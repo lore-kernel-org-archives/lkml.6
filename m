@@ -2,175 +2,152 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6C1C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91944C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A496E2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A496E2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 493E02086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="PljazNe3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493E02086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeJIVTd (ORCPT
+        id S1726762AbeJIVUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:19:33 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42853 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726617AbeJIVTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:19:33 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3350075B0C332;
-        Tue,  9 Oct 2018 22:02:23 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Tue, 9 Oct 2018
- 22:02:14 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <nfont@linux.vnet.ibm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v3 -next] powerpc/pseries/memory-hotplug: Fix return value type of find_aa_index
-Date:   Tue, 9 Oct 2018 21:59:13 +0800
-Message-ID: <20181009135913.14616-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 9 Oct 2018 17:20:38 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.133]:14765 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbeJIVUi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:20:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1539093807;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Y9lUzQris0ewwY7TxRc5B5jmxQNazfVae7pdzKt8rhM=;
+        b=PljazNe3t0QhsfaOMUhhbvXBbn2ZXh9ZDSLriIYszMefV0lM6xciI4ziK5k/ELHirF
+        gyCB8V0B0mmnIfnLZLhFnMVZ5fQqolk4yL7v718R1wUip6SnUzBtKYSov6EEQ4dilvSj
+        Bkxj8wKwVhX/T1xVLtaL5s0u6Pu26fhq618Dz09vRvYkYwzKrgHY7pplwlsBdXb+ww44
+        P0MO/UDkd9BiiTifyZgqaB/tjxvjuCCiKUoMRGpxCvGO7T5u3tiyKfOTPDmCnpUSZtpM
+        JWeb2+pGhEI0fK1kS2pIfjaeokymmWNOIzZJb88bg28YDYod/DIRIMG/Aqj8vCHueaAy
+        Oc1g==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyMly7vtKoBCSu4zR9/f0shzjGSYbJY5KbsbrlTGd0CtJA="
+X-RZG-CLASS-ID: mo05
+Received: from [IPv6:2003:a:e7a:6200:246c:2a8b:f45a:a33d]
+        by smtp.strato.de (RZmta 44.2 AUTH)
+        with ESMTPSA id h039efu99E3CM1a
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 9 Oct 2018 16:03:12 +0200 (CEST)
+Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end
+ functions
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        quentin.schulz@free-electrons.com, ulf.hansson@linaro.org,
+        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+        shawn.lin@rock-chips.com, adrian.hunter@intel.com,
+        baolin.wang@linaro.org, thomas.petazzoni@free-electrons.com,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devel@driverdev.osuosl.org, icenowy@aosc.xyz, wens@csie.org
+References: <CAPDyKFqDrdD+N+foLCwsVABtboz1Vn=OtJs14gp07zJfXHVKSA@mail.gmail.com>
+ <f9028dcb-c217-4efc-60a7-d0a2c1804a08@exceet.de>
+ <d9795fde-6bdd-b6fa-da41-839d44df6435@redhat.com>
+ <20180927081452.a2xw25sdoqtadntu@flea>
+ <85c2baea-8dbb-ef1b-93d2-7749c5a100e6@exceet.de>
+ <20181009075230.aaxne3z247yc3lu6@qschulz>
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+Message-ID: <d44615b8-32e0-1c71-97bb-13c1994239fb@exceet.de>
+Date:   Tue, 9 Oct 2018 16:03:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181009075230.aaxne3z247yc3lu6@qschulz>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'aa_index' is defined as an unsigned value, but find_aa_index
-may return -1 when dlpar_clone_property fails. So change 
-find_aa_index return value type to bool, which indicate 'aa_index'
-whether found or not.
+Hi Quentin,
 
-Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v3: change find_aa_index return type to bool
-v2: use 'rc' track the validation of aa_index
----
- arch/powerpc/platforms/pseries/hotplug-memory.c | 61 ++++++++++++-------------
- 1 file changed, 28 insertions(+), 33 deletions(-)
+On 09.10.2018 09:52, Quentin Schulz wrote:
+> Hi Frieder,
+> 
+> On Mon, Oct 08, 2018 at 11:53:21AM +0200, Frieder Schrempf wrote:
+>> Hi,
+>>
+>> On 27.09.2018 10:14, Maxime Ripard wrote:
+>>> On Wed, Sep 26, 2018 at 10:19:22PM +0200, Hans de Goede wrote:
+>>>> On 26-09-18 16:44, Frieder Schrempf wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Fri, Feb 09, 2018 at 03:01:00PM +0100, Ulf Hansson wrote:
+>>>>>> [...]
+>>>>>>
+>>>>>>>>> I'd like to know if any progress has been made on that problem
+>>>>> (I may
+>>>>>>>>> have missed patches).
+>>>>>>>>> Had you had the time to look at the issue?
+>>>>>>>>
+>>>>>>>> I have looked at the issue, but not manage to cook some patches
+>>>>> for it.
+>>>>>>>>
+>>>>>>>> However, it's on my top of my TODO list for mmc. No promises, but
+>>>>>>>> perhaps and hopefully I manage to get something posted during the
+>>>>>>>> coming release cycle.
+>>>>>
+>>>>> I would be interested in a ESP8089 driver in mainline and that's why I want to pick up this discussion.
+>>>>>
+>>>>> What is the current status of the "mmc_reprobe_device" implementation, that Hans was explaining and Ulf wanted to provide some months ago?
+>>>>
+>>>> Ulf did eventually write a new way to deal with this and then Quentin
+>>>> did manage to get the esp8089 driver to work with it, the new function
+>>>> to use for this is added by this commit:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/mmc/core?id=1433269c4d2461be1f36db5dbb453976b38996ff
+>>>>
+>>>> I'm not sure what the status of upstreaming the ep8089 driver is now
+>>>> that we've this in place.
+>>>>
+>>>> Quentin, do you have a version of the esp8089 driver somewhere
+>>>> which will work correctly with the new mmc_sw_reset() function?
+>>>>
+>>>> Also what is the status of adding this driver to say staging?
+>>>
+>>> IIRC, we tried to get it into staging, and we got told that it was too
+>>> nice for staging at this point. So we're basically stuck somewhere
+>>> between staging and !staging, with the driver being too nice for the
+>>> former, and not nice enough for the latter :)
+>>
+>> Ok, and is there someone willing to continue upstreaming the driver? Maybe
+>> someone can rebase and resend the latest approach?
+>>
+>> After all it looks like a lot of work has already been done.
+>>
+> 
+> There's clean up to do. It's time consuming but shouldn't be too hard to
+> do.
+> 
+> Then, we stressed the driver with an iperf test and it crashes very
+> often so we first need to identify if it happened with the "original"
+> driver before Icenowy's, Hans's and my clean-up. If it happened, since
+> we don't have a datasheet, it might be not that easy to fix. If it
+> didn't happen, then we have to find out where I cleaned up too much :D
+> 
+> I'm not currently working on this topic so anyone willing to take over
+> the work is free to do so.
 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index d26a771..4db510f 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -101,11 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
- 	return new_prop;
- }
- 
--static u32 find_aa_index(struct device_node *dr_node,
--			 struct property *ala_prop, const u32 *lmb_assoc)
-+static bool find_aa_index(struct device_node *dr_node,
-+			 struct property *ala_prop,
-+			 const u32 *lmb_assoc, u32 *aa_index)
- {
--	u32 *assoc_arrays;
--	u32 aa_index;
-+	u32 *assoc_arrays, new_prop_size;
-+	struct property *new_prop;
- 	int aa_arrays, aa_array_entries, aa_array_sz;
- 	int i, index;
- 
-@@ -121,46 +122,39 @@ static u32 find_aa_index(struct device_node *dr_node,
- 	aa_array_entries = be32_to_cpu(assoc_arrays[1]);
- 	aa_array_sz = aa_array_entries * sizeof(u32);
- 
--	aa_index = -1;
- 	for (i = 0; i < aa_arrays; i++) {
- 		index = (i * aa_array_entries) + 2;
- 
- 		if (memcmp(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz))
- 			continue;
- 
--		aa_index = i;
--		break;
-+		*aa_index = i;
-+		return true;
- 	}
- 
--	if (aa_index == -1) {
--		struct property *new_prop;
--		u32 new_prop_size;
--
--		new_prop_size = ala_prop->length + aa_array_sz;
--		new_prop = dlpar_clone_property(ala_prop, new_prop_size);
--		if (!new_prop)
--			return -1;
--
--		assoc_arrays = new_prop->value;
-+	new_prop_size = ala_prop->length + aa_array_sz;
-+	new_prop = dlpar_clone_property(ala_prop, new_prop_size);
-+	if (!new_prop)
-+		return false;
- 
--		/* increment the number of entries in the lookup array */
--		assoc_arrays[0] = cpu_to_be32(aa_arrays + 1);
-+	assoc_arrays = new_prop->value;
- 
--		/* copy the new associativity into the lookup array */
--		index = aa_arrays * aa_array_entries + 2;
--		memcpy(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz);
-+	/* increment the number of entries in the lookup array */
-+	assoc_arrays[0] = cpu_to_be32(aa_arrays + 1);
- 
--		of_update_property(dr_node, new_prop);
-+	/* copy the new associativity into the lookup array */
-+	index = aa_arrays * aa_array_entries + 2;
-+	memcpy(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz);
- 
--		/*
--		 * The associativity lookup array index for this lmb is
--		 * number of entries - 1 since we added its associativity
--		 * to the end of the lookup array.
--		 */
--		aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
--	}
-+	of_update_property(dr_node, new_prop);
- 
--	return aa_index;
-+	/*
-+	 * The associativity lookup array index for this lmb is
-+	 * number of entries - 1 since we added its associativity
-+	 * to the end of the lookup array.
-+	 */
-+	*aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-+	return true;
- }
- 
- static int update_lmb_associativity_index(struct drmem_lmb *lmb)
-@@ -169,6 +163,7 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
- 	struct property *ala_prop;
- 	const u32 *lmb_assoc;
- 	u32 aa_index;
-+	bool is_found;
- 
- 	parent = of_find_node_by_path("/");
- 	if (!parent)
-@@ -200,11 +195,11 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
- 		return -ENODEV;
- 	}
- 
--	aa_index = find_aa_index(dr_node, ala_prop, lmb_assoc);
-+	is_found = find_aa_index(dr_node, ala_prop, lmb_assoc, &aa_index);
- 
- 	dlpar_free_cc_nodes(lmb_node);
- 
--	if (aa_index < 0) {
-+	if (!is_found) {
- 		pr_err("Could not find LMB associativity\n");
- 		return -1;
- 	}
--- 
-2.7.0
+Thanks a lot for providing the details. It is currently not clear on our 
+side, if the project with the ESP8089 will happen, but if that's the 
+case we might pick up the work.
 
-
+Thanks
+Frieder
