@@ -2,106 +2,146 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD5EC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B5AC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2879213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A5B213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:32:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYnfOa1Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2879213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sbArQtaR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A5B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJINqs (ORCPT
+        id S1726683AbeJINr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:46:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41223 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeJINqs (ORCPT
+        Tue, 9 Oct 2018 09:47:27 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52398 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeJINr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:46:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x12-v6so431787wru.8
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xFHdCqYQbtTlvChbzju08shdLm2VKeOzlRsNjY1A7c0=;
-        b=nYnfOa1ZTpfwsWPvyrDsTxVRdfmih1EEYB53uX2U1B/L18457/7QzsItMITwGTT790
-         tkBgJFTj4bVNe9Wie+ZgUPULfbUYwuhIsy25KuG3vBxm0/ANbVLUcrpR5jMKmy+MAiiU
-         3KL7acLqMC13RfFLTehLLZoLxiQCAOglIOtUB1ChRoLWUprd6UFKEfK/MIkT3LKPbpcL
-         zjf4TKx+hAHCSurqxLhr4cp/Mni78Ovi92OuDmOr6XPqbIfT4VA/iaACt/2TlZO61Oo7
-         pcneUEBFcrD6fnD3zrf40vS6AkRZKiCi2lejwdWTsB0ZbnpbUhnDfP+S0O5Yrgv+4oDG
-         ua5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xFHdCqYQbtTlvChbzju08shdLm2VKeOzlRsNjY1A7c0=;
-        b=baZwXrq2vS2rkOaXoTXXy4bel3XKmpRAuQ9D/1HZVarUwQ02gA+9XmRQNSYV/umzaW
-         l7Hr7PYOHiQpibvUiuQBmz0qOf24FC+l/x6JSkDC1oxBteA+68qkbbCJAZXkpLlCrB2Y
-         hhVLLig2/wzXROmlVTkwA1VK4hvUmRKyA6vyn+ZphxIcbaAVUiKOz53fIkByo7x+HhXe
-         tmSN1RyxTwBBv7mYnBLCf20qvr9HS67yx5eeC6aIDgwgsSXl8IeH4rA9O2kI3ranM2wf
-         skpvsw2N1bMhR22JgCHOw31yb1YB0Pitc6t+Qe6vN4UOOaIDZawVw6Ly5lC5wAiCylzM
-         Pbcg==
-X-Gm-Message-State: ABuFfoiHH8Mvfnz0RfF49g/q+McqI+BHWj6U7RPRjvieaptIPNrhjTN0
-        S6pcn+XA1nNGTcF+4E5F3mU=
-X-Google-Smtp-Source: ACcGV62rSWytnArzQcj0p9jRhN6jQjGn90P6VNvamh7r/v2s5DfgdXXdJs7SdQXH5NiP3pb5yeeovw==
-X-Received: by 2002:adf:bf11:: with SMTP id p17-v6mr18153380wrh.235.1539066686258;
-        Mon, 08 Oct 2018 23:31:26 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm1516228wre.57.2018.10.08.23.31.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 23:31:25 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 08:31:23 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm,numa: Remove remaining traces of rate-limiting.
-Message-ID: <20181009063123.GA66632@gmail.com>
-References: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20181008170149.GB5819@techsingularity.net>
+        Tue, 9 Oct 2018 09:47:26 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w996Vt87120976;
+        Tue, 9 Oct 2018 01:31:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539066715;
+        bh=Er/MBcaeuFLJasm863Bj1/1RxgbQU99z8TS5Ke1LNTw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=sbArQtaREIKRGikM9ZUrpDmL3F/Qk969qH16+HvLSjq26E/iEinmBJLuwxZxNuycb
+         bYGVC2In7pBSRgLbofkBlMEezr7rMozLW3truBP3O2aykB9kEt7hzaPq44rn/eszqi
+         na/GJLDn15CdgtJ/vyLkDVd8T+3SIbLilSL6einM=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w996VtpI022493;
+        Tue, 9 Oct 2018 01:31:55 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 9 Oct
+ 2018 01:31:54 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 9 Oct 2018 01:31:54 -0500
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w996VplM013595;
+        Tue, 9 Oct 2018 01:31:52 -0500
+Subject: Re: [PATCH 1/6] dt-bindings: phy: am654-mmc-phy: Document new phy
+ bindings
+To:     "Andrew F. Davis" <afd@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <kishon@ti.com>, <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <adrian.hunter@intel.com>
+References: <20181004111451.9539-1-faiz_abbas@ti.com>
+ <20181004111451.9539-2-faiz_abbas@ti.com>
+ <ad9945db-de08-36fc-47b8-499ce2079d92@ti.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <92ff5e6a-455f-bd26-4f26-c5ff24ab6134@ti.com>
+Date:   Tue, 9 Oct 2018 12:04:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008170149.GB5819@techsingularity.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <ad9945db-de08-36fc-47b8-499ce2079d92@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
-* Mel Gorman <mgorman@techsingularity.net> wrote:
+On Friday 05 October 2018 09:28 PM, Andrew F. Davis wrote:
+> On 10/04/2018 06:14 AM, Faiz Abbas wrote:
+>> Add information to document bindings for the MMC PHY
+>> on TI's AM654 devices.
+>>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+>> ---
+>>  .../devicetree/bindings/phy/am654-mmc-phy.txt | 42 +++++++++++++++++++
+>>  1 file changed, 42 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/phy/am654-mmc-phy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/am654-mmc-phy.txt b/Documentation/devicetree/bindings/phy/am654-mmc-phy.txt
+>> new file mode 100644
+>> index 000000000000..766921612758
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/am654-mmc-phy.txt
+> 
+> 
+> Name ti,am654-mmc-phy.txt might be more consistent name.
 
-> On Sat, Oct 06, 2018 at 04:53:19PM +0530, Srikar Dronamraju wrote:
-> > With Commit efaffc5e40ae ("mm, sched/numa: Remove rate-limiting of automatic
-> > NUMA balancing migration"), we no more require migrate lock and its
-> > initialization. Its redundant. Hence remove it.
-> > 
-> > Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> 
-> Hi Ingo, 
-> 
-> Can this be sent with the rest of the patches that got merged for 4.19-rc7
-> so they are more or less together? It's functionally harmless to delay
-> until the 4.20 merge window but it's a bit untidy. The mistake was mine
-> switching between a backport and mainline versions of the original patch.
-> 
-> Thanks
+Ok.
 
-Ok, agreed and done - I queued it up in sched/urgent.
+> 
+> 
+>> @@ -0,0 +1,42 @@
+>> +TI AM654 MMC PHY
+>> +-------------------
+>> +
+>> +Required properties:
+>> + - compatible: ti,am654-emmc-phy
+>> + - #phy-cells: must be 0
+>> + - reg: PHY registers address offset and size
+>> + - clocks: must be phandle of the clock provider which is the host
+>> +	   controller
+>> + - clock-names: must be "mmcclk"
+>> + - ti,otap-del-sel: Output Tap Delay select.
+>> + - ti,trm-icp: DLL trim select.
+>> + - ti,driver-strength-ohm: driver strength in ohms.
+>> +			   Valid values are 33, 40, 50, 66, and 100 ohms.
+>> +
+>> +Example:
+>> +			mmc_phy1: mmc_phy@10100 {
+>> +				compatible = "ti,am654-mmc-phy";
+>> +				reg = <0x10100 0x34>;
+>> +				clocks = <&sdhci1>;
+>> +				clock-names = "mmcclk";
+>> +				#phy-cells = <0>;
+>> +				ti,otap-del-sel = <0x2>;
+>> +				ti,trm-icp = <0x8>;
+>> +				status = "disabled";
+> 
+> 
+> No need for disabled in the example case. 
+
+Ok.
+
+> Also not sure the host
+> controller example below needs to be here, there are already examples
+> for that binding in mmc/arasan,sdhci.txt.
+> 
+
+I had added it because it is a clock source in clocks=<&sdhci1> so it
+should have #clock-cells and clock-output-names. I suppose I can just
+reference it here.
 
 Thanks,
-
-	Ingo
+Faiz
