@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CF7C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB27C00449
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171922086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171922086D
+	by mail.kernel.org (Postfix) with ESMTP id 35768213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35768213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbeJIJfo (ORCPT
+        id S1727044AbeJIJfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:35:44 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:37142 "EHLO
+        Tue, 9 Oct 2018 05:35:54 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:49094 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726596AbeJIJfn (ORCPT
+        with ESMTP id S1726761AbeJIJfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:35:43 -0400
+        Tue, 9 Oct 2018 05:35:53 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w992LmT6032585;
-        Tue, 9 Oct 2018 10:21:48 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w992M8jx032690;
+        Tue, 9 Oct 2018 10:22:08 +0800 (GMT-8)
         (envelope-from alankao@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 9 Oct 2018
- 10:19:07 +0800
+ 10:19:27 +0800
 From:   Alan Kao <alankao@andestech.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
@@ -38,9 +38,9 @@ CC:     Greentime Hu <greentime@andestech.com>,
         Vincent Chen <vincentc@andestech.com>,
         Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
         Alan Kao <alankao@andestech.com>
-Subject: [PATCH v8 1/5] Extract FPU context operations from entry.S
-Date:   Tue, 9 Oct 2018 10:18:30 +0800
-Message-ID: <1539051514-3658-2-git-send-email-alankao@andestech.com>
+Subject: [PATCH v8 5/5] Auto-detect whether a FPU exists
+Date:   Tue, 9 Oct 2018 10:18:34 +0800
+Message-ID: <1539051514-3658-6-git-send-email-alankao@andestech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539051514-3658-1-git-send-email-alankao@andestech.com>
 References: <1539051514-3658-1-git-send-email-alankao@andestech.com>
@@ -48,250 +48,126 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.15.65]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w992LmT6032585
+X-MAIL: ATCSQR.andestech.com w992M8jx032690
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We move __fstate_save and __fstate_restore to a new source
-file, fpu.S.
+We expect that a kernel with CONFIG_FPU=y can still support no-FPU
+machines. To do so, the kernel should first examine the existence of a
+FPU, then do nothing if a FPU does exist; otherwise, it should
+disable/bypass all FPU-related functions.
+
+In this patch, a new global variable, has_fpu, is created and determined
+when parsing the hardware capability from device tree during booting.
+This variable is used in those FPU-related functions.
 
 Signed-off-by: Alan Kao <alankao@andestech.com>
 Cc: Greentime Hu <greentime@andestech.com>
 Cc: Vincent Chen <vincentc@andestech.com>
 Cc: Zong Li <zong@andestech.com>
 Cc: Nick Hu <nickhu@andestech.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/kernel/Makefile |   1 +
- arch/riscv/kernel/entry.S  |  87 -------------------------------------
- arch/riscv/kernel/fpu.S    | 106 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 107 insertions(+), 87 deletions(-)
- create mode 100644 arch/riscv/kernel/fpu.S
+ arch/riscv/include/asm/switch_to.h | 8 ++++----
+ arch/riscv/kernel/cpufeature.c     | 8 ++++++++
+ arch/riscv/kernel/process.c        | 4 +++-
+ arch/riscv/kernel/signal.c         | 6 ++++--
+ 4 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index e1274fc..bd433efd 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -13,6 +13,7 @@ extra-y += vmlinux.lds
- obj-y	+= cpu.o
- obj-y	+= cpufeature.o
- obj-y	+= entry.o
-+obj-y	+= fpu.o
- obj-y	+= irq.o
- obj-y	+= process.o
- obj-y	+= ptrace.o
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index fa2c08e..59c02e2 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -357,93 +357,6 @@ ENTRY(__switch_to)
- 	ret
- ENDPROC(__switch_to)
+diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+index 093050b..7335590 100644
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -56,13 +56,12 @@ static inline void __switch_to_aux(struct task_struct *prev,
+ 	fstate_restore(next, task_pt_regs(next));
+ }
  
--ENTRY(__fstate_save)
--	li  a2,  TASK_THREAD_F0
--	add a0, a0, a2
--	li t1, SR_FS
--	csrs sstatus, t1
--	frcsr t0
--	fsd f0,  TASK_THREAD_F0_F0(a0)
--	fsd f1,  TASK_THREAD_F1_F0(a0)
--	fsd f2,  TASK_THREAD_F2_F0(a0)
--	fsd f3,  TASK_THREAD_F3_F0(a0)
--	fsd f4,  TASK_THREAD_F4_F0(a0)
--	fsd f5,  TASK_THREAD_F5_F0(a0)
--	fsd f6,  TASK_THREAD_F6_F0(a0)
--	fsd f7,  TASK_THREAD_F7_F0(a0)
--	fsd f8,  TASK_THREAD_F8_F0(a0)
--	fsd f9,  TASK_THREAD_F9_F0(a0)
--	fsd f10, TASK_THREAD_F10_F0(a0)
--	fsd f11, TASK_THREAD_F11_F0(a0)
--	fsd f12, TASK_THREAD_F12_F0(a0)
--	fsd f13, TASK_THREAD_F13_F0(a0)
--	fsd f14, TASK_THREAD_F14_F0(a0)
--	fsd f15, TASK_THREAD_F15_F0(a0)
--	fsd f16, TASK_THREAD_F16_F0(a0)
--	fsd f17, TASK_THREAD_F17_F0(a0)
--	fsd f18, TASK_THREAD_F18_F0(a0)
--	fsd f19, TASK_THREAD_F19_F0(a0)
--	fsd f20, TASK_THREAD_F20_F0(a0)
--	fsd f21, TASK_THREAD_F21_F0(a0)
--	fsd f22, TASK_THREAD_F22_F0(a0)
--	fsd f23, TASK_THREAD_F23_F0(a0)
--	fsd f24, TASK_THREAD_F24_F0(a0)
--	fsd f25, TASK_THREAD_F25_F0(a0)
--	fsd f26, TASK_THREAD_F26_F0(a0)
--	fsd f27, TASK_THREAD_F27_F0(a0)
--	fsd f28, TASK_THREAD_F28_F0(a0)
--	fsd f29, TASK_THREAD_F29_F0(a0)
--	fsd f30, TASK_THREAD_F30_F0(a0)
--	fsd f31, TASK_THREAD_F31_F0(a0)
--	sw t0, TASK_THREAD_FCSR_F0(a0)
--	csrc sstatus, t1
--	ret
--ENDPROC(__fstate_save)
+-#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_INITIAL)
 -
--ENTRY(__fstate_restore)
--	li  a2,  TASK_THREAD_F0
--	add a0, a0, a2
--	li t1, SR_FS
--	lw t0, TASK_THREAD_FCSR_F0(a0)
--	csrs sstatus, t1
--	fld f0,  TASK_THREAD_F0_F0(a0)
--	fld f1,  TASK_THREAD_F1_F0(a0)
--	fld f2,  TASK_THREAD_F2_F0(a0)
--	fld f3,  TASK_THREAD_F3_F0(a0)
--	fld f4,  TASK_THREAD_F4_F0(a0)
--	fld f5,  TASK_THREAD_F5_F0(a0)
--	fld f6,  TASK_THREAD_F6_F0(a0)
--	fld f7,  TASK_THREAD_F7_F0(a0)
--	fld f8,  TASK_THREAD_F8_F0(a0)
--	fld f9,  TASK_THREAD_F9_F0(a0)
--	fld f10, TASK_THREAD_F10_F0(a0)
--	fld f11, TASK_THREAD_F11_F0(a0)
--	fld f12, TASK_THREAD_F12_F0(a0)
--	fld f13, TASK_THREAD_F13_F0(a0)
--	fld f14, TASK_THREAD_F14_F0(a0)
--	fld f15, TASK_THREAD_F15_F0(a0)
--	fld f16, TASK_THREAD_F16_F0(a0)
--	fld f17, TASK_THREAD_F17_F0(a0)
--	fld f18, TASK_THREAD_F18_F0(a0)
--	fld f19, TASK_THREAD_F19_F0(a0)
--	fld f20, TASK_THREAD_F20_F0(a0)
--	fld f21, TASK_THREAD_F21_F0(a0)
--	fld f22, TASK_THREAD_F22_F0(a0)
--	fld f23, TASK_THREAD_F23_F0(a0)
--	fld f24, TASK_THREAD_F24_F0(a0)
--	fld f25, TASK_THREAD_F25_F0(a0)
--	fld f26, TASK_THREAD_F26_F0(a0)
--	fld f27, TASK_THREAD_F27_F0(a0)
--	fld f28, TASK_THREAD_F28_F0(a0)
--	fld f29, TASK_THREAD_F29_F0(a0)
--	fld f30, TASK_THREAD_F30_F0(a0)
--	fld f31, TASK_THREAD_F31_F0(a0)
--	fscsr t0
--	csrc sstatus, t1
--	ret
--ENDPROC(__fstate_restore)
--
--
- 	.section ".rodata"
- 	/* Exception vector table */
- ENTRY(excp_vect_table)
-diff --git a/arch/riscv/kernel/fpu.S b/arch/riscv/kernel/fpu.S
-new file mode 100644
-index 0000000..1defb06
---- /dev/null
-+++ b/arch/riscv/kernel/fpu.S
-@@ -0,0 +1,106 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2012 Regents of the University of California
-+ * Copyright (C) 2017 SiFive
-+ *
-+ *   This program is free software; you can redistribute it and/or
-+ *   modify it under the terms of the GNU General Public License
-+ *   as published by the Free Software Foundation, version 2.
-+ *
-+ *   This program is distributed in the hope that it will be useful,
-+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *   GNU General Public License for more details.
-+ */
++extern bool has_fpu;
+ #else
++#define has_fpu false
+ #define fstate_save(task, regs) do { } while (0)
+ #define fstate_restore(task, regs) do { } while (0)
+ #define __switch_to_aux(__prev, __next) do { } while (0)
+-#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_OFF)
+ #endif
+ 
+ extern struct task_struct *__switch_to(struct task_struct *,
+@@ -72,7 +71,8 @@ extern struct task_struct *__switch_to(struct task_struct *,
+ do {							\
+ 	struct task_struct *__prev = (prev);		\
+ 	struct task_struct *__next = (next);		\
+-	__switch_to_aux(__prev, __next);		\
++	if (has_fpu)					\
++		__switch_to_aux(__prev, __next);	\
+ 	((last) = __switch_to(__prev, __next));		\
+ } while (0)
+ 
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 17011a8..46942e6 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -22,6 +22,9 @@
+ #include <asm/hwcap.h>
+ 
+ unsigned long elf_hwcap __read_mostly;
++#ifdef CONFIG_FPU
++bool has_fpu __read_mostly;
++#endif
+ 
+ void riscv_fill_hwcap(void)
+ {
+@@ -58,4 +61,9 @@ void riscv_fill_hwcap(void)
+ 		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+ 
+ 	pr_info("elf_hwcap is 0x%lx", elf_hwcap);
 +
-+#include <linux/linkage.h>
-+
-+#include <asm/asm.h>
-+#include <asm/csr.h>
-+#include <asm/asm-offsets.h>
-+
-+ENTRY(__fstate_save)
-+	li  a2,  TASK_THREAD_F0
-+	add a0, a0, a2
-+	li t1, SR_FS
-+	csrs sstatus, t1
-+	frcsr t0
-+	fsd f0,  TASK_THREAD_F0_F0(a0)
-+	fsd f1,  TASK_THREAD_F1_F0(a0)
-+	fsd f2,  TASK_THREAD_F2_F0(a0)
-+	fsd f3,  TASK_THREAD_F3_F0(a0)
-+	fsd f4,  TASK_THREAD_F4_F0(a0)
-+	fsd f5,  TASK_THREAD_F5_F0(a0)
-+	fsd f6,  TASK_THREAD_F6_F0(a0)
-+	fsd f7,  TASK_THREAD_F7_F0(a0)
-+	fsd f8,  TASK_THREAD_F8_F0(a0)
-+	fsd f9,  TASK_THREAD_F9_F0(a0)
-+	fsd f10, TASK_THREAD_F10_F0(a0)
-+	fsd f11, TASK_THREAD_F11_F0(a0)
-+	fsd f12, TASK_THREAD_F12_F0(a0)
-+	fsd f13, TASK_THREAD_F13_F0(a0)
-+	fsd f14, TASK_THREAD_F14_F0(a0)
-+	fsd f15, TASK_THREAD_F15_F0(a0)
-+	fsd f16, TASK_THREAD_F16_F0(a0)
-+	fsd f17, TASK_THREAD_F17_F0(a0)
-+	fsd f18, TASK_THREAD_F18_F0(a0)
-+	fsd f19, TASK_THREAD_F19_F0(a0)
-+	fsd f20, TASK_THREAD_F20_F0(a0)
-+	fsd f21, TASK_THREAD_F21_F0(a0)
-+	fsd f22, TASK_THREAD_F22_F0(a0)
-+	fsd f23, TASK_THREAD_F23_F0(a0)
-+	fsd f24, TASK_THREAD_F24_F0(a0)
-+	fsd f25, TASK_THREAD_F25_F0(a0)
-+	fsd f26, TASK_THREAD_F26_F0(a0)
-+	fsd f27, TASK_THREAD_F27_F0(a0)
-+	fsd f28, TASK_THREAD_F28_F0(a0)
-+	fsd f29, TASK_THREAD_F29_F0(a0)
-+	fsd f30, TASK_THREAD_F30_F0(a0)
-+	fsd f31, TASK_THREAD_F31_F0(a0)
-+	sw t0, TASK_THREAD_FCSR_F0(a0)
-+	csrc sstatus, t1
-+	ret
-+ENDPROC(__fstate_save)
-+
-+ENTRY(__fstate_restore)
-+	li  a2,  TASK_THREAD_F0
-+	add a0, a0, a2
-+	li t1, SR_FS
-+	lw t0, TASK_THREAD_FCSR_F0(a0)
-+	csrs sstatus, t1
-+	fld f0,  TASK_THREAD_F0_F0(a0)
-+	fld f1,  TASK_THREAD_F1_F0(a0)
-+	fld f2,  TASK_THREAD_F2_F0(a0)
-+	fld f3,  TASK_THREAD_F3_F0(a0)
-+	fld f4,  TASK_THREAD_F4_F0(a0)
-+	fld f5,  TASK_THREAD_F5_F0(a0)
-+	fld f6,  TASK_THREAD_F6_F0(a0)
-+	fld f7,  TASK_THREAD_F7_F0(a0)
-+	fld f8,  TASK_THREAD_F8_F0(a0)
-+	fld f9,  TASK_THREAD_F9_F0(a0)
-+	fld f10, TASK_THREAD_F10_F0(a0)
-+	fld f11, TASK_THREAD_F11_F0(a0)
-+	fld f12, TASK_THREAD_F12_F0(a0)
-+	fld f13, TASK_THREAD_F13_F0(a0)
-+	fld f14, TASK_THREAD_F14_F0(a0)
-+	fld f15, TASK_THREAD_F15_F0(a0)
-+	fld f16, TASK_THREAD_F16_F0(a0)
-+	fld f17, TASK_THREAD_F17_F0(a0)
-+	fld f18, TASK_THREAD_F18_F0(a0)
-+	fld f19, TASK_THREAD_F19_F0(a0)
-+	fld f20, TASK_THREAD_F20_F0(a0)
-+	fld f21, TASK_THREAD_F21_F0(a0)
-+	fld f22, TASK_THREAD_F22_F0(a0)
-+	fld f23, TASK_THREAD_F23_F0(a0)
-+	fld f24, TASK_THREAD_F24_F0(a0)
-+	fld f25, TASK_THREAD_F25_F0(a0)
-+	fld f26, TASK_THREAD_F26_F0(a0)
-+	fld f27, TASK_THREAD_F27_F0(a0)
-+	fld f28, TASK_THREAD_F28_F0(a0)
-+	fld f29, TASK_THREAD_F29_F0(a0)
-+	fld f30, TASK_THREAD_F30_F0(a0)
-+	fld f31, TASK_THREAD_F31_F0(a0)
-+	fscsr t0
-+	csrc sstatus, t1
-+	ret
-+ENDPROC(__fstate_restore)
++#ifdef CONFIG_FPU
++	if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
++		has_fpu = true;
++#endif
+ }
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index 07d5156..bef1999 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -76,7 +76,9 @@ void show_regs(struct pt_regs *regs)
+ void start_thread(struct pt_regs *regs, unsigned long pc,
+ 	unsigned long sp)
+ {
+-	regs->sstatus = DEFAULT_SSTATUS;
++	regs->sstatus = SR_SPIE;
++	if (has_fpu)
++		regs->sstatus |= SR_FS_INITIAL;
+ 	regs->sepc = pc;
+ 	regs->sp = sp;
+ 	set_fs(USER_DS);
+diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
+index 2450b82..f9b5e7e 100644
+--- a/arch/riscv/kernel/signal.c
++++ b/arch/riscv/kernel/signal.c
+@@ -98,7 +98,8 @@ static long restore_sigcontext(struct pt_regs *regs,
+ 	/* sc_regs is structured the same as the start of pt_regs */
+ 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
+ 	/* Restore the floating-point state. */
+-	err |= restore_fp_state(regs, &sc->sc_fpregs);
++	if (has_fpu)
++		err |= restore_fp_state(regs, &sc->sc_fpregs);
+ 	return err;
+ }
+ 
+@@ -150,7 +151,8 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
+ 	/* sc_regs is structured the same as the start of pt_regs */
+ 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
+ 	/* Save the floating-point state. */
+-	err |= save_fp_state(regs, &sc->sc_fpregs);
++	if (has_fpu)
++		err |= save_fp_state(regs, &sc->sc_fpregs);
+ 	return err;
+ }
+ 
 -- 
 2.7.4
 
