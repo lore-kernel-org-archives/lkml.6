@@ -2,211 +2,232 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C54ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817E7ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82094214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC29214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQVofOBk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82094214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W2UnPXR/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC29214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJJATz (ORCPT
+        id S1727016AbeJJAUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:19:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38088 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726764AbeJJATy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:19:54 -0400
-Received: from localhost (57.sub-174-234-155.myvzw.com [174.234.155.57])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1ABA214DA;
-        Tue,  9 Oct 2018 17:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539104520;
-        bh=2/u36yA2RO9M0kPxMJO7WK7RFc8N7LIJOmI3JRzZVBk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BQVofOBkXZpqFdlVxdXyQs+0h+VI56WJF2LG+EdU4tpo0rv6Kvw4htSQPYYY4W8Tb
-         NQhFB8Ix6r27XUsmImCiXcCJvP16AhqsO34SS4nmb17lRot+mywRE9I7E6eBo8LPBq
-         bx2/XGptgGf+AipNlSgDIsXGImnHtwJalh9TFZaI=
-Date:   Tue, 9 Oct 2018 12:01:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Bin Meng <bmeng.cn@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
- interrupt" quirk
-Message-ID: <20181009170158.GA5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
- <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
- <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
+        Tue, 9 Oct 2018 20:20:18 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35380 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbeJJAUR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:20:17 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j9-v6so2412183otl.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:02:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=eYFPc4s+QwgY+HY9B2CjCHW9yeLVZZtyLJMTEOLHSIk=;
+        b=W2UnPXR/V2+7n0pT9Nf2EMmVOVE3ra4JNkdKbP/ZrkxnwjNHiyExIwmsvK838h4C/l
+         n7S9KQc8O2zf3IoGaYt4VFKubmBh50NK1am8PaeURY3mnmtFO3PZZB7jSWRVjsQEzBPc
+         vld2gM364sT0g6UTuLuu2M7JnZ37ROdtDd7J/Zloy/2MqEQQsb6nORf8eDBST/xMMdFm
+         GstGGITuOW6li1HXb/EfVt1YZQo88q16AtXoJLsX7VEr0tTDQ4EdYhgBRxh/2rzb/NwN
+         XfamLd/za/Iq9qaPiAlK0PTZVwyPDqv+doONpdsqcGc/7MW9hHRpxF/RLW2GaTS1dfhG
+         reYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eYFPc4s+QwgY+HY9B2CjCHW9yeLVZZtyLJMTEOLHSIk=;
+        b=LPwXCze8E3gW2ikmvxGnKmoty/D2VWDgyFOtpLhZa6UT6qCzBlZpeNNUXci67XsYls
+         ZQ02UQ2ilHv7ZU3m2fltX88CBhwCwTP0lhVpiRElx1NekmHbO8w4LjZ3aYhMo1QsQ/KA
+         0w4oUSnikdqN5lo1JQTrR3j6BSXg8wquOfRSo2J0azJe103YYZyVIyYQR/AOjap+UXvb
+         takqdjZm1py5ZVvRJJdXlm04PNu4+KXyCHJTfXOgSQJdRPVajvXlR46Vw+o034dDb2tx
+         CbXO91ZeRIG/jpuJjUaKCG7mJdBYW2wXeklpuBoHW9DFHRTz6b2RpEV8I/N87vki8HTs
+         2dHg==
+X-Gm-Message-State: ABuFfogIM+3mALO+79wKRix8CmwRzIBnQFRbBS6rDepuDZ7Cp+kyBMbG
+        5KhJEgW/8Gq9C6gDRIcyBM2pZYVHByT5zl0dQWJazQ==
+X-Google-Smtp-Source: ACcGV63RZyNZ4EztQRctkUlzK06HSSe+mdSCEvUJRb9LZiKyPAyeUE6LiW8nlHA+OGQ0yN63NBL67VOMWmhnZ4gp2HY=
+X-Received: by 2002:a9d:4c15:: with SMTP id l21mr17856286otf.242.1539104542365;
+ Tue, 09 Oct 2018 10:02:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181009103752.21482-1-laurent@vivier.eu> <20181009103752.21482-2-laurent@vivier.eu>
+ <f14ce318-5a1a-06f3-2e90-91220f39e74b@virtuozzo.com> <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
+ <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com> <795fea1a-97bd-87f5-6a14-6d47a4e42f74@vivier.eu>
+In-Reply-To: <795fea1a-97bd-87f5-6a14-6d47a4e42f74@vivier.eu>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 9 Oct 2018 19:01:56 +0200
+Message-ID: <CAG48ez2HHv5VuW3GXk0ExxLqW-qzq8yuwSQ=8Z=-h7iNH0gizg@mail.gmail.com>
+Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     ktkhai@virtuozzo.com, kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
+        Linux API <linux-api@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        containers@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 05:44:08PM +0800, Bin Meng wrote:
-> On Thu, Oct 4, 2018 at 4:12 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Thu, Sep 27, 2018 at 10:10:07AM +0800, Bin Meng wrote:
-> > > On Thu, Sep 27, 2018 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
-> > > > > Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
-> > > > > which are known to break.
-> > > >
-> > > > Do you have a reference for this?  Any public bug reports, bugzilla,
-> > > > Intel spec reference or errata?  "Which are known to break" is pretty
-> > > > vague.
-> > >
-> > > Sorry I used wrong words and should have been clearer. These devices
-> > > are validated to be broken. The test I used is very simple, just
-> > > unplug the VGA cable and plug it again, and "spurious interrupt" will
-> > > be seen on the interrupt line of the IGD device. I was not aware of
-> > > any public bugs filed to Intel, nor seen any errata from Intel.
+On Tue, Oct 9, 2018 at 6:57 PM Laurent Vivier <laurent@vivier.eu> wrote:
+> Le 09/10/2018 =C3=A0 18:53, Jann Horn a =C3=A9crit :
+> > On Tue, Oct 9, 2018 at 6:45 PM Laurent Vivier <laurent@vivier.eu> wrote=
+:
+> >> Le 09/10/2018 =C3=A0 18:15, Kirill Tkhai a =C3=A9crit :
+> >>> On 09.10.2018 13:37, Laurent Vivier wrote:
+> >>>> This patch allows to have a different binfmt_misc configuration
+> >>>> for each new user namespace. By default, the binfmt_misc configurati=
+on
+> >>>> is the one of the previous level, but if the binfmt_misc filesystem =
+is
+> >>>> mounted in the new namespace a new empty binfmt instance is created =
+and
+> >>>> used in this namespace.
+> >>>>
+> >>>> For instance, using "unshare" we can start a chroot of an another
+> >>>> architecture and configure the binfmt_misc interpreter without being=
+ root
+> >>>> to run the binaries in this chroot.
+> >>>>
+> >>>> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> >>>> ---
+> >>>>  fs/binfmt_misc.c               | 106 ++++++++++++++++++++++++------=
+---
+> >>>>  include/linux/user_namespace.h |  13 ++++
+> >>>>  kernel/user.c                  |  13 ++++
+> >>>>  kernel/user_namespace.c        |   3 +
+> >>>>  4 files changed, 107 insertions(+), 28 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> >>>> index aa4a7a23ff99..1e0029d097d9 100644
+> >>>> --- a/fs/binfmt_misc.c
+> >>>> +++ b/fs/binfmt_misc.c
+> >> ...
+> >>>> @@ -80,18 +74,32 @@ static int entry_count;
+> >>>>   */
+> >>>>  #define MAX_REGISTER_LENGTH 1920
+> >>>>
+> >>>> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns=
+)
+> >>>> +{
+> >>>> +    struct binfmt_namespace *b_ns;
+> >>>> +
+> >>>> +    while (ns) {
+> >>>> +            b_ns =3D READ_ONCE(ns->binfmt_ns);
+> >>>> +            if (b_ns)
+> >>>> +                    return b_ns;
+> >>>> +            ns =3D ns->parent;
+> >>>> +    }
+> >>>> +    WARN_ON_ONCE(1);
+> >>>> +    return NULL;
+> >>>> +}
+> >>>> +
+> >> ...
+> >>>> @@ -823,12 +847,34 @@ static const struct super_operations s_ops =3D=
+ {
+> >>>>  static int bm_fill_super(struct super_block *sb, void *data, int si=
+lent)
+> >>>>  {
+> >>>>      int err;
+> >>>> +    struct user_namespace *ns =3D sb->s_user_ns;
+> >>>>      static const struct tree_descr bm_files[] =3D {
+> >>>>              [2] =3D {"status", &bm_status_operations, S_IWUSR|S_IRU=
+GO},
+> >>>>              [3] =3D {"register", &bm_register_operations, S_IWUSR},
+> >>>>              /* last one */ {""}
+> >>>>      };
+> >>>>
+> >>>> +    /* create a new binfmt namespace
+> >>>> +     * if we are not in the first user namespace
+> >>>> +     * but the binfmt namespace is the first one
+> >>>> +     */
+> >>>> +    if (READ_ONCE(ns->binfmt_ns) =3D=3D NULL) {
+> >>>> +            struct binfmt_namespace *new_ns;
+> >>>> +
+> >>>> +            new_ns =3D kmalloc(sizeof(struct binfmt_namespace),
+> >>>> +                             GFP_KERNEL);
+> >>>> +            if (new_ns =3D=3D NULL)
+> >>>> +                    return -ENOMEM;
+> >>>> +            INIT_LIST_HEAD(&new_ns->entries);
+> >>>> +            new_ns->enabled =3D 1;
+> >>>> +            rwlock_init(&new_ns->entries_lock);
+> >>>> +            new_ns->bm_mnt =3D NULL;
+> >>>> +            new_ns->entry_count =3D 0;
+> >>>> +            /* ensure new_ns is completely initialized before shari=
+ng it */
+> >>>> +            smp_wmb();
+> >>>
+> >>> (I haven't dived into patch logic, here just small barrier remark fro=
+m quick sight).
+> >>> smp_wmb() has no sense without paired smp_rmb() on the read side. Pos=
+sible,
+> >>> you want something like below in read hunk:
+> >>>
+> >>> +             b_ns =3D READ_ONCE(ns->binfmt_ns);
+> >>> +             if (b_ns) {
+> >>> +                     smp_rmb();
+> >>> +                     return b_ns;
+> >>> +             }
+> >>>
+> >>>
+> >>
+> >> The write barrier is here to ensure the structure is fully written
+> >> before we set the pointer.
+> >>
+> >> I don't understand how read barrier can change something at this level=
+,
+> >> IMHO the couple WRITE_ONCE()/READ_ONCE() should be enough to ensure we
+> >> have correctly initialized the pointer and the structure when we read
+> >> the pointer back.
+> >>
+> >> I think the pointer itself is the "barrier" to access the memory
+> >> modified before.
 > >
-> > The original commit, f67fd55fa96f ("PCI: Add quirk for still enabled
-> > interrupts on Intel Sandy Bridge GPUs"), says some systems "crash"
-> > (not sure if that means an oops or an actual crash that requires a
-> > reboot) and on other systems, Linux disables the shared interrupt
-> > line.  I assume disabling the interrupt line keeps devices using that
-> > line from working, but does not directly cause a crash.
+> > Things don't work that way on alpha, but that's why READ_ONCE()
+> > includes an smp_read_barrier_depends():
 > >
-> 
-> Correct, disable the shared interrupt line keeps all devices using
-> that line from working, which is current kernel's behavior w/o this
-> quirk handling: it disables the (shared) interrupt line after 100.000+
-> generated interrupts. But the side effect is that other devices become
-> unusable after that (eg: USB devices which share the same interrupt
-> line with the Intel GPU). That's why the original commit, f67fd55fa96f
-> ("PCI: Add quirk for still enabled interrupts on Intel Sandy Bridge
-> GPUs") disables the GPU's interrupt directly, which should really be
-> done by the VGA BIOS itself (a buggy VBIOS!).
-> 
-> > What specific symptom do you see here?  I think it might be useful to
-> > collect details, e.g., dmesg logs, /proc/interrupts contents, output
-> > of "sudo lspci -vv", etc., for the systems you're quirking here.  I'm
-> > hoping we can eventually figure out a solution that doesn't require a
-> > quirk for every new GPU, and maybe that info will help find it.
-> 
-> The symptom was described briefly in the original commit f67fd55fa96f
-> too, that disables the (shared) interrupt line after 100.000+
-> generated interrupts (can be observed via /proc/interrupts).
-> 
-> > > > > See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
-> > > > > on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
-> > > > > ID for Intel GPU "spurious interrupt" quirk") for some history.
-> > > > >
-> > > > > Based on current findings, it is highly possible that all Intel
-> > > > > 1st/2nd/3rd generation Core processors' IGD has such quirk.
-> > > >
-> > > > Can you include a reference to these "current findings"?  I assume you
-> > > > have bug reports that include the device IDs you're adding?  If not,
-> > > > how did you build this list of new IDs?
-> > >
-> > > By "current findings" I mean given the IDs we have here, plus previous
-> > > one added by Thomas, it's highly possible this VGA BIOS bug exists in
-> > > every 1st/2nd/3rd generation Core processors.
-> > >
-> > > > The function comment added by f67fd55fa96f ("PCI: Add quirk for still
-> > > > enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
-> > > > actually a BIOS issue, not a hardware erratum, i.e., I don't see
-> > > > anything there that suggests a hardware defect.
-> > > >
-> > > > But there must be a hole somewhere -- the kernel can't be expected to
-> > > > disable interrupts in device-specific ways when there's no driver
-> > > > loaded.  Maybe it's simply a BIOS defect or maybe there's some
-> > > > interrupt or _PRT-related setup we're missing.
-> > >
-> > > It's a pure VGA BIOS bug, not the BIOS bug or _PRT etc. The VGA BIOS
-> > > forgot to turn off the interrupt on these devices.
+> > #define __READ_ONCE(x, check)                                          =
+ \
+> > ({                                                                     =
+ \
+> >         union { typeof(x) __val; char __c[1]; } __u;                   =
+ \
+> >         if (check)                                                     =
+ \
+> >                 __read_once_size(&(x), __u.__c, sizeof(x));            =
+ \
+> >         else                                                           =
+ \
+> >                 __read_once_size_nocheck(&(x), __u.__c, sizeof(x));    =
+ \
+> >         smp_read_barrier_depends(); /* Enforce dependency ordering from=
+ x */ \
+> >         __u.__val;                                                     =
+ \
+> > })
+> > #define READ_ONCE(x) __READ_ONCE(x, 1)
 > >
-> > If this is a VGA BIOS defect, it's not very likely that it will
-> > magically be fixed for all new Intel GPUs, so in effect it sounds like
-> > we need to update this list of quirks in Linux every time a new Intel
-> > GPU comes out.  That prospect is a little daunting.
-> 
-> I don't have a relatively newer Intel board at hand for testing right
-> now. I can try to locate one. But as I said, it's highly possible at
-> least all 1st/2nd/3rd generation Core processors are affected.
+>
+> So my questions are:
+>
+> - do we need a smp_wmb() barrier if we use READ_ONCE() and WRITE_ONCE()?
 
-> Maybe
-> we can add all these known GPU devices of  1st/2nd/3rd generation Core
-> processors all together for now? For newer GPUs, let's wait until
-> someone reports the issue again?
+Yes.
 
-This is exactly my point: we don't want to have to wait for somebody
-to report an issue for every new GPU.  That (a) is a maintenance
-headache and, more importantly, (b) prevents an old kernel from
-running on new hardware.  (b) is important to distros because nobody
-wants to qualify and release a new kernel just to add a new device ID.
+> - if we need an smp_wmb() barrier, do we need an smp_rmb() barrier as
+> the data we want to "protect" are behind an access to the pointer?
 
-Bottom line is that I think I'm going to have to apply this patch, but
-I want to get off this train in the future, so now is the time to find
-a better solution.
-
-> > Do you happen to know if Windows has the same problem?  I.e., if you
-> > boot an old version of Windows with a new GPU, and unplug the VGA
-> > cable, does Windows crash?  If Windows can figure out how to handle
-> > that situation gracefully, Linux should be able to do it, too.
-> 
-> I suspect Windows cannot handle it too. Without the GPU awareness, the
-> interrupt line is simply on and no driver claims the devices and will
-> cause issues. I can test this.
-
-If you could test this, that would be great.  I would be quite
-surprised if Windows crashed when you unplug the VGA cable.
-
-What I'm wondering is if there's some different way we could manage
-the IOAPICs or maybe disable interrupts at the PCI device level as
-David suggests.  If something like that could be done we wouldn't need
-quirks for every new device.
-
-It's possible we could learn something by running Windows on qemu and
-tracing its PCI config accesses to see whether it sets the
-PCI_COMMAND_INTX_DISABLE bit or something.
-
-> > > > > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-> > > > > Cc: <stable@vger.kernel.org> # v3.4+
-> > > > > ---
-> > > > >
-> > > > >  drivers/pci/quirks.c | 4 ++++
-> > > > >  1 file changed, 4 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > > > > index 6bc27b7..c0673a7 100644
-> > > > > --- a/drivers/pci/quirks.c
-> > > > > +++ b/drivers/pci/quirks.c
-> > > > > @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
-> > > > >
-> > > > >       pci_iounmap(dev, regs);
-> > > > >  }
-> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
-> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
-> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
-> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
-> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
-> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
-> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
-> > > > >
-> > > > > --
-> 
-> Regards,
-> Bin
+No. You only need an smp_read_barrier_depends() to access things
+behind the pointer you're reading (documented in a big comment block
+in arch/alpha/include/asm/barrier.h); and that barrier is implied by
+READ_ONCE(), so you don't have to write it yourself.
