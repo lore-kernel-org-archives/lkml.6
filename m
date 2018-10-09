@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842AAC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8B0C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4760A2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A54B2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BzQh9QHz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4760A2054F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OUQ35khO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A54B2054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbeJIUnL (ORCPT
+        id S1727449AbeJIUnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49586 "EHLO
+        Tue, 9 Oct 2018 16:43:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49534 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbeJIUnK (ORCPT
+        with ESMTP id S1727374AbeJIUnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:10 -0400
+        Tue, 9 Oct 2018 16:43:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6xV/WpKVguy+7dNBIsuEqczBqEePEOdZd5rcV9GeR8s=; b=BzQh9QHz3roG6GtLk9xod+o2+R
-        QgEu+Yj0yhhbto0eCEpx65EdHrcciCT04Ks8VJeT3OtrGSnRTJI21Q2xY5lD76QOxNEyCcw0/O4T3
-        Ywtegp3xx1ZV3Nj3egui3CbzlOQuqPejD5flsBXtd4TzJVp2Es++u0xT7/PStAiuW6j5+ceDAx3xw
-        CVSUn1kDOtg2Ys0EtScNRd5fwoKqfxOPfi7igYzMzMTv9WznNK4pJuoB/W58JDobYtxGVLRBF5whO
-        WGHPxBKXrYKlo6Khd61o0hWj05EE6qhx3yeFyNgA9xxMcMPuu5rGAX4HAWpk1UXL1JSu7SqtRh/fV
-        4GhmwyZg==;
+        bh=qHIt8PU2ghlSSKLAslc/yyxBCNYkuCHyozLkBsIx2aI=; b=OUQ35khO0MRVkmARK+EPAPDiio
+        UoKONGmkCbN4iVRt5myckpSTUi0gQSvXp7mBkf00cd+z8ObfihkHZtg9jkfOgSCUPvU5wOhduYRZS
+        irqK3vMa2JbeXOE6li3QBYDfaRtv7dBvJHizrG5fAMwIEOvDCw+bbi5f3eCkTPuR7k0iA+XGPdOeP
+        Oer1TgzuziP8S0iKDsxBVoAHn2fZJAWlJjBVHSQVraQUziWNRLVp6TgzLKze3AH3XUT/w16MG5MWj
+        PqqJqoFK1HHkkOs73F2DLekxrbWK9j8gl04lyWUvh7LBzBPjFSPuZeBOHoDlL2FHxOqSr5I6gC6AS
+        3MewVvGA==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s1I-0001Ko-H0; Tue, 09 Oct 2018 13:25:52 +0000
+        id 1g9s1D-0001HQ-5k; Tue, 09 Oct 2018 13:25:47 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 20/33] powerpc/dma: remove the iommu fallback for coherent allocations
-Date:   Tue,  9 Oct 2018 15:24:47 +0200
-Message-Id: <20181009132500.17643-21-hch@lst.de>
+Subject: [PATCH 18/33] powerpc/dma: stop overriding dma_get_required_mask
+Date:   Tue,  9 Oct 2018 15:24:45 +0200
+Message-Id: <20181009132500.17643-19-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009132500.17643-1-hch@lst.de>
 References: <20181009132500.17643-1-hch@lst.de>
@@ -62,130 +62,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All iommu capable platforms now always use the iommu code with the
-internal bypass, so there is not need for this magic anymore.
+The ppc_md and pci_controller_ops methods are unused now and can be
+removed.  The dma_nommu implementation is generic to the generic one
+except for using max_pfn instead of calling into the memblock API,
+and all other dma_map_ops instances implement a method of their own.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/Kconfig      |  4 ---
- arch/powerpc/kernel/dma.c | 68 ++-------------------------------------
- 2 files changed, 2 insertions(+), 70 deletions(-)
+ arch/powerpc/include/asm/device.h      |  2 --
+ arch/powerpc/include/asm/dma-mapping.h |  2 --
+ arch/powerpc/include/asm/machdep.h     |  2 --
+ arch/powerpc/include/asm/pci-bridge.h  |  1 -
+ arch/powerpc/kernel/dma.c              | 42 --------------------------
+ drivers/base/platform.c                |  2 --
+ 6 files changed, 51 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 06996df07cad..7097019d8907 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -119,9 +119,6 @@ config GENERIC_HWEIGHT
- 	bool
- 	default y
+diff --git a/arch/powerpc/include/asm/device.h b/arch/powerpc/include/asm/device.h
+index 1aa53318b4bc..3814e1c2d4bc 100644
+--- a/arch/powerpc/include/asm/device.h
++++ b/arch/powerpc/include/asm/device.h
+@@ -59,6 +59,4 @@ struct pdev_archdata {
+ 	u64 dma_mask;
+ };
  
--config ARCH_HAS_DMA_SET_COHERENT_MASK
--        bool
+-#define ARCH_HAS_DMA_GET_REQUIRED_MASK
 -
- config PPC
- 	bool
- 	default y
-@@ -129,7 +126,6 @@ config PPC
- 	# Please keep this list sorted alphabetically.
- 	#
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
--	select ARCH_HAS_DMA_SET_COHERENT_MASK
- 	select ARCH_HAS_ELF_RANDOMIZE
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
-diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index 78ef4076e15c..bef91b8ad064 100644
---- a/arch/powerpc/kernel/dma.c
-+++ b/arch/powerpc/kernel/dma.c
-@@ -114,51 +114,6 @@ void __dma_nommu_free_coherent(struct device *dev, size_t size,
- }
- #endif /* !CONFIG_NOT_COHERENT_CACHE */
+ #endif /* _ASM_POWERPC_DEVICE_H */
+diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+index 59c090b7eaac..b1999880fc61 100644
+--- a/arch/powerpc/include/asm/dma-mapping.h
++++ b/arch/powerpc/include/asm/dma-mapping.h
+@@ -112,7 +112,5 @@ static inline void set_dma_offset(struct device *dev, dma_addr_t off)
+ #define HAVE_ARCH_DMA_SET_MASK 1
+ extern int dma_set_mask(struct device *dev, u64 dma_mask);
  
--static void *dma_nommu_alloc_coherent(struct device *dev, size_t size,
--				       dma_addr_t *dma_handle, gfp_t flag,
--				       unsigned long attrs)
--{
--	struct iommu_table *iommu;
+-extern u64 __dma_get_required_mask(struct device *dev);
 -
--	/* The coherent mask may be smaller than the real mask, check if
--	 * we can really use the direct ops
--	 */
--	if (dma_nommu_dma_supported(dev, dev->coherent_dma_mask))
--		return __dma_nommu_alloc_coherent(dev, size, dma_handle,
--						   flag, attrs);
--
--	/* Ok we can't ... do we have an iommu ? If not, fail */
--	iommu = get_iommu_table_base(dev);
--	if (!iommu)
--		return NULL;
--
--	/* Try to use the iommu */
--	return iommu_alloc_coherent(dev, iommu, size, dma_handle,
--				    dev->coherent_dma_mask, flag,
--				    dev_to_node(dev));
--}
--
--static void dma_nommu_free_coherent(struct device *dev, size_t size,
--				     void *vaddr, dma_addr_t dma_handle,
--				     unsigned long attrs)
--{
--	struct iommu_table *iommu;
--
--	/* See comments in dma_nommu_alloc_coherent() */
--	if (dma_nommu_dma_supported(dev, dev->coherent_dma_mask))
--		return __dma_nommu_free_coherent(dev, size, vaddr, dma_handle,
--						  attrs);
--	/* Maybe we used an iommu ... */
--	iommu = get_iommu_table_base(dev);
--
--	/* If we hit that we should have never allocated in the first
--	 * place so how come we are freeing ?
--	 */
--	if (WARN_ON(!iommu))
--		return;
--	iommu_free_coherent(iommu, size, vaddr, dma_handle);
--}
--
- int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
- 			     void *cpu_addr, dma_addr_t handle, size_t size,
- 			     unsigned long attrs)
-@@ -228,8 +183,8 @@ static inline void dma_nommu_sync_single(struct device *dev,
+ #endif /* __KERNEL__ */
+ #endif	/* _ASM_DMA_MAPPING_H */
+diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
+index a47de82fb8e2..99f06102474e 100644
+--- a/arch/powerpc/include/asm/machdep.h
++++ b/arch/powerpc/include/asm/machdep.h
+@@ -47,9 +47,7 @@ struct machdep_calls {
+ #endif
+ #endif /* CONFIG_PPC64 */
+ 
+-	/* Platform set_dma_mask and dma_get_required_mask overrides */
+ 	int		(*dma_set_mask)(struct device *dev, u64 dma_mask);
+-	u64		(*dma_get_required_mask)(struct device *dev);
+ 
+ 	int		(*probe)(void);
+ 	void		(*setup_arch)(void); /* Optional, may be NULL */
+diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
+index 5c7a1e7ffc8a..aace7033fa02 100644
+--- a/arch/powerpc/include/asm/pci-bridge.h
++++ b/arch/powerpc/include/asm/pci-bridge.h
+@@ -46,7 +46,6 @@ struct pci_controller_ops {
  #endif
  
- const struct dma_map_ops dma_nommu_ops = {
--	.alloc				= dma_nommu_alloc_coherent,
--	.free				= dma_nommu_free_coherent,
-+	.alloc				= __dma_nommu_alloc_coherent,
-+	.free				= __dma_nommu_free_coherent,
- 	.mmap				= dma_nommu_mmap_coherent,
+ 	int             (*dma_set_mask)(struct pci_dev *pdev, u64 dma_mask);
+-	u64		(*dma_get_required_mask)(struct pci_dev *pdev);
+ 
+ 	void		(*shutdown)(struct pci_controller *hose);
+ };
+diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+index 716b7eab3ee7..9ca9d2cec4ed 100644
+--- a/arch/powerpc/kernel/dma.c
++++ b/arch/powerpc/kernel/dma.c
+@@ -197,18 +197,6 @@ int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return nents;
+ }
+ 
+-static u64 dma_nommu_get_required_mask(struct device *dev)
+-{
+-	u64 end, mask;
+-
+-	end = memblock_end_of_DRAM() + get_dma_offset(dev);
+-
+-	mask = 1ULL << (fls64(end) - 1);
+-	mask += mask - 1;
+-
+-	return mask;
+-}
+-
+ dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
+ 		unsigned long offset, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs)
+@@ -246,7 +234,6 @@ const struct dma_map_ops dma_nommu_ops = {
  	.map_sg				= dma_nommu_map_sg,
  	.dma_supported			= dma_nommu_dma_supported,
-@@ -243,25 +198,6 @@ const struct dma_map_ops dma_nommu_ops = {
- };
- EXPORT_SYMBOL(dma_nommu_ops);
+ 	.map_page			= dma_nommu_map_page,
+-	.get_required_mask		= dma_nommu_get_required_mask,
+ #ifdef CONFIG_NOT_COHERENT_CACHE
+ 	.sync_single_for_cpu 		= dma_nommu_sync_single,
+ 	.sync_single_for_device 	= dma_nommu_sync_single,
+@@ -294,35 +281,6 @@ int dma_set_mask(struct device *dev, u64 dma_mask)
+ }
+ EXPORT_SYMBOL(dma_set_mask);
  
--int dma_set_coherent_mask(struct device *dev, u64 mask)
+-u64 __dma_get_required_mask(struct device *dev)
 -{
--	if (!dma_supported(dev, mask)) {
--		/*
--		 * We need to special case the direct DMA ops which can
--		 * support a fallback for coherent allocations. There
--		 * is no dma_op->set_coherent_mask() so we have to do
--		 * things the hard way:
--		 */
--		if (get_dma_ops(dev) != &dma_nommu_ops ||
--		    get_iommu_table_base(dev) == NULL ||
--		    !dma_iommu_dma_supported(dev, mask))
--			return -EIO;
--	}
--	dev->coherent_dma_mask = mask;
--	return 0;
--}
--EXPORT_SYMBOL(dma_set_coherent_mask);
+-	const struct dma_map_ops *dma_ops = get_dma_ops(dev);
 -
- int dma_set_mask(struct device *dev, u64 dma_mask)
+-	if (unlikely(dma_ops == NULL))
+-		return 0;
+-
+-	if (dma_ops->get_required_mask)
+-		return dma_ops->get_required_mask(dev);
+-
+-	return DMA_BIT_MASK(8 * sizeof(dma_addr_t));
+-}
+-
+-u64 dma_get_required_mask(struct device *dev)
+-{
+-	if (ppc_md.dma_get_required_mask)
+-		return ppc_md.dma_get_required_mask(dev);
+-
+-	if (dev_is_pci(dev)) {
+-		struct pci_dev *pdev = to_pci_dev(dev);
+-		struct pci_controller *phb = pci_bus_to_host(pdev->bus);
+-		if (phb->controller_ops.dma_get_required_mask)
+-			return phb->controller_ops.dma_get_required_mask(pdev);
+-	}
+-
+-	return __dma_get_required_mask(dev);
+-}
+-EXPORT_SYMBOL_GPL(dma_get_required_mask);
+-
+ static int __init dma_init(void)
  {
- 	if (ppc_md.dma_set_mask)
+ #ifdef CONFIG_IBMVIO
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 23cf4427f425..057357521561 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1179,7 +1179,6 @@ int __init platform_bus_init(void)
+ 	return error;
+ }
+ 
+-#ifndef ARCH_HAS_DMA_GET_REQUIRED_MASK
+ static u64 dma_default_get_required_mask(struct device *dev)
+ {
+ 	u32 low_totalram = ((max_pfn - 1) << PAGE_SHIFT);
+@@ -1208,7 +1207,6 @@ u64 dma_get_required_mask(struct device *dev)
+ 	return dma_default_get_required_mask(dev);
+ }
+ EXPORT_SYMBOL_GPL(dma_get_required_mask);
+-#endif
+ 
+ static __initdata LIST_HEAD(early_platform_driver_list);
+ static __initdata LIST_HEAD(early_platform_device_list);
 -- 
 2.19.0
 
