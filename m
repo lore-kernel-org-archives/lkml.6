@@ -2,556 +2,445 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375C0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E517C43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C141D2075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F6682075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="rf8JUvIS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C141D2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2gJufxx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6682075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725874AbeJJHC6 (ORCPT
+        id S1726503AbeJJHDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:02:58 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43010 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725756AbeJJHC6 (ORCPT
+        Wed, 10 Oct 2018 03:03:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41054 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeJJHDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:02:58 -0400
-Received: by mail-yb1-f196.google.com with SMTP id w80-v6so1446495ybe.10
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 16:43:36 -0700 (PDT)
+        Wed, 10 Oct 2018 03:03:39 -0400
+Received: by mail-pf1-f193.google.com with SMTP id m77-v6so1640506pfi.8;
+        Tue, 09 Oct 2018 16:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sA6q2OjT4kT4VbjK5Dry3SrMDl7vXqh6x2G4XygXMqo=;
-        b=rf8JUvISInb+Af1DHJrEDjpECckbjtUWbOdEHD3NeSyAA9Q2yMLOLKARtHUh7Ogbc7
-         P6oCD9CvBiFB+6m3Mvsbe2Z5Ut7DZiMQF9k+SpJnOMoo8jqXqSeyPzxlO7ofUVizEkBh
-         tXLt1zHB1tsV02JZq7jaeukeK7IIbBghTXDtVi1V/tqteoIo4WKnyiJaMZWZrJnd3zL0
-         ujlm2JHWHOUeMyT+NdO9Cj49anDZ/UjlNxFUix9HgXyGv/UpQAnKFHCeHPbIff50xPe7
-         At94mHvokKMGAyRZ7H5jPrmdQpJErk8Jc6gouWTEInmgACK5cmKwmcpBl5XwbwwDRx+t
-         pg2g==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0ahMLKu5Z74W/0/wMpIJ2fpDv8gGF9fLIz6Kbz7QAfI=;
+        b=T2gJufxxpCEIGoQSe0vjYSPUWnW7S4+lkZDy4XN31xTndQyqFPrikWvgC+vk0RdANV
+         DAgPt9qfBJev/bS30Dg9K6eX4IWc2yqdb110qdKCLDcxfcRrERmcMg4d2li+HFJRX4/4
+         73pYo2wZP8SXB3GxsOgDGENTIRJ18vUo2YBv8MV277SnQHRoaoywLdmAuJKNX/taYnh/
+         JVoY6DKNtmtWL2FYH4+S4aUnz8xbqQUAsiT8FRq3RX/dp0J4Su+atwxmTao+e1OvlvE3
+         yS0LH8oab+j565ZmWANNj5jbgweuMEy2/edaPz5EhuJZqvQAOJXV+2Oeo6z7E1r5/p8P
+         /W2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sA6q2OjT4kT4VbjK5Dry3SrMDl7vXqh6x2G4XygXMqo=;
-        b=aJLPQ5a/8J8ztkmAyBBY1xeXAlDen/30zPUJVytmPrli4aTjK5oLzC/R0SSJ9F4pkV
-         bER7UZE+qLozckPwqZDpNW4o5koZTMH0owyNHfh1JuTNiHRGpAPA9t1s2Pw8WnowB7kF
-         12SXn5f0NtyI9uVYJxpmDfrGswBT75P6cpmTi6GXtF4uYwkMGqt/Yv5RVh6CdAEd3bqP
-         QO2TX24JW8YooTMfOkD/EjLfCztdet0gdYfzTIzLzu1ifTTNjf34AB1G/OGmJnDkDZMe
-         pgQuoNTRUX2x+yRV4IJnpoG+kynoz66sbiYFxgTSTS+b0gcxiKLuNwNr8BEQ6QxIy0od
-         JUiw==
-X-Gm-Message-State: ABuFfoi4ABHuV0ltRvAwS0fjWu092k0aR2pRXzwkPJeM9zr2K3Rtbzhl
-        /RFairCP9KnNXpsOot8FTd0eTyy0Pd4=
-X-Google-Smtp-Source: ACcGV62EI6TUXQHvOG31emiRr9fAGTEVQ1AvX7SyfTJjvm6DenIb+y8HhW0qc0UAFY96Fj87uS6vhA==
-X-Received: by 2002:a25:ef0d:: with SMTP id g13-v6mr13591569ybd.165.1539128615585;
-        Tue, 09 Oct 2018 16:43:35 -0700 (PDT)
-Received: from t480s.mkb.name (47-49-164-163.static.spbg.sc.charter.com. [47.49.164.163])
-        by smtp.gmail.com with ESMTPSA id c142-v6sm10175453ywa.81.2018.10.09.16.43.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 16:43:34 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 19:43:32 -0400
-From:   martin@omnibond.com
-To:     devel@lists.orangefs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hubcap@omnibond.com
-Subject: invalidatepage questions (was Re: [PATCH 14/19] orangefs: write
- range tracking)
-Message-ID: <20181009234332.GA52014@t480s.mkb.name>
-References: <20181007232736.3780-1-martin@omnibond.com>
- <20181007232736.3780-15-martin@omnibond.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0ahMLKu5Z74W/0/wMpIJ2fpDv8gGF9fLIz6Kbz7QAfI=;
+        b=BUJSNSihbvpxt/s5PwFKq00eaiwjnvCnjLRjGYIvHzWcGIbkOJdKMylFek87Ns7q7q
+         wLlK9b7ZNpWboF6thUUTbnEI1WEJQkD+MKfkLAwI66pqfiIclYNAu3nGRL6Nt2wgeLIs
+         NSRwW4ppzMIIBCoABcd7twdck7tA3rIYTB9L7RxLU3q8Qee8IvBo/+5hOO3YNiirUKaB
+         HH7XdZoEX5oc96vrldDF/duPk4deZaiRuuEfsFccETpW0552s+sjvLSDW4wV/4C6lVif
+         7dkHoACr1Gymh3kQJOpGPHoiNIlPS0B395MUkQZpVCoPY5kwVGH6h/T85h30RyoirdWn
+         QQVQ==
+X-Gm-Message-State: ABuFfoinsvT00x4uWobOt3FnALpPHbeN3CqzOJSap1vA04bePqEAz3Hl
+        l08U5eZcLW9ZDUL6OE5tto4=
+X-Google-Smtp-Source: ACcGV63WMUHA/BpaJc1CaGH/MuXtpDBeFea4JQjaXzK9CGLNbAl7z7jK7aYkizsvIFtLzE4CuKbxdg==
+X-Received: by 2002:a63:6203:: with SMTP id w3-v6mr27338841pgb.53.1539128657443;
+        Tue, 09 Oct 2018 16:44:17 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id j25-v6sm25921369pff.116.2018.10.09.16.44.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 16:44:16 -0700 (PDT)
+Subject: Re: [PATCH 05/16] of: overlay: use prop add changeset entry for
+ property in new nodes
+To:     Alan Tull <atull@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
+ <1538712767-30394-6-git-send-email-frowand.list@gmail.com>
+ <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <09cdeb8f-3b8c-25ae-5804-0759a9db508d@gmail.com>
+Date:   Tue, 9 Oct 2018 16:44:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181007232736.3780-15-martin@omnibond.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have some questions about my assumptions writing this code.  I
-definitely have something wrong.
-
-(Given my comments in invalidatepage, it should be clear I'm not quite
-confident that it's doing the right thing.)
-
-I thought writpeage could not be called while PagePrivate is not set.
-It is set during a write to reflect the changed data, then cleared in
-writepage as the write is done.
-
-It is also cleared in invalidatepage since the write is no longer
-necessary.  However, I see writepage calls after an invalidatepage
-causing a ClearPagePrivate.  These naturally hit the BUG().
-
-Running xfstests generic/127 I see a page with a pending write from
-2110 to 4096 (end of page) and then an invalidate on that page from 744
-to 4096.  I ClearPagePrivate since there is no longer any data to write
-from that page.  But the kernel doens't know that and calls writepage.
-
-Should I ClearPageDirty too?
-
-Should I just ClearPagePrivate and then use the fact that it's not set
-as a hint not to do anything in writepage?
-
-Something I'm not thinking of?
-
-Martin
-
-On Sun, Oct 07, 2018 at 11:27:31PM +0000, Martin Brandenburg wrote:
-> This is necessary to ensure the uid/gid responsible for the write is
-> communicated with the server.  Only one uid/gid may have outstanding
-> changes at a time.  If another uid/gid writes while there are
-> outstanding changes, the changes must be written out before the new
-> data is put into the page.
+On 10/09/18 13:28, Alan Tull wrote:
+> On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
+>>
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
 > 
-> Signed-off-by: Martin Brandenburg <martin@omnibond.com>
-> ---
->  fs/orangefs/file.c            |  12 +-
->  fs/orangefs/inode.c           | 267 ++++++++++++++++++++++++++++++----
->  fs/orangefs/orangefs-kernel.h |  12 +-
->  3 files changed, 261 insertions(+), 30 deletions(-)
+> Hi Frank,
 > 
-> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-> index ba580a5c6fd2..5eda483263ae 100644
-> --- a/fs/orangefs/file.c
-> +++ b/fs/orangefs/file.c
-> @@ -46,8 +46,8 @@ static int flush_racache(struct inode *inode)
->   * Post and wait for the I/O upcall to finish
->   */
->  ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
-> -		loff_t *offset, struct iov_iter *iter,
-> -		size_t total_size, loff_t readahead_size)
-> +    loff_t *offset, struct iov_iter *iter, size_t total_size,
-> +    loff_t readahead_size, struct orangefs_write_request *wr)
->  {
->  	struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
->  	struct orangefs_khandle *handle = &orangefs_inode->refn.khandle;
-> @@ -103,6 +103,10 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
->  			    __func__, (long)ret);
->  			goto out;
->  		}
-> +		if (wr) {
-> +			new_op->upcall.uid = from_kuid(&init_user_ns, wr->uid);
-> +			new_op->upcall.gid = from_kgid(&init_user_ns, wr->gid);
-> +		}
->  	}
->  
->  	gossip_debug(GOSSIP_FILE_DEBUG,
-> @@ -292,7 +296,7 @@ ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
->  			     (int)*offset);
->  
->  		ret = wait_for_direct_io(type, inode, offset, iter,
-> -				each_count, 0);
-> +				each_count, 0, NULL);
->  		gossip_debug(GOSSIP_FILE_DEBUG,
->  			     "%s(%pU): return from wait_for_io:%d\n",
->  			     __func__,
-> @@ -434,7 +438,7 @@ static vm_fault_t orangefs_fault(struct vm_fault *vmf)
->  static const struct vm_operations_struct orangefs_file_vm_ops = {
->  	.fault = orangefs_fault,
->  	.map_pages = filemap_map_pages,
-> -	.page_mkwrite = filemap_page_mkwrite,
-> +	.page_mkwrite = orangefs_page_mkwrite,
->  };
->  
->  /*
-> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-> index bd2ce18453f2..5c155b259b13 100644
-> --- a/fs/orangefs/inode.c
-> +++ b/fs/orangefs/inode.c
-> @@ -15,9 +15,11 @@
->  #include "orangefs-kernel.h"
->  #include "orangefs-bufmap.h"
->  
-> -static int orangefs_writepage(struct page *page, struct writeback_control *wbc)
-> +static int orangefs_writepage_locked(struct page *page,
-> +    struct writeback_control *wbc)
->  {
->  	struct inode *inode = page->mapping->host;
-> +	struct orangefs_write_request *wr;
->  	struct iov_iter iter;
->  	struct bio_vec bv;
->  	size_t len, wlen;
-> @@ -26,33 +28,175 @@ static int orangefs_writepage(struct page *page, struct writeback_control *wbc)
->  
->  	set_page_writeback(page);
->  
-> -	off = page_offset(page);
-> -	len = i_size_read(inode);
-> -	if (off + PAGE_SIZE > len)
-> -		wlen = len - off;
-> -	else
-> -		wlen = PAGE_SIZE;
-> +	if (PagePrivate(page)) {
-> +		wr = (struct orangefs_write_request *)page_private(page);
-> +		BUG_ON(!wr);
-> +		if (wr->mwrite) {
-> +			off = page_offset(page);
-> +			len = i_size_read(inode);
-> +			if (off + PAGE_SIZE > len)
-> +				wlen = len - off;
-> +			else
-> +				wlen = PAGE_SIZE;
-> +		} else {
-> +			off = wr->pos;
-> +			wlen = wr->len;
-> +			len = i_size_read(inode);
-> +		}
-> +	} else {
-> +/*		BUG();*/
-> +		/* It's not private so there's nothing to write, right? */
-> +		printk("writepage not private!\n");
-> +		end_page_writeback(page);
-> +		return 0;
-> +
-> +	}
->  
->  	bv.bv_page = page;
->  	bv.bv_len = wlen;
->  	bv.bv_offset = off % PAGE_SIZE;
-> -	if (wlen == 0)
-> -		dump_stack();
->  	iov_iter_bvec(&iter, ITER_BVEC | WRITE, &bv, 1, wlen);
->  
->  	ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, wlen,
-> -	    len);
-> +	    len, wr);
->  	if (ret < 0) {
->  		SetPageError(page);
->  		mapping_set_error(page->mapping, ret);
->  	} else {
->  		ret = 0;
-> +		if (wr) {
-> +			ClearPagePrivate(page);
-> +			kfree(wr);
-> +		}
->  	}
->  	end_page_writeback(page);
-> -	unlock_page(page);
->  	return ret;
->  }
->  
-> +static int do_writepage_if_necessary(struct page *page, loff_t pos,
-> +    unsigned len)
-> +{
-> +	struct orangefs_write_request *wr;
-> +	struct writeback_control wbc = {
-> +		.sync_mode = WB_SYNC_ALL,
-> +		.nr_to_write = 0,
-> +	};
-> +	int r;
-> +	if (PagePrivate(page)) {
-> +		wr = (struct orangefs_write_request *)page_private(page);
-> +		BUG_ON(!wr);
-> +		/*
-> +		 * If the new request is not contiguous with the last one or if
-> +		 * the uid or gid is different, the page must be written out
-> +		 * before continuing.
-> +		 */
-> +		if (pos + len < wr->pos || wr->pos + wr->len < pos ||
-> +		    !uid_eq(current_fsuid(), wr->uid) ||
-> +		    !gid_eq(current_fsgid(), wr->gid)) {
-> +			wbc.range_start = page_file_offset(page);
-> +			wbc.range_end = wbc.range_start + PAGE_SIZE - 1;
-> +			wait_on_page_writeback(page);
-> +			if (clear_page_dirty_for_io(page)) {
-> +				r = orangefs_writepage_locked(page, &wbc);
-> +				if (r)
-> +					return r;
-> +			}
-> +			BUG_ON(PagePrivate(page));
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int update_wr(struct page *page, loff_t pos, unsigned len, int mwrite)
-> +{
-> +	struct orangefs_write_request *wr;
-> +	if (PagePrivate(page)) {
-> +		wr = (struct orangefs_write_request *)page_private(page);
-> +		BUG_ON(!wr);
-> +		if (mwrite) {
-> +			wr->mwrite = 1;
-> +			return 0;
-> +		}
-> +		if (pos < wr->pos) {
-> +			wr->len += wr->pos - pos;
-> +			wr->pos = pos;
-> +		}
-> +		if (pos + len > wr->pos + wr->len)
-> +			wr->len = pos + len - wr->pos;
-> +		else
-> +			wr->len = wr->pos + wr->len - wr->pos;
-> +	} else {
-> +		wr = kmalloc(sizeof *wr, GFP_KERNEL);
-> +		if (wr) {
-> +			wr->pos = pos;
-> +			wr->len = len;
-> +			wr->uid = current_fsuid();
-> +			wr->gid = current_fsgid();
-> +			wr->mwrite = mwrite;
-> +			SetPagePrivate(page);
-> +			set_page_private(page, (unsigned long)wr);
-> +		} else {
-> +			return -ENOMEM;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +int orangefs_page_mkwrite(struct vm_fault *vmf)
-> +{
-> +	struct page *page = vmf->page;
-> +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	unsigned len;
-> +	int r;
-> +
-> +	/* Do not write past the file size. */
-> +	len = i_size_read(inode) - page_file_offset(page);
-> +	if (len > PAGE_SIZE)
-> +		len = PAGE_SIZE;
-> +
-> +	lock_page(page);
-> +	r = do_writepage_if_necessary(page, page_file_offset(page),
-> +	    len);
-> +	if (r) {
-> +		r = VM_FAULT_RETRY;
-> +		unlock_page(vmf->page);
-> +		return r;
-> +	}
-> +	r = update_wr(page, page_file_offset(page), len, 1);
-> +	if (r) {
-> +		r = VM_FAULT_RETRY;
-> +		unlock_page(vmf->page);
-> +		return r;
-> +	}
-> +
-> +	r = VM_FAULT_LOCKED;
-> +	sb_start_pagefault(inode->i_sb);
-> +	file_update_time(vmf->vma->vm_file);
-> +	if (page->mapping != inode->i_mapping) {
-> +		unlock_page(page);
-> +		r = VM_FAULT_NOPAGE;
-> +		goto out;
-> +	}
-> +	/*
-> +	 * We mark the page dirty already here so that when freeze is in
-> +	 * progress, we are guaranteed that writeback during freezing will
-> +	 * see the dirty page and writeprotect it again.
-> +	 */
-> +	set_page_dirty(page);
-> +	wait_for_stable_page(page);
-> +out:
-> +	sb_end_pagefault(inode->i_sb);
-> +	return r;
-> +}
-> +
-> +static int orangefs_writepage(struct page *page, struct writeback_control *wbc)
-> +{
-> +	int r;
-> +	r = orangefs_writepage_locked(page, wbc);
-> +	unlock_page(page);
-> +	return r;
-> +}
-> +
->  static int orangefs_readpage(struct file *file, struct page *page)
->  {
->  	struct inode *inode = page->mapping->host;
-> @@ -68,7 +212,7 @@ static int orangefs_readpage(struct file *file, struct page *page)
->  	iov_iter_bvec(&iter, ITER_BVEC | READ, &bv, 1, PAGE_SIZE);
->  
->  	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
-> -	    PAGE_SIZE, inode->i_size);
-> +	    PAGE_SIZE, inode->i_size, NULL);
->  	/* this will only zero remaining unread portions of the page data */
->  	iov_iter_zero(~0U, &iter);
->  	/* takes care of potential aliasing */
-> @@ -86,10 +230,26 @@ static int orangefs_readpage(struct file *file, struct page *page)
->  	return ret;
->  }
->  
-> +static int orangefs_write_begin(struct file *file,
-> +    struct address_space *mapping, loff_t pos, unsigned len, unsigned flags,
-> +    struct page **pagep, void **fsdata)
-> +{
-> +	int r;
-> +	r = simple_write_begin(file, mapping, pos, len, flags, pagep, fsdata);
-> +	if (r)
-> +		return r;
-> +	r = do_writepage_if_necessary(*pagep, pos, len);
-> +	if (r)
-> +		unlock_page(*pagep);
-> +	return r;
-> +}
-> +
->  int orangefs_write_end(struct file *file, struct address_space *mapping,
->      loff_t pos, unsigned len, unsigned copied, struct page *page, void *fsdata)
->  {
->  	int r;
-> +	if (update_wr(page, pos, len, 0))
-> +		return -ENOMEM;
->  	r = simple_write_end(file, mapping, pos, len, copied, page, fsdata);
->  	mark_inode_dirty_sync(file_inode(file));
->  	return r;
-> @@ -99,24 +259,68 @@ static void orangefs_invalidatepage(struct page *page,
->  				 unsigned int offset,
->  				 unsigned int length)
->  {
-> -	gossip_debug(GOSSIP_INODE_DEBUG,
-> -		     "orangefs_invalidatepage called on page %p "
-> -		     "(offset is %u)\n",
-> -		     page,
-> -		     offset);
-> -
-> -	ClearPageUptodate(page);
-> -	ClearPageMappedToDisk(page);
-> +	struct orangefs_write_request *wr;
-> +	/* XXX move to releasepage and call + rebase */
-> +	struct writeback_control wbc = {
-> +		.sync_mode = WB_SYNC_ALL,
-> +		.nr_to_write = 0,
-> +	};
-> +	int r;
-> +	if (PagePrivate(page)) {
-> +		wr = (struct orangefs_write_request *)page_private(page);
-> +		BUG_ON(!wr);
-> +/* XXX prove */
-> +		if (offset == 0 && length == PAGE_SIZE) {
-> +			ClearPagePrivate(page);
-> +			kfree(wr);
-> +		} else if (wr->pos - page_offset(page) < offset &&
-> +		    wr->pos - page_offset(page) + wr->len > offset + length) {
-> +			wbc.range_start = page_file_offset(page);
-> +			wbc.range_end = wbc.range_start + PAGE_SIZE - 1;
-> +			wait_on_page_writeback(page);
-> +			if (clear_page_dirty_for_io(page)) {
-> +				r = orangefs_writepage_locked(page, &wbc);
-> +				if (r)
-> +					return;
-> +			} else {
-> +				ClearPagePrivate(page);
-> +				kfree(wr);
-> +			}
-> +		} else if (wr->pos - page_offset(page) < offset &&
-> +		    wr->pos - page_offset(page) + wr->len <= offset + length) {
-> +			wr->len = offset;
-> +		} else if (wr->pos - page_offset(page) >= offset &&
-> +		    wr->pos - page_offset(page) + wr->len > offset + length) {
-> +			wr->pos += length - wr->pos + page_offset(page);
-> +			wr->len -= length - wr->pos + page_offset(page);
-> +		} else {
-> +			/*
-> +			 * Invalidate range is bigger than write range but
-> +			 * entire write range is to be invalidated.
-> +			 */
-> +			ClearPagePrivate(page);
-> +			kfree(wr);
-> +		}
-> +	}
->  	return;
->  
->  }
->  
->  static int orangefs_releasepage(struct page *page, gfp_t foo)
->  {
-> -	gossip_debug(GOSSIP_INODE_DEBUG,
-> -		     "orangefs_releasepage called on page %p\n",
-> -		     page);
-> -	return 0;
-> +	/*
-> +	 * Two cases are mentioned in vfs.txt.  Only one is relevant
-> +	 * "VM finds a clean page with no active users and wants to make it a
-> +	 * free page"  However this page will not be private.
-> +	 * "request has been made to invalidate some or all pages in an
-> +	 * address_space"  So we call orangefs_invalidatepage.
-> +	 */
-> +	if (PagePrivate(page)) {
-> +		orangefs_invalidatepage(page, 0, PAGE_SIZE);
-> +		return !PagePrivate(page);
-> +	} else {
-> +		return 1;
-> +	}
->  }
->  
->  static ssize_t orangefs_direct_IO(struct kiocb *iocb,
-> @@ -128,16 +332,29 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
->  	    ORANGEFS_IO_WRITE : ORANGEFS_IO_READ, file, &pos, iter);
->  }
->  
-> +static int orangefs_launder_page(struct page *page)
-> +{
-> +	int r = 0;
-> +	if (PagePrivate(page)) {
-> +		if (clear_page_dirty_for_io(page))
-> +			r = orangefs_writepage_locked(page, NULL);
-> +		return r;
-> +	} else {
-> +		return 0;
-> +	}
-> +}
-> +
->  /** ORANGEFS2 implementation of address space operations */
->  static const struct address_space_operations orangefs_address_operations = {
->  	.writepage = orangefs_writepage,
->  	.readpage = orangefs_readpage,
->  	.set_page_dirty = __set_page_dirty_nobuffers,
-> -	.write_begin = simple_write_begin,
-> +	.write_begin = orangefs_write_begin,
->  	.write_end = orangefs_write_end,
->  	.invalidatepage = orangefs_invalidatepage,
->  	.releasepage = orangefs_releasepage,
->  	.direct_IO = orangefs_direct_IO,
-> +	.launder_page = orangefs_launder_page,
->  };
->  
->  static int orangefs_setattr_size(struct inode *inode, struct iattr *iattr)
-> diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-> index e128500e33b4..2e9726d1de7d 100644
-> --- a/fs/orangefs/orangefs-kernel.h
-> +++ b/fs/orangefs/orangefs-kernel.h
-> @@ -178,6 +178,14 @@ static inline void set_op_state_purged(struct orangefs_kernel_op_s *op)
->  	}
->  }
->  
-> +struct orangefs_write_request {
-> +	loff_t pos;
-> +	unsigned len;
-> +	kuid_t uid;
-> +	kgid_t gid;
-> +	int mwrite;
-> +};
-> +
->  /* per inode private orangefs info */
->  struct orangefs_inode_s {
->  	struct orangefs_object_kref refn;
-> @@ -341,6 +349,8 @@ void fsid_key_table_finalize(void);
->  /*
->   * defined in inode.c
->   */
-> +int orangefs_page_mkwrite(struct vm_fault *);
-> +
->  struct inode *orangefs_new_inode(struct super_block *sb,
->  			      struct inode *dir,
->  			      int mode,
-> @@ -382,7 +392,7 @@ bool __is_daemon_in_service(void);
->   * defined in file.c
->   */
->  ssize_t wait_for_direct_io(enum ORANGEFS_io_type, struct inode *, loff_t *,
-> -    struct iov_iter *, size_t, loff_t);
-> +    struct iov_iter *, size_t, loff_t, struct orangefs_write_request *);
->  ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
->      struct iov_iter *);
->  
-> -- 
-> 2.19.0
+>> The changeset entry 'update property' was used for new properties in
+>> an overlay instead of 'add property'.
+>>
+>> The decision of whether to use 'update property' was based on whether
+>> the property already exists in the subtree where the node is being
+>> spliced into.  At the top level of creating a changeset describing the
+>> overlay, the target node is in the live devicetree, so checking whether
+>> the property exists in the target node returns the correct result.
+>> As soon as the changeset creation algorithm recurses into a new node,
+>> the target is no longer in the live devicetree, but is instead in the
+>> detached overlay tree, thus all properties are incorrectly found to
+>> already exist in the target.
 > 
+> When I applied an overlay (that added a few gpio controllers, etc),
+> the node names for nodes added from the overlay end up NULL.   It
+
+I'll look at this tonight.
+
+-Frank
+
+
+> seems related to this patch and the next one.  I haven't completely
+> root caused this but if I back out to before this patch, the situation
+> is fixed.
+> 
+> root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_gpio/
+> bind             ff200010.<NULL>  ff200020.<NULL>  ff200030.<NULL>
+> uevent           unbind
+> 
+> root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_freeze_br/
+> bind             ff200450.<NULL>  uevent           unbind
+> 
+> Alan
+> 
+>>
+>> This fix will expose another devicetree bug that will be fixed
+>> in the following patch in the series.
+>>
+>> When this patch is applied the errors reported by the devictree
+>> unittest will change, and the unittest results will change from:
+>>
+>>    ### dt-test ### end of unittest - 210 passed, 0 failed
+>>
+>> to
+>>
+>>    ### dt-test ### end of unittest - 203 passed, 7 failed
+>>
+>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>> ---
+>>  drivers/of/overlay.c | 112 ++++++++++++++++++++++++++++++++++-----------------
+>>  1 file changed, 74 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>> index 32cfee68f2e3..0b0904f44bc7 100644
+>> --- a/drivers/of/overlay.c
+>> +++ b/drivers/of/overlay.c
+>> @@ -24,6 +24,26 @@
+>>  #include "of_private.h"
+>>
+>>  /**
+>> + * struct target - info about current target node as recursing through overlay
+>> + * @np:                        node where current level of overlay will be applied
+>> + * @in_livetree:       @np is a node in the live devicetree
+>> + *
+>> + * Used in the algorithm to create the portion of a changeset that describes
+>> + * an overlay fragment, which is a devicetree subtree.  Initially @np is a node
+>> + * in the live devicetree where the overlay subtree is targeted to be grafted
+>> + * into.  When recursing to the next level of the overlay subtree, the target
+>> + * also recurses to the next level of the live devicetree, as long as overlay
+>> + * subtree node also exists in the live devicetree.  When a node in the overlay
+>> + * subtree does not exist at the same level in the live devicetree, target->np
+>> + * points to a newly allocated node, and all subsequent targets in the subtree
+>> + * will be newly allocated nodes.
+>> + */
+>> +struct target {
+>> +       struct device_node *np;
+>> +       bool in_livetree;
+>> +};
+>> +
+>> +/**
+>>   * struct fragment - info about fragment nodes in overlay expanded device tree
+>>   * @target:    target of the overlay operation
+>>   * @overlay:   pointer to the __overlay__ node
+>> @@ -72,8 +92,7 @@ static int devicetree_corrupt(void)
+>>  }
+>>
+>>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>> -               struct device_node *target_node,
+>> -               const struct device_node *overlay_node);
+>> +               struct target *target, const struct device_node *overlay_node);
+>>
+>>  /*
+>>   * of_resolve_phandles() finds the largest phandle in the live tree.
+>> @@ -257,14 +276,17 @@ static struct property *dup_and_fixup_symbol_prop(
+>>  /**
+>>   * add_changeset_property() - add @overlay_prop to overlay changeset
+>>   * @ovcs:              overlay changeset
+>> - * @target_node:       where to place @overlay_prop in live tree
+>> + * @target:            where @overlay_prop will be placed
+>>   * @overlay_prop:      property to add or update, from overlay tree
+>>   * @is_symbols_prop:   1 if @overlay_prop is from node "/__symbols__"
+>>   *
+>> - * If @overlay_prop does not already exist in @target_node, add changeset entry
+>> - * to add @overlay_prop in @target_node, else add changeset entry to update
+>> + * If @overlay_prop does not already exist in live devicetree, add changeset
+>> + * entry to add @overlay_prop in @target, else add changeset entry to update
+>>   * value of @overlay_prop.
+>>   *
+>> + * @target may be either in the live devicetree or in a new subtree that
+>> + * is contained in the changeset.
+>> + *
+>>   * Some special properties are not updated (no error returned).
+>>   *
+>>   * Update of property in symbols node is not allowed.
+>> @@ -273,20 +295,22 @@ static struct property *dup_and_fixup_symbol_prop(
+>>   * invalid @overlay.
+>>   */
+>>  static int add_changeset_property(struct overlay_changeset *ovcs,
+>> -               struct device_node *target_node,
+>> -               struct property *overlay_prop,
+>> +               struct target *target, struct property *overlay_prop,
+>>                 bool is_symbols_prop)
+>>  {
+>>         struct property *new_prop = NULL, *prop;
+>>         int ret = 0;
+>>
+>> -       prop = of_find_property(target_node, overlay_prop->name, NULL);
+>> -
+>>         if (!of_prop_cmp(overlay_prop->name, "name") ||
+>>             !of_prop_cmp(overlay_prop->name, "phandle") ||
+>>             !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+>>                 return 0;
+>>
+>> +       if (target->in_livetree)
+>> +               prop = of_find_property(target->np, overlay_prop->name, NULL);
+>> +       else
+>> +               prop = NULL;
+>> +
+>>         if (is_symbols_prop) {
+>>                 if (prop)
+>>                         return -EINVAL;
+>> @@ -299,10 +323,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>>                 return -ENOMEM;
+>>
+>>         if (!prop)
+>> -               ret = of_changeset_add_property(&ovcs->cset, target_node,
+>> +               ret = of_changeset_add_property(&ovcs->cset, target->np,
+>>                                                 new_prop);
+>>         else
+>> -               ret = of_changeset_update_property(&ovcs->cset, target_node,
+>> +               ret = of_changeset_update_property(&ovcs->cset, target->np,
+>>                                                    new_prop);
+>>
+>>         if (ret) {
+>> @@ -315,14 +339,14 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>>
+>>  /**
+>>   * add_changeset_node() - add @node (and children) to overlay changeset
+>> - * @ovcs:              overlay changeset
+>> - * @target_node:       where to place @node in live tree
+>> - * @node:              node from within overlay device tree fragment
+>> + * @ovcs:      overlay changeset
+>> + * @target:    where @overlay_prop will be placed in live tree or changeset
+>> + * @node:      node from within overlay device tree fragment
+>>   *
+>> - * If @node does not already exist in @target_node, add changeset entry
+>> - * to add @node in @target_node.
+>> + * If @node does not already exist in @target, add changeset entry
+>> + * to add @node in @target.
+>>   *
+>> - * If @node already exists in @target_node, and the existing node has
+>> + * If @node already exists in @target, and the existing node has
+>>   * a phandle, the overlay node is not allowed to have a phandle.
+>>   *
+>>   * If @node has child nodes, add the children recursively via
+>> @@ -355,15 +379,16 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>>   * invalid @overlay.
+>>   */
+>>  static int add_changeset_node(struct overlay_changeset *ovcs,
+>> -               struct device_node *target_node, struct device_node *node)
+>> +               struct target *target, struct device_node *node)
+>>  {
+>>         const char *node_kbasename;
+>>         struct device_node *tchild;
+>> +       struct target target_child;
+>>         int ret = 0;
+>>
+>>         node_kbasename = kbasename(node->full_name);
+>>
+>> -       for_each_child_of_node(target_node, tchild)
+>> +       for_each_child_of_node(target->np, tchild)
+>>                 if (!of_node_cmp(node_kbasename, kbasename(tchild->full_name)))
+>>                         break;
+>>
+>> @@ -372,22 +397,28 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>>                 if (!tchild)
+>>                         return -ENOMEM;
+>>
+>> -               tchild->parent = target_node;
+>> +               tchild->parent = target->np;
+>>                 of_node_set_flag(tchild, OF_OVERLAY);
+>>
+>>                 ret = of_changeset_attach_node(&ovcs->cset, tchild);
+>>                 if (ret)
+>>                         return ret;
+>>
+>> -               ret = build_changeset_next_level(ovcs, tchild, node);
+>> +               target_child.np = tchild;
+>> +               target_child.in_livetree = false;
+>> +
+>> +               ret = build_changeset_next_level(ovcs, &target_child, node);
+>>                 of_node_put(tchild);
+>>                 return ret;
+>>         }
+>>
+>> -       if (node->phandle && tchild->phandle)
+>> +       if (node->phandle && tchild->phandle) {
+>>                 ret = -EINVAL;
+>> -       else
+>> -               ret = build_changeset_next_level(ovcs, tchild, node);
+>> +       } else {
+>> +               target_child.np = tchild;
+>> +               target_child.in_livetree = target->in_livetree;
+>> +               ret = build_changeset_next_level(ovcs, &target_child, node);
+>> +       }
+>>         of_node_put(tchild);
+>>
+>>         return ret;
+>> @@ -396,7 +427,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>>  /**
+>>   * build_changeset_next_level() - add level of overlay changeset
+>>   * @ovcs:              overlay changeset
+>> - * @target_node:       where to place @overlay_node in live tree
+>> + * @target:            where to place @overlay_node in live tree
+>>   * @overlay_node:      node from within an overlay device tree fragment
+>>   *
+>>   * Add the properties (if any) and nodes (if any) from @overlay_node to the
+>> @@ -409,27 +440,26 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>>   * invalid @overlay_node.
+>>   */
+>>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>> -               struct device_node *target_node,
+>> -               const struct device_node *overlay_node)
+>> +               struct target *target, const struct device_node *overlay_node)
+>>  {
+>>         struct device_node *child;
+>>         struct property *prop;
+>>         int ret;
+>>
+>>         for_each_property_of_node(overlay_node, prop) {
+>> -               ret = add_changeset_property(ovcs, target_node, prop, 0);
+>> +               ret = add_changeset_property(ovcs, target, prop, 0);
+>>                 if (ret) {
+>>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+>> -                                target_node, prop->name, ret);
+>> +                                target->np, prop->name, ret);
+>>                         return ret;
+>>                 }
+>>         }
+>>
+>>         for_each_child_of_node(overlay_node, child) {
+>> -               ret = add_changeset_node(ovcs, target_node, child);
+>> +               ret = add_changeset_node(ovcs, target, child);
+>>                 if (ret) {
+>>                         pr_debug("Failed to apply node @%pOF/%s, err=%d\n",
+>> -                                target_node, child->name, ret);
+>> +                                target->np, child->name, ret);
+>>                         of_node_put(child);
+>>                         return ret;
+>>                 }
+>> @@ -442,17 +472,17 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>>   * Add the properties from __overlay__ node to the @ovcs->cset changeset.
+>>   */
+>>  static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
+>> -               struct device_node *target_node,
+>> +               struct target *target,
+>>                 const struct device_node *overlay_symbols_node)
+>>  {
+>>         struct property *prop;
+>>         int ret;
+>>
+>>         for_each_property_of_node(overlay_symbols_node, prop) {
+>> -               ret = add_changeset_property(ovcs, target_node, prop, 1);
+>> +               ret = add_changeset_property(ovcs, target, prop, 1);
+>>                 if (ret) {
+>>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+>> -                                target_node, prop->name, ret);
+>> +                                target->np, prop->name, ret);
+>>                         return ret;
+>>                 }
+>>         }
+>> @@ -475,6 +505,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
+>>  static int build_changeset(struct overlay_changeset *ovcs)
+>>  {
+>>         struct fragment *fragment;
+>> +       struct target target;
+>>         int fragments_count, i, ret;
+>>
+>>         /*
+>> @@ -489,7 +520,9 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>>         for (i = 0; i < fragments_count; i++) {
+>>                 fragment = &ovcs->fragments[i];
+>>
+>> -               ret = build_changeset_next_level(ovcs, fragment->target,
+>> +               target.np = fragment->target;
+>> +               target.in_livetree = true;
+>> +               ret = build_changeset_next_level(ovcs, &target,
+>>                                                  fragment->overlay);
+>>                 if (ret) {
+>>                         pr_debug("apply failed '%pOF'\n", fragment->target);
+>> @@ -499,7 +532,10 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>>
+>>         if (ovcs->symbols_fragment) {
+>>                 fragment = &ovcs->fragments[ovcs->count - 1];
+>> -               ret = build_changeset_symbols_node(ovcs, fragment->target,
+>> +
+>> +               target.np = fragment->target;
+>> +               target.in_livetree = true;
+>> +               ret = build_changeset_symbols_node(ovcs, &target,
+>>                                                    fragment->overlay);
+>>                 if (ret) {
+>>                         pr_debug("apply failed '%pOF'\n", fragment->target);
+>> @@ -517,7 +553,7 @@ static int build_changeset(struct overlay_changeset *ovcs)
+>>   * 1) "target" property containing the phandle of the target
+>>   * 2) "target-path" property containing the path of the target
+>>   */
+>> -static struct device_node *find_target_node(struct device_node *info_node)
+>> +static struct device_node *find_target(struct device_node *info_node)
+>>  {
+>>         struct device_node *node;
+>>         const char *path;
+>> @@ -623,7 +659,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+>>
+>>                 fragment = &fragments[cnt];
+>>                 fragment->overlay = overlay_node;
+>> -               fragment->target = find_target_node(node);
+>> +               fragment->target = find_target(node);
+>>                 if (!fragment->target) {
+>>                         of_node_put(fragment->overlay);
+>>                         ret = -EINVAL;
+>> --
+>> Frank Rowand <frank.rowand@sony.com>
+>>
+> 
+
