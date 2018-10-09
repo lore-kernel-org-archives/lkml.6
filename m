@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14996C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2999C71122
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7282054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8CCF2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QgSNcfnz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7282054F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bNAFJJ+l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8CCF2054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeJIUm5 (ORCPT
+        id S1727352AbeJIUm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:42:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49068 "EHLO
+        Tue, 9 Oct 2018 16:42:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49098 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbeJIUm4 (ORCPT
+        with ESMTP id S1727316AbeJIUm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:42:56 -0400
+        Tue, 9 Oct 2018 16:42:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=W5emNbizLCS7LiIqBqhMWXhuT26R9Ea9KCG0lszGb70=; b=QgSNcfnzXP9eBaj/r33QO6P80a
-        CuC5VHdQDRq5CC7d32eeb/gcMDBdTI60+ny9lSoPq9hURro6wCwGnBE/H3qPFKnhhmjI8EUzmzAws
-        h2P31uXsK7jAk5NjJcWeVgBOOv/XWPUic0xwCCNMDEGxP0H5M6/XzyaK6W+QT3RG+vq/5DLaaohnz
-        oFyHvTwPil3p7FPBh1A8iY9dEHiYhFxOfTi88UVrHfaPXeAaSZlHMiQb4sSdCEGrcHa1GGa1jwjb5
-        /5aG3Pk9tQr0weILhveZ+fu5Qb9/Igca3TOIAwFgpD38iu9tJvCt3yaj+1vRDCRgm+VV68EAAmCOX
-        t/qVVwSg==;
+        bh=E3ytBO+xFPS/hUghGpPtRZVZDlLd3ymijaT0fBZBTd4=; b=bNAFJJ+l95sWYb3WWNZl6tR87A
+        3wdy6yRK2Pp0eigWUJ8bDkxZyEBRZk6WxWzo7wd+nNirzECt0zxbWW55KtgCfR2t2ljGUwo7Ssaio
+        GE4jr2E01ug3o0sMZb/qGtfQ3g8TL+jRFjNu0hPd0tZndAhl5mA2XkYy5oR8oVTq0BF/CkX+FVxE+
+        8bn0AISCfr02diRl1gHufsbR4ArdrIV3GN43rY7T6PQd9krAzba4DsaTKkSgkyxShUiwd1f9/pyj2
+        aZyxI4NSV1eqcmaEwOadLzb+FVDQfLdeQJuuyc2LkPb9tkBJMOrk8jybS7FYwY1sgUteADoomaVTT
+        6TIIpLwQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s0p-00019S-MI; Tue, 09 Oct 2018 13:25:24 +0000
+        id 1g9s0d-0000PQ-R5; Tue, 09 Oct 2018 13:25:12 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 09/33] powerpc/pseries: unwind dma_get_required_mask_pSeriesLP a bit
-Date:   Tue,  9 Oct 2018 15:24:36 +0200
-Message-Id: <20181009132500.17643-10-hch@lst.de>
+Subject: [PATCH 04/33] powerpc/dma: remove the unused dma_iommu_ops export
+Date:   Tue,  9 Oct 2018 15:24:31 +0200
+Message-Id: <20181009132500.17643-5-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009132500.17643-1-hch@lst.de>
 References: <20181009132500.17643-1-hch@lst.de>
@@ -62,27 +62,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call dma_get_required_mask_pSeriesLP directly instead of dma_iommu_ops
-to simply the code a bit.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/platforms/pseries/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/dma-iommu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 06f02960b439..da5716de7f4c 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -1273,7 +1273,7 @@ static u64 dma_get_required_mask_pSeriesLP(struct device *dev)
- 			return DMA_BIT_MASK(64);
- 	}
+diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
+index f9fe2080ceb9..2ca6cfaebf65 100644
+--- a/arch/powerpc/kernel/dma-iommu.c
++++ b/arch/powerpc/kernel/dma-iommu.c
+@@ -6,7 +6,6 @@
+  * busses using the iommu infrastructure
+  */
  
--	return dma_iommu_ops.get_required_mask(dev);
-+	return dma_iommu_get_required_mask(dev);
- }
+-#include <linux/export.h>
+ #include <asm/iommu.h>
  
- static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
+ /*
+@@ -123,4 +122,3 @@ struct dma_map_ops dma_iommu_ops = {
+ 	.get_required_mask	= dma_iommu_get_required_mask,
+ 	.mapping_error		= dma_iommu_mapping_error,
+ };
+-EXPORT_SYMBOL(dma_iommu_ops);
 -- 
 2.19.0
 
