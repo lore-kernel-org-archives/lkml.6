@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07F0C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABD3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6683F214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AAD20835
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:20:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="OosXLW4E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6683F214C5
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="dRiRLrkK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AAD20835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeJIShB (ORCPT
+        id S1727427AbeJIShC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:37:01 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41983 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbeJIShA (ORCPT
+        Tue, 9 Oct 2018 14:37:02 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33664 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeJIShC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:37:00 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x31-v6so1315465edd.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:20:31 -0700 (PDT)
+        Tue, 9 Oct 2018 14:37:02 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h13-v6so1341721edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YfYqdETdVGU71NK+5BbeGX1st6hc9fJrYkGKI3vmiNc=;
-        b=OosXLW4E7eS358zWHJ0EgVpp3ss0kGMs8gYeXB/vH0YjZRFiKKsWeYXiz9l/LhyUvc
-         zXG4D9YVMjSuvbZQDLhp7UgPHb9EIyckLLAsZy9GfT4Z6jyZ6BrQgTNlWDnqoE1XbbcA
-         3sjhiIRSidcqiCe/lqGYcCrGiiL/rZLw3OL1c=
+        bh=agJw5LvNZW1WGXi3lrrxi7wM1p2zlYIhPfa8TKWvT9k=;
+        b=dRiRLrkKa6wqfaIa/WEXHfI3cdFfFIVU2pU4D7sHh3H9BajWPUFrUpAUVetrcbC0lN
+         3KahslnUEnmCF1PY/OcJ8/XAdi+xbTzM2Pi6FxHS/pILTlQEoifIkI7Qii0rklSmt8da
+         m6tpJojS5nURDAGp0Rio5oXHmZN7d2NWRR4RQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YfYqdETdVGU71NK+5BbeGX1st6hc9fJrYkGKI3vmiNc=;
-        b=XXCm8JhfOPUJUqftGZWpxDmlUWwyQbMJQi+IXy5W4HSRCJsBC/29E2SXk9owtJ0itS
-         gSFe33Qw2KU+6SZ0+hUL16eh5MWh1n0u0+IxeMrLZwpAOHAetNm005zHTjdhlZPL13D1
-         xwnK3D0MjKi4x9KFxcsGekDJubsXf04ir08TmPvxYBSHB4Jh4A56gXuy+86ZbqQnWLdU
-         3BI2/HctI4wdUdTifsZQpoU6ZNwjQ8aaBXmNbBGFELQrwz4BuWqG2RIWR45r5exHfiky
-         dlyjTQRbfBrQe7SXXkWwkFRQCF3vD2JWHlLEScyCqsT0L9bx18tUiSxKb8xa457Ykjiu
-         VCXw==
-X-Gm-Message-State: ABuFfohm3LbiW3X9t0VY8wBfIGpXFn3vPw0QsiP667Jv9zBdgz5xLPRb
-        TIwrJ+yiuEHy4I/n2y8iOnzNxg==
-X-Google-Smtp-Source: ACcGV63cPw18pebgw2kIBuAAyJwitWVZu/tf6/MPwqIaQ8oRasgZG7cWntXlvk4wfvUUMyyjRiLt5w==
-X-Received: by 2002:a50:8664:: with SMTP id 33-v6mr35950754edt.190.1539084030446;
-        Tue, 09 Oct 2018 04:20:30 -0700 (PDT)
+        bh=agJw5LvNZW1WGXi3lrrxi7wM1p2zlYIhPfa8TKWvT9k=;
+        b=fe+5PxL045zVrbOiNHxV5L+D2l2/xPcBWc9GbsDq9grR8NgUYdtawrOOs30p8jKhrr
+         435ag5KmyD0sX+ktn4eHC5EucGf08hmgJ9srPlgh2XUinQAUQACFcBaa5CxA302zV2ff
+         kqzI7UREX35hyyFRQ/tjLVjy+1HAZIicMxdAWk1UJhzmJGSK2PEOLlymt8MGeIFkg40i
+         TdLfEfK628uYZyNmMZ86NT3eZxiVQNpMPRASv3tsiccdVWdp9FoG+uJVtbIX0a+ndEx8
+         D1/GuL5Pn9PQ1iERbDWhQ4gcOsiaDyDJbr+ogUGzx/znlUqJ4af26y/nxNGvLYa4FB3S
+         xRlg==
+X-Gm-Message-State: ABuFfoisFAYkc/wiqbS+L50+SOOLC+M1vx5GppVvywIPe8Mx3S0Zwjwj
+        UTPhFVViJp9POKUaOTWsZEli6NLV0Dg=
+X-Google-Smtp-Source: ACcGV61B5BoFYXWBGNrnD8YRS9oqq1W14O1Sm/QGhQjtDAw7Jsg2hXtkVNRSfmtLFRdMOyic4vsZVg==
+X-Received: by 2002:a50:86ba:: with SMTP id r55-v6mr34009751eda.87.1539084031632;
+        Tue, 09 Oct 2018 04:20:31 -0700 (PDT)
 Received: from prevas-ravi.vestasvisitor.net ([193.47.71.171])
-        by smtp.gmail.com with ESMTPSA id n23-v6sm3595821eja.41.2018.10.09.04.20.29
+        by smtp.gmail.com with ESMTPSA id n23-v6sm3595821eja.41.2018.10.09.04.20.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 04:20:30 -0700 (PDT)
+        Tue, 09 Oct 2018 04:20:31 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 10/23] dynamic_debug: remove unused EXPORT_SYMBOLs
-Date:   Tue,  9 Oct 2018 13:20:00 +0200
-Message-Id: <20181009112013.14238-11-linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 11/23] dynamic_debug: move pr_err from module.c to ddebug_add_module
+Date:   Tue,  9 Oct 2018 13:20:01 +0200
+Message-Id: <20181009112013.14238-12-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.19.1.4.g721af0fda3
 In-Reply-To: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -75,37 +75,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only caller of ddebug_{add,remove}_module outside dynamic_debug.c is
-kernel/module.c, which is obviously not itself modular (though it would
-be an interesting exercise to make that happen...). I also fail to see
-how these interfaces can be used by modules, in-tree or not.
+This serves two purposes: First, we get a diagnostic if (though
+extremely unlikely), any of the calls of ddebug_add_module for built-in
+code fails, effectively disabling dynamic_debug. Second, I want to make
+struct _ddebug opaque, and avoid accessing any of its members outside
+dynamic_debug.[ch].
 
 Acked-by: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- lib/dynamic_debug.c | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/module.c     | 4 +---
+ lib/dynamic_debug.c | 4 +++-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/kernel/module.c b/kernel/module.c
+index 6746c85511fe..381f9bf282fe 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2716,9 +2716,7 @@ static void dynamic_debug_setup(struct module *mod, struct _ddebug *debug, unsig
+ 	if (!debug)
+ 		return;
+ #ifdef CONFIG_DYNAMIC_DEBUG
+-	if (ddebug_add_module(debug, num, mod->name))
+-		pr_err("dynamic debug error adding module: %s\n",
+-			debug->modname);
++	ddebug_add_module(debug, num, mod->name);
+ #endif
+ }
+ 
 diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index ab81155f928d..f1de45a100fa 100644
+index f1de45a100fa..e90459dca34b 100644
 --- a/lib/dynamic_debug.c
 +++ b/lib/dynamic_debug.c
-@@ -868,7 +868,6 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
- 	vpr_info("%u debug prints in module %s\n", n, dt->mod_name);
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(ddebug_add_module);
+@@ -849,8 +849,10 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
+ 	struct ddebug_table *dt;
  
- /* helper for ddebug_dyndbg_(boot|module)_param_cb */
- static int ddebug_dyndbg_param_cb(char *param, char *val,
-@@ -938,7 +937,6 @@ int ddebug_remove_module(const char *mod_name)
- 	mutex_unlock(&ddebug_lock);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(ddebug_remove_module);
- 
- static void ddebug_remove_all_tables(void)
- {
+ 	dt = kzalloc(sizeof(*dt), GFP_KERNEL);
+-	if (dt == NULL)
++	if (dt == NULL) {
++		pr_err("error adding module: %s\n", name);
+ 		return -ENOMEM;
++	}
+ 	/*
+ 	 * For built-in modules, name lives in .rodata and is
+ 	 * immortal. For loaded modules, name points at the name[]
 -- 
 2.19.1.3.g1d92a00e68
 
