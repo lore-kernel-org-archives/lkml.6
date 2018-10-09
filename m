@@ -2,122 +2,112 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAF5C64EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96901ECDE4B
 	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2DF2087D
+	by mail.kernel.org (Postfix) with ESMTP id 5C3E0214DC
 	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2DF2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1GO9pUA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3E0214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeJIX5S (ORCPT
+        id S1726942AbeJIX5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:57:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63006 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeJIX5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:57:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 09:39:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,360,1534834800"; 
-   d="scan'208";a="97486546"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.109]) ([10.24.14.109])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Oct 2018 09:39:29 -0700
-Subject: Re: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
- generic names
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005205512.29545-1-babu.moger@amd.com>
- <20181005205512.29545-2-babu.moger@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <2fe2e853-47ef-af2a-6906-9ad7a7b8bba9@intel.com>
-Date:   Tue, 9 Oct 2018 09:39:28 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181005205512.29545-2-babu.moger@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 9 Oct 2018 19:57:19 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53389 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbeJIX5T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:57:19 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y11-v6so2551316wma.3;
+        Tue, 09 Oct 2018 09:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=r1bccujBhggz+nVVtPgQWsjosGEPtlkDO0q0NXskKMU=;
+        b=C1GO9pUAZtqOj1SW67zFLWYOLJZLdecV4zp8cHqr+LCX6Fk8gPJPTthYX91di1kR76
+         pVyrVJPj+TucAzKnosrNO/UVd2I3GsXDiUxKUExWa661/5Pm5i9PYlMBDb5GoPIY4mLY
+         K8p7uUzsODh67rz0bd1MfyXUSGyCLBRHO4+QbXbIjJh9Mb+O8w2rdQmy59OCQzen4wVS
+         L28MufRPIM0u+s4qhavJcr7NkIrYTCdKyOpXjd1gabJ9aSouZuUFH9Soz4aWhd5E4kfU
+         z7xUYbgctfibOc3qRDo6DvHZb8kzh9TLPNurlim84S2fCqT68QBMafAPtU/uzHwfZfD3
+         GZdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=r1bccujBhggz+nVVtPgQWsjosGEPtlkDO0q0NXskKMU=;
+        b=bfCMWlmnNv13u/i3z9lwjPfBwcD1z/3FbsO4sW7/W00nMCDpFliY0BjuzV7FFtnS9H
+         IYWexC7Z4gneaalmv48wVMDbFrV/B7NXfJlNUVNJZeI8Awn75KMXnyncfWvguZ21YP/Y
+         z/3ZLLIK1PUsAwlQqNtic58QiKMcz72/XokVvTUXaGS0AOkdqWF5r9GQ1IAWQSpVvBzp
+         5+0g67wFGBBoIYJrV0lhJJehkGYmfu4fQVQImMzWNeckGpY8TK3lCx2LGxGNhrKZ/7yd
+         iz16giCrVSU4gq1RsXHGqz0/xRnv66pyrODYwOSSjyt8Lblzh+NoHoaUFsrMUVTY4stX
+         tWDQ==
+X-Gm-Message-State: ABuFfogRXaw1qOnJAyExGZSWATV8ud6q3DDDwwIJG4++VhcTNEy93+gR
+        aaNvYoBydhl/BxY/oyhLZXrmklYc
+X-Google-Smtp-Source: ACcGV63BSxOHpz7dZU8mFltGcvOKYMh3vsr7OruMwIjdYJS4iZbgedLC0T3ZPKr/oho/r5lFyk1rZg==
+X-Received: by 2002:a1c:8e8c:: with SMTP id q134-v6mr2589281wmd.112.1539103169150;
+        Tue, 09 Oct 2018 09:39:29 -0700 (PDT)
+Received: from 640k.lan (94-36-184-18.adsl-ull.clienti.tiscali.it. [94.36.184.18])
+        by smtp.gmail.com with ESMTPSA id n11-v6sm25165866wra.26.2018.10.09.09.39.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 09:39:28 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: x86: support CONFIG_KVM_AMD=y with CONFIG_CRYPTO_DEV_CCP_DD=m
+Date:   Tue,  9 Oct 2018 18:39:26 +0200
+Message-Id: <1539103166-16317-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
+SEV requires access to the AMD cryptographic device APIs, and this
+does not work when KVM is builtin and the crypto driver is a module.
+Actually the Kconfig conditions for CONFIG_KVM_AMD_SEV try to disable
+SEV in that case, but it does not work because the actual crypto
+calls are not culled, only sev_hardware_setup() is.
 
-On 10/5/2018 1:55 PM, Moger, Babu wrote:
-> New generation of AMD processors start support RDT(or QOS) features.
-> With more than one vendors supporting these features, it seems more
-> appropriate to rename these files.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
->  arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h}     | 0
->  arch/x86/kernel/cpu/Makefile                                | 6 +++---
->  arch/x86/kernel/cpu/{intel_rdt.c => rdt.c}                  | 4 ++--
->  arch/x86/kernel/cpu/{intel_rdt.h => rdt.h}                  | 0
->  .../cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c}      | 2 +-
->  arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c}  | 2 +-
->  .../cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c}      | 6 +++---
->  ...ntel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} | 2 +-
->  .../x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} | 4 ++--
->  arch/x86/kernel/process_32.c                                | 2 +-
->  arch/x86/kernel/process_64.c                                | 2 +-
->  11 files changed, 15 insertions(+), 15 deletions(-)
->  rename arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h} (100%)
->  rename arch/x86/kernel/cpu/{intel_rdt.c => rdt.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt.h => rdt.h} (100%)
->  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} (95%)
->  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} (99%)
+This patch adds two CONFIG_KVM_AMD_SEV checks that gate all the remaining
+SEV code; it fixes this particular configuration, and drops 5 KiB of
+code when CONFIG_KVM_AMD_SEV=n.
 
-During the RFC it was agreed that "resctrl" will be the neutral name and
-"intel_rdt", "amd_qos", or "arm mpam" would be the vendor specific names.
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/svm.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-It is ok to delay that renaming but I think any renaming done from this
-point should respect this agreement.
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index d96092b35936..61ccfb13899e 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -436,14 +436,18 @@ static inline struct kvm_svm *to_kvm_svm(struct kvm *kvm)
+ 
+ static inline bool svm_sev_enabled(void)
+ {
+-	return max_sev_asid;
++	return IS_ENABLED(CONFIG_KVM_AMD_SEV) ? max_sev_asid : 0;
+ }
+ 
+ static inline bool sev_guest(struct kvm *kvm)
+ {
++#ifdef CONFIG_KVM_AMD_SEV
+ 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+ 
+ 	return sev->active;
++#else
++	return false;
++#endif
+ }
+ 
+ static inline int sev_get_asid(struct kvm *kvm)
+-- 
+1.8.3.1
 
-For example, if you want to rename intel_rdt.c then please rename it to
-resctrl.c instead of just rdt.c which does not represent a generic name
-as expressed as a goal in the subject of this patch.
-
-Reinette
