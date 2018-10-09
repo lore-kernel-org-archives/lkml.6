@@ -2,135 +2,141 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF16C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28876C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DAC9214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEIsp3ne"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAC9214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EA1A6214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:30:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1A6214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJIXri (ORCPT
+        id S1727363AbeJIXr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:47:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37325 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJIXqn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:46:43 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y11-v6so2521138wrd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ThxpkFr5W2WJ2iDMVrdBG6oQOM/x+o0DS/Pp9OUXHYU=;
-        b=UEIsp3neZHnltZB0ZScxRDjOWDjCyBALFL00rdmPUkuUnfexR6Wyz2jgR4iLQnbF3R
-         D1m6sXXlMmvtwCOkyKL/b57LEKJz6EK+M20Tkm5E277qNLZzQ4bh1Bi79XzjnWkA8yng
-         clb2clS1KHE6vOG97u28PwOW0Q7XmEaFrTfGFkIJYxRbQP18zDuaBpmzN5eta0ITFIpB
-         VWlSspoGBKQnnCK0j47bYIEkX/LUycnp26ULnDtnN7Yp0GaCQB35nDv7BxsVUWYwIZft
-         Ag9yQ9D3YUYSoA/ZbuYd67mwu5NOmUxdQQWYhUolxEVWCn5NSN72Qqu+hx5x6GE3Zu5/
-         zf1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ThxpkFr5W2WJ2iDMVrdBG6oQOM/x+o0DS/Pp9OUXHYU=;
-        b=YVbw+BA9THS1fguLKxUN1gvsxKxaSAZYXi/a6cGqERRp9/rYrqsUZtYO+i2qUVWozC
-         jGjMBQReF74594iGjFBEWC/Goo6vi0QbwkblvfXwgDwtnyzWRMvX76Ey01s/ji2p+yKK
-         +O62hTqNHrbVBRLWN6SG8qdxd4AEaZGQkGS8fkLInR6CHbKy0YRNT8GoLFBHGCm0x/ZN
-         BYXsoDEXbI4ATApFiHARL1KANFbTRnnnqdTDqekg4YYEtde1gDunIm8gIRa0CJ9Sd7pV
-         HWk3AVVJMeduW0HF1lI2pGcpZn9pPWm92IkAmd+260h1ewxDAFlZ5lYkGVnbkwDlWziQ
-         rgig==
-X-Gm-Message-State: ABuFfoi7aW3r/g/b8G54JxZyeFatyGI7XvkpmNeL1gOOrL9pAC85j3AY
-        l1jN2Po+EULX87vtGxlC8f0=
-X-Google-Smtp-Source: ACcGV63xE7wAMTx82pshrwHjKJvTRoUbVmi2jjFhkgxY+ZwX2bpiXdnO2wdA63QLSrSahlRNWrGT3w==
-X-Received: by 2002:a5d:4791:: with SMTP id w17-v6mr22117585wrq.319.1539102536796;
-        Tue, 09 Oct 2018 09:28:56 -0700 (PDT)
-Received: from kheib-workstation.mynet (bzq-109-64-21-122.red.bezeqint.net. [109.64.21.122])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.28.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:28:56 -0700 (PDT)
-From:   Kamal Heib <kamalheib1@gmail.com>
-To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-kernel@vger.kernel.org, kamalheib1@gmail.com
-Subject: [PATCH rdma-next 11/18] RDMA/nes: Initialize ib_device_ops struct
-Date:   Tue,  9 Oct 2018 19:28:10 +0300
-Message-Id: <20181009162817.4635-12-kamalheib1@gmail.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
-References: <20181009162817.4635-1-kamalheib1@gmail.com>
+        Tue, 9 Oct 2018 19:47:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46179 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbeJIXrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:47:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 09:30:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,360,1534834800"; 
+   d="scan'208";a="76647593"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
+  by fmsmga007.fm.intel.com with ESMTP; 09 Oct 2018 09:28:42 -0700
+Subject: Re: [PATCH v2] x86/numa_emulation: fix parsing of numa_meminfo for
+ uniform numa emulation
+From:   Dave Jiang <dave.jiang@intel.com>
+To:     mingo@redhat.com, dan.j.williams@intel.com
+Cc:     tglx@linutronix.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <153738070476.51648.10732413805504758768.stgit@djiang5-desk3.ch.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ o6nmKbYpUAltQObU2w==
+Message-ID: <306ff5d0-d6b6-c169-f43c-bb24c4be7fb1@intel.com>
+Date:   Tue, 9 Oct 2018 09:28:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <153738070476.51648.10732413805504758768.stgit@djiang5-desk3.ch.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize ib_device_ops with the supported operations.
 
-Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
----
- drivers/infiniband/hw/nes/nes_verbs.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-index 94054bc611bd..a305bb8115e9 100644
---- a/drivers/infiniband/hw/nes/nes_verbs.c
-+++ b/drivers/infiniband/hw/nes/nes_verbs.c
-@@ -3627,6 +3627,39 @@ static void get_dev_fw_str(struct ib_device *dev, char *str)
- 		 (nesvnic->nesdev->nesadapter->firmware_version & 0x000000ff));
- }
- 
-+static struct ib_device_ops nes_dev_ops = {
-+	.query_device		= nes_query_device,
-+	.query_port		= nes_query_port,
-+	.query_pkey		= nes_query_pkey,
-+	.query_gid		= nes_query_gid,
-+	.alloc_ucontext		= nes_alloc_ucontext,
-+	.dealloc_ucontext	= nes_dealloc_ucontext,
-+	.mmap			= nes_mmap,
-+	.alloc_pd		= nes_alloc_pd,
-+	.dealloc_pd		= nes_dealloc_pd,
-+	.create_qp		= nes_create_qp,
-+	.modify_qp		= nes_modify_qp,
-+	.query_qp		= nes_query_qp,
-+	.destroy_qp		= nes_destroy_qp,
-+	.create_cq		= nes_create_cq,
-+	.destroy_cq		= nes_destroy_cq,
-+	.poll_cq		= nes_poll_cq,
-+	.get_dma_mr		= nes_get_dma_mr,
-+	.reg_user_mr		= nes_reg_user_mr,
-+	.dereg_mr		= nes_dereg_mr,
-+	.alloc_mw		= nes_alloc_mw,
-+	.dealloc_mw		= nes_dealloc_mw,
-+	.alloc_mr		= nes_alloc_mr,
-+	.map_mr_sg		= nes_map_mr_sg,
-+	.req_notify_cq		= nes_req_notify_cq,
-+	.post_send		= nes_post_send,
-+	.post_recv		= nes_post_recv,
-+	.drain_sq		= nes_drain_sq,
-+	.drain_rq		= nes_drain_rq,
-+	.get_port_immutable	= nes_port_immutable,
-+	.get_dev_fw_str		= get_dev_fw_str,
-+};
-+
- /**
-  * nes_init_ofa_device
-  */
-@@ -3719,6 +3752,7 @@ struct nes_ib_device *nes_init_ofa_device(struct net_device *netdev)
- 	nesibdev->ibdev.iwcm->destroy_listen = nes_destroy_listen;
- 	nesibdev->ibdev.get_port_immutable   = nes_port_immutable;
- 	nesibdev->ibdev.get_dev_fw_str   = get_dev_fw_str;
-+	ib_set_device_ops(&nesibdev->ibdev, &nes_dev_ops);
- 	memcpy(nesibdev->ibdev.iwcm->ifname, netdev->name,
- 	       sizeof(nesibdev->ibdev.iwcm->ifname));
- 
--- 
-2.14.4
+On 09/19/2018 11:12 AM, Dave Jiang wrote:
+> During fakenuma processing in numa_emulation(), pi gets passed in and
+> processed as new fake numa nodes are being split out. Once the original
+> memory region is proccessed, it gets removed from the pi by
+> numa_remove_memblk_from() in emu_setup_memblk(). So entry 0 gets deleted
+> and the rest of the entries get moved up. Therefore we should always pass
+> in entry 0 for the next entry to process.
+> 
+> Fixes: 1f6a2c6d9f121 ("x86/numa_emulation: Introduce uniform split
+> capability")
+> 
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
+Ingo,
+Is this ok to make 4.19-rc as a fix? Thanks!
+
+> ---
+> 
+> V2:
+> - Add comment for the code change (Dan)
+> 
+>  arch/x86/mm/numa_emulation.c |   12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/mm/numa_emulation.c b/arch/x86/mm/numa_emulation.c
+> index b54d52a2d00a..d71d72cf6c66 100644
+> --- a/arch/x86/mm/numa_emulation.c
+> +++ b/arch/x86/mm/numa_emulation.c
+> @@ -400,9 +400,17 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
+>  		n = simple_strtoul(emu_cmdline, &emu_cmdline, 0);
+>  		ret = -1;
+>  		for_each_node_mask(i, physnode_mask) {
+> +			/*
+> +			 * The reason we pass in blk[0] is due to
+> +			 * numa_remove_memblk_from() called by
+> +			 * emu_setup_memblk() will delete entry 0
+> +			 * and then move everything else up in the pi.blk
+> +			 * array. Therefore we should always be looking
+> +			 * at blk[0].
+> +			 */
+>  			ret = split_nodes_size_interleave_uniform(&ei, &pi,
+> -					pi.blk[i].start, pi.blk[i].end, 0,
+> -					n, &pi.blk[i], nid);
+> +					pi.blk[0].start, pi.blk[0].end, 0,
+> +					n, &pi.blk[0], nid);
+>  			if (ret < 0)
+>  				break;
+>  			if (ret < n) {
+> 
