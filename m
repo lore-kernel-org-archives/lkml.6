@@ -6,101 +6,91 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F6AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24F9C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027382087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027382087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 96E8B2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E8B2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeJIVci (ORCPT
+        id S1726855AbeJIVcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:32:38 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:37762 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeJIVci (ORCPT
+        Tue, 9 Oct 2018 17:32:47 -0400
+Received: from mail-pf1-f173.google.com ([209.85.210.173]:42180 "EHLO
+        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJIVcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:32:38 -0400
-Received: by mail-vk1-f196.google.com with SMTP id y128-v6so411539vky.4;
-        Tue, 09 Oct 2018 07:15:28 -0700 (PDT)
+        Tue, 9 Oct 2018 17:32:47 -0400
+Received: by mail-pf1-f173.google.com with SMTP id f26-v6so908587pfn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:15:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+jNT7Ew4uBEDhnvJVNp0jMq6UrZlPALqiTLZpiTCrew=;
-        b=QBMxCFA0PvPq0iLEShKlpVzfXI09/0/5Q5U1RiyrLbEWMwunaDchovipjY4NPKMBV2
-         VGQA0vAWiGfS3LX8uCCMV069E92SjwalsCFBgZfh64L5HdFoXB7mWI3pXS2k81X9oMm9
-         lPgWLFEmfzKcBPZOb8DIiqphdbiBpiehnvxZN0YNUQB2qqYHsM5OK95VXZZRiGIl56UJ
-         z9VP+wQ81C+aK/e4OMPo8SvpIweRb+ee57IyEDs1YQUp/3mUJWHX+TkSFFcfXSclJ0Il
-         0H1O2ItjJLNHePqDsCdqCzzorfNGUQnJtGUEBo0sZYeS9IGI4LM0QEGfbiO5IoKFkdRj
-         pPmg==
-X-Gm-Message-State: ABuFfogeczi74KXzOdvXAQrgkhpV5KmlO0ZEuGASBzPAkav9E/q9zY8m
-        7gv4lMWSrY3Y5qrcQvIhW27L8Vt7YRLHegPsHMc=
-X-Google-Smtp-Source: ACcGV61mVamNthuylEhCGw238uSxaQrljizUN2swf55DB79xABdExiq+IvTLg3KqpAMxQCMvnZSzK2MKW02ABG6v0bU=
-X-Received: by 2002:a1f:cd3:: with SMTP id 202-v6mr11052570vkm.74.1539094527656;
- Tue, 09 Oct 2018 07:15:27 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DllrrJvfSrvoX/LM9Br5BLksqMz1X+Zbrw1FVmbykwY=;
+        b=YzvDAMzwQzBKrKOd7dif1YmjWYxhrOMmNg8k0L0vr32nf2hmdaL2eqSA6jd4XGM/wa
+         hWOuG9tjBlS2kxWwIKLe/bOPLbjOIMCQDjSUPIvvkZI5pz4VhUZXc9yqPPMpo7eeg+U2
+         MIjav1YuxmhKx3KF2KcYy8/+xtgc2ZzG9jChD/LD+wCrZ4Q/3L2mfJCLOlhjNvtN80L/
+         8jBDmD7XKckal7ys964eCgNYDz6qQPvvXLI+oqyktONuh+MHYf+TLYb7xjuCvRtLAotT
+         WKyQsWqZvdOzYEOjjGnCug9PSyNMS8MNnUlQD8Wmy0Bq4mmuqlHeo3dfn+flO1ME+0Fm
+         N0Uw==
+X-Gm-Message-State: ABuFfojC2iJXIUnQxZ277pEmTqH7n6UtvRHpp+/TXUUyUBOphIcmRKqr
+        cx1O10o171JT+Z+1+BGuS6CdlgoB
+X-Google-Smtp-Source: ACcGV618RFD2+P7gKJpgWgKGrAWfyIeOf9zcXHGZg0qVucsn0xkJkl4odkaS19IoN+paM7Ijme535g==
+X-Received: by 2002:a62:1d16:: with SMTP id d22-v6mr30664708pfd.159.1539094537083;
+        Tue, 09 Oct 2018 07:15:37 -0700 (PDT)
+Received: from ?IPv6:2405:6580:9660:3200:f4bc:2ef8:9cc1:3cac? ([2405:6580:9660:3200:f4bc:2ef8:9cc1:3cac])
+        by smtp.gmail.com with ESMTPSA id 19-v6sm35945008pft.97.2018.10.09.07.15.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 07:15:36 -0700 (PDT)
+Subject: Re: [PATCH 0/4] Various cleanup + Mic Fix
+To:     Connor McAdams <conmanx360@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <1539027601-20910-1-git-send-email-conmanx360@gmail.com>
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Message-ID: <2ded9b74-4140-c0b9-b628-42811284f403@sakamocchi.jp>
+Date:   Tue, 9 Oct 2018 23:15:33 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20181008110504.25449-1-geert+renesas@glider.be>
- <20181008110504.25449-2-geert+renesas@glider.be> <20181008142544.GB15943@smile.fi.intel.com>
- <CAMuHMdXFjDXWVxmkpc5AWebeOasDvj5RrhKOd3gkTqAeK5Y5pg@mail.gmail.com> <20181009135652.kdy2izt2pbehndmx@pathway.suse.cz>
-In-Reply-To: <20181009135652.kdy2izt2pbehndmx@pathway.suse.cz>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 9 Oct 2018 16:15:15 +0200
-Message-ID: <CAMuHMdUs76b=rPTAzS8NYY-cjhKD2tzC5p2099Lw5duYBtrctg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] lib/vsprintf: Prepare for more general use of ptr_to_id()
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539027601-20910-1-git-send-email-conmanx360@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
+On 2018年10月09日 04:39, Connor McAdams wrote:
+> This patch set fixes the microphone inconsistency issue, which means
+> the microphone now works all the time on all of the cards I've tested
+> (ZxR, Z, AE-5), along with the input effects.
+> 
+> It also includes changes suggested by Takashi Sakamoto, I believe I did
+> what he asked properly, but if I messed it up I'm sure you guys will
+> let me know.
+> 
+> This should finish up most of the ca0132 work, with all inputs and
+> outputs working on the desktop cards.
+> 
+> Connor McAdams (4):
+>    ALSA: hda/ca0132 - Fix microphone inconsistency issues
+>    ALSA: hda/ca0132 - Clean up patch_ca0132()
+>    ALSA: hda/ca0132 - Add error checking in ca0132_build_controls()
+>    ALSA: hda/ca0132 - Fix input effect controls for desktop cards
+> 
+>   sound/pci/hda/patch_ca0132.c | 75 +++++++++++++++++++++++++++++++-------------
+>   1 file changed, 54 insertions(+), 21 deletions(-)
 
-On Tue, Oct 9, 2018 at 3:56 PM Petr Mladek <pmladek@suse.com> wrote:
-> On Mon 2018-10-08 16:37:29, Geert Uytterhoeven wrote:
-> > On Mon, Oct 8, 2018 at 4:25 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Mon, Oct 08, 2018 at 01:05:02PM +0200, Geert Uytterhoeven wrote:
-> > > >   - Make the ptr argument const, to avoid adding casts in future
-> > > >     callers,
-> > >
-> > > >   - Add a forward declaration, to avoid moving large blocks of code.
-> > >
-> > > How big it would be? ptr_to_id() itself plus...
-> >
-> > ... all the randomization helpers.
-> > And ptr_to_id() needs pointer_string(), string(), widen_string(), number(),
-> > and move_right().
-> >
-> > 118 insertions(+), 120 deletions(-)
-> >
-> > Is that acceptable?
->
-> Yes, it is acceptable. And my feeling is that it is the preferred
-> solution is kernel because it helps to keep the code cleaner
-> in the long term.
->
-> I am for moving the code if there is no cyclic dependency.
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-OK, will do so for v2.
 
-Gr{oetje,eeting}s,
+Thanks
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Takashi Sakamoto
