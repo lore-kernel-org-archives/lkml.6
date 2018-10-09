@@ -7,99 +7,99 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87471C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDF0C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1F120644
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2374820644
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:37:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q4BG3ERc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1F120644
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZZ3QfjhO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2374820644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeJIWx4 (ORCPT
+        id S1726795AbeJIWyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:53:56 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55657 "EHLO
+        Tue, 9 Oct 2018 18:54:43 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55854 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbeJIWx4 (ORCPT
+        with ESMTP id S1726415AbeJIWyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:53:56 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181009153625euoutp021f50a6fd6e21785a17cc6e76a3099d30~b_rykW2nM0440604406euoutp02L
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 15:36:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181009153625euoutp021f50a6fd6e21785a17cc6e76a3099d30~b_rykW2nM0440604406euoutp02L
+        Tue, 9 Oct 2018 18:54:43 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181009153712euoutp020a065096911fede8262fc1b26ff68a55~b_sd7Q_xr0413104131euoutp02c
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 15:37:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181009153712euoutp020a065096911fede8262fc1b26ff68a55~b_sd7Q_xr0413104131euoutp02c
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539099385;
-        bh=R/Zl9HfQNYQmBN2pMyY4CARyVAwL0/4FnCqdSlI5l84=;
+        s=mail20170921; t=1539099432;
+        bh=x1bf3MsW/wPYz2QJQSLqiVkzUS/LiaWTAl/4D1cbY/Y=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=q4BG3ERcwY4AXkFTATvWmc4cxOhfLwI4Us/OEkh3GTkZPnPxKLzvccb4r+bxoPFgi
-         Ydhpq0jTIvwuOhbglATUObLlrXpyZ7LSqchOV+SIHeW3PEZ375gBdESI5LPdhSCLO7
-         2fKBpDrsYOaWHa8sLSMykbz5lLTxqM42lD5Y6kXw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181009153625eucas1p26048682b31c4e204b9c3efad599aacdc~b_ryHjF120311703117eucas1p2V;
-        Tue,  9 Oct 2018 15:36:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1B.11.04806.8FACCBB5; Tue,  9
-        Oct 2018 16:36:24 +0100 (BST)
+        b=ZZ3QfjhOgjITjLJePnPCN1ttLm4T9j3KqgFiFvq3pHlyBpZ1w3k9Oc213egiVw5pT
+         d27P0TD/sQFjyDGFLCvkf44AOPlEE57txEsriQ1x+jVGUg4rgXzPXm/hb1mbxqKLGt
+         mM6LytDBcERfd1joq5boNF+DUgx66Lzy31YUNavE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181009153711eucas1p10351fb978924b42e5432333ce8c2a253~b_sddwWft1337113371eucas1p1a;
+        Tue,  9 Oct 2018 15:37:11 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9B.CA.04294.72BCCBB5; Tue,  9
+        Oct 2018 16:37:11 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af~b_rxQW8J90311703117eucas1p2U;
-        Tue,  9 Oct 2018 15:36:24 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083~b_scuHGMD0310103101eucas1p2i;
+        Tue,  9 Oct 2018 15:37:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181009153624eusmtrp1760c4deb5a4d51e11dbba9b0ba3874ab~b_rw-ash10469104691eusmtrp1Y;
-        Tue,  9 Oct 2018 15:36:24 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-e5-5bbccaf88973
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.E3.04128.8FACCBB5; Tue,  9
-        Oct 2018 16:36:24 +0100 (BST)
+        20181009153710eusmtrp12118ab2ea358baed1af555b9811df0ca~b_scdWRyW0495904959eusmtrp1X;
+        Tue,  9 Oct 2018 15:37:10 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-73-5bbccb27ec0b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1E.64.04284.62BCCBB5; Tue,  9
+        Oct 2018 16:37:10 +0100 (BST)
 Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181009153623eusmtip1849019a0c0bbe13b74f6b30709cd9b06~b_rwpbtGE1636716367eusmtip1D;
-        Tue,  9 Oct 2018 15:36:23 +0000 (GMT)
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181009153710eusmtip2083b380d354157e366c577833dca23a3~b_scKLHb01235412354eusmtip2d;
+        Tue,  9 Oct 2018 15:37:10 +0000 (GMT)
 From:   Lukasz Luba <l.luba@partner.samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     l.luba@partner.samsung.com, b.zolnierkie@samsung.com,
-        tony@atomide.com, linux-omap@vger.kernel.org
-Subject: [PATCH] config: arm: omap2: remove PROVE_LOCKING from defconfig
-Date:   Tue,  9 Oct 2018 17:36:12 +0200
+        linux@armlinux.org.uk
+Subject: [PATCH] config: arm: moxart: remove PROVE_LOCKING from defconfig
+Date:   Tue,  9 Oct 2018 17:36:58 +0200
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7djP87o/Tu2JNri808pi44z1rBa3GmQs
-        Nj2+xmpxedccNovZS/pZLPZf8XJg8/j2dRKLx+Yl9R4H3+1h8ujbsorR4/MmuQDWKC6blNSc
-        zLLUIn27BK6MjXM3Mxec5qyY2rWGpYGxn6OLkZNDQsBE4tOSb6xdjFwcQgIrGCU2TT3EBuF8
-        YZSYf/swE4TzmVHia0MzC0zL7V8HoKqWM0q82PeAEa5l3+LjQMM4ONgE9CR2rCoEaRARcJO4
-        0djBBGIzC2RI/Jy4C8wWFvCQ+Lv3GjuIzSKgKnH77il2iAVyEjfPdTJD2CfYJE7O8QWxeQXK
-        JDav+gh1hIvErWmXoGxhiVfHt0D1ykicntwDFS+WONuxig3CrpFoP7kDqsZa4vDxi2BnMgto
-        SqzfpQ8RdpQ4P7mXDSQsIcAnceOtIMTFfBKTtk1nhgjzSnS0CUFUa0hs6bnABGGLSSxfMw1q
-        uIfEzKt/wZYKCcRK9B44xjiBUW4Wwq4FjIyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcx
-        AuP+9L/jX3cw7vuTdIhRgINRiYd3Rt7uaCHWxLLiytxDjBIczEoivKLbd0UL8aYkVlalFuXH
-        F5XmpBYfYpTmYFES5102b2O0kEB6YklqdmpqQWoRTJaJg1OqgXFd3PVPWiGzyiZWyfLOermj
-        O+Tu4mVrdCsP1dU8eX9ge4jHuoLsgh9n9W8uN3XreufZfVj+02wZI+YXYUu3cJ+1dv7z1aiU
-        /RgvU+wXfieVSP37kXouXJsrWkxYV2bPjV1QdTlONHiK10mb/TGH1q27mfUsaI/c08bnlm9T
-        z119Ml1g76V3s+2VWIozEg21mIuKEwGkw1P59wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xu7o/Tu2JNtixn8Vi44z1rBa3GmQs
-        Nj2+xmpxedccNovZS/pZLPZf8XJg8/j2dRKLx+Yl9R4H3+1h8ujbsorR4/MmuQDWKD2bovzS
-        klSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MjXM3Mxec5qyY
-        2rWGpYGxn6OLkZNDQsBE4vavA2xdjFwcQgJLGSVuLGlkhEiISUzat50dwhaW+HOtC6roE6PE
-        0n//WbsYOTjYBPQkdqwqBKkREfCQaPt3jxnEZhbIkXi16ScriC0MFP+79xrYHBYBVYnbd0+x
-        g7TyCnhKrLxkDjFeTuLmuU7mCYw8CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgQG3LZj
-        P7fsYOx6F3yIUYCDUYmHd0be7mgh1sSy4srcQ4wSHMxKIryi23dFC/GmJFZWpRblxxeV5qQW
-        H2I0Bdo9kVlKNDkfGA15JfGGpobmFpaG5sbmxmYWSuK85w0qo4QE0hNLUrNTUwtSi2D6mDg4
-        pRoYdX/GFcX//X3/asBOfc6jCy5L8KxYdi33z6345Tr7rtrIrKxhLxTk7yp2/m4fKP9s9c7M
-        q/oXxOrPMqw+ajSD7QqD/ysNtsMhnFfeue69vr1x4r+Lhhnfwln6wmScvi/zXXJ2+QPhF6dm
-        r+XZ1lZ4XCBCmfW3jXHhTcsZVXXGWhu9O4/79S/+rcRSnJFoqMVcVJwIAE9cX8NOAgAA
-Message-Id: <20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af~b_rxQW8J90311703117eucas1p2U@eucas1p2.samsung.com>
-X-CMS-MailID: 20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsWy7djPc7rqp/dEG6yZoGSxccZ6VotbDTIW
+        mx5fY7W4vGsOm8WhqXsZHVg9Ll+7yOyxeUm9x8F3e5g8+rasYvT4vEkugDWKyyYlNSezLLVI
+        3y6BK+PrJaeCzZwVZy7dZWxg/MzexcjJISFgInHjcyNTFyMXh5DACkaJJ8t+MkM4Xxglmj4s
+        h8p8ZpSYt2IVSxcjB1jLzNVyEPHljBL/z55lg+v4MmM/WBGbgJ7EjlWFICtEBNwkbjR2MIHY
+        zAKBEkvO7GcEsYUFPCUO9j9iBbFZBFQletasY4I4SU7i5rlOsCskBI6wSczq/c4MkuAVKJPo
+        2zefDaLIRWLBwxYWCFtY4tXxLVD/yEicntwDFS+WONuxCqq+RqL95A6oGmuJw8cvsoLcySyg
+        KbF+lz5E2FFi183lrBA/8knceCsIcTKfxKRt05khwrwSHW1CENUaElt6LkBdLCaxfM00qOEe
+        Eps2TgAHgpBArMSRjfUTGOVmIaxawMi4ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzDW
+        T/87/mUH464/SYcYBTgYlXh4Z+TtjhZiTSwrrsw9xCjBwawkwiu6fVe0EG9KYmVValF+fFFp
+        TmrxIUZpDhYlcd5l8zZGCwmkJ5akZqemFqQWwWSZODilGhhzfLTnHrXwOmTXtCe//5XDYobo
+        o+u60hZW6N5a0//72tGKj+GVwgxNJU+lWeLSd+0R9l1yTn1CgMS8srSX5jKufF9nq7OeepJs
+        zvFQP5pr2dod6otMFng/lduePJlDWfaHMb9Kx7xV2SsmJlub92VFZy+bIRm95cH7IhnveeES
+        obNfvlp6cZkSS3FGoqEWc1FxIgAehx338QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsVy+t/xe7pqp/dEGxxcrWexccZ6VotbDTIW
+        mx5fY7W4vGsOm8WhqXsZHVg9Ll+7yOyxeUm9x8F3e5g8+rasYvT4vEkugDVKz6Yov7QkVSEj
+        v7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PrJaeCzZwVZy7dZWxg
+        /MzexcjBISFgIjFztVwXIxeHkMBSRomjD3czdzFyAsXFJCbt284OYQtL/LnWxQZiCwl8YpTY
+        v6kepJdNQE9ix6pCkLCIgIdE2797YK3MAsESc77MYgWxhQU8JQ72PwKzWQRUJXrWrGMCsXmB
+        4l+uT2aFGC8ncfNcJ/MERp4FjAyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAoNs27Gfm3cw
+        XtoYfIhRgINRiYd3Rt7uaCHWxLLiytxDjBIczEoivKLbd0UL8aYkVlalFuXHF5XmpBYfYjQF
+        Wj6RWUo0OR8YAXkl8YamhuYWlobmxubGZhZK4rznDSqjhATSE0tSs1NTC1KLYPqYODilGhgZ
+        qixWreOb/e6vlcyp956mRqKLxGoEjy33vXN0a2nlvkY2nuVV+bvuZxmc2mFx+srZKyKsl8JD
+        kxaX1n0+wnp48uvX/TeTli+eLue+/5+p6ZU87QmzpKN+qqX9/ffhdSz/vKsyJiLlj6qXmfZq
+        BtZceVF1akWf8e6QoF3sb1gE7j3O4oubf3S1EktxRqKhFnNRcSIAHuTXp0gCAAA=
+Message-Id: <20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083~b_scuHGMD0310103101eucas1p2i@eucas1p2.samsung.com>
+X-CMS-MailID: 20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af
+X-RootMTR: 20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af
-References: <CGME20181009153624eucas1p2ad30aea33ad1c869f11bd9ca1156d9af@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083
+References: <CGME20181009153711eucas1p29688c4724f8b9d81a3096dd97a363083@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -122,21 +122,21 @@ Enable this option only when you have some locking issue to investigate.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/configs/omap2plus_defconfig | 1 -
+ arch/arm/configs/moxart_defconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 6491419..1bbfd76 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -536,7 +536,6 @@ CONFIG_DEBUG_INFO_SPLIT=y
- CONFIG_DEBUG_INFO_DWARF4=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_SCHEDSTATS=y
+diff --git a/arch/arm/configs/moxart_defconfig b/arch/arm/configs/moxart_defconfig
+index 2da0d9e..5740d47 100644
+--- a/arch/arm/configs/moxart_defconfig
++++ b/arch/arm/configs/moxart_defconfig
+@@ -136,7 +136,6 @@ CONFIG_DEBUG_SHIRQ=y
+ CONFIG_DETECT_HUNG_TASK=y
+ # CONFIG_SCHED_DEBUG is not set
+ # CONFIG_DEBUG_PREEMPT is not set
 -CONFIG_PROVE_LOCKING=y
- # CONFIG_DEBUG_BUGVERBOSE is not set
- CONFIG_SECURITY=y
- CONFIG_CRYPTO_MICHAEL_MIC=y
+ CONFIG_DMA_API_DEBUG=y
+ CONFIG_KGDB=y
+ CONFIG_DEBUG_LL=y
 -- 
 2.7.4
 
