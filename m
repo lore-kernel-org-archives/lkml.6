@@ -2,154 +2,108 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9261DC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157E8C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B03213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97B77213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:13:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyJrIT/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B03213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpBj9+LR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B77213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeJIN0Z (ORCPT
+        id S1726582AbeJIN14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:26:25 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37869 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeJIN0Y (ORCPT
+        Tue, 9 Oct 2018 09:27:56 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:39244 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeJIN14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:26:24 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o14so434584oth.4;
-        Mon, 08 Oct 2018 23:11:07 -0700 (PDT)
+        Tue, 9 Oct 2018 09:27:56 -0400
+Received: by mail-wr1-f41.google.com with SMTP id 61-v6so392496wrb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=k81Q47zZbuWrkQ6Ct1x5qo+tt0ZSBhaDMK1mvTzU3HQ=;
-        b=GyJrIT/5DGlq7oo1bW1Zzyj+ABTtaAv3vCcmNN4SqZUlTsFJDfANP2LlNOdexP9sWF
-         8TLTrBLm5xKDjL1aCRGdcEigHT9KNrZRIFLK9rHRAr4HDaHe/rVBMIg2Reo0qT2+Nzmu
-         7DpGyD9vkjls4bksI47LPZ+2ipXv64LNUIqucaEgKp9AC3zEOqoMiXD61VFpYHsLBnbw
-         Ux+K1nCXbvVZYJTBdXcLSeq/JzaRRGdN9cI6om2qlAF3/0oOP3UIBnWzUciVruAjTRRt
-         gR46BF6Z0PREoaNHGSZ06cCD65inxMOjZUyJtFEiCycqf98JyGhEEPhiUSmrbvYJf7d1
-         NJ7g==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8bdlqv+fk+B9p2/xRp1EpZH62eATHLa+d39zf0LLb1c=;
+        b=ZpBj9+LRib1+bJvhep7VRjHopB0dUksl7EqS7aakIpnQn8Ex8GY5Ul1NgJ4Rl6+uPc
+         M60ZudX+AVmtECWNl6YvoPBLOP8jQ8dLmc3mOGuRiLkeCa09Ck683pjqiiUfw2dRvq0V
+         6OEYP0c7TLU4N47voTO4NpM1onyWIFbBzyVMqOvXHJ6Rduyq3GNhi8NrwF7O+86jqHGc
+         lBGSvOdssusXxesjA4RQVa2eOurB57Z075clQj89JHfxe/Yc+TPpUUf5XUO4Ssr8D5ks
+         qKNyiKrj8c6rXk2Op2cMyli49yFyByu/9nk7wN4h9ATPC38/2zgcv40r4AW0494NA3v9
+         2/PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=k81Q47zZbuWrkQ6Ct1x5qo+tt0ZSBhaDMK1mvTzU3HQ=;
-        b=LIIyOErO1Ku+TpNEojk3LIUiGd0V71Y2FHPRyCT7ayZ6uwM/jkEEk5DIj7z8PqAbOT
-         m+fcgj/aTMBXaMzxKGefxwHMH4/UO9Br86lVH9uxbdxJVFKE69TGWXc2jowhjD2J+YCF
-         hT1V/tE/ePwvPLtGk7jbkOdBs+HZOZSY8w7sjly9gbZsTAelm0Ie/G+f4xx65NtzfJxx
-         2dNdelYcT6fWP2b3NvgFlhO/0ILgrdUFZSa1ycJMMZb62rsS30GXtgN9gUQpCTfBbNbr
-         GBH83iX3tABO3yoExxX5BVmWF/xlxDJzVDowKAwL1b//XCshWGVwdUE3CbARrEl/WKBU
-         Jr3w==
-X-Gm-Message-State: ABuFfojKPRR/1Sg6KaFpWSrP/WiMxila8VFIGNdKKg22oWrUc20wj4jS
-        z8lWYxOhNxOC3IzgDywVhR0PYWIJxGO2LcH0EiQ=
-X-Google-Smtp-Source: ACcGV63O93I4bzIBitLgh7ylMhtshDZwQVZuGHtQmH/B7j6pTNt73BCkKDv/vbwHTO4us8o4nLkAMlVT/xuUgWa+MFE=
-X-Received: by 2002:a9d:4d0c:: with SMTP id n12mr16617023otf.90.1539065466876;
- Mon, 08 Oct 2018 23:11:06 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8bdlqv+fk+B9p2/xRp1EpZH62eATHLa+d39zf0LLb1c=;
+        b=FUAZda0YJ0xMByT9Pi174CV4A93yCG5GF5692kjH+pq0dUWFZIjIfD6I9nElGwbpBN
+         1ieNFs7gLeKQzIwAXDLkz0ElhygwZWTUH56N1HzN5k81kOpyYfOL3kiTvYlQ2VRC8vX4
+         4JYEOiFa4XdcZHJyDoR2fA97658M5GaRd97gYrDSA9tzfMSpMlipihXpwl1lZFAh73BU
+         GD5Ani3Mvy1+Wb+j5EbV+BVzTVLHd6REEs8Wsp7GqN8d6Ecu8J9zkpMmHq1KntnJMgJI
+         59l9ZCATAWzqqiNmp6FHJ1/B8ZOU5SZ+BkVSDIRRlq1wLrYvZpvAW3u2qQnKVtjCuX6i
+         qTlw==
+X-Gm-Message-State: ABuFfogaXlCUXcU9sS+57kKZyt44I3jNqIfvE/ictmGvbg6O/vgbVm8n
+        hdNmB+/IkpzCCKjmuhl+UgU=
+X-Google-Smtp-Source: ACcGV634Ikc7QnZG8w8h/Rdo/NdUlHDaXBaH4PBlDhSN1Yhdx9gPaB+tN3qv2FYwk22vb2ISCK0rcw==
+X-Received: by 2002:adf:b109:: with SMTP id l9-v6mr18090761wra.101.1539065557699;
+        Mon, 08 Oct 2018 23:12:37 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 90-v6sm24217542wrg.86.2018.10.08.23.12.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 23:12:36 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 08:12:34 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: unwind_init() takes 100 ms
+Message-ID: <20181009061234.GA116930@gmail.com>
+References: <81a1ff79-b303-c384-f926-c9618afac8f0@molgen.mpg.de>
+ <20181008173417.crlfndi3p5pevnx3@treble>
 MIME-Version: 1.0
-References: <20181008211554.5355-1-ard.biesheuvel@linaro.org>
- <20181008211554.5355-4-ard.biesheuvel@linaro.org> <CAHmME9rDfVbGLpeV9-LDOUo1on2UB7UHd8jBKcWycf9HYkar=g@mail.gmail.com>
- <CAKv+Gu96PKVnymyJyR-9-3HGTryNT=c2kYfXwmHX-QS6DzWf5Q@mail.gmail.com>
-In-Reply-To: <CAKv+Gu96PKVnymyJyR-9-3HGTryNT=c2kYfXwmHX-QS6DzWf5Q@mail.gmail.com>
-Reply-To: noloader@gmail.com
-From:   Jeffrey Walton <noloader@gmail.com>
-Date:   Tue, 9 Oct 2018 02:10:37 -0400
-Message-ID: <CAH8yC8kqsDAYyTyn3W6oThH5qRX3Qw=2SYr_eA=L03JN0NSBSg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] crypto: siphash - drop _aligned variants
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@linux-mips.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008173417.crlfndi3p5pevnx3@treble>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 2:00 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On 9 October 2018 at 06:11, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > Hi Ard,
-> > ...
-> > As you might expect, when compiling in __siphash_unaligned and
-> > __siphash_aligned on the x86 at the same time, __siphash_unaligned is
-> > replaced with just "jmp __siphash_aligned", as gcc recognized that
-> > indeed the same code is generated.
-> >
-> Yeah, I noticed something similar on arm64, although we do get a stack
-> frame there.
->
-> > However, on platforms where get_unaligned_* does do something
-> > different, it looks to me like this patch now always calls the
-> > unaligned code, even when the input data _is_ an aligned address
-> > already, which is worse behaviour than before. While it would be
-> > possible for the get_unaligned_* function headers to also detect this
-> > and fallback to the faster version at compile time, by the time
-> > get_unaligned_* is used in this patch, it's no longer in the header,
-> > but rather in siphash.c, which means the compiler no longer knows that
-> > the address is aligned, and so we hit the slow path. This especially
-> > impacts architectures like MIPS, for example. This is why the original
-> > code, prior to this patch, checks the alignment in the .h and then
-> > selects which codepath afterwards. So while this patch might handle
-> > the ARM use case, it seems like a regression on all other platforms.
-> > See, for example, the struct passing in net/core/secure_seq.c, which
-> > sends intentionally aligned and packed structs to siphash, which then
-> > benefits from using the faster instructions on certain platforms.
-> >
-> > It seems like what you're grappling with on the ARM side of things is
-> > that CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS only half means what it
-> > says on some ISAs, complicating this logic. It seems like the ideal
-> > thing to do, given that, would be to just not set
-> > CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS on those, so that we can fall
-> > back to the unaligned path always, like this patch suggests. Or if
-> > that's _too_ drastic, perhaps introduce another variable like
-> > CONFIG_MOSTLY_EFFICIENT_UNALIGNED_ACCESS.
-> >
-> Perhaps we should clarify better what
-> CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS means.
->
-> One could argue that it means there is no point in reorganizing your
-> data to make it appear aligned, because the unaligned accessors are
-> cheap. Instead, it is used as a license to cast unaligned pointers to
-> any type (which C does not permit btw), even in the example.
 
-I recommend avoiding this strategy. One of the libraries I help with
-used a similar strategy and was constantly putting out 1-off fires
-when GCC assumed, say, 4- or 8-byte alignments. Integer stuff was
-fine. The problems did not surface until vectorization at -O3 when the
-misaligned buffers started causing exceptions.
+* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-To be clear, there were very few problems. It might surface with GCC
-4.9 on ARM in one function; and then surface again with GCC 5.1 on
-x86_64 on another function; and then surface again under Cygwin for
-another function with GCC 6.3.
+> > 4.  Would a command line parameter be reasonable `disable_unwind`, so people
+> > could decrease their boot time with distribution kernels, and easily turn it
+> > back on, when they need a stacktrace without having to rebuild the Linux
+> > kernel?
+> 
+> I think a boot cmdline option to disable ORC would be ok.
 
-The pattern was finally gutted in favor of the classic stuff - treat
-the data unaligned an walk the buffer OR'ing in to a datatype. Or,
-memcpy it into aligned datatypes. Modern compilers recognize the
-pattern and it will be optimized they way you hope.
+I don't agree with such a kludge: 100 msecs isn't the end of the world for a
+distro kernel bootup which takes a lot longer than that typically, and we'd like to
+see the build time sorting implemented as well.
 
-Older GCC's, like say, GCC 4.3, may not do as well. But it is the
-price paid for portability and bug free code. And nowadays those old
-GCC's and Clang's are getting more rare. There's no sense in doing
-something quickly if you can't arrive at the correct result or you
-crash at runtime.
+Let's fix this for real intstead of a workaround that is going to decrease
+the debuggability of the kernel *significantly*.
 
-> So in the case of siphash, that would mean always taking the unaligned
-> path if CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS is set, or only for
-> unaligned data if it is not.
+> I'm not sure about a runtime toggle though.  It might be racy and I'd
+> rather avoid that completely, unless there's a solid justification for
+> it.
 
-Jeff
+No, just no ...
+
+Debug facilities need to be robust, dependable and as simple as possible.
+
+Thanks,
+
+	Ingo
