@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00402ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E773C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96072087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96072087D
+	by mail.kernel.org (Postfix) with ESMTP id D6E4C2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:47:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E4C2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbeJJAFB (ORCPT
+        id S1727195AbeJJAFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:05:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40394 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 20:05:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25265 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726982AbeJJAFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:05:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726393AbeJJAFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:05:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3644F83F3E;
-        Tue,  9 Oct 2018 16:47:10 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 369653083390;
+        Tue,  9 Oct 2018 16:47:18 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 92E2F74E85;
-        Tue,  9 Oct 2018 16:47:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3812B7A5F7;
+        Tue,  9 Oct 2018 16:47:16 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/22] KEYS: Provide missing asymmetric key subops for new
- key type ops [ver #2]
+Subject: [PATCH 04/22] KEYS: Make the X.509 and PKCS7 parsers supply the sig
+ encoding type [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     Marcel Holtmann <marcel@holtmann.org>,
@@ -44,37 +44,23 @@ Cc:     Marcel Holtmann <marcel@holtmann.org>,
         Denis Kenzior <denkenz@gmail.com>, dhowells@redhat.com,
         denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 17:47:07 +0100
-Message-ID: <153910362782.12141.4858735029700372600.stgit@warthog.procyon.org.uk>
+Date:   Tue, 09 Oct 2018 17:47:15 +0100
+Message-ID: <153910363539.12141.4210082234235945107.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 09 Oct 2018 16:47:10 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 09 Oct 2018 16:47:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide the missing asymmetric key subops for new key type ops.  This
-include query, encrypt, decrypt and create signature.  Verify signature
-already exists.  Also provided are accessor functions for this:
-
-	int query_asymmetric_key(const struct key *key,
-				 struct kernel_pkey_query *info);
-
-	int encrypt_blob(struct kernel_pkey_params *params,
-			 const void *data, void *enc);
-	int decrypt_blob(struct kernel_pkey_params *params,
-			 const void *enc, void *data);
-	int create_signature(struct kernel_pkey_params *params,
-			     const void *data, void *enc);
-
-The public_key_signature struct gains an encoding field to carry the
-encoding for verify_signature().
+Make the X.509 and PKCS7 parsers fill in the signature encoding type field
+recently added to the public_key_signature struct.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Tested-by: Marcel Holtmann <marcel@holtmann.org>
@@ -83,313 +69,69 @@ Reviewed-by: Denis Kenzior <denkenz@gmail.com>
 Tested-by: Denis Kenzior <denkenz@gmail.com>
 ---
 
- Documentation/crypto/asymmetric-keys.txt |   24 ++++++--
- crypto/asymmetric_keys/asymmetric_keys.h |    3 +
- crypto/asymmetric_keys/asymmetric_type.c |   43 ++++++++++++++
- crypto/asymmetric_keys/signature.c       |   95 ++++++++++++++++++++++++++++++
- include/crypto/public_key.h              |   13 +++-
- include/keys/asymmetric-subtype.h        |    9 +++
- 6 files changed, 180 insertions(+), 7 deletions(-)
+ crypto/asymmetric_keys/pkcs7_parser.c     |    1 +
+ crypto/asymmetric_keys/x509_cert_parser.c |   21 +++++++++------------
+ 2 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
-index 5969bf42562a..deb656ef008b 100644
---- a/Documentation/crypto/asymmetric-keys.txt
-+++ b/Documentation/crypto/asymmetric-keys.txt
-@@ -183,6 +183,10 @@ and looks like the following:
+diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
+index 0f134162cef4..f0d56e1a8b7e 100644
+--- a/crypto/asymmetric_keys/pkcs7_parser.c
++++ b/crypto/asymmetric_keys/pkcs7_parser.c
+@@ -271,6 +271,7 @@ int pkcs7_sig_note_pkey_algo(void *context, size_t hdrlen,
+ 	switch (ctx->last_oid) {
+ 	case OID_rsaEncryption:
+ 		ctx->sinfo->sig->pkey_algo = "rsa";
++		ctx->sinfo->sig->encoding = "pkcs1";
+ 		break;
+ 	default:
+ 		printk("Unsupported pkey algo: %u\n", ctx->last_oid);
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index b6cabac4b62b..991f4d735a4e 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -199,35 +199,32 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
  
- 		void (*describe)(const struct key *key, struct seq_file *m);
- 		void (*destroy)(void *payload);
-+		int (*query)(const struct kernel_pkey_params *params,
-+			     struct kernel_pkey_query *info);
-+		int (*eds_op)(struct kernel_pkey_params *params,
-+			      const void *in, void *out);
- 		int (*verify_signature)(const struct key *key,
- 					const struct public_key_signature *sig);
- 	};
-@@ -207,12 +211,22 @@ There are a number of operations defined by the subtype:
-      asymmetric key will look after freeing the fingerprint and releasing the
-      reference on the subtype module.
+ 	case OID_md4WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "md4";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
  
-- (3) verify_signature().
-+ (3) query().
+ 	case OID_sha1WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "sha1";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
  
--     Optional.  These are the entry points for the key usage operations.
--     Currently there is only the one defined.  If not set, the caller will be
--     given -ENOTSUPP.  The subtype may do anything it likes to implement an
--     operation, including offloading to hardware.
-+     Mandatory.  This is a function for querying the capabilities of a key.
-+
-+ (4) eds_op().
-+
-+     Optional.  This is the entry point for the encryption, decryption and
-+     signature creation operations (which are distinguished by the operation ID
-+     in the parameter struct).  The subtype may do anything it likes to
-+     implement an operation, including offloading to hardware.
-+
-+ (5) verify_signature().
-+
-+     Optional.  This is the entry point for signature verification.  The
-+     subtype may do anything it likes to implement an operation, including
-+     offloading to hardware.
+ 	case OID_sha256WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "sha256";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
  
+ 	case OID_sha384WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "sha384";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
  
- ==========================
-diff --git a/crypto/asymmetric_keys/asymmetric_keys.h b/crypto/asymmetric_keys/asymmetric_keys.h
-index ca8e9ac34ce6..7be1ccf4fa9f 100644
---- a/crypto/asymmetric_keys/asymmetric_keys.h
-+++ b/crypto/asymmetric_keys/asymmetric_keys.h
-@@ -16,3 +16,6 @@ extern struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id);
- extern int __asymmetric_key_hex_to_key_id(const char *id,
- 					  struct asymmetric_key_id *match_id,
- 					  size_t hexlen);
-+
-+extern int asymmetric_key_eds_op(struct kernel_pkey_params *params,
-+				 const void *in, void *out);
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 26539e9a8bda..69a0788a7de5 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/ctype.h>
- #include <keys/system_keyring.h>
-+#include <keys/user-type.h>
- #include "asymmetric_keys.h"
+ 	case OID_sha512WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "sha512";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
  
- MODULE_LICENSE("GPL");
-@@ -538,6 +539,45 @@ static struct key_restriction *asymmetric_lookup_restriction(
- 	return ret;
+ 	case OID_sha224WithRSAEncryption:
+ 		ctx->cert->sig->hash_algo = "sha224";
+-		ctx->cert->sig->pkey_algo = "rsa";
+-		break;
++		goto rsa_pkcs1;
+ 	}
+ 
++rsa_pkcs1:
++	ctx->cert->sig->pkey_algo = "rsa";
++	ctx->cert->sig->encoding = "pkcs1";
+ 	ctx->algo_oid = ctx->last_oid;
+ 	return 0;
  }
- 
-+int asymmetric_key_eds_op(struct kernel_pkey_params *params,
-+			  const void *in, void *out)
-+{
-+	const struct asymmetric_key_subtype *subtype;
-+	struct key *key = params->key;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (key->type != &key_type_asymmetric)
-+		return -EINVAL;
-+	subtype = asymmetric_key_subtype(key);
-+	if (!subtype ||
-+	    !key->payload.data[0])
-+		return -EINVAL;
-+	if (!subtype->eds_op)
-+		return -ENOTSUPP;
-+
-+	ret = subtype->eds_op(params, in, out);
-+
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
-+					   const void *in, const void *in2)
-+{
-+	struct public_key_signature sig = {
-+		.s_size		= params->in2_len,
-+		.digest_size	= params->in_len,
-+		.encoding	= params->encoding,
-+		.hash_algo	= params->hash_algo,
-+		.digest		= (void *)in,
-+		.s		= (void *)in2,
-+	};
-+
-+	return verify_signature(params->key, &sig);
-+}
-+
- struct key_type key_type_asymmetric = {
- 	.name			= "asymmetric",
- 	.preparse		= asymmetric_key_preparse,
-@@ -548,6 +588,9 @@ struct key_type key_type_asymmetric = {
- 	.destroy		= asymmetric_key_destroy,
- 	.describe		= asymmetric_key_describe,
- 	.lookup_restriction	= asymmetric_lookup_restriction,
-+	.asym_query		= query_asymmetric_key,
-+	.asym_eds_op		= asymmetric_key_eds_op,
-+	.asym_verify_signature	= asymmetric_key_verify_signature,
- };
- EXPORT_SYMBOL_GPL(key_type_asymmetric);
- 
-diff --git a/crypto/asymmetric_keys/signature.c b/crypto/asymmetric_keys/signature.c
-index 28198314bc39..ad95a58c6642 100644
---- a/crypto/asymmetric_keys/signature.c
-+++ b/crypto/asymmetric_keys/signature.c
-@@ -16,7 +16,9 @@
- #include <linux/export.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <linux/keyctl.h>
- #include <crypto/public_key.h>
-+#include <keys/user-type.h>
- #include "asymmetric_keys.h"
- 
- /*
-@@ -36,6 +38,99 @@ void public_key_signature_free(struct public_key_signature *sig)
- }
- EXPORT_SYMBOL_GPL(public_key_signature_free);
- 
-+/**
-+ * query_asymmetric_key - Get information about an aymmetric key.
-+ * @params: Various parameters.
-+ * @info: Where to put the information.
-+ */
-+int query_asymmetric_key(const struct kernel_pkey_params *params,
-+			 struct kernel_pkey_query *info)
-+{
-+	const struct asymmetric_key_subtype *subtype;
-+	struct key *key = params->key;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (key->type != &key_type_asymmetric)
-+		return -EINVAL;
-+	subtype = asymmetric_key_subtype(key);
-+	if (!subtype ||
-+	    !key->payload.data[0])
-+		return -EINVAL;
-+	if (!subtype->query)
-+		return -ENOTSUPP;
-+
-+	ret = subtype->query(params, info);
-+
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(query_asymmetric_key);
-+
-+/**
-+ * encrypt_blob - Encrypt data using an asymmetric key
-+ * @params: Various parameters
-+ * @data: Data blob to be encrypted, length params->data_len
-+ * @enc: Encrypted data buffer, length params->enc_len
-+ *
-+ * Encrypt the specified data blob using the private key specified by
-+ * params->key.  The encrypted data is wrapped in an encoding if
-+ * params->encoding is specified (eg. "pkcs1").
-+ *
-+ * Returns the length of the data placed in the encrypted data buffer or an
-+ * error.
-+ */
-+int encrypt_blob(struct kernel_pkey_params *params,
-+		 const void *data, void *enc)
-+{
-+	params->op = kernel_pkey_encrypt;
-+	return asymmetric_key_eds_op(params, data, enc);
-+}
-+EXPORT_SYMBOL_GPL(encrypt_blob);
-+
-+/**
-+ * decrypt_blob - Decrypt data using an asymmetric key
-+ * @params: Various parameters
-+ * @enc: Encrypted data to be decrypted, length params->enc_len
-+ * @data: Decrypted data buffer, length params->data_len
-+ *
-+ * Decrypt the specified data blob using the private key specified by
-+ * params->key.  The decrypted data is wrapped in an encoding if
-+ * params->encoding is specified (eg. "pkcs1").
-+ *
-+ * Returns the length of the data placed in the decrypted data buffer or an
-+ * error.
-+ */
-+int decrypt_blob(struct kernel_pkey_params *params,
-+		 const void *enc, void *data)
-+{
-+	params->op = kernel_pkey_decrypt;
-+	return asymmetric_key_eds_op(params, enc, data);
-+}
-+EXPORT_SYMBOL_GPL(decrypt_blob);
-+
-+/**
-+ * create_signature - Sign some data using an asymmetric key
-+ * @params: Various parameters
-+ * @data: Data blob to be signed, length params->data_len
-+ * @enc: Signature buffer, length params->enc_len
-+ *
-+ * Sign the specified data blob using the private key specified by params->key.
-+ * The signature is wrapped in an encoding if params->encoding is specified
-+ * (eg. "pkcs1").  If the encoding needs to know the digest type, this can be
-+ * passed through params->hash_algo (eg. "sha1").
-+ *
-+ * Returns the length of the data placed in the signature buffer or an error.
-+ */
-+int create_signature(struct kernel_pkey_params *params,
-+		     const void *data, void *enc)
-+{
-+	params->op = kernel_pkey_sign;
-+	return asymmetric_key_eds_op(params, data, enc);
-+}
-+EXPORT_SYMBOL_GPL(create_signature);
-+
- /**
-  * verify_signature - Initiate the use of an asymmetric key to verify a signature
-  * @key: The asymmetric key to verify against
-diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-index e0b681a717ba..3a1047a0195c 100644
---- a/include/crypto/public_key.h
-+++ b/include/crypto/public_key.h
-@@ -14,6 +14,8 @@
- #ifndef _LINUX_PUBLIC_KEY_H
- #define _LINUX_PUBLIC_KEY_H
- 
-+#include <linux/keyctl.h>
-+
- /*
-  * Cryptographic data for the public-key subtype of the asymmetric key type.
-  *
-@@ -40,6 +42,7 @@ struct public_key_signature {
- 	u8 digest_size;		/* Number of bytes in digest */
- 	const char *pkey_algo;
- 	const char *hash_algo;
-+	const char *encoding;
- };
- 
- extern void public_key_signature_free(struct public_key_signature *sig);
-@@ -65,8 +68,14 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
- 						 const union key_payload *payload,
- 						 struct key *trusted);
- 
--extern int verify_signature(const struct key *key,
--			    const struct public_key_signature *sig);
-+extern int query_asymmetric_key(const struct kernel_pkey_params *,
-+				struct kernel_pkey_query *);
-+
-+extern int encrypt_blob(struct kernel_pkey_params *, const void *, void *);
-+extern int decrypt_blob(struct kernel_pkey_params *, const void *, void *);
-+extern int create_signature(struct kernel_pkey_params *, const void *, void *);
-+extern int verify_signature(const struct key *,
-+			    const struct public_key_signature *);
- 
- int public_key_verify_signature(const struct public_key *pkey,
- 				const struct public_key_signature *sig);
-diff --git a/include/keys/asymmetric-subtype.h b/include/keys/asymmetric-subtype.h
-index e0a9c2368872..9ce2f0fae57e 100644
---- a/include/keys/asymmetric-subtype.h
-+++ b/include/keys/asymmetric-subtype.h
-@@ -17,6 +17,8 @@
- #include <linux/seq_file.h>
- #include <keys/asymmetric-type.h>
- 
-+struct kernel_pkey_query;
-+struct kernel_pkey_params;
- struct public_key_signature;
- 
- /*
-@@ -34,6 +36,13 @@ struct asymmetric_key_subtype {
- 	/* Destroy a key of this subtype */
- 	void (*destroy)(void *payload_crypto, void *payload_auth);
- 
-+	int (*query)(const struct kernel_pkey_params *params,
-+		     struct kernel_pkey_query *info);
-+
-+	/* Encrypt/decrypt/sign data */
-+	int (*eds_op)(struct kernel_pkey_params *params,
-+		      const void *in, void *out);
-+
- 	/* Verify the signature on a key of this subtype (optional) */
- 	int (*verify_signature)(const struct key *key,
- 				const struct public_key_signature *sig);
 
