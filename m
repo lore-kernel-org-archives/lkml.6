@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA46ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA8FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8BB20858
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4A6214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFjTPb7G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8BB20858
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wf0ys7uZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4A6214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJIXnW (ORCPT
+        id S1727216AbeJIXmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:43:22 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39405 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbeJIXm4 (ORCPT
+        Tue, 9 Oct 2018 19:42:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35852 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbeJIXmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:42:56 -0400
-Received: by mail-qk1-f194.google.com with SMTP id q5-v6so1313043qki.6
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:13 -0700 (PDT)
+        Tue, 9 Oct 2018 19:42:53 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34-v6so2301477qth.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rGWgMI1+Sov2UL2W3G/z4V3AYRc3F2jCrmMhsGLsaSc=;
-        b=kFjTPb7GvlvcqqUl63mme8PN5mlZcwqjW+ATtvnaJEl0XoFJMZ8Ay1WAVuHps+VgBx
-         svfB27nf95qf95qR0svOwo2QaQGuIHYeV61E9ryxHuKhYiNtk9JwfuH+E/lPn6jUjiY8
-         6ZdgxI8FTxReaKCHOyf6fDISPoGJVymJosJYo=
+        bh=qbCXCRSOePNWlZULbLaHD5z+rbdqCdhX0BsGRnKqI98=;
+        b=Wf0ys7uZUptTZHdHTnhf5tZpd1u4BVhNoa1dMrTUTehXQMI5widEclWXpmET2J/UUi
+         ARuy7IAJwYHViB65i4fUg3atGzJCISXwL41NA69Ez8RJSEKWYZ2J4+dM0jo1Qve39upJ
+         MpuyjDSN/TOVTQQ6IUmaj/c2KXnifFczKDCCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rGWgMI1+Sov2UL2W3G/z4V3AYRc3F2jCrmMhsGLsaSc=;
-        b=S2FjR4xu8SEpt5htU4xN8VjGZ7SxzsyrZbWVsYjdieZQ2lx0imKQuoWGCt3eWCC76t
-         h/PDlUjgrm/e1I8wa0PUcfpy/xDp8rNlmAZogoEn8KVMp3QlgdnYTAQ3COjVkgCQfubh
-         +58ixRuhcInVGk1kKTlx4PK37ORiF2Up+hPpnEeW1155H0l2DF8f46jilwTIic9e2Xk9
-         JmFl5I6XXOwC6z5SXQkTtxlMVz0yz9l02F5mdSgmuvEmBqrcrCKAmCtTgvRFd3+hPgjz
-         LTSdIgNY4E0T5GfQL2o9++fWOaOzmPlZ3U+1jjD6YlKA5Bi++H8pi0ec0TNAWAc8OOxF
-         lTkA==
-X-Gm-Message-State: ABuFfojC3wQHPOmPVKfRk6ey+urbtJ0ZkVDmgowYkwb2XYw77BcFYPhw
-        rivMCQHwJHU0OFw3lFbI4Oe8+LWbrSF+Qw==
-X-Google-Smtp-Source: ACcGV623kJLkZQiUxZJJo6nB6kUKKEBO8H3Wa0J3aczqBf0XkWyLIqCJ5/jP19nGCkEAEcbZbhcoeQ==
-X-Received: by 2002:a37:10a7:: with SMTP id 39-v6mr22580045qkq.131.1539102312277;
-        Tue, 09 Oct 2018 09:25:12 -0700 (PDT)
+        bh=qbCXCRSOePNWlZULbLaHD5z+rbdqCdhX0BsGRnKqI98=;
+        b=UhNNGhCfQrDgc73xJbzE5uiIyP6uAXQ6o+DWrbqvask8Q41MaTPt1Qf/pj9AZP+dsH
+         DNu6DJGvqFjhLTkYoki13M+sS/xlnPQaSoK0brOrxOVKW6932Iyzo9lBtcoDsTL88aX4
+         6gOoTeCi5onsQ9k4PT3+doyCnZVrSQkgoPNKB53cVLouuS5YI+KUweTmBJwFjoVCVJi1
+         JpSIYzHEbZaDOwe8gl9TZD4pFO/stM2Rq3xHXAZvwfbrd3qR0EZQUxRJ/mKUKGfDzLLO
+         0b3GZ9LPq6nmZJ4ZpP+Q/gixp0DvCeRbwCOAaZB4ql7MiL/KElNwrYQIHzdQi0YDhqIK
+         GRBg==
+X-Gm-Message-State: ABuFfoj1CZBOhggix3J4XwWCDO5/AwJMD5ejkxuOvVT7I4A/zRsJxTFc
+        a9gkERqju8JA8swkFu7BQG7sD1Me42oPxQ==
+X-Google-Smtp-Source: ACcGV61ySOJUEVwHniPNKYbI9/uqoPV3JwF7vNoBsqH4cV6gKAxWSel+VxBJUydaqXjXzo9BQ8iQMw==
+X-Received: by 2002:a0c:d285:: with SMTP id q5mr6920778qvh.46.1539102308545;
+        Tue, 09 Oct 2018 09:25:08 -0700 (PDT)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.10
+        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 09:25:11 -0700 (PDT)
+        Tue, 09 Oct 2018 09:25:07 -0700 (PDT)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org, rui.zhang@intel.com
@@ -64,9 +64,9 @@ Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
         daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
         quentin.perret@arm.com, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org
-Subject: [RFC PATCH 4/7] sched: Initialize per cpu thermal pressure structure
-Date:   Tue,  9 Oct 2018 12:24:59 -0400
-Message-Id: <1539102302-9057-5-git-send-email-thara.gopinath@linaro.org>
+Subject: [RFC PATCH 2/7] sched/pelt.c: Add support to track thermal pressure
+Date:   Tue,  9 Oct 2018 12:24:57 -0400
+Message-Id: <1539102302-9057-3-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
 References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
@@ -75,38 +75,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize per cpu max_capacity_info during scheduler init.
+Extrapolating on the exisitng framework to track rt/dl utilization using
+pelt signals, add a similar mechanism to track thermal pressue. The
+difference here from rt/dl utilization tracking is that, instead of
+tracking time spent by a cpu running a rt/dl task through util_avg,
+the average thermal pressure is tracked through load_avg.
+In order to track average thermal pressure, a new sched_avg variable
+avg_thermal is introduced. Function update_thermal_avg can be called
+to do the periodic bookeeping (accumulate, decay and average)
+of the thermal pressure.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- drivers/base/arch_topology.c | 1 +
- kernel/sched/core.c          | 2 ++
- 2 files changed, 3 insertions(+)
+ kernel/sched/pelt.c  | 14 ++++++++++++++
+ kernel/sched/pelt.h  |  7 +++++++
+ kernel/sched/sched.h |  1 +
+ 3 files changed, 22 insertions(+)
 
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index e7cb0c6..542745f 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -126,6 +126,7 @@ void topology_normalize_cpu_scale(void)
- 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
- 			cpu, topology_get_cpu_scale(NULL, cpu));
- 	}
-+	populate_max_capacity_info();
- 	mutex_unlock(&cpu_scale_mutex);
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 05b8798..7034ede 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -362,6 +362,20 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+ 	return 0;
  }
  
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 625bc98..f0eed1a 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5868,6 +5868,8 @@ void __init sched_init_smp(void)
- 	init_sched_rt_class();
- 	init_sched_dl_class();
- 
-+	populate_max_capacity_info();
++int update_thermal_avg(u64 now, struct rq *rq, u64 capacity)
++{
++	if (___update_load_sum(now, rq->cpu, &rq->avg_thermal,
++				capacity,
++				capacity,
++				capacity, 0)) {
 +
- 	sched_smp_initialized = true;
++		___update_load_avg(&rq->avg_thermal, 1, 1);
++		return 1;
++	}
++
++	return 0;
++}
++
+ #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+ /*
+  * irq:
+diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+index d2894db..cc5a3ad 100644
+--- a/kernel/sched/pelt.h
++++ b/kernel/sched/pelt.h
+@@ -5,6 +5,7 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
+ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
+ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
++int update_thermal_avg(u64 now, struct rq *rq, u64 capacity);
+ 
+ #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+ int update_irq_load_avg(struct rq *rq, u64 running);
+@@ -67,6 +68,12 @@ update_irq_load_avg(struct rq *rq, u64 running)
+ {
+ 	return 0;
  }
++
++static inline int
++update_thermal_avg(u64 now, struct rq *rq, u64 capacity)
++{
++	return 0;
++}
+ #endif
+ 
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4a2e8ca..30b40a5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -859,6 +859,7 @@ struct rq {
+ #define HAVE_SCHED_AVG_IRQ
+ 	struct sched_avg	avg_irq;
+ #endif
++	struct sched_avg	avg_thermal;
+ 	u64			idle_stamp;
+ 	u64			avg_idle;
  
 -- 
 2.1.4
