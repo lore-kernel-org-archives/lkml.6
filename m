@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D2DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5B5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAE1214D5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEF6214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jAjkCpyE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BAE1214D5
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pfn34Y3X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EEF6214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeJIWPA (ORCPT
+        id S1727081AbeJIWPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:15:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43302 "EHLO
+        Tue, 9 Oct 2018 18:15:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43308 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbeJIWO7 (ORCPT
+        with ESMTP id S1726770AbeJIWPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:14:59 -0400
+        Tue, 9 Oct 2018 18:15:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hnxHqf1AfuWny81VWMegGHEz50fSMVPDlsdkhd5JvH4=; b=jAjkCpyEN0dQl4Aw/hNXICk+a7
-        Ka916XnA40l6D1pFbME8MB6z6+Hj00ECJLJbGc6DUpnXb6LWyXufnKgkeqAEpvtca1VR+p9fkN45h
-        JLqDOR6i1UGLydVKsdXX+BW6JUvp2F4xi6IbdBA/VVAAQAdLN7fSYvdWtp3u6bsZ5GGRLirOM22BR
-        ad1COFZNVGTw/Z4Rvnj7MWspA15sAtrbDJq5jsEiXHpIsGM/MGVmgYJPUfLzRIULVUZ9CT1NCoZ4C
-        t/AidAg3cGOzQPAcfvpZZa9+N6G4KjIPUvPWo0o0lBFItY6omYC99+zqiO3CrVwTXdEuStKHoTUdN
-        iEW7y58A==;
+        bh=ZEacMIXix2Uza8hkPethF1vxI2J7PRFVaUXHkyp7sJA=; b=pfn34Y3Xuvf8ooNy3fCBRUfBou
+        h33xagujbQPSxcIGRcPLO8KD3u3BfPtaTfBx0XIZhsZiMKzoyjgRukHWUtv1U06OX94fvfz/T8tOh
+        vjGGEKobao0i9Ja5fB/jaCtWEKZyqeA/76VfRVPx/XOn/94bOO7qS331p3UsfzBu2PxNk0JGHXgRV
+        Th0W04bhDLrMpXWFlai9jk4pfYl5XyJbyDDvs9myr1F2qHmzU/njb651mrlJEDoNv/cvp/iVzaj3Y
+        cbo8EwHAwYDcqO/tTMIKF2pnuAudv1/7rvXod7Nt24AT98dSiwISybUzzkC5OmOskULdjhyCzewQr
+        mg/FHnjg==;
 Received: from 089144207060.atnat0016.highway.bob.at ([89.144.207.60] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9tS7-0001Zh-W2; Tue, 09 Oct 2018 14:57:40 +0000
+        id 1g9tSB-0001Zv-6Y; Tue, 09 Oct 2018 14:57:43 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chas Williams <3chas3@gmail.com>, netdev@vger.kernel.org
 Cc:     linux-atm-general@lists.sourceforge.net,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] fore200e: don't use GFP_DMA
-Date:   Tue,  9 Oct 2018 16:57:19 +0200
-Message-Id: <20181009145720.32578-7-hch@lst.de>
+Subject: [PATCH 7/7] fore200e: check for dma mapping failures
+Date:   Tue,  9 Oct 2018 16:57:20 +0200
+Message-Id: <20181009145720.32578-8-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009145720.32578-1-hch@lst.de>
 References: <20181009145720.32578-1-hch@lst.de>
@@ -59,54 +59,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver properly uses the DMA mapping API, so it should not
-pointlessly dip into the GFP_DMA pool, which is only 16MB on x86.
+The driver was lacking any handling for failures from the DMA mapping
+routines.  With an iommu or swiotlb this can be fatal.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/atm/fore200e.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/atm/fore200e.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
-index 86be269500a9..7eda1a8c3d8c 100644
+index 7eda1a8c3d8c..2b5dc8fe1d85 100644
 --- a/drivers/atm/fore200e.c
 +++ b/drivers/atm/fore200e.c
-@@ -184,7 +184,7 @@ fore200e_chunk_alloc(struct fore200e* fore200e, struct chunk* chunk, int size, i
-     chunk->alloc_size = size + alignment;
-     chunk->direction  = direction;
+@@ -195,6 +195,10 @@ fore200e_chunk_alloc(struct fore200e* fore200e, struct chunk* chunk, int size, i
  
--    chunk->alloc_addr = kzalloc(chunk->alloc_size, GFP_KERNEL | GFP_DMA);
-+    chunk->alloc_addr = kzalloc(chunk->alloc_size, GFP_KERNEL);
-     if (chunk->alloc_addr == NULL)
- 	return -ENOMEM;
+     chunk->dma_addr = dma_map_single(fore200e->dev, chunk->align_addr,
+ 				     size, direction);
++    if (dma_mapping_error(fore200e->dev, chunk->dma_addr)) {
++	kfree(chunk->alloc_addr);
++	return -ENOMEM;
++    }
+     return 0;
+ }
  
-@@ -1527,7 +1527,7 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
-     }
+@@ -576,6 +580,8 @@ fore200e_pca_prom_read(struct fore200e* fore200e, struct prom_data* prom)
+ 
+     prom_dma = dma_map_single(fore200e->dev, prom, sizeof(struct prom_data),
+ 			      DMA_FROM_DEVICE);
++    if (dma_mapping_error(fore200e->dev, prom_dma))
++	return -ENOMEM;
+ 
+     fore200e->bus->write(prom_dma, &entry->cp_entry->cmd.prom_block.prom_haddr);
      
-     if (tx_copy) {
--	data = kmalloc(tx_len, GFP_ATOMIC | GFP_DMA);
-+	data = kmalloc(tx_len, GFP_ATOMIC);
- 	if (data == NULL) {
- 	    if (vcc->pop) {
- 		vcc->pop(vcc, skb);
-@@ -1664,7 +1664,7 @@ fore200e_getstats(struct fore200e* fore200e)
-     u32                     stats_dma_addr;
+@@ -1597,6 +1603,11 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
+     tpd = entry->tpd;
+     tpd->tsd[ 0 ].buffer = dma_map_single(fore200e->dev, data, tx_len,
+ 					  DMA_TO_DEVICE);
++    if (dma_mapping_error(fore200e->dev, tpd->tsd[0].buffer)) {
++	if (tx_copy)
++	    kfree(data);
++	return -ENOMEM;
++    }
+     tpd->tsd[ 0 ].length = tx_len;
  
-     if (fore200e->stats == NULL) {
--	fore200e->stats = kzalloc(sizeof(struct stats), GFP_KERNEL | GFP_DMA);
-+	fore200e->stats = kzalloc(sizeof(struct stats), GFP_KERNEL);
- 	if (fore200e->stats == NULL)
- 	    return -ENOMEM;
-     }
-@@ -1966,7 +1966,7 @@ static int fore200e_irq_request(struct fore200e *fore200e)
+     FORE200E_NEXT_ENTRY(txq->head, QUEUE_SIZE_TX);
+@@ -1671,6 +1682,8 @@ fore200e_getstats(struct fore200e* fore200e)
+     
+     stats_dma_addr = dma_map_single(fore200e->dev, fore200e->stats,
+ 				    sizeof(struct stats), DMA_FROM_DEVICE);
++    if (dma_mapping_error(fore200e->dev, stats_dma_addr))
++    	return -ENOMEM;
+     
+     FORE200E_NEXT_ENTRY(cmdq->head, QUEUE_SIZE_CMD);
  
- static int fore200e_get_esi(struct fore200e *fore200e)
- {
--    struct prom_data* prom = kzalloc(sizeof(struct prom_data), GFP_KERNEL | GFP_DMA);
-+    struct prom_data* prom = kzalloc(sizeof(struct prom_data), GFP_KERNEL);
-     int ok, i;
- 
-     if (!prom)
 -- 
 2.19.0
 
