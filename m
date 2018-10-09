@@ -2,112 +2,126 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC89C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D98C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E294214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E294214C4
+	by mail.kernel.org (Postfix) with ESMTP id 023F1214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023F1214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeJIWJu (ORCPT
+        id S1726714AbeJIWJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:09:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36964 "EHLO mx1.suse.de"
+        Tue, 9 Oct 2018 18:09:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36990 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726415AbeJIWJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726434AbeJIWJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 9 Oct 2018 18:09:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 13A26B004;
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7589CB005;
         Tue,  9 Oct 2018 14:52:30 +0000 (UTC)
-Subject: Re: [PATCH 0/2] xen: fix two issues in Xen pv qspinlock handling
-To:     David Woodhouse <dwmw2@infradead.org>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, Waiman.Long@hp.com,
-        peterz@infradead.org
-References: <20181001071641.19282-1-jgross@suse.com>
- <762802a4b8ff21e43e59e222e472ab9b23fc43cd.camel@infradead.org>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <53dc092d-a09c-beb4-f81f-399286da0ecd@suse.com>
-Date:   Tue, 9 Oct 2018 16:52:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Date:   Tue, 9 Oct 2018 16:52:29 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20181009145229.3lv5vl2ypz5i45cq@pathway.suse.cz>
+References: <20180928090939.GE1160@jagdpanzerIV>
+ <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+ <20180929105151.GA1392@tigerII.localdomain>
+ <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+ <20181001023721.GA6409@jagdpanzerIV>
+ <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
+ <20181002063851.GF598@jagdpanzerIV>
+ <5a958a1b-a986-014a-5908-816e0a3ef4ff@i-love.sakura.ne.jp>
+ <20181008160310.ldwryudzkvp5de3b@pathway.suse.cz>
+ <3ce1695b-9c47-40cc-602b-7c5ffb593024@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <762802a4b8ff21e43e59e222e472ab9b23fc43cd.camel@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ce1695b-9c47-40cc-602b-7c5ffb593024@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 16:40, David Woodhouse wrote:
-> On Mon, 2018-10-01 at 09:16 +0200, Juergen Gross wrote:
->> The Xen specific queue spinlock wait function has two issues which
->> could result in a hanging system.
->>
->> They have a similar root cause of clearing a pending wakeup of a
->> waiting vcpu and later going to sleep waiting for the just cleared
->> wakeup event, which of course won't ever happen.
->>
->> Juergen Gross (2):
->>   xen: fix race in xen_qlock_wait()
->>   xen: make xen_qlock_wait() nestable
->>
->>  arch/x86/xen/spinlock.c | 33 ++++++++++++---------------------
->>  1 file changed, 12 insertions(+), 21 deletions(-)
->>
->> Cc: Waiman.Long@hp.com
->> Cc: peterz@infradead.org
+On Tue 2018-10-09 05:48:33, Tetsuo Handa wrote:
+> On 2018/10/09 1:03, Petr Mladek wrote:
+> > On Mon 2018-10-08 19:31:58, Tetsuo Handa wrote:
+> >>   A structure named "struct printk_buffer" is introduced for buffering
+> >>   up to LOG_LINE_MAX bytes of printk() output which did not end with '\n'.
+> >>
+> >>   A caller is allowed to allocate/free "struct printk_buffer" using
+> >>   kzalloc()/kfree() if that caller is in a location where it is possible
+> >>   to do so.
+> >>
+> >>   A macro named "DEFINE_PRINTK_BUFFER()" is defined for allocating
+> >>   "struct printk_buffer" from the stack memory or in the .bss section.
+> >>
+> >>   But since sizeof("struct printk_buffer") is nearly 1KB, it might not be
+> >>   preferable to allocate "struct printk_buffer" from the stack memory.
+> >>   In that case, a caller can use best-effort buffering mode. Two functions
+> >>   get_printk_buffer() and put_printk_buffer() are provided for that mode.
+> >>
+> >>   get_printk_buffer() tries to assign a "struct printk_buffer" from
+> >>   statically preallocated array. It returns NULL if all static
+> >>   "struct printk_buffer" are in use.
+> >>
+> >>   put_printk_buffer() flushes and releases the "struct printk_buffer".
+> >>   put_printk_buffer() must match corresponding get_printk_buffer() as with
+> >>   rcu_read_unlock() must match corresponding rcu_read_lock().
+> > 
+> > One problem with this API is when it is used in more complicated code
+> > and put_printk_buffer() is not called in some path. I mean leaking.
+> > We might get out of buffers easily.
 > 
-> LGTM. Both these should be Cc:stable@vger.kernel.org, yes?
+> Then, as an debugging config option for statically preallocated buffers,
+> we could record how get_printk_buffer() was called, like lockdep records
+> where a lock was taken.
 
-Yes, they are.
+Another solution might be to store some timestamp (jiffies?) into
+struct printk_buffer when a new message is added. Then we could flush
+stalled buffers in get_printk_buffer() with some warning.
 
-I have them already queued in the Xen tree. As the bug is rather
-old I didn't want to rush the patches in so late in the rc phase of
-4.19.
+Unfortunately, it might be unsafe to put the stalled buffers.
+Well, it might be safe if there is a lock less access. I wonder
+if we could reuse the printk_safe code here.
+
+Anyway, I would like to have a solution before we add the new
+API into the kernel. We would need it sooner or later anyway.
+And I would like to be sure that the API is sane.
 
 
-Juergen
+> > A solution might be to store some information about the owner and
+> > put the buffer also when a non-buffered printk is called from
+> > the same context.
+> > 
+> > It might even make it easier to use. If we are able to guess the
+> > buffer by the context, we do not need to pass it as an argument.
+> 
+> It would be nice if we can omit passing "struct printk_buffer" argument.
+> But that results in "implicit contexts" which Linus has rejected
+> ( https://lkml.kernel.org/CA+55aFx+5R-vFQfr7+Ok9Yrs2adQ2Ma4fz+S6nCyWHY_-2mrmw@mail.gmail.com ).
+
+Yeah and the arguments for explicit context make sense when
+I reread them again.
+
+Best Regards,
+Petr
