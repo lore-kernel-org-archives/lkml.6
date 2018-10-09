@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A02DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BDFECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD4F2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD4F2087D
+	by mail.kernel.org (Postfix) with ESMTP id EEF162087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF162087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeJJAGD (ORCPT
+        id S1727500AbeJJAGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:06:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53728 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 20:06:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40836 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbeJJAGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:06:03 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1726695AbeJJAGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:06:11 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87D8F88319;
-        Tue,  9 Oct 2018 16:48:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 29186811A9;
+        Tue,  9 Oct 2018 16:48:20 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0739C78560;
-        Tue,  9 Oct 2018 16:48:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8DF3D600D1;
+        Tue,  9 Oct 2018 16:48:18 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/22] KEYS: asym_tpm: extract key size & public key [ver #2]
+Subject: [PATCH 12/22] KEYS: Add parser for TPM-based keys [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     Denis Kenzior <denkenz@gmail.com>,
@@ -42,16 +42,16 @@ Cc:     Denis Kenzior <denkenz@gmail.com>,
         Marcel Holtmann <marcel@holtmann.org>, dhowells@redhat.com,
         denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 17:48:10 +0100
-Message-ID: <153910369026.12141.17387700226034691682.stgit@warthog.procyon.org.uk>
+Date:   Tue, 09 Oct 2018 17:48:17 +0100
+Message-ID: <153910369777.12141.14183321463564348797.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 09 Oct 2018 16:48:12 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 09 Oct 2018 16:48:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,11 +59,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-The parsed BER/DER blob obtained from user space contains a TPM_Key
-structure.  This structure has some information about the key as well as
-the public key portion.
+For TPM based keys, the only standard seems to be described here:
+http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#rfc.section.4.4
 
-This patch extracts this information for future use.
+Quote from the relevant section:
+"Rather, a common form of storage for "wrapped" keys is to encode the
+binary TCPA_KEY structure in a single ASN.1 OCTET-STRING, and store the
+result in PEM format with the tag "-----BEGIN TSS KEY BLOB-----". "
+
+This patch implements the above behavior.  It is assumed that the PEM
+encoding is stripped out by userspace and only the raw DER/BER format is
+provided.  This is similar to how PKCS7, PKCS8 and X.509 keys are
+handled.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -71,161 +78,170 @@ Tested-by: Marcel Holtmann <marcel@holtmann.org>
 Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |  112 +++++++++++++++++++++++++++++++++++++
- include/crypto/asym_tpm_subtype.h |    3 +
- 2 files changed, 115 insertions(+)
+ crypto/asymmetric_keys/Kconfig      |    9 +++
+ crypto/asymmetric_keys/Makefile     |   11 ++++
+ crypto/asymmetric_keys/tpm.asn1     |    5 ++
+ crypto/asymmetric_keys/tpm_parser.c |  102 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 127 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/tpm.asn1
+ create mode 100644 crypto/asymmetric_keys/tpm_parser.c
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index d0b2b97e8e54..308c51e055a4 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -7,6 +7,7 @@
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
- #include <linux/tpm.h>
-+#include <asm/unaligned.h>
- #include <keys/asymmetric-subtype.h>
- #include <crypto/asym_tpm_subtype.h>
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index b75555c7d8ae..88353a9ebc9b 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -52,6 +52,15 @@ config PKCS8_PRIVATE_KEY_PARSER
+ 	  private key data and provides the ability to instantiate a crypto key
+ 	  from that data.
  
-@@ -37,6 +38,110 @@ static void asym_tpm_destroy(void *payload0, void *payload3)
- 	kfree(tk);
- }
++config TPM_KEY_PARSER
++	tristate "TPM private key parser"
++	depends on ASYMMETRIC_TPM_KEY_SUBTYPE
++	select ASN1
++	help
++	  This option provides support for parsing TPM format blobs for
++	  private key data and provides the ability to instantiate a crypto key
++	  from that data.
++
+ config PKCS7_MESSAGE_PARSER
+ 	tristate "PKCS#7 message parser"
+ 	depends on X509_CERTIFICATE_PARSER
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index 73fbe650ff1d..28b91adba2ae 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -75,3 +75,14 @@ verify_signed_pefile-y := \
  
+ $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
+ $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
++
++#
++# TPM private key parsing
++#
++obj-$(CONFIG_TPM_KEY_PARSER) += tpm_key_parser.o
++tpm_key_parser-y := \
++	tpm.asn1.o \
++	tpm_parser.o
++
++$(obj)/tpm_parser.o: $(obj)/tpm.asn1.h
++$(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
+diff --git a/crypto/asymmetric_keys/tpm.asn1 b/crypto/asymmetric_keys/tpm.asn1
+new file mode 100644
+index 000000000000..d7f194232f30
+--- /dev/null
++++ b/crypto/asymmetric_keys/tpm.asn1
+@@ -0,0 +1,5 @@
++--
++-- Unencryted TPM Blob.  For details of the format, see:
++-- http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#I-D.mavrogiannopoulos-tpmuri
++--
++PrivateKeyInfo ::= OCTET STRING ({ tpm_note_key })
+diff --git a/crypto/asymmetric_keys/tpm_parser.c b/crypto/asymmetric_keys/tpm_parser.c
+new file mode 100644
+index 000000000000..96405d8dcd98
+--- /dev/null
++++ b/crypto/asymmetric_keys/tpm_parser.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++#define pr_fmt(fmt) "TPM-PARSER: "fmt
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/export.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <keys/asymmetric-subtype.h>
++#include <keys/asymmetric-parser.h>
++#include <crypto/asym_tpm_subtype.h>
++#include "tpm.asn1.h"
++
++struct tpm_parse_context {
++	const void	*blob;
++	u32		blob_len;
++};
++
 +/*
-+ * Parse enough information out of TPM_KEY structure:
-+ * TPM_STRUCT_VER -> 4 bytes
-+ * TPM_KEY_USAGE -> 2 bytes
-+ * TPM_KEY_FLAGS -> 4 bytes
-+ * TPM_AUTH_DATA_USAGE -> 1 byte
-+ * TPM_KEY_PARMS -> variable
-+ * UINT32 PCRInfoSize -> 4 bytes
-+ * BYTE* -> PCRInfoSize bytes
-+ * TPM_STORE_PUBKEY
-+ * UINT32 encDataSize;
-+ * BYTE* -> encDataSize;
-+ *
-+ * TPM_KEY_PARMS:
-+ * TPM_ALGORITHM_ID -> 4 bytes
-+ * TPM_ENC_SCHEME -> 2 bytes
-+ * TPM_SIG_SCHEME -> 2 bytes
-+ * UINT32 parmSize -> 4 bytes
-+ * BYTE* -> variable
++ * Note the key data of the ASN.1 blob.
 + */
-+static int extract_key_parameters(struct tpm_key *tk)
++int tpm_note_key(void *context, size_t hdrlen,
++		   unsigned char tag,
++		   const void *value, size_t vlen)
 +{
-+	const void *cur = tk->blob;
-+	uint32_t len = tk->blob_len;
-+	const void *pub_key;
-+	uint32_t sz;
-+	uint32_t key_len;
++	struct tpm_parse_context *ctx = context;
 +
-+	if (len < 11)
-+		return -EBADMSG;
-+
-+	/* Ensure this is a legacy key */
-+	if (get_unaligned_be16(cur + 4) != 0x0015)
-+		return -EBADMSG;
-+
-+	/* Skip to TPM_KEY_PARMS */
-+	cur += 11;
-+	len -= 11;
-+
-+	if (len < 12)
-+		return -EBADMSG;
-+
-+	/* Make sure this is an RSA key */
-+	if (get_unaligned_be32(cur) != 0x00000001)
-+		return -EBADMSG;
-+
-+	/* Make sure this is TPM_ES_RSAESPKCSv15 encoding scheme */
-+	if (get_unaligned_be16(cur + 4) != 0x0002)
-+		return -EBADMSG;
-+
-+	/* Make sure this is TPM_SS_RSASSAPKCS1v15_DER signature scheme */
-+	if (get_unaligned_be16(cur + 6) != 0x0003)
-+		return -EBADMSG;
-+
-+	sz = get_unaligned_be32(cur + 8);
-+	if (len < sz + 12)
-+		return -EBADMSG;
-+
-+	/* Move to TPM_RSA_KEY_PARMS */
-+	len -= 12;
-+	cur += 12;
-+
-+	/* Grab the RSA key length */
-+	key_len = get_unaligned_be32(cur);
-+
-+	switch (key_len) {
-+	case 512:
-+	case 1024:
-+	case 1536:
-+	case 2048:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/* Move just past TPM_KEY_PARMS */
-+	cur += sz;
-+	len -= sz;
-+
-+	if (len < 4)
-+		return -EBADMSG;
-+
-+	sz = get_unaligned_be32(cur);
-+	if (len < 4 + sz)
-+		return -EBADMSG;
-+
-+	/* Move to TPM_STORE_PUBKEY */
-+	cur += 4 + sz;
-+	len -= 4 + sz;
-+
-+	/* Grab the size of the public key, it should jive with the key size */
-+	sz = get_unaligned_be32(cur);
-+	if (sz > 256)
-+		return -EINVAL;
-+
-+	pub_key = cur + 4;
-+
-+	tk->key_len = key_len;
-+	tk->pub_key = pub_key;
-+	tk->pub_key_len = sz;
++	ctx->blob = value;
++	ctx->blob_len = vlen;
 +
 +	return 0;
 +}
 +
- /* Given the blob, parse it and load it into the TPM */
- struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
- {
-@@ -64,8 +169,15 @@ struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
- 
- 	tk->blob_len = blob_len;
- 
-+	r = extract_key_parameters(tk);
-+	if (r < 0)
-+		goto error_extract;
++/*
++ * Parse a TPM-encrypted private key blob.
++ */
++static struct tpm_key *tpm_parse(const void *data, size_t datalen)
++{
++	struct tpm_parse_context ctx;
++	long ret;
 +
- 	return tk;
- 
-+error_extract:
-+	kfree(tk->blob);
-+	tk->blob_len = 0;
- error_memdup:
- 	kfree(tk);
- error:
-diff --git a/include/crypto/asym_tpm_subtype.h b/include/crypto/asym_tpm_subtype.h
-index 03550b850998..48198c36d6b9 100644
---- a/include/crypto/asym_tpm_subtype.h
-+++ b/include/crypto/asym_tpm_subtype.h
-@@ -7,6 +7,9 @@
- struct tpm_key {
- 	void *blob;
- 	u32 blob_len;
-+	uint16_t key_len; /* Size in bits of the key */
-+	const void *pub_key; /* pointer inside blob to the public key bytes */
-+	uint16_t pub_key_len; /* length of the public key */
- };
- 
- struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len);
++	memset(&ctx, 0, sizeof(ctx));
++
++	/* Attempt to decode the private key */
++	ret = asn1_ber_decoder(&tpm_decoder, &ctx, data, datalen);
++	if (ret < 0)
++		goto error;
++
++	return tpm_key_create(ctx.blob, ctx.blob_len);
++
++error:
++	return ERR_PTR(ret);
++}
++/*
++ * Attempt to parse a data blob for a key as a TPM private key blob.
++ */
++static int tpm_key_preparse(struct key_preparsed_payload *prep)
++{
++	struct tpm_key *tk;
++
++	/*
++	 * TPM 1.2 keys are max 2048 bits long, so assume the blob is no
++	 * more than 4x that
++	 */
++	if (prep->datalen > 256 * 4)
++		return -EMSGSIZE;
++
++	tk = tpm_parse(prep->data, prep->datalen);
++
++	if (IS_ERR(tk))
++		return PTR_ERR(tk);
++
++	/* We're pinning the module by being linked against it */
++	__module_get(asym_tpm_subtype.owner);
++	prep->payload.data[asym_subtype] = &asym_tpm_subtype;
++	prep->payload.data[asym_key_ids] = NULL;
++	prep->payload.data[asym_crypto] = tk;
++	prep->payload.data[asym_auth] = NULL;
++	prep->quotalen = 100;
++	return 0;
++}
++
++static struct asymmetric_key_parser tpm_key_parser = {
++	.owner	= THIS_MODULE,
++	.name	= "tpm_parser",
++	.parse	= tpm_key_preparse,
++};
++
++static int __init tpm_key_init(void)
++{
++	return register_asymmetric_key_parser(&tpm_key_parser);
++}
++
++static void __exit tpm_key_exit(void)
++{
++	unregister_asymmetric_key_parser(&tpm_key_parser);
++}
++
++module_init(tpm_key_init);
++module_exit(tpm_key_exit);
++
++MODULE_DESCRIPTION("TPM private key-blob parser");
++MODULE_LICENSE("GPL v2");
 
