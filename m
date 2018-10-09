@@ -2,227 +2,162 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C3BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4110AC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F40213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52F7213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:33:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wc+qlYMY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F40213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Dp4y2f+r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52F7213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJIVuL (ORCPT
+        id S1726665AbeJIVvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:50:11 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33082 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIVuL (ORCPT
+        Tue, 9 Oct 2018 17:51:07 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33630 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJIVvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:50:11 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181009143256euoutp0187595283a2681b67873e9175dc61fcbd~b90XTT0K_2733727337euoutp01P
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 14:32:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181009143256euoutp0187595283a2681b67873e9175dc61fcbd~b90XTT0K_2733727337euoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539095576;
-        bh=ZWR5LLPRWzhQkmhySZniWiRy7mL4Rr9/X3/4fCuAa6Y=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=Wc+qlYMYUMsYeZYxPvLydndAzJJC0wWtq7+ZYtbJCuxztMngIfJtIoZFVijhYeYJv
-         sPqS5H0fhyVE7tcyHZNu5obCH5DzLn5FQMWx/L6RzgUd3Txx9i35Ae6/9O8Kb6ork4
-         AaJQQscid0b7alycDPXlZmab9nPI+l9Vs9sAcQBg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181009143256eucas1p1779af1c538670d935fbb17cd3ea0bf72~b90WxRRx90983409834eucas1p1v;
-        Tue,  9 Oct 2018 14:32:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id CA.99.04806.71CBCBB5; Tue,  9
-        Oct 2018 15:32:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb~b90V1TQEm3273032730eucas1p2h;
-        Tue,  9 Oct 2018 14:32:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181009143255eusmtrp28ea3963817a2fbeef155e26adca94384~b90V0nP-61753817538eusmtrp23;
-        Tue,  9 Oct 2018 14:32:55 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-72-5bbcbc172177
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 57.2D.04284.71CBCBB5; Tue,  9
-        Oct 2018 15:32:55 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181009143255eusmtip23d5ce3c3d2cbdaeb98adfe9efe563d23~b90VistcM2817828178eusmtip2T;
-        Tue,  9 Oct 2018 14:32:55 +0000 (GMT)
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] block: remove redundant 'default n' from Kconfig-s
-Date:   Tue, 9 Oct 2018 16:32:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Tue, 9 Oct 2018 17:51:06 -0400
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58E9E21B8;
+        Tue,  9 Oct 2018 16:33:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539095631;
+        bh=tlMlWxsjwCITaZFPKG6cpwCksuGQyDrmHKsxduTHXPU=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Dp4y2f+rIQ38Bi/P4v2Hk1IIB2sZVu6owe/t0suh0aHWjFSCaa9Gh1SK7eBqa+sIy
+         NmLp81WBsimH2B9pH9+4Q2gZHsOvi1HH3ONniXribbayO8eKH0tb9aMK1FJ6kbzBai
+         6GFrUDO85NF65XtPtV0vqIVKLGis6zmZ1UByOpZE=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2] media: vivid: Support 480p for webcam capture
+To:     Keiichi Watanabe <keiichiw@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        jcliang@chromium.org, shik@chromium.org
+References: <20181009134339.233238-1-keiichiw@chromium.org>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <c2d10472-021d-ab1e-4eb8-bb189ee80f5d@ideasonboard.com>
+Date:   Tue, 9 Oct 2018 15:33:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181009134339.233238-1-keiichiw@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7djPc7rie/ZEG+x4a2Ox+m4/m8XeW9oW
-        l3fNYXNg9rh8ttTj8ya5AKYoLpuU1JzMstQifbsErozJCzQKripUXNh6ir2Bca9kFyMnh4SA
-        icSd95PYuhi5OIQEVjBKPJq0iRHC+cIo0XbnKxOE85lR4vWFGYwwLc9/9kJVLWeU2HvwLDOE
-        855R4nTHDRaQKhEBBYme3yvZQGxmAVuJ9pvP2EFsNgEriYntq8AmCQs4S+y40wkWZxFQkXg5
-        YQJQnINDVCBCov+MOkiYV0BQ4uTMJywQY+Qltr+dA7ZLQuAym8S5972sEEVlEpPXv2WDuM5F
-        YvOieewQtrDEq+NboGwZif875zNBNE9nlHjzaykLhLOeUWLNmWNMEFXWEoePX2QFuYJZQFNi
-        /S59iLCjxMnfh9lBwhICfBI33gpCHMQnMWnbdGaIMK9ER5sQRLWaxIZlG9hg1nbtXMkMYXtI
-        LOzoYgIpFxKIlbj+gW0Co8IsJF/OQvLlLIQTFjAyr2IUTy0tzk1PLTbOSy3XK07MLS7NS9dL
-        zs/dxAhMD6f/Hf+6g3Hfn6RDjAIcjEo8vDPydkcLsSaWFVfmHmKU4GBWEuEV3b4rWog3JbGy
-        KrUoP76oNCe1+BCjNAeLkjjvsnkbo4UE0hNLUrNTUwtSi2CyTBycUg2MVQsYWpbLzNm5I0Gx
-        0ueQ/Pu8tOXFqbOnFX83b1T2Xyq2XEBFzqk3cnFT/SXe7Zu8X91fKWR26Of6nz5Ts3zuLTSa
-        rrVznyXfpBNbnM6YnLoV4+W8VO7QKtbFnKwNoQVyZ43ElXOd4yZM/fgtfr1Tu4r5gmkrzEs+
-        PWiee97D4KnYizBNBZYUJZbijERDLeai4kQAFE8Y4QsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t/xe7rie/ZEGyy9IWCx+m4/m8XeW9oW
-        l3fNYXNg9rh8ttTj8ya5AKYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
-        O5uU1JzMstQifbsEvYzJCzQKripUXNh6ir2Bca9kFyMnh4SAicTzn72MXYxcHEICSxkldqy8
-        xtrFyAGUkJE4vr4MokZY4s+1LjaImreMEss+TmIFSYgIKEj0/F7JBmIzC9hKtN98xg5iswlY
-        SUxsX8UIYgsLOEvsuNMJFucVsJN4vquZGcRmEVCReDlhAliNqECExK2HHSwQNYISJ2c+YYGY
-        qS7xZ94lZghbXmL72znMExj5ZyEpm4WkbBaSsgWMzKsYRVJLi3PTc4sN9YoTc4tL89L1kvNz
-        NzECw3jbsZ+bdzBe2hh8iFGAg1GJh3dG3u5oIdbEsuLK3EOMEhzMSiK8ott3RQvxpiRWVqUW
-        5ccXleakFh9iNAU6fCKzlGhyPjDG8kriDU0NzS0sDc2NzY3NLJTEec8bVEYJCaQnlqRmp6YW
-        pBbB9DFxcEo1MCqLBH59FLrNZcMpD6ko1s8fYg8eimre7P1n5mU31ezaKCP96NymhyW+7Bcv
-        LPwYp9Cco3pqd2HT7ub1n0pinj6PZ3vx9mF1urHVF7lkpyCjiLk3K1TnnG0uPPu73XmRdVp3
-        JVdCpVSm+3bjNPZbG7fN8/QrnCH0eSLbQaVHaU56yVzX/1Z9VGIpzkg01GIuKk4EAFm5Wu15
-        AgAA
-Message-Id: <20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb~b90V1TQEm3273032730eucas1p2h@eucas1p2.samsung.com>
-X-CMS-MailID: 20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb
-References: <CGME20181009143255eucas1p2fa83e06a951634e4359b4492d54ec7cb@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'default n' is the default value for any bool or tristate Kconfig
-setting so there is no need to write it explicitly.
+Hi Keiichi,
 
-Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
-is not set' for visible symbols") the Kconfig behavior is the same
-regardless of 'default n' being present or not:
+Thank you for the patch update,
 
-    ...
-    One side effect of (and the main motivation for) this change is making
-    the following two definitions behave exactly the same:
-    
-        config FOO
-                bool
-    
-        config FOO
-                bool
-                default n
-    
-    With this change, neither of these will generate a
-    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
-    That might make it clearer to people that a bare 'default n' is
-    redundant.
-    ...
+On 09/10/18 14:43, Keiichi Watanabe wrote:
+> Support 640x480 as a frame size for video input devices of vivid.
+> 
+> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- block/Kconfig         |    7 -------
- block/Kconfig.iosched |    3 ---
- 2 files changed, 10 deletions(-)
+My concerns have been addressed,
 
-Index: b/block/Kconfig
-===================================================================
---- a/block/Kconfig	2018-10-09 15:58:37.031122890 +0200
-+++ b/block/Kconfig	2018-10-09 16:30:22.959170887 +0200
-@@ -74,7 +74,6 @@ config BLK_DEV_BSG
- 
- config BLK_DEV_BSGLIB
- 	bool "Block layer SG support v4 helper lib"
--	default n
- 	select BLK_DEV_BSG
- 	select BLK_SCSI_REQUEST
- 	help
-@@ -107,7 +106,6 @@ config BLK_DEV_ZONED
- config BLK_DEV_THROTTLING
- 	bool "Block layer bio throttling support"
- 	depends on BLK_CGROUP=y
--	default n
- 	---help---
- 	Block layer bio throttling support. It can be used to limit
- 	the IO rate to a device. IO rate policies are per cgroup and
-@@ -119,7 +117,6 @@ config BLK_DEV_THROTTLING
- config BLK_DEV_THROTTLING_LOW
- 	bool "Block throttling .low limit interface support (EXPERIMENTAL)"
- 	depends on BLK_DEV_THROTTLING
--	default n
- 	---help---
- 	Add .low limit interface for block throttling. The low limit is a best
- 	effort limit to prioritize cgroups. Depending on the setting, the limit
-@@ -130,7 +127,6 @@ config BLK_DEV_THROTTLING_LOW
- 
- config BLK_CMDLINE_PARSER
- 	bool "Block device command line partition parser"
--	default n
- 	---help---
- 	Enabling this option allows you to specify the partition layout from
- 	the kernel boot args.  This is typically of use for embedded devices
-@@ -141,7 +137,6 @@ config BLK_CMDLINE_PARSER
- 
- config BLK_WBT
- 	bool "Enable support for block device writeback throttling"
--	default n
- 	---help---
- 	Enabling this option enables the block layer to throttle buffered
- 	background writeback from the VM, making it more smooth and having
-@@ -152,7 +147,6 @@ config BLK_WBT
- config BLK_CGROUP_IOLATENCY
- 	bool "Enable support for latency based cgroup IO protection"
- 	depends on BLK_CGROUP=y
--	default n
- 	---help---
- 	Enabling this option enables the .latency interface for IO throttling.
- 	The IO controller will attempt to maintain average IO latencies below
-@@ -163,7 +157,6 @@ config BLK_CGROUP_IOLATENCY
- 
- config BLK_WBT_SQ
- 	bool "Single queue writeback throttling"
--	default n
- 	depends on BLK_WBT
- 	---help---
- 	Enable writeback throttling by default on legacy single queue devices
-Index: b/block/Kconfig.iosched
-===================================================================
---- a/block/Kconfig.iosched	2018-09-03 18:11:21.201792278 +0200
-+++ b/block/Kconfig.iosched	2018-10-09 16:30:54.207171674 +0200
-@@ -36,7 +36,6 @@ config IOSCHED_CFQ
- config CFQ_GROUP_IOSCHED
- 	bool "CFQ Group Scheduling support"
- 	depends on IOSCHED_CFQ && BLK_CGROUP
--	default n
- 	---help---
- 	  Enable group IO scheduling in CFQ.
- 
-@@ -82,7 +81,6 @@ config MQ_IOSCHED_KYBER
- 
- config IOSCHED_BFQ
- 	tristate "BFQ I/O scheduler"
--	default n
- 	---help---
- 	BFQ I/O scheduler for BLK-MQ. BFQ distributes the bandwidth of
- 	of the device among all processes according to their weights,
-@@ -94,7 +92,6 @@ config IOSCHED_BFQ
- config BFQ_GROUP_IOSCHED
-        bool "BFQ hierarchical scheduling support"
-        depends on IOSCHED_BFQ && BLK_CGROUP
--       default n
-        ---help---
- 
-        Enable hierarchical scheduling in BFQ, using the blkio
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
+> index 58e14dd1dcd3..6cf910a60ecf 100644
+> --- a/drivers/media/platform/vivid/vivid-vid-cap.c
+> +++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+> @@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>  };
+>  
+>  /* The number of discrete webcam framesizes */
+> -#define VIVID_WEBCAM_SIZES 5
+> +#define VIVID_WEBCAM_SIZES 6
+>  /* The number of discrete webcam frameintervals */
+>  #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
+>  
+> @@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
+>  static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
+>  	{  320, 180 },
+>  	{  640, 360 },
+> +	{  640, 480 },
+>  	{ 1280, 720 },
+>  	{ 1920, 1080 },
+>  	{ 3840, 2160 },
+> @@ -74,9 +75,11 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+>  	{  1, 4 },
+>  	{  1, 5 },
+>  	{  1, 10 },
+> +	{  2, 25 },
+>  	{  1, 15 },
+>  	{  1, 25 },
+>  	{  1, 30 },
+> +	{  1, 40 },
+>  	{  1, 50 },
+>  	{  1, 60 },
+>  };
+> 
+
+-- 
+Regards
+--
+Kieran
