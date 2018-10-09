@@ -2,75 +2,52 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD33C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A288C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E052054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:12:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E052054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C5082054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5082054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=bk.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeJIT2n (ORCPT
+        id S1726761AbeJITba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 15:28:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54078 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIT2n (ORCPT
+        Tue, 9 Oct 2018 15:31:30 -0400
+Received: from [206.189.136.169] ([206.189.136.169]:56342 "EHLO
+        mail.hanrfast.ga" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeJITba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 15:28:43 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g9qrm-0000Xn-6I; Tue, 09 Oct 2018 12:11:58 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (tmp421) make const array 'names' static
-Date:   Tue,  9 Oct 2018 13:11:57 +0100
-Message-Id: <20181009121157.21656-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 9 Oct 2018 15:31:30 -0400
+Received: by mail.hanrfast.ga (Postfix, from userid 48)
+        id 6A4154D8EC7; Tue,  9 Oct 2018 11:41:28 +0000 (UTC)
+To:     linux-kernel@vger.kernel.org
+Subject: Inquiry 09-10-2018
+X-PHP-Originating-Script: 0:dbageds.php
+From:   Daniel Murray <sinara-group@bk.ru>
+Reply-To: sinara-group@list.ru
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20181009114747.6A4154D8EC7@mail.hanrfast.ga>
+Date:   Tue,  9 Oct 2018 11:41:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,friend,
 
-The const array 'names' can be made static, saves populating it on
-the stack and will make it read-only.
+This is Daniel Murray and i am from Sinara Group Co.Ltd Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hwmon/tmp421.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Best Regards,
 
-diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
-index e36399213324..8844c9565d2a 100644
---- a/drivers/hwmon/tmp421.c
-+++ b/drivers/hwmon/tmp421.c
-@@ -226,8 +226,10 @@ static int tmp421_detect(struct i2c_client *client,
- {
- 	enum chips kind;
- 	struct i2c_adapter *adapter = client->adapter;
--	const char * const names[] = { "TMP421", "TMP422", "TMP423",
--				       "TMP441", "TMP442" };
-+	static const char * const names[] = {
-+		"TMP421", "TMP422", "TMP423",
-+		"TMP441", "TMP442"
-+	};
- 	int addr = client->addr;
- 	u8 reg;
- 
--- 
-2.17.1
+Daniel Murray
+Purchasing Manager
+
 
