@@ -2,100 +2,111 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D777C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B564C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C997C214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11270214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y6zYIaV+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C997C214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="uRWLIKVe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11270214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbeJIWPr (ORCPT
+        id S1727180AbeJIWPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:15:47 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:35448 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeJIWPr (ORCPT
+        Tue, 9 Oct 2018 18:15:54 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:19076 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIWPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:15:47 -0400
-Received: by mail-it1-f195.google.com with SMTP id p64-v6so3140023itp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=znF2dXmEw6I6sqhqCgrR/LkxoK0WiWJksvm1s3zT76g=;
-        b=Y6zYIaV+DO0dswyKV5aR0hPeFc9/VaiDArVrzBoWIdDJBu1kJXVDPDqekHI4bsu1Z/
-         phzwMeQQmMPJ4vDOmkUtps/HoA+vslDRDUUOvfeaOZHwkFcXIsrzz3vLJJWY2wmtPlDw
-         jGxT+0NUnu6uITGdOvM9unzD+sLC9nbG0yUFiqPMA31DLyoU/HH678BMCgKIxoH8uirs
-         lrxyj/0oIG6+UCR7vhUnuP0zXGP7Kr0a8tVJdaVf2grrAxwQR+zaoIynamiIZGww3JTT
-         mABV6f/K0+PMjQV90u7KvmhG9DgWIahoLO7pyzmq0jiEiO0VbcNlEg7+nvanYwUzZL4F
-         xbYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=znF2dXmEw6I6sqhqCgrR/LkxoK0WiWJksvm1s3zT76g=;
-        b=DRK60WC0BcbowO7Q4AzRvxyDjukJy14RQt6cdHuwjSJI2U97W1MYQbNUde2kXtWO7M
-         Q3XyIDeEs0lTlECmFBDhOVPE7NESJ4b/XkNHK4GOr/sh3TaPGYgitqyrhU7tZASfDk3H
-         IWl3Xvjpj/hdIzWAYY5whZZ/Kc1LQ/NP/LtIRv6X5fvlmFBMPQB6VySVPlN48oLiTmLO
-         ujtynDTOJvT5HcjLf4a+5bELgNfZ//vRVEfwh7v5+v6acDVYnDTvw7gD9XLZzTfZaDxy
-         diHEOELDnPLrmxXrl5F21zh5qE5/dYq8eRZqXPBHvsjulTwtcCOpgwLFMXNXEergaixP
-         9exw==
-X-Gm-Message-State: ABuFfojlMW+HtmXjAF0lJsPC+AfcSVYatyoLTwRlLpQm+ekIBGrGRAhs
-        yHHLcq0/fXoZbCoP4jEAgKg0CCPcky7B/VvvTcONNfYVa5k=
-X-Google-Smtp-Source: ACcGV62YyCWg30aj4WrRECEjk0Gg5PKgIryXQMSmED5zZ8yOiZaiKU2jbnZKIy91fkNz67ymLgsk470rkKx95ao/HIk=
-X-Received: by 2002:a24:f803:: with SMTP id a3-v6mr1952791ith.178.1539097106924;
- Tue, 09 Oct 2018 07:58:26 -0700 (PDT)
+        Tue, 9 Oct 2018 18:15:54 -0400
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w99EwIDo018708;
+        Tue, 9 Oct 2018 23:58:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w99EwIDo018708
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539097099;
+        bh=SL95+f40ErRozyT5ERA43ma0d+ZMbvzq5kbukVq1Fcs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uRWLIKVeIOuPvWvxrtdaqBTG6HigbhRUOo5Fxb2F+ukbMCDh/zbGhJOWcKct0Fosp
+         bWD+7T2NabBICFgvfuAbsk/4yjlEa6lpMw2EejKUK4YFstBfuW9dW5IpyW8h3qGr0Q
+         ot6MgEWAOKYD0GedjyNCOu+7kO/+vjRzGrhxYX/dhw//6JKUG7yWjdEyviyInyxIFH
+         Cmk5fIdycRxdbvPjZ1i96GY1DFFI+09hYzA7ddIWCq444QGi0mXzGgXcG9Fh6aw59X
+         6XvvRmJ8bC26Q2nSa+rdIGWuXvK5nLSOOKRaTZJ6olIyodpS7MzwwlyoCuCT9fClGU
+         MGzJyoaYjBisw==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id w1so1795948vsj.8;
+        Tue, 09 Oct 2018 07:58:18 -0700 (PDT)
+X-Gm-Message-State: ABuFfogans6nlxGiB/3P5XSUVJ5FfIzFaut9zeVBcyA01uWwa2IYQEJz
+        ybQPGEusX2SiSiz4AcLV/txhlAuOHEWVyNOxJDI=
+X-Google-Smtp-Source: ACcGV61jr2oO39378v5f2AqBPeWTIKaHu9Rnvbcwwii+FMUalmYzisKkhhJQFt1ctWteU1Px5tV5ZHGbwqdqeIDTuTk=
+X-Received: by 2002:a67:61c1:: with SMTP id v184mr6621044vsb.179.1539097097731;
+ Tue, 09 Oct 2018 07:58:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539086718-4119-1-git-send-email-laoar.shao@gmail.com>
- <1539086718-4119-2-git-send-email-laoar.shao@gmail.com> <CANn89iL1BMCx3Mbsj3TijR3Srjji95q86px0k98r7JYJbwLzcw@mail.gmail.com>
- <CALOAHbBwGAqia_2xJSNkaX7TzSPN89bRz71qHRH43FtbwNTP6w@mail.gmail.com>
-In-Reply-To: <CALOAHbBwGAqia_2xJSNkaX7TzSPN89bRz71qHRH43FtbwNTP6w@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Tue, 9 Oct 2018 07:58:14 -0700
-Message-ID: <CANn89iKe4vETuo-FBZ8ZrovJGiimBbhbzBnbqawX_h0LA+8PoA@mail.gmail.com>
-Subject: Re: [PATCH net-next] tcp: forbid direct reclaim if MSG_DONTWAIT is
- set in send path
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 9 Oct 2018 23:57:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASmxy=FQ0_Qg7ryNnCyh8uR_ffkT5L0P4s015F+1egJYA@mail.gmail.com>
+Message-ID: <CAK7LNASmxy=FQ0_Qg7ryNnCyh8uR_ffkT5L0P4s015F+1egJYA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] kbuild: add -Wno-pointer-sign flag unconditionally
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >
-> There was a network latency (hunreds msecs or even one sec ) recently
-> on our production enviroment.
-> And finally I diagnosed that this latency was caused by direct reclaim
-> in tcp_sendmsg.
-> That issue could be resovled by keeping a reserved memory.
-> But I think deeply that why not forbid direct reclaim if we set MSG_DONWAIT.
-> So I did this change and tested it. The application got a errno
-> returned instead of being blocked in send path.
-> That's why I sumbit this patch.
+On Mon, Oct 1, 2018 at 6:45 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> We have raised the compiler requirement from time to time.
+> With commit cafa0010cd51 ("Raise the minimum required gcc version
+> to 4.6"), the minimum for GCC is 4.6 now.
+>
+> The -Wno-pointer-sign has been here since the pre-git era.  It is
+> documented in the GCC 4.6 manual, and it is recognized by Clang
+> and ICC as well.
+>
+> Let's rip off the cc-disable-warning switch, and see if somebody
+> complains about it.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Sure, and I asked you how you have tested it, because it seems clear
-to me that  you missed
-the real memory allocation point (We fill up to 64 KB of page
-fragments memory into one (small) skb)
+Applied to linux-kbuild.
 
-And how is the application going to use MSG_DONTWAIT in the real
-world, I do wonder as well.
 
-We do not add bloat in the kernel if no application is ever going to
-use it, especially in the TCP fast path.
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index c6d1f2f..505a324 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -800,7 +800,7 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+>  KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+>
+>  # disable pointer signed / unsigned warnings in gcc 4.0
+> -KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
+> +KBUILD_CFLAGS += -Wno-pointer-sign
+>
+>  # disable stringop warnings in gcc 8+
+>  KBUILD_CFLAGS += $(call cc-disable-warning, stringop-truncation)
+> --
+> 2.7.4
+>
 
-Give us a test, so that we can see how this can be used...
 
-Thanks.
+-- 
+Best Regards
+Masahiro Yamada
