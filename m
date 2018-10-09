@@ -2,136 +2,123 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32097C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78689C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBCBD2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:59:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mc8IWPHO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCBD2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 47F2E2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:59:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F2E2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeJIPOt (ORCPT
+        id S1726942AbeJIPPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:14:49 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:32800 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbeJIPOq (ORCPT
+        Tue, 9 Oct 2018 11:15:25 -0400
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:33323 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725855AbeJIPPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:14:46 -0400
-Received: by mail-yw1-f66.google.com with SMTP id m127-v6so275464ywb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YfC2K77BgCfSmtV8fbfFim7K+3NV2MODtzHITr4r8xU=;
-        b=mc8IWPHO7Omu+x4RIA/W9p1MWJhGluVGsXIP7HA0oyEL6EIBf8rcOuh9Pywaeh02FQ
-         LdyYkkfNoJ9KDQsBgfUo7cYjicdv/8TRqoYB9v2QNJjaAB2X2ZSDyWoIpZSQOr1HkSwL
-         HgMlPi+1jGPixDHZXcVe7p2YmGV4yVNkHQySk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YfC2K77BgCfSmtV8fbfFim7K+3NV2MODtzHITr4r8xU=;
-        b=Q5cfWRQ9PLEpB9ABWf51x4pvMn7s677S/UQa69PW01bTMs84HEn4z6c+dd1LZ6E0D+
-         /4sOg4TesI2cwGI9wOw7bl9StesMIYQgiZe3eHjJr5yErEwbI0jjUE6Nh4WHxC4POA8r
-         MyFyL5E5G4eRoEppshEDxnQbgHzsoxxitzxT0dDhiHtzJlPEQXYKOKt9LhbLhTkyTxo4
-         8VM8HcIlV29iQXY+QMYuFAs1S9Dk2hoVZqkaN5ZpI5kuKtzRwXBwmrcM2A1lEYmDMmva
-         eR0W5v2JKDrQA7gdYU8e0j4cuRa/eJcnWJ9Xp6KFhQBgXkX54UyfTj1ACZKC/k0m/UQ4
-         NK5g==
-X-Gm-Message-State: ABuFfohrvdpU68Zg8NXVHOCksBp8+ir3F+KuhAcXNs9pGNHT8+paaSGU
-        Ff9TRmCVAGC0dhSFLW1p0VIkyVTud/Xd5A==
-X-Google-Smtp-Source: ACcGV62ybXq6i6dc1CZ7Q4DWkA5Sn09hTPrNVcBk/G3QasZECEjoVAcL7wWRV+ErggpWslUKLQdNhA==
-X-Received: by 2002:a81:a10c:: with SMTP id y12-v6mr15169927ywg.178.1539071946196;
-        Tue, 09 Oct 2018 00:59:06 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id l128-v6sm2703655ywd.35.2018.10.09.00.59.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 00:59:05 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id h1-v6so264119ybm.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:59:05 -0700 (PDT)
-X-Received: by 2002:a25:ac68:: with SMTP id r40-v6mr15375162ybd.285.1539071944661;
- Tue, 09 Oct 2018 00:59:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181004133739.19086-1-mjourdan@baylibre.com>
-In-Reply-To: <20181004133739.19086-1-mjourdan@baylibre.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 9 Oct 2018 16:58:53 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BTD6mwB1O4SVeKfKOho7cMMufuenu5xE0BjCAq1GuTag@mail.gmail.com>
-Message-ID: <CAAFQd5BTD6mwB1O4SVeKfKOho7cMMufuenu5xE0BjCAq1GuTag@mail.gmail.com>
-Subject: Re: [PATCH] media: videodev2: add V4L2_FMT_FLAG_NO_SOURCE_CHANGE
-To:     mjourdan@baylibre.com
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 9 Oct 2018 11:15:25 -0400
+X-IronPort-AV: E=Sophos;i="5.54,359,1534789800"; 
+   d="scan'208";a="240318"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 09 Oct 2018 13:20:32 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9040"; a="1605164"
+Received: from mgottam-linux.qualcomm.com ([10.204.66.66])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 09 Oct 2018 13:20:30 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id 5800B2E3B; Tue,  9 Oct 2018 13:20:29 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org, mgottam@codeaurora.org
+Subject: [PATCH] media: venus: queue initial buffers
+Date:   Tue,  9 Oct 2018 13:20:26 +0530
+Message-Id: <1539071426-1282-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+Buffers can be queued to driver before the planes are
+set to start streaming. Queue those buffers to firmware
+once start streaming is called on both the planes.
 
-On Thu, Oct 4, 2018 at 10:38 PM Maxime Jourdan <mjourdan@baylibre.com> wrote:
->
-> When a v4l2 driver exposes V4L2_EVENT_SOURCE_CHANGE, some (usually
-> OUTPUT) formats may not be able to trigger this event.
->
-> Add a enum_fmt format flag to tag those specific formats.
->
-> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-> ---
->  Documentation/media/uapi/v4l/vidioc-enum-fmt.rst | 5 +++++
->  include/uapi/linux/videodev2.h                   | 5 +++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-> index 019c513df217..e0040b36ac43 100644
-> --- a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-> +++ b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
-> @@ -116,6 +116,11 @@ one until ``EINVAL`` is returned.
->        - This format is not native to the device but emulated through
->         software (usually libv4l2), where possible try to use a native
->         format instead for better performance.
-> +    * - ``V4L2_FMT_FLAG_NO_SOURCE_CHANGE``
-> +      - 0x0004
-> +      - The event ``V4L2_EVENT_SOURCE_CHANGE`` is not supported
-> +       for this format.
-> +
->
->
->  Return Value
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 3a65951ca51e..a28acee1cb52 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -723,8 +723,9 @@ struct v4l2_fmtdesc {
->         __u32               reserved[4];
->  };
->
-> -#define V4L2_FMT_FLAG_COMPRESSED 0x0001
-> -#define V4L2_FMT_FLAG_EMULATED   0x0002
-> +#define V4L2_FMT_FLAG_COMPRESSED       0x0001
-> +#define V4L2_FMT_FLAG_EMULATED         0x0002
-> +#define V4L2_FMT_FLAG_NO_SOURCE_CHANGE 0x0004
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/helpers.c | 22 ++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  1 +
+ drivers/media/platform/qcom/venus/venc.c    |  5 +++++
+ 3 files changed, 28 insertions(+)
 
-I think it indeed makes sense. I'd suggest submitting this patch
-together with the series that adds the affected driver, though, since
-we'd be otherwise just adding a dead API.
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index e436385..2679adb 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -1041,6 +1041,28 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
+ }
+ EXPORT_SYMBOL_GPL(venus_helper_vb2_stop_streaming);
+ 
++int venus_helper_queue_initial_bufs(struct venus_inst *inst)
++{
++	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
++	struct v4l2_m2m_buffer *buf, *n;
++	int ret;
++
++	v4l2_m2m_for_each_dst_buf_safe(m2m_ctx, buf, n)	{
++		ret = session_process_buf(inst, &buf->vb);
++		if (ret)
++			return_buf_error(inst, &buf->vb);
++	}
++
++	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
++		ret = session_process_buf(inst, &buf->vb);
++		if (ret)
++			return_buf_error(inst, &buf->vb);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(venus_helper_queue_initial_bufs);
++
+ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
+ {
+ 	struct venus_core *core = inst->core;
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index 2475f284..f4d76ab 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -31,6 +31,7 @@ void venus_helper_buffers_done(struct venus_inst *inst,
+ int venus_helper_vb2_start_streaming(struct venus_inst *inst);
+ void venus_helper_m2m_device_run(void *priv);
+ void venus_helper_m2m_job_abort(void *priv);
++int venus_helper_queue_initial_bufs(struct venus_inst *inst);
+ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ 			    struct hfi_buffer_requirements *req);
+ u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index ce85962..ef11495 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -989,6 +989,11 @@ static int venc_start_streaming(struct vb2_queue *q, unsigned int count)
+ 	if (ret)
+ 		goto deinit_sess;
+ 
++	ret = venus_helper_queue_initial_bufs(inst);
++	if (ret)
++		goto deinit_sess;
++	}
++
+ 	mutex_unlock(&inst->lock);
+ 
+ 	return 0;
+-- 
+1.9.1
 
-Also, it would be good to refer to it from the Decoder Interface
-documentation. Depending on which one gets in earlier, you might
-either want to base on it or I'd add a note myself.
-
-Best regards,
-Tomasz
