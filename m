@@ -2,79 +2,122 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E04DC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF386C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B60E2075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:21:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B60E2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tomt.net
+	by mail.kernel.org (Postfix) with ESMTP id 8FC6821479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:21:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BDAUQQaX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC6821479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725991AbeJIKgU (ORCPT
+        id S1726468AbeJIKgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 06:36:20 -0400
-Received: from mail1.ugh.no ([178.79.162.34]:38006 "EHLO mail1.ugh.no"
+        Tue, 9 Oct 2018 06:36:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:60363 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeJIKgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 06:36:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail1.ugh.no (Postfix) with ESMTP id 13348249B6B;
-        Tue,  9 Oct 2018 05:21:33 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at catastrophix.ugh.no
-Received: from mail1.ugh.no ([127.0.0.1])
-        by localhost (catastrophix.ugh.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id w54QYZhDNbtz; Tue,  9 Oct 2018 05:21:32 +0200 (CEST)
-Received: from [10.255.99.10] (unknown [185.176.245.143])
+        id S1726057AbeJIKgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 06:36:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: andre@tomt.net)
-        by mail.ugh.no (Postfix) with ESMTPSA id 6F684249B66;
-        Tue,  9 Oct 2018 05:21:32 +0200 (CEST)
-Subject: Re: [PATCH 4.18 000/168] 4.18.13-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20181008175620.043587728@linuxfoundation.org>
-From:   Andre Tomt <andre@tomt.net>
-Message-ID: <966cae81-c3f6-1d38-5721-97dc317a3fde@tomt.net>
-Date:   Tue, 9 Oct 2018 05:21:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by ozlabs.org (Postfix) with ESMTPSA id 42TjFP33KDz9s5c;
+        Tue,  9 Oct 2018 14:21:45 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539055307;
+        bh=ghZkerf5GJTT4ZdCOeTFv05yWoNiLQ5zxDpzYrzIzDQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BDAUQQaXtkPnvI7IyP9srqXQ1NXuzEa0ehFy1GgB9/+Jva+7PEET9/777LHzCIzwk
+         tQ5eR3HobfqjfGS9emUkmIaUCSOGcKsUTNyB+rGvB2eOEnr+zZcI+L3LhZ9U+xexq7
+         PnczUcvkqFp5LnIYJ8jZi2yb8YMgYhujwqbXVyKswaVGFQCrEUI44C40zubhBDr9wJ
+         9oldQbdRM0uHZD3VEeUciFGcV1Qp3rBngwiV1WvPUkDNrPhQAeHImfvh6ekdMadqUw
+         QJmdE2LC1Fz0EQozkxYTS0cqH7ZdLzytpiwmkXgj+Fckt2p19qkPq0w55W1w3o/xgT
+         Sh//aBS4h15Mg==
+Date:   Tue, 9 Oct 2018 14:21:44 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the s290 tree
+Message-ID: <20181009142145.210622b2@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181008175620.043587728@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/D475+htFO5xCC+D8cK=3Qzq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08. okt. 2018 20:29, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.13 release.
-> There are 168 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+--Sig_/D475+htFO5xCC+D8cK=3Qzq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   CC [M]  net/ipv4/netfilter/nf_conntrack_proto_icmp.o
-net/ipv4/netfilter/nf_conntrack_proto_icmp.c:373:3: error: ‘const struct 
-nf_conntrack_l4proto’ has no member named ‘ctnl_timeout’; did you mean 
-‘get_timeouts’?
-   .ctnl_timeout  = {
-    ^~~~~~~~~~~~
-    get_timeouts
+Hi all,
 
-The problematic patch is:> 
-netfilter-conntrack-timeout-interface-depend-on-config_nf_conntrack_timeout.patch
+Today's linux-next merge of the tip tree got a conflict in:
 
-The stuff the commit message talks about seems like it was added in 
-4.19-rc1, so this should not go into stable.
+  arch/s390/Kconfig
 
-Kernel builds fine with this one patch reverted.
+between commit:
+
+  819eafaa7b58 ("s390/kasan: add initialization code and enable it")
+
+from the s290 tree and commit:
+
+  13ddb52c165b ("s390/jump_label: Switch to relative references")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/s390/Kconfig
+index a45583f731f0,12dc4c1af96c..000000000000
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@@ -126,7 -120,7 +126,8 @@@ config S39
+  	select HAVE_ALIGNED_STRUCT_PAGE if SLUB
+  	select HAVE_ARCH_AUDITSYSCALL
+  	select HAVE_ARCH_JUMP_LABEL
++ 	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ +	select HAVE_ARCH_KASAN
+  	select CPU_NO_EFFICIENT_FFS if !HAVE_MARCH_Z9_109_FEATURES
+  	select HAVE_ARCH_SECCOMP_FILTER
+  	select HAVE_ARCH_SOFT_DIRTY
+
+--Sig_/D475+htFO5xCC+D8cK=3Qzq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu8HskACgkQAVBC80lX
+0GxsBwf/VzUgxuA0VxwVpmoNWoRCSLJlKMlrc7w9K4MWhSt8a7t50+ikb8NFhDLY
+f0+KNsl7jbSPut0TBRmB2Tn+SVXxjLr7e5rG3lu/BlY7aVfgOqsdgyqT/tsTjaVy
+ksNpuFn5DIKOkRLjMjcrAL5JxmkwRVPBYzhsnD2eOWEkhUDvJL2ZD65IlUapN2Gj
+Vxq3IlfrzhFYbSoTF2NEXmsbePvKglP6EQ+nDj/t6/S70ERqfgiy3RYlR95fLi7P
+/gbPzT020GAsAi2Y8ZMLm8sBGNVCsrLgswyDiqIeROtysTaySZ7OqmA/1C/mCLfm
+YFaIqTLcsg/9vEQrccF1RlFJs4IqRQ==
+=NkNW
+-----END PGP SIGNATURE-----
+
+--Sig_/D475+htFO5xCC+D8cK=3Qzq--
