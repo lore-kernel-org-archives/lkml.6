@@ -2,161 +2,128 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE252C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A58DC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99091214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:01:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99091214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 20934214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:02:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="riVlM849"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20934214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeJJFUp (ORCPT
+        id S1727668AbeJJFVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 01:20:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11039 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbeJJFUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:20:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 15:01:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,361,1534834800"; 
-   d="scan'208";a="97573402"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.109]) ([10.24.14.109])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Oct 2018 15:01:09 -0700
-Subject: Re: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
- generic names
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005205512.29545-1-babu.moger@amd.com>
- <20181005205512.29545-2-babu.moger@amd.com>
- <2fe2e853-47ef-af2a-6906-9ad7a7b8bba9@intel.com>
- <ddec0530-59d1-fee0-eb67-528b887ca3f5@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <ab692687-6398-cf9a-a027-b9ff4b3ffd5f@intel.com>
-Date:   Tue, 9 Oct 2018 15:01:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 01:21:30 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46317 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeJJFVa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 01:21:30 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a5-v6so1463763pgv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 15:02:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RY/1y0qF+ooxTkI2Ud710WZXEykzGF+8FFJR/0EVVlM=;
+        b=riVlM849tHJ9aNkwmC/STFRvvd28hrwDuvDiPNAPCEdivVNe0cfhMonVUWrTjMiOfh
+         00QMj7knctpBm1knrX8dxRrpR9lwcHWAHVM3h8n6yBQR+hsLn1p8QGGGQ/2sRbnNlh5D
+         wZL/FcnuGpmYMT2tjYESDTeu4KvWEJL+9FGLj5NgeBkgCpTxsfAxeYokOlj+8pabLb1g
+         QygnJyVbYVH+7QUTDsfUM/Tk6GcdwD9x1CP7iKS9v6xgJKUO4To+6jbgqZeFnvClYjQx
+         63idfcSA9oOinBhH/OzbdxePe0FxTSIsr7DiB1Vq2lxU0AuFGiJ4Eq+zSeXkPdQffhYD
+         0m7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RY/1y0qF+ooxTkI2Ud710WZXEykzGF+8FFJR/0EVVlM=;
+        b=qsl222uw7+HwjGksqWUIYQBJX83t5zKMj5LpacgaNqcg0URqFU7QpQeJiEBPo7rBWl
+         QlUJmj6Btw2PEUVHW4gsD2GGdiewW1LaM6rrHJKf7C+8EIc40gIXxG9RWmvvjoP0cfwr
+         WyE1XkP3VGP7iZWM6Oro1oIu3nx1q7QVU78QJat62flqf8fFRDS4dPyrkHngMONvULit
+         LSTIHyH5l07459DX3SErVfpH4fNuU0hnOkU3siXMUNAqduAylBF563cx4i6ILSRKoKW7
+         uM97fAgIKvGbHbE4c8elsh2Gcc2gDlRy0reU+MCO7+Jdv/NT6SK/mumOutdn/1oHC/YX
+         3Fsw==
+X-Gm-Message-State: ABuFfogsO7zS6HX30UY5Np0OG8lSWbZ/orGWT+yxHnD1v6VucN26rhx3
+        eqfgaAxH5iGSA0UEDYNs2PEwHw==
+X-Google-Smtp-Source: ACcGV61TSg9WC+OUJ5wV4aaSEktq8h16+fcjulxiu2BIZ/3Gp5v3c69e7A0kHtA/g8Om++HZdfu70g==
+X-Received: by 2002:a63:b04f:: with SMTP id z15-v6mr25639953pgo.442.1539122548516;
+        Tue, 09 Oct 2018 15:02:28 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm29358232pfj.105.2018.10.09.15.02.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 15:02:27 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 8EF8030002C; Wed, 10 Oct 2018 01:02:22 +0300 (+03)
+Date:   Wed, 10 Oct 2018 01:02:22 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@android.com, minchan@google.com, hughd@google.com,
+        lokeshgidra@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm: Speed up mremap on large regions
+Message-ID: <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
+References: <20181009201400.168705-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-In-Reply-To: <ddec0530-59d1-fee0-eb67-528b887ca3f5@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009201400.168705-1-joel@joelfernandes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
-
-On 10/9/2018 2:17 PM, Moger, Babu wrote:
-> On 10/09/2018 11:39 AM, Reinette Chatre wrote:
->> Hi Babu,
->>
->> On 10/5/2018 1:55 PM, Moger, Babu wrote:
->>> New generation of AMD processors start support RDT(or QOS) features.
->>> With more than one vendors supporting these features, it seems more
->>> appropriate to rename these files.
->>>
->>> Signed-off-by: Babu Moger <babu.moger@amd.com>
->>> ---
->>>  arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h}     | 0
->>>  arch/x86/kernel/cpu/Makefile                                | 6 +++---
->>>  arch/x86/kernel/cpu/{intel_rdt.c => rdt.c}                  | 4 ++--
->>>  arch/x86/kernel/cpu/{intel_rdt.h => rdt.h}                  | 0
->>>  .../cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c}      | 2 +-
->>>  arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c}  | 2 +-
->>>  .../cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c}      | 6 +++---
->>>  ...ntel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} | 2 +-
->>>  .../x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} | 4 ++--
->>>  arch/x86/kernel/process_32.c                                | 2 +-
->>>  arch/x86/kernel/process_64.c                                | 2 +-
->>>  11 files changed, 15 insertions(+), 15 deletions(-)
->>>  rename arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h} (100%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt.c => rdt.c} (99%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt.h => rdt.h} (100%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c} (99%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c} (99%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c} (99%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} (95%)
->>>  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} (99%)
->>
->> During the RFC it was agreed that "resctrl" will be the neutral name and
->> "intel_rdt", "amd_qos", or "arm mpam" would be the vendor specific names.
->>
->> It is ok to delay that renaming but I think any renaming done from this
->> point should respect this agreement.
->>
->> For example, if you want to rename intel_rdt.c then please rename it to
->> resctrl.c instead of just rdt.c which does not represent a generic name
->> as expressed as a goal in the subject of this patch.
+On Tue, Oct 09, 2018 at 01:14:00PM -0700, Joel Fernandes (Google) wrote:
+> Android needs to mremap large regions of memory during memory management
+> related operations. The mremap system call can be really slow if THP is
+> not enabled. The bottleneck is move_page_tables, which is copying each
+> pte at a time, and can be really slow across a large map. Turning on THP
+> may not be a viable option, and is not for us. This patch speeds up the
+> performance for non-THP system by copying at the PMD level when possible.
 > 
-> I knew this was going to bit tricky. I can change all the places where I
-> am touching the code to generic names(change from intel_rdt to "resctrl").
+> The speed up is three orders of magnitude. On a 1GB mremap, the mremap
+> completion times drops from 160-250 millesconds to 380-400 microseconds.
+> 
+> Before:
+> Total mremap time for 1GB data: 242321014 nanoseconds.
+> Total mremap time for 1GB data: 196842467 nanoseconds.
+> Total mremap time for 1GB data: 167051162 nanoseconds.
+> 
+> After:
+> Total mremap time for 1GB data: 385781 nanoseconds.
+> Total mremap time for 1GB data: 388959 nanoseconds.
+> Total mremap time for 1GB data: 402813 nanoseconds.
+> 
+> Incase THP is enabled, the optimization is skipped. I also flush the
+> tlb every time we do this optimization since I couldn't find a way to
+> determine if the low-level PTEs are dirty. It is seen that the cost of
+> doing so is not much compared the improvement, on both x86-64 and arm64.
 
-Yes, "intel_rdt" can be changed to the generic "resctrl" when it is not
-vendor specific.
+Okay. That's interesting.
 
-As far as all the code you touch is concerned it may be easier and cause
-less confusion for now to just follow the current naming conventions as
-you have done in patches 3 onwards and have it be included in the later
-larger restructuring.
+It makes me wounder why do we pass virtual address to pte_alloc() (and
+pte_alloc_one() inside).
 
-> Also lets change the "texts" which are visible to user to make it more
-> generic.
+If an arch has real requirement to tight a page table to a virtual address
+than the optimization cannot be used as it is. Per-arch should be fine
+for this case, I guess.
 
-Could you please elaborate what you mean with "texts" here? Are you
-referring to the pr_info() found in intel_rdt_late_init()? Here it may
-be good to also change to print "RESCTRL %s allocation
-detected"/"RESCTRL %s monitoring detected" - the resource names printed
-are already generic.
+If nobody uses the address we should just drop the argument as a
+preparation to the patch.
 
-> But "rdt" has been used generously in multiple files(like rdt_resource,
-> rdt_domain etc). Changing those definitions and functions will be messier.
-> I will not worry about it now. Thoughts?
+Anyway, I think the optimization requires some groundwork before it can be
+accepted. At least some explanation why it is safe to move page table from
+one spot in virtual address space to another.
 
-I agree. My comments were specific to the first two patches of this
-series that started doing the renaming but not using the agreed upon
-naming - especially since both those patches claim to transition to
-generic names. Could just these two patches be modified to change
-"intel_rdt" to "resctrl" instead of "intel_rdt" to "rdt" as it currently
-does?
-
-Reinette
-
-
+-- 
+ Kirill A. Shutemov
