@@ -2,242 +2,176 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21097ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9974AC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE595214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE595214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 38A33214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:01:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="VkFgSdhq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A33214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeJJAQU (ORCPT
+        id S1726718AbeJJATr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:16:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:54813 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeJJAQU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:16:20 -0400
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MSI6i-1gGTrM3eem-00Sbg7; Tue, 09 Oct 2018 18:57:45 +0200
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MSI6i-1gGTrM3eem-00Sbg7; Tue, 09 Oct 2018 18:57:45 +0200
+        Tue, 9 Oct 2018 20:19:47 -0400
+Received: from mail-ve1eur01on0093.outbound.protection.outlook.com ([104.47.1.93]:7520
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbeJJATr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:19:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oPfJvKGdUPvrnfVPynLX7+X+bxvebVwlWiuBlDdYtX0=;
+ b=VkFgSdhqpMJsnZJ8YIm44iw1zksrQCZKwA2kkRyh7Xmn7hE9RLDWTGEU52J52S0tuHqkDvdOZCu1UFxC7hSOU34ALzH8nWUE0C5cx7BsFIsw9PGI9RkKym6sSfPyuq62k40PRgYK3Dqi9YW3NkRA2RSDVdIFxT6sMo1NoVc4EHA=
+Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com (10.168.95.15) by
+ HE1PR0801MB1402.eurprd08.prod.outlook.com (10.167.248.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Tue, 9 Oct 2018 17:01:47 +0000
+Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com
+ ([fe80::81:90cd:bab6:ed7a]) by HE1PR0801MB2026.eurprd08.prod.outlook.com
+ ([fe80::81:90cd:bab6:ed7a%2]) with mapi id 15.20.1228.020; Tue, 9 Oct 2018
+ 17:01:47 +0000
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     Laurent Vivier <laurent@vivier.eu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Eric Biederman <ebiederm@xmission.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andrei Vagin (C)" <avagin@gmail.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        Jann Horn <jannh@google.com>
 Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-To:     Jann Horn <jannh@google.com>
-Cc:     ktkhai@virtuozzo.com, kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
-        Linux API <linux-api@vger.kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        containers@lists.linux-foundation.org
+Thread-Topic: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
+Thread-Index: AQHUX+s9kF6FVIvT2ECnmBCh+DCRGaUXHxGAgAAEmwA=
+Date:   Tue, 9 Oct 2018 17:01:47 +0000
+Message-ID: <7d9d7846-d153-f328-f5b4-8dc9d9705339@virtuozzo.com>
 References: <20181009103752.21482-1-laurent@vivier.eu>
  <20181009103752.21482-2-laurent@vivier.eu>
  <f14ce318-5a1a-06f3-2e90-91220f39e74b@virtuozzo.com>
  <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
- <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com>
-From:   Laurent Vivier <laurent@vivier.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <795fea1a-97bd-87f5-6a14-6d47a4e42f74@vivier.eu>
-Date:   Tue, 9 Oct 2018 18:57:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
+Accept-Language: ru-RU, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZigYeYJpxcZLFV1LRiTgj6M2wi85ilW5twU2J5i95X7FzPQ+UxK
- Y3u0uHlG5anDaGUVgJiLIlGJciJ4ISzq8Nv5fVbCqh9Jj7u+0bEkTsEzSJ+nkiusXSozL/W
- ChOuiGMakIbmDfAllnCRdczQD63SG4Hqn7GZwmJJMs4s3wEVhA2IjSk0XRQbgN7gEFbSAbF
- S2sbeP2CvPaJfhqQBxM5A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:EX5Zsbm1LFM=:ycoAsIImTKiYQ2lDEpQeaZ
- LC5JkkltoFVZF08g+7+8mdITwCiuJJH15oPPxe+5qDW5/Vj4ua/TQuqOLBmIn8nNriGOvoxNj
- VBKuwzOwq4XUzGu2sQkDB3OgF+j9AhuKfSASa1OKozyt5nRwkxbGQTVCU4Irwvp7OMfrRB4AY
- aszKDgj9kFwYJoTSqBgmj5exJGSx5zp7IkJm2mfOQ/9o9lBm50DoLJfmWLICzjwGbG1Iv9gJV
- 3M6skcQspTHue9IHzn9qqzZIeggttEo+c12gNNkfU94uZgda2bxfEq4oZTXQltUO5TDFlEUCm
- kcjvNY/hDfaciYtTN1C2pL8lRcTZD4snDw85ai7mgcx1etx0+NUpdtjZfBA+rUpzqPiUSCUni
- cc5Jrd3J4g8cPlqyTnmYdKh+GKP69JtVUdH8w/9GW/iMroouPSzdzwozyA4KL83tuGoYC/uUb
- gwH9J6ySAUqecGph5LsUknsvTOQBcVfZJ5xcqOCmK8jIzGmcElIReVHJ9RiOOMsI7We6jqT7B
- 2Kowd9QbRI5dLAJBXeZCLDChV4Z+Aip64+MwwjHr5GEKmoCaTjeE/4XWQVvIjkM9ihsS1L8Bu
- NTbXNK23vI8bOqVQUFaWG5PGu/t2MH1iEpIozQ5ZVq1zLYcMcpgqMJEkWq7eRjT9xIibk6J7T
- f6MDsRlPPOBImQCHtZ6YcszV8x0pM6+/Ut3tSAMPgh/DP+NowIjdUFLBRsKyI/qufIhLfm18Q
- TeHTk+jcZphjTgxG
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0102CA0026.eurprd01.prod.exchangelabs.com
+ (2603:10a6:206::39) To HE1PR0801MB2026.eurprd08.prod.outlook.com
+ (2603:10a6:3:50::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [185.231.240.5]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0801MB1402;20:iIeEIgvCfVDlY6TqxMEPbPUSOHLLYusfw+qgLicdYs1w5WuCL8vGhv9b+km70P9dCWZ7zeprLU2WH8l75waYT/qCHJkPJKlW8XPIF9n8/RbSbpgDXNtmkF2YZOYVCv4Ay4qcrh5bnGJEnA3jBVC5CYQpYy8+VrycP9wXA/bWUzw=
+x-ms-office365-filtering-correlation-id: 6d909f90-c3a1-4080-ecc3-08d62e08e5ad
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1402;
+x-ms-traffictypediagnostic: HE1PR0801MB1402:
+x-ld-processed: 0bc7f26d-0264-416e-a6fc-8352af79c58f,ExtAddr
+x-microsoft-antispam-prvs: <HE1PR0801MB14028CE066C14A4DAEAB17D0CDE70@HE1PR0801MB1402.eurprd08.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051);SRVR:HE1PR0801MB1402;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1402;
+x-forefront-prvs: 08200063E9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(366004)(376002)(346002)(136003)(189003)(199004)(2906002)(5660300001)(6116002)(86362001)(446003)(11346002)(7416002)(6436002)(256004)(110136005)(66066001)(71190400001)(229853002)(93886005)(71200400001)(4326008)(8676002)(39060400002)(99286004)(186003)(53546011)(6506007)(6512007)(26005)(386003)(66574009)(3846002)(305945005)(7736002)(31696002)(76176011)(52116002)(25786009)(97736004)(106356001)(5250100002)(105586002)(53936002)(2616005)(2501003)(476003)(2900100001)(8936002)(6486002)(14444005)(81166006)(81156014)(6246003)(68736007)(54906003)(31686004)(36756003)(316002)(102836004)(14454004)(486006)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1402;H:HE1PR0801MB2026.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 2NPfyGaupzETN2NGSHsnvRcUogTVkgfMjdZX9hhuoUvaCQcOUIgQdq/89mtBGlhvu6Z2R4C2kMuZw2Vpt6LTZF1Rj7bjNdhN3Nru4phc952buD0jQo0Geo77DQpizMm/nkIUkFKaxPLg++LD9Xntjynleng3SbV/xD56LmyeWv/1j7oCnBfdnIewzqRaXhjf6NlZO/6aEzg6TVT4Y1AdCTTgIoL2QDsqgBLvyH5qU+z7BmgFvR+3NaPo/7VIc0A/VmZVUMiuPs5e/WHYReK9uwOhgeR0kanipcB+zMcNWZN8i5nqNKL5FTjBkrU2VpnoLesFzMiLCE1xnl48rtzBTIK0FGMP8FxzCgHhksZGweM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0247F71A93C55847856679BE251300BD@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d909f90-c3a1-4080-ecc3-08d62e08e5ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 17:01:47.1634
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1402
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 09/10/2018 à 18:53, Jann Horn a écrit :
-> On Tue, Oct 9, 2018 at 6:45 PM Laurent Vivier <laurent@vivier.eu> wrote:
->> Le 09/10/2018 à 18:15, Kirill Tkhai a écrit :
->>> On 09.10.2018 13:37, Laurent Vivier wrote:
->>>> This patch allows to have a different binfmt_misc configuration
->>>> for each new user namespace. By default, the binfmt_misc configuration
->>>> is the one of the previous level, but if the binfmt_misc filesystem is
->>>> mounted in the new namespace a new empty binfmt instance is created and
->>>> used in this namespace.
->>>>
->>>> For instance, using "unshare" we can start a chroot of an another
->>>> architecture and configure the binfmt_misc interpreter without being root
->>>> to run the binaries in this chroot.
->>>>
->>>> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
->>>> ---
->>>>  fs/binfmt_misc.c               | 106 ++++++++++++++++++++++++---------
->>>>  include/linux/user_namespace.h |  13 ++++
->>>>  kernel/user.c                  |  13 ++++
->>>>  kernel/user_namespace.c        |   3 +
->>>>  4 files changed, 107 insertions(+), 28 deletions(-)
->>>>
->>>> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
->>>> index aa4a7a23ff99..1e0029d097d9 100644
->>>> --- a/fs/binfmt_misc.c
->>>> +++ b/fs/binfmt_misc.c
->> ...
->>>> @@ -80,18 +74,32 @@ static int entry_count;
->>>>   */
->>>>  #define MAX_REGISTER_LENGTH 1920
->>>>
->>>> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
->>>> +{
->>>> +    struct binfmt_namespace *b_ns;
->>>> +
->>>> +    while (ns) {
->>>> +            b_ns = READ_ONCE(ns->binfmt_ns);
->>>> +            if (b_ns)
->>>> +                    return b_ns;
->>>> +            ns = ns->parent;
->>>> +    }
->>>> +    WARN_ON_ONCE(1);
->>>> +    return NULL;
->>>> +}
->>>> +
->> ...
->>>> @@ -823,12 +847,34 @@ static const struct super_operations s_ops = {
->>>>  static int bm_fill_super(struct super_block *sb, void *data, int silent)
->>>>  {
->>>>      int err;
->>>> +    struct user_namespace *ns = sb->s_user_ns;
->>>>      static const struct tree_descr bm_files[] = {
->>>>              [2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
->>>>              [3] = {"register", &bm_register_operations, S_IWUSR},
->>>>              /* last one */ {""}
->>>>      };
->>>>
->>>> +    /* create a new binfmt namespace
->>>> +     * if we are not in the first user namespace
->>>> +     * but the binfmt namespace is the first one
->>>> +     */
->>>> +    if (READ_ONCE(ns->binfmt_ns) == NULL) {
->>>> +            struct binfmt_namespace *new_ns;
->>>> +
->>>> +            new_ns = kmalloc(sizeof(struct binfmt_namespace),
->>>> +                             GFP_KERNEL);
->>>> +            if (new_ns == NULL)
->>>> +                    return -ENOMEM;
->>>> +            INIT_LIST_HEAD(&new_ns->entries);
->>>> +            new_ns->enabled = 1;
->>>> +            rwlock_init(&new_ns->entries_lock);
->>>> +            new_ns->bm_mnt = NULL;
->>>> +            new_ns->entry_count = 0;
->>>> +            /* ensure new_ns is completely initialized before sharing it */
->>>> +            smp_wmb();
->>>
->>> (I haven't dived into patch logic, here just small barrier remark from quick sight).
->>> smp_wmb() has no sense without paired smp_rmb() on the read side. Possible,
->>> you want something like below in read hunk:
->>>
->>> +             b_ns = READ_ONCE(ns->binfmt_ns);
->>> +             if (b_ns) {
->>> +                     smp_rmb();
->>> +                     return b_ns;
->>> +             }
->>>
->>>
->>
->> The write barrier is here to ensure the structure is fully written
->> before we set the pointer.
->>
->> I don't understand how read barrier can change something at this level,
->> IMHO the couple WRITE_ONCE()/READ_ONCE() should be enough to ensure we
->> have correctly initialized the pointer and the structure when we read
->> the pointer back.
->>
->> I think the pointer itself is the "barrier" to access the memory
->> modified before.
-> 
-> Things don't work that way on alpha, but that's why READ_ONCE()
-> includes an smp_read_barrier_depends():
-> 
-> #define __READ_ONCE(x, check)                                           \
-> ({                                                                      \
->         union { typeof(x) __val; char __c[1]; } __u;                    \
->         if (check)                                                      \
->                 __read_once_size(&(x), __u.__c, sizeof(x));             \
->         else                                                            \
->                 __read_once_size_nocheck(&(x), __u.__c, sizeof(x));     \
->         smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
->         __u.__val;                                                      \
-> })
-> #define READ_ONCE(x) __READ_ONCE(x, 1)
-> 
-
-So my questions are:
-
-- do we need a smp_wmb() barrier if we use READ_ONCE() and WRITE_ONCE()?
-
-- if we need an smp_wmb() barrier, do we need an smp_rmb() barrier as
-the data we want to "protect" are behind an access to the pointer?
-
-Thanks,
-Laurent
+T24gMDkuMTAuMjAxOCAxOTo0NSwgTGF1cmVudCBWaXZpZXIgd3JvdGU6DQo+IExlIDA5LzEwLzIw
+MTggw6AgMTg6MTUsIEtpcmlsbCBUa2hhaSBhIMOpY3JpdMKgOg0KPj4gT24gMDkuMTAuMjAxOCAx
+MzozNywgTGF1cmVudCBWaXZpZXIgd3JvdGU6DQo+Pj4gVGhpcyBwYXRjaCBhbGxvd3MgdG8gaGF2
+ZSBhIGRpZmZlcmVudCBiaW5mbXRfbWlzYyBjb25maWd1cmF0aW9uDQo+Pj4gZm9yIGVhY2ggbmV3
+IHVzZXIgbmFtZXNwYWNlLiBCeSBkZWZhdWx0LCB0aGUgYmluZm10X21pc2MgY29uZmlndXJhdGlv
+bg0KPj4+IGlzIHRoZSBvbmUgb2YgdGhlIHByZXZpb3VzIGxldmVsLCBidXQgaWYgdGhlIGJpbmZt
+dF9taXNjIGZpbGVzeXN0ZW0gaXMNCj4+PiBtb3VudGVkIGluIHRoZSBuZXcgbmFtZXNwYWNlIGEg
+bmV3IGVtcHR5IGJpbmZtdCBpbnN0YW5jZSBpcyBjcmVhdGVkIGFuZA0KPj4+IHVzZWQgaW4gdGhp
+cyBuYW1lc3BhY2UuDQo+Pj4NCj4+PiBGb3IgaW5zdGFuY2UsIHVzaW5nICJ1bnNoYXJlIiB3ZSBj
+YW4gc3RhcnQgYSBjaHJvb3Qgb2YgYW4gYW5vdGhlcg0KPj4+IGFyY2hpdGVjdHVyZSBhbmQgY29u
+ZmlndXJlIHRoZSBiaW5mbXRfbWlzYyBpbnRlcnByZXRlciB3aXRob3V0IGJlaW5nIHJvb3QNCj4+
+PiB0byBydW4gdGhlIGJpbmFyaWVzIGluIHRoaXMgY2hyb290Lg0KPj4+DQo+Pj4gU2lnbmVkLW9m
+Zi1ieTogTGF1cmVudCBWaXZpZXIgPGxhdXJlbnRAdml2aWVyLmV1Pg0KPj4+IC0tLQ0KPj4+ICBm
+cy9iaW5mbXRfbWlzYy5jICAgICAgICAgICAgICAgfCAxMDYgKysrKysrKysrKysrKysrKysrKysr
+KysrLS0tLS0tLS0tDQo+Pj4gIGluY2x1ZGUvbGludXgvdXNlcl9uYW1lc3BhY2UuaCB8ICAxMyAr
+KysrDQo+Pj4gIGtlcm5lbC91c2VyLmMgICAgICAgICAgICAgICAgICB8ICAxMyArKysrDQo+Pj4g
+IGtlcm5lbC91c2VyX25hbWVzcGFjZS5jICAgICAgICB8ICAgMyArDQo+Pj4gIDQgZmlsZXMgY2hh
+bmdlZCwgMTA3IGluc2VydGlvbnMoKyksIDI4IGRlbGV0aW9ucygtKQ0KPj4+DQo+Pj4gZGlmZiAt
+LWdpdCBhL2ZzL2JpbmZtdF9taXNjLmMgYi9mcy9iaW5mbXRfbWlzYy5jDQo+Pj4gaW5kZXggYWE0
+YTdhMjNmZjk5Li4xZTAwMjlkMDk3ZDkgMTAwNjQ0DQo+Pj4gLS0tIGEvZnMvYmluZm10X21pc2Mu
+Yw0KPj4+ICsrKyBiL2ZzL2JpbmZtdF9taXNjLmMNCj4gLi4uDQo+Pj4gQEAgLTgwLDE4ICs3NCwz
+MiBAQCBzdGF0aWMgaW50IGVudHJ5X2NvdW50Ow0KPj4+ICAgKi8NCj4+PiAgI2RlZmluZSBNQVhf
+UkVHSVNURVJfTEVOR1RIIDE5MjANCj4+PiAgDQo+Pj4gK3N0YXRpYyBzdHJ1Y3QgYmluZm10X25h
+bWVzcGFjZSAqYmluZm10X25zKHN0cnVjdCB1c2VyX25hbWVzcGFjZSAqbnMpDQo+Pj4gK3sNCj4+
+PiArCXN0cnVjdCBiaW5mbXRfbmFtZXNwYWNlICpiX25zOw0KPj4+ICsNCj4+PiArCXdoaWxlIChu
+cykgew0KPj4+ICsJCWJfbnMgPSBSRUFEX09OQ0UobnMtPmJpbmZtdF9ucyk7DQo+Pj4gKwkJaWYg
+KGJfbnMpDQo+Pj4gKwkJCXJldHVybiBiX25zOw0KPj4+ICsJCW5zID0gbnMtPnBhcmVudDsNCj4+
+PiArCX0NCj4+PiArCVdBUk5fT05fT05DRSgxKTsNCj4+PiArCXJldHVybiBOVUxMOw0KPj4+ICt9
+DQo+Pj4gKw0KPiAuLi4NCj4+PiBAQCAtODIzLDEyICs4NDcsMzQgQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBzdXBlcl9vcGVyYXRpb25zIHNfb3BzID0gew0KPj4+ICBzdGF0aWMgaW50IGJtX2ZpbGxf
+c3VwZXIoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdm9pZCAqZGF0YSwgaW50IHNpbGVudCkNCj4+
+PiAgew0KPj4+ICAJaW50IGVycjsNCj4+PiArCXN0cnVjdCB1c2VyX25hbWVzcGFjZSAqbnMgPSBz
+Yi0+c191c2VyX25zOw0KPj4+ICAJc3RhdGljIGNvbnN0IHN0cnVjdCB0cmVlX2Rlc2NyIGJtX2Zp
+bGVzW10gPSB7DQo+Pj4gIAkJWzJdID0geyJzdGF0dXMiLCAmYm1fc3RhdHVzX29wZXJhdGlvbnMs
+IFNfSVdVU1J8U19JUlVHT30sDQo+Pj4gIAkJWzNdID0geyJyZWdpc3RlciIsICZibV9yZWdpc3Rl
+cl9vcGVyYXRpb25zLCBTX0lXVVNSfSwNCj4+PiAgCQkvKiBsYXN0IG9uZSAqLyB7IiJ9DQo+Pj4g
+IAl9Ow0KPj4+ICANCj4+PiArCS8qIGNyZWF0ZSBhIG5ldyBiaW5mbXQgbmFtZXNwYWNlDQo+Pj4g
+KwkgKiBpZiB3ZSBhcmUgbm90IGluIHRoZSBmaXJzdCB1c2VyIG5hbWVzcGFjZQ0KPj4+ICsJICog
+YnV0IHRoZSBiaW5mbXQgbmFtZXNwYWNlIGlzIHRoZSBmaXJzdCBvbmUNCj4+PiArCSAqLw0KPj4+
+ICsJaWYgKFJFQURfT05DRShucy0+YmluZm10X25zKSA9PSBOVUxMKSB7DQo+Pj4gKwkJc3RydWN0
+IGJpbmZtdF9uYW1lc3BhY2UgKm5ld19uczsNCj4+PiArDQo+Pj4gKwkJbmV3X25zID0ga21hbGxv
+YyhzaXplb2Yoc3RydWN0IGJpbmZtdF9uYW1lc3BhY2UpLA0KPj4+ICsJCQkJIEdGUF9LRVJORUwp
+Ow0KPj4+ICsJCWlmIChuZXdfbnMgPT0gTlVMTCkNCj4+PiArCQkJcmV0dXJuIC1FTk9NRU07DQo+
+Pj4gKwkJSU5JVF9MSVNUX0hFQUQoJm5ld19ucy0+ZW50cmllcyk7DQo+Pj4gKwkJbmV3X25zLT5l
+bmFibGVkID0gMTsNCj4+PiArCQlyd2xvY2tfaW5pdCgmbmV3X25zLT5lbnRyaWVzX2xvY2spOw0K
+Pj4+ICsJCW5ld19ucy0+Ym1fbW50ID0gTlVMTDsNCj4+PiArCQluZXdfbnMtPmVudHJ5X2NvdW50
+ID0gMDsNCj4+PiArCQkvKiBlbnN1cmUgbmV3X25zIGlzIGNvbXBsZXRlbHkgaW5pdGlhbGl6ZWQg
+YmVmb3JlIHNoYXJpbmcgaXQgKi8NCj4+PiArCQlzbXBfd21iKCk7DQo+Pg0KPj4gKEkgaGF2ZW4n
+dCBkaXZlZCBpbnRvIHBhdGNoIGxvZ2ljLCBoZXJlIGp1c3Qgc21hbGwgYmFycmllciByZW1hcmsg
+ZnJvbSBxdWljayBzaWdodCkuDQo+PiBzbXBfd21iKCkgaGFzIG5vIHNlbnNlIHdpdGhvdXQgcGFp
+cmVkIHNtcF9ybWIoKSBvbiB0aGUgcmVhZCBzaWRlLiBQb3NzaWJsZSwNCj4+IHlvdSB3YW50IHNv
+bWV0aGluZyBsaWtlIGJlbG93IGluIHJlYWQgaHVuazoNCj4+DQo+PiArCQliX25zID0gUkVBRF9P
+TkNFKG5zLT5iaW5mbXRfbnMpOw0KPj4gKwkJaWYgKGJfbnMpIHsNCj4+ICsJCQlzbXBfcm1iKCk7
+DQo+PiArCQkJcmV0dXJuIGJfbnM7DQo+PiArCQl9DQo+Pg0KPj4NCj4gDQo+IFRoZSB3cml0ZSBi
+YXJyaWVyIGlzIGhlcmUgdG8gZW5zdXJlIHRoZSBzdHJ1Y3R1cmUgaXMgZnVsbHkgd3JpdHRlbg0K
+PiBiZWZvcmUgd2Ugc2V0IHRoZSBwb2ludGVyLg0KPiANCj4gSSBkb24ndCB1bmRlcnN0YW5kIGhv
+dyByZWFkIGJhcnJpZXIgY2FuIGNoYW5nZSBzb21ldGhpbmcgYXQgdGhpcyBsZXZlbCwNCj4gSU1I
+TyB0aGUgY291cGxlIFdSSVRFX09OQ0UoKS9SRUFEX09OQ0UoKSBzaG91bGQgYmUgZW5vdWdoIHRv
+IGVuc3VyZSB3ZQ0KPiBoYXZlIGNvcnJlY3RseSBpbml0aWFsaXplZCB0aGUgcG9pbnRlciBhbmQg
+dGhlIHN0cnVjdHVyZSB3aGVuIHdlIHJlYWQNCj4gdGhlIHBvaW50ZXIgYmFjay4NCj4gDQo+IEkg
+dGhpbmsgdGhlIHBvaW50ZXIgaXRzZWxmIGlzIHRoZSAiYmFycmllciIgdG8gYWNjZXNzIHRoZSBt
+ZW1vcnkNCj4gbW9kaWZpZWQgYmVmb3JlLg0KDQpzbXBfcm1iKCkgZ3VhcmFudGVlcyB5b3Ugc2Vl
+IHN0b3JlcyBpbiB0aGUgb3JkZXIgeW91IHdhbnQuIElmIHlvdSBoYXZlOg0KDQpbY3B1MF0JCQkJ
+CVtjcHUxXQ0KbmV3X25zLT5lbnRyeV9jb3VudCA9IDA7IA0Kc21wX3dtYigpOw0KV1JJVEVfT05D
+RShucy0+YmluZm10X25zLCBuZXdfbnMpOyAJYl9ucyA9IFJFQURfT05DRShucy0+YmluZm10X25z
+KTsNCgkJCQkJc21wX3JtYigpOw0KCQkJCQk8YWNjZXNzIGJfbnMtPmVudHJ5X2NvdW50Pg0KDQpz
+bXBfcm1iKCkgZ3VhcmFudGVlcyB5b3Ugc2VlIHRydWUgZW50cnlfY291bnQgb24gdGhlIGNwdTEu
+IFdpdGhvdXQNCnNtcF9ybWIoKSB5b3UgbWF5IHNlZSBvbGQgdmFsdWUgb2YgbmV3X25zLT5lbnRy
+eV9jb3VudC4NCgkJCQkJDQpTZWUgRG9jdW1lbnRhdGlvbi9tZW1vcnktYmFycmllcnMudHh0DQo=
