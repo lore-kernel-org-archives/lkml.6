@@ -2,104 +2,130 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEF7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A06C43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 269002075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269002075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id BD79B2075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gvYCCzwX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD79B2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbeJJHH6 (ORCPT
+        id S1726600AbeJJHIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:07:58 -0400
-Received: from sauhun.de ([88.99.104.3]:53722 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbeJJHH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:07:58 -0400
-Received: from localhost (p54B336A7.dip0.t-ipconnect.de [84.179.54.167])
-        by pokefinder.org (Postfix) with ESMTPSA id 0E9CE2C310A;
-        Wed, 10 Oct 2018 01:48:35 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 01:48:30 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mmc: tmio: move MFD variant reset to a platform
- hook
-Message-ID: <20181009234830.v7yzhnrtqcfwmm45@katana>
-References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
- <1538566587-29452-2-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 10 Oct 2018 03:08:09 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45590 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbeJJHIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 03:08:09 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v18-v6so3266450edq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 16:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VEAxdQUbLebE70D4n/NrlUOCPelNYX3qIfEFFRgPQ8E=;
+        b=gvYCCzwXVUfdHVH4/UmtkTA6vKHSmf+yrPTD0ZsLB8WIv1DW3Mxu3jBJtJ0TyjRaaV
+         l25RffQJmK9k24ISW8T3poaAoAdz/7C8bEziFgT/arO10M34H3btVtFK8cYUyozgSx2a
+         FyS/aDeLZp/xeHHLCtRRaBOrD5BlZ8meNZ2/o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VEAxdQUbLebE70D4n/NrlUOCPelNYX3qIfEFFRgPQ8E=;
+        b=AIYiA5kZiU87v2/3eJgw3MHan1xdWKGlvNZkOVCQ71QmruZbQyMAq6s5BnhQQZUAbR
+         Vrm9/DgAKkikobUBiM+Bf9jbXuoLARIfh0nrgLSsSvmtm8v6VlYCqqwbyLf7ofC7Y189
+         vsmgOKMyBtigVlQ+L3WVTch6lWO2ac8Q2cAl1+D5OIjth8STBxwuyvbKNHf3bwsLkyf3
+         0ejxW6DKgodGPiuY8qco9ucpmR7vWk4g2aswA7ZTAGDmsYnxKg6FgbA6ZSqmIPOLGGXX
+         eBoq46gdNR0nvgbz8SCyQFkh3vNphViqyLoeUPWqdAxRYdGhKgCPYEvquMjwzYt28N6d
+         S54Q==
+X-Gm-Message-State: ABuFfoiMu5OfYoghsDRWWNlxpLzfRObAmX0PZHsZOajWgMYrdsvkICla
+        s6p3k3NLfSNHKhx76Ira9MXDSIPkuE0=
+X-Google-Smtp-Source: ACcGV603h/TjNjW6ySVJmjXenIuONfQOv96eoJbxQAfeobJHsnkxGhLdJx6Rua/AW8miyZspkSkNMg==
+X-Received: by 2002:a17:906:c51a:: with SMTP id bf26-v6mr30297063ejb.142.1539128925020;
+        Tue, 09 Oct 2018 16:48:45 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id i19-v6sm3865556ejv.73.2018.10.09.16.48.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 16:48:43 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id c1-v6so3289195ede.5
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 16:48:43 -0700 (PDT)
+X-Received: by 2002:a50:cb03:: with SMTP id g3-v6mr37161949edi.287.1539128923126;
+ Tue, 09 Oct 2018 16:48:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oknejck5xq3nafxl"
-Content-Disposition: inline
-In-Reply-To: <1538566587-29452-2-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181009222527.74260-1-briannorris@chromium.org> <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
+In-Reply-To: <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 9 Oct 2018 16:48:31 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXP5iBWgX1K3=QHke4ZoqO72hLk6Q09=cP3X-esrTOhk+w@mail.gmail.com>
+Message-ID: <CA+ASDXP5iBWgX1K3=QHke4ZoqO72hLk6Q09=cP3X-esrTOhk+w@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, sibis@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 9, 2018 at 4:34 PM Doug Anderson <dianders@chromium.org> wrote:
+> On Tue, Oct 9, 2018 at 3:33 PM Brian Norris <briannorris@chromium.org> wrote:
+> > +       if (q6v5->wdog_irq < 0) {
+> > +               if (q6v5->wdog_irq != -EPROBE_DEFER)
+> > +                       dev_err(&pdev->dev,
+> > +                               "failed to retrieve wdog IRQ: %d\n",
+> > +                               q6v5->wdog_irq);
+> > +               return q6v5->wdog_irq;
+> > +       }
+>
+> optional: Since there's the same pattern 5 times here, I wonder if we
+> should abstract it out to a helper function that would print the
+> error?
 
---oknejck5xq3nafxl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'll leave that up to Bjorn. I don't personally care to do this, but I
+also acknowledge that there are a bunch of drivers that do this wrong.
 
+> ...in the ideal case it would be somewhere that all Linux drivers
+> could use since this is a super common pattern, but that might be a
+> bit too much yak shaving...
 
-> +static void tmio_mmc_reset(struct tmio_mmc_host *host)
-> +{
-> +	/* FIXME - should we set stop clock reg here */
-> +	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
-> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
-> +	usleep_range(10000, 11000);
-> +	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
-> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
-> +	usleep_range(10000, 11000);
-> +
-> +	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
-> +		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
-> +		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-> +	}
-> +}
+Yeah, I'll pass on shaving that yak.
 
-Yes, looks much safer now.
+> > @@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+> >         disable_irq(q6v5->handover_irq);
+> >
+> >         q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
+> > -       if (q6v5->stop_irq == -EPROBE_DEFER)
+> > -               return -EPROBE_DEFER;
+> > +       if (q6v5->stop_irq < 0) {
+> > +               if (q6v5->stop_irq != -EPROBE_DEFER)
+> > +                       dev_err(&pdev->dev,
+> > +                               "failed to retrieve stop IRQ: %d\n",
+> > +                               q6v5->stop_irq);
+> > +               return q6v5->stop_irq;
+>
+> Nitty nit that it's the "stop-ack" IRQ, not the "stop" IRQ.  The error
+> message below this one calls it stop-ack too so it would be ideal to
+> keep it consistent between the two error messages.
 
-> +	host->reset = tmio_mmc_reset;
+Ack. I thought I double checked on comparing the error messages.
 
-So, you populate the new pointer here...
+Bjorn already has this on his radar, so I'll let him decide if he
+wants other changes, or if he wants to make his own transformations
+before applying it.
 
-> +	if (!_host->reset)
-> +		_host->reset = tmio_mmc_reset;
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-... and here. But it seems never used anywhere? Or am I missing
-something?
-
-
---oknejck5xq3nafxl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu9PkkACgkQFA3kzBSg
-KbZnuA/+I2qZqk1fuGlq0wqo0xDfpv+d77LyeWBXWDsVa8I8YCjA0qK1Z0Bm7POJ
-L9W+Pv+zvxE1AcEScUagPXLBW6fEK27NrjzKhGO15udXaQEOPVJ9wFNfHcrbKJVy
-WnebEAfESUXoLbQ7CLyyNzoQUsilScErUHFtgLltN95MVYkTpd/8YlVeB+GWl6xj
-MvD+MYtRw0xj+PAmanjtl2dn+oNUE6Tdg4A8VA33+qE8ujXtayOjHw5lmWXYnOav
-bKe5dOMVKNw1Gc7QO0wFWYF6/0b+TYNTvE2WdsbUZx79RcNjL1DYiRRMadLATn2P
-zPDnNiqnZzJsANYugn8ubvtv8XrT/degeXW4eiX6auNy0y8A1FTpD/mtLCQA5SZE
-XemCYB32Pi/uFLUALD79lgP20lQqZvyWrxZd1r02dfhULO9DZ5GEDUlyglvxNWI2
-5xsm5XqIR2MVqmWqwH0FwDOOoRVwYc3uH6Y65trJYMioIWEPP0h4qdfA+n+1aHTJ
-KYJn2aESqgTDBmwW7X+KdtRjw1aNLVU5GnOE9Sacd5pjY9DlX0Ye4RIwyBSRDmkW
-RM7j6sBEEn51sSmPP+J7qFLgM29aSjRsp4AVpCPHkGz0ATv3y55yG+kN7JKnVVjm
-XxaludJs1Rma5SticTpNJPd6GYDfsubj6vU9NYYijX9lGS2mVnU=
-=5rVW
------END PGP SIGNATURE-----
-
---oknejck5xq3nafxl--
+Thanks,
+Brian
