@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBD2C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 19:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18C0C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 19:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B799D214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 19:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B799D214C4
+	by mail.kernel.org (Postfix) with ESMTP id 6A49C214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 19:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A49C214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeJJC5b (ORCPT
+        id S1727773AbeJJC6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 22:57:31 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:40471 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726608AbeJJC5a (ORCPT
+        Tue, 9 Oct 2018 22:58:50 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.133]:46203 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726935AbeJJC6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:57:30 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 29FD0301B6
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 14:38:59 -0500 (CDT)
+        Tue, 9 Oct 2018 22:58:49 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id D8DDE400D25EC
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 14:40:18 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 9xq2gVsFLBcCX9xqEgojYe; Tue, 09 Oct 2018 14:38:58 -0500
+        id 9xrIgmUnM8YaU9xrVgEF7a; Tue, 09 Oct 2018 14:40:18 -0500
 X-Authority-Reason: nr=8
-Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:39204 helo=embeddedor)
+Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:39214 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1g9xq0-001vWP-Dv; Tue, 09 Oct 2018 14:38:36 -0500
-Date:   Tue, 9 Oct 2018 21:38:33 +0200
+        id 1g9xrH-001wGd-9V; Tue, 09 Oct 2018 14:39:55 -0500
+Date:   Tue, 9 Oct 2018 21:39:53 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andrew Lunn <andrew@lunn.ch>,
@@ -42,9 +42,9 @@ Cc:     Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>,
         Quentin Schulz <quentin.schulz@bootlin.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next 1/2] net: phy: mscc: fix signedness bug in
- vsc85xx_downshift_get
-Message-ID: <84a75d5e5f7717108feeda49b69b57ecbf361b9c.1539113472.git.gustavo@embeddedor.com>
+Subject: [PATCH net-next 2/2] net: phy: mscc: fix memory leak in
+ vsc8574_config_pre_init
+Message-ID: <a7a293b1566cb37ecc873d9b186d87656d3766dc.1539113472.git.gustavo@embeddedor.com>
 References: <cover.1539113472.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +59,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 109.24.154.57
 X-Source-L: No
-X-Exim-ID: 1g9xq0-001vWP-Dv
+X-Exim-ID: 1g9xrH-001wGd-9V
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: 57.154.24.109.rev.sfr.net (embeddedor) [109.24.154.57]:39204
+X-Source-Sender: 57.154.24.109.rev.sfr.net (embeddedor) [109.24.154.57]:39214
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
+X-Email-Count: 20
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,33 +73,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the error handling for the call to function
-phy_read_paged() doesn't work because *reg_val* is of
-type u16 (16 bits, unsigned), which makes it impossible
-for it to hold a value less than 0.
+In case memory resources for *fw* were successfully allocated,
+release them before return.
 
-Fix this by changing the type of variable *reg_val* to int.
-
-Addresses-Coverity-ID: 1473970 ("Unsigned compared against 0")
-Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
+Addresses-Coverity-ID: 1473968 ("Resource leak")
+Fixes: 00d70d8e0e78 ("net: phy: mscc: add support for VSC8574 PHY")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/phy/mscc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/mscc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index bffe077..bff56c3 100644
+index bff56c3..af9fb2d 100644
 --- a/drivers/net/phy/mscc.c
 +++ b/drivers/net/phy/mscc.c
-@@ -522,7 +522,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
+@@ -1292,7 +1292,7 @@ static int vsc8574_config_pre_init(struct phy_device *phydev)
+ 				dev_err(dev,
+ 					"%s: failed to assert reset of micro\n",
+ 					__func__);
+-				return ret;
++				goto release_fw;
+ 			}
+ 		}
+ 	} else {
+@@ -1338,7 +1338,7 @@ static int vsc8574_config_pre_init(struct phy_device *phydev)
  
- static int vsc85xx_downshift_get(struct phy_device *phydev, u8 *count)
- {
--	u16 reg_val;
-+	int reg_val;
+ out:
+ 	phy_base_write(phydev, MSCC_EXT_PAGE_ACCESS, MSCC_PHY_PAGE_STANDARD);
+-
++release_fw:
+ 	release_firmware(fw);
  
- 	reg_val = phy_read_paged(phydev, MSCC_PHY_PAGE_EXTENDED,
- 				 MSCC_PHY_ACTIPHY_CNTL);
+ 	return ret;
 -- 
 2.7.4
 
