@@ -3,148 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB119C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CD3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA2B214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA2B214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 22999213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:14:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22999213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJIW2c (ORCPT
+        id S1726663AbeJIWbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:28:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:40142 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIW2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:28:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3E2280D;
-        Tue,  9 Oct 2018 08:11:08 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC0723F5D3;
-        Tue,  9 Oct 2018 08:11:06 -0700 (PDT)
-Subject: Re: [PATCH V11 1/8] irqchip: add C-SKY SMP interrupt controller
-To:     Guo Ren <ren_guo@c-sky.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1539095311.git.ren_guo@c-sky.com>
- <83d216b3fed039037ebe8b8513f3c51a36934e74.1539095312.git.ren_guo@c-sky.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8772c090-a139-04e4-a55f-820afe1bb5bd@arm.com>
-Date:   Tue, 9 Oct 2018 16:11:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 18:31:37 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37525 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJIWbe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:31:34 -0400
+Received: by mail-vk1-f194.google.com with SMTP id y128-v6so467994vky.4;
+        Tue, 09 Oct 2018 08:14:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vAGqBbSA1RSQkPwWyc/kNxdcUaFy54e8ph6hVOVfms4=;
+        b=kShC3KzTapKqacPHL++G5IROp/T5BXZJrUX3asi3MsyctH+5sGHP/Wlkj715AFRwbA
+         8tiX0zc5ntPr3taE8tZJADkCV1Ce2QaGIIzy/u0zasnRrU6VeM3LTdtiURFcNNTpil91
+         ua+mg9KC/r+CiPhZctJTfUMdoyKdZrJWK6s9uu5XJzkUT18ZK/3ASU3379bRGf5qEbMV
+         bENQiWTk88sVx8NEmWFZXX24VSj8go/taBRF3lOXe5KIfDW3d/O5KXGuoFI6AzIQux1R
+         mhGjhTnPHuaTlHWxI0GekgMc2YFRjs7Ku3cHzOOXObWAah6zwBKtjGsbDTK8W4NaRIKc
+         ZOpA==
+X-Gm-Message-State: ABuFfohS8+I3RIpI/IUGBuT2cO5Aoe/bKyykDM6zCf1gdvJkNsrQ1LjA
+        qf2owDarfH87I1GU4NEf3+gTka1LtSJY1IoF403aLw==
+X-Google-Smtp-Source: ACcGV62PaTnruQZsal+60+njskNgOXLchqbSfBlVbYThVVjfFKpN9VJfPfbMU75dGkva7KfCQvpInc5sn8Fywso5RCc=
+X-Received: by 2002:a1f:b547:: with SMTP id e68-v6mr10837096vkf.72.1539098049724;
+ Tue, 09 Oct 2018 08:14:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <83d216b3fed039037ebe8b8513f3c51a36934e74.1539095312.git.ren_guo@c-sky.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <cover.1539092111.git.christophe.leroy@c-s.fr> <0d489a2c917d6e8528fad099023eac3d5a516787.1539092111.git.christophe.leroy@c-s.fr>
+ <1539097191.64374.44.camel@acm.org>
+In-Reply-To: <1539097191.64374.44.camel@acm.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 9 Oct 2018 17:13:57 +0200
+Message-ID: <CAMuHMdVpS2wzUniDdXKSWyyTr3Cn9NsXAxOJEKe=D9BUrpdt=w@mail.gmail.com>
+Subject: Re: [PATCH v3 03/24] drivers/block/z2ram: use ioremap_wt() instead of __ioremap(_PAGE_WRITETHRU)
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Scott Wood <oss@buserror.net>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-block@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Debian m68k <debian-68k@lists.debian.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/18 15:41, Guo Ren wrote:
->   - Irq-csky-mpintc is C-SKY smp system interrupt controller and it
->     could support 16 soft irqs, 16 private irqs, and 992 max common
->     irqs.
-> 
-> Changelog:
->   - Convert the cpumask to an interrupt-controller specific representation
->     in driver's code, and not the SMP code's.
->   - pass checkpatch.pl
->   - Move IPI_IRQ into the driver
->   - Remove irq_set_default_host() and use set_ipi_irq_mapping()
->   - Change name with upstream feed-back
->   - Change irq map, reserve soft_irq & private_irq space
->   - Add License and Copyright
->   - Support set_affinity for irq balance in SMP
-> 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
+Hi Bart,
 
-[...]
+CC debian-68k, linux-m68k
 
-> +/* C-SKY multi processor interrupt controller */
-> +static int __init
-> +csky_mpintc_init(struct device_node *node, struct device_node *parent)
-> +{
-> +	unsigned int cpu, nr_irq;
-> +	int ret;
-> +
-> +	if (parent)
-> +		return 0;
-> +
-> +	ret = of_property_read_u32(node, "csky,num-irqs", &nr_irq);
-> +	if (ret < 0)
-> +		nr_irq = INTC_IRQS;
-> +
-> +	if (INTCG_base == NULL) {
-> +		INTCG_base = ioremap(mfcr("cr<31, 14>"),
-> +				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
-> +		if (INTCG_base == NULL)
-> +			return -EIO;
-> +
-> +		INTCL_base = INTCG_base + INTCG_SIZE;
-> +
-> +		writel_relaxed(BIT(0), INTCG_base + INTCG_ICTLR);
-> +	}
-> +
-> +	root_domain = irq_domain_add_linear(node, nr_irq, &csky_irqdomain_ops,
-> +					    NULL);
-> +	if (!root_domain)
-> +		return -ENXIO;
-> +
-> +	/* for every cpu */
-> +	for_each_present_cpu(cpu) {
-> +		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
-> +		writel_relaxed(BIT(0), per_cpu(intcl_reg, cpu) + INTCL_PICTLR);
-> +	}
-> +
-> +	set_handle_irq(&csky_mpintc_handler);
-> +
-> +#ifdef CONFIG_SMP
-> +	set_send_ipi(&csky_mpintc_send_ipi);
-> +
-> +	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
+On Tue, Oct 9, 2018 at 5:00 PM Bart Van Assche <bvanassche@acm.org> wrote:
+> On Tue, 2018-10-09 at 13:51 +0000, Christophe Leroy wrote:
+> > _PAGE_WRITETHRU is a target specific flag. Prefer generic functions.
+> >
+> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>
+> Hi Geert,
+>
+> All patches that have been applied to this driver since 2005 are API refactoring
+> patches. I haven't found any patches in the history of this driver that seem to
+> have been submitted by a user of this driver. Do you perhaps know whether anyone
+> is using this driver?
 
-Same remark as before.
+The z2ram is a very simple driver, used to configure (slower) Zorro II RAM as
+a swap device.  So I'm not so surprised no one submitted functional patches.
 
-You do not need this second callback, and you should redefine 
-set_send_ipi to take an irq number:
+I believe it's still being used.
+Probably it could be modified to use mtdram.
 
-	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
-	if (!ipi_irq)
-		[handle error]
+Gr{oetje,eeting}s,
 
-	set_send_ipi(csky_mpintc_send_ipi, ipi_irq);
+                        Geert
 
-and you can then delete both set_ipi_irq_mapping and 
-csky_mpintc_handler, none of which serve any purpose.
-
-In your SMP code:
-
-void __init set_send_ipi(void (*func)(const struct cpumask *), int irq)
-{
-	if (send_arch_ipi)
-		return;
-
-	send_arch_ipi = func;
-	ipi_irq = irq;
-}
-
-and simplify setup_smp_ipi.
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
