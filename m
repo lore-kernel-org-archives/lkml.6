@@ -2,182 +2,127 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD3CECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A466ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D69214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0518021479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zEN+/pyF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D69214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ESEItExX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0518021479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeJJBOo (ORCPT
+        id S1727317AbeJJBPA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:14:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbeJJBOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:14:44 -0400
-Received: from localhost (57.sub-174-234-155.myvzw.com [174.234.155.57])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED08621479;
-        Tue,  9 Oct 2018 17:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539107794;
-        bh=90nU/dnPcTYtM11JVXcysOMtZmjw+kKDpdmQsgFloLo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zEN+/pyFSoxR+XWEBnG/Zm6Bj6C1JH0Q6uRocurvqpvSbTtsB+LsOvFuyiUM0XVTX
-         3FcG/naAqzC0HQluTP7cLKuk9xLysn5gbo/GH+DNOG2z4o6mHtw1/0SmRffc+cmhwo
-         VlsV7+sBHM1x4dqcQ+9rYF/e/iGAQWV5tMXDvPvY=
-Date:   Tue, 9 Oct 2018 12:56:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] PCI/portdrv: Enable error reporting on managed ports
-Message-ID: <20181009175632.GB5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 9 Oct 2018 21:15:00 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:52813 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeJJBPA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 21:15:00 -0400
+Received: by mail-pg1-f201.google.com with SMTP id m4-v6so1801744pgq.19
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=jbUkitrzTYv5uI0nmsoLFGoQCfVIXTsBFswqlAMPmk0=;
+        b=ESEItExX3CYE111LZz+1iU/IWNHsqdmbLRpgT59ZElvM+HBtdz0C66QHzoEDJmeUkR
+         NMlTvQoF8/hp3t7IyONCZnGeQBUNO5t9ByEJyOfPKCqMoff39icpluiEFMERrBf17l+x
+         Ks1FovuVxGnV7nZy1gjd9H50YXxYKNBFtPXPvXXI1aRQWLTcyoLG6TH4+ALATVWtMhWw
+         rv4kMmWCNAHo+h6Hul7g/oPXtmA7pV8BBvuChJHVa2bsSNR4KmRVa7fyFA54TcVkhvQn
+         x+gpzAhTycrlLQRrDhwXLzCVVQm7z+pad+b045T3yxnM3UFdmBeKLo8CQtepPjretkIj
+         kKgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=jbUkitrzTYv5uI0nmsoLFGoQCfVIXTsBFswqlAMPmk0=;
+        b=b7Ox5dBVr7AmBW37RZULrUWCJinoEtCaGY8AVbIeW0UqkOQCcBrBNbMw0Ma1bt/a/l
+         Ir66rtRa2wxIO/BMhe6NZsP1PWt3wL8z53OhXEI/BUY1V6gChYllzpB7v/HiMHyDEk4M
+         9vlM2oaTLtIe0a/Z/cmW8Oe+WiA/SHVNdS92N6cYzk/iwYNiNjodZukSidJ2gxDWVsru
+         vIotgXMkGMbctSEKm0svisYEgMEc3scNnX9l+zXL3K0652SC+wCOWxDyxn3xBwZf7lF1
+         SgRGtgRzMQ6p02OsW50NmumGj/U0FDbnvDhZWdJwWAs6ptlNnC3BOfcWvD98Zpnbwv0C
+         OKYg==
+X-Gm-Message-State: ABuFfohVvrsmdgWBePj9VrKZsIsxSNqVEBBgY0o40irEumRAYiYevWNa
+        7lMJDrJbzs8UuiG/MfD8aGXw5emPPpmZ6A==
+X-Google-Smtp-Source: ACcGV61aoFq0JPQNNjXSk9swbEzEvgmt8OnXOSVY0Wl2FUxXt/cCTDjXmyGkpB6hearsZg54YTgR5/sJznp1YQ==
+X-Received: by 2002:a63:84c1:: with SMTP id k184-v6mr11941756pgd.42.1539107810402;
+ Tue, 09 Oct 2018 10:56:50 -0700 (PDT)
+Date:   Tue,  9 Oct 2018 10:56:46 -0700
+Message-Id: <20181009175646.39921-1-egranata@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+Subject: [PATCH v2] platform/chrome: Add a new interrupt path for cros_ec_lpc
+From:   Enrico Granata <egranata@google.com>
+To:     Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org,
+        gwendal@google.com
+Cc:     Enrico Granata <egranata@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 12:33:09PM -0600, Jon Derrick wrote:
-> During probe, the port driver will disable error reporting and assumes
-> it will be enabled later by the AER driver's pci_walk_bus() sequence.
-> This may not be the case for host-bridge enabled root ports, who will
-> enable first error reporting on the bus during the root port probe, and
-> then disable error reporting on downstream devices during subsequent
-> probing of the bus.
+From: Enrico Granata <egranata@chromium.org>
 
-I understand the hotplug case (see below), but help me understand this
-"host-bridge enabled root ports" thing.  I'm not sure what that means.
+This commit allows cros_ec_lpc to register a direct IRQ instead of relying
+on the ACPI notification chain to receive MKBP events.
 
-We run pcie_portdrv_probe() for every root port, switch upstream port,
-and switch downstream port, and it always disables error reporting for
-the port:
+This change is done in the interest of allowing reduced jitter in the
+communication path between the CrOS EC and the host for receiving sensor
+data.
 
-  pcie_portdrv_probe          # pci_driver .probe
-    pcie_port_device_register
-      get_port_device_capability
-        services |= PCIE_PORT_SERVICE_AER
-        pci_disable_pcie_error_reporting
-          # clear DEVCTL Error Reporting Enables
+Signed-off-by: Enrico Granata <egranata@chromium.org>
+---
+ drivers/platform/chrome/cros_ec_lpc.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-For root ports, we call aer_probe(), and it enables error reporting
-for the entire tree below the root port:
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 31c8b8c49e45..20e97525b1a9 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -25,6 +25,7 @@
+ #include <linux/dmi.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/interrupt.h>
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/mfd/cros_ec_commands.h>
+ #include <linux/mfd/cros_ec_lpc_reg.h>
+@@ -248,7 +249,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	acpi_status status;
+ 	struct cros_ec_device *ec_dev;
+ 	u8 buf[2];
+-	int ret;
++	int irq, ret;
+ 
+ 	if (!devm_request_region(dev, EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE,
+ 				 dev_name(dev))) {
+@@ -287,6 +288,18 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 			   sizeof(struct ec_response_get_protocol_info);
+ 	ec_dev->dout_size = sizeof(struct ec_host_request);
+ 
++	/*
++	 * Some boards do not have an IRQ allotted for cros_ec_lpc,
++	 * which makes ENXIO an expected (and safe) scenario.
++	 */
++	irq = platform_get_irq(pdev, 0);
++	if (irq > 0)
++		ec_dev->irq = irq;
++	else if (irq != -ENXIO) {
++		dev_err(dev, "couldn't retrieve IRQ number (%d)\n", irq);
++		return irq;
++	}
++
+ 	ret = cros_ec_register(ec_dev);
+ 	if (ret) {
+ 		dev_err(dev, "couldn't register ec_dev (%d)\n", ret);
+-- 
+2.19.0.605.g01d371f741-goog
 
-  aer_probe                   # pcie_port_service .probe
-    aer_enable_rootport
-      set_downstream_devices_error_reporting(dev, true)
-        pci_walk_bus(dev->subordinate, set_device_error_reporting)
-          set_device_error_reporting
-            if (Root Port || Upstream Port || Downstream Port)
-              pci_enable_pcie_error_reporting
-                # set DEVCTL Error Reporting Enables
-
-This is definitely broken for hot-added switches because aer_probe()
-is the only place we enable error reporting, and it's only run when we
-enumerate a root port, not when we hot-add things below that root
-port.
-
-> A hotplugged port device may also fail to enable error reporting as the
-> AER driver has already run on the root bus.
-
-> Check for these conditions and enable error reporting during portdrv
-> probing.
-> 
-> Example case:
-
-pcie_portdrv_probe(10000:00:00.0):
-> [  343.790573] pcieport 10000:00:00.0: pci_disable_pcie_error_reporting
-
-aer_probe(10000:00:00.0):
-> [  343.809812] pcieport 10000:00:00.0: pci_enable_pcie_error_reporting
-> [  343.819506] pci 10000:01:00.0: pci_enable_pcie_error_reporting
-> [  343.828814] pci 10000:02:00.0: pci_enable_pcie_error_reporting
-> [  343.838089] pci 10000:02:01.0: pci_enable_pcie_error_reporting
-> [  343.847478] pci 10000:02:02.0: pci_enable_pcie_error_reporting
-> [  343.856659] pci 10000:02:03.0: pci_enable_pcie_error_reporting
-> [  343.865794] pci 10000:02:04.0: pci_enable_pcie_error_reporting
-> [  343.874875] pci 10000:02:05.0: pci_enable_pcie_error_reporting
-> [  343.883918] pci 10000:02:06.0: pci_enable_pcie_error_reporting
-> [  343.892922] pci 10000:02:07.0: pci_enable_pcie_error_reporting
-
-pcie_portdrv_probe(10000:01:00.0):
-> [  343.918900] pcieport 10000:01:00.0: pci_disable_pcie_error_reporting
-
-pcie_portdrv_probe(10000:02:00.0):
-> [  343.968426] pcieport 10000:02:00.0: pci_disable_pcie_error_reporting
-
-...
-> [  344.028179] pcieport 10000:02:01.0: pci_disable_pcie_error_reporting
-> [  344.091269] pcieport 10000:02:02.0: pci_disable_pcie_error_reporting
-> [  344.156473] pcieport 10000:02:03.0: pci_disable_pcie_error_reporting
-> [  344.238042] pcieport 10000:02:04.0: pci_disable_pcie_error_reporting
-> [  344.321864] pcieport 10000:02:05.0: pci_disable_pcie_error_reporting
-> [  344.411601] pcieport 10000:02:06.0: pci_disable_pcie_error_reporting
-> [  344.505332] pcieport 10000:02:07.0: pci_disable_pcie_error_reporting
-
-> [  344.621824] nvme 10000:06:00.0: pci_enable_pcie_error_reporting
-> 
-> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-> ---
->  drivers/pci/pcie/portdrv_core.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-> index 7c37d81..fdd953a 100644
-> --- a/drivers/pci/pcie/portdrv_core.c
-> +++ b/drivers/pci/pcie/portdrv_core.c
-> @@ -343,6 +343,16 @@ int pcie_port_device_register(struct pci_dev *dev)
->       if (!nr_service)
->               goto error_cleanup_irqs;
->  
-> +#ifdef CONFIG_PCIEAER
-> +     /*
-> +      * Enable error reporting for this port in case AER probing has already
-> +      * run on the root bus or this port device is hot-inserted
-> +      */
-> +     if (dev->aer_cap && pci_aer_available() &&
-> +         (pcie_ports_native || pci_find_host_bridge(dev->bus)->native_aer))
-> +             pci_enable_pcie_error_reporting(dev);
-> +#endif
-
-I plan to apply this after we clarify the changelog a bit, but I don't
-really like this patch because it (and the corresponding code added by
-2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port
-initialization")) seem a little out of place.
-
-The way I think this *should* work is that the PCI core should arrange to
-handle AER interrupts when it enumerates the devices that can generate
-them (Root Ports and Root Complex Event Collectors), even before it
-enumerates the devices below the Root Port.
-
-Then the PCI core could directly enable the AER interrupts on all devices
-as it enumerates them.  I would envision both cases being handled somewhere
-like pci_aer_init() in pci_init_capabilities().
-
-This would also allow us to get rid of the pci_enable_pcie_error_reporting()
-calls that are currently sprinkled around in drivers, because that would be
-handled by the core for all devices.
-
-Bjorn
