@@ -4,42 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D410C71122
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 019FFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1E3214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC15214FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WfqpTe9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1E3214DA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Io5Mbc2M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC15214FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeJIUmn (ORCPT
+        id S1727242AbeJIUmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:42:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48536 "EHLO
+        Tue, 9 Oct 2018 16:42:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48612 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeJIUmn (ORCPT
+        with ESMTP id S1726861AbeJIUmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:42:43 -0400
+        Tue, 9 Oct 2018 16:42:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xcMUgmz8fxZAX73L1Qt9UC9lj3gcizfN8j5e3xZ/twA=; b=WfqpTe9AfNPRK03J03E1TgWbUV
-        lSW4aiCEpvTbqH0RGiKSSaQLPa5a70lIFkJ5FRqCvb5ASV5JGApWBXQrwPXof/ak6yitPRItVOvo/
-        8x+/tAyMXomgDDj46R3T32xOxR25J1+BWqWaNCz0wP/NGVVnlhONtFX89Hik1I/eTHdIB6QdD7YEW
-        V79m2iUZ0rWL6GW1EYDDvWtqGzF5C+eGTC3P8Ploojb95XoFGdxAH916+RQM3Po7OMw40PwEliqFP
-        YAg7DfskVSGB3AMk03xzkprfh69gEB5OflazRrBDa2GXVoCfa1DeOB8QXCTvEeg/Blnk4OttNO63h
-        +Lg7FPNA==;
+        bh=pgdEXC/sHHUjWFtFn1VF7InKvXmUXueeyx2znGokKV8=; b=Io5Mbc2M9Xbt6IT198HDwBTfJs
+        upqerTOm4EpX0USVYJgiDSzsVzlreExWfkJ+Ygi7qfp6CS4pMsqwelPzA4pzOvHLnJDod1pkNSwvV
+        UGB8MBaqeDOkVhwqrsZXrQ0l889Sgl4l8oqtwJI5JWklfxA5TUECat72Emj/oJE++KPJSrJFplFlU
+        r0Q7FQ74IvEqbMcR5xYD8YymdUNnqu9aKx0FzrkIzCnot1Wt1G2+oFiMRqR32zkiIKK+iFQ2ug3m2
+        cE61hN5wQmsF9NoWJGr9WrNkqYDYKAuv0/eIbXKYwM4mF9Ln5/fHdYYB6ycVbxU2Rt9++tnTozvoe
+        +lgilGiQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s0s-00019c-1E; Tue, 09 Oct 2018 13:25:26 +0000
+        id 1g9s0u-00019t-Br; Tue, 09 Oct 2018 13:25:28 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -47,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 10/33] powerpc/pseries: use the generic iommu bypass code
-Date:   Tue,  9 Oct 2018 15:24:37 +0200
-Message-Id: <20181009132500.17643-11-hch@lst.de>
+Subject: [PATCH 11/33] powerpc/cell: move dma direct window setup out of dma_configure
+Date:   Tue,  9 Oct 2018 15:24:38 +0200
+Message-Id: <20181009132500.17643-12-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009132500.17643-1-hch@lst.de>
 References: <20181009132500.17643-1-hch@lst.de>
@@ -61,149 +62,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the generic iommu bypass code instead of overriding set_dma_mask.
+Configure the dma settings at device setup time, and stop playing games
+with get_pci_dma_ops.  This prepares for using the common dma_configure
+code later on.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/platforms/pseries/iommu.c | 100 +++++++------------------
- 1 file changed, 27 insertions(+), 73 deletions(-)
+ arch/powerpc/platforms/cell/iommu.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index da5716de7f4c..8965d174c53b 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -973,7 +973,7 @@ static LIST_HEAD(failed_ddw_pdn_list);
-  * pdn: the parent pe node with the ibm,dma_window property
-  * Future: also check if we can remap the base window for our base page size
-  *
-- * returns the dma offset for use by dma_set_mask
-+ * returns the dma offset for use by the direct mapped DMA code.
-  */
- static u64 enable_ddw(struct pci_dev *dev, struct device_node *pdn)
+diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
+index 12352a58072a..cce5bf9515e5 100644
+--- a/arch/powerpc/platforms/cell/iommu.c
++++ b/arch/powerpc/platforms/cell/iommu.c
+@@ -657,14 +657,21 @@ static const struct dma_map_ops dma_iommu_fixed_ops = {
+ 	.mapping_error	= dma_iommu_mapping_error,
+ };
+ 
++static u64 cell_iommu_get_fixed_address(struct device *dev);
++
+ static void cell_dma_dev_setup(struct device *dev)
  {
-@@ -1193,87 +1193,40 @@ static void pci_dma_dev_setup_pSeriesLP(struct pci_dev *dev)
- 	iommu_add_device(&dev->dev);
+-	if (get_pci_dma_ops() == &dma_iommu_ops)
++	if (get_pci_dma_ops() == &dma_iommu_ops) {
++		u64 addr = cell_iommu_get_fixed_address(dev);
++
++		if (addr != OF_BAD_ADDR)
++			set_dma_offset(dev, addr + dma_iommu_fixed_base);
+ 		set_iommu_table_base(dev, cell_get_iommu_table(dev));
+-	else if (get_pci_dma_ops() == &dma_nommu_ops)
++	} else if (get_pci_dma_ops() == &dma_nommu_ops) {
+ 		set_dma_offset(dev, cell_dma_nommu_offset);
+-	else
++	} else {
+ 		BUG();
++	}
  }
  
--static int dma_set_mask_pSeriesLP(struct device *dev, u64 dma_mask)
-+static bool iommu_bypass_supported_pSeriesLP(struct pci_dev *pdev, u64 dma_mask)
+ static void cell_pci_dma_dev_setup(struct pci_dev *dev)
+@@ -950,19 +957,14 @@ static int dma_suported_and_switch(struct device *dev, u64 dma_mask)
  {
--	bool ddw_enabled = false;
--	struct device_node *pdn, *dn;
--	struct pci_dev *pdev;
-+	struct device_node *dn = pci_device_to_OF_node(pdev), *pdn;
- 	const __be32 *dma_window = NULL;
- 	u64 dma_offset;
- 
--	if (!dev->dma_mask)
--		return -EIO;
--
--	if (!dev_is_pci(dev))
--		goto check_mask;
--
--	pdev = to_pci_dev(dev);
--
- 	/* only attempt to use a new window if 64-bit DMA is requested */
--	if (!disable_ddw && dma_mask == DMA_BIT_MASK(64)) {
--		dn = pci_device_to_OF_node(pdev);
--		dev_dbg(dev, "node is %pOF\n", dn);
-+	if (dma_mask < DMA_BIT_MASK(64))
-+		return false;
- 
--		/*
--		 * the device tree might contain the dma-window properties
--		 * per-device and not necessarily for the bus. So we need to
--		 * search upwards in the tree until we either hit a dma-window
--		 * property, OR find a parent with a table already allocated.
--		 */
--		for (pdn = dn; pdn && PCI_DN(pdn) && !PCI_DN(pdn)->table_group;
--				pdn = pdn->parent) {
--			dma_window = of_get_property(pdn, "ibm,dma-window", NULL);
--			if (dma_window)
--				break;
--		}
--		if (pdn && PCI_DN(pdn)) {
--			dma_offset = enable_ddw(pdev, pdn);
--			if (dma_offset != 0) {
--				dev_info(dev, "Using 64-bit direct DMA at offset %llx\n", dma_offset);
--				set_dma_offset(dev, dma_offset);
--				set_dma_ops(dev, &dma_nommu_ops);
--				ddw_enabled = true;
--			}
--		}
--	}
-+	dev_dbg(&pdev->dev, "node is %pOF\n", dn);
- 
--	/* fall back on iommu ops */
--	if (!ddw_enabled && get_dma_ops(dev) != &dma_iommu_ops) {
--		dev_info(dev, "Restoring 32-bit DMA via iommu\n");
--		set_dma_ops(dev, &dma_iommu_ops);
-+	/*
-+	 * the device tree might contain the dma-window properties
-+	 * per-device and not necessarily for the bus. So we need to
-+	 * search upwards in the tree until we either hit a dma-window
-+	 * property, OR find a parent with a table already allocated.
-+	 */
-+	for (pdn = dn; pdn && PCI_DN(pdn) && !PCI_DN(pdn)->table_group;
-+			pdn = pdn->parent) {
-+		dma_window = of_get_property(pdn, "ibm,dma-window", NULL);
-+		if (dma_window)
-+			break;
+ 	if (dma_mask == DMA_BIT_MASK(64) &&
+ 	    cell_iommu_get_fixed_address(dev) != OF_BAD_ADDR) {
+-		u64 addr = cell_iommu_get_fixed_address(dev) +
+-			dma_iommu_fixed_base;
+ 		dev_dbg(dev, "iommu: 64-bit OK, using fixed ops\n");
+-		dev_dbg(dev, "iommu: fixed addr = %llx\n", addr);
+ 		set_dma_ops(dev, &dma_iommu_fixed_ops);
+-		set_dma_offset(dev, addr);
+ 		return 1;
  	}
  
--check_mask:
--	if (!dma_supported(dev, dma_mask))
--		return -EIO;
--
--	*dev->dma_mask = dma_mask;
--	return 0;
--}
--
--static u64 dma_get_required_mask_pSeriesLP(struct device *dev)
--{
--	if (!dev->dma_mask)
--		return 0;
--
--	if (!disable_ddw && dev_is_pci(dev)) {
--		struct pci_dev *pdev = to_pci_dev(dev);
--		struct device_node *dn;
--
--		dn = pci_device_to_OF_node(pdev);
--
--		/* search upwards for ibm,dma-window */
--		for (; dn && PCI_DN(dn) && !PCI_DN(dn)->table_group;
--				dn = dn->parent)
--			if (of_get_property(dn, "ibm,dma-window", NULL))
--				break;
--		/* if there is a ibm,ddw-applicable property require 64 bits */
--		if (dn && PCI_DN(dn) &&
--				of_get_property(dn, "ibm,ddw-applicable", NULL))
--			return DMA_BIT_MASK(64);
-+	if (pdn && PCI_DN(pdn)) {
-+		dma_offset = enable_ddw(pdev, pdn);
-+		if (dma_offset != 0) {
-+			set_dma_offset(&pdev->dev, dma_offset);
-+			return true;
-+		}
+ 	if (dma_iommu_dma_supported(dev, dma_mask)) {
+ 		dev_dbg(dev, "iommu: not 64-bit, using default ops\n");
+-		set_dma_ops(dev, get_pci_dma_ops());
+-		cell_dma_dev_setup(dev);
++		set_dma_ops(dev, &dma_iommu_ops);
+ 		return 1;
  	}
  
--	return dma_iommu_get_required_mask(dev);
-+	return false;
- }
- 
- static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
-@@ -1368,8 +1321,9 @@ void iommu_init_early_pSeries(void)
- 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
- 		pseries_pci_controller_ops.dma_bus_setup = pci_dma_bus_setup_pSeriesLP;
- 		pseries_pci_controller_ops.dma_dev_setup = pci_dma_dev_setup_pSeriesLP;
--		ppc_md.dma_set_mask = dma_set_mask_pSeriesLP;
--		ppc_md.dma_get_required_mask = dma_get_required_mask_pSeriesLP;
-+		if (!disable_ddw)
-+			pseries_pci_controller_ops.iommu_bypass_supported =
-+				iommu_bypass_supported_pSeriesLP;
- 	} else {
- 		pseries_pci_controller_ops.dma_bus_setup = pci_dma_bus_setup_pSeries;
- 		pseries_pci_controller_ops.dma_dev_setup = pci_dma_dev_setup_pSeries;
 -- 
 2.19.0
 
