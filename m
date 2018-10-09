@@ -2,100 +2,120 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88083C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3B0C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E8120835
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:56:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E8120835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FB6220835
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BcDOvE8Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB6220835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeJIRM7 (ORCPT
+        id S1726718AbeJIRNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:12:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45797 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIRM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:12:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C759B207BF; Tue,  9 Oct 2018 11:56:49 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9367420712;
-        Tue,  9 Oct 2018 11:56:39 +0200 (CEST)
-Date:   Tue, 9 Oct 2018 11:56:40 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Sean Paul <sean@poorly.run>
-Cc:     dri-devel@lists.freedesktop.org, Dave Airlie <arlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add Maxime Ripard as drm-misc maintainer
-Message-ID: <20181009095640.ye2kh5gciktq3kf6@flea>
-References: <20181005160256.200162-1-sean@poorly.run>
+        Tue, 9 Oct 2018 13:13:21 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44463 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeJIRNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 13:13:21 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 63-v6so1098987wra.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 02:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=BpaKW4NkhBiIhZZwZ+parlBrNxJkmpmjyyhHiDpjKW0=;
+        b=BcDOvE8QjyS6zqtRnzsuE5iMF8d9ryXbwW+y+UeUUeYAE3XwSXr2fo2DmLVYzD6QDc
+         uXuIQjHxsKzEwpE4Z3ZntbCqfq4oF1GHEBH1rNYHzfDM7Nt8ugTkOSyR1cB+u398izsk
+         erxcX11xRzPRJah8Uv4hVaCUgXe/9SI5pfD1c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=BpaKW4NkhBiIhZZwZ+parlBrNxJkmpmjyyhHiDpjKW0=;
+        b=snwNbA2FQ0xLw1U6lyPdAxD7ACG846SguWHszdLmkG9BrlM35baU+fdZ+UkfDZS1ft
+         9tKm6//L/SKLxCIQR5Aq8YPuqJzCjVW67LAA4u+mOBXhpuvK3w72ruY+0juNBmHTWO2a
+         zb3STyVgkH6514sontdTxrvn73wl4XuMHbspeqdn+vP41xN3oUINk6ka+g/nufQsqnZn
+         C4YxwqXTJFgPhC1MOzZu0FNV1fZKjBnqdbXIbjCsYSljwzNm6ar5uGOziYHBa/Vw922M
+         dPBk5bucUtbw57l+kUPL4K2iXcvK86cVj6ZAYtU6q5S/nkdP9xjunwOmuRepZstSJXS1
+         ZGkg==
+X-Gm-Message-State: ABuFfojAxG43dVL8VsPFHlq1T6Ay1lVz8PdDnvE71En1rcYezka6Apbg
+        IvXt2sBAi9rKwnPf4597Bt57sw==
+X-Google-Smtp-Source: ACcGV62Mj3ZT6l0yUEkQYQE88ATOMbpgAgDn7d2Nr7getwEpIla5BlJwUDcFpQK1plAE2e2yyP3iqA==
+X-Received: by 2002:a5d:4b50:: with SMTP id w16-v6mr17481278wrs.173.1539079033455;
+        Tue, 09 Oct 2018 02:57:13 -0700 (PDT)
+Received: from dell ([2.27.167.111])
+        by smtp.gmail.com with ESMTPSA id 203-v6sm1863875wmn.34.2018.10.09.02.57.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 02:57:12 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 02:57:10 -0700
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Aishwarya Pant <aishpant@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RESEND v2 1/2] backlight: Remove s6e63m0 driver
+Message-ID: <20181009095710.GI4939@dell>
+References: <20180927165541.11903-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="saf22wwguyfxbilc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181005160256.200162-1-sean@poorly.run>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180927165541.11903-1-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 27 Sep 2018, Krzysztof Kozlowski wrote:
 
---saf22wwguyfxbilc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The driver for S6E63M0 AMOLED LCD panel is not used.  It does not
+> support DeviceTree and respective possible users (S5Pv210 Aquila and
+> Goni boards) are DeviceTree-only.
+> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Remove sysfs ABI documentation file.
+> 2. Add Jingoo's and Daniel's acks.
+> ---
+>  .../ABI/testing/sysfs-class-lcd-s6e63m0       |  27 -
+>  drivers/video/backlight/Kconfig               |   8 -
+>  drivers/video/backlight/Makefile              |   1 -
+>  drivers/video/backlight/s6e63m0.c             | 857 ------------------
+>  drivers/video/backlight/s6e63m0_gamma.h       | 266 ------
+>  5 files changed, 1159 deletions(-)
+>  delete mode 100644 Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
+>  delete mode 100644 drivers/video/backlight/s6e63m0.c
+>  delete mode 100644 drivers/video/backlight/s6e63m0_gamma.h
 
-On Fri, Oct 05, 2018 at 12:02:22PM -0400, Sean Paul wrote:
-> Unfortunately Gustavo has decided to step down as drm-misc maintainer to
-> focus on other projects. Thanks Gustavo for your dedication and hard work!
->=20
-> Fortunately for us, we have a wealth of people qualified to assume a
-> -misc maintainer role. Maxime has done an outstanding job with sun4i and
-> in the community in general. I'm really excited that he agreed to take
-> on this responsibility and I look forward to working with him!
->=20
-> Cc: Dave Airlie <arlied@linux.ie>
-> Cc: Gustavo Padovan <gustavo@padovan.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard  <maxime.ripard@bootlin.com>
-> Signed-off-by: Sean Paul <sean@poorly.run>
+Applied, thanks.
 
-Obviously-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com> :)
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---saf22wwguyfxbilc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu8e1cACgkQ0rTAlCFN
-r3Tpqg/+Kqli7JMJQpMnNh5tOfuHvapyZaBxTNhbwLvtKex2ot0yhYjrJjKcNEi9
-SDTRBB74QlBXofmHZOHbvcO1a8niVWWQMPrDAHvcYMsbax6VfVbFmpHFIDLPeV2O
-0eMIYwoSO3EP1XlDsqY2TmoBPZmZnu9Xbjr+8TOqC5mPFGCmqzj0K212svMTnNSe
-OvSatydW+Y6UYq6COoMjlhBFePn9jzwCayp5ENrZeMUGgKXxepS/Mjv/D9etHgou
-BfrZheJj9NTZ4bb1z9iqrgsIGCBw7kC7xN9eTSjCYMPluc0Co1XjGGxKzlPMEZ/C
-2MlWcAgU+NGZbUMhhsL40zs+Xrd+8QVB/u0IbNZNsvifo+XvsMxiCPcL3AtxfCGe
-LsIDOwg4+943w+mTiO9YS0VCbTeyZklEMtvKLPAbKmBn2PW8sOoyuUTzg7pCOwDM
-0vyTrbHVWX6m2ld9GRqJ6h/jrdao8xh3pPWOV6RP69lU4DwZH0b8TLkVOHh7+xG/
-Pn1KcRIwIc/wBGVVoO44fiCQ4CHxYJdKpvjvHXyzM09UbhhqOr/gQvBrG55LdKl4
-PboBOKZDVeQTELWa8j+kWTrTnA2wimGY/IrP/8bb/GhuPEBESA5pJzjaQKcXPwcy
-pwzufTNO7AZlXDoldOvdhQ39m7T3v6MUZhFgK/Dw2HeIhboqEoA=
-=+kEu
------END PGP SIGNATURE-----
-
---saf22wwguyfxbilc--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
