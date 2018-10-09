@@ -2,147 +2,129 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C6BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADD7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AEF820C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FB92214FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:08:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OT4pinsK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEF820C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwbHvqgz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB92214FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbeJIXYZ (ORCPT
+        id S1726906AbeJIX0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:24:25 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35666 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIXYZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:24:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id o14-v6so2095070ljj.2;
-        Tue, 09 Oct 2018 09:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bQTlw73l9cuRf/gwTXV0f0JT0pvjZXObC6lg1TPZ8no=;
-        b=OT4pinsK2u5mutPgFE2idrbGg41GvvHlExTux5ohH7mA8vJn2X9CVM9GVvQs3eOxh3
-         779Uh+MjB/55nfvQrtvvCfUtPFSLv4hoE2l/zhiywh5c5XsbQwe+ZXA1TghHliM70GvG
-         Egp9DwX/DG1SNC7SlwPMhSss2KR90WTKrra5hm3BxKqKXwwgqnQA9wVJMf6BdqdCjdHX
-         9iajWZGOHFOn7X3loSGx2MNtTwQSbsDkkOwwHrY60dejJIkNcNUmvAzwfxKsUxVjed0T
-         +7pdyq8hm6g2cEGcppi7Ge6qKoJjZUdC6Y87KWiH7YLBZo0aWc76WaY3wFoWhPx9XFDy
-         g60g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bQTlw73l9cuRf/gwTXV0f0JT0pvjZXObC6lg1TPZ8no=;
-        b=C22gTs1FdULZqsAXPMxGx4UWeQhTRZ758PguNkdzZwhVJ+xaUp1njHJUHEiV96bnuL
-         fl3mFTjCtJXVIot7UyEopNSXyUyVqE6MQjsngPWexuquPnMbOnUy8woDyIB4/GbITr5Y
-         8LVz4v/V9PlURZo1rAL0bznreIjeIIycOSj8hhWgCVm98csPzI6bFDvM65W8LB2IlAYM
-         P25Mz7/OV+tF40X1RrQrDnyY04HQZWtW47Us2+nI1dhUoRmThfhqT7axtgsdd6q1X/QU
-         SGxws3pgMg3dwo9k5RxeT7RwYPuvk1s+WlfGwCA2EtJATOcUg8d1HnjosPjqT0jr/mac
-         t+WA==
-X-Gm-Message-State: ABuFfoiOl1U8dUODGkO5Dx9rVs9QMB5J/P01i8IUyftFO25gSveHfR2/
-        8twmTUF5RWtZ3hRPcgNjtlyvf++L6f00d6AZveo=
-X-Google-Smtp-Source: ACcGV63J1gsgUBOIlsOuZJ9Pj+ptchghLTV0k/pUmW4/UYXyosjrlemVTi8WomjYD0LRKbY22MM686sVd1xXYB+8D/E=
-X-Received: by 2002:a2e:2205:: with SMTP id i5-v6mr15867224lji.15.1539101205326;
- Tue, 09 Oct 2018 09:06:45 -0700 (PDT)
+        Tue, 9 Oct 2018 19:26:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeJIX0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:26:17 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5D7C20C0A;
+        Tue,  9 Oct 2018 16:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539101318;
+        bh=8u5tgihylxFcH5NWwdU6szc9qryCAenTCSaRWtpwlNM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fwbHvqgzqEpQuocLhNuEWmrfy0gLfueOYWykip/QfgMctLweHMjNB8TDM6RvzM4bn
+         b26XdnUoqOwHwH6TO7RmgN7rjUlVTX26sGoJetQ3mSgNX+MYX3liUOq1uswdHA/3Og
+         EaywFaQ3hZw0y6DmA93k8G7txiHKpQBdvhpxSsnE=
+Date:   Tue, 9 Oct 2018 18:08:36 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Andre Tomt <andre@tomt.net>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.18 000/168] 4.18.13-stable review
+Message-ID: <20181009160836.GB8426@kroah.com>
+References: <20181008175620.043587728@linuxfoundation.org>
+ <966cae81-c3f6-1d38-5721-97dc317a3fde@tomt.net>
+ <20181009092154.GC19241@kroah.com>
+ <41c3c40f-2757-9405-4899-02eacb3d05f0@tomt.net>
+ <20181009151828.hv6rrxyttjfj3yq7@salvia>
+ <20181009152021.gthtffreggalvy64@salvia>
 MIME-Version: 1.0
-References: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com> <CAJZ5v0j0GLHgKS9+mafm3eoFMuNEo6VPa3LhRthg+H5OKHhFqA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j0GLHgKS9+mafm3eoFMuNEo6VPa3LhRthg+H5OKHhFqA@mail.gmail.com>
-From:   Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-Date:   Tue, 9 Oct 2018 18:06:08 +0200
-Message-ID: <CAHKzcEMx2V-uvkM7_gUXiL1jEiYDwNn3KoGHqneqXAwmUQJ+0w@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: conservative: Fix requested_freq handling
-To:     rafael@kernel.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Bartholomae, Thomas" <t.bartholomae@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181009152021.gthtffreggalvy64@salvia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Oct 2018 at 09:47, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Oct 8, 2018 at 5:11 PM Waldemar Rymarkiewicz
-> <waldemar.rymarkiewicz@gmail.com> wrote:
-> >
-> > From: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
-> >
-> > The governor updates dbs_info->requested_freq only after increasing or
-> > decreasing frequency. There is, however, an use case when this is not
-> > sufficient.
-> >
-> > Imagine, external module constraining cpufreq policy in a way that policy->max
->
-> Is the "external module" here a utility or a demon running in user space?
+On Tue, Oct 09, 2018 at 05:20:21PM +0200, Pablo Neira Ayuso wrote:
+> On Tue, Oct 09, 2018 at 05:18:28PM +0200, Pablo Neira Ayuso wrote:
+> > On Tue, Oct 09, 2018 at 01:33:39PM +0200, Andre Tomt wrote:
+> > > On 09. okt. 2018 11:21, Greg Kroah-Hartman wrote:
+> > > > On Tue, Oct 09, 2018 at 05:21:31AM +0200, Andre Tomt wrote:
+> > > > > On 08. okt. 2018 20:29, Greg Kroah-Hartman wrote:
+> > > > > > This is the start of the stable review cycle for the 4.18.13 release.
+> > > > > > There are 168 patches in this series, all will be posted as a response
+> > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > let me know.
+> > > > > 
+> > > > >    CC [M]  net/ipv4/netfilter/nf_conntrack_proto_icmp.o
+> > > > > net/ipv4/netfilter/nf_conntrack_proto_icmp.c:373:3: error: ‘const struct
+> > > > > nf_conntrack_l4proto’ has no member named ‘ctnl_timeout’; did you mean
+> > > > > ‘get_timeouts’?
+> > > > >    .ctnl_timeout  = {
+> > > > >     ^~~~~~~~~~~~
+> > > > >     get_timeouts
+> > > > > 
+> > > > > The problematic patch is:> netfilter-conntrack-timeout-interface-depend-on-config_nf_conntrack_timeout.patch
+> > > > > 
+> > > > > The stuff the commit message talks about seems like it was added in
+> > > > > 4.19-rc1, so this should not go into stable.
+> > > > > 
+> > > > > Kernel builds fine with this one patch reverted.
+> > > > 
+> > > > So you have CONFIG_NF_CT_NETLINK_TIMEOUT enabled but not
+> > > > CONFIG_NF_NETLINK_TIMEOUT?  Looks like we just need to modify the .h
+> > > > file to fix this up properly, right?
+> > > 
+> > > Adding Pablo to the thread as I dont know
+> > > 
+> > > > This isn't showing up in my build tests as that configuration seems a
+> > > > bit odd to me.
+> > > 
+> > > I think you meant CONFIG_NF_CONNTRACK_TIMEOUT instead of
+> > > CONFIG_NF_NETLINK_TIMEOUT?
+> > > 
+> > > This is the configuration:
+> > > CONFIG_NF_CONNTRACK_TIMEOUT=y
+> > > # CONFIG_NF_CT_NETLINK_TIMEOUT is not set
+> > 
+> > upstream commit a874752a10da113f513980e28f562d946d3f829d depends on:
+> > 
+> > commit 6c1fd7dc489d9bf64196f5b0fa33e059f64460c8
+> > Author: Pablo Neira Ayuso <pablo@netfilter.org>
+> > Date:   Tue Aug 7 17:14:15 2018 +0200
+> > 
+> >     netfilter: cttimeout: decouple timeout policy from nfnetlink_cttimeout object
+> > 
+> > So I would suggest to keep it back / not place it 4.18.x stable.
+> 
+> Hm, actually, a874752a10da113f513980e28f562d946d3f829 depends on:
+> 
+> commit ad83f2a9ce37a264202f48f4fd8889ee9056b703
+> Author: Pablo Neira Ayuso <pablo@netfilter.org>
+> Date:   Tue Aug 7 17:14:19 2018 +0200
+> 
+>     netfilter: remove ifdef around cttimeout in struct nf_conntrack_l4proto
+> 
+> Not the one I mentioned above.
 
-No, this is a driver that communicates with a firmware and makes sure
-CPU is running at the highest rate in specific time.
-It uses verify_within_limits  and update_policy, a standard way to
-constraint cpufreq policy limits.
+Thanks for the info, I've now dropped this from both 4.14.y and 4.18.y.
 
-> > @@ -136,10 +135,10 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
-> >                         requested_freq = policy->min;
-> >
-> >                 __cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_L);
-> > -               dbs_info->requested_freq = requested_freq;
-> >         }
-> >
-> >   out:
-> > +       dbs_info->requested_freq = requested_freq;
->
-> This will have a side effect when requested_freq is updated before the
-> thresholds checks due to the policy_dbs->idle_periods < UINT_MAX
-> check.
->
-> Shouldn't that be avoided?
-
-I would say we should.
-
-A hardware design I use is running 4.9 kernel where the check does not
-exist yet, so there is not a problem.
-Anyway, the check policy_dbs->idle_periods < UINT_MAX  can change
-requested_freq  either to requested_freq = policy->min or
-requested_freq -= freq_steps;. The first case will not change anything
-for us as policy->max=min=cur. The second, however, will force to
-update freq which is definitely not expected when limits are set to
-min=max. Simply it will not go out  here:
-
-if (load < cs_tuners->down_threshold) {
-      if (requested_freq == policy->min)
-           goto out;   <---
-...
-}
-
-Am I right here? If so, shouldn't we check explicitly
-
-/*
-* If requested_freq is out of range, it is likely that the limits
-* changed in the meantime, so fall back to current frequency in that
-* case.
-*/
-if (requested_freq > policy->max || requested_freq < policy->min)
-       requested_freq = policy->cur;
-
-+/*
-+* If the the new limits min,max are equal, there is no point to process further
-+*/
-+
-+if (requested_freq == policy->max  &&  requested_freq == policy->min)
-+     goto out;
-
-Thanks,
-/Waldek
+greg k-h
