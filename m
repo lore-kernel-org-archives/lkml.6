@@ -2,148 +2,203 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5728C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D61C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628E3214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:39:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqN3UPia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628E3214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 0DFC1213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFC1213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbeJJD6Y (ORCPT
+        id S1725860AbeJJEAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:58:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44151 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJJD6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:58:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r9-v6so1426639pff.11;
-        Tue, 09 Oct 2018 13:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EGHdrEodQPClQrKE3/thZGkYahqRNKwGC6U1JCEhQnc=;
-        b=LqN3UPiaYiDwi797TX0gkxI1/rOM9GOq4ibaeLDTFJM8L/OzsKwJF9XRAinN1L0Coa
-         b5v9RPuS6zH9fiSvf1LLqeoz5hJw6DltReXyXxIjlbldERFbIoB8/3/6rY/zPO8PkJJY
-         7sVKXRLG3dllMTrAsJSl6H2cNN3Ofc6ST2SNsWRyJonE3q4O7KcDj64hl7+D8h2/opJe
-         un8v+ProPRA0O99KcD5JQZi8vwi/9uhlpFicIcPMdvpfs2McHFRfSbE+Rq2rLSzXpOa2
-         0i658/JrhO5o7QxPHUJBDnz5i9q3bQ3S78O6/3o3M3hI8ODUiL85JmvvupiM7QCtKio5
-         nUpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EGHdrEodQPClQrKE3/thZGkYahqRNKwGC6U1JCEhQnc=;
-        b=feEOcM+YOD2o50m7J3Lhwwl8wZXnySoaC4/gBkmLVKUI8nMsy86yekuXNyV3bWxmxV
-         DL+UMwo1AsFMAFmK6hLff3UvvGq2iwwBiz027FXp8dueKXR2ionitiCbZ68yyx88TVoZ
-         r2Fo+KAVoj1jbDyYNQPyeRiC3Xz+iFwfIF2gtGkc0vLbQ0VFQIR9yxxx8iR/9PJhGRu8
-         Bj3EIibKKYp0/P/FDqV0SjTPewX/ZAeW/g665FXN563zeCfMpx7lwFBRXLG3moAm+Xmn
-         y4JAAgPcZwvfZs/EkjJF0XrjP21hDh0FK3bVFdvPud6sdyqesyU/XUwghDik/bmiIx5D
-         9bHA==
-X-Gm-Message-State: ABuFfojchCCUkjB6ZnzDb1rROB+m69reEl/i8YCzG+MakzMdO1mrxcWL
-        WXiRGWjyS8mkgoykO42SgAg=
-X-Google-Smtp-Source: ACcGV60KN6FSDuPNL2b89oIRBSRAeu4ffSrRNFYeyamX5e1U00FwkthTWRRgEAUfvNm8Gi3mv4RoJg==
-X-Received: by 2002:a63:d256:: with SMTP id t22-v6mr26813261pgi.335.1539117580083;
-        Tue, 09 Oct 2018 13:39:40 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o76-v6sm33199742pfi.162.2018.10.09.13.39.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 13:39:38 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 13:39:37 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, jdelvare@suse.com,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com
-Subject: Re: [PATCH] hwmon: (core) Add trace events to _attr_show/store
- functions
-Message-ID: <20181009203937.GA11222@roeck-us.net>
-References: <20181009182602.3085-1-nicoleotsuka@gmail.com>
- <20181009145721.0669e412@gandalf.local.home>
- <20181009191111.GA6166@Asurada-Nvidia.nvidia.com>
- <20181009154945.65300231@gandalf.local.home>
- <20181009195654.GA7963@Asurada-Nvidia.nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009195654.GA7963@Asurada-Nvidia.nvidia.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 10 Oct 2018 00:00:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25494 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725748AbeJJEAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 00:00:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 13:41:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,361,1534834800"; 
+   d="scan'208";a="79845913"
+Received: from spandruv-mobl.amr.corp.intel.com ([10.254.43.28])
+  by orsmga007.jf.intel.com with ESMTP; 09 Oct 2018 13:41:57 -0700
+Message-ID: <e534dafea0a138777e46f41b8c33618148a79d57.camel@linux.intel.com>
+Subject: Re: [RESEND][PATCH] ACPI / CPPC: Add support for guaranteed
+ performance
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devel@acpica.org, Linux PM <linux-pm@vger.kernel.org>,
+        Prashanth Prakash <pprakash@codeaurora.org>,
+        George Cherian <george.cherian@cavium.com>
+Date:   Tue, 09 Oct 2018 13:41:57 -0700
+In-Reply-To: <CAJZ5v0h1ir+vU7xzQ15edSO6uNwXzmqXRFkbhPGpUY8gSz+gVg@mail.gmail.com>
+References: <20181008165136.9288-1-srinivas.pandruvada@linux.intel.com>
+         <CAJZ5v0h1ir+vU7xzQ15edSO6uNwXzmqXRFkbhPGpUY8gSz+gVg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 12:57:43PM -0700, Nicolin Chen wrote:
-> On Tue, Oct 09, 2018 at 03:49:45PM -0400, Steven Rostedt wrote:
-> > > > > Trace events are useful for people who collect data from the
-> > > > > ftrace output. This patch adds initial trace events for the
-> > > > > hwmon core. To call hwmon_attr_base() for aligned attr index
-> > > > > numbers, this patch also moves the function upward.
-> > > > > 
-> > > > > Ftrace outputs:
-> > > > >  ...: hwmon_attr_show_string: index=2, attr_name=in2_label, val=VDD_5V
-> > > > >  ...: hwmon_attr_show: index=2, attr_name=in2_input, val=5112
-> > > > >  ...: hwmon_attr_show: index=2, attr_name=curr2_input, val=440
-> > > > > 
-> > > > > Note that the _attr_show and _attr_store functions are tied
-> > > > > to the _with_info API. So a hwmon driver requiring the trace
-> > > > > events feature should use _with_info API to register a hwmon
-> > > > > device.  
-> > > > 
-> > > > Hmm, this doesn't really explain why these trace events are needed.
-> > > > They look to be attached to sysfs reads. What's the purpose of tracing
-> > > > these?  
-> > > 
-> > > Our power folks analyse Ftrace outputs of cpufreq, thermal and
-> > > hwmon (power/voltage/current) so as to get the relationship of
-> > > them. The reason why we specifically need trace events is that
-> > > it's convenient and timestamped, and because both cpufreq and
-> > > thermal already have trace events.
-> > > 
-> > > I could add this to make the commit message more convincing if
-> > > you'd prefer that.
+On Tue, 2018-10-09 at 09:35 +0200, Rafael J. Wysocki wrote:
+> On Mon, Oct 8, 2018 at 6:55 PM Srinivas Pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
 > > 
-> > I'm not against the patch, but yes, having this in the change log is
-> > helpful.
+> > The Continuous Performance Control Package can have guaranteed
+> > performance
+> > field. Add support to read guaranteed performance.
 > 
-> I will add it in v2.
+> The spec says that it is optional, but you seem to assume that it
+> always will be there.
 > 
-> > > > > @@ -193,6 +206,7 @@ static ssize_t hwmon_attr_show_string(struct device *dev,
-> > > > >  				      char *buf)
-> > > > >  {
-> > > > >  	struct hwmon_device_attribute *hattr = to_hwmon_attr(devattr);
-> > > > > +	enum hwmon_sensor_types type = hattr->type;
-> > > > >  	const char *s;
-> > > > >  	int ret;
-> > > > >  
-> > > > > @@ -201,6 +215,9 @@ static ssize_t hwmon_attr_show_string(struct device *dev,
-> > > > >  	if (ret < 0)
-> > > > >  		return ret;
-> > > > >  
-> > > > > +	trace_hwmon_attr_show_string(hattr->index + hwmon_attr_base(type),  
-> > > > 
-> > > > Also, the other to tracepoints use hattr->type, here you create a
-> > > > separate variable. Is that just to keep within the 80 char limit?  
-> > > 
-> > > Yes. It looks clearer to me than wrapping the line here, since
-> > > complier usually optimize the local variable away.
-> > 
-> > Or you can just break the 80 character limit ;-)
-> 
-> Personally a checkpatch warning bugs me more than having an extra
-> line :)
-> 
-Same here. If we no longer believe in the 80-column limit, we should remove it,
-not use it to hide other problems in the noise.
+Even if there is some missing optional field, the place will not be
+filled by the next mandatory field as the order of fields is _CPC is
+fixed.
+
+"Optional _CPC package fields that are not supported by the platform
+should be encoded as follows:
+• Integer fields: Integer 0
+• Register fields: the following NULL register descriptor should be
+used:
+ResourceTemplate() {Register {(SystemMemory, 0, 0, 0, 0)}}
+"
+
+> What happens if it is not there?
+Will see 0 acpi_cppc sysfs.
+
+But this may confuse users, so better not to add guaranteed attribute
+to acpi_cppc sysfs.
+
+I will submit v2 of patch series.
 
 Thanks,
-Guenter
+Srinivas
+
+> 
+> > Signed-off-by: Srinivas Pandruvada <
+> > srinivas.pandruvada@linux.intel.com>
+> > ---
+> > No changes. But adding CC to mailing lists.
+> > 
+> >  Documentation/acpi/cppc_sysfs.txt |  2 ++
+> >  drivers/acpi/cppc_acpi.c          | 10 ++++++++--
+> >  include/acpi/cppc_acpi.h          |  1 +
+> >  3 files changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/acpi/cppc_sysfs.txt
+> > b/Documentation/acpi/cppc_sysfs.txt
+> > index f20fb445135d..812574d30717 100644
+> > --- a/Documentation/acpi/cppc_sysfs.txt
+> > +++ b/Documentation/acpi/cppc_sysfs.txt
+> > @@ -22,6 +22,7 @@ $ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
+> >  /sys/devices/system/cpu/cpu0/acpi_cppc/:
+> >  total 0
+> >  -r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
+> > +-r--r--r-- 1 root root 65536 Mar  5 19:38 guaranteed_perf
+> >  -r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
+> >  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
+> >  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
+> > @@ -33,6 +34,7 @@ total 0
+> > 
+> >  ----------------------------------------------------------------
+> > ----------------
+> > 
+> > +* guaranteed_perf : Guaranteed performance of this processor
+> > (abstract scale).
+> >  * highest_perf : Highest performance of this processor (abstract
+> > scale).
+> >  * nominal_perf : Highest sustained performance of this processor
+> > (abstract scale).
+> >  * lowest_nonlinear_perf : Lowest performance of this processor
+> > with nonlinear
+> > diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> > index d9ce4b162e2c..5babb9402f11 100644
+> > --- a/drivers/acpi/cppc_acpi.c
+> > +++ b/drivers/acpi/cppc_acpi.c
+> > @@ -153,6 +153,7 @@ __ATTR(_name, 0444, show_##_name, NULL)
+> >         }                                                          
+> >      \
+> >         define_one_cppc_ro(member_name)
+> > 
+> > +show_cppc_data(cppc_get_perf_caps, cppc_perf_caps,
+> > guaranteed_perf);
+> >  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf);
+> >  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
+> >  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
+> > @@ -189,6 +190,7 @@ static struct attribute *cppc_attrs[] = {
+> >         &nominal_perf.attr,
+> >         &nominal_freq.attr,
+> >         &lowest_freq.attr,
+> > +       &guaranteed_perf.attr,
+> >         NULL
+> >  };
+> > 
+> > @@ -1061,9 +1063,9 @@ int cppc_get_perf_caps(int cpunum, struct
+> > cppc_perf_caps *perf_caps)
+> >  {
+> >         struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+> >         struct cpc_register_resource *highest_reg, *lowest_reg,
+> > -               *lowest_non_linear_reg, *nominal_reg,
+> > +               *lowest_non_linear_reg, *nominal_reg,
+> > *guaranteed_reg,
+> >                 *low_freq_reg = NULL, *nom_freq_reg = NULL;
+> > -       u64 high, low, nom, min_nonlinear, low_f = 0, nom_f = 0;
+> > +       u64 high, low, guaranteed, nom, min_nonlinear, low_f = 0,
+> > nom_f = 0;
+> >         int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+> >         struct cppc_pcc_data *pcc_ss_data = NULL;
+> >         int ret = 0, regs_in_pcc = 0;
+> > @@ -1079,6 +1081,7 @@ int cppc_get_perf_caps(int cpunum, struct
+> > cppc_perf_caps *perf_caps)
+> >         nominal_reg = &cpc_desc->cpc_regs[NOMINAL_PERF];
+> >         low_freq_reg = &cpc_desc->cpc_regs[LOWEST_FREQ];
+> >         nom_freq_reg = &cpc_desc->cpc_regs[NOMINAL_FREQ];
+> > +       guaranteed_reg = &cpc_desc->cpc_regs[GUARANTEED_PERF];
+> > 
+> >         /* Are any of the regs PCC ?*/
+> >         if (CPC_IN_PCC(highest_reg) || CPC_IN_PCC(lowest_reg) ||
+> > @@ -1107,6 +1110,9 @@ int cppc_get_perf_caps(int cpunum, struct
+> > cppc_perf_caps *perf_caps)
+> >         cpc_read(cpunum, nominal_reg, &nom);
+> >         perf_caps->nominal_perf = nom;
+> > 
+> > +       cpc_read(cpunum, guaranteed_reg, &guaranteed);
+> > +       perf_caps->guaranteed_perf = guaranteed;
+> > +
+> >         cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
+> >         perf_caps->lowest_nonlinear_perf = min_nonlinear;
+> > 
+> > diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+> > index 8e0b8250a139..cf59e6210d27 100644
+> > --- a/include/acpi/cppc_acpi.h
+> > +++ b/include/acpi/cppc_acpi.h
+> > @@ -104,6 +104,7 @@ enum cppc_regs {
+> >   * today.
+> >   */
+> >  struct cppc_perf_caps {
+> > +       u32 guaranteed_perf;
+> >         u32 highest_perf;
+> >         u32 nominal_perf;
+> >         u32 lowest_perf;
+> > --
+> > 2.17.1
+> > 
+
