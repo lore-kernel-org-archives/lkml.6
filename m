@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBDBC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E40C65C1D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411B021479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E10A21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="OAnb0LOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411B021479
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="uWYR81tW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E10A21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJINDX (ORCPT
+        id S1726740AbeJIND1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:03:23 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38536 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeJINDX (ORCPT
+        Tue, 9 Oct 2018 09:03:27 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33850 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbeJIND0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:03:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b5-v6so247032plr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:48:10 -0700 (PDT)
+        Tue, 9 Oct 2018 09:03:26 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f18-v6so254530plr.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3RJ/t1zGSm3UfjNE8WI2rEcf5JWxo9DPt72JtaWe1nc=;
-        b=OAnb0LOLsek/oBjbd/RvEDOLwPnxFi8khlKDc7dtNbTDodJRo3hJcQ3+RGL0hlVXUS
-         MeT3As4Err6QRj2bqtj2/AxIeyoiykDcUoyFJnxD0IPlsY0Zn3JArlnbHZKIUqgkjwcO
-         DRNZhYjaAiDXac4oXb/whaGEkY6Vlt1BFkxbQ=
+        bh=HUriwkHyLvnR6PfOR/IGT3CTgX/2scA9IP2awmjlhNg=;
+        b=uWYR81tWObB0a4RNo9BrUcBqCzZcJgRPoeZCBXo/pWQZrEineujy7zUB3WTRaoN0Pj
+         EOrEy1E/xrZvrfSnUtMVONVfcxl4TXW2LD4TWlUlV3aVzx7B0lyzmHBP03SeAo7SIBYb
+         KDMqTVMPFocag8zgmVOUKZVQQmWu52QdUxb7c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3RJ/t1zGSm3UfjNE8WI2rEcf5JWxo9DPt72JtaWe1nc=;
-        b=b2KvUeY3VGkeVSHNkLiQ8er5ItMUHVTckZZZNTjBatE/xDP/8PyVTJREoFpYnnfnlb
-         XhLmdc/NOPzsLc0wwik8tsreBT6n4ebejxpLRLEut7iUuR2tXwPS+uxIBe9N8w3GwjCM
-         CSGcEyMPoMJTifgVdUbBavRyx7wocuGAZb26je26dQMOnYS/ciisAYI7nAeS0sxRPVx0
-         Cq68GAIjtW3fc8pIgWoX1SqDWY4iI+30iuqR3XT52oBgf9n1gwQ3HvO6KsNs4KPaH6hN
-         kBDOulhoQLBnB7vRBpV1EYXPxe/FbGZ1PSdbY8Gn3TqsnKGMfnF57vOoG4lQhb4iSERW
-         VIAg==
-X-Gm-Message-State: ABuFfoihsBmYCODbP0H6qRWDqVA1S96CJhoc9+k7SXvS+64vOKyJhZz2
-        rfB7Va9L1R4tns+ejs4xIWpI7Q==
-X-Google-Smtp-Source: ACcGV61hNIYMAw/1MXI+AVlnFVRjyLQUhIq8EqHXyT+gawh5a79FLEuK6O6RcAeZ/xrFtwE5xRCgKw==
-X-Received: by 2002:a17:902:d715:: with SMTP id w21-v6mr26370555ply.143.1539064090437;
-        Mon, 08 Oct 2018 22:48:10 -0700 (PDT)
+        bh=HUriwkHyLvnR6PfOR/IGT3CTgX/2scA9IP2awmjlhNg=;
+        b=ZzJo36SeN4M/sZVgs3DpJuxuVX6DSGO8pAplBnSXy4lk/dOi5pIMVsLuMVUJzChuAL
+         3Zi5mao8bl8BajSaNyNnFaKy+7q9yJTLP1xZ/JKUmFOTPiGmh7gr1wsROR++lS1gjEer
+         kenZDsS1CCA/Pp1Q5c5iYeO9gICuVmEq0efwD5kwrx3sBm15OSkExTJaeGH5wzzkvbat
+         D2SxdQT01Ey59LHcq1r2h6QqZV1YarxSnRyxm9CIF8nXZAysJUkuZTd18s4eaKwrTxs0
+         YNiBeEtovLuOVmwf8JVf8677o8l4wVLBNAdrso1p0A9oIVouBftJrRWpCGW7ebwpCYjk
+         s1zQ==
+X-Gm-Message-State: ABuFfojh+iemYU91pkHWn47yFiNRFp4wP+S2GoOx3bc+c0puRJktqaYy
+        +azAr6m3n1D85baE5paiAaHyQSJvzK4=
+X-Google-Smtp-Source: ACcGV61n0c+VbTj7yWqStK2eKWDmJ1dD6rYcg2o4jH6PZOroiMKqXdoK8Hi7z6fVU+zvRIfy+65I7w==
+X-Received: by 2002:a17:902:7109:: with SMTP id a9-v6mr26985609pll.310.1539064093897;
+        Mon, 08 Oct 2018 22:48:13 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm16886234pff.8.2018.10.08.22.48.08
+        by smtp.gmail.com with ESMTPSA id a15-v6sm16886234pff.8.2018.10.08.22.48.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 22:48:09 -0700 (PDT)
+        Mon, 08 Oct 2018 22:48:12 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     stable@vger.kernel.org
 Cc:     Pierre Yves MORDRET <pierre-yves.mordret@st.com>,
@@ -67,9 +67,9 @@ Cc:     Pierre Yves MORDRET <pierre-yves.mordret@st.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32
         ARCHITECTURE), linux-kernel@vger.kernel.org,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [PATCH 3/7] dmaengine: stm32-dma: fix typo and reported checkpatch warnings
-Date:   Mon,  8 Oct 2018 22:47:48 -0700
-Message-Id: <20181009054752.145978-4-joel@joelfernandes.org>
+Subject: [PATCH 5/7] dmaengine: stm32-dma: fix DMA IRQ status handling
+Date:   Mon,  8 Oct 2018 22:47:50 -0700
+Message-Id: <20181009054752.145978-6-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181009054752.145978-1-joel@joelfernandes.org>
 References: <20181009054752.145978-1-joel@joelfernandes.org>
@@ -82,57 +82,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
 
-Fix typo in a comment and solved reported checkpatch warnings.
+Update the way Transfer Complete and Half Transfer Complete status are
+acknowledge. Even if HTI is not enabled its status is shown when reading
+registers, driver has to clear it gently and not raise an error.
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 ---
- drivers/dma/stm32-dma.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/dma/stm32-dma.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index fae7de54f00a..b64e14a83dec 100644
+index 21ad359a5a59..b40486454a2c 100644
 --- a/drivers/dma/stm32-dma.c
 +++ b/drivers/dma/stm32-dma.c
-@@ -60,7 +60,8 @@
- #define STM32_DMA_SCR_PINC		BIT(9) /* Peripheral increment mode */
- #define STM32_DMA_SCR_CIRC		BIT(8) /* Circular mode */
- #define STM32_DMA_SCR_PFCTRL		BIT(5) /* Peripheral Flow Controller */
--#define STM32_DMA_SCR_TCIE		BIT(4) /* Transfer Cplete Int Enable*/
-+#define STM32_DMA_SCR_TCIE		BIT(4) /* Transfer Complete Int Enable
-+						*/
- #define STM32_DMA_SCR_TEIE		BIT(2) /* Transfer Error Int Enable */
- #define STM32_DMA_SCR_DMEIE		BIT(1) /* Direct Mode Err Int Enable */
- #define STM32_DMA_SCR_EN		BIT(0) /* Stream Enable */
-@@ -918,7 +919,7 @@ static enum dma_status stm32_dma_tx_status(struct dma_chan *c,
- 	u32 residue = 0;
+@@ -34,9 +34,14 @@
+ #define STM32_DMA_LIFCR			0x0008 /* DMA Low Int Flag Clear Reg */
+ #define STM32_DMA_HIFCR			0x000c /* DMA High Int Flag Clear Reg */
+ #define STM32_DMA_TCI			BIT(5) /* Transfer Complete Interrupt */
++#define STM32_DMA_HTI			BIT(4) /* Half Transfer Interrupt */
+ #define STM32_DMA_TEI			BIT(3) /* Transfer Error Interrupt */
+ #define STM32_DMA_DMEI			BIT(2) /* Direct Mode Error Interrupt */
+ #define STM32_DMA_FEI			BIT(0) /* FIFO Error Interrupt */
++#define STM32_DMA_MASKI			(STM32_DMA_TCI \
++					 | STM32_DMA_TEI \
++					 | STM32_DMA_DMEI \
++					 | STM32_DMA_FEI)
  
- 	status = dma_cookie_status(c, cookie, state);
--	if ((status == DMA_COMPLETE) || (!state))
-+	if (status == DMA_COMPLETE || !state)
- 		return status;
+ /* DMA Stream x Configuration Register */
+ #define STM32_DMA_SCR(x)		(0x0010 + 0x18 * (x)) /* x = 0..7 */
+@@ -643,13 +648,29 @@ static irqreturn_t stm32_dma_chan_irq(int irq, void *devid)
+ 	status = stm32_dma_irq_status(chan);
+ 	scr = stm32_dma_read(dmadev, STM32_DMA_SCR(chan->id));
  
- 	spin_lock_irqsave(&chan->vchan.lock, flags);
-@@ -982,7 +983,7 @@ static void stm32_dma_desc_free(struct virt_dma_desc *vdesc)
- }
- 
- static void stm32_dma_set_config(struct stm32_dma_chan *chan,
--			  struct stm32_dma_cfg *cfg)
-+				 struct stm32_dma_cfg *cfg)
- {
- 	stm32_dma_clear_reg(&chan->chan_reg);
- 
-@@ -1015,8 +1016,8 @@ static struct dma_chan *stm32_dma_of_xlate(struct of_phandle_args *dma_spec,
- 	cfg.stream_config = dma_spec->args[2];
- 	cfg.features = dma_spec->args[3];
- 
--	if ((cfg.channel_id >= STM32_DMA_MAX_CHANNELS) ||
--	    (cfg.request_line >= STM32_DMA_MAX_REQUEST_ID)) {
-+	if (cfg.channel_id >= STM32_DMA_MAX_CHANNELS ||
-+	    cfg.request_line >= STM32_DMA_MAX_REQUEST_ID) {
- 		dev_err(dev, "Bad channel and/or request id\n");
- 		return NULL;
+-	if ((status & STM32_DMA_TCI) && (scr & STM32_DMA_SCR_TCIE)) {
++	if (status & STM32_DMA_TCI) {
+ 		stm32_dma_irq_clear(chan, STM32_DMA_TCI);
+-		stm32_dma_handle_chan_done(chan);
+-
+-	} else {
++		if (scr & STM32_DMA_SCR_TCIE)
++			stm32_dma_handle_chan_done(chan);
++		status &= ~STM32_DMA_TCI;
++	}
++	if (status & STM32_DMA_HTI) {
++		stm32_dma_irq_clear(chan, STM32_DMA_HTI);
++		status &= ~STM32_DMA_HTI;
++	}
++	if (status & STM32_DMA_FEI) {
++		stm32_dma_irq_clear(chan, STM32_DMA_FEI);
++		status &= ~STM32_DMA_FEI;
++		if (!(scr & STM32_DMA_SCR_EN))
++			dev_err(chan2dev(chan), "FIFO Error\n");
++		else
++			dev_dbg(chan2dev(chan), "FIFO over/underrun\n");
++	}
++	if (status) {
+ 		stm32_dma_irq_clear(chan, status);
+ 		dev_err(chan2dev(chan), "DMA error: status=0x%08x\n", status);
++		if (!(scr & STM32_DMA_SCR_EN))
++			dev_err(chan2dev(chan), "chan disabled by HW\n");
  	}
+ 
+ 	spin_unlock(&chan->vchan.lock);
 -- 
 2.19.0.605.g01d371f741-goog
 
