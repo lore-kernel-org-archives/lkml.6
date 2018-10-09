@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704CAC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6822ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91219214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C06214DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZt8x//N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91219214C5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFSQBFV4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C06214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeJIXqp (ORCPT
+        id S1727608AbeJIXq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:46:45 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36002 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbeJIXqp (ORCPT
+        Tue, 9 Oct 2018 19:46:59 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37334 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbeJIXqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:46:45 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a8-v6so2668041wmf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:00 -0700 (PDT)
+        Tue, 9 Oct 2018 19:46:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y11-v6so2521456wrd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+zJ7OvqIOhFG8Bz6ToLDYZc8ULkE9qZBoiGR2ew5iWI=;
-        b=pZt8x//NrkFuhjVehpioRUjXgCZTjbsbsSNpUyEOHlC4+zj19DgRDsOEK0qf22KvPt
-         QjaYLde7EXvZOuKxL/uAWxbOlAzBMvHaXNmHlEE/S1aQqHOpX3PxR9pqBl2VI9CDtfLs
-         pyUoO2dTGLCdqMrn7+amq6nHnenveVk+Ha8qjnWpq0u4EHuQY+AWcz+MaC8thj1XXOL+
-         eW7Bp222wMRQ18rotNEXdI2wFPyaR6dplL/ThmJ6qXzqh/8/e6QfVisu3BsSweWlpMa2
-         a8+8/Ef+SZQocksYemWB6yfefrEU6HwJoWSQIpYKPHwOPrn/sy03vzXWiBFrF/pxTh9d
-         J3KQ==
+        bh=bZx3t7q+UnozZRruXST7lP2ZXEpIQkkgwHA6Q+6HcUY=;
+        b=LFSQBFV4ws9OeUpCStW9Wbq9DT2JTXUX2aIcxQW9lZ346CXnYYSsFNbWAkiPHmBFCn
+         GkfZLQZr82BWAK7aiZybd4bWEe6T3emUEVvyEARPtnEd1d0uJ4XQK+gP+FtxSfqHVyq9
+         vdtPIl8339LwyvgtpkZQkcBfl1DsTSwBtvpLKWAjDgdLc4w4hFH5uEFhaoj54uglvDv4
+         7B01qb+WtofS2JhkhbWaLhiNpgKNzpj4tRu4NrvpxCXlJNVaPHIaqfA7NpdSQRv6XCGu
+         bvScBEiMfCfJTmwMJAnmknv4y0QCqo9uFTZr5Ega4uZJcJaSZP7KMLyZYLkF3Gt3OTp+
+         bUog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+zJ7OvqIOhFG8Bz6ToLDYZc8ULkE9qZBoiGR2ew5iWI=;
-        b=SEKKkWHqbyxTF2HKH7kx07p+MzuTDhMuusmlmU6roqgUbZtkr/OuBFFL65e8or2VCx
-         Y2Zg0s3afT4jRdwbQC3EyK88JyD2iUtqJycNf76bZMeYB4ARMLdCyCeNERTnhfVONDb9
-         AatveXQjimWbYKFgYtVDPzpF6M5KRzC6EsRwVpVHi/w4DQ3wvDljo34vRvasRF6ixEFn
-         pQRcIsETS0ioJ32du6ra24viF9W+WEV4nZZMZW6W/u4zCWWnpD1lg+gUGDZ293QPjyIo
-         +r1o1x37L7QXzS0qPr4NIizodZ6T6Gt+NGffOaLpfuj1LnuVKbNhsG2SEqGwT1pj7DTc
-         3eAw==
-X-Gm-Message-State: ABuFfohbx+JN99PbfQIErG0fSi/I5Y/UkiJieP9/gvd5LxFRHNJkLuek
-        o+1u/KUiksnaEuUgajGZT2o=
-X-Google-Smtp-Source: ACcGV635AwpCFnQP4ETlrPMnP+wClD2blsFuabDlJ15FUZV4f5rLLCmYXbVjbYbY2AEZpAl7m02TrA==
-X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr2463610wme.125.1539102539200;
-        Tue, 09 Oct 2018 09:28:59 -0700 (PDT)
+        bh=bZx3t7q+UnozZRruXST7lP2ZXEpIQkkgwHA6Q+6HcUY=;
+        b=hP+g9Fmsl4xeYYGiCL53PQVBgV88uydutakcT5xydcBrdtqJQKdFbHqazLon9vfzzX
+         zxqt9Xb6OX2zcYUu63iaM/Bw6PRnhEKosI5aI1P6P+TDn2RnMDhEcLbe4vMI9tE2yFvU
+         0HezysZsEAd5vB+hmQZOIuqITbyAE50SRt5sYh5/StKj0vYGNi34qYGVUpM0V0O/gsJY
+         JH7z5SplbCk1sZvtYKyZ40H4TXU7DfWBtpX7TMG9+uqhSMv3mICpUhh6mkuCqZp3Gzem
+         +3SzkXFLH4u2u8Uw4ZSzLFUgNCaZuzXqowyXoEwfkBm5Ps7cm4tKOz9tUg5il/mIRuq3
+         U6Tw==
+X-Gm-Message-State: ABuFfohyg7QFnj4N6mhNPcr4NIsO4ZN1I36uAOLhIkfZdr/zvJszXDvD
+        zuvRPh7hUYE86ct66YgyBLYKn1QI
+X-Google-Smtp-Source: ACcGV63q/LCuBS2TzVijrIBstU2jwdIfa5oMrl6L1Pc6WluqA+LZ5zGvmGAn7xe82oMLRbmP7iIBQw==
+X-Received: by 2002:adf:9304:: with SMTP id 4-v6mr19745912wro.129.1539102542977;
+        Tue, 09 Oct 2018 09:29:02 -0700 (PDT)
 Received: from kheib-workstation.mynet (bzq-109-64-21-122.red.bezeqint.net. [109.64.21.122])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.28.58
+        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.29.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:28:58 -0700 (PDT)
+        Tue, 09 Oct 2018 09:29:02 -0700 (PDT)
 From:   Kamal Heib <kamalheib1@gmail.com>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kamalheib1@gmail.com
-Subject: [PATCH rdma-next 13/18] RDMA/qedr: Initialize ib_device_ops struct
-Date:   Tue,  9 Oct 2018 19:28:12 +0300
-Message-Id: <20181009162817.4635-14-kamalheib1@gmail.com>
+Subject: [PATCH rdma-next 16/18] RDMA/vmw_pvrdma: Initialize ib_device_ops struct
+Date:   Tue,  9 Oct 2018 19:28:15 +0300
+Message-Id: <20181009162817.4635-17-kamalheib1@gmail.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
 References: <20181009162817.4635-1-kamalheib1@gmail.com>
@@ -76,99 +76,80 @@ Initialize ib_device_ops with the supported operations.
 
 Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
 ---
- drivers/infiniband/hw/qedr/main.c | 52 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c | 46 ++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
-index cd7b8b39a129..ae7b28e4a475 100644
---- a/drivers/infiniband/hw/qedr/main.c
-+++ b/drivers/infiniband/hw/qedr/main.c
-@@ -133,12 +133,18 @@ static int qedr_iw_port_immutable(struct ib_device *ibdev, u8 port_num,
- 	return 0;
+diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+index c1e31985b11c..25d494ce2d7d 100644
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+@@ -157,6 +157,49 @@ static struct net_device *pvrdma_get_netdev(struct ib_device *ibdev,
+ 	return netdev;
  }
  
-+static struct ib_device_ops qedr_iw_dev_ops = {
-+	.query_gid		= qedr_iw_query_gid,
-+	.get_port_immutable	= qedr_iw_port_immutable,
++static struct ib_device_ops pvrdma_dev_ops = {
++	.query_device		= pvrdma_query_device,
++	.query_port		= pvrdma_query_port,
++	.query_gid		= pvrdma_query_gid,
++	.query_pkey		= pvrdma_query_pkey,
++	.modify_port		= pvrdma_modify_port,
++	.alloc_ucontext		= pvrdma_alloc_ucontext,
++	.dealloc_ucontext	= pvrdma_dealloc_ucontext,
++	.mmap			= pvrdma_mmap,
++	.alloc_pd		= pvrdma_alloc_pd,
++	.dealloc_pd		= pvrdma_dealloc_pd,
++	.create_ah		= pvrdma_create_ah,
++	.destroy_ah		= pvrdma_destroy_ah,
++	.create_qp		= pvrdma_create_qp,
++	.modify_qp		= pvrdma_modify_qp,
++	.query_qp		= pvrdma_query_qp,
++	.destroy_qp		= pvrdma_destroy_qp,
++	.post_send		= pvrdma_post_send,
++	.post_recv		= pvrdma_post_recv,
++	.create_cq		= pvrdma_create_cq,
++	.destroy_cq		= pvrdma_destroy_cq,
++	.poll_cq		= pvrdma_poll_cq,
++	.req_notify_cq		= pvrdma_req_notify_cq,
++	.get_dma_mr		= pvrdma_get_dma_mr,
++	.reg_user_mr		= pvrdma_reg_user_mr,
++	.dereg_mr		= pvrdma_dereg_mr,
++	.alloc_mr		= pvrdma_alloc_mr,
++	.map_mr_sg		= pvrdma_map_mr_sg,
++	.add_gid		= pvrdma_add_gid,
++	.del_gid		= pvrdma_del_gid,
++	.get_netdev		= pvrdma_get_netdev,
++	.get_port_immutable	= pvrdma_port_immutable,
++	.get_link_layer		= pvrdma_port_link_layer,
++	.get_dev_fw_str		= pvrdma_get_fw_ver_str,
 +};
 +
- static int qedr_iw_register_device(struct qedr_dev *dev)
- {
- 	dev->ibdev.node_type = RDMA_NODE_RNIC;
- 	dev->ibdev.query_gid = qedr_iw_query_gid;
- 
- 	dev->ibdev.get_port_immutable = qedr_iw_port_immutable;
-+	ib_set_device_ops(&dev->ibdev, &qedr_iw_dev_ops);
- 
- 	dev->ibdev.iwcm = kzalloc(sizeof(*dev->ibdev.iwcm), GFP_KERNEL);
- 	if (!dev->ibdev.iwcm)
-@@ -159,13 +165,57 @@ static int qedr_iw_register_device(struct qedr_dev *dev)
- 	return 0;
- }
- 
-+static struct ib_device_ops qedr_roce_dev_ops = {
-+	.get_port_immutable	= qedr_roce_port_immutable,
++static struct ib_device_ops pvrdma_dev_srq_ops = {
++	.create_srq		= pvrdma_create_srq,
++	.modify_srq		= pvrdma_modify_srq,
++	.query_srq		= pvrdma_query_srq,
++	.destroy_srq		= pvrdma_destroy_srq,
 +};
 +
- static void qedr_roce_register_device(struct qedr_dev *dev)
+ static int pvrdma_register_device(struct pvrdma_dev *dev)
  {
- 	dev->ibdev.node_type = RDMA_NODE_IB_CA;
+ 	int ret = -1;
+@@ -228,6 +271,8 @@ static int pvrdma_register_device(struct pvrdma_dev *dev)
+ 	dev->ib_dev.get_link_layer = pvrdma_port_link_layer;
+ 	dev->ib_dev.get_dev_fw_str = pvrdma_get_fw_ver_str;
  
- 	dev->ibdev.get_port_immutable = qedr_roce_port_immutable;
-+	ib_set_device_ops(&dev->ibdev, &qedr_roce_dev_ops);
- }
- 
-+static struct ib_device_ops qedr_dev_ops = {
-+	.query_device		= qedr_query_device,
-+	.query_port		= qedr_query_port,
-+	.modify_port		= qedr_modify_port,
-+	.alloc_ucontext		= qedr_alloc_ucontext,
-+	.dealloc_ucontext	= qedr_dealloc_ucontext,
-+	.mmap			= qedr_mmap,
-+	.alloc_pd		= qedr_alloc_pd,
-+	.dealloc_pd		= qedr_dealloc_pd,
-+	.create_cq		= qedr_create_cq,
-+	.destroy_cq		= qedr_destroy_cq,
-+	.resize_cq		= qedr_resize_cq,
-+	.req_notify_cq		= qedr_arm_cq,
-+	.create_qp		= qedr_create_qp,
-+	.modify_qp		= qedr_modify_qp,
-+	.query_qp		= qedr_query_qp,
-+	.destroy_qp		= qedr_destroy_qp,
-+	.create_srq		= qedr_create_srq,
-+	.destroy_srq		= qedr_destroy_srq,
-+	.modify_srq		= qedr_modify_srq,
-+	.query_srq		= qedr_query_srq,
-+	.post_srq_recv		= qedr_post_srq_recv,
-+	.query_pkey		= qedr_query_pkey,
-+	.create_ah		= qedr_create_ah,
-+	.destroy_ah		= qedr_destroy_ah,
-+	.get_dma_mr		= qedr_get_dma_mr,
-+	.dereg_mr		= qedr_dereg_mr,
-+	.reg_user_mr		= qedr_reg_user_mr,
-+	.alloc_mr		= qedr_alloc_mr,
-+	.map_mr_sg		= qedr_map_mr_sg,
-+	.poll_cq		= qedr_poll_cq,
-+	.post_send		= qedr_post_send,
-+	.post_recv		= qedr_post_recv,
-+	.process_mad		= qedr_process_mad,
-+	.get_netdev		= qedr_get_netdev,
-+	.get_link_layer		= qedr_link_layer,
-+	.get_dev_fw_str		= qedr_get_dev_fw_str,
-+};
++	ib_set_device_ops(&dev->ib_dev, &pvrdma_dev_ops);
 +
- static int qedr_register_device(struct qedr_dev *dev)
- {
- 	int rc;
-@@ -261,6 +311,8 @@ static int qedr_register_device(struct qedr_dev *dev)
- 	dev->ibdev.get_link_layer = qedr_link_layer;
- 	dev->ibdev.get_dev_fw_str = qedr_get_dev_fw_str;
+ 	mutex_init(&dev->port_mutex);
+ 	spin_lock_init(&dev->desc_lock);
  
-+	ib_set_device_ops(&dev->ibdev, &qedr_dev_ops);
-+
- 	dev->ibdev.driver_id = RDMA_DRIVER_QEDR;
- 	return ib_register_device(&dev->ibdev, "qedr%d", NULL);
- }
+@@ -256,6 +301,7 @@ static int pvrdma_register_device(struct pvrdma_dev *dev)
+ 		dev->ib_dev.modify_srq = pvrdma_modify_srq;
+ 		dev->ib_dev.query_srq = pvrdma_query_srq;
+ 		dev->ib_dev.destroy_srq = pvrdma_destroy_srq;
++		ib_set_device_ops(&dev->ib_dev, &pvrdma_dev_srq_ops);
+ 
+ 		dev->srq_tbl = kcalloc(dev->dsr->caps.max_srq,
+ 				       sizeof(struct pvrdma_srq *),
 -- 
 2.14.4
 
