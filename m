@@ -2,87 +2,102 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF0FAC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18D3C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F12721479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F12721479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D19B214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:56:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D19B214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeJITH0 (ORCPT
+        id S1726798AbeJITNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 15:07:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:36616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbeJITHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 15:07:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 701307A9;
-        Tue,  9 Oct 2018 04:50:50 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 412E33F5D3;
-        Tue,  9 Oct 2018 04:50:50 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 846071AE03D0; Tue,  9 Oct 2018 12:50:49 +0100 (BST)
-Date:   Tue, 9 Oct 2018 12:50:49 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steve.capper@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2] Documentation/arm64: HugeTLB page implementation
-Message-ID: <20181009115049.GA6248@arm.com>
-References: <97e4e5fb-24ed-0545-414a-6a0c0116e6b8@infradead.org>
- <20181008100355.31820-1-punit.agrawal@arm.com>
- <67f4ceb7-d41c-ab7a-4d5e-c147dadf6860@infradead.org>
- <87ftxf7812.fsf@e105922-lin.cambridge.arm.com>
+        Tue, 9 Oct 2018 15:13:21 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:37786 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeJITNU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 15:13:20 -0400
+Received: by mail-wr1-f52.google.com with SMTP id y11-v6so1508193wrd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:56:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jrUOVshL93CDxYu7hxuyd4O3cvngTxN/QsenqfI1vv4=;
+        b=sT6s5OMtYueaqwvcLJRf2BniZ9LQWzvU1zE3cl0pjFz4aCtb8u74joR9ue5mAJtf1M
+         I8la9oX+WLvnU+aAI2J6Ml5G8nXo/w9QbYEIyThZMPvwix9IW4dq18aOK4dCh3lbG25W
+         7zVZcsbPtVaQlSD7KOnO8YvAFE+epy3Go9iM3BDdST94I3n4azUzF0kgO0vond0IRZ3Y
+         cvgc82us/FrJ8fH20lHJmbT4zmAj3vI7uUBXdbn+7+jBusPtIVfqrRToKK2m8C1Wm5zS
+         JUrMKDpvlWINgwqDK2lX9Iuj09vXOU6yzOi1Ooocqu8u3dq3MVy3Ne2Cbj8/RTWiLBg1
+         mAEg==
+X-Gm-Message-State: ABuFfojFQ+0qMH3cPVSVHwwJLhw21diMiftXmKKi9FWhccm139Xo19gH
+        3serlAKmv3ZcL8EEa5uknBWgug==
+X-Google-Smtp-Source: ACcGV6362XamdW/AWy1Lpc2N5UEql7O/jIBiZP4ON9/FaCEsTFAXhQRR2UBhCx0WNfuUwWVQQ1FhiQ==
+X-Received: by 2002:adf:be07:: with SMTP id n7-v6mr18572708wrh.267.1539086202821;
+        Tue, 09 Oct 2018 04:56:42 -0700 (PDT)
+Received: from t460s.bristot.redhat.com (nat-cataldo.sssup.it. [193.205.81.5])
+        by smtp.gmail.com with ESMTPSA id 90-v6sm25374867wrg.86.2018.10.09.04.56.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 04:56:41 -0700 (PDT)
+Subject: Re: [RFD/RFC PATCH 0/8] Towards implementing proxy execution
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Juri Lelli <juri.lelli@redhat.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, alessio.balsini@gmail.com,
+        will.deacon@arm.com, andrea.parri@amarulasolutions.com,
+        dietmar.eggemann@arm.com, patrick.bellasi@arm.com,
+        henrik@austad.us, linux-rt-users@vger.kernel.org
+References: <20181009092434.26221-1-juri.lelli@redhat.com>
+ <20181009105112.bhqlrabdt5ae5qmm@linutronix.de>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <9837aa4b-1bd4-bc6a-84f7-0b8704995d44@redhat.com>
+Date:   Tue, 9 Oct 2018 13:56:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ftxf7812.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181009105112.bhqlrabdt5ae5qmm@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 11:02:01AM +0100, Punit Agrawal wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
-> 
-> > On 10/8/18 3:03 AM, Punit Agrawal wrote:
-> >> Arm v8 architecture supports multiple page sizes - 4k, 16k and
-> >> 64k. Based on the active page size, the Linux port supports
-> >> corresponding hugepage sizes at PMD and PUD(4k only) levels.
-> >> 
-> >> In addition, the architecture also supports caching larger sized
-> >> ranges (composed of multiple entries) at the PTE and PMD level in the
-> >> TLBs using the contiguous bit. The Linux port makes use of this
-> >> architectural support to enable additional hugepage sizes.
-> >> 
-> >> Describe the two different types of hugepages supported by the arm64
-> >> kernel and the hugepage sizes enabled by each.
-> >> 
-> >> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >> Cc: Will Deacon <will.deacon@arm.com>
-> >> Cc: Jonathan Corbet <corbet@lwn.net>
-> >
-> > Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks!
-> 
-> Catalin, Will - I assume you'll pick this up at some point? Or do arm64
-> documentation patches get routed by another tree?
+On 10/9/18 12:51 PM, Sebastian Andrzej Siewior wrote:
+>> The main concerns I have with the current approach is that, being based
+>> on mutex.c, it's both
+>>
+>>  - not linked with futexes
+>>  - not involving "legacy" priority inheritance (rt_mutex.c)
+>>
+>> I believe one of the main reasons Peter started this on mutexes is to
+>> have better coverage of potential problems (which I can assure everybody
+>> it had). I'm not yet sure what should we do moving forward, and this is
+>> exactly what I'd be pleased to hear your opinions on.
+> wasn't the idea that once it works to get rid of rt_mutex?
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+As far as I know, it is. But there are some additional complexity
+involving a -rt version of this patch, for instance:
 
-Catalin can pick this up for 4.20.
+What should the protocol do if the thread migrating is with migration
+disabled?
 
-Will
+The side effects of, for instance, ignoring the migrate_disable() would
+add noise for the initial implementation... too much complexity at once.
+
+IMHO, once it works in the non-rt, it will be easier to do the changes
+needed to integrate it with -rt.
+
+Thoughts?
+
+-- Daniel
+
