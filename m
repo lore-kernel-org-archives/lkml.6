@@ -2,133 +2,196 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C62AC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240DEC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AA8213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AA8213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id C440F213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JSjnW0Ij"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C440F213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeJJFMb (ORCPT
+        id S1727635AbeJJFP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 01:12:31 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.120]:31986 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725837AbeJJFMa (ORCPT
+        Wed, 10 Oct 2018 01:15:56 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35065 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeJJFPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:12:30 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 91C2AA267
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 16:53:30 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 9zwPgbOrIBcCX9zwUguEm7; Tue, 09 Oct 2018 16:53:30 -0500
-X-Authority-Reason: nr=8
-Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:49498 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g9zwO-0037Qu-He; Tue, 09 Oct 2018 16:53:20 -0500
-Subject: Re: [PATCH v2] smb2: fix uninitialized variable bug in
- smb2_ioctl_query_info
-To:     Ronnie Sahlberg <lsahlber@redhat.com>
-Cc:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-References: <20181009201748.GA21025@embeddedor.com>
- <716967702.32689579.1539121620152.JavaMail.zimbra@redhat.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <507142d7-d630-8eb3-9e0a-b2fa90e38d23@embeddedor.com>
-Date:   Tue, 9 Oct 2018 23:53:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 10 Oct 2018 01:15:55 -0400
+Received: by mail-vs1-f67.google.com with SMTP id c10so3117813vsk.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 14:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XXRIKfnZ48WP82n92ZNWk77jjQVNKnLE/WTB0ajRh8U=;
+        b=JSjnW0IjlXLi0VhaLl/IghYadzG2gUYfrzkP2dt1bRVYtk/O+dWnSf1YBBjtqt5njg
+         STAF2y3Aex+pcAy2kk24ViPQk2bdX9CX6DlSensCvC2O8GgU+w9eO/qB1rO0BIVlqoX/
+         8SmkpHicpfNhHi1SrGv6Huwrx5iHX/cPrq7s0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XXRIKfnZ48WP82n92ZNWk77jjQVNKnLE/WTB0ajRh8U=;
+        b=IaBQ8gjy800944xbvySybsEjJCDUM6mlZZapGAz7slq9KF+yNWKLrOjfc8HRAj6oNC
+         P631AJQ15lB2AcpyUPiLN4mL1Tf1V7lbPdWAFC7sa41a/syryDDNZSYOwazCOGUzennS
+         Anxyzoh1HzlDGLKkj9JChu7De84kpxZefEGsiqtUakSBQDrcgEGCmJlt8pyZpFoObdIj
+         eJ+a+E6glzvIKXJHr5WLDS3Sf5HAC4QBap2RAZuOW4USoUNdaZNG3tizZciaa30B/1Xo
+         KbCZjZpthwU6S1Qpt+HGW5m3A663rLg3utTQ6cf7Z5mGUdeH8yr377kZ8y+Ncq587aM7
+         aNRA==
+X-Gm-Message-State: ABuFfojZK7osIqVxMAOtzDSNcUrlsODpWXhEEi1p01jwlOimcYm4oMPC
+        JJY6jbEebsQOH7RS7cQAA9W4L87w0fU=
+X-Google-Smtp-Source: ACcGV61aRH913wsXEQVdtOm2aROEM8qOk8foQbzyjvPcTfLXbiCt9qX5mPi3hH72Eo8WCBRkc343mg==
+X-Received: by 2002:ab0:350:: with SMTP id 74mr11683826uat.135.1539122215029;
+        Tue, 09 Oct 2018 14:56:55 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id c189-v6sm9076157vkd.1.2018.10.09.14.56.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 14:56:54 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id v12-v6so3130451vsc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 14:56:53 -0700 (PDT)
+X-Received: by 2002:a67:1141:: with SMTP id 62-v6mr11207954vsr.213.1539122213412;
+ Tue, 09 Oct 2018 14:56:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <716967702.32689579.1539121620152.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 109.24.154.57
-X-Source-L: No
-X-Exim-ID: 1g9zwO-0037Qu-He
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:49498
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <1538973275-5961-1-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1538973275-5961-1-git-send-email-cang@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 9 Oct 2018 14:56:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xg4UtkJxvVQ2_ky+6-XnM=FvXcnc8xb=uhHeiP5bdFiw@mail.gmail.com>
+Message-ID: <CAD=FV=Xg4UtkJxvVQ2_ky+6-XnM=FvXcnc8xb=uhHeiP5bdFiw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] scsi: ufs: make UFS Tx lane1 clock optional
+To:     cang@codeaurora.org
+Cc:     subhashj@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, venkatg@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Ronnie,
+Hi,
 
-On 10/9/18 11:47 PM, Ronnie Sahlberg wrote:
-> Good catch, but I think it should be :
-> 
-> int resp_buftype = CIFS_NO_BUFFER;
+On Sun, Oct 7, 2018 at 9:34 PM Can Guo <cang@codeaurora.org> wrote:
 >
+> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>
+> The UFS Tx lane1 clock could be muxed, hence keep it optional by ignoring
+> it if it is not provided in device tree.
 
-Oh okay. I'll send v3 shortly.
-
-Thanks for the feedback.
---
-Gustavo
+Thanks for the updated commit message.  This makes much more sense now!  :-)
 
 
+> @@ -113,10 +110,10 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
+>         if (!host->is_lane_clks_enabled)
+>                 return;
+>
+> -       if (host->hba->lanes_per_direction > 1)
+> +       if (host->tx_l1_sync_clk)
+>                 clk_disable_unprepare(host->tx_l1_sync_clk);
+
+I don't believe you need the "if".  A NULL clock is by definition OK
+to enable / disable which is designed to make optional clocks easier
+to deal with.
+
+
+>         clk_disable_unprepare(host->tx_l0_sync_clk);
+> -       if (host->hba->lanes_per_direction > 1)
+> +       if (host->rx_l1_sync_clk)
+>                 clk_disable_unprepare(host->rx_l1_sync_clk);
+
+optional: Technically this part of the patch wasn't actually needed,
+right?  "rx_l1_sync_clk" is not optional so that means that
+"rx_l1_sync_clk" should be non-NULL exactly when lanes_per_direction >
+1.
+
+...but actually I'm fine with keeping this part of your patch for
+symmetry.  Especially since you can leverage the
+clk_disable_unprepare(NULL) to simplify your code.  Please mention in
+your commit message that this is a cleanup and just for symmetry.
+Probably also remove the "if" tests that are guarding
+ufs_qcom_host_clk_enable().
+
+
+>         clk_disable_unprepare(host->rx_l0_sync_clk);
+>
+> @@ -141,24 +138,21 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
+>         if (err)
+>                 goto disable_rx_l0;
+>
+> -       if (host->hba->lanes_per_direction > 1) {
+> +       if (host->rx_l1_sync_clk) {
+
+Similar: the above change isn't required but I'm OK if you want to
+make this change for symmetry / to cleanup clock handling.  Please
+mention in your commit message.
+
+
+> +       /* The tx lane1 clk could be muxed, hence keep this optional */
+> +       if (host->tx_l1_sync_clk)
+> +               ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+> +                                        host->tx_l1_sync_clk);
+
+If "host->tx_l1_sync_clk" is provided then you should still check the
+return value of ufs_qcom_host_clk_enable(), right?  ...so please leave
+the error path here.
+
+
+> @@ -174,23 +168,33 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
+>
+>         err = ufs_qcom_host_clk_get(dev,
+>                         "rx_lane0_sync_clk", &host->rx_l0_sync_clk);
+> -       if (err)
+> +       if (err) {
+> +               dev_err(dev, "%s: failed to get rx_lane0_sync_clk, err %d",
+> +                               __func__, err);
+
+nit: including "__func__" in dev_xxx() calls is discouraged.  The
+"dev_xxx" calls already print the device name and the string within a
+given device driver should be unique enough so __func__ just adds crap
+to the logs.  If you really feel that __func__ adds something for you,
+try posting up a patch to make all "dev_err" functions include
+__func__.  ...but I think you'd probably be rejected.
+
+suggestion: you'd save a few lines of code and simplify your probe if
+you just passed an "optional" bool to the ufs_qcom_host_clk_get() that
+controlled the printout.
+
+
+> -               err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+> -                       &host->tx_l1_sync_clk);
+> +               /* The tx lane1 clk could be muxed, hence keep this optional */
+> +               ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+> +                                       &host->tx_l1_sync_clk);
+
+To be technically correct you should actually check the error value
+returned by ufs_qcom_host_clk_get().  Specifically figure out what the
+error value is when "tx_lane1_sync_clk" isn't specified and check for
+that.
+
+...one reason this matters is -EPROBE_DEFER.  In theory devm_clk_get()
+could return -EPROBE_DEFER.  In such a case you'd want to exit the
+probe, not continue on.  It's also just good coding practice to handle
+just the error you want though so that if the function returned some
+other failing case you'd propagate it down instead of eating it.
+
+If you passed "optional" to ufs_qcom_host_clk_get() as suggested above
+you could put this error-code checking in ufs_qcom_host_clk_get() and
+return 0 from that function if an optional clock was found to not
+exist.
+
+-Doug
