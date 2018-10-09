@@ -2,115 +2,118 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C9C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4EDC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C09F20835
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:22:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C09F20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9591A20835
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:22:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="VzvcHkfP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9591A20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeJISis (ORCPT
+        id S1727312AbeJISg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:38:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726775AbeJISis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:38:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BC3B2AD98;
-        Tue,  9 Oct 2018 11:22:16 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 13:22:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-Message-ID: <20181009112216.GM8528@dhcp22.suse.cz>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074457.GD22173@dhcp22.suse.cz>
- <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
+        Tue, 9 Oct 2018 14:36:59 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46094 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeJISg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 14:36:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g32-v6so1301182edg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aCRqEoXGmJJB0s9epSpdcb+zk52CuivvQj9Vs+LgLAk=;
+        b=VzvcHkfPPzU4FoJ3am6Ft8P0U6a6sykjvvvX+6PAU69srJGdm7HrvEz5MmFAy1srDK
+         4QSl4/L7eCYUWb+hE0atJfolOUIZzVZCQgi5rhYoVd9n6fqOQN65bS4p4GtTsnnXvLKI
+         Ozg9erPtY35VNsBWsoRq/SB4LcZMbA4D7H/Aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aCRqEoXGmJJB0s9epSpdcb+zk52CuivvQj9Vs+LgLAk=;
+        b=CJ/aoqA0m+hSPjSfoZ02kK8yytJSyqEYZCiIPSJJKTbFEtl344h52J6sSXszcrUjLn
+         RLB9oTs4CJxhvgmmBIeOtHATaMPEwqdPlEeUIBMSZlSfbcZIxwiGD1fK358k+AFKwFql
+         ENNwR1tokKvXuUfaheN2Au8pcdBNwcKNX0oJEGJUQnPqQjgTu5SFc5MS5V4B1e/1Kfju
+         5E+dwi0y6eykkJmI2qaDz9pqxK0KUMnw5RsdwXzrSevWLh2lqIhr0EHJQcAfr/nFuXvL
+         /x7yBi40ATKsGMJOkGhE/zkZSMxNWv8nCm2+UjR2isI+Fyfcjhcku/BPsULx0wetXbQt
+         o0bA==
+X-Gm-Message-State: ABuFfojDSbOzYDxBwPUDEg0DZ8PtX/bqvEvtbp6ovy970tz0k3pjK+PS
+        d9OWshfGCgGcIz0uJbqhXoWTaA==
+X-Google-Smtp-Source: ACcGV62UcuZlooM7GU+uQJ0j228aSniMozaODU+3oJhPaNehj97es1o74G8kwlPOGmel7FaY7jSNFg==
+X-Received: by 2002:a50:cf0a:: with SMTP id c10-v6mr34371193edk.242.1539084026408;
+        Tue, 09 Oct 2018 04:20:26 -0700 (PDT)
+Received: from prevas-ravi.vestasvisitor.net ([193.47.71.171])
+        by smtp.gmail.com with ESMTPSA id n23-v6sm3595821eja.41.2018.10.09.04.20.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 09 Oct 2018 04:20:25 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 06/23] linux/printk.h: use unique identifier for each struct _ddebug
+Date:   Tue,  9 Oct 2018 13:19:56 +0200
+Message-Id: <20181009112013.14238-7-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.19.1.4.g721af0fda3
+In-Reply-To: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
+References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
+ <20181009112013.14238-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 04-10-18 09:44:35, Dan Williams wrote:
-> Hi Michal,
-> 
-> On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Wed 03-10-18 19:15:18, Dan Williams wrote:
-> > > Changes since v1:
-> > > * Add support for shuffling hot-added memory (Andrew)
-> > > * Update cover letter and commit message to clarify the performance impact
-> > >   and relevance to future platforms
-> >
-> > I believe this hasn't addressed my questions in
-> > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
-> > "
-> > It is the more general idea that I am not really sure about. First of
-> > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
-> > cannot we simply have it disabled?
-> 
-> I'm not aware of any CVE that this would directly preclude, but that
-> said the entropy injected at 4MB boundaries raises the bar on heap
-> attacks. Environments that want more can adjust that with the boot
-> parameter. Given the potential benefits I think it would only make
-> sense to default disable it if there was a significant runtime impact,
-> from what I have seen there isn't.
-> 
-> > Then and more concerning question is,
-> > does it even make sense to have this randomization applied to higher
-> > orders than 0? Attacker might fragment the memory and keep recycling the
-> > lowest order and get the predictable behavior that we have right now.
-> 
-> Certainly I expect there are attacks that can operate within a 4MB
-> window, as I expect there are attacks that could operate within a 4K
-> window that would need sub-page randomization to deter. In fact I
-> believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
-> Combining that with page allocator randomization makes the kernel less
-> predictable.
+Changes on x86-64 later in this series require that all struct _ddebug
+descriptors in a translation unit uses distinct identifiers. Realize
+that for pr_debug_ratelimited by generating such an identifier via
+__UNIQUE_ID and pass that to an extra level of macros.
 
-I am sorry but this hasn't explained anything (at least to me). I can
-still see a way to bypass this randomization by fragmenting the memory.
-With that possibility in place this doesn't really provide the promissed
-additional security. So either I am missing something or the per-order
-threshold is simply a wrong interface to a broken security misfeature.
+No functional change.
 
-> Is that enough justification for this patch on its own?
+Acked-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Jason Baron <jbaron@akamai.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ include/linux/printk.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I do not think so from what I have heard so far.
-
-> It's
-> debatable. Combine that though with the wider availability of
-> platforms with memory-side-cache and I think it's a reasonable default
-> behavior for the kernel to deploy.
-
-OK, this sounds a bit more interesting. I am going to speculate because
-memory-side-cache is way too generic of a term for me to imagine
-anything specific. Many years back while at a university I was playing
-with page coloring as a method to reach a more stable performance
-results due to reduced cache conflicts. It was not always a performance
-gain but it definitely allowed for more stable run-to-run comparable
-results. I can imagine that a randomization might lead to a similar effect
-although I am not sure how much and it would be more interesting to hear
-about that effect. If this is really the case then I would assume on/off
-knob to control the randomization without something as specific as
-order.
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index d3ba3245531d..70df2c578d40 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -460,7 +460,7 @@ extern int kptr_restrict;
+ /* If you are writing a driver, please use dev_dbg instead */
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ /* descriptor check is first to prevent flooding with "callbacks suppressed" */
+-#define pr_debug_ratelimited(fmt, ...)					\
++#define _pr_debug_ratelimited(descriptor, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+ 				      DEFAULT_RATELIMIT_INTERVAL,	\
+@@ -470,6 +470,8 @@ do {									\
+ 	    __ratelimit(&_rs))						\
+ 		__dynamic_pr_debug(&descriptor, pr_fmt(fmt), ##__VA_ARGS__);	\
+ } while (0)
++#define pr_debug_ratelimited(fmt, ...)		\
++	_pr_debug_ratelimited(__UNIQUE_ID(ddebug), fmt, ##__VA_ARGS__)
+ #elif defined(DEBUG)
+ #define pr_debug_ratelimited(fmt, ...)					\
+ 	printk_ratelimited(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1.3.g1d92a00e68
+
