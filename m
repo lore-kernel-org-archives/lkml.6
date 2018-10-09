@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D564AECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C401CECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932C9214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC31214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:25:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aFYhAl95"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932C9214C5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kdY7h6gD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC31214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJIXm6 (ORCPT
+        id S1727361AbeJIXnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:42:58 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35867 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbeJIXm6 (ORCPT
+        Tue, 9 Oct 2018 19:43:00 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40908 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbeJIXnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:42:58 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u34-v6so2301885qth.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:14 -0700 (PDT)
+        Tue, 9 Oct 2018 19:43:00 -0400
+Received: by mail-qt1-f193.google.com with SMTP id b4-v6so2290317qtc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=k9t4ZQyhj3UHB2vpFiS96ld6Wm363DNdyAeKB8jO/D8=;
-        b=aFYhAl95BW4L9QN7e/W030cStVJJKryh0zaKjg8BqMNvfm+X6GuHEX527vtwOs3Ldh
-         bz9Vaf0vkJ7P/PAPDf/xA501Z1tQhjteOvNnC0nX9hyw5yFyLAH5Q2jJVIfU0Y079fwh
-         ntW/ZjBmwdH4k4/iIBE19vywXV1+vj6FBLhzk=
+        bh=zIbq74SHzUmAAn9beXqSbIF0xv76+VwJaPbFBIeIe1U=;
+        b=kdY7h6gD1j1ZOLtPzQxEfbc4s3OD13OAN015eqld8teNR3+nmmjs/yTd5FpiU0di87
+         qpUqMO8Ns1pedoP0cGypsMgs2UXMZqoWFLcxwWAjKO6dfseK3ibqVv3MH+mTC/ttnPl+
+         8bAduK1OBfF087dvUgV/UImLxOwwIHScBIC9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=k9t4ZQyhj3UHB2vpFiS96ld6Wm363DNdyAeKB8jO/D8=;
-        b=LyHoTRZtlhJHpLKnIPcR4FY6f0yHigikzclyNvUXy8SaCLRjN2OcpqApDuD0cWaWsd
-         Q0DTIY8s4toIkaNoHTVoi79+7RjLOUVALwi2cFp+NhHuFma32RZ31ISDG6mpVmRfHu0T
-         Z55TisAKbhOHR06cbSZQeBCX3pFdADuVl+qlVcBJw1sEDrb02VsTQlIR6or/NsX8xUVB
-         AJ0IOdq+DLDA0P3oWfdhNg1vDmL8QZmyKK3b9Vt7rVC08TuBpTxf4LZfwiGl3CIyEfFc
-         GVdtf6KEa2D4Aoo4D+5CwJ3t026NyHdZ6ke4mgx8MdYTyzztH2B1GfwHclG8zHHp7QpX
-         5KrQ==
-X-Gm-Message-State: ABuFfoh8VDttNFCqSlpbRn2V28l7rsCo+bDmLB2lPJFq4PuYmSMmJoxA
-        N3Vcwpmp7GfBiGhUkEKEdAJoxM8vFPJK9Q==
-X-Google-Smtp-Source: ACcGV60Q8Q69K6x6jktKcbORVVIYHWgG+VD+W/6rLUgk92I9qhk1TLvvekYSF1tpP8fUeEnSMsUVyQ==
-X-Received: by 2002:ad4:414b:: with SMTP id z11-v6mr19680915qvp.206.1539102314077;
-        Tue, 09 Oct 2018 09:25:14 -0700 (PDT)
+        bh=zIbq74SHzUmAAn9beXqSbIF0xv76+VwJaPbFBIeIe1U=;
+        b=so5ZN5aLRFWvi/3D6ImffHKuHuAiYPa9UI5+mavPS4pVl8H9CQ6R/fsv04DRR9Z5Bb
+         dzaRWxeGQGf1OhUB4iWymU2K8Lkr7hDrAlw3UHV8qCoJ6cKCE/7UQ6EwiykL0hXZBr32
+         wq6H1WDtpGBiwkcTvc8SE0AxDveMPrcV6+IUf5SOUTJxfkCAHjBs/pkuDZb60d4nIzGG
+         AXV7tdgvqONajHfevLq8r8gw4Ul8WVevds/6Ck0FEwGUlAu8OfmxIqxYkJLTmCqrP6gY
+         NEdcE3vjPvCl6CuTlIziwZ3olMQsEt5cSqcnUtvZbkTw1DE0yJUnNxWhR69ByEbdFsFZ
+         GUZg==
+X-Gm-Message-State: ABuFfogDpMF8RshqJjw3+Q1J7XowIPekZ3Ai8y4whfQNqOTBhIHD64mJ
+        zQrLlHPjFoESqcpClC78dPJDhGdhcHMbkw==
+X-Google-Smtp-Source: ACcGV602XfqXVNPD/Eg/092xZk0PMy7jAlLchI99z3G11vY0KKo70lEW4tCqakEIbaPNLs+84lDBbg==
+X-Received: by 2002:aed:3342:: with SMTP id u60-v6mr20271131qtd.177.1539102315988;
+        Tue, 09 Oct 2018 09:25:15 -0700 (PDT)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.12
+        by smtp.googlemail.com with ESMTPSA id o7-v6sm10441169qkc.67.2018.10.09.09.25.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 09:25:13 -0700 (PDT)
+        Tue, 09 Oct 2018 09:25:15 -0700 (PDT)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org, rui.zhang@intel.com
@@ -64,9 +64,9 @@ Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
         daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
         quentin.perret@arm.com, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org
-Subject: [RFC PATCH 5/7] sched/fair: Enable CFS periodic tick to update thermal pressure
-Date:   Tue,  9 Oct 2018 12:25:00 -0400
-Message-Id: <1539102302-9057-6-git-send-email-thara.gopinath@linaro.org>
+Subject: [RFC PATCH 6/7] sched/fair: update cpu_capcity to reflect thermal pressure
+Date:   Tue,  9 Oct 2018 12:25:01 -0400
+Message-Id: <1539102302-9057-7-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
 References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
@@ -75,35 +75,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce support in CFS periodic tick to trigger the process of
-computing average thermal pressure for a cpu.
+cpu_capacity relflects the maximum available capacity of a cpu. Thermal
+pressure on a cpu means this maximum available capacity is reduced. This
+patch reduces the average thermal pressure for a cpu from its maximum
+available capacity so that cpu_capacity reflects the actual
+available capacity.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- kernel/sched/fair.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b39fb59..7deb1d0 100644
+index 7deb1d0..8651e55 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -21,6 +21,7 @@
-  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
-  */
- #include "sched.h"
-+#include "thermal.h"
+@@ -7497,6 +7497,7 @@ static unsigned long scale_rt_capacity(int cpu)
  
- #include <trace/events/sched.h>
+ 	used = READ_ONCE(rq->avg_rt.util_avg);
+ 	used += READ_ONCE(rq->avg_dl.util_avg);
++	used += READ_ONCE(rq->avg_thermal.load_avg);
  
-@@ -9557,6 +9558,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 
- 	if (static_branch_unlikely(&sched_numa_balancing))
- 		task_tick_numa(rq, curr);
-+
-+	update_periodic_maxcap(rq);
- }
- 
- /*
+ 	if (unlikely(used >= max))
+ 		return 1;
 -- 
 2.1.4
 
