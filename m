@@ -2,263 +2,141 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FCC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32783C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4D9214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCF44213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:37:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c02aZUvJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4D9214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+EmKW1u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF44213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeJJDxI (ORCPT
+        id S1726870AbeJJDzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbeJJDxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:53:08 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77ABD214C4;
-        Tue,  9 Oct 2018 20:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539117264;
-        bh=geTX9f2Q1fw8JCj0sx4lXutNXjoTCgnePKZhWPFcrmE=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=c02aZUvJnZPbR+2nyAtphQlD5yfP0v0PNTnMYWjUNEhWEGA5fzCtnrHGgnGnCo8m6
-         TYAbONMMAvoREkYFgxb+YAmEb5ghKOg1PDEwSNEPERESPen/Qa06Stx+tTkFE719ga
-         XWSCLUdIJaYKpgBBsboJO3Yw3BCOap9LavBq/OxI=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 9 Oct 2018 23:55:48 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:36630 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeJJDzs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 23:55:48 -0400
+Received: by mail-wr1-f41.google.com with SMTP id y16so3267514wrw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VqOwJW831xjJ5Unqznvj6I4iVs9hYgV2jnbslHchdsc=;
+        b=X+EmKW1uSpvZPRGSCl5BOvGpLLbMtJVsBfOQSzd7DLrjTvck96JXXJrT1M9h1/rtZK
+         DD2N2e3qgtMVh9yqOyMaZmoDmvO6Q1vq/HbKMCWWvbEqM+VdFouuba71HQ9sIPxX/at9
+         mbf8DvLJj1EP1TRfEN4pOcHC5M88Nuqs2Jd9zwEidBTRsH2tKbcwGvLYx3UTvaxVxr6M
+         vIIcg+QnXjkqzdUe1+OLxBB/USwTBB1o+Jnr7pJEGTENgq1BoZ+nXpt/cW0XH+18JXbI
+         52raC88lRGzr2u0HNAXpAddFN+Q++K8FWe1uzZTDCOakwfx7QGyztwdTHkOxbcSlhK8J
+         eS7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VqOwJW831xjJ5Unqznvj6I4iVs9hYgV2jnbslHchdsc=;
+        b=RqXrdPWbgjdJfbkpk5ApUlCt+9QCbNPIFN/0rkWMcL+jhpeFhyesbpVaq2yvXGuYNF
+         KwVW/Bf0uq/ZGAQKAs5fOEcKmz8B/CIN6T3CQ+B5OjtIi4MjH751tzim5J3oAK/+NwN8
+         nHC2eIcQVk5e++CdrVN4y6UNis93Q9MJqE1eSUoR3Xnh2LIaGQe1Qw18wcf0Rw3fRQG7
+         qm7T0UQtKibsdsaCBKQRfbu4tUWJKLRgjqhk/FkPKZCvZIIVG+XNZrpQrL85fUFYfNVo
+         1M12CQOW7/KuvJQPcUMUI2CZLeS5igRaS8J/j/KFXIzn2hj5joOQvELNDyRILk4gzLIR
+         YZUw==
+X-Gm-Message-State: ABuFfoitn/C6cJg5MG5NZ1V4srU6+mS/DPtoMuInRsOcHtWAbz2Oa/j2
+        4L3Y/MKa9daRZ0fZXzgsfSt5z9ImCDY=
+X-Google-Smtp-Source: ACcGV609tJkXkfcIsg8qWtFAdLr1EIFAO51/SaTq4m7JbC0ut+lAo39uVjkhX2Qb3yrjrZ4Sdz9DKw==
+X-Received: by 2002:a5d:4dd2:: with SMTP id f18-v6mr22914628wru.80.1539117423154;
+        Tue, 09 Oct 2018 13:37:03 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd4:3f00:fd29:c80b:4f28:4b3d? (p200300EA8BD43F00FD29C80B4F284B3D.dip0.t-ipconnect.de. [2003:ea:8bd4:3f00:fd29:c80b:4f28:4b3d])
+        by smtp.googlemail.com with ESMTPSA id o201-v6sm18279359wmg.16.2018.10.09.13.37.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 13:37:02 -0700 (PDT)
+Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
+To:     Chris Clayton <chris2553@googlemail.com>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Azat Khuzhin <a3at.mail@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
+ <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
+ <98680351-5123-761f-982a-726098da9716@gmail.com>
+ <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
+ <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
+ <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
+ <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
+Date:   Tue, 9 Oct 2018 22:36:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chandanu@codeaurora.org, Taniya Das <tdas@codeaurora.org>
-References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
- <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port clocks
-Date:   Tue, 09 Oct 2018 13:34:23 -0700
+In-Reply-To: <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 06:57:47)
-> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-s=
-dm845.c
-> index 0cc4909..6d3136a 100644
-> --- a/drivers/clk/qcom/dispcc-sdm845.c
-> +++ b/drivers/clk/qcom/dispcc-sdm845.c
-> @@ -128,6 +144,100 @@ enum {
->         },
->  };
-> =
+On 09.10.2018 16:40, Chris Clayton wrote:
+> Thanks to Maciej and Heiner for their replies.
+> 
+> On 09/10/2018 13:32, Maciej S. Szmigiero wrote:
+>> On 07.10.2018 21:36, Chris Clayton wrote:
+>>> Hi again,
+>>>
+>>> I didn't think there was anything in 4.19-rc7 to fix this regression, but tried it anyway. I can confirm that the
+>>> regression is still present and my network still fails when, after a resume from suspend (to ram or disk), I open my
+>>> browser or my mail client. In both those cases the failure is almost immediate - e.g. my home page doesn't get displayed
+>>> in the browser. Pinging one of my ISPs name servers doesn't fail quite so quickly but the reported time increases from
+>>> 14-15ms to more than 1000ms.
+>>
+>> You can try comparing chip registers (ethtool -d eth0) in the working
+>> state (before a suspend) and in the broken state (after a resume).
+>> Maybe there will be some obvious in the difference.
+>>
+>> The same goes for the PCI configuration (lspci -d :8168 -vv).
+>>
+> Maciej suggested comparing the output from lspci -vv for the ethernet device. They are identical.
+> 
+> Both Maciej and Heiner suggested comparing the output from "ethtool -d" pre and post suspend. Again, they are identical.
+> Heiner specifically suggested looking at the RxConfig. The value of that is 0x0002870e both pre and post suspend.
+> 
+Hmm, this is very weird, especially taking into account that in your original
+report you state that removing the call to rtl_init_rxcfg() from rtl_hw_start()
+fixes the issue. rtl_init_rxcfg() deals with the RxConfig register only and
+register values seem to be the same before and after resume. So how can the
+chip behave differently?
+So far my best guess is that some chip quirk causes it to accept writes to
+register RxConfig, but to misinterpret or ignore the written value.
+So far your report is the only one (affecting RTL8411), but we don't know
+whether other chip versions are affected too.
+One option could be to call rtl_init_rxcfg() for chip versions <= 06 only
+because for them we know that they need this call.
 
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] =3D {
-> +       F(19200000, P_BI_TCXO, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src =3D {
-> +       .cmd_rcgr =3D 0x219c,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_2,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_aux_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_aux_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_2,
-> +               .num_parents =3D 2,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] =3D {
-> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2154,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_crypto_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_crypto_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_GET_RATE_NOCACHE,
 
-Why?
+> I've attached files I redirected the outputs to.
+> 
+> Please don't hesitate to ask for any other information needed to solve this problem. In the meantime, I've now got
+> scripts that stop the network during suspend and restart it during resume. (Those scripts were removed whilst I gathered
+> the diagnostics shown in the attachments.)
+> 
+> Chris
+> 
+>>> Chris
+>>
+>> Maciej
+>>
 
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] =3D {
-> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-
-Are these in kHz? They really look like it and that's bad. Why do we
-need them at all? Just to make sure the display driver picks these exact
-frequencies? It seems like we could just pass whatever number comes in
-up to the parent and see what it can do.
-
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2138,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_link_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_link_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2184,
-> +       .mnd_width =3D 16,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_pixel1_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_dp_ops,
-> +       },
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src =3D {
-> +       .cmd_rcgr =3D 0x216c,
-> +       .mnd_width =3D 16,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_pixel_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_dp_ops,
-> +       },
-> +};
-> +
->  static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] =3D {
->         F(19200000, P_BI_TCXO, 1, 0, 0),
->         { }
-> @@ -391,6 +501,115 @@ enum {
->         },
->  };
-> =
-
-> +static struct clk_branch disp_cc_mdss_dp_aux_clk =3D {
-> +       .halt_reg =3D 0x2054,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2054,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_aux_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_aux_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch disp_cc_mdss_dp_crypto_clk =3D {
-> +       .halt_reg =3D 0x2048,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2048,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_crypto_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_crypto_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch disp_cc_mdss_dp_link_clk =3D {
-> +       .halt_reg =3D 0x2040,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2040,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_link_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_link_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 (div 4=
-) */
-
-Not sure what this comment is for. But it's interesting nonetheless.
-
-> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk =3D {
-> +       .halt_reg =3D 0x2044,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2044,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_link_intf_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_link_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_GET_RATE_NOCACHE,
-
-Why?
-
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
