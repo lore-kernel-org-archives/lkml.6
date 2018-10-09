@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4772FECDE4F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AD7ECDE4F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1401B2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1401B2087D
+	by mail.kernel.org (Postfix) with ESMTP id CD0BF2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:48:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0BF2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeJJAG2 (ORCPT
+        id S1727569AbeJJAGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:06:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55526 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 20:06:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50881 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJJAG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:06:27 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726393AbeJJAGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:06:35 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B01B0C050012;
-        Tue,  9 Oct 2018 16:48:36 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37FE3C07DEB3;
+        Tue,  9 Oct 2018 16:48:44 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D3E525F59A;
-        Tue,  9 Oct 2018 16:48:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE4BE747C9;
+        Tue,  9 Oct 2018 16:48:42 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 14/22] KEYS: asym_tpm: Implement encryption operation [ver
- #2]
+Subject: [PATCH 15/22] KEYS: trusted: Expose common functionality [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     Denis Kenzior <denkenz@gmail.com>,
@@ -43,16 +42,16 @@ Cc:     Denis Kenzior <denkenz@gmail.com>,
         Marcel Holtmann <marcel@holtmann.org>, dhowells@redhat.com,
         denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 17:48:33 +0100
-Message-ID: <153910371304.12141.3922421291748583148.stgit@warthog.procyon.org.uk>
+Date:   Tue, 09 Oct 2018 17:48:41 +0100
+Message-ID: <153910372194.12141.17623684520426288627.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 09 Oct 2018 16:48:36 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 09 Oct 2018 16:48:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,9 +59,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-This patch impelements the pkey_encrypt operation.  The public key
-portion extracted from the TPM key blob is used.  The operation is
-performed entirely in software using the crypto API.
+This patch exposes some common functionality needed to send TPM commands.
+Several functions from keys/trusted.c are exposed for use by the new tpm
+key subtype and a module dependency is introduced.
+
+In the future, common functionality between the trusted key type and the
+asym_tpm subtype should be factored out into a common utility library.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -70,116 +72,122 @@ Tested-by: Marcel Holtmann <marcel@holtmann.org>
 Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |   84 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ crypto/asymmetric_keys/Kconfig |    1 +
+ security/keys/trusted.c        |   12 ++++++++----
+ security/keys/trusted.h        |   14 +++++++++++++-
+ 3 files changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index 837472d107d5..8edca3c4c193 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -165,6 +165,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
- 	info->max_enc_size = len;
- 	info->max_dec_size = tk->key_len / 8;
- 
-+	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT;
-+
- 	ret = 0;
- error_free_tfm:
- 	crypto_free_akcipher(tfm);
-@@ -172,6 +174,87 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index 88353a9ebc9b..be70ca6c85d3 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -24,6 +24,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ config ASYMMETRIC_TPM_KEY_SUBTYPE
+ 	tristate "Asymmetric TPM backed private key subtype"
+ 	depends on TCG_TPM
++	depends on TRUSTED_KEYS
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_HASH_INFO
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index b69d3b1777c2..1c025fdfe0e0 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -121,7 +121,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+ /*
+  * calculate authorization info fields to send to TPM
+  */
+-static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
++int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+ 			unsigned char *h2, unsigned char h3, ...)
+ {
+@@ -168,11 +168,12 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 	kzfree(sdesc);
  	return ret;
  }
++EXPORT_SYMBOL_GPL(TSS_authhmac);
  
-+/*
-+ * Encryption operation is performed with the public key.  Hence it is done
-+ * in software
-+ */
-+static int tpm_key_encrypt(struct tpm_key *tk,
-+			   struct kernel_pkey_params *params,
-+			   const void *in, void *out)
-+{
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	struct crypto_akcipher *tfm;
-+	struct akcipher_request *req;
-+	struct crypto_wait cwait;
-+	struct scatterlist in_sg, out_sg;
-+	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
-+	uint32_t der_pub_key_len;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	ret = determine_akcipher(params->encoding, params->hash_algo, alg_name);
-+	if (ret < 0)
-+		return ret;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
-+					 der_pub_key);
-+
-+	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
-+	if (ret < 0)
-+		goto error_free_tfm;
-+
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req)
-+		goto error_free_tfm;
-+
-+	sg_init_one(&in_sg, in, params->in_len);
-+	sg_init_one(&out_sg, out, params->out_len);
-+	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
-+				   params->out_len);
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+
-+	ret = crypto_akcipher_encrypt(req);
-+	ret = crypto_wait_req(ret, &cwait);
-+
-+	if (ret == 0)
-+		ret = req->dst_len;
-+
-+	akcipher_request_free(req);
-+error_free_tfm:
-+	crypto_free_akcipher(tfm);
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+/*
-+ * Do encryption, decryption and signing ops.
-+ */
-+static int tpm_key_eds_op(struct kernel_pkey_params *params,
-+			  const void *in, void *out)
-+{
-+	struct tpm_key *tk = params->key->payload.data[asym_crypto];
-+	int ret = -EOPNOTSUPP;
-+
-+	/* Perform the encryption calculation. */
-+	switch (params->op) {
-+	case kernel_pkey_encrypt:
-+		ret = tpm_key_encrypt(tk, params, in, out);
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	return ret;
-+}
-+
  /*
-  * Parse enough information out of TPM_KEY structure:
-  * TPM_STRUCT_VER -> 4 bytes
-@@ -329,6 +412,7 @@ struct asymmetric_key_subtype asym_tpm_subtype = {
- 	.describe		= asym_tpm_describe,
- 	.destroy		= asym_tpm_destroy,
- 	.query			= tpm_key_query,
-+	.eds_op			= tpm_key_eds_op,
- };
- EXPORT_SYMBOL_GPL(asym_tpm_subtype);
+  * verify the AUTH1_COMMAND (Seal) result from TPM
+  */
+-static int TSS_checkhmac1(unsigned char *buffer,
++int TSS_checkhmac1(unsigned char *buffer,
+ 			  const uint32_t command,
+ 			  const unsigned char *ononce,
+ 			  const unsigned char *key,
+@@ -249,6 +250,7 @@ static int TSS_checkhmac1(unsigned char *buffer,
+ 	kzfree(sdesc);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(TSS_checkhmac1);
  
+ /*
+  * verify the AUTH2_COMMAND (unseal) result from TPM
+@@ -355,7 +357,7 @@ static int TSS_checkhmac2(unsigned char *buffer,
+  * For key specific tpm requests, we will generate and send our
+  * own TPM command packets using the drivers send function.
+  */
+-static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
++int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+ {
+ 	int rc;
+ 
+@@ -367,6 +369,7 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+ 		rc = -EPERM;
+ 	return rc;
+ }
++EXPORT_SYMBOL_GPL(trusted_tpm_send);
+ 
+ /*
+  * Lock a trusted key, by extending a selected PCR.
+@@ -425,7 +428,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+ /*
+  * Create an object independent authorisation protocol (oiap) session
+  */
+-static int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
++int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
+ {
+ 	int ret;
+ 
+@@ -442,6 +445,7 @@ static int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
+ 	       TPM_NONCE_SIZE);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(oiap);
+ 
+ struct tpm_digests {
+ 	unsigned char encauth[SHA1_DIGEST_SIZE];
+diff --git a/security/keys/trusted.h b/security/keys/trusted.h
+index 8d5fe9eafb22..adbcb6817826 100644
+--- a/security/keys/trusted.h
++++ b/security/keys/trusted.h
+@@ -3,7 +3,7 @@
+ #define __TRUSTED_KEY_H
+ 
+ /* implementation specific TPM constants */
+-#define MAX_BUF_SIZE			512
++#define MAX_BUF_SIZE			1024
+ #define TPM_GETRANDOM_SIZE		14
+ #define TPM_OSAP_SIZE			36
+ #define TPM_OIAP_SIZE			10
+@@ -36,6 +36,18 @@ enum {
+ 	SRK_keytype = 4
+ };
+ 
++int TSS_authhmac(unsigned char *digest, const unsigned char *key,
++			unsigned int keylen, unsigned char *h1,
++			unsigned char *h2, unsigned char h3, ...);
++int TSS_checkhmac1(unsigned char *buffer,
++			  const uint32_t command,
++			  const unsigned char *ononce,
++			  const unsigned char *key,
++			  unsigned int keylen, ...);
++
++int trusted_tpm_send(unsigned char *cmd, size_t buflen);
++int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
++
+ #define TPM_DEBUG 0
+ 
+ #if TPM_DEBUG
 
