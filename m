@@ -3,255 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4ED3C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010E6C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 351CA21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:59:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351CA21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AC3B02089D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3B02089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeJIOOf (ORCPT
+        id S1726488AbeJIOPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:14:35 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25939 "EHLO mga12.intel.com"
+        Tue, 9 Oct 2018 10:15:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:60681 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbeJIOOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:14:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Oct 2018 23:59:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,359,1534834800"; 
-   d="scan'208";a="95857285"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Oct 2018 23:59:07 -0700
-Received: from [10.125.251.255] (abudanko-mobl.ccr.corp.intel.com [10.125.251.255])
-        by linux.intel.com (Postfix) with ESMTP id 65AF1580034;
-        Mon,  8 Oct 2018 23:59:05 -0700 (PDT)
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v4] perf record: encode -k clockid frequency into Perf trace
-Organization: Intel Corp.
-Message-ID: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
-Date:   Tue, 9 Oct 2018 09:59:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725835AbeJIOPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 10:15:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Tp5P1wtPz9s47;
+        Tue,  9 Oct 2018 18:00:08 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     YueHaibing <yuehaibing@huawei.com>, benh@kernel.crashing.org,
+        paulus@samba.org, nfont@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH v2 -next] powerpc/pseries/memory-hotplug: Fix return value type of find_aa_index
+In-Reply-To: <20181004094113.5492-1-yuehaibing@huawei.com>
+References: <20181004094113.5492-1-yuehaibing@huawei.com>
+Date:   Tue, 09 Oct 2018 18:00:08 +1100
+Message-ID: <871s8z38qv.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+YueHaibing <yuehaibing@huawei.com> writes:
+> 'aa_index' is defined as an unsigned value, but find_aa_index
+> may return -1 when dlpar_clone_property fails. So we use an rc
+> value to track the validation of finding the aa_index instead
+> of the 'aa_index' value itself
+>
+> Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: use 'rc' track the validation of aa_index
 
-Store -k clockid frequency into Perf trace to enable timestamps 
-derived metrics conversion into wall clock time on reporting stage.
+Thanks for sending a v2, some more comments ...
 
-Below is the example of perf report output:
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> index 9a15d39..796e68b 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> @@ -101,13 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
+>  	return new_prop;
+>  }
+>  
+> -static u32 find_aa_index(struct device_node *dr_node,
+> -			 struct property *ala_prop, const u32 *lmb_assoc)
+> +static int find_aa_index(struct device_node *dr_node, struct property *ala_prop,
+> +			 const u32 *lmb_assoc, u32 *aa_index)
+>  {
+>  	u32 *assoc_arrays;
+> -	u32 aa_index;
+>  	int aa_arrays, aa_array_entries, aa_array_sz;
+> -	int i, index;
+> +	int i, index, rc = -1;
 
-tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
-...
-[ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
+It's preferable to leave rc uninitialised until we actually need to
+initialise it, that gives the compiler the chance to warn us if we use
+it inadvertently before that.
 
-tools/perf/perf report --header
-# ========
-...
-# event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
-...
-# clockid frequency: 1000 MHz
-...
-# ========
+>  
+>  	/*
+>  	 * The ibm,associativity-lookup-arrays property is defined to be
+> @@ -121,18 +120,18 @@ static u32 find_aa_index(struct device_node *dr_node,
+>  	aa_array_entries = be32_to_cpu(assoc_arrays[1]);
+>  	aa_array_sz = aa_array_entries * sizeof(u32);
+>  
+> -	aa_index = -1;
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v4:
- - addressed compilation issues on 32bit platforms
-Changes in v3:
- - moved header's clockid_res_ns initialization out of record__init_features()
- - added explicit warning for case of failed clock_getres() call
-Changes in v2:
- - renamed clockid_freq to clockid_res_ns and get_clockid_freq() to get_clockid_res()
- - avoided redundant define of NSEC_IN_SEC, reused linux/time64.h:NSEC_PER_SEC
- - moved MHz conversion into print_clockid() and shortened write_clockid()
----
- tools/perf/builtin-record.c | 24 ++++++++++++++++++++++--
- tools/perf/perf.h           |  1 +
- tools/perf/util/env.h       |  1 +
- tools/perf/util/header.c    | 28 ++++++++++++++++++++++++++++
- tools/perf/util/header.h    |  1 +
- 5 files changed, 53 insertions(+), 2 deletions(-)
+So that would be here:
+	rc = -1;
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0980dfe3396b..d803d3264465 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -592,6 +592,9 @@ static void record__init_features(struct record *rec)
- 	if (!rec->opts.full_auxtrace)
- 		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
- 
-+	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
-+		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
-+
- 	perf_header__clear_feat(&session->header, HEADER_STAT);
- }
- 
-@@ -897,6 +900,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 
- 	record__init_features(rec);
- 
-+	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
-+		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
-+
- 	if (forks) {
- 		err = perf_evlist__prepare_workload(rec->evlist, &opts->target,
- 						    argv, data->is_pipe,
-@@ -1337,6 +1343,19 @@ static const struct clockid_map clockids[] = {
- 	CLOCKID_END,
- };
- 
-+static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
-+{
-+	struct timespec res;
-+
-+	*res_ns = 0;
-+	if (!clock_getres(clk_id, &res))
-+		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-+	else
-+		pr_warning("WARNING: Failed to determine specified clock resolution.\n");
-+
-+	return 0;
-+}
-+
- static int parse_clockid(const struct option *opt, const char *str, int unset)
- {
- 	struct record_opts *opts = (struct record_opts *)opt->value;
-@@ -1360,7 +1379,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 
- 	/* if its a number, we're done */
- 	if (sscanf(str, "%d", &opts->clockid) == 1)
--		return 0;
-+		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
- 
- 	/* allow a "CLOCK_" prefix to the name */
- 	if (!strncasecmp(str, "CLOCK_", 6))
-@@ -1369,7 +1388,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 	for (cm = clockids; cm->name; cm++) {
- 		if (!strcasecmp(str, cm->name)) {
- 			opts->clockid = cm->clockid;
--			return 0;
-+			return get_clockid_res(opts->clockid,
-+					       &opts->clockid_res_ns);
- 		}
- 	}
- 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..981db3c2ed60 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -81,6 +81,7 @@ struct record_opts {
- 	unsigned     initial_delay;
- 	bool         use_clockid;
- 	clockid_t    clockid;
-+	size_t       clockid_res_ns;
- 	unsigned int proc_map_timeout;
- };
- 
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 1f3ccc368530..b167a54d635f 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -63,6 +63,7 @@ struct perf_env {
- 	struct numa_node	*numa_nodes;
- 	struct memory_node	*memory_nodes;
- 	unsigned long long	 memory_bsize;
-+	size_t                   clockid_res_ns;
- };
- 
- extern struct perf_env perf_env;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 1ec1d9bc2d63..702e0cce63da 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1034,6 +1034,14 @@ static int write_auxtrace(struct feat_fd *ff,
- 	return err;
- }
- 
-+static int write_clockid(struct feat_fd *ff,
-+			 struct perf_evlist *evlist __maybe_unused)
-+{
-+	u64 clockid_res_ns = ff->ph->env.clockid_res_ns;
-+
-+	return do_write(ff, &clockid_res_ns, sizeof(clockid_res_ns));
-+}
-+
- static int cpu_cache_level__sort(const void *a, const void *b)
- {
- 	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-@@ -1508,6 +1516,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
- 		fprintf(fp, "# Core ID and Socket ID information is not available\n");
- }
- 
-+static void print_clockid(struct feat_fd *ff, FILE *fp)
-+{
-+	fprintf(fp, "# clockid frequency: %zd MHz\n",
-+		ff->ph->env.clockid_res_ns * 1000);
-+}
-+
- static void free_event_desc(struct perf_evsel *events)
- {
- 	struct perf_evsel *evsel;
-@@ -2531,6 +2545,19 @@ static int process_mem_topology(struct feat_fd *ff,
- 	return ret;
- }
- 
-+static int process_clockid(struct feat_fd *ff,
-+			   void *data __maybe_unused)
-+{
-+	u64 clockid_res_ns;
-+
-+	if (do_read_u64(ff, &clockid_res_ns))
-+		return -1;
-+
-+	ff->ph->env.clockid_res_ns = *(size_t *)&clockid_res_ns;
-+
-+	return 0;
-+}
-+
- struct feature_ops {
- 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
- 	void (*print)(struct feat_fd *ff, FILE *fp);
-@@ -2590,6 +2617,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPN(CACHE,		cache,		true),
- 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
- 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
-+	FEAT_OPR(CLOCKID,       clockid,        false)
- };
- 
- struct header_print_data {
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index e17903caa71d..0d553ddca0a3 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -38,6 +38,7 @@ enum {
- 	HEADER_CACHE,
- 	HEADER_SAMPLE_TIME,
- 	HEADER_MEM_TOPOLOGY,
-+	HEADER_CLOCKID,
- 	HEADER_LAST_FEATURE,
- 	HEADER_FEAT_BITS	= 256,
- };
+But ..
+
+>  	for (i = 0; i < aa_arrays; i++) {
+>  		index = (i * aa_array_entries) + 2;
+>  
+>  		if (memcmp(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz))
+>  			continue;
+>  
+> -		aa_index = i;
+> +		*aa_index = i;
+> +		rc = 0;
+>  		break;
+>  	}
+
+The 'rc' variable is basically a boolean now, it means "we found something".
+
+And all we do with it in the found case (rc = 0) is test it below and return.
+
+So can't we just return directly in the for loop above, rather than breaking?
+
+In which case we don't need the rc variable at all.
+
+And the whole function may as well return bool, rather than int.
+
+Does that make sense?
+
+cheers
+
+> -	if (aa_index == -1) {
+> +	if (rc == -1) {
+>  		struct property *new_prop;
+>  		u32 new_prop_size;
+>  
+> @@ -157,10 +156,11 @@ static u32 find_aa_index(struct device_node *dr_node,
+>  		 * number of entries - 1 since we added its associativity
+>  		 * to the end of the lookup array.
+>  		 */
+> -		aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
+> +		*aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
+> +		rc = 0;
+>  	}
+>  
+> -	return aa_index;
+> +	return rc;
+>  }
+>  
+>  static int update_lmb_associativity_index(struct drmem_lmb *lmb)
