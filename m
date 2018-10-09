@@ -2,125 +2,106 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA807C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A79FDC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72EC213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72EC213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 61827213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61827213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeJINix (ORCPT
+        id S1726434AbeJINng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:38:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52072 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725835AbeJINiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:38:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07BBAAE17;
-        Tue,  9 Oct 2018 06:23:32 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 08:23:30 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yong-Taek Lee <ytk.lee@samsung.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-Message-ID: <20181009062330.GA8528@dhcp22.suse.cz>
-References: <CGME20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
- <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
+        Tue, 9 Oct 2018 09:43:36 -0400
+Received: from tartarus.angband.pl ([54.37.238.230]:52078 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbeJINng (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 09:43:36 -0400
+Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
+        by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1g9lV1-0006VO-TS; Tue, 09 Oct 2018 08:28:09 +0200
+Received: from sirius.angband.pl ([2001:470:64f4::9])
+        by barad-dur.angband.pl with esmtp (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1g9lV1-0000g4-6z; Tue, 09 Oct 2018 08:28:07 +0200
+Received: from kilobyte by sirius.angband.pl with local (Exim 4.91)
+        (envelope-from <kilobyte@sirius.angband.pl>)
+        id 1g9lV0-00018g-Jc; Tue, 09 Oct 2018 08:28:06 +0200
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Adam Borowski <kilobyte@angband.pl>
+Date:   Tue,  9 Oct 2018 08:28:03 +0200
+Message-Id: <20181009062803.4332-1-kilobyte@angband.pl>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181009061849.GC116930@gmail.com>
+References: <20181009061849.GC116930@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 89.64.163.218
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+Subject: [PATCH v2] x86/defconfig: Enable CONFIG_USB_XHCI_HCD
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Oleg]
+A spanking new machine I just got has all but one USB ports wired as 3.0.
+Booting defconfig resulted in no keyboard or mouse, which was pretty
+uncool.  Let's enable that -- USB3 is ubiquitous rather than an oddity.
+As 'y' not 'm' -- recovering from initrd problems needs a keyboard.
 
-On Fri 05-10-18 15:32:08, Yong-Taek Lee wrote:
-> It is introduced by commit 44a70adec910 ("mm, oom_adj: make sure
-> processes sharing mm have same view of oom_score_adj"). Most of
-> user process's mm_users is bigger than 1 but only one thread group.
-> In this case, for_each_process loop meaninglessly try to find processes
-> which sharing same mm even though there is only one thread group.
-> 
-> My idea is that target task's nr thread is smaller than mm_users if there
-> are more thread groups sharing the same mm. So we can skip loop
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+---
+v2: also i386
 
-I remember trying to optimize this but ended up with nothing that would
-work reliable. E.g. what prevents a thread terminating right after we
-read mm reference count and result in early break and other process
-not being updated properly?
+Ingo Molnar said:
+> Also, could we please refresh this in the 32-bit defconfig as well.
 
-> if mm_user and nr_thread are same.
-> 
-> test result
-> while true; do count=0; time while [ $count -lt 10000 ]; do echo -1000 > /proc/
-> 1457/oom_score_adj; count=$((count+1)); done; done;
+While real 32-bit machines are ancient, folks tend to test such kernels on
+something modern, thus you have a good point.  Changed.
 
-Is this overhead noticeable in a real work usecases though? Or are you
-updating oom_score_adj that often really?
 
-> before patch
-> 0m00.59s real     0m00.09s user     0m00.51s system
-> 0m00.59s real     0m00.14s user     0m00.45s system
-> 0m00.58s real     0m00.11s user     0m00.47s system
-> 0m00.58s real     0m00.10s user     0m00.48s system
-> 0m00.59s real     0m00.11s user     0m00.48s system
-> 
-> after patch
-> 0m00.15s real     0m00.07s user     0m00.08s system
-> 0m00.14s real     0m00.10s user     0m00.04s system
-> 0m00.14s real     0m00.10s user     0m00.05s system
-> 0m00.14s real     0m00.08s user     0m00.07s system
-> 0m00.14s real     0m00.08s user     0m00.07s system
-> 
-> Signed-off-by: Lee YongTaek <ytk.lee@samsung.com>
-> ---
->  fs/proc/base.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index f9f72aee6d45..54b2fb5e9c51 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj,
-> bool legacy)
->         struct mm_struct *mm = NULL;
->         struct task_struct *task;
->         int err = 0;
-> +       int mm_users = 0;
-> 
->         task = get_proc_task(file_inode(file));
->         if (!task)
-> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj,
-> bool legacy)
->                 struct task_struct *p = find_lock_task_mm(task);
-> 
->                 if (p) {
-> -                       if (atomic_read(&p->mm->mm_users) > 1) {
-> +                       mm_users = atomic_read(&p->mm->mm_users);
-> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p)))
-> {
->                                 mm = p->mm;
->                                 atomic_inc(&mm->mm_count);
->                         }
-> --
-> 
-> *
+ arch/x86/configs/i386_defconfig   | 1 +
+ arch/x86/configs/x86_64_defconfig | 1 +
+ 2 files changed, 2 insertions(+)
 
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index 0eb9f92f3717..6c3ab05c231d 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -247,6 +247,7 @@ CONFIG_USB_HIDDEV=y
+ CONFIG_USB=y
+ CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+ CONFIG_USB_MON=y
++CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_TT_NEWSCHED=y
+ CONFIG_USB_OHCI_HCD=y
+diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
+index e32fc1f274d8..ac9ae487cfeb 100644
+--- a/arch/x86/configs/x86_64_defconfig
++++ b/arch/x86/configs/x86_64_defconfig
+@@ -243,6 +243,7 @@ CONFIG_USB_HIDDEV=y
+ CONFIG_USB=y
+ CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+ CONFIG_USB_MON=y
++CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_TT_NEWSCHED=y
+ CONFIG_USB_OHCI_HCD=y
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
+
