@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD60CC00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CF7C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB5A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB5A2086D
+	by mail.kernel.org (Postfix) with ESMTP id 171922086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:21:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171922086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbeJIJfl (ORCPT
+        id S1727040AbeJIJfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:35:41 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:54893 "EHLO
+        Tue, 9 Oct 2018 05:35:44 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:37142 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726569AbeJIJfl (ORCPT
+        with ESMTP id S1726596AbeJIJfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:35:41 -0400
+        Tue, 9 Oct 2018 05:35:43 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w992LwUj032623;
-        Tue, 9 Oct 2018 10:21:58 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w992LmT6032585;
+        Tue, 9 Oct 2018 10:21:48 +0800 (GMT-8)
         (envelope-from alankao@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 9 Oct 2018
- 10:19:17 +0800
+ 10:19:07 +0800
 From:   Alan Kao <alankao@andestech.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
@@ -38,9 +38,9 @@ CC:     Greentime Hu <greentime@andestech.com>,
         Vincent Chen <vincentc@andestech.com>,
         Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
         Alan Kao <alankao@andestech.com>
-Subject: [PATCH v8 3/5] Cleanup ISA string setting
-Date:   Tue, 9 Oct 2018 10:18:32 +0800
-Message-ID: <1539051514-3658-4-git-send-email-alankao@andestech.com>
+Subject: [PATCH v8 1/5] Extract FPU context operations from entry.S
+Date:   Tue, 9 Oct 2018 10:18:30 +0800
+Message-ID: <1539051514-3658-2-git-send-email-alankao@andestech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539051514-3658-1-git-send-email-alankao@andestech.com>
 References: <1539051514-3658-1-git-send-email-alankao@andestech.com>
@@ -48,68 +48,250 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.15.65]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w992LwUj032623
+X-MAIL: ATCSQR.andestech.com w992LmT6032585
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch cleanup the MARCH string passing to both compiler and
-assembler.  Note that the CFLAGS should not contain "fd" before we
-have mechnisms like kernel_fpu_begin/end in other architectures.
+We move __fstate_save and __fstate_restore to a new source
+file, fpu.S.
 
 Signed-off-by: Alan Kao <alankao@andestech.com>
 Cc: Greentime Hu <greentime@andestech.com>
 Cc: Vincent Chen <vincentc@andestech.com>
 Cc: Zong Li <zong@andestech.com>
 Cc: Nick Hu <nickhu@andestech.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/Makefile | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ arch/riscv/kernel/Makefile |   1 +
+ arch/riscv/kernel/entry.S  |  87 -------------------------------------
+ arch/riscv/kernel/fpu.S    | 106 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 107 insertions(+), 87 deletions(-)
+ create mode 100644 arch/riscv/kernel/fpu.S
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 61ec424..01393e1 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -28,7 +28,6 @@ ifeq ($(CONFIG_ARCH_RV64I),y)
- 	
- 	KBUILD_CFLAGS	+= $(call cc-ifversion, -ge, 0500, -DCONFIG_ARCH_SUPPORTS_INT128)
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index e1274fc..bd433efd 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -13,6 +13,7 @@ extra-y += vmlinux.lds
+ obj-y	+= cpu.o
+ obj-y	+= cpufeature.o
+ obj-y	+= entry.o
++obj-y	+= fpu.o
+ obj-y	+= irq.o
+ obj-y	+= process.o
+ obj-y	+= ptrace.o
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index fa2c08e..59c02e2 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -357,93 +357,6 @@ ENTRY(__switch_to)
+ 	ret
+ ENDPROC(__switch_to)
  
--	KBUILD_MARCH = rv64im
- 	KBUILD_LDFLAGS += -melf64lriscv
- else
- 	BITS := 32
-@@ -36,22 +35,20 @@ else
- 
- 	KBUILD_CFLAGS += -mabi=ilp32
- 	KBUILD_AFLAGS += -mabi=ilp32
--	KBUILD_MARCH = rv32im
- 	KBUILD_LDFLAGS += -melf32lriscv
- endif
- 
- KBUILD_CFLAGS += -Wall
- 
--ifeq ($(CONFIG_RISCV_ISA_A),y)
--	KBUILD_ARCH_A = a
--endif
--ifeq ($(CONFIG_RISCV_ISA_C),y)
--	KBUILD_ARCH_C = c
--endif
+-ENTRY(__fstate_save)
+-	li  a2,  TASK_THREAD_F0
+-	add a0, a0, a2
+-	li t1, SR_FS
+-	csrs sstatus, t1
+-	frcsr t0
+-	fsd f0,  TASK_THREAD_F0_F0(a0)
+-	fsd f1,  TASK_THREAD_F1_F0(a0)
+-	fsd f2,  TASK_THREAD_F2_F0(a0)
+-	fsd f3,  TASK_THREAD_F3_F0(a0)
+-	fsd f4,  TASK_THREAD_F4_F0(a0)
+-	fsd f5,  TASK_THREAD_F5_F0(a0)
+-	fsd f6,  TASK_THREAD_F6_F0(a0)
+-	fsd f7,  TASK_THREAD_F7_F0(a0)
+-	fsd f8,  TASK_THREAD_F8_F0(a0)
+-	fsd f9,  TASK_THREAD_F9_F0(a0)
+-	fsd f10, TASK_THREAD_F10_F0(a0)
+-	fsd f11, TASK_THREAD_F11_F0(a0)
+-	fsd f12, TASK_THREAD_F12_F0(a0)
+-	fsd f13, TASK_THREAD_F13_F0(a0)
+-	fsd f14, TASK_THREAD_F14_F0(a0)
+-	fsd f15, TASK_THREAD_F15_F0(a0)
+-	fsd f16, TASK_THREAD_F16_F0(a0)
+-	fsd f17, TASK_THREAD_F17_F0(a0)
+-	fsd f18, TASK_THREAD_F18_F0(a0)
+-	fsd f19, TASK_THREAD_F19_F0(a0)
+-	fsd f20, TASK_THREAD_F20_F0(a0)
+-	fsd f21, TASK_THREAD_F21_F0(a0)
+-	fsd f22, TASK_THREAD_F22_F0(a0)
+-	fsd f23, TASK_THREAD_F23_F0(a0)
+-	fsd f24, TASK_THREAD_F24_F0(a0)
+-	fsd f25, TASK_THREAD_F25_F0(a0)
+-	fsd f26, TASK_THREAD_F26_F0(a0)
+-	fsd f27, TASK_THREAD_F27_F0(a0)
+-	fsd f28, TASK_THREAD_F28_F0(a0)
+-	fsd f29, TASK_THREAD_F29_F0(a0)
+-	fsd f30, TASK_THREAD_F30_F0(a0)
+-	fsd f31, TASK_THREAD_F31_F0(a0)
+-	sw t0, TASK_THREAD_FCSR_F0(a0)
+-	csrc sstatus, t1
+-	ret
+-ENDPROC(__fstate_save)
 -
--KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)fd$(KBUILD_ARCH_C)
-+# ISA string setting
-+riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32im
-+riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64im
-+riscv-march-$(CONFIG_RISCV_ISA_A)	:= $(riscv-march-y)a
-+riscv-march-y				:= $(riscv-march-y)fd
-+riscv-march-$(CONFIG_RISCV_ISA_C)	:= $(riscv-march-y)c
-+KBUILD_CFLAGS += -march=$(subst fd,,$(riscv-march-y))
-+KBUILD_AFLAGS += -march=$(riscv-march-y)
- 
--KBUILD_CFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
- KBUILD_CFLAGS += -mno-save-restore
- KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
- 
+-ENTRY(__fstate_restore)
+-	li  a2,  TASK_THREAD_F0
+-	add a0, a0, a2
+-	li t1, SR_FS
+-	lw t0, TASK_THREAD_FCSR_F0(a0)
+-	csrs sstatus, t1
+-	fld f0,  TASK_THREAD_F0_F0(a0)
+-	fld f1,  TASK_THREAD_F1_F0(a0)
+-	fld f2,  TASK_THREAD_F2_F0(a0)
+-	fld f3,  TASK_THREAD_F3_F0(a0)
+-	fld f4,  TASK_THREAD_F4_F0(a0)
+-	fld f5,  TASK_THREAD_F5_F0(a0)
+-	fld f6,  TASK_THREAD_F6_F0(a0)
+-	fld f7,  TASK_THREAD_F7_F0(a0)
+-	fld f8,  TASK_THREAD_F8_F0(a0)
+-	fld f9,  TASK_THREAD_F9_F0(a0)
+-	fld f10, TASK_THREAD_F10_F0(a0)
+-	fld f11, TASK_THREAD_F11_F0(a0)
+-	fld f12, TASK_THREAD_F12_F0(a0)
+-	fld f13, TASK_THREAD_F13_F0(a0)
+-	fld f14, TASK_THREAD_F14_F0(a0)
+-	fld f15, TASK_THREAD_F15_F0(a0)
+-	fld f16, TASK_THREAD_F16_F0(a0)
+-	fld f17, TASK_THREAD_F17_F0(a0)
+-	fld f18, TASK_THREAD_F18_F0(a0)
+-	fld f19, TASK_THREAD_F19_F0(a0)
+-	fld f20, TASK_THREAD_F20_F0(a0)
+-	fld f21, TASK_THREAD_F21_F0(a0)
+-	fld f22, TASK_THREAD_F22_F0(a0)
+-	fld f23, TASK_THREAD_F23_F0(a0)
+-	fld f24, TASK_THREAD_F24_F0(a0)
+-	fld f25, TASK_THREAD_F25_F0(a0)
+-	fld f26, TASK_THREAD_F26_F0(a0)
+-	fld f27, TASK_THREAD_F27_F0(a0)
+-	fld f28, TASK_THREAD_F28_F0(a0)
+-	fld f29, TASK_THREAD_F29_F0(a0)
+-	fld f30, TASK_THREAD_F30_F0(a0)
+-	fld f31, TASK_THREAD_F31_F0(a0)
+-	fscsr t0
+-	csrc sstatus, t1
+-	ret
+-ENDPROC(__fstate_restore)
+-
+-
+ 	.section ".rodata"
+ 	/* Exception vector table */
+ ENTRY(excp_vect_table)
+diff --git a/arch/riscv/kernel/fpu.S b/arch/riscv/kernel/fpu.S
+new file mode 100644
+index 0000000..1defb06
+--- /dev/null
++++ b/arch/riscv/kernel/fpu.S
+@@ -0,0 +1,106 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2012 Regents of the University of California
++ * Copyright (C) 2017 SiFive
++ *
++ *   This program is free software; you can redistribute it and/or
++ *   modify it under the terms of the GNU General Public License
++ *   as published by the Free Software Foundation, version 2.
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ */
++
++#include <linux/linkage.h>
++
++#include <asm/asm.h>
++#include <asm/csr.h>
++#include <asm/asm-offsets.h>
++
++ENTRY(__fstate_save)
++	li  a2,  TASK_THREAD_F0
++	add a0, a0, a2
++	li t1, SR_FS
++	csrs sstatus, t1
++	frcsr t0
++	fsd f0,  TASK_THREAD_F0_F0(a0)
++	fsd f1,  TASK_THREAD_F1_F0(a0)
++	fsd f2,  TASK_THREAD_F2_F0(a0)
++	fsd f3,  TASK_THREAD_F3_F0(a0)
++	fsd f4,  TASK_THREAD_F4_F0(a0)
++	fsd f5,  TASK_THREAD_F5_F0(a0)
++	fsd f6,  TASK_THREAD_F6_F0(a0)
++	fsd f7,  TASK_THREAD_F7_F0(a0)
++	fsd f8,  TASK_THREAD_F8_F0(a0)
++	fsd f9,  TASK_THREAD_F9_F0(a0)
++	fsd f10, TASK_THREAD_F10_F0(a0)
++	fsd f11, TASK_THREAD_F11_F0(a0)
++	fsd f12, TASK_THREAD_F12_F0(a0)
++	fsd f13, TASK_THREAD_F13_F0(a0)
++	fsd f14, TASK_THREAD_F14_F0(a0)
++	fsd f15, TASK_THREAD_F15_F0(a0)
++	fsd f16, TASK_THREAD_F16_F0(a0)
++	fsd f17, TASK_THREAD_F17_F0(a0)
++	fsd f18, TASK_THREAD_F18_F0(a0)
++	fsd f19, TASK_THREAD_F19_F0(a0)
++	fsd f20, TASK_THREAD_F20_F0(a0)
++	fsd f21, TASK_THREAD_F21_F0(a0)
++	fsd f22, TASK_THREAD_F22_F0(a0)
++	fsd f23, TASK_THREAD_F23_F0(a0)
++	fsd f24, TASK_THREAD_F24_F0(a0)
++	fsd f25, TASK_THREAD_F25_F0(a0)
++	fsd f26, TASK_THREAD_F26_F0(a0)
++	fsd f27, TASK_THREAD_F27_F0(a0)
++	fsd f28, TASK_THREAD_F28_F0(a0)
++	fsd f29, TASK_THREAD_F29_F0(a0)
++	fsd f30, TASK_THREAD_F30_F0(a0)
++	fsd f31, TASK_THREAD_F31_F0(a0)
++	sw t0, TASK_THREAD_FCSR_F0(a0)
++	csrc sstatus, t1
++	ret
++ENDPROC(__fstate_save)
++
++ENTRY(__fstate_restore)
++	li  a2,  TASK_THREAD_F0
++	add a0, a0, a2
++	li t1, SR_FS
++	lw t0, TASK_THREAD_FCSR_F0(a0)
++	csrs sstatus, t1
++	fld f0,  TASK_THREAD_F0_F0(a0)
++	fld f1,  TASK_THREAD_F1_F0(a0)
++	fld f2,  TASK_THREAD_F2_F0(a0)
++	fld f3,  TASK_THREAD_F3_F0(a0)
++	fld f4,  TASK_THREAD_F4_F0(a0)
++	fld f5,  TASK_THREAD_F5_F0(a0)
++	fld f6,  TASK_THREAD_F6_F0(a0)
++	fld f7,  TASK_THREAD_F7_F0(a0)
++	fld f8,  TASK_THREAD_F8_F0(a0)
++	fld f9,  TASK_THREAD_F9_F0(a0)
++	fld f10, TASK_THREAD_F10_F0(a0)
++	fld f11, TASK_THREAD_F11_F0(a0)
++	fld f12, TASK_THREAD_F12_F0(a0)
++	fld f13, TASK_THREAD_F13_F0(a0)
++	fld f14, TASK_THREAD_F14_F0(a0)
++	fld f15, TASK_THREAD_F15_F0(a0)
++	fld f16, TASK_THREAD_F16_F0(a0)
++	fld f17, TASK_THREAD_F17_F0(a0)
++	fld f18, TASK_THREAD_F18_F0(a0)
++	fld f19, TASK_THREAD_F19_F0(a0)
++	fld f20, TASK_THREAD_F20_F0(a0)
++	fld f21, TASK_THREAD_F21_F0(a0)
++	fld f22, TASK_THREAD_F22_F0(a0)
++	fld f23, TASK_THREAD_F23_F0(a0)
++	fld f24, TASK_THREAD_F24_F0(a0)
++	fld f25, TASK_THREAD_F25_F0(a0)
++	fld f26, TASK_THREAD_F26_F0(a0)
++	fld f27, TASK_THREAD_F27_F0(a0)
++	fld f28, TASK_THREAD_F28_F0(a0)
++	fld f29, TASK_THREAD_F29_F0(a0)
++	fld f30, TASK_THREAD_F30_F0(a0)
++	fld f31, TASK_THREAD_F31_F0(a0)
++	fscsr t0
++	csrc sstatus, t1
++	ret
++ENDPROC(__fstate_restore)
 -- 
 2.7.4
 
