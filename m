@@ -2,326 +2,152 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028BBC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46ECEC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C7E214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:03:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="yWjhkcgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C7E214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C5642075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C5642075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeJIOSa (ORCPT
+        id S1726918AbeJIOSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:18:30 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43936 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeJIOS3 (ORCPT
+        Tue, 9 Oct 2018 10:18:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46733 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbeJIOSk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:18:29 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 30-v6so328703plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qmZafo3zJv9kMVMPUWgOCYt/JYDyF0D+c5fLLPyy88k=;
-        b=yWjhkcgS9bM4DGjOlIkrRlWhB30V/raI6rYlLkj+sgwzgxDcepSANK3sdX5ngvMrj0
-         4CcHcHVEY32OvClVgFPyasBNNhIz74t3yXVGTDy8t6UDXLG7gNtTggPyl/wnuEZBPZoY
-         ttZ6z8rHiiKwlIeGXmvMV1U4AMlxpHNkg0btVC2AcRxfFJujACUW7ABr9si4hBrhtFlC
-         HZGCKsNvzayHjGXnYxjx9tnM0lRuf41cD0T9chP4N0jtS4BKQkGSQ5Nz2eaaOJynzBVo
-         7TYHOTGKXn7jMHiMdSL7lbyFFMSFjs2/eR0if1UDG2T7/iXv3qj/4C3LPa0Fn/xmXIRh
-         1oxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qmZafo3zJv9kMVMPUWgOCYt/JYDyF0D+c5fLLPyy88k=;
-        b=pPrtuW6s5v3VmXmWKEUSUBxsExK3S/DHm5n92IfnYfQwSKU5AwwKBWIcjH0N4jgOLy
-         oeFStan1Nr7Rf8rBU4vUigF/QL1n5rWaVaUIpOSq4W7msBbUR2dZXWgnrhCzWNujsqok
-         iaYBicq4+9p9l9PJzOB8bxNNmWn5rX0cPcr2UlYNuf0JrpnLhC20bzTFoC7t4LY3eaEm
-         DzADfkaMoa7fconekWc5GVf+8MmexQ+GnDOp5x6y3H252OXC4pq6aeKR+Evmg05Hvv0P
-         dlPVsJFSpexulJu29kd3kmVMLnaYt2WwR0CjjaON29Bz8SLV4Js4m0+qOY9IFIEkwWox
-         KB3A==
-X-Gm-Message-State: ABuFfoifODkV/BPl/1iIFl4n2eFioJ4a6fEgTfDhy5ZVjP5DSaxNgd9k
-        xLjdqlydb+OMNq8wloPR+u9AYw==
-X-Google-Smtp-Source: ACcGV624pRkr2MxHMSHFzNCsorsACit0HtyOdepmJXCQSfgSLh5u6G9ku5ZqMjnDiE6Stf2gvxYTLw==
-X-Received: by 2002:a17:902:33c3:: with SMTP id b61-v6mr24551338plc.52.1539068581405;
-        Tue, 09 Oct 2018 00:03:01 -0700 (PDT)
-Received: from ?redacted? ([220.240.25.129])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm31179246pfy.89.2018.10.09.00.02.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 00:03:00 -0700 (PDT)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v3 3/3] namei: aggressively check for nd->root escape on ".." resolution
-Date:   Tue,  9 Oct 2018 18:02:30 +1100
-Message-Id: <20181009070230.12884-4-cyphar@cyphar.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181009070230.12884-1-cyphar@cyphar.com>
-References: <20181009070230.12884-1-cyphar@cyphar.com>
+        Tue, 9 Oct 2018 10:18:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99736v7935764
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 00:03:06 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99735xE935758;
+        Tue, 9 Oct 2018 00:03:05 -0700
+Date:   Tue, 9 Oct 2018 00:03:05 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-2a7adf6ce643fdeec051dc88e5250b08c83bbb67@git.kernel.org>
+Cc:     reinette.chatre@intel.com, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        fenghua.yu@intel.com
+Reply-To: mingo@kernel.org, hpa@zytor.com, reinette.chatre@intel.com,
+          fenghua.yu@intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
+References: <b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Fix initial allocation to consider
+ CDP
+Git-Commit-ID: 2a7adf6ce643fdeec051dc88e5250b08c83bbb67
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows for AT_BENEATH and AT_THIS_ROOT to safely permit ".."
-resolution (in the case of AT_BENEATH the resolution will still fail if
-".." resolution would resolve a path outside of the root -- while
-AT_THIS_ROOT will chroot(2)-style scope it). "proclink" jumps are still
-disallowed entirely because now they could result in inconsistent
-behaviour if resolution encounters a subsequent "..".
+Commit-ID:  2a7adf6ce643fdeec051dc88e5250b08c83bbb67
+Gitweb:     https://git.kernel.org/tip/2a7adf6ce643fdeec051dc88e5250b08c83bbb67
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Wed, 3 Oct 2018 15:17:03 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 9 Oct 2018 08:50:47 +0200
 
-The need for this patch is explained by observing there is a fairly
-easy-to-exploit race condition with chroot(2) (and thus by extension
-AT_THIS_ROOT and AT_BENEATH) where a rename(2) of a path can be used to
-"skip over" nd->root and thus escape to the filesystem above nd->root.
+x86/intel_rdt: Fix initial allocation to consider CDP
 
-  thread1 [attacker]:
-    for (;;)
-      renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
-  thread2 [victim]:
-    for (;;)
-      openat(dirb, "b/c/../../etc/shadow", O_THISROOT);
+When a new resource group is created it is initialized with a default
+allocation that considers which portions of cache are currently
+available for sharing across all resource groups or which portions of
+cache are currently unused.
 
-With fairly significant regularity, thread2 will resolve to
-"/etc/shadow" rather than "/a/b/etc/shadow". There is also a similar
-(though somewhat more privileged) attack using MS_MOVE.
+If a CDP allocation forms part of a resource group that is in exclusive
+mode then it should be ensured that no new allocation overlaps with any
+resource that shares the underlying hardware. The current initial
+allocation does not take this sharing of hardware into account and
+a new allocation in a resource that shares the same
+hardware would affect the exclusive resource group.
 
-With this patch, such cases will be detected *during* ".." resolution
-(which is the weak point of chroot(2) -- since walking *into* a
-subdirectory tautologically cannot result in you walking *outside*
-nd->root -- except through a bind-mount or "proclink"). By detecting
-this at ".." resolution (rather than checking only at the end of the
-entire resolution) we can both correct escapes by jumping back to the
-root (in the case of AT_THIS_ROOT), as well as avoid revealing to
-attackers the structure of the filesystem outside of the root (through
-timing attacks for instance).
+Fix this by considering the allocation of a peer RDT domain - a RDT
+domain sharing the same hardware - as part of the test to determine
+which portion of cache is in use and available for use.
 
-In order to avoid a quadratic lookup with each ".." entry, we only
-activate the slow path if a write through &rename_lock or &mount_lock
-have occurred during path resolution (&rename_lock and &mount_lock are
-re-taken to further optimise the lookup). Since the primary attack being
-protected against is MS_MOVE or rename(2), not doing additional checks
-unless a mount or rename have occurred avoids making the common case
-slow.
-
-The use of __d_path here might seem suspect, but on further inspection
-of the most important race (a path was *inside* the root but is now
-*outside*), there appears to be no attack potential. If __d_path occurs
-before the rename, then the path will be resolved but since the path was
-originally inside the root there is no escape. Subsequent ".." jumps are
-guaranteed to check __d_path reachable (by construction, &rename_lock or
-&mount_lock must have been taken after __d_path returned), and thus will
-not be able to escape from the previously-inside-root path. Walking down
-is still safe since the entire subtree was moved (either by rename(2) or
-MS_MOVE) and because (as discussed above) walking down is safe.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+Cc: tony.luck@intel.com
+Cc: jithu.joseph@intel.com
+Cc: gavin.hindman@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/b1f7ec08b1695be067de416a4128466d49684317.1538603665.git.reinette.chatre@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- fs/namei.c | 79 +++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 61 insertions(+), 18 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index b31aef27df22..12cd8d8987ea 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -493,7 +493,7 @@ struct nameidata {
- 	struct path	root;
- 	struct inode	*inode; /* path.dentry.d_inode */
- 	unsigned int	flags;
--	unsigned	seq, m_seq;
-+	unsigned	seq, m_seq, r_seq;
- 	int		last_type;
- 	unsigned	depth;
- 	int		total_link_count;
-@@ -508,6 +508,7 @@ struct nameidata {
- 	struct inode	*link_inode;
- 	unsigned	root_seq;
- 	int		dfd;
-+	char		*dpathbuf;
- } __randomize_layout;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 49c479822844..dbc7fc98b60a 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2460,14 +2460,16 @@ static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
+  */
+ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ {
++	struct rdt_resource *r_cdp = NULL;
++	struct rdt_domain *d_cdp = NULL;
+ 	u32 used_b = 0, unused_b = 0;
+ 	u32 closid = rdtgrp->closid;
+ 	struct rdt_resource *r;
+ 	unsigned long tmp_cbm;
+ 	enum rdtgrp_mode mode;
+ 	struct rdt_domain *d;
++	u32 peer_ctl, *ctrl;
+ 	int i, ret;
+-	u32 *ctrl;
  
- static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
-@@ -530,6 +531,7 @@ static void restore_nameidata(void)
- 		old->total_link_count = now->total_link_count;
- 	if (now->stack != now->internal)
- 		kfree(now->stack);
-+	kfree(now->dpathbuf);
- }
- 
- static int __nd_alloc_stack(struct nameidata *nd)
-@@ -580,6 +582,22 @@ static inline int nd_alloc_stack(struct nameidata *nd)
- 	return __nd_alloc_stack(nd);
- }
- 
-+static inline int nd_alloc_dpathbuf(struct nameidata *nd)
-+{
-+	if (unlikely(!nd->dpathbuf)) {
-+		if (nd->flags & LOOKUP_RCU) {
-+			nd->dpathbuf = kmalloc(PATH_MAX, GFP_ATOMIC);
-+			if (unlikely(!nd->dpathbuf))
-+				return -ECHILD;
-+		} else {
-+			nd->dpathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
-+			if (unlikely(!nd->dpathbuf))
-+				return -ENOMEM;
-+		}
-+	}
-+	return 0;
-+}
-+
- static void drop_links(struct nameidata *nd)
- {
- 	int i = nd->depth;
-@@ -1738,18 +1756,40 @@ static inline int may_lookup(struct nameidata *nd)
- static inline int handle_dots(struct nameidata *nd, int type)
- {
- 	if (type == LAST_DOTDOT) {
--		/*
--		 * AT_BENEATH resolving ".." is not currently safe -- races can cause
--		 * our parent to have moved outside of the root and us to skip over it.
--		 */
--		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)))
--			return -EXDEV;
-+		int error = 0;
-+
- 		if (!nd->root.mnt)
- 			set_root(nd);
--		if (nd->flags & LOOKUP_RCU) {
--			return follow_dotdot_rcu(nd);
--		} else
--			return follow_dotdot(nd);
-+		if (nd->flags & LOOKUP_RCU)
-+			error = follow_dotdot_rcu(nd);
-+		else
-+			error = follow_dotdot(nd);
-+		if (error)
-+			return error;
-+
-+		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_CHROOT))) {
-+			char *pathptr;
-+			bool m_retry = read_seqretry(&mount_lock, nd->m_seq);
-+			bool r_retry = read_seqretry(&rename_lock, nd->r_seq);
-+
-+			/* Racing rename(2) or MS_MOVE? */
-+			if (likely(!m_retry && !r_retry))
-+				return 0;
-+			if (m_retry && !(nd->flags & LOOKUP_RCU))
-+				nd->m_seq = read_seqbegin(&mount_lock);
-+			if (r_retry)
-+				nd->r_seq = read_seqbegin(&rename_lock);
-+
-+			error = nd_alloc_dpathbuf(nd);
-+			if (error)
-+				return error;
-+			pathptr = __d_path(&nd->path, &nd->root, nd->dpathbuf, PATH_MAX);
-+			if (unlikely(!pathptr))
-+				/* Breakout -- go back to root! */
-+				return nd_jump_root(nd);
-+			if (unlikely(IS_ERR(pathptr)))
-+				return PTR_ERR(pathptr);
-+		}
- 	}
- 	return 0;
- }
-@@ -2279,6 +2319,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->last_type = LAST_ROOT; /* if there are only slashes... */
- 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
- 	nd->depth = 0;
-+
-+	nd->m_seq = read_seqbegin(&mount_lock);
-+	if (unlikely(flags & (LOOKUP_BENEATH | LOOKUP_CHROOT)))
-+		nd->r_seq = read_seqbegin(&rename_lock);
-+
- 	if (flags & LOOKUP_ROOT) {
- 		struct dentry *root = nd->root.dentry;
- 		struct inode *inode = root->d_inode;
-@@ -2289,7 +2334,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 		if (flags & LOOKUP_RCU) {
- 			nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
- 			nd->root_seq = nd->seq;
--			nd->m_seq = read_seqbegin(&mount_lock);
- 		} else {
- 			path_get(&nd->path);
- 		}
-@@ -2300,7 +2344,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->path.mnt = NULL;
- 	nd->path.dentry = NULL;
- 
--	nd->m_seq = read_seqbegin(&mount_lock);
- 	if (unlikely(flags & (LOOKUP_CHROOT | LOOKUP_XDEV))) {
- 		error = dirfd_path_init(nd);
- 		if (unlikely(error))
-@@ -2407,7 +2450,7 @@ int filename_lookup(int dfd, struct filename *name, unsigned flags,
- 		    struct path *path, struct path *root)
- {
- 	int retval;
--	struct nameidata nd;
-+	struct nameidata nd = {};
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
- 	if (unlikely(root)) {
-@@ -2450,7 +2493,7 @@ static struct filename *filename_parentat(int dfd, struct filename *name,
- 				struct qstr *last, int *type)
- {
- 	int retval;
--	struct nameidata nd;
-+	struct nameidata nd = {};
- 
- 	if (IS_ERR(name))
- 		return name;
-@@ -2779,7 +2822,7 @@ static int
- filename_mountpoint(int dfd, struct filename *name, struct path *path,
- 			unsigned int flags)
- {
--	struct nameidata nd;
-+	struct nameidata nd = {};
- 	int error;
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
-@@ -3626,7 +3669,7 @@ static struct file *path_openat(struct nameidata *nd,
- struct file *do_filp_open(int dfd, struct filename *pathname,
- 		const struct open_flags *op)
- {
--	struct nameidata nd;
-+	struct nameidata nd = {};
- 	int flags = op->lookup_flags;
- 	struct file *filp;
- 
-@@ -3643,7 +3686,7 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
- struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- 		const char *name, const struct open_flags *op)
- {
--	struct nameidata nd;
-+	struct nameidata nd = {};
- 	struct file *file;
- 	struct filename *filename;
- 	int flags = op->lookup_flags | LOOKUP_ROOT;
--- 
-2.19.0
-
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		/*
+@@ -2477,6 +2479,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 		if (r->rid == RDT_RESOURCE_MBA)
+ 			continue;
+ 		list_for_each_entry(d, &r->domains, list) {
++			rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
+ 			d->have_new_ctrl = false;
+ 			d->new_ctrl = r->cache.shareable_bits;
+ 			used_b = r->cache.shareable_bits;
+@@ -2486,9 +2489,19 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 					mode = rdtgroup_mode_by_closid(i);
+ 					if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
+ 						break;
+-					used_b |= *ctrl;
++					/*
++					 * If CDP is active include peer
++					 * domain's usage to ensure there
++					 * is no overlap with an exclusive
++					 * group.
++					 */
++					if (d_cdp)
++						peer_ctl = d_cdp->ctrl_val[i];
++					else
++						peer_ctl = 0;
++					used_b |= *ctrl | peer_ctl;
+ 					if (mode == RDT_MODE_SHAREABLE)
+-						d->new_ctrl |= *ctrl;
++						d->new_ctrl |= *ctrl | peer_ctl;
+ 				}
+ 			}
+ 			if (d->plr && d->plr->cbm > 0)
