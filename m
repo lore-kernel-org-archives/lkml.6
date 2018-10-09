@@ -2,95 +2,68 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24F9C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D32C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E8B2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:15:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E8B2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sakamocchi.jp
+	by mail.kernel.org (Postfix) with ESMTP id A5CA020C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:18:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5CA020C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbeJIVcr (ORCPT
+        id S1726568AbeJIVfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:32:47 -0400
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:42180 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeJIVcr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:32:47 -0400
-Received: by mail-pf1-f173.google.com with SMTP id f26-v6so908587pfn.9
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:15:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DllrrJvfSrvoX/LM9Br5BLksqMz1X+Zbrw1FVmbykwY=;
-        b=YzvDAMzwQzBKrKOd7dif1YmjWYxhrOMmNg8k0L0vr32nf2hmdaL2eqSA6jd4XGM/wa
-         hWOuG9tjBlS2kxWwIKLe/bOPLbjOIMCQDjSUPIvvkZI5pz4VhUZXc9yqPPMpo7eeg+U2
-         MIjav1YuxmhKx3KF2KcYy8/+xtgc2ZzG9jChD/LD+wCrZ4Q/3L2mfJCLOlhjNvtN80L/
-         8jBDmD7XKckal7ys964eCgNYDz6qQPvvXLI+oqyktONuh+MHYf+TLYb7xjuCvRtLAotT
-         WKyQsWqZvdOzYEOjjGnCug9PSyNMS8MNnUlQD8Wmy0Bq4mmuqlHeo3dfn+flO1ME+0Fm
-         N0Uw==
-X-Gm-Message-State: ABuFfojC2iJXIUnQxZ277pEmTqH7n6UtvRHpp+/TXUUyUBOphIcmRKqr
-        cx1O10o171JT+Z+1+BGuS6CdlgoB
-X-Google-Smtp-Source: ACcGV618RFD2+P7gKJpgWgKGrAWfyIeOf9zcXHGZg0qVucsn0xkJkl4odkaS19IoN+paM7Ijme535g==
-X-Received: by 2002:a62:1d16:: with SMTP id d22-v6mr30664708pfd.159.1539094537083;
-        Tue, 09 Oct 2018 07:15:37 -0700 (PDT)
-Received: from ?IPv6:2405:6580:9660:3200:f4bc:2ef8:9cc1:3cac? ([2405:6580:9660:3200:f4bc:2ef8:9cc1:3cac])
-        by smtp.gmail.com with ESMTPSA id 19-v6sm35945008pft.97.2018.10.09.07.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 07:15:36 -0700 (PDT)
-Subject: Re: [PATCH 0/4] Various cleanup + Mic Fix
-To:     Connor McAdams <conmanx360@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <1539027601-20910-1-git-send-email-conmanx360@gmail.com>
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <2ded9b74-4140-c0b9-b628-42811284f403@sakamocchi.jp>
-Date:   Tue, 9 Oct 2018 23:15:33 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 9 Oct 2018 17:35:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726393AbeJIVfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:35:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4501BAE60;
+        Tue,  9 Oct 2018 14:18:20 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 16:18:19 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] lib/vsprintf: Hash printed address for netdev bits
+ fallback
+Message-ID: <20181009141819.ajng53xs43meudsj@pathway.suse.cz>
+References: <20181008110504.25449-1-geert+renesas@glider.be>
+ <20181008110504.25449-4-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <1539027601-20910-1-git-send-email-conmanx360@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008110504.25449-4-geert+renesas@glider.be>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018年10月09日 04:39, Connor McAdams wrote:
-> This patch set fixes the microphone inconsistency issue, which means
-> the microphone now works all the time on all of the cards I've tested
-> (ZxR, Z, AE-5), along with the input effects.
+On Mon 2018-10-08 13:05:04, Geert Uytterhoeven wrote:
+> The handler for "%pN" falls back to printing the raw pointer value when
+> using a different format than the (sole supported) special format
+> "%pNF", potentially leaking sensitive information regarding the kernel
+> layout in memory.
 > 
-> It also includes changes suggested by Takashi Sakamoto, I believe I did
-> what he asked properly, but if I messed it up I'm sure you guys will
-> let me know.
+> Avoid this leak by printing the hashed address instead.
+> Note that there are no in-tree users of the fallback.
 > 
-> This should finish up most of the ca0132 work, with all inputs and
-> outputs working on the desktop cards.
-> 
-> Connor McAdams (4):
->    ALSA: hda/ca0132 - Fix microphone inconsistency issues
->    ALSA: hda/ca0132 - Clean up patch_ca0132()
->    ALSA: hda/ca0132 - Add error checking in ca0132_build_controls()
->    ALSA: hda/ca0132 - Fix input effect controls for desktop cards
-> 
->   sound/pci/hda/patch_ca0132.c | 75 +++++++++++++++++++++++++++++++-------------
->   1 file changed, 54 insertions(+), 21 deletions(-)
+> Fixes: ad67b74d2469d9b8 ("printk: hash addresses printed with %p")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Great catch!
 
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Thanks
-
-Takashi Sakamoto
+Best Regards,
+Petr
