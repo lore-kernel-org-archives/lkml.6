@@ -2,82 +2,126 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26F1C67879
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7A3C67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E9521476
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:37:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E9521476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D0652075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:40:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cr7d8QAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0652075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeJIIvv (ORCPT
+        id S1726718AbeJIIyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:51:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeJIIvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:51:50 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC3B92075E;
-        Tue,  9 Oct 2018 01:37:19 +0000 (UTC)
-Date:   Mon, 8 Oct 2018 21:37:17 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Helsley <mhelsley@vmware.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [POC][RFC][PATCH 0/2 v2] PROOF OF CONCEPT: Dynamic Functions
- (jump functions)
-Message-ID: <20181008213717.07c59434@vmware.local.home>
-In-Reply-To: <20181006120125.376880240@goodmis.org>
-References: <20181006120125.376880240@goodmis.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 9 Oct 2018 04:54:41 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37847 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbeJIIyl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 04:54:41 -0400
+Received: by mail-yw1-f65.google.com with SMTP id y14-v6so8903879ywa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 18:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7qA+dtOcdI9urqDaS/IIx7h3l7wueuGPmWbY8bS/3GU=;
+        b=Cr7d8QAz0kukYdX0iBqB5KVdL/yUDjRmOJyD2dc6Vca6WvhfsP421Td/pzu5oqOyHg
+         vWlxQnjXCC7v55mqc/rDdr5wc7MeIxqZ7muGiZA+v5x01nSspt/SnK8V1DwKWl6Gkwbm
+         uO8CQq0kdGPN3kyueDJcm9Vjm72pamEF8xH0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7qA+dtOcdI9urqDaS/IIx7h3l7wueuGPmWbY8bS/3GU=;
+        b=F1ufE37nhHYAYOLUz8KDUFLKFmng7YmKslBM/mrHMwAqt1H2PLLbNtnqLSNfOakzts
+         LGp40O+yEFp6k+iSfVh2M3j5vVSWS6dtTfrWjLa3IYkyv3jUyMug86mIK/Um24jvus+L
+         +CltiZALuTum5jSzguFWNsCc3btR2tywKuyauc4OH7loROUMBVn6DpwrJVSJN3OEkdyI
+         hvHH4cZ36frySnj66jVoGQvqvx9t5/ndaAyKhqVHuFbuLtJIuZ0altajG+Ug2z4E7DHs
+         PLFg3jFPHcRMys+r4BndvTB8UyWr/n84b1bPo4XVK7WQddNSAIolnG5n3QIIZW4OFQkN
+         326Q==
+X-Gm-Message-State: ABuFfoi+Dm4BWaxYac5uGs6M8Y4PhDjrWBDRH4PS7SEtto+/3g+7q9jI
+        cs6ezdFAKOuX093USGDrbMB+pCXF7YY=
+X-Google-Smtp-Source: ACcGV62RCIb/aH6vpCIHZLvxrjkVWLtouSHubLaA0orWeGvymodsXcYOIpIsldcmpQN/NqARtUGIcg==
+X-Received: by 2002:a81:9148:: with SMTP id i69-v6mr14945814ywg.371.1539049211039;
+        Mon, 08 Oct 2018 18:40:11 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id i62-v6sm9430634ywb.32.2018.10.08.18.40.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 18:40:09 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id j75-v6so8902199ywj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 18:40:09 -0700 (PDT)
+X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr14391598ywg.353.1539049208850;
+ Mon, 08 Oct 2018 18:40:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 18:40:08 -0700 (PDT)
+In-Reply-To: <c06eb47c-05d3-f51c-625b-9bfdd33a426a@infradead.org>
+References: <c06eb47c-05d3-f51c-625b-9bfdd33a426a@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 8 Oct 2018 18:40:08 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+B82dt9KvO0UVMBLoFxZEZF76xic4Sz41HtVfKHWpwWQ@mail.gmail.com>
+Message-ID: <CAGXu5j+B82dt9KvO0UVMBLoFxZEZF76xic4Sz41HtVfKHWpwWQ@mail.gmail.com>
+Subject: Re: [PATCH] security: fix LSM description location
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 06 Oct 2018 08:01:25 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Oct 8, 2018 at 5:46 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix Documentation location reference for where LSM descriptions should
+> be placed.
+>
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
 
-> [ Sending v2 because I updated quilt and it added back that stupid
->   "Content-Disposition: inline; filename=$patch" line, messing up
->   how the patches look in gmail. This should be better. ]
-> 
+Thanks!
 
-Actually, this wasn't suppose to go out. I started to resend this, and
-had my quilt send mail going, and I stopped at the "edit prologue"
-where I wrote all this.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-But then I postponed it to fix up the code a bit more, and in the mean
-time, Peter, et. al. replied, and I figured we go down a different
-path. But I forgot that I had the quilt mail opened. I came back to the
-window with it up, thought it was just some text file I haven't saved
-yet, typed ":wq" and then saw the "sendmail" message pop out. Oops!
+Jon, can you take this?
 
-This also explains why the date is set to Oct 6 (that's when I started
-the quilt send mail).
+-Kees
 
-Feel free to ignore this :-)
+> ---
+>  Documentation/security/LSM.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- lnx-419-rc7.orig/Documentation/security/LSM.rst
+> +++ lnx-419-rc7/Documentation/security/LSM.rst
+> @@ -5,7 +5,7 @@ Linux Security Module Development
+>  Based on https://lkml.org/lkml/2007/10/26/215,
+>  a new LSM is accepted into the kernel when its intent (a description of
+>  what it tries to protect against and in what cases one would expect to
+> -use it) has been appropriately documented in ``Documentation/security/LSM.rst``.
+> +use it) has been appropriately documented in ``Documentation/admin-guide/LSM/``.
+>  This allows an LSM's code to be easily compared to its goals, and so
+>  that end users and distros can make a more informed decision about which
+>  LSMs suit their requirements.
+>
+>
 
--- Steve
+
+
+-- 
+Kees Cook
+Pixel Security
