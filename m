@@ -2,305 +2,102 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E27DAC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F29C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9253E2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:41:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWnbuNjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9253E2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 185B02086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:42:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185B02086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeJIU6g (ORCPT
+        id S1726764AbeJIU70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:58:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39940 "EHLO mail.kernel.org"
+        Tue, 9 Oct 2018 16:59:26 -0400
+Received: from foss.arm.com ([217.140.101.70]:38094 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeJIU6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:58:36 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 862B22086D;
-        Tue,  9 Oct 2018 13:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539092494;
-        bh=j/1Eh3Zzi3k0pxhAAf/EnAMGRvjBj/YbgpjiZXIBzhE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aWnbuNjU8reZb3ciUWpkl4UUtpVH6MHSC0HAmdMo0EX4WpNfAUT5/lgyo7gcMUGCD
-         C54g0BWaZAKQkN6/kSPrCtBMNCLlRcp8sltobaBw2DF6GeOlhoGjkdNoEdARbusNa6
-         pUS7uWY8VjrBsgckYs1MnFbh2E18qXJ8+ehccNQw=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 58362142C5E; Tue,  9 Oct 2018 10:41:31 -0300 (-03)
-Date:   Tue, 9 Oct 2018 10:41:31 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] perf record: encode -k clockid frequency into Perf
- trace
-Message-ID: <20181009134131.GB10775@kernel.org>
-References: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
+        id S1726496AbeJIU70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:59:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD3A380D;
+        Tue,  9 Oct 2018 06:42:25 -0700 (PDT)
+Received: from [10.163.1.248] (unknown [10.163.1.248])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A51553F5B7;
+        Tue,  9 Oct 2018 06:42:23 -0700 (PDT)
+Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
+ PMD migration entry
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
+        mhocko@suse.com, zi.yan@cs.rutgers.edu, will.deacon@arm.com
+References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
+ <20181009130421.bmus632ocurn275u@kshutemo-mobl1>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <c0a81be1-4734-2ff8-4167-6d5e219008e6@arm.com>
+Date:   Tue, 9 Oct 2018 19:12:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181009130421.bmus632ocurn275u@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 09, 2018 at 09:59:03AM +0300, Alexey Budankov escreveu:
-> 
-> Store -k clockid frequency into Perf trace to enable timestamps 
-> derived metrics conversion into wall clock time on reporting stage.
-> 
-> Below is the example of perf report output:
 
-Some questions below, left the code for easier reference.
- 
-> tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
+
+On 10/09/2018 06:34 PM, Kirill A. Shutemov wrote:
+> On Tue, Oct 09, 2018 at 09:28:58AM +0530, Anshuman Khandual wrote:
+>> A normal mapped THP page at PMD level should be correctly differentiated
+>> from a PMD migration entry while walking the page table. A mapped THP would
+>> additionally check positive for pmd_present() along with pmd_trans_huge()
+>> as compared to a PMD migration entry. This just adds a new conditional test
+>> differentiating the two while walking the page table.
+>>
+>> Fixes: 616b8371539a6 ("mm: thp: enable thp migration in generic path")
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> On X86, pmd_trans_huge() and is_pmd_migration_entry() are always mutually
+>> exclusive which makes the current conditional block work for both mapped
+>> and migration entries. This is not same with arm64 where pmd_trans_huge()
+>> returns positive for both mapped and migration entries. Could some one
+>> please explain why pmd_trans_huge() has to return false for migration
+>> entries which just install swap bits and its still a PMD ?
+> 
+> I guess it's just a design choice. Any reason why arm64 cannot do the
+> same?
+>
+I think probably it can do. I am happy to look into these in detail what
+will make pmd_trans_huge() return false on migration entries but it does
+not quite sound like a right semantic at the moment.
+
+>> Nonetheless pmd_present() seems to be a better check to distinguish
+>> between mapped and (non-mapped non-present) migration entries without
+>> any ambiguity.
+> 
+> Can we instead reverse order of check:
+> 
+> if (pmd_trans_huge(pmde) || is_pmd_migration_entry(pmde)) {
+> 	pvmw->ptl = pmd_lock(mm, pvmw->pmd);
+> 	if (!pmd_present(*pvmw->pmd)) {
+> 		...
+> 	} else if (likely(pmd_trans_huge(*pvmw->pmd))) {
+> 		...
+> 	} else {
+> 		...
+> 	}
 > ...
-> [ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
 > 
-> tools/perf/perf report --header
-> # ========
-> ...
-> # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
-> ...
-> # clockid frequency: 1000 MHz
-> ...
-> # ========
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
-> Changes in v4:
->  - addressed compilation issues on 32bit platforms
-> Changes in v3:
->  - moved header's clockid_res_ns initialization out of record__init_features()
->  - added explicit warning for case of failed clock_getres() call
-> Changes in v2:
->  - renamed clockid_freq to clockid_res_ns and get_clockid_freq() to get_clockid_res()
->  - avoided redundant define of NSEC_IN_SEC, reused linux/time64.h:NSEC_PER_SEC
->  - moved MHz conversion into print_clockid() and shortened write_clockid()
-> ---
->  tools/perf/builtin-record.c | 24 ++++++++++++++++++++++--
->  tools/perf/perf.h           |  1 +
->  tools/perf/util/env.h       |  1 +
->  tools/perf/util/header.c    | 28 ++++++++++++++++++++++++++++
->  tools/perf/util/header.h    |  1 +
->  5 files changed, 53 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 0980dfe3396b..d803d3264465 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -592,6 +592,9 @@ static void record__init_features(struct record *rec)
->  	if (!rec->opts.full_auxtrace)
->  		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
->  
-> +	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
-> +		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
-> +
->  	perf_header__clear_feat(&session->header, HEADER_STAT);
->  }
->  
-> @@ -897,6 +900,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
->  
->  	record__init_features(rec);
->  
-> +	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
-> +		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
-> +
->  	if (forks) {
->  		err = perf_evlist__prepare_workload(rec->evlist, &opts->target,
->  						    argv, data->is_pipe,
-> @@ -1337,6 +1343,19 @@ static const struct clockid_map clockids[] = {
->  	CLOCKID_END,
->  };
->  
-> +static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
-> +{
-> +	struct timespec res;
-> +
-> +	*res_ns = 0;
-> +	if (!clock_getres(clk_id, &res))
-> +		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-> +	else
-> +		pr_warning("WARNING: Failed to determine specified clock resolution.\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int parse_clockid(const struct option *opt, const char *str, int unset)
->  {
->  	struct record_opts *opts = (struct record_opts *)opt->value;
-> @@ -1360,7 +1379,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
->  
->  	/* if its a number, we're done */
->  	if (sscanf(str, "%d", &opts->clockid) == 1)
-> -		return 0;
-> +		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
->  
->  	/* allow a "CLOCK_" prefix to the name */
->  	if (!strncasecmp(str, "CLOCK_", 6))
-> @@ -1369,7 +1388,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
->  	for (cm = clockids; cm->name; cm++) {
->  		if (!strcasecmp(str, cm->name)) {
->  			opts->clockid = cm->clockid;
-> -			return 0;
-> +			return get_clockid_res(opts->clockid,
-> +					       &opts->clockid_res_ns);
->  		}
->  	}
->  
-> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> index 21bf7f5a3cf5..981db3c2ed60 100644
-> --- a/tools/perf/perf.h
-> +++ b/tools/perf/perf.h
-> @@ -81,6 +81,7 @@ struct record_opts {
->  	unsigned     initial_delay;
->  	bool         use_clockid;
->  	clockid_t    clockid;
-> +	size_t       clockid_res_ns;
->  	unsigned int proc_map_timeout;
->  };
->  
-> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-> index 1f3ccc368530..b167a54d635f 100644
-> --- a/tools/perf/util/env.h
-> +++ b/tools/perf/util/env.h
-> @@ -63,6 +63,7 @@ struct perf_env {
->  	struct numa_node	*numa_nodes;
->  	struct memory_node	*memory_nodes;
->  	unsigned long long	 memory_bsize;
-> +	size_t                   clockid_res_ns;
->  };
->  
->  extern struct perf_env perf_env;
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index 1ec1d9bc2d63..702e0cce63da 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1034,6 +1034,14 @@ static int write_auxtrace(struct feat_fd *ff,
->  	return err;
->  }
->  
-> +static int write_clockid(struct feat_fd *ff,
-> +			 struct perf_evlist *evlist __maybe_unused)
-> +{
-> +	u64 clockid_res_ns = ff->ph->env.clockid_res_ns;
-> +
-> +	return do_write(ff, &clockid_res_ns, sizeof(clockid_res_ns));
-> +}
-> +
->  static int cpu_cache_level__sort(const void *a, const void *b)
->  {
->  	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-> @@ -1508,6 +1516,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
->  		fprintf(fp, "# Core ID and Socket ID information is not available\n");
->  }
->  
-> +static void print_clockid(struct feat_fd *ff, FILE *fp)
-> +{
-> +	fprintf(fp, "# clockid frequency: %zd MHz\n",
-> +		ff->ph->env.clockid_res_ns * 1000);
-> +}
-> +
->  static void free_event_desc(struct perf_evsel *events)
->  {
->  	struct perf_evsel *evsel;
-> @@ -2531,6 +2545,19 @@ static int process_mem_topology(struct feat_fd *ff,
->  	return ret;
->  }
->  
-> +static int process_clockid(struct feat_fd *ff,
-> +			   void *data __maybe_unused)
-> +{
-> +	u64 clockid_res_ns;
-> +
-> +	if (do_read_u64(ff, &clockid_res_ns))
-> +		return -1;
-> +
-> +	ff->ph->env.clockid_res_ns = *(size_t *)&clockid_res_ns;
+> This should cover both imeplementations of pmd_trans_huge().
 
-What is wrong with:
-
-	ff->ph->env.clockid_res_ns = clockid_res_ns;
-
-?
-
-Also why have you picked 'size_t' for that nanoseconds variable
-(clockid_res_ns)?
-
-When one looks at things like:
-
-           struct timespec {
-               time_t   tv_sec;        /* seconds */
-               long     tv_nsec;       /* nanoseconds */
-           };
-
-that would lead one to use 'long' for a variable holding nanoseconds,
-no?
-
-And 'timespec' is what clock_getres() uses:
-
-   int clock_getres(clockid_t clk_id, struct timespec *res);
-
-Since you're storing this as:
-
-+static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
-+{
-+     struct timespec res;
-+
-+     *res_ns = 0;
-+     if (!clock_getres(clk_id, &res))
-+             *res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-
-Why don't you make ff->ph->env.clockid_res_ns an 'u64'? Would simplify
-the code a bit, no?
-
-Am I missing something?
-
-- Arnaldo
-
-> +	return 0;
-> +}
-> +
->  struct feature_ops {
->  	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
->  	void (*print)(struct feat_fd *ff, FILE *fp);
-> @@ -2590,6 +2617,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
->  	FEAT_OPN(CACHE,		cache,		true),
->  	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
->  	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
-> +	FEAT_OPR(CLOCKID,       clockid,        false)
->  };
->  
->  struct header_print_data {
-> diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-> index e17903caa71d..0d553ddca0a3 100644
-> --- a/tools/perf/util/header.h
-> +++ b/tools/perf/util/header.h
-> @@ -38,6 +38,7 @@ enum {
->  	HEADER_CACHE,
->  	HEADER_SAMPLE_TIME,
->  	HEADER_MEM_TOPOLOGY,
-> +	HEADER_CLOCKID,
->  	HEADER_LAST_FEATURE,
->  	HEADER_FEAT_BITS	= 256,
->  };
+Yeah it does cover and I have tested it first before proposing the current
+patch. The only problem is that the order saves the code :) Having another
+reasonable check like pmd_present() prevents it from being broken if the
+code block moves around for some reason. But I am happy to do either way.
