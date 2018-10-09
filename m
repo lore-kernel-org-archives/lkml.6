@@ -2,217 +2,189 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3346FC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C011C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2FB20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:54:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2FB20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 94A472086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:55:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="lip7GzG5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A472086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeJIVLV (ORCPT
+        id S1726647AbeJIVMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:11:21 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2963 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726966AbeJIVIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:08:41 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42TzCx0WkXz9ttSh;
-        Tue,  9 Oct 2018 15:51:25 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 7yNJaNovY7mD; Tue,  9 Oct 2018 15:51:25 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42TzCw73V3z9ttRm;
-        Tue,  9 Oct 2018 15:51:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 899AC8B80C;
-        Tue,  9 Oct 2018 15:51:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id MywqY15iighl; Tue,  9 Oct 2018 15:51:36 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0B85E8B80B;
-        Tue,  9 Oct 2018 15:51:36 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id CE91C6F444; Tue,  9 Oct 2018 13:51:35 +0000 (UTC)
-Message-Id: <25348d7faf67d5e2829aad03aef8096cd5f6908d.1539092111.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1539092111.git.christophe.leroy@c-s.fr>
-References: <cover.1539092111.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 02/24] drivers/video/fbdev: use ioremap_wc/wt() instead of
- __ioremap()
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Date:   Tue,  9 Oct 2018 13:51:35 +0000 (UTC)
+        Tue, 9 Oct 2018 17:12:55 -0400
+Received: from mail-sn1nam02on0077.outbound.protection.outlook.com ([104.47.36.77]:52192
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726476AbeJIVMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:12:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a4s+/ci1pVAcku4yuyfVrltJOVY2rAEwIP41/ygSIkg=;
+ b=lip7GzG5ycM1rYqPA247DVhoin0MAUbGDC5CKKx/e0HQHK7+kprhqlp6ear9slMHSZioz4reLkVc8rMueOpD9jr4vkfWJHI2mn5Mt/I1RwOLK0O2FghHlBnYGxykD8I3kQmKpw5r+JockfCg8vpRzL87Ji98t7ovxQPowspM04Y=
+Received: from BN6PR12MB1809.namprd12.prod.outlook.com (10.175.101.146) by
+ BN6PR12MB1171.namprd12.prod.outlook.com (10.168.226.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Tue, 9 Oct 2018 13:55:09 +0000
+Received: from BN6PR12MB1809.namprd12.prod.outlook.com
+ ([fe80::9df7:7ad5:5b10:aeee]) by BN6PR12MB1809.namprd12.prod.outlook.com
+ ([fe80::9df7:7ad5:5b10:aeee%5]) with mapi id 15.20.1207.024; Tue, 9 Oct 2018
+ 13:55:06 +0000
+From:   "Deucher, Alexander" <Alexander.Deucher@amd.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Zhu, Rex" <Rex.Zhu@amd.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: RE: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
+ smu7/8
+Thread-Topic: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC for
+ smu7/8
+Thread-Index: AQHUVARg2MOAZvRixUSipQEGskb4iKUVfsWAgAAD/oCAABSD8IAAFIiAgAANhaCAATqEAIAAE1kQ
+Date:   Tue, 9 Oct 2018 13:55:06 +0000
+Message-ID: <BN6PR12MB1809C04BB67BD6D95822E3EFF7E70@BN6PR12MB1809.namprd12.prod.outlook.com>
+References: <20180924113103.999624566@linuxfoundation.org>
+ <20180924113125.488862921@linuxfoundation.org>
+ <BN6PR12MB18092FFEF5BB3861912C8535F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
+ <20181008144421.GB15968@kroah.com>
+ <BN6PR12MB180971CA88D1B8D580512A71F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
+ <20181008171115.GB29418@kroah.com>
+ <BN6PR12MB1809AAC678E020F33E189C92F7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
+ <20181009124520.GA1633@kroah.com>
+In-Reply-To: <20181009124520.GA1633@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Deucher@amd.com; 
+x-originating-ip: [71.219.49.5]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1171;20:bTIEyuTfsdLNDG1wD8+eLrw8Ck2oiovtW1vuHLestz7SMaULInWvkpKDyBT5aMYmC4OPN2kgETa11VHDgUQ9TBH1XLv7xdIzn91BK+vQYIv7BHZwz1OODJJE6SO2xSTNuI+8AWvAElny7fktG3ZHBasCaBD0SPNH6XEZMHe3w9mkbxnXkWVi7O13Xi+lZ/PRsx3r++vFpt6zlU9Y3pKmY0y5vdVJcKPtP7dUsQCT8EHmofZFbsR3x30CBZ/wXqBo
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(13464003)(66066001)(68736007)(25786009)(8936002)(7736002)(76176011)(6506007)(53546011)(99286004)(256004)(316002)(305945005)(478600001)(74316002)(71200400001)(2906002)(93886005)(54906003)(7696005)(71190400001)(6246003)(6116002)(5660300001)(55016002)(9686003)(6306002)(6436002)(86362001)(33656002)(53936002)(4326008)(72206003)(966005)(5250100002)(229853002)(97736004)(8676002)(186003)(14454004)(102836004)(81156014)(3846002)(105586002)(2900100001)(106356001)(486006)(6916009)(476003)(81166006)(446003)(11346002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1171;H:BN6PR12MB1809.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: f1cf445e-76f2-4dec-4cae-08d62deed1ca
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1171;
+x-ms-traffictypediagnostic: BN6PR12MB1171:
+x-microsoft-antispam-prvs: <BN6PR12MB11717A7EE510397BBF22BC65F7E70@BN6PR12MB1171.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:BN6PR12MB1171;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1171;
+x-forefront-prvs: 08200063E9
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Cym/09G3B83pWKkE/d/LJBQ+B+opKZJSA4iyyJ1kUCzusLBx6VJqUZEJJSGkhf957kmBGY4BYcT713DUz173q6/H9RKDygXucJRMC77TeDd5tjrCT0FKa0ZgVbC89urziT66cf2ExUCFTcG1JRB7380GRkqbdYLSaUzxo29Ek1rLE/mNjLLE4/QRAJuLitRoZl5ILVnVAoNwzRuTE1Vc0WLJf9ltYImiinx/hIr+BPQQJhyJJofVjHpNW/DMnRc0lNPJDPb67alEUbWuIW2cjET8u3pJ1VUZdf7bTDxnGSUgreOKo97Q07Ra4DikatNXXZixv240jCVOxiu+y0Hl9+9FgG/4N42IykLEDbp72Gc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1cf445e-76f2-4dec-4cae-08d62deed1ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 13:55:06.3728
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_PAGE_NO_CACHE is a platform specific flag. In addition, this flag
-is misleading because one would think it requests a noncached page
-whereas a noncached page is _PAGE_NO_CACHE | _PAGE_GUARDED
+> -----Original Message-----
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Sent: Tuesday, October 9, 2018 8:45 AM
+> To: Deucher, Alexander <Alexander.Deucher@amd.com>
+> Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Wentland, Harry
+> <Harry.Wentland@amd.com>; Zhu, Rex <Rex.Zhu@amd.com>; Sasha Levin
+> <alexander.levin@microsoft.com>
+> Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values to DC
+> for smu7/8
+>=20
+> On Mon, Oct 08, 2018 at 06:01:50PM +0000, Deucher, Alexander wrote:
+> > > -----Original Message-----
+> > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Sent: Monday, October 8, 2018 1:11 PM
+> > > To: Deucher, Alexander <Alexander.Deucher@amd.com>
+> > > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Wentland,
+> > > Harry <Harry.Wentland@amd.com>; Zhu, Rex <Rex.Zhu@amd.com>;
+> Sasha
+> > > Levin <alexander.levin@microsoft.com>
+> > > Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock values
+> > > to DC for smu7/8
+> > >
+> > > On Mon, Oct 08, 2018 at 04:02:19PM +0000, Deucher, Alexander wrote:
+> > > > > -----Original Message-----
+> > > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > Sent: Monday, October 8, 2018 10:44 AM
+> > > > > To: Deucher, Alexander <Alexander.Deucher@amd.com>
+> > > > > Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org;
+> > > > > Wentland, Harry <Harry.Wentland@amd.com>; Zhu, Rex
+> > > > > <Rex.Zhu@amd.com>;
+> > > Sasha
+> > > > > Levin <alexander.levin@microsoft.com>
+> > > > > Subject: Re: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock
+> > > > > values to DC for smu7/8
+> > > > >
+> > > > > On Mon, Oct 08, 2018 at 02:33:56PM +0000, Deucher, Alexander
+> wrote:
+> > > > > > > -----Original Message-----
+> > > > > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > > > Sent: Monday, September 24, 2018 7:53 AM
+> > > > > > > To: linux-kernel@vger.kernel.org
+> > > > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+> > > > > > > stable@vger.kernel.org; Wentland, Harry
+> > > > > > > <Harry.Wentland@amd.com>; Deucher, Alexander
+> > > > > > > <Alexander.Deucher@amd.com>; Zhu, Rex
+> <Rex.Zhu@amd.com>;
+> > > Sasha
+> > > > > > > Levin <alexander.levin@microsoft.com>
+> > > > > > > Subject: [PATCH 4.18 222/235] drm/amd/pp: Send khz clock
+> > > > > > > values to DC for
+> > > > > > > smu7/8
+> > > > > > >
+> > > > > > > 4.18-stable review patch.  If anyone has any objections,
+> > > > > > > please let me
+> > > > > know.
+> > > > > > >
+> > > > > >
+> > > > > > This regresses power usage on 4.18.  Please revert.
+> > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=3D201275
+> > > > >
+> > > > > Is it reverted in "upstream" as well?  If not, please get the
+> > > > > fix in there and then I will be glad to backport it here.
+> > > > >
+> > > >
+> > > > There's no breakage in upstream.  This patch addressed breakages
+> > > > in
+> > > > 4.19 specifically due to some other refactoring we did in the drive=
+r.
+> > > > I'll try and dig out the exact series of patches this addressed.
+> > >
+> > > So there is no problem in 4.19-rc7?  That contridicts the statement
+> > > of looking in drm-next for the fixes.
+> >
+> > Sorry, what statement about drm-next?  This patch was for 4.19 and was
+> not intended for 4.18.  It was picked up by Sasha's auto select system fo=
+r
+> stable.
+>=20
+> I thought this thread said that.
+>=20
+> Ok, so I should just revert it?
 
-_PAGE_NO_CACHE alone means write combined noncached page, so lets
-use ioremap_wc() instead.
+Yes, please.
 
-_PAGE_WRITETHRU is also platform specific flag. Use ioremap_wt()
-instead.
+Thanks,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/video/fbdev/chipsfb.c    |  3 +--
- drivers/video/fbdev/controlfb.c  |  5 +----
- drivers/video/fbdev/platinumfb.c |  5 +----
- drivers/video/fbdev/valkyriefb.c | 12 ++++++------
- 4 files changed, 9 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
-index f103665cad43..40182ed85648 100644
---- a/drivers/video/fbdev/chipsfb.c
-+++ b/drivers/video/fbdev/chipsfb.c
-@@ -27,7 +27,6 @@
- #include <linux/init.h>
- #include <linux/pci.h>
- #include <linux/console.h>
--#include <asm/io.h>
- 
- #ifdef CONFIG_PMAC_BACKLIGHT
- #include <asm/backlight.h>
-@@ -401,7 +400,7 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
- #endif /* CONFIG_PMAC_BACKLIGHT */
- 
- #ifdef CONFIG_PPC
--	p->screen_base = __ioremap(addr, 0x200000, _PAGE_NO_CACHE);
-+	p->screen_base = ioremap_wc(addr, 0x200000);
- #else
- 	p->screen_base = ioremap(addr, 0x200000);
- #endif
-diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
-index 8d14b29aafea..9cb0ef7ac29e 100644
---- a/drivers/video/fbdev/controlfb.c
-+++ b/drivers/video/fbdev/controlfb.c
-@@ -48,9 +48,7 @@
- #include <linux/nvram.h>
- #include <linux/adb.h>
- #include <linux/cuda.h>
--#include <asm/io.h>
- #include <asm/prom.h>
--#include <asm/pgtable.h>
- #include <asm/btext.h>
- 
- #include "macmodes.h"
-@@ -715,8 +713,7 @@ static int __init control_of_init(struct device_node *dp)
- 		goto error_out;
- 	}
- 	/* map at most 8MB for the frame buffer */
--	p->frame_buffer = __ioremap(p->frame_buffer_phys, 0x800000,
--				    _PAGE_WRITETHRU);
-+	p->frame_buffer = ioremap_wt(p->frame_buffer_phys, 0x800000);
- 
- 	if (!p->control_regs_phys ||
- 	    !request_mem_region(p->control_regs_phys, p->control_regs_size,
-diff --git a/drivers/video/fbdev/platinumfb.c b/drivers/video/fbdev/platinumfb.c
-index 377d3399a3ad..bf6b7fb83cf4 100644
---- a/drivers/video/fbdev/platinumfb.c
-+++ b/drivers/video/fbdev/platinumfb.c
-@@ -32,9 +32,7 @@
- #include <linux/nvram.h>
- #include <linux/of_device.h>
- #include <linux/of_platform.h>
--#include <asm/io.h>
- #include <asm/prom.h>
--#include <asm/pgtable.h>
- 
- #include "macmodes.h"
- #include "platinumfb.h"
-@@ -577,8 +575,7 @@ static int platinumfb_probe(struct platform_device* odev)
- 
- 	/* frame buffer - map only 4MB */
- 	pinfo->frame_buffer_phys = pinfo->rsrc_fb.start;
--	pinfo->frame_buffer = __ioremap(pinfo->rsrc_fb.start, 0x400000,
--					_PAGE_WRITETHRU);
-+	pinfo->frame_buffer = ioremap_wt(pinfo->rsrc_fb.start, 0x400000);
- 	pinfo->base_frame_buffer = pinfo->frame_buffer;
- 
- 	/* registers */
-diff --git a/drivers/video/fbdev/valkyriefb.c b/drivers/video/fbdev/valkyriefb.c
-index 275fb98236d3..d51c3a8009cb 100644
---- a/drivers/video/fbdev/valkyriefb.c
-+++ b/drivers/video/fbdev/valkyriefb.c
-@@ -54,13 +54,11 @@
- #include <linux/nvram.h>
- #include <linux/adb.h>
- #include <linux/cuda.h>
--#include <asm/io.h>
- #ifdef CONFIG_MAC
- #include <asm/macintosh.h>
- #else
- #include <asm/prom.h>
- #endif
--#include <asm/pgtable.h>
- 
- #include "macmodes.h"
- #include "valkyriefb.h"
-@@ -318,7 +316,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
- int __init valkyriefb_init(void)
- {
- 	struct fb_info_valkyrie	*p;
--	unsigned long frame_buffer_phys, cmap_regs_phys, flags;
-+	unsigned long frame_buffer_phys, cmap_regs_phys;
- 	int err;
- 	char *option = NULL;
- 
-@@ -337,7 +335,6 @@ int __init valkyriefb_init(void)
- 	/* Hardcoded addresses... welcome to 68k Macintosh country :-) */
- 	frame_buffer_phys = 0xf9000000;
- 	cmap_regs_phys = 0x50f24000;
--	flags = IOMAP_NOCACHE_SER; /* IOMAP_WRITETHROUGH?? */
- #else /* ppc (!CONFIG_MAC) */
- 	{
- 		struct device_node *dp;
-@@ -354,7 +351,6 @@ int __init valkyriefb_init(void)
- 
- 		frame_buffer_phys = r.start;
- 		cmap_regs_phys = r.start + 0x304000;
--		flags = _PAGE_WRITETHRU;
- 	}
- #endif /* ppc (!CONFIG_MAC) */
- 
-@@ -369,7 +365,11 @@ int __init valkyriefb_init(void)
- 	}
- 	p->total_vram = 0x100000;
- 	p->frame_buffer_phys = frame_buffer_phys;
--	p->frame_buffer = __ioremap(frame_buffer_phys, p->total_vram, flags);
-+#ifdef CONFIG_MAC
-+	p->frame_buffer = ioremap_nocache(frame_buffer_phys, p->total_vram);
-+#else
-+	p->frame_buffer = ioremap_wt(frame_buffer_phys, p->total_vram);
-+#endif
- 	p->cmap_regs_phys = cmap_regs_phys;
- 	p->cmap_regs = ioremap(p->cmap_regs_phys, 0x1000);
- 	p->valkyrie_regs_phys = cmap_regs_phys+0x6000;
--- 
-2.13.3
-
+Alex
