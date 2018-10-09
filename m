@@ -2,175 +2,131 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A224C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F40EC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43F4213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43F4213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 49D122085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:46:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qvRz68xA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D122085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeJINzB (ORCPT
+        id S1726573AbeJIOCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:55:01 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:59002 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725887AbeJINzB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:55:01 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id 9lg4gWNu0SskC9lg7glSDl; Tue, 09 Oct 2018 08:39:36 +0200
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Tue, 9 Oct 2018 10:02:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:35255 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbeJIOCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 10:02:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Tnns6Njnz9s8r;
+        Tue,  9 Oct 2018 17:46:41 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539067602;
+        bh=VQGoBfHO8kvMcW1ICNyu9Ctt3UyUO3MR0ADujx3zqqU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qvRz68xA3+gI8XV8LIAYbczjuFVaFd0YjSNwC9EryHD2SjhFTXeCtciB2EDIZbPvt
+         ogm3ezWmhWL/gwgFaF1z4Ge5e7ob/4bA0Rh4SLLtE1xUOvP6OjAJvWpMFloVsPycxd
+         ge7DMOyWxOLJj+bp7lapZ6TtBZ/rrkjtcMr7e/+BM8NS7x+B0W5fsEImNx3LhUOlWM
+         SRTTR9TTWbAO+Y4SUcz/lT9UZhvefwsenR+juDAvRssa3EutiS0FaJh0A5cO2nq6HF
+         lXQj6r4V602XX9htnFlOdxXt2YZLr19bVuYqHAisDPCBQICXBzyNQpfpgtL0HepSym
+         ipbtruAwaaPqA==
+Date:   Tue, 9 Oct 2018 17:46:39 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-References: <20180724140621.59624-1-tfiga@chromium.org>
- <20180724140621.59624-2-tfiga@chromium.org>
- <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
- <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
- <CAAFQd5Ba+8_wpCr2D2OUSRt-PbRUPk4MV1OxMzEetntL169fBA@mail.gmail.com>
- <1dc5fd0b-61f0-545a-fea6-bd90721e144b@xs4all.nl>
- <CAAFQd5DKhed1M8X61VjBd0gXtJb-8qrz5ncPyppff5LmyoqO8w@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <79b6e542-4b81-7cc2-df78-74c012c5c478@xs4all.nl>
-Date:   Tue, 9 Oct 2018 08:39:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the akpm tree with the s390 tree
+Message-ID: <20181009174639.24fbc2ce@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5DKhed1M8X61VjBd0gXtJb-8qrz5ncPyppff5LmyoqO8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIONemGJ1QY9jgJN8+LfPFPXb6+iNDWFKFHdInJHEmaWvxPamKSIvftUK0+gOI6ZKifWLbUnJXW5+inbM2u1/x5JcUNogFSxrddbj+a1datCkDya4lBK
- dOOMPbzMy5Up86b4IPz34V0LNerJsshovgpeYgf+0Q91LurBSHn9FEfzl8ZT5Dk/e6Gop92KVwOXpPsOpksSyaRLXX+uVWYcy+lqeg5fxOD2Ay8O0Dmel7Mj
- A7oyKoC8e09qp4s/t3A4e7j35HdB50WH00thaJ5IP7/6NO0CJYEitIsQHvykKs+bRT8G9UywQZ7AYCjRSa30EVvpslbHxOwldk9tUX3ev0MtgDFk3yEeFvfI
- OPIcjJR0IlUKyMFky8UiEJ3SkJr2bncY6Qix80YKpIAYLutNoCO8HD7VjTEsvz8TuHS/1K7gQDFlLwGPNavkWzCnelsak152gZqIicrbQTzGgVI2jSAkgz77
- tO6MOzD9AKZz7ZoUlaSOH8YUuC+kh2x3BM0iof/4OErObAMB6uTzePeJWa40aYIdyAALBzoOXAoDQOu/6wq+poVYXVGaFXn0GpuJgzEwbUsRqL07sfRigk80
- JMAuXBY9M3Sot93A+a+n0C1iRr2TE/CA+l24FZ3I1LnLvWBk4fjtq9qyU1Is7HUYweSQllDacCyyaSrzecDeOZ0CeEIYIjAe5gmx5ynLqN5T1bH8tAT1RAlv
- obMyVuA10Mg/BWC4ti67WU8YbinWj1WtHCSANhT6FqgjK160pls9Hk2YHIwjD70BalktvzEEJthEasnJFcsYnLZTQ5kR2Z8S+EImTE7gYP6eoYfWffig6nno
- 3ld7G9dSVv6T3NxIkcQoBSwaO/SzbsVPwbn5w5ou5akXs+enMRElb3eHgsIdyEBak0foC49H8DBz+mDUQlk=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EZft1rkL7n2bOXoKB2mfZvh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/2018 06:23 AM, Tomasz Figa wrote:
-> On Mon, Oct 8, 2018 at 9:22 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 09/19/2018 12:17 PM, Tomasz Figa wrote:
->>> Hi Hans,
->>>
->>> On Thu, Jul 26, 2018 at 7:20 PM Tomasz Figa <tfiga@chromium.org> wrote:
->>>>
->>>> Hi Hans,
->>>>
->>>> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>>>
->>>>> Hi Tomasz,
->>>>>
->>>>> Many, many thanks for working on this! It's a great document and when done
->>>>> it will be very useful indeed.
->>>>>
->>>>> Review comments follow...
->>>>
->>>> Thanks for review!
->>>>
->>>>>
->>>>> On 24/07/18 16:06, Tomasz Figa wrote:
->>> [snip]
->>>>>> +13. Allocate destination (raw format) buffers via :c:func:`VIDIOC_REQBUFS`
->>>>>> +    on the ``CAPTURE`` queue.
->>>>>> +
->>>>>> +    * **Required fields:**
->>>>>> +
->>>>>> +      ``count``
->>>>>> +          requested number of buffers to allocate; greater than zero
->>>>>> +
->>>>>> +      ``type``
->>>>>> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
->>>>>> +
->>>>>> +      ``memory``
->>>>>> +          follows standard semantics
->>>>>> +
->>>>>> +    * **Return fields:**
->>>>>> +
->>>>>> +      ``count``
->>>>>> +          adjusted to allocated number of buffers
->>>>>> +
->>>>>> +    * The driver must adjust count to minimum of required number of
->>>>>> +      destination buffers for given format and stream configuration and the
->>>>>> +      count passed. The client must check this value after the ioctl
->>>>>> +      returns to get the number of buffers allocated.
->>>>>> +
->>>>>> +    .. note::
->>>>>> +
->>>>>> +       To allocate more than minimum number of buffers (for pipeline
->>>>>> +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``) to
->>>>>> +       get minimum number of buffers required, and pass the obtained value
->>>>>> +       plus the number of additional buffers needed in count to
->>>>>> +       :c:func:`VIDIOC_REQBUFS`.
->>>>>
->>>>>
->>>>> I think we should mention here the option of using VIDIOC_CREATE_BUFS in order
->>>>> to allocate buffers larger than the current CAPTURE format in order to accommodate
->>>>> future resolution changes.
->>>>
->>>> Ack.
->>>>
->>>
->>> I'm about to add a paragraph to describe this, but there is one detail
->>> to iron out.
->>>
->>> The VIDIOC_CREATE_BUFS ioctl accepts a v4l2_format struct. Userspace
->>> needs to fill in this struct and the specs says that
->>>
->>>   "Usually this will be done using the VIDIOC_TRY_FMT or VIDIOC_G_FMT
->>> ioctls to ensure that the requested format is supported by the
->>> driver."
->>>
->>> However, in case of a decoder, those calls would fixup the format to
->>> match the currently parsed stream, which would likely resolve to the
->>> current coded resolution (~hardware alignment). How do we get a format
->>> for the desired maximum resolution?
->>
->> You would call G_FMT to get the current format/resolution, then update
->> width and height and call TRY_FMT.
->>
->> Although to be honest you can also just set pixelformat and width/height
->> and zero everything else and call TRY_FMT directly, skipping the G_FMT
->> ioctl.
->>
-> 
-> Wouldn't TRY_FMT adjust the width and height back to match current stream?
+--Sig_/EZft1rkL7n2bOXoKB2mfZvh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Huh. Hmm. Grrr.
+Hi Andrew,
 
-Good point and I didn't read your original comment carefully enough.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Suggestions on a postcard...
+  arch/s390/kernel/setup.c
 
-Regards,
+between commit:
 
-	Hans
+  b45248da1a33 ("s390: unify stack size definitions")
+  ee46f78659ac ("s390: add support for virtually mapped kernel stacks")
+
+from the s390 tree and commit:
+
+  ab9c2b8deb1b ("memblock: remove _virt from APIs returning virtual address=
+")
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/s390/kernel/setup.c
+index 2a20e6ef8369,2e29456ca11e..000000000000
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@@ -418,12 -357,8 +418,12 @@@ static void __init setup_lowcore(void
+  	lc->last_update_timer =3D S390_lowcore.last_update_timer;
+  	lc->last_update_clock =3D S390_lowcore.last_update_clock;
+ =20
+ -	restart_stack =3D memblock_alloc(ASYNC_SIZE, ASYNC_SIZE);
+ -	restart_stack +=3D ASYNC_SIZE;
+ +	/*
+ +	 * Allocate the global restart stack which is the same for
+ +	 * all CPUs in cast *one* of them does a PSW restart.
+ +	 */
+- 	restart_stack =3D memblock_virt_alloc(THREAD_SIZE, THREAD_SIZE);
+++	restart_stack =3D memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+ +	restart_stack +=3D STACK_INIT_OFFSET;
+ =20
+  	/*
+  	 * Set up PSW restart to call ipl.c:do_restart(). Copy the relevant
+
+--Sig_/EZft1rkL7n2bOXoKB2mfZvh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu8Ts8ACgkQAVBC80lX
+0GyEVggAi2TIY/DBlbClhB88s8QHDXmip9elVtwUaMbVhrenr37GIUXlh/L+QJiR
+Lr7RUSJ3KDfxuRppylMcMLrmiDMx6YqNfS0qzT94FCdxvy3zbRm2pa11wm5/dewi
+Hl07GmhqNt+6/jNCLh1W48UZf+REmTpdpwW3wkpaboOkV00vQouWy6CUF1YqRQHk
+KbD6kW3II2VXR07O7wbKZ5P9Ck7iy7OL0afppynAKGac/kItuDXRlpFZUv2VdUQb
+WcPL5vHbpTT+CNxCGR1ZSqeCmGHDt9KrB9Ze8yoeOqMh/yX7GcNAJne3sqoDy62x
+Lj47wecnH1cC9OR4Q/4h7R2PkzYz3Q==
+=JnFX
+-----END PGP SIGNATURE-----
+
+--Sig_/EZft1rkL7n2bOXoKB2mfZvh--
