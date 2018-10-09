@@ -2,101 +2,160 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCDFC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103A8C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B15214D5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E300214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV0jDXXD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B15214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ha433zy1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E300214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeJITxk (ORCPT
+        id S1726902AbeJIT5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 15:53:40 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39510 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeJITxj (ORCPT
+        Tue, 9 Oct 2018 15:57:07 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39311 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeJIT5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 15:53:39 -0400
-Received: by mail-oi1-f193.google.com with SMTP id y81-v6so1064703oia.6;
-        Tue, 09 Oct 2018 05:36:54 -0700 (PDT)
+        Tue, 9 Oct 2018 15:57:07 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l58so1426262otd.6
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 05:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=E8l90IDZRsf+UE4xdWQoHWSJiqsRMCpene1hc8ltqOs=;
-        b=EV0jDXXDZUMr91jYDQHBl3vEiPzC1qVngBdFBpPMceS/0Lhqre3Ndh46qQ9t+XjV2b
-         hsZQztGPgqVNHvuscGJiK2XDi00tpOSt9ZVw+oKHWZ0WUEb+VXX4odBGYRJwYoRb6pUs
-         Q3o4dUZ+6vsBiROEd7HMVZm4Na/+8AczTCbgVWPG25sAYotMc3lHtId4ZTvmz7MRHu70
-         d4AsWKQlqWOIDd7glcYBa3vXI97l0KbUWOzEAMqwJqEs5Z+QUX7yb8fgDEx7Q5Hk7fXg
-         QusHsuWshfGQMRrzZTNDq7LFaFtZtLJ6MLezQ054L2mJeMZoa3QRvuwvM5Yp4blGeLU8
-         nERw==
+         :cc;
+        bh=UUh7DZePWQGubrujTdGMYRhGcavfDkqyiRLdHw9pBtM=;
+        b=ha433zy1NgQMlpuhkgWe4HK1wA/AA1KTB3ZKzt4+yir5gHg6v7AgyeTGffriqO2kRV
+         suVQJiFZiRY6dXYMIcZInxplnJWBKQqyupEYdsP/aXsDFQB3iV9/WdSOlCLoaJqnswh4
+         JFoPGvlCTZkCQIxpFRHF7SUABQGMHNveoCZV8BI4mUe+BBNnOJrV3eaKv5duYJ/LfC0J
+         9n1RvVBk7dWCgGo7VmdKKlxZKlWSkl0EButgX8TxuTaIg8GTOowUIYUrmrwiPtFcZfeQ
+         bYpgYpCG/8jAvgWQoN+CKHSu3TbWQzBN8T6y0OVm7gUg8zENhXbtv7eiuVr1POdfVqrz
+         xmhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=E8l90IDZRsf+UE4xdWQoHWSJiqsRMCpene1hc8ltqOs=;
-        b=Nclz5Cr9s71XRjYetcx2mnIBVEQMSB3ohTDjkVmR/ZRrVLhuaohSILCodk6s/S0Reg
-         5HmHcIl3Om7gGwBEx1yn9IlZWbXCtWC/WyrRmwJO+eimjVBzgAg8fawUuKIzyaGMtCPJ
-         H/w7/ATH/FnK+XeKEJ8NG+CnswFyGZWZfIYWUStgOCkjKuX35Rlx3LjBTsB/PJ4DxjOg
-         QEO2/EhcrhlOWY+kFuASC+8WynqzrF4+fCzSrz2J2LbS4DXqFOnU05kHmpGVPcvD4vPT
-         MB8OGEH8HF4uDqZC7iRxA7/Pmt0v14QYPuMhoD+o1fOPEOnsXRutUN33p/jMogU5EgAH
-         sTqQ==
-X-Gm-Message-State: ABuFfog/xy+zopEJ91mAt6PzN9OZ5i1LS4vxyYmtXDuEQFtcEp4C6AEQ
-        VRtgQ/kS8PFMKkBfSLxzfGmrYKdyVAoYVsaI/Ng=
-X-Google-Smtp-Source: ACcGV60DdvwDFmF5ExpuSG83gtKNE3PGTUqLXfY9yLj5hEKkNqWiEwG/iSaTjsfLDDwtmIN9Nao65EVMdU7jHQg29rM=
-X-Received: by 2002:aca:e385:: with SMTP id a127-v6mr7390893oih.261.1539088614090;
- Tue, 09 Oct 2018 05:36:54 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=UUh7DZePWQGubrujTdGMYRhGcavfDkqyiRLdHw9pBtM=;
+        b=I27vfkNQGOQKAMI10BacQOvnfmjjBCK3K0ClRWKQNQY2fpXemv+wmF61SgDn0gSy3z
+         EMmaUTPy1gFkhyl2yBgn7KZBK1pXDgz2ZRCjv8kROQpu8H8ytHLR6YTicjOHl9O9Kpqd
+         YqzO8khw97rmHWP/60YCnm06+igDt7uXr8rmlL6hEkqyBO0nxuZcAgbVYhS24a9uCpI8
+         Xb7ozWbDuXF0uMo0qPbNOMNrYesogq0jd901GV3Mzgmg2eslbOlfuZiNY1CIK8QBhSgg
+         YH6qzY7PuMTQtmyTnBDVHjtio3Vbsdc8VGxZ5c3lyOtYXoYLBIESyh7XTjODy5acZ9Uq
+         goaA==
+X-Gm-Message-State: ABuFfoj63BBf8L0RvqcdUA2aH3QL3K8gW9U2Z3ZamaYAnak7HXz9wTd1
+        LbMSPvYp2nmAAH+2NS1Oj2LsjK8E6x1Q1hX5/YtCDw==
+X-Google-Smtp-Source: ACcGV62CbDOKw4X0OO63JV+0x8ib6PwKGS5lHP8efeduwL6b0tYIbn/cIbLIn/E5LdA6EitdpFz1km/jb766MMhKCjE=
+X-Received: by 2002:a9d:4917:: with SMTP id e23mr14890956otf.73.1539088820572;
+ Tue, 09 Oct 2018 05:40:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538040281-21319-1-git-send-email-michal.vokac@ysoft.com>
- <1538040281-21319-3-git-send-email-michal.vokac@ysoft.com>
- <68f4da21-6f0d-5bf9-b352-cdc423269080@ysoft.com> <CGME20181009002056epcas5p24207204c9e65e8f34382de6672adb993@epcas5p2.samsung.com>
- <20181009002031.GU3587@dragon> <20181009075145eucas1p2691c7d04aa8328080af7cbc4ab5e03b9~b4WFAVFkx0235802358eucas1p2c@eucas1p2.samsung.com>
- <bfbfd490-3872-2fd9-e088-3add596b987c@ysoft.com>
-In-Reply-To: <bfbfd490-3872-2fd9-e088-3add596b987c@ysoft.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 9 Oct 2018 09:36:51 -0300
-Message-ID: <CAOMZO5DdV9Sm9z6wX8e4LTvbokjnOMqtgOJQOvVvysVvzaBKGw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2 3/3] ARM: dts: imx28-cfa10036: Fix the reset
- gpio signal polarity
-To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <Michal.Vokac@ysoft.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+ <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+In-Reply-To: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 9 Oct 2018 14:39:53 +0200
+Message-ID: <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     christian@brauner.io
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
+> On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
+> > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > > > index 44a31ac8373a..17685803a2af 100644
+> > > > > > --- a/kernel/seccomp.c
+> > > > > > +++ b/kernel/seccomp.c
+> > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > > > >
+> > > > > >       return ret;
+> > > > > >  }
+> > > > > > +
+> > > > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > > > +                       unsigned long filter_off)
+> > > > > > +{
+> > > > > > +     struct seccomp_filter *filter;
+> > > > > > +     struct file *listener;
+> > > > > > +     int fd;
+> > > > > > +
+> > > > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > > > +             return -EACCES;
+> > > > >
+> > > > > I know this might have been discussed a while back but why exactly do we
+> > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > > > use ptrace from in there?
+> > > >
+> > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > > > . Basically, the problem is that this doesn't just give you capability
+> > > > over the target task, but also over every other task that has the same
+> > > > filter installed; you need some sort of "is the caller capable over
+> > > > the filter and anyone who uses it" check.
+> > >
+> > > Thanks.
+> > > But then this new ptrace feature as it stands is imho currently broken.
+> > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> > > if you are ns_cpabable(CAP_SYS_ADMIN)
 
-On Tue, Oct 9, 2018 at 5:30 AM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft.c=
-om> wrote:
+Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
+you enable the NNP flag, I think?
 
-> Sorry for the inconvenience :( Lesson learned..
+> > > then either the new ptrace() api
+> > > extension should be fixed to allow for this too or the seccomp() way of
+> > > retrieving the pid - which I really think we want - needs to be fixed to
+> > > require capable(CAP_SYS_ADMIN) too.
+> > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> > > the preferred way to solve this.
+> > > Everything else will just be confusing.
+> >
+> > First you say "broken", then you say "confusing". Which one do you mean?
 >
-> So in other words (no offense): broken drivers need to stay broken becaus=
-e
-> users may already get used to the broken behavior?
+> Both. It's broken in so far as it places a seemingly unnecessary
+> restriction that could be fixed. You outlined one possible fix yourself
+> in the link you provided.
 
-In order to keep the old dtb's working you could introduce a new
-property (like reset-gpio-active-low, for example).
+If by "possible fix" you mean "check whether the seccomp filter is
+only attached to a single task": That wouldn't fundamentally change
+the situation, it would only add an additional special case.
 
-Then the driver behavior can be made untouched for the old dtb's and
-only new dtb's with this new property would have the correct GPIO
-reset behavior.
+> And it's confusing in so far as there is a way
+> via seccomp() to get the fd without said requirement.
+
+I don't find it confusing at all. seccomp() and ptrace() are very
+different situations: When you use seccomp(), infrastructure is
+already in place for ensuring that your filter is only applied to
+processes over which you are capable, and propagation is limited by
+inheritance from your task down. When you use ptrace(), you need a
+pretty different sort of access check that checks whether you're
+privileged over ancestors, siblings and so on of the target task.
+
+But thinking about it more, I think that CAP_SYS_ADMIN over the saved
+current->mm->user_ns of the task that installed the filter (stored as
+a "struct user_namespace *" in the filter) should be acceptable.
