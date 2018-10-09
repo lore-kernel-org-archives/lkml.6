@@ -2,191 +2,191 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC9EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7139C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3842214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9246B21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:41:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VDnrh/xb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3842214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mwjBlgyH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9246B21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJIV5l (ORCPT
+        id S1726747AbeJIV6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:57:41 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49212 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJIV5l (ORCPT
+        Tue, 9 Oct 2018 17:58:22 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39223 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeJIV6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:57:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Mime-Version:Content-Type:References:
-        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7m+wxLvGK9MBImywFcpso0zEmmAPNLsg0Ws9Fp4b15U=; b=VDnrh/xboW894/GoCFuJl1zVo
-        +8fP6dVbfAtBecmhy0jVDq+bSsMI434nXNyIq+pkaWV7tvswjFU7O4Mwi0OP/9fXZpqvJz89GeiGS
-        YJ+K0hvEP18kVp40k0aLuzfcIPY7WkjvE8pjFpVnQCd6SqtxJ5C0AiuxnQtsEevx/8Z3WBsr0/BiD
-        CxfX5OkNrOy/mbx97rmYA3J/jLbxJP0LgxgyH7BGHeZ71hArAvRjaZiKNclnOMNHgFpiPFMz7kmuK
-        VyXsVUiOHkPkBd4FrrCeyGux9tXXzVgh/jAQTktEzvYrAJuVdmA+lVZ98WN7GaUDMtqIl8LCbWBH+
-        ycH8kLvpw==;
-Received: from [2001:8b0:10b:1::3ae] (helo=u3832b3a9db3152.ant.amazon.com)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9tBK-0005ds-W9; Tue, 09 Oct 2018 14:40:19 +0000
-Message-ID: <762802a4b8ff21e43e59e222e472ab9b23fc43cd.camel@infradead.org>
-Subject: Re: [PATCH 0/2] xen: fix two issues in Xen pv qspinlock handling
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, Waiman.Long@hp.com,
-        peterz@infradead.org
-Date:   Tue, 09 Oct 2018 15:40:16 +0100
-In-Reply-To: <20181001071641.19282-1-jgross@suse.com>
-References: <20181001071641.19282-1-jgross@suse.com>
-Content-Type: multipart/signed; micalg="sha-256";
-        protocol="application/x-pkcs7-signature";
-        boundary="=-BaIM7n6fpAm4sRm5x209"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 9 Oct 2018 17:58:21 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181009144105euoutp027c5b0c10ab0a93261dd2c86dfc02f2d6~b97eP3v_X0871308713euoutp02V
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 14:41:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181009144105euoutp027c5b0c10ab0a93261dd2c86dfc02f2d6~b97eP3v_X0871308713euoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539096065;
+        bh=a7Tk2crN95FHQGbnNEhIgyhBB6XD7HziqDIRR9FcpFw=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=mwjBlgyHSlVxzHbQLBwsKG9aDL/Wi45r1ciKMt+MuwX6269UN+MmARvNAqM61VtUz
+         nwMFlknmxaOh44wDVwuYfz2rA/nPJzdt3CnHv6+7uJBZ1JF39HSGBEAyBpxZ9BbgVK
+         Iq/zUo8SyXVGdUu/GIn2nbzTs9CEyZhaVdl1WtRU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181009144104eucas1p10ce609146a01f9af086c3218fff0cc16~b97dkzeSE0885608856eucas1p1k;
+        Tue,  9 Oct 2018 14:41:04 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 2D.0C.04441.00EBCBB5; Tue,  9
+        Oct 2018 15:41:04 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1~b97cjWjY10058900589eucas1p1n;
+        Tue,  9 Oct 2018 14:41:03 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181009144103eusmtrp1460d142ec2219867942df89ff138d8b3~b97cSde5m2096520965eusmtrp10;
+        Tue,  9 Oct 2018 14:41:03 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-ee-5bbcbe001e62
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C3.4E.04284.FFDBCBB5; Tue,  9
+        Oct 2018 15:41:03 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181009144102eusmtip179221369939272d1154a032daf6f5177~b97b4hyXM3256132561eusmtip1M;
+        Tue,  9 Oct 2018 14:41:02 +0000 (GMT)
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        drbd-dev@lists.linbit.com, Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] drivers/block: remove redundant 'default n' from Kconfig-s
+Date:   Tue, 9 Oct 2018 16:41:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7oM+/ZEG6zsl7RYfbefzeLh1RUs
+        FvO737NY7L2lbXF51xw2i2Vf37NbbGiZxW7xcuZjJotHEyYxOXB67Jx1l93j8tlSj02rOtk8
+        nl45wuTR8qCNzWPnp82sHp83yQWwR3HZpKTmZJalFunbJXBlTP3/lq1gslhF38XMBsb5gl2M
+        nBwSAiYSL370MYHYQgIrGCU6Zmh2MXIB2V8YJc4ve8ICkfjMKHHttT5Mw5lpZ1ggipYzSvQ1
+        X2CGcN4zSnzd+IQNpEpEQEGi5/dKNpAEs8BWJomW1ptgo9gErCQmtq9iBLGFBbwldm95C2Rz
+        cLAIqEjM21QOYooKREj0n1EHqeAVEJQ4ORPiCGYBeYntb+eA7ZIQWMUu8frHPzaIojKJq5/W
+        MUJc5yKx5c4BdghbWOLV8S1QtozE6ck9LBDN0xkl3vxaCuWsZ5RYc+YYE0SVtcTh4xdZQa5g
+        FtCUWL9LH8SUEHCU+LZRBMLkk7jxVhDiHj6JSdumM0OEeSU62oQgZqhJbFi2gQ1ma9fOlcwQ
+        tofE3c/L2SDhGSuxa+cP1gmMCrOQfDkLyZezEE5YwMi8ilE8tbQ4Nz212DAvtVyvODG3uDQv
+        XS85P3cTIzARnf53/NMOxq+Xkg4xCnAwKvHwzsjbHS3EmlhWXJl7iFGCg1lJhFd0+65oId6U
+        xMqq1KL8+KLSnNTiQ4zSHCxK4rzL5m2MFhJITyxJzU5NLUgtgskycXBKNTCmc269+/jzqQ2P
+        TJVnHGDZ/Jn/Sx1XxjO2fKezr1x3e1id/uj6hWm2e02jcTT3ZO7IyoBDlpdETb7/vsg61eWk
+        wK4Vyx/oeFsnV26Pb/kzf2MRg+WK9zr68mvXdSR8yf0Vu3rSiwVOQeXHAlXjN6769Mvl+eWE
+        5X/Y/+7PTDi3cdbz+6XeK6NalViKMxINtZiLihMB1eh4SkADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7r/9+6JNlj8S8Bi9d1+NouHV1ew
+        WMzvfs9isfeWtsXlXXPYLJZ9fc9usaFlFrvFy5mPmSweTZjE5MDpsXPWXXaPy2dLPTat6mTz
+        eHrlCJNHy4M2No+dnzazenzeJBfAHqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5r
+        ZWSqpG9nk5Kak1mWWqRvl6CXMfX/W7aCyWIVfRczGxjnC3YxcnJICJhInJl2hgXEFhJYyihx
+        cLdkFyMHUFxG4vj6MogSYYk/17rYuhi5gEreMkrsan4BVi8ioCDR83slWIJZYCuTxJbbq5hB
+        EmwCVhIT21cxgtjCAt4Su7e8ZQQZyitgJzH7ehKIySKgIjFvUzlIhahAhMSthx1gI3kFBCVO
+        znwCZjMLqEv8mXeJGcKWl9j+dg7zBEb+WUjKZiEpm4WkbAEj8ypGkdTS4tz03GJDveLE3OLS
+        vHS95PzcTYzAiNl27OfmHYyXNgYfYhTgYFTi4Z2RtztaiDWxrLgy9xCjBAezkgiv6PZd0UK8
+        KYmVValF+fFFpTmpxYcYTYHunsgsJZqcD4zmvJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFCAumJ
+        JanZqakFqUUwfUwcnFINjFl7Zghv27e041Uwt92czXw+ZV8XLnL5tPebxQKn2r+LHhlkB9XI
+        bOvKqTTZ48gkrHn2yHWzl8wC7ko3CwovH1m8Uer/ArXjZybMWlugeq1zc6/e3ph1oldzDY4t
+        aoztKGFO4guXuxAc+M1DeKLO9md9nbesXFc4znxy6ZcK94mV5gwL7M/nL1RiKc5INNRiLipO
+        BABjSs9yrgIAAA==
+Message-Id: <20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1~b97cjWjY10058900589eucas1p1n@eucas1p1.samsung.com>
+X-CMS-MailID: 20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1
+References: <CGME20181009144103eucas1p1dbf48b04c923877cdbdcf2197725ccd1@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+'default n' is the default value for any bool or tristate Kconfig
+setting so there is no need to write it explicitly.
 
---=-BaIM7n6fpAm4sRm5x209
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+is not set' for visible symbols") the Kconfig behavior is the same
+regardless of 'default n' being present or not:
 
-On Mon, 2018-10-01 at 09:16 +0200, Juergen Gross wrote:
-> The Xen specific queue spinlock wait function has two issues which
-> could result in a hanging system.
->=20
-> They have a similar root cause of clearing a pending wakeup of a
-> waiting vcpu and later going to sleep waiting for the just cleared
-> wakeup event, which of course won't ever happen.
->=20
-> Juergen Gross (2):
->   xen: fix race in xen_qlock_wait()
->   xen: make xen_qlock_wait() nestable
->=20
->  arch/x86/xen/spinlock.c | 33 ++++++++++++---------------------
->  1 file changed, 12 insertions(+), 21 deletions(-)
->=20
-> Cc: Waiman.Long@hp.com
-> Cc: peterz@infradead.org
+    ...
+    One side effect of (and the main motivation for) this change is making
+    the following two definitions behave exactly the same:
+    
+        config FOO
+                bool
+    
+        config FOO
+                bool
+                default n
+    
+    With this change, neither of these will generate a
+    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+    That might make it clearer to people that a bare 'default n' is
+    redundant.
+    ...
 
-LGTM. Both these should be Cc:stable@vger.kernel.org, yes?
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/block/Kconfig      |    1 -
+ drivers/block/drbd/Kconfig |    1 -
+ drivers/block/zram/Kconfig |    2 --
+ 3 files changed, 4 deletions(-)
 
-Thanks.
-
---=-BaIM7n6fpAm4sRm5x209
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODEwMDkxNDQwMTZaMC8GCSqG
-SIb3DQEJBDEiBCDiqHzMkXDxtVFuDPK7nblSaRhQzLZhec/WuYnlbnIPszCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAGYpXBQG4HFu
-9IYAbcAsyYVbcnk7lkjJoi9YERiHe6Pk6Dx4yVSXD26FE8hLuIq1FqY8I4j19Bg/gg6boPG8IDWz
-UaoQYDsVOg8UfUuDewJmmPRYcIkB+Ec7+f8SwfVstZLHMpYFOCMiTvVSkEZaib3pvP0PtacatT2w
-nYsTObVpW4ZIsDDagThFRR+VNwdJjN2SK5kiQMjy9rBgGACmD6qbhkMRRGuzcrcTVWv5ugdw1RtK
-aMLl4hqdsagj9lSiUSzKSkOTTkVB7vrfN+/w0L5PGPtUr5JNbO/CJanR8rHDmuro9Qa4xjhDH5SU
-PXv4kHGsaHVAOEaUPr7RjWVdTj4AAAAAAAA=
-
-
---=-BaIM7n6fpAm4sRm5x209--
-
+Index: b/drivers/block/Kconfig
+===================================================================
+--- a/drivers/block/Kconfig	2018-09-26 15:54:31.958819766 +0200
++++ b/drivers/block/Kconfig	2018-10-09 16:35:01.327177898 +0200
+@@ -461,7 +461,6 @@ config BLK_DEV_RBD
+ 	select LIBCRC32C
+ 	select CRYPTO_AES
+ 	select CRYPTO
+-	default n
+ 	help
+ 	  Say Y here if you want include the Rados block device, which stripes
+ 	  a block device over objects stored in the Ceph distributed object
+Index: b/drivers/block/drbd/Kconfig
+===================================================================
+--- a/drivers/block/drbd/Kconfig	2018-09-03 18:11:21.973792264 +0200
++++ b/drivers/block/drbd/Kconfig	2018-10-09 16:35:10.251178122 +0200
+@@ -11,7 +11,6 @@ config BLK_DEV_DRBD
+ 	depends on PROC_FS && INET
+ 	select LRU_CACHE
+ 	select LIBCRC32C
+-	default n
+ 	help
+ 
+ 	  NOTE: In order to authenticate connections you have to select
+Index: b/drivers/block/zram/Kconfig
+===================================================================
+--- a/drivers/block/zram/Kconfig	2018-09-03 18:11:22.185792260 +0200
++++ b/drivers/block/zram/Kconfig	2018-10-09 16:35:21.667178410 +0200
+@@ -3,7 +3,6 @@ config ZRAM
+ 	tristate "Compressed RAM block device support"
+ 	depends on BLOCK && SYSFS && ZSMALLOC && CRYPTO
+ 	select CRYPTO_LZO
+-	default n
+ 	help
+ 	  Creates virtual block devices called /dev/zramX (X = 0, 1, ...).
+ 	  Pages written to these disks are compressed and stored in memory
+@@ -18,7 +17,6 @@ config ZRAM
+ config ZRAM_WRITEBACK
+        bool "Write back incompressible page to backing device"
+        depends on ZRAM
+-       default n
+        help
+ 	 With incompressible page, there is no memory saving to keep it
+ 	 in memory. Instead, write it out to backing device.
