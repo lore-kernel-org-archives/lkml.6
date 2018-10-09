@@ -7,91 +7,91 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EBEC67879
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E3EC67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EBD20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 856652089D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:30:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArxDbKtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67EBD20C0A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMOKOIcW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856652089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbeJIIoG (ORCPT
+        id S1726656AbeJIIoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:44:06 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45245 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeJIIoG (ORCPT
+        Tue, 9 Oct 2018 04:44:39 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37335 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeJIIoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:44:06 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t70-v6so8597032pgd.12;
-        Mon, 08 Oct 2018 18:29:39 -0700 (PDT)
+        Tue, 9 Oct 2018 04:44:39 -0400
+Received: by mail-pl1-f196.google.com with SMTP id az3-v6so10836046plb.4;
+        Mon, 08 Oct 2018 18:30:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=AGhFdwi1qhFZtPr98X/jDRCMO7N/jAM12unSNMmMjrs=;
-        b=ArxDbKtJN9Ur1FFUBoKHqCZVS7WDyDaRG5oZ9czNvbLmz/wARlllno7b2XLd43L4M+
-         HxX/yqM5UaVyaU5Yzns12zWPhmBWMeSFjEIAj9xewfOGiCMQ+eHz1d9CG7jFApbxkd9+
-         JReHksw0zkCa3nj8ZOMWlFa0nssy1wZnbMfl/bKu/knRdc5ZTLJ4FBmz8itnyNigjE7V
-         iA1lXRT9nnVv7Mf5DXYiKhzRKKU+nZYydpdRRuoBEp2WfEUCcWWPDcjiGKRlc0SMdCBq
-         DoW+BsMZeOsmFRa5SGknRaLwj4VpqlGdYWpOrGESZOlC+32PiOBmJUeIGQnvQcKi4eRD
-         rz1g==
+        bh=9Y3PFzuEe/Qp3LsFSQEE9WQgvGzWssFdxtjqmNhL1dk=;
+        b=OMOKOIcW6Yt5gHG3apn1JKQlEmj9s25KyFZT3n8lVNl+Xl8RGth964XYUHvwvW5vSn
+         cdNBfUI+EVNNeHFureddnpMpqnnMfn8IFaFVIPcvgkF2UbaWO9UQzydkmPEep7D9Hnq7
+         jwVGCmpS7R4Xwzcvk1lMAJ0kiSc+Dd2xP5BqTv9sPYuIv/d8ixreEfKaHBoV0s32aVdL
+         bGH3H0gP8r9IPNUXV28lLZBjsmztaRkJwAgJZ4iA7ujlPZV1UC0Y5qOvrultNblzRdk8
+         Za99YyLp/ZVHsYCneLxCKmU8SB8i7gG4jCRikZx0YMsDZIDKayMPzfT+UaY2PD+4nvQG
+         2OPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AGhFdwi1qhFZtPr98X/jDRCMO7N/jAM12unSNMmMjrs=;
-        b=cOlZTgh4LmZh8cD3S0p/I3eLyR/83f95gsHXcL3s9bKvj94vdXSjtuAkTB/TDMupCx
-         BVdGhJ0oYWDz/KqDowgRSjgsbVrmtGjSgOs8XVQs3f4fDFysNp/wTu++GwGwo5hn7gFm
-         aaes/kGkZTKs9alo6e17keP+goh+msHI0Woj/dNF0ZRtHcRlJQoLkeU+7SuyELG8Yi7g
-         U8Ov4B3RlqnFB5sorJzCot5u40REG8gukS9nbN3Nt68DHyuo3HlI94yFNSb9PDZWXxAs
-         y4KC58skq/w2CWHx9KzZ2f+oh+EsrKuCwTiQOtqnuBLWO/laf8uv3+ehTwISLWitHthK
-         C5TQ==
-X-Gm-Message-State: ABuFfoiqFa1QixBVZX+cHOhfFej62JURP0ABn7ch4+TAx8Ujize6c8ai
-        8dMNrrI4cBFc7zysx7CrZFM=
-X-Google-Smtp-Source: ACcGV61KVoqPstDxpEqPlAWs2+Vi+WeeIIe20or0K7oDdGJepLvjhW7Lkha8W8kz9W6sLA2t0GEPvg==
-X-Received: by 2002:a62:e80c:: with SMTP id c12-v6mr20257106pfi.124.1539048578462;
-        Mon, 08 Oct 2018 18:29:38 -0700 (PDT)
+        bh=9Y3PFzuEe/Qp3LsFSQEE9WQgvGzWssFdxtjqmNhL1dk=;
+        b=SkathzJTjahTsqN65pPjjGjD40ClBZ8xRuRyTXeZuC4pooMhYR6o+snj/LTOr1/lNE
+         PhusbPAD5h7Q35JYZskfljz6aA/QixPhdCq8v2HJdUmmXxu2dumgc2EfcvDsGjJe54iO
+         BAom0Im6X9UHFm7ET17NRw4g5hjbIyPc1Xt+B4dP4uCziDjALcpFZhY/h885vl99dwdq
+         CMDh6OJL/cFfpsM6ybAJPZtgMyLDI9xn0fhEe3VX+cjuss0JSvxFZQQJeWX3l+5DzIMR
+         k0H5WHpbwDukZAMPKJrQyZIwtT5vqA86wnm2qVVHpp6CXKgHAPv3Yy14modr7JkyRffW
+         Pvkg==
+X-Gm-Message-State: ABuFfogjzCoLNhULX+E4jrDAF0qhntEdnxQ9VPTvecnPBwv5brmhCd6N
+        Y9/K0G1ohMJbOPjc1EIeuNc=
+X-Google-Smtp-Source: ACcGV606U08bD+ReR98rCyR/ChtPYZZ3exuvfyUm4cpCj0Qg7cRL7AUCQykpB7O1My5bNUUw+fmSLQ==
+X-Received: by 2002:a17:902:7b84:: with SMTP id w4-v6mr25595586pll.32.1539048611953;
+        Mon, 08 Oct 2018 18:30:11 -0700 (PDT)
 Received: from localhost ([82.102.30.219])
-        by smtp.gmail.com with ESMTPSA id s133-v6sm23898592pgc.78.2018.10.08.18.29.36
+        by smtp.gmail.com with ESMTPSA id x13-v6sm17569797pgl.87.2018.10.08.18.30.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 18:29:37 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 18:29:33 -0700
+        Mon, 08 Oct 2018 18:30:11 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 18:30:07 -0700
 From:   Nathan Chancellor <natechancellor@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
         patches@kernelci.org, ben.hutchings@codethink.co.uk,
         lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 000/113] 4.4.160-stable review
-Message-ID: <20181009012933.GA26684@localhost>
-References: <20181008175530.864641368@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/59] 4.9.132-stable review
+Message-ID: <20181009013007.GB26684@localhost>
+References: <20181008175546.620836256@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
+In-Reply-To: <20181008175546.620836256@linuxfoundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 08:30:01PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.160 release.
-> There are 113 patches in this series, all will be posted as a response
+On Mon, Oct 08, 2018 at 08:31:07PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.132 release.
+> There are 59 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Wed Oct 10 17:55:13 UTC 2018.
+> Responses should be made by Wed Oct 10 17:55:28 UTC 2018.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.160-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.132-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -99,7 +99,7 @@ On Mon, Oct 08, 2018 at 08:30:01PM +0200, Greg Kroah-Hartman wrote:
 > greg k-h
 > 
 
-Merged, compiled with -Werror, and installed onto my Pixel 2 XL.
+Merged, compiled with -Werror, and installed onto my OnePlus 6.
 
 No initial issues noticed in dmesg or general usage.
 
