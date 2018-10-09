@@ -2,849 +2,174 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAF8C67879
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E27C6787A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033F42087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 663E621476
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xhSzIPKy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033F42087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+bjHuvx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663E621476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeJIIJ4 (ORCPT
+        id S1726540AbeJIIQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:09:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbeJIIJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:09:55 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C597F21476;
-        Tue,  9 Oct 2018 00:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539046532;
-        bh=ObcrEiAPqbyWHBOZWh8J4VsGrwcgY48oKvCsKd6NcG4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xhSzIPKytDxzf5NBHBJfnLia6xal4ddLBpRoxTE6RefmtOmT0fj6OrKgPN2z6r9Fa
-         LP0OEtnlan3I2tMZWZWuJp2Zw+A7MA48K+C41noCFOM+g3zL5/08HGFpCyrK/rbpnX
-         WHg4iPUEGAcuzGnL3VKB49LBAvWoDYF20Cf9t6ko=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux trace devel <linux-trace-devel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/12] tools lib traceevent, perf tools: Move struct tep_handler definition in a local header file
-Date:   Mon,  8 Oct 2018 21:54:27 -0300
-Message-Id: <20181009005427.6607-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181009005427.6607-1-acme@kernel.org>
-References: <20181009005427.6607-1-acme@kernel.org>
+        Tue, 9 Oct 2018 04:16:36 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33925 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbeJIIQf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 04:16:35 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f18-v6so10809528plr.1;
+        Mon, 08 Oct 2018 18:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dO0hGKlvzsvqDv1Q00o82/brddTfpWNNmVp2naSRJHM=;
+        b=A+bjHuvxVyBlxkIRgbr/mxe8GjuzQ7s6IEBPN27uFnpWXIGXwvF8UYvgYUAZ4Z7eeZ
+         u4pKVJnzL0ivyvyrL/ISSr/RniLu2pwWm917xv0nR76ojaM4guK3xoJA5ysh6T0/iA3Z
+         kgpoq3I9b+VQso59FfxLTLNQKbr4pGc0L3BTXW3Mp6gLa+TN/MZOvOOfIc+/9N1SKKyP
+         eAo6+TG4mBksSs4hhBJQiGuv79Yic5FNkvFChaRv3ytvTz9SI0cYVFF4PF/xUDDH5prs
+         00hY405D5jheskNwmUfziCOo6gkeCdvKZUbA5KfFrEFrQ+CqbzXfkiCe2+Mdq0Mvzq6M
+         u9eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dO0hGKlvzsvqDv1Q00o82/brddTfpWNNmVp2naSRJHM=;
+        b=ZSX+Jf931IGaOgb3m75Sy0Cf4O++H3IcPw9QzLPMMJzxN5MX1cDmFTSyUhmvtMysQs
+         qWSpzsY2YdV6gC9G1Mpq6cCXEu5NxEoyyxPW4I4TR+lihioNWPtWfIlYOX3aC7+1Aa+Y
+         OlR9BfoA82YQM3GJ4k130NjrLp1BaZFxolhrH9cr/kSIBgcYEgDpg173DJDE/iFQVo3P
+         jK2N5MZhkn6FNYB/EQn3RDKi/95NmwOTYtU+pREhPmezr/b+mNn4hlGoyBRv47sBDHlk
+         ZKfCGkoNRb+pm/wuF3V5pkIZBR+c6PajN/Lf5skNSgaElYzK1Hd97Kz3jj19Qdhrx25H
+         1QsA==
+X-Gm-Message-State: ABuFfogEXpbFFEFu/oSM6Rg91lCkmjvrH+KixY+Ze+hV1x27XCz7qLlM
+        q1EQtV/T4tSa14WkNQ4A+Yt3YFNj
+X-Google-Smtp-Source: ACcGV60gfByK5H6hKhDG0jaEFAWhcX/EpUnW1QUA4tye4uXa3BvHtVCVVqZk2io3QPzs7NnGYREYVg==
+X-Received: by 2002:a17:902:8eca:: with SMTP id x10-v6mr26289430plo.336.1539046933601;
+        Mon, 08 Oct 2018 18:02:13 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id y24-v6sm8980168pfn.123.2018.10.08.18.02.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 08 Oct 2018 18:02:13 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v2] KVM: LAPIC: Tune lapic_timer_advance_ns automatically
+Date:   Tue,  9 Oct 2018 09:02:08 +0800
+Message-Id: <1539046928-18600-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-As traceevent is going to be transferred into a proper library,
-its local data should be protected from the library users.
-This patch encapsulates struct tep_handler into a local header,
-not visible outside of the library. It implements also a bunch
-of new APIs, which library users can use to access tep_handler members.
+In cloud environment, lapic_timer_advance_ns is needed to be tuned for every CPU 
+generations, and every host kernel versions(the kvm-unit-tests/tscdeadline_latency.flat 
+is 5700 cycles for upstream kernel and 9600 cycles for our 3.10 product kernel, 
+both preemption_timer=N, Skylake server).
 
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux trace devel <linux-trace-devel@vger.kernel.org>
-Cc: tzvetomir stoyanov <tstoyanov@vmware.com>
-Link: http://lkml.kernel.org/r/20181005122225.522155df@gandalf.local.home
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch adds the capability to automatically tune lapic_timer_advance_ns
+step by step, the initial value is 1000ns as 'commit d0659d946be0 ("KVM: x86: 
+add option to advance tscdeadline hrtimer expiration")' recommended, it will be 
+reduced when it is too early, and increased when it is too late. The guest_tsc 
+and tsc_deadline are hard to equal, so we assume we are done when the delta 
+is within a small scope e.g. 100 cycles. This patch reduces latency 
+(kvm-unit-tests/tscdeadline_latency, busy waits, preemption_timer enabled)
+from ~2600 cyles to ~1200 cyles on our Skylake server.
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- tools/lib/traceevent/Build               |   1 +
- tools/lib/traceevent/event-parse-api.c   | 275 +++++++++++++++++++++++++++++++
- tools/lib/traceevent/event-parse-local.h |  92 +++++++++++
- tools/lib/traceevent/event-parse.c       |   2 +
- tools/lib/traceevent/event-parse.h       | 228 ++++---------------------
- tools/lib/traceevent/event-plugin.c      |   1 +
- tools/lib/traceevent/parse-filter.c      |   1 +
- tools/perf/util/trace-event-parse.c      |  25 +--
- tools/perf/util/trace-event-read.c       |   2 +-
- 9 files changed, 416 insertions(+), 211 deletions(-)
- create mode 100644 tools/lib/traceevent/event-parse-api.c
- create mode 100644 tools/lib/traceevent/event-parse-local.h
+v1 -> v2:
+ * converts between guest TSC units to host nanoseconds correctly
+ * put hard-coded numbers to #define 
 
-diff --git a/tools/lib/traceevent/Build b/tools/lib/traceevent/Build
-index 0050c145d806..ba54bfce0b0b 100644
---- a/tools/lib/traceevent/Build
-+++ b/tools/lib/traceevent/Build
-@@ -5,6 +5,7 @@ libtraceevent-y += parse-filter.o
- libtraceevent-y += parse-utils.o
- libtraceevent-y += kbuffer-parse.o
- libtraceevent-y += tep_strerror.o
-+libtraceevent-y += event-parse-api.o
+ arch/x86/kvm/lapic.c | 25 ++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c   |  2 +-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index fbb0e6d..197cf5d 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -70,6 +70,11 @@
+ #define APIC_BROADCAST			0xFF
+ #define X2APIC_BROADCAST		0xFFFFFFFFul
  
- plugin_jbd2-y         += plugin_jbd2.o
- plugin_hrtimer-y      += plugin_hrtimer.o
-diff --git a/tools/lib/traceevent/event-parse-api.c b/tools/lib/traceevent/event-parse-api.c
-new file mode 100644
-index 000000000000..61f7149085ee
---- /dev/null
-+++ b/tools/lib/traceevent/event-parse-api.c
-@@ -0,0 +1,275 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Copyright (C) 2009, 2010 Red Hat Inc, Steven Rostedt <srostedt@redhat.com>
-+ *
-+ */
++static bool lapic_timer_advance_adjust_done = false;
++#define LAPIC_TIMER_ADVANCE_ADJUST_DONE 100
++/* step-by-step approximation to mitigate fluctuation */
++#define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
 +
-+#include "event-parse.h"
-+#include "event-parse-local.h"
-+#include "event-utils.h"
-+
-+/**
-+ * tep_get_first_event - returns the first event in the events array
-+ * @tep: a handle to the tep_handle
-+ *
-+ * This returns pointer to the first element of the events array
-+ * If @tep is NULL, NULL is returned.
-+ */
-+struct tep_event_format *tep_get_first_event(struct tep_handle *tep)
-+{
-+	if (tep && tep->events)
-+		return tep->events[0];
-+
-+	return NULL;
-+}
-+
-+/**
-+ * tep_get_events_count - get the number of defined events
-+ * @tep: a handle to the tep_handle
-+ *
-+ * This returns number of elements in event array
-+ * If @tep is NULL, 0 is returned.
-+ */
-+int tep_get_events_count(struct tep_handle *tep)
-+{
-+	if(tep)
-+		return tep->nr_events;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_flag - set event parser flag
-+ * @tep: a handle to the tep_handle
-+ * @flag: flag, or combination of flags to be set
-+ * can be any combination from enum tep_flag
-+ *
-+ * This sets a flag or mbination of flags  from enum tep_flag
-+  */
-+void tep_set_flag(struct tep_handle *tep, int flag)
-+{
-+	if(tep)
-+		tep->flags |= flag;
-+}
-+
-+unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data)
-+{
-+	unsigned short swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 8) |
-+		((data & (0xffULL << 8)) >> 8);
-+
-+	return swap;
-+}
-+
-+unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data)
-+{
-+	unsigned int swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 24) |
-+		((data & (0xffULL << 8)) << 8) |
-+		((data & (0xffULL << 16)) >> 8) |
-+		((data & (0xffULL << 24)) >> 24);
-+
-+	return swap;
-+}
-+
-+unsigned long long
-+__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
-+{
-+	unsigned long long swap;
-+
-+	if (!pevent || pevent->host_bigendian == pevent->file_bigendian)
-+		return data;
-+
-+	swap = ((data & 0xffULL) << 56) |
-+		((data & (0xffULL << 8)) << 40) |
-+		((data & (0xffULL << 16)) << 24) |
-+		((data & (0xffULL << 24)) << 8) |
-+		((data & (0xffULL << 32)) >> 8) |
-+		((data & (0xffULL << 40)) >> 24) |
-+		((data & (0xffULL << 48)) >> 40) |
-+		((data & (0xffULL << 56)) >> 56);
-+
-+	return swap;
-+}
-+
-+/**
-+ * tep_get_header_page_size - get size of the header page
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns size of the header page
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_header_page_size(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->header_page_size_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_get_cpus - get the number of CPUs
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the number of CPUs
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_cpus(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->cpus;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_cpus - set the number of CPUs
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This sets the number of CPUs
-+ */
-+void tep_set_cpus(struct tep_handle *pevent, int cpus)
-+{
-+	if(pevent)
-+		pevent->cpus = cpus;
-+}
-+
-+/**
-+ * tep_get_long_size - get the size of a long integer on the current machine
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the size of a long integer on the current machine
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_long_size(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->long_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_long_size - set the size of a long integer on the current machine
-+ * @pevent: a handle to the tep_handle
-+ * @size: size, in bytes, of a long integer
-+ *
-+ * This sets the size of a long integer on the current machine
-+ */
-+void tep_set_long_size(struct tep_handle *pevent, int long_size)
-+{
-+	if(pevent)
-+		pevent->long_size = long_size;
-+}
-+
-+/**
-+ * tep_get_page_size - get the size of a memory page on the current machine
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns the size of a memory page on the current machine
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_get_page_size(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->page_size;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_page_size - set the size of a memory page on the current machine
-+ * @pevent: a handle to the tep_handle
-+ * @_page_size: size of a memory page, in bytes
-+ *
-+ * This sets the size of a memory page on the current machine
-+ */
-+void tep_set_page_size(struct tep_handle *pevent, int _page_size)
-+{
-+	if(pevent)
-+		pevent->page_size = _page_size;
-+}
-+
-+/**
-+ * tep_is_file_bigendian - get if the file is in big endian order
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This returns if the file is in big endian order
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_file_bigendian(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->file_bigendian;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_file_bigendian - set if the file is in big endian order
-+ * @pevent: a handle to the tep_handle
-+ * @endian: non zero, if the file is in big endian order
-+ *
-+ * This sets if the file is in big endian order
-+ */
-+void tep_set_file_bigendian(struct tep_handle *pevent, enum tep_endian endian)
-+{
-+	if(pevent)
-+		pevent->file_bigendian = endian;
-+}
-+
-+/**
-+ * tep_is_host_bigendian - get if the order of the current host is big endian
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This gets if the order of the current host is big endian
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_host_bigendian(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->host_bigendian;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_host_bigendian - set the order of the local host
-+ * @pevent: a handle to the tep_handle
-+ * @endian: non zero, if the local host has big endian order
-+ *
-+ * This sets the order of the local host
-+ */
-+void tep_set_host_bigendian(struct tep_handle *pevent, enum tep_endian endian)
-+{
-+	if(pevent)
-+		pevent->host_bigendian = endian;
-+}
-+
-+/**
-+ * tep_is_latency_format - get if the latency output format is configured
-+ * @pevent: a handle to the tep_handle
-+ *
-+ * This gets if the latency output format is configured
-+ * If @pevent is NULL, 0 is returned.
-+ */
-+int tep_is_latency_format(struct tep_handle *pevent)
-+{
-+	if(pevent)
-+		return pevent->latency_format;
-+	return 0;
-+}
-+
-+/**
-+ * tep_set_latency_format - set the latency output format
-+ * @pevent: a handle to the tep_handle
-+ * @lat: non zero for latency output format
-+ *
-+ * This sets the latency output format
-+  */
-+void tep_set_latency_format(struct tep_handle *pevent, int lat)
-+{
-+	if(pevent)
-+		pevent->latency_format = lat;
-+}
-diff --git a/tools/lib/traceevent/event-parse-local.h b/tools/lib/traceevent/event-parse-local.h
-new file mode 100644
-index 000000000000..b9bddde577f8
---- /dev/null
-+++ b/tools/lib/traceevent/event-parse-local.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Copyright (C) 2009, 2010 Red Hat Inc, Steven Rostedt <srostedt@redhat.com>
-+ *
-+ */
-+
-+#ifndef _PARSE_EVENTS_INT_H
-+#define _PARSE_EVENTS_INT_H
-+
-+struct cmdline;
-+struct cmdline_list;
-+struct func_map;
-+struct func_list;
-+struct event_handler;
-+struct func_resolver;
-+
-+struct tep_handle {
-+	int ref_count;
-+
-+	int header_page_ts_offset;
-+	int header_page_ts_size;
-+	int header_page_size_offset;
-+	int header_page_size_size;
-+	int header_page_data_offset;
-+	int header_page_data_size;
-+	int header_page_overwrite;
-+
-+	enum tep_endian file_bigendian;
-+	enum tep_endian host_bigendian;
-+
-+	int latency_format;
-+
-+	int old_format;
-+
-+	int cpus;
-+	int long_size;
-+	int page_size;
-+
-+	struct cmdline *cmdlines;
-+	struct cmdline_list *cmdlist;
-+	int cmdline_count;
-+
-+	struct func_map *func_map;
-+	struct func_resolver *func_resolver;
-+	struct func_list *funclist;
-+	unsigned int func_count;
-+
-+	struct printk_map *printk_map;
-+	struct printk_list *printklist;
-+	unsigned int printk_count;
-+
-+
-+	struct tep_event_format **events;
-+	int nr_events;
-+	struct tep_event_format **sort_events;
-+	enum tep_event_sort_type last_type;
-+
-+	int type_offset;
-+	int type_size;
-+
-+	int pid_offset;
-+	int pid_size;
-+
-+	int pc_offset;
-+	int pc_size;
-+
-+	int flags_offset;
-+	int flags_size;
-+
-+	int ld_offset;
-+	int ld_size;
-+
-+	int print_raw;
-+
-+	int test_filters;
-+
-+	int flags;
-+
-+	struct tep_format_field *bprint_ip_field;
-+	struct tep_format_field *bprint_fmt_field;
-+	struct tep_format_field *bprint_buf_field;
-+
-+	struct event_handler *handlers;
-+	struct tep_function_handler *func_handlers;
-+
-+	/* cache */
-+	struct tep_event_format *last_event;
-+
-+	char *trace_clock;
-+};
-+
-+#endif /* _PARSE_EVENTS_INT_H */
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 233179a712d6..3692f29fee46 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -22,6 +22,8 @@
- 
- #include <netinet/in.h>
- #include "event-parse.h"
-+
-+#include "event-parse-local.h"
- #include "event-utils.h"
- #include "trace-seq.h"
- 
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 9c29a5f7aa39..16bf4c890b6f 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -405,149 +405,18 @@ void tep_print_plugins(struct trace_seq *s,
- 			const char *prefix, const char *suffix,
- 			const struct tep_plugin_list *list);
- 
--struct cmdline;
--struct cmdline_list;
--struct func_map;
--struct func_list;
--struct event_handler;
--struct func_resolver;
--
-+/* tep_handle */
- typedef char *(tep_func_resolver_t)(void *priv,
- 				    unsigned long long *addrp, char **modp);
-+void tep_set_flag(struct tep_handle *tep, int flag);
-+unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data);
-+unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data);
-+unsigned long long
-+__tep_data2host8(struct tep_handle *pevent, unsigned long long data);
- 
--struct tep_handle {
--	int ref_count;
--
--	int header_page_ts_offset;
--	int header_page_ts_size;
--	int header_page_size_offset;
--	int header_page_size_size;
--	int header_page_data_offset;
--	int header_page_data_size;
--	int header_page_overwrite;
--
--	int file_bigendian;
--	int host_bigendian;
--
--	int latency_format;
--
--	int old_format;
--
--	int cpus;
--	int long_size;
--	int page_size;
--
--	struct cmdline *cmdlines;
--	struct cmdline_list *cmdlist;
--	int cmdline_count;
--
--	struct func_map *func_map;
--	struct func_resolver *func_resolver;
--	struct func_list *funclist;
--	unsigned int func_count;
--
--	struct printk_map *printk_map;
--	struct printk_list *printklist;
--	unsigned int printk_count;
--
--
--	struct tep_event_format **events;
--	int nr_events;
--	struct tep_event_format **sort_events;
--	enum tep_event_sort_type last_type;
--
--	int type_offset;
--	int type_size;
--
--	int pid_offset;
--	int pid_size;
--
-- 	int pc_offset;
--	int pc_size;
--
--	int flags_offset;
--	int flags_size;
--
--	int ld_offset;
--	int ld_size;
--
--	int print_raw;
--
--	int test_filters;
--
--	int flags;
--
--	struct tep_format_field *bprint_ip_field;
--	struct tep_format_field *bprint_fmt_field;
--	struct tep_format_field *bprint_buf_field;
--
--	struct event_handler *handlers;
--	struct tep_function_handler *func_handlers;
--
--	/* cache */
--	struct tep_event_format *last_event;
--
--	char *trace_clock;
--};
--
--static inline void tep_set_flag(struct tep_handle *pevent, int flag)
--{
--	pevent->flags |= flag;
--}
--
--static inline unsigned short
--__tep_data2host2(struct tep_handle *pevent, unsigned short data)
--{
--	unsigned short swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 8) |
--		((data & (0xffULL << 8)) >> 8);
--
--	return swap;
--}
--
--static inline unsigned int
--__tep_data2host4(struct tep_handle *pevent, unsigned int data)
--{
--	unsigned int swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 24) |
--		((data & (0xffULL << 8)) << 8) |
--		((data & (0xffULL << 16)) >> 8) |
--		((data & (0xffULL << 24)) >> 24);
--
--	return swap;
--}
--
--static inline unsigned long long
--__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
--{
--	unsigned long long swap;
--
--	if (pevent->host_bigendian == pevent->file_bigendian)
--		return data;
--
--	swap = ((data & 0xffULL) << 56) |
--		((data & (0xffULL << 8)) << 40) |
--		((data & (0xffULL << 16)) << 24) |
--		((data & (0xffULL << 24)) << 8) |
--		((data & (0xffULL << 32)) >> 8) |
--		((data & (0xffULL << 40)) >> 24) |
--		((data & (0xffULL << 48)) >> 40) |
--		((data & (0xffULL << 56)) >> 56);
--
--	return swap;
--}
--
--#define tep_data2host2(pevent, ptr)		__tep_data2host2(pevent, *(unsigned short *)(ptr))
--#define tep_data2host4(pevent, ptr)		__tep_data2host4(pevent, *(unsigned int *)(ptr))
--#define tep_data2host8(pevent, ptr)					\
-+#define tep_data2host2(pevent, ptr)	__tep_data2host2(pevent, *(unsigned short *)(ptr))
-+#define tep_data2host4(pevent, ptr)	__tep_data2host4(pevent, *(unsigned int *)(ptr))
-+#define tep_data2host8(pevent, ptr)	\
- ({								\
- 	unsigned long long __val;				\
- 								\
-@@ -655,11 +524,12 @@ unsigned long long tep_read_number(struct tep_handle *pevent, const void *ptr, i
- int tep_read_number_field(struct tep_format_field *field, const void *data,
- 			  unsigned long long *value);
- 
-+struct tep_event_format *tep_get_first_event(struct tep_handle *tep);
-+int tep_get_events_count(struct tep_handle *tep);
- struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id);
- 
- struct tep_event_format *
- tep_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
--
- struct tep_event_format *
- tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
- 
-@@ -689,65 +559,23 @@ struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum tep_ev
- struct tep_format_field **tep_event_common_fields(struct tep_event_format *event);
- struct tep_format_field **tep_event_fields(struct tep_event_format *event);
- 
--static inline int tep_get_cpus(struct tep_handle *pevent)
--{
--	return pevent->cpus;
--}
--
--static inline void tep_set_cpus(struct tep_handle *pevent, int cpus)
--{
--	pevent->cpus = cpus;
--}
--
--static inline int tep_get_long_size(struct tep_handle *pevent)
--{
--	return pevent->long_size;
--}
--
--static inline void tep_set_long_size(struct tep_handle *pevent, int long_size)
--{
--	pevent->long_size = long_size;
--}
--
--static inline int tep_get_page_size(struct tep_handle *pevent)
--{
--	return pevent->page_size;
--}
--
--static inline void tep_set_page_size(struct tep_handle *pevent, int _page_size)
--{
--	pevent->page_size = _page_size;
--}
--
--static inline int tep_is_file_bigendian(struct tep_handle *pevent)
--{
--	return pevent->file_bigendian;
--}
--
--static inline void tep_set_file_bigendian(struct tep_handle *pevent, int endian)
--{
--	pevent->file_bigendian = endian;
--}
--
--static inline int tep_is_host_bigendian(struct tep_handle *pevent)
--{
--	return pevent->host_bigendian;
--}
--
--static inline void tep_set_host_bigendian(struct tep_handle *pevent, int endian)
--{
--	pevent->host_bigendian = endian;
--}
--
--static inline int tep_is_latency_format(struct tep_handle *pevent)
--{
--	return pevent->latency_format;
--}
--
--static inline void tep_set_latency_format(struct tep_handle *pevent, int lat)
--{
--	pevent->latency_format = lat;
--}
-+enum tep_endian {
-+        TEP_LITTLE_ENDIAN = 0,
-+        TEP_BIG_ENDIAN
-+};
-+int tep_get_cpus(struct tep_handle *pevent);
-+void tep_set_cpus(struct tep_handle *pevent, int cpus);
-+int tep_get_long_size(struct tep_handle *pevent);
-+void tep_set_long_size(struct tep_handle *pevent, int long_size);
-+int tep_get_page_size(struct tep_handle *pevent);
-+void tep_set_page_size(struct tep_handle *pevent, int _page_size);
-+int tep_is_file_bigendian(struct tep_handle *pevent);
-+void tep_set_file_bigendian(struct tep_handle *pevent, enum tep_endian endian);
-+int tep_is_host_bigendian(struct tep_handle *pevent);
-+void tep_set_host_bigendian(struct tep_handle *pevent, enum tep_endian endian);
-+int tep_is_latency_format(struct tep_handle *pevent);
-+void tep_set_latency_format(struct tep_handle *pevent, int lat);
-+int tep_get_header_page_size(struct tep_handle *pevent);
- 
- struct tep_handle *tep_alloc(void);
- void tep_free(struct tep_handle *pevent);
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index 46eb64eb0c2e..e74f16c88398 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -14,6 +14,7 @@
- #include <unistd.h>
- #include <dirent.h>
- #include "event-parse.h"
-+#include "event-parse-local.h"
- #include "event-utils.h"
- #include "trace-seq.h"
- 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index d64b6128fa7d..ed87cb56713d 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -11,6 +11,7 @@
- #include <sys/types.h>
- 
- #include "event-parse.h"
-+#include "event-parse-local.h"
- #include "event-utils.h"
- 
- #define COMM "COMM"
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index 02f97f5dd588..32e558a65af3 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -37,10 +37,11 @@ static int get_common_field(struct scripting_context *context,
- 	struct tep_format_field *field;
- 
- 	if (!*size) {
--		if (!pevent->events)
-+
-+		event = tep_get_first_event(pevent);
-+		if (!event)
- 			return 0;
- 
--		event = pevent->events[0];
- 		field = tep_find_common_field(event, type);
- 		if (!field)
- 			return 0;
-@@ -193,25 +194,29 @@ struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
- 					       struct tep_event_format *event)
+ static inline int apic_test_vector(int vec, void *bitmap)
  {
- 	static int idx;
-+	int events_count;
-+	struct tep_event_format *all_events;
+ 	return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
+@@ -1472,7 +1477,7 @@ static bool lapic_timer_int_injected(struct kvm_vcpu *vcpu)
+ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_lapic *apic = vcpu->arch.apic;
+-	u64 guest_tsc, tsc_deadline;
++	u64 guest_tsc, tsc_deadline, ns;
  
--	if (!pevent || !pevent->events)
-+	all_events = tep_get_first_event(pevent);
-+	events_count = tep_get_events_count(pevent);
-+	if (!pevent || !all_events || events_count < 1)
- 		return NULL;
- 
- 	if (!event) {
- 		idx = 0;
--		return pevent->events[0];
-+		return all_events;
- 	}
- 
--	if (idx < pevent->nr_events && event == pevent->events[idx]) {
-+	if (idx < events_count && event == (all_events + idx)) {
- 		idx++;
--		if (idx == pevent->nr_events)
-+		if (idx == events_count)
- 			return NULL;
--		return pevent->events[idx];
-+		return (all_events + idx);
- 	}
- 
--	for (idx = 1; idx < pevent->nr_events; idx++) {
--		if (event == pevent->events[idx - 1])
--			return pevent->events[idx];
-+	for (idx = 1; idx < events_count; idx++) {
-+		if (event == (all_events + (idx - 1)))
-+			return (all_events + idx);
- 	}
- 	return NULL;
+ 	if (!lapic_in_kernel(vcpu))
+ 		return;
+@@ -1492,6 +1497,24 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+ 	if (guest_tsc < tsc_deadline)
+ 		__delay(min(tsc_deadline - guest_tsc,
+ 			nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
++
++	if (!lapic_timer_advance_adjust_done) {
++		/* too early */
++		if (guest_tsc < tsc_deadline) {
++			ns = (tsc_deadline - guest_tsc) * 1000000ULL;
++			do_div(ns, vcpu->arch.virtual_tsc_khz);
++			lapic_timer_advance_ns -= min((unsigned int)ns,
++				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
++		} else {
++		/* too late */
++			ns = (guest_tsc - tsc_deadline) * 1000000ULL;
++			do_div(ns, vcpu->arch.virtual_tsc_khz);
++			lapic_timer_advance_ns += min((unsigned int)ns,
++				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
++		}
++		if (abs(guest_tsc - tsc_deadline) < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
++			lapic_timer_advance_adjust_done = true;
++	}
  }
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index add8441de579..76f12c705ef9 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -241,7 +241,7 @@ static int read_header_files(struct tep_handle *pevent)
- 		 * The commit field in the page is of type long,
- 		 * use that instead, since it represents the kernel.
- 		 */
--		tep_set_long_size(pevent, pevent->header_page_size_size);
-+		tep_set_long_size(pevent, tep_get_header_page_size(pevent));
- 	}
- 	free(header_page);
+ 
+ static void start_sw_tscdeadline(struct kvm_lapic *apic)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ca71773..1f3f955 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -136,7 +136,7 @@ static u32 __read_mostly tsc_tolerance_ppm = 250;
+ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
+ 
+ /* lapic timer advance (tscdeadline mode only) in nanoseconds */
+-unsigned int __read_mostly lapic_timer_advance_ns = 0;
++unsigned int __read_mostly lapic_timer_advance_ns = 1000;
+ module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
+ EXPORT_SYMBOL_GPL(lapic_timer_advance_ns);
  
 -- 
-2.14.4
+2.7.4
 
