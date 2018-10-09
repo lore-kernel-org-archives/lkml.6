@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3B0C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AA5C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB6220835
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7A220835
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:57:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BcDOvE8Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB6220835
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ihsb+e6S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7A220835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJIRNV (ORCPT
+        id S1726750AbeJIRNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:13:21 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44463 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbeJIRNV (ORCPT
+        Tue, 9 Oct 2018 13:13:31 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53847 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJIRNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:13:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 63-v6so1098987wra.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 02:57:14 -0700 (PDT)
+        Tue, 9 Oct 2018 13:13:31 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y11-v6so1197043wma.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 02:57:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=BpaKW4NkhBiIhZZwZ+parlBrNxJkmpmjyyhHiDpjKW0=;
-        b=BcDOvE8QjyS6zqtRnzsuE5iMF8d9ryXbwW+y+UeUUeYAE3XwSXr2fo2DmLVYzD6QDc
-         uXuIQjHxsKzEwpE4Z3ZntbCqfq4oF1GHEBH1rNYHzfDM7Nt8ugTkOSyR1cB+u398izsk
-         erxcX11xRzPRJah8Uv4hVaCUgXe/9SI5pfD1c=
+        bh=VMCzdP22on589wsFehnS4fY/Istx26tCF06USFoNWKQ=;
+        b=Ihsb+e6S82WDTvbz+8J4/aVyRGV4sRN87UxZVEq99jktZqEPHaLvwUlgn+xinzr0pg
+         fpj2C1dbhfPo52lCNb2tTu92Fj6s5F65qM6h7Ag0cmIGsrpxcbxp16PQ7GJppNQpWBpj
+         5qc4aW8GrzaQs2DRPj8jdbFbhbf3yxi2EkM54=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=BpaKW4NkhBiIhZZwZ+parlBrNxJkmpmjyyhHiDpjKW0=;
-        b=snwNbA2FQ0xLw1U6lyPdAxD7ACG846SguWHszdLmkG9BrlM35baU+fdZ+UkfDZS1ft
-         9tKm6//L/SKLxCIQR5Aq8YPuqJzCjVW67LAA4u+mOBXhpuvK3w72ruY+0juNBmHTWO2a
-         zb3STyVgkH6514sontdTxrvn73wl4XuMHbspeqdn+vP41xN3oUINk6ka+g/nufQsqnZn
-         C4YxwqXTJFgPhC1MOzZu0FNV1fZKjBnqdbXIbjCsYSljwzNm6ar5uGOziYHBa/Vw922M
-         dPBk5bucUtbw57l+kUPL4K2iXcvK86cVj6ZAYtU6q5S/nkdP9xjunwOmuRepZstSJXS1
-         ZGkg==
-X-Gm-Message-State: ABuFfojAxG43dVL8VsPFHlq1T6Ay1lVz8PdDnvE71En1rcYezka6Apbg
-        IvXt2sBAi9rKwnPf4597Bt57sw==
-X-Google-Smtp-Source: ACcGV62Mj3ZT6l0yUEkQYQE88ATOMbpgAgDn7d2Nr7getwEpIla5BlJwUDcFpQK1plAE2e2yyP3iqA==
-X-Received: by 2002:a5d:4b50:: with SMTP id w16-v6mr17481278wrs.173.1539079033455;
-        Tue, 09 Oct 2018 02:57:13 -0700 (PDT)
+        bh=VMCzdP22on589wsFehnS4fY/Istx26tCF06USFoNWKQ=;
+        b=RwxGRnhqXnbqSWbSdal0wJryv6KET+fb+YF/IZLsJb601Vknej1/EaEpw+j4SJFjL8
+         Mc8VwsVlbioSJVs16d83QgzFWYyUzP9p7H72+GXkrBqAbiEjx4zg5f1/B2jz+qyi3RuV
+         Wgj1MMg7DSJFtSctMwDCkqrIT4Dczm4Bi/W7gW+BuJiZZNUbOtMIZ+mj9AR5sLjdBBZT
+         trFZfnB51mstw+kKtXEXcKFDodXJuNRQlI+9FbxMEJgySuPS5W4iFtGittPtqbags7lY
+         nk/GslbsZdMP1MLbppb6NiusS7Jn0Mp8p3+hWB2A/5/aEs3CL9fT1VanyDfpsaAHXfSk
+         fCeg==
+X-Gm-Message-State: ABuFfojEshFPe3Zm9HUTLcdLB9hmS5jjYCsZJrEv/imC7K/N7xg4Xsb2
+        20PUX1Quzwo4U9svaR1vT/a2mg==
+X-Google-Smtp-Source: ACcGV62M7NroAdNaY4ITCQdvdAqRF4YrXDShNIGKjdEMW/iSXLUM3ZAo08haTs6cpMaM2QpepjUVog==
+X-Received: by 2002:a1c:7913:: with SMTP id l19-v6mr1306123wme.84.1539079043156;
+        Tue, 09 Oct 2018 02:57:23 -0700 (PDT)
 Received: from dell ([2.27.167.111])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm1863875wmn.34.2018.10.09.02.57.12
+        by smtp.gmail.com with ESMTPSA id y7-v6sm11279890wmy.27.2018.10.09.02.57.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 02:57:12 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 02:57:10 -0700
+        Tue, 09 Oct 2018 02:57:22 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 02:57:20 -0700
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
@@ -69,14 +69,15 @@ Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RESEND v2 1/2] backlight: Remove s6e63m0 driver
-Message-ID: <20181009095710.GI4939@dell>
+Subject: Re: [RESEND v2 2/2] backlight: Remove ld9040 driver
+Message-ID: <20181009095720.GJ4939@dell>
 References: <20180927165541.11903-1-krzk@kernel.org>
+ <20180927165541.11903-2-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180927165541.11903-1-krzk@kernel.org>
+In-Reply-To: <20180927165541.11903-2-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -85,9 +86,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 27 Sep 2018, Krzysztof Kozlowski wrote:
 
-> The driver for S6E63M0 AMOLED LCD panel is not used.  It does not
-> support DeviceTree and respective possible users (S5Pv210 Aquila and
-> Goni boards) are DeviceTree-only.
+> The driver for LD9040 AMOLED LCD panel was superseded with DRM driver
+> panel-samsung-ld9040.c.  It does not support DeviceTree and respective
+> possible user (Exynos4210 Universal C210) is DeviceTree-only and uses
+> DRM version of driver.
 > 
 > Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -99,18 +101,15 @@ On Thu, 27 Sep 2018, Krzysztof Kozlowski wrote:
 > ---
 > 
 > Changes since v1:
-> 1. Remove sysfs ABI documentation file.
-> 2. Add Jingoo's and Daniel's acks.
+> 1. Add Jingoo's and Daniel's acks.
 > ---
->  .../ABI/testing/sysfs-class-lcd-s6e63m0       |  27 -
->  drivers/video/backlight/Kconfig               |   8 -
->  drivers/video/backlight/Makefile              |   1 -
->  drivers/video/backlight/s6e63m0.c             | 857 ------------------
->  drivers/video/backlight/s6e63m0_gamma.h       | 266 ------
->  5 files changed, 1159 deletions(-)
->  delete mode 100644 Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
->  delete mode 100644 drivers/video/backlight/s6e63m0.c
->  delete mode 100644 drivers/video/backlight/s6e63m0_gamma.h
+>  drivers/video/backlight/Kconfig        |   8 -
+>  drivers/video/backlight/Makefile       |   1 -
+>  drivers/video/backlight/ld9040.c       | 811 -------------------------
+>  drivers/video/backlight/ld9040_gamma.h | 202 ------
+>  4 files changed, 1022 deletions(-)
+>  delete mode 100644 drivers/video/backlight/ld9040.c
+>  delete mode 100644 drivers/video/backlight/ld9040_gamma.h
 
 Applied, thanks.
 
