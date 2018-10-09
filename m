@@ -6,87 +6,124 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACB5C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B13C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3692086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3692086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 30B462087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B462087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbeJIVP0 (ORCPT
+        id S1727034AbeJIVPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:15:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54974 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726717AbeJIVPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:15:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4CF0DAD7D;
-        Tue,  9 Oct 2018 13:58:19 +0000 (UTC)
-Subject: Re: [PATCH] xen/balloon: Support xend-based toolstack
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20181007200538.19320-1-boris.ostrovsky@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a47c9474-2ff3-97ad-5a23-35ae4c3044c6@suse.com>
-Date:   Tue, 9 Oct 2018 15:58:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 9 Oct 2018 17:15:47 -0400
+Received: from mail-qt1-f178.google.com ([209.85.160.178]:38607 "EHLO
+        mail-qt1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbeJIVPr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:15:47 -0400
+Received: by mail-qt1-f178.google.com with SMTP id l9-v6so1668032qtf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:58:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version;
+        bh=xjWs20RU0HrI89lsHaEBcr1iR8tVkybbvwIIXjr3tIQ=;
+        b=ozr0jx7HlXk4SXjpAb5immZ7oJrBd/gsmWz1PiWB7oCLGG76Bc5+/XATO9F1+mq0KN
+         qzWJl3PFlU3cibnuLBgqZrFQ4F8jna/91pWUvRhqbk6axxRSYE5/VB7jSsaMS9lAUO0g
+         EuTo1TSRxzFrVPUjryhJOI/utkT+C6rBWMf7WaPnkiAgEvfW9ioygXieHq2n2iBbd3Oe
+         91ifI7YWVH6YOXfwIOuahiQvCGDuu0dDNzY8jWKL8eg+d0RLXsK49r6sN//dscetyBZI
+         yTRGepnNQteVrd4U3tyyJa1hWy1b1JqMVaT1/aiyb2K+s7GMiHV4HsANhEl92ETfVq4r
+         HBDA==
+X-Gm-Message-State: ABuFfoh4YwMBYqIFpx9X6WLpD0st9W5Hvj2QCc441dUV41zDj+9jCiL3
+        PNb5ES5feC/v8BKLIiJGPGDJ2g==
+X-Google-Smtp-Source: ACcGV626G3jydU5SxjqwYTIjpRSOARbD5Z0uzsmi7ZbrpYqHtuL8lyN515/1K7GQlZG3JM+O+QvBXw==
+X-Received: by 2002:a0c:edcd:: with SMTP id i13-v6mr23800835qvr.15.1539093521181;
+        Tue, 09 Oct 2018 06:58:41 -0700 (PDT)
+Received: from [172.25.130.148] (pool-128-6-36-179.nat.rutgers.edu. [128.6.36.179])
+        by smtp.gmail.com with ESMTPSA id z24-v6sm10193549qtg.42.2018.10.09.06.58.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 06:58:39 -0700 (PDT)
+From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
+To:     "Anshuman Khandual" <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
+        mhocko@suse.com, will.deacon@arm.com,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>
+Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
+ PMD migration entry
+Date:   Tue, 09 Oct 2018 09:58:36 -0400
+X-Mailer: MailMate (1.12r5528)
+Message-ID: <7E8E6B14-D5C4-4A30-840D-A7AB046517FB@cs.rutgers.edu>
+In-Reply-To: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
+References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181007200538.19320-1-boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed;
+ boundary="=_MailMate_D24ABCAE-03FA-4552-A378-F6F6EC1FF47E_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 22:05, Boris Ostrovsky wrote:
-> Xend-based toolstacks don't have static-max entry in xenstore. The
-> equivalent node for those toolstacks is memory_static_max.
-> 
-> Fixes: 5266b8e4445c (xen: fix booting ballooned down hvm guest)
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: <stable@vger.kernel.org> # 4.13
+This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+--=_MailMate_D24ABCAE-03FA-4552-A378-F6F6EC1FF47E_=
+Content-Type: text/plain
+
+cc: Naoya Horiguchi (who proposed to use !_PAGE_PRESENT && !_PAGE_PSE for x86
+PMD migration entry check)
+
+On 8 Oct 2018, at 23:58, Anshuman Khandual wrote:
+
+> A normal mapped THP page at PMD level should be correctly differentiated
+> from a PMD migration entry while walking the page table. A mapped THP would
+> additionally check positive for pmd_present() along with pmd_trans_huge()
+> as compared to a PMD migration entry. This just adds a new conditional test
+> differentiating the two while walking the page table.
+>
+> Fixes: 616b8371539a6 ("mm: thp: enable thp migration in generic path")
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> On X86, pmd_trans_huge() and is_pmd_migration_entry() are always mutually
+> exclusive which makes the current conditional block work for both mapped
+> and migration entries. This is not same with arm64 where pmd_trans_huge()
+
+!pmd_present() && pmd_trans_huge() is used to represent THPs under splitting,
+since _PAGE_PRESENT is cleared during THP splitting but _PAGE_PSE is not.
+See the comment in pmd_present() for x86, in arch/x86/include/asm/pgtable.h
+
+> returns positive for both mapped and migration entries. Could some one
+> please explain why pmd_trans_huge() has to return false for migration
+> entries which just install swap bits and its still a PMD ? Nonetheless
+> pmd_present() seems to be a better check to distinguish between mapped
+> and (non-mapped non-present) migration entries without any ambiguity.
+
+If arm64 does it differently, I just wonder how THP splitting is handled
+in arm64.
 
 
-Juergen
+--
+Best Regards
+Yan Zi
+
+--=_MailMate_D24ABCAE-03FA-4552-A378-F6F6EC1FF47E_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - https://gpgtools.org
+
+iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAlu8tAwWHHppLnlhbkBj
+cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzDkDB/0UH4oRh+cOCW0EYDRVhKtKBjs1
+e1BD1S/Pcq/XFtgVfFoziz+3TRHYESnnwDOG86L7hyWON0yL20X6OIaKcQjRkRo7
+OLReAB5Jq13CPF4q1U9jjRyNdl9dYvOEBtDsc02F8xv/8Hge3aIAqYH1eouCmAVa
+Zo1hIRSxdHbWlLRLOOdNc2vD218gNuqtrcCsR78fddklGnItibcyokilXd3VBPRe
+5gTJxg4s172rqL7IxkUs3N3KsiHnDDmH383tGZzIl7tULdLcboMvPK+ops5pOWTZ
+UhCmfX0iauJoG8uHTkhQZvR2WiUz7gptJOA6QzlV80DqfgapNSpdzaJbn8mt
+=ULbu
+-----END PGP SIGNATURE-----
+
+--=_MailMate_D24ABCAE-03FA-4552-A378-F6F6EC1FF47E_=--
