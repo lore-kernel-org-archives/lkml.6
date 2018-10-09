@@ -2,315 +2,117 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E18DC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE65C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF66213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A169B21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:36:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U3Bs1kjc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IRuFz4hh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF66213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9ekYKVY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A169B21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeJINv7 (ORCPT
+        id S1726925AbeJINwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:51:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37838 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbeJINv7 (ORCPT
+        Tue, 9 Oct 2018 09:52:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36878 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726854AbeJINwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:51:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 821E460BFA; Tue,  9 Oct 2018 06:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539066995;
-        bh=sy1q3mnJGJTUz5IPvUZ/+v42awGKowKHYWWxKpWM4RY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3Bs1kjcqYUkHneLF/Ndx1BH0GNPR3hBgsbtt52dHn0D4Vb25OTR8+WXe2i65s8nz
-         U03v/Gm2j0Pdn40P/wih13anUBreGd97Q+pNJchxKHNaUWUGqZIF6NQxj4VyHag4FL
-         ugIb4CAkbo70pAVq86py9nu0h1m7G4pVNIBgE7Sw=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C6D7360C67;
-        Tue,  9 Oct 2018 06:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539066993;
-        bh=sy1q3mnJGJTUz5IPvUZ/+v42awGKowKHYWWxKpWM4RY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRuFz4hhz67cNZNw4YHzLIOOq+3t2n8/QCVpQGCJH0HPDU+Vy9VF036BmImjD4xuw
-         4ywmvsn5kCzRVJFZr3/xyGeHIauwGzJWWrtYWVWkChi4X1hJ+UzlZEFLhnzz/GMDMZ
-         qDwMRTv7npXBdiwVPSCWVtxCC66p2ATrqX6C1uJY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6D7360C67
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
-        mka@chromium.org, ilina@codeaurora.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH RESEND v3 3/3] drivers: qcom: rpmh: disallow active requests in solver mode
-Date:   Tue,  9 Oct 2018 12:06:09 +0530
-Message-Id: <1539066969-26970-4-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539066969-26970-1-git-send-email-rplsssn@codeaurora.org>
-References: <1539066969-26970-1-git-send-email-rplsssn@codeaurora.org>
+        Tue, 9 Oct 2018 09:52:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y11-v6so457426wrd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=f1LE+fuCOHL7G05Gu6dofBOQSogK/95XhyKefcWmaQE=;
+        b=S9ekYKVYBqkNHnV9uSe6leKpkrnidTgKHiwypc89ea30D6CJ1GaLdZjQHhK9xnPBWS
+         4HFPSE7rsosTaa1hEPsfFEmn9pYbpravqBXw8UZXM+966BUUtbHU3qxrw+Qaz4uG5VTL
+         Xmc4YF0JYAJx1yu0QwSD23OyyBsyIqPmJXR8I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=f1LE+fuCOHL7G05Gu6dofBOQSogK/95XhyKefcWmaQE=;
+        b=jBqdWyuRoiiqe4lZiehjQpRhD97VrwmAr0Vjpou6xMB30MxChEJ2ZcSlxVWxPYOq1e
+         qwYjkIZjkbRech4Ya1b49IAKjAmKT82QcH9vPftPP3v4nqLHdMggWNa+zDLpJjWDZ3TS
+         GvE3C6NMpALHJEwimf3+ZA/MQSRK1WSOjzMgWCar9xDEuyv9dGiz8I4TQsXYLCAwXyqO
+         buxvwagk1+gaGr5/wY8MgOgTvmSuTPwlZZQjv/+spNIsG2QFlod8wBgzRq5sqBwpVrwl
+         iXz0nE/OgXXNp6MI4RytqN8Y4yX5n/jVrhsf2nphnvSRFFYznLIHhFt7qj64m9da+0Ee
+         QmZw==
+X-Gm-Message-State: ABuFfogxQZrc1sfuArLo+05ZfMvtD/oZa1ETHUkFweFpGRQcuwmqOD30
+        Hzm2B9/Y7XEqP70xM1rwrdQgjA==
+X-Google-Smtp-Source: ACcGV61IMrL1QQF4r6gLj40Ih2wDHHUO7PqKVSbYEGKfTyNLfUkFuuv6b+GRg75OQUzyNY7Vq5K0VA==
+X-Received: by 2002:adf:b64e:: with SMTP id i14-v6mr19715990wre.14.1539067003223;
+        Mon, 08 Oct 2018 23:36:43 -0700 (PDT)
+Received: from dell ([2.27.167.111])
+        by smtp.gmail.com with ESMTPSA id c21-v6sm927144wmh.26.2018.10.08.23.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 23:36:42 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 23:36:40 -0700
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Guenter Roeck <linux@roeck-us.net>, linux-doc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        robh@kernel.org, linux-mips@linux-mips.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 04/21] dt-bindings: Add doc for the Ingenic TCU drivers
+Message-ID: <20181009063640.GB32033@dell>
+References: <5bb4c6ad.1c69fb81.42bb.93ecSMTPIN_ADDED_MISSING@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5bb4c6ad.1c69fb81.42bb.93ecSMTPIN_ADDED_MISSING@mx.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+On Wed, 03 Oct 2018, Paul Cercueil wrote:
+> Le 3 oct. 2018 3:02 PM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
+> > On 03/10/2018 14:51, Paul Cercueil wrote: 
+> > > 
+> > > Le 3 oct. 2018 2:47 PM, Daniel Lezcano <daniel.lezcano@linaro.org> a 
+> > > écrit : 
+> > >> 
+> > >> On 03/10/2018 12:32, Paul Cercueil wrote: 
+> > >>> 
+> > >>> Le 1 oct. 2018 10:48, Daniel Lezcano <daniel.lezcano@linaro.org> 
+> > >>> a écrit : 
+> > >>>> 
+> > >>>> On 31/07/2018 00:01, Paul Cercueil wrote: 
+> > >>>> 
+> > >>>> [ ... ] 
 
-Controllers may be in 'solver' state, where they could be in autonomous
-mode executing low power modes for their hardware and as such are not
-available for sending active votes. Device driver may notify RPMH API
-that the controller is in solver mode and when in such mode, disallow
-requests from platform drivers for state change using the RSC.
+Paul,
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
-Chanages in v3
- - Add functionality to set solver mode for RSC controller
- - return -EINVAL if active requests are sent in solver mode
----
- drivers/soc/qcom/rpmh-internal.h |  5 ++++
- drivers/soc/qcom/rpmh-rsc.c      | 30 +++++++++++++++++++++++
- drivers/soc/qcom/rpmh.c          | 51 ++++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h          |  5 ++++
- 4 files changed, 91 insertions(+)
+I think there is something wrong with your mailer since your replies
+are being scattered across my inbox un-threaded, making conversations
+very difficult to follow.
 
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 4b891c23..0923c45 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -70,12 +70,14 @@ struct rpmh_request {
-  * @cache_lock: synchronize access to the cache data
-  * @dirty: was the cache updated since flush
-  * @batch_cache: Cache sleep and wake requests sent as batch
-+ * @in_solver_mode: Controller is busy in solver mode
-  */
- struct rpmh_ctrlr {
- 	struct list_head cache;
- 	spinlock_t cache_lock;
- 	bool dirty;
- 	struct list_head batch_cache;
-+	bool in_solver_mode;
- };
- 
- /**
-@@ -86,6 +88,7 @@ struct rpmh_ctrlr {
-  * @base:       start address of the RSC's DRV registers
-  * @tcs_base:   start address of the TCS registers in this controller
-  * @id:         instance id in the controller (Direct Resource Voter)
-+ * @in_solver_mode: Controller is in solver mode
-  * @num_tcs:    number of TCSes in this DRV
-  * @tcs:        TCS groups
-  * @tcs_in_use: s/w state of the TCS
-@@ -97,6 +100,7 @@ struct rsc_drv {
- 	void __iomem *base;
- 	void __iomem *tcs_base;
- 	int id;
-+	bool in_solver_mode;
- 	int num_tcs;
- 	struct tcs_group tcs[TCS_TYPE_NR];
- 	DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
-@@ -107,6 +111,7 @@ struct rsc_drv {
- int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
- int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
- 			     const struct tcs_request *msg);
-+void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable);
- int rpmh_rsc_invalidate(struct rsc_drv *drv);
- int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg);
- bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv);
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 9cc303e..10b3102 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -386,6 +386,11 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 		return PTR_ERR(tcs);
- 
- 	spin_lock(&drv->lock);
-+
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE && drv->in_solver_mode) {
-+		ret = -EINVAL;
-+		goto done_write;
-+	}
- 	/*
- 	 * The h/w does not like if we send a request to the same address,
- 	 * when one is already in-flight or being processed.
-@@ -525,6 +530,30 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
- }
- 
- /**
-+ *  rpmh_rsc_mode_solver_set: Enable/disable solver mode
-+ *
-+ *  @drv: The controller
-+ *
-+ *  enable: boolean state to be set - true/false
-+ */
-+void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
-+{
-+	int m;
-+	struct tcs_group *tcs = get_tcs_of_type(drv, ACTIVE_TCS);
-+
-+again:
-+	spin_lock(&drv->lock);
-+	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
-+		if (!tcs_is_free(drv, m)) {
-+			spin_unlock(&drv->lock);
-+			goto again;
-+		}
-+	}
-+	drv->in_solver_mode = enable;
-+	spin_unlock(&drv->lock);
-+}
-+
-+/**
-  *  rpmh_rsc_ctrlr_is_idle: Check if any of the AMCs are busy.
-  *
-  *  @drv: The controller
-@@ -718,6 +747,7 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	spin_lock_init(&drv->lock);
-+	drv->in_solver_mode = false;
- 	bitmap_zero(drv->tcs_in_use, MAX_TCS_NR);
- 
- 	irq = platform_get_irq(pdev, drv->id);
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 43eb981..e6e98d4 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/bug.h>
-+#include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/jiffies.h>
- #include <linux/kernel.h>
-@@ -75,6 +76,42 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
- 	return &drv->client;
- }
- 
-+static int check_ctrlr_state(struct rpmh_ctrlr *ctrlr, enum rpmh_state state)
-+{
-+	int ret = 0;
-+
-+	/* Do not allow setting active votes when in solver mode */
-+	spin_lock(&ctrlr->cache_lock);
-+	if (ctrlr->in_solver_mode && state == RPMH_ACTIVE_ONLY_STATE)
-+		ret = -EBUSY;
-+	spin_unlock(&ctrlr->cache_lock);
-+
-+	return ret;
-+}
-+
-+/**
-+ * rpmh_mode_solver_set: Indicate that the RSC controller hardware has
-+ * been configured to be in solver mode
-+ *
-+ * @dev: the device making the request
-+ * @enable: Boolean value indicating if the controller is in solver mode.
-+ *
-+ * When solver mode is enabled, passthru API will not be able to send wake
-+ * votes, just awake and active votes.
-+ */
-+int rpmh_mode_solver_set(const struct device *dev, bool enable)
-+{
-+	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
-+
-+	spin_lock(&ctrlr->cache_lock);
-+	rpmh_rsc_mode_solver_set(ctrlr_to_drv(ctrlr), enable);
-+	ctrlr->in_solver_mode = enable;
-+	spin_unlock(&ctrlr->cache_lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rpmh_mode_solver_set);
-+
- void rpmh_tx_done(const struct tcs_request *msg, int r)
- {
- 	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
-@@ -230,8 +267,13 @@ int rpmh_write_async(const struct device *dev, enum rpmh_state state,
- 		     const struct tcs_cmd *cmd, u32 n)
- {
- 	struct rpmh_request *rpm_msg;
-+	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
- 	int ret;
- 
-+	ret = check_ctrlr_state(ctrlr, state);
-+	if (ret)
-+		return ret;
-+
- 	rpm_msg = kzalloc(sizeof(*rpm_msg), GFP_ATOMIC);
- 	if (!rpm_msg)
- 		return -ENOMEM;
-@@ -262,11 +304,16 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
- {
- 	DECLARE_COMPLETION_ONSTACK(compl);
- 	DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
-+	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
- 	int ret;
- 
- 	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
- 		return -EINVAL;
- 
-+	ret = check_ctrlr_state(ctrlr, state);
-+	if (ret)
-+		return ret;
-+
- 	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
- 	rpm_msg.msg.num_cmds = n;
- 
-@@ -353,6 +400,10 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 	if (!cmd || !n)
- 		return -EINVAL;
- 
-+	ret = check_ctrlr_state(ctrlr, state);
-+	if (ret)
-+		return ret;
-+
- 	while (n[count] > 0)
- 		count++;
- 	if (!count)
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-index 4c4b013..e8356b6 100644
---- a/include/soc/qcom/rpmh.h
-+++ b/include/soc/qcom/rpmh.h
-@@ -29,6 +29,8 @@ int rpmh_write_pdc_data(const struct device *dev,
- 
- int rpmh_ctrlr_idle(const struct device *dev);
- 
-+int rpmh_mode_solver_set(const struct device *dev, bool enable);
-+
- #else
- 
- static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
-@@ -58,6 +60,9 @@ static inline int rpmh_write_pdc_data(const struct device *dev,
- static inline int rpmh_ctrlr_idle(const struct device *dev)
- { return -ENODEV; }
- 
-+static inline int rpmh_mode_solver_set(const struct device *dev, bool enable)
-+{ return -ENODEV; }
-+
- #endif /* CONFIG_QCOM_RPMH */
- 
- #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of the Code Aurora Forum, hosted by The Linux Foundation.
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
