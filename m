@@ -2,192 +2,177 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C89BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C311BC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3046C214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZsTzpb07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3046C214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 89BDB21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BDB21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeJIWSA (ORCPT
+        id S1727351AbeJIWSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:18:00 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46160 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbeJIWSA (ORCPT
+        Tue, 9 Oct 2018 18:18:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58083 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbeJIWSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:18:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w99EwbCE038569;
-        Tue, 9 Oct 2018 15:00:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=hzFePnuqT7p71/Pq56u2NqOhrWhI/Dvfknmvt3Q5hw8=;
- b=ZsTzpb071gAnsooaOiO4iimF558LOmIAszjIYGvG5syTg2OpNv0onWJ3JPWC62w3bEGT
- 1BdoQMUnfbuV7cxGDQpnAODmiSgKow9Ohl7ulM1VvhYPgrlSgVtxAFRCHGm4ujEJaXxi
- oWsVoFdBk43prYan+2tExwYheu9yQeP4pfUt3g7o0Y1u/yBnm8Aq4Xhk2jcqekdfl9q4
- QlphkyMpiArDG1XBjzX4LmHsenz0xBHAxBN62osKarNNOaw6lCdiOoJ7lEnseGR66T50
- nxkqIbh6msoTcsyQGlovGxUidxDjUNVLEP2dlsni/MEf2EL3zZpb4ntyF8GvlGDKKGcK AQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2mxn0pwxsg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 Oct 2018 15:00:38 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w99F0bQ1015092
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 9 Oct 2018 15:00:37 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w99F0aED012578;
-        Tue, 9 Oct 2018 15:00:36 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 09 Oct 2018 15:00:36 +0000
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 711F86A013A; Tue,  9 Oct 2018 11:00:35 -0400 (EDT)
-Date:   Tue, 9 Oct 2018 11:00:35 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Filippo Sironi <sironi@amazon.de>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: Start populating /sys/hypervisor with KVM entries
-Message-ID: <20181009150035.GK5106@char.us.oracle.com>
-References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
+        Tue, 9 Oct 2018 18:18:04 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99F0NXI1081429
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 08:00:23 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99F0NXE1081416;
+        Tue, 9 Oct 2018 08:00:23 -0700
+Date:   Tue, 9 Oct 2018 08:00:23 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rik van Riel <tipbot@zytor.com>
+Message-ID: <tip-016c4d92cd16f569c6485ae62b076c1a4b779536@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de, riel@surriel.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          peterz@infradead.org, mingo@kernel.org, riel@surriel.com
+In-Reply-To: <20180926035844.1420-6-riel@surriel.com>
+References: <20180926035844.1420-6-riel@surriel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/tlb: Add freed_tables argument to
+ flush_tlb_mm_range
+Git-Commit-ID: 016c4d92cd16f569c6485ae62b076c1a4b779536
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1539078879-4372-1-git-send-email-sironi@amazon.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9040 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810090147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 11:54:39AM +0200, Filippo Sironi wrote:
-> Start populating /sys/hypervisor with KVM entries when we're running on
-> KVM. This is to replicate functionality that's available when we're
-> running on Xen.
-> 
-> Let's start with /sys/hypervisor/uuid, which users prefer over
-> /sys/devices/virtual/dmi/id/product_uuid as a way to recognize a virtual
-> machine, since it's also available when running on Xen HVM and on Xen PV
-> and, on top of that doesn't require root privileges by default.
+Commit-ID:  016c4d92cd16f569c6485ae62b076c1a4b779536
+Gitweb:     https://git.kernel.org/tip/016c4d92cd16f569c6485ae62b076c1a4b779536
+Author:     Rik van Riel <riel@surriel.com>
+AuthorDate: Tue, 25 Sep 2018 23:58:42 -0400
+Committer:  Peter Zijlstra <peterz@infradead.org>
+CommitDate: Tue, 9 Oct 2018 16:51:12 +0200
 
-Yeey! Thank you for doing this. It has been on my TODO but just never
-got to it.
+x86/mm/tlb: Add freed_tables argument to flush_tlb_mm_range
 
-I think you also need to update the Documentation/../sysfs file.
-> 
-> Signed-off-by: Filippo Sironi <sironi@amazon.de>
-> ---
->  drivers/Kconfig              |  2 ++
->  drivers/Makefile             |  2 ++
->  drivers/kvm/Kconfig          | 14 ++++++++++++++
->  drivers/kvm/Makefile         |  1 +
->  drivers/kvm/sys-hypervisor.c | 26 ++++++++++++++++++++++++++
->  5 files changed, 45 insertions(+)
->  create mode 100644 drivers/kvm/Kconfig
->  create mode 100644 drivers/kvm/Makefile
->  create mode 100644 drivers/kvm/sys-hypervisor.c
-> 
-> diff --git a/drivers/Kconfig b/drivers/Kconfig
-> index afc942c54814..597519c5f7c8 100644
-> --- a/drivers/Kconfig
-> +++ b/drivers/Kconfig
-> @@ -135,6 +135,8 @@ source "drivers/hv/Kconfig"
->  
->  source "drivers/xen/Kconfig"
->  
-> +source "drivers/kvm/Kconfig"
-> +
->  source "drivers/staging/Kconfig"
->  
->  source "drivers/platform/Kconfig"
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 1056f9699192..727205e287fc 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -47,6 +47,8 @@ obj-y				+= soc/
->  obj-$(CONFIG_VIRTIO)		+= virtio/
->  obj-$(CONFIG_XEN)		+= xen/
->  
-> +obj-$(CONFIG_KVM_GUEST)		+= kvm/
-> +
->  # regulators early, since some subsystems rely on them to initialize
->  obj-$(CONFIG_REGULATOR)		+= regulator/
->  
-> diff --git a/drivers/kvm/Kconfig b/drivers/kvm/Kconfig
-> new file mode 100644
-> index 000000000000..3fc041df7c11
-> --- /dev/null
-> +++ b/drivers/kvm/Kconfig
-> @@ -0,0 +1,14 @@
-> +menu "KVM driver support"
-> +        depends on KVM_GUEST
-> +
-> +config KVM_SYS_HYPERVISOR
-> +        bool "Create KVM entries under /sys/hypervisor"
-> +        depends on SYSFS
-> +        select SYS_HYPERVISOR
-> +        default y
-> +        help
-> +          Create KVM entries under /sys/hypervisor (e.g., uuid). When running
-> +          native or on another hypervisor, /sys/hypervisor may still be
-> +          present, but it will have no KVM entries.
-> +
-> +endmenu
-> diff --git a/drivers/kvm/Makefile b/drivers/kvm/Makefile
-> new file mode 100644
-> index 000000000000..73a43fc994b9
-> --- /dev/null
-> +++ b/drivers/kvm/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_KVM_SYS_HYPERVISOR) += sys-hypervisor.o
-> diff --git a/drivers/kvm/sys-hypervisor.c b/drivers/kvm/sys-hypervisor.c
-> new file mode 100644
-> index 000000000000..ef04ca65cf1a
-> --- /dev/null
-> +++ b/drivers/kvm/sys-hypervisor.c
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <asm/kvm_para.h>
-> +
-> +#include <linux/dmi.h>
-> +#include <linux/kobject.h>
-> +#include <linux/sysfs.h>
-> +
-> +static ssize_t uuid_show(struct kobject *obj,
-> +			 struct kobj_attribute *attr,
-> +			 char *buf)
-> +{
-> +	const char *uuid = dmi_get_system_info(DMI_PRODUCT_UUID);
-> +	return sprintf(buf, "%s\n", uuid);
-> +}
-> +
-> +static struct kobj_attribute uuid = __ATTR_RO(uuid);
-> +
-> +static int __init uuid_init(void)
-> +{
-> +	if (!kvm_para_available())
-> +		return 0;
-> +	return sysfs_create_file(hypervisor_kobj, &uuid.attr);
-> +}
-> +
-> +device_initcall(uuid_init);
-> -- 
-> 2.7.4
-> 
+Add an argument to flush_tlb_mm_range to indicate whether page tables
+are about to be freed after this TLB flush. This allows for an
+optimization of flush_tlb_mm_range to skip CPUs in lazy TLB mode.
+
+No functional changes.
+
+Cc: npiggin@gmail.com
+Cc: mingo@kernel.org
+Cc: will.deacon@arm.com
+Cc: songliubraving@fb.com
+Cc: kernel-team@fb.com
+Cc: luto@kernel.org
+Cc: hpa@zytor.com
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180926035844.1420-6-riel@surriel.com
+---
+ arch/x86/include/asm/tlb.h      |  2 +-
+ arch/x86/include/asm/tlbflush.h | 10 ++++++----
+ arch/x86/kernel/ldt.c           |  2 +-
+ arch/x86/kernel/vm86_32.c       |  2 +-
+ arch/x86/mm/tlb.c               |  3 ++-
+ 5 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+index afbe7d1e68cf..404b8b1d44f5 100644
+--- a/arch/x86/include/asm/tlb.h
++++ b/arch/x86/include/asm/tlb.h
+@@ -20,7 +20,7 @@ static inline void tlb_flush(struct mmu_gather *tlb)
+ 		end = tlb->end;
+ 	}
+ 
+-	flush_tlb_mm_range(tlb->mm, start, end, stride_shift);
++	flush_tlb_mm_range(tlb->mm, start, end, stride_shift, tlb->freed_tables);
+ }
+ 
+ /*
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index d6c0cd9e9591..1dea9860ce5b 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -536,22 +536,24 @@ struct flush_tlb_info {
+ 
+ #define local_flush_tlb() __flush_tlb()
+ 
+-#define flush_tlb_mm(mm)	flush_tlb_mm_range(mm, 0UL, TLB_FLUSH_ALL, 0UL)
++#define flush_tlb_mm(mm)						\
++		flush_tlb_mm_range(mm, 0UL, TLB_FLUSH_ALL, 0UL, true)
+ 
+ #define flush_tlb_range(vma, start, end)				\
+ 	flush_tlb_mm_range((vma)->vm_mm, start, end,			\
+ 			   ((vma)->vm_flags & VM_HUGETLB)		\
+ 				? huge_page_shift(hstate_vma(vma))	\
+-				: PAGE_SHIFT)
++				: PAGE_SHIFT, false)
+ 
+ extern void flush_tlb_all(void);
+ extern void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+-				unsigned long end, unsigned int stride_shift);
++				unsigned long end, unsigned int stride_shift,
++				bool freed_tables);
+ extern void flush_tlb_kernel_range(unsigned long start, unsigned long end);
+ 
+ static inline void flush_tlb_page(struct vm_area_struct *vma, unsigned long a)
+ {
+-	flush_tlb_mm_range(vma->vm_mm, a, a + PAGE_SIZE, PAGE_SHIFT);
++	flush_tlb_mm_range(vma->vm_mm, a, a + PAGE_SIZE, PAGE_SHIFT, false);
+ }
+ 
+ void native_flush_tlb_others(const struct cpumask *cpumask,
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 7fdb2414ca65..ab18e0884dc6 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -273,7 +273,7 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 	map_ldt_struct_to_user(mm);
+ 
+ 	va = (unsigned long)ldt_slot_va(slot);
+-	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, PAGE_SHIFT);
++	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, PAGE_SHIFT, false);
+ 
+ 	ldt->slot = slot;
+ 	return 0;
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 52fed70f671e..c2fd39752da8 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -199,7 +199,7 @@ static void mark_screen_rdonly(struct mm_struct *mm)
+ 	pte_unmap_unlock(pte, ptl);
+ out:
+ 	up_write(&mm->mmap_sem);
+-	flush_tlb_mm_range(mm, 0xA0000, 0xA0000 + 32*PAGE_SIZE, PAGE_SHIFT);
++	flush_tlb_mm_range(mm, 0xA0000, 0xA0000 + 32*PAGE_SIZE, PAGE_SHIFT, false);
+ }
+ 
+ 
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 9fb30d27854b..14bf39fc0447 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -609,7 +609,8 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ static unsigned long tlb_single_page_flush_ceiling __read_mostly = 33;
+ 
+ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+-				unsigned long end, unsigned int stride_shift)
++				unsigned long end, unsigned int stride_shift,
++				bool freed_tables)
+ {
+ 	int cpu;
+ 
