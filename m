@@ -2,136 +2,139 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA7EC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D99DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30DF214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60B66214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:16:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oUDip3cv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30DF214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="LAaGAgCi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B66214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeJIUcs (ORCPT
+        id S1726713AbeJIUdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:32:48 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:35298 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbeJIUcq (ORCPT
+        Tue, 9 Oct 2018 16:33:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44798 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIUdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:32:46 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 6348510A1
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 13:15:51 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9Mph6G_qD-ir for <linux-kernel@vger.kernel.org>;
-        Tue,  9 Oct 2018 08:15:51 -0500 (CDT)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 3AC22F19
-        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 08:15:51 -0500 (CDT)
-Received: by mail-io1-f69.google.com with SMTP id s15-v6so1297450iob.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:15:51 -0700 (PDT)
+        Tue, 9 Oct 2018 16:33:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 63-v6so1781385wra.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=G6GdFpGDi92tAkLEZ9SDpsTjy0DPhqdhrYIdQ0RWPlc=;
-        b=oUDip3cvTxxRgOwiSdvtUp7gX4hcBQ4VIdeBhCMHleoEQI4K45rUHMUNaWxSm2WZUF
-         G2Ig0rEQQPex9sh4zTo4vC5Ha+VMTrBALRX7AUsMU2tADHZDRVnyjoagcDoWFn2I5afa
-         uMeciT+tHQ91ln/0FY5fvLcrvLhTq5wy9z7eBl8u4T31v044D0wI7iFvGZd/sLeAMk9L
-         hWSOt4eziXcRmVcTOsox17KveQkYLLzuobl1D0C3GpsNUFxRxXf7LAcGJuGwzNYC/Y5C
-         P70v5mbuI/PhQwW6O7rnueOezywwXRYoCcbrYq9HbQB6tNZRkYytNFsPnsLOnYUX+mTb
-         oEBg==
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=LAaGAgCi0NcoEr3wwat/e6ZyDuU14AkDDOfnN+3QBPF028QxAebXHkBCYbFoZNe8L1
+         fsXjgN/2B33XZQ+HU8Pv8Qj5HpqEZDFYUDUB+FQNwF2401yEEmWoew8rviCkJotmGKZV
+         Y/JUuRYUQrFCtkGsZg+PCKSUgaNBxpAGWBJwAzhEb/czs0/IWbQHmuhHUOG34pMkXP4L
+         py71DYajKZOEncWBF4vRG2dOsyfMoPtuFpLWDvxNUHRVfg40PCJYLEoI5KRaWW3UBeBQ
+         fCZXv5wGgZG0ChtgDCPodiNSpBy1nqF0B/QYinnagBkxddSGH3sz+GEO4zWyOy1ohGw3
+         /XRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=G6GdFpGDi92tAkLEZ9SDpsTjy0DPhqdhrYIdQ0RWPlc=;
-        b=RjRMhNjwEteQtyS/J0NhwmdEDDkE3co4sL4mkQys7JqDEnjuGU+Q9eMohj0fyRCIiy
-         64s3lyhdPqE0WpYZqPdenO0sGhSKMZHQw0VHKmzwNXQwEcT4DImAjpTwSVRoq9jJsptl
-         Lov8h38e6gTpBgEMjO+CzWoQWgPwxCU+O5qaCtE4DrwuEKLAUCbvTI/FeRT09WkzACQ/
-         rnaNNg0fNcRN+Td0fIyohfXutBCSUaPyHWmNHbSID4ovzA9nxoo5Iq0qR4SSEYLmBFPB
-         Dzg/XdsWyBDGMdFQ2qxURNyOfJOYVAe++X+NJo+YNoVJlaHaBon1tQ4rHakFwcMa6y8V
-         lYzg==
-X-Gm-Message-State: ABuFfoiukeYiDvyHitLkUBBNy9x9pODHPl28dT58PPBTnerQyHeledlm
-        tE8S2/U98S7IwTjEEzKKJxCv3Z+8JvAjwChbRIZCrBl+lRqhQtO7rlWko4U1dxuvutvvuQTIhv7
-        AUzqKdwtwC/QV8xIrabl2oUzu4M8q
-X-Received: by 2002:a02:1e07:: with SMTP id m7-v6mr22157317jad.128.1539090950653;
-        Tue, 09 Oct 2018 06:15:50 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV62/HvB2NX2I8ESbKMgTYFHM+4lq7NWIYBRHpmJxDTYZwQu5wcGcDCHmY9G8OYUcCEKNfaPQ2A==
-X-Received: by 2002:a02:1e07:: with SMTP id m7-v6mr22157290jad.128.1539090950417;
-        Tue, 09 Oct 2018 06:15:50 -0700 (PDT)
-Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
-        by smtp.gmail.com with ESMTPSA id j19-v6sm7156782itb.25.2018.10.09.06.15.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 06:15:49 -0700 (PDT)
-From:   Wenwen Wang <wang6495@umn.edu>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ilya Lesokhin <ilyal@mellanox.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Alan Brady <alan.brady@intel.com>,
-        Eugenia Emantayev <eugenia@mellanox.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ethtool: fix a missing-check bug
-Date:   Tue,  9 Oct 2018 08:15:38 -0500
-Message-Id: <1539090940-5323-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=I7vmKpIt1DI2Xoj2u8yfFZURuSm6Yh+OzbtXe6/1fq4obX5G4KtICuLVbvR+xLCALK
+         /0njfoh9Loat+NPUGlERJKkTBYKRd8rkBBU0JpootxUoeJI4AFfSk4HCV+e8KDtQWtVA
+         EzzPJrlXfGhR5dmp4XAUP8DP/8tnTojdNbSVq8Lh0auUZLS/+H/V+wg8MWflWmZ7sQEm
+         FwE0y94IHIjNhVi5AWQKzxeBvNts6HiNTNSdWwbF33vOEVZiUWLmYDWcALGntgO9TskY
+         MhfQ66Pou6q1sHh7mYwren/r0RhO4GCPq+kQCTwqs5pxfjYYZvy3mf9w5mw8za79pPpQ
+         Ap0g==
+X-Gm-Message-State: ABuFfohcETS7hB5t7/SN6s6ODO/D0HJSSQpC84QgPCxTL0WOcsWPM2ah
+        wBueIBY9/zZ6Kqfm0mIXLhJQPrGj038=
+X-Google-Smtp-Source: ACcGV62hRTHg5BLXobzObx33vPtNsulKdPStQUa17M/n8T4lZ4uFYB9xXlzPMbaUmdjHacSxrbbdhw==
+X-Received: by 2002:a5d:4d4b:: with SMTP id a11-v6mr20844411wru.40.1539090983211;
+        Tue, 09 Oct 2018 06:16:23 -0700 (PDT)
+Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
+        by smtp.gmail.com with ESMTPSA id g76-v6sm13767986wmd.25.2018.10.09.06.16.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 06:16:22 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 14:16:21 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     dushistov@mail.ru
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: ufs: Remove switch statement from ufs_set_de_type
+ function
+Message-ID: <20181009131621.GA7113@pathfinder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ethtool_get_rxnfc(), the eth command 'cmd' is compared against
-'ETHTOOL_GRXFH' to see whether it is necessary to adjust the variable
-'info_size'. Then the whole structure of 'info' is copied from the
-user-space buffer 'useraddr' with 'info_size' bytes. In the following
-execution, 'info' may be copied again from the buffer 'useraddr' depending
-on the 'cmd' and the 'info.flow_type'. However, after these two copies,
-there is no check between 'cmd' and 'info.cmd'. In fact, 'cmd' is also
-copied from the buffer 'useraddr' in dev_ethtool(), which is the caller
-function of ethtool_get_rxnfc(). Given that 'useraddr' is in the user
-space, a malicious user can race to change the eth command in the buffer
-between these copies. By doing so, the attacker can supply inconsistent
-data and cause undefined behavior because in the following execution 'info'
-will be passed to ops->get_rxnfc().
+Remove switch statement from ufs_set_de_type function in fs/ufs/util.h
+header and replace with simple assignment. For each case, S_IFx >> 12
+is equal to DT_x, so in valid cases (mode & S_IFMT) >> 12 should give
+us the correct file type. For invalid cases, upper layer validation
+catches this anyway, so this improves readability and arguably
+performance by assigning (mode & S_IFMT) >> 12 directly.
 
-This patch adds a necessary check on 'info.cmd' and 'cmd' to confirm that
-they are still same after the two copies in ethtool_get_rxnfc(). Otherwise,
-an error code EINVAL will be returned.
-
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
- net/core/ethtool.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ufs/util.h | 30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
-diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index c9993c6..0136625 100644
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -1015,6 +1015,9 @@ static noinline_for_stack int ethtool_get_rxnfc(struct net_device *dev,
- 			return -EINVAL;
- 	}
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1fd3011ea623..7e0c0878b9f9 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -16,6 +16,7 @@
+  * some useful macros
+  */
+ #define in_range(b,first,len)	((b)>=(first)&&(b)<(first)+(len))
++#define S_SHIFT			12
  
-+	if (info.cmd != cmd)
-+		return -EINVAL;
-+
- 	if (info.cmd == ETHTOOL_GRXCLSRLALL) {
- 		if (info.rule_cnt > 0) {
- 			if (info.rule_cnt <= KMALLOC_MAX_SIZE / sizeof(u32))
+ /*
+  * functions used for retyping
+@@ -158,34 +159,7 @@ ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
+ 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
+ 		return;
+ 
+-	/*
+-	 * TODO turn this into a table lookup
+-	 */
+-	switch (mode & S_IFMT) {
+-	case S_IFSOCK:
+-		de->d_u.d_44.d_type = DT_SOCK;
+-		break;
+-	case S_IFLNK:
+-		de->d_u.d_44.d_type = DT_LNK;
+-		break;
+-	case S_IFREG:
+-		de->d_u.d_44.d_type = DT_REG;
+-		break;
+-	case S_IFBLK:
+-		de->d_u.d_44.d_type = DT_BLK;
+-		break;
+-	case S_IFDIR:
+-		de->d_u.d_44.d_type = DT_DIR;
+-		break;
+-	case S_IFCHR:
+-		de->d_u.d_44.d_type = DT_CHR;
+-		break;
+-	case S_IFIFO:
+-		de->d_u.d_44.d_type = DT_FIFO;
+-		break;
+-	default:
+-		de->d_u.d_44.d_type = DT_UNKNOWN;
+-	}
++	de->d_u.d_44.d_type = (mode & S_IFMT) >> S_SHIFT;
+ }
+ 
+ static inline u32
 -- 
-2.7.4
+2.17.0
 
