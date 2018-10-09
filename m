@@ -2,268 +2,154 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2BEC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4450FC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43542086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78D8E2064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="c0fS0aM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43542086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Prfxpsc+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D8E2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeJIV0v (ORCPT
+        id S1726731AbeJIV04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:26:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35416 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbeJIV0v (ORCPT
+        Tue, 9 Oct 2018 17:26:56 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52259 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbeJIV04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:26:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id e187-v6so2178628wmf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+ySPUymLT4MeIZyqVH+Mo2WUpYK0f8EwMdFIOn+Ivak=;
-        b=c0fS0aM1d9+FlyRqNyTdGj5d1RA3FpamoClDW6Bf5rjXkceQnw/zVKQCZetlMW5mDR
-         08UyB6hW8H0aAvZl7YhrNOyzCyNy9x1i0k72zH9lBn9nFHyNZu2ZJToaO6zBu0k+29sh
-         vN1xshfAtA1G7kg0I7NnGFdlvu3cEWKJG7E4mA7b/qr4aDo3i7H/rT6soYkXzquHkPir
-         Fn7EUtiCHyuIy2YEN0Sk67quWprE0H/K+iVp6hxqEd8/108UYXvhYsScK4YH9jOcBumw
-         LC5xvffYgpLpEABpbcZjna5LRu2OIpKFLOFJanSkyWgUzgfjA3PRAs9y932PBcbaVsKw
-         Fkkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+ySPUymLT4MeIZyqVH+Mo2WUpYK0f8EwMdFIOn+Ivak=;
-        b=L7pxcoMeKDLjXynitGydyDDklwk7V1XlH7KB6tHfX+5yH55tCXHHQZI2ZPCaxqz1sF
-         UbdULE6EEZlAoNlo7LHQy3b+lU+1m8TDWMIAL8e7IfW0TnB79UfUgCwlyL+KfuyJjbrW
-         AVnK4DFmSooIHV20VGVkeQOF2nSetnLGd5TipQdOZhO0mIrPSfsUOs7lUMOJdEvVQ50+
-         KCQVLV7Of5ph7ra0XS7QM0u4L+yNUvcvOrSRzcqBN5pVYncelt5AJDaGio4Uf9ECKORM
-         JGgQKeAdyRcZ/nC1G3Dcmg6f8MA7p69/0e0x70Hm1Bo2HZ9d2ZXL76HGn1HHv9bOdb+K
-         u4WA==
-X-Gm-Message-State: ABuFfohoDg21E6QwCY0Xy4fowJkpLC6p131tPKyzMwy1ofgV5+BQBZ9z
-        1Va+WX9dfWUhqYYZgkzWP5CsLA==
-X-Google-Smtp-Source: ACcGV611WWMBCCZuDDiNL2Yh4RhR7H/G1PP6z7BDHq6Z18hGgjpE1joRuLDPcvLz+siJIUSh+J3ZqQ==
-X-Received: by 2002:a1c:b605:: with SMTP id g5-v6mr1996725wmf.97.1539094181268;
-        Tue, 09 Oct 2018 07:09:41 -0700 (PDT)
-Received: from brauner.io (u-084-c138.eap.uni-tuebingen.de. [134.2.84.138])
-        by smtp.gmail.com with ESMTPSA id y76-v6sm5191999wmd.37.2018.10.09.07.09.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 07:09:39 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 16:09:33 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Jann Horn <jannh@google.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
+        Tue, 9 Oct 2018 17:26:56 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181009140946euoutp01d7ff0403a4864571074430a4aa1c305a~b9gIB3vvQ1454414544euoutp01U
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 14:09:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181009140946euoutp01d7ff0403a4864571074430a4aa1c305a~b9gIB3vvQ1454414544euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539094186;
+        bh=qzbC05Cth5m4jdpceY8Odld1qGWRFWJ59gPZmkBUSFc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Prfxpsc+jMA2fDd8isIcxoup7cCL3BlJc6yhu+svJrUYzsZ0f9E51XfQTj1Bjoq4/
+         a3dw9qGcgfWXny0Pp99D0sP9I0JqftoErgLLfLYzGwg6sh0rpllrRoWjIVhY3hH2E1
+         Ll4m1MTBYmpcJ64GoYt67smxPM6N02t5qtV5PHsY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181009140945eucas1p2b95e5cb4c1d0d3b8e9b9948d69af3fd9~b9gHLevix0650006500eucas1p2W;
+        Tue,  9 Oct 2018 14:09:45 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E1.06.04806.8A6BCBB5; Tue,  9
+        Oct 2018 15:09:44 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b~b9gGLal7g1686816868eucas1p1T;
+        Tue,  9 Oct 2018 14:09:44 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181009140943eusmtrp29e4264672f9c08182dd3b89d273a9706~b9gF6HLss1153311533eusmtrp2g;
+        Tue,  9 Oct 2018 14:09:43 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-ae-5bbcb6a8f3c0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 63.A9.04128.7A6BCBB5; Tue,  9
+        Oct 2018 15:09:43 +0100 (BST)
+Received: from [106.120.51.16] (unknown [106.120.51.16]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181009140943eusmtip29b62b7075c168d595d5c052e7ca4a454~b9gFbAIFh2339923399eusmtip2W;
+        Tue,  9 Oct 2018 14:09:43 +0000 (GMT)
+Subject: Re: [PATCH v1 21/22] LSM: Multiple concurrent major security
+ modules
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
- ptrace
-Message-ID: <20181009140932.e5w5lgbgucbl72kt@brauner.io>
-References: <20181008151629.hkgzzsluevwtuclw@brauner.io>
- <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
- <20181008162147.ubfxxsv2425l2zsp@brauner.io>
- <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
- <20181008181815.pwnqxngj22mhm2vj@brauner.io>
- <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io>
- <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <20181009134923.2fvf5roghqgaj5gq@brauner.io>
- <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
+        SE Linux <selinux@tycho.nsa.gov>,
+        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        James Morris <jmorris@namei.org>
+Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.lsm,gmane.comp.security.selinux
+From:   Piotr Sawicki <p.sawicki2@partner.samsung.com>
+Date:   Tue, 9 Oct 2018 16:09:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <42a1e879-e104-e663-2e0d-0b43eaa4c130@schaufler-ca.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe885OzuuJq9T86ErLEGKUsvIA4YYGJy+dIGocB9s6UGlXWTz
+        khE00oXoLNPKmuVdW5pX5j0TZ1piKiWhaYXZkFKngpYYojmPkd9+z+3/PH94GFL2SbSDidHE
+        8TqNUiWnJVRD91L/IUvDS4V/6e9j7LClgGC/Nvyh2arqYoJ9u2Ck2Xfpanaw5QnNzpnGaXY0
+        K4dic1NmRGxnazHJZtttFPuxtFYcso0zGzJoLtfwnuKaK8sJrvjlT4JLz12hONNiBFfZ9gNx
+        Xe1FNFefsyri5uv2nJWESY5H8qqYBF7nF3xZEm0te0HFFtLXPs+uEAaULUpDLgzgo5Bq/0Om
+        IQkjwxYEFU0PN4IFBPl95SIhmEfQNZpC/BuxWgtoJ8vwMwSp9y4I7EBwt413sjs+A42VtnUl
+        DzxIgsMwIXYWSHwEutMc60Ku+BxktNSTTqbXRE1VS5STKewN7dP9yMme+BK8HitcZyl2g57H
+        9rUehnHBoZA3uVuQ9IIRez4h8F5odDxZ3wvYyMBY7pBYmE2AFXvNhoFQ+N6WLhbYHSbfWDd4
+        F6w252/03ISM6m5aEDIhMNbn0UIhCOazrKTzCBLvh+oWPyF9AmaqOghnGrArDDvchHtcIash
+        hxTSUki9LRO6D8L0nRIqE+0zbzJm3uTGvMmN+f+uAkSVIy8+Xq+O4vUBGj7RV69U6+M1Ub4R
+        WnUdWnu43pU3v5rQq+UrNoQZJN8mfaRpVchEygR9ktqGgCHlHlLPxhaFTBqpTLrO67ThungV
+        r7ehnQwl95KW5dUqZDhKGcdf5flYXvevSjAuOwyo9/yHskAfny9t/YspzWLLSe9l4y161tKz
+        /VtNc0dl1talgPxu04Ngl9bnE1h732+kf4u2b3QgcKokJKA3M65oIPTtxTTXoK1VtGJOm3ja
+        o3w1+17yqVM3NA+G6zORf8jM1NCsxaMicGe2KeSV1sh0Jmv3qOTJPk8Dg1QzYePhmXJKH608
+        fIDU6ZV/AWWMgrlsAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xe7rLt+2JNvi6ztjixooFTBb3tv1i
+        s1i3fjGTxYkvrWwWZ7pzLS7vmsNm8aHnEZvF7UnTWSxmt7xjtTi8ezGzxeQnh1gsri7dyO7A
+        4zGroZfNY3bDRRaPnWtXMXks3vOSyaN79j8Wj57vyR5r975g9Di6fxGbx9bp/1k9Pm+SC+CK
+        0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvYsmwN
+        S8FCtoo77/8xNTBOZu1i5OSQEDCR2LJlAVsXIxeHkMBSRon7E6cxQSSkJOb+28sOYQtL/LnW
+        BVX0mlFixuv5QAkODmEBX4ldjytB4iIC15klns3axQjSwCxgJHGs6y3YID6BQIneXVuZQWwh
+        gVqJ51dPgm1mA9rcs+4nC4jNK+Am8ab7G1g9i4CKxP4358DmiApESKxe/oIVokZQ4uTMJywg
+        ezkFXCTmvZKFWKUu8WfeJWYIW1zi1pP5TBC2vMT2t3OYJzAKz0LSPQtJyywkLbOQtCxgZFnF
+        KJJaWpybnltspFecmFtcmpeul5yfu4kRGOvbjv3csoOx613wIUYBDkYlHt4ZebujhVgTy4or
+        cw8xSnAwK4nwim7fFS3Em5JYWZValB9fVJqTWnyI0RTot4nMUqLJ+cA0lFcSb2hqaG5haWhu
+        bG5sZqEkznveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgTE97OkecYbPTsKzFlivmKLhYVKwbcXL
+        XuZ3zMtK7iydtspTa30Ge5hadUsrt+LkuXfuCj6d0Kwbe3Ldi6aVggfsRayWMtll5+5R4RbO
+        zHPz8DdYlhoTE/5mh/uxotIHCg67py1JmNH1Ynr1n60MZ22LZELTWdSsG6R8ZsapbGNn+9/T
+        Nu1WvRJLcUaioRZzUXEiAFistvkLAwAA
+Message-Id: <20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b~b9gGLal7g1686816868eucas1p1T@eucas1p1.samsung.com>
+X-CMS-MailID: 20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b
+References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
+        <42a1e879-e104-e663-2e0d-0b43eaa4c130@schaufler-ca.com>
+        <CGME20181009140944eucas1p1b935c2b8b2534cb15e36d28b7f9b134b@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
-> On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
-> >
-> > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
-> > > +cc selinux people explicitly, since they probably have opinions on this
-> > >
-> > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > On Tue, Oct 09, 2018 at 02:39:53PM +0200, Jann Horn wrote:
-> > > > > On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
-> > > > > > > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
-> > > > > > > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
-> > > > > > > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > > > > > > > > > > index 44a31ac8373a..17685803a2af 100644
-> > > > > > > > > > > --- a/kernel/seccomp.c
-> > > > > > > > > > > +++ b/kernel/seccomp.c
-> > > > > > > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
-> > > > > > > > > > >
-> > > > > > > > > > >       return ret;
-> > > > > > > > > > >  }
-> > > > > > > > > > > +
-> > > > > > > > > > > +long seccomp_new_listener(struct task_struct *task,
-> > > > > > > > > > > +                       unsigned long filter_off)
-> > > > > > > > > > > +{
-> > > > > > > > > > > +     struct seccomp_filter *filter;
-> > > > > > > > > > > +     struct file *listener;
-> > > > > > > > > > > +     int fd;
-> > > > > > > > > > > +
-> > > > > > > > > > > +     if (!capable(CAP_SYS_ADMIN))
-> > > > > > > > > > > +             return -EACCES;
-> > > > > > > > > >
-> > > > > > > > > > I know this might have been discussed a while back but why exactly do we
-> > > > > > > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
-> > > > > > > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
-> > > > > > > > > > use ptrace from in there?
-> > > > > > > > >
-> > > > > > > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
-> > > > > > > > > . Basically, the problem is that this doesn't just give you capability
-> > > > > > > > > over the target task, but also over every other task that has the same
-> > > > > > > > > filter installed; you need some sort of "is the caller capable over
-> > > > > > > > > the filter and anyone who uses it" check.
-> > > > > > > >
-> > > > > > > > Thanks.
-> > > > > > > > But then this new ptrace feature as it stands is imho currently broken.
-> > > > > > > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
-> > > > > > > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
-> > > > > > > > if you are ns_cpabable(CAP_SYS_ADMIN)
-> > > > >
-> > > > > Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
-> > > > > you enable the NNP flag, I think?
-> > > >
-> > > > Yes, if you turn on NNP you don't even need sys_admin.
-> > > >
-> > > > >
-> > > > > > > > then either the new ptrace() api
-> > > > > > > > extension should be fixed to allow for this too or the seccomp() way of
-> > > > > > > > retrieving the pid - which I really think we want - needs to be fixed to
-> > > > > > > > require capable(CAP_SYS_ADMIN) too.
-> > > > > > > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
-> > > > > > > > the preferred way to solve this.
-> > > > > > > > Everything else will just be confusing.
-> > > > > > >
-> > > > > > > First you say "broken", then you say "confusing". Which one do you mean?
-> > > > > >
-> > > > > > Both. It's broken in so far as it places a seemingly unnecessary
-> > > > > > restriction that could be fixed. You outlined one possible fix yourself
-> > > > > > in the link you provided.
-> > > > >
-> > > > > If by "possible fix" you mean "check whether the seccomp filter is
-> > > > > only attached to a single task": That wouldn't fundamentally change
-> > > > > the situation, it would only add an additional special case.
-> > > > >
-> > > > > > And it's confusing in so far as there is a way
-> > > > > > via seccomp() to get the fd without said requirement.
-> > > > >
-> > > > > I don't find it confusing at all. seccomp() and ptrace() are very
-> > > >
-> > > > Fine, then that's a matter of opinion. I find it counterintuitive that
-> > > > you can get an fd without privileges via one interface but not via
-> > > > another.
-> > > >
-> > > > > different situations: When you use seccomp(), infrastructure is
-> > > >
-> > > > Sure. Note, that this is _one_ of the reasons why I want to make sure we
-> > > > keep the native seccomp() only based way of getting an fd without
-> > > > forcing userspace to switching to a differnet kernel api.
-> > > >
-> > > > > already in place for ensuring that your filter is only applied to
-> > > > > processes over which you are capable, and propagation is limited by
-> > > > > inheritance from your task down. When you use ptrace(), you need a
-> > > > > pretty different sort of access check that checks whether you're
-> > > > > privileged over ancestors, siblings and so on of the target task.
-> > > >
-> > > > So, don't get me wrong I'm not arguing against the ptrace() interface in
-> > > > general. If this is something that people find useful, fine. But, I
-> > > > would like to have a simple single-syscall pure-seccomp() based way of
-> > > > getting an fd, i.e. what we have in patch 1 of this series.
-> > >
-> > > Yeah, I also prefer the seccomp() one.
-> > >
-> > > > > But thinking about it more, I think that CAP_SYS_ADMIN over the saved
-> > > > > current->mm->user_ns of the task that installed the filter (stored as
-> > > > > a "struct user_namespace *" in the filter) should be acceptable.
-> > > >
-> > > > Hm... Why not CAP_SYS_PTRACE?
-> > >
-> > > Because LSMs like SELinux add extra checks that apply even if you have
-> > > CAP_SYS_PTRACE, and this would subvert those. The only capability I
-> > > know of that lets you bypass LSM checks by design (if no LSM blocks
-> > > the capability itself) is CAP_SYS_ADMIN.
-> > >
-> > > > One more thing. Citing from [1]
-> > > >
-> > > > > I think there's a security problem here. Imagine the following scenario:
-> > > > >
-> > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
-> > > > > 2. task A forks off a child B
-> > > > > 3. task B uses setuid(1) to drop its privileges
-> > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
-> > > > > or via execve()
-> > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
-> > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
-> > > >
-> > > > Sorry, to be late to the party but would this really pass
-> > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
-> > > > that it would... Doesn't look like it would get past:
-> > > >
-> > > >         tcred = __task_cred(task);
-> > > >         if (uid_eq(caller_uid, tcred->euid) &&
-> > > >             uid_eq(caller_uid, tcred->suid) &&
-> > > >             uid_eq(caller_uid, tcred->uid)  &&
-> > > >             gid_eq(caller_gid, tcred->egid) &&
-> > > >             gid_eq(caller_gid, tcred->sgid) &&
-> > > >             gid_eq(caller_gid, tcred->gid))
-> > > >                 goto ok;
-> > > >         if (ptrace_has_cap(tcred->user_ns, mode))
-> > > >                 goto ok;
-> > > >         rcu_read_unlock();
-> > > >         return -EPERM;
-> > > > ok:
-> > > >         rcu_read_unlock();
-> > > >         mm = task->mm;
-> > > >         if (mm &&
-> > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> > > >              !ptrace_has_cap(mm->user_ns, mode)))
-> > > >             return -EPERM;
-> > >
-> > > Which specific check would prevent task C from attaching to task B? If
-> > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
-> > > you don't trigger the second "return -EPERM".
-> >
-> > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
-> > have if you did a setuid to an unpriv user. (But I always find that code
-> > confusing.)
-> 
-> Only if the target hasn't gone through execve() since setuid().
+On 07/16/2018 08:24 PM, Casey Schaufler wrote:
+> LSM: Multiple concurrent major security modules
 
-Sorry if I want to know this in excessive detail but I'd like to
-understand this properly so bear with me :)
-- If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
-  execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
-- If task B has setuid()ed, exeved()ed it will get its dumpable flag set
-  to /proc/sys/fs/suid_dumpable which by default is 0. So C won't pass
-  (get_dumpable(mm) != SUID_DUMP_USER).
-In both cases PTRACE_ATTACH shouldn't work. Now, if
-/proc/sys/fs/suid_dumpable is 1 I'd find it acceptable for this to work.
-This is an administrator choice.
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index c0d7ea0bf5b6..db72f2e38311 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -219,4 +219,8 @@ struct prctl_mm_map {
+>  # define PR_SPEC_DISABLE		(1UL << 2)
+>  # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+>  
+> +/* Control the LSM specific peer information */
+> +#define	PR_GET_DISPLAY_LSM	52
+> +#define	PR_SET_DISPLAY_LSM	53
+> +
+>  #endif /* _LINUX_PRCTL_H */
+
+Hi,
+
+The above two numbers for prctl() options have been reserved by
+PR_GET_SPECULATION_CTRL and PR_SET_SPECULATION_CTRL.
+
+Take a look at this commit: "prctl: Add speculation control prctls"
+
+Regards,
+Piotr
