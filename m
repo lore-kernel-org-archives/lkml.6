@@ -4,117 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BCCC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590D1C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8252D213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18F3F213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:01:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GWBZuvGj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8252D213A2
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QtDdEEwC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F3F213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbeJINQ1 (ORCPT
+        id S1726679AbeJINQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:16:27 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36688 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbeJINQ1 (ORCPT
+        Tue, 9 Oct 2018 09:16:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33176 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbeJINQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:16:27 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p89-v6so369253ljb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:01:11 -0700 (PDT)
+        Tue, 9 Oct 2018 09:16:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y18-v6so271403pge.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FtCNLCR9RVhtQdetaD7QRukgyTk0NIPbgawZ3rF5sy8=;
-        b=GWBZuvGjuN/G9roXXzfZVVd3Z+u40QOJwop19V8YvFvf7dTb0l+9Y/666ctYb4sOAr
-         CJZ7UEPm7nuz+8lU98JCnKmwxUO5kgw+feI2lGGnFh5y8d5T+JxxIQcn4r2eAOhV44H4
-         hcyVSBMm+rm4v+yI1drsMZdc8fhBu0Q6gl9uw=
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=nhineWP9hseGNpXMeQQAIXvodxGH6hDyDKoIOkC+gig=;
+        b=QtDdEEwClZRh0tpA1geDGvH8GJsnyRlGKuGMn+K0pzbvVpkZlzHDhK51DK+QDrfRNo
+         +hn+zx3F7t5ZMKBiy5qkZnHLIZkyGJFHKe8KvExxfxU4TZNDfilqtG8M7gsvvkBr9ED+
+         FEe3YQOZ6RfCtjvVaCiNzApq8biH8Vphhqu3g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FtCNLCR9RVhtQdetaD7QRukgyTk0NIPbgawZ3rF5sy8=;
-        b=VBmPxMLTd4CImYGz0UFwt4Pdw27lW1AyMKhNLzQHV4tdqnQLtbGoVpeReVBWDxW+Gi
-         nOn7Qkx+aWvf/Hq4Gc0QhKm1l4Ohd5jCG3MCLPxcZ9VJfWJWNsJEIXI3h5ImZkG+uyhX
-         v/MqMLVQ1MYnupOSIo4zD8ELVFIB+MOp7Wd1qfTNlOpyCX4ew1bISvE5y5iZvvtbAKL1
-         rIWkub70Rd/NY2ep2KjFZa/4eh2fEV+4zor9FE4HhX9gzeCiXQ5oi2Kp8uaj8UmW/d7U
-         oRWAOmRoCKSFBUAZDcsgpCIhd7MLnttjAIpBgn+PKtKLi0Cyoyps9J6mxfCNLyaydz1m
-         86tg==
-X-Gm-Message-State: ABuFfojAshRftv5SaKq4QA0eoh7Ry1gdNFzdZY9Qj8xOQDxD/HHh4hDB
-        EJA6g/ZIpvoO5nbVjh282UBHKv+cGmd4GGTS4MfwHQ==
-X-Google-Smtp-Source: ACcGV62roCwYpyVxfxK3FMKyDMh/F7kan6KYU9yp8L8UzMIVxKAzLkLq2aNT4LgIbfBh8PtygOmjIoKHTjfG7VBtDSY=
-X-Received: by 2002:a2e:8e93:: with SMTP id z19-v6mr17521000ljk.86.1539064870924;
- Mon, 08 Oct 2018 23:01:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=nhineWP9hseGNpXMeQQAIXvodxGH6hDyDKoIOkC+gig=;
+        b=d30NJ7WHgxodawUEX12+uR1PrA/C4M45TsNm2dk6Prt8ny7ysp5hJYxIDh6UhY99g4
+         abB8SuVNDI9ZihEEgV9C8RXIf0REqfnFg2vEcyp18TFMLCIzvRisP/pGcdc4qTjsqhaq
+         83RJ9rvOYj5OgKap7j7NXvVAcX0HP/szsELpEEjnh9E0sLrTOPSdVhHiu+vEQzPTaM6D
+         x4Cz+mM94fmcBrfazPTmKavcLFB0hiBTPGJ0VlIf7TxBWrAzv8wBoesM8FDz7MjlaT0I
+         qbVnd8/FAxVs+twVpGWRWiYEqo7mFcRTDvu3pL9tuO3CglYr6QUSunJDLb5+cQrydtPz
+         0xXQ==
+X-Gm-Message-State: ABuFfoj8S9V77bI4GnsslPhNm6NtNszvf4uQkCoc1T2lkW+LVQMfOyiB
+        +PzZWMDo1xb9Ym3vONRQTioaOA==
+X-Google-Smtp-Source: ACcGV60sfnTMPY5ZcEmXMDE3E+C4VXPvVrzD2so5MkXwErMCThuf6lED7nhZpftr3bRsELOZCtSoPQ==
+X-Received: by 2002:a65:6144:: with SMTP id o4-v6mr18871411pgv.387.1539064876522;
+        Mon, 08 Oct 2018 23:01:16 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id 70-v6sm27886129pfz.27.2018.10.08.23.01.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 23:01:16 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a2e:92c8:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 23:01:09 -0700 (PDT)
-In-Reply-To: <20181008160029.1bd1f5a8@coco.lan>
-References: <20181003070656.193854-1-keiichiw@chromium.org>
- <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com> <20181008140302.2239633f@coco.lan>
- <00b0a8af-b7a5-cb49-0684-0fd0efefa196@xs4all.nl> <20181008152348.7ef6d77e@coco.lan>
- <931ca67d-3ac6-afc1-f933-c9733d561767@xs4all.nl> <20181008160029.1bd1f5a8@coco.lan>
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-Date:   Tue, 9 Oct 2018 15:01:09 +0900
-Message-ID: <CAD90VcY+n_jAWqQ09JBSE==aUxNB7Yc2BNNZRGsP4jd74OW3+g@mail.gmail.com>
-Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricky Liang <jcliang@chromium.org>,
-        Shik Chen <shik@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     kbuild test robot <lkp@intel.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <201810091251.jzXVZxHH%fengguang.wu@intel.com>
+Cc:     kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+References: <20181008163216.97436-2-swboyd@chromium.org>
+ <201810091251.jzXVZxHH%fengguang.wu@intel.com>
+Message-ID: <153906487527.119890.6761556114422000083@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date:   Mon, 08 Oct 2018 23:01:15 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let me back to the topic about interval.
-I'd like to send a nex version of this patch to avoid duplication of intervals.
+Quoting kbuild test robot (2018-10-08 21:56:25)
+> Hi Stephen,
+> =
 
-We need to choose two intervals from the three options: 1/20, 2/25 and 1/40.
-As Mauro said, we would want to have 2/25 for a fractional rate.
-Then, I think adding 2/25 and 1/40 will work well.
-If it's okay, I will send an updated version.
+> I love your patch! Perhaps something to improve:
+[...]
+>    net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx=
+_stats.packets' not described in 'sta_info'
+>    net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx=
+_stats.bytes' not described in 'sta_info'
+>    net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx=
+_stats.last_rate' not described in 'sta_info'
+>    net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx=
+_stats.msdu' not described in 'sta_info'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_excl.cb' not described in 'dma_buf'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_excl.poll' not described in 'dma_buf'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_excl.active' not described in 'dma_buf'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_shared.cb' not described in 'dma_buf'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_shared.poll' not described in 'dma_buf'
+>    include/linux/dma-buf.h:304: warning: Function parameter or member 'cb=
+_shared.active' not described in 'dma_buf'
+>    include/linux/dma-fence-array.h:54: warning: Function parameter or mem=
+ber 'work' not described in 'dma_fence_array'
+>    include/linux/gpio/driver.h:105: warning: Incorrect use of kernel-doc =
+format: Documentation Makefile include scripts source private: For use by g=
+piochip_set_cascaded_irqchip()
+> >> include/linux/gpio/driver.h:167: warning: Function parameter or member=
+ 'parent_irq' not described in 'gpio_irq_chip'
 
-Best regards,
-Kei
+Ok! That was a little rough to pick out. Is there any way to mark
+something as private with inline kernel doc?
 
-On Tue, Oct 9, 2018 at 4:00 AM, Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
-> Em Mon, 8 Oct 2018 20:31:10 +0200
-> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
->
->> > (gdb) list *vivid_fillbuff+0x1e9b
->> > 0x1936b is in vivid_fillbuff (drivers/media/platform/vivid/vivid-kthread-cap.c:495).
->> > 490                                 ms % 1000,
->> > 491                                 buf->vb.sequence,
->> > 492                                 (dev->field_cap == V4L2_FIELD_ALTERNATE) ?
->> > 493                                         (buf->vb.field == V4L2_FIELD_TOP ?
->> > 494                                          " top" : " bottom") : "");
->> > 495                 tpg_gen_text(tpg, basep, line++ * line_height, 16, str);
->> > 496         }
->> > 497         if (dev->osd_mode == 0) {
->> > 498                 snprintf(str, sizeof(str), " %dx%d, input %d ",
->> > 499                                 dev->src_rect.width, dev->src_rect.height, dev->input);
->> >
->>
->> There is a bug with hflip handling in that function. Nothing to do with the
->> resolution. I could reproduce it by just checking the hflip control.
->> I'll investigate.
->
-> Ah! Well, as I said, I got it only once last week while trying to use
-> vivid for some event racing test. I didn't have time to actually
-> seek. On that time, the bug only manifested when I changed the frame
-> rate.
->
-> Thanks,
-> Mauro
