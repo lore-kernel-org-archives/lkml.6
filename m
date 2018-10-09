@@ -2,322 +2,236 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1954BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538BAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C08232054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B2A2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hoBvi551"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08232054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="C5vieWP5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B2A2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeJIUp5 (ORCPT
+        id S1727797AbeJIUp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:45:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49072 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbeJIUm5 (ORCPT
+        Tue, 9 Oct 2018 16:45:59 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52257 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeJIUp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:42:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JhfAI7+Q5zQfe4nU3Z7X/NaCUXxeqE67+vUNnRaT5wk=; b=hoBvi551yWbQrBhyCC05HtCkxi
-        0nWk7SCLEUlZoNRoiHPAnHHlCGv0MBbCSF7B4q52VGHjc9n8s+FuDLVRLtgGi2OYIlzL5I4jW8tuy
-        XVMc4bi5MyqVqSMBiAAVaqB9eMrTegx43PuaRDNSNdrX+nxNIjcbNlHfkWtR8ZOfpuiiXP1TeU4Kr
-        S3cBTkZ5Ha/Hqvd47bftzt7+I+7btEQbq4BAWNec8VQme/LLDFm8npYph8wvZSWswFJy7SJPTN708
-        Y56MS5ir1qT+JfhqB7+sREezfC2Qi7EPwM94BANpbaY7yEAFdB0JDV4Qahv0QtlYHCtMQ33pDy9G6
-        9glo0dwQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s0n-000199-Ab; Tue, 09 Oct 2018 13:25:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 08/33] powerpc/dma: handle iommu bypass in dma_iommu_ops
-Date:   Tue,  9 Oct 2018 15:24:35 +0200
-Message-Id: <20181009132500.17643-9-hch@lst.de>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181009132500.17643-1-hch@lst.de>
-References: <20181009132500.17643-1-hch@lst.de>
+        Tue, 9 Oct 2018 16:45:59 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 189-v6so1893096wmw.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T1/+hAFKdTDWVbPDaFjudEv3SOe7Pb5KuQiniu3D8J4=;
+        b=C5vieWP5Spesh1yIt817pM+ilsQe2I6wl/OUgj//eDVk4pB29fBt6vHTmK6mK0U2i9
+         AHnTsTj723fIIG6Vt4qfkJjKBpmQvMKza9lVehTgYMuH9aHA9JBxE3WN8XQH5OhbMlAS
+         D3y4PvwgrUCPC6v4mJSHWIRLFAloeTmWdRMPPBwtMXcXwsfGVcF1/eQV/5bei18DdRvi
+         2EIED/lNep+DkFlfx54TJYCMZydPu+P8DvFuZDf5Fmd2NrHgDa7knEL8zOaiaROmQEFn
+         deMoxrVsQZVhCUs8YPdd5gS4yW6h13j6mIok+6XuXIyglPKHKV7yUytuDdm3xbwbpULu
+         eKtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T1/+hAFKdTDWVbPDaFjudEv3SOe7Pb5KuQiniu3D8J4=;
+        b=YDoFQb1+S/EuNyynWMi/wewW+oxzY9Nelz+qmECyYod1n/h+9L9kfL3KzgXCDmUECg
+         XvLCXRjkb+X8cO7iKrW3cGxQ1W2GXqT41uOadNLdEdHHL1JXecI6ESy5m+hltfjKqsGG
+         rKG3M1zpweRF1nPjhBRKlULb1BB+zq6kFsTy4AkQYycDeaLNhYBb/sF/K1DFW5rASd+3
+         sEKbypNM3DXAq3Mn4ICh1AtgM4W1S7/xa9Adl/S7+dkUwjsdnh7+oCVM31hqVh5hbb7M
+         XcP4aBkwSiG+b97G//h4zH+qKPYsjgBJIFmmbhvKMNoaWjHe8QfKJfNW0e8Md6Y/8z4c
+         In9w==
+X-Gm-Message-State: ABuFfogsdm4vZfCd7pnBhO6dyIHvAabhORZ0yNttw8Oh4g3b1ubBaTIz
+        EayqU8c6m3iHzfDxIBK+PmCeYQ==
+X-Google-Smtp-Source: ACcGV63tFVk3W7gMnr936umgafU40kikJibSOxcj7eWNVR3VympQtnwRYfMeIW2e3Px35tksInX6gw==
+X-Received: by 2002:a1c:e141:: with SMTP id y62-v6mr2093121wmg.138.1539091739058;
+        Tue, 09 Oct 2018 06:28:59 -0700 (PDT)
+Received: from brauner.io (u-084-c138.eap.uni-tuebingen.de. [134.2.84.138])
+        by smtp.gmail.com with ESMTPSA id o3-v6sm14128055wrw.93.2018.10.09.06.28.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 06:28:58 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 15:28:52 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io>
+ <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+ <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+ <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+ <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new iommu_bypass flag to struct dev_archdata so that the dma_iommu
-implementation can handle the direct mapping transparently instead of
-switiching ops around.  Setting of this flag is controlled by new
-pci_controller_ops method.
+On Tue, Oct 09, 2018 at 02:39:53PM +0200, Jann Horn wrote:
+> On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
+> > > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > > > > index 44a31ac8373a..17685803a2af 100644
+> > > > > > > --- a/kernel/seccomp.c
+> > > > > > > +++ b/kernel/seccomp.c
+> > > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > > > > >
+> > > > > > >       return ret;
+> > > > > > >  }
+> > > > > > > +
+> > > > > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > > > > +                       unsigned long filter_off)
+> > > > > > > +{
+> > > > > > > +     struct seccomp_filter *filter;
+> > > > > > > +     struct file *listener;
+> > > > > > > +     int fd;
+> > > > > > > +
+> > > > > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > > > > +             return -EACCES;
+> > > > > >
+> > > > > > I know this might have been discussed a while back but why exactly do we
+> > > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > > > > use ptrace from in there?
+> > > > >
+> > > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > > > > . Basically, the problem is that this doesn't just give you capability
+> > > > > over the target task, but also over every other task that has the same
+> > > > > filter installed; you need some sort of "is the caller capable over
+> > > > > the filter and anyone who uses it" check.
+> > > >
+> > > > Thanks.
+> > > > But then this new ptrace feature as it stands is imho currently broken.
+> > > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> > > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> > > > if you are ns_cpabable(CAP_SYS_ADMIN)
+> 
+> Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
+> you enable the NNP flag, I think?
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/powerpc/include/asm/device.h      |  5 ++
- arch/powerpc/include/asm/dma-mapping.h |  7 +++
- arch/powerpc/include/asm/pci-bridge.h  |  2 +
- arch/powerpc/kernel/dma-iommu.c        | 70 +++++++++++++++++++++++---
- arch/powerpc/kernel/dma.c              | 17 +++----
- 5 files changed, 85 insertions(+), 16 deletions(-)
+Yes, if you turn on NNP you don't even need sys_admin.
 
-diff --git a/arch/powerpc/include/asm/device.h b/arch/powerpc/include/asm/device.h
-index 0245bfcaac32..1aa53318b4bc 100644
---- a/arch/powerpc/include/asm/device.h
-+++ b/arch/powerpc/include/asm/device.h
-@@ -19,6 +19,11 @@ struct iommu_table;
-  * drivers/macintosh/macio_asic.c
-  */
- struct dev_archdata {
-+	/*
-+	 * Set to %true if the dma_iommu_ops are requested to use a direct
-+	 * window instead of dynamically mapping memory.
-+	 */
-+	bool			iommu_bypass : 1;
- 	/*
- 	 * These two used to be a union. However, with the hybrid ops we need
- 	 * both so here we store both a DMA offset for direct mappings and
-diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-index dacd0f93f2b2..27283eb68c50 100644
---- a/arch/powerpc/include/asm/dma-mapping.h
-+++ b/arch/powerpc/include/asm/dma-mapping.h
-@@ -29,6 +29,13 @@ extern int dma_nommu_mmap_coherent(struct device *dev,
- 				    struct vm_area_struct *vma,
- 				    void *cpu_addr, dma_addr_t handle,
- 				    size_t size, unsigned long attrs);
-+int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
-+		int nents, enum dma_data_direction direction,
-+		unsigned long attrs);
-+dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
-+		unsigned long offset, size_t size,
-+		enum dma_data_direction dir, unsigned long attrs);
-+int dma_nommu_dma_supported(struct device *dev, u64 mask);
- 
- #ifdef CONFIG_NOT_COHERENT_CACHE
- /*
-diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
-index 94d449031b18..5c7a1e7ffc8a 100644
---- a/arch/powerpc/include/asm/pci-bridge.h
-+++ b/arch/powerpc/include/asm/pci-bridge.h
-@@ -19,6 +19,8 @@ struct device_node;
- struct pci_controller_ops {
- 	void		(*dma_dev_setup)(struct pci_dev *pdev);
- 	void		(*dma_bus_setup)(struct pci_bus *bus);
-+	bool		(*iommu_bypass_supported)(struct pci_dev *pdev,
-+				u64 mask);
- 
- 	int		(*probe_mode)(struct pci_bus *bus);
- 
-diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
-index 0613278abf9f..c865e15ad024 100644
---- a/arch/powerpc/kernel/dma-iommu.c
-+++ b/arch/powerpc/kernel/dma-iommu.c
-@@ -6,12 +6,30 @@
-  * busses using the iommu infrastructure
-  */
- 
-+#include <linux/dma-direct.h>
-+#include <linux/pci.h>
- #include <asm/iommu.h>
- 
- /*
-  * Generic iommu implementation
-  */
- 
-+/*
-+ * The coherent mask may be smaller than the real mask, check if we can
-+ * really use a direct window.
-+ */
-+static inline bool dma_iommu_alloc_bypass(struct device *dev)
-+{
-+	return dev->archdata.iommu_bypass &&
-+		dma_nommu_dma_supported(dev, dev->coherent_dma_mask);
-+}
-+
-+static inline bool dma_iommu_map_bypass(struct device *dev,
-+		unsigned long attrs)
-+{
-+	return dev->archdata.iommu_bypass;
-+}
-+
- /* Allocates a contiguous real buffer and creates mappings over it.
-  * Returns the virtual address of the buffer and sets dma_handle
-  * to the dma address (mapping) of the first page.
-@@ -20,6 +38,9 @@ static void *dma_iommu_alloc_coherent(struct device *dev, size_t size,
- 				      dma_addr_t *dma_handle, gfp_t flag,
- 				      unsigned long attrs)
- {
-+	if (dma_iommu_alloc_bypass(dev))
-+		return __dma_nommu_alloc_coherent(dev, size, dma_handle, flag,
-+				attrs);
- 	return iommu_alloc_coherent(dev, get_iommu_table_base(dev), size,
- 				    dma_handle, dev->coherent_dma_mask, flag,
- 				    dev_to_node(dev));
-@@ -29,7 +50,11 @@ static void dma_iommu_free_coherent(struct device *dev, size_t size,
- 				    void *vaddr, dma_addr_t dma_handle,
- 				    unsigned long attrs)
- {
--	iommu_free_coherent(get_iommu_table_base(dev), size, vaddr, dma_handle);
-+	if (dma_iommu_alloc_bypass(dev))
-+		__dma_nommu_free_coherent(dev, size, vaddr, dma_handle, attrs);
-+	else
-+		iommu_free_coherent(get_iommu_table_base(dev), size, vaddr,
-+				dma_handle);
- }
- 
- /* Creates TCEs for a user provided buffer.  The user buffer must be
-@@ -42,6 +67,9 @@ static dma_addr_t dma_iommu_map_page(struct device *dev, struct page *page,
- 				     enum dma_data_direction direction,
- 				     unsigned long attrs)
- {
-+	if (dma_iommu_map_bypass(dev, attrs))
-+		return dma_nommu_map_page(dev, page, offset, size, direction,
-+				attrs);
- 	return iommu_map_page(dev, get_iommu_table_base(dev), page, offset,
- 			      size, device_to_mask(dev), direction, attrs);
- }
-@@ -51,8 +79,9 @@ static void dma_iommu_unmap_page(struct device *dev, dma_addr_t dma_handle,
- 				 size_t size, enum dma_data_direction direction,
- 				 unsigned long attrs)
- {
--	iommu_unmap_page(get_iommu_table_base(dev), dma_handle, size, direction,
--			 attrs);
-+	if (!dma_iommu_map_bypass(dev, attrs))
-+		iommu_unmap_page(get_iommu_table_base(dev), dma_handle, size,
-+				direction,  attrs);
- }
- 
- 
-@@ -60,6 +89,8 @@ static int dma_iommu_map_sg(struct device *dev, struct scatterlist *sglist,
- 			    int nelems, enum dma_data_direction direction,
- 			    unsigned long attrs)
- {
-+	if (dma_iommu_map_bypass(dev, attrs))
-+		return dma_nommu_map_sg(dev, sglist, nelems, direction, attrs);
- 	return ppc_iommu_map_sg(dev, get_iommu_table_base(dev), sglist, nelems,
- 				device_to_mask(dev), direction, attrs);
- }
-@@ -68,10 +99,20 @@ static void dma_iommu_unmap_sg(struct device *dev, struct scatterlist *sglist,
- 		int nelems, enum dma_data_direction direction,
- 		unsigned long attrs)
- {
--	ppc_iommu_unmap_sg(get_iommu_table_base(dev), sglist, nelems,
-+	if (!dma_iommu_map_bypass(dev, attrs))
-+		ppc_iommu_unmap_sg(get_iommu_table_base(dev), sglist, nelems,
- 			   direction, attrs);
- }
- 
-+static bool dma_iommu_bypass_supported(struct device *dev, u64 mask)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct pci_controller *phb = pci_bus_to_host(pdev->bus);
-+
-+	return phb->controller_ops.iommu_bypass_supported &&
-+		phb->controller_ops.iommu_bypass_supported(pdev, mask);
-+}
-+
- /* We support DMA to/from any memory page via the iommu */
- int dma_iommu_dma_supported(struct device *dev, u64 mask)
- {
-@@ -83,22 +124,39 @@ int dma_iommu_dma_supported(struct device *dev, u64 mask)
- 		return 0;
- 	}
- 
-+	if (dev_is_pci(dev) && dma_iommu_bypass_supported(dev, mask)) {
-+		dev->archdata.iommu_bypass = true;
-+		dev_dbg(dev, "iommu: 64-bit OK, using fixed ops\n");
-+		return 1;
-+	}
-+
- 	if (tbl->it_offset > (mask >> tbl->it_page_shift)) {
- 		dev_info(dev, "Warning: IOMMU offset too big for device mask\n");
- 		dev_info(dev, "mask: 0x%08llx, table offset: 0x%08lx\n",
- 				mask, tbl->it_offset << tbl->it_page_shift);
- 		return 0;
--	} else
--		return 1;
-+	}
-+
-+	dev_dbg(dev, "iommu: not 64-bit, using default ops\n");
-+	dev->archdata.iommu_bypass = false;
-+	return 1;
- }
- 
- u64 dma_iommu_get_required_mask(struct device *dev)
- {
- 	struct iommu_table *tbl = get_iommu_table_base(dev);
- 	u64 mask;
-+
- 	if (!tbl)
- 		return 0;
- 
-+	if (dev_is_pci(dev)) {
-+		u64 bypass_mask = dma_direct_get_required_mask(dev);
-+
-+		if (dma_iommu_bypass_supported(dev, bypass_mask))
-+			return bypass_mask;
-+	}
-+
- 	mask = 1ULL < (fls_long(tbl->it_offset + tbl->it_size) - 1);
- 	mask += mask - 1;
- 
-diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index 7078d72baec2..716b7eab3ee7 100644
---- a/arch/powerpc/kernel/dma.c
-+++ b/arch/powerpc/kernel/dma.c
-@@ -40,7 +40,7 @@ static u64 __maybe_unused get_pfn_limit(struct device *dev)
- 	return pfn;
- }
- 
--static int dma_nommu_dma_supported(struct device *dev, u64 mask)
-+int dma_nommu_dma_supported(struct device *dev, u64 mask)
- {
- #ifdef CONFIG_PPC64
- 	u64 limit = get_dma_offset(dev) + (memblock_end_of_DRAM() - 1);
-@@ -177,9 +177,9 @@ int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
- 			       vma->vm_page_prot);
- }
- 
--static int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
--			     int nents, enum dma_data_direction direction,
--			     unsigned long attrs)
-+int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
-+		int nents, enum dma_data_direction direction,
-+		unsigned long attrs)
- {
- 	struct scatterlist *sg;
- 	int i;
-@@ -209,12 +209,9 @@ static u64 dma_nommu_get_required_mask(struct device *dev)
- 	return mask;
- }
- 
--static inline dma_addr_t dma_nommu_map_page(struct device *dev,
--					     struct page *page,
--					     unsigned long offset,
--					     size_t size,
--					     enum dma_data_direction dir,
--					     unsigned long attrs)
-+dma_addr_t dma_nommu_map_page(struct device *dev, struct page *page,
-+		unsigned long offset, size_t size,
-+		enum dma_data_direction dir, unsigned long attrs)
- {
- 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
- 		__dma_sync_page(page, offset, size, dir);
--- 
-2.19.0
+> 
+> > > > then either the new ptrace() api
+> > > > extension should be fixed to allow for this too or the seccomp() way of
+> > > > retrieving the pid - which I really think we want - needs to be fixed to
+> > > > require capable(CAP_SYS_ADMIN) too.
+> > > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> > > > the preferred way to solve this.
+> > > > Everything else will just be confusing.
+> > >
+> > > First you say "broken", then you say "confusing". Which one do you mean?
+> >
+> > Both. It's broken in so far as it places a seemingly unnecessary
+> > restriction that could be fixed. You outlined one possible fix yourself
+> > in the link you provided.
+> 
+> If by "possible fix" you mean "check whether the seccomp filter is
+> only attached to a single task": That wouldn't fundamentally change
+> the situation, it would only add an additional special case.
+> 
+> > And it's confusing in so far as there is a way
+> > via seccomp() to get the fd without said requirement.
+> 
+> I don't find it confusing at all. seccomp() and ptrace() are very
 
+Fine, then that's a matter of opinion. I find it counterintuitive that
+you can get an fd without privileges via one interface but not via
+another.
+
+> different situations: When you use seccomp(), infrastructure is
+
+Sure. Note, that this is _one_ of the reasons why I want to make sure we
+keep the native seccomp() only based way of getting an fd without
+forcing userspace to switching to a differnet kernel api.
+
+> already in place for ensuring that your filter is only applied to
+> processes over which you are capable, and propagation is limited by
+> inheritance from your task down. When you use ptrace(), you need a
+> pretty different sort of access check that checks whether you're
+> privileged over ancestors, siblings and so on of the target task.
+
+So, don't get me wrong I'm not arguing against the ptrace() interface in
+general. If this is something that people find useful, fine. But, I
+would like to have a simple single-syscall pure-seccomp() based way of
+getting an fd, i.e. what we have in patch 1 of this series.
+
+> 
+> But thinking about it more, I think that CAP_SYS_ADMIN over the saved
+> current->mm->user_ns of the task that installed the filter (stored as
+> a "struct user_namespace *" in the filter) should be acceptable.
+
+Hm... Why not CAP_SYS_PTRACE?
+
+
+One more thing. Citing from [1] 
+
+> I think there's a security problem here. Imagine the following scenario:
+> 
+> 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> 2. task A forks off a child B
+> 3. task B uses setuid(1) to drop its privileges
+> 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> or via execve()
+> 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+
+Sorry, to be late to the party but would this really pass
+__ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
+that it would... Doesn't look like it would get past:
+
+ 	tcred = __task_cred(task);
+	if (uid_eq(caller_uid, tcred->euid) &&
+	    uid_eq(caller_uid, tcred->suid) &&
+	    uid_eq(caller_uid, tcred->uid)  &&
+	    gid_eq(caller_gid, tcred->egid) &&
+	    gid_eq(caller_gid, tcred->sgid) &&
+	    gid_eq(caller_gid, tcred->gid))
+		goto ok;
+	if (ptrace_has_cap(tcred->user_ns, mode))
+		goto ok;
+	rcu_read_unlock();
+	return -EPERM;
+ok:
+	rcu_read_unlock();
+	mm = task->mm;
+	if (mm &&
+	    ((get_dumpable(mm) != SUID_DUMP_USER) &&
+	     !ptrace_has_cap(mm->user_ns, mode)))
+	    return -EPERM;
+
+> 7. because the seccomp filter is shared by task A and task B, task C
+> is now able to influence syscall results for syscalls performed by
+> task A
+
+[1]: https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
