@@ -2,144 +2,135 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F096DC6787A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DACC67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18EB2145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18EB2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 058DC2145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 00:39:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iRAt+kNW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058DC2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbeJIHuR (ORCPT
+        id S1726488AbeJIHyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 03:50:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3308 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 03:54:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:57737 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeJIHuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 03:50:17 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3274743A38;
-        Tue,  9 Oct 2018 00:35:58 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA11169EFA;
-        Tue,  9 Oct 2018 00:35:56 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 08:35:53 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Garnier <thgarnie@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 4/3 v2] x86/mm/doc: Enhance the x86-64 virtual memory
- layout descriptions
-Message-ID: <20181009003553.GG5140@MiWiFi-R3L-srv>
-References: <20181006084327.27467-1-bhe@redhat.com>
- <20181006122259.GB418@gmail.com>
- <20181006143821.GA72401@gmail.com>
- <20181006170317.GA21297@gmail.com>
- <CALCETrXcsf9fNAkZH29e=p8pTkqE=YR42cbnLWmqqbAbJQ6KbA@mail.gmail.com>
+        id S1725749AbeJIHyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 03:54:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=1Vs6MF31yun0Dr49s1i51QdnYDbf33uYA+XQGcXQuL0=;
+        b=iRAt+kNWN7ICkXDJoPuBUsA/nCZpp29cfl2Nuh7w0KS14SNMsy9FWQS0h8YVygbg1OZF8SEnbktuYrPBvPKwURVSnl1OXzr3m8y4i13fG11P3ro/Hb+fHHCsOC2TCyrROdx2yBYDExRlxCeL6z0RLzoJxgtEGPwyp0+iUuZ2zFI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g9g3j-0006sQ-2w; Tue, 09 Oct 2018 02:39:35 +0200
+Date:   Tue, 9 Oct 2018 02:39:35 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 03/11] phy: ti: introduce phy-gmii-sel driver
+Message-ID: <20181009003935.GA23588@lunn.ch>
+References: <20181008234949.15416-1-grygorii.strashko@ti.com>
+ <20181008234949.15416-4-grygorii.strashko@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXcsf9fNAkZH29e=p8pTkqE=YR42cbnLWmqqbAbJQ6KbA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 09 Oct 2018 00:35:58 +0000 (UTC)
+In-Reply-To: <20181008234949.15416-4-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy, Ingo
+On Mon, Oct 08, 2018 at 06:49:41PM -0500, Grygorii Strashko wrote:
+> +static int phy_gmii_sel_mode(struct phy *phy, phy_interface_t intf_mode)
+> +{
+> +	struct phy_gmii_sel_phy_priv *if_phy = phy_get_drvdata(phy);
+> +	const struct phy_gmii_sel_soc_data *soc_data = if_phy->priv->soc_data;
+> +	struct device *dev = if_phy->priv->dev;
+> +	struct regmap_field *regfield;
+> +	int ret, rgmii_id = 0;
+> +	u32 mode = 0;
+> +
+> +	if_phy->phy_if_mode = intf_mode;
+> +
+> +	switch (if_phy->phy_if_mode) {
+> +	case PHY_INTERFACE_MODE_RMII:
+> +		mode = AM33XX_GMII_SEL_MODE_RMII;
+> +		break;
+> +
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +		mode = AM33XX_GMII_SEL_MODE_RGMII;
+> +		break;
+> +
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> +		mode = AM33XX_GMII_SEL_MODE_RGMII;
+> +		rgmii_id = 1;
+> +		break;
 
-On 10/06/18 at 03:17pm, Andy Lutomirski wrote:
-> On Sat, Oct 6, 2018 at 10:03 AM Ingo Molnar <mingo@kernel.org> wrote:
-> > ... but unless I'm missing something it's not really fundamental for it to be at the PGD level
-> > - it could be two levels lower as well, and it could move back to the same place where it's on
-> > the 47-bit kernel.
-> >
-> 
-> The subtlety is that, if it's lower than the PGD level, there end up
-> being some tables that are private to each LDT-using mm that map
-> things other than the LDT.  Those tables cover the same address range
-> as some corresponding tables in init_mm, and if those tables in
-> init_mm change after the LDT mapping is set up, the changes won't
-> propagate.
-> 
-> So it probably could be made to work, but it would take some extra care.
+Hi Grygorii
 
-I didn't know LDT well before, after some investigation, seems mainly
-user space program like Wine will use it to protect/isolate something
-by calling modify_ldt syscall, and Xen also use it. still I don't know
-how they will use it to manipulate code/data segments.
+It looks like the MAC can do AM33XX_GMII_SEL_MODE_RGMII and
+AM33XX_GMII_SEL_MODE_RGMII_ID. I don't think it can do
+AM33XX_GMII_SEL_MODE_RGMII_RXID or AM33XX_GMII_SEL_MODE_RGMII_TXID?  I
+would prefer it return -EINVAL when asked to do something it cannot
+do.
 
-While from the current kernel code, it can contains array of 8192 entries,
-and each entry is 8 Byte, when PTI not enabled. If PTI is enabled, it's
-doubled, 2 slots to map, 2 * 8192 * 8, 128KB in all. So one pmd entry can
-cover it.
+> +
+> +	default:
+> +		dev_warn(dev,
+> +			 "port%u: unsupported mode: \"%s\". Defaulting to MII.\n",
+> +			 if_phy->id, phy_modes(rgmii_id));
+> +		/* fall through */
 
-In 4-level paging mode, we reserve 512 GB virtual address space for it to
-map, the 512 GB is one PGD entry. In 5-level paging mode, we reserve 4
-PB for mapping LDT, and leave the previous 512 GB space next to
-cpu_entry_area mapping empty as unused hole. Maybe we can still put LDT
-map for PTI in the old place, after cpu_entry_area mapping in 5-level.
-Then in 5-level, 512 GB is only one p4d entry, however it's in the last
-pgd entry, each pgd points to 256 TB area, and the last pgd entry will
-points to p4d table which always exists in system since it contains
-kernel text mapping etc. Now if LDT take one entry in the always
-existing p4d table, maybe it can still works as before it owns a whole
-pgd entry, oh, no, 4 PB will cost 16 pgd entries.
+Returning -EINVAL would be better. Otherwise the DT might never get
+fixed.
 
-Most importantly, putting LDT map for PTI in KASLR area, won't it cause
-code bug, if we randomize the direct mapping/vmaloc/vmemmap to make them
-overlap with LDT map area? We didn't take LDT into consideration when do
-memory region KASLR.
+> +	case PHY_INTERFACE_MODE_MII:
+> +		mode = AM33XX_GMII_SEL_MODE_MII;
+> +		break;
+> +	};
+> +
+> +	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
+> +		__func__, if_phy->id, mode, rgmii_id,
+> +		if_phy->rmii_clock_external);
+> +
+> +	regfield = if_phy->fields[PHY_GMII_SEL_PORT_MODE];
+> +	ret = regmap_field_write(regfield, mode);
+> +
+> +	if (soc_data->features & BIT(PHY_GMII_SEL_RGMII_ID_MODE) &&
+> +	    if_phy->fields[PHY_GMII_SEL_RGMII_ID_MODE]) {
+> +		regfield = if_phy->fields[PHY_GMII_SEL_RGMII_ID_MODE];
+> +		ret |= regmap_field_write(regfield, rgmii_id);
+> +	}
+> +
+> +	if (soc_data->features & BIT(PHY_GMII_SEL_RMII_IO_CLK_EN) &&
+> +	    if_phy->fields[PHY_GMII_SEL_RMII_IO_CLK_EN]) {
+> +		regfield = if_phy->fields[PHY_GMII_SEL_RMII_IO_CLK_EN];
+> +		ret |= regmap_field_write(regfield,
+> +					  if_phy->rmii_clock_external);
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(dev, "port%u: set mode fail %d", if_phy->id, ret);
+> +		return -EIO;
+> +	}
 
+I would prefer each write had its own error check. The fact you don't
+return ret means you know ret could be -EINVAL|-EOIO, making
+-EMORECOFFEE.
 
-4-level virutal memory layout:
-
-ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
-ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
-ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
-ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-                 |            |                  |         | vaddr_end for KASLR
-fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap for PTI
-					^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^	
-ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-
-5-level virtual memory layout:
-
-ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap for PTI
-					^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ioremap space (vmalloc_base)
-ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
-ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
-ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
-ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shadow memory
-fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-                 |            |                  |         | vaddr_end for KASLR
-fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
+	Andrew
