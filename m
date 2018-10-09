@@ -2,90 +2,82 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4854C6787A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26F1C67879
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C919213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C919213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 04E9521476
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 01:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E9521476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeJIItT (ORCPT
+        id S1726670AbeJIIvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:49:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13204 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbeJIItT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:49:19 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7197BF02F36C1;
-        Tue,  9 Oct 2018 09:34:47 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 9 Oct 2018 09:34:40 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Kalle Valo <kvalo@codeaurora.org>, Felix Fietkau <nbd@nbd.name>,
-        "Lorenzo Bianconi" <lorenzo.bianconi@redhat.com>,
-        Stanislaw Gruszka <sgruszka@redhat.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <linux-wireless@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] mt76x0: pci: fix set external PA I/O current
-Date:   Tue, 9 Oct 2018 01:45:59 +0000
-Message-ID: <1539049559-178175-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
-References: <1539004909-195005-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Tue, 9 Oct 2018 04:51:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbeJIIvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 04:51:50 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC3B92075E;
+        Tue,  9 Oct 2018 01:37:19 +0000 (UTC)
+Date:   Mon, 8 Oct 2018 21:37:17 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [POC][RFC][PATCH 0/2 v2] PROOF OF CONCEPT: Dynamic Functions
+ (jump functions)
+Message-ID: <20181008213717.07c59434@vmware.local.home>
+In-Reply-To: <20181006120125.376880240@goodmis.org>
+References: <20181006120125.376880240@goodmis.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Sat, 06 Oct 2018 08:01:25 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-drivers/net/wireless/mediatek/mt76/mt76x0/pci.c: In function 'mt76x0e_register_device':
-drivers/net/wireless/mediatek/mt76/mt76x0/pci.c:107:8: warning:
- variable 'data' set but not used [-Wunused-but-set-variable]
+> [ Sending v2 because I updated quilt and it added back that stupid
+>   "Content-Disposition: inline; filename=$patch" line, messing up
+>   how the patches look in gmail. This should be better. ]
+> 
 
-It seems correct value to write is 'data'
+Actually, this wasn't suppose to go out. I started to resend this, and
+had my quilt send mail going, and I stopped at the "edit prologue"
+where I wrote all this.
 
-Fixes: 2b2cb40bcd7d ("mt76x0: pci: add hw initialization at bootstrap")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
----
-v2: remove 'net-next' from patch title
----
- drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+But then I postponed it to fix up the code a bit more, and in the mean
+time, Peter, et. al. replied, and I figured we go down a different
+path. But I forgot that I had the quilt mail opened. I came back to the
+window with it up, thought it was just some text file I haven't saved
+yet, typed ":wq" and then saw the "sendmail" message pop out. Oops!
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-index 87997cd..0426c68 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
-@@ -106,12 +106,12 @@ static int mt76x0e_register_device(struct mt76x02_dev *dev)
- 		if (val & MT_EE_NIC_CONF_0_PA_IO_CURRENT) {
- 			u32 data;
- 
--			/* set external external PA I/O
-+			/* set external PA I/O
- 			 * current to 16mA
- 			 */
- 			data = mt76_rr(dev, 0x11c);
--			val |= 0xc03;
--			mt76_wr(dev, 0x11c, val);
-+			data |= 0xc03;
-+			mt76_wr(dev, 0x11c, data);
- 		}
- 	}
+This also explains why the date is set to Oct 6 (that's when I started
+the quilt send mail).
 
+Feel free to ignore this :-)
+
+-- Steve
