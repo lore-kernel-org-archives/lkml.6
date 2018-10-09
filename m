@@ -2,100 +2,102 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05BDC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C09DC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763B3204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:33:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Uy67dr9c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763B3204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C8F0204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:34:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8F0204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeJIOsq (ORCPT
+        id S1726679AbeJIOts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:48:46 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38178 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeJIOsp (ORCPT
+        Tue, 9 Oct 2018 10:49:48 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:42284 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbeJIOts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:48:45 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w997X40u027885;
-        Tue, 9 Oct 2018 02:33:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539070384;
-        bh=ckoYC9dMIavsd3sNi2wJ9sd7zlN+XfwAfNGdGMDo9yE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Uy67dr9c3ga7mUYh+86lwd0dpx732aj6cvFKaxA4798G6fpRokALktz2yZo6HcGuf
-         RgGuvE5CVA8mnbqv+HcPVAupc5VWzhMwqlSXUtL1B5knfhi2cwSEZiGMSGdHh5G/U8
-         CvPImo+/iu+3+dQAdUKCMplY8vh3TfrI+WS+IMAU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w997X2r3026762;
-        Tue, 9 Oct 2018 02:33:04 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 9 Oct
- 2018 02:33:03 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 9 Oct 2018 02:33:03 -0500
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w997X0XK008844;
-        Tue, 9 Oct 2018 02:33:01 -0500
-Subject: Re: [PATCH 5/6] mmc: sdhci-of-arasan: Add Support for AM654 MMC and
- PHY
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Kishon <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-References: <20181004111451.9539-1-faiz_abbas@ti.com>
- <20181004111451.9539-6-faiz_abbas@ti.com>
- <CAPDyKFpRU1bQB6LMt30c8hGhTYnYp7FBVOz092TEzkiXfoDdgQ@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <f1979ee5-404b-4397-8acb-837fbda83eec@ti.com>
-Date:   Tue, 9 Oct 2018 13:05:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 10:49:48 -0400
+Received: by mail-qt1-f175.google.com with SMTP id j46-v6so551785qtc.9;
+        Tue, 09 Oct 2018 00:34:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FGhTpVcoCkwFxuALNcYHdAIDUtbdyYJ2TCNHfxIRU8s=;
+        b=cvjGxrAeq3s75daP1P7cyMaEZAMM/7xPF9s1s2LiEPXIi9b1lofJ0AIFlEgHFG+Byf
+         TOGBYIE1la6S0CgNSFjUb5Rw+pRgQ4wRAesIaZB4dfFbcDswPEtrnAtapZ3b9i1zC2RZ
+         F7XNZmG5INFHIBXwLiw3HFM3T0dtammD6DxCDviwN4uXsF9kg+3a7eWTExlN+rce15Wx
+         1sKiWh1P4v5o+Pd5qA3sOsSViBnwjFT1PvILX/ypBdtpUwmxWQwwnYAnEJKyP7Yb5rrH
+         D9WHzaK2mCxrkL3aNjh7DbP15G+AfEzDEzp4oXc1yBY5DhGbYzA8UXG+y5CX4+rxkN0i
+         vJEw==
+X-Gm-Message-State: ABuFfoiTUlaOZYWhHZvU3iU+U+DrvqSiHDJhHQ+zokx8D21c663hQyGN
+        P/Br0gyQSrI8Kj0qhzwogTZNpoyC04C+U8ieZzA=
+X-Google-Smtp-Source: ACcGV61pPD9gTyz9iuvDD/s1k/sv/bsBXxR/A9Bfe7RnLvwCATcyJOyim07nAe5H7GWcxzYMd/ucpJRbISyRZZ3tMHs=
+X-Received: by 2002:a0c:9e59:: with SMTP id z25-v6mr21543805qve.180.1539070452969;
+ Tue, 09 Oct 2018 00:34:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpRU1bQB6LMt30c8hGhTYnYp7FBVOz092TEzkiXfoDdgQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20181005161333.765973-1-arnd@arndb.de> <tip-1be3f247c2882a82279cbcf43717581ea943b692@git.kernel.org>
+ <20181008202209.GA6597@zn.tnic> <CAGXu5j+4hjJSFpYi=5SqDmkonJ79J=hcb65qJC8+_r6+5NHewg@mail.gmail.com>
+In-Reply-To: <CAGXu5j+4hjJSFpYi=5SqDmkonJ79J=hcb65qJC8+_r6+5NHewg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 9 Oct 2018 09:33:56 +0200
+Message-ID: <CAK8P3a2KTzTD5d10KkmcKh=_E7J7EJkE48wrcUe4AAwDiBVuEQ@mail.gmail.com>
+Subject: Re: [tip:x86/urgent] x86/mm: Avoid VLA in pgd_alloc()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-tip-commits@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Toshimitsu Kani <toshi.kani@hpe.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uffe,
+On Tue, Oct 9, 2018 at 1:28 AM Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Oct 8, 2018 at 1:22 PM, Borislav Petkov <bp@alien8.de> wrote:
+> > On Fri, Oct 05, 2018 at 09:24:53AM -0700, tip-bot for Arnd Bergmann wrote:
 
-On Tuesday 09 October 2018 01:00 PM, Ulf Hansson wrote:
-> On 4 October 2018 at 13:14, Faiz Abbas <faiz_abbas@ti.com> wrote:
->> The current arasan sdhci PHY configuration isn't compatible
->> with the PHY on TI's AM654 devices.
->>
->> Therefore, add a new compatible, AM654 specific quirks
->> and a new AM654 specific set_clock function which
->> configures the PHY in a sane way.
->>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> 
-> Applied for next, thanks!
-> 
+> >
+> > For whatever reason - probably because it forced
+> > MAX_PREALLOCATED_USER_PMDS be KERNEL_PGD_PTRS and not 0 (and I don't
+> > have CONFIG_PAGE_TABLE_ISOLATION so it was 0 here with my .config
+> > before) but this patch causes the fun below.
+> >
+> > If I revert it, no splat.
+> >
+> > Also, config has CONFIG_X86_PAE=y. And CONFIG_STACKPROTECTOR_STRONG=y. If I
+> > disable _STRONG, it boots too. Attached.
+>
+> This really should mean that the stack canary changed. Either the
+> stack canary wasn't prepared yet (but this is from run_init_process(),
+> which is WELL after boot_init_stack_canary()), or the canary was
+> actually stomped on, which would certainly be a bug in the existing
+> code.
+>
+> Ah! I see it now. "pmds" shouldn't have changed, it's not .._USER_PMDS...
+>
+> -       pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+> -       pmd_t *pmds[PREALLOCATED_PMDS];
+> +       pmd_t *u_pmds[MAX_PREALLOCATED_USER_PMDS];
+> +       pmd_t *pmds[MAX_PREALLOCATED_USER_PMDS];
 
-Do I need to repost these in the v2 ?
+Ah, cool, thanks for the analysis. Is the patch already reverted?
+I.e. should I send a replacement patch, or a relative fix, or is
+someone else already on it?
 
-Thanks,
-Faiz
+      Arnd
