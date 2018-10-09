@@ -2,94 +2,154 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0834CC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91467C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0A3213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5223C214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:13:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cy7vCog9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0A3213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KcgiNZcK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5223C214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeJJEbK (ORCPT
+        id S1727333AbeJJEcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:31:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39296 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbeJJEbK (ORCPT
+        Wed, 10 Oct 2018 00:32:09 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37003 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725833AbeJJEcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:31:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w99LCGlR127447;
-        Tue, 9 Oct 2018 16:12:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539119536;
-        bh=G+9Y6w6VAIV5UkHpkOJQLceo1BED23riuHyn/t0oA00=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Cy7vCog9U3vHsYzSZimpdgbvurFcKWfWbhUNDqT3uCKhhds/hEgeH/Tdm4YPylgDg
-         ll0dwt4wc84ODHDM1S2Mtu5wJBz6CN13qTm15Dks/wTMxS+/sinf83smn+lgCwopau
-         nOyxsp04jGPxx74u1kVkLiuGPdoGYSqR/zhKbiwM=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w99LCGrY021268;
-        Tue, 9 Oct 2018 16:12:16 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 9 Oct
- 2018 16:12:16 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 9 Oct 2018 16:12:16 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w99LCGx8016441;
-        Tue, 9 Oct 2018 16:12:16 -0500
-Subject: Re: [RFC PATCH 00/11] net: ethernet: ti: cpsw: replace cpsw-phy-sel
- with phy driver
-To:     Tony Lindgren <tony@atomide.com>
-CC:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20181008234949.15416-1-grygorii.strashko@ti.com>
- <20181009143631.GK5662@atomide.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <6f77b8a2-a973-4a13-8b9e-014648dea2c5@ti.com>
-Date:   Tue, 9 Oct 2018 16:12:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 00:32:09 -0400
+Received: by mail-yb1-f194.google.com with SMTP id h1-v6so1308681ybm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 14:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MkX/Wx7rtRmIqH07kFue+9OB4UgcdPCNJdyqGn/+EL4=;
+        b=KcgiNZcKNQHUDmUJQmVY9UJhz22NGGLZLJhWZzzT386kDlkr+RJGGWmg93sF3Sop9G
+         lMTNtGk7pMRGxUKr7oNPCZIf8AKlanqpXnCX8Hj80uTdV1t1mbudbS56FTe5HZEdfui1
+         Xj1aWXZ6jc4mzkQloHdlKy2H1kh9jdMtlqZMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MkX/Wx7rtRmIqH07kFue+9OB4UgcdPCNJdyqGn/+EL4=;
+        b=B8VlNF2P2b10AfVvc/slfC7XzjfKQuzJew4Cw5eq7pYPwLmQZ9b78a4AEW+10xUOYt
+         RO8/VYiydqZ+wi5QhMq4qqioIQ6lLNoA2bcDi+Z+ETQwyRwarch5L4giAynQQr9CzlGz
+         yeV3BOdpErXMA4QQWh8XuLEmlChGMujsol4kDyMTRydFrJJhmRod6ckDH3f+SIHPWVHQ
+         ciIcejXrq27NoT4Oc3lNdZEF+EavX1OLJU4xq3A0vNlc8wcM/MP9KN7a3IP/bOtaZqKp
+         Ui90okN9PV8AVJ90QQsO84utRYPrdr2jrTfHH9JDBUvq1w4zztHOmyk9qFzQZhzxo+ep
+         ERnQ==
+X-Gm-Message-State: ABuFfoiGIYfUM5JV1hexLHEIt2rbRZzJlFyhQnYkTn92X+WWalQhZ8in
+        4dMRZBjFuh6WjRcgK7be1CiIVDmFixg=
+X-Google-Smtp-Source: ACcGV61u9da1frG2WS7HKWy6ufnDkyJtHXPFnZBkTpIZPRd5X7o9WqwpnpETuyjxpog5VRpd+OqyDw==
+X-Received: by 2002:a25:4155:: with SMTP id o82-v6mr16347749yba.310.1539119597965;
+        Tue, 09 Oct 2018 14:13:17 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id k2-v6sm24876666ywh.52.2018.10.09.14.13.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 14:13:16 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 5-v6so1311704ybf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 14:13:16 -0700 (PDT)
+X-Received: by 2002:a5b:d:: with SMTP id a13-v6mr4910340ybp.171.1539119596067;
+ Tue, 09 Oct 2018 14:13:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181009143631.GK5662@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 9 Oct 2018 14:13:14 -0700 (PDT)
+In-Reply-To: <20181009205019.2786-1-bp@alien8.de>
+References: <20181009205019.2786-1-bp@alien8.de>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 9 Oct 2018 14:13:14 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+=pkdaCvXxao=Y2XMzMAsy_ByA6PMnmK2cuQVpU41SEQ@mail.gmail.com>
+Message-ID: <CAGXu5j+=pkdaCvXxao=Y2XMzMAsy_ByA6PMnmK2cuQVpU41SEQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] kernel/panic: Filter out a potential trailing newline
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 9, 2018 at 1:50 PM, Borislav Petkov <bp@alien8.de> wrote:
+> From: Borislav Petkov <bp@suse.de>
+>
+> If a call to panic() terminates the string with a \n, the result puts
+> the closing brace ']---' on a newline because panic() itself adds \n
+> too.
+>
+> Now, if one goes and removes the newline chars from all panic()
+> invocations - and the stats right now look like this:
+>
+> ~300 calls with an \n
+> ~500 calls without a \n
+>
+> one is destined to a neverending game of whack-a-mole because the usual
+> thing to do is add a newline at the end of a string a function is
+> supposed to print.
+>
+> Therefore, simply zap any \n at the end of the panic string to avoid
+> touching so many places in the kernel.
+>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Cc: x86@kernel.org
+
+Ah yes, I like this. :)
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  kernel/panic.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 8b2e002d52eb..5776d2879650 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -136,7 +136,7 @@ void panic(const char *fmt, ...)
+>  {
+>         static char buf[1024];
+>         va_list args;
+> -       long i, i_next = 0;
+> +       long i, i_next = 0, len;
+>         int state = 0;
+>         int old_cpu, this_cpu;
+>         bool _crash_kexec_post_notifiers = crash_kexec_post_notifiers;
+> @@ -173,8 +173,12 @@ void panic(const char *fmt, ...)
+>         console_verbose();
+>         bust_spinlocks(1);
+>         va_start(args, fmt);
+> -       vsnprintf(buf, sizeof(buf), fmt, args);
+> +       len = vscnprintf(buf, sizeof(buf), fmt, args);
+>         va_end(args);
+> +
+> +       if (len && buf[len - 1] == '\n')
+> +               buf[len - 1] = '\0';
+> +
+>         pr_emerg("Kernel panic - not syncing: %s\n", buf);
+>  #ifdef CONFIG_DEBUG_BUGVERBOSE
+>         /*
+> --
+> 2.19.0.271.gfe8321ec057f
+>
 
 
-On 10/09/2018 09:36 AM, Tony Lindgren wrote:
-> * Grygorii Strashko <grygorii.strashko@ti.com> [181008 23:54]:
->> 2) introduce new PHY API for network interface mode selection which will use
->> already defined set of modes from phy_interface_t.
->>
->> Option 2 was selected for this series.
-> 
-> Looks good to me :) The dts files will cause merge conflicts with
-> what I have pending for the ti-sysc changes so please send the dts
-> changes in a separate series when posting without RFC.
-
-expected. I did on top of mauster, but will rebase and resend if approved.
 
 -- 
-regards,
--grygorii
+Kees Cook
+Pixel Security
