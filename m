@@ -2,106 +2,104 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79FDC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FE0C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61827213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:28:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61827213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id C5D13213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:29:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CXlDy+bn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D13213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeJINng (ORCPT
+        id S1726596AbeJINoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:43:36 -0400
-Received: from tartarus.angband.pl ([54.37.238.230]:52078 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbeJINng (ORCPT
+        Tue, 9 Oct 2018 09:44:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38147 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeJINoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:43:36 -0400
-Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
-        by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1g9lV1-0006VO-TS; Tue, 09 Oct 2018 08:28:09 +0200
-Received: from sirius.angband.pl ([2001:470:64f4::9])
-        by barad-dur.angband.pl with esmtp (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1g9lV1-0000g4-6z; Tue, 09 Oct 2018 08:28:07 +0200
-Received: from kilobyte by sirius.angband.pl with local (Exim 4.91)
-        (envelope-from <kilobyte@sirius.angband.pl>)
-        id 1g9lV0-00018g-Jc; Tue, 09 Oct 2018 08:28:06 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Tue,  9 Oct 2018 08:28:03 +0200
-Message-Id: <20181009062803.4332-1-kilobyte@angband.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181009061849.GC116930@gmail.com>
-References: <20181009061849.GC116930@gmail.com>
+        Tue, 9 Oct 2018 09:44:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a13-v6so433025wrt.5
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/GBFI/QDf+2wCuLMcmCmEjR0Zk/A3MfKU8LhJAK9R0Y=;
+        b=CXlDy+bnlIH0F5v0NhVpFeiCARaWQmEH0R0CCipE0ULADuYIZlK9bZjCsEQk07HDQO
+         Ie9FObYhgaHhHtGXfo6jd6AWFBb925A4R2HoszRQFnTjwrPJW0uq3niFzY0VPgL+Pdfx
+         HS1DxUyEnxjZcqOVgNC1+nvCpqLzegjD47VFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/GBFI/QDf+2wCuLMcmCmEjR0Zk/A3MfKU8LhJAK9R0Y=;
+        b=Db59sqJy7zIg6vDGNUxPWooj5279q2MfTgbus66DDTpxqN7gaiPdNBi7dG2Nqz+rc3
+         DqpzBzjmms1HJOGPGJoIcMG1ocbXHwVhkkleopMO468fLTeOkQdIcHx4f+D1l8e8OZbJ
+         GrUMJHkkk9bnQzPXS9aqRI8Kwomj1XhQOYxZd5Lo1/46me0WLtI2M6Hq0tcP3wVGJhwh
+         4pMosZ+W7LsY4TktiGKEXho2QEJfQlwZexkqDlXQMsFe0g7d9ZEbRN1ClayeWPJq0NkG
+         tiHzc5Ukpjg5KE/TazpstLJtYJlWacV6J0BCQTWS0BU5m9Zl8i2vKUFhJXnJOh7IgB97
+         9wKw==
+X-Gm-Message-State: ABuFfojpUWUaIQlJMHgSDCTZCJB6WO/dlX+3NwRDGionObWz+qrUG4+x
+        PvBsjTFIQRzwNvTrnVON35Is/Q==
+X-Google-Smtp-Source: ACcGV605lmMqkqxOI534mLEOmgaKk3+PKB4gddyZjsBjfKbcwPMNB2SwMLb4mhtJXC01koR32k9Fcg==
+X-Received: by 2002:adf:8141:: with SMTP id 59-v6mr17595893wrm.127.1539066538028;
+        Mon, 08 Oct 2018 23:28:58 -0700 (PDT)
+Received: from dell ([2.27.167.111])
+        by smtp.gmail.com with ESMTPSA id z69-v6sm11596209wmz.18.2018.10.08.23.28.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Oct 2018 23:28:57 -0700 (PDT)
+Date:   Mon, 8 Oct 2018 23:28:55 -0700
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dmitry Torokhov <dtor@chromium.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>
+Subject: Re: [PATCH v2 1/2] mfd: cros: add "base attached" MKBP switch
+ definition
+Message-ID: <20181009062855.GA32033@dell>
+References: <20181005184114.207503-1-dtor@chromium.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 89.64.163.218
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH v2] x86/defconfig: Enable CONFIG_USB_XHCI_HCD
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
+In-Reply-To: <20181005184114.207503-1-dtor@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A spanking new machine I just got has all but one USB ports wired as 3.0.
-Booting defconfig resulted in no keyboard or mouse, which was pretty
-uncool.  Let's enable that -- USB3 is ubiquitous rather than an oddity.
-As 'y' not 'm' -- recovering from initrd problems needs a keyboard.
+On Fri, 05 Oct 2018, Dmitry Torokhov wrote:
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
----
-v2: also i386
+> This adds a "base attached" switch definition to the MKBP protocol that
+> is used by Whiskers driver to properly determine device state (clamshell
+> vs tablet mode).
+> 
+> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+> ---
+> 
+> v2 changes: None
+> 
+> Lee, I was wondering if it would be OK for cros_ec_commands.h to be
+> merged through HID tree.
 
-Ingo Molnar said:
-> Also, could we please refresh this in the 32-bit defconfig as well.
+Yes, so long as it goes through in this merge-window.
 
-While real 32-bit machines are ancient, folks tend to test such kernels on
-something modern, thus you have a good point.  Changed.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-
- arch/x86/configs/i386_defconfig   | 1 +
- arch/x86/configs/x86_64_defconfig | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
-index 0eb9f92f3717..6c3ab05c231d 100644
---- a/arch/x86/configs/i386_defconfig
-+++ b/arch/x86/configs/i386_defconfig
-@@ -247,6 +247,7 @@ CONFIG_USB_HIDDEV=y
- CONFIG_USB=y
- CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
- CONFIG_USB_MON=y
-+CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TT_NEWSCHED=y
- CONFIG_USB_OHCI_HCD=y
-diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
-index e32fc1f274d8..ac9ae487cfeb 100644
---- a/arch/x86/configs/x86_64_defconfig
-+++ b/arch/x86/configs/x86_64_defconfig
-@@ -243,6 +243,7 @@ CONFIG_USB_HIDDEV=y
- CONFIG_USB=y
- CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
- CONFIG_USB_MON=y
-+CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TT_NEWSCHED=y
- CONFIG_USB_OHCI_HCD=y
 -- 
-2.19.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
