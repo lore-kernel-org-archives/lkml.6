@@ -2,131 +2,618 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDD5C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC94C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C4D20841
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:45:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C4D20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id AFF4B2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:50:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF4B2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeJISCG (ORCPT
+        id S1726727AbeJISHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:02:06 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49929 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbeJISCG (ORCPT
+        Tue, 9 Oct 2018 14:07:13 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:38722 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeJISHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:02:06 -0400
-Received: from 79.184.255.62.ipv4.supernova.orange.pl (79.184.255.62) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id 58704f577b1a0e61; Tue, 9 Oct 2018 12:45:44 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Doug Smythies <dsmythies@telus.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 0/6] cpuidle: menu: Fixes, optimizations and cleanups
-Date:   Tue, 09 Oct 2018 12:42:38 +0200
-Message-ID: <32751210.eVKMK0JPWn@aspire.rjw.lan>
-In-Reply-To: <CAJZ5v0h4sVoen++nF1cYvqQeY3qN0B1aP42e8A4SZwxzBV3NVA@mail.gmail.com>
-References: <000301d45ecb$4f002a90$ed007fb0$@net> <003801d45f54$3d9b0c50$b8d124f0$@net> <CAJZ5v0h4sVoen++nF1cYvqQeY3qN0B1aP42e8A4SZwxzBV3NVA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 9 Oct 2018 14:07:13 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42TvCY11P6z1qxDq;
+        Tue,  9 Oct 2018 12:50:49 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42TvCX6VzBz1qtdy;
+        Tue,  9 Oct 2018 12:50:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id r8t3ZuWwaUiv; Tue,  9 Oct 2018 12:50:46 +0200 (CEST)
+X-Auth-Info: +Taoefpfl345p/hRLnB0stTY0YcNqZMlhjFEM2uSrag=
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue,  9 Oct 2018 12:50:46 +0200 (CEST)
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Stefan Agner <stefan@agner.ch>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v3] ARM: dts: Add support for Liebherr's BK4 device (vf610 based)
+Date:   Tue,  9 Oct 2018 12:50:28 +0200
+Message-Id: <20181009105028.17971-1-lukma@denx.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180921152726.31742-1-lukma@denx.de>
+References: <20180921152726.31742-1-lukma@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, October 9, 2018 12:26:48 AM CEST Rafael J. Wysocki wrote:
-> On Tue, Oct 9, 2018 at 12:14 AM Doug Smythies <dsmythies@telus.net> wrote:
-> >
-> > On 2018.10.08 00:51 Rafael J. Wysocki wrote:
-> > > On Mon, Oct 8, 2018 at 8:02 AM Doug Smythies <dsmythies@telus.net> wrote:
-> > >>
-> > >> On 2018.10.03 23:56 Rafael J. Wysocki wrote:
-> > >>> On Tue, Oct 2, 2018 at 11:51 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> 
-> [cut]
-> 
-> > >> Test 2: pipe test 2 CPUs, one core. CPU test:
-> > >>
-> > >> The average loop times graph is here:
-> > >> http://fast.smythies.com/linux-pm/k419/k419-rjw-pipe-1core.png
-> > >>
-> > >> The power and idle statistics graphs are here:
-> > >> http://fast.smythies.com/linux-pm/k419/k419-rjw-pipe-1core.htm
-> > >>
-> > >> Conclusions:
-> > >>
-> > >> Better performance at the cost of more power with
-> > >> the patch set, but late August had both better performance
-> > >> and less power.
-> > >>
-> > >> Overall idle entries and exits are about the same, but way
-> > >> way more idle state 0 entries and exits with the patch set.
-> > >
-> > >Same as above (and expected too).
-> >
-> > I Disagree. The significant transfer of idle entries from
-> > idle state 1 with kernel 4.19-rc6 to idle state 0 with the
-> > additional 8 patch set is virtually entirely due to this patch:
-> >
-> > "[PATCH 2/6] cpuidle: menu: Compute first_idx when latency_req is known"
-> 
-> OK
-> 
-> > As far as I can determine from all of this data, in particular the
-> > histogram data below, it seems to me that it now is selecting
-> > idle state 0 whereas before it was selecting idle state 1
-> > is the correct decision for those very short duration idle states
-> > (well, for my processor (older i7-2600K) at least).
-> 
-> At least, that's a matter of consistency IMO.
-> 
-> State 1 should not be selected if the final latency limit is below its
-> exit latency and that's what happens in that situation.
-> 
-> > Note: I did test my above assertion with kernels compiled with only
-> > the first 2 and then 3 of the 8 patch set.
-> 
-> I see.
+This commit adds DTS support for BK4 device from Liebherr. It
+uses vf610 SoC from NXP.
 
-While at it, could you test the appended patch (on top of the previous 8)
-for me please?
-
-I think that this code can be simplified now.
-
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
 ---
- drivers/cpuidle/governors/menu.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes for v3:
 
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -371,12 +371,12 @@ static int menu_select(struct cpuidle_dr
- 		if (s->target_residency > predicted_us) {
- 			/*
- 			 * Use a physical idle state, not busy polling, unless
--			 * a timer is going to trigger really really soon.
-+			 * a timer is going to trigger soon enough.
- 			 */
- 			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--			    i == idx + 1 && latency_req > s->exit_latency &&
--			    data->next_timer_us > max_t(unsigned int, 20,
--							s->target_residency)) {
-+			    s->exit_latency <= latency_req &&
-+			    s->target_residency <= data->next_timer_us) {
-+				predicted_us = s->target_residency;
- 				idx = i;
- 				break;
- 			}
+- Rename regulator-vcc_3v3_mcu -> regulator-vcc3v3mcu
+- Add a blank line between properties and node @ mdio
+- Rename rtc and eeprom node's labels and names
+- Rename flash nodes
+- Rename 'gpio_leds' -> 'gpioledsgrp'
+- Move 'pinctrl_qspi0: qspi0grp' to be in alphabetic order
+
+Changes for v2:
+
+- Rename enet_ext and audio_ext oscillator names
+- Move regulators from simple-bus (and rename to reg_3p3v: regulator-3p3v)
+- Add stdout-path property to chosen node
+- Move iomuxc node to the end (as it is so large)
+- Sort with alphabetical order
+- Rename the default pinctrl to "hog"
+- Move LED pins definition from "hog" to "led" group
+- Add more descriptive names to default pins pinmux definition
+- Use spi-slave property to describe node working in this mode
+- Rename the spidev3 node to slave
+- Introduce new compatible name (lwn,bk4) for spidev driver (to avoid
+  confusion)
+- Update some compatibles to match current kernel
+---
+ arch/arm/boot/dts/Makefile      |   1 +
+ arch/arm/boot/dts/vf610-bk4.dts | 501 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 502 insertions(+)
+ create mode 100644 arch/arm/boot/dts/vf610-bk4.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b5bd3de87c33..e6f159895fa9 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -577,6 +577,7 @@ dtb-$(CONFIG_SOC_LS1021A) += \
+ 	ls1021a-twr.dtb
+ dtb-$(CONFIG_SOC_VF610) += \
+ 	vf500-colibri-eval-v3.dtb \
++	vf610-bk4.dtb \
+ 	vf610-colibri-eval-v3.dtb \
+ 	vf610m4-colibri.dtb \
+ 	vf610-cosmic.dtb \
+diff --git a/arch/arm/boot/dts/vf610-bk4.dts b/arch/arm/boot/dts/vf610-bk4.dts
+new file mode 100644
+index 000000000000..cab95714c058
+--- /dev/null
++++ b/arch/arm/boot/dts/vf610-bk4.dts
+@@ -0,0 +1,501 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2018
++ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
++ */
++
++/dts-v1/;
++#include "vf610.dtsi"
++
++/ {
++	model = "Liebherr BK4 controller";
++	compatible = "lwn,bk4", "fsl,vf610";
++
++	chosen {
++		stdout-path = &uart1;
++	};
++
++	memory@80000000 {
++		reg = <0x80000000 0x8000000>;
++	};
++
++	audio_ext: oscillator-audio {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++	};
++
++	enet_ext: oscillator-ethernet {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_leds>;
++
++		/* LED D5 */
++		led0: heartbeat {
++			label = "heartbeat";
++			gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
++
++	reg_vcc_3v3_mcu: regulator-vcc3v3mcu {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_3v3_mcu";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++};
++
++&adc0 {
++	vref-supply = <&reg_vcc_3v3_mcu>;
++	status = "okay";
++};
++
++&adc1 {
++	vref-supply = <&reg_vcc_3v3_mcu>;
++	status = "okay";
++};
++
++&can0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_can0>;
++	status = "okay";
++};
++
++&can1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_can1>;
++	status = "okay";
++};
++
++&clks {
++	clocks = <&sxosc>, <&fxosc>, <&enet_ext>, <&audio_ext>;
++	clock-names = "sxosc", "fxosc", "enet_ext", "audio_ext";
++};
++
++&dspi0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_dspi0>;
++	bus-num = <0>;
++	status = "okay";
++
++	spidev0@0 {
++		compatible = "lwn,bk4";
++		spi-max-frequency = <30000000>;
++		reg = <0>;
++		fsl,spi-cs-sck-delay = <200>;
++		fsl,spi-sck-cs-delay = <400>;
++	};
++};
++
++&dspi3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_dspi3>;
++	bus-num = <3>;
++	status = "okay";
++	spi-slave;
++
++	slave@0 {
++		compatible = "lwn,bk4";
++		spi-max-frequency = <30000000>;
++		reg = <0>;
++	};
++};
++
++&edma0 {
++	status = "okay";
++};
++
++&edma1 {
++	status = "okay";
++};
++
++&esdhc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_esdhc1>;
++	bus-width = <4>;
++	cd-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&fec0 {
++	phy-mode = "rmii";
++	phy-handle = <&ethphy0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_fec0>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@1 {
++			reg = <1>;
++			clocks = <&clks VF610_CLK_ENET_50M>;
++			clock-names = "rmii-ref";
++		};
++	};
++};
++
++&fec1 {
++	phy-mode = "rmii";
++	phy-handle = <&ethphy1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_fec1>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy1: ethernet-phy@1 {
++			reg = <1>;
++			clocks = <&clks VF610_CLK_ENET_50M>;
++			clock-names = "rmii-ref";
++		};
++	};
++};
++
++&i2c2 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c2>;
++	status = "okay";
++
++	at24c256: eeprom@50 {
++		compatible = "atmel,24c256";
++		reg = <0x50>;
++	};
++
++	m41t62: rtc@68 {
++		compatible = "st,m41t62";
++		reg = <0x68>;
++	};
++};
++
++&nfc {
++	assigned-clocks = <&clks VF610_CLK_NFC>;
++	assigned-clock-rates = <33000000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_nfc>;
++	status = "okay";
++
++	nand@0 {
++		compatible = "fsl,vf610-nfc-nandcs";
++		reg = <0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		nand-bus-width = <16>;
++		nand-ecc-mode = "hw";
++		nand-ecc-strength = <24>;
++		nand-ecc-step-size = <2048>;
++		nand-on-flash-bbt;
++	};
++};
++
++&qspi0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_qspi0>;
++	status = "okay";
++
++	n25q128a13_4: flash@0 {
++		compatible = "n25q128a13", "jedec,spi-nor";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		spi-max-frequency = <66000000>;
++		spi-rx-bus-width = <4>;
++		reg = <0>;
++	};
++
++	n25q128a13_2: flash@1 {
++		compatible = "n25q128a13", "jedec,spi-nor";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		spi-max-frequency = <66000000>;
++		spi-rx-bus-width = <2>;
++		reg = <1>;
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart0>;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart1>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart2>;
++	status = "okay";
++};
++
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart3>;
++	status = "okay";
++};
++
++&usbdev0 {
++	disable-over-current;
++	status = "okay";
++};
++
++&usbh1 {
++	disable-over-current;
++	status = "okay";
++};
++
++&usbmisc0 {
++	status = "okay";
++};
++
++&usbmisc1 {
++	status = "okay";
++};
++
++&usbphy0 {
++	status = "okay";
++};
++
++&usbphy1 {
++	status = "okay";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			/* One_Wire_PSU_EN */
++			VF610_PAD_PTC29__GPIO_102		0x1183
++			/* SPI ENABLE */
++			VF610_PAD_PTB26__GPIO_96		0x1183
++			/* EB control */
++			VF610_PAD_PTE14__GPIO_119		0x1183
++			VF610_PAD_PTE4__GPIO_109		0x1181
++			/* Feedback_Lines */
++			VF610_PAD_PTC31__GPIO_104		0x1181
++			VF610_PAD_PTA7__GPIO_134		0x1181
++			VF610_PAD_PTD9__GPIO_88		0x1181
++			VF610_PAD_PTE1__GPIO_106		0x1183
++			VF610_PAD_PTB2__GPIO_24		0x1181
++			VF610_PAD_PTB3__GPIO_25		0x1181
++			VF610_PAD_PTB1__GPIO_23		0x1181
++			/* SDHC Enable */
++			VF610_PAD_PTE19__GPIO_124		0x1183
++			/* SDHC Overcurrent */
++			VF610_PAD_PTB23__GPIO_93		0x1181
++			/* GPI */
++			VF610_PAD_PTE2__GPIO_107		0x1181
++			VF610_PAD_PTE3__GPIO_108		0x1181
++			VF610_PAD_PTE5__GPIO_110		0x1181
++			VF610_PAD_PTE6__GPIO_111		0x1181
++			/* GPO */
++			VF610_PAD_PTE0__GPIO_105		0x1183
++			VF610_PAD_PTE7__GPIO_112		0x1183
++			/* RS485 Control */
++			VF610_PAD_PTB8__GPIO_30		0x1183
++			VF610_PAD_PTB9__GPIO_31		0x1183
++			VF610_PAD_PTE8__GPIO_113		0x1183
++			/* MPBUS MPB_EN */
++			VF610_PAD_PTE28__GPIO_133		0x1183
++			/* MISC */
++			VF610_PAD_PTE10__GPIO_115		0x1183
++			VF610_PAD_PTE11__GPIO_116		0x1183
++			VF610_PAD_PTE17__GPIO_122		0x1183
++			VF610_PAD_PTC30__GPIO_103		0x1183
++			VF610_PAD_PTB0__GPIO_22		0x1181
++			/* RESETINFO */
++			VF610_PAD_PTE26__GPIO_131		0x1183
++			VF610_PAD_PTD6__GPIO_85		0x1181
++			VF610_PAD_PTE27__GPIO_132		0x1181
++			VF610_PAD_PTE13__GPIO_118		0x1181
++			VF610_PAD_PTE21__GPIO_126		0x1181
++			VF610_PAD_PTE22__GPIO_127		0x1181
++			/* EE_5V_EN */
++			VF610_PAD_PTE18__GPIO_123		0x1183
++			/* EE_5V_OC_N */
++			VF610_PAD_PTE25__GPIO_130		0x1181
++		>;
++	};
++
++	pinctrl_can0: can0grp {
++		fsl,pins = <
++			VF610_PAD_PTB14__CAN0_RX		0x1181
++			VF610_PAD_PTB15__CAN0_TX		0x1182
++		>;
++	};
++
++	pinctrl_can1: can1grp {
++		fsl,pins = <
++			VF610_PAD_PTB16__CAN1_RX		0x1181
++			VF610_PAD_PTB17__CAN1_TX		0x1182
++		>;
++	};
++
++	pinctrl_dspi0: dspi0grp {
++		fsl,pins = <
++			VF610_PAD_PTB18__DSPI0_CS1		0x1182
++			VF610_PAD_PTB19__DSPI0_CS0		0x1182
++			VF610_PAD_PTB20__DSPI0_SIN		0x1181
++			VF610_PAD_PTB21__DSPI0_SOUT		0x1182
++			VF610_PAD_PTB22__DSPI0_SCK		0x1182
++		>;
++	};
++
++	pinctrl_dspi3: dspi3grp {
++		fsl,pins = <
++			VF610_PAD_PTD10__DSPI3_CS0		0x1181
++			VF610_PAD_PTD11__DSPI3_SIN		0x1181
++			VF610_PAD_PTD12__DSPI3_SOUT		0x1182
++			VF610_PAD_PTD13__DSPI3_SCK		0x1181
++		>;
++	};
++
++	pinctrl_esdhc1: esdhc1grp {
++		fsl,pins = <
++			VF610_PAD_PTA24__ESDHC1_CLK		0x31ef
++			VF610_PAD_PTA25__ESDHC1_CMD		0x31ef
++			VF610_PAD_PTA26__ESDHC1_DAT0		0x31ef
++			VF610_PAD_PTA27__ESDHC1_DAT1		0x31ef
++			VF610_PAD_PTA28__ESDHC1_DATA2		0x31ef
++			VF610_PAD_PTA29__ESDHC1_DAT3		0x31ef
++			VF610_PAD_PTB28__GPIO_98		0x219d
++		>;
++	};
++
++	pinctrl_fec0: fec0grp {
++		fsl,pins = <
++			VF610_PAD_PTA6__RMII_CLKIN		0x30dd
++			VF610_PAD_PTC0__ENET_RMII0_MDC		0x30de
++			VF610_PAD_PTC1__ENET_RMII0_MDIO	0x30df
++			VF610_PAD_PTC2__ENET_RMII0_CRS		0x30dd
++			VF610_PAD_PTC3__ENET_RMII0_RXD1	0x30dd
++			VF610_PAD_PTC4__ENET_RMII0_RXD0	0x30dd
++			VF610_PAD_PTC5__ENET_RMII0_RXER	0x30dd
++			VF610_PAD_PTC6__ENET_RMII0_TXD1	0x30de
++			VF610_PAD_PTC7__ENET_RMII0_TXD0	0x30de
++			VF610_PAD_PTC8__ENET_RMII0_TXEN	0x30de
++		>;
++	};
++
++	pinctrl_fec1: fec1grp {
++		fsl,pins = <
++			VF610_PAD_PTC9__ENET_RMII1_MDC		0x30de
++			VF610_PAD_PTC10__ENET_RMII1_MDIO	0x30df
++			VF610_PAD_PTC11__ENET_RMII1_CRS	0x30dd
++			VF610_PAD_PTC12__ENET_RMII1_RXD1	0x30dd
++			VF610_PAD_PTC13__ENET_RMII1_RXD0	0x30dd
++			VF610_PAD_PTC14__ENET_RMII1_RXER	0x30dd
++			VF610_PAD_PTC15__ENET_RMII1_TXD1	0x30de
++			VF610_PAD_PTC16__ENET_RMII1_TXD0	0x30de
++			VF610_PAD_PTC17__ENET_RMII1_TXEN	0x30de
++		>;
++	};
++
++	pinctrl_gpio_leds: gpioledsgrp {
++		fsl,pins = <
++			/* Heart bit LED */
++			VF610_PAD_PTE12__GPIO_117	0x1183
++			/* LEDS */
++			VF610_PAD_PTE15__GPIO_120	0x1183
++			VF610_PAD_PTA12__GPIO_5	0x1183
++			VF610_PAD_PTA16__GPIO_6	0x1183
++			VF610_PAD_PTE9__GPIO_114	0x1183
++			VF610_PAD_PTE20__GPIO_125	0x1183
++			VF610_PAD_PTE23__GPIO_128	0x1183
++			VF610_PAD_PTE16__GPIO_121	0x1183
++		>;
++	};
++
++	pinctrl_i2c2: i2c2grp {
++		fsl,pins = <
++			VF610_PAD_PTA22__I2C2_SCL               0x34df
++			VF610_PAD_PTA23__I2C2_SDA               0x34df
++		>;
++	};
++
++	pinctrl_nfc: nfcgrp {
++		fsl,pins = <
++			VF610_PAD_PTD23__NF_IO7		0x28df
++			VF610_PAD_PTD22__NF_IO6		0x28df
++			VF610_PAD_PTD21__NF_IO5		0x28df
++			VF610_PAD_PTD20__NF_IO4		0x28df
++			VF610_PAD_PTD19__NF_IO3		0x28df
++			VF610_PAD_PTD18__NF_IO2		0x28df
++			VF610_PAD_PTD17__NF_IO1		0x28df
++			VF610_PAD_PTD16__NF_IO0		0x28df
++			VF610_PAD_PTB24__NF_WE_B		0x28c2
++			VF610_PAD_PTB25__NF_CE0_B		0x28c2
++			VF610_PAD_PTB27__NF_RE_B		0x28c2
++			VF610_PAD_PTC26__NF_RB_B		0x283d
++			VF610_PAD_PTC27__NF_ALE		0x28c2
++			VF610_PAD_PTC28__NF_CLE		0x28c2
++		>;
++	};
++
++	pinctrl_qspi0: qspi0grp {
++		fsl,pins = <
++			VF610_PAD_PTD0__QSPI0_A_QSCK	0x397f
++			VF610_PAD_PTD1__QSPI0_A_CS0	0x397f
++			VF610_PAD_PTD2__QSPI0_A_DATA3	0x397f
++			VF610_PAD_PTD3__QSPI0_A_DATA2	0x397f
++			VF610_PAD_PTD4__QSPI0_A_DATA1	0x397f
++			VF610_PAD_PTD5__QSPI0_A_DATA0	0x397f
++			VF610_PAD_PTD7__QSPI0_B_QSCK	0x397f
++			VF610_PAD_PTD8__QSPI0_B_CS0	0x397f
++			VF610_PAD_PTD11__QSPI0_B_DATA1	0x397f
++			VF610_PAD_PTD12__QSPI0_B_DATA0	0x397f
++		>;
++	};
++
++	pinctrl_uart0: uart0grp {
++		fsl,pins = <
++			VF610_PAD_PTB10__UART0_TX		0x21a2
++			VF610_PAD_PTB11__UART0_RX		0x21a1
++		>;
++	};
++
++	pinctrl_uart1: uart1grp {
++		fsl,pins = <
++			VF610_PAD_PTB4__UART1_TX		0x21a2
++			VF610_PAD_PTB5__UART1_RX		0x21a1
++		>;
++	};
++
++	pinctrl_uart2: uart2grp {
++		fsl,pins = <
++			VF610_PAD_PTB6__UART2_TX		0x21a2
++			VF610_PAD_PTB7__UART2_RX		0x21a1
++		>;
++	};
++
++	pinctrl_uart3: uart3grp {
++		fsl,pins = <
++			VF610_PAD_PTA20__UART3_TX		0x21a2
++			VF610_PAD_PTA21__UART3_RX		0x21a1
++		>;
++	};
++};
+-- 
+2.11.0
 
