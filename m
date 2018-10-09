@@ -2,152 +2,138 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72EBC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E1BC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2FD2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15F362087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PvwUgA8h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2FD2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BJ8oRlkk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F362087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbeJIV2M (ORCPT
+        id S1726647AbeJIV3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:28:12 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:44273 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeJIV2M (ORCPT
+        Tue, 9 Oct 2018 17:29:30 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51905 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbeJIV3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:28:12 -0400
-Received: by mail-yb1-f195.google.com with SMTP id x5-v6so670917ybl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:11:03 -0700 (PDT)
+        Tue, 9 Oct 2018 17:29:30 -0400
+Received: by mail-it1-f195.google.com with SMTP id 74-v6so2810712itw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:12:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=raC50H3i6Rq/gAHAxqx/HZulacRGFaQbhcZ8FwelmBA=;
-        b=PvwUgA8hjzgwUOXWCcgbPsVl9pWZA9gZV8ulJi7VJNLX6dhl7qaXUw0WbwO11kla+w
-         ixjfYfvtW7rOXT3lMEkPiH0Q37rAtD7yqJGHv8eQOwnD031i60qQWdeZOlWqJnKay/tL
-         pobTNJzxRqalWXHPOhRTuWVAf8Om8JmBgdoHA=
+        bh=QZKEA8iSBgjK4ckiRdSruGBtaPbqaH+9W4Nc1s97l7c=;
+        b=BJ8oRlkk/f+7UGOvzxK9z7TgYRjF9P9jwYbSyvNeMnRDC+cRzi6gmuFTiXhlBgyV5B
+         BXpUExJF6mBub8dHTPWn8sIk3LKBTxdwVzDsgl/KofC4u9yw+0McW/x9f690dg1bnsBS
+         Zvkeg8tkBZhQwP522lxTBKsYujmqn4Fj1xDFegzG5fICGwfIi9x5oLs6cbl2uklqAIxS
+         Cn6yXO8zzD2RTMEFYXAqem6z6/FuT9zR6hJAYReQI7j6LUNYugUfcxB1vlWhlX1TSoke
+         FyU5ac7XcnGNuVtiKI8wxQSPgVomMMk8886LrH6E1bvbJoJLDY6P7eaYx7P2MgJvRDs/
+         te9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=raC50H3i6Rq/gAHAxqx/HZulacRGFaQbhcZ8FwelmBA=;
-        b=B87M4Ofa49v5Aqo7Bbi87y0eNr3O2DzZVjwqm8r26zP9gfaH1y5p+rOXDTJIZsrVvY
-         inC/JpX1W9icgU0PrY3/VfOup2OkkQwXvMeFBqubuI3wtM6Z2WxR4kpnd7dvHgHTJVur
-         VqGQmQrmZqusDAqtkER3f+p0wKVrlffiaxgj9WtuKRV3bMy9zkGNIMahj3vbB1pxH8B7
-         G4XwbsM2zFbNHcRaNLXdWTdpb5/G5yzDRoQw019NzK3ikpt6uHp6fzByxr6KpB7R99ix
-         a21gxi/3IzLu3Nifyr7fgwQZL397R9eGLugCYPuXtLQ6eOm3//pq/1IGjwMbpF53aeHU
-         hl2w==
-X-Gm-Message-State: ABuFfojrl8pRVBY/f0JUdE1RrwA920ycE58dWbWjoYTbXH6/WcuyZ6sV
-        sktQ3GqLUDCYkMPGO52fFUVo8vP/sqRWKLPSEkyylA==
-X-Google-Smtp-Source: ACcGV60v7/w3eB+kQ97g4LWUsNzubSOQT0n1AQig+LFYRFwSxy9T/2jff56+8CmyJ17jG8NVjdUGDL0uXJR1c04ao0c=
-X-Received: by 2002:a25:b127:: with SMTP id g39-v6mr7812921ybj.483.1539094262749;
- Tue, 09 Oct 2018 07:11:02 -0700 (PDT)
+        bh=QZKEA8iSBgjK4ckiRdSruGBtaPbqaH+9W4Nc1s97l7c=;
+        b=daE5pQ1gx+08AKKVK+BRJCL5Hr4Qu2jTZFQyASkd79SJgWUuVwFyb2KN3Gf0v9DW7z
+         cI2Rqt2ideptRBDQvxtgvmIF+1gnmFGjMAXbbWxfB2j3uRi8WRXbkgbq1+54KxkeT9MW
+         QToVtBDdhRfcRUhOHa30jHBBNmcmw6OcEGTk/jxryvuiPrLTDerhkA4aVOrX0jRRi6P3
+         S5IrDftJMzh/wFvZog6tvTn4jX2gtURFtE2rgUFEwN8xplP6GDuR/UPhu5VPkb+iuNll
+         TF7aoW+OIzQaL5VwAi2NCzoa0gne1NQ3hBDdAvQANjO+sOLn6aFIlKxu+/wfGR9tinIo
+         /lEw==
+X-Gm-Message-State: ABuFfojVrQm5cMsCkZ829ha5b3wa+eZiYn2U/K1vSJusOevFcu/KiqeY
+        Bn0TfZjdOk9HgU/l7D5RkrEYjqHnw9HC9QugWKiOeA==
+X-Google-Smtp-Source: ACcGV60rgrbhoF/R4vQIFynZxsyd7gCB+SiHm02aVqzeMVYld1XBnL3oNSSryqAoSRPup6pEMcXYUG2cjueYkElAM2M=
+X-Received: by 2002:a24:6486:: with SMTP id t128-v6mr1861870itc.136.1539094341234;
+ Tue, 09 Oct 2018 07:12:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-4-git-send-email-firoz.khan@linaro.org> <CALxhOnj4r_MUuAa2zvkvxvhQttEvCZ98n2dA9d6CYyvVf2rB3g@mail.gmail.com>
- <20181008130301.GM32759@asgard.redhat.com> <CAK8P3a0eoCVBVOZs0VwybAnUw0OUoW4Z=NJYi8686EHKj076_Q@mail.gmail.com>
- <CALxhOniJZGNCP+Xw_9EF8hnUEG_AWwrnQ86Gbh7vAW6SrE8ykQ@mail.gmail.com>
- <CAK8P3a0D+GUzza--ETrT1NHGduTfFGVoCcSEn5LxvKTtMYisbA@mail.gmail.com>
- <CALxhOnhCRWsuz-2G-SovjfqkXpsRdTrG5Atz2X8s+T8u=GbUcA@mail.gmail.com> <CAK8P3a343PoH9WNH5ZYkNDTy=-ybGGsmvH9PbaSMmNo0Yob5eA@mail.gmail.com>
-In-Reply-To: <CAK8P3a343PoH9WNH5ZYkNDTy=-ybGGsmvH9PbaSMmNo0Yob5eA@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 9 Oct 2018 19:40:46 +0530
-Message-ID: <CALxhOnip15ztzMed59M3eKOdqdLJ2y8Yi5OGF3v__zApHzJkBQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] parisc: add system call table generation support
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     esyr@redhat.com, linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+References: <1539086718-4119-1-git-send-email-laoar.shao@gmail.com> <1539086718-4119-2-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1539086718-4119-2-git-send-email-laoar.shao@gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 9 Oct 2018 07:12:09 -0700
+Message-ID: <CANn89iL1BMCx3Mbsj3TijR3Srjji95q86px0k98r7JYJbwLzcw@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: forbid direct reclaim if MSG_DONTWAIT is
+ set in send path
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Tue, Oct 9, 2018 at 5:05 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> By default, the sk->sk_allocation is GFP_KERNEL, that means if there's
+> no enough memory it will do both direct reclaim and background reclaim.
+> If the size of system memory is great, the direct reclaim may cause great
+> latency spike.
+>
+> When we set MSG_DONTWAIT in send syscalls, we really don't want it to be
+> blocked, so we'd better clear __GFP_DIRECT_RECLAIM when allocate skb in the
+> send path. Then, it will return immediately if there's no enough memory to
+> be allocated, and then the appliation has a chance to do some other stuffs
+> instead of being blocked here.
+>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  net/ipv4/tcp.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 43ef83b..fe4f5ce 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1182,6 +1182,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>         bool process_backlog = false;
+>         bool zc = false;
+>         long timeo;
+> +       gfp_t gfp;
+>
+>         flags = msg->msg_flags;
+>
+> @@ -1255,6 +1256,9 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>         /* Ok commence sending. */
+>         copied = 0;
+>
+> +       gfp = flags & MSG_DONTWAIT ? sk->sk_allocation & ~__GFP_DIRECT_RECLAIM :
+> +             sk->sk_allocation;
+> +
+>  restart:
+>         mss_now = tcp_send_mss(sk, &size_goal, flags);
+>
+> @@ -1283,8 +1287,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>                         }
+>                         first_skb = tcp_rtx_and_write_queues_empty(sk);
+>                         linear = select_size(first_skb, zc);
+> -                       skb = sk_stream_alloc_skb(sk, linear, sk->sk_allocation,
+> -                                                 first_skb);
+> +                       skb = sk_stream_alloc_skb(sk, linear, gfp, first_skb);
+>                         if (!skb)
+>                                 goto wait_for_memory;
 
-On Tue, 9 Oct 2018 at 16:58, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Oct 9, 2018 at 11:36 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > On Tue, 9 Oct 2018 at 13:18, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > On Tue, Oct 9, 2018 at 7:35 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > > > On Mon, 8 Oct 2018 at 19:27, Arnd Bergmann <arnd@arndb.de> wrote:
-> > Let me bring another example from powerpc:
-> >
-> > syscall_32.tbl,
-> > 136     common  personality                     sys_personality
-> >          ppc64_personality   ---> 32-bit, compat (this is the current
-> > model which I implemented)
-> > syscall_64.tbl
-> > 136     common  personality                     ppc64_personality
-> >                                        ---> 64-bit
-> >
-> > I was wondering if the above table is right, how to arrange like parisc model?
->
-> I think this should simply be
->
-> 136    32 personality sys_personality      ppc64_personality
-> 136    64 personality ppc64_personality
->
-> Keeping the contents exactly the same as you have them
-> in the separate .tbl files, just merging the two files, and
-> splitting out the differences as 32/64 ABI.
->
-> > FYI, there are some implement missing for SPU in powerpc
-> >
-> > For your reference:
-> > SYSX_SPU(sys_newfstatat,sys_fstatat64,sys_fstatat64)
-> > SYSX_SPU(ppc64_personality,ppc64_personality,sys_personality)
->
-> This is a good question. The only difference between SPU and
-> native 64-bit is that some syscalls are not part of the SPU table
-> because those syscalls are impossible to implement on SPU.
->
-> Maybe we can solve this by allowing multiple comma-separated
-> ABIs in the table. On powerpc, 'common' would then mean
-> '32-bit, 64-bit and spu', while you could have various other
-> combinations:
->
-> /* always:32, 64 and SPU */
-> 1 common exit sys_exit
->
-> /* 32-bit only call */
-> 76  32    getrlimit      sys_old_getrlimit     compat_sys_old_getrlimit
->
-> /* 64-bit only, no SPU */
-> 363 64 switch_endian  sys_switch_endian
->
-> /* 32-bit and 64-bit, no SPU */
-> 198 32,64 pciconfig_read  sys_pciconfig_read
->
-> /* different pointers */
-> 136    32 personality sys_personality      ppc64_personality
-> 136    64,spu personality ppc64_personality
->
-> Would that work for you?
 
-At this point, yes. V2 patches for powerpc on my pipeline. I can bring
-the above points when I start creating those patches.
+How have you tested this patch exactly ?
 
-Thanks
-Firoz
->
->        Arnd
+Most of TCP payloads are added in page fragments, and you have not
+changed the page allocation fragments.
+
+Also, I do not see how an application will get future notifications
+that it can retry the failed system call ?
+How are you really going to deal with this in high performance applications ?
+
+I would rather prefer a socket setsockopt() to eventually be able to
+flip __GFP_DIRECT_RECLAIM in sk->sk_allocation,
+to not add all these tests in fast path, but honestly I do not see how
+applications can really make use of this.
