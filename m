@@ -2,104 +2,143 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19127C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD07C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB1DB214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:19:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1DB214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 420B72077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420B72077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJJAhL (ORCPT
+        id S1726982AbeJJAic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:37:11 -0400
-Received: from mga04.intel.com ([192.55.52.120]:21000 "EHLO mga04.intel.com"
+        Tue, 9 Oct 2018 20:38:32 -0400
+Received: from mga11.intel.com ([192.55.52.93]:62790 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbeJJAhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:37:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726434AbeJJAic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:38:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 10:19:10 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 10:20:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,361,1534834800"; 
-   d="scan'208";a="97501505"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.109]) ([10.24.14.109])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Oct 2018 10:18:48 -0700
-Subject: Re: [PATCH v2 07/11] arch/x86: Initialize the resource functions that
- are different
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005205512.29545-1-babu.moger@amd.com>
- <20181005205512.29545-8-babu.moger@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <1d3b42db-4651-2bb0-4632-a084d1df5991@intel.com>
-Date:   Tue, 9 Oct 2018 10:18:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+   d="scan'208";a="79802155"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga007.jf.intel.com with SMTP; 09 Oct 2018 10:20:28 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 09 Oct 2018 20:20:27 +0300
+Date:   Tue, 9 Oct 2018 20:20:27 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sean Paul <sean@poorly.run>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH v7 1/5] drm/atomic_helper: Disallow new modesets on
+ unregistered connectors
+Message-ID: <20181009172027.GK9144@intel.com>
+References: <20181008232437.5571-1-lyude@redhat.com>
+ <20181008232437.5571-2-lyude@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181005205512.29545-8-babu.moger@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181008232437.5571-2-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
-
-On 10/5/2018 1:55 PM, Moger, Babu wrote:
-> diff --git a/arch/x86/kernel/cpu/rdt_ctrlmondata.c b/arch/x86/kernel/cpu/rdt_ctrlmondata.c
-> index 812cc5c5e39e..ee3e8389d8d2 100644
-> --- a/arch/x86/kernel/cpu/rdt_ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/rdt_ctrlmondata.c
-> @@ -64,7 +64,7 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
->  	return true;
->  }
->  
-> -int parse_bw(struct rdt_parse_data *data, struct rdt_resource *r,
-> +int parse_bw_intel(struct rdt_parse_data *data, struct rdt_resource *r,
->  	     struct rdt_domain *d)
->  {
->  	unsigned long bw_val;
+On Mon, Oct 08, 2018 at 07:24:30PM -0400, Lyude Paul wrote:
+> With the exception of modesets which would switch the DPMS state of a
+> connector from on to off, we want to make sure that we disallow all
+> modesets which would result in enabling a new monitor or a new mode
+> configuration on a monitor if the connector for the display in question
+> is no longer registered. This allows us to stop userspace from trying to
+> enable new displays on connectors for an MST topology that were just
+> removed from the system, without preventing userspace from disabling
+> DPMS on those connectors.
 > 
+> Changes since v5:
+> - Fix typo in comment, nothing else
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 21 ++++++++++++++++++++-
+>  1 file changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 6f66777dca4b..e6a2cf72de5e 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -319,6 +319,26 @@ update_connector_routing(struct drm_atomic_state *state,
+>  		return 0;
+>  	}
+>  
+> +	crtc_state = drm_atomic_get_new_crtc_state(state,
+> +						   new_connector_state->crtc);
+> +	/*
+> +	 * For compatibility with legacy users, we want to make sure that
+> +	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
+> +	 * which would result in anything else must be considered invalid, to
+> +	 * avoid turning on new displays on dead connectors.
+> +	 *
+> +	 * Since the connector can be unregistered at any point during an
+> +	 * atomic check or commit, this is racy. But that's OK: all we care
+> +	 * about is ensuring that userspace can't do anything but shut off the
+> +	 * display on a connector that was destroyed after its been notified,
+> +	 * not before.
+> +	 */
+> +	if (!READ_ONCE(connector->registered) && crtc_state->active) {
+> +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
+> +				 connector->base.id, connector->name);
+> +		return -EINVAL;
+> +	}
 
-Just a small nit - could you please check that the alignment matches the
-open parenthesis as you have done with all the other similar changes in
-this patch?
+This broke my ilk (and presumably snb-bdw as well).
 
-Reinette
+[   25.593121] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing for [CONNECTOR:55:eDP-1]
+[   25.593131] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CONNECTOR:55:eDP-1] is not registered
+[   25.593133] ------------[ cut here ]------------
+[   25.593134] Could not determine valid watermarks for inherited state
+[   25.593212] WARNING: CPU: 0 PID: 3060 at ../drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x12cf/0x1980 [i915]
+
+Also I can't see that any of the repostings of this has undergone the
+full CI run (just BAT results are visible). Not sure why that is.
+Not that the full run would have caught this because we unwisely 
+load the module before the tests start. Which means any failures
+during initial readout/takeover will not be flagged :(
+
+> +
+>  	funcs = connector->helper_private;
+>  
+>  	if (funcs->atomic_best_encoder)
+> @@ -363,7 +383,6 @@ update_connector_routing(struct drm_atomic_state *state,
+>  
+>  	set_best_encoder(state, new_connector_state, new_encoder);
+>  
+> -	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
+>  	crtc_state->connectors_changed = true;
+>  
+>  	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Ville Syrjälä
+Intel
