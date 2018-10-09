@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BA3ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D227EECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B9F221479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C30A214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:31:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nanometrics.ca header.i=@nanometrics.ca header.b="l91QPysW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9F221479
+	dkim=pass (1024-bit key) header.d=nanometrics.ca header.i=@nanometrics.ca header.b="MtsFXtl9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C30A214DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=nanometrics.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeJJAt0 (ORCPT
+        id S1727346AbeJJAt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:49:26 -0400
-Received: from mail-it1-f182.google.com ([209.85.166.182]:56147 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJJAtZ (ORCPT
+        Tue, 9 Oct 2018 20:49:29 -0400
+Received: from mail-it1-f174.google.com ([209.85.166.174]:36928 "EHLO
+        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJJAt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:49:25 -0400
-Received: by mail-it1-f182.google.com with SMTP id c23-v6so3882954itd.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:31:23 -0700 (PDT)
+        Tue, 9 Oct 2018 20:49:28 -0400
+Received: by mail-it1-f174.google.com with SMTP id e74-v6so3928017ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nanometrics.ca; s=google;
         h=mime-version:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=zBWkjNzk11427+WOtJ7+ZWiA+nYFUEXDOZ1d8kfXQLU=;
-        b=l91QPysWTLf/MWgXCMChIdMqPjui8kU9g1RH49lnT569AyRBzfrnyGa0mootRdfhnM
-         +DLj3+xz5zljEsm1OZcIOEvG3ancXsDT0qiPWAEdNP1R2lJFabu8BqCK0KeZgGVqzXgD
-         QbenUXhojdykvnqIkDioZtT4FoSyRXluBwDGY=
+        bh=46CS8BnLz44Na4ecEMVYlapes34LPL9XvwCGT1TI3xE=;
+        b=MtsFXtl9PSeUy28cAGp7qjbtAadZ8/F9bZlYFhuZhyyNOYj0BWbz+XBJGLPzpvyaYr
+         Fm161/V4Idfo+Kx8sMn5bNATJH4mbR58SFRqukwcaJQktlkUvduseVoSBd5ca6RluUrb
+         X3fumUlQwSS2yJeEK0YRJu3Nx7TQKHhFKE6XI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:from:to:cc:subject:date:message-id
          :in-reply-to:references:in-reply-to:references;
-        bh=zBWkjNzk11427+WOtJ7+ZWiA+nYFUEXDOZ1d8kfXQLU=;
-        b=p5Cx2hCFXOZT3v6lILqYzbRjN2IWLsdHlwXspFOeeWMI2N61SggAS+QKmbCMoeeFrI
-         AREOeFvmecibgaQw3UujrDltzPLRh6O1VQ5vFY4EGmhM/GEretgt7mDsgp9PTIhspvYy
-         kWwtJ65E9yBgCVvzCs1STyqIuVsVrSGbXWpqMFSajQxXAlEFiginEq+ftWnZE3NiJCfJ
-         n/G6hPg3iSdo28U35RtOAGYSiBSWa+sRoo/E5+jJVstPyoCR4rnpVO7Wy5OiuFKpoo/K
-         mGw7UcYCVz/VuKyioVBbN+0/Rswq2ROnRzMvCcVEWm/txV6jpBPF/M04BknCxBWrySmc
-         30QQ==
-X-Gm-Message-State: ABuFfojOIGdXiPiBv9HHWFoCCFDWwlz2k1XMPYWDfurGeVGxMCfCjg27
-        i+RDlwP95NiU00va0mFKV2UGtjVyk+rfUpm/7ErdGp/6Ddb3KhFAcZYo+L2ylvI2wP4PXknmGrS
-        Ox4QsiRL3X1W7d4FJ
+        bh=46CS8BnLz44Na4ecEMVYlapes34LPL9XvwCGT1TI3xE=;
+        b=iy+mUWQc5xiqwdEz5Qhy4Wpkv30QkpFW1houc/SjZWRAk9UZyzyh+c+Sp3YzQfs3Ks
+         /bBBWNZppUlpMp9YobfTDsAu9A/kJFN/mJ1pWlkJLFIAhiz5fmdJx7kvMOJrU2cdtfKp
+         k+6K+Ddaec0gCs5XDWwlYmt0ove46u/fApfiZAs01Dyf0WntnArWiYrPaUjzNapHB3PF
+         xlDxH/g9JTBawtnrxFI2ugbF/WC0LzXYjxXGBDWtgbsRTwPns9nmFK/oaEJ69uJ3GNtJ
+         9sq4XiKnoFgyXBA5wcCcL26OyGcoKEuL398fZjhLu7aO0cUbEjUkiu8Q5RTuC3e2sxR6
+         Niww==
+X-Gm-Message-State: ABuFfohRALHVbm9CFcd3COAwkPgAa2wRkoXg3bwPNTdMg8Xcebj+kAoZ
+        XmiMpU6OGEtWQ7kpYQjPNFwos2g9r2rWDj3CqJ1nXdYoDjPPqYxTI+DrXDfPOcSAGOKXnqSlwuu
+        snCsquEYE9lfTzpN/
 MIME-Version: 1.0
-X-Google-Smtp-Source: ACcGV63VgDlbg9UGfze9Jl+qfXnZZ4XGn895Azyo4+O/yyEaarBj/AnfMdEkPJpA4otY9b72dn1G8g==
-X-Received: by 2002:a02:31d:: with SMTP id y29-v6mr23302372jad.98.1539106282589;
-        Tue, 09 Oct 2018 10:31:22 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV61VLVvah/KMPMDi11j3RlEvzPHQovlU+iNZHhVfJ1h1NvUdUMk1W0Ro5oIJjZZvqbRFK5Qjvw==
+X-Received: by 2002:a24:448:: with SMTP id 69-v6mr2222440itb.156.1539106285410;
+        Tue, 09 Oct 2018 10:31:25 -0700 (PDT)
 Received: from jamesnuss-kubuntu.nanometrics.ca ([72.142.127.130])
-        by smtp.gmail.com with ESMTPSA id c24-v6sm6321018iod.44.2018.10.09.10.31.20
+        by smtp.gmail.com with ESMTPSA id c24-v6sm6321018iod.44.2018.10.09.10.31.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 10:31:21 -0700 (PDT)
+        Tue, 09 Oct 2018 10:31:24 -0700 (PDT)
 From:   James Nuss <jamesnuss@nanometrics.ca>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] mmc-utils: interpret OPTIMAL_*_SIZE fields in extcsd
-Date:   Tue,  9 Oct 2018 13:31:05 -0400
-Message-Id: <4a016f761d388a989059467507f2bc948ba26c6c.1539103468.git.jamesnuss@nanometrics.ca>
+Subject: [PATCH 3/7] mmc-utils: interpret DEVICE_VERSION when printing extcsd
+Date:   Tue,  9 Oct 2018 13:31:07 -0400
+Message-Id: <f3e073c1088ac17d0d749cb095e1adda8edda00b.1539103468.git.jamesnuss@nanometrics.ca>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1539103468.git.jamesnuss@nanometrics.ca>
 References: <cover.1539103468.git.jamesnuss@nanometrics.ca>
@@ -75,61 +75,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-eMMC 5.0 introduced OPTIMAL_READ_SIZE, OPTIMAL_WRITE_SIZE and OPTIMAL
-TRIM_UNIT_SIZE fields in the extcsd
+The DEVICE_VERSION is a 2-byte field
 
-Interpret these fields when reading out the extcsd with human-readable
-results
+Print the individual byte values in hex
 
 Signed-off-by: James Nuss <jamesnuss@nanometrics.ca>
 ---
- mmc.h      |  3 +++
- mmc_cmds.c | 18 ++++++++++++++++++
- 2 files changed, 21 insertions(+)
+ mmc.h      | 2 ++
+ mmc_cmds.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
 diff --git a/mmc.h b/mmc.h
-index 285c1f1..5d8a7e3 100644
+index 86e209a..f25869e 100644
 --- a/mmc.h
 +++ b/mmc.h
-@@ -56,6 +56,9 @@
- #define EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_B 	269	/* RO */
- #define EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_A 	268	/* RO */
- #define EXT_CSD_PRE_EOL_INFO		267	/* RO */
-+#define EXT_CSD_OPTIMAL_READ_SIZE	266	/* RO */
-+#define EXT_CSD_OPTIMAL_WRITE_SIZE	265	/* RO */
-+#define EXT_CSD_OPTIMAL_TRIM_UNIT_SIZE	264	/* RO */
- #define EXT_CSD_FIRMWARE_VERSION	254	/* RO */
- #define EXT_CSD_CACHE_SIZE_3		252
- #define EXT_CSD_CACHE_SIZE_2		251
+@@ -59,6 +59,8 @@
+ #define EXT_CSD_OPTIMAL_READ_SIZE	266	/* RO */
+ #define EXT_CSD_OPTIMAL_WRITE_SIZE	265	/* RO */
+ #define EXT_CSD_OPTIMAL_TRIM_UNIT_SIZE	264	/* RO */
++#define EXT_CSD_DEVICE_VERSION_1	263	/* RO */
++#define EXT_CSD_DEVICE_VERSION_0	262	/* RO */
+ #define EXT_CSD_FIRMWARE_VERSION_7	261	/* RO */
+ #define EXT_CSD_FIRMWARE_VERSION_6	260	/* RO */
+ #define EXT_CSD_FIRMWARE_VERSION_5	259	/* RO */
 diff --git a/mmc_cmds.c b/mmc_cmds.c
-index 44623fe..97ea111 100644
+index 45aa4c0..756aa2f 100644
 --- a/mmc_cmds.c
 +++ b/mmc_cmds.c
-@@ -1766,6 +1766,24 @@ int do_read_extcsd(int nargs, char **argv)
- 			ext_csd[EXT_CSD_DEVICE_LIFE_TIME_EST_TYP_B]);
- 		printf("eMMC Pre EOL information [EXT_CSD_PRE_EOL_INFO]: 0x%02x\n",
- 			ext_csd[EXT_CSD_PRE_EOL_INFO]);
-+
-+		reg = ext_csd[EXT_CSD_OPTIMAL_READ_SIZE];
-+		printf("Minimum optimal read unit size (for the device) "
-+			"[OPTIMAL_READ_SIZE]: 0x%02x\n", reg);
-+		printf(" i.e. %lu KiB\n", reg * 4UL);
-+
-+		reg = ext_csd[EXT_CSD_OPTIMAL_WRITE_SIZE];
-+		printf("Minimum optimal write unit size (for the device) "
-+			"[OPTIMAL_WRITE_SIZE]: 0x%02x\n", reg);
-+		printf(" i.e. %lu KiB\n", reg * 4UL);
-+
-+		reg = ext_csd[EXT_CSD_OPTIMAL_TRIM_UNIT_SIZE];
-+		printf("Minimum optimal trim unit size (for the device) "
-+			"[OPTIMAL_TRIM_UNIT_SIZE]: 0x%02x\n", reg);
-+		if (reg == 0 || reg > 21)
-+			printf("error: invalid OPTIMAL_TRIM_UNIT_SIZE\n");
-+		else
-+			printf(" i.e. %lu KiB\n", (1UL << (reg - 1)) * 4);
+@@ -1758,6 +1758,9 @@ int do_read_extcsd(int nargs, char **argv)
  	}
  
- 	if (ext_csd_rev >= 8) {
+ 	if (ext_csd_rev >= 7) {
++		printf("Device Version: 0x%02x%02x\n",
++			ext_csd[EXT_CSD_DEVICE_VERSION_1],
++			ext_csd[EXT_CSD_DEVICE_VERSION_0]);
+ 		printf("Firmware Version: 0x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+ 			ext_csd[EXT_CSD_FIRMWARE_VERSION_7],
+ 			ext_csd[EXT_CSD_FIRMWARE_VERSION_6],
 -- 
 2.7.4
 
