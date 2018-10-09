@@ -2,95 +2,103 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABECBC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE709C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1A021479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:30:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="srKH15O6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1A021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id B49D1205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:30:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49D1205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJIPpq (ORCPT
+        id S1726683AbeJIPqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:45:46 -0400
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:51752 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeJIPpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:45:46 -0400
-Received: by mail-wm1-f46.google.com with SMTP id 143-v6so914631wmf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 01:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=jrlqW5a/v5xDBBATvChyRMwYpWeWeEXFhinRbKx3A+k=;
-        b=srKH15O6VKpWf239rwPfBo8BdbS0x4agpUQobW9wHePZHmcHC1/gWibyNkTMRQkIJX
-         RFBhI4g7EMLyeqg7zgv5tqPec9rrhwEGXIkfe8cGRlZqicq9S6QNXpIhVu7Fi2aHx2wg
-         dqS2a7fYzBQrGOoCUiq+VHnIs8zCF1SD7btHHFtaqLzKPa/U4T9D9waGO58XQEMYernI
-         Nn5YR2yCzYKRKo5B6hc96MW/B3GMuG4C/nN/7p1HfXdsJMSh+oo1hYyPmwKToOU7YOM9
-         UknICKkMbMXUMUIKz77l0HpXvlyG+zoSWqOSCarZVsog+rk20Omt234+0dN+0eHNJztw
-         SVCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=jrlqW5a/v5xDBBATvChyRMwYpWeWeEXFhinRbKx3A+k=;
-        b=QLaFi81WCErdYa1NhWfjXBkkTAKkZH9oKuc6SAUYuykURmzeyf+DUi8CykNa9GTlvt
-         JKfE/FIf0E1kBE5UEAW++kN37t4FxABBfP/UmiSeG5qWBvZiKyLTfA6DT+Egn3NcyRZP
-         qBo1922TDy2iNYg7yex8QAfAmGKsXxXEdsxh7uoltOMpo/JX31OsipU56XfY4lW6Nvq/
-         WNFy1cu+luE73IdebG/h5Ddc5BxISfTWp0NqzX4tExYenss8wwxenCqlvTihM6MT1CaD
-         6EJI7lm8Gn432hwmlPKD6FZPepXsV+be2isFf8BpWj25xYv6/aaQm5+OkAOnOlyzsh2+
-         O7dw==
-X-Gm-Message-State: ABuFfogIYhHIXPFEPNWsLf6gvG0h53oFQdX0fEzYLMyZaeaVTg+crHEe
-        d3zlBUjTtN3d1xj7wC174bvfAw==
-X-Google-Smtp-Source: ACcGV63Vx/gqsF6aNEIu1XstsfBCYUx7LLbTfqx0VcHJEHX+kwlPRkT7s2o2ue9OlNR8vpcncVHekw==
-X-Received: by 2002:a1c:7f83:: with SMTP id a125-v6mr1108687wmd.23.1539073798565;
-        Tue, 09 Oct 2018 01:29:58 -0700 (PDT)
-Received: from localhost (AStLambert-681-1-25-242.w90-86.abo.wanadoo.fr. [90.86.145.242])
-        by smtp.googlemail.com with ESMTPSA id c21-v6sm1325272wmh.26.2018.10.09.01.29.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 01:29:57 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] arm64: dts: meson: s400: emmc updates
-Organization: BayLibre
-References: <20181002084341.5487-1-jbrunet@baylibre.com>
-Date:   Tue, 09 Oct 2018 10:29:56 +0200
-In-Reply-To: <20181002084341.5487-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Tue, 2 Oct 2018 10:43:39 +0200")
-Message-ID: <7hbm834j5n.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 9 Oct 2018 11:46:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42906 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbeJIPqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:46:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7A3D3B03E;
+        Tue,  9 Oct 2018 08:30:26 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 73A4F1E3615; Tue,  9 Oct 2018 10:30:25 +0200 (CEST)
+Date:   Tue, 9 Oct 2018 10:30:25 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
+ versions
+Message-ID: <20181009083025.GE11150@quack2.suse.cz>
+References: <20181008211623.30796-1-jhubbard@nvidia.com>
+ <20181008211623.30796-3-jhubbard@nvidia.com>
+ <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Mon 08-10-18 17:14:42, Andrew Morton wrote:
+> On Mon,  8 Oct 2018 14:16:22 -0700 john.hubbard@gmail.com wrote:
+> > +		put_user_page(pages[index]);
+> > +	}
+> > +}
+> > +
+> > +static inline void put_user_pages(struct page **pages,
+> > +				  unsigned long npages)
+> > +{
+> > +	unsigned long index;
+> > +
+> > +	for (index = 0; index < npages; index++)
+> > +		put_user_page(pages[index]);
+> > +}
+> > +
+> 
+> Otherwise looks OK.  Ish.  But it would be nice if that comment were to
+> explain *why* get_user_pages() pages must be released with
+> put_user_page().
 
-> This patchset adds the emmc pwrseq to the emmc node and disable the device
-> by default, since eMMC is not the default option for this board.
->
-> Jerome Brunet (2):
->   arm64: dts: meson-axg: s400: add missing emmc pwrseq
->   arm64: dts: meson-axg: s400: disable emmc
+The reason is that eventually we want to track reference from GUP
+separately but you're right that it would be good to have a comment about
+that somewhere.
 
-Appled to v4.20/dt64.
+> Also, maintainability.  What happens if someone now uses put_page() by
+> mistake?  Kernel fails in some mysterious fashion?  How can we prevent
+> this from occurring as code evolves?  Is there a cheap way of detecting
+> this bug at runtime?
 
-Thanks.
+The same will happen as with any other reference counting bug - the special
+user reference will leak. It will be pretty hard to debug I agree. I was
+thinking about whether we could provide some type safety against such bugs
+such as get_user_pages() not returning struct page pointers but rather some
+other special type but it would result in a big amount of additional churn
+as we'd have to propagate this different type e.g. through the IO path so
+that IO completion routines could properly call put_user_pages(). So I'm
+not sure it's really worth it.
 
-Kevin
-
-P.S.  Looks like I forgot to reply when I applied these, but these are
-      already submitted to arm-soc and merged.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
