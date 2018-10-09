@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB893C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFFFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82BD7214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E258214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="iqNbz1/k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82BD7214C5
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Zygh9Xj0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E258214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJISaB (ORCPT
+        id S1727094AbeJISaF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:30:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41370 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeJISaB (ORCPT
+        Tue, 9 Oct 2018 14:30:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37399 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbeJISaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:30:01 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m77-v6so670206pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:34 -0700 (PDT)
+        Tue, 9 Oct 2018 14:30:04 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c10-v6so655849pgq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TW5vGK+GFEiT3jlXEL3T0mYgtavATsFHq+hChjJApoQ=;
-        b=iqNbz1/k4U9j/nzuLSp5mew1KF8jnStG2XqH8+gk4cqZlBP+DJL1FHEpXHD58N7E34
-         WmiQJQqZB6tUEKHJgMoLhapHOHFp6Ueo8ObxirpOumjjLM3cdXxlOHmPGDktWgnSHYgH
-         mPvXGDkYH0KLBMOPicJMVAAjvg6C3l1tL0ftAjeIYtETW58aHfF5ZLcrq7AhlpChtA5l
-         3O+jmeqBiUTEtmtecSFvYRb+LaGeorrNzBtJVZyoj2qHcNoVRFbjn4mOU2MWeB8gxrmZ
-         QLNH8/ymrnM24epv5377upxiLrYv7MAOm78faw9E2AX6xxX5ohwXjIrgI5D8HkMcCjon
-         JwzA==
+        bh=7UHDRbJu2krwJl4P+tfllamaJ+ZZlOnQhWkW8p/OkPA=;
+        b=Zygh9Xj0fLAAKKW3scbSdrGDUl1RZPYgYGsXsWmI2QnplFsMHbdyYMw2lJ01DWBua/
+         evtXql2GxHjgmfel/HmH0UHp7SO/TRODjaumI0aKpIZ3g3a2+o0ijoB5MdO7ruR20+0+
+         SHuXUmXRYcWE/jJmCK+3VDdU0ArhJB0h2XK0xQpbeGB/XvDW3T98/8B+hSFAcmDGhmJB
+         MEbGE7Hzhv/LLNq972UNpMJ5JGXQtDvoIAI3UV0AWzQztSymX7bY5u9z11itGgT73Dep
+         vX1b4U+bh3qo5cx3EjnnFXpDFAjHYE9DNOreyF5DC0x0x+iHU1CZRmnBbj9SclqNJ/OS
+         6zrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TW5vGK+GFEiT3jlXEL3T0mYgtavATsFHq+hChjJApoQ=;
-        b=bcutNZHJ0I7f4fYAxCx7Nyvtbek1DdYQIQyNPUUuHNIJMm1SP8Q6paN40FT/0nK0kU
-         isQEwnQCWQ4xMGqo2/4sNBYy5V9pyJdf1hZgBsid4Lm21rB80OAtqUDBkko0OZtY7DTh
-         T4DbOjr7u51IAnMYq1ALdkDHyyhGCecOIRuP0LBozN9g1CzNF3bLX7BTsmN2BK10TbrI
-         yplQYaKVfSGA7q8irfmEW4y6Lq7q8x6ohEMtHcBs8+9qp1HArvD6yTbSj/1b6+xtYtVq
-         on78Cp84PEY5QaFNItrEhudWQ+cY8CdIktU6W3KVNw8eT7y1bU4WiWrxMp3Piq0TTZ84
-         8bJA==
-X-Gm-Message-State: ABuFfohtAQR1Vt5ZBaoXk+fsZOPR/mhnpWANz8sFdFxVZlRoFj3EEoMx
-        +JyOqLGVP/Jq5Du8XYsSDD8t2w==
-X-Google-Smtp-Source: ACcGV62AgcT94bFOJ7abZdGKfkSd37/UL6PRNjP/sKRdv+BGkuHPja/HnN3SoZjfT5GdnUzX6bfq5A==
-X-Received: by 2002:a62:8490:: with SMTP id k138-v6mr29467189pfd.177.1539083614234;
-        Tue, 09 Oct 2018 04:13:34 -0700 (PDT)
+        bh=7UHDRbJu2krwJl4P+tfllamaJ+ZZlOnQhWkW8p/OkPA=;
+        b=FMIOpRHieQ0Z4F0aBHnQAAeJxAJUxF1btRX5W8ky4z7uMFTXLihSykhHYcp28fOXrO
+         bzzLejYldGapNtMo3juPc+lEO8PeSSaw4Z+yz4TCLXRV4gTil18Ye98qD5CrJMyXNUA9
+         csT7n1qOjC0UkeY5gFevFBrm6hHUDOiVB8pElRyrQWgurRxCEYro7EBfK7GEiomGtyRN
+         tDGYmE3QHiM1NWA/FfCNyk2u6Qx7CBky6ZBc1iFFqNv3hwSIAc4PyFKM6YuR3Ffy8/pC
+         HZhZrDQzFcmbDnGnmv9AlbqMvHrrXcZcJAXc2H5q7eWtqASugJMoi6guLY2kdyBuJMFl
+         iRFw==
+X-Gm-Message-State: ABuFfoizXRU5Iz4OGmuUi+eJzFqIhlYiAU1AC6g7eeLBsWgQfoXt5fnY
+        EKOigdhRe9brxmriX9H25abEyg==
+X-Google-Smtp-Source: ACcGV615ZRt8m0ayIa4FfR9Te0CN99oyoibLkVNmnAh0FVQvIn2gaZfSfnkEwXZh3bRklWspt1EAHg==
+X-Received: by 2002:a63:a40a:: with SMTP id c10-v6mr25504851pgf.140.1539083617223;
+        Tue, 09 Oct 2018 04:13:37 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.31
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:13:33 -0700 (PDT)
+        Tue, 09 Oct 2018 04:13:36 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 06/45] lightnvm: move bad block and chunk state logic to core
-Date:   Tue,  9 Oct 2018 13:11:36 +0200
-Message-Id: <20181009111215.7653-7-mb@lightnvm.io>
+Subject: [GIT PULL 07/45] lightnvm: pblk: unify vector max req constants
+Date:   Tue,  9 Oct 2018 13:11:37 +0200
+Message-Id: <20181009111215.7653-8-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -77,637 +77,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pblk implements two data paths for recovery line state. One for 1.2
-and another for 2.0, instead of having pblk implement these, combine
-them in the core to reduce complexity and make available to other
-targets.
+Both NVM_MAX_VLBA and PBLK_MAX_REQ_ADDRS define how many LBAs that
+are available in a vector command. pblk uses them interchangeably
+in its implementation. Use NVM_MAX_VLBA as the main one and remove
+usages of PBLK_MAX_REQ_ADDRS.
 
-The new interface will adhere to the 2.0 chunk definition,
-including managing open chunks with an active write pointer. To provide
-this interface, a 1.2 device recovers the state of the chunks by
-manually detecting if a chunk is either free/open/close/offline, and if
-open, scanning the flash pages sequentially to find the next writeable
-page. This process takes on average ~10 seconds on a device with 64 dies,
-1024 blocks and 60us read access time. The process can be parallelized
-but is left out for maintenance simplicity, as the 1.2 specification is
-deprecated. For 2.0 devices, the logic is maintained internally in the
-drive and retrieved through the 2.0 interface.
+Also remove the power representation that only has one user, and
+instead calculate it at runtime.
 
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Reviewed-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/core.c      | 309 ++++++++++++++++++++++++++++-------
- drivers/lightnvm/pblk-core.c |   6 +-
- drivers/lightnvm/pblk-init.c | 116 +------------
- drivers/lightnvm/pblk.h      |   2 +-
- drivers/nvme/host/lightnvm.c |   4 +-
- include/linux/lightnvm.h     |  15 +-
- 6 files changed, 265 insertions(+), 187 deletions(-)
+ drivers/lightnvm/pblk-init.c |  6 ------
+ drivers/lightnvm/pblk-read.c |  6 +++---
+ drivers/lightnvm/pblk-rl.c   |  4 ++--
+ drivers/lightnvm/pblk.h      | 10 ++++------
+ 4 files changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 964352720a03..8df188e0767e 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -717,46 +717,6 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
- 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
- }
- 
--int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
--		struct ppa_addr ppa, int nchks)
--{
--	struct nvm_dev *dev = tgt_dev->parent;
--
--	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
--
--	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
--						(sector_t)ppa.ppa, nchks);
--}
--EXPORT_SYMBOL(nvm_get_chunk_meta);
--
--int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
--		       int nr_ppas, int type)
--{
--	struct nvm_dev *dev = tgt_dev->parent;
--	struct nvm_rq rqd;
--	int ret;
--
--	if (nr_ppas > NVM_MAX_VLBA) {
--		pr_err("nvm: unable to update all blocks atomically\n");
--		return -EINVAL;
--	}
--
--	memset(&rqd, 0, sizeof(struct nvm_rq));
--
--	nvm_set_rqd_ppalist(tgt_dev, &rqd, ppas, nr_ppas);
--	nvm_rq_tgt_to_dev(tgt_dev, &rqd);
--
--	ret = dev->ops->set_bb_tbl(dev, &rqd.ppa_addr, rqd.nr_ppas, type);
--	nvm_free_rqd_ppalist(tgt_dev, &rqd);
--	if (ret) {
--		pr_err("nvm: failed bb mark\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL(nvm_set_tgt_bb_tbl);
--
- static int nvm_set_flags(struct nvm_geo *geo, struct nvm_rq *rqd)
- {
- 	int flags = 0;
-@@ -830,27 +790,159 @@ void nvm_end_io(struct nvm_rq *rqd)
- }
- EXPORT_SYMBOL(nvm_end_io);
- 
-+static int nvm_submit_io_sync_raw(struct nvm_dev *dev, struct nvm_rq *rqd)
-+{
-+	if (!dev->ops->submit_io_sync)
-+		return -ENODEV;
-+
-+	rqd->flags = nvm_set_flags(&dev->geo, rqd);
-+
-+	return dev->ops->submit_io_sync(dev, rqd);
-+}
-+
-+static int nvm_bb_chunk_sense(struct nvm_dev *dev, struct ppa_addr ppa)
-+{
-+	struct nvm_rq rqd = { NULL };
-+	struct bio bio;
-+	struct bio_vec bio_vec;
-+	struct page *page;
-+	int ret;
-+
-+	page = alloc_page(GFP_KERNEL);
-+	if (!page)
-+		return -ENOMEM;
-+
-+	bio_init(&bio, &bio_vec, 1);
-+	bio_add_page(&bio, page, PAGE_SIZE, 0);
-+	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
-+
-+	rqd.bio = &bio;
-+	rqd.opcode = NVM_OP_PREAD;
-+	rqd.is_seq = 1;
-+	rqd.nr_ppas = 1;
-+	rqd.ppa_addr = generic_to_dev_addr(dev, ppa);
-+
-+	ret = nvm_submit_io_sync_raw(dev, &rqd);
-+	if (ret)
-+		return ret;
-+
-+	__free_page(page);
-+
-+	return rqd.error;
-+}
-+
- /*
-- * folds a bad block list from its plane representation to its virtual
-- * block representation. The fold is done in place and reduced size is
-- * returned.
-+ * Scans a 1.2 chunk first and last page to determine if its state.
-+ * If the chunk is found to be open, also scan it to update the write
-+ * pointer.
-+ */
-+static int nvm_bb_chunk_scan(struct nvm_dev *dev, struct ppa_addr ppa,
-+			     struct nvm_chk_meta *meta)
-+{
-+	struct nvm_geo *geo = &dev->geo;
-+	int ret, pg, pl;
-+
-+	/* sense first page */
-+	ret = nvm_bb_chunk_sense(dev, ppa);
-+	if (ret < 0) /* io error */
-+		return ret;
-+	else if (ret == 0) /* valid data */
-+		meta->state = NVM_CHK_ST_OPEN;
-+	else if (ret > 0) {
-+		/*
-+		 * If empty page, the chunk is free, else it is an
-+		 * actual io error. In that case, mark it offline.
-+		 */
-+		switch (ret) {
-+		case NVM_RSP_ERR_EMPTYPAGE:
-+			meta->state = NVM_CHK_ST_FREE;
-+			return 0;
-+		case NVM_RSP_ERR_FAILCRC:
-+		case NVM_RSP_ERR_FAILECC:
-+		case NVM_RSP_WARN_HIGHECC:
-+			meta->state = NVM_CHK_ST_OPEN;
-+			goto scan;
-+		default:
-+			return -ret; /* other io error */
-+		}
-+	}
-+
-+	/* sense last page */
-+	ppa.g.pg = geo->num_pg - 1;
-+	ppa.g.pl = geo->num_pln - 1;
-+
-+	ret = nvm_bb_chunk_sense(dev, ppa);
-+	if (ret < 0) /* io error */
-+		return ret;
-+	else if (ret == 0) { /* Chunk fully written */
-+		meta->state = NVM_CHK_ST_CLOSED;
-+		meta->wp = geo->clba;
-+		return 0;
-+	} else if (ret > 0) {
-+		switch (ret) {
-+		case NVM_RSP_ERR_EMPTYPAGE:
-+		case NVM_RSP_ERR_FAILCRC:
-+		case NVM_RSP_ERR_FAILECC:
-+		case NVM_RSP_WARN_HIGHECC:
-+			meta->state = NVM_CHK_ST_OPEN;
-+			break;
-+		default:
-+			return -ret; /* other io error */
-+		}
-+	}
-+
-+scan:
-+	/*
-+	 * chunk is open, we scan sequentially to update the write pointer.
-+	 * We make the assumption that targets write data across all planes
-+	 * before moving to the next page.
-+	 */
-+	for (pg = 0; pg < geo->num_pg; pg++) {
-+		for (pl = 0; pl < geo->num_pln; pl++) {
-+			ppa.g.pg = pg;
-+			ppa.g.pl = pl;
-+
-+			ret = nvm_bb_chunk_sense(dev, ppa);
-+			if (ret < 0) /* io error */
-+				return ret;
-+			else if (ret == 0) {
-+				meta->wp += geo->ws_min;
-+			} else if (ret > 0) {
-+				switch (ret) {
-+				case NVM_RSP_ERR_EMPTYPAGE:
-+					return 0;
-+				case NVM_RSP_ERR_FAILCRC:
-+				case NVM_RSP_ERR_FAILECC:
-+				case NVM_RSP_WARN_HIGHECC:
-+					meta->wp += geo->ws_min;
-+					break;
-+				default:
-+					return -ret; /* other io error */
-+				}
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * folds a bad block list from its plane representation to its
-+ * chunk representation.
-  *
-- * If any of the planes status are bad or grown bad block, the virtual block
-- * is marked bad. If not bad, the first plane state acts as the block state.
-+ * If any of the planes status are bad or grown bad, the chunk is marked
-+ * offline. If not bad, the first plane state acts as the chunk state.
-  */
--int nvm_bb_tbl_fold(struct nvm_dev *dev, u8 *blks, int nr_blks)
-+static int nvm_bb_to_chunk(struct nvm_dev *dev, struct ppa_addr ppa,
-+			   u8 *blks, int nr_blks, struct nvm_chk_meta *meta)
- {
- 	struct nvm_geo *geo = &dev->geo;
--	int blk, offset, pl, blktype;
--
--	if (nr_blks != geo->num_chk * geo->pln_mode)
--		return -EINVAL;
-+	int ret, blk, pl, offset, blktype;
- 
- 	for (blk = 0; blk < geo->num_chk; blk++) {
- 		offset = blk * geo->pln_mode;
- 		blktype = blks[offset];
- 
--		/* Bad blocks on any planes take precedence over other types */
- 		for (pl = 0; pl < geo->pln_mode; pl++) {
- 			if (blks[offset + pl] &
- 					(NVM_BLK_T_BAD|NVM_BLK_T_GRWN_BAD)) {
-@@ -859,23 +951,124 @@ int nvm_bb_tbl_fold(struct nvm_dev *dev, u8 *blks, int nr_blks)
- 			}
- 		}
- 
--		blks[blk] = blktype;
-+		ppa.g.blk = blk;
-+
-+		meta->wp = 0;
-+		meta->type = NVM_CHK_TP_W_SEQ;
-+		meta->wi = 0;
-+		meta->slba = generic_to_dev_addr(dev, ppa).ppa;
-+		meta->cnlb = dev->geo.clba;
-+
-+		if (blktype == NVM_BLK_T_FREE) {
-+			ret = nvm_bb_chunk_scan(dev, ppa, meta);
-+			if (ret)
-+				return ret;
-+		} else {
-+			meta->state = NVM_CHK_ST_OFFLINE;
-+		}
-+
-+		meta++;
- 	}
- 
--	return geo->num_chk;
-+	return 0;
-+}
-+
-+static int nvm_get_bb_meta(struct nvm_dev *dev, sector_t slba,
-+			   int nchks, struct nvm_chk_meta *meta)
-+{
-+	struct nvm_geo *geo = &dev->geo;
-+	struct ppa_addr ppa;
-+	u8 *blks;
-+	int ch, lun, nr_blks;
-+	int ret;
-+
-+	ppa.ppa = slba;
-+	ppa = dev_to_generic_addr(dev, ppa);
-+
-+	if (ppa.g.blk != 0)
-+		return -EINVAL;
-+
-+	if ((nchks % geo->num_chk) != 0)
-+		return -EINVAL;
-+
-+	nr_blks = geo->num_chk * geo->pln_mode;
-+
-+	blks = kmalloc(nr_blks, GFP_KERNEL);
-+	if (!blks)
-+		return -ENOMEM;
-+
-+	for (ch = ppa.g.ch; ch < geo->num_ch; ch++) {
-+		for (lun = ppa.g.lun; lun < geo->num_lun; lun++) {
-+			struct ppa_addr ppa_gen, ppa_dev;
-+
-+			if (!nchks)
-+				goto done;
-+
-+			ppa_gen.ppa = 0;
-+			ppa_gen.g.ch = ch;
-+			ppa_gen.g.lun = lun;
-+			ppa_dev = generic_to_dev_addr(dev, ppa_gen);
-+
-+			ret = dev->ops->get_bb_tbl(dev, ppa_dev, blks);
-+			if (ret)
-+				goto done;
-+
-+			ret = nvm_bb_to_chunk(dev, ppa_gen, blks, nr_blks,
-+									meta);
-+			if (ret)
-+				goto done;
-+
-+			meta += geo->num_chk;
-+			nchks -= geo->num_chk;
-+		}
-+	}
-+done:
-+	kfree(blks);
-+	return ret;
- }
--EXPORT_SYMBOL(nvm_bb_tbl_fold);
- 
--int nvm_get_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr ppa,
--		       u8 *blks)
-+int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct ppa_addr ppa,
-+		       int nchks, struct nvm_chk_meta *meta)
- {
- 	struct nvm_dev *dev = tgt_dev->parent;
- 
- 	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
- 
--	return dev->ops->get_bb_tbl(dev, ppa, blks);
-+	if (dev->geo.version == NVM_OCSSD_SPEC_12)
-+		return nvm_get_bb_meta(dev, (sector_t)ppa.ppa, nchks, meta);
-+
-+	return dev->ops->get_chk_meta(dev, (sector_t)ppa.ppa, nchks, meta);
- }
--EXPORT_SYMBOL(nvm_get_tgt_bb_tbl);
-+EXPORT_SYMBOL_GPL(nvm_get_chunk_meta);
-+
-+int nvm_set_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
-+		       int nr_ppas, int type)
-+{
-+	struct nvm_dev *dev = tgt_dev->parent;
-+	struct nvm_rq rqd;
-+	int ret;
-+
-+	if (dev->geo.version == NVM_OCSSD_SPEC_20)
-+		return 0;
-+
-+	if (nr_ppas > NVM_MAX_VLBA) {
-+		pr_err("nvm: unable to update all blocks atomically\n");
-+		return -EINVAL;
-+	}
-+
-+	memset(&rqd, 0, sizeof(struct nvm_rq));
-+
-+	nvm_set_rqd_ppalist(tgt_dev, &rqd, ppas, nr_ppas);
-+	nvm_rq_tgt_to_dev(tgt_dev, &rqd);
-+
-+	ret = dev->ops->set_bb_tbl(dev, &rqd.ppa_addr, rqd.nr_ppas, type);
-+	nvm_free_rqd_ppalist(tgt_dev, &rqd);
-+	if (ret)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(nvm_set_chunk_meta);
- 
- static int nvm_core_init(struct nvm_dev *dev)
- {
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 72de7456845b..e0b513d07e14 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -27,7 +27,7 @@ static void pblk_line_mark_bb(struct work_struct *work)
- 	struct ppa_addr *ppa = line_ws->priv;
- 	int ret;
- 
--	ret = nvm_set_tgt_bb_tbl(dev, ppa, 1, NVM_BLK_T_GRWN_BAD);
-+	ret = nvm_set_chunk_meta(dev, ppa, 1, NVM_BLK_T_GRWN_BAD);
- 	if (ret) {
- 		struct pblk_line *line;
- 		int pos;
-@@ -110,7 +110,7 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
-  *
-  * The caller is responsible for freeing the returned structure
-  */
--struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk)
-+struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -126,7 +126,7 @@ struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk)
- 	if (!meta)
- 		return ERR_PTR(-ENOMEM);
- 
--	ret = nvm_get_chunk_meta(dev, meta, ppa, geo->all_chunks);
-+	ret = nvm_get_chunk_meta(dev, ppa, geo->all_chunks, meta);
- 	if (ret) {
- 		kfree(meta);
- 		return ERR_PTR(-EIO);
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 039f62d05e84..53bd52114aee 100644
+index 53bd52114aee..9119c64d6f62 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -540,67 +540,6 @@ static void pblk_lines_free(struct pblk *pblk)
- 	kfree(pblk->lines);
- }
+@@ -376,12 +376,6 @@ static int pblk_core_init(struct pblk *pblk)
+ 	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
+ 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
  
--static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
--			   u8 *blks, int nr_blks)
--{
--	struct ppa_addr ppa;
--	int ret;
--
--	ppa.ppa = 0;
--	ppa.g.ch = rlun->bppa.g.ch;
--	ppa.g.lun = rlun->bppa.g.lun;
--
--	ret = nvm_get_tgt_bb_tbl(dev, ppa, blks);
--	if (ret)
--		return ret;
--
--	nr_blks = nvm_bb_tbl_fold(dev->parent, blks, nr_blks);
--	if (nr_blks < 0)
--		return -EIO;
--
--	return 0;
--}
--
--static void *pblk_bb_get_meta(struct pblk *pblk)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--	u8 *meta;
--	int i, nr_blks, blk_per_lun;
--	int ret;
--
--	blk_per_lun = geo->num_chk * geo->pln_mode;
--	nr_blks = blk_per_lun * geo->all_luns;
--
--	meta = kmalloc(nr_blks, GFP_KERNEL);
--	if (!meta)
--		return ERR_PTR(-ENOMEM);
--
--	for (i = 0; i < geo->all_luns; i++) {
--		struct pblk_lun *rlun = &pblk->luns[i];
--		u8 *meta_pos = meta + i * blk_per_lun;
--
--		ret = pblk_bb_get_tbl(dev, rlun, meta_pos, blk_per_lun);
--		if (ret) {
--			kfree(meta);
--			return ERR_PTR(-EIO);
--		}
+-	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
+-		pblk_err(pblk, "vector list too big(%u > %u)\n",
+-				pblk->max_write_pgs, PBLK_MAX_REQ_ADDRS);
+-		return -EINVAL;
 -	}
 -
--	return meta;
--}
--
--static void *pblk_chunk_get_meta(struct pblk *pblk)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--
--	if (geo->version == NVM_OCSSD_SPEC_12)
--		return pblk_bb_get_meta(pblk);
--	else
--		return pblk_chunk_get_info(pblk);
--}
--
- static int pblk_luns_init(struct pblk *pblk)
+ 	pblk->pad_dist = kcalloc(pblk->min_write_pgs - 1, sizeof(atomic64_t),
+ 								GFP_KERNEL);
+ 	if (!pblk->pad_dist)
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index 07b7f82c7595..9c61c19be5dc 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -43,7 +43,7 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 				 unsigned long *read_bitmap)
  {
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -699,51 +638,7 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
- 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
- }
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	struct ppa_addr ppas[PBLK_MAX_REQ_ADDRS];
++	struct ppa_addr ppas[NVM_MAX_VLBA];
+ 	int nr_secs = rqd->nr_ppas;
+ 	bool advanced_bio = false;
+ 	int i, j = 0;
+@@ -450,7 +450,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	int ret = NVM_IO_ERR;
  
--static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
--				   void *chunk_meta)
--{
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_meta *lm = &pblk->lm;
--	int i, chk_per_lun, nr_bad_chks = 0;
--
--	chk_per_lun = geo->num_chk * geo->pln_mode;
--
--	for (i = 0; i < lm->blk_per_line; i++) {
--		struct pblk_lun *rlun = &pblk->luns[i];
--		struct nvm_chk_meta *chunk;
--		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
--		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
--
--		chunk = &line->chks[pos];
--
--		/*
--		 * In 1.2 spec. chunk state is not persisted by the device. Thus
--		 * some of the values are reset each time pblk is instantiated,
--		 * so we have to assume that the block is closed.
--		 */
--		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
--			chunk->state =  NVM_CHK_ST_CLOSED;
--		else
--			chunk->state = NVM_CHK_ST_OFFLINE;
--
--		chunk->type = NVM_CHK_TP_W_SEQ;
--		chunk->wi = 0;
--		chunk->slba = -1;
--		chunk->cnlb = geo->clba;
--		chunk->wp = 0;
--
--		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
--			continue;
--
--		set_bit(pos, line->blk_bitmap);
--		nr_bad_chks++;
--	}
--
--	return nr_bad_chks;
--}
--
--static int pblk_setup_line_meta_20(struct pblk *pblk, struct pblk_line *line,
-+static int pblk_setup_line_meta_chk(struct pblk *pblk, struct pblk_line *line,
- 				   struct nvm_chk_meta *meta)
+ 	/* logic error: lba out-of-bounds. Ignore read request */
+-	if (blba >= pblk->rl.nr_secs || nr_secs > PBLK_MAX_REQ_ADDRS) {
++	if (blba >= pblk->rl.nr_secs || nr_secs > NVM_MAX_VLBA) {
+ 		WARN(1, "pblk: read lba out of bounds (lba:%llu, nr:%d)\n",
+ 					(unsigned long long)blba, nr_secs);
+ 		return NVM_IO_ERR;
+@@ -547,7 +547,7 @@ static int read_ppalist_rq_gc(struct pblk *pblk, struct nvm_rq *rqd,
+ 			      struct pblk_line *line, u64 *lba_list,
+ 			      u64 *paddr_list_gc, unsigned int nr_secs)
  {
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -790,8 +685,6 @@ static int pblk_setup_line_meta_20(struct pblk *pblk, struct pblk_line *line,
- static long pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
- 				 void *chunk_meta, int line_id)
- {
--	struct nvm_tgt_dev *dev = pblk->dev;
--	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	long nr_bad_chks, chk_in_line;
-@@ -804,10 +697,7 @@ static long pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
- 	line->vsc = &l_mg->vsc_list[line_id];
- 	spin_lock_init(&line->lock);
+-	struct ppa_addr ppa_list_l2p[PBLK_MAX_REQ_ADDRS];
++	struct ppa_addr ppa_list_l2p[NVM_MAX_VLBA];
+ 	struct ppa_addr ppa_gc;
+ 	int valid_secs = 0;
+ 	int i;
+diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+index 6a0616a6fcaf..a32790f7b7fc 100644
+--- a/drivers/lightnvm/pblk-rl.c
++++ b/drivers/lightnvm/pblk-rl.c
+@@ -127,7 +127,7 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+ 	} else if (free_blocks < rl->high) {
+ 		int shift = rl->high_pw - rl->rb_windows_pw;
+ 		int user_windows = free_blocks >> shift;
+-		int user_max = user_windows << PBLK_MAX_REQ_ADDRS_PW;
++		int user_max = user_windows << ilog2(NVM_MAX_VLBA);
  
--	if (geo->version == NVM_OCSSD_SPEC_12)
--		nr_bad_chks = pblk_setup_line_meta_12(pblk, line, chunk_meta);
--	else
--		nr_bad_chks = pblk_setup_line_meta_20(pblk, line, chunk_meta);
-+	nr_bad_chks = pblk_setup_line_meta_chk(pblk, line, chunk_meta);
+ 		rl->rb_user_max = user_max;
+ 		rl->rb_gc_max = max - user_max;
+@@ -228,7 +228,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	rl->rsv_blocks = min_blocks;
  
- 	chk_in_line = lm->blk_per_line - nr_bad_chks;
- 	if (nr_bad_chks < 0 || nr_bad_chks > lm->blk_per_line ||
-@@ -1058,7 +948,7 @@ static int pblk_lines_init(struct pblk *pblk)
- 	if (ret)
- 		goto fail_free_meta;
+ 	/* This will always be a power-of-2 */
+-	rb_windows = budget / PBLK_MAX_REQ_ADDRS;
++	rb_windows = budget / NVM_MAX_VLBA;
+ 	rl->rb_windows_pw = get_count_order(rb_windows);
  
--	chunk_meta = pblk_chunk_get_meta(pblk);
-+	chunk_meta = pblk_get_chunk_meta(pblk);
- 	if (IS_ERR(chunk_meta)) {
- 		ret = PTR_ERR(chunk_meta);
- 		goto fail_free_luns;
+ 	/* To start with, all buffer is available to user I/O writers */
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 48b3035df3c4..579b4ea9716c 100644
+index 579b4ea9716c..64ae0c7ed3bb 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -774,7 +774,7 @@ void pblk_set_sec_per_write(struct pblk *pblk, int sec_per_write);
- int pblk_setup_w_rec_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 			struct pblk_c_ctx *c_ctx);
- void pblk_discard(struct pblk *pblk, struct bio *bio);
--struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk);
-+struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk);
- struct nvm_chk_meta *pblk_chunk_get_off(struct pblk *pblk,
- 					      struct nvm_chk_meta *lp,
- 					      struct ppa_addr ppa);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index 1e4f97538838..e42af7771fe5 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -567,8 +567,8 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
-  * Expect the lba in device format
-  */
- static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
--				 struct nvm_chk_meta *meta,
--				 sector_t slba, int nchks)
-+				 sector_t slba, int nchks,
-+				 struct nvm_chk_meta *meta)
- {
- 	struct nvm_geo *geo = &ndev->geo;
- 	struct nvme_ns *ns = ndev->q->queuedata;
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index f4a84694e5e2..0106984400bc 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -86,8 +86,8 @@ struct nvm_chk_meta;
- typedef int (nvm_id_fn)(struct nvm_dev *);
- typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
- typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
--typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct nvm_chk_meta *,
--								sector_t, int);
-+typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, sector_t, int,
-+							struct nvm_chk_meta *);
- typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
-@@ -532,18 +532,13 @@ extern struct nvm_dev *nvm_alloc_dev(int);
- extern int nvm_register(struct nvm_dev *);
- extern void nvm_unregister(struct nvm_dev *);
+@@ -37,8 +37,6 @@
  
--
--extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
--			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
--			      int nchks);
--
--extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
-+extern int nvm_get_chunk_meta(struct nvm_tgt_dev *, struct ppa_addr,
-+			      int, struct nvm_chk_meta *);
-+extern int nvm_set_chunk_meta(struct nvm_tgt_dev *, struct ppa_addr *,
- 			      int, int);
- extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
- extern int nvm_submit_io_sync(struct nvm_tgt_dev *, struct nvm_rq *);
- extern void nvm_end_io(struct nvm_rq *);
--extern int nvm_bb_tbl_fold(struct nvm_dev *, u8 *, int);
--extern int nvm_get_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr, u8 *);
+ #define PBLK_SECTOR (512)
+ #define PBLK_EXPOSED_PAGE_SIZE (4096)
+-#define PBLK_MAX_REQ_ADDRS (64)
+-#define PBLK_MAX_REQ_ADDRS_PW (6)
  
- #else /* CONFIG_NVM */
- struct nvm_dev_ops;
+ #define PBLK_NR_CLOSE_JOBS (4)
+ 
+@@ -99,8 +97,8 @@ enum {
+ 	PBLK_RL_LOW = 4
+ };
+ 
+-#define pblk_dma_meta_size (sizeof(struct pblk_sec_meta) * PBLK_MAX_REQ_ADDRS)
+-#define pblk_dma_ppa_size (sizeof(u64) * PBLK_MAX_REQ_ADDRS)
++#define pblk_dma_meta_size (sizeof(struct pblk_sec_meta) * NVM_MAX_VLBA)
++#define pblk_dma_ppa_size (sizeof(u64) * NVM_MAX_VLBA)
+ 
+ /* write buffer completion context */
+ struct pblk_c_ctx {
+@@ -218,8 +216,8 @@ struct pblk_lun {
+ struct pblk_gc_rq {
+ 	struct pblk_line *line;
+ 	void *data;
+-	u64 paddr_list[PBLK_MAX_REQ_ADDRS];
+-	u64 lba_list[PBLK_MAX_REQ_ADDRS];
++	u64 paddr_list[NVM_MAX_VLBA];
++	u64 lba_list[NVM_MAX_VLBA];
+ 	int nr_secs;
+ 	int secs_to_gc;
+ 	struct list_head list;
 -- 
 2.17.1
 
