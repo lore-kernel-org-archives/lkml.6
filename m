@@ -2,103 +2,67 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90B9C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31737C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72D332087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D332087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 01A372087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A372087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeJIXPp (ORCPT
+        id S1726830AbeJIXPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:15:45 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:39053 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJIXPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:15:45 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MA88C-1fzVLJ32HS-00Bf2S; Tue, 09 Oct 2018 17:57:59 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MA88C-1fzVLJ32HS-00Bf2S; Tue, 09 Oct 2018 17:57:59 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Igor Mitsyanko <imitsyanko@quantenna.com>,
-        Avinash Patil <avinashp@quantenna.com>,
-        Sergey Matyukevich <smatyukevich@quantenna.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vasily Ulyanov <vulyanov@quantenna.com>,
-        Andrey Shevchenko <ashevchenko@quantenna.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qtnfmac: avoid uninitialized variable access
-Date:   Tue,  9 Oct 2018 17:57:35 +0200
-Message-Id: <20181009155757.494212-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Xax1BOyVDSS/I6d+mxoxQgcdDQz5f+hcrKd/pDuDVWrpsoIp7bq
- ROicNzkQdIG+sypFTyswVlV4jds99I+dfS27N2vqq9iN+Extm5sNg1q+90HvaR8MT26dnJY
- EP9orhI5sseScpXK05Ecowgj4/5uOt2jpvBKc/NWpWSYIUm1GqiKp8EB/MCVktBJd81eIto
- zYVOmLQrFwj7ORhLAynIA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QcTAjmk3cIQ=:2pdHry2WAzRiytm4ZY09Ob
- e2dZ5NcKYOGaP0bCq07jEJroWBSC5/8k3crJl6Z+4Vqw4zAhk/VeQ9+k25ey8HmhPBRDClon2
- UxEuEgNYV4NU+UVElmoy4oZ3NU3Gr4jnh46RHfu/YkuWVmFBw/GeFWhL9xc93xJvYxTJKtC18
- SbsrMFSp+083AWnlBDcpSYNmUUD5b7WYmIA0/kJFRAXoGkn5gYiqZZPF+uoIADek7GdK9ZK/x
- 6cw3s8WwlvGbf9UsrcLoBrMn4yaE7bHzrhkU6zsD/fYAKluaoJxcGeZDY/ocpnhG59kbaqeNV
- xNTYDJPGDKfzt2vaZ72tJM7Zhb5saBFoJ6w6TMj9QPIIxP4F1OiUtq77tZGRmsHIAAYiNN/95
- q9wBp/nZ/uykld45UY53Fvzl0SwZDpHanFwBOzswSA2a2e+xUuqr5XqM0j8RDSu6uHXLiLxpm
- GEYihj2aEqMXQqb2/Mz8902mDzoqqScF9xImh9cEyVp9VS53/nn/zkp+SNSFbq3aiHKGpvupg
- kefD25F7gDcY3BbqUIJ8HboW20fuzY1H5/C/M/Bi8/Qw+pXytK2lkIC8XMuL3vmWR9+wXjqP9
- HpsQk8pUYJZWituCHA3oQd/jWmvZd8YFHZu4wdSBDL2abZlH+JgqhDIP3+cjJHWKL0u5WunOa
- CVHx4yajpzLJYrWH2sA6BUbdMBaE+vyrIBz9PZg451c2PPZR4mnJ5CqfNpW5hLk0T/Ec=
+        Tue, 9 Oct 2018 19:15:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:40850 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeJIXPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:15:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58F0B80D;
+        Tue,  9 Oct 2018 08:58:19 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 28DA43F5D3;
+        Tue,  9 Oct 2018 08:58:19 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7BA991AE0B3B; Tue,  9 Oct 2018 16:58:18 +0100 (BST)
+Date:   Tue, 9 Oct 2018 16:58:18 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com, mingo@redhat.com, corbet@lwn.net
+Subject: Re: [PATCH] Doc: lockdep: add information about performance impact
+Message-ID: <20181009155818.GD9259@arm.com>
+References: <CGME20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056@eucas1p2.samsung.com>
+ <20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056~b_ujkjRd31303013030eucas1p2C@eucas1p2.samsung.com>
+ <20181009154359.GB5728@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009154359.GB5728@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When qtnf_trans_send_cmd_with_resp() fails, we have not yet initialized
-'resp', as pointed out by a valid gcc warning:
+On Tue, Oct 09, 2018 at 05:43:59PM +0200, Peter Zijlstra wrote:
+> On Tue, Oct 09, 2018 at 05:39:27PM +0200, Lukasz Luba wrote:
+> > This patch add some warning related to performance drop.
+> > It should be mentioned that this is not for free
+> > and the platfrom resources (cache, bus interconnect, etc.)
+> > will be used more frequently.
+> 
+> To me this reads a bit like: water is wet.
+> 
+> Is this really needed?
 
-drivers/net/wireless/quantenna/qtnfmac/commands.c: In function 'qtnf_cmd_send_with_reply':
-drivers/net/wireless/quantenna/qtnfmac/commands.c:133:54: error: 'resp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+I don't think so -- this is a debug option under "kernel hacking". Surely
+the perf hit comes with the territory.
 
-Since 'resp_skb' is also not set here, we can skip all further
-processing and just print the warning and return the failure code.
-
-Fixes: c6ed298ffe09 ("qtnfmac: cleanup and unify command error handling")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/wireless/quantenna/qtnfmac/commands.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-index bfdc1ad30c13..9b211459684a 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-@@ -111,7 +111,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
- 
- 	ret = qtnf_trans_send_cmd_with_resp(bus, cmd_skb, &resp_skb);
- 	if (ret)
--		goto out;
-+		goto out_noresp;
- 
- 	resp = (const struct qlink_resp *)resp_skb->data;
- 	ret = qtnf_cmd_check_reply_header(resp, cmd_id, mac_id, vif_id,
-@@ -132,6 +132,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
- 	if (!ret && resp)
- 		return qtnf_cmd_resp_result_decode(le16_to_cpu(resp->result));
- 
-+out_noresp:
- 	pr_warn("VIF%u.%u: cmd 0x%.4X failed: %d\n",
- 		mac_id, vif_id, le16_to_cpu(cmd->cmd_id), ret);
- 
--- 
-2.18.0
-
+Will
