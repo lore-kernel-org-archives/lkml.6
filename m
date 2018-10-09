@@ -2,124 +2,268 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF81C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE5EC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A746214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:44:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RA+jJwLn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A746214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 724E22087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:44:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724E22087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJIUBK (ORCPT
+        id S1726944AbeJIUBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:01:10 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34000 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIUBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:01:09 -0400
-Received: by mail-oi1-f195.google.com with SMTP id v69-v6so1095723oif.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 05:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Mgv8nZVA4iK9x8cx21nzvxLWBG8pe5Xw26erHZzU5Y=;
-        b=RA+jJwLnTAQ9n6isy6HNiqDqwGXa2MF3ZGCTbQcGiz7RQi4UXqyGr7e2oi0DtbnuSy
-         4rI8YrV91y95NeOSyL6+vQ4ziiidNOvzCEm+T1CHHCtSBdPesCTtDnufEmrRKf2dvWI1
-         U7Mr86q0COczug6s7bMatjsz8K3jCDOyem8tz9DWKW3DAADN8WxkVbr9C2h0KrPiBmu2
-         kti10IJfirH/N/PdQYfSe7jE/Ow260m4EKqZjPK6fT+Nsemo2WnCwrWL3QnCihuwRTHp
-         w9feCR378rJynVcifYii8EbOwaXuhNHiSGhyPnvaWtWZQMEALNxvdvj9Cue5+6ZhGUD/
-         51tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Mgv8nZVA4iK9x8cx21nzvxLWBG8pe5Xw26erHZzU5Y=;
-        b=RckDrPyA0O24Tnve3/3vSne4DVtA+XYHmsNX1IiQ+ZVObwPZIL253ye3VHO4AQier2
-         FM5mN7+il3mNUWVbPQNutRGy5LMhv3loH9UjDVwycLyrwv9DL5I8shA5xciiPxuavaLH
-         qyw3xgkMVfnBKag5BokgTrmlfIMfkLr+f9HgD85NLUanN+Ei6+qEwVeNzlpBZJ2Afy4Y
-         sswOjQjDiPhSz8r673giF8S2s5wtoWrzdCw2MIhLxxz8V7VwYjEoOucUhF/DFOvWN9Ao
-         FIllJf/9JRLoknL/eVx4zIN1Q1qQCBFi88GkqlZ2cBsF3i7hcP2NulOXewKwm7zW9DEZ
-         48kw==
-X-Gm-Message-State: ABuFfohE1tC2oUe7WRp8nkBfRDuAVilsufMIgU/WLILRzhYemiKQ1U1E
-        fZPpLTm+tipPci6ZfqGz1EWvhoqoashdHAyybn/tcg==
-X-Google-Smtp-Source: ACcGV60Okn4ivAN+Trri9/yg80uIhsw3OvvZoAgNkvZnifUAldKAzZYnI6tYAJyONdht1F93uL5P1fDnSnJDQUrCIOU=
-X-Received: by 2002:aca:c045:: with SMTP id q66-v6mr6110923oif.22.1539089062316;
- Tue, 09 Oct 2018 05:44:22 -0700 (PDT)
+        Tue, 9 Oct 2018 16:01:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57206 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726740AbeJIUBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:01:32 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5DCB308ED4D;
+        Tue,  9 Oct 2018 12:44:44 +0000 (UTC)
+Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 90F56106224F;
+        Tue,  9 Oct 2018 12:44:43 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 08:44:41 -0400
+From:   Phil Auld <pauld@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Ben Segall <bsegall@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [Patch] sched/fair: Avoid throttle_list starvation with low cfs
+ quota
+Message-ID: <20181009124441.GF4019@pauld.bos.csb>
+References: <20181008143639.GA4019@pauld.bos.csb>
+ <20181009083244.GA51643@gmail.com>
 MIME-Version: 1.0
-References: <20181009103752.21482-1-laurent@vivier.eu> <20181009103752.21482-2-laurent@vivier.eu>
-In-Reply-To: <20181009103752.21482-2-laurent@vivier.eu>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 9 Oct 2018 14:43:56 +0200
-Message-ID: <CAG48ez1OVKqRZe6AtTwXSc27AjNF596nt-46J9WPffKu7fNb8Q@mail.gmail.com>
-Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-To:     Laurent Vivier <laurent@vivier.eu>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
-        Linux API <linux-api@vger.kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, avagin@gmail.com,
-        containers@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009083244.GA51643@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 09 Oct 2018 12:44:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 12:38 PM Laurent Vivier <laurent@vivier.eu> wrote:
-> This patch allows to have a different binfmt_misc configuration
-> for each new user namespace. By default, the binfmt_misc configuration
-> is the one of the previous level, but if the binfmt_misc filesystem is
-> mounted in the new namespace a new empty binfmt instance is created and
-> used in this namespace.
->
-> For instance, using "unshare" we can start a chroot of an another
-> architecture and configure the binfmt_misc interpreter without being root
-> to run the binaries in this chroot.
-[...]
-> @@ -823,12 +847,34 @@ static const struct super_operations s_ops = {
->  static int bm_fill_super(struct super_block *sb, void *data, int silent)
->  {
->         int err;
-> +       struct user_namespace *ns = sb->s_user_ns;
->         static const struct tree_descr bm_files[] = {
->                 [2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
->                 [3] = {"register", &bm_register_operations, S_IWUSR},
->                 /* last one */ {""}
->         };
->
-> +       /* create a new binfmt namespace
-> +        * if we are not in the first user namespace
-> +        * but the binfmt namespace is the first one
-> +        */
-> +       if (READ_ONCE(ns->binfmt_ns) == NULL) {
-> +               struct binfmt_namespace *new_ns;
-> +
-> +               new_ns = kmalloc(sizeof(struct binfmt_namespace),
-> +                                GFP_KERNEL);
-> +               if (new_ns == NULL)
-> +                       return -ENOMEM;
-> +               INIT_LIST_HEAD(&new_ns->entries);
-> +               new_ns->enabled = 1;
-> +               rwlock_init(&new_ns->entries_lock);
-> +               new_ns->bm_mnt = NULL;
-> +               new_ns->entry_count = 0;
-> +               /* ensure new_ns is completely initialized before sharing it */
-> +               smp_wmb();
-> +               WRITE_ONCE(ns->binfmt_ns, new_ns);
-> +       }
 
-You're still not preventing a concurrent race of two mount() calls,
-right? What prevents two instances of this code block from running
-concurrently in two different namespaces? I think you want to take
-some sort of global lock around this.
+Hi,
+
+On Tue, Oct 09, 2018 at 10:32:44AM +0200 Ingo Molnar wrote:
+> 
+> I've Cc:-ed a handful of gents who worked on CFS bandwidth details to widen the discussion. 
+> Patch quoted below.
+> 
+> Looks like a real bug that needs to be fixed - and at first sight the quota of 1000 looks very 
+> low - could we improve the arithmetics perhaps?
+> 
+> A low quota of 1000 is used because there's many VMs or containers provisioned on the system 
+> that is triggering the bug, right?
+> 
+
+
+Thanks for taking a look.
+
+
+The quota is extremely low. I believe that's a different issue, though.  The kernel 
+allows this setting and should handle it better than it currently does.  The proposed 
+patch fixes it so that all the tasks make progress (even if not much progress) rather 
+than having some starve at the back of the list. 
+
+
+Cheers,
+Phil
+
+
+> Thanks,
+> 
+> 	Ingo
+> 
+> * Phil Auld <pauld@redhat.com> wrote:
+> 
+> > From: "Phil Auld" <pauld@redhat.com>
+> > 
+> > sched/fair: Avoid throttle_list starvation with low cfs quota
+> > 
+> > With a very low cpu.cfs_quota_us setting, such as the minimum of 1000, 
+> > distribute_cfs_runtime may not empty the throttled_list before it runs 
+> > out of runtime to distribute. In that case, due to the change from 
+> > c06f04c7048 to put throttled entries at the head of the list, later entries 
+> > on the list will starve.  Essentially, the same X processes will get pulled 
+> > off the list, given CPU time and then, when expired, get put back on the 
+> > head of the list where distribute_cfs_runtime will give runtime to the same 
+> > set of processes leaving the rest.
+> > 
+> > Fix the issue by setting a bit in struct cfs_bandwidth when 
+> > distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can 
+> > decide to put the throttled entry on the tail or the head of the list.  The 
+> > bit is set/cleared by the callers of distribute_cfs_runtime while they hold 
+> > cfs_bandwidth->lock. 
+> > 
+> > Signed-off-by: Phil Auld <pauld@redhat.com>
+> > Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: stable@vger.kernel.org
+> > ---
+> > 
+> > This is easy to reproduce with a handful of cpu consumers. I use crash on 
+> > the live system. In some cases you can simply look at the throttled list and 
+> > see the later entries are not changing:
+> > 
+> > crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
+> >   1     ffff90b56cb2d200  -976050
+> >   2     ffff90b56cb2cc00  -484925
+> >   3     ffff90b56cb2bc00  -658814
+> >   4     ffff90b56cb2ba00  -275365
+> >   5     ffff90b166a45600  -135138
+> >   6     ffff90b56cb2da00  -282505
+> >   7     ffff90b56cb2e000  -148065
+> >   8     ffff90b56cb2fa00  -872591
+> >   9     ffff90b56cb2c000  -84687
+> >  10     ffff90b56cb2f000  -87237
+> >  11     ffff90b166a40a00  -164582
+> > crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
+> >   1     ffff90b56cb2d200  -994147
+> >   2     ffff90b56cb2cc00  -306051
+> >   3     ffff90b56cb2bc00  -961321
+> >   4     ffff90b56cb2ba00  -24490
+> >   5     ffff90b166a45600  -135138
+> >   6     ffff90b56cb2da00  -282505
+> >   7     ffff90b56cb2e000  -148065
+> >   8     ffff90b56cb2fa00  -872591
+> >   9     ffff90b56cb2c000  -84687
+> >  10     ffff90b56cb2f000  -87237
+> >  11     ffff90b166a40a00  -164582
+> > 
+> > Sometimes it is easier to see by finding a process getting starved and looking 
+> > at the sched_info:
+> > 
+> > crash> task ffff8eb765994500 sched_info
+> > PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
+> >   sched_info = {
+> >     pcount = 8, 
+> >     run_delay = 697094208, 
+> >     last_arrival = 240260125039, 
+> >     last_queued = 240260327513
+> >   }, 
+> > crash> task ffff8eb765994500 sched_info
+> > PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
+> >   sched_info = {
+> >     pcount = 8, 
+> >     run_delay = 697094208, 
+> >     last_arrival = 240260125039, 
+> >     last_queued = 240260327513
+> >   }, 
+> > 
+> > 
+> >  fair.c  |   22 +++++++++++++++++++---
+> >  sched.h |    2 ++
+> >  2 files changed, 21 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 7fc4a371bdd2..f88e00705b55 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -4476,9 +4476,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+> >  
+> >  	/*
+> >  	 * Add to the _head_ of the list, so that an already-started
+> > -	 * distribute_cfs_runtime will not see us
+> > +	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
+> > +	 * not running add to the tail so that later runqueues don't get starved.
+> >  	 */
+> > -	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> > +	if (cfs_b->distribute_running)
+> > +		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> > +	else
+> > +		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> >  
+> >  	/*
+> >  	 * If we're the first throttled task, make sure the bandwidth
+> > @@ -4622,14 +4626,16 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
+> >  	 * in us over-using our runtime if it is all used during this loop, but
+> >  	 * only by limited amounts in that extreme case.
+> >  	 */
+> > -	while (throttled && cfs_b->runtime > 0) {
+> > +	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+> >  		runtime = cfs_b->runtime;
+> > +		cfs_b->distribute_running = 1;
+> >  		raw_spin_unlock(&cfs_b->lock);
+> >  		/* we can't nest cfs_b->lock while distributing bandwidth */
+> >  		runtime = distribute_cfs_runtime(cfs_b, runtime,
+> >  						 runtime_expires);
+> >  		raw_spin_lock(&cfs_b->lock);
+> >  
+> > +		cfs_b->distribute_running = 0;
+> >  		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+> >  
+> >  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
+> > @@ -4740,6 +4746,11 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >  
+> >  	/* confirm we're still not at a refresh boundary */
+> >  	raw_spin_lock(&cfs_b->lock);
+> > +	if (cfs_b->distribute_running) {
+> > +		raw_spin_unlock(&cfs_b->lock);
+> > +		return;
+> > +	}
+> > +
+> >  	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
+> >  		raw_spin_unlock(&cfs_b->lock);
+> >  		return;
+> > @@ -4749,6 +4760,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >  		runtime = cfs_b->runtime;
+> >  
+> >  	expires = cfs_b->runtime_expires;
+> > +	if (runtime)
+> > +		cfs_b->distribute_running = 1;
+> > +
+> >  	raw_spin_unlock(&cfs_b->lock);
+> >  
+> >  	if (!runtime)
+> > @@ -4759,6 +4773,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >  	raw_spin_lock(&cfs_b->lock);
+> >  	if (expires == cfs_b->runtime_expires)
+> >  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
+> > +	cfs_b->distribute_running = 0;
+> >  	raw_spin_unlock(&cfs_b->lock);
+> >  }
+> >  
+> > @@ -4867,6 +4882,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+> >  	cfs_b->period_timer.function = sched_cfs_period_timer;
+> >  	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> >  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
+> > +	cfs_b->distribute_running = 0;
+> >  }
+> >  
+> >  static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index 455fa330de04..9683f458aec7 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -346,6 +346,8 @@ struct cfs_bandwidth {
+> >  	int			nr_periods;
+> >  	int			nr_throttled;
+> >  	u64			throttled_time;
+> > +
+> > +	bool                    distribute_running;
+> >  #endif
+> >  };
+> >  
+> > 
+> > 
+> > -- 
+
+-- 
