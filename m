@@ -2,155 +2,157 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F803C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066C5C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3176D2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3176D2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BE1D32054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iOd+EwXl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1D32054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbeJIUnk (ORCPT
+        id S1728041AbeJIUnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51035 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbeJIUnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D02A1207C3; Tue,  9 Oct 2018 15:26:40 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95F1820712;
-        Tue,  9 Oct 2018 15:26:40 +0200 (CEST)
-Date:   Tue, 9 Oct 2018 15:26:40 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] drm/v3d: Add a little debugfs entry for measuring
- the core clock.
-Message-ID: <20181009152640.791c709d@bbrezillon>
-In-Reply-To: <20180928232126.4332-2-eric@anholt.net>
-References: <20180928232126.4332-1-eric@anholt.net>
-        <20180928232126.4332-2-eric@anholt.net>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 9 Oct 2018 16:43:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50654 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeJIUnm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:43:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=K74mCYmVOLJRzyNfEnzhXh0UECbS5GU9R54tYFzJ4NQ=; b=iOd+EwXl95eb2AVGqS8jW/oHlA
+        QkWuS3BVe5xM5dRfwO5pKw3OUinJ8vhM5YMk+pEEpBFS9VSO7m7WMf10lNcIvi6uonCHXdg7g5cBg
+        s9zDsXqxuWo5FyU3W4R5fvifHnciQwKfrG79vSVhNQVH5ICk0jcpJMEdNp4x6CeKZjppu6oqzAEYb
+        QheWujtsqDMvaU3hVYwlEJt6sQ9tbBe4LNe+8RbEmrb+0vl0Wi0pxXCqrq6tN8DEVn3ADjm9t79Uz
+        n6nbJtlxZjGdjvtMy8bVVoAmTtchZSCUPjY7Ye1mas5OKo/Sao130eS9Re9qXUqw8Rfyj/kNW8Odg
+        BX+B971Q==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9s1q-0001fX-WC; Tue, 09 Oct 2018 13:26:27 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 33/33] powerpc/dma: trim the fat from <asm/dma-mapping.h>
+Date:   Tue,  9 Oct 2018 15:25:00 +0200
+Message-Id: <20181009132500.17643-34-hch@lst.de>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181009132500.17643-1-hch@lst.de>
+References: <20181009132500.17643-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018 16:21:24 -0700
-Eric Anholt <eric@anholt.net> wrote:
+There is no need to provide anything but get_arch_dma_ops to
+<linux/dma-mapping.h>.  More the remaining declarations to <asm/iommu.h>
+and drop all the includes.
 
-> This adds just enough performance counter support to measure the
-> clock.  We don't have linux kernel drivers for the clock driving the
-> HW, and this was useful for determining that the V3D HW is running on
-> a slow clock, not that the driver was slow.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/powerpc/include/asm/dma-mapping.h | 29 --------------------------
+ arch/powerpc/include/asm/iommu.h       | 10 +++++++++
+ arch/powerpc/platforms/44x/ppc476.c    |  1 +
+ 3 files changed, 11 insertions(+), 29 deletions(-)
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/gpu/drm/v3d/v3d_debugfs.c | 35 +++++++++++++++++++++++++++++++
->  drivers/gpu/drm/v3d/v3d_regs.h    | 30 ++++++++++++++++++++++++++
->  2 files changed, 65 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> index 4db62c545748..d48008adb085 100644
-> --- a/drivers/gpu/drm/v3d/v3d_debugfs.c
-> +++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> @@ -176,9 +176,44 @@ static int v3d_debugfs_bo_stats(struct seq_file *m, void *unused)
->  	return 0;
->  }
->  
-> +static int v3d_measure_clock(struct seq_file *m, void *unused)
-> +{
-> +	struct drm_info_node *node = (struct drm_info_node *)m->private;
-> +	struct drm_device *dev = node->minor->dev;
-> +	struct v3d_dev *v3d = to_v3d_dev(dev);
-> +	uint32_t cycles;
-> +	int core = 0;
-> +	int measure_ms = 1000;
-> +
-> +	if (v3d->ver >= 40) {
-> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_SRC_0_3,
-> +			       V3D_SET_FIELD(V3D_PCTR_CYCLE_COUNT,
-> +					     V3D_PCTR_S0));
-> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_CLR, 1);
-> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_EN, 1);
-> +	} else {
-> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_PCTRS0,
-> +			       V3D_PCTR_CYCLE_COUNT);
-> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_CLR, 1);
-> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_EN,
-> +			       V3D_V3_PCTR_0_EN_ENABLE |
-> +			       1);
-> +	}
-> +	msleep(measure_ms);
-> +	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
-> +
-> +	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
-> +		   cycles,
-> +		   cycles / (measure_ms * 1000),
-> +		   (cycles / (measure_ms * 100)) % 10);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct drm_info_list v3d_debugfs_list[] = {
->  	{"v3d_ident", v3d_v3d_debugfs_ident, 0},
->  	{"v3d_regs", v3d_v3d_debugfs_regs, 0},
-> +	{"measure_clock", v3d_measure_clock, 0},
->  	{"bo_stats", v3d_debugfs_bo_stats, 0},
->  };
->  
-> diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
-> index 854046565989..c3a5e4e44f73 100644
-> --- a/drivers/gpu/drm/v3d/v3d_regs.h
-> +++ b/drivers/gpu/drm/v3d/v3d_regs.h
-> @@ -267,6 +267,36 @@
->  # define V3D_PTB_BXCF_RWORDERDISA                      BIT(1)
->  # define V3D_PTB_BXCF_CLIPDISA                         BIT(0)
->  
-> +#define V3D_V3_PCTR_0_EN                               0x00674
-> +#define V3D_V3_PCTR_0_EN_ENABLE                        BIT(31)
-> +#define V3D_V4_PCTR_0_EN                               0x00650
-> +/* When a bit is set, resets the counter to 0. */
-> +#define V3D_V3_PCTR_0_CLR                              0x00670
-> +#define V3D_V4_PCTR_0_CLR                              0x00654
-> +#define V3D_PCTR_0_OVERFLOW                            0x00658
-> +
-> +#define V3D_V3_PCTR_0_PCTRS0                           0x00684
-> +#define V3D_V3_PCTR_0_PCTRS15                          0x00660
-> +#define V3D_V3_PCTR_0_PCTRSX(x)                        (V3D_V3_PCTR_0_PCTRS0 + \
-> +							4 * (x))
-> +/* Each src reg muxes four counters each. */
-> +#define V3D_V4_PCTR_0_SRC_0_3                          0x00660
-> +#define V3D_V4_PCTR_0_SRC_28_31                        0x0067c
-> +# define V3D_PCTR_S0_MASK                              V3D_MASK(6, 0)
-> +# define V3D_PCTR_S0_SHIFT                             0
-> +# define V3D_PCTR_S1_MASK                              V3D_MASK(14, 8)
-> +# define V3D_PCTR_S1_SHIFT                             8
-> +# define V3D_PCTR_S2_MASK                              V3D_MASK(22, 16)
-> +# define V3D_PCTR_S2_SHIFT                             16
-> +# define V3D_PCTR_S3_MASK                              V3D_MASK(30, 24)
-> +# define V3D_PCTR_S3_SHIFT                             24
-> +# define V3D_PCTR_CYCLE_COUNT                          32
-> +
-> +/* Output values of the counters. */
-> +#define V3D_PCTR_0_PCTR0                               0x00680
-> +#define V3D_PCTR_0_PCTR31                              0x006fc
-> +#define V3D_PCTR_0_PCTRX(x)                            (V3D_PCTR_0_PCTR0 + \
-> +							4 * (x))
->  #define V3D_GMP_STATUS                                 0x00800
->  # define V3D_GMP_STATUS_GMPRST                         BIT(31)
->  # define V3D_GMP_STATUS_WR_COUNT_MASK                  V3D_MASK(30, 24)
+diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+index a59c42879194..565d6f74b189 100644
+--- a/arch/powerpc/include/asm/dma-mapping.h
++++ b/arch/powerpc/include/asm/dma-mapping.h
+@@ -1,37 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2004 IBM
+- *
+- * Implements the generic device dma API for powerpc.
+- * the pci and vio busses
+  */
+ #ifndef _ASM_DMA_MAPPING_H
+ #define _ASM_DMA_MAPPING_H
+-#ifdef __KERNEL__
+-
+-#include <linux/types.h>
+-#include <linux/cache.h>
+-/* need struct page definitions */
+-#include <linux/mm.h>
+-#include <linux/scatterlist.h>
+-#include <linux/dma-debug.h>
+-#include <asm/io.h>
+-#include <asm/swiotlb.h>
+-
+-static inline unsigned long device_to_mask(struct device *dev)
+-{
+-	if (dev->dma_mask && *dev->dma_mask)
+-		return *dev->dma_mask;
+-	/* Assume devices without mask can take 32 bit addresses */
+-	return 0xfffffffful;
+-}
+-
+-/*
+- * Available generic sets of operations
+- */
+-#ifdef CONFIG_PPC64
+-extern const struct dma_map_ops dma_iommu_ops;
+-#endif
+ 
+ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ {
+@@ -43,5 +15,4 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ 	return NULL;
+ }
+ 
+-#endif /* __KERNEL__ */
+ #endif	/* _ASM_DMA_MAPPING_H */
+diff --git a/arch/powerpc/include/asm/iommu.h b/arch/powerpc/include/asm/iommu.h
+index 264d04f1dcd1..db745575e6a4 100644
+--- a/arch/powerpc/include/asm/iommu.h
++++ b/arch/powerpc/include/asm/iommu.h
+@@ -334,5 +334,15 @@ extern bool iommu_fixed_is_weak;
+ #define iommu_fixed_is_weak false
+ #endif
+ 
++extern const struct dma_map_ops dma_iommu_ops;
++
++static inline unsigned long device_to_mask(struct device *dev)
++{
++	if (dev->dma_mask && *dev->dma_mask)
++		return *dev->dma_mask;
++	/* Assume devices without mask can take 32 bit addresses */
++	return 0xfffffffful;
++}
++
+ #endif /* __KERNEL__ */
+ #endif /* _ASM_IOMMU_H */
+diff --git a/arch/powerpc/platforms/44x/ppc476.c b/arch/powerpc/platforms/44x/ppc476.c
+index e55933f9cd55..a5e61e5c16e2 100644
+--- a/arch/powerpc/platforms/44x/ppc476.c
++++ b/arch/powerpc/platforms/44x/ppc476.c
+@@ -34,6 +34,7 @@
+ #include <asm/ppc4xx.h>
+ #include <asm/mpic.h>
+ #include <asm/mmu.h>
++#include <asm/swiotlb.h>
+ 
+ #include <linux/pci.h>
+ #include <linux/i2c.h>
+-- 
+2.19.0
 
