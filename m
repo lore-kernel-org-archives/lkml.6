@@ -2,108 +2,158 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361D6C00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20286C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F35213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F35213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E375E21476
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:08:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E375E21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJIKJm (ORCPT
+        id S1726103AbeJIKXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 06:09:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726616AbeJIKJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 06:09:42 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35B6A3082A2E;
-        Tue,  9 Oct 2018 02:55:00 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-43.pek2.redhat.com [10.72.12.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DD0A46DAEA;
-        Tue,  9 Oct 2018 02:54:55 +0000 (UTC)
-Subject: Re: [tip:x86/mm] kdump, proc/vmcore: Enable kdumping encrypted memory
- with SME enabled
-To:     Borislav Petkov <bp@suse.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-tip-commits@vger.kernel.org
-References: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
- <tip-992b649a3f013465d8128da02e5449def662a4c3@git.kernel.org>
- <21eab36e-d113-cf88-e497-7dd620981544@redhat.com>
- <20181007084742.GA30797@zn.tnic>
- <58270f3f-f17c-8996-09cd-6da3481beb40@redhat.com>
- <20181008053714.GA6490@zn.tnic>
- <710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com>
- <20181008080013.GB6490@zn.tnic>
- <8147597a-f8e0-7f1a-bd2b-e914b18c5c74@redhat.com>
- <20181008085909.GC6490@zn.tnic> <20181008134359.GF6490@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <0cecda76-0c1b-c11a-08be-f99cf7214d12@redhat.com>
-Date:   Tue, 9 Oct 2018 10:54:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 06:23:16 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:21647 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725749AbeJIKXQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 06:23:16 -0400
+X-UUID: 5096bdfdada14104b1f0fd2f11514021-20181009
+X-UUID: 5096bdfdada14104b1f0fd2f11514021-20181009
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 746380465; Tue, 09 Oct 2018 11:08:17 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 9 Oct
+ 2018 11:08:16 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 9 Oct 2018 11:08:15 +0800
+Message-ID: <1539054495.6246.31.camel@mhfsdcap03>
+Subject: Re: [PATCH v6 2/9] PCI: mediatek: Fixup class ID for MT7622 as
+ PCI_CLASS_BRIDGE_PCI
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <bhelgaas@google.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
+        <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
+        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yt.shen@mediatek.com>,
+        <sean.wang@mediatek.com>
+Date:   Tue, 9 Oct 2018 11:08:15 +0800
+In-Reply-To: <20181008172337.GA13538@e107981-ln.cambridge.arm.com>
+References: <1538969088-7136-1-git-send-email-honghui.zhang@mediatek.com>
+         <1538969088-7136-3-git-send-email-honghui.zhang@mediatek.com>
+         <20181008172337.GA13538@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <20181008134359.GF6490@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 09 Oct 2018 02:55:00 +0000 (UTC)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月08日 21:43, Borislav Petkov 写道:
-> On Mon, Oct 08, 2018 at 10:59:09AM +0200, Borislav Petkov wrote:
->> On Mon, Oct 08, 2018 at 04:47:34PM +0800, lijiang wrote:
->>> It looks like a good way to avoid the 'ifdefined', and it's also good enough for i386.
->>>
->>> But for other architectures, such as POWERPC/ARM..., we will also have to add the same 
->>> function for every architecture. Otherwise, i guess that they also have a same compile
->>> error on other architectures.
->>
->> Yap, just realized that and looking at the rest of fs/proc/vmcore.c -
->> such functions are defined with the __weak attribute. Lemme see if that
->> works better.
+On Mon, 2018-10-08 at 18:23 +0100, Lorenzo Pieralisi wrote:
+> On Mon, Oct 08, 2018 at 11:24:41AM +0800, honghui.zhang@mediatek.com wrote:
+> > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > 
+> > The PCIe controller of MT7622 has TYPE 1 configuration space type, but
+> > the HW default class type values is invalid.
+> > 
+> > The commit 101c92dc80c8 ("PCI: mediatek: Set up vendor ID and class
+> > type for MT7622") have set the class ID for MT7622 as
+> > PCI_CLASS_BRIDGE_HOST, but it's not workable for MT7622:
+> > 
+> > In __pci_bus_assign_resources, the framework only setup bridge's
+> > resource window only if class type is PCI_CLASS_BRIDGE_PCI. Or it
+> > will leave the subordinary PCIe device's MMIO window un-touched.
+> > 
+> > Fixup the class type to PCI_CLASS_BRIDGE_PCI as most of the controller
+> > driver do.
 > 
-> Seems so. I'll hammer on it more today:
+> I think that this patch is correct but the commit log fails to pin point
+> the problem. The IP you are programming is a root port, that's why you
+> have to have the proper class code, the patch looks fine but I would
+> like to peek Bjorn's brain on this since it is a fundamental concept.
 > 
-Great! Thank you, Borislav.
 
-Regards,
-Lianbo
-> ---
->  fs/proc/vmcore.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+I'm a bit confused with the concepts of PCI_CLASS_BRIDGE_HOST and
+PCI_CLASS_BRIDGE_PCI, from PCI express spec,
+4.0r1.0(PCI_Express_Base_4.0r1.0_September-27-2017-c), Host Bridge is
+"part of a Root Complex that connects a host CPU or CPUs to a
+Hierarchy". While Root Complex defines as "A defined System Element that
+includes at least one Host Bridge, Root port, or Root complex Integrated
+Endpoint".
+
+But according to my understanding, most of the root port IPs integrated
+with a "PCI_CLASS_BRIDGE_PCI", which has type 1 configuration space and
+could be saw as a pci device when using lspci.
+
+And for MT7622, it integrated with block of internal control registers,
+type 1 configuration space, and is considered as a root complex.
+
+I'm not sure which CLASS type it should have:
+From PCI_Code-ID_r_1_10__v8-Nov_2017, class type of
+0x0604(PCI_CLASS_BRIDGE_PCI) is defined as a PCI-to-PCI bridge, not
+literally suitable for MT7622(which is a root complex)(In my personal
+opinion). But it is the only workable CLASS type for MT7622 in current
+kernel.
+
+> If the kernel does not assign resources unless it detects a
+> PCI_CLASS_BRIDGE_PCI this means that for components that are
+> actually PCI_CLASS_BRIDGE_HOST their register set must come
+> preprogrammed unless I am missing something.
 > 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 42c32d06f7da..91ae16fbd7d5 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -187,6 +187,16 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  	return remap_pfn_range(vma, from, pfn, size, prot);
->  }
->  
-> +/*
-> + * Architectures which support memory encryption override this.
-> + */
-> +ssize_t __weak
-> +copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-> +			   unsigned long offset, int userbuf)
-> +{
-> +	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
-> +}
-> +
->  /*
->   * Copy to either kernel or user space
->   */
+
+In the function pci_request_resource_alignment, it will by pass the
+resource assignment for PCI_CLASS_BRIDGE_HOST, though I'm not figured
+out why.
+
+> I would like to get to the bottom of this since it is a fundamental
+> enumeration concept.
 > 
+
+Do you like me to re-write the commit message for this patch and put the
+above information in? Or just not mention the PCI_CLASS_BRIDGE_HOST
+assign resource routine?
+
+Thanks
+
+> Thanks,
+> Lorenzo
+> 
+> > 
+> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > index 288b8e2..bcdac9b 100644
+> > --- a/drivers/pci/controller/pcie-mediatek.c
+> > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > @@ -432,7 +432,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> >  		val = PCI_VENDOR_ID_MEDIATEK;
+> >  		writew(val, port->base + PCIE_CONF_VEND_ID);
+> >  
+> > -		val = PCI_CLASS_BRIDGE_HOST;
+> > +		val = PCI_CLASS_BRIDGE_PCI;
+> >  		writew(val, port->base + PCIE_CONF_CLASS_ID);
+> >  	}
+> >  
+> > -- 
+> > 2.6.4
+> > 
+
+
