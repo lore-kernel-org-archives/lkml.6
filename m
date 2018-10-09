@@ -2,112 +2,149 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15DAC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F71C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9B1213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9B1213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 99431213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99431213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeJINtY (ORCPT
+        id S1726579AbeJINuc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:49:24 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:60493 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726057AbeJINtX (ORCPT
+        Tue, 9 Oct 2018 09:50:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36016 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725835AbeJINuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:49:23 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id 9lafgWJsxSskC9laiglPj6; Tue, 09 Oct 2018 08:34:01 +0200
-Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
-To:     Keiichi Watanabe <keiichiw@chromium.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricky Liang <jcliang@chromium.org>,
-        Shik Chen <shik@chromium.org>
-References: <20181003070656.193854-1-keiichiw@chromium.org>
- <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com>
- <20181008140302.2239633f@coco.lan>
- <00b0a8af-b7a5-cb49-0684-0fd0efefa196@xs4all.nl>
- <20181008152348.7ef6d77e@coco.lan>
- <931ca67d-3ac6-afc1-f933-c9733d561767@xs4all.nl>
- <20181008160029.1bd1f5a8@coco.lan>
- <CAD90VcY+n_jAWqQ09JBSE==aUxNB7Yc2BNNZRGsP4jd74OW3+g@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <609798e1-ab23-75d8-ddc2-40fe55cb85d3@xs4all.nl>
-Date:   Tue, 9 Oct 2018 08:33:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 9 Oct 2018 09:50:32 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w996XwY5053283
+        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 02:35:09 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0hmkatxw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 02:35:09 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 9 Oct 2018 07:35:06 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 9 Oct 2018 07:35:03 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w996Z2O663504558
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 9 Oct 2018 06:35:02 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E78542047;
+        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DEB742041;
+        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
+Received: from osiris (unknown [9.152.212.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
+Date:   Tue, 9 Oct 2018 08:35:00 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-next@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [BUG -next 20181008] list corruption with "mm/slub: remove useless
+ condition in deactivate_slab"
+X-TM-AS-GCONF: 00
+x-cbid: 18100906-0016-0000-0000-000002105F59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100906-0017-0000-0000-00003267C348
+Message-Id: <20181009063500.GB3555@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <CAD90VcY+n_jAWqQ09JBSE==aUxNB7Yc2BNNZRGsP4jd74OW3+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHIvX00Rs3NmTaxNLgo+Mr+F+0Btc44mvpFREO6AZMGqGFlruIZxSodfVBEISv1b59PfOy0H/ElfSAIlU7qR7ZDnjtp+Xj1kGMOx2o2vqD/NgLsAMH+G
- XaEbG6Uf8MtR3UcvVgV8ihQTyRzVaWYDJrxx06DIITjEjjguZp2mZ7niLKttDNDaJ+ruEyPVqknfx8X4MkLM5Ub7zPQUulWJODX2sTC9kdu1YvsI68g1pnNv
- IRUObzQk4oueLiP98NTD01Ip7CO3+Z/+p6d2Zc+2V2Cjg+QiixDzUMZCR5hK8YJsX8QIsQckfTXmq6k0zpVyqtuvs9gvGq7kCWcz6AYrU+Zk6xSsRsvEYG0J
- Hso22uXL+++jTYLq6hk84tHRsIpGqPlImRidZqB+RcXnG+3h8cRaYYVNwE19A8S4mGp643OiVTBpnU6kVW8VMoCSZzbx1XOLG/YbtOEOQq4POfeUvu8=
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=762 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810090069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/2018 08:01 AM, Keiichi Watanabe wrote:
-> Let me back to the topic about interval.
-> I'd like to send a nex version of this patch to avoid duplication of intervals.
-> 
-> We need to choose two intervals from the three options: 1/20, 2/25 and 1/40.
-> As Mauro said, we would want to have 2/25 for a fractional rate.
-> Then, I think adding 2/25 and 1/40 will work well.
-> If it's okay, I will send an updated version.
+Hello,
 
-Fine by me!
+with linux-next for 20181008 I can reliably crash my system with lot's of
+debugging options enabled on s390. List debugging triggers the list
+corruption below, which I could bisect down to this commit:
 
-	Hans
+fde06e07750477f049f12d7d471ffa505338a3e7 is the first bad commit
+commit fde06e07750477f049f12d7d471ffa505338a3e7
+Author: Pingfan Liu <kernelfans@gmail.com>
+Date:   Thu Oct 4 07:43:01 2018 +1000
 
-> 
-> Best regards,
-> Kei
-> 
-> On Tue, Oct 9, 2018 at 4:00 AM, Mauro Carvalho Chehab
-> <mchehab+samsung@kernel.org> wrote:
->> Em Mon, 8 Oct 2018 20:31:10 +0200
->> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
->>
->>>> (gdb) list *vivid_fillbuff+0x1e9b
->>>> 0x1936b is in vivid_fillbuff (drivers/media/platform/vivid/vivid-kthread-cap.c:495).
->>>> 490                                 ms % 1000,
->>>> 491                                 buf->vb.sequence,
->>>> 492                                 (dev->field_cap == V4L2_FIELD_ALTERNATE) ?
->>>> 493                                         (buf->vb.field == V4L2_FIELD_TOP ?
->>>> 494                                          " top" : " bottom") : "");
->>>> 495                 tpg_gen_text(tpg, basep, line++ * line_height, 16, str);
->>>> 496         }
->>>> 497         if (dev->osd_mode == 0) {
->>>> 498                 snprintf(str, sizeof(str), " %dx%d, input %d ",
->>>> 499                                 dev->src_rect.width, dev->src_rect.height, dev->input);
->>>>
->>>
->>> There is a bug with hflip handling in that function. Nothing to do with the
->>> resolution. I could reproduce it by just checking the hflip control.
->>> I'll investigate.
->>
->> Ah! Well, as I said, I got it only once last week while trying to use
->> vivid for some event racing test. I didn't have time to actually
->> seek. On that time, the bug only manifested when I changed the frame
->> rate.
->>
->> Thanks,
->> Mauro
+    mm/slub: remove useless condition in deactivate_slab
+
+    The var l should be used to reflect the original list, on which the page
+    should be.  But c->page is not on any list.  Furthermore, the current code
+    does not update the value of l.  Hence remove the related logic
+
+    Link: http://lkml.kernel.org/r/1537941430-16217-1-git-send-email-kernelfans@gmail.com
+    Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+    Acked-by: Christoph Lameter <cl@linux.com>
+    Cc: Pekka Enberg <penberg@kernel.org>
+    Cc: David Rientjes <rientjes@google.com>
+    Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+list_add double add: new=000003d1029ecc08, prev=000000008ff846d0,next=000003d1029ecc08.
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:31!
+illegal operation: 0001 ilc:1 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 3 PID: 106 Comm: (sd-executor) Not tainted 4.19.0-rc6-00291-gfde06e077504 #21
+Hardware name: IBM 2964 NC9 702 (z/VM 6.4.0)
+Krnl PSW : (____ptrval____) (____ptrval____) (__list_add_valid+0x98/0xa8)
+           R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
+Krnl GPRS: 0000000074311fdf 0000000080000001 0000000000000058 0000000000e7b8b2
+           0000000000000000 0000000075438c64 00000000a7b31928 001c007b00000000
+           000000008fe99d00 00000000a7b31b40 000003d1029ecc08 00000000a7c03a80
+           000003d1029ecc08 000000008ff84680 00000000007b5674 00000000a7c03960
+Krnl Code: 00000000007b5668: c0200034734a        larl    %r2,e43cfc
+           00000000007b566e: c0e5ffd0cf51        brasl   %r14,1cf510
+          #00000000007b5674: a7f40001            brc     15,7b5676
+          >00000000007b5678: a7290001            lghi    %r2,1
+           00000000007b567c: ebcff0a00004        lmg     %r12,%r15,160(%r15)
+           00000000007b5682: 07fe                bcr     15,%r14
+           00000000007b5684: 0707                bcr     0,%r7
+           00000000007b5686: 0707                bcr     0,%r7
+Call Trace:
+([<00000000007b5674>] __list_add_valid+0x94/0xa8)
+ [<000000000037d30e>] deactivate_slab.isra.15+0x45e/0x810
+ [<000000000037ede4>] ___slab_alloc+0x76c/0x7c0
+ [<000000000037eeb0>] __slab_alloc.isra.16+0x78/0xa8
+ [<00000000003808c8>] kmem_cache_alloc+0x160/0x458
+ [<0000000000141a3a>] vm_area_dup+0x3a/0x60
+ [<0000000000142f0a>] copy_process+0xd72/0x2100
+ [<000000000014449a>] _do_fork+0xba/0x688
+ [<0000000000144bb0>] sys_clone+0x48/0x50
+ [<0000000000b8faf0>] system_call+0xd8/0x2d0
+INFO: lockdep is turned off.
+Last Breaking-Event-Address:
+ [<00000000007b5674>] __list_add_valid+0x94/0xa8
+
+Kernel panic - not syncing: Fatal exception: panic_on_oops
 
