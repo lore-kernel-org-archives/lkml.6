@@ -2,96 +2,90 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89BEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 251D6C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773AE2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JvHYW2+N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773AE2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id E9B782054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B782054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeJIUnT (ORCPT
+        id S1727735AbeJIUnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49942 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbeJIUnS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=VVrA3gX4S4aK9b26/sI5R8iiOEO8w46y03v4nt2GxbY=; b=JvHYW2+NRx9uTFwvGoZUB3K994
-        Ltj4pFTEi1yyA7kwBwtmRHbedPTrG3gCPqY3wCtb3bZJEHjCU/sqzXnuLSNkRz+Gvu7vpO0Rls4T3
-        CEuP5xLYrWxsf1knWSzpOzUEjS/OdZMAKeCH2kieVo4v18xgHP53xYO+2HBmp6cuRYbJiS6eSWB9t
-        KdmnUzrgjecB0KlFQoVB+hDIWFA7Gby/cIUFD544mthDIRFUSigTLJw/Hmmc1Z5LdqBHR3DB+daMT
-        GFAtYLTlaT7t9DmlVXFMS50N0RdDWG4thjLXBau8unoiIp7Q7coMJg57S/4wMHn4/1Iu1QPE9dC9G
-        WbMOli/w==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s1T-0001Rf-QG; Tue, 09 Oct 2018 13:26:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 24/33] powerpc/dma: fix an off-by-one in dma_capable
-Date:   Tue,  9 Oct 2018 15:24:51 +0200
-Message-Id: <20181009132500.17643-25-hch@lst.de>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181009132500.17643-1-hch@lst.de>
-References: <20181009132500.17643-1-hch@lst.de>
+        Tue, 9 Oct 2018 16:43:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45722 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727657AbeJIUnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:43:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EE203AC1F;
+        Tue,  9 Oct 2018 13:26:22 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 15:26:22 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009132622.GR8528@dhcp22.suse.cz>
+References: <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
+ <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+ <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+ <20181009063541.GB8528@dhcp22.suse.cz>
+ <20181009075015.GC8528@dhcp22.suse.cz>
+ <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
+ <20181009111005.GK8528@dhcp22.suse.cz>
+ <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
+ <20181009125841.GP8528@dhcp22.suse.cz>
+ <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to compare the last byte in the dma range and not the one after it
-for the bus_dma_mask, just like we do for the regular dma_mask.  Fix this
-cleanly by merging the two comparisms into one.
+On Tue 09-10-18 22:14:24, Tetsuo Handa wrote:
+> On 2018/10/09 21:58, Michal Hocko wrote:
+> > On Tue 09-10-18 21:52:12, Tetsuo Handa wrote:
+> >> On 2018/10/09 20:10, Michal Hocko wrote:
+> >>> On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
+> >>>>> 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
+> >>>>> reap the mm in the rare case of the race.
+> >>>>
+> >>>> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
+> >>>> to -1000 (and allowed unprivileged users to OOM-lockup the system).
+> >>>
+> >>> I do not follow.
+> >>>
+> >>
+> >> http://tomoyo.osdn.jp/cgi-bin/lxr/source/mm/oom_kill.c?v=linux-4.6.7#L493
+> > 
+> > Ahh, so you are not referring to the current upstream code. Do you see
+> > any specific problem with the current one (well, except for the possible
+> > race which I have tried to evaluate).
+> > 
+> 
+> Yes. "task_will_free_mem(current) in out_of_memory() returns false due to MMF_OOM_SKIP
+> being already set" is a problem for clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+> with the current code.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/powerpc/include/asm/dma-direct.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/dma-direct.h b/arch/powerpc/include/asm/dma-direct.h
-index e00ab5d0612d..92d8aed86422 100644
---- a/arch/powerpc/include/asm/dma-direct.h
-+++ b/arch/powerpc/include/asm/dma-direct.h
-@@ -4,15 +4,11 @@
- 
- static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
- {
--#ifdef CONFIG_SWIOTLB
--	if (dev->bus_dma_mask && addr + size > dev->bus_dma_mask)
--		return false;
--#endif
--
- 	if (!dev->dma_mask)
- 		return false;
- 
--	return addr + size - 1 <= *dev->dma_mask;
-+	return addr + size - 1 <=
-+		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
- }
- 
- static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
+a) I fail to see how that is related to your previous post and b) could
+you be more specific. Is there any other scenario from the two described
+in my earlier email?
 -- 
-2.19.0
-
+Michal Hocko
+SUSE Labs
