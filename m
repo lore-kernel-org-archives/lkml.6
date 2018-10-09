@@ -2,189 +2,106 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2FAC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D944BC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D62213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:46:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUslgJAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D62213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CD21213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:50:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD21213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJJEFZ (ORCPT
+        id S1727388AbeJJEJN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39246 "EHLO mail.kernel.org"
+        Wed, 10 Oct 2018 00:09:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38046 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbeJJEFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:05:25 -0400
-Received: from localhost (unknown [104.132.0.74])
+        id S1725748AbeJJEJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 00:09:13 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id hGhLKRwstRVX; Tue,  9 Oct 2018 22:50:26 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A33DE213A2;
-        Tue,  9 Oct 2018 20:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539117999;
-        bh=7L3W3D1LSExK7RCCuBflEjR+VfF3EG1spu2DjWVMb3Q=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=eUslgJAmu105cKIFRT7rjALqIJVlqU0fgrLDONpKHYcqXC4yTCDMTZ4j41iqmKPpR
-         JnX2rGCk3KApDotLRPkDVFsiTkBR4Q2Bc7g0cmUKRR7ayh/80kuyZJkwuV9ZZLlIxY
-         YAPhKJjPY2tjxbCFCYwZ9oTnY/P9JoNmNyObPymM=
-Content-Type: text/plain; charset="utf-8"
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C733D1EC028B;
+        Tue,  9 Oct 2018 22:50:25 +0200 (CEST)
+From:   Borislav Petkov <bp@alien8.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>, x86@kernel.org
+Subject: [RFC PATCH] kernel/panic: Filter out a potential trailing newline
+Date:   Tue,  9 Oct 2018 22:50:19 +0200
+Message-Id: <20181009205019.2786-1-bp@alien8.de>
+X-Mailer: git-send-email 2.19.0.271.gfe8321ec057f
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539093467-12123-2-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chandanu@codeaurora.org, Taniya Das <tdas@codeaurora.org>
-References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
- <1539093467-12123-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153911799897.119890.15102407227774253910@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 1/2] clk: qcom: rcg2: Add support for display port clock ops
-Date:   Tue, 09 Oct 2018 13:46:38 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 06:57:46)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 6e3bd19..ca6142f 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -10,6 +10,7 @@
->  #include <linux/export.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
-> +#include <linux/rational.h>
+From: Borislav Petkov <bp@suse.de>
 
-Can you also select RATIONAL in the Kconfig language? Yes the clk
-subsystem is already selecting it, but it's nice to be explicit in the
-subdrivers.
+If a call to panic() terminates the string with a \n, the result puts
+the closing brace ']---' on a newline because panic() itself adds \n
+too.
 
->  #include <linux/regmap.h>
->  #include <linux/math64.h>
->  #include <linux/slab.h>
-> @@ -1124,3 +1125,88 @@ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
-> +
-> +static int clk_rcg2_dp_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                       unsigned long parent_rate)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       struct freq_tbl f =3D { 0 };
-> +       unsigned long src_rate;
-> +       unsigned long num, den;
-> +       u32 mask =3D BIT(rcg->hid_width) - 1;
-> +       u32 hid_div, cfg;
-> +       int i, num_parents =3D clk_hw_get_num_parents(hw);
-> +
-> +       src_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
+Now, if one goes and removes the newline chars from all panic()
+invocations - and the stats right now look like this:
 
-What is this doing? We shouldn't need to check the parent clk for any
-rate here when we're setting the rate.
+~300 calls with an \n
+~500 calls without a \n
 
-> +       if (src_rate <=3D 0) {
-> +               pr_err("Invalid RCG parent rate\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       rational_best_approximation(src_rate, rate,
-> +                       (unsigned long)(1 << 16) - 1,
+one is destined to a neverending game of whack-a-mole because the usual
+thing to do is add a newline at the end of a string a function is
+supposed to print.
 
-Use GENMASK?
+Therefore, simply zap any \n at the end of the panic string to avoid
+touching so many places in the kernel.
 
-> +                       (unsigned long)(1 << 16) - 1, &den, &num);
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: x86@kernel.org
+---
+ kernel/panic.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Same?
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 8b2e002d52eb..5776d2879650 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -136,7 +136,7 @@ void panic(const char *fmt, ...)
+ {
+ 	static char buf[1024];
+ 	va_list args;
+-	long i, i_next = 0;
++	long i, i_next = 0, len;
+ 	int state = 0;
+ 	int old_cpu, this_cpu;
+ 	bool _crash_kexec_post_notifiers = crash_kexec_post_notifiers;
+@@ -173,8 +173,12 @@ void panic(const char *fmt, ...)
+ 	console_verbose();
+ 	bust_spinlocks(1);
+ 	va_start(args, fmt);
+-	vsnprintf(buf, sizeof(buf), fmt, args);
++	len = vscnprintf(buf, sizeof(buf), fmt, args);
+ 	va_end(args);
++
++	if (len && buf[len - 1] == '\n')
++		buf[len - 1] = '\0';
++
+ 	pr_emerg("Kernel panic - not syncing: %s\n", buf);
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ 	/*
+-- 
+2.19.0.271.gfe8321ec057f
 
-> +
-> +       if (!num || !den) {
-> +               pr_err("Invalid MN values derived for requested rate %lu\=
-n",
-> +                                                       rate);
-> +               return -EINVAL;
-> +       }
-> +
-> +       regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-> +       hid_div =3D cfg;
-> +       cfg &=3D CFG_SRC_SEL_MASK;
-> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
-> +
-> +       for (i =3D 0; i < num_parents; i++)
-> +               if (cfg =3D=3D rcg->parent_map[i].cfg) {
-> +                       f.src =3D rcg->parent_map[i].src;
-> +                       break;
-> +       }
-> +
-> +       f.pre_div =3D hid_div;
-> +       f.pre_div >>=3D CFG_SRC_DIV_SHIFT;
-> +       f.pre_div &=3D mask;
-> +
-> +       if (num =3D=3D den) {
-> +               f.m =3D 0;
-> +               f.n =3D 0;
-> +       } else {
-> +               f.m =3D num;
-> +               f.n =3D den;
-> +       }
-> +
-> +       return clk_rcg2_configure(rcg, &f);
-> +}
-> +
-> +static int clk_rcg2_dp_set_rate_and_parent(struct clk_hw *hw,
-> +               unsigned long rate, unsigned long parent_rate, u8 index)
-> +{
-> +       return clk_rcg2_dp_set_rate(hw, rate, parent_rate);
-> +}
-> +
-> +static int clk_rcg2_dp_determine_rate(struct clk_hw *hw,
-> +                               struct clk_rate_request *req)
-> +{
-> +       if (!hw)
-> +               return -EINVAL;
-> +
-> +       if (!clk_hw_get_parent(hw)) {
-> +               pr_err("Missing the parent for the DP RCG\n");
-> +               return -EINVAL;
-> +       }
-
-Let me Harry Potter this stuff. Expelliarmus!
-
-> +
-> +       req->best_parent_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
-
-Presumably we should ask the parent clk for the rate that is requested
-here by calling determine rate up and see if the parent can do it. Sure,
-this clk does nothing, so we don't really need any sort of op here then
-and we can just flag the clk as CLK_SET_RATE_PARENT and let the core do
-the rest.
-
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops clk_dp_ops =3D {
-> +       .is_enabled =3D clk_rcg2_is_enabled,
-> +       .get_parent =3D clk_rcg2_get_parent,
-> +       .set_parent =3D clk_rcg2_set_parent,
-> +       .recalc_rate =3D clk_rcg2_recalc_rate,
-> +       .set_rate =3D clk_rcg2_dp_set_rate,
-> +       .set_rate_and_parent =3D clk_rcg2_dp_set_rate_and_parent,
-> +       .determine_rate =3D clk_rcg2_dp_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_dp_ops);
