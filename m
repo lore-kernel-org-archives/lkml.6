@@ -2,132 +2,156 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E161C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E511C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260BB2087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:13:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s/QAgJrE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260BB2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 322DF2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322DF2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeJIVaq (ORCPT
+        id S1726714AbeJIVb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:30:46 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35962 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeJIVaq (ORCPT
+        Tue, 9 Oct 2018 17:31:29 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.194]:25654 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726393AbeJIVb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:30:46 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u34-v6so1740525qth.3;
-        Tue, 09 Oct 2018 07:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kq5wa5PWVVx/kxt3A42TS1IApA4ReTV/1jPPl7qBSAY=;
-        b=s/QAgJrEGe+qg/bnjsUx4nUJRfBbkjQ0ec/HCNCdl1A5s/lZT5gky704OtnwnDqDo4
-         JUix4wqp/ihiP7Za9fKRXgt4LdxhS86tpaaMPlDplcxikjSirAssMJaMuEPtRgw/VOWH
-         iyY4n9aj366NW/CPc24LHKPSvI+OlPrHxufEjmuC67G05HOe3tgPgFcDpLFLHHD95pPs
-         k1Ra2q3tquHVcl/n4gICLYZVATd5HXwvHsc5FuBUuRA27DzXR+NeNvSVji0pNBX3UZLE
-         oCjItp74y6KL2HgTCNi3DP2+0w/5VmIPX5K/IFHolTEyohTjD/SfMbfOUWnJBCNCrbFh
-         rXDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kq5wa5PWVVx/kxt3A42TS1IApA4ReTV/1jPPl7qBSAY=;
-        b=XD5xI0WOB4Kldysa35UgN7gUdg+mVblZivf5Zn5gOkqP4otGbM7LvN32NzA39+xbxR
-         lgsr2kfpAIl2dvXMa9Kg1jExOt5fiL9ML6xCaeYtOBysw8bo4tij4wHT8LMrB6HrYFPO
-         n0qcA057OJuryClCXbxtyJLBCrFsip1QWq06TLisqMIn2YPth/OzFn9+IY2FAfe51g2V
-         YsIkG6rO8MJDsPfyS4CWOa1OQKzfcTL16txdqMuZS273dfVTJHrl23xdZn+AENHJonhY
-         Iw8Vcvu5Pf8tVlKcrqyywaSHa4gteP9FtIFSB0lR1jvi6Kh8ynigO4ehY03gQirTwjOK
-         ivlg==
-X-Gm-Message-State: ABuFfoj94I4QArMfU48lcQ75J1H4h1PuI1EB8hv3iCqIbL9nPAqJ47s0
-        yLK0TyUSDwWtd1Ah05VxGkTfFgOzYpPQkWzicZE=
-X-Google-Smtp-Source: ACcGV60bLzo1FXdU0LyiIgroshSHN4BbgilUhudNnmm+EN2MO2RgWpzkRUSvLT0+FychB4h0HVuQAndq02zA82QrxVQ=
-X-Received: by 2002:a0c:93c5:: with SMTP id g5mr2140332qvg.136.1539094416348;
- Tue, 09 Oct 2018 07:13:36 -0700 (PDT)
+        Tue, 9 Oct 2018 17:31:29 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 19B1485F83
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 09:13:36 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9slFg1B7QRPoj9slOgJT7G; Tue, 09 Oct 2018 09:13:35 -0500
+X-Authority-Reason: nr=8
+Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:42704 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g9slF-002og4-8G; Tue, 09 Oct 2018 09:13:21 -0500
+Subject: Re: [PATCH 0/2] phy: ocelot-serdes: fix out-of-bounds bug
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <cover.1539036280.git.gustavo@embeddedor.com>
+ <20181009072853.t4jjqdlvc4g735hm@qschulz>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <bbaed401-0ea1-f5bb-43b9-0e38bcdbdfa5@embeddedor.com>
+Date:   Tue, 9 Oct 2018 16:13:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181008144303.23878-1-rajneesh.bhardwaj@linux.intel.com>
- <CAHp75VfNsasf-hpiubrfw=x+iVjBOOcY=uj6dB97iVpkoT6K=w@mail.gmail.com> <f6742716-d302-9af6-4d7f-428def965279@linux.intel.com>
-In-Reply-To: <f6742716-d302-9af6-4d7f-428def965279@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 9 Oct 2018 17:13:25 +0300
-Message-ID: <CAHp75VcHUZzzemZdtuNgOYMA=DJ-naWk1Cxj0yPxZn3-W151Bw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: intel_telemetry: Update maintainers info
-To:     rajneesh.bhardwaj@linux.intel.com
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        David Box <david.e.box@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181009072853.t4jjqdlvc4g735hm@qschulz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 109.24.154.57
+X-Source-L: No
+X-Exim-ID: 1g9slF-002og4-8G
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:42704
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 5:12 PM Bhardwaj, Rajneesh
-<rajneesh.bhardwaj@linux.intel.com> wrote:
->
->
->
-> On 09-Oct-18 5:07 PM, Andy Shevchenko wrote:
-> > On Mon, Oct 8, 2018 at 5:44 PM Rajneesh Bhardwaj
-> > <rajneesh.bhardwaj@linux.intel.com> wrote:
-> >> Add myself and David as the new maintainers for Intel Telemetry driver.
-> >>
-> > There is no explanation why.
-> > (Like previous one left the company, and / or you are doing set of the
-> > drivers related to PMC where telemetry is part of, etc)
->
-> Hi Andy,
->   Souvik no longer works with Intel. I and David are volunteering to
-> take up the task on his behalf since we do work on drivers which are
-> pretty close to this one in terms of functionalities.
->
-
-Good, please update the commit message and send v2. Thanks!
-
-> Thanks
-> Rajneesh
->
-> >> Signed-off-by: Box, David E <david.e.box@linux.intel.com>
-> >> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> >> ---
-> >>   MAINTAINERS | 3 ++-
-> >>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 22065048d89d..f33ebd1b8034 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -7530,7 +7530,8 @@ F:        arch/x86/crypto/sha*-mb/
-> >>   F:     crypto/mcryptd.c
-> >>
-> >>   INTEL TELEMETRY DRIVER
-> >> -M:     Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-> >> +M:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> >> +M:     Box, David E <david.e.box@linux.intel.com>
-> >>   L:     platform-driver-x86@vger.kernel.org
-> >>   S:     Maintained
-> >>   F:     arch/x86/include/asm/intel_telemetry.h
-> >> --
-> >> 2.17.1
-> >>
-> >
->
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+On 10/9/18 9:28 AM, Quentin Schulz wrote:
+> Hi Gustavo,
+> 
+> On Tue, Oct 09, 2018 at 12:20:28AM +0200, Gustavo A. R. Silva wrote:
+>> This patchset aims to fix an out-of-bounds bug in
+>> the phy-ocelot-serdes driver.
+>>
+>> Currently, there is an out-of-bounds read on array ctrl->phys,
+>> once variable i reaches the maximum array size of SERDES_MAX
+>> in the for loop.
+>>
+>> Quentin Schulz pointed out that SERDES_MAX is a valid value to
+>> index ctrl->phys. So, I updated SERDES_MAX to be SERDES6G_MAX + 1
+>> in include/dt-bindings/phy/phy-ocelot-serdes.h.
+>>
+>> Then I changed the condition in the for loop from
+>> i <= SERDES_MAX to i < SERDES_MAX in order to
+>> complete the fix.
+>>
+>> The reason I'm sending this fix as series is because
+>> checkpatch reported an error when I first tried to
+>> integrate the whole solution into a singe patch. So,
+>> changes to dt-bindings should be sent as a separate
+>> patch.
+>>
+> 
+> Much appreciated, thank you!
+> 
+
+Glad to help. :)
+
+Thanks
+--
+Gustavo
