@@ -2,108 +2,137 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A576C65BD1
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28650C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5201214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:30:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="IXKnDQxY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5201214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id CF98F20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 21:37:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF98F20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeJJEtv (ORCPT
+        id S1727268AbeJJE4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:49:51 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:53196 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJEtq (ORCPT
+        Wed, 10 Oct 2018 00:56:00 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46343 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJE4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:49:46 -0400
-Received: from allenwind.lan (unknown [37.17.239.109])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 300D15C097A;
-        Tue,  9 Oct 2018 23:30:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1539120651;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oxKES5i8OdqEPY0M+7sSXxnNFq2ypMEHz1LKRg/ZWX8=;
-        b=IXKnDQxYRNYsCQ8OJd65+MojUtbqTAobgET+WYt5lfpgiqtBYSEdB1SKTeRUajfeUT3v+x
-        QlSp5XQlOy46VIcdAv/A7VjDqBnWVTYVyJT2pp/x+hjfoWg8L/miTxzQ2jW/0Vt5bVsPv7
-        /+kjdFzwwq9iGha5oATJ0ELVCnPU6nI=
-From:   Stefan Agner <stefan@agner.ch>
-To:     p.zabel@pengutronix.de, airlied@linux.ie,
-        gregkh@linuxfoundation.org
-Cc:     rafael@kernel.org, linux@armlinux.org.uk,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/2] drm/imx: make sure to cleanup DRM before unbinding components
-Date:   Tue,  9 Oct 2018 23:30:49 +0200
-Message-Id: <e08eff2ed53b441c8a6c41758c00c1c91dc48d2c.1539120077.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <83a28282a3f745a4cd4ca77d0593ad2e61359a5d.1539120077.git.stefan@agner.ch>
-References: <83a28282a3f745a4cd4ca77d0593ad2e61359a5d.1539120077.git.stefan@agner.ch>
+        Wed, 10 Oct 2018 00:56:00 -0400
+Received: by mail-qk1-f193.google.com with SMTP id q12-v6so1933002qkl.13;
+        Tue, 09 Oct 2018 14:37:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :organization:content-transfer-encoding;
+        bh=hblN8q8gUG/U0aFiotnemC58vA2ZfVizjitRY8gaGxA=;
+        b=Utr+w645X5I3/pz4U0NweBRKB9KO/yCRMeZuE2T60mh1Txbhq6xnFI+fhZrFy6H/Ji
+         HbYdljKQyDkn+LfJ33LT27dRJ+Stv/HNA1ZfoXrcycyNzPFB/zgWl9lc400BsWVyJ4y0
+         Lm4HF6HHaCUzhv7wJb54/j9GcqFfiZFnjV6Mlwp/ovxvYYrq8CDJ5khA+UrYyniAeI3C
+         PA2TU5XulKXdvTOh6nJVq5J9QagJE3gwudnaZtW2Y+8yggFRUD3XZh1aghowPZl06/1f
+         vGhFLqVdt00kb+pkCMio0rIAtlLvSjg8Fsgc8jOo4FWQMyv6ladWYQrrb3bbr61nY2Fd
+         2RpQ==
+X-Gm-Message-State: ABuFfohlmQLRtk79xDdua6Xp2P6VgAwYd6vQGR3YsUn0gCKhZyDcIFPh
+        HTURHra8kEcd9Eq/6xKjKcs=
+X-Google-Smtp-Source: ACcGV601ckzTadSdypOw8uV+aq8AgdLFOb2dcw8yizrBCMYqfvHP67/GQzCNTbmtV2qRKSRL9q1u0Q==
+X-Received: by 2002:a37:cb8a:: with SMTP id u10-v6mr21968335qkl.324.1539121024074;
+        Tue, 09 Oct 2018 14:37:04 -0700 (PDT)
+Received: from localhost.localdomain ([181.220.65.91])
+        by smtp.gmail.com with ESMTPSA id g39-v6sm3495200qtc.89.2018.10.09.14.36.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 14:37:03 -0700 (PDT)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Tue, 09 Oct 2018 18:36:56 -0300
+From:   Otavio Salvador <otavio@ossystems.com.br>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+        devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] ARM: dts: rv1108-evb: enable eMMC support
+Date:   Tue,  9 Oct 2018 18:36:56 -0300
+Message-Id: <20181009213656.27719-1-otavio@ossystems.com.br>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
+Organization: O.S. Systems Software LTDA.
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In situations where a component fails to bind, a previously
-successfully bound component might already registered itself
-with the DRM framework (e.g. an encoder). When the master
-component then calls drm_mode_config_cleanup, we end up in a
-use after free sitution.
+Enable eMMC support for rv1108 evaluation board.
 
-Use the cleanup callback to make sure all framework level
-cleanup is done by the time we unbind components.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
- drivers/gpu/drm/imx/imx-drm-core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 5ea0c82f9957..b174a0ca9acb 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -288,8 +288,8 @@ static int imx_drm_bind(struct device *dev)
- err_unbind:
- #endif
- 	component_unbind_all(drm->dev, drm);
--err_kms:
- 	drm_mode_config_cleanup(drm);
-+err_kms:
- 	drm_dev_put(drm);
- 
- 	return ret;
-@@ -313,9 +313,17 @@ static void imx_drm_unbind(struct device *dev)
- 	drm_dev_put(drm);
- }
- 
-+static void imx_drm_cleanup(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+
-+	drm_mode_config_cleanup(drm);
-+}
-+
- static const struct component_master_ops imx_drm_ops = {
- 	.bind = imx_drm_bind,
- 	.unbind = imx_drm_unbind,
-+	.cleanup = imx_drm_cleanup,
+ arch/arm/boot/dts/rv1108-evb.dts |  8 ++++++++
+ arch/arm/boot/dts/rv1108.dtsi    | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rv1108-evb.dts b/arch/arm/boot/dts/rv1108-evb.dts
+index 70f0106d1252..f3c6f52c49e6 100644
+--- a/arch/arm/boot/dts/rv1108-evb.dts
++++ b/arch/arm/boot/dts/rv1108-evb.dts
+@@ -226,6 +226,14 @@
+ 	status = "okay";
  };
  
- static int imx_drm_platform_probe(struct platform_device *pdev)
++&emmc {
++	cap-mmc-highspeed;
++	supports-emmc;
++	non-removable;
++	num-slots = <1>;
++	status = "okay";
++};
++
+ &u2phy {
+ 	status = "okay";
+ 
+diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+index 76ea24636feb..f14a733d85f6 100644
+--- a/arch/arm/boot/dts/rv1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -772,6 +772,35 @@
+ 			};
+ 		};
+ 
++		emmc {
++			emmc_clk: emmc-clk {
++				rockchip,pins = <2 RK_PB6 RK_FUNC_1 &pcfg_pull_none_drv_8ma>;
++			};
++
++			emmc_cmd: emmc-cmd {
++				rockchip,pins = <2 RK_PB4 RK_FUNC_2 &pcfg_pull_up_drv_8ma>;
++			};
++
++			emmc_pwren: emmc-pwren {
++				rockchip,pins = <2 RK_PC2 RK_FUNC_2 &pcfg_pull_none>;
++			};
++
++			emmc_bus1: emmc-bus1 {
++				rockchip,pins = <2 RK_PA0 RK_FUNC_2 &pcfg_pull_up_drv_8ma>;
++			};
++
++			emmc_bus8: emmc-bus8 {
++				rockchip,pins = <2 RK_PA0 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA1 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA2 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA3 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA4 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA5 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA6 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA7 RK_FUNC_2 &pcfg_pull_up_drv_8ma>;
++			};
++		};
++
+ 		sdmmc {
+ 			sdmmc_clk: sdmmc-clk {
+ 				rockchip,pins = <3 RK_PC4 RK_FUNC_1 &pcfg_pull_none_drv_4ma>;
 -- 
-2.19.1
+2.19.0
 
