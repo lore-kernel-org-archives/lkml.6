@@ -2,99 +2,103 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D118BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BFBC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96BE82077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XX9IWH8a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96BE82077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 95A4921479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A4921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeJIRqr (ORCPT
+        id S1726907AbeJIRrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:46:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40819 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbeJIRqq (ORCPT
+        Tue, 9 Oct 2018 13:47:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46055 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbeJIRrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:46:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d2-v6so1219355wro.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 03:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=S5lZF5oI6oR0WKAKtPqdNCvf5iAqMKTgJ0i0i+oPMsU=;
-        b=XX9IWH8aGUPivEVCnzfF0AWzTvTPN5XJ655nr3DQ7MojRBW6m+LB/sQxOYJGcisvgA
-         cgrwLRfc0rEYtJXhAsU8Tt84bkJFHXdWjdEyMzwwsLrNk55umagiVrOjl3v5rSwYOl3y
-         o1SsfZ8wJLOXAu8oxaGAWWoB4tHhQVIEPvh7c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=S5lZF5oI6oR0WKAKtPqdNCvf5iAqMKTgJ0i0i+oPMsU=;
-        b=TqvpR3KrvubJzrVPZIGmG03rCV8Cj+KWXxzvGpOSrywKUPgSG+IRBtlSL0tvFMXEB2
-         oQAaIrAatTWn1I8zBjCVQHl4FinvhOn4KUaXsPWPuKbfCTpwH2gB9gHU12taXgIsyEbW
-         QBeskE2DYnDd6Pae62K7clt1NWKto7FnTb79xTe6t0t3p3P2nWr6uncp2/fx5QGX60b0
-         lY5X41s1RauTKHJp648fOpTW+jSWrOyv5FH858Pic/uBeBWNJ6RvBPiGwLJ/B2doWKHI
-         E0R08zkMNmhwEQPQ6fK5QxnZPHexodKgWlDZr74BgP1ZEFaylf3cfv6+Yh5Icuo3gwKm
-         cydA==
-X-Gm-Message-State: ABuFfogN2f3kkz8EB15vlz5mVygIqSMsRUHzuO9DQaDxD/vPcZYbj79a
-        8vLI0RyedGHawnABMSXMZiVymA==
-X-Google-Smtp-Source: ACcGV60YVAgGdTqPhPrJ68Gz4gHZvZdwl7Sc1iS2P/Z/sizVVVY5EvKHl9yqCvcwq8vM3W/Lc2jvSw==
-X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr19625137wrm.145.1539081030010;
-        Tue, 09 Oct 2018 03:30:30 -0700 (PDT)
-Received: from dell ([2.27.167.111])
-        by smtp.gmail.com with ESMTPSA id 90-v6sm25093049wrg.86.2018.10.09.03.30.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 03:30:29 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 11:30:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 5/5] Input: ti_am335x_tsc: Mark IRQ as wakeup capable
-Message-ID: <20181009103027.GQ4939@dell>
-References: <20180630103318.25355-1-vigneshr@ti.com>
- <20180630103318.25355-6-vigneshr@ti.com>
+        Tue, 9 Oct 2018 13:47:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99AUp9u999982
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 03:30:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99AUpp4999979;
+        Tue, 9 Oct 2018 03:30:51 -0700
+Date:   Tue, 9 Oct 2018 03:30:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-cf089611f4c446285046fcd426d90c18f37d2905@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, bp@suse.de, mingo@kernel.org,
+        lijiang@redhat.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, lijiang@redhat.com,
+          tglx@linutronix.de, hpa@zytor.com, bp@suse.de, mingo@kernel.org
+In-Reply-To: <710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com>
+References: <710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] proc/vmcore: Fix i386 build error of missing
+ copy_oldmem_page_encrypted()
+Git-Commit-ID: cf089611f4c446285046fcd426d90c18f37d2905
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180630103318.25355-6-vigneshr@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 30 Jun 2018, Vignesh R wrote:
+Commit-ID:  cf089611f4c446285046fcd426d90c18f37d2905
+Gitweb:     https://git.kernel.org/tip/cf089611f4c446285046fcd426d90c18f37d2905
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Mon, 8 Oct 2018 10:05:20 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 9 Oct 2018 11:57:28 +0200
 
-> On AM335x, ti_am335x_tsc can wake up the system from suspend, mark the
-> IRQ as wakeup capable, so that device irq is not disabled during system
-> suspend.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  drivers/input/touchscreen/ti_am335x_tsc.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+proc/vmcore: Fix i386 build error of missing copy_oldmem_page_encrypted()
 
-Applied, thanks.
+Lianbo reported a build error with a particular 32-bit config, see Link
+below for details.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Provide a weak copy_oldmem_page_encrypted() function which architectures
+can override, in the same manner other functionality in that file is
+supplied.
+
+Reported-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: x86@kernel.org
+Link: http://lkml.kernel.org/r/710b9d95-2f70-eadf-c4a1-c3dc80ee4ebb@redhat.com
+---
+ fs/proc/vmcore.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 42c32d06f7da..91ae16fbd7d5 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -187,6 +187,16 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
+ 	return remap_pfn_range(vma, from, pfn, size, prot);
+ }
+ 
++/*
++ * Architectures which support memory encryption override this.
++ */
++ssize_t __weak
++copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
++			   unsigned long offset, int userbuf)
++{
++	return copy_oldmem_page(pfn, buf, csize, offset, userbuf);
++}
++
+ /*
+  * Copy to either kernel or user space
+  */
