@@ -2,89 +2,84 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09046C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E158C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5FD2064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:09:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rMhs0zSL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5FD2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D8972064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:10:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D8972064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJIS0P (ORCPT
+        id S1726731AbeJIS0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:26:15 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34166 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbeJIS0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:26:15 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i12-v6so1175924otl.1;
-        Tue, 09 Oct 2018 04:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Au8/ydA/7QtQmXFjgivVts11SWfsBqDEN6Zjj7iS9Fg=;
-        b=rMhs0zSLSed5ecrRmaQJT04qItLiiIbU+cBXxG2f/THbBMPz04nhMDBEiDlveQU++w
-         qjnnzIng1RX9TfuReDvLWgz9G7CV1SXpoeGu3EspEXfLEH/8Z8SRfHvkOKD3KnO3xg6a
-         8n6OvA1fLuKkCWJqZj/M4vjxwvIqcF3YvC+Vf4hzYgG6kX64ixQUasle7Pa23Z6/peuu
-         836BdbZGGRwlmQnCV1gfS2Va8gvzIsCXhsFPtbjmnJxfq3ERsxeqn6XcO75kZs5XJzFk
-         nigCh+TMXS4GOE+aHQ65yCzb2BZREg7BVxMZqB8F5i19FF8CeP3hMNBs57lGH1O99ZJt
-         A8wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Au8/ydA/7QtQmXFjgivVts11SWfsBqDEN6Zjj7iS9Fg=;
-        b=gBn3Cls680doPkQ3Sq6FIg6RoURq1pbhMcZ4K0AbhtBy0tBxWK+ouOCoT5YOHrmdKD
-         hOIHm7D7ZWE2SuO2YcE/l048/+kRbs8sL+jEr5ULjBRl49pvEurDE+pINzYbEc+dxC0z
-         /ZvkZuwvJvCc1NZ5Ir5bZTnNPJ7DPkPC3S8EcvDac62KVJxBr7RSVxArgSQwWA5xC/eU
-         NQcU2aRm6aco5UToHKNb+eAVvz7fvI4yIdC3LKcj6xXiJpmzJD2qTynJ8u5rnrm/84hK
-         vnO9dWjPMAy7mJCZYs4EesclCxjeVpIgpy4ea4sFENMXwpLhwmF2yqU3J5JIVm2HzfIL
-         85kA==
-X-Gm-Message-State: ABuFfohlxQVsTb5UC8lsbgiLov0rQDk3w/zhfLn/U6DmW6WkPWqe27N8
-        BDX+iKJfWSAUI+H2KSUHimjlpuEtal1BJxafYccCxw==
-X-Google-Smtp-Source: ACcGV62KgdnN87wALr/P9t+WvPvOSQXbPAw6B/zTj4Sjz8kwyvYMAyhp7ugm4/rvmHe/IClxtybFly9cZoKEqxsZsaY=
-X-Received: by 2002:a9d:2f23:: with SMTP id h32-v6mr619096otb.255.1539083389317;
- Tue, 09 Oct 2018 04:09:49 -0700 (PDT)
+        Tue, 9 Oct 2018 14:26:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47190 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726393AbeJIS0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 14:26:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CAD24AF6F;
+        Tue,  9 Oct 2018 11:10:06 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 13:10:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009111005.GK8528@dhcp22.suse.cz>
+References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+ <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
+ <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
+ <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+ <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
+ <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+ <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+ <20181009063541.GB8528@dhcp22.suse.cz>
+ <20181009075015.GC8528@dhcp22.suse.cz>
+ <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-References: <20180921152726.31742-1-lukma@denx.de> <20181009105028.17971-1-lukma@denx.de>
-In-Reply-To: <20181009105028.17971-1-lukma@denx.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 9 Oct 2018 08:09:46 -0300
-Message-ID: <CAOMZO5C86vXGAvcXxsTk3nJFf_J3eqVBkkgMG13VGOqO=MJFOw@mail.gmail.com>
-Subject: Re: [PATCH v3] ARM: dts: Add support for Liebherr's BK4 device (vf610 based)
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 7:50 AM Lukasz Majewski <lukma@denx.de> wrote:
->
-> This commit adds DTS support for BK4 device from Liebherr. It
-> uses vf610 SoC from NXP.
->
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
+> On 2018/10/09 16:50, Michal Hocko wrote:
+[...]
+> >                               Well, that is unfortunate indeed and it
+> > breaks the OOM_SCORE_ADJ_MIN contract. There are basically two ways here
+> > 1) do not care and encourage users to use a saner way to set
+> > OOM_SCORE_ADJ_MIN because doing that externally is racy anyway e.g.
+> > setting it before [v]fork & exec. Btw. do we know about an actual user
+> > who would care?
+> 
+> I'm not talking about [v]fork & exec. Why are you talking about [v]fork & exec ?
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Because that is the only raceless way to set your oom_score_adj.
+
+> > 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
+> > reap the mm in the rare case of the race.
+> 
+> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
+> to -1000 (and allowed unprivileged users to OOM-lockup the system).
+
+I do not follow.
+
+-- 
+Michal Hocko
+SUSE Labs
