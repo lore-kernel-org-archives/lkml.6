@@ -2,188 +2,124 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1773BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87AAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC64A214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC64A214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+	by mail.kernel.org (Postfix) with ESMTP id B98CC214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98CC214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJIS1w (ORCPT
+        id S1726789AbeJIS2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:27:52 -0400
-Received: from mleia.com ([178.79.152.223]:39608 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbeJIS1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:27:52 -0400
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 48BF841E559;
-        Tue,  9 Oct 2018 12:11:25 +0100 (BST)
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sandeep Jain <Sandeep_Jain@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
- <5631ac17-a1c1-af12-8b30-314880af42df@gmail.com>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <4569f3e3-3812-f423-eda9-51e7a4d56a58@mleia.com>
-Date:   Tue, 9 Oct 2018 14:11:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 9 Oct 2018 14:28:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47534 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726160AbeJIS2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 14:28:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 822C1AF6F;
+        Tue,  9 Oct 2018 11:12:10 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 13:12:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] mm: Shuffle initial free memory
+Message-ID: <20181009111209.GL8528@dhcp22.suse.cz>
+References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153861932401.2863953.11364943845583542894.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181004074838.GE22173@dhcp22.suse.cz>
+ <CAPcyv4jO_K8g3XRzuYOQPeGT--aPtucwZsqkywxOFO4Zny5Xrg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5631ac17-a1c1-af12-8b30-314880af42df@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20181009_121125_320961_0AC7F131 
-X-CRM114-Status: GOOD (  25.07  )
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jO_K8g3XRzuYOQPeGT--aPtucwZsqkywxOFO4Zny5Xrg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
-
-On 10/09/2018 03:13 AM, Marek Vasut wrote:
-> On 10/08/2018 11:11 PM, Vladimir Zapolskiy wrote:
->> From: Sandeep Jain <Sandeep_Jain@mentor.com>
->>
->> The change adds device tree binding description of TI DS90Ux9xx
->> series of serializer and deserializer controllers which support video,
->> audio and control data transmission over FPD-III Link connection.
->>
->> Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
->> [vzapolskiy: various updates and corrections of secondary importance]
->> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->> ---
->>  .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
->>  1 file changed, 66 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->> new file mode 100644
->> index 000000000000..0733da88f7ef
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->> @@ -0,0 +1,66 @@
->> +Texas Instruments DS90Ux9xx de-/serializer controllers
->> +
->> +Required properties:
->> +- compatible: Must contain a generic "ti,ds90ux9xx" value and
->> +	may contain one more specific value from the list:
->> +	"ti,ds90ub925q",
->> +	"ti,ds90uh925q",
->> +	"ti,ds90ub927q",
->> +	"ti,ds90uh927q",
->> +	"ti,ds90ub926q",
->> +	"ti,ds90uh926q",
+On Thu 04-10-18 09:51:37, Dan Williams wrote:
+> On Thu, Oct 4, 2018 at 12:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Wed 03-10-18 19:15:24, Dan Williams wrote:
+> > > Some data exfiltration and return-oriented-programming attacks rely on
+> > > the ability to infer the location of sensitive data objects. The kernel
+> > > page allocator, especially early in system boot, has predictable
+> > > first-in-first out behavior for physical pages. Pages are freed in
+> > > physical address order when first onlined.
+> > >
+> > > Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
+> > > perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
+> > > when they are initially populated with free memory at boot and at
+> > > hotplug time.
+> > >
+> > > Quoting Kees:
+> > >     "While we already have a base-address randomization
+> > >      (CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
+> > >      memory layouts would certainly be using the predictability of
+> > >      allocation ordering (i.e. for attacks where the base address isn't
+> > >      important: only the relative positions between allocated memory).
+> > >      This is common in lots of heap-style attacks. They try to gain
+> > >      control over ordering by spraying allocations, etc.
+> > >
+> > >      I'd really like to see this because it gives us something similar
+> > >      to CONFIG_SLAB_FREELIST_RANDOM but for the page allocator."
+> > >
+> > > Another motivation for this change is performance in the presence of a
+> > > memory-side cache. In the future, memory-side-cache technology will be
+> > > available on generally available server platforms. The proposed
+> > > randomization approach has been measured to improve the cache conflict
+> > > rate by a factor of 2.5X on a well-known Java benchmark. It avoids
+> > > performance peaks and valleys to provide more predictable performance.
+> > >
+> > > While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
+> > > caches it leaves vast bulk of memory to be predictably in order
+> > > allocated. That ordering can be detected by a memory side-cache.
+> > >
+> > > The shuffling is done in terms of 'shuffle_page_order' sized free pages
+> > > where the default shuffle_page_order is MAX_ORDER-1 i.e. 10, 4MB this
+> > > trades off randomization granularity for time spent shuffling.
+> > > MAX_ORDER-1 was chosen to be minimally invasive to the page allocator
+> > > while still showing memory-side cache behavior improvements.
+> > >
+> > > The performance impact of the shuffling appears to be in the noise
+> > > compared to other memory initialization work. Also the bulk of the work
+> > > is done in the background as a part of deferred_init_memmap().
+> >
+> > This is the biggest portion of the series and I am wondering why do we
+> > need it at all. Why it isn't sufficient to rely on the patch 3 here?
 > 
-> Keep the list sorted.
+> In fact we started with only patch3 and it had no measurable impact on
+> the cache conflict rate.
 > 
-
-actually the list is a concatenation of two sorted lists, one for
-serializers, another for deserializers.
-
-Perhaps it makes sense to keep the list as it is done now and just
-mention the selected order, but then it will complicate the formal
-description.
-
->> +	"ti,ds90ub928q",
->> +	"ti,ds90uh928q",
->> +	"ti,ds90ub940q",
->> +	"ti,ds90uh940q".
->> +
->> +Optional properties:
->> +- reg : Specifies the I2C slave address of a local de-/serializer.
->> +- power-gpios : GPIO line to control supplied power to the device.
+> > Pages freed from the bootmem allocator go via the same path so they
+> > might be shuffled at that time. Or is there any problem with that?
+> > Not enough entropy at the time when this is called or the final result
+> > is not randomized enough (some numbers would be helpful).
 > 
-> Shouldn't this be regulator phandle ?
+> So the reason front-back randomization is not enough is due to the
+> in-order initial freeing of pages. At the start of that process
+> putting page1 in front or behind page0 still keeps them close
+> together, page2 is still near page1 and has a high chance of being
+> adjacent. As more pages are added ordering diversity improves, but
+> there is still high page locality for the low address pages and this
+> leads to no significant impact to the cache conflict rate. Patch3 is
+> enough to keep the entropy sustained over time, but it's not enough
+> initially.
 
-It could be, right. I'll ponder upon it.
+That should be in the changelog IMHO.
 
->> +- ti,backward-compatible-mode : Overrides backward compatibility mode.
->> +	Possible values are "<1>" or "<0>".
-> 
-> Make this bool , ie. present or not.
-> 
-
-It is a real tristate property which is represented by non-present, 0, 1.
-It shall not be bool IMHO.
-
->> +	If "ti,backward-compatible-mode" is not mentioned, the backward
->> +	compatibility mode is not touched and given by hardware pin strapping.
->> +- ti,low-frequency-mode : Overrides low frequency mode.
->> +	Possible values are "<1>" or "<0>".
->> +	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
->> +	is not touched and given by hardware pin strapping.
->> +- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
->> +	MAPSEL pin value is ignored.
->> +- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
->> +	MAPSEL pin value is ignored.
-> 
-> This needs some additional explanation, what's this about ?
-> 
-
-Please reference to datasheet, for instance search for MAPSEL pin description
-and overriding I2C commands in http://www.ti.com/lit/ds/symlink/ds90ub927q-q1.pdf
-
-I believe it makes little sense to copy excessive information from an open
-datasheet into bindings documentation.
-
->> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
->> +	Possible values are "<1>" or "<0>".
->> +	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
->> +	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
->> +	strobed on the Falling edge of the PCLK.
->> +	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
->> +	value is not touched and given by hardware pin strapping.
->> +- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
->> +	Possible values are from "<0>" to "<7>". The same value will be
->> +	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
->> +	found, then SSCG will be disabled.
->> +
->> +TI DS90Ux9xx serializers and deserializer device nodes may contain a number
->> +of children device nodes to describe and enable particular subcomponents
->> +found on ICs.
->> +
->> +Example:
->> +
->> +serializer: serializer@c {
->> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
->> +	reg = <0xc>;
->> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
->> +	ti,backward-compatible-mode = <0>;
->> +	ti,low-frequency-mode = <0>;
->> +	ti,pixel-clock-edge = <0>;
->> +	...
->> +}
->> +
->> +deserializer: deserializer@3c {
->> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
->> +	reg = <0x3c>;
->> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
->> +	...
->> +}
->> +
->>
-> 
-
---
-Best wishes,
-Vladimir
+-- 
+Michal Hocko
+SUSE Labs
