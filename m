@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33197C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F2BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE53E214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF322075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Yua7By9o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE53E214C5
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="U9gcIOA+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF322075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeJIScI (ORCPT
+        id S1728129AbeJIScK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:32:08 -0400
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:36388 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeJIScH (ORCPT
+        Tue, 9 Oct 2018 14:32:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45036 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeJIScK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:32:07 -0400
-Received: by mail-pl1-f177.google.com with SMTP id y11-v6so673442plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:15:40 -0700 (PDT)
+        Tue, 9 Oct 2018 14:32:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g2-v6so641723pgu.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=evQI4Gz4N8LGWm/76tEq/RRDa+8TbPgOzrAOKpZRfSY=;
-        b=Yua7By9oBlyrE3lwY42J8LxDLRkesDbinzmZIrYjAuZGiXC4gsyd+32GMqvvEet5Z/
-         8C8iQR4sAcYMpnOH3hJCMAxZ7L4dNX1CvMfU+jpvgjN20GDKZp9yfX6KGc1a2Fajxxzj
-         sEZLJpY4h7l+7AjFF+L2i8RTVP/Wu221lE14aqE60CmWmMp88vAWwzAMvUzbuize01V3
-         8OGRgaGod7isXKHsHxRFfgiDLO6C6nnyNSFWLMSr554JRmC35EYSN8+F1AcYSpH930f2
-         4usy4GaCMqtjj9dou45pT3/OHL2KoItd96XEtVACwldkVVGCOKjUN9O5Qo9/u4xOqC5X
-         txQg==
+        bh=UG5TyJ4mQLwlYDrNM4sIdv6PF17gqlPRsMtI7Jo8TAk=;
+        b=U9gcIOA+BJPPcKUx2cJiROlhvWYAiUNyOkoHqMx+80x9BotdlkVhtc0j9krUyZ+Zka
+         qd2NZ5DdSs6P7rMgUqukJfgwo9hXTv9HcG6IigLuBZ8RI4cLjZLK08KOQwNYkLzBsHyk
+         xaoXuECGJ93bbINQQV9IqxK6uue8hIee9RXE+bs3+k4uWQNEQj/FjrS6LaRWuyR42hal
+         7DyL5ymeIR1hXaKg6T+WhH/Ej7I3EhZYsQCB9UeUqL7soZlKfdEVGHqLuAziRVC2OJsK
+         6iluUv1A1QDflPPEYy6C8Q44hz93iVgN+Kst0z4AV/mYeMzzTweeHUmfipZZSnQGARLh
+         2hZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=evQI4Gz4N8LGWm/76tEq/RRDa+8TbPgOzrAOKpZRfSY=;
-        b=l8/8ltJr1dfz8bblatWU+pNWulF7YIUAZG3Zqt84HhtZ5jN2Ck+7pc+v7kKQz+eBGc
-         p4rxr3/1HalOceC2X1wwhlV/Vwxh+L+gAt8T/S1n/NvIjf2jhdvbYW3E3whcL/wYI3fr
-         FN0T0IzUnVhDia4yANKgkuWRcjUp6ej2CZ7pro2hL0n5wUwzrs03CJnuC9XFitbpTlxz
-         KTAQvKqau2QlYqoSi5wsESwjWF0+daN3fQKAE2EsgujAROu4jhcUJXD/h9okR75SgCvS
-         ytdPQddLVQClkFFGnCzf2/vsQbzvc/FEdV9OcA1p+71rvuzJvmE5kZgYI1nhg6K4YzYG
-         1a8Q==
-X-Gm-Message-State: ABuFfoiCUxNEpL0NdC1jE27Qj/n8GRGdLnuSiv4AxF63oZFJdTc/l2B5
-        1oopOc8wMjlGhKDesbzxqxYJEg==
-X-Google-Smtp-Source: ACcGV63JUHc3kDom5OnydYjGTzS4fQod6Qt65dkYArTPeA+hWnMnCZKTa5DsM/37BtWj4bkGPXVrAQ==
-X-Received: by 2002:a17:902:5a89:: with SMTP id r9-v6mr27885290pli.95.1539083740029;
-        Tue, 09 Oct 2018 04:15:40 -0700 (PDT)
+        bh=UG5TyJ4mQLwlYDrNM4sIdv6PF17gqlPRsMtI7Jo8TAk=;
+        b=WeVB68xEHHMbbBMy8d84KMEVJ//OI9/iZ2X25ubdJIfnpbYTV9ERTbFYB2HCkQo1A8
+         /m8hhKewD/4sOfgs/KoKG6FODSxSDApFBl29M0L8dXUtCVt7hDgGxlZLvhwwW2Nu126l
+         XeYogwVkXwIUqtmIc2W8rrjmPmrR8TdGeMdRbFJataSy/fdil0dubM/bri7r5aaZm0Nv
+         EFuz7wx9WC5kWYeUfUf1WJ6hTlYwz0fnF/pX4ZNNnUUzL8+7Zx/nhNmSFp8VoYv5+FH1
+         YAwCWGyogTwUwA5vsqzLJvMHHwhzWb2LpBYTANVgsEkMROIzhjqK6CWU3hAu4HNcYBFN
+         Eglw==
+X-Gm-Message-State: ABuFfoh6UaZUtcMdeOWBrj44kANJ8xmEFhym4p26NSj/XjpG9MgPPS1Q
+        /sxggFLOcu26KAO9QDJf3XIrEQ==
+X-Google-Smtp-Source: ACcGV615r46l7cfrPXWMzgsZk6WYJifaV4XDqBZcOPpf5uduyRgcSl+9QppxAeQLZbLQB/GEa2w5Dw==
+X-Received: by 2002:a63:501:: with SMTP id 1-v6mr24842199pgf.205.1539083743373;
+        Tue, 09 Oct 2018 04:15:43 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.15.36
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.15.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:15:38 -0700 (PDT)
+        Tue, 09 Oct 2018 04:15:42 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wei Yongjun <weiyongjun1@huawei.com>,
+        Zhoujie Wu <zjwu@marvell.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 43/45] lightnvm: pblk: fix error handling of pblk_lines_init()
-Date:   Tue,  9 Oct 2018 13:12:13 +0200
-Message-Id: <20181009111215.7653-44-mb@lightnvm.io>
+Subject: [GIT PULL 44/45] lightnvm: pblk: consider max hw sectors supported for max_write_pgs
+Date:   Tue,  9 Oct 2018 13:12:14 +0200
+Message-Id: <20181009111215.7653-45-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -78,33 +78,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Zhoujie Wu <zjwu@marvell.com>
 
-In the too many bad blocks error handling case, we should release all
-the allocated resources, otherwise it will cause memory leak.
+When do GC, the number of read/write sectors are determined
+by max_write_pgs(see gc_rq preparation in pblk_gc_line_prepare_ws).
 
-Fixes: 2deeefc02dff ("lightnvm: pblk: fail gracefully on line alloc. failure")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Due to max_write_pgs doesn't consider max hw sectors
+supported by nvme controller(128K), which leads to GC
+tries to read 64 * 4K in one command, and see below error
+caused by pblk_bio_map_addr in function pblk_submit_read_gc.
+
+[ 2923.005376] pblk: could not add page to bio
+[ 2923.005377] pblk: could not allocate GC bio (18446744073709551604)
+
+Signed-off-by: Zhoujie Wu <zjwu@marvell.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/lightnvm/pblk-init.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index e0db0cb3122d..e3573880dbda 100644
+index e3573880dbda..e5239aba806b 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -1024,7 +1024,8 @@ static int pblk_lines_init(struct pblk *pblk)
+@@ -407,6 +407,8 @@ static int pblk_core_init(struct pblk *pblk)
+ 	pblk->min_write_pgs = geo->ws_opt;
+ 	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
+ 	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
++	pblk->max_write_pgs = min_t(int, pblk->max_write_pgs,
++		queue_max_hw_sectors(dev->q) / (geo->csecs >> SECTOR_SHIFT));
+ 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
  
- 	if (!nr_free_chks) {
- 		pblk_err(pblk, "too many bad blocks prevent for sane instance\n");
--		return -EINTR;
-+		ret = -EINTR;
-+		goto fail_free_lines;
- 	}
- 
- 	pblk_set_provision(pblk, nr_free_chks);
+ 	pblk->pad_dist = kcalloc(pblk->min_write_pgs - 1, sizeof(atomic64_t),
 -- 
 2.17.1
 
