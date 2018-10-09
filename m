@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1864FECDE47
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704CAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5C7214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91219214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ms4mvntF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5C7214DC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZt8x//N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91219214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbeJIXqv (ORCPT
+        id S1727471AbeJIXqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:46:51 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46658 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeJIXqu (ORCPT
+        Tue, 9 Oct 2018 19:46:45 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36002 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbeJIXqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:46:50 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n11-v6so2418030wru.13
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:05 -0700 (PDT)
+        Tue, 9 Oct 2018 19:46:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a8-v6so2668041wmf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sSYkuyo8gio+vQmhDl6DcBl7uYon+VFW6rLfvz0xVvI=;
-        b=ms4mvntFBJLK1tf2KtDs/ELfDlk5t20k0ASu1hCQo0Mn9MZgDn34e3PYZLEYk9lmRy
-         QtFNAqHycF8jIxxjI7WFtBwTT/5+tf6sXGet+spZezU3CvcJb7P42oTrnphmm6iKDOjK
-         PDqNFOkr/Bae5fcJLCmSo5nHRMzHxuLCtb2NSgeiHetqfxrHUIXLIWt/W7rneVlTFI7M
-         WH3al73NCxfhSRe9uKo/rmgJCzafv4hxC7oNLd9IXbIaIlynFvpTw6s3y5sYvC+wAuAE
-         i9RQDeFUQ0bKY+2RqGvAeBrwlaJIcMRQu99VW+22VUYp5OWDDjYvf+nl26qKCb7lWP48
-         H8Rg==
+        bh=+zJ7OvqIOhFG8Bz6ToLDYZc8ULkE9qZBoiGR2ew5iWI=;
+        b=pZt8x//NrkFuhjVehpioRUjXgCZTjbsbsSNpUyEOHlC4+zj19DgRDsOEK0qf22KvPt
+         QjaYLde7EXvZOuKxL/uAWxbOlAzBMvHaXNmHlEE/S1aQqHOpX3PxR9pqBl2VI9CDtfLs
+         pyUoO2dTGLCdqMrn7+amq6nHnenveVk+Ha8qjnWpq0u4EHuQY+AWcz+MaC8thj1XXOL+
+         eW7Bp222wMRQ18rotNEXdI2wFPyaR6dplL/ThmJ6qXzqh/8/e6QfVisu3BsSweWlpMa2
+         a8+8/Ef+SZQocksYemWB6yfefrEU6HwJoWSQIpYKPHwOPrn/sy03vzXWiBFrF/pxTh9d
+         J3KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sSYkuyo8gio+vQmhDl6DcBl7uYon+VFW6rLfvz0xVvI=;
-        b=FT67Z8tPVz5UYMWvb1JteFiaIWDpXLt/6N+ZHrbXWZE4ffWzunM5w9PvpywELYPfii
-         4KolOE1zWnPL1R8dGJjFu6ILgFGZVd9qzU4PPALUmPepCSS7KE9u7wDejsp2jtcEpr8L
-         2yBbOv3k7KthTKJLzE1VFWuk49II75Y0O3vkRTQ6BHGeOx4NvPHI8S5fAWimfvkNE+2h
-         G1IKrjJfBSJJvKn2rmnMjnqBe6cbg8RUcxwIDzC3pwI90u0QZ7x+/j4GRhAgP80BXDb1
-         /Pp4O6k5WvECUFVeRNWRdkqZyQ+uGc6BWhyrVo3QiiMgnJgKgAeAGa1Dd+CmwAo04Iau
-         Ybaw==
-X-Gm-Message-State: ABuFfog5Rmpes/F+/AV1BOpCdSviRrcFNZPSl9XAfErjtEy0puNyr3np
-        a63MUeWqTAX3HYOWN2Kmmt4=
-X-Google-Smtp-Source: ACcGV638g+lebu+LQiRGJ0w+yfkOhrNJirayJTmOnDBElW64+hDWvLf3Y6XMo6sZvNThOnlm5fRRLw==
-X-Received: by 2002:a5d:6383:: with SMTP id p3-v6mr20973939wru.291.1539102544297;
-        Tue, 09 Oct 2018 09:29:04 -0700 (PDT)
+        bh=+zJ7OvqIOhFG8Bz6ToLDYZc8ULkE9qZBoiGR2ew5iWI=;
+        b=SEKKkWHqbyxTF2HKH7kx07p+MzuTDhMuusmlmU6roqgUbZtkr/OuBFFL65e8or2VCx
+         Y2Zg0s3afT4jRdwbQC3EyK88JyD2iUtqJycNf76bZMeYB4ARMLdCyCeNERTnhfVONDb9
+         AatveXQjimWbYKFgYtVDPzpF6M5KRzC6EsRwVpVHi/w4DQ3wvDljo34vRvasRF6ixEFn
+         pQRcIsETS0ioJ32du6ra24viF9W+WEV4nZZMZW6W/u4zCWWnpD1lg+gUGDZ293QPjyIo
+         +r1o1x37L7QXzS0qPr4NIizodZ6T6Gt+NGffOaLpfuj1LnuVKbNhsG2SEqGwT1pj7DTc
+         3eAw==
+X-Gm-Message-State: ABuFfohbx+JN99PbfQIErG0fSi/I5Y/UkiJieP9/gvd5LxFRHNJkLuek
+        o+1u/KUiksnaEuUgajGZT2o=
+X-Google-Smtp-Source: ACcGV635AwpCFnQP4ETlrPMnP+wClD2blsFuabDlJ15FUZV4f5rLLCmYXbVjbYbY2AEZpAl7m02TrA==
+X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr2463610wme.125.1539102539200;
+        Tue, 09 Oct 2018 09:28:59 -0700 (PDT)
 Received: from kheib-workstation.mynet (bzq-109-64-21-122.red.bezeqint.net. [109.64.21.122])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.29.03
+        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.28.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:29:03 -0700 (PDT)
+        Tue, 09 Oct 2018 09:28:58 -0700 (PDT)
 From:   Kamal Heib <kamalheib1@gmail.com>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kamalheib1@gmail.com
-Subject: [PATCH rdma-next 17/18] RDMA/rxe: Initialize ib_device_ops struct
-Date:   Tue,  9 Oct 2018 19:28:16 +0300
-Message-Id: <20181009162817.4635-18-kamalheib1@gmail.com>
+Subject: [PATCH rdma-next 13/18] RDMA/qedr: Initialize ib_device_ops struct
+Date:   Tue,  9 Oct 2018 19:28:12 +0300
+Message-Id: <20181009162817.4635-14-kamalheib1@gmail.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
 References: <20181009162817.4635-1-kamalheib1@gmail.com>
@@ -76,75 +76,99 @@ Initialize ib_device_ops with the supported operations.
 
 Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
 ---
- drivers/infiniband/sw/rxe/rxe_verbs.c | 48 +++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/infiniband/hw/qedr/main.c | 52 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.c b/drivers/infiniband/sw/rxe/rxe_verbs.c
-index e4da5b671e4a..4f28f71b7746 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.c
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
-@@ -1152,6 +1152,52 @@ static struct device_attribute *rxe_dev_attributes[] = {
- 	&dev_attr_parent,
- };
+diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
+index cd7b8b39a129..ae7b28e4a475 100644
+--- a/drivers/infiniband/hw/qedr/main.c
++++ b/drivers/infiniband/hw/qedr/main.c
+@@ -133,12 +133,18 @@ static int qedr_iw_port_immutable(struct ib_device *ibdev, u8 port_num,
+ 	return 0;
+ }
  
-+static struct ib_device_ops rxe_dev_ops = {
-+	.query_device		= rxe_query_device,
-+	.modify_device		= rxe_modify_device,
-+	.query_port		= rxe_query_port,
-+	.modify_port		= rxe_modify_port,
-+	.get_link_layer		= rxe_get_link_layer,
-+	.get_netdev		= rxe_get_netdev,
-+	.query_pkey		= rxe_query_pkey,
-+	.alloc_ucontext		= rxe_alloc_ucontext,
-+	.dealloc_ucontext	= rxe_dealloc_ucontext,
-+	.mmap			= rxe_mmap,
-+	.get_port_immutable	= rxe_port_immutable,
-+	.alloc_pd		= rxe_alloc_pd,
-+	.dealloc_pd		= rxe_dealloc_pd,
-+	.create_ah		= rxe_create_ah,
-+	.modify_ah		= rxe_modify_ah,
-+	.query_ah		= rxe_query_ah,
-+	.destroy_ah		= rxe_destroy_ah,
-+	.create_srq		= rxe_create_srq,
-+	.modify_srq		= rxe_modify_srq,
-+	.query_srq		= rxe_query_srq,
-+	.destroy_srq		= rxe_destroy_srq,
-+	.post_srq_recv		= rxe_post_srq_recv,
-+	.create_qp		= rxe_create_qp,
-+	.modify_qp		= rxe_modify_qp,
-+	.query_qp		= rxe_query_qp,
-+	.destroy_qp		= rxe_destroy_qp,
-+	.post_send		= rxe_post_send,
-+	.post_recv		= rxe_post_recv,
-+	.create_cq		= rxe_create_cq,
-+	.destroy_cq		= rxe_destroy_cq,
-+	.resize_cq		= rxe_resize_cq,
-+	.poll_cq		= rxe_poll_cq,
-+	.peek_cq		= rxe_peek_cq,
-+	.req_notify_cq		= rxe_req_notify_cq,
-+	.get_dma_mr		= rxe_get_dma_mr,
-+	.reg_user_mr		= rxe_reg_user_mr,
-+	.dereg_mr		= rxe_dereg_mr,
-+	.alloc_mr		= rxe_alloc_mr,
-+	.map_mr_sg		= rxe_map_mr_sg,
-+	.attach_mcast		= rxe_attach_mcast,
-+	.detach_mcast		= rxe_detach_mcast,
-+	.get_hw_stats		= rxe_ib_get_hw_stats,
-+	.alloc_hw_stats		= rxe_ib_alloc_hw_stats,
++static struct ib_device_ops qedr_iw_dev_ops = {
++	.query_gid		= qedr_iw_query_gid,
++	.get_port_immutable	= qedr_iw_port_immutable,
 +};
 +
- int rxe_register_device(struct rxe_dev *rxe)
+ static int qedr_iw_register_device(struct qedr_dev *dev)
  {
- 	int err;
-@@ -1251,6 +1297,8 @@ int rxe_register_device(struct rxe_dev *rxe)
- 	dev->get_hw_stats = rxe_ib_get_hw_stats;
- 	dev->alloc_hw_stats = rxe_ib_alloc_hw_stats;
+ 	dev->ibdev.node_type = RDMA_NODE_RNIC;
+ 	dev->ibdev.query_gid = qedr_iw_query_gid;
  
-+	ib_set_device_ops(dev, &rxe_dev_ops);
+ 	dev->ibdev.get_port_immutable = qedr_iw_port_immutable;
++	ib_set_device_ops(&dev->ibdev, &qedr_iw_dev_ops);
+ 
+ 	dev->ibdev.iwcm = kzalloc(sizeof(*dev->ibdev.iwcm), GFP_KERNEL);
+ 	if (!dev->ibdev.iwcm)
+@@ -159,13 +165,57 @@ static int qedr_iw_register_device(struct qedr_dev *dev)
+ 	return 0;
+ }
+ 
++static struct ib_device_ops qedr_roce_dev_ops = {
++	.get_port_immutable	= qedr_roce_port_immutable,
++};
 +
- 	tfm = crypto_alloc_shash("crc32", 0, 0);
- 	if (IS_ERR(tfm)) {
- 		pr_err("failed to allocate crc algorithm err:%ld\n",
+ static void qedr_roce_register_device(struct qedr_dev *dev)
+ {
+ 	dev->ibdev.node_type = RDMA_NODE_IB_CA;
+ 
+ 	dev->ibdev.get_port_immutable = qedr_roce_port_immutable;
++	ib_set_device_ops(&dev->ibdev, &qedr_roce_dev_ops);
+ }
+ 
++static struct ib_device_ops qedr_dev_ops = {
++	.query_device		= qedr_query_device,
++	.query_port		= qedr_query_port,
++	.modify_port		= qedr_modify_port,
++	.alloc_ucontext		= qedr_alloc_ucontext,
++	.dealloc_ucontext	= qedr_dealloc_ucontext,
++	.mmap			= qedr_mmap,
++	.alloc_pd		= qedr_alloc_pd,
++	.dealloc_pd		= qedr_dealloc_pd,
++	.create_cq		= qedr_create_cq,
++	.destroy_cq		= qedr_destroy_cq,
++	.resize_cq		= qedr_resize_cq,
++	.req_notify_cq		= qedr_arm_cq,
++	.create_qp		= qedr_create_qp,
++	.modify_qp		= qedr_modify_qp,
++	.query_qp		= qedr_query_qp,
++	.destroy_qp		= qedr_destroy_qp,
++	.create_srq		= qedr_create_srq,
++	.destroy_srq		= qedr_destroy_srq,
++	.modify_srq		= qedr_modify_srq,
++	.query_srq		= qedr_query_srq,
++	.post_srq_recv		= qedr_post_srq_recv,
++	.query_pkey		= qedr_query_pkey,
++	.create_ah		= qedr_create_ah,
++	.destroy_ah		= qedr_destroy_ah,
++	.get_dma_mr		= qedr_get_dma_mr,
++	.dereg_mr		= qedr_dereg_mr,
++	.reg_user_mr		= qedr_reg_user_mr,
++	.alloc_mr		= qedr_alloc_mr,
++	.map_mr_sg		= qedr_map_mr_sg,
++	.poll_cq		= qedr_poll_cq,
++	.post_send		= qedr_post_send,
++	.post_recv		= qedr_post_recv,
++	.process_mad		= qedr_process_mad,
++	.get_netdev		= qedr_get_netdev,
++	.get_link_layer		= qedr_link_layer,
++	.get_dev_fw_str		= qedr_get_dev_fw_str,
++};
++
+ static int qedr_register_device(struct qedr_dev *dev)
+ {
+ 	int rc;
+@@ -261,6 +311,8 @@ static int qedr_register_device(struct qedr_dev *dev)
+ 	dev->ibdev.get_link_layer = qedr_link_layer;
+ 	dev->ibdev.get_dev_fw_str = qedr_get_dev_fw_str;
+ 
++	ib_set_device_ops(&dev->ibdev, &qedr_dev_ops);
++
+ 	dev->ibdev.driver_id = RDMA_DRIVER_QEDR;
+ 	return ib_register_device(&dev->ibdev, "qedr%d", NULL);
+ }
 -- 
 2.14.4
 
