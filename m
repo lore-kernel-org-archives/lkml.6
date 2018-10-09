@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F06C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98595C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A497920C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:32:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A497920C0A
+	by mail.kernel.org (Postfix) with ESMTP id 5BA8020C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA8020C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbeJIMr1 (ORCPT
+        id S1726715AbeJIMr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 08:47:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37219 "EHLO
+        Tue, 9 Oct 2018 08:47:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46563 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeJIMr1 (ORCPT
+        with ESMTP id S1725861AbeJIMr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 08:47:27 -0400
+        Tue, 9 Oct 2018 08:47:56 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w995W6h5910334
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w995Wb8M910373
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 22:32:06 -0700
+        Mon, 8 Oct 2018 22:32:37 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w995W59W910331;
-        Mon, 8 Oct 2018 22:32:05 -0700
-Date:   Mon, 8 Oct 2018 22:32:05 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w995WbaQ910366;
+        Mon, 8 Oct 2018 22:32:37 -0700
+Date:   Mon, 8 Oct 2018 22:32:37 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Eduardo Habkost <tipbot@zytor.com>
-Message-ID: <tip-e13a5d69c31d35538e80176d54d95b6addf4dcbf@git.kernel.org>
-Cc:     ehabkost@redhat.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-        namhyung@kernel.org, hpa@zytor.com, acme@redhat.com,
-        jolsa@kernel.org, tglx@linutronix.de, dsahern@gmail.com,
-        adrian.hunter@intel.com
-Reply-To: dsahern@gmail.com, jolsa@kernel.org, tglx@linutronix.de,
-          acme@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
-          mingo@kernel.org, ehabkost@redhat.com, namhyung@kernel.org,
-          wangnan0@huawei.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20181005204058.7966-2-ehabkost@redhat.com>
-References: <20181005204058.7966-2-ehabkost@redhat.com>
+Message-ID: <tip-8b2f245faa6238e28a1d801e8633515251d1acfc@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        wangnan0@huawei.com, hpa@zytor.com, jolsa@kernel.org,
+        namhyung@kernel.org, ehabkost@redhat.com, dsahern@gmail.com,
+        adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
+          ehabkost@redhat.com, dsahern@gmail.com, tglx@linutronix.de,
+          namhyung@kernel.org, jolsa@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, wangnan0@huawei.com
+In-Reply-To: <20181005204058.7966-3-ehabkost@redhat.com>
+References: <20181005204058.7966-3-ehabkost@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf python: Make clang_has_option() work on Python
- 3
-Git-Commit-ID: e13a5d69c31d35538e80176d54d95b6addf4dcbf
+Subject: [tip:perf/core] perf python: More portable way to make CFLAGS work
+ with clang
+Git-Commit-ID: 8b2f245faa6238e28a1d801e8633515251d1acfc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,40 +61,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e13a5d69c31d35538e80176d54d95b6addf4dcbf
-Gitweb:     https://git.kernel.org/tip/e13a5d69c31d35538e80176d54d95b6addf4dcbf
+Commit-ID:  8b2f245faa6238e28a1d801e8633515251d1acfc
+Gitweb:     https://git.kernel.org/tip/8b2f245faa6238e28a1d801e8633515251d1acfc
 Author:     Eduardo Habkost <ehabkost@redhat.com>
-AuthorDate: Fri, 5 Oct 2018 17:40:57 -0300
+AuthorDate: Fri, 5 Oct 2018 17:40:58 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 8 Oct 2018 14:30:44 -0300
+CommitDate: Mon, 8 Oct 2018 14:30:45 -0300
 
-perf python: Make clang_has_option() work on Python 3
+perf python: More portable way to make CFLAGS work with clang
 
-Use a bytes literal so it works with Python 3's version of Popen().
-Note that the b"..." syntax requires Python 2.6+.
+The existing code that tries to make CFLAGS compatible with clang
+doesn't work with Python 3.
+
+Instead of trying to touch _sysconfigdata.build_time_vars directly,
+change the dictionary returned by disutils.sysconfig.get_config_vars().
+This works on both Python 2 and Python 3.
 
 Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/20181005204058.7966-2-ehabkost@redhat.com
+Link: http://lkml.kernel.org/r/20181005204058.7966-3-ehabkost@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/setup.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/setup.py | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 1942f6dd24f6..261a55e7e1b2 100644
+index 261a55e7e1b2..63f758c655d5 100644
 --- a/tools/perf/util/setup.py
 +++ b/tools/perf/util/setup.py
-@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
- from re import sub
- 
- def clang_has_option(option):
--    return [o for o in Popen(['clang', option], stderr=PIPE).stderr.readlines() if "unknown argument" in o] == [ ]
-+    return [o for o in Popen(['clang', option], stderr=PIPE).stderr.readlines() if b"unknown argument" in o] == [ ]
+@@ -9,12 +9,14 @@ def clang_has_option(option):
  
  cc = getenv("CC")
  if cc == "clang":
+-    from _sysconfigdata import build_time_vars
+-    build_time_vars["CFLAGS"] = sub("-specs=[^ ]+", "", build_time_vars["CFLAGS"])
+-    if not clang_has_option("-mcet"):
+-        build_time_vars["CFLAGS"] = sub("-mcet", "", build_time_vars["CFLAGS"])
+-    if not clang_has_option("-fcf-protection"):
+-        build_time_vars["CFLAGS"] = sub("-fcf-protection", "", build_time_vars["CFLAGS"])
++    from distutils.sysconfig import get_config_vars
++    vars = get_config_vars()
++    for var in ('CFLAGS', 'OPT'):
++        vars[var] = sub("-specs=[^ ]+", "", vars[var])
++        if not clang_has_option("-mcet"):
++            vars[var] = sub("-mcet", "", vars[var])
++        if not clang_has_option("-fcf-protection"):
++            vars[var] = sub("-fcf-protection", "", vars[var])
+ 
+ from distutils.core import setup, Extension
+ 
