@@ -2,122 +2,170 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34014C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BD5C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE7C21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C110821479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ktn2PMtK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BzO82hIf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE7C21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="o1RXR+Qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C110821479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbeJIRKW (ORCPT
+        id S1726668AbeJIRLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:10:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37936 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeJIRKW (ORCPT
+        Tue, 9 Oct 2018 13:11:07 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:21023 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeJIRLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:10:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4126860C4F; Tue,  9 Oct 2018 09:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539078855;
-        bh=RB4YXzcsN5e/uv8WK6ub12iNf0wTmfEWvTQHD4CuHNw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ktn2PMtKl7JkFU7YqLy0ul+LLLrGtvBCFyiq6HyPQxBb6n8sxpqvvVSc4VN6NRgvJ
-         n0+1vkBBcP+Zv9Ic1TFgODY3x7GMCJhJvo9VeiyfpjHtpy8NADPJNyyBrP+oNOIQnO
-         gY81XhbJ4tR5GHelihGBOeGMj07mni1br9m7rYfg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id C7399600E6;
-        Tue,  9 Oct 2018 09:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539078853;
-        bh=RB4YXzcsN5e/uv8WK6ub12iNf0wTmfEWvTQHD4CuHNw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BzO82hIf0qWr5XuapMFp+7OQI54UJHMyxFFJYuH73zDVrWJ2t8ILhAEp89JyRW5mj
-         OuQdjT99Cqy5YGqlcnp4KlxreIiuke3ihZb+PWHESaze1X9uemYRn8C68DpJPO6ZBo
-         YXtJ0t7aO+vQlEns/5V2B8DlK1QxG2qZPuMTOOs8=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 09 Oct 2018 15:24:13 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        vbabka@suse.cz, iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
-        osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-In-Reply-To: <20181009092938.GH8528@dhcp22.suse.cz>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
- <20181009092938.GH8528@dhcp22.suse.cz>
-Message-ID: <9b56e156b911e943eba3a1daa0a1cb31@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Tue, 9 Oct 2018 13:11:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1539078900; x=1570614900;
+  h=from:to:subject:date:message-id;
+  bh=/VM79TH2d1xRAK/Qy55i0mWq2AP3IAcNW47FMTpi/Hs=;
+  b=o1RXR+QnP9PgOKHCOQtkLnKvXZ2GHptzsRRMa5TMmm6WaDkdcyc37ogt
+   5o7QZQduLhL4J40MMS80Q8uYL6ttS0qApaaXQoAW4GDKMTpi24rwdJGof
+   XIPu17umefZUzQoqs0LFXkK2c+E5ddsgTS/7UZFyBUgx0X2Y7bVrzcTn+
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.54,360,1534809600"; 
+   d="scan'208";a="635114436"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-397e131e.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Oct 2018 09:54:57 +0000
+Received: from uf8b156e456a5587c9af4.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2c-397e131e.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w999ssJb043783
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 9 Oct 2018 09:54:55 GMT
+Received: from uf8b156e456a5587c9af4.ant.amazon.com (localhost [127.0.0.1])
+        by uf8b156e456a5587c9af4.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w999srEr004486;
+        Tue, 9 Oct 2018 11:54:53 +0200
+Received: (from sironi@localhost)
+        by uf8b156e456a5587c9af4.ant.amazon.com (8.15.2/8.15.2/Submit) id w999sr3P004483;
+        Tue, 9 Oct 2018 11:54:53 +0200
+From:   Filippo Sironi <sironi@amazon.de>
+To:     sironi@amazon.de, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: Start populating /sys/hypervisor with KVM entries
+Date:   Tue,  9 Oct 2018 11:54:39 +0200
+Message-Id: <1539078879-4372-1-git-send-email-sironi@amazon.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-09 14:59, Michal Hocko wrote:
-> On Fri 05-10-18 13:40:05, Arun KS wrote:
->> When free pages are done with higher order, time spend on
->> coalescing pages by buddy allocator can be reduced. With
->> section size of 256MB, hot add latency of a single section
->> shows improvement from 50-60 ms to less than 1 ms, hence
->> improving the hot add latency by 60%. Modify external
->> providers of online callback to align with the change.
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Thanks for your patience with all the resubmission.
+Start populating /sys/hypervisor with KVM entries when we're running on
+KVM. This is to replicate functionality that's available when we're
+running on Xen.
 
-Hello Michal,
+Let's start with /sys/hypervisor/uuid, which users prefer over
+/sys/devices/virtual/dmi/id/product_uuid as a way to recognize a virtual
+machine, since it's also available when running on Xen HVM and on Xen PV
+and, on top of that doesn't require root privileges by default.
 
-I got the below email few days back. Do I still need to resubmit the 
-patch? or is it already on the way to merge?
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+---
+ drivers/Kconfig              |  2 ++
+ drivers/Makefile             |  2 ++
+ drivers/kvm/Kconfig          | 14 ++++++++++++++
+ drivers/kvm/Makefile         |  1 +
+ drivers/kvm/sys-hypervisor.c | 26 ++++++++++++++++++++++++++
+ 5 files changed, 45 insertions(+)
+ create mode 100644 drivers/kvm/Kconfig
+ create mode 100644 drivers/kvm/Makefile
+ create mode 100644 drivers/kvm/sys-hypervisor.c
 
-Regards,
-Arun
-
-The patch titled
-      Subject: mm/page_alloc.c: memory hotplug: free pages as higher 
-order
-has been added to the -mm tree.  Its filename is
-      memory_hotplug-free-pages-as-higher-order.patch
-
-This patch should soon appear at
-     
-http://ozlabs.org/~akpm/mmots/broken-out/memory_hotplug-free-pages-as-higher-order.patch
-and later at
-     
-http://ozlabs.org/~akpm/mmotm/broken-out/memory_hotplug-free-pages-as-higher-order.patch
-
-Before you just go and hit "reply", please:
-    a) Consider who else should be cc'ed
-    b) Prefer to cc a suitable mailing list as well
-    c) Ideally: find the original patch on the mailing list and do a
-       reply-to-all to that, adding suitable additional cc's
-
-*** Remember to use Documentation/process/submit-checklist.rst when 
-testing your code ***
-
-The -mm tree is included into linux-next and is updated
-there every 3-4 working days
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index afc942c54814..597519c5f7c8 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -135,6 +135,8 @@ source "drivers/hv/Kconfig"
+ 
+ source "drivers/xen/Kconfig"
+ 
++source "drivers/kvm/Kconfig"
++
+ source "drivers/staging/Kconfig"
+ 
+ source "drivers/platform/Kconfig"
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 1056f9699192..727205e287fc 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -47,6 +47,8 @@ obj-y				+= soc/
+ obj-$(CONFIG_VIRTIO)		+= virtio/
+ obj-$(CONFIG_XEN)		+= xen/
+ 
++obj-$(CONFIG_KVM_GUEST)		+= kvm/
++
+ # regulators early, since some subsystems rely on them to initialize
+ obj-$(CONFIG_REGULATOR)		+= regulator/
+ 
+diff --git a/drivers/kvm/Kconfig b/drivers/kvm/Kconfig
+new file mode 100644
+index 000000000000..3fc041df7c11
+--- /dev/null
++++ b/drivers/kvm/Kconfig
+@@ -0,0 +1,14 @@
++menu "KVM driver support"
++        depends on KVM_GUEST
++
++config KVM_SYS_HYPERVISOR
++        bool "Create KVM entries under /sys/hypervisor"
++        depends on SYSFS
++        select SYS_HYPERVISOR
++        default y
++        help
++          Create KVM entries under /sys/hypervisor (e.g., uuid). When running
++          native or on another hypervisor, /sys/hypervisor may still be
++          present, but it will have no KVM entries.
++
++endmenu
+diff --git a/drivers/kvm/Makefile b/drivers/kvm/Makefile
+new file mode 100644
+index 000000000000..73a43fc994b9
+--- /dev/null
++++ b/drivers/kvm/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_KVM_SYS_HYPERVISOR) += sys-hypervisor.o
+diff --git a/drivers/kvm/sys-hypervisor.c b/drivers/kvm/sys-hypervisor.c
+new file mode 100644
+index 000000000000..ef04ca65cf1a
+--- /dev/null
++++ b/drivers/kvm/sys-hypervisor.c
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <asm/kvm_para.h>
++
++#include <linux/dmi.h>
++#include <linux/kobject.h>
++#include <linux/sysfs.h>
++
++static ssize_t uuid_show(struct kobject *obj,
++			 struct kobj_attribute *attr,
++			 char *buf)
++{
++	const char *uuid = dmi_get_system_info(DMI_PRODUCT_UUID);
++	return sprintf(buf, "%s\n", uuid);
++}
++
++static struct kobj_attribute uuid = __ATTR_RO(uuid);
++
++static int __init uuid_init(void)
++{
++	if (!kvm_para_available())
++		return 0;
++	return sysfs_create_file(hypervisor_kobj, &uuid.attr);
++}
++
++device_initcall(uuid_init);
+-- 
+2.7.4
 
