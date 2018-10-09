@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E40C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE8C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C2CC214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA26C214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="S0x1skEk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C2CC214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="mCiCLmif"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA26C214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJISbF (ORCPT
+        id S1727768AbeJISbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:31:05 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38689 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeJISbE (ORCPT
+        Tue, 9 Oct 2018 14:31:09 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43056 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeJISbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:31:04 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b5-v6so674495plr.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:38 -0700 (PDT)
+        Tue, 9 Oct 2018 14:31:08 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 80-v6so644304pgh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=J6AOKCcdZpaPo0z9TI+wgv9/xXbJhuIRYvEcLNzLWcQ=;
-        b=S0x1skEkmPmRvQQ46ETuDp5tREJkyqNP1wceS99o8XPS8Y+Ndb+I8pFU4r5QstcKz3
-         oXpaFzbz2DGIYb2MTm+EzhJ5g47MpoWuEMWii59ilnC0csGe2GpyRoIxM1cj0dD6n17s
-         XgL//4hR8qvwLn/3bW08Jo8YuxhpVQaGY8OMFLor8flYUcVALA2ZPjLlzBLqJ9bLs0RM
-         pUQ19rPSdL2anRSdjo6yxhZp87Bp82G/mMmW8Mz2JOQOns6KgaeQkVKs+PKSuP90Scxq
-         5mwcsDgmrofep5S+sk4rZikIUkHe7t/u9BNrMx6hTkEsIqoSfHDg6rUd1jTLBmqf6Twa
-         eZ5A==
+        bh=2KQ7a6V+QsZjnp+mY5Qv4Wwwbkm6jegrv59uu4jR/iM=;
+        b=mCiCLmifVBrOZCqiOfVLGUdaX1QWi8lqD1VPARcZPnBC02VEpoZOuV67nS9Lol7Vpr
+         jq6DiFrGw+Recv4MMORTqb2Q6r4oT5F41EwSdTa7OWpl01vGB2Rj0oUHNs3kKapZq6Ni
+         CC+eEqlok8s8GKuhWv0S3QNiTUcipTLtasffBB2PLf2PGPTpANDsdfDJSOeI+aOnFVnF
+         qwEXkKFCY+sXT3LOwYTS7u1NQizTxmrsW+n0n7kvaC1nrlKBwlGdqrnXtrc5iEypwTmm
+         MIA+FZJpjzECV+1c+Quq7A7RG9p7olYg1l7igIU4cK2vq155VGqXxXDP2OV/ZE/Y6UvT
+         2XDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=J6AOKCcdZpaPo0z9TI+wgv9/xXbJhuIRYvEcLNzLWcQ=;
-        b=JXNlhNNm6a/D44IuAv+UAIXEpuzJqQ2icUeWwBhHokXQWzuDG6/ihF6LcUHTrJ6oCS
-         tObXWXN9xDspKW2S+3/agx/WV1q1tEkFk6NwJbLJyIwlxFFXKKXYHBmV1+lEMuyFKyMQ
-         ZBCh9V2nreRTf2bSHyM9XK5Ycf5IuG+xwzKiu7HPFph3EgLeKSZTzObAIqj+95s81tJ0
-         OvRiNTaf8WlWm3yhckRr3zVLitV8JgDCy5MXmSWDPtKwfUD7pUGoYJH2n/hQxa22o7RJ
-         FA1EcdsiDCzMXNeVbYg/v7av9uAW5pt1UomTSXYJbgCDcMCwwqXfjKb855xH6be7l1w4
-         C+ig==
-X-Gm-Message-State: ABuFfoi1qxNux4ihSb81vvHkncCwbZwDVbwOaLgNDKo7zzvrOaFzGJK6
-        x6h4brZLqb4TnsW+nWIXCZGJVg==
-X-Google-Smtp-Source: ACcGV63umZj/88hh5yFJ8sWkRKVHpVwcg65cD8yJJL+qTg5rlGBSNkOCp3u2uqUDRreXdR8u1Ws+9w==
-X-Received: by 2002:a17:902:6bc2:: with SMTP id m2-v6mr28211735plt.133.1539083677680;
-        Tue, 09 Oct 2018 04:14:37 -0700 (PDT)
+        bh=2KQ7a6V+QsZjnp+mY5Qv4Wwwbkm6jegrv59uu4jR/iM=;
+        b=Bg6m3q5n/N0wpCl04Llyme36PoxQn0X6yKrpp2iyoQbyULBZguBPROi0yaT5cIGqIy
+         qWYnNYKAM0qpxyuaqYQ/7OjTifHmX698oaSuJ1+lIf0XJqCDwLYYfTC+okhl206fGC74
+         7YQ14kyOtUpX9w9r/gmMrQ8scJ+wq1lMhL6xnk/dS/UQdC8K8jf4FHZOGC/lMedGSzQv
+         R4OxZAvEhCSeL0AXZu6UUkx9q+7uGFFtH/boVIpbGS5IAX05Z0St5+saOS7JRQ/btdqp
+         EU7F0r4JL8PZL47rZaMqxoOf5+mqDQH12ANequq8W5HqDjISk0ZGOkCA8i7u4Quvkn6j
+         82pA==
+X-Gm-Message-State: ABuFfoicxBb6Eyvh+zJOhDKgABC+FMQZjPe6+ndURVvAQ+tevhz+vVBx
+        hwIDM4mAaHMNxn0TY4JrSIvlSQ==
+X-Google-Smtp-Source: ACcGV61F1PoA4hRqWYK1IAGYsOAzEC62z/q1Z+g4JaA3omWYDC0saH+ySb71I2ONOkfxYYXsIFxTeQ==
+X-Received: by 2002:a62:d713:: with SMTP id b19-v6mr29557442pfh.238.1539083681128;
+        Tue, 09 Oct 2018 04:14:41 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.34
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:14:36 -0700 (PDT)
+        Tue, 09 Oct 2018 04:14:39 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 25/45] lightnvm: pblk: add tracing for chunk resets
-Date:   Tue,  9 Oct 2018 13:11:55 +0200
-Message-Id: <20181009111215.7653-26-mb@lightnvm.io>
+Subject: [GIT PULL 26/45] lightnvm: move ppa transformations to core
+Date:   Tue,  9 Oct 2018 13:11:56 +0200
+Message-Id: <20181009111215.7653-27-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -78,117 +79,207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+From: Javier González <javier@javigon.com>
 
-Trace state of chunk resets.
+Continuing the effort of moving 1.2 and 2.0 specific code to core, move
+64_to_32 and 32_to_64 ppa helpers from pblk to core.
 
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c  | 12 ++++++++++++
- drivers/lightnvm/pblk-trace.h | 31 +++++++++++++++++++++++++++++++
- drivers/lightnvm/pblk.h       |  6 ++++++
- 3 files changed, 49 insertions(+)
+ drivers/lightnvm/pblk.h  | 78 ++-----------------------------------
+ include/linux/lightnvm.h | 83 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 87 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index c482ef7dd4b5..84f3b4912b92 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -90,9 +90,15 @@ static void __pblk_end_io_erase(struct pblk *pblk, struct nvm_rq *rqd)
- 	atomic_dec(&line->left_seblks);
- 
- 	if (rqd->error) {
-+		trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&rqd->ppa_addr, PBLK_CHUNK_RESET_FAILED);
-+
- 		chunk->state = NVM_CHK_ST_OFFLINE;
- 		pblk_mark_bb(pblk, line, rqd->ppa_addr);
- 	} else {
-+		trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&rqd->ppa_addr, PBLK_CHUNK_RESET_DONE);
-+
- 		chunk->state = NVM_CHK_ST_FREE;
- 	}
- 
-@@ -923,6 +929,9 @@ static int pblk_blk_erase_sync(struct pblk *pblk, struct ppa_addr ppa)
- 	struct nvm_rq rqd = {NULL};
- 	int ret;
- 
-+	trace_pblk_chunk_reset(pblk_disk_name(pblk), &ppa,
-+				PBLK_CHUNK_RESET_START);
-+
- 	pblk_setup_e_rq(pblk, &rqd, ppa);
- 
- 	/* The write thread schedules erases so that it minimizes disturbances
-@@ -1736,6 +1745,9 @@ int pblk_blk_erase_async(struct pblk *pblk, struct ppa_addr ppa)
- 	rqd->end_io = pblk_end_io_erase;
- 	rqd->private = pblk;
- 
-+	trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&ppa, PBLK_CHUNK_RESET_START);
-+
- 	/* The write thread schedules erases so that it minimizes disturbances
- 	 * with writes. Thus, there is no need to take the LUN semaphore.
- 	 */
-diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
-index c171d0450c07..679e5c458ca6 100644
---- a/drivers/lightnvm/pblk-trace.h
-+++ b/drivers/lightnvm/pblk-trace.h
-@@ -31,6 +31,37 @@ struct ppa_addr;
- 	{ PBLK_STATE_RECOVERING,	"RECOVERING",	},	\
- 	{ PBLK_STATE_STOPPED,		"STOPPED"	})
- 
-+#define show_chunk_erase_state(state) __print_symbolic(state,	\
-+	{ PBLK_CHUNK_RESET_START,	"START",	},	\
-+	{ PBLK_CHUNK_RESET_DONE,	"OK",		},	\
-+	{ PBLK_CHUNK_RESET_FAILED,	"FAILED"	})
-+
-+
-+TRACE_EVENT(pblk_chunk_reset,
-+
-+	TP_PROTO(const char *name, struct ppa_addr *ppa, int state),
-+
-+	TP_ARGS(name, ppa, state),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(u64, ppa)
-+		__field(int, state);
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, name);
-+		__entry->ppa = ppa->ppa;
-+		__entry->state = state;
-+	),
-+
-+	TP_printk("dev=%s grp=%llu pu=%llu chk=%llu state=%s", __get_str(name),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.grp),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.pu),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.chk),
-+			show_chunk_erase_state((int)__entry->state))
-+
-+);
- 
- TRACE_EVENT(pblk_chunk_state,
- 
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index b2746099ca1d..7f4e46dfb0d7 100644
+index 7f4e46dfb0d7..a2cc581951ef 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -79,6 +79,12 @@ enum {
- 	PBLK_BLK_ST_CLOSED =	0x2,
- };
+@@ -1102,86 +1102,16 @@ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
  
-+enum {
-+	PBLK_CHUNK_RESET_START,
-+	PBLK_CHUNK_RESET_DONE,
-+	PBLK_CHUNK_RESET_FAILED,
-+};
+ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
+ {
+-	struct ppa_addr ppa64;
++	struct nvm_tgt_dev *dev = pblk->dev;
+ 
+-	ppa64.ppa = 0;
+-
+-	if (ppa32 == -1) {
+-		ppa64.ppa = ADDR_EMPTY;
+-	} else if (ppa32 & (1U << 31)) {
+-		ppa64.c.line = ppa32 & ((~0U) >> 1);
+-		ppa64.c.is_cached = 1;
+-	} else {
+-		struct nvm_tgt_dev *dev = pblk->dev;
+-		struct nvm_geo *geo = &dev->geo;
+-
+-		if (geo->version == NVM_OCSSD_SPEC_12) {
+-			struct nvm_addrf_12 *ppaf =
+-					(struct nvm_addrf_12 *)&pblk->addrf;
+-
+-			ppa64.g.ch = (ppa32 & ppaf->ch_mask) >>
+-							ppaf->ch_offset;
+-			ppa64.g.lun = (ppa32 & ppaf->lun_mask) >>
+-							ppaf->lun_offset;
+-			ppa64.g.blk = (ppa32 & ppaf->blk_mask) >>
+-							ppaf->blk_offset;
+-			ppa64.g.pg = (ppa32 & ppaf->pg_mask) >>
+-							ppaf->pg_offset;
+-			ppa64.g.pl = (ppa32 & ppaf->pln_mask) >>
+-							ppaf->pln_offset;
+-			ppa64.g.sec = (ppa32 & ppaf->sec_mask) >>
+-							ppaf->sec_offset;
+-		} else {
+-			struct nvm_addrf *lbaf = &pblk->addrf;
+-
+-			ppa64.m.grp = (ppa32 & lbaf->ch_mask) >>
+-							lbaf->ch_offset;
+-			ppa64.m.pu = (ppa32 & lbaf->lun_mask) >>
+-							lbaf->lun_offset;
+-			ppa64.m.chk = (ppa32 & lbaf->chk_mask) >>
+-							lbaf->chk_offset;
+-			ppa64.m.sec = (ppa32 & lbaf->sec_mask) >>
+-							lbaf->sec_offset;
+-		}
+-	}
+-
+-	return ppa64;
++	return nvm_ppa32_to_ppa64(dev->parent, &pblk->addrf, ppa32);
+ }
+ 
+ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
+ {
+-	u32 ppa32 = 0;
++	struct nvm_tgt_dev *dev = pblk->dev;
+ 
+-	if (ppa64.ppa == ADDR_EMPTY) {
+-		ppa32 = ~0U;
+-	} else if (ppa64.c.is_cached) {
+-		ppa32 |= ppa64.c.line;
+-		ppa32 |= 1U << 31;
+-	} else {
+-		struct nvm_tgt_dev *dev = pblk->dev;
+-		struct nvm_geo *geo = &dev->geo;
+-
+-		if (geo->version == NVM_OCSSD_SPEC_12) {
+-			struct nvm_addrf_12 *ppaf =
+-					(struct nvm_addrf_12 *)&pblk->addrf;
+-
+-			ppa32 |= ppa64.g.ch << ppaf->ch_offset;
+-			ppa32 |= ppa64.g.lun << ppaf->lun_offset;
+-			ppa32 |= ppa64.g.blk << ppaf->blk_offset;
+-			ppa32 |= ppa64.g.pg << ppaf->pg_offset;
+-			ppa32 |= ppa64.g.pl << ppaf->pln_offset;
+-			ppa32 |= ppa64.g.sec << ppaf->sec_offset;
+-		} else {
+-			struct nvm_addrf *lbaf = &pblk->addrf;
+-
+-			ppa32 |= ppa64.m.grp << lbaf->ch_offset;
+-			ppa32 |= ppa64.m.pu << lbaf->lun_offset;
+-			ppa32 |= ppa64.m.chk << lbaf->chk_offset;
+-			ppa32 |= ppa64.m.sec << lbaf->sec_offset;
+-		}
+-	}
+-
+-	return ppa32;
++	return nvm_ppa64_to_ppa32(dev->parent, &pblk->addrf, ppa64);
+ }
+ 
+ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 50ac5b21297c..eb7300c20f24 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -511,6 +511,89 @@ static inline u64 dev_to_chunk_addr(struct nvm_dev *dev, void *addrf,
+ 	return caddr;
+ }
+ 
++static inline struct ppa_addr nvm_ppa32_to_ppa64(struct nvm_dev *dev,
++						 void *addrf, u32 ppa32)
++{
++	struct ppa_addr ppa64;
 +
- struct pblk_sec_meta {
- 	u64 reserved;
- 	__le64 lba;
++	ppa64.ppa = 0;
++
++	if (ppa32 == -1) {
++		ppa64.ppa = ADDR_EMPTY;
++	} else if (ppa32 & (1U << 31)) {
++		ppa64.c.line = ppa32 & ((~0U) >> 1);
++		ppa64.c.is_cached = 1;
++	} else {
++		struct nvm_geo *geo = &dev->geo;
++
++		if (geo->version == NVM_OCSSD_SPEC_12) {
++			struct nvm_addrf_12 *ppaf = addrf;
++
++			ppa64.g.ch = (ppa32 & ppaf->ch_mask) >>
++							ppaf->ch_offset;
++			ppa64.g.lun = (ppa32 & ppaf->lun_mask) >>
++							ppaf->lun_offset;
++			ppa64.g.blk = (ppa32 & ppaf->blk_mask) >>
++							ppaf->blk_offset;
++			ppa64.g.pg = (ppa32 & ppaf->pg_mask) >>
++							ppaf->pg_offset;
++			ppa64.g.pl = (ppa32 & ppaf->pln_mask) >>
++							ppaf->pln_offset;
++			ppa64.g.sec = (ppa32 & ppaf->sec_mask) >>
++							ppaf->sec_offset;
++		} else {
++			struct nvm_addrf *lbaf = addrf;
++
++			ppa64.m.grp = (ppa32 & lbaf->ch_mask) >>
++							lbaf->ch_offset;
++			ppa64.m.pu = (ppa32 & lbaf->lun_mask) >>
++							lbaf->lun_offset;
++			ppa64.m.chk = (ppa32 & lbaf->chk_mask) >>
++							lbaf->chk_offset;
++			ppa64.m.sec = (ppa32 & lbaf->sec_mask) >>
++							lbaf->sec_offset;
++		}
++	}
++
++	return ppa64;
++}
++
++static inline u32 nvm_ppa64_to_ppa32(struct nvm_dev *dev,
++				     void *addrf, struct ppa_addr ppa64)
++{
++	u32 ppa32 = 0;
++
++	if (ppa64.ppa == ADDR_EMPTY) {
++		ppa32 = ~0U;
++	} else if (ppa64.c.is_cached) {
++		ppa32 |= ppa64.c.line;
++		ppa32 |= 1U << 31;
++	} else {
++		struct nvm_geo *geo = &dev->geo;
++
++		if (geo->version == NVM_OCSSD_SPEC_12) {
++			struct nvm_addrf_12 *ppaf = addrf;
++
++			ppa32 |= ppa64.g.ch << ppaf->ch_offset;
++			ppa32 |= ppa64.g.lun << ppaf->lun_offset;
++			ppa32 |= ppa64.g.blk << ppaf->blk_offset;
++			ppa32 |= ppa64.g.pg << ppaf->pg_offset;
++			ppa32 |= ppa64.g.pl << ppaf->pln_offset;
++			ppa32 |= ppa64.g.sec << ppaf->sec_offset;
++		} else {
++			struct nvm_addrf *lbaf = addrf;
++
++			ppa32 |= ppa64.m.grp << lbaf->ch_offset;
++			ppa32 |= ppa64.m.pu << lbaf->lun_offset;
++			ppa32 |= ppa64.m.chk << lbaf->chk_offset;
++			ppa32 |= ppa64.m.sec << lbaf->sec_offset;
++		}
++	}
++
++	return ppa32;
++}
++
++
+ typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
+ typedef sector_t (nvm_tgt_capacity_fn)(void *);
+ typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
 -- 
 2.17.1
 
