@@ -2,79 +2,155 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDBAC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174C5C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668E42075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668E42075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C72D52075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72D52075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeJIUPe (ORCPT
+        id S1726944AbeJIUPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:15:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39648 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726415AbeJIUPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:15:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6A19EAFB0;
-        Tue,  9 Oct 2018 12:58:42 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 14:58:41 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Tue, 9 Oct 2018 16:15:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37336 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbeJIUPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:15:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 701577A9;
+        Tue,  9 Oct 2018 05:58:50 -0700 (PDT)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.29.135])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1EE73F5B3;
+        Tue,  9 Oct 2018 05:58:40 -0700 (PDT)
+Date:   Tue, 09 Oct 2018 13:58:34 +0100
+Message-ID: <86pnwjtgxx.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-Message-ID: <20181009125841.GP8528@dhcp22.suse.cz>
-References: <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
- <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
- <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
- <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
- <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
- <20181009063541.GB8528@dhcp22.suse.cz>
- <20181009075015.GC8528@dhcp22.suse.cz>
- <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
- <20181009111005.GK8528@dhcp22.suse.cz>
- <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 0/9] Implement wake event support on Tegra186 and later
+In-Reply-To: <153898289355.119890.15326986475278938009@swboyd.mtv.corp.google.com>
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
+        <CACRpkdbLoz+gSFa292OFNszeS6tNywpBRHyGwL9SK2u5s=UhZw@mail.gmail.com>
+        <20180925095723.GC7097@ulmo>
+        <20180925171605.GK17420@codeaurora.org>
+        <153898289355.119890.15326986475278938009@swboyd.mtv.corp.google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09-10-18 21:52:12, Tetsuo Handa wrote:
-> On 2018/10/09 20:10, Michal Hocko wrote:
-> > On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
-> >>> 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
-> >>> reap the mm in the rare case of the race.
-> >>
-> >> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
-> >> to -1000 (and allowed unprivileged users to OOM-lockup the system).
+On Mon, 08 Oct 2018 08:14:53 +0100,
+Stephen Boyd <swboyd@chromium.org> wrote:
+> 
+> Quoting Lina Iyer (2018-09-25 10:16:05)
+> > Thanks Linus, for bringing this to my attention.
 > > 
-> > I do not follow.
+> > Hi Thierry,
+> > 
+> > On Tue, Sep 25 2018 at 03:57 -0600, Thierry Reding wrote:
+> > >On Tue, Sep 25, 2018 at 10:48:39AM +0200, Linus Walleij wrote:
+> > >> Hi Thierry,
+> > >>
+> > >> thanks for working on the wakeup business!
+> > >>
+> > >> This patch gets me a bit confused on our different approaches
+> > >> toward wakeups in the kernel, so I included Lina, Marc and Ulf
+> > >> to see if we can get some common understanding.
+> > >>
+> > >> On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
+> > >> <thierry.reding@gmail.com> wrote:
+> > >>
+> > >> > The following is a set of patches that allow certain interrupts to be
+> > >> > used as wakeup sources on Tegra186 and later. To implement this, each
+> > >> > of the GPIO controllers' IRQ domain needs to become hierarchical, and
+> > >> > parented to the PMC domain. The PMC domain in turn implements a new
+> > >> > IRQ domain that is a child to the GIC IRQ domain.
+> > >> >
+> > >> > The above ensures that the interrupt chip implementation of the PMC is
+> > >> > called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+> > >> > implementations program the PMC wake registers in a way to enable the
+> > >> > given interrupts as wakeup sources.
+> > >> >
+> > >> > This is based on a suggestion from Thomas Gleixner that resulted from
+> > >> > the following thread:
+> > >> >
+> > >> >         https://lkml.org/lkml/2018/9/13/1042
+> [...]
+> > >
+> > >Yes, there was some good discussion in that thread which helped me come
+> > >up with this solution. I think it's pretty elegant because it allows all
+> > >of this interaction to happen almost automatically via the existing
+> > >infrastructure. I'm not sure the same could be applied to the PDC,
+> > >though, because of the need to manually replay the interrupt. That's not
+> > >something I think can be done with just the simple parent/child
+> > >relationship that we use on Tegra.
+> > >
+> > I wasn't able to use the hierarchy because not all GPIOs and the summary
+> > line are routed to the PDC. But I am exploring options of hierarchy as
+> > well.
 > > 
 > 
-> http://tomoyo.osdn.jp/cgi-bin/lxr/source/mm/oom_kill.c?v=linux-4.6.7#L493
+> From reading this thread (and https://lkml.org/lkml/2018/9/17/756) it
+> looks almost exactly the same. The only difference is that Nvidia Tegra
+> does the replay in hardware whereas Qualcomm SDM845 decided to replay
+> the irq in software. Either way, the gpio controller has two parent
+> domains, one is wakeup capable (PDC or PMC) and the other is not (GIC)
+> and some wakeup capable irqs only go through the PDC/PMC and then to the
+> GIC (e.g. RTC) instead of through gpio first. And it sounds like not all
+> gpios are wakeup capable in both designs.
+> 
+> The plan to have the gpio to wakeup capable irq map live in DT for the
+> PMC sounds good too. That way, the wakeup domain alloc function can
+> figure things out and redirect gpios by itself while the gpio controller
+> doesn't need to do anything special besides ask for wakeup to be set and
+> fail if the parent can't support it.
+> 
+> Can hierarchical irq domains entirely replace the chained irqchip code
+> in gpiolib? That would be interesting.
 
-Ahh, so you are not referring to the current upstream code. Do you see
-any specific problem with the current one (well, except for the possible
-race which I have tried to evaluate).
+I'm not convinced this is generally doable. Most GPIO blocks multiplex
+the signalling on a single parent interrupt, meaning that although you
+may be able to have a hierarchy extending to that point, it can't go
+any further (at which point you're back into chained-irq land). It
+doesn't mean it invalidates the above design, but it probably requires
+a bit of flexibility.
+
+I must admit having slightly lost track of the intricacies of the QC
+design, but we already have a set of interrupt controllers whose sole
+task is to generate wake-up events. They are well behaved though, in
+the sense that they will regenerate edges that the QC HW drops on the
+floor.
+
+The main issue I can see is that the QC HW relies on some signal other
+than the normal interrupt we can handle, and this completely breaks
+the very notion of a hierarchy. You need some "side-band signalling"
+which will re-inject the lost edges. That, on its own, is a bit of a
+deal-breaker.
+
+Thanks,
+
+	M.
+
 -- 
-Michal Hocko
-SUSE Labs
+Jazz is not dead, it just smell funny.
