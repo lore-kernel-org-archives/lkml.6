@@ -2,103 +2,172 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C289BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00836C43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753BE2150F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753BE2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9FB3A21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:33:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nJs9gOoY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB3A21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeJJFr0 (ORCPT
+        id S1727593AbeJJFwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 01:47:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37631 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJFr0 (ORCPT
+        Wed, 10 Oct 2018 01:52:39 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44756 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJFwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:47:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so1511492pgq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 15:28:19 -0700 (PDT)
+        Wed, 10 Oct 2018 01:52:38 -0400
+Received: by mail-vs1-f67.google.com with SMTP id w194so3175788vsc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 15:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CPGFW2DQC4f1MgxoiuDkDHORIrgQre84IqugeepP430=;
+        b=nJs9gOoYJg5yYbcF8xxeW2UXHNDrF6FtoiNpTxqf2s5AMxk3sMq0snuZ0YzZTYzFa3
+         dZDEXDeh7cPe1iyHEEqU6kzsQ2WpJfWxIBXctAVLjtij1R8cFSHzo+A+XEMxPDgi7KfP
+         m9YYPas2bf4zqRwSod1XwGnltaDiWoyS82dqo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XC6Oa3GFkiQoaiWxH264KZ7TuRSuwM2VWb/wf0LE0v4=;
-        b=Kra5/UOtZF5+1DUbXRjjLAexsgDcp+/IkQlk/p8mH7Du51hCQDYJbgixEbwJRK5URu
-         qg+UXvveeUs5RSRUUyXmZw4pjTvav2w2V6n6ifDphW7FYGzctqw1gH10onn3n7gwjuG+
-         0/ExprQE9xZFlKI7iNQVG9H4aSYln1mlxbrpCL+KjrJihzKsZPRY6ve5wHCE8aUoyodr
-         m+jHWQTa5u5TuFA5qxpqYzMI6cFKnegzXj690oLGGuc2RPrqIvTYGygtrSah3cYda+aD
-         PUBAhziFdP9h38vyWUqyygo25TuSJ4lfXsMypNrDrOTTK9mnFONN5Zdc//iAkFN4TPmn
-         ZTDQ==
-X-Gm-Message-State: ABuFfoi2wRIIsv8PoALrmEcvGI5CLLiRAmB6UNdIodjfEIlZ/2i1IClW
-        PVI/nbxZWbHkIGWLV8OMwkR/S40w
-X-Google-Smtp-Source: ACcGV60cE5Dz6YLovIC8QrLq1XkZuEUN204lEeHJHLOzPQM7WmBb/GcU+Vdi+j2zHiF1qZS5ahaLDA==
-X-Received: by 2002:a62:6dc3:: with SMTP id i186-v6mr21796881pfc.218.1539124098996;
-        Tue, 09 Oct 2018 15:28:18 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::7:ebaa])
-        by smtp.gmail.com with ESMTPSA id a64-v6sm29743884pfe.32.2018.10.09.15.28.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CPGFW2DQC4f1MgxoiuDkDHORIrgQre84IqugeepP430=;
+        b=uOzWVq6AGIQanb3q/fH/dAGp2SCQ6ebt6OHzqei+LmnBckFl/WlDvyFiUGPiPn6TDt
+         AwkWV+BpF/l6IxBQZiuBs5adEgF8qt1vJDVt+3GaLAAc9K/jmAwJxJhCVlFmydVwWJNc
+         ufrDULOWxZs5zFiAPHP+YXmShNGfBCG55MEJZ7ksHNkmxhML8kgVK4MxrexZD1FlAfXE
+         KSz5+aMghwGYINjWYh4hwygJ9nrMjiCLllXkRhKPL2I9ubxxYmrH0ypc2ZOmdr1umjAU
+         vL4rbgJpXsa6IDydMbLGmb4J8oIT63jQmkqUHsSkdpL8p3G3+QcRE3D39zPol6uKHPzI
+         x2lA==
+X-Gm-Message-State: ABuFfojKCedq7DyTXZk0+eC2hnokHB34qtpQUZPG9HO/eQosuE9CY5h3
+        YKdkSoC/LtvbmhnxSS67uxWXSg==
+X-Google-Smtp-Source: ACcGV60t1qxjWBxKmPdvKDR2M929CD7tjYIjSorLWKy9Rp7CnN4LV0CAUubvFZ3D6uGYA7lZexeUFA==
+X-Received: by 2002:a67:4e54:: with SMTP id c81mr11260418vsb.72.1539124410761;
+        Tue, 09 Oct 2018 15:33:30 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id w75sm7328200vsh.21.2018.10.09.15.33.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 15:28:18 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 15:28:15 -0700
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] percpu fixes for-4.19-rc8
-Message-ID: <20181009222815.GA56709@dennisz-mbp.dhcp.thefacebook.com>
+        Tue, 09 Oct 2018 15:33:29 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
+Date:   Tue,  9 Oct 2018 15:25:27 -0700
+Message-Id: <20181009222527.74260-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Commit d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
+fixed up our probe code to handle -EPROBE_DEFER, but it ignored one of
+our interrupts, and it also didn't really handle all the other error
+codes you might get (e.g., with a bad DT definition). Handle those all
+explicitly.
 
-The new percpu allocator introduced in 4.14 had a missing free for the
-percpu metadata. This caused a memory leak when percpu memory is being
-churned resulting in the allocation and deallocation of percpu memory
-chunks.
+Fixes: d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/remoteproc/qcom_q6v5.c | 44 +++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-Thanks,
-Dennis
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index edeb2e43209e..7d6a98072b21 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -187,6 +187,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	init_completion(&q6v5->stop_done);
+ 
+ 	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
++	if (q6v5->wdog_irq < 0) {
++		if (q6v5->wdog_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve wdog IRQ: %d\n",
++				q6v5->wdog_irq);
++		return q6v5->wdog_irq;
++	}
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
+ 					NULL, q6v5_wdog_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+@@ -197,8 +205,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
+-	if (q6v5->fatal_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->fatal_irq < 0) {
++		if (q6v5->fatal_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve fatal IRQ: %d\n",
++				q6v5->fatal_irq);
++		return q6v5->fatal_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
+ 					NULL, q6v5_fatal_interrupt,
+@@ -210,8 +223,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
+-	if (q6v5->ready_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->ready_irq < 0) {
++		if (q6v5->ready_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve ready IRQ: %d\n",
++				q6v5->ready_irq);
++		return q6v5->ready_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
+ 					NULL, q6v5_ready_interrupt,
+@@ -223,8 +241,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
+-	if (q6v5->handover_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->handover_irq < 0) {
++		if (q6v5->handover_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve handover IRQ: %d\n",
++				q6v5->handover_irq);
++		return q6v5->handover_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
+ 					NULL, q6v5_handover_interrupt,
+@@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	disable_irq(q6v5->handover_irq);
+ 
+ 	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
+-	if (q6v5->stop_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->stop_irq < 0) {
++		if (q6v5->stop_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve stop IRQ: %d\n",
++				q6v5->stop_irq);
++		return q6v5->stop_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
+ 					NULL, q6v5_stop_interrupt,
+-- 
+2.19.0.605.g01d371f741-goog
 
-The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
-
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git for-4.19-fixes
-
-for you to fetch changes up to 6685b357363bfe295e3ae73665014db4aed62c58:
-
-  percpu: stop leaking bitmap metadata blocks (2018-10-07 14:50:12 -0700)
-
-----------------------------------------------------------------
-Mike Rapoport (1):
-      percpu: stop leaking bitmap metadata blocks
-
- mm/percpu.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/mm/percpu.c b/mm/percpu.c
-index a749d4d96e3e..4b90682623e9 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1212,6 +1212,7 @@ static void pcpu_free_chunk(struct pcpu_chunk *chunk)
- {
- 	if (!chunk)
- 		return;
-+	pcpu_mem_free(chunk->md_blocks);
- 	pcpu_mem_free(chunk->bound_map);
- 	pcpu_mem_free(chunk->alloc_map);
- 	pcpu_mem_free(chunk);
