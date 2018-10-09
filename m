@@ -2,292 +2,177 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55867C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36972C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC942082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:28:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC942082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EF5FE214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:28:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5FE214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeJIWpd (ORCPT
+        id S1726764AbeJIWqP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:45:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40436 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbeJIWpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:45:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97E9980D;
-        Tue,  9 Oct 2018 08:28:05 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84A883F5D3;
-        Tue,  9 Oct 2018 08:28:02 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 16:28:00 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 11/16] arm64: kexec_file: allow for loading
- Image-format kernel
-Message-ID: <20181009152759.x24xuiwb3zsg4jx7@lakrids.cambridge.arm.com>
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-12-takahiro.akashi@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928064841.14117-12-takahiro.akashi@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 9 Oct 2018 18:46:15 -0400
+Received: from vie01a-dmta-pe08-1.mx.upcmail.net ([84.116.36.20]:47518 "EHLO
+        vie01a-dmta-pe08-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726393AbeJIWqP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:46:15 -0400
+Received: from [172.31.216.44] (helo=vie01a-pemc-psmtp-pe02)
+        by vie01a-dmta-pe08.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <mikebrady@eircom.net>)
+        id 1g9twD-0007LO-N3
+        for linux-kernel@vger.kernel.org; Tue, 09 Oct 2018 17:28:45 +0200
+Received: from helix.aillwee.com ([37.228.204.209])
+        by vie01a-pemc-psmtp-pe02 with SMTP @ mailcloud.upcmail.net
+        id lTUd1y01r4XbgXZ01TUfie; Tue, 09 Oct 2018 17:28:40 +0200
+X-SourceIP: 37.228.204.209
+Received: from [192.168.50.181] (apu.aillwee.com [192.168.50.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by helix.aillwee.com (Postfix) with ESMTPSA id 3F22C4E607;
+        Tue,  9 Oct 2018 16:28:37 +0100 (IST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint
+ [Resend in plain text...]
+From:   Mike Brady <mikebrady@eircom.net>
+In-Reply-To: <s5hy3b7z138.wl-tiwai@suse.de>
+Date:   Tue, 9 Oct 2018 16:28:36 +0100
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Phil Elwell <phil@raspberrypi.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <425F6E5F-782E-4288-ABF0-180504FD7B01@eircom.net>
+References: <20180904155858.8001-1-tiwai@suse.de>
+ <20180904155858.8001-18-tiwai@suse.de>
+ <4c5f9aed-8fbe-fe22-0c8d-097d8915805c@i2se.com>
+ <s5h4lelu84e.wl-tiwai@suse.de>
+ <8866e22a-6cd7-d32d-92e5-9a4e60206d2f@i2se.com>
+ <s5hworhs559.wl-tiwai@suse.de>
+ <828AF61F-4F6F-44C3-B463-7FE4EB8974F1@eircom.net>
+ <s5hy3b7z138.wl-tiwai@suse.de>
+To:     Takashi Iwai <tiwai@suse.de>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 03:48:36PM +0900, AKASHI Takahiro wrote:
-> This patch provides kexec_file_ops for "Image"-format kernel. In this
-> implementation, a binary is always loaded with a fixed offset identified
-> in text_offset field of its header.
+Hi Takashi.
+
+> On 9 Oct 2018, at 14:44, Takashi Iwai <tiwai@suse.de> wrote:
 > 
-> Regarding signature verification for trusted boot, this patch doesn't
-> contains CONFIG_KEXEC_VERIFY_SIG support, which is to be added later
-> in this series, but file-attribute-based verification is still a viable
-> option by enabling IMA security subsystem.
+> On Tue, 09 Oct 2018 15:18:15 +0200,
+> Mike Brady wrote:
+>> 
+>>>> @Mike: Do you want to write a patch series which upstream "interpolate
+>>>> audio delay" and addresses Takashi's comments?
+>>>> 
+>>>> I would help you, in case you have questions about setup a Raspberry Pi
+>>>> with Mainline kernel or patch submission.
+>>> 
+>>> Well, the question is who really wants this.  The value given by that
+>>> patch is nothing but some estimation and might be even incorrect.
+>>> 
+>>> PulseAudio won't need it any longer when you set the BATCH flag.
+>>> Then it'll switch from tsched mode to the old mode, and the delay
+>>> value would be almost irrelevant.
+>> 
+>> Well, two answers. First, Shairport Sync
+>> (https://github.com/mikebrady/shairport-sync) needs it — whenever a
+>> packet of audio frames is about to be added to the output queue (at
+>> approximately 7.9 millisecond intervals), the delay is checked to
+>> try to maintain sync to within a few milliseconds. The BCM2835 audio
+>> device is the only one I have yet come across with so much
+>> jitter. Whatever other drivers do, the delay they report doesn’t
+>> suffer from anything like this level of jitter.
 > 
-> You can sign(label) a to-be-kexec'ed kernel image on target file system
-> with:
->     $ evmctl ima_sign --key /path/to/private_key.pem Image
+> OK, if there is another application using that delay value, it's worth
+> to consider providing a fine-grained value.
 > 
-> On live system, you must have IMA enforced with, at least, the following
-> security policy:
->     "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig"
+>> The second answer is that the veracity of the ALSA documentation
+>> depends on it — any application using the ALSA system for
+>> synchronisation will rely on this being an accurate reflection of
+>> the situation. AFAIK there is really no workaround it if the
+>> application is confined to “safe” ALSA
+>> (http://0pointer.de/blog/projects/guide-to-sound-apis).
 > 
-> See more details about IMA here:
->     https://sourceforge.net/p/linux-ima/wiki/Home/
+>> On LMKL.org, Takashi wrote:
+>> 
+>>> Date	Wed, 19 Sep 2018 11:52:33 +0200
+>>> From	Takashi Iwai <>
+>>> Subject	Re: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint
+>> 
+>>> [snip]
+>> 
+>>> That's OK, as long as the computation is accurate enough (at least not
+>>> exceed the actual position) and is light-weight.
+>> 
+>>> [snip]
+>> 
+>> The overhead is small -- an extra ktime_get() every time a GPU message
+>> is sent -- and another call and a few calculations whenever the delay
+>> is sought from userland.
+>> 
+>> At 48,000 frames per second, i.e. approximately 20 microseconds per
+>> frame, it would take a clock inaccuracy of roughly
+>> 20 microseconds in 10 milliseconds -- 2,000 parts per million — to
+>> result in an inaccurate estimate. 
+>> Crystal or resonator-based clocks typically have an inaccuracy of
+>> 10s to 100s of parts per million.
+>> 
+>> Finally, to see the effect of the absence and presence of this
+>> interpolation, please have a look at this:
+>> https://github.com/raspberrypi/firmware/issues/1026#issuecomment-415746016,
+>> where a downstream version of this fix was being discussed.
 > 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
-> ---
->  arch/arm64/include/asm/kexec.h         |  28 +++++++
->  arch/arm64/kernel/Makefile             |   2 +-
->  arch/arm64/kernel/kexec_image.c        | 108 +++++++++++++++++++++++++
->  arch/arm64/kernel/machine_kexec_file.c |   1 +
->  4 files changed, 138 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/kernel/kexec_image.c
+> I'm not opposing to the usage of delay value.  The attribute is
+> provided exactly for such a purpose.  It's a good thing (tm).
 > 
-> diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-> index 157b2897d911..5e673481b3a3 100644
-> --- a/arch/arm64/include/asm/kexec.h
-> +++ b/arch/arm64/include/asm/kexec.h
-> @@ -101,6 +101,34 @@ struct kimage_arch {
->  	unsigned long dtb_mem;
->  };
->  
-> +/**
-> + * struct arm64_image_header - arm64 kernel image header
-> + * See Documentation/arm64/booting.txt for details
-> + *
-> + * @mz_magic: DOS header magic number ('MZ', optional)
+> The potential problem is, however, rather the implementation: it's
+> using a system timer for interpolation, which is known to drift from
+> the actual clocks.  Though, one may say that in such a use case, we
+> may ignore the drift since the interpolation is so narrow.
 
-Please just call this code0. If CONFIG_EFI is disabled, it is not 'MZ'.
+Yes, that was my thought. I guess another thing in its favour is that this audio device will always
+be in partnership with a processor as part of an SoC, so it will always be likely to have a reasonably
+accurate clock.
 
-> + * @code1: Instruction (branch to stext)
-> + * @text_offset: Image load offset
-> + * @image_size: Effective image size
-> + * @flags: Bit-field flags
-> + * @reserved: Reserved
-> + * @magic: Magic number
-> + * @pe_header: Offset to PE COFF header (optional)
-> + **/
-> +
-> +struct arm64_image_header {
-> +	__le16 mz_magic; /* also code0 */
-> +	__le16 pad;
+> But another question is whether it should be implemented in each
+> driver level.  The time-stamping is basically a PCM core
+> functionality, and nothing specific to the hardware, especially when
+> it's referring to the system timer.
 
-Likewise, just have __le32 code0 here, please.
+That’s a fair point. I don’t know what is done in other drivers, but can only report that with one possible exception,
+the DACs used with Shairport Sync by many end users report well-behaved delay figures, certainly to within two microseconds. I’m afraid I don’t know how they do it.
 
-> +	__le32 code1;
-> +	__le64 text_offset;
-> +	__le64 image_size;
-> +	__le64 flags;
-> +	__le64 reserved[3];
-> +	__le32 magic;
-> +	__le32 pe_header;
-> +};
-> +
-> +extern const struct kexec_file_ops kexec_image_ops;
-> +
->  struct kimage;
->  
->  extern int arch_kimage_file_post_load_cleanup(struct kimage *image);
-> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> index 030a39bff117..48868255f09c 100644
-> --- a/arch/arm64/kernel/Makefile
-> +++ b/arch/arm64/kernel/Makefile
-> @@ -51,7 +51,7 @@ arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
->  arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
->  arm64-obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
->  					   cpu-reset.o
-> -arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o
-> +arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o kexec_image.o
->  arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
->  arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
->  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> new file mode 100644
-> index 000000000000..d64f5e9f9d22
-> --- /dev/null
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Kexec image loader
-> +
-> + * Copyright (C) 2018 Linaro Limited
-> + * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> + */
-> +
-> +#define pr_fmt(fmt)	"kexec_file(Image): " fmt
-> +
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kexec.h>
-> +#include <linux/string.h>
-> +#include <asm/boot.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/memory.h>
-> +
-> +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
-> +{
-> +	const struct arm64_image_header *h;
-> +
-> +	h = (const struct arm64_image_header *)(kernel_buf);
-> +
-> +	if (!h || (kernel_len < sizeof(*h)) ||
-> +			memcmp(&h->magic, ARM64_MAGIC, sizeof(h->magic)))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static void *image_load(struct kimage *image,
-> +				char *kernel, unsigned long kernel_len,
-> +				char *initrd, unsigned long initrd_len,
-> +				char *cmdline, unsigned long cmdline_len)
-> +{
-> +	struct arm64_image_header *h;
-> +	u64 flags, value;
-> +	struct kexec_buf kbuf;
-> +	unsigned long text_offset;
-> +	struct kexec_segment *kernel_segment;
-> +	int ret;
-> +
-> +	/* Don't support old kernel */
-> +	h = (struct arm64_image_header *)kernel;
-> +	if (!h->text_offset)
-> +		return ERR_PTR(-EINVAL);
+> e.g. you can think in a different way, too: we may put a timestamp at
+> each hwptr update, and pass it as-is, instead of updating the
+> timestamp at each position query.  This will effectively gives the
+> accurate position-timestamp pair, and user-space may interpolate as it
+> likes, too.
 
-It's entirely valid for TEXT_OFFSET to be zero when
-RANDOMIZE_TEXT_OFFSET is selected.
+That’s not a bad idea, and I might take it up on the alsa-devel mailing list, as you suggest.
 
-I think you meant to check image_size here.
+> In anyway, if *this* kind of feature needs to be merged, it's
+> definitely to be discussed with the upstream.  So, if you're going to
+> merge that sort of path, please keep Cc to alsa-devel ML.
 
-We could do with a better comment, too, e.g.
+In the meantime, would you think that the balance of convenience lies with this interpolation scheme? (Finally, I have a patch ready….)
+Regards
+Mike
 
-	/*
-	 * We require a kernel with an unambiguous Image header. Per
-	 * Documentation/booting.txt, this is the case when image_size
-	 * is non-zero (practically speaking, since v3.17).
-	 */
-	if (!h->image_size)
-		return ERR_PTR(-EINVAL);
+> 
+> thanks,
+> 
+> Takashi
 
-> +
-> +	/* Check cpu features */
-> +	flags = le64_to_cpu(h->flags);
-> +	value = head_flag_field(flags, HEAD_FLAG_BE);
-> +	if (((value == HEAD_FLAG_BE) && !IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) ||
-> +	    ((value != HEAD_FLAG_BE) && IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)))
-> +		if (!system_supports_mixed_endian())
-> +			return ERR_PTR(-EINVAL);
-
-I think this can be simplified:
-
-	bool be_image = head_flag_field(flags, HEAD_FLAG_BE);
-	bool be_kernel = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN);
-
-	if ((be_image != be_kernel) && !system_supports_mixed_endian)
-	    		return ERR_PTR(-EINVAL);
-
-... though do we need to police this at all? It's arguably policy given
-the new image has to be signed anyway), and there are other fields that
-could fall into that category in future.
-
-> +
-> +	value = head_flag_field(flags, HEAD_FLAG_PAGE_SIZE);
-> +	if (((value == HEAD_FLAG_PAGE_SIZE_4K) &&
-> +			!system_supports_4kb_granule()) ||
-> +	    ((value == HEAD_FLAG_PAGE_SIZE_64K) &&
-> +			!system_supports_64kb_granule()) ||
-> +	    ((value == HEAD_FLAG_PAGE_SIZE_16K) &&
-> +			!system_supports_16kb_granule()))
-> +		return ERR_PTR(-EINVAL);
-
-... likewise here?
-
-> +
-> +	/* Load the kernel */
-> +	kbuf.image = image;
-> +	kbuf.buf_min = 0;
-> +	kbuf.buf_max = ULONG_MAX;
-> +	kbuf.top_down = false;
-> +
-> +	kbuf.buffer = kernel;
-> +	kbuf.bufsz = kernel_len;
-> +	kbuf.mem = 0;
-> +	kbuf.memsz = le64_to_cpu(h->image_size);
-> +	text_offset = le64_to_cpu(h->text_offset);
-> +	kbuf.buf_align = MIN_KIMG_ALIGN;
-> +
-> +	/* Adjust kernel segment with TEXT_OFFSET */
-> +	kbuf.memsz += text_offset;
-
-It's very surprising at first glance to add text_offset here, then undo
-that below. This should have a better comment explaining what we're
-doing.
-
-> +
-> +	ret = kexec_add_buffer(&kbuf);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	kernel_segment = &image->segment[image->nr_segments - 1];
-
-I'm confused here. When/how can the image have muliple segments?
-
-> +	kernel_segment->mem += text_offset;
-> +	kernel_segment->memsz -= text_offset;
-> +	image->start = kernel_segment->mem;
-
-As above, I don't like the fact that we're altering the result of
-kexec_add_buffer here. It feels fragile, even if it works today.
-
-Can we teach the core kexec buffer code that we need an offset from an
-aligned base?
-
-Thanks,
-Mark.
