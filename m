@@ -2,138 +2,305 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5DAC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27DAC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF9D2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF9D2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9253E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:41:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWnbuNjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9253E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeJIU5I (ORCPT
+        id S1726721AbeJIU6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:57:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55730 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726492AbeJIU5H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:57:07 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99DdgCn015974
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 09:40:06 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0u23xxes-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:39:45 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 9 Oct 2018 09:36:55 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Oct 2018 09:36:52 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99Dap8n63045736
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 9 Oct 2018 13:36:51 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BBFFEB2065;
-        Tue,  9 Oct 2018 09:34:54 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8F02CB205F;
-        Tue,  9 Oct 2018 09:34:54 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.157.198])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Oct 2018 09:34:54 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A511C16C4242; Tue,  9 Oct 2018 06:36:50 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 06:36:50 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Lance Roy <ldr709@gmail.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 12/16] locking/mutex: Replace spin_is_locked() with
- lockdep
-Reply-To: paulmck@linux.ibm.com
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-13-ldr709@gmail.com>
- <20181009121809.GG6248@arm.com>
+        Tue, 9 Oct 2018 16:58:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726492AbeJIU6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:58:36 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 862B22086D;
+        Tue,  9 Oct 2018 13:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539092494;
+        bh=j/1Eh3Zzi3k0pxhAAf/EnAMGRvjBj/YbgpjiZXIBzhE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aWnbuNjU8reZb3ciUWpkl4UUtpVH6MHSC0HAmdMo0EX4WpNfAUT5/lgyo7gcMUGCD
+         C54g0BWaZAKQkN6/kSPrCtBMNCLlRcp8sltobaBw2DF6GeOlhoGjkdNoEdARbusNa6
+         pUS7uWY8VjrBsgckYs1MnFbh2E18qXJ8+ehccNQw=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 58362142C5E; Tue,  9 Oct 2018 10:41:31 -0300 (-03)
+Date:   Tue, 9 Oct 2018 10:41:31 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] perf record: encode -k clockid frequency into Perf
+ trace
+Message-ID: <20181009134131.GB10775@kernel.org>
+References: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181009121809.GG6248@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18100913-0064-0000-0000-0000035CA7A4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009848; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01100154; UDB=6.00569182; IPR=6.00880202;
- MB=3.00023679; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-09 13:36:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100913-0065-0000-0000-00003AEBEEA7
-Message-Id: <20181009133650.GO2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810090135
+In-Reply-To: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 01:18:10PM +0100, Will Deacon wrote:
-> On Tue, Oct 02, 2018 at 10:38:58PM -0700, Lance Roy wrote:
-> > lockdep_assert_held() is better suited to checking locking requirements,
-> > since it won't get confused when someone else holds the lock. This is
-> > also a step towards possibly removing spin_is_locked().
-> > 
-> > Signed-off-by: Lance Roy <ldr709@gmail.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > ---
-> >  kernel/locking/mutex-debug.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug.c
-> > index 9aa713629387..771d4ca96dda 100644
-> > --- a/kernel/locking/mutex-debug.c
-> > +++ b/kernel/locking/mutex-debug.c
-> > @@ -36,7 +36,7 @@ void debug_mutex_lock_common(struct mutex *lock, struct mutex_waiter *waiter)
-> >  
-> >  void debug_mutex_wake_waiter(struct mutex *lock, struct mutex_waiter *waiter)
-> >  {
-> > -	SMP_DEBUG_LOCKS_WARN_ON(!spin_is_locked(&lock->wait_lock));
-> > +	lockdep_assert_held(&lock->wait_lock);
-> >  	DEBUG_LOCKS_WARN_ON(list_empty(&lock->wait_list));
-> >  	DEBUG_LOCKS_WARN_ON(waiter->magic != waiter);
-> >  	DEBUG_LOCKS_WARN_ON(list_empty(&waiter->list));
-> > @@ -51,7 +51,7 @@ void debug_mutex_free_waiter(struct mutex_waiter *waiter)
-> >  void debug_mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
-> >  			    struct task_struct *task)
-> >  {
-> > -	SMP_DEBUG_LOCKS_WARN_ON(!spin_is_locked(&lock->wait_lock));
-> > +	lockdep_assert_held(&lock->wait_lock);
+Em Tue, Oct 09, 2018 at 09:59:03AM +0300, Alexey Budankov escreveu:
 > 
-> I think it's a good idea to replace debug usage of spin_is_locked() with
-> calls to lockdep, but I wonder whether that means that DEBUG_MUTEXES should
-> select LOCKDEP so that we don't lose coverage?
+> Store -k clockid frequency into Perf trace to enable timestamps 
+> derived metrics conversion into wall clock time on reporting stage.
 > 
-> What do you think?
+> Below is the example of perf report output:
 
-Makes sense to me!
+Some questions below, left the code for easier reference.
+ 
+> tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
+> ...
+> [ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
+> 
+> tools/perf/perf report --header
+> # ========
+> ...
+> # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
+> ...
+> # clockid frequency: 1000 MHz
+> ...
+> # ========
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+> Changes in v4:
+>  - addressed compilation issues on 32bit platforms
+> Changes in v3:
+>  - moved header's clockid_res_ns initialization out of record__init_features()
+>  - added explicit warning for case of failed clock_getres() call
+> Changes in v2:
+>  - renamed clockid_freq to clockid_res_ns and get_clockid_freq() to get_clockid_res()
+>  - avoided redundant define of NSEC_IN_SEC, reused linux/time64.h:NSEC_PER_SEC
+>  - moved MHz conversion into print_clockid() and shortened write_clockid()
+> ---
+>  tools/perf/builtin-record.c | 24 ++++++++++++++++++++++--
+>  tools/perf/perf.h           |  1 +
+>  tools/perf/util/env.h       |  1 +
+>  tools/perf/util/header.c    | 28 ++++++++++++++++++++++++++++
+>  tools/perf/util/header.h    |  1 +
+>  5 files changed, 53 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 0980dfe3396b..d803d3264465 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -592,6 +592,9 @@ static void record__init_features(struct record *rec)
+>  	if (!rec->opts.full_auxtrace)
+>  		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
+>  
+> +	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
+> +		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
+> +
+>  	perf_header__clear_feat(&session->header, HEADER_STAT);
+>  }
+>  
+> @@ -897,6 +900,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  
+>  	record__init_features(rec);
+>  
+> +	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
+> +		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
+> +
+>  	if (forks) {
+>  		err = perf_evlist__prepare_workload(rec->evlist, &opts->target,
+>  						    argv, data->is_pipe,
+> @@ -1337,6 +1343,19 @@ static const struct clockid_map clockids[] = {
+>  	CLOCKID_END,
+>  };
+>  
+> +static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
+> +{
+> +	struct timespec res;
+> +
+> +	*res_ns = 0;
+> +	if (!clock_getres(clk_id, &res))
+> +		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
+> +	else
+> +		pr_warning("WARNING: Failed to determine specified clock resolution.\n");
+> +
+> +	return 0;
+> +}
+> +
+>  static int parse_clockid(const struct option *opt, const char *str, int unset)
+>  {
+>  	struct record_opts *opts = (struct record_opts *)opt->value;
+> @@ -1360,7 +1379,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
+>  
+>  	/* if its a number, we're done */
+>  	if (sscanf(str, "%d", &opts->clockid) == 1)
+> -		return 0;
+> +		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
+>  
+>  	/* allow a "CLOCK_" prefix to the name */
+>  	if (!strncasecmp(str, "CLOCK_", 6))
+> @@ -1369,7 +1388,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
+>  	for (cm = clockids; cm->name; cm++) {
+>  		if (!strcasecmp(str, cm->name)) {
+>  			opts->clockid = cm->clockid;
+> -			return 0;
+> +			return get_clockid_res(opts->clockid,
+> +					       &opts->clockid_res_ns);
+>  		}
+>  	}
+>  
+> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+> index 21bf7f5a3cf5..981db3c2ed60 100644
+> --- a/tools/perf/perf.h
+> +++ b/tools/perf/perf.h
+> @@ -81,6 +81,7 @@ struct record_opts {
+>  	unsigned     initial_delay;
+>  	bool         use_clockid;
+>  	clockid_t    clockid;
+> +	size_t       clockid_res_ns;
+>  	unsigned int proc_map_timeout;
+>  };
+>  
+> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+> index 1f3ccc368530..b167a54d635f 100644
+> --- a/tools/perf/util/env.h
+> +++ b/tools/perf/util/env.h
+> @@ -63,6 +63,7 @@ struct perf_env {
+>  	struct numa_node	*numa_nodes;
+>  	struct memory_node	*memory_nodes;
+>  	unsigned long long	 memory_bsize;
+> +	size_t                   clockid_res_ns;
+>  };
+>  
+>  extern struct perf_env perf_env;
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index 1ec1d9bc2d63..702e0cce63da 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -1034,6 +1034,14 @@ static int write_auxtrace(struct feat_fd *ff,
+>  	return err;
+>  }
+>  
+> +static int write_clockid(struct feat_fd *ff,
+> +			 struct perf_evlist *evlist __maybe_unused)
+> +{
+> +	u64 clockid_res_ns = ff->ph->env.clockid_res_ns;
+> +
+> +	return do_write(ff, &clockid_res_ns, sizeof(clockid_res_ns));
+> +}
+> +
+>  static int cpu_cache_level__sort(const void *a, const void *b)
+>  {
+>  	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
+> @@ -1508,6 +1516,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+>  		fprintf(fp, "# Core ID and Socket ID information is not available\n");
+>  }
+>  
+> +static void print_clockid(struct feat_fd *ff, FILE *fp)
+> +{
+> +	fprintf(fp, "# clockid frequency: %zd MHz\n",
+> +		ff->ph->env.clockid_res_ns * 1000);
+> +}
+> +
+>  static void free_event_desc(struct perf_evsel *events)
+>  {
+>  	struct perf_evsel *evsel;
+> @@ -2531,6 +2545,19 @@ static int process_mem_topology(struct feat_fd *ff,
+>  	return ret;
+>  }
+>  
+> +static int process_clockid(struct feat_fd *ff,
+> +			   void *data __maybe_unused)
+> +{
+> +	u64 clockid_res_ns;
+> +
+> +	if (do_read_u64(ff, &clockid_res_ns))
+> +		return -1;
+> +
+> +	ff->ph->env.clockid_res_ns = *(size_t *)&clockid_res_ns;
 
-But given that this was accepted into -tip, I have dropped it from my tree.
+What is wrong with:
 
-							Thanx, Paul
+	ff->ph->env.clockid_res_ns = clockid_res_ns;
 
+?
+
+Also why have you picked 'size_t' for that nanoseconds variable
+(clockid_res_ns)?
+
+When one looks at things like:
+
+           struct timespec {
+               time_t   tv_sec;        /* seconds */
+               long     tv_nsec;       /* nanoseconds */
+           };
+
+that would lead one to use 'long' for a variable holding nanoseconds,
+no?
+
+And 'timespec' is what clock_getres() uses:
+
+   int clock_getres(clockid_t clk_id, struct timespec *res);
+
+Since you're storing this as:
+
++static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
++{
++     struct timespec res;
++
++     *res_ns = 0;
++     if (!clock_getres(clk_id, &res))
++             *res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
+
+Why don't you make ff->ph->env.clockid_res_ns an 'u64'? Would simplify
+the code a bit, no?
+
+Am I missing something?
+
+- Arnaldo
+
+> +	return 0;
+> +}
+> +
+>  struct feature_ops {
+>  	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
+>  	void (*print)(struct feat_fd *ff, FILE *fp);
+> @@ -2590,6 +2617,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+>  	FEAT_OPN(CACHE,		cache,		true),
+>  	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
+>  	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
+> +	FEAT_OPR(CLOCKID,       clockid,        false)
+>  };
+>  
+>  struct header_print_data {
+> diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+> index e17903caa71d..0d553ddca0a3 100644
+> --- a/tools/perf/util/header.h
+> +++ b/tools/perf/util/header.h
+> @@ -38,6 +38,7 @@ enum {
+>  	HEADER_CACHE,
+>  	HEADER_SAMPLE_TIME,
+>  	HEADER_MEM_TOPOLOGY,
+> +	HEADER_CLOCKID,
+>  	HEADER_LAST_FEATURE,
+>  	HEADER_FEAT_BITS	= 256,
+>  };
