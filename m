@@ -2,328 +2,61 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4E7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A2DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1EC214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:36:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1EC214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DCEE1214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:36:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEE1214D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJIVxx (ORCPT
+        id S1726707AbeJIVxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:53:53 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19220 "EHLO mga01.intel.com"
+        Tue, 9 Oct 2018 17:53:49 -0400
+Received: from muru.com ([72.249.23.125]:51788 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726476AbeJIVxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:53:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 07:36:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,360,1534834800"; 
-   d="scan'208";a="93617414"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 09 Oct 2018 07:36:38 -0700
-Received: from [10.125.251.255] (abudanko-mobl.ccr.corp.intel.com [10.125.251.255])
-        by linux.intel.com (Postfix) with ESMTP id 99A6D58014B;
-        Tue,  9 Oct 2018 07:36:36 -0700 (PDT)
-Subject: Re: [PATCH v4] perf record: encode -k clockid frequency into Perf
- trace
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <bb8f8b82-aadc-af93-5ba5-d3e5572f1914@linux.intel.com>
- <20181009134131.GB10775@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <b81d7dda-a079-9019-7e4a-1652a37382a5@linux.intel.com>
-Date:   Tue, 9 Oct 2018 17:36:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726483AbeJIVxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:53:49 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8DF2280C3;
+        Tue,  9 Oct 2018 14:36:32 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 07:36:31 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 00/11] net: ethernet: ti: cpsw: replace cpsw-phy-sel
+ with phy driver
+Message-ID: <20181009143631.GK5662@atomide.com>
+References: <20181008234949.15416-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20181009134131.GB10775@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008234949.15416-1-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+* Grygorii Strashko <grygorii.strashko@ti.com> [181008 23:54]:
+> 2) introduce new PHY API for network interface mode selection which will use
+> already defined set of modes from phy_interface_t.
+> 
+> Option 2 was selected for this series.
 
-On 09.10.2018 16:41, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Oct 09, 2018 at 09:59:03AM +0300, Alexey Budankov escreveu:
->>
->> Store -k clockid frequency into Perf trace to enable timestamps 
->> derived metrics conversion into wall clock time on reporting stage.
->>
->> Below is the example of perf report output:
-> 
-> Some questions below, left the code for easier reference.
->  
->> tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
->> ...
->> [ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
->>
->> tools/perf/perf report --header
->> # ========
->> ...
->> # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
->> ...
->> # clockid frequency: 1000 MHz
->> ...
->> # ========>>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->> Changes in v4:
->>  - addressed compilation issues on 32bit platforms
->> Changes in v3:
->>  - moved header's clockid_res_ns initialization out of record__init_features()
->>  - added explicit warning for case of failed clock_getres() call
->> Changes in v2:
->>  - renamed clockid_freq to clockid_res_ns and get_clockid_freq() to get_clockid_res()
->>  - avoided redundant define of NSEC_IN_SEC, reused linux/time64.h:NSEC_PER_SEC
->>  - moved MHz conversion into print_clockid() and shortened write_clockid()
->> ---
->>  tools/perf/builtin-record.c | 24 ++++++++++++++++++++++--
->>  tools/perf/perf.h           |  1 +
->>  tools/perf/util/env.h       |  1 +
->>  tools/perf/util/header.c    | 28 ++++++++++++++++++++++++++++
->>  tools/perf/util/header.h    |  1 +
->>  5 files changed, 53 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
->> index 0980dfe3396b..d803d3264465 100644
->> --- a/tools/perf/builtin-record.c
->> +++ b/tools/perf/builtin-record.c
->> @@ -592,6 +592,9 @@ static void record__init_features(struct record *rec)
->>  	if (!rec->opts.full_auxtrace)
->>  		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
->>  
->> +	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
->> +		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
->> +
->>  	perf_header__clear_feat(&session->header, HEADER_STAT);
->>  }
->>  
->> @@ -897,6 +900,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
->>  
->>  	record__init_features(rec);
->>  
->> +	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
->> +		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
->> +
->>  	if (forks) {
->>  		err = perf_evlist__prepare_workload(rec->evlist, &opts->target,
->>  						    argv, data->is_pipe,
->> @@ -1337,6 +1343,19 @@ static const struct clockid_map clockids[] = {
->>  	CLOCKID_END,
->>  };
->>  
->> +static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
->> +{
->> +	struct timespec res;
->> +
->> +	*res_ns = 0;
->> +	if (!clock_getres(clk_id, &res))
->> +		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
->> +	else
->> +		pr_warning("WARNING: Failed to determine specified clock resolution.\n");
->> +
->> +	return 0;
->> +}
->> +
->>  static int parse_clockid(const struct option *opt, const char *str, int unset)
->>  {
->>  	struct record_opts *opts = (struct record_opts *)opt->value;
->> @@ -1360,7 +1379,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
->>  
->>  	/* if its a number, we're done */
->>  	if (sscanf(str, "%d", &opts->clockid) == 1)
->> -		return 0;
->> +		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
->>  
->>  	/* allow a "CLOCK_" prefix to the name */
->>  	if (!strncasecmp(str, "CLOCK_", 6))
->> @@ -1369,7 +1388,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
->>  	for (cm = clockids; cm->name; cm++) {
->>  		if (!strcasecmp(str, cm->name)) {
->>  			opts->clockid = cm->clockid;
->> -			return 0;
->> +			return get_clockid_res(opts->clockid,
->> +					       &opts->clockid_res_ns);
->>  		}
->>  	}
->>  
->> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
->> index 21bf7f5a3cf5..981db3c2ed60 100644
->> --- a/tools/perf/perf.h
->> +++ b/tools/perf/perf.h
->> @@ -81,6 +81,7 @@ struct record_opts {
->>  	unsigned     initial_delay;
->>  	bool         use_clockid;
->>  	clockid_t    clockid;
->> +	size_t       clockid_res_ns;
->>  	unsigned int proc_map_timeout;
->>  };
->>  
->> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
->> index 1f3ccc368530..b167a54d635f 100644
->> --- a/tools/perf/util/env.h
->> +++ b/tools/perf/util/env.h
->> @@ -63,6 +63,7 @@ struct perf_env {
->>  	struct numa_node	*numa_nodes;
->>  	struct memory_node	*memory_nodes;
->>  	unsigned long long	 memory_bsize;
->> +	size_t                   clockid_res_ns;
->>  };
->>  
->>  extern struct perf_env perf_env;
->> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
->> index 1ec1d9bc2d63..702e0cce63da 100644
->> --- a/tools/perf/util/header.c
->> +++ b/tools/perf/util/header.c
->> @@ -1034,6 +1034,14 @@ static int write_auxtrace(struct feat_fd *ff,
->>  	return err;
->>  }
->>  
->> +static int write_clockid(struct feat_fd *ff,
->> +			 struct perf_evlist *evlist __maybe_unused)
->> +{
->> +	u64 clockid_res_ns = ff->ph->env.clockid_res_ns;
->> +
->> +	return do_write(ff, &clockid_res_ns, sizeof(clockid_res_ns));
->> +}
->> +
->>  static int cpu_cache_level__sort(const void *a, const void *b)
->>  {
->>  	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
->> @@ -1508,6 +1516,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
->>  		fprintf(fp, "# Core ID and Socket ID information is not available\n");
->>  }
->>  
->> +static void print_clockid(struct feat_fd *ff, FILE *fp)
->> +{
->> +	fprintf(fp, "# clockid frequency: %zd MHz\n",
->> +		ff->ph->env.clockid_res_ns * 1000);
->> +}
->> +
->>  static void free_event_desc(struct perf_evsel *events)
->>  {
->>  	struct perf_evsel *evsel;
->> @@ -2531,6 +2545,19 @@ static int process_mem_topology(struct feat_fd *ff,
->>  	return ret;
->>  }
->>  
->> +static int process_clockid(struct feat_fd *ff,
->> +			   void *data __maybe_unused)
->> +{
->> +	u64 clockid_res_ns;
->> +
->> +	if (do_read_u64(ff, &clockid_res_ns))
->> +		return -1;
->> +
->> +	ff->ph->env.clockid_res_ns = *(size_t *)&clockid_res_ns;
-> 
-> What is wrong with:
-> 
-> 	ff->ph->env.clockid_res_ns = clockid_res_ns;
-> 
-> ?
+Looks good to me :) The dts files will cause merge conflicts with
+what I have pending for the ti-sysc changes so please send the dts
+changes in a separate series when posting without RFC.
 
-It can lead to implicit type size reduction, so compiler can 
-report warning what breaks compilation.
+Thanks,
 
-> 
-> Also why have you picked 'size_t' for that nanoseconds variable
-> (clockid_res_ns)?
-> 
-> When one looks at things like:
-> 
->            struct timespec {
->                time_t   tv_sec;        /* seconds */
->                long     tv_nsec;       /* nanoseconds */
->            };
-> 
-> that would lead one to use 'long' for a variable holding nanoseconds,
-> no?
-
-Yes, long type for clockid_res_ns is what it was before 
-I had started to prepare the patch :)
-
-> 
-> And 'timespec' is what clock_getres() uses:
-> 
->    int clock_getres(clockid_t clk_id, struct timespec *res);
-> 
-> Since you're storing this as:
-> 
-> +static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
-> +{
-> +     struct timespec res;
-> +
-> +     *res_ns = 0;
-> +     if (!clock_getres(clk_id, &res))
-> +             *res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-
-but then I thought a little bit more and came to conclusion that 
-for this multiplication with addition would probably better 
-have larger type than long.
-
-> 
-> Why don't you make ff->ph->env.clockid_res_ns an 'u64'? Would simplify
-> the code a bit, no?
-
-and now I think that keeping things simple is the best approach. :)
-
-> 
-> Am I missing something?
-
-Please see v5. Thanks!
-
-Have a good day,
-Alexey
-
-> 
-> - Arnaldo
-> 
->> +	return 0;
->> +}
->> +
->>  struct feature_ops {
->>  	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
->>  	void (*print)(struct feat_fd *ff, FILE *fp);
->> @@ -2590,6 +2617,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
->>  	FEAT_OPN(CACHE,		cache,		true),
->>  	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
->>  	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
->> +	FEAT_OPR(CLOCKID,       clockid,        false)
->>  };
->>  
->>  struct header_print_data {
->> diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
->> index e17903caa71d..0d553ddca0a3 100644
->> --- a/tools/perf/util/header.h
->> +++ b/tools/perf/util/header.h
->> @@ -38,6 +38,7 @@ enum {
->>  	HEADER_CACHE,
->>  	HEADER_SAMPLE_TIME,
->>  	HEADER_MEM_TOPOLOGY,
->> +	HEADER_CLOCKID,
->>  	HEADER_LAST_FEATURE,
->>  	HEADER_FEAT_BITS	= 256,
->>  };
-> 
+Tony
