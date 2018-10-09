@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD43C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BC8C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76ACB20841
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76ACB20841
+	by mail.kernel.org (Postfix) with ESMTP id B6A3B20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A3B20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeJIMpn (ORCPT
+        id S1726683AbeJIMqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 08:45:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58451 "EHLO
+        Tue, 9 Oct 2018 08:46:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38311 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeJIMpn (ORCPT
+        with ESMTP id S1725823AbeJIMqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 08:45:43 -0400
+        Tue, 9 Oct 2018 08:46:15 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w995UTAe910209
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w995V1fa910258
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 8 Oct 2018 22:30:29 -0700
+        Mon, 8 Oct 2018 22:31:01 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w995UTfT910206;
-        Mon, 8 Oct 2018 22:30:29 -0700
-Date:   Mon, 8 Oct 2018 22:30:29 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w995V1el910255;
+        Mon, 8 Oct 2018 22:31:01 -0700
+Date:   Mon, 8 Oct 2018 22:31:01 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sanskriti Sharma <tipbot@zytor.com>
-Message-ID: <tip-9c8a182e5a73e01afd11742a2ab887bf338fdafd@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-        hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
-        sansharm@redhat.com, joe.lawrence@redhat.com
-Reply-To: hpa@zytor.com, acme@redhat.com, sansharm@redhat.com,
-          mingo@kernel.org, joe.lawrence@redhat.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org
-In-Reply-To: <1538490554-8161-4-git-send-email-sansharm@redhat.com>
-References: <1538490554-8161-4-git-send-email-sansharm@redhat.com>
+Message-ID: <tip-470c8f7c88de013d266e1b61044efe8937728b7f@git.kernel.org>
+Cc:     mingo@kernel.org, sansharm@redhat.com, jolsa@kernel.org,
+        joe.lawrence@redhat.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, acme@redhat.com
+Reply-To: sansharm@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+          acme@redhat.com, jolsa@kernel.org, joe.lawrence@redhat.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <1538490554-8161-5-git-send-email-sansharm@redhat.com>
+References: <1538490554-8161-5-git-send-email-sansharm@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Free 'printk' string in
- parse_ftrace_printk()
-Git-Commit-ID: 9c8a182e5a73e01afd11742a2ab887bf338fdafd
+Subject: [tip:perf/core] perf tools: Avoid double free in read_event_file()
+Git-Commit-ID: 470c8f7c88de013d266e1b61044efe8937728b7f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,46 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9c8a182e5a73e01afd11742a2ab887bf338fdafd
-Gitweb:     https://git.kernel.org/tip/9c8a182e5a73e01afd11742a2ab887bf338fdafd
+Commit-ID:  470c8f7c88de013d266e1b61044efe8937728b7f
+Gitweb:     https://git.kernel.org/tip/470c8f7c88de013d266e1b61044efe8937728b7f
 Author:     Sanskriti Sharma <sansharm@redhat.com>
-AuthorDate: Tue, 2 Oct 2018 10:29:12 -0400
+AuthorDate: Tue, 2 Oct 2018 10:29:13 -0400
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 8 Oct 2018 14:23:45 -0300
+CommitDate: Mon, 8 Oct 2018 14:23:46 -0300
 
-perf tools: Free 'printk' string in parse_ftrace_printk()
+perf tools: Avoid double free in read_event_file()
 
-parse_ftrace_printk() tokenizes and parses a line, calling strdup() each
-iteration.  Add code to free this temporary format string duplicate.
+The temporary 'buf' buffer allocated in read_event_file() may be freed
+twice.  Move the free() call to the common function exit point.
 
 Fixes the following coverity complaints:
 
-  Error: RESOURCE_LEAK (CWE-772):
-  tools/perf/util/trace-event-parse.c:158: overwrite_var: Overwriting
-  "printk" in "printk = strdup(fmt + 1)" leaks the storage that "printk"
-  points to.
-
-  tools/perf/util/trace-event-parse.c:162: leaked_storage: Variable
-  "printk" going out of scope leaks the storage it points to.
+  Error: USE_AFTER_FREE (CWE-825):
+  tools/perf/util/trace-event-read.c:309: double_free: Calling "free"
+  frees pointer "buf" which has already been freed.
 
 Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-4-git-send-email-sansharm@redhat.com
+Link: http://lkml.kernel.org/r/1538490554-8161-5-git-send-email-sansharm@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/trace-event-parse.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/trace-event-read.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index a4d7de1c96d1..02f97f5dd588 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -158,6 +158,7 @@ void parse_ftrace_printk(struct tep_handle *pevent,
- 		printk = strdup(fmt+1);
- 		line = strtok_r(NULL, "\n", &next);
- 		tep_register_print_string(pevent, printk, addr);
-+		free(printk);
+diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
+index b98ee2a2eb44..a278e1eee5f5 100644
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -297,10 +297,8 @@ static int read_event_file(struct tep_handle *pevent, char *sys,
  	}
- }
  
+ 	ret = do_read(buf, size);
+-	if (ret < 0) {
+-		free(buf);
++	if (ret < 0)
+ 		goto out;
+-	}
+ 
+ 	ret = parse_event_file(pevent, buf, size, sys);
+ 	if (ret < 0)
