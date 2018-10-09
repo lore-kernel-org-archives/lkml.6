@@ -2,234 +2,182 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BCAECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF091ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A54092064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E7052064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:49:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="mbTFM3qJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54092064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f69vUUng"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E7052064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeJJBHJ (ORCPT
+        id S1727577AbeJJBHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:07:09 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57308 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726486AbeJJBHJ (ORCPT
+        Tue, 9 Oct 2018 21:07:18 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:44156 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeJJBHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:07:09 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w99HifAT019288
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 10:49:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=IXl8b/pb5ZwLHCqDtKpx9KnNaGD49JpuxYOKDI5ELAg=;
- b=mbTFM3qJpfXqxvz3jkgzb+jlsRB/k8k+t+h7iNKH0vWiwfnOJt81V8Qnwzo7LQXH2E+B
- 1PCsE1fH5+A07XjbSG5+cvhTkbf+cDNw4muVpZyz0H5SVEmRD0cjOb6l7QHEXE2JMhKK
- ps2EGyJt2yREjVcf9JUhf/zqx4pL5X3tZ4E= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2n0x7s0nbt-9
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:49:01 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.18) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 9 Oct
- 2018 10:48:46 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- 07DEC253530D; Tue,  9 Oct 2018 10:48:46 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
-        <Justin.Lee1@Dell.com>, <joel@jms.id.au>,
-        <linux-aspeed@lists.ozlabs.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v2 2/2] net/ncsi: Add NCSI Mellanox OEM command
-Date:   Tue, 9 Oct 2018 10:48:06 -0700
-Message-ID: <20181009174806.404791-2-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181009174806.404791-1-vijaykhemka@fb.com>
-References: <20181009174806.404791-1-vijaykhemka@fb.com>
-X-FB-Internal: Safe
+        Tue, 9 Oct 2018 21:07:18 -0400
+Received: by mail-vk1-f195.google.com with SMTP id b2-v6so593485vkd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hn+LAQuKpXXAJd1XDrQ9rpJaQnh2Y9vgJgOmoRdmONs=;
+        b=f69vUUngqAuZT2J/fTSrHAWbbzo2kellpSItiAQNRttRjT/xha3l+kZ+HSLXCnorba
+         X0PJCjorSrXbEFlGdZIssR5LHk/RjHrRW+edoBfTztfLGr4PRHxi3gNK8rkJNSkN/unn
+         ydr3kNjCqyJdc2uszJzvIUTZz/skYE4hKeS/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hn+LAQuKpXXAJd1XDrQ9rpJaQnh2Y9vgJgOmoRdmONs=;
+        b=cpVvgFk6ZGDVnNmaO8j92DvpJGAACLjgNV4f8A419nNArACoqca1Jwf/TkaARhMQTz
+         BZ8mipUQrjfM0yei7fQ84iltUJUiNPKpHH2MfDy1mqvlbi24XZtUN/cX3t3aa0q1SxmU
+         QCB125eAuekHN0o1INqcmZrFYw0hOHzQH8hDh0VqgSLJ+ztg/TzBuJtNuR0axZQnocwe
+         DaVDTVq+1sSrPmJdOKN2Tyggu9wvilDwi1hBZQCJV20Pay7QG/aa1aNwCuqsK07dKoOs
+         fDLIM2jpdFY27L9Zg4Bhow/kvSDgjZFJpYvIUHF/Wn3XG94OCgSKYrqa0NOsqXM2Bxrm
+         mGMQ==
+X-Gm-Message-State: ABuFfoisq8/deqHJltu/OGiCgaUI2audvbo0US5t45enZNNxLwqsA9rP
+        WYPY5tpYJisCVLDIpMVd+cOr8zrWhVk=
+X-Google-Smtp-Source: ACcGV62ijiKsbyrYO/3BtVc5BjNvcaOOBVFWS2ePIhSlPa0eRa0bGxPecJVKyD1o6EGjLydYdVNlmQ==
+X-Received: by 2002:a1f:b215:: with SMTP id b21-v6mr5514176vkf.0.1539107350153;
+        Tue, 09 Oct 2018 10:49:10 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id f188-v6sm3223494vke.53.2018.10.09.10.49.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 10:49:08 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id m5so2390232vsk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:49:08 -0700 (PDT)
+X-Received: by 2002:a67:1141:: with SMTP id 62-v6mr10837852vsr.213.1539107347783;
+ Tue, 09 Oct 2018 10:49:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_12:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <1538574265-30235-1-git-send-email-alokc@codeaurora.org>
+ <1538574265-30235-4-git-send-email-alokc@codeaurora.org> <153904219713.119890.7463642233895152532@swboyd.mtv.corp.google.com>
+ <CAD=FV=XnYucy4JmgATrB89RYHTbzRC_GaouaRjHAocD4-H0ncg@mail.gmail.com> <153910152600.119890.14820584405992384926@swboyd.mtv.corp.google.com>
+In-Reply-To: <153910152600.119890.14820584405992384926@swboyd.mtv.corp.google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 9 Oct 2018 10:48:55 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U-ZZQhFKR9kxYnw=F1j+dExrsgFvjabYJ8AVmBDM4eXA@mail.gmail.com>
+Message-ID: <CAD=FV=U-ZZQhFKR9kxYnw=F1j+dExrsgFvjabYJ8AVmBDM4eXA@mail.gmail.com>
+Subject: Re: [PATCH V5 3/3] spi: spi-geni-qcom: Add SPI driver support for
+ GENI based QUP
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     alokc@codeaurora.org, Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds OEM Mellanox commands and response handling. It also
-defines OEM Get MAC Address handler to get and configure the device.
+Hi,
 
-ncsi_oem_gma_handler_mlx: This handler send NCSI mellanox command for
-getting mac address.
-ncsi_rsp_handler_oem_mlx: This handles response received for all
-mellanox OEM commands.
-ncsi_rsp_handler_oem_mlx_gma: This handles get mac address response and
-set it to device.
+On Tue, Oct 9, 2018 at 9:12 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Doug Anderson (2018-10-08 16:52:36)
+> > Hi,
+> >
+> > On Mon, Oct 8, 2018 at 4:43 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> > > > +       mas->irq = platform_get_irq(pdev, 0);
+> > > > +       if (mas->irq < 0) {
+> > > > +               ret = mas->irq;
+> > > > +               dev_err(&pdev->dev, "Err getting IRQ %d\n", ret);
+> > > > +               goto spi_geni_probe_runtime_disable;
+> > > > +       }
+> > >
+> > > Nitpick: If you got the irq earlier before allocating anything then nothing has
+> > > to be put on failure path.
+> >
+> > I think this might have been in response to previous feedback from you
+> > suggesting that we should get the irq as late as possible.  Ah, here
+> > ya go:
+> >
+> > https://lkml.kernel.org/r/153780767551.119890.9339380838620508307@swboyd.mtv.corp.google.com
+>
+> Yes I suggested we register for the irq as last as possible, but I
+> didn't suggest calling platform_get_irq() this late. It could be called
+> earlier so that if there isn't any irq then nothing to do besides return
+> failure.
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- net/ncsi/internal.h    |  5 +++++
- net/ncsi/ncsi-manage.c | 24 +++++++++++++++++++++++-
- net/ncsi/ncsi-pkt.h    |  9 +++++++++
- net/ncsi/ncsi-rsp.c    | 41 ++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 77 insertions(+), 2 deletions(-)
+Ah, you're suggesting separating the platform_get_irq() and the
+request_irq() so that we call platform_get_irq() as the first thing in
+the function but don't do the request_irq() until later.  Yeah, that
+could be done and I guess if you feel strongly about it I wouldn't
+object to the change, but I don't feel it buys us a lot and I kind of
+like keeping the two next to each other.  Specifically why I don't
+think it buys us a lot:
 
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 45883b32790e..d4558628a991 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -73,10 +73,15 @@ enum {
- #define NCSI_OEM_MFR_BCM_ID             0x113d
- /* Broadcom specific OEM Command */
- #define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
-+/* Mellanox specific OEM Command */
-+#define NCSI_OEM_MLX_CMD_GMA            0x00   /* CMD ID for Get MAC */
-+#define NCSI_OEM_MLX_CMD_GMA_PARAM      0x1b   /* Parameter for GMA  */
- /* OEM Command payload lengths*/
- #define NCSI_OEM_BCM_CMD_GMA_LEN        12
-+#define NCSI_OEM_MLX_CMD_GMA_LEN        8
- /* Mac address offset in OEM response */
- #define BCM_MAC_ADDR_OFFSET             28
-+#define MLX_MAC_ADDR_OFFSET             8
- 
- 
- struct ncsi_channel_version {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index e5bfd9245b5d..38aef27d2e67 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -658,12 +658,34 @@ static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
- 			   nca->type);
- }
- 
-+static void ncsi_oem_gma_handler_mlx(struct ncsi_cmd_arg *nca)
-+{
-+	int ret = 0;
-+	unsigned char data[NCSI_OEM_MLX_CMD_GMA_LEN];
-+
-+	nca->payload = NCSI_OEM_MLX_CMD_GMA_LEN;
-+
-+	memset(data, 0, NCSI_OEM_MLX_CMD_GMA_LEN);
-+	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_MLX_ID);
-+	data[5] = NCSI_OEM_MLX_CMD_GMA;
-+	data[6] = NCSI_OEM_MLX_CMD_GMA_PARAM;
-+
-+	nca->data = data;
-+
-+	ret = ncsi_xmit_cmd(nca);
-+	if (ret)
-+		netdev_err(nca->ndp->ndev.dev,
-+			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
-+			   nca->type);
-+}
-+
- /* OEM Command handlers initialization */
- static struct ncsi_oem_gma_handler {
- 	unsigned int	mfr_id;
- 	void		(*handler)(struct ncsi_cmd_arg *nca);
- } ncsi_oem_gma_handlers[] = {
--	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
-+	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm },
-+	{ NCSI_OEM_MFR_MLX_ID, ncsi_oem_gma_handler_mlx }
- };
- 
- #endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
-index 4d3f06be38bd..2a6d83a596c9 100644
---- a/net/ncsi/ncsi-pkt.h
-+++ b/net/ncsi/ncsi-pkt.h
-@@ -165,6 +165,15 @@ struct ncsi_rsp_oem_pkt {
- 	unsigned char           data[];      /* Payload data      */
- };
- 
-+/* Mellanox Response Data */
-+struct ncsi_rsp_oem_mlx_pkt {
-+	unsigned char           cmd_rev;     /* Command Revision  */
-+	unsigned char           cmd;         /* Command ID        */
-+	unsigned char           param;       /* Parameter         */
-+	unsigned char           optional;    /* Optional data     */
-+	unsigned char           data[];      /* Data              */
-+};
-+
- /* Broadcom Response Data */
- struct ncsi_rsp_oem_bcm_pkt {
- 	unsigned char           ver;         /* Payload Version   */
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index 31672e967db2..b18efa23faa2 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -596,6 +596,45 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
- 	return 0;
- }
- 
-+/* Response handler for Mellanox command Get Mac Address */
-+static int ncsi_rsp_handler_oem_mlx_gma(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_dev_priv *ndp = nr->ndp;
-+	struct net_device *ndev = ndp->ndev.dev;
-+	int ret = 0;
-+	const struct net_device_ops *ops = ndev->netdev_ops;
-+	struct sockaddr saddr;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+
-+	saddr.sa_family = ndev->type;
-+	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-+	memcpy(saddr.sa_data, &rsp->data[MLX_MAC_ADDR_OFFSET], ETH_ALEN);
-+	ret = ops->ndo_set_mac_address(ndev, &saddr);
-+	if (ret < 0)
-+		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
-+
-+	return ret;
-+}
-+
-+/* Response handler for Mellanox card */
-+static int ncsi_rsp_handler_oem_mlx(struct ncsi_request *nr)
-+{
-+	struct ncsi_rsp_oem_pkt *rsp;
-+	struct ncsi_rsp_oem_mlx_pkt *mlx;
-+
-+	/* Get the response header */
-+	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-+	mlx = (struct ncsi_rsp_oem_mlx_pkt *)(rsp->data);
-+
-+	if (mlx->cmd == NCSI_OEM_MLX_CMD_GMA &&
-+	    mlx->param == NCSI_OEM_MLX_CMD_GMA_PARAM)
-+		return ncsi_rsp_handler_oem_mlx_gma(nr);
-+	return 0;
-+}
-+
- /* Response handler for Broadcom command Get Mac Address */
- static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
- {
-@@ -638,7 +677,7 @@ static struct ncsi_rsp_oem_handler {
- 	unsigned int	mfr_id;
- 	int		(*handler)(struct ncsi_request *nr);
- } ncsi_rsp_oem_handlers[] = {
--	{ NCSI_OEM_MFR_MLX_ID, NULL },
-+	{ NCSI_OEM_MFR_MLX_ID, ncsi_rsp_handler_oem_mlx },
- 	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
- };
- 
--- 
-2.17.1
+1. You still need the "dev_err" print, right?  platform_get_irq()
+doesn't automatically print errors for you I think.
 
+2. You now need a local variable "irq".  By putting the
+platform_get_irq() before the memory allocation you now can't store it
+directly in mas->irq.  We could try using "ret" as a temporary
+variable but that seems worse in this case since it'd be a bit
+fragile.
+
+3. You don't get rid of any error labels / error handling so we don't
+really save any code
+
+When I tried this my diffstat says 8 lines added and 7 removed, so a
+net increase in LOC FWIW.  I'm relying in gmail so my patch will be
+whitespace-damaged (sigh), but you can find a clean one at:
+
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/e0325d618e209c22379e3a4269c14627b19243a8%5E%21/#F0
+
+...the basic idea is this though:
+
+@@ -543,6 +543,13 @@
+   struct spi_geni_master *mas;
+   struct resource *res;
+   struct geni_se *se;
++  int irq;
++
++  irq = platform_get_irq(pdev, 0);
++  if (irq < 0) {
++    dev_err(&pdev->dev, "Err getting IRQ %d\n", irq);
++    return irq;
++  }
+
+   spi = spi_alloc_master(&pdev->dev, sizeof(*mas));
+   if (!spi)
+@@ -553,6 +560,7 @@
+   mas->dev = &pdev->dev;
+   mas->se.dev = &pdev->dev;
+   mas->se.wrapper = dev_get_drvdata(pdev->dev.parent);
++  mas->irq = irq;
+   se = &mas->se;
+
+   spi->bus_num = -1;
+@@ -589,13 +597,6 @@
+   if (ret)
+     goto spi_geni_probe_runtime_disable;
+
+-  mas->irq = platform_get_irq(pdev, 0);
+-  if (mas->irq < 0) {
+-    ret = mas->irq;
+-    dev_err(&pdev->dev, "Err getting IRQ %d\n", ret);
+-    goto spi_geni_probe_runtime_disable;
+-  }
+-
+   ret = request_irq(mas->irq, geni_spi_isr,
+       IRQF_TRIGGER_HIGH, "spi_geni", spi);
+   if (ret)
+
+
+-Doug
