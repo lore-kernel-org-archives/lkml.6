@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB9FECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80BFECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECE0214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECE0214DC
+	by mail.kernel.org (Postfix) with ESMTP id 88375214FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88375214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeJJAwL (ORCPT
+        id S1727396AbeJJAwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:52:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49726 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726445AbeJJAwK (ORCPT
+        Tue, 9 Oct 2018 20:52:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57846 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726468AbeJJAwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:52:10 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTSh9083606
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 13:34:06 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n10hgrry0-1
+        Tue, 9 Oct 2018 20:52:19 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTfdq128167
+        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 13:34:16 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0wtf0ys9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:34:06 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 13:34:15 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 9 Oct 2018 18:34:04 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 9 Oct 2018 18:34:13 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Oct 2018 18:34:01 +0100
+        Tue, 9 Oct 2018 18:34:08 +0100
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99HXxrG4719028
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99HY6GA8651218
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 9 Oct 2018 17:33:59 GMT
+        Tue, 9 Oct 2018 17:34:06 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39AAE52052;
-        Tue,  9 Oct 2018 20:33:33 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 91F9052050;
+        Tue,  9 Oct 2018 20:33:40 +0100 (BST)
 Received: from swastik.in.ibm.com (unknown [9.195.38.245])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B6FC25204E;
-        Tue,  9 Oct 2018 20:33:27 +0100 (BST)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8D8D85204E;
+        Tue,  9 Oct 2018 20:33:35 +0100 (BST)
 From:   Nayna Jain <nayna@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
@@ -56,16 +56,16 @@ Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         seth.forshee@canonical.com, pjones@redhat.com, vgoyal@redhat.com,
         dyoung@redhat.com, ebiederm@xmission.com,
         kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v6 1/5] x86/ima: define arch_ima_get_secureboot
-Date:   Tue,  9 Oct 2018 23:00:33 +0530
+Subject: [PATCH v6 2/5] ima: prevent kexec_load syscall based on runtime secureboot flag
+Date:   Tue,  9 Oct 2018 23:00:34 +0530
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
 References: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18100917-4275-0000-0000-000002C73152
+x-cbid: 18100917-0028-0000-0000-00000304B2DC
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100917-4276-0000-0000-000037D25DAF
-Message-Id: <20181009173037.32630-2-nayna@linux.vnet.ibm.com>
+x-cbparentid: 18100917-0029-0000-0000-000023BF05F5
+Message-Id: <20181009173037.32630-3-nayna@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,81 +80,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nayna Jain <nayna@linux.ibm.com>
 
-Distros are concerned about totally disabling the kexec_load syscall.
-As a compromise, the kexec_load syscall will only be disabled when
-CONFIG_KEXEC_VERIFY_SIG is configured and the system is booted with
+When CONFIG_KEXEC_VERIFY_SIG is enabled, the kexec_file_load syscall
+requires the kexec'd kernel image to be signed. Distros are concerned
+about totally disabling the kexec_load syscall. As a compromise, the
+kexec_load syscall will only be disabled when CONFIG_KEXEC_VERIFY_SIG
+is configured and the system is booted with secureboot enabled.
+
+This patch disables the kexec_load syscall only for systems booted with
 secureboot enabled.
 
-This patch defines the new arch specific function called
-arch_ima_get_secureboot() to retrieve the secureboot state of the system.
-
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Suggested-by: Seth Forshee <seth.forshee@canonical.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Eric Biederman <ebiederm@xmission.com>
 Cc: Peter Jones <pjones@redhat.com>
 Cc: Vivek Goyal <vgoyal@redhat.com>
 Cc: Dave Young <dyoung@redhat.com>
 ---
- arch/x86/kernel/Makefile   |  2 ++
- arch/x86/kernel/ima_arch.c | 17 +++++++++++++++++
- include/linux/ima.h        |  9 +++++++++
- 3 files changed, 28 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
+ security/integrity/ima/ima_main.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..f32406e51424 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA)			+= ima_arch.o
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..bb5a88d2b271
---- /dev/null
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
-+
-+extern struct boot_params boot_params;
-+
-+bool arch_ima_get_secureboot(void)
-+{
-+	if (efi_enabled(EFI_BOOT) &&
-+		(boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return true;
-+	else
-+		return false;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 84806b54b50a..4852255aa4f4 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,6 +30,15 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
-+#ifdef CONFIG_X86
-+extern bool arch_ima_get_secureboot(void);
-+#else
-+static inline bool arch_ima_get_secureboot(void)
-+{
-+	return false;
-+}
-+#endif
-+
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dce0a8a217bb..9031c99e37a6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -505,20 +505,24 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  */
+ int ima_load_data(enum kernel_load_data_id id)
  {
+-	bool sig_enforce;
++	bool ima_enforce, sig_enforce;
+ 
+-	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+-		return 0;
++	ima_enforce =
++		(ima_appraise & IMA_APPRAISE_ENFORCE) == IMA_APPRAISE_ENFORCE;
+ 
+ 	switch (id) {
+ 	case LOADING_KEXEC_IMAGE:
+-		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++		if (IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
++		    && arch_ima_get_secureboot())
++			return -EACCES;
++
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+ 		break;
+ 	case LOADING_FIRMWARE:
+-		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_FIRMWARE)) {
+ 			pr_err("Prevent firmware sysfs fallback loading.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+@@ -526,7 +530,8 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	case LOADING_MODULE:
+ 		sig_enforce = is_module_sig_enforced();
+ 
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
++		if (ima_enforce && (!sig_enforce
++				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+ 			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
 -- 
 2.13.6
 
