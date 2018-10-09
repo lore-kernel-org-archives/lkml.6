@@ -2,95 +2,137 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F9BECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836B3ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D7621524
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:36:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="CD4lJNfn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D7621524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4367E204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:39:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4367E204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeJJAy3 (ORCPT
+        id S1727233AbeJJA5S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:54:29 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34782 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbeJJAy3 (ORCPT
+        Tue, 9 Oct 2018 20:57:18 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38115 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJJA5S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:54:29 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i12-v6so2528248otl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DoYB0X1jhJA2q0lW8xYYWyGXalA56LyXrGU7hBlyrdk=;
-        b=CD4lJNfn/y93hJIJZ6lzV7kqH8n7DxVxku0i1bgJ9eg3Gqx/7X5YlMZM02UBCglYdJ
-         5J/TK8NiGeNdkmVxbsqktqxR+UIkfrwgWWExiekIY/Tcn8sxrhlc0+vrLLIQPrHDGFxm
-         Yl8ZN92VuH0L0cxlOZBUN+pDY0CtxXH0eIu0ChqbH2LiK58J9LIDj3hpC5N2OXGgkNIy
-         +Q+ME80lolKor7LvfVOA/frKxj9gSFO0uwamzIuUGqLK97It/Jg8+2WlkWyJU92BlddQ
-         QWJzJDs1zG6ir0uXJ3jQmom1mXHy7wEfpOkmomjkXAZ3dIEFuUm8udKVlFW/Upp1XhJO
-         bu7g==
+        Tue, 9 Oct 2018 20:57:18 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u197-v6so1907664oif.5;
+        Tue, 09 Oct 2018 10:39:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DoYB0X1jhJA2q0lW8xYYWyGXalA56LyXrGU7hBlyrdk=;
-        b=ZKg8mH+t+FMSb8R/jRB0hLvzyT+Kg3WKuPzBLpjT+V0rf1Zsat18vdwD4yGsblB/jS
-         YTQiSatV1iFxT4Sh4346UN0UCdIqq1OOiPwf60m8nGkuykfpsJb8vUQ2mvBNwJeiFHtg
-         spZ8dN6yc/plGpZYQe4tzrPpiMuOBAS9EIzDmr06o2Ga/Hz85jTw7lQlQ7SwSlXVX0HS
-         HtexBpEvOjOgmwGBoPOqWdsuNyST16ZTlgL6kQgxxc8eAQ8+hBYiRMgUneHJnQrJnl2j
-         8Zv+dtEi5s4Wj6q1NFK3ZOOHVKJipFl4rOKAagvNuvFByIcqhvQEbGi1hmU1sAkfWks8
-         Hs/A==
-X-Gm-Message-State: ABuFfog0V8kNSmClUUmpXnEQUV+DPjXV/EBv2pnw6kjgg1q6PtPZR64R
-        w47uvC4nbEhxwJjrK1Wt6UurDA32TCKvZ6233nl5Lw==
-X-Google-Smtp-Source: ACcGV63q5g54+Wc2X/0ct1BlZzNRH8Wu/QH40RN4VbasXnddRlmeVYZ6Nc7KddN5jvTuDzUfNkMNkKqCYQkWf+apx8w=
-X-Received: by 2002:a9d:56ef:: with SMTP id b44mr18172849otj.214.1539106585745;
- Tue, 09 Oct 2018 10:36:25 -0700 (PDT)
+        bh=9YJ2eFYI2HqiBFh/cYH89bZC0TxDqedS4Pavfx6HiP4=;
+        b=pU5cOAzay3Zsf55zDNc1K0qjsX48oGmp5Cva40GHjan2nprX7vlk5idfDZjR3f8Wla
+         q6k/NeVMoRdKtpny0WxY17aInpf89XIFN/Q/aFSixAGn4ZoyCVTzYXVR50MJHnHYGawU
+         OrWQLxxulYsk5w0AzyJjIrl6eNJHZO/OGWSo+88CxpqlqSWKv/ov3VRF41oJRKtQ2WIZ
+         2MebPv0epOTTXrV4BLjCL1chejcqKdjJEOv/jI6nfeA+sTxdGDlyWVaxfKLmoYzgbL6c
+         RmrDe1tHeVeqsmmP4d8DyTZ8VQopDs7EJxfi2/cbZCVzisXcMWo5aKcEGwk9F/Ei+mGC
+         3/gQ==
+X-Gm-Message-State: ABuFfoifVfZyku6mjtYrmGbdAmlhxf2OSrg0zg5kFliGPBuFW6Nuk2xC
+        K1sbNUH7MKDbIQTswBagzpSEM6PArOYDPkm+06ueWg==
+X-Google-Smtp-Source: ACcGV633y3rhIBMtz6BnaREWeP8bT9AofRMeTW0YNtzY+wUcDH7QFoZ56uE7gO4hLn5U7bx9BfrPSTf2HCfpN62WVAw=
+X-Received: by 2002:aca:d785:: with SMTP id o127-v6mr7366612oig.33.1539106753312;
+ Tue, 09 Oct 2018 10:39:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153861932401.2863953.11364943845583542894.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074838.GE22173@dhcp22.suse.cz> <CAPcyv4jO_K8g3XRzuYOQPeGT--aPtucwZsqkywxOFO4Zny5Xrg@mail.gmail.com>
- <20181009111209.GL8528@dhcp22.suse.cz>
-In-Reply-To: <20181009111209.GL8528@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 9 Oct 2018 10:36:14 -0700
-Message-ID: <CAPcyv4hcVG7V07d0gT4mQjOLrZnesWvVg7cOuUhxCg=+F5qYMA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] mm: Shuffle initial free memory
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1539080245-25818-1-git-send-email-svellattu@mvista.com> <20181009172726.GA2182@xps15>
+In-Reply-To: <20181009172726.GA2182@xps15>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 9 Oct 2018 19:39:01 +0200
+Message-ID: <CAJZ5v0gckkg0jyTc7=JYPpUruQQXL_FhEjm03-0mrFcxH60cHA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] Driver core: add bus_find_device_by_fwnode
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     svellattu@mvista.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-rdma@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, oulijun@huawei.com,
+        xavier.huwei@huawei.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        David Miller <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 4:16 AM Michal Hocko <mhocko@kernel.org> wrote:
+On Tue, Oct 9, 2018 at 7:27 PM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
 >
-> On Thu 04-10-18 09:51:37, Dan Williams wrote:
-> > On Thu, Oct 4, 2018 at 12:48 AM Michal Hocko <mhocko@kernel.org> wrote:
-[..]
-> > So the reason front-back randomization is not enough is due to the
-> > in-order initial freeing of pages. At the start of that process
-> > putting page1 in front or behind page0 still keeps them close
-> > together, page2 is still near page1 and has a high chance of being
-> > adjacent. As more pages are added ordering diversity improves, but
-> > there is still high page locality for the low address pages and this
-> > leads to no significant impact to the cache conflict rate. Patch3 is
-> > enough to keep the entropy sustained over time, but it's not enough
-> > initially.
+> Hi Silesh,
 >
-> That should be in the changelog IMHO.
+> On Tue, Oct 09, 2018 at 03:47:24PM +0530, Silesh C V wrote:
+> > Some drivers need to find the device on a bus having a specific firmware
+> > node. Currently, such drivers have their own implementations to do this.
+> > Provide a helper similar to bus_find_device_by_name so that each driver
+> > does not have to reinvent this.
+> >
+> > Signed-off-by: Silesh C V <svellattu@mvista.com>
+> > ---
+> > Changes since v2:
+> >       - make use of dev_fwnode in match_fwnode.
+> >
+> >  drivers/base/bus.c     | 20 ++++++++++++++++++++
+> >  include/linux/device.h |  3 +++
+> >  2 files changed, 23 insertions(+)
+> >
+> > diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> > index 8bfd27e..a2f39db 100644
+> > --- a/drivers/base/bus.c
+> > +++ b/drivers/base/bus.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/string.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/sysfs.h>
+> > +#include <linux/property.h>
+> >  #include "base.h"
+> >  #include "power/power.h"
+> >
+> > @@ -373,6 +374,25 @@ struct device *bus_find_device_by_name(struct bus_type *bus,
+> >  }
+> >  EXPORT_SYMBOL_GPL(bus_find_device_by_name);
+> >
+> > +static int match_fwnode(struct device *dev, void *fwnode)
+> > +{
+> > +     return dev_fwnode(dev) == fwnode;
+> > +}
+> > +
+> > +/**
+> > + * bus_find_device_by_fwnode - device iterator for locating a particular device
+> > + * having a specific firmware node
+> > + * @bus: bus type
+> > + * @start: Device to begin with
+> > + * @fwnode: firmware node of the device to match
+> > + */
+> > +struct device *bus_find_device_by_fwnode(struct bus_type *bus, struct device *start,
+> > +                                     struct fwnode_handle *fwnode)
+>
+> I get the following when running checkpatch on your set:
+>
+> mpoirier@xps15:~/work/linaro/coresight/kernel-maint$ ./scripts/checkpatch.pl
+> 0001-Driver-core-add-bus_find_device_by_fwnode.patch
+> WARNING: line over 80 characters
 
-Fair enough, I'll fold that in when I rebase on top of -next.
+Lines longer than 80 chars often are legitimate.  No need to send
+extra reports about those cases in general.
+
+Thanks,
+Rafael
