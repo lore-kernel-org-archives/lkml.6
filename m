@@ -2,88 +2,80 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D33C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA7EC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D040021479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:44:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fTtEGEBS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D040021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 621DE21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621DE21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbeJIRBA (ORCPT
+        id S1726481AbeJIRDd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:01:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37424 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeJIRA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:00:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ULsf3qLVKhw0XY+gqJq+0f4hV7OmFUu9a7ZaHIAD8aw=; b=fTtEGEBSgkPPJyjhx3kkikslE
-        WC6quQyhJ4pt4jBqN5s2RuLmpLvX/ynKkLttYmtvxbqXo8yHU6Y/ZBloz6xh558Fdb/Reptj4NKd5
-        FfWWUtN/vxhwXErn6Rfqh7nETdeRsbHwb5TMh/zUNuIjx6NK5GYQHHspY+DTj8/UKv5an2Dv4AY0I
-        LCijSHraTf+/7+llWkLiVvX21v4jPU6EIysoiac6O02waVJcZm/HVjCvjvGBycjWdsixmp5ptOqxq
-        RRhx/M/CkhDsoGNwkkNkK0aGcA5OueeQwZwNFNxBGVRTIuOQv+IhqPsdZlIUn4+8cH1eKaHxCYjHx
-        UC3JTXGQg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9oZJ-00036C-6v; Tue, 09 Oct 2018 09:44:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 441FF20281DC1; Tue,  9 Oct 2018 11:44:41 +0200 (CEST)
-Date:   Tue, 9 Oct 2018 11:44:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     mingo@redhat.com, rostedt@goodmis.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        alessio.balsini@gmail.com, bristot@redhat.com, will.deacon@arm.com,
-        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, henrik@austad.us,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [RFD/RFC PATCH 0/8] Towards implementing proxy execution
-Message-ID: <20181009094441.GI5663@hirez.programming.kicks-ass.net>
-References: <20181009092434.26221-1-juri.lelli@redhat.com>
+        Tue, 9 Oct 2018 13:03:33 -0400
+Received: from ozlabs.org ([203.11.71.1]:37367 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbeJIRDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 13:03:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42TspQ6x3vz9s2P;
+        Tue,  9 Oct 2018 20:47:26 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     linux-next <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sachinp <sachinp@linux.vnet.ibm.com>, keith.busch@intel.com,
+        bhelgaas@google.com
+Subject: Re: [linux-next][bisected e3fbcc7c] build error at
+ drivers/pci/pcie/aer_inject.c:444:6: error: =?utf-8?Q?=E2=80=98struct_pt?=
+ =?utf-8?Q?=5Fregs=E2=80=99?= has no member named =?utf-8?Q?=E2=80=98ip?=
+In-Reply-To: <1539069292.17569.7.camel@abdul.in.ibm.com>
+References: <1539069292.17569.7.camel@abdul.in.ibm.com>
+Date:   Tue, 09 Oct 2018 20:47:20 +1100
+Message-ID: <87woqr1mfr.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009092434.26221-1-juri.lelli@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 11:24:26AM +0200, Juri Lelli wrote:
-> The main concerns I have with the current approach is that, being based
-> on mutex.c, it's both
-> 
->  - not linked with futexes
->  - not involving "legacy" priority inheritance (rt_mutex.c)
-> 
-> I believe one of the main reasons Peter started this on mutexes is to
-> have better coverage of potential problems (which I can assure everybody
-> it had). I'm not yet sure what should we do moving forward, and this is
-> exactly what I'd be pleased to hear your opinions on.
+Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
+> Greeting's
+>
+> Today's linux-next fails to build on ppc with below error
+>
+> drivers/pci/pcie/aer_inject.c: In function ‘aer_inject_ftrace_thunk’:
+> drivers/pci/pcie/aer_inject.c:444:6: error: ‘struct pt_regs’ has no
+> member named ‘ip’
+>   regs->ip = (unsigned long) hook->function;
+>       ^
+> make[3]: *** [drivers/pci/pcie/aer_inject.o] Error 1
+> make[2]: *** [drivers/pci/pcie] Error 2
+> make[1]: *** [drivers/pci] Error 2
+>
+> Machine: Power 9
+> kernel version: 4.19.0-rc7-next-20181008
+> gcc version: 4.8.5 20150623
+> config attached
+>
+> Recent code changes from these commits:
+>
+> c79ad38b36dd4967d67f83fc48bade37ee041a47 PCI/AER: Abstract AER interrupt handling
+> 7b23285f930a8dedcbf749661cd0f2cc27f79be6 PCI/AER: Reuse existing pcie_port_find_device() interface
+> e3fbcc7c4b130f81ea586183db561fa3ce9c6447 PCI/AER: Covertly inject errors with ftrace hooks
 
-Well that, and mutex was 'simple', I didn't have to go rip out all the
-legacy PI crud.
+I don't see this commit in today's linux next (20181009) so presumably
+someone else has noticed and dropped the commit?
 
-If this all ends up working well, the solution is 'simple' and we can
-simply copy mutex to rt_mutex or something along those lines if we want
-to keep the distinction between them. Alternatively we simply delete
-rt_mutex.
-
-Thanks for reviving this.. it's been an 'interesting' year and a half
-since I wrote all this and I've really not had time to work on it.
+cheers
