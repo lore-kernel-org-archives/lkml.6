@@ -2,90 +2,69 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251D6C64EAD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E978C64EB8
 	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B782054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B782054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 236672150C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOs7aSvH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236672150C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeJIUnV (ORCPT
+        id S1727786AbeJIUnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727657AbeJIUnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE203AC1F;
+        Tue, 9 Oct 2018 16:43:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727654AbeJIUnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:43:19 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A70012054F;
         Tue,  9 Oct 2018 13:26:22 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 15:26:22 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-Message-ID: <20181009132622.GR8528@dhcp22.suse.cz>
-References: <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
- <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
- <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
- <20181009063541.GB8528@dhcp22.suse.cz>
- <20181009075015.GC8528@dhcp22.suse.cz>
- <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
- <20181009111005.GK8528@dhcp22.suse.cz>
- <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
- <20181009125841.GP8528@dhcp22.suse.cz>
- <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539091583;
+        bh=aWY7owfOhkG3BGZNSLTjVrL8XdbRnCUMjTU6xD6Ye04=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QOs7aSvHMRNthxx3zYlHI2dDmckJAGw4u6Z5DvDYKLBkJhpSiOQ4DVvbOabBrlwRs
+         iU8FmBH2g0R0+PVBbtQz9K+mEnb1ZEFoUSFa9BQZGn8IGX04pr4PEMHaXNNMLKi7za
+         hE70P5iSb50u3gZLgb8NMxUR6Bjp3+dtCAp6qF4Q=
+Date:   Tue, 9 Oct 2018 15:26:20 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     John Whitmore <johnfwhitmore@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH 06/11] staging:rtl8192u: Rewrite test for null - Style
+Message-ID: <20181009132620.GA28602@kroah.com>
+References: <20181007214025.25469-1-johnfwhitmore@gmail.com>
+ <20181007214025.25469-7-johnfwhitmore@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
+In-Reply-To: <20181007214025.25469-7-johnfwhitmore@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09-10-18 22:14:24, Tetsuo Handa wrote:
-> On 2018/10/09 21:58, Michal Hocko wrote:
-> > On Tue 09-10-18 21:52:12, Tetsuo Handa wrote:
-> >> On 2018/10/09 20:10, Michal Hocko wrote:
-> >>> On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
-> >>>>> 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
-> >>>>> reap the mm in the rare case of the race.
-> >>>>
-> >>>> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
-> >>>> to -1000 (and allowed unprivileged users to OOM-lockup the system).
-> >>>
-> >>> I do not follow.
-> >>>
-> >>
-> >> http://tomoyo.osdn.jp/cgi-bin/lxr/source/mm/oom_kill.c?v=linux-4.6.7#L493
-> > 
-> > Ahh, so you are not referring to the current upstream code. Do you see
-> > any specific problem with the current one (well, except for the possible
-> > race which I have tried to evaluate).
-> > 
+On Sun, Oct 07, 2018 at 10:40:20PM +0100, John Whitmore wrote:
+> Rewrite a test for NULL to comply with the coding style and clear the
+> checkpatch issue.
 > 
-> Yes. "task_will_free_mem(current) in out_of_memory() returns false due to MMF_OOM_SKIP
-> being already set" is a problem for clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
-> with the current code.
+> This is a coding style change which should not impact runtime
+> code execution.
+> 
+> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> ---
+>  drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-a) I fail to see how that is related to your previous post and b) could
-you be more specific. Is there any other scenario from the two described
-in my earlier email?
--- 
-Michal Hocko
-SUSE Labs
+This patch did not apply :(
+
