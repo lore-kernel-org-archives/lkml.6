@@ -2,164 +2,436 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BBBC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F36C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624F2213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87677214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="iZPdrw4U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624F2213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="udJYPGAt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87677214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbeJIMZp (ORCPT
+        id S1726486AbeJIMdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 08:25:45 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:39361 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbeJIMZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 08:25:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=y4jc8aNJ9RxCPKTVX4gvibEsq2FCRgeegfKiNidEN68=; b=iZPdrw4UHmiRilL2CUi8ZuwM0K
-        dLuMIq20Mw+RKgiKMMvgSQiNejMfeVUjfdSZy41Es1butxlGSBpqktlMrud5nK2luyA36OMZaqtVm
-        C1dS6IcgPhS91ZdVAqJR3t6BKgp6B2kno54swfKhKaBngAGSiozgzX3KeqyLOAMoJwUSlrrUX8QwR
-        CsfHogBJO+1zPuf7tREWTspMzE7vOuzmfxuGmbvnp5g8v7zXIESXsTUcqYKnnS1HQvxm/5586hhYU
-        Cobmi44V9AwYL5jVfZo7s8R5f3StwZ7Q3PXMmY66dJM/k5fo/l8XniJKH2x8OrwO6WmjSJ4WnQmj9
-        2xed1uLQ==;
-Received: from [39.110.237.146] (helo=[10.19.58.25])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1g9kI2-0004Y8-Hv; Tue, 09 Oct 2018 08:10:38 +0300
-Subject: Re: [PATCH v2 3/3] gpu: host1x: Continue CDMA execution starting with
- a next job
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180807130713.1016-1-digetx@gmail.com>
- <20180807130713.1016-4-digetx@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <b508bf7e-e329-b903-e851-d679bac93027@kapsi.fi>
-Date:   Tue, 9 Oct 2018 14:10:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 9 Oct 2018 08:33:54 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:47176 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbeJIMdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 08:33:54 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w995IfU6104391;
+        Tue, 9 Oct 2018 00:18:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539062321;
+        bh=tfEnJw6QjP9EtSf91e0CISM+by/Kwwpf3yJdNHyrR8E=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=udJYPGAtsiaQxA2v6dLdb+OGxz1ZVvXmbTBcK9dw8fqkDNM9tvCl8bHEi0OWTipU9
+         QsbJBGI9f5yjkLH5eDyw5ob/p4u01FAQ0cC156ZYG0l3WdaBKiq6pDqnxDRWi7tn/Q
+         K3uqNYCWe7TSSwoBmh7Bm5KMMO/bUc5bgVk9TDJ4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w995If1E025072;
+        Tue, 9 Oct 2018 00:18:41 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 9 Oct
+ 2018 00:18:41 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 9 Oct 2018 00:18:40 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w995Ibru025194;
+        Tue, 9 Oct 2018 00:18:38 -0500
+Subject: Re: [PATCH 2/6] phy: am654-mmc-phy: Add Support for MMC PHY on AM654
+ Devices
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Faiz Abbas <faiz_abbas@ti.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+References: <20181004111451.9539-1-faiz_abbas@ti.com>
+ <20181004111451.9539-3-faiz_abbas@ti.com>
+ <CAPDyKFpgUqHy4ihN-NZd8Qiat8K3U7xzofj_yjpDqGiFLd3JGg@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <dfd6f0ee-bfd9-b951-c296-61442a458a24@ti.com>
+Date:   Tue, 9 Oct 2018 10:48:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180807130713.1016-4-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAPDyKFpgUqHy4ihN-NZd8Qiat8K3U7xzofj_yjpDqGiFLd3JGg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 39.110.237.146
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Mikko Perttnuen <mperttunen@nvidia.com>
+Hi Uffe,
 
-On 07/08/2018 22.07, Dmitry Osipenko wrote:
-> Currently gathers of a hung job are getting NOP'ed and a restarted CDMA
-> executes the NOP'ed gathers. There shouldn't be a reason to not restart
-> CDMA execution starting with a next job, avoiding the unnecessary churning
-> with gathers NOP'ing.
+On Monday 08 October 2018 05:02 PM, Ulf Hansson wrote:
+> On 4 October 2018 at 13:14, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>> Add driver support for the MMC physical layer present
+>> on TI's AM654 devices.
+>>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->   drivers/gpu/host1x/cdma.c       | 23 +++++++++++------------
->   drivers/gpu/host1x/hw/cdma_hw.c | 13 -------------
->   2 files changed, 11 insertions(+), 25 deletions(-)
+> I assume Kishon would like to pick up this through his tree? If not,
+> please tell and I can do it, with his ack.
+
+yes, I'll pick this in my tree.
+
 > 
-> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> index 6aa6fa1498e8..9e4f01c7f663 100644
-> --- a/drivers/gpu/host1x/cdma.c
-> +++ b/drivers/gpu/host1x/cdma.c
-> @@ -323,7 +323,7 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   {
->   	struct host1x *host1x = cdma_to_host1x(cdma);
->   	u32 restart_addr, syncpt_incrs, syncpt_val;
-> -	struct host1x_job *job;
-> +	struct host1x_job *job, *next_job = NULL;
->   
->   	syncpt_val = host1x_syncpt_load(cdma->timeout.syncpt);
->   
-> @@ -341,8 +341,13 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   		__func__);
->   
->   	list_for_each_entry(job, &cdma->sync_queue, list) {
-> -		if (syncpt_val < job->syncpt_end)
-> +		if (syncpt_val < job->syncpt_end) {
-> +
-> +			if (!list_is_last(&job->list, &cdma->sync_queue))
-> +				next_job = list_next_entry(job, list);
-> +
->   			goto syncpt_incr;
-> +		}
->   
->   		host1x_job_dump(dev, job);
->   	}
-> @@ -355,17 +360,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   	/*
->   	 * Increment with CPU the remaining syncpts of a partially executed job.
->   	 *
-> -	 * Syncpt increments must be done inline with the pushbuffer from a
-> -	 * GATHER buffer to maintain the order (slots are modified to be a
-> -	 * GATHER of syncpt incrs).
-> -	 *
-> -	 * Note: save in restart_addr the location where the timed out buffer
-> -	 * started in the PB, so we can start the refetch from there (with the
-> -	 * modified NOP-ed PB slots). This lets things appear to have completed
-> -	 * properly for this buffer and resources are freed.
-> +	 * CDMA will continue execution starting with the next job or will get
-> +	 * into idle state.
->   	 */
-> -	if (job)
-> -		restart_addr = job->first_get;
-> +	if (next_job)
-> +		restart_addr = next_job->first_get;
->   	else
->   		restart_addr = cdma->last_pos;
->   
-> diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-> index ce320534cbed..bc203532ae6d 100644
-> --- a/drivers/gpu/host1x/hw/cdma_hw.c
-> +++ b/drivers/gpu/host1x/hw/cdma_hw.c
-> @@ -40,7 +40,6 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
->   				u32 syncpt_incrs, u32 syncval, u32 nr_slots)
->   {
->   	struct host1x *host1x = cdma_to_host1x(cdma);
-> -	struct push_buffer *pb = &cdma->push_buffer;
->   	unsigned int i;
->   
->   	for (i = 0; i < syncpt_incrs; i++)
-> @@ -48,18 +47,6 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
->   
->   	/* after CPU incr, ensure shadow is up to date */
->   	host1x_syncpt_load(cdma->timeout.syncpt);
-> -
-> -	/* NOP all the PB slots */
-> -	while (nr_slots--) {
-> -		u32 *p = (u32 *)(pb->mapped + getptr);
-> -		*(p++) = HOST1X_OPCODE_NOP;
-> -		*(p++) = HOST1X_OPCODE_NOP;
-> -		dev_dbg(host1x->dev, "%s: NOP at %pad+%#x\n", __func__,
-> -			&pb->dma, getptr);
-> -		getptr = (getptr + 8) & (pb->size - 1);
-> -	}
-> -
-> -	wmb();
->   }
->   
->   /*
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Thanks
+Kishon
+
 > 
+> Kind regards
+> Uffe
+> 
+>> ---
+>>  drivers/phy/ti/Kconfig         |   7 +
+>>  drivers/phy/ti/Makefile        |   1 +
+>>  drivers/phy/ti/phy-am654-mmc.c | 291 +++++++++++++++++++++++++++++++++
+>>  3 files changed, 299 insertions(+)
+>>  create mode 100644 drivers/phy/ti/phy-am654-mmc.c
+>>
+>> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
+>> index 20503562666c..ea5fe4db01c8 100644
+>> --- a/drivers/phy/ti/Kconfig
+>> +++ b/drivers/phy/ti/Kconfig
+>> @@ -76,3 +76,10 @@ config TWL4030_USB
+>>           family chips (including the TWL5030 and TPS659x0 devices).
+>>           This transceiver supports high and full speed devices plus,
+>>           in host mode, low speed.
+>> +
+>> +config PHY_AM654_MMC
+>> +       bool "TI AM654 MMC PHY Support"
+>> +       select GENERIC_PHY
+>> +       help
+>> +         This option enables support for the Physical layer for MMC host
+>> +         controllers present on TI AM654 SOCs.
+>> diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
+>> index 9f361756eaf2..5b2db2d164a5 100644
+>> --- a/drivers/phy/ti/Makefile
+>> +++ b/drivers/phy/ti/Makefile
+>> @@ -6,3 +6,4 @@ obj-$(CONFIG_OMAP_USB2)                 += phy-omap-usb2.o
+>>  obj-$(CONFIG_TI_PIPE3)                 += phy-ti-pipe3.o
+>>  obj-$(CONFIG_PHY_TUSB1210)             += phy-tusb1210.o
+>>  obj-$(CONFIG_TWL4030_USB)              += phy-twl4030-usb.o
+>> +obj-$(CONFIG_PHY_AM654_MMC)            += phy-am654-mmc.o
+>> diff --git a/drivers/phy/ti/phy-am654-mmc.c b/drivers/phy/ti/phy-am654-mmc.c
+>> new file mode 100644
+>> index 000000000000..91255947fb67
+>> --- /dev/null
+>> +++ b/drivers/phy/ti/phy-am654-mmc.c
+>> @@ -0,0 +1,291 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * phy-am654-mmc.c - MMC PHY driver for TI's AM654 SOCs
+>> + *
+>> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com
+>> + *
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/phy/phy.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/printk.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +/* MMC PHY Registers */
+>> +#define PHYCTRL_CTRL1_REG      0x00
+>> +#define PHYCTRL_CTRL2_REG      0x04
+>> +#define PHYCTRL_CTRL3_REG      0x08
+>> +#define PHYCTRL_CTRL4_REG      0x0C
+>> +#define PHYCTRL_CTRL5_REG      0x10
+>> +#define PHYCTRL_CTRL6_REG      0x14
+>> +#define PHYCTRL_STAT1_REG      0x30
+>> +#define PHYCTRL_STAT2_REG      0x34
+>> +
+>> +#define IOMUX_ENABLE_SHIFT     31
+>> +#define IOMUX_ENABLE_MASK      BIT(IOMUX_ENABLE_SHIFT)
+>> +#define OTAPDLYENA_SHIFT       20
+>> +#define OTAPDLYENA_MASK        BIT(OTAPDLYENA_SHIFT)
+>> +#define OTAPDLYSEL_SHIFT       12
+>> +#define OTAPDLYSEL_MASK        GENMASK(15, 12)
+>> +#define STRBSEL_SHIFT          24
+>> +#define STRBSEL_MASK           GENMASK(27, 24)
+>> +#define SEL50_SHIFT            8
+>> +#define SEL50_MASK             BIT(SEL50_SHIFT)
+>> +#define SEL100_SHIFT           9
+>> +#define SEL100_MASK            BIT(SEL100_SHIFT)
+>> +#define DLL_TRIM_ICP_SHIFT     4
+>> +#define DLL_TRIM_ICP_MASK      GENMASK(7, 4)
+>> +#define DR_TY_SHIFT            20
+>> +#define DR_TY_MASK             GENMASK(22, 20)
+>> +#define ENDLL_SHIFT            1
+>> +#define ENDLL_MASK             BIT(ENDLL_SHIFT)
+>> +#define DLLRDY_SHIFT           0
+>> +#define DLLRDY_MASK            BIT(DLLRDY_SHIFT)
+>> +#define PDB_SHIFT              0
+>> +#define PDB_MASK               BIT(PDB_SHIFT)
+>> +#define CALDONE_SHIFT          1
+>> +#define CALDONE_MASK           BIT(CALDONE_SHIFT)
+>> +
+>> +#define DRIVER_STRENGTH_50_OHM 0x0
+>> +#define DRIVER_STRENGTH_33_OHM 0x1
+>> +#define DRIVER_STRENGTH_66_OHM 0x2
+>> +#define DRIVER_STRENGTH_100_OHM        0x3
+>> +#define DRIVER_STRENGTH_40_OHM 0x4
+>> +
+>> +static struct regmap_config am654_mmc_phy_regmap_config = {
+>> +       .reg_bits = 32,
+>> +       .val_bits = 32,
+>> +       .reg_stride = 4,
+>> +       .fast_io = true,
+>> +};
+>> +
+>> +struct am654_mmc_phy {
+>> +       struct regmap *reg_base;
+>> +       struct clk *mmcclk;
+>> +       int otap_del_sel;
+>> +       int trm_icp;
+>> +       int drv_strength;
+>> +};
+>> +
+>> +static int am654_mmc_phy_init(struct phy *phy)
+>> +{
+>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
+>> +       int ret;
+>> +       u32 val;
+>> +
+>> +       /* Reset registers to default value */
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, 0x10000);
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
+>> +
+>> +       /* Calibrate IO lines */
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
+>> +                          PDB_MASK, PDB_MASK);
+>> +       ret = regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
+>> +                                      val, val & CALDONE_MASK, 1, 20);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       /* Enable pins by setting the IO mux to 0 */
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
+>> +                          IOMUX_ENABLE_MASK, 0);
+>> +
+>> +       mmc_phy->mmcclk = clk_get(&phy->dev, "mmcclk");
+>> +       if (IS_ERR(mmc_phy->mmcclk)) {
+>> +               dev_err(&phy->dev, "Error getting mmcclk");
+>> +               return PTR_ERR(mmc_phy->mmcclk);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int am654_mmc_phy_exit(struct phy *phy)
+>> +{
+>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
+>> +
+>> +       clk_put(mmc_phy->mmcclk);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int am654_mmc_phy_power_on(struct phy *phy)
+>> +{
+>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
+>> +       u32 mask, val;
+>> +       int sel50, sel100;
+>> +       int rate;
+>> +
+>> +       /* Setup DLL Output TAP delay */
+>> +       mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
+>> +       val = (1 << OTAPDLYENA_SHIFT) |
+>> +             (mmc_phy->otap_del_sel << OTAPDLYSEL_SHIFT);
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL4_REG,
+>> +                          mask, val);
+>> +
+>> +       rate = clk_get_rate(mmc_phy->mmcclk);
+>> +       switch (rate) {
+>> +       case 200000000:
+>> +               sel50 = 0;
+>> +               sel100 = 0;
+>> +               break;
+>> +       case 100000000:
+>> +               sel50 = 0;
+>> +               sel100 = 1;
+>> +               break;
+>> +       default:
+>> +               sel50 = 1;
+>> +               sel100 = 0;
+>> +       }
+>> +
+>> +       /* Configure PHY DLL frequency */
+>> +       mask = SEL50_MASK | SEL100_MASK;
+>> +       val = (sel50 << SEL50_SHIFT) | (sel100 << SEL100_SHIFT);
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL5_REG,
+>> +                          mask, val);
+>> +
+>> +       /* Configure DLL TRIM */
+>> +       mask = DLL_TRIM_ICP_MASK;
+>> +       val = mmc_phy->trm_icp << DLL_TRIM_ICP_SHIFT;
+>> +
+>> +       /* Configure DLL driver strength */
+>> +       mask |= DR_TY_MASK;
+>> +       val |= mmc_phy->drv_strength << DR_TY_SHIFT;
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG, mask, val);
+>> +
+>> +       /* Enable DLL */
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
+>> +                          ENDLL_MASK, 0x1 << ENDLL_SHIFT);
+>> +
+>> +       /*
+>> +        * Poll for DLL ready. Use a one second timeout.
+>> +        * Works in all experiments done so far
+>> +        */
+>> +       return regmap_read_poll_timeout(mmc_phy->reg_base, PHYCTRL_STAT1_REG,
+>> +                                       val, val & DLLRDY_MASK, 1000, 1000000);
+>> +
+>> +}
+>> +
+>> +static int am654_mmc_phy_power_off(struct phy *phy)
+>> +{
+>> +       struct am654_mmc_phy *mmc_phy = phy_get_drvdata(phy);
+>> +
+>> +       /* Disable DLL */
+>> +       regmap_update_bits(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
+>> +                          ENDLL_MASK, 0);
+>> +
+>> +       /* Reset registers to default value except PDB */
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL1_REG,
+>> +                    0x10000 | PDB_MASK);
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL4_REG, 0x0);
+>> +       regmap_write(mmc_phy->reg_base, PHYCTRL_CTRL5_REG, 0x0);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct phy_ops ops = {
+>> +       .init           = am654_mmc_phy_init,
+>> +       .exit           = am654_mmc_phy_exit,
+>> +       .power_on       = am654_mmc_phy_power_on,
+>> +       .power_off      = am654_mmc_phy_power_off,
+>> +       .owner          = THIS_MODULE,
+>> +};
+>> +
+>> +static int am654_mmc_phy_probe(struct platform_device *pdev)
+>> +{
+>> +       struct phy_provider *phy_provider;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device_node *np = dev->of_node;
+>> +       struct am654_mmc_phy *mmc_phy;
+>> +       struct phy *generic_phy;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +       struct regmap *map;
+>> +       int drv_strength;
+>> +       int err;
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(base))
+>> +               return PTR_ERR(base);
+>> +
+>> +       map = devm_regmap_init_mmio(dev, base, &am654_mmc_phy_regmap_config);
+>> +       if (IS_ERR(map)) {
+>> +               dev_err(dev, "could not initialize regmap\n");
+>> +               return PTR_ERR(map);
+>> +       }
+>> +
+>> +       mmc_phy = devm_kzalloc(dev, sizeof(struct am654_mmc_phy), GFP_KERNEL);
+>> +       if (!mmc_phy)
+>> +               return -ENOMEM;
+>> +
+>> +       mmc_phy->reg_base = map;
+>> +       err = of_property_read_u32(np, "ti,otap-del-sel",
+>> +                                  &mmc_phy->otap_del_sel);
+>> +       if (err)
+>> +               return err;
+>> +
+>> +       err = of_property_read_u32(np, "ti,trm-icp",
+>> +                                  &mmc_phy->trm_icp);
+>> +       if (err)
+>> +               return err;
+>> +
+>> +       err = of_property_read_u32(np, "ti,driver-strength-ohm", &drv_strength);
+>> +       if (err)
+>> +               return err;
+>> +
+>> +       switch (drv_strength) {
+>> +       case 50:
+>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_50_OHM;
+>> +               break;
+>> +       case 33:
+>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_33_OHM;
+>> +               break;
+>> +       case 66:
+>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_66_OHM;
+>> +               break;
+>> +       case 100:
+>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_100_OHM;
+>> +               break;
+>> +       case 40:
+>> +               mmc_phy->drv_strength = DRIVER_STRENGTH_40_OHM;
+>> +               break;
+>> +       default:
+>> +               dev_err(dev, "Invalid driver strength\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       generic_phy = devm_phy_create(dev, dev->of_node, &ops);
+>> +       if (IS_ERR(generic_phy)) {
+>> +               dev_err(dev, "failed to create PHY\n");
+>> +               return PTR_ERR(generic_phy);
+>> +       }
+>> +
+>> +       phy_set_drvdata(generic_phy, mmc_phy);
+>> +       phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>> +
+>> +       return PTR_ERR_OR_ZERO(phy_provider);
+>> +}
+>> +
+>> +static const struct of_device_id am654_mmc_phy_dt_ids[] = {
+>> +       { .compatible = "ti,am654-mmc-phy" },
+>> +       {}
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, am654_mmc_phy_dt_ids);
+>> +
+>> +static struct platform_driver am654_mmc_phy_driver = {
+>> +       .probe          = am654_mmc_phy_probe,
+>> +       .driver         = {
+>> +               .name   = "am654-mmc-phy",
+>> +               .of_match_table = am654_mmc_phy_dt_ids,
+>> +       },
+>> +};
+>> +
+>> +module_platform_driver(am654_mmc_phy_driver);
+>> +
+>> +MODULE_AUTHOR("Faiz Abbas <faiz_abbas@ti.com>");
+>> +MODULE_DESCRIPTION("TI AM654 MMC PHY driver");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 2.18.0
+>>
