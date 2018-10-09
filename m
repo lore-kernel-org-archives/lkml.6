@@ -2,209 +2,164 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D74CC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D49C00449
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633E42086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633E42086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AE3E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:20:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTzx94dQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE3E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeJIJea (ORCPT
+        id S1726958AbeJIJfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:34:30 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:33604 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726486AbeJIJeY (ORCPT
+        Tue, 9 Oct 2018 05:35:21 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41989 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbeJIJfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:34:24 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w992M3xj032673;
-        Tue, 9 Oct 2018 10:22:03 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 9 Oct 2018
- 10:19:22 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-CC:     Greentime Hu <greentime@andestech.com>,
-        Vincent Chen <vincentc@andestech.com>,
-        Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
-        Alan Kao <alankao@andestech.com>
-Subject: [PATCH v8 4/5] Allow to disable FPU support
-Date:   Tue, 9 Oct 2018 10:18:33 +0800
-Message-ID: <1539051514-3658-5-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539051514-3658-1-git-send-email-alankao@andestech.com>
-References: <1539051514-3658-1-git-send-email-alankao@andestech.com>
+        Tue, 9 Oct 2018 05:35:21 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y71-v6so28864lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 19:20:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=19Hdi7klKgMFb9ldNOiHfrhBJs5CZ78jkkStyPMZ3XQ=;
+        b=GTzx94dQqrhZJbTrVFUuvx175/655VSHSWv09ropqCQUz93e+s9qimDnlfUcJZ0aob
+         81y6YOXdmRoAwym5Gfb62I0kBe+Ag6zjFd8ur254IMYA7vr3nah1DACAIYMTgAIzUCW2
+         FvpR54vf0AQvKet7nJh6L0NfMxXkR9EwUkn938tMZlTk8c2kraCLZjE711mxVhl/613J
+         Y0kv3jV8olrtR9HViVuklttlde+jVGgcpUSUg6lLVLWFF5DLHI5Pzmw9R67Oy7qlMd/2
+         Dmdmpdoy3aN4o0WuB4xD4JpZ/w95WXjd/IxvnqJMhEQ3hZgZ8E957HS+T5Kfkb/EEh4x
+         UQAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=19Hdi7klKgMFb9ldNOiHfrhBJs5CZ78jkkStyPMZ3XQ=;
+        b=F3Qh9OPDHSoAw+KHoB4dQAqEDGziRukm8jN2r1bRiVVqFQsHLk4k23sz+oxLxHi0QU
+         3V1SJP1yxXR8XgYTjPsLn2D8/cZCUbB0xNhc+Z1QEuYJKHyBbuQQQQJZVkcO8Y3Dsioa
+         uIEhE8F02T1YIIgUf1VbiOuh/wtrJ4/GeKu9tVuxRMXO08ues/Ee2SOxqYy6OSiwUrpE
+         Qef7yvxGYMsbWYNYxOOJusU7Hol9rFNEdcL68HPXYzCo6wFpg3IaXxp74ssjc2nQmoNy
+         EdKTyiHyfudJdAtqkmYcQ/LjLJF8zGyyaPbr13oETMC+2ADtZt1LNSCoAervG5euTSI6
+         t0uw==
+X-Gm-Message-State: ABuFfoh0UCwFULFthb3O1bILgMTvh56Dn4LaIqRaY5OHmujjuZoF6TZR
+        cQqzT5+IYXUr8L+9F3jNxS6K8kbGu9OCvkgLuE7aUTEC
+X-Google-Smtp-Source: ACcGV60Sq9vn6s/+zJ297sMaTmUM70xkCBwDDMIpWpMM7DXFqLsNYa3j7JPSW8x6aNE+VmtTxSIktLjfX1XCOH9kyZI=
+X-Received: by 2002:a2e:8981:: with SMTP id c1-v6mr9922102lji.124.1539051643065;
+ Mon, 08 Oct 2018 19:20:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w992M3xj032673
+Received: by 2002:ab3:4984:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 19:20:02 -0700 (PDT)
+In-Reply-To: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
+References: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Tue, 9 Oct 2018 10:20:02 +0800
+Message-ID: <CAAfSe-ugVfdsSf_jQBYH8QObbjJJpBE+QcN75VzgS9eczbOdyA@mail.gmail.com>
+Subject: Re: [RESEND PATCH] ARM: prevent tracing IPI_CPU_BACKTRACE
+To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
+Cc:     Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FPU codes have been separated from common part in previous patches.
-This patch add the CONFIG_FPU option and some stubs, so that a no-FPU
-configuration is allowed.
+Hi All,
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Vincent Chen <vincentc@andestech.com>
-Cc: Zong Li <zong@andestech.com>
-Cc: Nick Hu <nickhu@andestech.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/Kconfig                 |  9 +++++++++
- arch/riscv/Makefile                |  2 +-
- arch/riscv/include/asm/switch_to.h | 10 ++++++++++
- arch/riscv/kernel/Makefile         |  2 +-
- arch/riscv/kernel/process.c        |  4 +++-
- arch/riscv/kernel/signal.c         |  5 +++++
- 6 files changed, 29 insertions(+), 3 deletions(-)
+If there's no comments, should I submit this patch on RMK's Patch system?
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a344980..a63f9db 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -208,6 +208,15 @@ config RISCV_BASE_PMU
- 
- endmenu
- 
-+config FPU
-+	bool "FPU support"
-+	default y
-+	help
-+	  Say N here if you want to disable all floating-point related procedure
-+	  in the kernel.
-+
-+	  If you don't know what to do here, say Y.
-+
- endmenu
- 
- menu "Kernel type"
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 01393e1..901770f 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -44,7 +44,7 @@ KBUILD_CFLAGS += -Wall
- riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32im
- riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64im
- riscv-march-$(CONFIG_RISCV_ISA_A)	:= $(riscv-march-y)a
--riscv-march-y				:= $(riscv-march-y)fd
-+riscv-march-$(CONFIG_FPU)		:= $(riscv-march-y)fd
- riscv-march-$(CONFIG_RISCV_ISA_C)	:= $(riscv-march-y)c
- KBUILD_CFLAGS += -march=$(subst fd,,$(riscv-march-y))
- KBUILD_AFLAGS += -march=$(riscv-march-y)
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index dd6b05b..093050b 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -18,6 +18,7 @@
- #include <asm/ptrace.h>
- #include <asm/csr.h>
- 
-+#ifdef CONFIG_FPU
- extern void __fstate_save(struct task_struct *save_to);
- extern void __fstate_restore(struct task_struct *restore_from);
- 
-@@ -55,6 +56,15 @@ static inline void __switch_to_aux(struct task_struct *prev,
- 	fstate_restore(next, task_pt_regs(next));
- }
- 
-+#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_INITIAL)
-+
-+#else
-+#define fstate_save(task, regs) do { } while (0)
-+#define fstate_restore(task, regs) do { } while (0)
-+#define __switch_to_aux(__prev, __next) do { } while (0)
-+#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_OFF)
-+#endif
-+
- extern struct task_struct *__switch_to(struct task_struct *,
- 				       struct task_struct *);
- 
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index bd433efd..f13f7f2 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -13,7 +13,6 @@ extra-y += vmlinux.lds
- obj-y	+= cpu.o
- obj-y	+= cpufeature.o
- obj-y	+= entry.o
--obj-y	+= fpu.o
- obj-y	+= irq.o
- obj-y	+= process.o
- obj-y	+= ptrace.o
-@@ -32,6 +31,7 @@ obj-y	+= vdso/
- 
- CFLAGS_setup.o := -mcmodel=medany
- 
-+obj-$(CONFIG_FPU)		+= fpu.o
- obj-$(CONFIG_SMP)		+= smpboot.o
- obj-$(CONFIG_SMP)		+= smp.o
- obj-$(CONFIG_MODULES)		+= module.o
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index d7c6ca7..07d5156 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -76,7 +76,7 @@ void show_regs(struct pt_regs *regs)
- void start_thread(struct pt_regs *regs, unsigned long pc,
- 	unsigned long sp)
- {
--	regs->sstatus = SR_SPIE /* User mode, irqs on */ | SR_FS_INITIAL;
-+	regs->sstatus = DEFAULT_SSTATUS;
- 	regs->sepc = pc;
- 	regs->sp = sp;
- 	set_fs(USER_DS);
-@@ -84,12 +84,14 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
- 
- void flush_thread(void)
- {
-+#ifdef CONFIG_FPU
- 	/*
- 	 * Reset FPU context
- 	 *	frm: round to nearest, ties to even (IEEE default)
- 	 *	fflags: accrued exceptions cleared
- 	 */
- 	memset(&current->thread.fstate, 0, sizeof(current->thread.fstate));
-+#endif
- }
- 
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 6a18b98..2450b82 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -37,6 +37,7 @@ struct rt_sigframe {
- 	struct ucontext uc;
- };
- 
-+#ifdef CONFIG_FPU
- static long restore_fp_state(struct pt_regs *regs,
- 			     union __riscv_fp_state *sc_fpregs)
- {
-@@ -85,6 +86,10 @@ static long save_fp_state(struct pt_regs *regs,
- 
- 	return err;
- }
-+#else
-+#define save_fp_state(task, regs) (0)
-+#define restore_fp_state(task, regs) (0)
-+#endif
- 
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
--- 
-2.7.4
+Thanks,
+Chunyan
 
+On 27 September 2018 at 11:41, Chunyan Zhang <chunyan.zhang@unisoc.com> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> When function tracing for IPIs is enabled, we get a warning for an
+> overflow of the ipi_types array with the IPI_CPU_BACKTRACE type
+> as triggered by raise_nmi():
+>
+> arch/arm/kernel/smp.c: In function 'raise_nmi':
+> arch/arm/kernel/smp.c:489:2: error: array subscript is above array bounds [-Werror=array-bounds]
+>         trace_ipi_raise(target, ipi_types[ipinr]);
+>
+> This is a correct warning as we actually overflow the array here.
+>
+> This patch raise_nmi() to call __smp_cross_call() instead of
+> smp_cross_call(), to avoid calling into ftrace. For clarification,
+> I'm also adding a two new code comments describing how this one
+> is special.
+>
+> The warning appears to have shown up after patch e7273ff49acf
+> ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI"), which
+> changed the number assignment from '15' to '8', but as far as I can
+> tell has existed since the IPI tracepoints were first introduced.
+> If we decide to backport this patch to stable kernels, we probably
+> need to backport e7273ff49acf as well.
+>
+> Resubmiting this patch is because that I found coverity is complaining
+> the issue this patch fixed, and also I got the traces like below:
+> "ipi_raise: target_mask=00000001 (machine_suspend)" which actually was
+> the TPS of suspend_resume[1] rather than ipi_raise.
+>
+> [1]
+> https://elixir.bootlin.com/linux/latest/source/kernel/power/suspend.c#L80
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: e7273ff49acf ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI")
+> Fixes: 365ec7b17327 ("ARM: add IPI tracepoints") # v3.17
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+>  arch/arm/include/asm/hardirq.h | 1 +
+>  arch/arm/kernel/smp.c          | 6 +++++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/include/asm/hardirq.h b/arch/arm/include/asm/hardirq.h
+> index cba23ea..7a88f16 100644
+> --- a/arch/arm/include/asm/hardirq.h
+> +++ b/arch/arm/include/asm/hardirq.h
+> @@ -6,6 +6,7 @@
+>  #include <linux/threads.h>
+>  #include <asm/irq.h>
+>
+> +/* number of IPIS _not_ including IPI_CPU_BACKTRACE */
+>  #define NR_IPI 7
+>
+>  typedef struct {
+> diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+> index 0978282..123be77 100644
+> --- a/arch/arm/kernel/smp.c
+> +++ b/arch/arm/kernel/smp.c
+> @@ -75,6 +75,10 @@ enum ipi_msg_type {
+>         IPI_CPU_STOP,
+>         IPI_IRQ_WORK,
+>         IPI_COMPLETION,
+> +       /*
+> +        * CPU_BACKTRACE is special and not included in NR_IPI
+> +        * or tracable with trace_ipi_*
+> +        */
+>         IPI_CPU_BACKTRACE,
+>         /*
+>          * SGI8-15 can be reserved by secure firmware, and thus may
+> @@ -755,7 +759,7 @@ core_initcall(register_cpufreq_notifier);
+>
+>  static void raise_nmi(cpumask_t *mask)
+>  {
+> -       smp_cross_call(mask, IPI_CPU_BACKTRACE);
+> +       _smp_cross_call(mask, IPI_CPU_BACKTRACE);
+>  }
+>
+>  void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+> --
+> 2.7.4
+>
