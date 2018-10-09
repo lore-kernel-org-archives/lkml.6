@@ -2,212 +2,155 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977E5C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F803C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507DC2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l8UPegYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507DC2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 3176D2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3176D2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeJIUnh (ORCPT
+        id S1728026AbeJIUnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50570 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeJIUng (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NGCU2lrt5bq7Rc3mk/OMld2IdjRQQ5SDzs63QFi1+BM=; b=l8UPegYXTgla6zResoGtjiiUTT
-        K+v5TvfDQ5H3YaN3kxyiX7jPgviqYWxTjEoEQZU4u+DiIpu467fj+ymlbo3+6mY8K4f8Ch/Kzqepg
-        RNb8G6lbsBKg+mFZ3Z36s/Abf9X8IAvdUghidJn/Gy98NTsa4WRRRj4amyXkx9yjuyzvuDF6nNIQo
-        /sBRmXtNeKN4pkfk91f/Bc35+5/kb2UJxoyNNdb4X4StNTdKP6D0Fm2dLvwxaviRFCS8SYf9vrwjp
-        fxOhWVl6+nD8nUS+5I00J1JYd+IXujk1QOvjmcQbFDxZaVqqxC432carN1AGcsvLixsi7K0ma5kp9
-        WJiHx8zQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s1l-0001dF-Dg; Tue, 09 Oct 2018 13:26:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 31/33] powerpc/dma: remove dma_nommu_mmap_coherent
-Date:   Tue,  9 Oct 2018 15:24:58 +0200
-Message-Id: <20181009132500.17643-32-hch@lst.de>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181009132500.17643-1-hch@lst.de>
-References: <20181009132500.17643-1-hch@lst.de>
+        Tue, 9 Oct 2018 16:43:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51035 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbeJIUnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:43:39 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D02A1207C3; Tue,  9 Oct 2018 15:26:40 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 95F1820712;
+        Tue,  9 Oct 2018 15:26:40 +0200 (CEST)
+Date:   Tue, 9 Oct 2018 15:26:40 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/v3d: Add a little debugfs entry for measuring
+ the core clock.
+Message-ID: <20181009152640.791c709d@bbrezillon>
+In-Reply-To: <20180928232126.4332-2-eric@anholt.net>
+References: <20180928232126.4332-1-eric@anholt.net>
+        <20180928232126.4332-2-eric@anholt.net>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The coherent cache version of this function already is functionally
-identicall to the default version, and by defining the
-arch_dma_coherent_to_pfn hook the same is ture for the noncoherent
-version as well.
+On Fri, 28 Sep 2018 16:21:24 -0700
+Eric Anholt <eric@anholt.net> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/powerpc/include/asm/dma-mapping.h |  4 ----
- arch/powerpc/kernel/dma-iommu.c        |  1 -
- arch/powerpc/kernel/dma-swiotlb.c      |  1 -
- arch/powerpc/kernel/dma.c              | 19 -------------------
- arch/powerpc/mm/dma-noncoherent.c      |  7 +++++--
- arch/powerpc/platforms/Kconfig.cputype |  1 +
- arch/powerpc/platforms/pseries/vio.c   |  1 -
- 7 files changed, 6 insertions(+), 28 deletions(-)
+> This adds just enough performance counter support to measure the
+> clock.  We don't have linux kernel drivers for the clock driving the
+> HW, and this was useful for determining that the V3D HW is running on
+> a slow clock, not that the driver was slow.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-index e12439ae8211..ababad4b07a7 100644
---- a/arch/powerpc/include/asm/dma-mapping.h
-+++ b/arch/powerpc/include/asm/dma-mapping.h
-@@ -25,10 +25,6 @@ extern void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
- extern void __dma_nommu_free_coherent(struct device *dev, size_t size,
- 				       void *vaddr, dma_addr_t dma_handle,
- 				       unsigned long attrs);
--extern int dma_nommu_mmap_coherent(struct device *dev,
--				    struct vm_area_struct *vma,
--				    void *cpu_addr, dma_addr_t handle,
--				    size_t size, unsigned long attrs);
- int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
- 		int nents, enum dma_data_direction direction,
- 		unsigned long attrs);
-diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
-index 7fa3636636fa..2e682004959f 100644
---- a/arch/powerpc/kernel/dma-iommu.c
-+++ b/arch/powerpc/kernel/dma-iommu.c
-@@ -172,7 +172,6 @@ int dma_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
- const struct dma_map_ops dma_iommu_ops = {
- 	.alloc			= dma_iommu_alloc_coherent,
- 	.free			= dma_iommu_free_coherent,
--	.mmap			= dma_nommu_mmap_coherent,
- 	.map_sg			= dma_iommu_map_sg,
- 	.unmap_sg		= dma_iommu_unmap_sg,
- 	.dma_supported		= dma_iommu_dma_supported,
-diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
-index d33caff8c684..c6f8519f8d4e 100644
---- a/arch/powerpc/kernel/dma-swiotlb.c
-+++ b/arch/powerpc/kernel/dma-swiotlb.c
-@@ -42,7 +42,6 @@ unsigned int ppc_swiotlb_enable;
- const struct dma_map_ops powerpc_swiotlb_dma_ops = {
- 	.alloc = __dma_nommu_alloc_coherent,
- 	.free = __dma_nommu_free_coherent,
--	.mmap = dma_nommu_mmap_coherent,
- 	.map_sg = swiotlb_map_sg_attrs,
- 	.unmap_sg = swiotlb_unmap_sg_attrs,
- 	.dma_supported = swiotlb_dma_supported,
-diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index 7f7f3a069b63..92cc402d249f 100644
---- a/arch/powerpc/kernel/dma.c
-+++ b/arch/powerpc/kernel/dma.c
-@@ -113,24 +113,6 @@ void __dma_nommu_free_coherent(struct device *dev, size_t size,
- }
- #endif /* !CONFIG_NOT_COHERENT_CACHE */
- 
--int dma_nommu_mmap_coherent(struct device *dev, struct vm_area_struct *vma,
--			     void *cpu_addr, dma_addr_t handle, size_t size,
--			     unsigned long attrs)
--{
--	unsigned long pfn;
--
--#ifdef CONFIG_NOT_COHERENT_CACHE
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
--	pfn = __dma_get_coherent_pfn((unsigned long)cpu_addr);
--#else
--	pfn = page_to_pfn(virt_to_page(cpu_addr));
--#endif
--	return remap_pfn_range(vma, vma->vm_start,
--			       pfn + vma->vm_pgoff,
--			       vma->vm_end - vma->vm_start,
--			       vma->vm_page_prot);
--}
--
- int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
- 		int nents, enum dma_data_direction direction,
- 		unsigned long attrs)
-@@ -184,7 +166,6 @@ static inline void dma_nommu_sync_single(struct device *dev,
- const struct dma_map_ops dma_nommu_ops = {
- 	.alloc				= __dma_nommu_alloc_coherent,
- 	.free				= __dma_nommu_free_coherent,
--	.mmap				= dma_nommu_mmap_coherent,
- 	.map_sg				= dma_nommu_map_sg,
- 	.dma_supported			= dma_nommu_dma_supported,
- 	.map_page			= dma_nommu_map_page,
-diff --git a/arch/powerpc/mm/dma-noncoherent.c b/arch/powerpc/mm/dma-noncoherent.c
-index 965ce3d19f5a..a016c9c356d5 100644
---- a/arch/powerpc/mm/dma-noncoherent.c
-+++ b/arch/powerpc/mm/dma-noncoherent.c
-@@ -30,6 +30,7 @@
- #include <linux/types.h>
- #include <linux/highmem.h>
- #include <linux/dma-direct.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/export.h>
- 
- #include <asm/tlbflush.h>
-@@ -400,14 +401,16 @@ EXPORT_SYMBOL(__dma_sync_page);
- 
- /*
-  * Return the PFN for a given cpu virtual address returned by
-- * __dma_nommu_alloc_coherent. This is used by dma_mmap_coherent()
-+ * __dma_nommu_alloc_coherent.
-  */
--unsigned long __dma_get_coherent_pfn(unsigned long cpu_addr)
-+long arch_dma_coherent_to_pfn(struct device *dev, void *vaddr,
-+		dma_addr_t dma_addr)
- {
- 	/* This should always be populated, so we don't test every
- 	 * level. If that fails, we'll have a nice crash which
- 	 * will be as good as a BUG_ON()
- 	 */
-+	unsigned long cpu_addr = (unsigned long)vaddr;
- 	pgd_t *pgd = pgd_offset_k(cpu_addr);
- 	pud_t *pud = pud_offset(pgd, cpu_addr);
- 	pmd_t *pmd = pmd_offset(pud, cpu_addr);
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 6c6a7c72cae4..0c4fc631cb33 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -415,6 +415,7 @@ config NR_CPUS
- config NOT_COHERENT_CACHE
- 	bool
- 	depends on 4xx || PPC_8xx || E200 || PPC_MPC512x || GAMECUBE_COMMON
-+	select ARCH_HAS_DMA_COHERENT_TO_PFN
- 	default n if PPC_47x
- 	default y
- 
-diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
-index 1dfff53ebd7f..3ad74efc83bf 100644
---- a/arch/powerpc/platforms/pseries/vio.c
-+++ b/arch/powerpc/platforms/pseries/vio.c
-@@ -603,7 +603,6 @@ static void vio_dma_iommu_unmap_sg(struct device *dev,
- static const struct dma_map_ops vio_dma_mapping_ops = {
- 	.alloc             = vio_dma_iommu_alloc_coherent,
- 	.free              = vio_dma_iommu_free_coherent,
--	.mmap		   = dma_nommu_mmap_coherent,
- 	.map_sg            = vio_dma_iommu_map_sg,
- 	.unmap_sg          = vio_dma_iommu_unmap_sg,
- 	.map_page          = vio_dma_iommu_map_page,
--- 
-2.19.0
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
+> ---
+>  drivers/gpu/drm/v3d/v3d_debugfs.c | 35 +++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/v3d/v3d_regs.h    | 30 ++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
+> index 4db62c545748..d48008adb085 100644
+> --- a/drivers/gpu/drm/v3d/v3d_debugfs.c
+> +++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
+> @@ -176,9 +176,44 @@ static int v3d_debugfs_bo_stats(struct seq_file *m, void *unused)
+>  	return 0;
+>  }
+>  
+> +static int v3d_measure_clock(struct seq_file *m, void *unused)
+> +{
+> +	struct drm_info_node *node = (struct drm_info_node *)m->private;
+> +	struct drm_device *dev = node->minor->dev;
+> +	struct v3d_dev *v3d = to_v3d_dev(dev);
+> +	uint32_t cycles;
+> +	int core = 0;
+> +	int measure_ms = 1000;
+> +
+> +	if (v3d->ver >= 40) {
+> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_SRC_0_3,
+> +			       V3D_SET_FIELD(V3D_PCTR_CYCLE_COUNT,
+> +					     V3D_PCTR_S0));
+> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_CLR, 1);
+> +		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_EN, 1);
+> +	} else {
+> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_PCTRS0,
+> +			       V3D_PCTR_CYCLE_COUNT);
+> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_CLR, 1);
+> +		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_EN,
+> +			       V3D_V3_PCTR_0_EN_ENABLE |
+> +			       1);
+> +	}
+> +	msleep(measure_ms);
+> +	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
+> +
+> +	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
+> +		   cycles,
+> +		   cycles / (measure_ms * 1000),
+> +		   (cycles / (measure_ms * 100)) % 10);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct drm_info_list v3d_debugfs_list[] = {
+>  	{"v3d_ident", v3d_v3d_debugfs_ident, 0},
+>  	{"v3d_regs", v3d_v3d_debugfs_regs, 0},
+> +	{"measure_clock", v3d_measure_clock, 0},
+>  	{"bo_stats", v3d_debugfs_bo_stats, 0},
+>  };
+>  
+> diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
+> index 854046565989..c3a5e4e44f73 100644
+> --- a/drivers/gpu/drm/v3d/v3d_regs.h
+> +++ b/drivers/gpu/drm/v3d/v3d_regs.h
+> @@ -267,6 +267,36 @@
+>  # define V3D_PTB_BXCF_RWORDERDISA                      BIT(1)
+>  # define V3D_PTB_BXCF_CLIPDISA                         BIT(0)
+>  
+> +#define V3D_V3_PCTR_0_EN                               0x00674
+> +#define V3D_V3_PCTR_0_EN_ENABLE                        BIT(31)
+> +#define V3D_V4_PCTR_0_EN                               0x00650
+> +/* When a bit is set, resets the counter to 0. */
+> +#define V3D_V3_PCTR_0_CLR                              0x00670
+> +#define V3D_V4_PCTR_0_CLR                              0x00654
+> +#define V3D_PCTR_0_OVERFLOW                            0x00658
+> +
+> +#define V3D_V3_PCTR_0_PCTRS0                           0x00684
+> +#define V3D_V3_PCTR_0_PCTRS15                          0x00660
+> +#define V3D_V3_PCTR_0_PCTRSX(x)                        (V3D_V3_PCTR_0_PCTRS0 + \
+> +							4 * (x))
+> +/* Each src reg muxes four counters each. */
+> +#define V3D_V4_PCTR_0_SRC_0_3                          0x00660
+> +#define V3D_V4_PCTR_0_SRC_28_31                        0x0067c
+> +# define V3D_PCTR_S0_MASK                              V3D_MASK(6, 0)
+> +# define V3D_PCTR_S0_SHIFT                             0
+> +# define V3D_PCTR_S1_MASK                              V3D_MASK(14, 8)
+> +# define V3D_PCTR_S1_SHIFT                             8
+> +# define V3D_PCTR_S2_MASK                              V3D_MASK(22, 16)
+> +# define V3D_PCTR_S2_SHIFT                             16
+> +# define V3D_PCTR_S3_MASK                              V3D_MASK(30, 24)
+> +# define V3D_PCTR_S3_SHIFT                             24
+> +# define V3D_PCTR_CYCLE_COUNT                          32
+> +
+> +/* Output values of the counters. */
+> +#define V3D_PCTR_0_PCTR0                               0x00680
+> +#define V3D_PCTR_0_PCTR31                              0x006fc
+> +#define V3D_PCTR_0_PCTRX(x)                            (V3D_PCTR_0_PCTR0 + \
+> +							4 * (x))
+>  #define V3D_GMP_STATUS                                 0x00800
+>  # define V3D_GMP_STATUS_GMPRST                         BIT(31)
+>  # define V3D_GMP_STATUS_WR_COUNT_MASK                  V3D_MASK(30, 24)
 
