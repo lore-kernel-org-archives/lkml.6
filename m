@@ -2,181 +2,144 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5631AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EAFC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F0820652
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:47:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ifbwQYMm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F0820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 0134F20652
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:47:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0134F20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeJIPCy (ORCPT
+        id S1726700AbeJIPDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:02:54 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:38110 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725855AbeJIPCy (ORCPT
+        Tue, 9 Oct 2018 11:03:30 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45074 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJIPDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:02:54 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie3.idc.renesas.com with ESMTP; 09 Oct 2018 16:47:14 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 17BAF7D959;
-        Tue,  9 Oct 2018 16:47:14 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,359,1534777200"; 
-   d="scan'208";a="293059395"
-Received: from mail-os2jpn01lp0146.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.146])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 09 Oct 2018 16:47:13 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AiDKRV8IyyE1wStmW2lu+gIMNik+DlLRw6HddnR7kYA=;
- b=ifbwQYMm6g0pyS+nUUtMMA2sf4VmSnMfrhxQHPxn3jJ3zFDLI38bF7PPJslCqzFIAPX16U8FBKcDNkfJgtaW/tnc6h1eVVZX7UQoaHpTXGNu2m4ikcZa5CCor3OdUD6MoWmkMfd8SdGje0N4LRo+ZyhQ1g+70L4w7RZ4LhqxrLk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- TY1PR01MB1868.jpnprd01.prod.outlook.com (2603:1096:403:8::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.27; Tue, 9 Oct 2018 07:47:11 +0000
-Message-ID: <877eirbmcf.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH linux-next v2 9/9] ASoC: rsnd: add busif property to dai stream
-In-Reply-To: <ed602ba8-6dc5-005c-3267-47aa378b6c0a@mentor.com>
-References: <20181003090136.4556-1-jiada_wang@mentor.com>
-        <87va6ipkaz.wl-kuninori.morimoto.gx@renesas.com>
-        <557e63d1-dbb7-4232-b53e-4a5499024180@mentor.com>
-        <87pnwqpeni.wl-kuninori.morimoto.gx@renesas.com>
-        <a5712f6a-a61b-f6c4-4f3d-a6d4a60bcfab@mentor.com>
-        <87h8hward4.wl-kuninori.morimoto.gx@renesas.com>
-        <ed602ba8-6dc5-005c-3267-47aa378b6c0a@mentor.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 9 Oct 2018 07:47:11 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: OSAPR01CA0208.jpnprd01.prod.outlook.com
- (2603:1096:603:36::28) To TY1PR01MB1868.jpnprd01.prod.outlook.com
- (2603:1096:403:8::22)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7063f20e-42a5-4760-5291-08d62dbb6c48
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1868;
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;3:2vdvz6FkIRBRP4N8xyraHr08a6PP+CzFkEB0gjw8kLyMLF3WApZRNUgb0ue1kB1JV4p8hzTmhWDpbU/VkSwrUFPuRfIjUGrbzPLj9D+pstzlzwkfjxqc/0jt+1MsfFqLP6SIN6uOUL5OLfMMA+ISahlPikHOiSEHzx3z8Dld6fn43arNPBzG+OBMdJlWKrrJi+WvL1tlIBjNwXJbDBdpDFUAGYoI/mUBNhBpkjs9mRDEM69HavHPJbCchx1GsUpT;25:PqCompXqSTlK2xfl5cPCV0CPyYQ6RSsC4mSzquXdCFnqcd/Nl0lLOtTUWJiv552u9e8T2KDHmjXF2rSBGzH4oKjAwNu9nIklLbUdNTskqClTrC9VsdHeNJbkJHCU00WvAQAiNmp2PVlEgu7pSQQPvvWdmr6Mm8vng/bbt0zimcp9wtq5oT0jZgEnfgGc3alWw67gr9rWbNVXD6y5gxyn1WZSahWu3VsXCNGZmBeyLF82uTYhGA6gTuH0eZTk/XkLu1vzbIDFbVQvVrZe82xeS1MIW/QuNcL37Pa63nG+ztkJUK/YxUOy9S6vptOZHBPWSphh9eS+slAyLrkqoXtJkg==;31:toFdMQbZrDiyZhmAlpTmh2uuXXdBgns2gkJ1x2jF86p1twHebIC8gl7SbU+nmHDwAVjDu/Y2k46uLK2thO62kgJFNqCRijT/go9ChmkoIrBznnWtsu+5uS/h771WZ3D3ebcq9PMsaFNx2kq8h6Eyus++6ZrkuR0WHUBshf7F/7ZqLOM5DdE+qLr72T1izZgDaUeZPcWplPREmBZKWulQJrewWAGimwEs7jBoeoq7NRg=
-X-MS-TrafficTypeDiagnostic: TY1PR01MB1868:
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;20:QG9a012DZ/ZIXDLKBp5x5FcUIbYPXnVdRim7JQddqZtTbSL7dUmO/joZLQ6qJoWcsAAlRz8w57PGvIe7NZ+akS6wsIBmpn0U83vyqOAZHuW4VaoEr5uijNN8RPJTB6RdVbmhEYxjKR399ONEOqBJpgXg4kO5vPXMqcDklXRysLSTzkN+f1GTaz0nKevEGFLRqlapAdTat+GEiOIl/IAfUGjZ8bHiGZgO94zlrb/sOGcwU5mCUOnBdogfZAiviLejCT/k6egUprJgvzaA1DPXKmgdhcu5DjgYGwe3vu0GbCQBFeePxV/9qApcJU1KamgYuV4umtrKksdTfWdeN0sV9teUvgujgJLZGtiO5rLvkFElAqs4Qn/0pVZC9hk/VIiTvbjjcoG4rMPr2eCaZyhrOIHpQeAqnJrdYSsEikBGOI2WNg+4DR6nhYAp4cBd69S1TMFlRHTYLfXOXyhz+xE7e3pO0yRZYyTsbfRMvtvslDUiNIoEnnPLqKd95BrgoiCe;4:7uJ6H5T0CbMUXceAWeW9BkOdUlcyPG5spDQGw+v0EQBm3T1N/CRNzrCF81IJlwZG/dMttNiGabA58tkKH/fdJBl5WfRYV6RYxdob5acs4rOKwsIpIBPkBrhlCTr4G7NeSIsZNp+1yuvgnUVw57w5hYehTqpCQM8QdMaPZmJsNeYhMFQWezALVCzvejiDRVBru8C5aUZmSM4rcdAaXc8ETQP1Mnw7yqox5SViAzdEkjBemSzc5JrDJ/mkju19JEk6BHZCtHg0XGE/1jvqUSWGcw==
-X-Microsoft-Antispam-PRVS: <TY1PR01MB186881D36D6AF68C8C0B7AFED4E70@TY1PR01MB1868.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:TY1PR01MB1868;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1868;
-X-Forefront-PRVS: 08200063E9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(346002)(366004)(396003)(189003)(199004)(486006)(39060400002)(97736004)(6246003)(5660300001)(8746002)(76176011)(53936002)(8936002)(229853002)(86362001)(2906002)(386003)(3846002)(93886005)(68736007)(25786009)(6116002)(4326008)(316002)(478600001)(6916009)(69596002)(7736002)(11346002)(23756003)(36756003)(305945005)(8676002)(446003)(956004)(53416004)(476003)(106356001)(2616005)(26005)(66066001)(47776003)(7696005)(105586002)(52116002)(58126008)(16526019)(186003)(50466002)(54906003)(81166006)(81156014)(6486002)(21314002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1868;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?iso-8859-1?Q?1;TY1PR01MB1868;23:WlYqKb6bwp1fcn7OcMOPqV8U4TprDKIa4EJt5cT?=
- =?iso-8859-1?Q?FSPz5lUgpGEvy93DkxuprEykrKQme7+hgl7xp5EGeAgL2V5e9TM2aifbfb?=
- =?iso-8859-1?Q?6+dbmYkigOOyOCp3rv7S9s7wTIdhz8+q9LKHLigUX4gToGN/7kYjjNzuWS?=
- =?iso-8859-1?Q?ceO2G3/U0Mi1ubDDX74p8mqkVXi8Wf8gv4rPL87lHRBkHOqgYwWE+phbrQ?=
- =?iso-8859-1?Q?M8Boaz+4+yXKZTDMbGDU1CHV9aQEWdj6DIdcvFwuDw+fy++GUGBYYy4KMP?=
- =?iso-8859-1?Q?Lw5uXdDsY7a46yStcl/OVpW8Rtq0PiT0guLF46kzSn0sm2XJar8TZw7ecq?=
- =?iso-8859-1?Q?51JDQyXLrm/BE3ytkNQgu982WvZRNR9kfq7LDantMH9hE39uTBPFM0YP/7?=
- =?iso-8859-1?Q?3ixGE5N9cqjeuDJNoJPZJZenJwo3dep8apfhSQAWKEyxfEgJ81VCIlOeAi?=
- =?iso-8859-1?Q?KknXqTigyBG7KM20VL+XMZ3l+QQ84DGQTG6OjcUQTsWC5hZrF3rcljeXvu?=
- =?iso-8859-1?Q?hcZU4TRBv07ysglR1uJ+/8VUohyXaHPAbcdwTvdkXEhqUj6fuK0YMPuKzq?=
- =?iso-8859-1?Q?FBpb8l6fq6rxjK6STpc+GAes877DzPUwWj9D0VoZ+3zN3CJsb+8ddVTSXM?=
- =?iso-8859-1?Q?h/KRBu3m4cddt/qyUfCzQFXtSn2j6yeacnwhcrKHZEmsxFR+2YyipxFL5F?=
- =?iso-8859-1?Q?/m2KiRulioSUUlbgOsT6v2Kb3WggupvpgGy54DAhY9rQ/NjBb6E/793SPf?=
- =?iso-8859-1?Q?8omjH62K3o5Po8Rm7qZ6PVfqEU0064+IwUd+oY+7SvjXAL5rgdwfADvvPz?=
- =?iso-8859-1?Q?S1XIjARWvzI6mCheOZK7Zavp1t24RZvZCbXk1Q+EMNlkuszWsl8pc0n5He?=
- =?iso-8859-1?Q?YTjBnptv6IFmPmMbZF34XgZsqTeDc3XZbIRIuyCeJ+LF1dS1fVPSeIl7U/?=
- =?iso-8859-1?Q?3XtBoTk+DrIZS1H0v3S947UeSjHbTk3Li0KEkftCcjcQU9sw0Cds2+r4Iq?=
- =?iso-8859-1?Q?uhsaAgAgjYqH7Phas2rTvngaJZoyzUJt7XOWiOzreTFdlW1FD2NNQI9eMm?=
- =?iso-8859-1?Q?ETDJOuU3kKXnWz2l8OXTH8kCKo4NlAxY8hfDNrKDZNkLVoWCtaEHiz3PVw?=
- =?iso-8859-1?Q?SBAHRP2a+vXyWfR65v2e38351QiU5DnHEDck8GWkmOTgI3BdCII9TzcxKF?=
- =?iso-8859-1?Q?blJLZNpyZ99NuNym2VwWs8M+HIlhEIkdBpDTv7c2yQTymUq7sAUU5F/vHr?=
- =?iso-8859-1?Q?HKdDxtH6Uq8HMVc54B30oDSeAr4hTpWTXJ3keWaf5/y3edbN9sv40NQo5B?=
- =?iso-8859-1?Q?L0s4qeutL5+SkEr/jNQr1rsq2MVBaNvzSTyQVDfn+IfImr4Z7ejD4hIhhn?=
- =?iso-8859-1?Q?XANpYDl8=3D?=
-X-Microsoft-Antispam-Message-Info: cToq1j9ulc5v91ZBZLQSOZ1zm2FdTLNGoF9RDM58o2JXf2YUltTFENInZ/yMiHIQ15LH5ZYbKqdM+M3y6frcjlOSQJBW7fEon+XMfRdHKVTP6ZfQPgpHb09J7t0ICUyBszW9wG7SGmBTmmEjrB6A4r1uvca1JQ69dCBmRrrBhLep/63pwTIHJOUbhMCYDmtogMMj5Rpckxf8mL1rMR429Lw2deuc9CW+QBnaIxIPS1aZd6qgaOW0jGJz/i45HhJ8+jRbTpSARQOTl4pv5k0kWfdgGKXK04lQb2YwNzXyxOpXsOINRRyQ/feaY1mMEtxwVJGwE3wMGNaMr+m3rmFRNpPGYyOw8NvscGokbX+LNCQ=
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;6:GaqHGHDxSLaUne1zAqgcOCvc3gFMIe61KWv/1IDL/y1VSREDQfbwpG4wTf+5cXiestLNenppqLPEurx3MWW2HP6NvzEtLHpP8Ne8GuJbTZzSyvh4xSWfEBwlpXgMsm9vON3h5wSTkUO52NJdcDx190c6IjJQfieA+8gzTdTf4Zd2baD5yaoMGCeFAi3tshQOsfWaRr9SvqRf4R69g86GGfWDWywrAHEYPslNTexI6BoIKN/fpF8FqTB6Hld2IsdpBN7yA+OsBBX/S9GCMkJdGZqvWZ6ylrunZyzQMjkvlfxhYadxetUkt2uHDo2DsECXOJrbQiBgR25SKPPu0x/+R/MXRI0GY5sxpB/hQpHv0iG8ivUtNM8a0D8LBEC54B9nofppQ8M8YWoHwj21xhBZw3gxdbeETmZ88xszunZ5bcDd2o2wfPzgLCpTAD0AAl/FEe2/VzNQNuuW/ZO6DYVgNw==;5:TWQaIOAYVUR0bmuSHop3l6N3YiBFEcoVizjyP+dPiOvcBbDh2UYg4bGlyU30EUlhkf9XwDi6BXcbfauZdZln6lhKpoy29fkuPmbDSPfe3VoTGMubwqtXBVSRHdat44u4tO9ttWOPheR7beM0lcK3taCDwdzWl6ddqejMutf97zI=;7:6Tp359q9/soSX5GUbm1be7KLACnYCctCkXR6gjLGFpdRxpcPIGlloFZG1yH9acYYnk7MmVng+QzoNksvXjJxndBmX7cMlBd0El+H+GiBZew/jiyKSP/8teu9sa9ujASppY9THcC5d+oez+S8UeMc3Jv8v6plYsrsSJjzaL65m7wrXEVo65S2TtSGKXcJtgT77Del10SfpB0X1klr3SrZQgu/Y2erjSo1Uw6YFNMp6KoAObGDjC0KVVytN2YFFa0s
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;20:cFeZ8eBn/RKws+DAu6CuWFGA+myl+qwTvQXSOnIY9X0ivMZJMHgXuAf0uKixePMmf6JxcGJ2po4NUwZA8O2l2L14dIe0sQpUHyr5Up7TZvFSoslr3dcbobCuqIUtaBLlBfFd+Pf5QL943lXWRtp7Y+9Xf7f4umh/0RqKE2zEulM=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2018 07:47:11.5965 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7063f20e-42a5-4760-5291-08d62dbb6c48
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1868
+        Tue, 9 Oct 2018 11:03:30 -0400
+Received: by mail-ot1-f67.google.com with SMTP id u22so625131ota.12;
+        Tue, 09 Oct 2018 00:47:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Egn/kGyioReOJ4yUMi6ESPkt6MOWUiS4ngDBvejSGQ0=;
+        b=X9Ea1dGBKEIWr6hFMWdPmh7DvAzEPlgquMw+piPIsdgVMaVIi5RKXw7nJsjd2cJPYu
+         2fvEyCTN1go32cSOLWHjZ+yh25Yq+tgHZpxm86poi/p+yABetw8r3EBC5AK90tBKm4Bi
+         LCEY3Zm9FPLNh/fciKP1fAn/ifOgTSDhoFVfnxPIvxURJGTiIr3LderEI2c0PIMhBfSS
+         zGKjYNbDwzMRMykwD0bfShm8njPMwbyssC42mydPrhPiku5TspEs6+MfjMeVXbBgg23A
+         qwhzjyHf/5PVGoaMedqT3Crc0yrSnvaRH17799CQu7i71LJKWwfa6xrjIuu7tx5/Rn/c
+         qxuQ==
+X-Gm-Message-State: ABuFfohZUEAywdsKWog65v1k4DBulaaknKZol/YYYdKJYUs3oXLjWcSt
+        CFEm8A4pKv98/sG2K/QfDl5DvSkIszRF9n1r5Gs=
+X-Google-Smtp-Source: ACcGV61sIVOJEv5BdQWQVuIktzbHtaOGn9kU5V+rd+CIsiARF7yr8B4aXqNbcE+T6DhsMN/ntHWjjzkwOHHKN14Yszg=
+X-Received: by 2002:a9d:34f:: with SMTP id 73mr17103548otv.343.1539071271973;
+ Tue, 09 Oct 2018 00:47:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com>
+In-Reply-To: <20181008150901.19667-1-waldemar.rymarkiewicz@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 9 Oct 2018 09:47:40 +0200
+Message-ID: <CAJZ5v0j0GLHgKS9+mafm3eoFMuNEo6VPa3LhRthg+H5OKHhFqA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: conservative: Fix requested_freq handling
+To:     Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 8, 2018 at 5:11 PM Waldemar Rymarkiewicz
+<waldemar.rymarkiewicz@gmail.com> wrote:
+>
+> From: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+>
+> The governor updates dbs_info->requested_freq only after increasing or
+> decreasing frequency. There is, however, an use case when this is not
+> sufficient.
+>
+> Imagine, external module constraining cpufreq policy in a way that policy->max
 
-Hi Jiada
+Is the "external module" here a utility or a demon running in user space?
 
-Thanks for your feedback
+> = policy->min = max_available_freq (eg. 1Ghz). CPUfreq will set freq to
+> max_freq and conservative gov will not try downscale/upscale due to the
+> limits. It will just exit instead
+>
+>     if (requested_freq > policy->max || requested_freq < policy->min)
+>             //max=min=1Ghz -> requested_freq=cur=1Ghz
+>             requested_freq = policy->cur;
+>     [...]
+>     if (requested_freq == policy->max)
+>              goto out;
+>
+> In a result, dbs_info->requested_freq is not updated with newly calculated
+> requested_freq=1Ghz. Next, execution of update routine will use again
+> previously stored requested_freq (in my case it was min_available_freq)
+>
+>     [...]
+>     unsigned int requested_freq = dbs_info->requested_freq;
+>     [....]
+>
+> Now, when external module returns to previous policy limits that is
+> policy->min = min_available_freq and policy->max = max_available_freq,
+> conservative governor is not able to decrease frequency because stored
+> requested_freq is still or rather already set to min_available_freq so
+> the check (for decreasing)
+>
+>     [...]
+>     if (load < cs_tuners->down_threshold) {
+>     [....]
+>            if (requested_freq == policy->min)
+>                    goto out;
+>     [...]
+>
+> returns from routine before it does any freq change. To fix that just update
+> dbs_info->requested_freq every time we go out from the update routine.
+>
+> Signed-off-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+> ---
+>  drivers/cpufreq/cpufreq_conservative.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq_conservative.c b/drivers/cpufreq/cpufreq_conservative.c
+> index f20f20a..7f90f6e 100644
+> --- a/drivers/cpufreq/cpufreq_conservative.c
+> +++ b/drivers/cpufreq/cpufreq_conservative.c
+> @@ -113,7 +113,6 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+>                         requested_freq = policy->max;
+>
+>                 __cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_H);
+> -               dbs_info->requested_freq = requested_freq;
+>                 goto out;
+>         }
+>
+> @@ -136,10 +135,10 @@ static unsigned int cs_dbs_update(struct cpufreq_policy *policy)
+>                         requested_freq = policy->min;
+>
+>                 __cpufreq_driver_target(policy, requested_freq, CPUFREQ_RELATION_L);
+> -               dbs_info->requested_freq = requested_freq;
+>         }
+>
+>   out:
+> +       dbs_info->requested_freq = requested_freq;
 
-> 1ch:=A0 (tdm_slots < 4) Basic mode, (tdm_slots >=3D 4) TDM Split mode
-> 2ch: (2 <=3D tdm_slots < 8) Basic mode, (tdm_slots >=3D 8) TDM Ex-Split m=
-ode
-> 4ch: (4 <=3D tdm_slots < 8) Basic mode, (tdm_slots >=3D 8) TDM Ex-Split m=
-ode
-> 6ch: (6 <=3D tdm_slots < 8) Basic mode, (tdm_slots =3D=3D 8) TDM Extended
-> mode, (8 < tdm_slots) TDM Ex-Split mode
-> 8ch: (6 <=3D tdm_slots < 8) TDM Extended mode, (8 <=3D tdm_slots < 16)
-> Basic mode, (tdm_slots =3D=3D 16) TDM Ex-Split
-> 10ch: TDM Ex-Split mode
-> 16ch: Basic Mode
+This will have a side effect when requested_freq is updated before the
+thresholds checks due to the policy_dbs->idle_periods < UINT_MAX
+check.
 
-Sorry, but I couldn't understand what this table means ?
-For example, what does "1ch" mean ?
-It looks like "1ch playback by TDM"...
+Shouldn't that be avoided?
 
-> The reason I added rsnd_ssi_select_busif(io, chan) in rsnd_hw_params()
-> in patch ASoC: rsnd: add busif property to dai stream of v2 patch-set,
-> is because runtime channel is necessary information to determine which
-> BUSIFx to select,
-> (which is mentioned in above)
-> and at this stage (rsnd_hw_params()), all other control settings
-> (register setting, dma address calculation etc)
-> haven't been done, so corresponding dai-link can be considered to be
-> not active at this timing
-> but maybe you have better suggestion when to automatically select BUSIFx
-
-My image is like this.
-
-	sound {
-		compatible =3D "simple-scu-audio-card or new card";
-		...
-		simple-audio-card,convert-channels =3D <8>;
-		...
-		busif0: simple-audio-card,cpu@0 { sound-dai =3D <&rcar_sound 0>; };
-		busif1: simple-audio-card,cpu@1 { sound-dai =3D <&rcar_sound 1>; };
-		busif2: simple-audio-card,cpu@2 { sound-dai =3D <&rcar_sound 2>; };
-		busif3: simple-audio-card,cpu@3 { sound-dai =3D <&rcar_sound 3>; };
-		        simple-audio-card,codec { sound-dai =3D <&xxx>;          };
-	};
-
-	rcar_sound {
-		dai0 { playback =3D <&ssiu0 ssi0>; }
-		dai1 { playback =3D <&ssiu1 ssi0>; }
-		dai2 { playback =3D <&ssiu2 ssi0>; }
-		dai3 { playback =3D <&ssiu3 ssi0>; }
-	};
-
-Best regards
----
-Kuninori Morimoto
+>         return dbs_data->sampling_rate;
+>  }
