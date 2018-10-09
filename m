@@ -4,43 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19786C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89BEC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1AB02087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 773AE2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i9L1kOia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AB02087D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JvHYW2+N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773AE2054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJIUnR (ORCPT
+        id S1727703AbeJIUnT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:43:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49862 "EHLO
+        Tue, 9 Oct 2018 16:43:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49942 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeJIUnQ (ORCPT
+        with ESMTP id S1727080AbeJIUnS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:43:16 -0400
+        Tue, 9 Oct 2018 16:43:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Z1NpYAlNjtOl6wtV5jUw9RPikGAiju1XuiWRoBAFPXo=; b=i9L1kOiaNfNO/7tZVTeWRXi2kz
-        I0a1agaNzMsnb522ajukDtVwUPc2LpL27ozdBJ9e5zSvgje4+azhFCnTPzq6vLxMZgdUN7m52NRQp
-        EDpw5ZUT7Z6yCVZGESJ9dPHF1jbJHlO9WSTQSey4XLseB6F6FlZJQWvgyRddKIuQClZPLZaNk4FOF
-        DpOYFj/AJjdwhKFwLk/V+ZH1Bfk29QjQK6S+yhwnLgxpjmgUsSfD0VcnXjNcoXyaxA0AhNvUvVSZv
-        Qtx828RuRHH8+AZ8OyeY+W+Zhpa2Z4MghUPWbV0g6EmjVD3KbNucebmbE/xEt5rGEp/L/XGWFa9QD
-        cVc3bl+Q==;
+        bh=VVrA3gX4S4aK9b26/sI5R8iiOEO8w46y03v4nt2GxbY=; b=JvHYW2+NRx9uTFwvGoZUB3K994
+        Ltj4pFTEi1yyA7kwBwtmRHbedPTrG3gCPqY3wCtb3bZJEHjCU/sqzXnuLSNkRz+Gvu7vpO0Rls4T3
+        CEuP5xLYrWxsf1knWSzpOzUEjS/OdZMAKeCH2kieVo4v18xgHP53xYO+2HBmp6cuRYbJiS6eSWB9t
+        KdmnUzrgjecB0KlFQoVB+hDIWFA7Gby/cIUFD544mthDIRFUSigTLJw/Hmmc1Z5LdqBHR3DB+daMT
+        GFAtYLTlaT7t9DmlVXFMS50N0RdDWG4thjLXBau8unoiIp7Q7coMJg57S/4wMHn4/1Iu1QPE9dC9G
+        WbMOli/w==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s1R-0001Q3-5q; Tue, 09 Oct 2018 13:26:01 +0000
+        id 1g9s1T-0001Rf-QG; Tue, 09 Oct 2018 13:26:04 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +47,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 23/33] powerpc/dma: remove max_direct_dma_addr
-Date:   Tue,  9 Oct 2018 15:24:50 +0200
-Message-Id: <20181009132500.17643-24-hch@lst.de>
+Subject: [PATCH 24/33] powerpc/dma: fix an off-by-one in dma_capable
+Date:   Tue,  9 Oct 2018 15:24:51 +0200
+Message-Id: <20181009132500.17643-25-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009132500.17643-1-hch@lst.de>
 References: <20181009132500.17643-1-hch@lst.de>
@@ -62,129 +61,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The max_direct_dma_addr duplicates the bus_dma_mask field in struct
-device.  Use the generic field instead.
+We need to compare the last byte in the dma range and not the one after it
+for the bus_dma_mask, just like we do for the regular dma_mask.  Fix this
+cleanly by merging the two comparisms into one.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/include/asm/device.h     |  3 ---
- arch/powerpc/include/asm/dma-direct.h |  4 +---
- arch/powerpc/kernel/dma-swiotlb.c     | 20 --------------------
- arch/powerpc/kernel/dma.c             |  5 ++---
- arch/powerpc/sysdev/fsl_pci.c         |  3 +--
- 5 files changed, 4 insertions(+), 31 deletions(-)
+ arch/powerpc/include/asm/dma-direct.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/device.h b/arch/powerpc/include/asm/device.h
-index 3814e1c2d4bc..a130be13ee83 100644
---- a/arch/powerpc/include/asm/device.h
-+++ b/arch/powerpc/include/asm/device.h
-@@ -38,9 +38,6 @@ struct dev_archdata {
- #ifdef CONFIG_IOMMU_API
- 	void			*iommu_domain;
- #endif
--#ifdef CONFIG_SWIOTLB
--	dma_addr_t		max_direct_dma_addr;
--#endif
- #ifdef CONFIG_PPC64
- 	struct pci_dn		*pci_data;
- #endif
 diff --git a/arch/powerpc/include/asm/dma-direct.h b/arch/powerpc/include/asm/dma-direct.h
-index 7702875aabb7..e00ab5d0612d 100644
+index e00ab5d0612d..92d8aed86422 100644
 --- a/arch/powerpc/include/asm/dma-direct.h
 +++ b/arch/powerpc/include/asm/dma-direct.h
-@@ -5,9 +5,7 @@
+@@ -4,15 +4,11 @@
+ 
  static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
  {
- #ifdef CONFIG_SWIOTLB
--	struct dev_archdata *sd = &dev->archdata;
+-#ifdef CONFIG_SWIOTLB
+-	if (dev->bus_dma_mask && addr + size > dev->bus_dma_mask)
+-		return false;
+-#endif
 -
--	if (sd->max_direct_dma_addr && addr + size > sd->max_direct_dma_addr)
-+	if (dev->bus_dma_mask && addr + size > dev->bus_dma_mask)
+ 	if (!dev->dma_mask)
  		return false;
- #endif
  
-diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
-index 60cb86338233..e05d95ff50ad 100644
---- a/arch/powerpc/kernel/dma-swiotlb.c
-+++ b/arch/powerpc/kernel/dma-swiotlb.c
-@@ -24,21 +24,6 @@
- 
- unsigned int ppc_swiotlb_enable;
- 
--static u64 swiotlb_powerpc_get_required(struct device *dev)
--{
--	u64 end, mask, max_direct_dma_addr = dev->archdata.max_direct_dma_addr;
--
--	end = memblock_end_of_DRAM();
--	if (max_direct_dma_addr && end > max_direct_dma_addr)
--		end = max_direct_dma_addr;
--	end += get_dma_offset(dev);
--
--	mask = 1ULL << (fls64(end) - 1);
--	mask += mask - 1;
--
--	return mask;
--}
--
- /*
-  * At the moment, all platforms that use this code only require
-  * swiotlb to be used if we're operating on HIGHMEM.  Since
-@@ -60,22 +45,17 @@ const struct dma_map_ops powerpc_swiotlb_dma_ops = {
- 	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
- 	.sync_sg_for_device = swiotlb_sync_sg_for_device,
- 	.mapping_error = swiotlb_dma_mapping_error,
--	.get_required_mask = swiotlb_powerpc_get_required,
- };
- 
- static int ppc_swiotlb_bus_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
- {
- 	struct device *dev = data;
--	struct dev_archdata *sd;
- 
- 	/* We are only intereted in device addition */
- 	if (action != BUS_NOTIFY_ADD_DEVICE)
- 		return 0;
- 
--	sd = &dev->archdata;
--	sd->max_direct_dma_addr = 0;
--
- 	/* May need to bounce if the device can't address all of DRAM */
- 	if ((dma_get_mask(dev) + 1) < memblock_end_of_DRAM())
- 		set_dma_ops(dev, &powerpc_swiotlb_dma_ops);
-diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index bef91b8ad064..e3d2c15b209c 100644
---- a/arch/powerpc/kernel/dma.c
-+++ b/arch/powerpc/kernel/dma.c
-@@ -30,11 +30,10 @@
- static u64 __maybe_unused get_pfn_limit(struct device *dev)
- {
- 	u64 pfn = (dev->coherent_dma_mask >> PAGE_SHIFT) + 1;
--	struct dev_archdata __maybe_unused *sd = &dev->archdata;
- 
- #ifdef CONFIG_SWIOTLB
--	if (sd->max_direct_dma_addr && dev->dma_ops == &powerpc_swiotlb_dma_ops)
--		pfn = min_t(u64, pfn, sd->max_direct_dma_addr >> PAGE_SHIFT);
-+	if (dev->bus_dma_mask && dev->dma_ops == &powerpc_swiotlb_dma_ops)
-+		pfn = min_t(u64, pfn, dev->bus_dma_mask >> PAGE_SHIFT);
- #endif
- 
- 	return pfn;
-diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-index 561f97d698cc..f136567a5ed5 100644
---- a/arch/powerpc/sysdev/fsl_pci.c
-+++ b/arch/powerpc/sysdev/fsl_pci.c
-@@ -117,9 +117,8 @@ static u64 pci64_dma_offset;
- static void pci_dma_dev_setup_swiotlb(struct pci_dev *pdev)
- {
- 	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
--	struct dev_archdata *sd = &pdev->dev.archdata;
- 
--	sd->max_direct_dma_addr =
-+	pdev->dev.bus_dma_mask =
- 		hose->dma_window_base_cur + hose->dma_window_size;
+-	return addr + size - 1 <= *dev->dma_mask;
++	return addr + size - 1 <=
++		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
  }
  
+ static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
 -- 
 2.19.0
 
