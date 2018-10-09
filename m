@@ -2,305 +2,142 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC43DC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4255DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771A1214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771A1214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 09EB920C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:34:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cdmheF8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09EB920C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbeJIWtr (ORCPT
+        id S1726883AbeJIWwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:49:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46187 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeJIWtr (ORCPT
+        Tue, 9 Oct 2018 18:52:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51749 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJIWwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:49:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99FVsOS1091911
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 08:31:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99FVsUM1091908;
-        Tue, 9 Oct 2018 08:31:54 -0700
-Date:   Tue, 9 Oct 2018 08:31:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Bjorn Helgaas <tipbot@zytor.com>
-Message-ID: <tip-010a93bf97c72f43aac664d0a685942f83d1a103@git.kernel.org>
-Cc:     brijesh.singh@amd.com, lijiang@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, bp@suse.de, bhelgaas@google.com,
-        vgoyal@redhat.com, thomas.lendacky@amd.com,
-        baiyaowei@cmss.chinamobile.com, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, tiwai@suse.de,
-        akpm@linux-foundation.org, x86@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, mingo@kernel.org, lijiang@redhat.com,
-          brijesh.singh@amd.com, bhelgaas@google.com, bp@suse.de,
-          thomas.lendacky@amd.com, baiyaowei@cmss.chinamobile.com,
-          dan.j.williams@intel.com, tiwai@suse.de,
-          linux-kernel@vger.kernel.org, vgoyal@redhat.com,
-          tglx@linutronix.de, akpm@linux-foundation.org, x86@kernel.org
-In-Reply-To: <153805812916.1157.177580438135143788.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153805812916.1157.177580438135143788.stgit@bhelgaas-glaptop.roam.corp.google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] resource: Fix find_next_iomem_res() iteration issue
-Git-Commit-ID: 010a93bf97c72f43aac664d0a685942f83d1a103
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 9 Oct 2018 18:52:11 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181009153441euoutp01dccf4aeb6841b99a698fd5debb236a26~b_qRRAYaf2472824728euoutp01k
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 15:34:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181009153441euoutp01dccf4aeb6841b99a698fd5debb236a26~b_qRRAYaf2472824728euoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539099281;
+        bh=ox3ssDeFhhKb7BhUn9hgODkK+LQZhkfSJjSturg+/00=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=cdmheF8coCJy4LR9gAciz2QJjh0tpbaFQyvO4xvau+ZZ6Jg61sr3376CEkfISWSDn
+         G88ct7oMNstNBYGOJwDSagT3pz66/Rfp7CWtemWCfx+MpbdAEaTKG+dqBerqUua38n
+         b2SMO+KjJRoB6VIYO4H6+f14pz9zBMedU/zX4st4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181009153440eucas1p11f29b0cef7d94ae7ff70f4c503a24bb9~b_qQS4BbM1415514155eucas1p17;
+        Tue,  9 Oct 2018 15:34:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4B.F0.04806.F8ACCBB5; Tue,  9
+        Oct 2018 16:34:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a~b_qPT4nMA1415514155eucas1p16;
+        Tue,  9 Oct 2018 15:34:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181009153438eusmtrp1ababfda434a2ec8b6eb8c56abda74c8b~b_qPCyQz20414104141eusmtrp1b;
+        Tue,  9 Oct 2018 15:34:38 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-0a-5bbcca8f0b18
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B1.34.04284.E8ACCBB5; Tue,  9
+        Oct 2018 16:34:38 +0100 (BST)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181009153438eusmtip2edba67aea9b969fa128f649f597175b6~b_qOqrLBY1235412354eusmtip2q;
+        Tue,  9 Oct 2018 15:34:38 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     l.luba@partner.samsung.com, b.zolnierkie@samsung.com,
+        krzk@kernel.org, kgene@kernel.org, m.szyprowski@samsung.com
+Subject: [PATCH] config: arm: exynos: remove PROVE_LOCKING from defconfig
+Date:   Tue,  9 Oct 2018 17:33:57 +0200
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7djPc7r9p/ZEG/z9a2WxccZ6Vov+x6+Z
+        Lc6f38BucatBxmLT42usFpd3zWGzWHvkLrsDu8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJY
+        o7hsUlJzMstSi/TtErgyTp/4xlJwiLNi3+KtjA2MrRxdjBwcEgImEnsXKXcxcnEICaxglPhz
+        8Cs7hPOFUWLBgfssEM5nRonvr2exdTFygnU0zj3NCpFYzijR0LOeBa6l5VgvG8hcNgE9iR2r
+        CkEaRATcJG40djCB2MwC5RL7vv4Fs4UFPCU2rXkKNpRFQFWiYd86RogFchI3z3Uyg8yUELjM
+        JnF0/zdmkASvQJnEnymv2CGKXCTOdP9lgbCFJV4d3wIVl5E4PbkHKl4scbZjFdTVNRLtJ3dA
+        1VhLHD5+kRXkTmYBTYn1u/Qhwo4Sn3qOMEKChU/ixltBiJP5JCZtm84MEeaV6GgTgqjWkNjS
+        c4EJwhaTWL5mGtRwD4lFf6azgthCArESXcf6WCYwys1C2LWAkXEVo3hqaXFuemqxcV5quV5x
+        Ym5xaV66XnJ+7iZGYAo4/e/41x2M+/4kHWIU4GBU4uGdkbc7Wog1say4MvcQowQHs5IIr+j2
+        XdFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZfN2xgtJJCeWJKanZpakFoEk2Xi4JRqYNS5/i9E
+        fk30+9ds08x/HLjo8/jh7QMm0Rd74k2dPeY6HMx4EpEsWL778gGfzBn6whPOVZuc2LbiSp3R
+        78sn9ggzRC5kEL19XsX4R1XwjuI1P19bJrq9YNrrXDHzuXlbX6vJjNJARxfpa4vlBcr1/G8t
+        Tq6+7KjXbRhz2uLtikML299qGipoXVBiKc5INNRiLipOBABp+oyP/QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsVy+t/xe7p9p/ZEG5z6ZWaxccZ6Vov+x6+Z
+        Lc6f38BucatBxmLT42usFpd3zWGzWHvkLrsDu8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJY
+        o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyTp/4
+        xlJwiLNi3+KtjA2MrRxdjJwcEgImEo1zT7N2MXJxCAksZZRo+dTDBpEQk5i0bzs7hC0s8eda
+        FxtE0SdGiW1XVwA5HBxsAnoSO1YVgtSICHhItP27xwxiMwvUSkyctRzMFhbwlNi05inYTBYB
+        VYmGfesYQWxeoHj/tF/MEPPlJG6e62SewMizgJFhFaNIamlxbnpusaFecWJucWleul5yfu4m
+        RmD4bTv2c/MOxksbgw8xCnAwKvHwzsjbHS3EmlhWXJl7iFGCg1lJhFd0+65oId6UxMqq1KL8
+        +KLSnNTiQ4ymQMsnMkuJJucDYyOvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFq
+        EUwfEwenVAOj106PMzPYeLOe2HBslxVhLrjRsW3J9cC/k+c83LHbQeTlvXWnFO7UNvq8jV7u
+        +eNustilvwtlQx7r7rjGyj7rXF6ORHZT0TzV7sL3UjufnXz+Lt/Qwv2VzmnpvQdl+4QVPug4
+        Hee7vWt6moiB+s4NYfrs1a7ffGPYXjNs2diXKrLtewW/07GZSizFGYmGWsxFxYkAaow2tFUC
+        AAA=
+Message-Id: <20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a~b_qPT4nMA1415514155eucas1p16@eucas1p1.samsung.com>
+X-CMS-MailID: 20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a
+References: <CGME20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  010a93bf97c72f43aac664d0a685942f83d1a103
-Gitweb:     https://git.kernel.org/tip/010a93bf97c72f43aac664d0a685942f83d1a103
-Author:     Bjorn Helgaas <bhelgaas@google.com>
-AuthorDate: Thu, 27 Sep 2018 09:22:09 -0500
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 9 Oct 2018 17:18:36 +0200
+PROVE_LOCKING enables LOCKDEP, which causes big overhead on cache and
+bus transactions.
 
-resource: Fix find_next_iomem_res() iteration issue
+On some ARM big.LITTLE architecutres (Exynos 5433) the overhead is really big.
+The overhead can be measures using hackbench test which will speed up
+by x3 times (11sec -> 3.4sec).
+When you check transaction on cache or buses, the results are way higher
+than normal for the same hackbench test:
+L1d cache invalidations: 26mln vs 4mln
+L2u cache invalidations: 42mln vs 12mln
+bus cyc/access: 30cyc/access vs. 20cyc/access
+context switch is x3 times cheaper
 
-Previously find_next_iomem_res() used "*res" as both an input parameter for
-the range to search and the type of resource to search for, and an output
-parameter for the resource we found, which makes the interface confusing.
+Enable this option only when you have some locking issue to investigate.
 
-The current callers use find_next_iomem_res() incorrectly because they
-allocate a single struct resource and use it for repeated calls to
-find_next_iomem_res().  When find_next_iomem_res() returns a resource, it
-overwrites the start, end, flags, and desc members of the struct.  If we
-call find_next_iomem_res() again, we must update or restore these fields.
-The previous code restored res.start and res.end, but not res.flags or
-res.desc.
-
-Since the callers did not restore res.flags, if they searched for flags
-IORESOURCE_MEM | IORESOURCE_BUSY and found a resource with flags
-IORESOURCE_MEM | IORESOURCE_BUSY | IORESOURCE_SYSRAM, the next search would
-incorrectly skip resources unless they were also marked as
-IORESOURCE_SYSRAM.
-
-Fix this by restructuring the interface so it takes explicit "start, end,
-flags" parameters and uses "*res" only as an output parameter.
-
-Based on a patch by Lianbo Jiang <lijiang@redhat.com>.
-
- [ bp: While at it:
-   - make comments kernel-doc style.
-   -
-
-Originally-by: http://lore.kernel.org/lkml/20180921073211.20097-2-lijiang@redhat.com
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Brijesh Singh <brijesh.singh@amd.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: H. Peter Anvin <hpa@zytor.com>
-CC: Lianbo Jiang <lijiang@redhat.com>
-CC: Takashi Iwai <tiwai@suse.de>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: Vivek Goyal <vgoyal@redhat.com>
-CC: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-CC: bhe@redhat.com
-CC: dan.j.williams@intel.com
-CC: dyoung@redhat.com
-CC: kexec@lists.infradead.org
-CC: mingo@redhat.com
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/153805812916.1157.177580438135143788.stgit@bhelgaas-glaptop.roam.corp.google.com
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- kernel/resource.c | 96 ++++++++++++++++++++++++-------------------------------
- 1 file changed, 42 insertions(+), 54 deletions(-)
+ arch/arm/configs/exynos_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 155ec873ea4d..38b8d11c9eaf 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -318,24 +318,27 @@ int release_resource(struct resource *old)
- 
- EXPORT_SYMBOL(release_resource);
- 
--/*
-- * Finds the lowest iomem resource existing within [res->start..res->end].
-- * The caller must specify res->start, res->end, res->flags, and optionally
-- * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
-- * This function walks the whole tree and not just first level children until
-- * and unless first_level_children_only is true.
-+/**
-+ * Finds the lowest iomem resource that covers part of [start..end].  The
-+ * caller must specify start, end, flags, and desc (which may be
-+ * IORES_DESC_NONE).
-+ *
-+ * If a resource is found, returns 0 and *res is overwritten with the part
-+ * of the resource that's within [start..end]; if none is found, returns
-+ * -1.
-+ *
-+ * This function walks the whole tree and not just first level children
-+ * unless @first_level_children_only is true.
-  */
--static int find_next_iomem_res(struct resource *res, unsigned long desc,
--			       bool first_level_children_only)
-+static int find_next_iomem_res(resource_size_t start, resource_size_t end,
-+			       unsigned long flags, unsigned long desc,
-+			       bool first_level_children_only,
-+			       struct resource *res)
- {
--	resource_size_t start, end;
- 	struct resource *p;
- 	bool sibling_only = false;
- 
- 	BUG_ON(!res);
--
--	start = res->start;
--	end = res->end;
- 	BUG_ON(start >= end);
- 
- 	if (first_level_children_only)
-@@ -344,7 +347,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
- 	read_lock(&resource_lock);
- 
- 	for (p = iomem_resource.child; p; p = next_resource(p, sibling_only)) {
--		if ((p->flags & res->flags) != res->flags)
-+		if ((p->flags & flags) != flags)
- 			continue;
- 		if ((desc != IORES_DESC_NONE) && (desc != p->desc))
- 			continue;
-@@ -359,32 +362,31 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
- 	read_unlock(&resource_lock);
- 	if (!p)
- 		return -1;
-+
- 	/* copy data */
--	if (res->start < p->start)
--		res->start = p->start;
--	if (res->end > p->end)
--		res->end = p->end;
-+	res->start = max(start, p->start);
-+	res->end = min(end, p->end);
- 	res->flags = p->flags;
- 	res->desc = p->desc;
- 	return 0;
- }
- 
--static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
--				 bool first_level_children_only,
--				 void *arg,
-+static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
-+				 unsigned long flags, unsigned long desc,
-+				 bool first_level_children_only, void *arg,
- 				 int (*func)(struct resource *, void *))
- {
--	u64 orig_end = res->end;
-+	struct resource res;
- 	int ret = -1;
- 
--	while ((res->start < res->end) &&
--	       !find_next_iomem_res(res, desc, first_level_children_only)) {
--		ret = (*func)(res, arg);
-+	while (start < end &&
-+	       !find_next_iomem_res(start, end, flags, desc,
-+				    first_level_children_only, &res)) {
-+		ret = (*func)(&res, arg);
- 		if (ret)
- 			break;
- 
--		res->start = res->end + 1;
--		res->end = orig_end;
-+		start = res.end + 1;
- 	}
- 
- 	return ret;
-@@ -407,13 +409,7 @@ static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
- int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
- 		u64 end, void *arg, int (*func)(struct resource *, void *))
- {
--	struct resource res;
--
--	res.start = start;
--	res.end = end;
--	res.flags = flags;
--
--	return __walk_iomem_res_desc(&res, desc, false, arg, func);
-+	return __walk_iomem_res_desc(start, end, flags, desc, false, arg, func);
- }
- EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
- 
-@@ -427,13 +423,9 @@ EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
- int walk_system_ram_res(u64 start, u64 end, void *arg,
- 				int (*func)(struct resource *, void *))
- {
--	struct resource res;
-+	unsigned long flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 
--	res.start = start;
--	res.end = end;
--	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
--
--	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
-+	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
- 				     arg, func);
- }
- 
-@@ -444,13 +436,9 @@ int walk_system_ram_res(u64 start, u64 end, void *arg,
- int walk_mem_res(u64 start, u64 end, void *arg,
- 		 int (*func)(struct resource *, void *))
- {
--	struct resource res;
-+	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
- 
--	res.start = start;
--	res.end = end;
--	res.flags = IORESOURCE_MEM | IORESOURCE_BUSY;
--
--	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
-+	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
- 				     arg, func);
- }
- 
-@@ -464,25 +452,25 @@ int walk_mem_res(u64 start, u64 end, void *arg,
- int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
- 		void *arg, int (*func)(unsigned long, unsigned long, void *))
- {
-+	resource_size_t start, end;
-+	unsigned long flags;
- 	struct resource res;
- 	unsigned long pfn, end_pfn;
--	u64 orig_end;
- 	int ret = -1;
- 
--	res.start = (u64) start_pfn << PAGE_SHIFT;
--	res.end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
--	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
--	orig_end = res.end;
--	while ((res.start < res.end) &&
--		(find_next_iomem_res(&res, IORES_DESC_NONE, true) >= 0)) {
-+	start = (u64) start_pfn << PAGE_SHIFT;
-+	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
-+	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-+	while (start < end &&
-+	       !find_next_iomem_res(start, end, flags, IORES_DESC_NONE,
-+				    true, &res)) {
- 		pfn = (res.start + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 		end_pfn = (res.end + 1) >> PAGE_SHIFT;
- 		if (end_pfn > pfn)
- 			ret = (*func)(pfn, end_pfn - pfn, arg);
- 		if (ret)
- 			break;
--		res.start = res.end + 1;
--		res.end = orig_end;
-+		start = res.end + 1;
- 	}
- 	return ret;
- }
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 27ea6dfc..fbf52f3 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -324,7 +324,6 @@ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_SOFTLOCKUP_DETECTOR=y
+ # CONFIG_DETECT_HUNG_TASK is not set
+-CONFIG_PROVE_LOCKING=y
+ CONFIG_DEBUG_ATOMIC_SLEEP=y
+ CONFIG_DEBUG_USER=y
+ CONFIG_CRYPTO_RSA=m
+-- 
+2.7.4
+
