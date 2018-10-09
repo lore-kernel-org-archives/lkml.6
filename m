@@ -2,105 +2,100 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEBEECDE2C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F64C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3592082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:21:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3592082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 236ED2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236ED2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJIWjD convert rfc822-to-8bit (ORCPT
+        id S1726573AbeJIWnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:39:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43906 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 18:43:03 -0400
+Received: from mout.perfora.net ([74.208.4.196]:47723 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbeJIWjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:39:03 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A27F3097074;
-        Tue,  9 Oct 2018 15:21:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCC626EE56;
-        Tue,  9 Oct 2018 15:21:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <alpine.LRH.2.21.1810040520570.16168@namei.org>
-References: <alpine.LRH.2.21.1810040520570.16168@namei.org> <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <153618449119.7946.11025480207548147086.stgit@warthog.procyon.org.uk>
-To:     James Morris <jmorris@namei.org>
-Cc:     dhowells@redhat.com, denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/22] KEYS: Provide software public key query function
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16729.1539098496.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 09 Oct 2018 16:21:36 +0100
-Message-ID: <16730.1539098496@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 09 Oct 2018 15:21:38 +0000 (UTC)
+        id S1726393AbeJIWnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:43:03 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MLhDB-1gAjEZ22XD-000tzE; Tue, 09 Oct 2018 17:25:29 +0200
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MLhDB-1gAjEZ22XD-000tzE; Tue, 09 Oct 2018 17:25:28 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v1 0/8] ARM: dts: tegra: last minute fixes
+Date:   Tue,  9 Oct 2018 17:25:15 +0200
+Message-Id: <20181009152523.3771-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:4RfaGsk4PxzXq4pU5ioM3/7/I4EhjbdYw06On61QqoRFicJ4GLp
+ dMwnw+1yRqVfRmxiBaT4UJYV2xJ8IarzRJ+2qVN+5dUEsCvGrfMf9AdFn1pcJbC47INNdmv
+ ouZEvs2qbVlfK5Allz1j5sTk4Rd59qM48AyQs9W7SXGy6VDm9+R4sVlxgRIIPoqpOS9doAP
+ WbfIC2jzuvKBWHmDXgt3Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KgS1Wfry0lE=:Wn5o+5geSuqpdVO58cWfIR
+ W4RaqzwCXYQMBzH0H6h2O0Z9OOi5w1rCagyzzzYNcgn9cFDZcoHoz+tfPIeZS0ApHamYmWqwG
+ JdK9p4WuUL6Fq0hHv7eDYvFZtTzZE+41OrW1G1MnPs62MXwxb76jyhLs4IRd3XxYFDZAqk5va
+ YfjIb4cXE2n+NbNGwqn2XPL7Hdud7YWDPK822M/lJFiTI4mE2CL8b6Uoy7rqrwP3sEI/AELDZ
+ kde97PaXBRX18HzHtEWap48R//Z9CwhwUpRia0S9wHG7Z7pqwue9LoBRM5t45u+fz5Pc/iuGb
+ 3zibA4Wte3U5gCTU1Z26nOLZczbZ8AOBeCtYtRXErw/fwLcey1nNp0yrqoyZc4BnX8A3g8RJZ
+ DjYjEClEdmYnaqlwWlxS1Oqmyv8i6MGBG3GH4BTuDvmUk1cs3K0Rt8OvBt05AZVlCGzMh4hPj
+ nisr8ilidEcWRdzSJsvwpCsyyA/X4bi68P5cYcQTRD+TF7a/FjY1diReTfjdFzR7a+O9Wy5rg
+ EwWRMdI/7aRM/alM+eVSdJWahnzXULVoRgVB77rkEk9te2socsnp8FHrGjfwm9zmiZ/Kn2PnA
+ SZT0rJriMLK/9yfYuHlCzuiYJH5Y5lc8b5S06Pyt8YHnUVehHHYf7oGAR7RawVpPB71pJyx3W
+ DT59N9yyh3Dxud9kkZLBaFTISWdcwWPgcYBjOQ25KKeHJh0U2N4MgHJiyhso/qD/B+Yw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
+This series comes with some last minutes fixes and further clean-up.
 
-> > +	if (strcmp(encoding, "raw") == 0) {
-> > +		strcpy(alg_name, pkey->pkey_algo);
-> > +		return 0;
-> > +	}
-> 
-> Can encoding here also be NULL to indicate raw? per patch 01:
+Marcel Ziswiler (8):
+  ARM: tegra: fix simple-panel compatibles
+  ARM: tegra: apalis-tk1/colibri_t20/t30: eval/iris: fix regulator gpio
+    enable
+  ARM: tegra: apalis/colibri_t30: fix hdmi regulator
+  ARM: tegra: colibri_t20: reorder pmic properties
+  ARM: tegra: apalis-tk1: further regulator clean-up
+  ARM: tegra: apalis_t30/tk1: annotate power I2C being on-module
+  ARM: tegra: colibri_t30: further regulator clean-up
+  ARM: tegra: apalis_t30: further regulator clean-up
 
-Okay, I'm making the attached changes to patch 01.  They're
-documentary/commentary only.
+ arch/arm/boot/dts/tegra114-dalmore.dts          |  3 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 17 +++--
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 17 +++--
+ arch/arm/boot/dts/tegra124-venice2.dts          |  2 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts   |  4 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts      |  4 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi          |  4 +-
+ arch/arm/boot/dts/tegra20-harmony.dts           |  2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts       |  2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts             |  2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts          |  2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts           |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts       |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts  |  4 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi      | 88 ++++++++++++-------------
+ arch/arm/boot/dts/tegra30-apalis.dtsi           | 86 ++++++++++++------------
+ arch/arm/boot/dts/tegra30-cardhu.dtsi           |  2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts   |  4 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi          | 61 +++++++++--------
+ 21 files changed, 159 insertions(+), 157 deletions(-)
 
-David
----
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 2cdccde6c585..c144978479d5 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -1507,12 +1507,12 @@ The structure has a number of fields, some of which are mandatory:
- 		enum kernel_pkey_operation op : 8;
- 	};
- 
--     This includes the key to be used; an optional string indicating the
--     encoding to use (for instance, "pkcs1" may be used with an RSA key to
--     indicate RSASSA-PKCS1-v1.5 or RSAES-PKCS1-v1.5 encoding); the name of the
--     hash algorithm used to generate the data for a signature (if appropriate);
--     the sizes of the input and output (or second input) buffers; and the ID of
--     the operation to be performed.
-+     This includes the key to be used; a string indicating the encoding to use
-+     (for instance, "pkcs1" may be used with an RSA key to indicate
-+     RSASSA-PKCS1-v1.5 or RSAES-PKCS1-v1.5 encoding or "raw" if no encoding);
-+     the name of the hash algorithm used to generate the data for a signature
-+     (if appropriate); the sizes of the input and output (or second input)
-+     buffers; and the ID of the operation to be performed.
- 
-      For a given operation ID, the input and output buffers are used as
-      follows::
-diff --git a/include/linux/keyctl.h b/include/linux/keyctl.h
-index e89b4a4e43d0..c7c48c79ce0e 100644
---- a/include/linux/keyctl.h
-+++ b/include/linux/keyctl.h
-@@ -32,7 +32,7 @@ enum kernel_pkey_operation {
- 
- struct kernel_pkey_params {
- 	struct key	*key;
--	const char	*encoding;	/* Encoding (eg. "oaep" or NULL for raw) */
-+	const char	*encoding;	/* Encoding (eg. "oaep" or "raw" for none) */
- 	const char	*hash_algo;	/* Digest algorithm used (eg. "sha1") or NULL if N/A */
- 	char		*info;		/* Modified info string to be released later */
- 	__u32		in_len;		/* Input data size */
+-- 
+2.14.4
+
