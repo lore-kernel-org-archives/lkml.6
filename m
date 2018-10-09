@@ -2,150 +2,117 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B719ECDE21
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F038C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E13E21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:58:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E13E21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D625A21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:59:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1JFzum2n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D625A21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeJIWPz (ORCPT
+        id S1726761AbeJIWQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:15:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39657 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJIWPy (ORCPT
+        Tue, 9 Oct 2018 18:16:20 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:63055 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIWQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:15:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99Ew9g21080852
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 07:58:09 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99Ew9qw1080849;
-        Tue, 9 Oct 2018 07:58:09 -0700
-Date:   Tue, 9 Oct 2018 07:58:09 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rik van Riel <tipbot@zytor.com>
-Message-ID: <tip-5462bc3a9a3c38328bbbd276d51164c7cf21d6a8@git.kernel.org>
-Cc:     songliubraving@fb.com, tglx@linutronix.de, peterz@infradead.org,
-        dave.hansen@intel.com, torvalds@linux-foundation.org,
-        riel@surriel.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          riel@surriel.com, torvalds@linux-foundation.org,
-          dave.hansen@intel.com, peterz@infradead.org, tglx@linutronix.de,
-          songliubraving@fb.com
-In-Reply-To: <20180716190337.26133-7-riel@surriel.com>
-References: <20180716190337.26133-7-riel@surriel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Always use lazy TLB mode
-Git-Commit-ID: 5462bc3a9a3c38328bbbd276d51164c7cf21d6a8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 9 Oct 2018 18:16:20 -0400
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w99EwaRe007607;
+        Tue, 9 Oct 2018 23:58:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w99EwaRe007607
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539097117;
+        bh=wSMAcIh8SYHHoD1gaKFxb5vmR5j13MGePI4bAxk1/ZM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1JFzum2nvspitf5XxsQQA/TsJ7YulYGpU6CKrvZFYTm85rF0yZ03IY0iW05W5RkWY
+         f/ASfokn0I6KsMroGQquzzY5qQaDsYy8a838hEx/yHVZxNysMbycKSgH7lxYWNT8mx
+         wOQpsxcK7NOzaHS+1n1D560AdRGsapVYCge3IxczYs9Uo05ues4jdfbZ1l0GAgQtnT
+         eshNsICZH0b3cc8AHa/qQHxOZ73R4d8NJegGOB2hR8/a1hurQNo6jH4yvP7/2ruXdc
+         okzD+AzvlxFXoNO85zVw+SEZMajxW9GH/gIZQLhYHYjjkc0cu3fuYojjMylzcqEGor
+         GWnece7PAc/LQ==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id c205so1809838vsd.3;
+        Tue, 09 Oct 2018 07:58:37 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiEMEMEF1LMrukdEzWbnyQewjWKZwwEL4U9eazywj4+XRkpkxpy
+        GMbklLcWgcI/Vl+tHeObLd41fCVi7yQc6tXa+yI=
+X-Google-Smtp-Source: ACcGV63Xl+HlhFQdeKCvS017jAO+eEn3TKUp5bibTv8X1cXWLKOOhFzomdIpbVR1mHSxsT+f0PtMooDNPQgDO4mXX74=
+X-Received: by 2002:a67:65c3:: with SMTP id z186mr9135217vsb.54.1539097116414;
+ Tue, 09 Oct 2018 07:58:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <1538443943-29805-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538443943-29805-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 9 Oct 2018 23:58:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASykS_y8pA6LUEPasGfVVOEPuiF-q2cygQzWHvHq1mr+A@mail.gmail.com>
+Message-ID: <CAK7LNASykS_y8pA6LUEPasGfVVOEPuiF-q2cygQzWHvHq1mr+A@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: add -Wno-unused-but-set-variable flag unconditionally
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5462bc3a9a3c38328bbbd276d51164c7cf21d6a8
-Gitweb:     https://git.kernel.org/tip/5462bc3a9a3c38328bbbd276d51164c7cf21d6a8
-Author:     Rik van Riel <riel@surriel.com>
-AuthorDate: Tue, 25 Sep 2018 23:58:38 -0400
-Committer:  Peter Zijlstra <peterz@infradead.org>
-CommitDate: Tue, 9 Oct 2018 16:51:11 +0200
+On Tue, Oct 2, 2018 at 10:33 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> We have raised the compiler requirement from time to time.
+> With commit cafa0010cd51 ("Raise the minimum required gcc version
+> to 4.6"), the minimum for GCC is 4.6 now.
+>
+> This flag was added by GCC 4.6, and it is recognized by ICC as well.
+>
+> It is true that Clang does not support this flag but this commit is
+> just touching the else part of the "ifeq ($(cc-name),clang)" check.
+> Hence, Clang build is not affected.
+>
+> Let's rip off the cc-disable-warning switch, and see if somebody
+> complains about it.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-x86/mm/tlb: Always use lazy TLB mode
 
-On most workloads, the number of context switches far exceeds the
-number of TLB flushes sent. Optimizing the context switches, by always
-using lazy TLB mode, speeds up those workloads.
+Applied to linux-kbuild.
 
-This patch results in about a 1% reduction in CPU use on a two socket
-Broadwell system running a memcache like workload.
+>
+> Changes in v2:
+>   - Fix commit log
+>
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 8a23fee..2627266 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -716,7 +716,7 @@ else
+>
+>  # These warnings generated too much noise in a regular build.
+>  # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+> +KBUILD_CFLAGS += -Wno-unused-but-set-variable
+>  endif
+>
+>  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+> --
+> 2.7.4
+>
 
-Cc: npiggin@gmail.com
-Cc: efault@gmx.de
-Cc: will.deacon@arm.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-team@fb.com
-Cc: hpa@zytor.com
-Cc: luto@kernel.org
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Rik van Riel <riel@surriel.com>
-(cherry picked from commit 95b0e6357d3e4e05349668940d7ff8f3b7e7e11e)
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180716190337.26133-7-riel@surriel.com
----
- arch/x86/include/asm/tlbflush.h | 16 ----------------
- arch/x86/mm/tlb.c               | 15 +--------------
- 2 files changed, 1 insertion(+), 30 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 671f65309ce7..d6c0cd9e9591 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
- #endif
- 
--static inline bool tlb_defer_switch_to_init_mm(void)
--{
--	/*
--	 * If we have PCID, then switching to init_mm is reasonably
--	 * fast.  If we don't have PCID, then switching to init_mm is
--	 * quite slow, so we try to defer it in the hopes that we can
--	 * avoid it entirely.  The latter approach runs the risk of
--	 * receiving otherwise unnecessary IPIs.
--	 *
--	 * This choice is just a heuristic.  The tlb code can handle this
--	 * function returning true or false regardless of whether we have
--	 * PCID.
--	 */
--	return !static_cpu_has(X86_FEATURE_PCID);
--}
--
- struct tlb_context {
- 	u64 ctx_id;
- 	u64 tlb_gen;
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6aa195796dec..54a5870190a6 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -368,20 +368,7 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
- 		return;
- 
--	if (tlb_defer_switch_to_init_mm()) {
--		/*
--		 * There's a significant optimization that may be possible
--		 * here.  We have accurate enough TLB flush tracking that we
--		 * don't need to maintain coherence of TLB per se when we're
--		 * lazy.  We do, however, need to maintain coherence of
--		 * paging-structure caches.  We could, in principle, leave our
--		 * old mm loaded and only switch to init_mm when
--		 * tlb_remove_page() happens.
--		 */
--		this_cpu_write(cpu_tlbstate.is_lazy, true);
--	} else {
--		switch_mm(NULL, &init_mm, NULL);
--	}
-+	this_cpu_write(cpu_tlbstate.is_lazy, true);
- }
- 
- /*
+-- 
+Best Regards
+Masahiro Yamada
