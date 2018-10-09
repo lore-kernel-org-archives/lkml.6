@@ -2,117 +2,125 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B35EC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA807C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B49213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:21:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vywm7SB8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B49213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A72EC213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72EC213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbeJINgs (ORCPT
+        id S1726486AbeJINix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:36:48 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34584 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeJINgs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:36:48 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f18-v6so295779plr.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 23:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nzzWG5/SdBIPBCDcDwPJnGCGHVCSmiEELi0eih6ejck=;
-        b=Vywm7SB8Ixz7ZN5PNoIPEjlGRuT+3svh9sJihFMbNjZPG+f/wZEp0V/iOUfGmjYVca
-         7NiAYRvzMqF2TPkw9BgFBG0aF44fM7Z6va9iCgFFHWS88+eZxQFY4a1snfGZ1w8GHY8r
-         qMYpNg7IRKmxe2/89Ii+g6s4UXtugPiMgZq/8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nzzWG5/SdBIPBCDcDwPJnGCGHVCSmiEELi0eih6ejck=;
-        b=MUxuCcFqKimO54R2bqCOUjEAC2rXlINxIijxxoRqQEWJXZlloMKK6r28d1A/hVKgVO
-         SbIlN71nm59f/1VinXT/KE05lQLBRlwoE5fyg/jkp4FzMEJ4o85CIksksQjuEUn6NRSS
-         R1cC/s1g9k847scw1QM4N5Dk7quani5wTNu79Vr6cOINy4xaXiO7ghxkII2OFOk3FBnT
-         t720DuihiL1wuJFtUk6fvW6/Iv8XVoMU1YGJx7t1FhalBXWQWRhyozBMJXJQY6Iz/O1L
-         7YSO6IOLeUG8O/kxaiKLv2hW7myvrj8FLkQEdw/4I+rbnDpdRjYYI0jUNU8x1ZgX5Wwy
-         a6/Q==
-X-Gm-Message-State: ABuFfoggXQfrxAlM/8R9K8+fOoLSweh3FyOJy/ATwLgLAbivIFGJXBYO
-        +kWoSJRZ5LGdRgMVbhATxiyQ5PoQhlYgrw==
-X-Google-Smtp-Source: ACcGV62HCsR9q6rF+ANyC7pEfY3cEmTs9XlwENkSH+iNjDXy8IzZS7isgblzngFcvFxcsDa53pRsvw==
-X-Received: by 2002:a17:902:33c2:: with SMTP id b60-v6mr27148905plc.105.1539066089100;
-        Mon, 08 Oct 2018 23:21:29 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k185-v6sm7924523pgd.2.2018.10.08.23.21.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 23:21:28 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 23:21:25 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-pil: add SCM probe dependency
-Message-ID: <20181009062125.GA2518@tuxbook-pro>
-References: <20181009020805.143982-1-briannorris@chromium.org>
+        Tue, 9 Oct 2018 09:38:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52072 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725835AbeJINiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 09:38:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 07BBAAE17;
+        Tue,  9 Oct 2018 06:23:32 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 08:23:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yong-Taek Lee <ytk.lee@samsung.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009062330.GA8528@dhcp22.suse.cz>
+References: <CGME20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
+ <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181009020805.143982-1-briannorris@chromium.org>
+In-Reply-To: <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 08 Oct 19:08 PDT 2018, Brian Norris wrote:
+[Cc Oleg]
 
-> Similar to qcom_q6v5_pas and qcom_wcnss drivers, probe will fail if SCM
-> is not up.
+On Fri 05-10-18 15:32:08, Yong-Taek Lee wrote:
+> It is introduced by commit 44a70adec910 ("mm, oom_adj: make sure
+> processes sharing mm have same view of oom_score_adj"). Most of
+> user process's mm_users is bigger than 1 but only one thread group.
+> In this case, for_each_process loop meaninglessly try to find processes
+> which sharing same mm even though there is only one thread group.
 > 
+> My idea is that target task's nr thread is smaller than mm_users if there
+> are more thread groups sharing the same mm. So we can skip loop
 
-Thanks Brian, this dependency was introduced with the memory ownership
-support.
+I remember trying to optimize this but ended up with nothing that would
+work reliable. E.g. what prevents a thread terminating right after we
+read mm reference count and result in early break and other process
+not being updated properly?
 
-I applied it with an updated conditional to make it explicit that it
-related to need_mem_protection, updated the commit message to describe
-actual relationship to the memory protection mechanism and added a
-Fixes: tag.
+> if mm_user and nr_thread are same.
+> 
+> test result
+> while true; do count=0; time while [ $count -lt 10000 ]; do echo -1000 > /proc/
+> 1457/oom_score_adj; count=$((count+1)); done; done;
 
+Is this overhead noticeable in a real work usecases though? Or are you
+updating oom_score_adj that often really?
 
-Don't we also need to add the ability to disable need_mem_protection
-when we're running ATF?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> before patch
+> 0m00.59s real     0m00.09s user     0m00.51s system
+> 0m00.59s real     0m00.14s user     0m00.45s system
+> 0m00.58s real     0m00.11s user     0m00.47s system
+> 0m00.58s real     0m00.10s user     0m00.48s system
+> 0m00.59s real     0m00.11s user     0m00.48s system
+> 
+> after patch
+> 0m00.15s real     0m00.07s user     0m00.08s system
+> 0m00.14s real     0m00.10s user     0m00.04s system
+> 0m00.14s real     0m00.10s user     0m00.05s system
+> 0m00.14s real     0m00.08s user     0m00.07s system
+> 0m00.14s real     0m00.08s user     0m00.07s system
+> 
+> Signed-off-by: Lee YongTaek <ytk.lee@samsung.com>
 > ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/proc/base.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index a839b07a58b1..8836ca1bc0c1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1151,6 +1151,9 @@ static int q6v5_probe(struct platform_device *pdev)
->  	if (!desc)
->  		return -EINVAL;
->  
-> +	if (!qcom_scm_is_available())
-> +		return -EPROBE_DEFER;
-> +
->  	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
->  			    desc->hexagon_mba_image, sizeof(*qproc));
->  	if (!rproc) {
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index f9f72aee6d45..54b2fb5e9c51 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj,
+> bool legacy)
+>         struct mm_struct *mm = NULL;
+>         struct task_struct *task;
+>         int err = 0;
+> +       int mm_users = 0;
+> 
+>         task = get_proc_task(file_inode(file));
+>         if (!task)
+> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj,
+> bool legacy)
+>                 struct task_struct *p = find_lock_task_mm(task);
+> 
+>                 if (p) {
+> -                       if (atomic_read(&p->mm->mm_users) > 1) {
+> +                       mm_users = atomic_read(&p->mm->mm_users);
+> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p)))
+> {
+>                                 mm = p->mm;
+>                                 atomic_inc(&mm->mm_count);
+>                         }
+> --
+> 
+> *
+
+-- 
+Michal Hocko
+SUSE Labs
