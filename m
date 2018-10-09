@@ -2,65 +2,326 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37931C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F69C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF3552054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBBC6214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xwM8nZW9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3552054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rx8ORDO/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBC6214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeJIUmI (ORCPT
+        id S1726722AbeJIUmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:42:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeJIUmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:42:08 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4406921479;
-        Tue,  9 Oct 2018 13:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539091512;
-        bh=WVLqyDzMfHFkQ609SYCTb7hVLNxECcFXgDnGpsE3m4g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xwM8nZW9xas70kJdBK92anVKyrS4CBZGboWaP+gRnFEcRfXvmi8DsybiP9qsvoQfr
-         L1fyjH4lASXgCOIaLBwllPUHXu1yQwUwqgK4cOmTDAuFjpBMYEMLEXNntkhl0tHvKK
-         jhJVWWJXAd5LKTT6doBpa64yyhR4UzXp4eh6T5bM=
-Date:   Tue, 9 Oct 2018 15:25:09 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH 02/11] staging:rtl8192u: Removed commented out include -
- Style
-Message-ID: <20181009132509.GA24623@kroah.com>
-References: <20181007214025.25469-1-johnfwhitmore@gmail.com>
- <20181007214025.25469-3-johnfwhitmore@gmail.com>
+        Tue, 9 Oct 2018 16:42:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48012 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeJIUmW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 16:42:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=t4111eWUggvDPhD1JmlTBkHpP8cYIAKt6u/lP2eJRkM=; b=Rx8ORDO/Vl2daZDQb4J0rqJloG
+        GcESEP+TeojH/eEJSqgVzgxRcZGymVI9smAysM0mUdhQJ7Dw0Hnbo1cuhRknivHTry0gkbfn0ZO8D
+        KxG4CB0m02b2y0S7wseMbQF16JtwTPGG3PbfkfJGKxNt8Xl24WnbPXyoIK2VnKzQJsv0cdKatS0zR
+        +PpZa9kqWlmj3DG3RCp4mWMYQtvDyBYPEdYX3ngPZZ/gEbbPGv/tH4bwsUS6S6JzlUc93Bc/Du2ac
+        aMJNqP0lMUeVGaqie7/eqPoPgdppkJeXL7fTCVVuMkWcJXdUF9yXpwPoB/BmATJPFKX5F/o0maJ3i
+        TfLAq52A==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g9s0W-0008Kf-PH; Tue, 09 Oct 2018 13:25:05 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 01/33] powerpc: use mm zones more sensibly
+Date:   Tue,  9 Oct 2018 15:24:28 +0200
+Message-Id: <20181009132500.17643-2-hch@lst.de>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181009132500.17643-1-hch@lst.de>
+References: <20181009132500.17643-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181007214025.25469-3-johnfwhitmore@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 07, 2018 at 10:40:16PM +0100, John Whitmore wrote:
-> Remove commented out #include directive.
-> 
-> Additionally shorted a block comment to clear the checkpatch issue
-> with line length.
+Powerpc has somewhat odd usage where ZONE_DMA is used for all memory on
+common 64-bit configfs, and ZONE_DMA32 is used for 31-bit schemes.
 
-You really should only do one type of thing per patch, but I'll let this
-one go...
+Move to a scheme closer to what other architectures use (and I dare to
+say the intent of the system):
+
+ - ZONE_DMA: optionally for memory < 31-bit
+ - ZONE_NORMAL: everything addressable by the kernel
+ - ZONE_HIGHMEM: memory > 32-bit for 32-bit kernels
+
+Also provide information on how ZONE_DMA is used by defining
+ARCH_ZONE_DMA_BITS.
+
+Contains various fixes from Benjamin Herrenschmidt.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/powerpc/Kconfig                          |  6 +--
+ arch/powerpc/include/asm/page.h               |  2 +
+ arch/powerpc/include/asm/pgtable.h            |  1 -
+ arch/powerpc/kernel/dma-swiotlb.c             |  6 +--
+ arch/powerpc/kernel/dma.c                     |  7 +--
+ arch/powerpc/mm/mem.c                         | 50 +++++++------------
+ arch/powerpc/platforms/85xx/corenet_generic.c | 10 ----
+ arch/powerpc/platforms/85xx/qemu_e500.c       |  9 ----
+ include/linux/mmzone.h                        |  2 +-
+ 9 files changed, 24 insertions(+), 69 deletions(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index a80669209155..06996df07cad 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -380,7 +380,7 @@ config PPC_ADV_DEBUG_DAC_RANGE
+ 	depends on PPC_ADV_DEBUG_REGS && 44x
+ 	default y
+ 
+-config ZONE_DMA32
++config ZONE_DMA
+ 	bool
+ 	default y if PPC64
+ 
+@@ -879,10 +879,6 @@ config ISA
+ 	  have an IBM RS/6000 or pSeries machine, say Y.  If you have an
+ 	  embedded board, consult your board documentation.
+ 
+-config ZONE_DMA
+-	bool
+-	default y
+-
+ config GENERIC_ISA_DMA
+ 	bool
+ 	depends on ISA_DMA_API
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index f6a1265face2..fc8c9ac0c6be 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -354,4 +354,6 @@ typedef struct page *pgtable_t;
+ #endif /* __ASSEMBLY__ */
+ #include <asm/slice.h>
+ 
++#define ARCH_ZONE_DMA_BITS 31
++
+ #endif /* _ASM_POWERPC_PAGE_H */
+diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
+index 14c79a7dc855..9bafb38e959e 100644
+--- a/arch/powerpc/include/asm/pgtable.h
++++ b/arch/powerpc/include/asm/pgtable.h
+@@ -37,7 +37,6 @@ extern unsigned long empty_zero_page[];
+ 
+ extern pgd_t swapper_pg_dir[];
+ 
+-void limit_zone_pfn(enum zone_type zone, unsigned long max_pfn);
+ int dma_pfn_limit_to_zone(u64 pfn_limit);
+ extern void paging_init(void);
+ 
+diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
+index 88f3963ca30f..93a4622563c6 100644
+--- a/arch/powerpc/kernel/dma-swiotlb.c
++++ b/arch/powerpc/kernel/dma-swiotlb.c
+@@ -108,12 +108,8 @@ int __init swiotlb_setup_bus_notifier(void)
+ 
+ void __init swiotlb_detect_4g(void)
+ {
+-	if ((memblock_end_of_DRAM() - 1) > 0xffffffff) {
++	if ((memblock_end_of_DRAM() - 1) > 0xffffffff)
+ 		ppc_swiotlb_enable = 1;
+-#ifdef CONFIG_ZONE_DMA32
+-		limit_zone_pfn(ZONE_DMA32, (1ULL << 32) >> PAGE_SHIFT);
+-#endif
+-	}
+ }
+ 
+ static int __init check_swiotlb_enabled(void)
+diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+index dbfc7056d7df..6551685a4ed0 100644
+--- a/arch/powerpc/kernel/dma.c
++++ b/arch/powerpc/kernel/dma.c
+@@ -50,7 +50,7 @@ static int dma_nommu_dma_supported(struct device *dev, u64 mask)
+ 		return 1;
+ 
+ #ifdef CONFIG_FSL_SOC
+-	/* Freescale gets another chance via ZONE_DMA/ZONE_DMA32, however
++	/* Freescale gets another chance via ZONE_DMA, however
+ 	 * that will have to be refined if/when they support iommus
+ 	 */
+ 	return 1;
+@@ -94,13 +94,10 @@ void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
+ 	}
+ 
+ 	switch (zone) {
++#ifdef CONFIG_ZONE_DMA
+ 	case ZONE_DMA:
+ 		flag |= GFP_DMA;
+ 		break;
+-#ifdef CONFIG_ZONE_DMA32
+-	case ZONE_DMA32:
+-		flag |= GFP_DMA32;
+-		break;
+ #endif
+ 	};
+ #endif /* CONFIG_FSL_SOC */
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 5c8530d0c611..8bff7e893bde 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -69,15 +69,12 @@ pte_t *kmap_pte;
+ EXPORT_SYMBOL(kmap_pte);
+ pgprot_t kmap_prot;
+ EXPORT_SYMBOL(kmap_prot);
+-#define TOP_ZONE ZONE_HIGHMEM
+ 
+ static inline pte_t *virt_to_kpte(unsigned long vaddr)
+ {
+ 	return pte_offset_kernel(pmd_offset(pud_offset(pgd_offset_k(vaddr),
+ 			vaddr), vaddr), vaddr);
+ }
+-#else
+-#define TOP_ZONE ZONE_NORMAL
+ #endif
+ 
+ int page_is_ram(unsigned long pfn)
+@@ -246,35 +243,19 @@ static int __init mark_nonram_nosave(void)
+ }
+ #endif
+ 
+-static bool zone_limits_final;
+-
+-/*
+- * The memory zones past TOP_ZONE are managed by generic mm code.
+- * These should be set to zero since that's what every other
+- * architecture does.
+- */
+-static unsigned long max_zone_pfns[MAX_NR_ZONES] = {
+-	[0            ... TOP_ZONE        ] = ~0UL,
+-	[TOP_ZONE + 1 ... MAX_NR_ZONES - 1] = 0
+-};
+-
+ /*
+- * Restrict the specified zone and all more restrictive zones
+- * to be below the specified pfn.  May not be called after
+- * paging_init().
++ * Zones usage:
++ *
++ * We setup ZONE_DMA to be 31-bits on all platforms and ZONE_NORMAL to be
++ * everything else. GFP_DMA32 page allocations automatically fall back to
++ * ZONE_DMA.
++ *
++ * By using 31-bit unconditionally, we can exploit ARCH_ZONE_DMA_BITS to
++ * inform the generic DMA mapping code.  32-bit only devices (if not handled
++ * by an IOMMU anyway) will take a first dip into ZONE_NORMAL and get
++ * otherwise served by ZONE_DMA.
+  */
+-void __init limit_zone_pfn(enum zone_type zone, unsigned long pfn_limit)
+-{
+-	int i;
+-
+-	if (WARN_ON(zone_limits_final))
+-		return;
+-
+-	for (i = zone; i >= 0; i--) {
+-		if (max_zone_pfns[i] > pfn_limit)
+-			max_zone_pfns[i] = pfn_limit;
+-	}
+-}
++static unsigned long max_zone_pfns[MAX_NR_ZONES];
+ 
+ /*
+  * Find the least restrictive zone that is entirely below the
+@@ -324,11 +305,14 @@ void __init paging_init(void)
+ 	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+ 	       (long int)((top_of_ram - total_ram) >> 20));
+ 
++#ifdef CONFIG_ZONE_DMA
++	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
++#endif
++	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+ #ifdef CONFIG_HIGHMEM
+-	limit_zone_pfn(ZONE_NORMAL, lowmem_end_addr >> PAGE_SHIFT);
++	max_zone_pfns[ZONE_HIGHMEM] = max_pfn
+ #endif
+-	limit_zone_pfn(TOP_ZONE, top_of_ram >> PAGE_SHIFT);
+-	zone_limits_final = true;
++
+ 	free_area_init_nodes(max_zone_pfns);
+ 
+ 	mark_nonram_nosave();
+diff --git a/arch/powerpc/platforms/85xx/corenet_generic.c b/arch/powerpc/platforms/85xx/corenet_generic.c
+index ac191a7a1337..b0dac307bebf 100644
+--- a/arch/powerpc/platforms/85xx/corenet_generic.c
++++ b/arch/powerpc/platforms/85xx/corenet_generic.c
+@@ -68,16 +68,6 @@ void __init corenet_gen_setup_arch(void)
+ 
+ 	swiotlb_detect_4g();
+ 
+-#if defined(CONFIG_FSL_PCI) && defined(CONFIG_ZONE_DMA32)
+-	/*
+-	 * Inbound windows don't cover the full lower 4 GiB
+-	 * due to conflicts with PCICSRBAR and outbound windows,
+-	 * so limit the DMA32 zone to 2 GiB, to allow consistent
+-	 * allocations to succeed.
+-	 */
+-	limit_zone_pfn(ZONE_DMA32, 1UL << (31 - PAGE_SHIFT));
+-#endif
+-
+ 	pr_info("%s board\n", ppc_md.name);
+ 
+ 	mpc85xx_qe_init();
+diff --git a/arch/powerpc/platforms/85xx/qemu_e500.c b/arch/powerpc/platforms/85xx/qemu_e500.c
+index b63a8548366f..27631c607f3d 100644
+--- a/arch/powerpc/platforms/85xx/qemu_e500.c
++++ b/arch/powerpc/platforms/85xx/qemu_e500.c
+@@ -45,15 +45,6 @@ static void __init qemu_e500_setup_arch(void)
+ 
+ 	fsl_pci_assign_primary();
+ 	swiotlb_detect_4g();
+-#if defined(CONFIG_FSL_PCI) && defined(CONFIG_ZONE_DMA32)
+-	/*
+-	 * Inbound windows don't cover the full lower 4 GiB
+-	 * due to conflicts with PCICSRBAR and outbound windows,
+-	 * so limit the DMA32 zone to 2 GiB, to allow consistent
+-	 * allocations to succeed.
+-	 */
+-	limit_zone_pfn(ZONE_DMA32, 1UL << (31 - PAGE_SHIFT));
+-#endif
+ 	mpc85xx_smp_init();
+ }
+ 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 1e22d96734e0..68970340df1c 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -312,7 +312,7 @@ enum zone_type {
+ 	 * Architecture		Limit
+ 	 * ---------------------------
+ 	 * parisc, ia64, sparc	<4G
+-	 * s390			<2G
++	 * s390, powerpc	<2G
+ 	 * arm			Various
+ 	 * alpha		Unlimited or 0-16MB.
+ 	 *
+-- 
+2.19.0
 
