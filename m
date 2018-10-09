@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E34C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB4FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E75D214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14516214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="J8lZLHOY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E75D214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="IHwkG3Jr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14516214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeJISbV (ORCPT
+        id S1727866AbeJISbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:31:21 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34174 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbeJISbV (ORCPT
+        Tue, 9 Oct 2018 14:31:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42128 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbeJISbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:31:21 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k19-v6so685663pfi.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:54 -0700 (PDT)
+        Tue, 9 Oct 2018 14:31:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i4-v6so647257pgq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jYV4XtZvQJcH5lonM8XkSCurPDD+mGIDAojfNLj+Ipk=;
-        b=J8lZLHOYK1LrbY6Pq/9Td9waby+CNpeceM5hEqGwFAqmiObwbixI9PITvVw+LvWVuj
-         uRfzErRYQ4itOZQ/++9nktVEnKHTW+vpC72Lax2iRMNNuUB0GxFcfwOoSkpNGmSgBPnJ
-         6ts8HuZ9YBAvMcQO+cW8LSsC3y9Sd8u50AVaxs0OIHkIZpWzkl3Ou5NLdMykqEDBK/zS
-         w8KMwzdeQzXuIJhb23ZflMtGoUEDvRw+tZTwzhsD77IDYJPTMPCGaj3rC2/z+3U477NO
-         GjcAuuPp1TRhpzYsRnBhJkDoSC4FlIJpWj6jqPYaa8bTDVub8z3U8dPAQiy2TglkBtoo
-         TK+Q==
+        bh=0XaUrxQqmQTFREgCtPs1kcTaSn0YqIRu/Zt57gy/yJQ=;
+        b=IHwkG3JrEofRlZM8EXd70kcb1AYWWLBB+cLBj1ejFwKH1C7aznEJzVRHCKunFeH+Xg
+         3F1rf9BqtK4btHcs/m72nZJpM4sMN89j93RMRK2kYDuXUIPmXxUYhr76VifGv4WJUaFs
+         gK2vbF3h5t425G40d44twQca48Ym9vU7NlmQDG8/j5/YvxoxxN2Pw8YlzB8ah4Vt+rI7
+         yOML+z5fP8s+EctoS/EZ1MZGIB93diDdGSKCkYepk94LLQuFPltj6v4Jroxf9sy7Ilpn
+         yLKqxuvyjKywBLxhlIeQXA0FnW6mYVEsTucthq/7tUfxWayySqmHIzJRE0rwX9gDQK4R
+         X/SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jYV4XtZvQJcH5lonM8XkSCurPDD+mGIDAojfNLj+Ipk=;
-        b=OS0F2RBY450stX4BYcSsygnib6qDzbRFgMcxs+vWK1agcv4ctOXlPQhNtvNTj1JBJZ
-         yFgqo80Kc2Qoa2Bh1Kb4vnD1fdf0zVqjDJmDIriE1t+tThbZ1vl2lwTbWOg4v/9pZcYy
-         LSLVWihsaVzafVKVo5RzHNHb9+kO4e2WFMrdnLranCN/uVsKQ4eUI0TBFXdz98xGKSN5
-         TffGKsx/u8ABz7SBe7uS8EEZPUsOamBVzpBk33eDaM4jTjUlvP2Dkv+dpQ1g/dGmH7ul
-         uYYwCE/UtIh0gDndouLZh0BtuiCK16gIS7D/YlN6tju+ZM1MBigZ4TjTQUKcB2xq1qeV
-         L5UQ==
-X-Gm-Message-State: ABuFfoglaasdX5hsgQO8hSYVaidvbce3BGVnYiqKsg3TZ0yjIBZbsM8S
-        8kVfenrvP6wEytCF3SuORTVi0w==
-X-Google-Smtp-Source: ACcGV62Osy0EJ7KNHfxsdRbYHE4EeCaoGvN/YD7HHLYD7aXxQHLmkipoSCwVGlZC1vgCnUA2LSwzUQ==
-X-Received: by 2002:a63:3308:: with SMTP id z8-v6mr21143648pgz.220.1539083694326;
-        Tue, 09 Oct 2018 04:14:54 -0700 (PDT)
+        bh=0XaUrxQqmQTFREgCtPs1kcTaSn0YqIRu/Zt57gy/yJQ=;
+        b=LQAEN+uZV+yHW+ue4YmHUlal9x2UsQnfPfdyjBn8hqQOXgXINpqh6PCJuItB1uqvsP
+         TnBu0zuIqhAC9vHDpMfLNGi1/vXo5QRIrkyDYz28oVfw0hPotGHHytakMVeBKqfmvBNL
+         2S/U1A3fBf8QT4zrGow30qE+AouFi6AUdQ2VmTAJmTURS+bCe+cnI1Rnrcuul5d5xL3w
+         siENqrJd/iEgxQ4pRpxGSmjjPa/OkKZlPdO2fvXIzWdyDuv3LiB8WkNbPLNGhX+CZ416
+         xwLcyIGuZuae/TELUEdoMpOjR9UrOZN4W5rnMu6fl9rLFQpTqUJFAniI6RxPHuCog/KZ
+         W17A==
+X-Gm-Message-State: ABuFfojwmSEq4fA0zuK6AMOYKhgx9O0oifGchGdcd3k/3PfVATKOL3/E
+        4k3444RKtGnXQRGdk0R5QoBW/MGavY51lg==
+X-Google-Smtp-Source: ACcGV617XUVNbZ8OQmtLKZRKeFCGJcblGaZAMaWvWPfFX260yn1a7vzH4tL/l4YNeu82+oyadJ4g9g==
+X-Received: by 2002:aa7:84cc:: with SMTP id x12-v6mr10678355pfn.220.1539083697766;
+        Tue, 09 Oct 2018 04:14:57 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.51
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:14:53 -0700 (PDT)
+        Tue, 09 Oct 2018 04:14:56 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 30/45] lightnvm: pblk: fix two sleep-in-atomic-context bugs
-Date:   Tue,  9 Oct 2018 13:12:00 +0200
-Message-Id: <20181009111215.7653-31-mb@lightnvm.io>
+Subject: [GIT PULL 31/45] lightnvm: use internal allocation for chunk log page
+Date:   Tue,  9 Oct 2018 13:12:01 +0200
+Message-Id: <20181009111215.7653-32-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -78,78 +79,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Javier González <javier@javigon.com>
 
-The driver may sleep with holding a spinlock.
+The lightnvm subsystem provides helpers to retrieve chunk metadata,
+where the target needs to provide a buffer to store the metadata. An
+implicit assumption is that this buffer is contiguous and can be used to
+retrieve the data from the device. If the device exposes too many
+chunks, then kmalloc might fail, thus failing instance creation.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+This patch removes this assumption by implementing an internal buffer in
+the lightnvm subsystem to retrieve chunk metadata. Targets can then
+use virtual memory allocations. Since this is a target API change, adapt
+pblk accordingly.
 
-[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 754:
-	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
-
-[FUNC] bio_map_kern(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 762:
-	bio_map_kern in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
-
-To fix these bugs, the call to pblk_line_replace_data()
-is moved out of the spinlock protection.
-
-These bugs are found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-recovery.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c |  4 ++--
+ drivers/lightnvm/pblk-init.c |  2 +-
+ drivers/nvme/host/lightnvm.c | 25 +++++++++++++++++--------
+ 3 files changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 8036c3eb6372..2526722304bb 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -966,12 +966,14 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 84f3b4912b92..875f3cf615ac 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -120,7 +120,7 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
+ /*
+  * Get information for all chunks from the device.
+  *
+- * The caller is responsible for freeing the returned structure
++ * The caller is responsible for freeing (vmalloc) the returned structure
+  */
+ struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
+ {
+@@ -134,7 +134,7 @@ struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
+ 	ppa.ppa = 0;
+ 
+ 	len = geo->all_chunks * sizeof(*meta);
+-	meta = kzalloc(len, GFP_KERNEL);
++	meta = vzalloc(len);
+ 	if (!meta)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index fb66bc84d5ca..7ef8249108f0 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1039,7 +1039,7 @@ static int pblk_lines_init(struct pblk *pblk)
+ 
+ 	pblk_set_provision(pblk, nr_free_chks);
+ 
+-	kfree(chunk_meta);
++	vfree(chunk_meta);
+ 	return 0;
+ 
+ fail_free_lines:
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index e42af7771fe5..7d0a4d3b0a48 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -573,7 +573,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	struct nvm_geo *geo = &ndev->geo;
+ 	struct nvme_ns *ns = ndev->q->queuedata;
+ 	struct nvme_ctrl *ctrl = ns->ctrl;
+-	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
++	struct nvme_nvm_chk_meta *dev_meta, *dev_meta_off;
+ 	struct ppa_addr ppa;
+ 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+ 	size_t log_pos, offset, len;
+@@ -585,6 +585,10 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	 */
+ 	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
+ 
++	dev_meta = kmalloc(max_len, GFP_KERNEL);
++	if (!dev_meta)
++		return -ENOMEM;
++
+ 	/* Normalize lba address space to obtain log offset */
+ 	ppa.ppa = slba;
+ 	ppa = dev_to_generic_addr(ndev, ppa);
+@@ -598,6 +602,9 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	while (left) {
+ 		len = min_t(unsigned int, left, max_len);
+ 
++		memset(dev_meta, 0, max_len);
++		dev_meta_off = dev_meta;
++
+ 		ret = nvme_get_log(ctrl, ns->head->ns_id,
+ 				NVME_NVM_LOG_REPORT_CHUNK, 0, dev_meta, len,
+ 				offset);
+@@ -607,21 +614,23 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
  		}
+ 
+ 		for (i = 0; i < len; i += sizeof(struct nvme_nvm_chk_meta)) {
+-			meta->state = dev_meta->state;
+-			meta->type = dev_meta->type;
+-			meta->wi = dev_meta->wi;
+-			meta->slba = le64_to_cpu(dev_meta->slba);
+-			meta->cnlb = le64_to_cpu(dev_meta->cnlb);
+-			meta->wp = le64_to_cpu(dev_meta->wp);
++			meta->state = dev_meta_off->state;
++			meta->type = dev_meta_off->type;
++			meta->wi = dev_meta_off->wi;
++			meta->slba = le64_to_cpu(dev_meta_off->slba);
++			meta->cnlb = le64_to_cpu(dev_meta_off->cnlb);
++			meta->wp = le64_to_cpu(dev_meta_off->wp);
+ 
+ 			meta++;
+-			dev_meta++;
++			dev_meta_off++;
+ 		}
+ 
+ 		offset += len;
+ 		left -= len;
  	}
  
--	spin_lock(&l_mg->free_lock);
- 	if (!open_lines) {
-+		spin_lock(&l_mg->free_lock);
- 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
- 							&l_mg->meta_bitmap));
-+		spin_unlock(&l_mg->free_lock);
- 		pblk_line_replace_data(pblk);
- 	} else {
-+		spin_lock(&l_mg->free_lock);
- 		/* Allocate next line for preparation */
- 		l_mg->data_next = pblk_line_get(pblk);
- 		if (l_mg->data_next) {
-@@ -979,8 +981,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
- 			is_next = 1;
- 		}
-+		spin_unlock(&l_mg->free_lock);
- 	}
--	spin_unlock(&l_mg->free_lock);
++	kfree(dev_meta);
++
+ 	return ret;
+ }
  
- 	if (is_next)
- 		pblk_line_erase(pblk, l_mg->data_next);
 -- 
 2.17.1
 
