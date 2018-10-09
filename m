@@ -2,176 +2,211 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9974AC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C54ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A33214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82094214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:02:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="VkFgSdhq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A33214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQVofOBk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82094214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJJATr (ORCPT
+        id S1726964AbeJJATz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:19:47 -0400
-Received: from mail-ve1eur01on0093.outbound.protection.outlook.com ([104.47.1.93]:7520
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726415AbeJJATr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:19:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oPfJvKGdUPvrnfVPynLX7+X+bxvebVwlWiuBlDdYtX0=;
- b=VkFgSdhqpMJsnZJ8YIm44iw1zksrQCZKwA2kkRyh7Xmn7hE9RLDWTGEU52J52S0tuHqkDvdOZCu1UFxC7hSOU34ALzH8nWUE0C5cx7BsFIsw9PGI9RkKym6sSfPyuq62k40PRgYK3Dqi9YW3NkRA2RSDVdIFxT6sMo1NoVc4EHA=
-Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com (10.168.95.15) by
- HE1PR0801MB1402.eurprd08.prod.outlook.com (10.167.248.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.21; Tue, 9 Oct 2018 17:01:47 +0000
-Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com
- ([fe80::81:90cd:bab6:ed7a]) by HE1PR0801MB2026.eurprd08.prod.outlook.com
- ([fe80::81:90cd:bab6:ed7a%2]) with mapi id 15.20.1228.020; Tue, 9 Oct 2018
- 17:01:47 +0000
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     Laurent Vivier <laurent@vivier.eu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Eric Biederman <ebiederm@xmission.com>,
-        Dmitry Safonov <dima@arista.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Andrei Vagin (C)" <avagin@gmail.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-Thread-Topic: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-Thread-Index: AQHUX+s9kF6FVIvT2ECnmBCh+DCRGaUXHxGAgAAEmwA=
-Date:   Tue, 9 Oct 2018 17:01:47 +0000
-Message-ID: <7d9d7846-d153-f328-f5b4-8dc9d9705339@virtuozzo.com>
-References: <20181009103752.21482-1-laurent@vivier.eu>
- <20181009103752.21482-2-laurent@vivier.eu>
- <f14ce318-5a1a-06f3-2e90-91220f39e74b@virtuozzo.com>
- <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
-In-Reply-To: <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0102CA0026.eurprd01.prod.exchangelabs.com
- (2603:10a6:206::39) To HE1PR0801MB2026.eurprd08.prod.outlook.com
- (2603:10a6:3:50::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [185.231.240.5]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0801MB1402;20:iIeEIgvCfVDlY6TqxMEPbPUSOHLLYusfw+qgLicdYs1w5WuCL8vGhv9b+km70P9dCWZ7zeprLU2WH8l75waYT/qCHJkPJKlW8XPIF9n8/RbSbpgDXNtmkF2YZOYVCv4Ay4qcrh5bnGJEnA3jBVC5CYQpYy8+VrycP9wXA/bWUzw=
-x-ms-office365-filtering-correlation-id: 6d909f90-c3a1-4080-ecc3-08d62e08e5ad
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1402;
-x-ms-traffictypediagnostic: HE1PR0801MB1402:
-x-ld-processed: 0bc7f26d-0264-416e-a6fc-8352af79c58f,ExtAddr
-x-microsoft-antispam-prvs: <HE1PR0801MB14028CE066C14A4DAEAB17D0CDE70@HE1PR0801MB1402.eurprd08.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051);SRVR:HE1PR0801MB1402;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1402;
-x-forefront-prvs: 08200063E9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(366004)(376002)(346002)(136003)(189003)(199004)(2906002)(5660300001)(6116002)(86362001)(446003)(11346002)(7416002)(6436002)(256004)(110136005)(66066001)(71190400001)(229853002)(93886005)(71200400001)(4326008)(8676002)(39060400002)(99286004)(186003)(53546011)(6506007)(6512007)(26005)(386003)(66574009)(3846002)(305945005)(7736002)(31696002)(76176011)(52116002)(25786009)(97736004)(106356001)(5250100002)(105586002)(53936002)(2616005)(2501003)(476003)(2900100001)(8936002)(6486002)(14444005)(81166006)(81156014)(6246003)(68736007)(54906003)(31686004)(36756003)(316002)(102836004)(14454004)(486006)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1402;H:HE1PR0801MB2026.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2NPfyGaupzETN2NGSHsnvRcUogTVkgfMjdZX9hhuoUvaCQcOUIgQdq/89mtBGlhvu6Z2R4C2kMuZw2Vpt6LTZF1Rj7bjNdhN3Nru4phc952buD0jQo0Geo77DQpizMm/nkIUkFKaxPLg++LD9Xntjynleng3SbV/xD56LmyeWv/1j7oCnBfdnIewzqRaXhjf6NlZO/6aEzg6TVT4Y1AdCTTgIoL2QDsqgBLvyH5qU+z7BmgFvR+3NaPo/7VIc0A/VmZVUMiuPs5e/WHYReK9uwOhgeR0kanipcB+zMcNWZN8i5nqNKL5FTjBkrU2VpnoLesFzMiLCE1xnl48rtzBTIK0FGMP8FxzCgHhksZGweM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0247F71A93C55847856679BE251300BD@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 9 Oct 2018 20:19:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38088 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726764AbeJJATy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:19:54 -0400
+Received: from localhost (57.sub-174-234-155.myvzw.com [174.234.155.57])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1ABA214DA;
+        Tue,  9 Oct 2018 17:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539104520;
+        bh=2/u36yA2RO9M0kPxMJO7WK7RFc8N7LIJOmI3JRzZVBk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BQVofOBkXZpqFdlVxdXyQs+0h+VI56WJF2LG+EdU4tpo0rv6Kvw4htSQPYYY4W8Tb
+         NQhFB8Ix6r27XUsmImCiXcCJvP16AhqsO34SS4nmb17lRot+mywRE9I7E6eBo8LPBq
+         bx2/XGptgGf+AipNlSgDIsXGImnHtwJalh9TFZaI=
+Date:   Tue, 9 Oct 2018 12:01:58 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bin Meng <bmeng.cn@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
+ interrupt" quirk
+Message-ID: <20181009170158.GA5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
+ <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
+ <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d909f90-c3a1-4080-ecc3-08d62e08e5ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 17:01:47.1634
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1402
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMDkuMTAuMjAxOCAxOTo0NSwgTGF1cmVudCBWaXZpZXIgd3JvdGU6DQo+IExlIDA5LzEwLzIw
-MTggw6AgMTg6MTUsIEtpcmlsbCBUa2hhaSBhIMOpY3JpdMKgOg0KPj4gT24gMDkuMTAuMjAxOCAx
-MzozNywgTGF1cmVudCBWaXZpZXIgd3JvdGU6DQo+Pj4gVGhpcyBwYXRjaCBhbGxvd3MgdG8gaGF2
-ZSBhIGRpZmZlcmVudCBiaW5mbXRfbWlzYyBjb25maWd1cmF0aW9uDQo+Pj4gZm9yIGVhY2ggbmV3
-IHVzZXIgbmFtZXNwYWNlLiBCeSBkZWZhdWx0LCB0aGUgYmluZm10X21pc2MgY29uZmlndXJhdGlv
-bg0KPj4+IGlzIHRoZSBvbmUgb2YgdGhlIHByZXZpb3VzIGxldmVsLCBidXQgaWYgdGhlIGJpbmZt
-dF9taXNjIGZpbGVzeXN0ZW0gaXMNCj4+PiBtb3VudGVkIGluIHRoZSBuZXcgbmFtZXNwYWNlIGEg
-bmV3IGVtcHR5IGJpbmZtdCBpbnN0YW5jZSBpcyBjcmVhdGVkIGFuZA0KPj4+IHVzZWQgaW4gdGhp
-cyBuYW1lc3BhY2UuDQo+Pj4NCj4+PiBGb3IgaW5zdGFuY2UsIHVzaW5nICJ1bnNoYXJlIiB3ZSBj
-YW4gc3RhcnQgYSBjaHJvb3Qgb2YgYW4gYW5vdGhlcg0KPj4+IGFyY2hpdGVjdHVyZSBhbmQgY29u
-ZmlndXJlIHRoZSBiaW5mbXRfbWlzYyBpbnRlcnByZXRlciB3aXRob3V0IGJlaW5nIHJvb3QNCj4+
-PiB0byBydW4gdGhlIGJpbmFyaWVzIGluIHRoaXMgY2hyb290Lg0KPj4+DQo+Pj4gU2lnbmVkLW9m
-Zi1ieTogTGF1cmVudCBWaXZpZXIgPGxhdXJlbnRAdml2aWVyLmV1Pg0KPj4+IC0tLQ0KPj4+ICBm
-cy9iaW5mbXRfbWlzYy5jICAgICAgICAgICAgICAgfCAxMDYgKysrKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tLS0tDQo+Pj4gIGluY2x1ZGUvbGludXgvdXNlcl9uYW1lc3BhY2UuaCB8ICAxMyAr
-KysrDQo+Pj4gIGtlcm5lbC91c2VyLmMgICAgICAgICAgICAgICAgICB8ICAxMyArKysrDQo+Pj4g
-IGtlcm5lbC91c2VyX25hbWVzcGFjZS5jICAgICAgICB8ICAgMyArDQo+Pj4gIDQgZmlsZXMgY2hh
-bmdlZCwgMTA3IGluc2VydGlvbnMoKyksIDI4IGRlbGV0aW9ucygtKQ0KPj4+DQo+Pj4gZGlmZiAt
-LWdpdCBhL2ZzL2JpbmZtdF9taXNjLmMgYi9mcy9iaW5mbXRfbWlzYy5jDQo+Pj4gaW5kZXggYWE0
-YTdhMjNmZjk5Li4xZTAwMjlkMDk3ZDkgMTAwNjQ0DQo+Pj4gLS0tIGEvZnMvYmluZm10X21pc2Mu
-Yw0KPj4+ICsrKyBiL2ZzL2JpbmZtdF9taXNjLmMNCj4gLi4uDQo+Pj4gQEAgLTgwLDE4ICs3NCwz
-MiBAQCBzdGF0aWMgaW50IGVudHJ5X2NvdW50Ow0KPj4+ICAgKi8NCj4+PiAgI2RlZmluZSBNQVhf
-UkVHSVNURVJfTEVOR1RIIDE5MjANCj4+PiAgDQo+Pj4gK3N0YXRpYyBzdHJ1Y3QgYmluZm10X25h
-bWVzcGFjZSAqYmluZm10X25zKHN0cnVjdCB1c2VyX25hbWVzcGFjZSAqbnMpDQo+Pj4gK3sNCj4+
-PiArCXN0cnVjdCBiaW5mbXRfbmFtZXNwYWNlICpiX25zOw0KPj4+ICsNCj4+PiArCXdoaWxlIChu
-cykgew0KPj4+ICsJCWJfbnMgPSBSRUFEX09OQ0UobnMtPmJpbmZtdF9ucyk7DQo+Pj4gKwkJaWYg
-KGJfbnMpDQo+Pj4gKwkJCXJldHVybiBiX25zOw0KPj4+ICsJCW5zID0gbnMtPnBhcmVudDsNCj4+
-PiArCX0NCj4+PiArCVdBUk5fT05fT05DRSgxKTsNCj4+PiArCXJldHVybiBOVUxMOw0KPj4+ICt9
-DQo+Pj4gKw0KPiAuLi4NCj4+PiBAQCAtODIzLDEyICs4NDcsMzQgQEAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBzdXBlcl9vcGVyYXRpb25zIHNfb3BzID0gew0KPj4+ICBzdGF0aWMgaW50IGJtX2ZpbGxf
-c3VwZXIoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdm9pZCAqZGF0YSwgaW50IHNpbGVudCkNCj4+
-PiAgew0KPj4+ICAJaW50IGVycjsNCj4+PiArCXN0cnVjdCB1c2VyX25hbWVzcGFjZSAqbnMgPSBz
-Yi0+c191c2VyX25zOw0KPj4+ICAJc3RhdGljIGNvbnN0IHN0cnVjdCB0cmVlX2Rlc2NyIGJtX2Zp
-bGVzW10gPSB7DQo+Pj4gIAkJWzJdID0geyJzdGF0dXMiLCAmYm1fc3RhdHVzX29wZXJhdGlvbnMs
-IFNfSVdVU1J8U19JUlVHT30sDQo+Pj4gIAkJWzNdID0geyJyZWdpc3RlciIsICZibV9yZWdpc3Rl
-cl9vcGVyYXRpb25zLCBTX0lXVVNSfSwNCj4+PiAgCQkvKiBsYXN0IG9uZSAqLyB7IiJ9DQo+Pj4g
-IAl9Ow0KPj4+ICANCj4+PiArCS8qIGNyZWF0ZSBhIG5ldyBiaW5mbXQgbmFtZXNwYWNlDQo+Pj4g
-KwkgKiBpZiB3ZSBhcmUgbm90IGluIHRoZSBmaXJzdCB1c2VyIG5hbWVzcGFjZQ0KPj4+ICsJICog
-YnV0IHRoZSBiaW5mbXQgbmFtZXNwYWNlIGlzIHRoZSBmaXJzdCBvbmUNCj4+PiArCSAqLw0KPj4+
-ICsJaWYgKFJFQURfT05DRShucy0+YmluZm10X25zKSA9PSBOVUxMKSB7DQo+Pj4gKwkJc3RydWN0
-IGJpbmZtdF9uYW1lc3BhY2UgKm5ld19uczsNCj4+PiArDQo+Pj4gKwkJbmV3X25zID0ga21hbGxv
-YyhzaXplb2Yoc3RydWN0IGJpbmZtdF9uYW1lc3BhY2UpLA0KPj4+ICsJCQkJIEdGUF9LRVJORUwp
-Ow0KPj4+ICsJCWlmIChuZXdfbnMgPT0gTlVMTCkNCj4+PiArCQkJcmV0dXJuIC1FTk9NRU07DQo+
-Pj4gKwkJSU5JVF9MSVNUX0hFQUQoJm5ld19ucy0+ZW50cmllcyk7DQo+Pj4gKwkJbmV3X25zLT5l
-bmFibGVkID0gMTsNCj4+PiArCQlyd2xvY2tfaW5pdCgmbmV3X25zLT5lbnRyaWVzX2xvY2spOw0K
-Pj4+ICsJCW5ld19ucy0+Ym1fbW50ID0gTlVMTDsNCj4+PiArCQluZXdfbnMtPmVudHJ5X2NvdW50
-ID0gMDsNCj4+PiArCQkvKiBlbnN1cmUgbmV3X25zIGlzIGNvbXBsZXRlbHkgaW5pdGlhbGl6ZWQg
-YmVmb3JlIHNoYXJpbmcgaXQgKi8NCj4+PiArCQlzbXBfd21iKCk7DQo+Pg0KPj4gKEkgaGF2ZW4n
-dCBkaXZlZCBpbnRvIHBhdGNoIGxvZ2ljLCBoZXJlIGp1c3Qgc21hbGwgYmFycmllciByZW1hcmsg
-ZnJvbSBxdWljayBzaWdodCkuDQo+PiBzbXBfd21iKCkgaGFzIG5vIHNlbnNlIHdpdGhvdXQgcGFp
-cmVkIHNtcF9ybWIoKSBvbiB0aGUgcmVhZCBzaWRlLiBQb3NzaWJsZSwNCj4+IHlvdSB3YW50IHNv
-bWV0aGluZyBsaWtlIGJlbG93IGluIHJlYWQgaHVuazoNCj4+DQo+PiArCQliX25zID0gUkVBRF9P
-TkNFKG5zLT5iaW5mbXRfbnMpOw0KPj4gKwkJaWYgKGJfbnMpIHsNCj4+ICsJCQlzbXBfcm1iKCk7
-DQo+PiArCQkJcmV0dXJuIGJfbnM7DQo+PiArCQl9DQo+Pg0KPj4NCj4gDQo+IFRoZSB3cml0ZSBi
-YXJyaWVyIGlzIGhlcmUgdG8gZW5zdXJlIHRoZSBzdHJ1Y3R1cmUgaXMgZnVsbHkgd3JpdHRlbg0K
-PiBiZWZvcmUgd2Ugc2V0IHRoZSBwb2ludGVyLg0KPiANCj4gSSBkb24ndCB1bmRlcnN0YW5kIGhv
-dyByZWFkIGJhcnJpZXIgY2FuIGNoYW5nZSBzb21ldGhpbmcgYXQgdGhpcyBsZXZlbCwNCj4gSU1I
-TyB0aGUgY291cGxlIFdSSVRFX09OQ0UoKS9SRUFEX09OQ0UoKSBzaG91bGQgYmUgZW5vdWdoIHRv
-IGVuc3VyZSB3ZQ0KPiBoYXZlIGNvcnJlY3RseSBpbml0aWFsaXplZCB0aGUgcG9pbnRlciBhbmQg
-dGhlIHN0cnVjdHVyZSB3aGVuIHdlIHJlYWQNCj4gdGhlIHBvaW50ZXIgYmFjay4NCj4gDQo+IEkg
-dGhpbmsgdGhlIHBvaW50ZXIgaXRzZWxmIGlzIHRoZSAiYmFycmllciIgdG8gYWNjZXNzIHRoZSBt
-ZW1vcnkNCj4gbW9kaWZpZWQgYmVmb3JlLg0KDQpzbXBfcm1iKCkgZ3VhcmFudGVlcyB5b3Ugc2Vl
-IHN0b3JlcyBpbiB0aGUgb3JkZXIgeW91IHdhbnQuIElmIHlvdSBoYXZlOg0KDQpbY3B1MF0JCQkJ
-CVtjcHUxXQ0KbmV3X25zLT5lbnRyeV9jb3VudCA9IDA7IA0Kc21wX3dtYigpOw0KV1JJVEVfT05D
-RShucy0+YmluZm10X25zLCBuZXdfbnMpOyAJYl9ucyA9IFJFQURfT05DRShucy0+YmluZm10X25z
-KTsNCgkJCQkJc21wX3JtYigpOw0KCQkJCQk8YWNjZXNzIGJfbnMtPmVudHJ5X2NvdW50Pg0KDQpz
-bXBfcm1iKCkgZ3VhcmFudGVlcyB5b3Ugc2VlIHRydWUgZW50cnlfY291bnQgb24gdGhlIGNwdTEu
-IFdpdGhvdXQNCnNtcF9ybWIoKSB5b3UgbWF5IHNlZSBvbGQgdmFsdWUgb2YgbmV3X25zLT5lbnRy
-eV9jb3VudC4NCgkJCQkJDQpTZWUgRG9jdW1lbnRhdGlvbi9tZW1vcnktYmFycmllcnMudHh0DQo=
+On Mon, Oct 08, 2018 at 05:44:08PM +0800, Bin Meng wrote:
+> On Thu, Oct 4, 2018 at 4:12 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Thu, Sep 27, 2018 at 10:10:07AM +0800, Bin Meng wrote:
+> > > On Thu, Sep 27, 2018 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
+> > > > > Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
+> > > > > which are known to break.
+> > > >
+> > > > Do you have a reference for this?  Any public bug reports, bugzilla,
+> > > > Intel spec reference or errata?  "Which are known to break" is pretty
+> > > > vague.
+> > >
+> > > Sorry I used wrong words and should have been clearer. These devices
+> > > are validated to be broken. The test I used is very simple, just
+> > > unplug the VGA cable and plug it again, and "spurious interrupt" will
+> > > be seen on the interrupt line of the IGD device. I was not aware of
+> > > any public bugs filed to Intel, nor seen any errata from Intel.
+> >
+> > The original commit, f67fd55fa96f ("PCI: Add quirk for still enabled
+> > interrupts on Intel Sandy Bridge GPUs"), says some systems "crash"
+> > (not sure if that means an oops or an actual crash that requires a
+> > reboot) and on other systems, Linux disables the shared interrupt
+> > line.  I assume disabling the interrupt line keeps devices using that
+> > line from working, but does not directly cause a crash.
+> >
+> 
+> Correct, disable the shared interrupt line keeps all devices using
+> that line from working, which is current kernel's behavior w/o this
+> quirk handling: it disables the (shared) interrupt line after 100.000+
+> generated interrupts. But the side effect is that other devices become
+> unusable after that (eg: USB devices which share the same interrupt
+> line with the Intel GPU). That's why the original commit, f67fd55fa96f
+> ("PCI: Add quirk for still enabled interrupts on Intel Sandy Bridge
+> GPUs") disables the GPU's interrupt directly, which should really be
+> done by the VGA BIOS itself (a buggy VBIOS!).
+> 
+> > What specific symptom do you see here?  I think it might be useful to
+> > collect details, e.g., dmesg logs, /proc/interrupts contents, output
+> > of "sudo lspci -vv", etc., for the systems you're quirking here.  I'm
+> > hoping we can eventually figure out a solution that doesn't require a
+> > quirk for every new GPU, and maybe that info will help find it.
+> 
+> The symptom was described briefly in the original commit f67fd55fa96f
+> too, that disables the (shared) interrupt line after 100.000+
+> generated interrupts (can be observed via /proc/interrupts).
+> 
+> > > > > See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
+> > > > > on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
+> > > > > ID for Intel GPU "spurious interrupt" quirk") for some history.
+> > > > >
+> > > > > Based on current findings, it is highly possible that all Intel
+> > > > > 1st/2nd/3rd generation Core processors' IGD has such quirk.
+> > > >
+> > > > Can you include a reference to these "current findings"?  I assume you
+> > > > have bug reports that include the device IDs you're adding?  If not,
+> > > > how did you build this list of new IDs?
+> > >
+> > > By "current findings" I mean given the IDs we have here, plus previous
+> > > one added by Thomas, it's highly possible this VGA BIOS bug exists in
+> > > every 1st/2nd/3rd generation Core processors.
+> > >
+> > > > The function comment added by f67fd55fa96f ("PCI: Add quirk for still
+> > > > enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
+> > > > actually a BIOS issue, not a hardware erratum, i.e., I don't see
+> > > > anything there that suggests a hardware defect.
+> > > >
+> > > > But there must be a hole somewhere -- the kernel can't be expected to
+> > > > disable interrupts in device-specific ways when there's no driver
+> > > > loaded.  Maybe it's simply a BIOS defect or maybe there's some
+> > > > interrupt or _PRT-related setup we're missing.
+> > >
+> > > It's a pure VGA BIOS bug, not the BIOS bug or _PRT etc. The VGA BIOS
+> > > forgot to turn off the interrupt on these devices.
+> >
+> > If this is a VGA BIOS defect, it's not very likely that it will
+> > magically be fixed for all new Intel GPUs, so in effect it sounds like
+> > we need to update this list of quirks in Linux every time a new Intel
+> > GPU comes out.  That prospect is a little daunting.
+> 
+> I don't have a relatively newer Intel board at hand for testing right
+> now. I can try to locate one. But as I said, it's highly possible at
+> least all 1st/2nd/3rd generation Core processors are affected.
+
+> Maybe
+> we can add all these known GPU devices of  1st/2nd/3rd generation Core
+> processors all together for now? For newer GPUs, let's wait until
+> someone reports the issue again?
+
+This is exactly my point: we don't want to have to wait for somebody
+to report an issue for every new GPU.  That (a) is a maintenance
+headache and, more importantly, (b) prevents an old kernel from
+running on new hardware.  (b) is important to distros because nobody
+wants to qualify and release a new kernel just to add a new device ID.
+
+Bottom line is that I think I'm going to have to apply this patch, but
+I want to get off this train in the future, so now is the time to find
+a better solution.
+
+> > Do you happen to know if Windows has the same problem?  I.e., if you
+> > boot an old version of Windows with a new GPU, and unplug the VGA
+> > cable, does Windows crash?  If Windows can figure out how to handle
+> > that situation gracefully, Linux should be able to do it, too.
+> 
+> I suspect Windows cannot handle it too. Without the GPU awareness, the
+> interrupt line is simply on and no driver claims the devices and will
+> cause issues. I can test this.
+
+If you could test this, that would be great.  I would be quite
+surprised if Windows crashed when you unplug the VGA cable.
+
+What I'm wondering is if there's some different way we could manage
+the IOAPICs or maybe disable interrupts at the PCI device level as
+David suggests.  If something like that could be done we wouldn't need
+quirks for every new device.
+
+It's possible we could learn something by running Windows on qemu and
+tracing its PCI config accesses to see whether it sets the
+PCI_COMMAND_INTX_DISABLE bit or something.
+
+> > > > > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+> > > > > Cc: <stable@vger.kernel.org> # v3.4+
+> > > > > ---
+> > > > >
+> > > > >  drivers/pci/quirks.c | 4 ++++
+> > > > >  1 file changed, 4 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > > > > index 6bc27b7..c0673a7 100644
+> > > > > --- a/drivers/pci/quirks.c
+> > > > > +++ b/drivers/pci/quirks.c
+> > > > > @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
+> > > > >
+> > > > >       pci_iounmap(dev, regs);
+> > > > >  }
+> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
+> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
+> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
+> > > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+> > > > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
+> > > > >
+> > > > > --
+> 
+> Regards,
+> Bin
