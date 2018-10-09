@@ -2,130 +2,103 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539C9ECDE39
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90B9C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2453C21502
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2453C21502
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 72D332087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D332087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbeJIXLf (ORCPT
+        id S1726693AbeJIXPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:11:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56601 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIXLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:11:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 975AE207C8; Tue,  9 Oct 2018 17:53:57 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 62F5120618;
-        Tue,  9 Oct 2018 17:53:47 +0200 (CEST)
-Date:   Tue, 9 Oct 2018 17:53:48 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 10/29] drm/sun4i: Rename DE2 registers related macros
-Message-ID: <20181009155348.exmeyvvelxwnv3b5@flea>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net>
- <20181007093905.11253-11-jernej.skrabec@siol.net>
- <20181008101828.hb4xtppbexwalbkk@flea>
- <11072788.dZi9MDiihb@jernej-laptop>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qlwprrpwi56itdhx"
-Content-Disposition: inline
-In-Reply-To: <11072788.dZi9MDiihb@jernej-laptop>
-User-Agent: NeoMutt/20180716
+        Tue, 9 Oct 2018 19:15:45 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:39053 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIXPp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:15:45 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MA88C-1fzVLJ32HS-00Bf2S; Tue, 09 Oct 2018 17:57:59 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MA88C-1fzVLJ32HS-00Bf2S; Tue, 09 Oct 2018 17:57:59 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vasily Ulyanov <vulyanov@quantenna.com>,
+        Andrey Shevchenko <ashevchenko@quantenna.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] qtnfmac: avoid uninitialized variable access
+Date:   Tue,  9 Oct 2018 17:57:35 +0200
+Message-Id: <20181009155757.494212-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:Xax1BOyVDSS/I6d+mxoxQgcdDQz5f+hcrKd/pDuDVWrpsoIp7bq
+ ROicNzkQdIG+sypFTyswVlV4jds99I+dfS27N2vqq9iN+Extm5sNg1q+90HvaR8MT26dnJY
+ EP9orhI5sseScpXK05Ecowgj4/5uOt2jpvBKc/NWpWSYIUm1GqiKp8EB/MCVktBJd81eIto
+ zYVOmLQrFwj7ORhLAynIA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:QcTAjmk3cIQ=:2pdHry2WAzRiytm4ZY09Ob
+ e2dZ5NcKYOGaP0bCq07jEJroWBSC5/8k3crJl6Z+4Vqw4zAhk/VeQ9+k25ey8HmhPBRDClon2
+ UxEuEgNYV4NU+UVElmoy4oZ3NU3Gr4jnh46RHfu/YkuWVmFBw/GeFWhL9xc93xJvYxTJKtC18
+ SbsrMFSp+083AWnlBDcpSYNmUUD5b7WYmIA0/kJFRAXoGkn5gYiqZZPF+uoIADek7GdK9ZK/x
+ 6cw3s8WwlvGbf9UsrcLoBrMn4yaE7bHzrhkU6zsD/fYAKluaoJxcGeZDY/ocpnhG59kbaqeNV
+ xNTYDJPGDKfzt2vaZ72tJM7Zhb5saBFoJ6w6TMj9QPIIxP4F1OiUtq77tZGRmsHIAAYiNN/95
+ q9wBp/nZ/uykld45UY53Fvzl0SwZDpHanFwBOzswSA2a2e+xUuqr5XqM0j8RDSu6uHXLiLxpm
+ GEYihj2aEqMXQqb2/Mz8902mDzoqqScF9xImh9cEyVp9VS53/nn/zkp+SNSFbq3aiHKGpvupg
+ kefD25F7gDcY3BbqUIJ8HboW20fuzY1H5/C/M/Bi8/Qw+pXytK2lkIC8XMuL3vmWR9+wXjqP9
+ HpsQk8pUYJZWituCHA3oQd/jWmvZd8YFHZu4wdSBDL2abZlH+JgqhDIP3+cjJHWKL0u5WunOa
+ CVHx4yajpzLJYrWH2sA6BUbdMBaE+vyrIBz9PZg451c2PPZR4mnJ5CqfNpW5hLk0T/Ec=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When qtnf_trans_send_cmd_with_resp() fails, we have not yet initialized
+'resp', as pointed out by a valid gcc warning:
 
---qlwprrpwi56itdhx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/net/wireless/quantenna/qtnfmac/commands.c: In function 'qtnf_cmd_send_with_reply':
+drivers/net/wireless/quantenna/qtnfmac/commands.c:133:54: error: 'resp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-On Mon, Oct 08, 2018 at 04:28:41PM +0200, Jernej =C5=A0krabec wrote:
-> Dne ponedeljek, 08. oktober 2018 ob 12:18:28 CEST je Maxime Ripard napisa=
-l(a):
-> > Hi,
-> >=20
-> > On Sun, Oct 07, 2018 at 11:38:46AM +0200, Jernej Skrabec wrote:
-> > > In preparation to introduce DE3 support, change prefix from "SUN8I_" =
-to
-> > > "DE2_". Current prefix suggest that it's valid only for one family,
-> > > whereas in reality, DE2 unit is used also on sun50i family.
-> > > Additionally, it will be easier to distinguish DE3 specific macros by
-> > > using "DE3_" prefix.
-> > >=20
-> > > No functional change in this commit.
-> >=20
-> > I'm not too sure about this one. There's basically two ways to look at
-> > this: you described the first one, and the second one would be to
-> > treat it as we do for the compatibles: the IP was introduced on one
-> > SoC family, and then got used on some other ones.
-> >=20
-> > Trying to always match the one you have however have a quite big
-> > maintainance cost, as can be shown by your patch: you always have to
-> > adapt comments, function names, defines, etc. This creates a lot of
-> > useless churns (ie, non-functional changes) in the drivers, that need
-> > to be written in the first place, and then reviewed.
-> >=20
-> > It's just not worth it.
->=20
-> Well, using family neutral way would mean that there is no need
-> anymore for adaptation in the future, but as you wish.
+Since 'resp_skb' is also not set here, we can skip all further
+processing and just print the warning and return the failure code.
 
-If you consider only the DE case, where it has been numbered by
-design, yes. If you consider all the other controllers that haven't
-been (like, SPI, or the USB PHY, for example), then you end up with
-two drivers that are using the same names, with no easy way to tell
-which is which
+Fixes: c6ed298ffe09 ("qtnfmac: cleanup and unify command error handling")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/wireless/quantenna/qtnfmac/commands.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> What prefix should I use for DE3 specific registers?
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index bfdc1ad30c13..9b211459684a 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -111,7 +111,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
+ 
+ 	ret = qtnf_trans_send_cmd_with_resp(bus, cmd_skb, &resp_skb);
+ 	if (ret)
+-		goto out;
++		goto out_noresp;
+ 
+ 	resp = (const struct qlink_resp *)resp_skb->data;
+ 	ret = qtnf_cmd_check_reply_header(resp, cmd_id, mac_id, vif_id,
+@@ -132,6 +132,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
+ 	if (!ret && resp)
+ 		return qtnf_cmd_resp_result_decode(le16_to_cpu(resp->result));
+ 
++out_noresp:
+ 	pr_warn("VIF%u.%u: cmd 0x%.4X failed: %d\n",
+ 		mac_id, vif_id, le16_to_cpu(cmd->cmd_id), ret);
+ 
+-- 
+2.18.0
 
-We should just follow the same pattern, and use the first family where
-it was introduced. So sun50i, I guess?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---qlwprrpwi56itdhx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu8zwsACgkQ0rTAlCFN
-r3QqwQ/+IoZy8t7aGMla11oE/6yNeaFJ34IxjnNbHLImveD7Ovr9f5ba3XSoQpxX
-AX83BsNpV0Y3c42ZOIAE5O1sJ9dO0P9YAQXsWIhtglWpt6PByfJ6fP6oHmV2Oacn
-4THjYt00r1vGtrjU9RpTVQ5deR1dLTLobPc1pB0gTCzRn3W7mnqdMs2p/yT2SMyT
-sPqwmVvK7flMM1B/h6yG9nzTsWzj4Xh64+Y7w+eviUUVqS7PpL5yG+y2zFeag3rH
-3KYKqWzaewOisFJZhHv9T/Q3NC1XXdNn8Dv4fg3i6zcPJFxi1oWFp44PXEMHEJsd
-3FtTxLSbk8IvYSRWkd+qVKLKngstpA97wJ84MTpRaEeIVk39vwBYRuvQwwG6aior
-+1juz0zdqLmDihnNfo/JhyEd8z32CPOxSAJBaWz9AspFynHtS17vM0qzFupQfiSK
-w7iCl8cplcfoFRJj+qFexAzPeL6Q3HSNRu0nQJ/hRnXQs3QbXFNWalHJ8R9slzH2
-S4hsP7X9xGx55xZEQM23CtHve1zMQ6uZPdJ8ncRmkFsAA6OL2YGCVTEauSxa8bge
-dXD7ZMm3+ucSJ6c4jRFJb9VL13FVFxgYYn9u1HcY9B7DK97Y1UldMP4jHs+SQFGy
-SI1gafvdOxtaIaATXp2SbPmAoh3PjKgVLr//lAjul9m822mnxLU=
-=VJae
------END PGP SIGNATURE-----
-
---qlwprrpwi56itdhx--
