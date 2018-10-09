@@ -2,158 +2,142 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27DDC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60CEC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 856032075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856032075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9110F20835
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9110F20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeJIOTk (ORCPT
+        id S1726461AbeJIOYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:19:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44507 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbeJIOTk (ORCPT
+        Tue, 9 Oct 2018 10:24:43 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:57031 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeJIOYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:19:40 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9973dHL935844
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 00:03:39 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9973dW5935841;
-        Tue, 9 Oct 2018 00:03:39 -0700
-Date:   Tue, 9 Oct 2018 00:03:39 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kees Cook <tipbot@zytor.com>
-Message-ID: <tip-184d47f0fd365108bd06ab26cdb3450b716269fd@git.kernel.org>
-Cc:     peterz@infradead.org, luto@kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, arnd@arndb.de, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, toshi.kani@hpe.com,
-        torvalds@linux-foundation.org, bp@alien8.de, jroedel@suse.de,
-        keescook@chromium.org, hpa@zytor.com, dave.hansen@linux.intel.com
-Reply-To: jroedel@suse.de, bp@alien8.de, torvalds@linux-foundation.org,
-          toshi.kani@hpe.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-          keescook@chromium.org, mingo@kernel.org, luto@kernel.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          akpm@linux-foundation.org, tglx@linutronix.de, arnd@arndb.de
-In-Reply-To: <20181008235434.GA35035@beast>
-References: <20181008235434.GA35035@beast>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Avoid VLA in pgd_alloc()
-Git-Commit-ID: 184d47f0fd365108bd06ab26cdb3450b716269fd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 9 Oct 2018 10:24:43 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g9m8k-0007ZQ-1u from Jiada_Wang@mentor.com ; Tue, 09 Oct 2018 00:09:10 -0700
+Received: from [172.30.112.244] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Tue, 9 Oct 2018 00:09:06 -0700
+Subject: Re: [alsa-devel] [PATCH linux-next v2 9/9] ASoC: rsnd: add busif
+ property to dai stream
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181003090136.4556-1-jiada_wang@mentor.com>
+ <87va6ipkaz.wl-kuninori.morimoto.gx@renesas.com>
+ <557e63d1-dbb7-4232-b53e-4a5499024180@mentor.com>
+ <87pnwqpeni.wl-kuninori.morimoto.gx@renesas.com>
+ <a5712f6a-a61b-f6c4-4f3d-a6d4a60bcfab@mentor.com>
+ <87h8hward4.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <ed602ba8-6dc5-005c-3267-47aa378b6c0a@mentor.com>
+Date:   Tue, 9 Oct 2018 16:09:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <87h8hward4.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Language: en-US
+X-ClientProxiedBy: svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  184d47f0fd365108bd06ab26cdb3450b716269fd
-Gitweb:     https://git.kernel.org/tip/184d47f0fd365108bd06ab26cdb3450b716269fd
-Author:     Kees Cook <keescook@chromium.org>
-AuthorDate: Mon, 8 Oct 2018 16:54:34 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 9 Oct 2018 08:55:07 +0200
+Hi Morimoto-san
 
-x86/mm: Avoid VLA in pgd_alloc()
+Thanks for your comment
 
-Arnd Bergmann reported that turning on -Wvla found a new (unintended) VLA usage:
+On 2018/10/09 9:44, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+>> SSI can work in following modes
+>> 1. Basic Mode: (channel 1, 2, 4, 6, 8, 16)
+>> 2. TDM Extended Mode: (channel 6, 8)
+>> 3. TDM Split Mode: (channel 1, 2)
+>> 4. TDM Ex-Split mode: (Channel 2, 4, 6, 8, 10)
+> (snip)
+>>> So, my opinions for BUSIFn support are
+>>> 	- SSI mode should be selected automatically
+>> can you give me your idea, how to automatically determine working mode,
+>> when user plays 2 channel stream on playback dai-link
+> If my understanding was correct, we can do like this
+> If DT indicated sound card has dai-link x N, tdm-slots = <M>,
+> 	If (N, M) = (1, 2) : Basic mode
+> 	If (N, M) = (1, >2): TDM mode
+> 	If (N, M) = (2, 4) : TDM Split mode
+> 	If (N, M) = (2, >4): TDM Ex-Split mode
+> 	If (N, M) = (>2, 8): TDM Split mode
+> 	...
+>
+> Maybe some combination was wrong, but we can do something like this ?
+The idea to consider tdm_slot when determine SSI mode makes sense to me,
+by checking runtime channel and tdm_slots combination,
+I think SSI mode can be automatically selected like following:
 
-  arch/x86/mm/pgtable.c: In function 'pgd_alloc':
-  include/linux/build_bug.h:29:45: error: ISO C90 forbids variable length array 'u_pmds' [-Werror=vla]
-  arch/x86/mm/pgtable.c:190:34: note: in expansion of macro 'static_cpu_has'
-   #define PREALLOCATED_USER_PMDS  (static_cpu_has(X86_FEATURE_PTI) ? \
-                                    ^~~~~~~~~~~~~~
-  arch/x86/mm/pgtable.c:431:16: note: in expansion of macro 'PREALLOCATED_USER_PMDS'
-    pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
-                ^~~~~~~~~~~~~~~~~~~~~~
+1ch:  (tdm_slots < 4) Basic mode, (tdm_slots >= 4) TDM Split mode
+2ch: (2 <= tdm_slots < 8) Basic mode, (tdm_slots >= 8) TDM Ex-Split mode
+4ch: (4 <= tdm_slots < 8) Basic mode, (tdm_slots >= 8) TDM Ex-Split mode
+6ch: (6 <= tdm_slots < 8) Basic mode, (tdm_slots == 8) TDM Extended 
+mode, (8 < tdm_slots) TDM Ex-Split mode
+8ch: (6 <= tdm_slots < 8) TDM Extended mode, (8 <= tdm_slots < 16) Basic 
+mode, (tdm_slots == 16) TDM Ex-Split
+10ch: TDM Ex-Split mode
+16ch: Basic Mode
 
-Use the actual size of the array that is used for X86_FEATURE_PTI,
-which is known at build time, instead of the variable size.
+>> for example user asks dai-link0 to playback 2ch audio stream,
+>> driver can't determine which mode to work, as it can be Basic mode,
+>> Split mode or Ex-Split mode.
+> Why do we need to use Basic mode if HW has TDM Split mode connection?
+> If user playbacks 2ch audio in such situation,
+> we can use TDM Split mode (= only 2ch has sound, other channel has no sound ?)
+> user might start to playback for other channels.
+> I'm not sure how it works...
+>>> 	- BUSIFn connection should be selected on DT
+>> since which BUSIFx is used during audio data transfer, is not
+>> consideration of user,
+>> I think your previous suggestion, (automatically select BUSIFx) makes
+>> more sense
+> I'm not yet sure detail, but in your idea, does it mean,
+> BUSIFx connection might be exchanged runtime ?
+no BUSIFx shouldn't be changed during runtime, my idea is BUSIFx can be 
+automatically selected
+when corresponding dai-link is not active
 
-[ mingo: Squashed original fix with followup fix to avoid bisection breakage, wrote new changelog. ]
+The reason I added rsnd_ssi_select_busif(io, chan) in rsnd_hw_params() 
+in patch ASoC: rsnd: add busif property to dai stream of v2 patch-set,
+is because runtime channel is necessary information to determine which 
+BUSIFx to select,
+(which is mentioned in above)
+and at this stage (rsnd_hw_params()), all other control settings 
+(register setting, dma address calculation etc)
+haven't been done, so corresponding dai-link can be considered to be not 
+active at this timing
+but maybe you have better suggestion when to automatically select BUSIFx
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Original-written-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Toshi Kani <toshi.kani@hpe.com>
-Fixes: 1be3f247c288 ("x86/mm: Avoid VLA in pgd_alloc()")
-Link: http://lkml.kernel.org/r/20181008235434.GA35035@beast
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pgtable.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+What is your opinion?
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 089e78c4effd..59274e2c1ac4 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -115,6 +115,8 @@ static inline void pgd_list_del(pgd_t *pgd)
- 
- #define UNSHARED_PTRS_PER_PGD				\
- 	(SHARED_KERNEL_PMD ? KERNEL_PGD_BOUNDARY : PTRS_PER_PGD)
-+#define MAX_UNSHARED_PTRS_PER_PGD			\
-+	max_t(size_t, KERNEL_PGD_BOUNDARY, PTRS_PER_PGD)
- 
- 
- static void pgd_set_mm(pgd_t *pgd, struct mm_struct *mm)
-@@ -181,6 +183,7 @@ static void pgd_dtor(pgd_t *pgd)
-  * and initialize the kernel pmds here.
-  */
- #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
-+#define MAX_PREALLOCATED_PMDS	MAX_UNSHARED_PTRS_PER_PGD
- 
- /*
-  * We allocate separate PMDs for the kernel part of the user page-table
-@@ -189,6 +192,7 @@ static void pgd_dtor(pgd_t *pgd)
-  */
- #define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
- 					KERNEL_PGD_PTRS : 0)
-+#define MAX_PREALLOCATED_USER_PMDS KERNEL_PGD_PTRS
- 
- void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- {
-@@ -210,7 +214,9 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- 
- /* No need to prepopulate any pagetable entries in non-PAE modes. */
- #define PREALLOCATED_PMDS	0
-+#define MAX_PREALLOCATED_PMDS	0
- #define PREALLOCATED_USER_PMDS	 0
-+#define MAX_PREALLOCATED_USER_PMDS 0
- #endif	/* CONFIG_X86_PAE */
- 
- static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
-@@ -428,8 +434,8 @@ static inline void _pgd_free(pgd_t *pgd)
- pgd_t *pgd_alloc(struct mm_struct *mm)
- {
- 	pgd_t *pgd;
--	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
--	pmd_t *pmds[PREALLOCATED_PMDS];
-+	pmd_t *u_pmds[MAX_PREALLOCATED_USER_PMDS];
-+	pmd_t *pmds[MAX_PREALLOCATED_PMDS];
- 
- 	pgd = _pgd_alloc();
- 
+Thanks,
+Jiada
+> I think BUSIFx connection shouldn't exchanged runtime IMO.
+> Otherwise, sound position can't be fixed, and user can't control
+> sound, I think...
+
+>
+> Best regards
+> ---
+> Kuninori Morimoto
+
