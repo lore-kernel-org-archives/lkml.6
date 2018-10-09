@@ -4,70 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D99AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDA3C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CD32075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B64214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:15:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="oON6cxI0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CD32075C
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="ZD1NiJwC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B64214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeJISby (ORCPT
+        id S1728064AbeJISb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:31:54 -0400
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:36059 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbeJISbx (ORCPT
+        Tue, 9 Oct 2018 14:31:57 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40778 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727237AbeJISb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:31:53 -0400
-Received: by mail-pf1-f178.google.com with SMTP id l81-v6so684172pfg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:15:26 -0700 (PDT)
+        Tue, 9 Oct 2018 14:31:56 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n31-v6so650151pgm.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:15:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mq7QT5AwEHerzLjtp9AEpsdA3BnMo73ASBrU7qWuG9g=;
-        b=oON6cxI0qVT59/WE1KlehgABIyHbHlLwYQaf3LE/PYHn/MLgXFkBDMtN/qeRYq+Vu8
-         IooPGjEC7NcgOUo/fX3kH7wAyzojRLCsGOmQ0NVRMDzdhx8YGOUcxbhTvaKpxqDmQpV0
-         +ziTzelqwZ6Ux+ihgFuFYaZPMAPRTLqTYec98zjkFeUQeGS52v/Ajrz5555mETL99N7M
-         /0dFwoBjh9s5+tt/19yyy4NZp3FKH5BbSiU+mq5P0/7UqH8DLPS4whDS/l1e2cnCX88h
-         Go+7iZVvZJW5gokV3y1VpiE9qcE/7BW8tjL8NQq7zJNMX4gelAPrR2i6J5GtTdk0NGM0
-         /BGQ==
+        bh=fRum3lXB1bNHEAQb7lz6QST7UOincCrT8LETdDV7j20=;
+        b=ZD1NiJwCM/LEhtSjNAh1zXAUWqQeQWAYG8PlpHvt8L0dS+58TQ7JQYFx87WIY4YYk9
+         qrvCOJHu+q3YhDwJnZokyFtxuXRirnfpBbjTqpdAb8/teRVc5rpVNQ+wj40JUknMc34Y
+         aqbBQkUm/tThuEL0JHmbZ4paku0+tXiNovLSrC9y7Bc/SN6JdUusSV20imi5TogWgibW
+         ioAAc73qNUj9umpUGGLxke1ntjthdBv6en0VErZeeE9B3aQum90W4K2eUjcHBy56XnPm
+         zlJ3v3Y/mVROLzk8bDqnMcTJMB5Q3zI9kAuSEqle7ULDrxEZ+4iggXpYpG2t7gWUntk4
+         FrXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mq7QT5AwEHerzLjtp9AEpsdA3BnMo73ASBrU7qWuG9g=;
-        b=SA3tfpR3Vx1QZTYF9Q8UsSsWVbmxg+wqRxLKfbDjnAg3rC7DXoA+CWqmXFyqVM0FOk
-         vDxNI8exm7EaLFWg96fH8DrWPnyz3PENFIjLS/X/qGG0+shovfMKJzbpJ/npHeX/igQA
-         o8bkEdWV0bnLqiajAvLU9tTGvVtJ4x6zttBl/l24tgIKWpDI+ualBjRRGYBtZ+AcaCg/
-         iFt4mt6uHTJOBsUhkK46jokz3bFP0zumUKlO2JCqHGryOOv22NifeW/lpNyoazQHfqbn
-         C5+V01IVy1/ghStg9sLrjv9EIpDRt+Ryuv53zlpg1o/Aw7uLBNMZsF824WSd25DkotDu
-         CMWQ==
-X-Gm-Message-State: ABuFfohW/bUmHBnyD7zbNIRU6d3+U9xVsiaAUxi2y18jYc1ZQ9298MhZ
-        5MuojJ7r3QBx6oJwU/6yBhDIEA==
-X-Google-Smtp-Source: ACcGV60aveD2tS5WmOC1gzETUgwvv3i+TiFOWORUS/Jdbqa5W9/3/z8etsYpCZKlF0b4nUAspqgW/w==
-X-Received: by 2002:a63:a012:: with SMTP id r18-v6mr25673128pge.282.1539083726204;
-        Tue, 09 Oct 2018 04:15:26 -0700 (PDT)
+        bh=fRum3lXB1bNHEAQb7lz6QST7UOincCrT8LETdDV7j20=;
+        b=SD/0OZ8gzClQsaOg5FGcPwTOvLQJDnX/mCWb21UJfbmLr1YArc4SGD2SMRw0A4N60b
+         DJ4HgLy26xjs2wF72uYhC4jYREektIxbKFS2fLMqdFbWXDOBWeCDBbZ8JF30Iz5GTL+A
+         /34SRWTB8bVCc74IGwBWIe0MhY5z+yS1MGIwL93JQzqQBi/fvMsM0pJcjCx2uJt4lKNg
+         n/Ea3HwXVdi7wdkPBE6pGCOsYIf7RAGhWQ5PNkTBGm6fA35hzUcYts/ExPT7ZQ4voLZ6
+         f3C+gbwjXwKp2AzMzbaDIuhkYUAps4xlw79jt8PP2OqLqcMY5IWJQub/XZyixiDCOBOu
+         SL1w==
+X-Gm-Message-State: ABuFfoj4dHXC6++DDWSCMLXfvbc3y7OCg3+nAKb1oRj47Sq8OJ2nFJ8/
+        W8cf2vdmWABgiC2K1CQanTE1Pw==
+X-Google-Smtp-Source: ACcGV61NHfzQJkObrs0XhX4xsaKJzldURAStqeQvpISM+oGL9fGhCi0iYc26AsJpZ5m4ssae4df/Dg==
+X-Received: by 2002:a63:2903:: with SMTP id p3-v6mr19968798pgp.188.1539083729694;
+        Tue, 09 Oct 2018 04:15:29 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.15.23
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.15.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:15:25 -0700 (PDT)
+        Tue, 09 Oct 2018 04:15:28 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 39/45] lightnvm: pblk: encapsulate rb pointer operations
-Date:   Tue,  9 Oct 2018 13:12:09 +0200
-Message-Id: <20181009111215.7653-40-mb@lightnvm.io>
+Subject: [GIT PULL 40/45] lightnvm: pblk: move ring buffer alloc/free rb init
+Date:   Tue,  9 Oct 2018 13:12:10 +0200
+Message-Id: <20181009111215.7653-41-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -81,142 +81,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-pblk's read/write buffer is always a power-of-2, thus wrapping up the
-buffer can be done with a bit mask. Since this is an implementation
-detail internal to the write buffer, make a helper that hides pointer
-increment + wrap, and allows to transparently relax this assumption in
-the future.
+pblk's read/write buffer currently takes a buffer and its size and uses
+it to create the metadata around it to use it as a ring buffer. This
+puts the responsibility of allocating/freeing ring buffer memory on the
+ring buffer user. Instead, move it inside of the ring buffer helpers
+(pblk-rb.c). This simplifies creation/destruction routines.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-rb.c    | 21 +++++++++++++--------
- drivers/lightnvm/pblk-write.c |  7 ++-----
- drivers/lightnvm/pblk.h       |  2 ++
- 3 files changed, 17 insertions(+), 13 deletions(-)
+ drivers/lightnvm/pblk-init.c | 18 ++----------
+ drivers/lightnvm/pblk-rb.c   | 53 ++++++++++++++++++++++--------------
+ drivers/lightnvm/pblk.h      |  7 ++---
+ 3 files changed, 38 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index 82829e8151db..e46d8cb9d28b 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -169,6 +169,12 @@ static unsigned int pblk_rb_space(struct pblk_rb *rb)
- 	return pblk_rb_ring_space(rb, mem, sync, rb->nr_entries);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index f84c428a76f1..b2c49fc006c9 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -185,17 +185,14 @@ static void pblk_rwb_free(struct pblk *pblk)
+ 	if (pblk_rb_tear_down_check(&pblk->rwb))
+ 		pblk_err(pblk, "write buffer error on tear down\n");
+ 
+-	pblk_rb_data_free(&pblk->rwb);
+-	vfree(pblk_rb_entries_ref(&pblk->rwb));
++	pblk_rb_free(&pblk->rwb);
  }
  
-+unsigned int pblk_rb_ptr_wrap(struct pblk_rb *rb, unsigned int p,
-+			      unsigned int nr_entries)
+ static int pblk_rwb_init(struct pblk *pblk)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	struct pblk_rb_entry *entries;
+-	unsigned long nr_entries, buffer_size;
+-	unsigned int power_size, power_seg_sz;
++	unsigned long buffer_size;
+ 	int pgs_in_buffer;
+ 
+ 	pgs_in_buffer = max(geo->mw_cunits, geo->ws_opt) * geo->all_luns;
+@@ -205,16 +202,7 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	else
+ 		buffer_size = pgs_in_buffer;
+ 
+-	nr_entries = pblk_rb_calculate_size(buffer_size);
+-
+-	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
+-	if (!entries)
+-		return -ENOMEM;
+-
+-	power_size = get_count_order(nr_entries);
+-	power_seg_sz = get_count_order(geo->csecs);
+-
+-	return pblk_rb_init(&pblk->rwb, entries, power_size, power_seg_sz);
++	return pblk_rb_init(&pblk->rwb, buffer_size, geo->csecs);
+ }
+ 
+ /* Minimum pages needed within a lun */
+diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+index e46d8cb9d28b..f653faa6a9ed 100644
+--- a/drivers/lightnvm/pblk-rb.c
++++ b/drivers/lightnvm/pblk-rb.c
+@@ -23,7 +23,7 @@
+ 
+ static DECLARE_RWSEM(pblk_rb_lock);
+ 
+-void pblk_rb_data_free(struct pblk_rb *rb)
++static void pblk_rb_data_free(struct pblk_rb *rb)
+ {
+ 	struct pblk_rb_pages *p, *t;
+ 
+@@ -36,22 +36,46 @@ void pblk_rb_data_free(struct pblk_rb *rb)
+ 	up_write(&pblk_rb_lock);
+ }
+ 
++void pblk_rb_free(struct pblk_rb *rb)
 +{
-+	return (p + nr_entries) & (rb->nr_entries - 1);
++	pblk_rb_data_free(rb);
++	vfree(rb->entries);
++}
++
++/*
++ * pblk_rb_calculate_size -- calculate the size of the write buffer
++ */
++static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
++{
++	/* Alloc a write buffer that can at least fit 128 entries */
++	return (1 << max(get_count_order(nr_entries), 7));
 +}
 +
  /*
-  * Buffer count is calculated with respect to the submission entry signaling the
-  * entries that are available to send to the media
-@@ -195,8 +201,7 @@ unsigned int pblk_rb_read_commit(struct pblk_rb *rb, unsigned int nr_entries)
- 
- 	subm = READ_ONCE(rb->subm);
- 	/* Commit read means updating submission pointer */
--	smp_store_release(&rb->subm,
--				(subm + nr_entries) & (rb->nr_entries - 1));
-+	smp_store_release(&rb->subm, pblk_rb_ptr_wrap(rb, subm, nr_entries));
- 
- 	return subm;
- }
-@@ -229,7 +234,7 @@ static int __pblk_rb_update_l2p(struct pblk_rb *rb, unsigned int to_update)
- 		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
- 		kref_put(&line->ref, pblk_line_put);
- 		clean_wctx(w_ctx);
--		rb->l2p_update = (rb->l2p_update + 1) & (rb->nr_entries - 1);
-+		rb->l2p_update = pblk_rb_ptr_wrap(rb, rb->l2p_update, 1);
- 	}
- 
- 	pblk_rl_out(&pblk->rl, user_io, gc_io);
-@@ -408,7 +413,7 @@ static int pblk_rb_may_write(struct pblk_rb *rb, unsigned int nr_entries,
- 		return 0;
- 
- 	/* Protect from read count */
--	smp_store_release(&rb->mem, (*pos + nr_entries) & (rb->nr_entries - 1));
-+	smp_store_release(&rb->mem, pblk_rb_ptr_wrap(rb, *pos, nr_entries));
- 	return 1;
- }
- 
-@@ -432,7 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb *rb, unsigned int nr_entries,
- 	if (!__pblk_rb_may_write(rb, nr_entries, pos))
- 		return 0;
- 
--	mem = (*pos + nr_entries) & (rb->nr_entries - 1);
-+	mem = pblk_rb_ptr_wrap(rb, *pos, nr_entries);
- 	*io_ret = NVM_IO_DONE;
- 
- 	if (bio->bi_opf & REQ_PREFLUSH) {
-@@ -572,7 +577,7 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
- 		/* Release flags on context. Protect from writes */
- 		smp_store_release(&entry->w_ctx.flags, flags);
- 
--		pos = (pos + 1) & (rb->nr_entries - 1);
-+		pos = pblk_rb_ptr_wrap(rb, pos, 1);
- 	}
- 
- 	if (pad) {
-@@ -652,7 +657,7 @@ int pblk_rb_copy_to_bio(struct pblk_rb *rb, struct bio *bio, sector_t lba,
- 
- struct pblk_w_ctx *pblk_rb_w_ctx(struct pblk_rb *rb, unsigned int pos)
+  * Initialize ring buffer. The data and metadata buffers must be previously
+  * allocated and their size must be a power of two
+  * (Documentation/core-api/circular-buffers.rst)
+  */
+-int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+-		 unsigned int power_size, unsigned int power_seg_sz)
++int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int seg_size)
  {
--	unsigned int entry = pos & (rb->nr_entries - 1);
-+	unsigned int entry = pblk_rb_ptr_wrap(rb, pos, 0);
+ 	struct pblk *pblk = container_of(rb, struct pblk, rwb);
++	struct pblk_rb_entry *entries;
+ 	unsigned int init_entry = 0;
+-	unsigned int alloc_order = power_size;
+ 	unsigned int max_order = MAX_ORDER - 1;
+-	unsigned int order, iter;
++	unsigned int power_size, power_seg_sz;
++	unsigned int alloc_order, order, iter;
++	unsigned int nr_entries;
++
++	nr_entries = pblk_rb_calculate_size(size);
++	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
++	if (!entries)
++		return -ENOMEM;
++
++	power_size = get_count_order(size);
++	power_seg_sz = get_count_order(seg_size);
  
- 	return &rb->entries[entry].w_ctx;
- }
-@@ -698,7 +703,7 @@ unsigned int pblk_rb_sync_advance(struct pblk_rb *rb, unsigned int nr_entries)
+ 	down_write(&pblk_rb_lock);
+-	rb->entries = rb_entry_base;
++	rb->entries = entries;
+ 	rb->seg_size = (1 << power_seg_sz);
+ 	rb->nr_entries = (1 << power_size);
+ 	rb->mem = rb->subm = rb->sync = rb->l2p_update = 0;
+@@ -62,6 +86,7 @@ int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+ 
+ 	INIT_LIST_HEAD(&rb->pages);
+ 
++	alloc_order = power_size;
+ 	if (alloc_order >= max_order) {
+ 		order = max_order;
+ 		iter = (1 << (alloc_order - max_order));
+@@ -80,6 +105,7 @@ int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+ 		page_set = kmalloc(sizeof(struct pblk_rb_pages), GFP_KERNEL);
+ 		if (!page_set) {
+ 			up_write(&pblk_rb_lock);
++			vfree(entries);
+ 			return -ENOMEM;
  		}
- 	}
  
--	sync = (sync + nr_entries) & (rb->nr_entries - 1);
-+	sync = pblk_rb_ptr_wrap(rb, sync, nr_entries);
- 
- 	/* Protect from counts */
- 	smp_store_release(&rb->sync, sync);
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index 277abc8633f7..fa8726493b39 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -140,12 +140,11 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
- 	struct pblk_w_ctx *w_ctx;
- 	struct ppa_addr ppa_l2p;
- 	int flags;
--	unsigned int pos, i;
-+	unsigned int i;
- 
- 	spin_lock(&pblk->trans_lock);
--	pos = sentry;
- 	for (i = 0; i < nr_entries; i++) {
--		entry = &rb->entries[pos];
-+		entry = &rb->entries[pblk_rb_ptr_wrap(rb, sentry, i)];
- 		w_ctx = &entry->w_ctx;
- 
- 		/* Check if the lba has been overwritten */
-@@ -164,8 +163,6 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
- 		 */
- 		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
- 		kref_put(&line->ref, pblk_line_put);
--
--		pos = (pos + 1) & (rb->nr_entries - 1);
- 	}
- 	spin_unlock(&pblk->trans_lock);
+@@ -89,6 +115,7 @@ int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+ 			kfree(page_set);
+ 			pblk_rb_data_free(rb);
+ 			up_write(&pblk_rb_lock);
++			vfree(entries);
+ 			return -ENOMEM;
+ 		}
+ 		kaddr = page_address(page_set->pages);
+@@ -125,20 +152,6 @@ int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+ 	return 0;
  }
+ 
+-/*
+- * pblk_rb_calculate_size -- calculate the size of the write buffer
+- */
+-unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
+-{
+-	/* Alloc a write buffer that can at least fit 128 entries */
+-	return (1 << max(get_count_order(nr_entries), 7));
+-}
+-
+-void *pblk_rb_entries_ref(struct pblk_rb *rb)
+-{
+-	return rb->entries;
+-}
+-
+ static void clean_wctx(struct pblk_w_ctx *w_ctx)
+ {
+ 	int flags;
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 22586b78198a..7660811aa8af 100644
+index 7660811aa8af..0f98ea24ee59 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -760,6 +760,8 @@ unsigned int pblk_rb_read_commit(struct pblk_rb *rb, unsigned int entries);
+@@ -734,10 +734,7 @@ struct pblk_line_ws {
+ /*
+  * pblk ring buffer operations
+  */
+-int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
+-		 unsigned int power_size, unsigned int power_seg_sz);
+-unsigned int pblk_rb_calculate_size(unsigned int nr_entries);
+-void *pblk_rb_entries_ref(struct pblk_rb *rb);
++int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int seg_sz);
+ int pblk_rb_may_write_user(struct pblk_rb *rb, struct bio *bio,
+ 			   unsigned int nr_entries, unsigned int *pos);
+ int pblk_rb_may_write_gc(struct pblk_rb *rb, unsigned int nr_entries,
+@@ -771,7 +768,7 @@ unsigned int pblk_rb_wrap_pos(struct pblk_rb *rb, unsigned int pos);
  
- unsigned int pblk_rb_sync_init(struct pblk_rb *rb, unsigned long *flags);
- unsigned int pblk_rb_sync_advance(struct pblk_rb *rb, unsigned int nr_entries);
-+unsigned int pblk_rb_ptr_wrap(struct pblk_rb *rb, unsigned int p,
-+			      unsigned int nr_entries);
- void pblk_rb_sync_end(struct pblk_rb *rb, unsigned long *flags);
- unsigned int pblk_rb_flush_point_count(struct pblk_rb *rb);
+ int pblk_rb_tear_down_check(struct pblk_rb *rb);
+ int pblk_rb_pos_oob(struct pblk_rb *rb, u64 pos);
+-void pblk_rb_data_free(struct pblk_rb *rb);
++void pblk_rb_free(struct pblk_rb *rb);
+ ssize_t pblk_rb_sysfs(struct pblk_rb *rb, char *buf);
  
+ /*
 -- 
 2.17.1
 
