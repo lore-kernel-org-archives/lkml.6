@@ -2,108 +2,184 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABD7C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BEEC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DAFE21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZBPda2f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DAFE21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3524521479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3524521479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeJIWR1 (ORCPT
+        id S1727298AbeJIWRa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:17:27 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42401 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeJIWR0 (ORCPT
+        Tue, 9 Oct 2018 18:17:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53791 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbeJIWR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:17:26 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f26-v6so974441pfn.9;
-        Tue, 09 Oct 2018 08:00:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZxiI7aNf4MPsBPvgfy9JgBpDO30bdl/+v1RrtegkG4Y=;
-        b=VZBPda2fulVDC5wvBjZHqGM9qs5rJqmd53Xu25Li4x7AUhpKYg6L/1Rv6on62Co/VN
-         5MskN3oCnb6tJQvpYcNbUgUMzW6pxuSfCcBmn8HEK9055JhuZ6kExU8Hy+hRAGXHApqL
-         1vKeI8PpEa45GJM/WMBAuT0qsvJ5gKScAygTpTdKZj2kaXPjIkAPCMtQqtIjS/uk6O3k
-         7gLZp3wEwZTwFdlXWDN6l2NETq0mw1TcmRDo43sz9aGvj7a1/GbM3E+8sOcitgwMFDnc
-         i00Ehv67erhQI3p+mmBwokCaWjtutWlOOKyzUlEIXluvbHsfl7Pra8N5I5IjxbRf6GIq
-         Mnzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZxiI7aNf4MPsBPvgfy9JgBpDO30bdl/+v1RrtegkG4Y=;
-        b=Kyr+KImvqrLOO0T5lQMSH8SV7eGHlv3oHimg6xf9U1MZUDXGOhunc1yBtCvZeT2iif
-         b94GusXMtZyphWDjXSQM+r8u1C2vyZIrwbxzobhqKw4X0HXpAbbYAWNX0es5CCEaIWZd
-         Mg42HtIEpVPJZ6HWvSGtLe3QkDVtNxnHDMX0ZBsuU4NbkrKY1UlpdeVcxH+LomQiA4qD
-         Ctzb3Et7/kOLXAteSVJVoxjh+Bv5Jx+cjSOaQkKr0d24Qa03R3dN/xjfuYsxHiQXETn5
-         pkHvrheqMUsxo7k7hrcW0f2foaU4i547XXL4LGd6uzX/gxZ/k9adlJQyOudJSXGDPqJ6
-         KUJQ==
-X-Gm-Message-State: ABuFfohJ1H8YzX4gQ7q3n8m/uAYvNbmOtvwHXB7yeUFUzeb+6jxZA8+v
-        tDD5qRjTSdmSSiPDMD/UEKY=
-X-Google-Smtp-Source: ACcGV60I0QngDVAyTPSh39T8Bkt2/zLhavLciSQ+oIrTGvKpgT0u2lNjzK9wJrNMU0SLc2jV72eauw==
-X-Received: by 2002:a63:d84a:: with SMTP id k10-v6mr26232665pgj.314.1539097206854;
-        Tue, 09 Oct 2018 08:00:06 -0700 (PDT)
-Received: from [192.168.88.43] (150.sub-166-148-115.myvzw.com. [166.148.115.150])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm22705083pgl.6.2018.10.09.08.00.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 08:00:06 -0700 (PDT)
-Subject: Re: general protection fault in __handle_mm_fault
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com
-Cc:     David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com
-References: <0000000000009d47b2057782bab4@google.com>
- <CAF=yD-+7NxN37Ez=3WXG0+2i6j30uSV8u9D7oJXEhp+SxzYCpA@mail.gmail.com>
- <CAF=yD-+Qh5f9kqmYLY5EyUwNPuyhMpBxz6dh_kfzFZsgE3UijQ@mail.gmail.com>
- <87va6bwlfg.fsf@linux.ibm.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <48d891dd-3f45-c03c-a55b-bb153080881a@gmail.com>
-Date:   Tue, 9 Oct 2018 08:00:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 18:17:29 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w99Exmrx1081065
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 07:59:48 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w99Exl5R1081062;
+        Tue, 9 Oct 2018 07:59:47 -0700
+Date:   Tue, 9 Oct 2018 07:59:47 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rik van Riel <tipbot@zytor.com>
+Message-ID: <tip-7d49b28a80b830c3ca876d33bedc58d62a78e16f@git.kernel.org>
+Cc:     riel@surriel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, peterz@infradead.org, riel@surriel.com,
+          hpa@zytor.com
+In-Reply-To: <20180926035844.1420-5-riel@surriel.com>
+References: <20180926035844.1420-5-riel@surriel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] smp,cpumask: introduce on_each_cpu_cond_mask
+Git-Commit-ID: 7d49b28a80b830c3ca876d33bedc58d62a78e16f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <87va6bwlfg.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  7d49b28a80b830c3ca876d33bedc58d62a78e16f
+Gitweb:     https://git.kernel.org/tip/7d49b28a80b830c3ca876d33bedc58d62a78e16f
+Author:     Rik van Riel <riel@surriel.com>
+AuthorDate: Tue, 25 Sep 2018 23:58:41 -0400
+Committer:  Peter Zijlstra <peterz@infradead.org>
+CommitDate: Tue, 9 Oct 2018 16:51:11 +0200
 
+smp,cpumask: introduce on_each_cpu_cond_mask
 
-On 10/09/2018 01:53 AM, Aneesh Kumar K.V wrote:
-...
+Introduce a variant of on_each_cpu_cond that iterates only over the
+CPUs in a cpumask, in order to avoid making callbacks for every single
+CPU in the system when we only need to test a subset.
 
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cdb67e400000
-...
+Cc: npiggin@gmail.com
+Cc: mingo@kernel.org
+Cc: will.deacon@arm.com
+Cc: songliubraving@fb.com
+Cc: kernel-team@fb.com
+Cc: hpa@zytor.com
+Cc: luto@kernel.org
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180926035844.1420-5-riel@surriel.com
+---
+ include/linux/smp.h |  4 ++++
+ kernel/smp.c        | 17 +++++++++++++----
+ kernel/up.c         | 14 +++++++++++---
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-> 
-> Can you check with this patch
-
-Well, this is a C repro, you can test this yourself instead of asking Willem who
-already did a painful bisection.
-
-Thanks.
+diff --git a/include/linux/smp.h b/include/linux/smp.h
+index 9fb239e12b82..a56f08ff3097 100644
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -53,6 +53,10 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		smp_call_func_t func, void *info, bool wait,
+ 		gfp_t gfp_flags);
+ 
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
++		smp_call_func_t func, void *info, bool wait,
++		gfp_t gfp_flags, const struct cpumask *mask);
++
+ int smp_call_function_single_async(int cpu, call_single_data_t *csd);
+ 
+ #ifdef CONFIG_SMP
+diff --git a/kernel/smp.c b/kernel/smp.c
+index a7d4f9f50a49..163c451af42e 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -669,9 +669,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
+  * You must not call this function with disabled interrupts or
+  * from a hardware interrupt handler or from a bottom half handler.
+  */
+-void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
+ 			smp_call_func_t func, void *info, bool wait,
+-			gfp_t gfp_flags)
++			gfp_t gfp_flags, const struct cpumask *mask)
+ {
+ 	cpumask_var_t cpus;
+ 	int cpu, ret;
+@@ -680,7 +680,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 
+ 	if (likely(zalloc_cpumask_var(&cpus, (gfp_flags|__GFP_NOWARN)))) {
+ 		preempt_disable();
+-		for_each_online_cpu(cpu)
++		for_each_cpu(cpu, mask)
+ 			if (cond_func(cpu, info))
+ 				__cpumask_set_cpu(cpu, cpus);
+ 		on_each_cpu_mask(cpus, func, info, wait);
+@@ -692,7 +692,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		 * just have to IPI them one by one.
+ 		 */
+ 		preempt_disable();
+-		for_each_online_cpu(cpu)
++		for_each_cpu(cpu, mask)
+ 			if (cond_func(cpu, info)) {
+ 				ret = smp_call_function_single(cpu, func,
+ 								info, wait);
+@@ -701,6 +701,15 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		preempt_enable();
+ 	}
+ }
++EXPORT_SYMBOL(on_each_cpu_cond_mask);
++
++void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++			smp_call_func_t func, void *info, bool wait,
++			gfp_t gfp_flags)
++{
++	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags,
++				cpu_online_mask);
++}
+ EXPORT_SYMBOL(on_each_cpu_cond);
+ 
+ static void do_nothing(void *unused)
+diff --git a/kernel/up.c b/kernel/up.c
+index 42c46bf3e0a5..ff536f9cc8a2 100644
+--- a/kernel/up.c
++++ b/kernel/up.c
+@@ -68,9 +68,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
+  * Preemption is disabled here to make sure the cond_func is called under the
+  * same condtions in UP and SMP.
+  */
+-void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+-		      smp_call_func_t func, void *info, bool wait,
+-		      gfp_t gfp_flags)
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
++			   smp_call_func_t func, void *info, bool wait,
++			   gfp_t gfp_flags, const struct cpumask *mask)
+ {
+ 	unsigned long flags;
+ 
+@@ -82,6 +82,14 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 	}
+ 	preempt_enable();
+ }
++EXPORT_SYMBOL(on_each_cpu_cond_mask);
++
++void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++		      smp_call_func_t func, void *info, bool wait,
++		      gfp_t gfp_flags)
++{
++	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags, NULL);
++}
+ EXPORT_SYMBOL(on_each_cpu_cond);
+ 
+ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
