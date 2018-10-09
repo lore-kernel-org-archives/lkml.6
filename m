@@ -4,273 +4,186 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3418AECDE4F
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464A6C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED646206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:49:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED646206B2
+	by mail.kernel.org (Postfix) with ESMTP id E45B1214FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45B1214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbeJJAH3 (ORCPT
+        id S1726750AbeJJAKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:07:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48418 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 20:10:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50488 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbeJJAH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:07:28 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726393AbeJJAKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 20:10:44 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EEB93082132;
-        Tue,  9 Oct 2018 16:49:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DF46105707B;
-        Tue,  9 Oct 2018 16:49:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 22/22] KEYS: asym_tpm: Add support for the sign operation
- [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     Denis Kenzior <denkenz@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Marcel Holtmann <marcel@holtmann.org>, dhowells@redhat.com,
-        denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 17:49:35 +0100
-Message-ID: <153910377563.12141.14769652909465225699.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
-References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mx1.redhat.com (Postfix) with ESMTPS id 2D8C73082E4E;
+        Tue,  9 Oct 2018 16:52:52 +0000 (UTC)
+Received: from [10.36.117.230] (ovpn-117-230.ams2.redhat.com [10.36.117.230])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E9AD694D0;
+        Tue,  9 Oct 2018 16:52:50 +0000 (UTC)
+Subject: Re: [PATCH v2] KVM: LAPIC: Tune lapic_timer_advance_ns automatically
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <1539046928-18600-1-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8f6a633b-9b7d-656e-599a-e1811656bbf1@redhat.com>
+Date:   Tue, 9 Oct 2018 18:52:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 09 Oct 2018 16:49:38 +0000 (UTC)
+In-Reply-To: <1539046928-18600-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 09 Oct 2018 16:52:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kenzior <denkenz@gmail.com>
+On 09/10/2018 03:02, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> In cloud environment, lapic_timer_advance_ns is needed to be tuned for every CPU 
+> generations, and every host kernel versions(the kvm-unit-tests/tscdeadline_latency.flat 
+> is 5700 cycles for upstream kernel and 9600 cycles for our 3.10 product kernel, 
+> both preemption_timer=N, Skylake server).
+> 
+> This patch adds the capability to automatically tune lapic_timer_advance_ns
+> step by step, the initial value is 1000ns as 'commit d0659d946be0 ("KVM: x86: 
+> add option to advance tscdeadline hrtimer expiration")' recommended, it will be 
+> reduced when it is too early, and increased when it is too late. The guest_tsc 
+> and tsc_deadline are hard to equal, so we assume we are done when the delta 
+> is within a small scope e.g. 100 cycles. This patch reduces latency 
+> (kvm-unit-tests/tscdeadline_latency, busy waits, preemption_timer enabled)
+> from ~2600 cyles to ~1200 cyles on our Skylake server.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Liran Alon <liran.alon@oracle.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2:
+>  * converts between guest TSC units to host nanoseconds correctly
+>  * put hard-coded numbers to #define 
+> 
+>  arch/x86/kvm/lapic.c | 25 ++++++++++++++++++++++++-
+>  arch/x86/kvm/x86.c   |  2 +-
+>  2 files changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index fbb0e6d..197cf5d 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -70,6 +70,11 @@
+>  #define APIC_BROADCAST			0xFF
+>  #define X2APIC_BROADCAST		0xFFFFFFFFul
+>  
+> +static bool lapic_timer_advance_adjust_done = false;
+> +#define LAPIC_TIMER_ADVANCE_ADJUST_DONE 100
+> +/* step-by-step approximation to mitigate fluctuation */
+> +#define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
+> +
+>  static inline int apic_test_vector(int vec, void *bitmap)
+>  {
+>  	return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
+> @@ -1472,7 +1477,7 @@ static bool lapic_timer_int_injected(struct kvm_vcpu *vcpu)
+>  void wait_lapic_expire(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_lapic *apic = vcpu->arch.apic;
+> -	u64 guest_tsc, tsc_deadline;
+> +	u64 guest_tsc, tsc_deadline, ns;
+>  
+>  	if (!lapic_in_kernel(vcpu))
+>  		return;
+> @@ -1492,6 +1497,24 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+>  	if (guest_tsc < tsc_deadline)
+>  		__delay(min(tsc_deadline - guest_tsc,
+>  			nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
+> +
+> +	if (!lapic_timer_advance_adjust_done) {
+> +		/* too early */
+> +		if (guest_tsc < tsc_deadline) {
+> +			ns = (tsc_deadline - guest_tsc) * 1000000ULL;
+> +			do_div(ns, vcpu->arch.virtual_tsc_khz);
+> +			lapic_timer_advance_ns -= min((unsigned int)ns,
+> +				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
+> +		} else {
+> +		/* too late */
+> +			ns = (guest_tsc - tsc_deadline) * 1000000ULL;
+> +			do_div(ns, vcpu->arch.virtual_tsc_khz);
+> +			lapic_timer_advance_ns += min((unsigned int)ns,
+> +				lapic_timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
+> +		}
+> +		if (abs(guest_tsc - tsc_deadline) < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
+> +			lapic_timer_advance_adjust_done = true;
+> +	}
+>  }
+>  
+>  static void start_sw_tscdeadline(struct kvm_lapic *apic)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index ca71773..1f3f955 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -136,7 +136,7 @@ static u32 __read_mostly tsc_tolerance_ppm = 250;
+>  module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
+>  
+>  /* lapic timer advance (tscdeadline mode only) in nanoseconds */
+> -unsigned int __read_mostly lapic_timer_advance_ns = 0;
+> +unsigned int __read_mostly lapic_timer_advance_ns = 1000;
+>  module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
+>  EXPORT_SYMBOL_GPL(lapic_timer_advance_ns);
+>  
+> 
 
-The sign operation can operate in a non-hashed mode by running the RSA
-sign operation directly on the input.  This assumes that the input is
-less than key_size_in_bytes - 11.  Since the TPM performs its own PKCS1
-padding, it isn't possible to support 'raw' mode, only 'pkcs1'.
+Queued, thanks.
 
-Alternatively, a hashed version is also possible.  In this variant the
-input is hashed (by userspace) via the selected hash function first.
-Then this implementation takes care of converting the hash to ASN.1
-format and the sign operation is performed on the result.  This is
-similar to the implementation inside crypto/rsa-pkcs1pad.c.
-
-ASN1 templates were copied from crypto/rsa-pkcs1pad.c.  There seems to
-be no easy way to expose that functionality, but likely the templates
-should be shared somehow.
-
-The sign operation is implemented via TPM_Sign operation on the TPM.
-It is assumed that the TPM wrapped key provided uses
-TPM_SS_RSASSAPKCS1v15_DER signature scheme.  This allows the TPM_Sign
-operation to work on data up to key_len_in_bytes - 11 bytes long.
-
-In theory, we could also use TPM_Unbind instead of TPM_Sign, but we would
-have to manually pkcs1 pad the digest first.
-
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Marcel Holtmann <marcel@holtmann.org>
-Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
----
-
- crypto/asymmetric_keys/asym_tpm.c |  156 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index a5a5f913a74f..5d4c270463f6 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -435,7 +435,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
- 
- 	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
- 			      KEYCTL_SUPPORTS_DECRYPT |
--			      KEYCTL_SUPPORTS_VERIFY;
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
- 
- 	ret = 0;
- error_free_tfm:
-@@ -556,6 +557,156 @@ static int tpm_key_decrypt(struct tpm_key *tk,
- 	return r;
- }
- 
-+/*
-+ * Hash algorithm OIDs plus ASN.1 DER wrappings [RFC4880 sec 5.2.2].
-+ */
-+static const u8 digest_info_md5[] = {
-+	0x30, 0x20, 0x30, 0x0c, 0x06, 0x08,
-+	0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x05, /* OID */
-+	0x05, 0x00, 0x04, 0x10
-+};
-+
-+static const u8 digest_info_sha1[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x0e, 0x03, 0x02, 0x1a,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_rmd160[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x24, 0x03, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_sha224[] = {
-+	0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04,
-+	0x05, 0x00, 0x04, 0x1c
-+};
-+
-+static const u8 digest_info_sha256[] = {
-+	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x20
-+};
-+
-+static const u8 digest_info_sha384[] = {
-+	0x30, 0x41, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02,
-+	0x05, 0x00, 0x04, 0x30
-+};
-+
-+static const u8 digest_info_sha512[] = {
-+	0x30, 0x51, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03,
-+	0x05, 0x00, 0x04, 0x40
-+};
-+
-+static const struct asn1_template {
-+	const char	*name;
-+	const u8	*data;
-+	size_t		size;
-+} asn1_templates[] = {
-+#define _(X) { #X, digest_info_##X, sizeof(digest_info_##X) }
-+	_(md5),
-+	_(sha1),
-+	_(rmd160),
-+	_(sha256),
-+	_(sha384),
-+	_(sha512),
-+	_(sha224),
-+	{ NULL }
-+#undef _
-+};
-+
-+static const struct asn1_template *lookup_asn1(const char *name)
-+{
-+	const struct asn1_template *p;
-+
-+	for (p = asn1_templates; p->name; p++)
-+		if (strcmp(name, p->name) == 0)
-+			return p;
-+	return NULL;
-+}
-+
-+/*
-+ * Sign operation is performed with the private key in the TPM.
-+ */
-+static int tpm_key_sign(struct tpm_key *tk,
-+			struct kernel_pkey_params *params,
-+			const void *in, void *out)
-+{
-+	struct tpm_buf *tb;
-+	uint32_t keyhandle;
-+	uint8_t srkauth[SHA1_DIGEST_SIZE];
-+	uint8_t keyauth[SHA1_DIGEST_SIZE];
-+	void *asn1_wrapped = NULL;
-+	uint32_t in_len = params->in_len;
-+	int r;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (strcmp(params->encoding, "pkcs1"))
-+		return -ENOPKG;
-+
-+	if (params->hash_algo) {
-+		const struct asn1_template *asn1 =
-+						lookup_asn1(params->hash_algo);
-+
-+		if (!asn1)
-+			return -ENOPKG;
-+
-+		/* request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped)
-+			return -ENOMEM;
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	if (in_len > tk->key_len / 8 - 11) {
-+		r = -EOVERFLOW;
-+		goto error_free_asn1_wrapped;
-+	}
-+
-+	r = -ENOMEM;
-+	tb = kzalloc(sizeof(*tb), GFP_KERNEL);
-+	if (!tb)
-+		goto error_free_asn1_wrapped;
-+
-+	/* TODO: Handle a non-all zero SRK authorization */
-+	memset(srkauth, 0, sizeof(srkauth));
-+
-+	r = tpm_loadkey2(tb, SRKHANDLE, srkauth,
-+			 tk->blob, tk->blob_len, &keyhandle);
-+	if (r < 0) {
-+		pr_devel("loadkey2 failed (%d)\n", r);
-+		goto error_free_tb;
-+	}
-+
-+	/* TODO: Handle a non-all zero key authorization */
-+	memset(keyauth, 0, sizeof(keyauth));
-+
-+	r = tpm_sign(tb, keyhandle, keyauth, in, in_len, out, params->out_len);
-+	if (r < 0)
-+		pr_devel("tpm_sign failed (%d)\n", r);
-+
-+	if (tpm_flushspecific(tb, keyhandle) < 0)
-+		pr_devel("flushspecific failed (%d)\n", r);
-+
-+error_free_tb:
-+	kzfree(tb);
-+error_free_asn1_wrapped:
-+	kfree(asn1_wrapped);
-+	pr_devel("<==%s() = %d\n", __func__, r);
-+	return r;
-+}
-+
- /*
-  * Do encryption, decryption and signing ops.
-  */
-@@ -573,6 +724,9 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
- 	case kernel_pkey_decrypt:
- 		ret = tpm_key_decrypt(tk, params, in, out);
- 		break;
-+	case kernel_pkey_sign:
-+		ret = tpm_key_sign(tk, params, in, out);
-+		break;
- 	default:
- 		BUG();
- 	}
-
+Paolo
