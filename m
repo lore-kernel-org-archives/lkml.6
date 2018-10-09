@@ -2,97 +2,147 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B512BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5248C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703C320858
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703C320858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6484D21479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:51:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EWNTM6r3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6484D21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeJIPF4 (ORCPT
+        id S1726664AbeJIPH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:05:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36796 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeJIPF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:05:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5A954AFD7;
-        Tue,  9 Oct 2018 07:50:16 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 09:50:15 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Tue, 9 Oct 2018 11:07:27 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47497 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbeJIPH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:07:26 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181009075147euoutp01d292a7a077d31623577e07b83cafcd61~b4WGuLJKD0306003060euoutp01l
+        for <linux-kernel@vger.kernel.org>; Tue,  9 Oct 2018 07:51:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181009075147euoutp01d292a7a077d31623577e07b83cafcd61~b4WGuLJKD0306003060euoutp01l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539071507;
+        bh=iBQ8W0Va1THdhv90z2R4VMSWSrZYuAcjHnr1ASe2V3k=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=EWNTM6r3X2eChcYEB8Gmz2TUJ32F/jBmKAGCunFZq1fRye4ezZUwlX0r+xiG02OSh
+         dWeXDyFLCm2rcJrZzuKQ4SOM7CzEfAexKm8ENMwjFrUnQCvlEuI1Pt6ICMTuxf4uan
+         D+KoaxTlSnN/XlOp/1hpD0GN9rmcJ5yFwYoyZLrE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181009075146eucas1p290ec4116b8600deceee9e0c8c8331250~b4WF_aO8V0237202372eucas1p2h;
+        Tue,  9 Oct 2018 07:51:46 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id FF.9C.04806.21E5CBB5; Tue,  9
+        Oct 2018 08:51:46 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181009075145eucas1p2691c7d04aa8328080af7cbc4ab5e03b9~b4WFAVFkx0235802358eucas1p2c;
+        Tue,  9 Oct 2018 07:51:45 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181009075145eusmtrp22fcced226a7029cf6ed7a9d9a7994fbd~b4WEvMpoN1179911799eusmtrp2N;
+        Tue,  9 Oct 2018 07:51:45 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-47-5bbc5e12bdd1
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 6C.42.04128.01E5CBB5; Tue,  9
+        Oct 2018 08:51:44 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181009075144eusmtip296d8354c47cbbba05046242fe0d49f1a~b4WEL4Z_K2020720207eusmtip2U;
+        Tue,  9 Oct 2018 07:51:44 +0000 (GMT)
+Subject: Re: [RESEND PATCH v2 3/3] ARM: dts: imx28-cfa10036: Fix the reset
+ gpio signal polarity
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-Message-ID: <20181009075015.GC8528@dhcp22.suse.cz>
-References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
- <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
- <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
- <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
- <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
- <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
- <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
- <20181009063541.GB8528@dhcp22.suse.cz>
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Tue, 9 Oct 2018 09:51:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009063541.GB8528@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181009002031.GU3587@dragon>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djPc7pCcXuiDTr+c1jMP3KO1WLj5tss
+        Fif6PrBaXN41h83i/+cnrBate4+wW7zYIu7A7rFpVSebx8Z3O5g8Pm+S83j59wNzAEsUl01K
+        ak5mWWqRvl0CV8bKh5uYC86xVTw4+JqpgXE1axcjJ4eEgInE6UlrmLoYuTiEBFYwSjRub2SF
+        cL4wSmxZ+hvK+cwoMeHUJXaYlvvzfzNDJJYzSlw5P4kNwnnPKNH2aDpYlbBAosScky+ZQWwR
+        AWWJUxv72EGKmAWOMkm0ve5gA0mwCVhJTGxfxQhiswioSKy+sR5oHweHqECERP8ZdZAwr4Cg
+        xMmZT1hAbE4BbYkX8y+AzWcWkJdo3job7AoJgUXsEm8vbmaEaCiTWHDyBNR3LhK9q0+yQNjC
+        Eq+Ob4F6QUbi/875TBDN0xkl3vxaygLhrGeUWHPmGBNElbXE4eMXwS5iFtCUWL9LHyLsKDG5
+        +S07SFhCgE/ixltBiIP4JCZtm84MEeaV6GgTgqhWk9iwbAMbzNqunSuZIWwPiR8PXzFOYFSc
+        heTNWUhem4WwdwEj8ypG8dTS4tz01GLjvNRyveLE3OLSvHS95PzcTYzAFHP63/GvOxj3/Uk6
+        xCjAwajEwzsjb3e0EGtiWXFl7iFGCQ5mJRFe0e27ooV4UxIrq1KL8uOLSnNSiw8xSnOwKInz
+        Lpu3MVpIID2xJDU7NbUgtQgmy8TBKdXA6NS84e5ZRpupx9ck/81/+LJjhjBTjkS8xM7vya8m
+        XpFQ7fjgu2Mtl2IV79vrO32OfN/I0Zwze5KxS4yfzE29fwc3n2sJdbl7a16NoLOJu0j1grig
+        AnedNOVWc8GZHEerfW4pf1kc0zDP7ljxN5XeLxIz5Z0vrN3x6q6SdJhsffG5v2K/Pms+VWIp
+        zkg01GIuKk4EAHLWKiYtAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsVy+t/xe7oCcXuiDR6/M7eYf+Qcq8XGzbdZ
+        LE70fWC1uLxrDpvF/89PWC1a9x5ht3ixRdyB3WPTqk42j43vdjB5fN4k5/Hy7wfmAJYoPZui
+        /NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyVDzcxF5xj
+        q3hw8DVTA+Nq1i5GTg4JAROJ+/N/M3cxcnEICSxllJi5+T5QggMoISNxfH0ZRI2wxJ9rXWwg
+        tpDAW0aJ+2sqQGxhgUSJOSdfMoPYIgLKEqc29rFDzFnNJLFtyQQ2EIdZ4CiTxIzPP9hBqtgE
+        rCQmtq9iBLF5Bewk3uydC9bNIqAisfrGerCLRAUiJG497GCBqBGUODnzCZjNKaAt8WL+BbA5
+        zALqEn/mXWKGsOUlmrfOZp7AKDgLScssJGWzkJQtYGRexSiSWlqcm55bbKRXnJhbXJqXrpec
+        n7uJERg524793LKDsetd8CFGAQ5GJR7eGXm7o4VYE8uKK3MPMUpwMCuJ8Ipu3xUtxJuSWFmV
+        WpQfX1Sak1p8iNEU6ImJzFKiyfnAqM4riTc0NTS3sDQ0NzY3NrNQEuc9b1AZJSSQnliSmp2a
+        WpBaBNPHxMEp1cBYYNr8LevY8vP61TtevrQ/khgUl7nL4J/F5RU+r9QKOqLW8UT1Lz60SWTD
+        5Yk3709S+HPE4WPOn8dKbzJulPvt5CzNVWC3knY+nBpSVH2wtXee2SzdW0LdKm42Hmt2xPiU
+        3L59Uj1pt1pjRWJD/Bqxy3MLj3jZ9HtPvRDUdfXku8yeY389t59WYinOSDTUYi4qTgQAOB9E
+        C7ICAAA=
+Message-Id: <20181009075145eucas1p2691c7d04aa8328080af7cbc4ab5e03b9~b4WFAVFkx0235802358eucas1p2c@eucas1p2.samsung.com>
+X-CMS-MailID: 20181009075145eucas1p2691c7d04aa8328080af7cbc4ab5e03b9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181009002056epcas5p24207204c9e65e8f34382de6672adb993
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181009002056epcas5p24207204c9e65e8f34382de6672adb993
+References: <1538040281-21319-1-git-send-email-michal.vokac@ysoft.com>
+        <1538040281-21319-3-git-send-email-michal.vokac@ysoft.com>
+        <68f4da21-6f0d-5bf9-b352-cdc423269080@ysoft.com>
+        <CGME20181009002056epcas5p24207204c9e65e8f34382de6672adb993@epcas5p2.samsung.com>
+        <20181009002031.GU3587@dragon>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09-10-18 08:35:41, Michal Hocko wrote:
-> [I have only now noticed that the patch has been reposted]
-> 
-> On Mon 08-10-18 18:27:39, Tetsuo Handa wrote:
-> > On 2018/10/08 17:38, Yong-Taek Lee wrote:
-[...]
-> > > Thank you for your suggestion. But i think it would be better to seperate to 2 issues. How about think these
-> > > issues separately because there are no dependency between race issue and my patch. As i already explained,
-> > > for_each_process path is meaningless if there is only one thread group with many threads(mm_users > 1 but 
-> > > no other thread group sharing same mm). Do you have any other idea to avoid meaningless loop ? 
-> > 
-> > Yes. I suggest reverting commit 44a70adec910d692 ("mm, oom_adj: make sure processes
-> > sharing mm have same view of oom_score_adj") and commit 97fd49c2355ffded ("mm, oom:
-> > kill all tasks sharing the mm").
-> 
-> This would require a lot of other work for something as border line as
-> weird threading model like this. I will think about something more
-> appropriate - e.g. we can take mmap_sem for read while doing this check
-> and that should prevent from races with [v]fork.
 
-Not really. We do not even take the mmap_sem when CLONE_VM. So this is
-not the way. Doing a proper synchronization seems much harder. So let's
-consider what is the worst case scenario. We would basically hit a race
-window between copy_signal and copy_mm and the only relevant case would
-be OOM_SCORE_ADJ_MIN which wouldn't propagate to the new "thread". OOM
-killer could then pick up the "thread" and kill it along with the whole
-process group sharing the mm. Well, that is unfortunate indeed and it
-breaks the OOM_SCORE_ADJ_MIN contract. There are basically two ways here
-1) do not care and encourage users to use a saner way to set
-OOM_SCORE_ADJ_MIN because doing that externally is racy anyway e.g.
-setting it before [v]fork & exec. Btw. do we know about an actual user
-who would care?
-2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
-reap the mm in the rare case of the race.
+On 10/09/2018 02:20 AM, Shawn Guo wrote:
+> On Mon, Oct 08, 2018 at 11:45:36AM +0000, Vokáč Michal wrote:
+>> On 27.9.2018 11:24, Michal Vokáč wrote:
+>>> The reset signal of the SSD1306 OLED display is actually active-low.
+>>> Adapt the DT to reflect the real world.
+>>>
+>>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+>>> ---
+>>> v2 changes: New patch in the series
+>>
+>> Bartlomiej just queued the first two patches for v4.20.
+>> Will somebody take this one? Otherwise this SoM will end up with
+>> broken OLED display reset.
+> 
+> Well, it means the change breaks the ABI between kernel and device tree,
+> e.g. the new kernel will not work with existing/installed DTBs.
 
-I would prefer the firs but if this race really has to be addressed then
-the 2 sounds more reasonable than the wholesale revert.
--- 
-Michal Hocko
-SUSE Labs
+Should I revert this sdd10307fb patch then?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
