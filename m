@@ -2,139 +2,110 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0061CC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09097C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD37214DC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P9fYlfKW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD37214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C000B2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C000B2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeJIVXU (ORCPT
+        id S1726573AbeJIV0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:23:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37519 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeJIVXT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:23:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id c10-v6so873641pgq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:06:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hChhdla9rTd0uwo6Xihafa/FlHoPiHoTl0N1PS2CtQE=;
-        b=P9fYlfKW1jr/ywASq1XVvFTGvIGUZaPBqHtk0jZzHS/lrYNP1fhXkUBV22XPzVGZG3
-         rmuOU2KgdV8OdoBwKrqeyPANe/JX+371cK5tScZSXir6PPjqdWRs+YT99pglU3w2pNAv
-         P41ReJ8m+GEtbRFAmEhk/SMIiFnqtCGfD6jUs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hChhdla9rTd0uwo6Xihafa/FlHoPiHoTl0N1PS2CtQE=;
-        b=YswBaZZEG+n1KgU1QPyushaSzQW984wnkhGNOjeIT27pLd2XM7JxCozxM1DJSZb72v
-         eQJmnB0XkAeHzScHEiNXDs3U4WmsqAeAEcyVpz4bEpg92NDxlvNh+vxSVxNxWflLCGAz
-         g8ifVSJIUYs68ShTK1wftr3o8G3zGVQiVwVxo9Z6JabihDX8WLxS7rknYSbrNJj7p2+V
-         ziY/cPBMQed80Zy4OMsyLbTj16k0BWi/UpHV4+8stIcpQr1tZ1GX1bgSy73l+3tCB9fz
-         trgVjdbD6s6wXVhI2m0R9mwJAiaIvCD16j+q/bXp9DdwX1EarD6EchNelH9kQNzBAZUm
-         luvQ==
-X-Gm-Message-State: ABuFfogwUOMpXzs+QDIX02LvDwzdwyu9EBVwvJBqwpZLNf7fMWKH0EDh
-        tVrL7Y66gGOdLZkX9fK3YE7n
-X-Google-Smtp-Source: ACcGV60C4nL+hZxUvfN473ZY8NZH44WwbS4hA1oiMsF3EIuvct1ryAzvcMyNYFMhNh+EqDz3XgiHuA==
-X-Received: by 2002:a62:aa17:: with SMTP id e23-v6mr30276853pff.211.1539093972325;
-        Tue, 09 Oct 2018 07:06:12 -0700 (PDT)
-Received: from localhost.localdomain ([103.59.133.81])
-        by smtp.googlemail.com with ESMTPSA id e64-v6sm28947722pfe.55.2018.10.09.07.06.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 07:06:11 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     robh+dt@kernel.org, heiko@sntech.de, ezequiel@collabora.com,
-        xuwei5@hisilicon.com, michal.simek@xilinx.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, koen.kooi@linaro.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 6/6] arm64: dts: xilinx: ultra96: Standardize LED labels and triggers
-Date:   Tue,  9 Oct 2018 19:35:22 +0530
-Message-Id: <20181009140522.6492-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181009140522.6492-1-manivannan.sadhasivam@linaro.org>
-References: <20181009140522.6492-1-manivannan.sadhasivam@linaro.org>
+        Tue, 9 Oct 2018 17:26:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57012 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbeJIV0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:26:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 217E3AE17;
+        Tue,  9 Oct 2018 14:09:28 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 16:09:25 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009140925.GS8528@dhcp22.suse.cz>
+References: <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+ <20181009063541.GB8528@dhcp22.suse.cz>
+ <20181009075015.GC8528@dhcp22.suse.cz>
+ <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
+ <20181009111005.GK8528@dhcp22.suse.cz>
+ <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
+ <20181009125841.GP8528@dhcp22.suse.cz>
+ <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
+ <20181009132622.GR8528@dhcp22.suse.cz>
+ <0ab96b81-042e-b9d9-8d63-b423941d8072@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ab96b81-042e-b9d9-8d63-b423941d8072@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For all 96Boards, the following standard is used for onboard LEDs.
+On Tue 09-10-18 22:51:00, Tetsuo Handa wrote:
+> On 2018/10/09 22:26, Michal Hocko wrote:
+> > On Tue 09-10-18 22:14:24, Tetsuo Handa wrote:
+> >> On 2018/10/09 21:58, Michal Hocko wrote:
+> >>> On Tue 09-10-18 21:52:12, Tetsuo Handa wrote:
+> >>>> On 2018/10/09 20:10, Michal Hocko wrote:
+> >>>>> On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
+> >>>>>>> 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
+> >>>>>>> reap the mm in the rare case of the race.
+> >>>>>>
+> >>>>>> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
+> >>>>>> to -1000 (and allowed unprivileged users to OOM-lockup the system).
+> >>>>>
+> >>>>> I do not follow.
+> >>>>>
+> >>>>
+> >>>> http://tomoyo.osdn.jp/cgi-bin/lxr/source/mm/oom_kill.c?v=linux-4.6.7#L493
+> >>>
+> >>> Ahh, so you are not referring to the current upstream code. Do you see
+> >>> any specific problem with the current one (well, except for the possible
+> >>> race which I have tried to evaluate).
+> >>>
+> >>
+> >> Yes. "task_will_free_mem(current) in out_of_memory() returns false due to MMF_OOM_SKIP
+> >> being already set" is a problem for clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+> >> with the current code.
+> > 
+> > a) I fail to see how that is related to your previous post and b) could
+> > you be more specific. Is there any other scenario from the two described
+> > in my earlier email?
+> > 
+> 
+> I do not follow. Just reverting commit 44a70adec910d692 and commit 97fd49c2355ffded
+> is sufficient for closing the copy_process() versus __set_oom_adj() race.
 
-device-name:green:user1  default-trigger: heartbeat
-device-name:green:user2  default-trigger: mmc0/disk-activity
-                                          (onboard-storage)
-device-name:green:user3  default-trigger: mmc1 (SD-card)
-device-name:green:user4  default-trigger: none, panic-indicator
-device-name:yellow:wlan  default-trigger: phy0tx
-device-name:blue:bt      default-trigger: hci0-power
+Please go back and see why this has been done in the first place.
 
-So lets adopt the same for Ultra96, which is one of the 96Boards
-CE and AI platform. Since the WLAN and BT LEDs are hardwired onboard,
-consolidate only User LEDs.
+> We went too far towards complete "struct mm_struct" based OOM handling. But stepping
+> back to "struct signal_struct" based OOM handling solves Yong-Taek's for_each_process()
+> latency problem and your copy_process() versus __set_oom_adj() race problem and my
+> task_will_free_mem(current) race problem.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+And again, I have put an evaluation of the race and try to see what is
+the effect. Then you have started to fire hard to follow notes and it is
+not clear whether the analysis/conclusions is wrong/incomplete.
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-index eb5e8bddb610..565ceb390f99 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-@@ -57,29 +57,30 @@
- 	leds {
- 		compatible = "gpio-leds";
- 		ds2 {
--			label = "ds2";
-+			label = "zynqmp-zcu100-revC:green:user1";
- 			gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
- 			linux,default-trigger = "heartbeat";
- 		};
- 
- 		ds3 {
--			label = "ds3";
-+			label = "zynqmp-zcu100-revC:green:user2";
- 			gpios = <&gpio 19 GPIO_ACTIVE_HIGH>;
--			linux,default-trigger = "phy0tx"; /* WLAN tx */
-+			linux,default-trigger = "mmc0";
- 			default-state = "off";
- 		};
- 
- 		ds4 {
--			label = "ds4";
-+			label = "zynqmp-zcu100-revC:green:user3";
- 			gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
--			linux,default-trigger = "phy0rx"; /* WLAN rx */
-+			linux,default-trigger = "mmc1";
- 			default-state = "off";
- 		};
- 
- 		ds5 {
--			label = "ds5";
-+			label = "zynqmp-zcu100-revC:green:user4";
- 			gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
--			linux,default-trigger = "bluetooth-power";
-+			linux,default-trigger = "none";
-+			panic-indicator;
- 		};
- 
- 		vbus_det { /* U5 USB5744 VBUS detection via MIO25 */
+So an we get back to that analysis and stick to the topic please?
+
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
