@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E898C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3E7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08922086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08922086D
+	by mail.kernel.org (Postfix) with ESMTP id 085A02086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:47:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085A02086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeJIVEd (ORCPT
+        id S1726942AbeJIVEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:04:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:38184 "EHLO foss.arm.com"
+        Tue, 9 Oct 2018 17:04:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:38196 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbeJIVEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:04:33 -0400
+        id S1726897AbeJIVEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:04:35 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C54A380D;
-        Tue,  9 Oct 2018 06:47:31 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E9B415BE;
+        Tue,  9 Oct 2018 06:47:33 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 44A143F5B7;
-        Tue,  9 Oct 2018 06:47:30 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0EBD73F5B7;
+        Tue,  9 Oct 2018 06:47:31 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
         will.deacon@arm.com, mark.rutland@arm.com, pelcan@codeaurora.org,
         shankerd@codeaurora.org, suzuki.poulose@arm.com
 Subject: [PATCH v2 0/3] arm64: cpufeature: Fix handling of CTR_EL0
-Date:   Tue,  9 Oct 2018 14:47:03 +0100
-Message-Id: <20181009134707.3479-1-suzuki.poulose@arm.com>
+Date:   Tue,  9 Oct 2018 14:47:04 +0100
+Message-Id: <20181009134707.3479-2-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181009134707.3479-1-suzuki.poulose@arm.com>
+References: <20181009134707.3479-1-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
