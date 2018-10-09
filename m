@@ -2,211 +2,242 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3A3C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21097ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6363214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dioTa8Br"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6363214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CE595214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:58:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE595214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeJJAP5 (ORCPT
+        id S1726897AbeJJAQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:15:57 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33891 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeJJAP4 (ORCPT
+        Tue, 9 Oct 2018 20:16:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:54813 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeJJAQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:15:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f18-v6so1137242plr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=peF5BIpAOde4WiBCpsaCeG7SLfiQqYSE7xnzYkEUGZk=;
-        b=dioTa8BrrrOjCUqjYBGlINUK/QJw/meaNA62vBgFcISsWB1Zsinz7lhw1BS+Wb07CM
-         3OBWnCT/B1B//v0qcEARtIV4E2/gkfI0p+o6SH6+/DZCkkL5xaWdLWhDMDQ8EJ7+5w1p
-         iQeFszlYjiXmJn/bXj98js04Ru6WVy4OpuIpU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=peF5BIpAOde4WiBCpsaCeG7SLfiQqYSE7xnzYkEUGZk=;
-        b=qfT9mvZ28LN6Tf/lK6hj6DXtDqnsxr8Sx2aL+fJTvS31A5h4qdlVDMnPLdBAXhr/BE
-         T9iLjclhYFB3MSs16SCGAo1KRVR7bhKndVILpa6OezJy35SlgCPrlWV5Evfa4m3wVygz
-         kf17CCAS4moij5lCSk1FgbCZkC21QIl4GPV5CkYnkbThbBimnFi/DrT/m5vrSfCxt4kT
-         ebZyLpDKZ/3wkRNqwWGB2ZDROxUjMgIFFZTzWf7FBMqvspdTTxCo9MuJNexx6J8amXIN
-         b3tzj6uc3iJjzxebxc7TGOclCBVhvwq1DycAdGqsw2kpdZFauakKHq+f0Hf3Uj5CSQhi
-         3USg==
-X-Gm-Message-State: ABuFfoiCC5iy4a5LpoAdw+hcFSl8TR6tuJcNn8zHl0CBVzj3UpsN9Yfw
-        cV7PlEhXlYDxHyNJwjvTBTIipw==
-X-Google-Smtp-Source: ACcGV63m0OXLeaxQ6fwU6VpFSjkpLPYPMV1d/rCPe0Dpw/Mfwz7ytRO4wmXgVet4OkKfy7qm8r+2HA==
-X-Received: by 2002:a17:902:ceb:: with SMTP id 98-v6mr19060701plt.331.1539104282722;
-        Tue, 09 Oct 2018 09:58:02 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm20524179pgs.92.2018.10.09.09.58.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:58:01 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 09:57:59 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts
- to prevent latching
-Message-ID: <20181009165759.GB28399@tuxbook-pro>
-References: <20181008175530.864641368@linuxfoundation.org>
- <20181008175536.405502473@linuxfoundation.org>
- <20181009063338.GA22218@flashbox>
- <20181009092359.GD19241@kroah.com>
+        Tue, 9 Oct 2018 20:16:20 -0400
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MSI6i-1gGTrM3eem-00Sbg7; Tue, 09 Oct 2018 18:57:45 +0200
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MSI6i-1gGTrM3eem-00Sbg7; Tue, 09 Oct 2018 18:57:45 +0200
+Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
+To:     Jann Horn <jannh@google.com>
+Cc:     ktkhai@virtuozzo.com, kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
+        Linux API <linux-api@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        containers@lists.linux-foundation.org
+References: <20181009103752.21482-1-laurent@vivier.eu>
+ <20181009103752.21482-2-laurent@vivier.eu>
+ <f14ce318-5a1a-06f3-2e90-91220f39e74b@virtuozzo.com>
+ <bc11ca64-8616-f06a-c1fa-c76511e60257@vivier.eu>
+ <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <795fea1a-97bd-87f5-6a14-6d47a4e42f74@vivier.eu>
+Date:   Tue, 9 Oct 2018 18:57:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009092359.GD19241@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAG48ez0pAxC+yetPfM+XyS8kfqA4hw1hxjKG55gbF-4qcNWUiA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ZigYeYJpxcZLFV1LRiTgj6M2wi85ilW5twU2J5i95X7FzPQ+UxK
+ Y3u0uHlG5anDaGUVgJiLIlGJciJ4ISzq8Nv5fVbCqh9Jj7u+0bEkTsEzSJ+nkiusXSozL/W
+ ChOuiGMakIbmDfAllnCRdczQD63SG4Hqn7GZwmJJMs4s3wEVhA2IjSk0XRQbgN7gEFbSAbF
+ S2sbeP2CvPaJfhqQBxM5A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:EX5Zsbm1LFM=:ycoAsIImTKiYQ2lDEpQeaZ
+ LC5JkkltoFVZF08g+7+8mdITwCiuJJH15oPPxe+5qDW5/Vj4ua/TQuqOLBmIn8nNriGOvoxNj
+ VBKuwzOwq4XUzGu2sQkDB3OgF+j9AhuKfSASa1OKozyt5nRwkxbGQTVCU4Irwvp7OMfrRB4AY
+ aszKDgj9kFwYJoTSqBgmj5exJGSx5zp7IkJm2mfOQ/9o9lBm50DoLJfmWLICzjwGbG1Iv9gJV
+ 3M6skcQspTHue9IHzn9qqzZIeggttEo+c12gNNkfU94uZgda2bxfEq4oZTXQltUO5TDFlEUCm
+ kcjvNY/hDfaciYtTN1C2pL8lRcTZD4snDw85ai7mgcx1etx0+NUpdtjZfBA+rUpzqPiUSCUni
+ cc5Jrd3J4g8cPlqyTnmYdKh+GKP69JtVUdH8w/9GW/iMroouPSzdzwozyA4KL83tuGoYC/uUb
+ gwH9J6ySAUqecGph5LsUknsvTOQBcVfZJ5xcqOCmK8jIzGmcElIReVHJ9RiOOMsI7We6jqT7B
+ 2Kowd9QbRI5dLAJBXeZCLDChV4Z+Aip64+MwwjHr5GEKmoCaTjeE/4XWQVvIjkM9ihsS1L8Bu
+ NTbXNK23vI8bOqVQUFaWG5PGu/t2MH1iEpIozQ5ZVq1zLYcMcpgqMJEkWq7eRjT9xIibk6J7T
+ f6MDsRlPPOBImQCHtZ6YcszV8x0pM6+/Ut3tSAMPgh/DP+NowIjdUFLBRsKyI/qufIhLfm18Q
+ TeHTk+jcZphjTgxG
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09 Oct 02:23 PDT 2018, Greg Kroah-Hartman wrote:
-
-> On Mon, Oct 08, 2018 at 11:33:38PM -0700, Nathan Chancellor wrote:
-> > On Mon, Oct 08, 2018 at 08:31:34PM +0200, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Stephen Boyd <swboyd@chromium.org>
-> > > 
-> > > [ Upstream commit b55326dc969ea2d704a008d9a97583b128f54f4f ]
-> > > 
-> > > The interrupt controller hardware in this pin controller has two status
-> > > enable bits. The first "normal" status enable bit enables or disables
-> > > the summary interrupt line being raised when a gpio interrupt triggers
-> > > and the "raw" status enable bit allows or prevents the hardware from
-> > > latching an interrupt into the status register for a gpio interrupt.
-> > > Currently we just toggle the "normal" status enable bit in the mask and
-> > > unmask ops so that the summary irq interrupt going to the CPU's
-> > > interrupt controller doesn't trigger for the masked gpio interrupt.
-> > > 
-> > > For a level triggered interrupt, the flow would be as follows: the pin
-> > > controller sees the interrupt, latches the status into the status
-> > > register, raises the summary irq to the CPU, summary irq handler runs
-> > > and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> > > interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> > > When the interrupt handler completes, we expect that the interrupt line
-> > > level will go back to the deasserted state so the genirq code can unmask
-> > > the interrupt without it triggering again.
-> > > 
-> > > If we only mask the interrupt by clearing the "normal" status enable bit
-> > > then we'll ack the interrupt but it will continue to show up as pending
-> > > in the status register because the raw status bit is enabled, the
-> > > hardware hasn't deasserted the line, and thus the asserted state latches
-> > > into the status register again. When the hardware deasserts the
-> > > interrupt the pin controller still thinks there is a pending unserviced
-> > > level interrupt because it latched it earlier. This behavior causes
-> > > software to see an extra interrupt for level type interrupts each time
-> > > the interrupt is handled.
-> > > 
-> > > Let's fix this by clearing the raw status enable bit for level type
-> > > interrupts so that the hardware stops latching the status of the
-> > > interrupt after we ack it. We don't do this for edge type interrupts
-> > > because it seems that toggling the raw status enable bit for edge type
-> > > interrupts causes spurious edge interrupts.
-> > > 
-> > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > ---
-> > >  drivers/pinctrl/qcom/pinctrl-msm.c |   24 ++++++++++++++++++++++++
-> > >  1 file changed, 24 insertions(+)
-> > > 
-> > > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > @@ -577,6 +577,29 @@ static void msm_gpio_irq_mask(struct irq
-> > >  	spin_lock_irqsave(&pctrl->lock, flags);
-> > >  
-> > >  	val = readl(pctrl->regs + g->intr_cfg_reg);
-> > > +	/*
-> > > +	 * There are two bits that control interrupt forwarding to the CPU. The
-> > > +	 * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
-> > > +	 * latched into the interrupt status register when the hardware detects
-> > > +	 * an irq that it's configured for (either edge for edge type or level
-> > > +	 * for level type irq). The 'non-raw' status enable bit causes the
-> > > +	 * hardware to assert the summary interrupt to the CPU if the latched
-> > > +	 * status bit is set. There's a bug though, the edge detection logic
-> > > +	 * seems to have a problem where toggling the RAW_STATUS_EN bit may
-> > > +	 * cause the status bit to latch spuriously when there isn't any edge
-> > > +	 * so we can't touch that bit for edge type irqs and we have to keep
-> > > +	 * the bit set anyway so that edges are latched while the line is masked.
-> > > +	 *
-> > > +	 * To make matters more complicated, leaving the RAW_STATUS_EN bit
-> > > +	 * enabled all the time causes level interrupts to re-latch into the
-> > > +	 * status register because the level is still present on the line after
-> > > +	 * we ack it. We clear the raw status enable bit during mask here and
-> > > +	 * set the bit on unmask so the interrupt can't latch into the hardware
-> > > +	 * while it's masked.
-> > > +	 */
-> > > +	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
-> > > +		val &= ~BIT(g->intr_raw_status_bit);
-> > > +
-> > >  	val &= ~BIT(g->intr_enable_bit);
-> > >  	writel(val, pctrl->regs + g->intr_cfg_reg);
-> > >  
-> > > @@ -598,6 +621,7 @@ static void msm_gpio_irq_unmask(struct i
-> > >  	spin_lock_irqsave(&pctrl->lock, flags);
-> > >  
-> > >  	val = readl(pctrl->regs + g->intr_cfg_reg);
-> > > +	val |= BIT(g->intr_raw_status_bit);
-> > >  	val |= BIT(g->intr_enable_bit);
-> > >  	writel(val, pctrl->regs + g->intr_cfg_reg);
-> > >  
-> > > 
-> > > 
-> > 
-> > Sigh, sorry, I caught this after I sent my initial all good email but
-> > this commit breaks NFC on my Pixel 2 XL (toggle becomes greyed out and
-> > apps that want to use it ask to enable it). I can't say why, I'm more
-> > than happy to debug but I'm assuming it's some voodoo that Qualcomm has
-> > done out of tree. I'll leave it up to you how to proceed given that I
-> > can't run mainline :(
-
-The patch corrects an issue that all level interrupts where delivered
-twice, so if that breaks NFC then there's something quite broken in that
-driver - or more likely something else broke.
-
-Can you please do some level of investigation to see where in the stack
-this broke, even if you can't run mainline.
-
+Le 09/10/2018 à 18:53, Jann Horn a écrit :
+> On Tue, Oct 9, 2018 at 6:45 PM Laurent Vivier <laurent@vivier.eu> wrote:
+>> Le 09/10/2018 à 18:15, Kirill Tkhai a écrit :
+>>> On 09.10.2018 13:37, Laurent Vivier wrote:
+>>>> This patch allows to have a different binfmt_misc configuration
+>>>> for each new user namespace. By default, the binfmt_misc configuration
+>>>> is the one of the previous level, but if the binfmt_misc filesystem is
+>>>> mounted in the new namespace a new empty binfmt instance is created and
+>>>> used in this namespace.
+>>>>
+>>>> For instance, using "unshare" we can start a chroot of an another
+>>>> architecture and configure the binfmt_misc interpreter without being root
+>>>> to run the binaries in this chroot.
+>>>>
+>>>> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+>>>> ---
+>>>>  fs/binfmt_misc.c               | 106 ++++++++++++++++++++++++---------
+>>>>  include/linux/user_namespace.h |  13 ++++
+>>>>  kernel/user.c                  |  13 ++++
+>>>>  kernel/user_namespace.c        |   3 +
+>>>>  4 files changed, 107 insertions(+), 28 deletions(-)
+>>>>
+>>>> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+>>>> index aa4a7a23ff99..1e0029d097d9 100644
+>>>> --- a/fs/binfmt_misc.c
+>>>> +++ b/fs/binfmt_misc.c
+>> ...
+>>>> @@ -80,18 +74,32 @@ static int entry_count;
+>>>>   */
+>>>>  #define MAX_REGISTER_LENGTH 1920
+>>>>
+>>>> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
+>>>> +{
+>>>> +    struct binfmt_namespace *b_ns;
+>>>> +
+>>>> +    while (ns) {
+>>>> +            b_ns = READ_ONCE(ns->binfmt_ns);
+>>>> +            if (b_ns)
+>>>> +                    return b_ns;
+>>>> +            ns = ns->parent;
+>>>> +    }
+>>>> +    WARN_ON_ONCE(1);
+>>>> +    return NULL;
+>>>> +}
+>>>> +
+>> ...
+>>>> @@ -823,12 +847,34 @@ static const struct super_operations s_ops = {
+>>>>  static int bm_fill_super(struct super_block *sb, void *data, int silent)
+>>>>  {
+>>>>      int err;
+>>>> +    struct user_namespace *ns = sb->s_user_ns;
+>>>>      static const struct tree_descr bm_files[] = {
+>>>>              [2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
+>>>>              [3] = {"register", &bm_register_operations, S_IWUSR},
+>>>>              /* last one */ {""}
+>>>>      };
+>>>>
+>>>> +    /* create a new binfmt namespace
+>>>> +     * if we are not in the first user namespace
+>>>> +     * but the binfmt namespace is the first one
+>>>> +     */
+>>>> +    if (READ_ONCE(ns->binfmt_ns) == NULL) {
+>>>> +            struct binfmt_namespace *new_ns;
+>>>> +
+>>>> +            new_ns = kmalloc(sizeof(struct binfmt_namespace),
+>>>> +                             GFP_KERNEL);
+>>>> +            if (new_ns == NULL)
+>>>> +                    return -ENOMEM;
+>>>> +            INIT_LIST_HEAD(&new_ns->entries);
+>>>> +            new_ns->enabled = 1;
+>>>> +            rwlock_init(&new_ns->entries_lock);
+>>>> +            new_ns->bm_mnt = NULL;
+>>>> +            new_ns->entry_count = 0;
+>>>> +            /* ensure new_ns is completely initialized before sharing it */
+>>>> +            smp_wmb();
+>>>
+>>> (I haven't dived into patch logic, here just small barrier remark from quick sight).
+>>> smp_wmb() has no sense without paired smp_rmb() on the read side. Possible,
+>>> you want something like below in read hunk:
+>>>
+>>> +             b_ns = READ_ONCE(ns->binfmt_ns);
+>>> +             if (b_ns) {
+>>> +                     smp_rmb();
+>>> +                     return b_ns;
+>>> +             }
+>>>
+>>>
+>>
+>> The write barrier is here to ensure the structure is fully written
+>> before we set the pointer.
+>>
+>> I don't understand how read barrier can change something at this level,
+>> IMHO the couple WRITE_ONCE()/READ_ONCE() should be enough to ensure we
+>> have correctly initialized the pointer and the structure when we read
+>> the pointer back.
+>>
+>> I think the pointer itself is the "barrier" to access the memory
+>> modified before.
 > 
-> Ugh, I hate the qualcomm changes...
+> Things don't work that way on alpha, but that's why READ_ONCE()
+> includes an smp_read_barrier_depends():
+> 
+> #define __READ_ONCE(x, check)                                           \
+> ({                                                                      \
+>         union { typeof(x) __val; char __c[1]; } __u;                    \
+>         if (check)                                                      \
+>                 __read_once_size(&(x), __u.__c, sizeof(x));             \
+>         else                                                            \
+>                 __read_once_size_nocheck(&(x), __u.__c, sizeof(x));     \
+>         smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
+>         __u.__val;                                                      \
+> })
+> #define READ_ONCE(x) __READ_ONCE(x, 1)
 > 
 
-Noted...
+So my questions are:
 
-Regards,
-Bjorn
+- do we need a smp_wmb() barrier if we use READ_ONCE() and WRITE_ONCE()?
 
-> Given the mess that all of the msm driver changes have, I'll go drop
-> this patch from the stable tree as I don't want to deal with the
-> fall-out for when people merge this to their device-specific trees.
-> 
-> thanks for testing and letting me know about this.
-> 
+- if we need an smp_wmb() barrier, do we need an smp_rmb() barrier as
+the data we want to "protect" are behind an access to the pointer?
+
+Thanks,
+Laurent
