@@ -2,286 +2,477 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BF9C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC676C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D16820C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7063120C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:59:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FtkK8pQ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D16820C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIYkXHEH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7063120C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeJINOC (ORCPT
+        id S1726613AbeJINOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:14:02 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:41068 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeJINOC (ORCPT
+        Tue, 9 Oct 2018 09:14:32 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35650 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeJINOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:14:02 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 135-v6so161747ywo.8
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:58:47 -0700 (PDT)
+        Tue, 9 Oct 2018 09:14:31 -0400
+Received: by mail-it1-f193.google.com with SMTP id p64-v6so954966itp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VHLg29mBVr77+k9zLd/e9I4G9qRRHNWvWWbbfzxhFIo=;
-        b=FtkK8pQ9Yw1VypuC5jIqn0jCZ6KB8h9ovxi/w4ClivAlNB1uW3PHwTLF/0sX920R7u
-         d0oICE+LhMUerl+3nBnauE3N/AX2cu8ryIbUgNXSLQYu7/mEH0juVS89S3qS/gZfQ+u7
-         uXjKw9YoUb8IKJo4qf2D+9FtdXNw1UClNV6Qk=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wDzVLhHd3bdmPpuJiUw6KKNOXhNvICKNbjLU3tsYNmk=;
+        b=YIYkXHEHiqbLny2LkjnQIqI2t0dTcSD0yf4LVFlZ+V4h5TmAffHlSIZFn8x/rBL2DQ
+         kBE0xFRh7CWJ3VJtVvKXXwZq4INt5M79KqqT+Frc6WD3Wmooji4MPfDFA8pUNxSdDK7U
+         w1gIu9s934e8qkIdZFuP0R9u6dBTCSRrXDhUc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VHLg29mBVr77+k9zLd/e9I4G9qRRHNWvWWbbfzxhFIo=;
-        b=nR2jASaBoJksVyUdKW46S3MtUG1dHswEBNpEhHEqpEvgAWeDd78b7Z/vaS2quuOo80
-         WYA/lQQNflN17vby4cBnbED9Y2ogSACAK9vSP4RYNQb9QuJBQmKSdR9YGScJ6XCBvF1f
-         S6Px58pD5Cux/0+CqgbdG8lrMSuQ0mPDo8grorr0f/WjJ+D81hG6d+J+jC8bWGBMTgZ5
-         myCWXRw7pbQzNrqYeQkP1JacHguEUeJcjcB+6aGBR9O2tzk+Ca4O5Q9ZGFIrpKARvuey
-         v38Am8bvgz9Qujzchh7RusDXHqfZq7E8TeOmNlaP3gZYIEQPw7umHKpPF2kLMoqyxyKw
-         tbnw==
-X-Gm-Message-State: ABuFfoiKtFCp4RMdgm3lnXnyl2yU0aryt2v6WhZ7c5AXiW+bjRNY0+Vg
-        t/kQafNtnInEMY5MWQ0oYsHvW8rK8KSk8w==
-X-Google-Smtp-Source: ACcGV61Bpp8zaLgSZFwSFxFGN95XX4H2vS8kun7ZQGoQqvDOAZf7sxftcXA86QHc4aLX0YiGhV85WQ==
-X-Received: by 2002:a81:230a:: with SMTP id j10-v6mr14738672ywj.255.1539064726815;
-        Mon, 08 Oct 2018 22:58:46 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 128-v6sm7730632ywx.108.2018.10.08.22.58.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 22:58:45 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id o8-v6so150102ybk.13
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 22:58:45 -0700 (PDT)
-X-Received: by 2002:a25:7613:: with SMTP id r19-v6mr14725144ybc.204.1539064725213;
- Mon, 08 Oct 2018 22:58:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wDzVLhHd3bdmPpuJiUw6KKNOXhNvICKNbjLU3tsYNmk=;
+        b=PuXJSwyaylpSyzalkAZFhdaXyT5LyPs4VKSSDfi1+FJ6ckiADJmkdVLS1hUbtiUGou
+         VbShqSx9gc1fI5WYZ2MIikX8/TM0HqBr5+nsrkvKep35SlqVF9DFx11BOQeLG8ncpc63
+         +tzpT3zn6hJUJhL11dTCQB3MCxNLx8N8XiGyQaKGXUZUFtbRbesr0tX0H5Qpx4SqMeDT
+         xxSNZeu9JG8xYQVOP8pKrLRTQuxgZEc20V42J2+EtMvZgTjFLjhBwtoznzkCdTcIbqhX
+         BIzrCFNiXSRE9Ztlys1nZGi+QgbdcIqRIQlbDamtoAws6uPgHWnK/1NwojnyGUSI1yTK
+         s+6Q==
+X-Gm-Message-State: ABuFfohlWAKBz+ww19+a+XlYU5+V4KlZRrqzhBvJeKJtuBbewqVugKa2
+        8LisWbfS0uPxYimTS+3goCNYmajz7cwE5g/eC9izfg==
+X-Google-Smtp-Source: ACcGV62GYD4+LAva/DMygjyn24efxx+hqa5VvCKWEqmL5ZCgACbE/ZJW3QIP8rDQB6ykoGjjtxNEw2W61s0/dBAJBhY=
+X-Received: by 2002:a02:5147:: with SMTP id s68-v6mr19986804jaa.62.1539064755404;
+ Mon, 08 Oct 2018 22:59:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181004081119.102575-1-acourbot@chromium.org> <7bd6883f43f3ffa1803975236eb18b5e63d3455a.camel@paulk.fr>
-In-Reply-To: <7bd6883f43f3ffa1803975236eb18b5e63d3455a.camel@paulk.fr>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 9 Oct 2018 14:58:33 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DvkvjMrdSVd-Ba5RiGUjM6Jp8hruk23A87sd4htoFovw@mail.gmail.com>
-Message-ID: <CAAFQd5DvkvjMrdSVd-Ba5RiGUjM6Jp8hruk23A87sd4htoFovw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
- decoder interface
-To:     contact@paulk.fr
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 22:59:14 -0700 (PDT)
+In-Reply-To: <CAHmME9rDfVbGLpeV9-LDOUo1on2UB7UHd8jBKcWycf9HYkar=g@mail.gmail.com>
+References: <20181008211554.5355-1-ard.biesheuvel@linaro.org>
+ <20181008211554.5355-4-ard.biesheuvel@linaro.org> <CAHmME9rDfVbGLpeV9-LDOUo1on2UB7UHd8jBKcWycf9HYkar=g@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 9 Oct 2018 07:59:14 +0200
+Message-ID: <CAKv+Gu96PKVnymyJyR-9-3HGTryNT=c2kYfXwmHX-QS6DzWf5Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] crypto: siphash - drop _aligned variants
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On 9 October 2018 at 06:11, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Hi Ard,
+>
+> On Mon, Oct 8, 2018 at 11:16 PM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>>
+>> On ARM v6 and later, we define CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> because the ordinary load/store instructions (ldr, ldrh, ldrb) can
+>> tolerate any misalignment of the memory address. However, load/store
+>> double and load/store multiple instructions (ldrd, ldm) may still only
+>> be used on memory addresses that are 32-bit aligned, and so we have to
+>> use the CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS macro with care, or we
+>> may end up with a severe performance hit due to alignment traps that
+>> require fixups by the kernel.
+>>
+>> Fortunately, the get_unaligned() accessors do the right thing: when
+>> building for ARMv6 or later, the compiler will emit unaligned accesses
+>> using the ordinary load/store instructions (but avoid the ones that
+>> require 32-bit alignment). When building for older ARM, those accessors
+>> will emit the appropriate sequence of ldrb/mov/orr instructions. And on
+>> architectures that can truly tolerate any kind of misalignment, the
+>> get_unaligned() accessors resolve to the leXX_to_cpup accessors that
+>> operate on aligned addresses.
+>>
+>> Since the compiler will in fact emit ldrd or ldm instructions when
+>> building this code for ARM v6 or later, the solution is to use the
+>> unaligned accessors on the aligned code paths. Given the above, this
+>> either produces the same code, or better in the ARMv6+ case. However,
+>> since that removes the only difference between the aligned and unaligned
+>> variants, we can drop the aligned variant entirely.
+>>
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> ---
+>>  include/linux/siphash.h | 106 +++++++++-----------
+>>  lib/siphash.c           | 103 ++-----------------
+>>  2 files changed, 54 insertions(+), 155 deletions(-)
+>>
+>> diff --git a/include/linux/siphash.h b/include/linux/siphash.h
+>> index fa7a6b9cedbf..ef3c36b0ae0f 100644
+>> --- a/include/linux/siphash.h
+>> +++ b/include/linux/siphash.h
+>> @@ -15,16 +15,14 @@
+>>
+>>  #include <linux/types.h>
+>>  #include <linux/kernel.h>
+>> +#include <asm/unaligned.h>
+>>
+>>  #define SIPHASH_ALIGNMENT __alignof__(u64)
+>>  typedef struct {
+>>         u64 key[2];
+>>  } siphash_key_t;
+>>
+>> -u64 __siphash_aligned(const void *data, size_t len, const siphash_key_t *key);
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key);
+>> -#endif
+>> +u64 __siphash(const void *data, size_t len, const siphash_key_t *key);
+>>
+>>  u64 siphash_1u64(const u64 a, const siphash_key_t *key);
+>>  u64 siphash_2u64(const u64 a, const u64 b, const siphash_key_t *key);
+>> @@ -48,26 +46,6 @@ static inline u64 siphash_4u32(const u32 a, const u32 b, const u32 c,
+>>  }
+>>
+>>
+>> -static inline u64 ___siphash_aligned(const __le64 *data, size_t len,
+>> -                                    const siphash_key_t *key)
+>> -{
+>> -       if (__builtin_constant_p(len) && len == 4)
+>> -               return siphash_1u32(le32_to_cpup((const __le32 *)data), key);
+>> -       if (__builtin_constant_p(len) && len == 8)
+>> -               return siphash_1u64(le64_to_cpu(data[0]), key);
+>> -       if (__builtin_constant_p(len) && len == 16)
+>> -               return siphash_2u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
+>> -                                   key);
+>> -       if (__builtin_constant_p(len) && len == 24)
+>> -               return siphash_3u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
+>> -                                   le64_to_cpu(data[2]), key);
+>> -       if (__builtin_constant_p(len) && len == 32)
+>> -               return siphash_4u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
+>> -                                   le64_to_cpu(data[2]), le64_to_cpu(data[3]),
+>> -                                   key);
+>> -       return __siphash_aligned(data, len, key);
+>> -}
+>> -
+>>  /**
+>>   * siphash - compute 64-bit siphash PRF value
+>>   * @data: buffer to hash
+>> @@ -77,11 +55,30 @@ static inline u64 ___siphash_aligned(const __le64 *data, size_t len,
+>>  static inline u64 siphash(const void *data, size_t len,
+>>                           const siphash_key_t *key)
+>>  {
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -       if (!IS_ALIGNED((unsigned long)data, SIPHASH_ALIGNMENT))
+>> -               return __siphash_unaligned(data, len, key);
+>> -#endif
+>> -       return ___siphash_aligned(data, len, key);
+>> +       if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {
+>> +               if (__builtin_constant_p(len) && len == 4)
+>> +                       return siphash_1u32(get_unaligned_le32(data),
+>> +                                           key);
+>> +               if (__builtin_constant_p(len) && len == 8)
+>> +                       return siphash_1u64(get_unaligned_le64(data),
+>> +                                           key);
+>> +               if (__builtin_constant_p(len) && len == 16)
+>> +                       return siphash_2u64(get_unaligned_le64(data),
+>> +                                           get_unaligned_le64(data + 8),
+>> +                                           key);
+>> +               if (__builtin_constant_p(len) && len == 24)
+>> +                       return siphash_3u64(get_unaligned_le64(data),
+>> +                                           get_unaligned_le64(data + 8),
+>> +                                           get_unaligned_le64(data + 16),
+>> +                                           key);
+>> +               if (__builtin_constant_p(len) && len == 32)
+>> +                       return siphash_4u64(get_unaligned_le64(data),
+>> +                                           get_unaligned_le64(data + 8),
+>> +                                           get_unaligned_le64(data + 16),
+>> +                                           get_unaligned_le64(data + 24),
+>> +                                           key);
+>> +       }
+>> +       return __siphash(data, len, key);
+>>  }
+>>
+>>  #define HSIPHASH_ALIGNMENT __alignof__(unsigned long)
+>> @@ -89,12 +86,7 @@ typedef struct {
+>>         unsigned long key[2];
+>>  } hsiphash_key_t;
+>>
+>> -u32 __hsiphash_aligned(const void *data, size_t len,
+>> -                      const hsiphash_key_t *key);
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -u32 __hsiphash_unaligned(const void *data, size_t len,
+>> -                        const hsiphash_key_t *key);
+>> -#endif
+>> +u32 __hsiphash(const void *data, size_t len, const hsiphash_key_t *key);
+>>
+>>  u32 hsiphash_1u32(const u32 a, const hsiphash_key_t *key);
+>>  u32 hsiphash_2u32(const u32 a, const u32 b, const hsiphash_key_t *key);
+>> @@ -103,24 +95,6 @@ u32 hsiphash_3u32(const u32 a, const u32 b, const u32 c,
+>>  u32 hsiphash_4u32(const u32 a, const u32 b, const u32 c, const u32 d,
+>>                   const hsiphash_key_t *key);
+>>
+>> -static inline u32 ___hsiphash_aligned(const __le32 *data, size_t len,
+>> -                                     const hsiphash_key_t *key)
+>> -{
+>> -       if (__builtin_constant_p(len) && len == 4)
+>> -               return hsiphash_1u32(le32_to_cpu(data[0]), key);
+>> -       if (__builtin_constant_p(len) && len == 8)
+>> -               return hsiphash_2u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
+>> -                                    key);
+>> -       if (__builtin_constant_p(len) && len == 12)
+>> -               return hsiphash_3u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
+>> -                                    le32_to_cpu(data[2]), key);
+>> -       if (__builtin_constant_p(len) && len == 16)
+>> -               return hsiphash_4u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
+>> -                                    le32_to_cpu(data[2]), le32_to_cpu(data[3]),
+>> -                                    key);
+>> -       return __hsiphash_aligned(data, len, key);
+>> -}
+>> -
+>>  /**
+>>   * hsiphash - compute 32-bit hsiphash PRF value
+>>   * @data: buffer to hash
+>> @@ -130,11 +104,27 @@ static inline u32 ___hsiphash_aligned(const __le32 *data, size_t len,
+>>  static inline u32 hsiphash(const void *data, size_t len,
+>>                            const hsiphash_key_t *key)
+>>  {
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -       if (!IS_ALIGNED((unsigned long)data, HSIPHASH_ALIGNMENT))
+>> -               return __hsiphash_unaligned(data, len, key);
+>> -#endif
+>> -       return ___hsiphash_aligned(data, len, key);
+>> +       if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {
+>> +               if (__builtin_constant_p(len) && len == 4)
+>> +                       return hsiphash_1u32(get_unaligned_le32(data),
+>> +                                            key);
+>> +               if (__builtin_constant_p(len) && len == 8)
+>> +                       return hsiphash_2u32(get_unaligned_le32(data),
+>> +                                            get_unaligned_le32(data + 4),
+>> +                                            key);
+>> +               if (__builtin_constant_p(len) && len == 12)
+>> +                       return hsiphash_3u32(get_unaligned_le32(data),
+>> +                                            get_unaligned_le32(data + 4),
+>> +                                            get_unaligned_le32(data + 8),
+>> +                                            key);
+>> +               if (__builtin_constant_p(len) && len == 16)
+>> +                       return hsiphash_4u32(get_unaligned_le32(data),
+>> +                                            get_unaligned_le32(data + 4),
+>> +                                            get_unaligned_le32(data + 8),
+>> +                                            get_unaligned_le32(data + 12),
+>> +                                            key);
+>> +       }
+>> +       return __hsiphash(data, len, key);
+>>  }
+>>
+>>  #endif /* _LINUX_SIPHASH_H */
+>> diff --git a/lib/siphash.c b/lib/siphash.c
+>> index 3ae58b4edad6..3b2ba1a10ad9 100644
+>> --- a/lib/siphash.c
+>> +++ b/lib/siphash.c
+>> @@ -49,40 +49,7 @@
+>>         SIPROUND; \
+>>         return (v0 ^ v1) ^ (v2 ^ v3);
+>>
+>> -u64 __siphash_aligned(const void *data, size_t len, const siphash_key_t *key)
+>> -{
+>> -       const u8 *end = data + len - (len % sizeof(u64));
+>> -       const u8 left = len & (sizeof(u64) - 1);
+>> -       u64 m;
+>> -       PREAMBLE(len)
+>> -       for (; data != end; data += sizeof(u64)) {
+>> -               m = le64_to_cpup(data);
+>> -               v3 ^= m;
+>> -               SIPROUND;
+>> -               SIPROUND;
+>> -               v0 ^= m;
+>> -       }
+>> -#if defined(CONFIG_DCACHE_WORD_ACCESS) && BITS_PER_LONG == 64
+>> -       if (left)
+>> -               b |= le64_to_cpu((__force __le64)(load_unaligned_zeropad(data) &
+>> -                                                 bytemask_from_count(left)));
+>> -#else
+>> -       switch (left) {
+>> -       case 7: b |= ((u64)end[6]) << 48;
+>> -       case 6: b |= ((u64)end[5]) << 40;
+>> -       case 5: b |= ((u64)end[4]) << 32;
+>> -       case 4: b |= le32_to_cpup(data); break;
+>> -       case 3: b |= ((u64)end[2]) << 16;
+>> -       case 2: b |= le16_to_cpup(data); break;
+>> -       case 1: b |= end[0];
+>> -       }
+>> -#endif
+>> -       POSTAMBLE
+>> -}
+>> -EXPORT_SYMBOL(__siphash_aligned);
+>> -
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key)
+>> +u64 __siphash(const void *data, size_t len, const siphash_key_t *key)
+>>  {
+>>         const u8 *end = data + len - (len % sizeof(u64));
+>>         const u8 left = len & (sizeof(u64) - 1);
+>> @@ -112,8 +79,7 @@ u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key)
+>>  #endif
+>>         POSTAMBLE
+>>  }
+>> -EXPORT_SYMBOL(__siphash_unaligned);
+>> -#endif
+>> +EXPORT_SYMBOL(__siphash);
+>>
+>>  /**
+>>   * siphash_1u64 - compute 64-bit siphash PRF value of a u64
+>> @@ -250,39 +216,7 @@ EXPORT_SYMBOL(siphash_3u32);
+>>         HSIPROUND; \
+>>         return (v0 ^ v1) ^ (v2 ^ v3);
+>>
+>> -u32 __hsiphash_aligned(const void *data, size_t len, const hsiphash_key_t *key)
+>> -{
+>> -       const u8 *end = data + len - (len % sizeof(u64));
+>> -       const u8 left = len & (sizeof(u64) - 1);
+>> -       u64 m;
+>> -       HPREAMBLE(len)
+>> -       for (; data != end; data += sizeof(u64)) {
+>> -               m = le64_to_cpup(data);
+>> -               v3 ^= m;
+>> -               HSIPROUND;
+>> -               v0 ^= m;
+>> -       }
+>> -#if defined(CONFIG_DCACHE_WORD_ACCESS) && BITS_PER_LONG == 64
+>> -       if (left)
+>> -               b |= le64_to_cpu((__force __le64)(load_unaligned_zeropad(data) &
+>> -                                                 bytemask_from_count(left)));
+>> -#else
+>> -       switch (left) {
+>> -       case 7: b |= ((u64)end[6]) << 48;
+>> -       case 6: b |= ((u64)end[5]) << 40;
+>> -       case 5: b |= ((u64)end[4]) << 32;
+>> -       case 4: b |= le32_to_cpup(data); break;
+>> -       case 3: b |= ((u64)end[2]) << 16;
+>> -       case 2: b |= le16_to_cpup(data); break;
+>> -       case 1: b |= end[0];
+>> -       }
+>> -#endif
+>> -       HPOSTAMBLE
+>> -}
+>> -EXPORT_SYMBOL(__hsiphash_aligned);
+>> -
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -u32 __hsiphash_unaligned(const void *data, size_t len,
+>> +u32 __hsiphash(const void *data, size_t len,
+>>                          const hsiphash_key_t *key)
+>>  {
+>>         const u8 *end = data + len - (len % sizeof(u64));
+>> @@ -312,8 +246,7 @@ u32 __hsiphash_unaligned(const void *data, size_t len,
+>>  #endif
+>>         HPOSTAMBLE
+>>  }
+>> -EXPORT_SYMBOL(__hsiphash_unaligned);
+>> -#endif
+>> +EXPORT_SYMBOL(__hsiphash);
+>>
+>>  /**
+>>   * hsiphash_1u32 - compute 64-bit hsiphash PRF value of a u32
+>> @@ -418,30 +351,7 @@ EXPORT_SYMBOL(hsiphash_4u32);
+>>         HSIPROUND; \
+>>         return v1 ^ v3;
+>>
+>> -u32 __hsiphash_aligned(const void *data, size_t len, const hsiphash_key_t *key)
+>> -{
+>> -       const u8 *end = data + len - (len % sizeof(u32));
+>> -       const u8 left = len & (sizeof(u32) - 1);
+>> -       u32 m;
+>> -       HPREAMBLE(len)
+>> -       for (; data != end; data += sizeof(u32)) {
+>> -               m = le32_to_cpup(data);
+>> -               v3 ^= m;
+>> -               HSIPROUND;
+>> -               v0 ^= m;
+>> -       }
+>> -       switch (left) {
+>> -       case 3: b |= ((u32)end[2]) << 16;
+>> -       case 2: b |= le16_to_cpup(data); break;
+>> -       case 1: b |= end[0];
+>> -       }
+>> -       HPOSTAMBLE
+>> -}
+>> -EXPORT_SYMBOL(__hsiphash_aligned);
+>> -
+>> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>> -u32 __hsiphash_unaligned(const void *data, size_t len,
+>> -                        const hsiphash_key_t *key)
+>> +u32 __hsiphash(const void *data, size_t len, const hsiphash_key_t *key)
+>>  {
+>>         const u8 *end = data + len - (len % sizeof(u32));
+>>         const u8 left = len & (sizeof(u32) - 1);
+>> @@ -460,8 +370,7 @@ u32 __hsiphash_unaligned(const void *data, size_t len,
+>>         }
+>>         HPOSTAMBLE
+>>  }
+>> -EXPORT_SYMBOL(__hsiphash_unaligned);
+>> -#endif
+>> +EXPORT_SYMBOL(__hsiphash);
+>>
+>>  /**
+>>   * hsiphash_1u32 - compute 32-bit hsiphash PRF value of a u32
+>> --
+>> 2.11.0
+>>
+>
+> As you might expect, when compiling in __siphash_unaligned and
+> __siphash_aligned on the x86 at the same time, __siphash_unaligned is
+> replaced with just "jmp __siphash_aligned", as gcc recognized that
+> indeed the same code is generated.
+>
 
-On Thu, Oct 4, 2018 at 9:40 PM Paul Kocialkowski <contact@paulk.fr> wrote:
->
-> Hi Alexandre,
->
-> Thanks for submitting this second version of the RFC, it is very
-> appreciated! I will try to provide useful feedback here and hopefully
-> be more reactive than during v1 review!
->
-> Most of it looks good to me, but there is a specific point I'd like to
-> keep discussing.
->
-> Le jeudi 04 octobre 2018 =C3=A0 17:11 +0900, Alexandre Courbot a =C3=A9cr=
-it :
-> > This patch documents the protocol that user-space should follow when
-> > communicating with stateless video decoders. It is based on the
-> > following references:
-> >
-> > * The current protocol used by Chromium (converted from config store to
-> >   request API)
-> >
-> > * The submitted Cedrus VPU driver
-> >
-> > As such, some things may not be entirely consistent with the current
-> > state of drivers, so it would be great if all stakeholders could point
-> > out these inconsistencies. :)
-> >
-> > This patch is supposed to be applied on top of the Request API V18 as
-> > well as the memory-to-memory video decoder interface series by Tomasz
-> > Figa.
-> >
-> > Changes since V1:
-> >
-> > * Applied fixes received as feedback,
-> > * Moved controls descriptions to the extended controls file,
-> > * Document reference frame management and referencing (need Hans' feedb=
-ack on
-> >   that).
-> >
-> > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> > ---
-> >  .../media/uapi/v4l/dev-stateless-decoder.rst  | 348 ++++++++++++++++++
-> >  Documentation/media/uapi/v4l/devices.rst      |   1 +
-> >  .../media/uapi/v4l/extended-controls.rst      |  25 ++
-> >  .../media/uapi/v4l/pixfmt-compressed.rst      |  54 ++-
-> >  4 files changed, 424 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.=
-rst
-> >
-> > diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/D=
-ocumentation/media/uapi/v4l/dev-stateless-decoder.rst
-> > new file mode 100644
-> > index 000000000000..e54246df18d0
-> > --- /dev/null
-> > +++ b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
-> > @@ -0,0 +1,348 @@
-> > +.. -*- coding: utf-8; mode: rst -*-
-> > +
-> > +.. _stateless_decoder:
-> > +
-> > +**************************************************
-> > +Memory-to-memory Stateless Video Decoder Interface
-> > +**************************************************
-> > +
-> > +A stateless decoder is a decoder that works without retaining any kind=
- of state
-> > +between processing frames. This means that each frame is decoded indep=
-endently
-> > +of any previous and future frames, and that the client is responsible =
-for
-> > +maintaining the decoding state and providing it to the driver. This is=
- in
-> > +contrast to the stateful video decoder interface, where the hardware m=
-aintains
-> > +the decoding state and all the client has to do is to provide the raw =
-encoded
-> > +stream.
-> > +
-> > +This section describes how user-space ("the client") is expected to co=
-mmunicate
-> > +with such decoders in order to successfully decode an encoded stream. =
-Compared
-> > +to stateful codecs, the driver/client sequence is simpler, but the cos=
-t of this
-> > +simplicity is extra complexity in the client which must maintain a con=
-sistent
-> > +decoding state.
-> > +
-> > +Querying capabilities
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +1. To enumerate the set of coded formats supported by the driver, the =
-client
-> > +   calls :c:func:`VIDIOC_ENUM_FMT` on the ``OUTPUT`` queue.
-> > +
-> > +   * The driver must always return the full set of supported ``OUTPUT`=
-` formats,
-> > +     irrespective of the format currently set on the ``CAPTURE`` queue=
-.
-> > +
-> > +2. To enumerate the set of supported raw formats, the client calls
-> > +   :c:func:`VIDIOC_ENUM_FMT` on the ``CAPTURE`` queue.
-> > +
-> > +   * The driver must return only the formats supported for the format =
-currently
-> > +     active on the ``OUTPUT`` queue.
-> > +
-> > +   * Depending on the currently set ``OUTPUT`` format, the set of supp=
-orted raw
-> > +     formats may depend on the value of some controls (e.g. H264 or VP=
-9
-> > +     profile). The client is responsible for making sure that these co=
-ntrols
-> > +     are set to the desired value before querying the ``CAPTURE`` queu=
-e.
->
-> I still think we have a problem when enumerating CAPTURE formats, that
-> providing the profile/level information does not help solving.
->
-> From previous emails on v1 (to which I failed to react to), it seems
-> that the consensus was to set the profile/level indication beforehand
-> to reduce the subset of possible formats and return that as enumerated
-> possible formats.
+Yeah, I noticed something similar on arm64, although we do get a stack
+frame there.
 
-I think the consensus was to set all the the parsed header controls
-and actually Alex seems to have mentioned it slightly further in his
-patch:
-
-+   * In order to enumerate raw formats supported by a given coded format, =
-the
-+     client must thus set that coded format on the ``OUTPUT`` queue first,=
- then
-+     set any control listed on the format's description, and finally enume=
-rate
-+     the ``CAPTURE`` queue.
-
+> However, on platforms where get_unaligned_* does do something
+> different, it looks to me like this patch now always calls the
+> unaligned code, even when the input data _is_ an aligned address
+> already, which is worse behaviour than before. While it would be
+> possible for the get_unaligned_* function headers to also detect this
+> and fallback to the faster version at compile time, by the time
+> get_unaligned_* is used in this patch, it's no longer in the header,
+> but rather in siphash.c, which means the compiler no longer knows that
+> the address is aligned, and so we hit the slow path. This especially
+> impacts architectures like MIPS, for example. This is why the original
+> code, prior to this patch, checks the alignment in the .h and then
+> selects which codepath afterwards. So while this patch might handle
+> the ARM use case, it seems like a regression on all other platforms.
+> See, for example, the struct passing in net/core/secure_seq.c, which
+> sends intentionally aligned and packed structs to siphash, which then
+> benefits from using the faster instructions on certain platforms.
 >
-> However, it does not really solve the issue here, given the following
-> distinct cases:
+> It seems like what you're grappling with on the ARM side of things is
+> that CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS only half means what it
+> says on some ISAs, complicating this logic. It seems like the ideal
+> thing to do, given that, would be to just not set
+> CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS on those, so that we can fall
+> back to the unaligned path always, like this patch suggests. Or if
+> that's _too_ drastic, perhaps introduce another variable like
+> CONFIG_MOSTLY_EFFICIENT_UNALIGNED_ACCESS.
 >
-> 1. The VPU can only output the format for the decoded frame and that
-> format is not known until the first buffer metadata is passed.
 
-That's why I later suggested metadata (parsed header controls) and not
-just some selective controls, such as profiles.
+Perhaps we should clarify better what
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS means.
 
-> Everything that is reported as supported at this point should be
-> understood as supported formats for the decoded bitstreams, but
-> userspace would have to pick the one matching the decoded format of the
-> bitstream to decode. I don't really see the point of trying to reduce
-> that list by providing the profile/level.
+One could argue that it means there is no point in reorganizing your
+data to make it appear aligned, because the unaligned accessors are
+cheap. Instead, it is used as a license to cast unaligned pointers to
+any type (which C does not permit btw), even in the example.
+
+So in the case of siphash, that would mean always taking the unaligned
+path if CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS is set, or only for
+unaligned data if it is not.
+
+> By the way, have you confirmed that the compiler actually does emit
+> ldrd and ldm here?
 >
-> 2. The VPU has some format conversion block in its pipeline and can
-> actually provide a range of different formats for CAPTURE buffers,
-> independently from the format of the decoded bitstream.
->
-> Either way, I think (correct me if I'm wrong) that players do know the
-> format from the decoded bitstream here, so enumeration only makes sense
-> for case 2.
 
-Players don't know the format for the decoded bitstream, as I already
-explained before. From stream metadata they would only know whether
-the stream is YUV 4:2:0 vs 4:2:2, but wouldn't know the exact hardware
-constraints, e.g. whether NV12 or YUV420 is supported for given YUV
-4:2:0 stream.
-
->
-> Something we could do is to not enumerate any format for case 1., which
-> we would specify as an indication that only the decoded bitstream
-> format must be set. Then in case 2., we would enumerate the possible
-> formats.
->
-> For case 1., having the driver expose the supported profiles ensures
-> that any format in a supported profile is valid although not
-> enumerated.
-
-Profile doesn't fully determine a specific pixel format, only the
-abstract format (see above).
-
->
-> Alternatively, we could go with a control that indicates whether the
-> driver supports a format decorrelated from the decoded bitstream format
-> and still enumerate all formats in case 1., with the implication that
-> only the right one must be picked by userspace. Here again, I don't see
-> the point of reducing the list by setting the profile/level.
->
-> So my goal here is to clearly enable userspace to distinguish between
-> the two situations.
->
-> What do you think?
-
-Why would we need to create a control, if we already have the ENUM_FMT
-API existing exactly to achieve this? We already have this problem
-solved for stateful decoders and if we request the userspace to
-actually set all the necessary metadata beforehand, the resulting
-behavior (initialization sequence) would be much more consistent
-between these 2 APIs.
-
-Best regards,
-Tomasz
+Yes.
