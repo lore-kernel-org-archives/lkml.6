@@ -2,231 +2,142 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5EEC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AF3C65BD1
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6247213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6247213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1822F213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:45:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="bSwyDREK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1822F213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeJJED0 (ORCPT
+        id S1727254AbeJJEES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:03:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725748AbeJJED0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:03:26 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6ACFA81DE9;
-        Tue,  9 Oct 2018 20:44:41 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59C927C828;
-        Tue,  9 Oct 2018 20:44:37 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     intel-gfx@lists.freedesktop.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, stable@vger.kernel.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/atomic_helper: Allow DPMS On<->Off changes for unregistered connectors
-Date:   Tue,  9 Oct 2018 16:44:24 -0400
-Message-Id: <20181009204424.21462-1-lyude@redhat.com>
+        Wed, 10 Oct 2018 00:04:18 -0400
+Received: from mail-by2nam03on0089.outbound.protection.outlook.com ([104.47.42.89]:45050
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726607AbeJJEES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 00:04:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yOJriWRj9tjH57dJvx5p7V2EyhnBGwo14AynNybLmOo=;
+ b=bSwyDREK+VWr0cMgh8DRddPrIoXONrUzFgEO0+hNPPJzRUrYvUj6kbKhdSH4biOnAcXKRorThZwpa5TSXp0kku61RGmQTadu8474Munb1cC+S6m5few9W/FNMbrvIddtMDavJzU5JZk5nzXzYd76cS+obtbo7Pc+w1Qz4ZoO+Wk=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB2581.namprd12.prod.outlook.com (52.132.141.164) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.28; Tue, 9 Oct 2018 20:45:30 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1228.020; Tue, 9 Oct 2018
+ 20:45:30 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/11] arch/x86: Initialize the resource functions that
+ are different
+Thread-Topic: [PATCH v2 07/11] arch/x86: Initialize the resource functions
+ that are different
+Thread-Index: AQHUXO3RKpKecNr1j0SojII0eXo5EKUXLmwAgAA5uIA=
+Date:   Tue, 9 Oct 2018 20:45:30 +0000
+Message-ID: <9834f9b1-d997-4842-6dac-321c6ec85311@amd.com>
+References: <20181005205512.29545-1-babu.moger@amd.com>
+ <20181005205512.29545-8-babu.moger@amd.com>
+ <1d3b42db-4651-2bb0-4632-a084d1df5991@intel.com>
+In-Reply-To: <1d3b42db-4651-2bb0-4632-a084d1df5991@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR22CA0062.namprd22.prod.outlook.com
+ (2603:10b6:300:12a::24) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB2581;20:xZvxijFwoib06Rc/ja6Ewqi3imzYCPThXZRLe/GSIMdkNRjM8eC6CXytg18XS9sFDwUIpVmFQRKCvB64TfG/QIuLx0sOV24VhNB+8IeVSMM0DTrkXqOO6+ru5O9SjwiYkrULslAICFmGgalMlbjK0HePy7LowDI0ZBeyUdz34hPVa5JgpwtYmBR89Hny95KWqDsNApgzwj9ea6CvH81yxIuay+CxGZio7Hxn6JLyEBDJg1KPhPY7KJHVYA7UAQml
+x-ms-office365-filtering-correlation-id: 0137333c-d109-4016-e14a-08d62e282681
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2581;
+x-ms-traffictypediagnostic: DM5PR12MB2581:
+x-microsoft-antispam-prvs: <DM5PR12MB2581F3D2C31E224F1B2CB6A995E70@DM5PR12MB2581.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:DM5PR12MB2581;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2581;
+x-forefront-prvs: 08200063E9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(366004)(376002)(396003)(43544003)(189003)(199004)(86362001)(2501003)(229853002)(6116002)(3846002)(54906003)(486006)(99286004)(446003)(6506007)(31696002)(53936002)(5660300001)(5250100002)(11346002)(14444005)(110136005)(2201001)(52116002)(256004)(106356001)(386003)(6246003)(478600001)(36756003)(305945005)(6512007)(25786009)(2900100001)(7736002)(97736004)(316002)(102836004)(71190400001)(7416002)(14454004)(2616005)(6486002)(105586002)(31686004)(4326008)(8936002)(6436002)(81166006)(8676002)(26005)(72206003)(53546011)(76176011)(68736007)(66066001)(71200400001)(476003)(81156014)(2906002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2581;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ju1JJei9VOMyBuNboazAVKqsN6/L0ixopf0lEpTUFd2IDM1e4qsZMqgW7kSDohdZqQGNnhodEYSC0mhXyA0pVgBtnIykbABsSmbJ0B4/gUSWL0yX6EFpG18fLiFH65LxaE4Td1Tv2FdeJAahH41MnOUfORT0tB9QP20oM5TRUSqNneeuxaNEEOE+TZVSgNZ9g6MBugsk/xrXWsq8eOGoJtU5J4E4w+iEmnERs3QajwXYYMZOAt9dq3wsGb9S9HYSDkGhib9CWKAXKtcBdNwlIipJeiUICITzC0xzbY2pCQo5Gsh5VAcVd4j4sY6PCEbCua26DgL4hSb3KBxNmoO1qT0o5ALtShvZf8OIZgoUK9Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C1E095693FED8244BC4090751EFEC154@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 09 Oct 2018 20:44:41 +0000 (UTC)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0137333c-d109-4016-e14a-08d62e282681
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 20:45:30.4453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2581
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It appears when testing my previous fix for some of the legacy
-modesetting issues with MST, I misattributed some kernel splats that
-started appearing on my machine after a rebase as being from upstream.
-But it appears they actually came from my patch series:
-
-[    2.980512] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing for [CONNECTOR:65:eDP-1]
-[    2.980516] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CONNECTOR:65:eDP-1] is not registered
-[    2.980516] ------------[ cut here ]------------
-[    2.980519] Could not determine valid watermarks for inherited state
-[    2.980553] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
-[    2.980556] Modules linked in: i915(O+) i2c_algo_bit drm_kms_helper(O) syscopyarea sysfillrect sysimgblt fb_sys_fops drm(O) intel_rapl x86_pkg_temp_thermal iTCO_wdt wmi_bmof coretemp crc32_pclmul psmouse i2c_i801 mei_me mei i2c_core lpc_ich mfd_core tpm_tis tpm_tis_core wmi tpm thinkpad_acpi pcc_cpufreq video ehci_pci crc32c_intel serio_raw ehci_hcd xhci_pci xhci_hcd
-[    2.980577] CPU: 3 PID: 551 Comm: systemd-udevd Tainted: G           O      4.19.0-rc7Lyude-Test+ #1
-[    2.980579] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET63WW (1.27 ) 11/10/2016
-[    2.980605] RIP: 0010:intel_modeset_init+0x14d7/0x19f0 [i915]
-[    2.980607] Code: 89 df e8 ec 27 02 00 e9 24 f2 ff ff be 03 00 00 00 48 89 df e8 da 27 02 00 e9 26 f2 ff ff 48 c7 c7 c8 d1 34 a0 e8 23 cf dc e0 <0f> 0b e9 7c fd ff ff f6 c4 04 0f 85 37 f7 ff ff 48 8b 83 60 08 00
-[    2.980611] RSP: 0018:ffffc90000287988 EFLAGS: 00010282
-[    2.980614] RAX: 0000000000000000 RBX: ffff88031b488000 RCX: 0000000000000006
-[    2.980617] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff880321ad54d0
-[    2.980620] RBP: ffffc90000287a10 R08: 000000000000040a R09: 0000000000000065
-[    2.980623] R10: ffff88030ebb8f00 R11: ffffffff81416590 R12: ffff88031b488000
-[    2.980626] R13: ffff88031b4883a0 R14: ffffc900002879a8 R15: ffff880319099800
-[    2.980630] FS:  00007f475620d180(0000) GS:ffff880321ac0000(0000) knlGS:0000000000000000
-[    2.980633] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    2.980636] CR2: 00007f9ef28018a0 CR3: 000000031b72c001 CR4: 00000000003606e0
-[    2.980639] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    2.980642] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    2.980645] Call Trace:
-[    2.980675]  i915_driver_load+0xb0e/0xdc0 [i915]
-[    2.980681]  ? kernfs_add_one+0xe7/0x130
-[    2.980709]  i915_pci_probe+0x46/0x60 [i915]
-[    2.980715]  pci_device_probe+0xd4/0x150
-[    2.980719]  really_probe+0x243/0x3b0
-[    2.980722]  driver_probe_device+0xba/0x100
-[    2.980726]  __driver_attach+0xe4/0x110
-[    2.980729]  ? driver_probe_device+0x100/0x100
-[    2.980733]  bus_for_each_dev+0x74/0xb0
-[    2.980736]  driver_attach+0x1e/0x20
-[    2.980739]  bus_add_driver+0x159/0x230
-[    2.980743]  ? 0xffffffffa0393000
-[    2.980746]  driver_register+0x70/0xc0
-[    2.980749]  ? 0xffffffffa0393000
-[    2.980753]  __pci_register_driver+0x57/0x60
-[    2.980780]  i915_init+0x55/0x58 [i915]
-[    2.980785]  do_one_initcall+0x4a/0x1c4
-[    2.980789]  ? do_init_module+0x27/0x210
-[    2.980793]  ? kmem_cache_alloc_trace+0x131/0x190
-[    2.980797]  do_init_module+0x60/0x210
-[    2.980800]  load_module+0x2063/0x22e0
-[    2.980804]  ? vfs_read+0x116/0x140
-[    2.980807]  ? vfs_read+0x116/0x140
-[    2.980811]  __do_sys_finit_module+0xbd/0x120
-[    2.980814]  ? __do_sys_finit_module+0xbd/0x120
-[    2.980818]  __x64_sys_finit_module+0x1a/0x20
-[    2.980821]  do_syscall_64+0x5a/0x110
-[    2.980824]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    2.980826] RIP: 0033:0x7f4754e32879
-[    2.980828] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f7 45 2c 00 f7 d8 64 89 01 48
-[    2.980831] RSP: 002b:00007fff43fd97d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-[    2.980834] RAX: ffffffffffffffda RBX: 0000559a44ca64f0 RCX: 00007f4754e32879
-[    2.980836] RDX: 0000000000000000 RSI: 00007f475599f4cd RDI: 0000000000000018
-[    2.980838] RBP: 00007f475599f4cd R08: 0000000000000000 R09: 0000000000000000
-[    2.980839] R10: 0000000000000018 R11: 0000000000000246 R12: 0000000000000000
-[    2.980841] R13: 0000559a44c92fd0 R14: 0000000000020000 R15: 0000000000000000
-[    2.980881] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
-[    2.980884] ---[ end trace 5eb47a76277d4731 ]---
-
-The cause of this appears to be due to the fact that if there's
-pre-existing display state that was set by the BIOS when i915 loads, it
-will attempt to perform a modeset before the driver is registered with
-userspace. Since this happens before the driver's registered with
-userspace, it's connectors are also unregistered and thus-states which
-would turn on DPMS on a connector end up getting rejected since the
-connector isn't registered.
-
-These bugs managed to get past Intel's CI partially due to the fact it
-never ran a full test on my patches for some reason, but also because
-all of the tests unload the GPU once before running. Since this bug is
-only really triggered when the drivers tries to perform a modeset before
-it's been fully registered with userspace when coming from whatever
-display configuration the firmware left us with, it likely would never
-have been picked up by CI in the first place.
-
-After some discussion with vsyrjala, we decided the best course of
-action would be to just move the unregistered connector checks out of
-update_connector_routing() and into drm_atomic_set_crtc_for_connector().
-The reason for this being that legacy modesetting isn't going to be
-expecting failures anywhere (at least this is the case with X), so
-ideally we want to ensure that any DPMS changes will still work even on
-unregistered connectors. Instead, we now only reject new modesets which
-would change the current CRTC assigned to an unregistered connector
-unless no new CRTC is being assigned to replace the connector's previous
-one.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Fixes: 4d80273976bf ("drm/atomic_helper: Disallow new modesets on unregistered connectors")
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: stable@vger.kernel.org
----
- drivers/gpu/drm/drm_atomic_helper.c | 21 +--------------------
- drivers/gpu/drm/drm_atomic_uapi.c   | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index e6a2cf72de5e..6f66777dca4b 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -319,26 +319,6 @@ update_connector_routing(struct drm_atomic_state *state,
- 		return 0;
- 	}
- 
--	crtc_state = drm_atomic_get_new_crtc_state(state,
--						   new_connector_state->crtc);
--	/*
--	 * For compatibility with legacy users, we want to make sure that
--	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
--	 * which would result in anything else must be considered invalid, to
--	 * avoid turning on new displays on dead connectors.
--	 *
--	 * Since the connector can be unregistered at any point during an
--	 * atomic check or commit, this is racy. But that's OK: all we care
--	 * about is ensuring that userspace can't do anything but shut off the
--	 * display on a connector that was destroyed after its been notified,
--	 * not before.
--	 */
--	if (!READ_ONCE(connector->registered) && crtc_state->active) {
--		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
--				 connector->base.id, connector->name);
--		return -EINVAL;
--	}
--
- 	funcs = connector->helper_private;
- 
- 	if (funcs->atomic_best_encoder)
-@@ -383,6 +363,7 @@ update_connector_routing(struct drm_atomic_state *state,
- 
- 	set_best_encoder(state, new_connector_state, new_encoder);
- 
-+	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
- 	crtc_state->connectors_changed = true;
- 
- 	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
-diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index d5b7f315098c..7acec863b10c 100644
---- a/drivers/gpu/drm/drm_atomic_uapi.c
-+++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -299,6 +299,27 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
- 	struct drm_connector *connector = conn_state->connector;
- 	struct drm_crtc_state *crtc_state;
- 
-+	/*
-+	 * For compatibility with legacy users, we want to make sure that
-+	 * we allow DPMS On<->Off modesets on unregistered connectors, since
-+	 * legacy modesetting users will not be expecting these to fail. We do
-+	 * not however, want to allow legacy users to assign a connector
-+	 * that's been unregistered from sysfs to another CRTC, since doing
-+	 * this with a now non-existant connector could potentially leave us
-+	 * in an invalid state.
-+	 *
-+	 * Since the connector can be unregistered at any point during an
-+	 * atomic check or commit, this is racy. But that's OK: all we care
-+	 * about is ensuring that userspace can't use this connector for new
-+	 * configurations after it's been notified that the connector is no
-+	 * longer present.
-+	 */
-+	if (!READ_ONCE(connector->registered) && crtc) {
-+		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
-+				 connector->base.id, connector->name);
-+		return -EINVAL;
-+	}
-+
- 	if (conn_state->crtc == crtc)
- 		return 0;
- 
--- 
-2.17.1
-
+DQoNCk9uIDEwLzA5LzIwMTggMTI6MTggUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4gSGkg
+QmFidSwNCj4gDQo+IE9uIDEwLzUvMjAxOCAxOjU1IFBNLCBNb2dlciwgQmFidSB3cm90ZToNCj4+
+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3JkdF9jdHJsbW9uZGF0YS5jIGIvYXJj
+aC94ODYva2VybmVsL2NwdS9yZHRfY3RybG1vbmRhdGEuYw0KPj4gaW5kZXggODEyY2M1YzVlMzll
+Li5lZTNlODM4OWQ4ZDIgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3JkdF9j
+dHJsbW9uZGF0YS5jDQo+PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3JkdF9jdHJsbW9uZGF0
+YS5jDQo+PiBAQCAtNjQsNyArNjQsNyBAQCBzdGF0aWMgYm9vbCBid192YWxpZGF0ZShjaGFyICpi
+dWYsIHVuc2lnbmVkIGxvbmcgKmRhdGEsIHN0cnVjdCByZHRfcmVzb3VyY2UgKnIpDQo+PiAgCXJl
+dHVybiB0cnVlOw0KPj4gIH0NCj4+ICANCj4+IC1pbnQgcGFyc2VfYncoc3RydWN0IHJkdF9wYXJz
+ZV9kYXRhICpkYXRhLCBzdHJ1Y3QgcmR0X3Jlc291cmNlICpyLA0KPj4gK2ludCBwYXJzZV9id19p
+bnRlbChzdHJ1Y3QgcmR0X3BhcnNlX2RhdGEgKmRhdGEsIHN0cnVjdCByZHRfcmVzb3VyY2UgKnIs
+DQo+PiAgCSAgICAgc3RydWN0IHJkdF9kb21haW4gKmQpDQo+PiAgew0KPj4gIAl1bnNpZ25lZCBs
+b25nIGJ3X3ZhbDsNCj4+DQo+IA0KPiBKdXN0IGEgc21hbGwgbml0IC0gY291bGQgeW91IHBsZWFz
+ZSBjaGVjayB0aGF0IHRoZSBhbGlnbm1lbnQgbWF0Y2hlcyB0aGUNCj4gb3BlbiBwYXJlbnRoZXNp
+cyBhcyB5b3UgaGF2ZSBkb25lIHdpdGggYWxsIHRoZSBvdGhlciBzaW1pbGFyIGNoYW5nZXMgaW4N
+Cj4gdGhpcyBwYXRjaD8NCg0KT2suIFN1cmUuIHdpbGwgdGFrZSBjYXJlIG9mIGl0LiBUaGFua3Mu
+DQoNCj4gDQo+IFJlaW5ldHRlDQo+IA0K
