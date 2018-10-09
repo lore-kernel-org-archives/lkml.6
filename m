@@ -2,116 +2,290 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC321C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E508C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63E2F214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:28:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rInS1iwE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E2F214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 409A4214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409A4214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJJDre (ORCPT
+        id S1726831AbeJJDrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:47:34 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39360 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeJJDre (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:47:34 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w99KSU4H079739;
-        Tue, 9 Oct 2018 15:28:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539116910;
-        bh=upotiUt4CqogOYtKmu1y/fIExdJR9jytEfDuhVNCW6w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rInS1iwEtwvnTT9Q68liBCLFfdsttbznyYDx/c5bxY+Hd/dC7+86ccmSCYiCblOWu
-         fRlzemaFKrGoaQ064Ktuc8glYPJulx/xBN4Zyw5fSN6571h/0XvcKT4qkj3Jl2G6Qi
-         I8T7UaBwq6YXHbK9oj8b3RbrMMCKueu/frnYY6OY=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w99KSU1s002026;
-        Tue, 9 Oct 2018 15:28:30 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 9 Oct
- 2018 15:28:30 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 9 Oct 2018 15:28:30 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w99KSTG9016272;
-        Tue, 9 Oct 2018 15:28:29 -0500
-Subject: Re: [RFC PATCH 05/11] net: ethernet: ti: cpsw: add support for port
- interface mode selection phy
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20181008234949.15416-1-grygorii.strashko@ti.com>
- <20181008234949.15416-6-grygorii.strashko@ti.com>
- <20181009005048.GB23588@lunn.ch>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <fd5c9503-8eed-0f7f-e9db-1bc870a23a93@ti.com>
-Date:   Tue, 9 Oct 2018 15:28:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 23:47:47 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63669 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726701AbeJJDrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 23:47:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 13:29:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,361,1534834800"; 
+   d="scan'208";a="98834476"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.165]) ([10.7.198.165])
+  by orsmga002.jf.intel.com with ESMTP; 09 Oct 2018 13:26:41 -0700
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20181009170051.GA40606@tiger-server>
+ <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+Date:   Tue, 9 Oct 2018 13:26:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181009005048.GB23588@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-
-On 10/08/2018 07:50 PM, Andrew Lunn wrote:
->>   	/* Configure GMII_SEL register */
->> -	cpsw_phy_sel(cpsw->dev, slave->phy->interface, slave->slave_num);
->> +	if (!IS_ERR(slave->data->ifphy))
->> +		phy_set_netif_mode(slave->data->ifphy, slave->data->phy_if);
+On 10/9/2018 11:04 AM, Dan Williams wrote:
+> On Tue, Oct 9, 2018 at 3:21 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+>>
+>> On 2018-09-25 at 13:21:24 -0700, Alexander Duyck wrote:
+>>> The ZONE_DEVICE pages were being initialized in two locations. One was with
+>>> the memory_hotplug lock held and another was outside of that lock. The
+>>> problem with this is that it was nearly doubling the memory initialization
+>>> time. Instead of doing this twice, once while holding a global lock and
+>>> once without, I am opting to defer the initialization to the one outside of
+>>> the lock. This allows us to avoid serializing the overhead for memory init
+>>> and we can instead focus on per-node init times.
+>>>
+>>> One issue I encountered is that devm_memremap_pages and
+>>> hmm_devmmem_pages_create were initializing only the pgmap field the same
+>>> way. One wasn't initializing hmm_data, and the other was initializing it to
+>>> a poison value. Since this is something that is exposed to the driver in
+>>> the case of hmm I am opting for a third option and just initializing
+>>> hmm_data to 0 since this is going to be exposed to unknown third party
+>>> drivers.
+>>>
+>>> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>> ---
+>>>
+>>> v4: Moved moved memmap_init_zone_device to below memmmap_init_zone to avoid
+>>>      merge conflicts with other changes in the kernel.
+>>> v5: No change
+>>>
+>>>   include/linux/mm.h |    2 +
+>>>   kernel/memremap.c  |   24 +++++---------
+>>>   mm/hmm.c           |   12 ++++---
+>>>   mm/page_alloc.c    |   92 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+>>>   4 files changed, 107 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index 06d7d7576f8d..7312fb78ef31 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -848,6 +848,8 @@ static inline bool is_zone_device_page(const struct page *page)
+>>>   {
+>>>        return page_zonenum(page) == ZONE_DEVICE;
+>>>   }
+>>> +extern void memmap_init_zone_device(struct zone *, unsigned long,
+>>> +                                 unsigned long, struct dev_pagemap *);
+>>>   #else
+>>>   static inline bool is_zone_device_page(const struct page *page)
+>>>   {
+>>> diff --git a/kernel/memremap.c b/kernel/memremap.c
+>>> index 5b8600d39931..d0c32e473f82 100644
+>>> --- a/kernel/memremap.c
+>>> +++ b/kernel/memremap.c
+>>> @@ -175,10 +175,10 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>>>        struct vmem_altmap *altmap = pgmap->altmap_valid ?
+>>>                        &pgmap->altmap : NULL;
+>>>        struct resource *res = &pgmap->res;
+>>> -     unsigned long pfn, pgoff, order;
+>>> +     struct dev_pagemap *conflict_pgmap;
+>>>        pgprot_t pgprot = PAGE_KERNEL;
+>>> +     unsigned long pgoff, order;
+>>>        int error, nid, is_ram;
+>>> -     struct dev_pagemap *conflict_pgmap;
+>>>
+>>>        align_start = res->start & ~(SECTION_SIZE - 1);
+>>>        align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+>>> @@ -256,19 +256,13 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>>>        if (error)
+>>>                goto err_add_memory;
+>>>
+>>> -     for_each_device_pfn(pfn, pgmap) {
+>>> -             struct page *page = pfn_to_page(pfn);
+>>> -
+>>> -             /*
+>>> -              * ZONE_DEVICE pages union ->lru with a ->pgmap back
+>>> -              * pointer.  It is a bug if a ZONE_DEVICE page is ever
+>>> -              * freed or placed on a driver-private list.  Seed the
+>>> -              * storage with LIST_POISON* values.
+>>> -              */
+>>> -             list_del(&page->lru);
+>>> -             page->pgmap = pgmap;
+>>> -             percpu_ref_get(pgmap->ref);
+>>> -     }
+>>> +     /*
+>>> +      * Initialization of the pages has been deferred until now in order
+>>> +      * to allow us to do the work while not holding the hotplug lock.
+>>> +      */
+>>> +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+>>> +                             align_start >> PAGE_SHIFT,
+>>> +                             align_size >> PAGE_SHIFT, pgmap);
+>>>
+>>>        devm_add_action(dev, devm_memremap_pages_release, pgmap);
+>>>
+>>> diff --git a/mm/hmm.c b/mm/hmm.c
+>>> index c968e49f7a0c..774d684fa2b4 100644
+>>> --- a/mm/hmm.c
+>>> +++ b/mm/hmm.c
+>>> @@ -1024,7 +1024,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>>>        resource_size_t key, align_start, align_size, align_end;
+>>>        struct device *device = devmem->device;
+>>>        int ret, nid, is_ram;
+>>> -     unsigned long pfn;
+>>>
+>>>        align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
+>>>        align_size = ALIGN(devmem->resource->start +
+>>> @@ -1109,11 +1108,14 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>>>                                align_size >> PAGE_SHIFT, NULL);
+>>>        mem_hotplug_done();
+>>>
+>>> -     for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
+>>> -             struct page *page = pfn_to_page(pfn);
+>>> +     /*
+>>> +      * Initialization of the pages has been deferred until now in order
+>>> +      * to allow us to do the work while not holding the hotplug lock.
+>>> +      */
+>>> +     memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+>>> +                             align_start >> PAGE_SHIFT,
+>>> +                             align_size >> PAGE_SHIFT, &devmem->pagemap);
+>>>
+>>> -             page->pgmap = &devmem->pagemap;
+>>> -     }
+>>>        return 0;
+>>>
+>>>   error_add_memory:
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index 926ad3083b28..7ec0997ded39 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -5489,12 +5489,23 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>>        if (highest_memmap_pfn < end_pfn - 1)
+>>>                highest_memmap_pfn = end_pfn - 1;
+>>>
+>>> +#ifdef CONFIG_ZONE_DEVICE
+>>>        /*
+>>>         * Honor reservation requested by the driver for this ZONE_DEVICE
+>>> -      * memory
+>>> +      * memory. We limit the total number of pages to initialize to just
+>>> +      * those that might contain the memory mapping. We will defer the
+>>> +      * ZONE_DEVICE page initialization until after we have released
+>>> +      * the hotplug lock.
+>>>         */
+>>> -     if (altmap && start_pfn == altmap->base_pfn)
+>>> -             start_pfn += altmap->reserve;
+>>> +     if (zone == ZONE_DEVICE) {
+>>> +             if (!altmap)
+>>> +                     return;
+>>> +
+>>> +             if (start_pfn == altmap->base_pfn)
+>>> +                     start_pfn += altmap->reserve;
+>>> +             end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+>>> +     }
+>>> +#endif
+>>>
+>>>        for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>>>                /*
+>>> @@ -5538,6 +5549,81 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>>        }
+>>>   }
+>>>
+>>> +#ifdef CONFIG_ZONE_DEVICE
+>>> +void __ref memmap_init_zone_device(struct zone *zone,
+>>> +                                unsigned long start_pfn,
+>>> +                                unsigned long size,
+>>> +                                struct dev_pagemap *pgmap)
+>>> +{
+>>> +     unsigned long pfn, end_pfn = start_pfn + size;
+>>> +     struct pglist_data *pgdat = zone->zone_pgdat;
+>>> +     unsigned long zone_idx = zone_idx(zone);
+>>> +     unsigned long start = jiffies;
+>>> +     int nid = pgdat->node_id;
+>>> +
+>>> +     if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
+>>> +             return;
+>>> +
+>>> +     /*
+>>> +      * The call to memmap_init_zone should have already taken care
+>>> +      * of the pages reserved for the memmap, so we can just jump to
+>>> +      * the end of that region and start processing the device pages.
+>>> +      */
+>>> +     if (pgmap->altmap_valid) {
+>>> +             struct vmem_altmap *altmap = &pgmap->altmap;
+>>> +
+>>> +             start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+>>> +             size = end_pfn - start_pfn;
+>>> +     }
+>>> +
+>>> +     for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>>> +             struct page *page = pfn_to_page(pfn);
+>>> +
+>>> +             __init_single_page(page, pfn, zone_idx, nid);
+>>> +
+>>> +             /*
+>>> +              * Mark page reserved as it will need to wait for onlining
+>>> +              * phase for it to be fully associated with a zone.
+>>> +              *
+>>> +              * We can use the non-atomic __set_bit operation for setting
+>>> +              * the flag as we are still initializing the pages.
+>>> +              */
+>>> +             __SetPageReserved(page);
+>>
+>> So we need to hold the page reserved flag while memory onlining.
+>> But after onlined, Do we neeed to clear the reserved flag in the DEV/FS
+>> DAX memory type?
+>> @Dan, What will going on with this?
+>>
 > 
-> Is slave->data->phy_if also passed to phy_connect()? So you are going
-> to end up with both the MAC and the PHY inserting RGMII delays, and it
-> not working.
-
-No. This logic not changed comparing to how it was.
-
-  * "rgmii" (RX and TX delays are added by the MAC when required)
-
-rgmii_id = 0 --> CPSW: 0 : Internal Delay, PHY - no delay
-
-  * "rgmii-id" (RGMII with internal RX and TX delays provided by the PHY, the
-     MAC should not add the RX or TX delays in this case)
-  * "rgmii-rxid" (RGMII with internal RX delay provided by the PHY, the MAC
-     should not add an RX delay in this case)
-  * "rgmii-txid" (RGMII with internal TX delay provided by the PHY, the MAC
-     should not add an TX delay in this case)
-
-rgmii_id = 1 --> CPSW: 1 : No Internal Delay, PHY/board -  delay
-
+> That comment is incorrect, device-pages are never onlined. So I think
+> we can just skip that call to __SetPageReserved() unless the memory
+> range is MEMORY_DEVICE_{PRIVATE,PUBLIC}.
 > 
-> You need to somehow decide if the MAC is going to do the delay, or the
-> PHY. But not both.
 
-Again, this series does not change logic - only interfaces and DT.
+When pages are "onlined" via __free_pages_boot_core they clear the 
+reserved bit, that is the reason for the comment. The reserved bit is 
+meant to indicate that the page cannot be swapped out or moved based on 
+the description of the bit.
 
-Thank you for review.
+I would think with that being the case we still probably need the call 
+to __SetPageReserved to set the bit with the expectation that it will 
+not be cleared for device-pages since the pages are not onlined. 
+Removing the call to __SetPageReserved would probably introduce a number 
+of regressions as there are multiple spots that use the reserved bit to 
+determine if a page can be swapped out to disk, mapped as system memory, 
+or migrated.
 
--- 
-regards,
--grygorii
+Thanks.
+
+- Alex
+
