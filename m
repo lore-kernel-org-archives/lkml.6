@@ -2,126 +2,163 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D98C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66292C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023F1214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023F1214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 25A6B214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:53:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsIbBitb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A6B214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJIWJv (ORCPT
+        id S1726727AbeJIWKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:09:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbeJIWJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:09:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7589CB005;
-        Tue,  9 Oct 2018 14:52:30 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 16:52:29 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20181009145229.3lv5vl2ypz5i45cq@pathway.suse.cz>
-References: <20180928090939.GE1160@jagdpanzerIV>
- <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
- <20180929105151.GA1392@tigerII.localdomain>
- <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
- <20181001023721.GA6409@jagdpanzerIV>
- <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
- <20181002063851.GF598@jagdpanzerIV>
- <5a958a1b-a986-014a-5908-816e0a3ef4ff@i-love.sakura.ne.jp>
- <20181008160310.ldwryudzkvp5de3b@pathway.suse.cz>
- <3ce1695b-9c47-40cc-602b-7c5ffb593024@i-love.sakura.ne.jp>
+        Tue, 9 Oct 2018 18:10:31 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52646 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJIWKa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:10:30 -0400
+Received: by mail-it1-f194.google.com with SMTP id 134-v6so3034172itz.2;
+        Tue, 09 Oct 2018 07:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J7BVTazitQ38nthpwd2UFjerB9MlaBokQUm37HxYkKo=;
+        b=VsIbBitbG3phadKclNU7lDq8GfZEufWPfloQj5KJcPIc/xEA3xuMOu7wk8I/OCmkcw
+         /fnnSc+mH1/wK41EPAEbidR7wyc6DdrHmIUYNQ5Kj5fw/IviJBNkbn6ZsCh8TMw38cxL
+         Wn5ri/hAjHumDXJj/mJdXXxBJVoAX9UvbI/Yd0TikNAR6OXuBsLqZ3VJE6zOQZ9Y7Twu
+         BAGmvSC1vbjsl5aP1xF7HFqbSVdYsBwegiHS90GSj5dS88YHeg5R4EEOG+WGkDN16cmI
+         j7HStsCAdqwfhrdJ2mZtA6QtIaQhXLyN1JznIYQFnYs/z9R+5EHZ8cDF6qsiEPMMuL9h
+         /28Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J7BVTazitQ38nthpwd2UFjerB9MlaBokQUm37HxYkKo=;
+        b=QtISFbofLAAVYUyfm2rAuPnFrMpq6EQK9lcaLo6axNhb7CRCVtD9TfgVo3bzGskft2
+         zBwoGwyz7xO7Yv4mFrkdfx1sGk7Lc+hma2Yf03xgo5nsvFpWUouTMQtImupFqsOYGfVF
+         N5/aTSkTiaR1oAnWR/4H7JUjg8j+ooH/hwovCzYN1h8kHLh2VitWR/lG9rc8ZNujshM3
+         On9gThWRHAnUeeCjvfLe26ZUQAxRJzUVppdGQh5qEnDIs3qLPfmIIPoJYBR0LoO9TlU5
+         xphxWwCgRlHbPwtnxh2/D7NLouABLzFqWYuFFEmKBzgHWBoy2kDfQ8kYf4Jhjs4U+niO
+         YAtg==
+X-Gm-Message-State: ABuFfogHQK6IbSloxJEgn3db2w6rSE6r96bBWs6XGdm75kHlCOF9mY95
+        HyYy254vaG4lWYyjtbU+aiKKtII5f7Y7FZPgrRs=
+X-Google-Smtp-Source: ACcGV63jCmi25JSlvy8LJJu8KFvpKbOchKTRdGXwPo7Xi5Y+dCa5SSEY4w3Dms1A1xWUKXhCQtTQ5FaZJT1wVQgRwQI=
+X-Received: by 2002:a02:5a01:: with SMTP id v1-v6mr5106991jaa.11.1539096792459;
+ Tue, 09 Oct 2018 07:53:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ce1695b-9c47-40cc-602b-7c5ffb593024@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <1539086718-4119-1-git-send-email-laoar.shao@gmail.com>
+ <1539086718-4119-2-git-send-email-laoar.shao@gmail.com> <CANn89iL1BMCx3Mbsj3TijR3Srjji95q86px0k98r7JYJbwLzcw@mail.gmail.com>
+In-Reply-To: <CANn89iL1BMCx3Mbsj3TijR3Srjji95q86px0k98r7JYJbwLzcw@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Tue, 9 Oct 2018 22:52:35 +0800
+Message-ID: <CALOAHbBwGAqia_2xJSNkaX7TzSPN89bRz71qHRH43FtbwNTP6w@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: forbid direct reclaim if MSG_DONTWAIT is
+ set in send path
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-10-09 05:48:33, Tetsuo Handa wrote:
-> On 2018/10/09 1:03, Petr Mladek wrote:
-> > On Mon 2018-10-08 19:31:58, Tetsuo Handa wrote:
-> >>   A structure named "struct printk_buffer" is introduced for buffering
-> >>   up to LOG_LINE_MAX bytes of printk() output which did not end with '\n'.
-> >>
-> >>   A caller is allowed to allocate/free "struct printk_buffer" using
-> >>   kzalloc()/kfree() if that caller is in a location where it is possible
-> >>   to do so.
-> >>
-> >>   A macro named "DEFINE_PRINTK_BUFFER()" is defined for allocating
-> >>   "struct printk_buffer" from the stack memory or in the .bss section.
-> >>
-> >>   But since sizeof("struct printk_buffer") is nearly 1KB, it might not be
-> >>   preferable to allocate "struct printk_buffer" from the stack memory.
-> >>   In that case, a caller can use best-effort buffering mode. Two functions
-> >>   get_printk_buffer() and put_printk_buffer() are provided for that mode.
-> >>
-> >>   get_printk_buffer() tries to assign a "struct printk_buffer" from
-> >>   statically preallocated array. It returns NULL if all static
-> >>   "struct printk_buffer" are in use.
-> >>
-> >>   put_printk_buffer() flushes and releases the "struct printk_buffer".
-> >>   put_printk_buffer() must match corresponding get_printk_buffer() as with
-> >>   rcu_read_unlock() must match corresponding rcu_read_lock().
-> > 
-> > One problem with this API is when it is used in more complicated code
-> > and put_printk_buffer() is not called in some path. I mean leaking.
-> > We might get out of buffers easily.
-> 
-> Then, as an debugging config option for statically preallocated buffers,
-> we could record how get_printk_buffer() was called, like lockdep records
-> where a lock was taken.
+On Tue, Oct 9, 2018 at 10:12 PM Eric Dumazet <edumazet@google.com> wrote:
+>
+> On Tue, Oct 9, 2018 at 5:05 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > By default, the sk->sk_allocation is GFP_KERNEL, that means if there's
+> > no enough memory it will do both direct reclaim and background reclaim.
+> > If the size of system memory is great, the direct reclaim may cause great
+> > latency spike.
+> >
+> > When we set MSG_DONTWAIT in send syscalls, we really don't want it to be
+> > blocked, so we'd better clear __GFP_DIRECT_RECLAIM when allocate skb in the
+> > send path. Then, it will return immediately if there's no enough memory to
+> > be allocated, and then the appliation has a chance to do some other stuffs
+> > instead of being blocked here.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  net/ipv4/tcp.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> > index 43ef83b..fe4f5ce 100644
+> > --- a/net/ipv4/tcp.c
+> > +++ b/net/ipv4/tcp.c
+> > @@ -1182,6 +1182,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+> >         bool process_backlog = false;
+> >         bool zc = false;
+> >         long timeo;
+> > +       gfp_t gfp;
+> >
+> >         flags = msg->msg_flags;
+> >
+> > @@ -1255,6 +1256,9 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+> >         /* Ok commence sending. */
+> >         copied = 0;
+> >
+> > +       gfp = flags & MSG_DONTWAIT ? sk->sk_allocation & ~__GFP_DIRECT_RECLAIM :
+> > +             sk->sk_allocation;
+> > +
+> >  restart:
+> >         mss_now = tcp_send_mss(sk, &size_goal, flags);
+> >
+> > @@ -1283,8 +1287,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+> >                         }
+> >                         first_skb = tcp_rtx_and_write_queues_empty(sk);
+> >                         linear = select_size(first_skb, zc);
+> > -                       skb = sk_stream_alloc_skb(sk, linear, sk->sk_allocation,
+> > -                                                 first_skb);
+> > +                       skb = sk_stream_alloc_skb(sk, linear, gfp, first_skb);
+> >                         if (!skb)
+> >                                 goto wait_for_memory;
+>
+>
+> How have you tested this patch exactly ?
+>
+There was a network latency (hunreds msecs or even one sec ) recently
+on our production enviroment.
+And finally I diagnosed that this latency was caused by direct reclaim
+in tcp_sendmsg.
+That issue could be resovled by keeping a reserved memory.
+But I think deeply that why not forbid direct reclaim if we set MSG_DONWAIT.
+So I did this change and tested it. The application got a errno
+returned instead of being blocked in send path.
+That's why I sumbit this patch.
 
-Another solution might be to store some timestamp (jiffies?) into
-struct printk_buffer when a new message is added. Then we could flush
-stalled buffers in get_printk_buffer() with some warning.
+> Most of TCP payloads are added in page fragments, and you have not
+> changed the page allocation fragments.
+>
+> Also, I do not see how an application will get future notifications
+> that it can retry the failed system call ?
+> How are you really going to deal with this in high performance applications ?
+>
 
-Unfortunately, it might be unsafe to put the stalled buffers.
-Well, it might be safe if there is a lock less access. I wonder
-if we could reuse the printk_safe code here.
+I think that immdiately return with errno is better than being blocked.
+Maybe this solution is not good enough.
+At least it could tell the application that something is wrong and it
+can't send now.
 
-Anyway, I would like to have a solution before we add the new
-API into the kernel. We would need it sooner or later anyway.
-And I would like to be sure that the API is sane.
+> I would rather prefer a socket setsockopt() to eventually be able to
+> flip __GFP_DIRECT_RECLAIM in sk->sk_allocation,
+> to not add all these tests in fast path, but honestly I do not see how
+> applications can really make use of this.
 
+Maybe an event is needed to tell the application it can send now.
+I don't have better idea neither.
 
-> > A solution might be to store some information about the owner and
-> > put the buffer also when a non-buffered printk is called from
-> > the same context.
-> > 
-> > It might even make it easier to use. If we are able to guess the
-> > buffer by the context, we do not need to pass it as an argument.
-> 
-> It would be nice if we can omit passing "struct printk_buffer" argument.
-> But that results in "implicit contexts" which Linus has rejected
-> ( https://lkml.kernel.org/CA+55aFx+5R-vFQfr7+Ok9Yrs2adQ2Ma4fz+S6nCyWHY_-2mrmw@mail.gmail.com ).
-
-Yeah and the arguments for explicit context make sense when
-I reread them again.
-
-Best Regards,
-Petr
+Thanks
+Yafang
