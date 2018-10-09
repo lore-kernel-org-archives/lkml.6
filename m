@@ -2,188 +2,112 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
+	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9A0C65BD6
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED75AC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49354213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACFE9213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="08yVeUgo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49354213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGJRmNIr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFE9213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeJJEKy (ORCPT
+        id S1727569AbeJJELO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:10:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725748AbeJJEKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:10:54 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E41213A2;
-        Tue,  9 Oct 2018 20:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539118327;
-        bh=Hkq7UK/xxfWcHd6VgR70r3z/I2A5gFw3W+VSCg8VF7Q=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=08yVeUgoYoQOPes9jWOTuNKvURFT/b3qWEjbbodFmuOXlRBdy/HaAF1w6fKeBaopb
-         ywTljhguqAihYebqXeWz04bmM3xl2ZO1ll05ZFkko3qiXbYF3pZMdojTrZkgSGj/GF
-         bHIQYjMMhb5pUbT9QxVsXk/TTYXS660rEOvCRKvs=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 10 Oct 2018 00:11:14 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39946 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbeJJELO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 00:11:14 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 1-v6so1402551plv.7;
+        Tue, 09 Oct 2018 13:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5Wn8c8dAdUkI6QjyWcFHAfsO1yrg/TuzKz1KavsrX/Q=;
+        b=FGJRmNIr51vvyMocQ5gF4VjDaXjXiXuAifBcE7Z8/ATQGzZYQndmI9k7pgvqXLwilw
+         nlCVRpt3yrxBhiZZ0dGC7HMOIfIwNI1oGtcng+MUl1xbMhDgCfgeovR9mnVDotP7VZeC
+         U1lrwyCAlwHEqAjIAW5wxEgDeeZ9v06SpaaEg9WU4j4eT6Uks/u5iysdgsU40vWwXzYw
+         s27chkp1MATKCORnQDs9foomNWTPz+md+l87J5/sD68uNz99L5Pg+UuYjbiXjxmoq37d
+         U4FwSSManBDK5K5vh3BVu/YNNwwzfYBtPk9KnKUbFJ27JUcGXxfNBF/evA0FbgXDSWBf
+         ypEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5Wn8c8dAdUkI6QjyWcFHAfsO1yrg/TuzKz1KavsrX/Q=;
+        b=WQE+Ypmqy9zK+a79aM3lkFKfSqMloHoCLS5l5rfVnPFPn2rhHBdNpKi9oVYh/rh/LY
+         GmnLPao0CE9b73hZoxbKMBsmZx7/gM8MJNZYJJM+n5JEEpyBp1vPlsVUsZfemDiDlPVy
+         qFnDKnBJL8r9oNiQOgrelPih0PxmjpACdMJASq/T4m7qcGptouriAVwApO6WS7uf1xi6
+         NcuWvG2eYndh+Ich+neFk5zq/+x9O0XhgazXEohh6cMNcN1do+TtlMl60u/s+GPi2no2
+         hw57WEzRK6q6mDguA1gmnbc7yv3aDqMY9LLncTr2UT+HDQgludRartobwielhx2BNIpn
+         tmHQ==
+X-Gm-Message-State: ABuFfojmzQfzUG3srwsxqo2+ueygxvr9klY8wtgd0p7BCVhlJektQOZM
+        G8jU9kv2sCMHdChtySogdbI=
+X-Google-Smtp-Source: ACcGV63xVdBC831hNiN8sHHRnzZ7fihp9KAK/ry1nPfznQczMjIoCdQi5tqs8ksDEWxPmsAqf4JbEg==
+X-Received: by 2002:a17:902:b78c:: with SMTP id e12-v6mr30034528pls.67.1539118348224;
+        Tue, 09 Oct 2018 13:52:28 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm40208881pfs.108.2018.10.09.13.52.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 13:52:27 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 13:52:26 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, jdelvare@suse.com,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com
+Subject: Re: [PATCH] hwmon: (core) Add trace events to _attr_show/store
+ functions
+Message-ID: <20181009205226.GA11520@roeck-us.net>
+References: <20181009182602.3085-1-nicoleotsuka@gmail.com>
+ <20181009145721.0669e412@gandalf.local.home>
+ <20181009191111.GA6166@Asurada-Nvidia.nvidia.com>
+ <20181009154945.65300231@gandalf.local.home>
+ <20181009195654.GA7963@Asurada-Nvidia.nvidia.com>
+ <20181009203937.GA11222@roeck-us.net>
+ <20181009164242.76e397ad@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
- <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
- <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
-Message-ID: <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Tue, 09 Oct 2018 13:52:07 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009164242.76e397ad@gandalf.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 10:26:38)
-> Hello Stephen,
-> =
+On Tue, Oct 09, 2018 at 04:42:42PM -0400, Steven Rostedt wrote:
+> On Tue, 9 Oct 2018 13:39:37 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> > > Personally a checkpatch warning bugs me more than having an extra
+> > > line :)
+> > >   
+> > Same here. If we no longer believe in the 80-column limit, we should remove it,
+> > not use it to hide other problems in the noise.
+> 
+> Yes, please, can we?
+> 
+> I personally hate the 80 character limit rule, because I like
+> descriptive variables and function names, which itself causes the 80
+> character limit to be broken. I find line breaks to avoid that limit
+> just makes the code look worse. Or at least up it to 100 chars.
+> 
 
-> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-10-04 05:02:26)
-> >> Add support for the lpass clock controller found on SDM845 based devic=
-es.
-> >> This would allow lpass peripheral loader drivers to control the clocks=
- to
-> >> bring the subsystem out of reset.
-> >> LPASS clocks present on the global clock controller would be registered
-> >> with the clock framework based on the device tree flag. Also do not ga=
-te
-> >> these clocks if they are left unused.
-> > =
+It is a two-edged sword. Downside is that a longer limit also invites
+deeply nested loops and conditionals, which I am sure will be used as
+argument against raising it.
 
-> > Why not gate them? This statement states what the code is doing, not why
-> > it's doing it which is the more crucial information that should be
-> > described in the commit text. Also, please add a comment about it to the
-> > code next to the flag.
-> > =
+Feel free to submit a patch to raise the limit to 100; I'll be more
+than happy to give it an enthusiastic Reviewed-by:. My personal desire
+for conflict isn't strong enough to submit it myself, though.
 
-> > I am concerned that it doesn't make any sense though, so probably it
-> > shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
-> > other larger bug that needs to be fixed.
-> > =
-
-> =
-
-> It does not have any bug, it is just that to access these lpass =
-
-> registers we would need the GCC lpass registers to be enabled. I would =
-
-> update the same in the commit text.
-> =
-
-> During clock late_init these clocks should not be accessed to check the =
-
-> clock status as they would result in unclocked access. The client would =
-
-> request these clocks in the correct order and it would not have any issue.
-> =
-
-
-That seems like the bug right there. If the LPASS registers can't be
-accessed unless the clks in GCC are enabled then this driver needs to
-turn the clks on before reading/writing registers. Marking the clks as
-ignore unused is skipping around the real problem.
-
-> =
-
-> >>
-> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> >> ---
-> >> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm8=
-45.c
-> >> index 08d593e..6379b8b 100644
-> >> --- a/drivers/clk/qcom/gcc-sdm845.c
-> >> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> >> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_dev=
-ice *pdev)
-> >>          if (ret)
-> >>                  return ret;
-> >>
-> >> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-prot=
-ected")) {
-> >> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =3D
-> >> +                       &gcc_lpass_q6_axi_clk.clkr;
-> >> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =3D
-> >> +                       &gcc_lpass_sway_clk.clkr;
-
-For all intents and purposes could we not just mark these two as
-CLK_IS_CRITICAL and then let the LPASS turn these on and off when it
-cares (does it ever do so)? Or even just turn them on once in probe here
-with direct register writes and then not care anymore to touch them
-again? Or do we need to turn these clks on again later on when the
-subsystem crashes to read/write the registers and cycle the clks back on
-and off?
-
-> >> +       }
-> >> +
-> >>          return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-> >>   }
-> >>
-> >> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpas=
-scc-sdm845.c
-> >> new file mode 100644
-> >> index 0000000..f7b9b0f
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-> >> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, in=
-t index,
-> >> +                                    const struct qcom_cc_desc *desc)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +       struct resource *res;
-> >> +       void __iomem *base;
-> >> +
-> >> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
-> >> +       base =3D devm_ioremap_resource(&pdev->dev, res);
-> >> +       if (IS_ERR(base))
-> >> +               return PTR_ERR(base);
-> >> +
-> >> +       regmap =3D devm_regmap_init_mmio(&pdev->dev, base, desc->confi=
-g);
-> >> +       if (IS_ERR(regmap))
-> >> +               return PTR_ERR(regmap);
-> > =
-
-> > If this happens again in the future we should move this into the
-> > common.c file and let qcom_cc_probe_index() exist.
-> > =
-
-> =
-
-> Yes, I agree, could submit a patch to add the new function and then =
-
-> clean it up.
-
-Ok, but please don't do anything now because we don't care yet.
-
+Guenter
