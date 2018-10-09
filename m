@@ -2,80 +2,266 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746DFC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1768CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299B2214C5
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:30:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmAYrLgG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299B2214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 54BB5214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 09:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54BB5214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbeJIQqw (ORCPT
+        id S1726910AbeJIQrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 12:46:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726789AbeJIQqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 12:46:52 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B053214C4;
-        Tue,  9 Oct 2018 09:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539077451;
-        bh=mVU6/J+bGNmSusKTQ1FYe680IBaaKpxFdDl/1JQTUf0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VmAYrLgGPIyFYsX65eJh8XJNlo8x8jvXncsao2Gwmr3JobIryGQY3t0FbsXE/q6vi
-         H/2/d4ewL7jddzshK0ZMsX/JQioyd6B07wioJiC3lqmtuun4blJEkdV8k3aovZNB3I
-         l1sUm7w3W03CFAjgIsE06JBPu7c0W0czIAp5ow2k=
-Date:   Tue, 9 Oct 2018 11:30:49 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>, ejt@redhat.com,
-        Mike Snitzer <snitzer@redhat.com>,
-        alexander.levin@microsoft.com
-Subject: Re: [PATCH 4.14 66/94] dm thin metadata: try to avoid ever aborting
- transactions
-Message-ID: <20181009093049.GA15436@kroah.com>
-References: <20181008175605.067676667@linuxfoundation.org>
- <20181008175609.656421529@linuxfoundation.org>
- <CADVatmODtvLS=1Bb2Oi-o2_fQOFAykhiAXLk08x30pNmFDseDA@mail.gmail.com>
+        Tue, 9 Oct 2018 12:47:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51589 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbeJIQrG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 12:47:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w999Usul980587
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 02:30:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w999Uscb980581;
+        Tue, 9 Oct 2018 02:30:54 -0700
+Date:   Tue, 9 Oct 2018 02:30:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yi Sun <tipbot@zytor.com>
+Message-ID: <tip-b36bcb7ce0b353bd4889e06b61e036744b02ca51@git.kernel.org>
+Cc:     sthemmin@microsoft.com, tglx@linutronix.de,
+        yi.y.sun@linux.intel.com, kys@microsoft.com, jgross@suse.com,
+        mingo@kernel.org, haiyangz@microsoft.com,
+        Michael.H.Kelley@microsoft.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          haiyangz@microsoft.com, Michael.H.Kelley@microsoft.com,
+          mingo@kernel.org, jgross@suse.com, kys@microsoft.com,
+          yi.y.sun@linux.intel.com, sthemmin@microsoft.com,
+          tglx@linutronix.de
+In-Reply-To: <1538987374-51217-3-git-send-email-yi.y.sun@linux.intel.com>
+References: <1538987374-51217-3-git-send-email-yi.y.sun@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/hyperv] x86/hyperv: Enable PV qspinlock for Hyper-V
+Git-Commit-ID: b36bcb7ce0b353bd4889e06b61e036744b02ca51
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CADVatmODtvLS=1Bb2Oi-o2_fQOFAykhiAXLk08x30pNmFDseDA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 08:45:57PM +0100, Sudip Mukherjee wrote:
-> HI Greg,
-> 
-> On Mon, Oct 8, 2018 at 8:06 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> >
-> > ------------------
-> >
-> > From: Joe Thornber <ejt@redhat.com>
-> >
-> > [ Upstream commit 3ab91828166895600efd9cdc3a0eb32001f7204a ]
-> 
-> This has been fixed by a later commit 013ad043906b ("dm thin metadata:
-> fix __udivdi3 undefined on 32-bit")
+Commit-ID:  b36bcb7ce0b353bd4889e06b61e036744b02ca51
+Gitweb:     https://git.kernel.org/tip/b36bcb7ce0b353bd4889e06b61e036744b02ca51
+Author:     Yi Sun <yi.y.sun@linux.intel.com>
+AuthorDate: Mon, 8 Oct 2018 16:29:34 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 9 Oct 2018 11:26:31 +0200
 
-Thanks, now queued up.
+x86/hyperv: Enable PV qspinlock for Hyper-V
 
-greg k-h
+Implement the required wait and kick callbacks to support PV spinlocks in
+Hyper-V guests.
+
+[ tglx: Document the requirement for disabling interrupts in the wait()
+  	callback. Remove goto and unnecessary includes. Add prototype
+	for hv_vcpu_is_preempted(). ]
+
+Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>
+Cc: chao.p.peng@intel.com
+Cc: chao.gao@intel.com
+Cc: isaku.yamahata@intel.com
+Cc: tianyu.lan@microsoft.com
+Link: https://lkml.kernel.org/r/1538987374-51217-3-git-send-email-yi.y.sun@linux.intel.com
+
+---
+ Documentation/admin-guide/kernel-parameters.txt |  5 ++
+ arch/x86/hyperv/Makefile                        |  4 ++
+ arch/x86/hyperv/hv_spinlock.c                   | 88 +++++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h                 |  2 +
+ arch/x86/kernel/cpu/mshyperv.c                  | 14 ++++
+ 5 files changed, 113 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 92eb1f42240d..ca6ca93e8281 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1385,6 +1385,11 @@
+ 	hvc_iucv_allow=	[S390]	Comma-separated list of z/VM user IDs.
+ 				If specified, z/VM IUCV HVC accepts connections
+ 				from listed z/VM user IDs only.
++
++	hv_nopvspin	[X86,HYPER_V] Disables the paravirt spinlock optimizations
++				      which allow the hypervisor to 'idle' the
++				      guest on lock contention.
++
+ 	keep_bootcon	[KNL]
+ 			Do not unregister boot console at start. This is only
+ 			useful for debugging when something happens in the window
+diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
+index b21ee65c4101..1c11f9420a82 100644
+--- a/arch/x86/hyperv/Makefile
++++ b/arch/x86/hyperv/Makefile
+@@ -1,2 +1,6 @@
+ obj-y			:= hv_init.o mmu.o nested.o
+ obj-$(CONFIG_X86_64)	+= hv_apic.o
++
++ifdef CONFIG_X86_64
++obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+= hv_spinlock.o
++endif
+diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
+new file mode 100644
+index 000000000000..2b6382cbb769
+--- /dev/null
++++ b/arch/x86/hyperv/hv_spinlock.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Hyper-V specific spinlock code.
++ *
++ * Copyright (C) 2018, Intel, Inc.
++ *
++ * Author : Yi Sun <yi.y.sun@intel.com>
++ */
++
++#define pr_fmt(fmt) "Hyper-V: " fmt
++
++#include <linux/spinlock.h>
++
++#include <asm/mshyperv.h>
++#include <asm/paravirt.h>
++#include <asm/apic.h>
++
++static bool __initdata hv_pvspin = true;
++
++static void hv_qlock_kick(int cpu)
++{
++	apic->send_IPI(cpu, X86_PLATFORM_IPI_VECTOR);
++}
++
++static void hv_qlock_wait(u8 *byte, u8 val)
++{
++	unsigned long msr_val;
++	unsigned long flags;
++
++	if (in_nmi())
++		return;
++
++	/*
++	 * Reading HV_X64_MSR_GUEST_IDLE MSR tells the hypervisor that the
++	 * vCPU can be put into 'idle' state. This 'idle' state is
++	 * terminated by an IPI, usually from hv_qlock_kick(), even if
++	 * interrupts are disabled on the vCPU.
++	 *
++	 * To prevent a race against the unlock path it is required to
++	 * disable interrupts before accessing the HV_X64_MSR_GUEST_IDLE
++	 * MSR. Otherwise, if the IPI from hv_qlock_kick() arrives between
++	 * the lock value check and the rdmsrl() then the vCPU might be put
++	 * into 'idle' state by the hypervisor and kept in that state for
++	 * an unspecified amount of time.
++	 */
++	local_irq_save(flags);
++	/*
++	 * Only issue the rdmsrl() when the lock state has not changed.
++	 */
++	if (READ_ONCE(*byte) == val)
++		rdmsrl(HV_X64_MSR_GUEST_IDLE, msr_val);
++	local_irq_restore(flags);
++}
++
++/*
++ * Hyper-V does not support this so far.
++ */
++bool hv_vcpu_is_preempted(int vcpu)
++{
++	return false;
++}
++PV_CALLEE_SAVE_REGS_THUNK(hv_vcpu_is_preempted);
++
++void __init hv_init_spinlocks(void)
++{
++	if (!hv_pvspin || !apic ||
++	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
++	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
++		pr_info("PV spinlocks disabled\n");
++		return;
++	}
++	pr_info("PV spinlocks enabled\n");
++
++	__pv_init_lock_hash();
++	pv_lock_ops.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
++	pv_lock_ops.queued_spin_unlock = PV_CALLEE_SAVE(__pv_queued_spin_unlock);
++	pv_lock_ops.wait = hv_qlock_wait;
++	pv_lock_ops.kick = hv_qlock_kick;
++	pv_lock_ops.vcpu_is_preempted = PV_CALLEE_SAVE(hv_vcpu_is_preempted);
++}
++
++static __init int hv_parse_nopvspin(char *arg)
++{
++	hv_pvspin = false;
++	return 0;
++}
++early_param("hv_nopvspin", hv_parse_nopvspin);
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index f37704497d8f..0d6271cce198 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -351,6 +351,8 @@ int hyperv_flush_guest_mapping(u64 as);
+ 
+ #ifdef CONFIG_X86_64
+ void hv_apic_init(void);
++void __init hv_init_spinlocks(void);
++bool hv_vcpu_is_preempted(int vcpu);
+ #else
+ static inline void hv_apic_init(void) {}
+ #endif
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index ad12733f6058..2179c7efc1f4 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -199,6 +199,16 @@ static unsigned long hv_get_tsc_khz(void)
+ 	return freq / 1000;
+ }
+ 
++#if defined(CONFIG_SMP) && IS_ENABLED(CONFIG_HYPERV)
++static void __init hv_smp_prepare_boot_cpu(void)
++{
++	native_smp_prepare_boot_cpu();
++#if defined(CONFIG_X86_64) && defined(CONFIG_PARAVIRT_SPINLOCKS)
++	hv_init_spinlocks();
++#endif
++}
++#endif
++
+ static void __init ms_hyperv_init_platform(void)
+ {
+ 	int hv_host_info_eax;
+@@ -303,6 +313,10 @@ static void __init ms_hyperv_init_platform(void)
+ 	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
+ 		alloc_intr_gate(HYPERV_STIMER0_VECTOR,
+ 				hv_stimer0_callback_vector);
++
++# if defined(CONFIG_SMP)
++	smp_ops.smp_prepare_boot_cpu = hv_smp_prepare_boot_cpu;
++# endif
+ #endif
+ }
+ 
