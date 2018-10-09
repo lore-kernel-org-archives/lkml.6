@@ -2,143 +2,130 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA494C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539C9ECDE39
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A929C2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A929C2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2453C21502
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2453C21502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeJIXLb (ORCPT
+        id S1726828AbeJIXLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:11:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49680 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeJIXLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:11:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 025A2AE69;
-        Tue,  9 Oct 2018 15:53:55 +0000 (UTC)
-Subject: Re: [PATCH] lib/Kconfig.debug: add a comment to PROVE_LOCKING impact
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-kernel@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, longman@redhat.com, mingo@redhat.com
-References: <CGME20181009153959eucas1p1ab3c10ba4868a4e97a1bff24d8f34c41@eucas1p1.samsung.com>
- <20181009153959eucas1p1ab3c10ba4868a4e97a1bff24d8f34c41~b_u5xrZ3z3130331303eucas1p1U@eucas1p1.samsung.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <720c53a6-30c4-19f9-d971-8c1d6054c149@suse.com>
-Date:   Tue, 9 Oct 2018 18:53:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 19:11:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56601 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeJIXLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:11:35 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 975AE207C8; Tue,  9 Oct 2018 17:53:57 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 62F5120618;
+        Tue,  9 Oct 2018 17:53:47 +0200 (CEST)
+Date:   Tue, 9 Oct 2018 17:53:48 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 10/29] drm/sun4i: Rename DE2 registers related macros
+Message-ID: <20181009155348.exmeyvvelxwnv3b5@flea>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+ <20181007093905.11253-11-jernej.skrabec@siol.net>
+ <20181008101828.hb4xtppbexwalbkk@flea>
+ <11072788.dZi9MDiihb@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20181009153959eucas1p1ab3c10ba4868a4e97a1bff24d8f34c41~b_u5xrZ3z3130331303eucas1p1U@eucas1p1.samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qlwprrpwi56itdhx"
+Content-Disposition: inline
+In-Reply-To: <11072788.dZi9MDiihb@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--qlwprrpwi56itdhx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On  9.10.2018 18:39, Lukasz Luba wrote:
-> This patch add some comment related to performance impact,
-> which can be really big (x3 times slower context switch).
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+On Mon, Oct 08, 2018 at 04:28:41PM +0200, Jernej =C5=A0krabec wrote:
+> Dne ponedeljek, 08. oktober 2018 ob 12:18:28 CEST je Maxime Ripard napisa=
+l(a):
+> > Hi,
+> >=20
+> > On Sun, Oct 07, 2018 at 11:38:46AM +0200, Jernej Skrabec wrote:
+> > > In preparation to introduce DE3 support, change prefix from "SUN8I_" =
+to
+> > > "DE2_". Current prefix suggest that it's valid only for one family,
+> > > whereas in reality, DE2 unit is used also on sun50i family.
+> > > Additionally, it will be easier to distinguish DE3 specific macros by
+> > > using "DE3_" prefix.
+> > >=20
+> > > No functional change in this commit.
+> >=20
+> > I'm not too sure about this one. There's basically two ways to look at
+> > this: you described the first one, and the second one would be to
+> > treat it as we do for the compatibles: the IP was introduced on one
+> > SoC family, and then got used on some other ones.
+> >=20
+> > Trying to always match the one you have however have a quite big
+> > maintainance cost, as can be shown by your patch: you always have to
+> > adapt comments, function names, defines, etc. This creates a lot of
+> > useless churns (ie, non-functional changes) in the drivers, that need
+> > to be written in the first place, and then reviewed.
+> >=20
+> > It's just not worth it.
+>=20
+> Well, using family neutral way would mean that there is no need
+> anymore for adaptation in the future, but as you wish.
 
-I don't think this brings any value. lockdep is a debugging aid aimed at
-developers. A developer should be aware that it has a performance impact
-and the classification x3 doesn't really bring anything.
-> ---
->  lib/Kconfig.debug | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 4966c4f..9e67a2a3 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1088,6 +1088,9 @@ config PROVE_LOCKING
->  	 the proof of observed correctness is also maintained for an
->  	 arbitrary combination of these separate locking variants.
->  
-> +	 This feature enables LOCKDEP which can harm system performance
-> +	 even x3 times.
-> +
->  	 For more details, see Documentation/locking/lockdep-design.txt.
->  
->  config LOCK_STAT
-> @@ -1112,6 +1115,10 @@ config LOCK_STAT
->  	 CONFIG_LOCK_STAT defines "contended" and "acquired" lock events.
->  	 (CONFIG_LOCKDEP defines "acquire" and "release" events.)
->  
-> +	 This feature enables LOCKDEP which can harm system performance
-> +	 even x3 times.
-> +	 For more details, see Documentation/locking/lockdep-design.txt.
-> +
->  config DEBUG_RT_MUTEXES
->  	bool "RT Mutex debugging, deadlock detection"
->  	depends on DEBUG_KERNEL && RT_MUTEXES
-> @@ -1175,6 +1182,10 @@ config DEBUG_LOCK_ALLOC
->  	 spin_lock_init()/mutex_init()/etc., or whether there is any lock
->  	 held during task exit.
->  
-> +	 This feature enables LOCKDEP which can harm system performance
-> +	 even x3 times.
-> +	 For more details, see Documentation/locking/lockdep-design.txt.
-> +
->  config LOCKDEP
->  	bool
->  	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
-> 
+If you consider only the DE case, where it has been numbered by
+design, yes. If you consider all the other controllers that haven't
+been (like, SPI, or the USB PHY, for example), then you end up with
+two drivers that are using the same names, with no easy way to tell
+which is which
+
+> What prefix should I use for DE3 specific registers?
+
+We should just follow the same pattern, and use the first family where
+it was introduced. So sun50i, I guess?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--qlwprrpwi56itdhx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu8zwsACgkQ0rTAlCFN
+r3QqwQ/+IoZy8t7aGMla11oE/6yNeaFJ34IxjnNbHLImveD7Ovr9f5ba3XSoQpxX
+AX83BsNpV0Y3c42ZOIAE5O1sJ9dO0P9YAQXsWIhtglWpt6PByfJ6fP6oHmV2Oacn
+4THjYt00r1vGtrjU9RpTVQ5deR1dLTLobPc1pB0gTCzRn3W7mnqdMs2p/yT2SMyT
+sPqwmVvK7flMM1B/h6yG9nzTsWzj4Xh64+Y7w+eviUUVqS7PpL5yG+y2zFeag3rH
+3KYKqWzaewOisFJZhHv9T/Q3NC1XXdNn8Dv4fg3i6zcPJFxi1oWFp44PXEMHEJsd
+3FtTxLSbk8IvYSRWkd+qVKLKngstpA97wJ84MTpRaEeIVk39vwBYRuvQwwG6aior
++1juz0zdqLmDihnNfo/JhyEd8z32CPOxSAJBaWz9AspFynHtS17vM0qzFupQfiSK
+w7iCl8cplcfoFRJj+qFexAzPeL6Q3HSNRu0nQJ/hRnXQs3QbXFNWalHJ8R9slzH2
+S4hsP7X9xGx55xZEQM23CtHve1zMQ6uZPdJ8ncRmkFsAA6OL2YGCVTEauSxa8bge
+dXD7ZMm3+ucSJ6c4jRFJb9VL13FVFxgYYn9u1HcY9B7DK97Y1UldMP4jHs+SQFGy
+SI1gafvdOxtaIaATXp2SbPmAoh3PjKgVLr//lAjul9m822mnxLU=
+=VJae
+-----END PGP SIGNATURE-----
+
+--qlwprrpwi56itdhx--
