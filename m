@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8C3C00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96B8C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197922086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64EF32086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uc2ISOXa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I0lNrZTw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197922086D
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IxeKBdtr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PNV6I6m1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EF32086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJIJXX (ORCPT
+        id S1726996AbeJIJX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:23:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56394 "EHLO
+        Tue, 9 Oct 2018 05:23:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56560 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeJIJXX (ORCPT
+        with ESMTP id S1726642AbeJIJX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:23:23 -0400
+        Tue, 9 Oct 2018 05:23:28 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DEAC160249; Tue,  9 Oct 2018 02:08:47 +0000 (UTC)
+        id 0E3BD60C84; Tue,  9 Oct 2018 02:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539050927;
-        bh=2qcS3xyGH6QV8YngYKwc1G7bn6jE3DuPrHrzI1pcLf4=;
+        s=default; t=1539050933;
+        bh=ii0PLJZPDD2k3fBLa82FHwLFjEOTs+24pTETEsLYFv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uc2ISOXawjeA3kOWXNFIAnfjFc1dCr/3eMWU6HuMqCZpDidDu5T0t89CKEpsGwk5I
-         WYl5p3S/4gOUexngRDI9U0LT2HuofECoqRKVk4mvY10KH4zUSA8oWO0GpPaKi2Rvig
-         MY34WODpl0oBwMME2aT1RUJ9+96zkE+aadK5HMFQ=
+        b=IxeKBdtrlq0CQmOvV1g+OLtiuVCFyxm4SMqbrVFaFAtRWcZDaMbT8MQpfO9CznPIP
+         IfPBtAVXpUIqiDXVL66x3Ly1V/Bfd3HkXIncMfl4TMjtmPt8l/tIrqsog5hGhL6VFG
+         4yMkuZZykd+RYcgkmcw4PJU9jQop+/2YvBGbR/dU=
 Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8AE7760249;
-        Tue,  9 Oct 2018 02:08:42 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8A5B960C62;
+        Tue,  9 Oct 2018 02:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539050926;
-        bh=2qcS3xyGH6QV8YngYKwc1G7bn6jE3DuPrHrzI1pcLf4=;
+        s=default; t=1539050932;
+        bh=ii0PLJZPDD2k3fBLa82FHwLFjEOTs+24pTETEsLYFv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0lNrZTwNyhw6l5WzESyGAW6k1Vv+rCJlfaZm2rcYnPAOV2EPyQDs087OPxLu5ifJ
-         bqQ97oajjyimfM0sJFSoaGNdFR2y4l3Y85rQf+vi9/rM3t5LZp456Q9pElc8qLjWfG
-         A1CI/6Z7VbTkyFnKVZ3XHPfMP1PYxtw4MZnoppWA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AE7760249
+        b=PNV6I6m17gb1i03sfU/TgTw+O3DLnLDPGMOEmauJY+uEpyTgNf4ZPBvn1d/FYIpAV
+         o57MHxJE+vYAVN640NsQzH+zg+Ejezq7ERLGracshCirsTJi0zM9cntQmVA6FVVCzW
+         Wnom4nHFKKVdZT+evv1qojCY6rbQN2ul9GyM9CcU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A5B960C62
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
@@ -60,9 +60,9 @@ Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
         mka@chromium.org, ilina@codeaurora.org,
         "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v3 1/3] drivers: qcom: rpmh-rsc: simplify TCS locking
-Date:   Tue,  9 Oct 2018 07:38:30 +0530
-Message-Id: <1539050912-25749-2-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH v3 2/3] drivers: qcom: rpmh-rsc: return if the controller is idle
+Date:   Tue,  9 Oct 2018 07:38:31 +0530
+Message-Id: <1539050912-25749-3-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539050912-25749-1-git-send-email-rplsssn@codeaurora.org>
 References: <1539050912-25749-1-git-send-email-rplsssn@codeaurora.org>
@@ -71,261 +71,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcs->lock was introduced to serialize access with in TCS group. But
-even without tcs->lock, drv->lock is serving the same purpose. So
-use single drv->lock.
+From: Lina Iyer <ilina@codeaurora.org>
 
-Other optimizations include -
- - Remove locking around clear_bit() in IRQ handler. clear_bit() is
-   atomic.
- - Remove redundant read of TCS registers.
- - Use spin_lock instead of _irq variants as the locks are not held
-   in interrupt context
+Allow the controller status be queried. The controller is busy if it is
+actively processing request. Also allow the controller state be read by
+platform drivers. This is useful for PM drivers which can choose to
+disallow idle modes when the controller is busy.
 
-Suggested-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 ---
-This patch is based on https://lkml.org/lkml/2018/10/3/422
+changes in v3
+- Add lock check to avoid potential race as suggested by Matthias
 ---
- drivers/soc/qcom/rpmh-internal.h |  2 --
- drivers/soc/qcom/rpmh-rsc.c      | 37 +++++++++++++------------------------
- drivers/soc/qcom/rpmh.c          | 20 ++++++++------------
- 3 files changed, 21 insertions(+), 38 deletions(-)
+ drivers/soc/qcom/rpmh-internal.h |  1 +
+ drivers/soc/qcom/rpmh-rsc.c      | 24 ++++++++++++++++++++++++
+ drivers/soc/qcom/rpmh.c          | 13 +++++++++++++
+ include/soc/qcom/rpmh.h          |  5 +++++
+ 4 files changed, 43 insertions(+)
 
 diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 8c316b4..2e3ffcd 100644
+index 2e3ffcd..4b891c23 100644
 --- a/drivers/soc/qcom/rpmh-internal.h
 +++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -28,7 +28,6 @@
-  * @offset:    start of the TCS group relative to the TCSes in the RSC
-  * @num_tcs:   number of TCSes in this type
-  * @ncpt:      number of commands in each TCS
-- * @lock:      lock for synchronizing this TCS writes
-  * @req:       requests that are sent from the TCS
-  * @cmd_cache: flattened cache of cmds in sleep/wake TCS
-  * @slots:     indicates which of @cmd_addr are occupied
-@@ -40,7 +39,6 @@ struct tcs_group {
- 	u32 offset;
- 	int num_tcs;
- 	int ncpt;
--	spinlock_t lock;
- 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
- 	u32 *cmd_cache;
- 	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+@@ -109,6 +109,7 @@ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
+ 			     const struct tcs_request *msg);
+ int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg);
++bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv);
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
+ #endif /* __RPM_INTERNAL_H__ */
 diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 73d5b98..d6b834e 100644
+index d6b834e..9cc303e 100644
 --- a/drivers/soc/qcom/rpmh-rsc.c
 +++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -98,8 +98,7 @@ static void write_tcs_reg_sync(struct rsc_drv *drv, int reg, int tcs_id,
- 
- static bool tcs_is_free(struct rsc_drv *drv, int tcs_id)
- {
--	return !test_bit(tcs_id, drv->tcs_in_use) &&
--	       read_tcs_reg(drv, RSC_DRV_STATUS, tcs_id, 0);
-+	return !test_bit(tcs_id, drv->tcs_in_use);
- }
- 
- static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
-@@ -109,29 +108,28 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
- 
- static int tcs_invalidate(struct rsc_drv *drv, int type)
- {
--	int m;
-+	int m, ret = 0;
- 	struct tcs_group *tcs;
- 
- 	tcs = get_tcs_of_type(drv, type);
- 
--	spin_lock(&tcs->lock);
--	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
--		spin_unlock(&tcs->lock);
--		return 0;
--	}
-+	spin_lock(&drv->lock);
-+	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS))
-+		goto done;
- 
- 	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
- 		if (!tcs_is_free(drv, m)) {
--			spin_unlock(&tcs->lock);
--			return -EAGAIN;
-+			ret = -EAGAIN;
-+			goto done;
- 		}
- 		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
- 		write_tcs_reg_sync(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0);
- 	}
- 	bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
--	spin_unlock(&tcs->lock);
- 
--	return 0;
-+done:
-+	spin_unlock(&drv->lock);
-+	return ret;
+@@ -525,6 +525,30 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
  }
  
  /**
-@@ -298,9 +296,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
- 		write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, i, 0);
- 		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, BIT(i));
--		spin_lock(&drv->lock);
- 		clear_bit(i, drv->tcs_in_use);
--		spin_unlock(&drv->lock);
- 		if (req)
- 			rpmh_tx_done(req, err);
- 	}
-@@ -383,14 +379,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- {
- 	struct tcs_group *tcs;
- 	int tcs_id;
--	unsigned long flags;
- 	int ret;
- 
- 	tcs = get_tcs_for_msg(drv, msg);
- 	if (IS_ERR(tcs))
- 		return PTR_ERR(tcs);
- 
--	spin_lock_irqsave(&tcs->lock, flags);
- 	spin_lock(&drv->lock);
- 	/*
- 	 * The h/w does not like if we send a request to the same address,
-@@ -398,14 +392,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 	 */
- 	ret = check_for_req_inflight(drv, tcs, msg);
- 	if (ret) {
--		spin_unlock(&drv->lock);
- 		goto done_write;
- 	}
- 
- 	tcs_id = find_free_tcs(tcs);
- 	if (tcs_id < 0) {
- 		ret = tcs_id;
--		spin_unlock(&drv->lock);
- 		goto done_write;
- 	}
- 
-@@ -413,13 +405,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 	set_bit(tcs_id, drv->tcs_in_use);
- 	if (msg->state == RPMH_ACTIVE_ONLY_STATE && tcs->type != ACTIVE_TCS)
- 		enable_tcs_irq(drv, tcs_id, true);
--	spin_unlock(&drv->lock);
- 
- 	__tcs_buffer_write(drv, tcs_id, 0, msg);
- 	__tcs_trigger(drv, tcs_id, true);
- 
- done_write:
--	spin_unlock_irqrestore(&tcs->lock, flags);
-+	spin_unlock(&drv->lock);
- 	return ret;
- }
- 
-@@ -517,19 +508,18 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
- {
- 	struct tcs_group *tcs;
- 	int tcs_id = 0, cmd_id = 0;
--	unsigned long flags;
- 	int ret;
- 
- 	tcs = get_tcs_for_msg(drv, msg);
- 	if (IS_ERR(tcs))
- 		return PTR_ERR(tcs);
- 
--	spin_lock_irqsave(&tcs->lock, flags);
++ *  rpmh_rsc_ctrlr_is_idle: Check if any of the AMCs are busy.
++ *
++ *  @drv: The controller
++ *
++ *  Returns true if the TCSes are engaged in handling requests.
++ */
++bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv)
++{
++	int m;
++	struct tcs_group *tcs = get_tcs_of_type(drv, ACTIVE_TCS);
++
 +	spin_lock(&drv->lock);
- 	/* find the TCS id and the command in the TCS to write to */
- 	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
- 	if (!ret)
- 		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
--	spin_unlock_irqrestore(&tcs->lock, flags);
++	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
++		if (!tcs_is_free(drv, m)) {
++			spin_unlock(&drv->lock);
++			return false;
++		}
++	}
 +	spin_unlock(&drv->lock);
- 
- 	return ret;
- }
-@@ -638,7 +628,6 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 		tcs->type = tcs_cfg[i].type;
- 		tcs->num_tcs = tcs_cfg[i].n;
- 		tcs->ncpt = ncpt;
--		spin_lock_init(&tcs->lock);
- 
- 		if (!tcs->num_tcs || tcs->type == CONTROL_TCS)
- 			continue;
++
++	return true;
++}
++
++/**
+  * rpmh_rsc_write_ctrl_data: Write request to the controller
+  *
+  * @drv: the controller
 diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 71a76ea..297d6cc 100644
+index 297d6cc..43eb981 100644
 --- a/drivers/soc/qcom/rpmh.c
 +++ b/drivers/soc/qcom/rpmh.c
-@@ -117,9 +117,8 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- 					   struct tcs_cmd *cmd)
- {
- 	struct cache_req *req;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	req = __find_req(ctrlr, cmd->addr);
- 	if (req)
- 		goto existing;
-@@ -153,7 +152,7 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- 
- 	ctrlr->dirty = true;
- unlock:
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- 
- 	return req;
- }
-@@ -283,23 +282,21 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
- 
- static void cache_batch(struct rpmh_ctrlr *ctrlr, struct batch_cache_req *req)
- {
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_add_tail(&req->list, &ctrlr->batch_cache);
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- }
- 
- static int flush_batch(struct rpmh_ctrlr *ctrlr)
- {
- 	struct batch_cache_req *req;
- 	const struct rpmh_request *rpm_msg;
--	unsigned long flags;
- 	int ret = 0;
- 	int i;
- 
- 	/* Send Sleep/Wake requests to the controller, expect no response */
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_for_each_entry(req, &ctrlr->batch_cache, list) {
- 		for (i = 0; i < req->count; i++) {
- 			rpm_msg = req->rpm_msgs + i;
-@@ -309,7 +306,7 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
- 				break;
- 		}
- 	}
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- 
+@@ -535,3 +535,16 @@ int rpmh_invalidate(const struct device *dev)
  	return ret;
  }
-@@ -317,13 +314,12 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
- static void invalidate_batch(struct rpmh_ctrlr *ctrlr)
- {
- 	struct batch_cache_req *req, *tmp;
--	unsigned long flags;
+ EXPORT_SYMBOL(rpmh_invalidate);
++
++/**
++ * rpmh_ctrlr_idle: Return the controller idle status
++ *
++ * @dev: the device making the request
++ */
++int rpmh_ctrlr_idle(const struct device *dev)
++{
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++
++	return rpmh_rsc_ctrlr_is_idle(ctrlr_to_drv(ctrlr));
++}
++EXPORT_SYMBOL(rpmh_ctrlr_idle);
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index b05e31a..4c4b013 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -27,6 +27,8 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+ int rpmh_write_pdc_data(const struct device *dev,
+ 			const struct tcs_cmd *cmd, u32 n);
  
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_for_each_entry_safe(req, tmp, &ctrlr->batch_cache, list)
- 		kfree(req);
- 	INIT_LIST_HEAD(&ctrlr->batch_cache);
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- }
++int rpmh_ctrlr_idle(const struct device *dev);
++
+ #else
  
- /**
+ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+@@ -53,6 +55,9 @@ static inline int rpmh_write_pdc_data(const struct device *dev,
+ 				      const struct tcs_cmd *cmd, u32 n)
+ { return -ENODEV; }
+ 
++static inline int rpmh_ctrlr_idle(const struct device *dev)
++{ return -ENODEV; }
++
+ #endif /* CONFIG_QCOM_RPMH */
+ 
+ #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of the Code Aurora Forum, hosted by The Linux Foundation.
