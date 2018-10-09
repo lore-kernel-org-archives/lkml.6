@@ -2,107 +2,145 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CC6C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 681B5C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98D5214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B51120858
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 05:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MQEF1aS8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98D5214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="f5qoLHOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B51120858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeJIMOv (ORCPT
+        id S1726569AbeJIMPh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 08:14:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:55265 "EHLO ozlabs.org"
+        Tue, 9 Oct 2018 08:15:37 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:48877 "EHLO mail.kapsi.fi"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbeJIMOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 08:14:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42TlQV1tJWz9s8T;
-        Tue,  9 Oct 2018 15:59:45 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539061186;
-        bh=alk0cvMj8WCYa/bgvtJzko5Bnm/wTtbLoj/5IJLbiew=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MQEF1aS8ryGox3hwy7crGI0+OhMvqcEQUopEopn4Rsbgl0K7uElXp+/cd9xHnyaWb
-         JS4M7lwPn19UR5WyPGBldTcQjimIz7arymdSMmT2yJMoMaKyI9tBRTAtLE9Pu4/Cbl
-         T5lSYR0n8H5Zm7xkjkKiuH0RqCOSqNtogk4DiIrVdUQBcT1eT6LBPMfVIEDXF0XZmJ
-         gSk5/ZkwbfKFNyePmc/+x4aeHVYruWZmNFgnjQJttvR8esqQViJgYM3jhl3kiCe/YW
-         e1455i98nSh9hoxtoUfRpGETXudXoDfHH0X8kLcDG/DMg+m8lKYkZtd2vTGvZZ6Ca2
-         vCgipRuuWXMGQ==
-Date:   Tue, 9 Oct 2018 15:59:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the staging tree with the vfs tree
-Message-ID: <20181009155945.1b66ee78@canb.auug.org.au>
+        id S1725803AbeJIMPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 08:15:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RXP7JBLWAIo4UGl4nwoQxR610Fy4Oip1AtKwO0cgQG8=; b=f5qoLHORjGNgAt5wHFdeJ3l9FR
+        SjN0J4t33Luenl9Ng4eLnl04dpDw053xu8Jg2yAZuW4LO8OP+jZhsfrtlek8A1wJ5SbP2LJ/PIs9W
+        QcUonG7mXJu9xLM5r/rzuZgum8YWnLuNa+XnzJ6wmNoRaAQvN+aqHIpBaOUACN+qReT0tnJlnqU9W
+        SGODzyrA0pSx18W7uKFOgxCUpLeMmuckWa6k5HqzUJItkm5GvqaEu4VYdNYnjzXXISmnjJqG8Sztu
+        JMqnStZgFiCHaHkcvkGNjDdUOAnNAzhVLZPtL6+5fq3Wwqlndl1BgHz1hrgtTY8ovNIVGBes0EyCN
+        H8wX3xJQ==;
+Received: from [39.110.237.146] (helo=[10.19.58.25])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1g9k8G-0000Xy-Nv; Tue, 09 Oct 2018 08:00:33 +0300
+Subject: Re: [PATCH v2 2/3] gpu: host1x: Don't complete a completed job
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180807130713.1016-1-digetx@gmail.com>
+ <20180807130713.1016-3-digetx@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <4946d88d-f36c-b17e-59f6-5b7d626271a3@kapsi.fi>
+Date:   Tue, 9 Oct 2018 14:00:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rW1RL+ZHGmb._dGidBpSDgv"; protocol="application/pgp-signature"
+In-Reply-To: <20180807130713.1016-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 39.110.237.146
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rW1RL+ZHGmb._dGidBpSDgv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Hi all,
-
-Today's linux-next merge of the staging tree got a conflict in:
-
-  drivers/staging/dgnc/dgnc_tty.c
-
-between commits:
-
-  b68166ef8fd9 ("dgnc: leave TIOC[GS]SOFTCAR to ldisc")
-  e002c6f1ccb9 ("dgnc: don't bother with (empty) stub for TCXONC")
-  79273fc94ee9 ("dgnc: break-related ioctls won't reach ->ioctl()")
-  246d394c9cc5 ("dgnc: TIOCM... won't reach ->ioctl()")
-
-from the vfs tree and commit:
-
-  3268357865d6 ("staging: dgnc: delete the driver")
-
-from the staging tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rW1RL+ZHGmb._dGidBpSDgv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu8NcEACgkQAVBC80lX
-0GztIAf8DRmuJi7tmXbQdDwLaR0QARuSHLOCWY/oRHzCYx3Z1SLvORVZHjsk31us
-ZSUwFo0nJgastQZaR0JzNK6edEfw45kq8MbtzW/Z0IOpglx5obc8MgT5/e0FZZoM
-HBOVpnTC4RCrxX4G9VkyVrQl6ZUjdNlFgm6o1giIol5mGJNx6FYOz7OMTsXHnOeC
-gCFZfwq2DFFLMpyT9et/Fb1u/SKH8u4eHRwdcD4bMAM3JVPAXJ4W3fW3ki+mjJXm
-eVifGKcLYwuo2zHLV9QySTJlWS0Uw4WREl4nHEzH2kIJ3HSjGsoM5eaaO/tTMyHK
-VS31LjwpwBFLVy9MZOTO4XrCfuXgWQ==
-=Kir6
------END PGP SIGNATURE-----
-
---Sig_/rW1RL+ZHGmb._dGidBpSDgv--
+On 07/08/2018 22.07, Dmitry Osipenko wrote:
+> There is a chance that the last job has been completed at the time of
+> CDMA timeout handler invocation. In this case there is no need to complete
+> the completed job.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>   drivers/gpu/host1x/cdma.c | 22 ++++++++++++++--------
+>   1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+> index 75f339f5df6f..6aa6fa1498e8 100644
+> --- a/drivers/gpu/host1x/cdma.c
+> +++ b/drivers/gpu/host1x/cdma.c
+> @@ -323,7 +323,7 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
+>   {
+>   	struct host1x *host1x = cdma_to_host1x(cdma);
+>   	u32 restart_addr, syncpt_incrs, syncpt_val;
+> -	struct host1x_job *job = NULL;
+> +	struct host1x_job *job;
+>   
+>   	syncpt_val = host1x_syncpt_load(cdma->timeout.syncpt);
+>   
+> @@ -342,11 +342,16 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
+>   
+>   	list_for_each_entry(job, &cdma->sync_queue, list) {
+>   		if (syncpt_val < job->syncpt_end)
+> -			break;
+> +			goto syncpt_incr;
+>   
+>   		host1x_job_dump(dev, job);
+>   	}
+>   
+> +	/* all jobs have been completed */
+> +	job = NULL;
+> +
+> +syncpt_incr:
+> +
+>   	/*
+>   	 * Increment with CPU the remaining syncpts of a partially executed job.
+>   	 *
+> @@ -359,16 +364,16 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
+>   	 * modified NOP-ed PB slots). This lets things appear to have completed
+>   	 * properly for this buffer and resources are freed.
+>   	 */
+> -
+> -	dev_dbg(dev, "%s: perform CPU incr on pending buffers\n", __func__);
+> -
+> -	if (!list_empty(&cdma->sync_queue))
+> +	if (job)
+>   		restart_addr = job->first_get;
+>   	else
+>   		restart_addr = cdma->last_pos;
+>   
+>   	/* do CPU increments for the remaining syncpts */
+>   	if (job) {
+> +		dev_dbg(dev, "%s: perform CPU incr on pending buffers\n",
+> +			__func__);
+> +
+>   		/* won't need a timeout when replayed */
+>   		job->timeout = 0;
+>   
+> @@ -381,9 +386,10 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
+>   		host1x_hw_cdma_timeout_cpu_incr(host1x, cdma, job->first_get,
+>   						syncpt_incrs, job->syncpt_end,
+>   						job->num_slots);
+> -	}
+>   
+> -	dev_dbg(dev, "%s: finished sync_queue modification\n", __func__);
+> +		dev_dbg(dev, "%s: finished sync_queue modification\n",
+> +			__func__);
+> +	}
+>   
+>   	/* roll back DMAGET and start up channel again */
+>   	host1x_hw_cdma_resume(host1x, cdma, restart_addr);
+> 
