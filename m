@@ -2,445 +2,104 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E517C43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEF7C43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6682075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:44:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2gJufxx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6682075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 269002075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269002075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeJJHDk (ORCPT
+        id S1726445AbeJJHH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:03:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41054 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeJJHDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:03:39 -0400
-Received: by mail-pf1-f193.google.com with SMTP id m77-v6so1640506pfi.8;
-        Tue, 09 Oct 2018 16:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0ahMLKu5Z74W/0/wMpIJ2fpDv8gGF9fLIz6Kbz7QAfI=;
-        b=T2gJufxxpCEIGoQSe0vjYSPUWnW7S4+lkZDy4XN31xTndQyqFPrikWvgC+vk0RdANV
-         DAgPt9qfBJev/bS30Dg9K6eX4IWc2yqdb110qdKCLDcxfcRrERmcMg4d2li+HFJRX4/4
-         73pYo2wZP8SXB3GxsOgDGENTIRJ18vUo2YBv8MV277SnQHRoaoywLdmAuJKNX/taYnh/
-         JVoY6DKNtmtWL2FYH4+S4aUnz8xbqQUAsiT8FRq3RX/dp0J4Su+atwxmTao+e1OvlvE3
-         yS0LH8oab+j565ZmWANNj5jbgweuMEy2/edaPz5EhuJZqvQAOJXV+2Oeo6z7E1r5/p8P
-         /W2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0ahMLKu5Z74W/0/wMpIJ2fpDv8gGF9fLIz6Kbz7QAfI=;
-        b=BUJSNSihbvpxt/s5PwFKq00eaiwjnvCnjLRjGYIvHzWcGIbkOJdKMylFek87Ns7q7q
-         wLlK9b7ZNpWboF6thUUTbnEI1WEJQkD+MKfkLAwI66pqfiIclYNAu3nGRL6Nt2wgeLIs
-         NSRwW4ppzMIIBCoABcd7twdck7tA3rIYTB9L7RxLU3q8Qee8IvBo/+5hOO3YNiirUKaB
-         HH7XdZoEX5oc96vrldDF/duPk4deZaiRuuEfsFccETpW0552s+sjvLSDW4wV/4C6lVif
-         7dkHoACr1Gymh3kQJOpGPHoiNIlPS0B395MUkQZpVCoPY5kwVGH6h/T85h30RyoirdWn
-         QQVQ==
-X-Gm-Message-State: ABuFfoinsvT00x4uWobOt3FnALpPHbeN3CqzOJSap1vA04bePqEAz3Hl
-        l08U5eZcLW9ZDUL6OE5tto4=
-X-Google-Smtp-Source: ACcGV63WMUHA/BpaJc1CaGH/MuXtpDBeFea4JQjaXzK9CGLNbAl7z7jK7aYkizsvIFtLzE4CuKbxdg==
-X-Received: by 2002:a63:6203:: with SMTP id w3-v6mr27338841pgb.53.1539128657443;
-        Tue, 09 Oct 2018 16:44:17 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id j25-v6sm25921369pff.116.2018.10.09.16.44.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 16:44:16 -0700 (PDT)
-Subject: Re: [PATCH 05/16] of: overlay: use prop add changeset entry for
- property in new nodes
-To:     Alan Tull <atull@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-References: <1538712767-30394-1-git-send-email-frowand.list@gmail.com>
- <1538712767-30394-6-git-send-email-frowand.list@gmail.com>
- <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <09cdeb8f-3b8c-25ae-5804-0759a9db508d@gmail.com>
-Date:   Tue, 9 Oct 2018 16:44:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 03:07:58 -0400
+Received: from sauhun.de ([88.99.104.3]:53722 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725766AbeJJHH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 03:07:58 -0400
+Received: from localhost (p54B336A7.dip0.t-ipconnect.de [84.179.54.167])
+        by pokefinder.org (Postfix) with ESMTPSA id 0E9CE2C310A;
+        Wed, 10 Oct 2018 01:48:35 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 01:48:30 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mmc: tmio: move MFD variant reset to a platform
+ hook
+Message-ID: <20181009234830.v7yzhnrtqcfwmm45@katana>
+References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
+ <1538566587-29452-2-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oknejck5xq3nafxl"
+Content-Disposition: inline
+In-Reply-To: <1538566587-29452-2-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/18 13:28, Alan Tull wrote:
-> On Thu, Oct 4, 2018 at 11:14 PM <frowand.list@gmail.com> wrote:
->>
->> From: Frank Rowand <frank.rowand@sony.com>
->>
-> 
-> Hi Frank,
-> 
->> The changeset entry 'update property' was used for new properties in
->> an overlay instead of 'add property'.
->>
->> The decision of whether to use 'update property' was based on whether
->> the property already exists in the subtree where the node is being
->> spliced into.  At the top level of creating a changeset describing the
->> overlay, the target node is in the live devicetree, so checking whether
->> the property exists in the target node returns the correct result.
->> As soon as the changeset creation algorithm recurses into a new node,
->> the target is no longer in the live devicetree, but is instead in the
->> detached overlay tree, thus all properties are incorrectly found to
->> already exist in the target.
-> 
-> When I applied an overlay (that added a few gpio controllers, etc),
-> the node names for nodes added from the overlay end up NULL.   It
 
-I'll look at this tonight.
-
--Frank
+--oknejck5xq3nafxl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-> seems related to this patch and the next one.  I haven't completely
-> root caused this but if I back out to before this patch, the situation
-> is fixed.
-> 
-> root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_gpio/
-> bind             ff200010.<NULL>  ff200020.<NULL>  ff200030.<NULL>
-> uevent           unbind
-> 
-> root@arria10:~/unit_tests# ls /sys/bus/platform/drivers/altera_freeze_br/
-> bind             ff200450.<NULL>  uevent           unbind
-> 
-> Alan
-> 
->>
->> This fix will expose another devicetree bug that will be fixed
->> in the following patch in the series.
->>
->> When this patch is applied the errors reported by the devictree
->> unittest will change, and the unittest results will change from:
->>
->>    ### dt-test ### end of unittest - 210 passed, 0 failed
->>
->> to
->>
->>    ### dt-test ### end of unittest - 203 passed, 7 failed
->>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->>  drivers/of/overlay.c | 112 ++++++++++++++++++++++++++++++++++-----------------
->>  1 file changed, 74 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->> index 32cfee68f2e3..0b0904f44bc7 100644
->> --- a/drivers/of/overlay.c
->> +++ b/drivers/of/overlay.c
->> @@ -24,6 +24,26 @@
->>  #include "of_private.h"
->>
->>  /**
->> + * struct target - info about current target node as recursing through overlay
->> + * @np:                        node where current level of overlay will be applied
->> + * @in_livetree:       @np is a node in the live devicetree
->> + *
->> + * Used in the algorithm to create the portion of a changeset that describes
->> + * an overlay fragment, which is a devicetree subtree.  Initially @np is a node
->> + * in the live devicetree where the overlay subtree is targeted to be grafted
->> + * into.  When recursing to the next level of the overlay subtree, the target
->> + * also recurses to the next level of the live devicetree, as long as overlay
->> + * subtree node also exists in the live devicetree.  When a node in the overlay
->> + * subtree does not exist at the same level in the live devicetree, target->np
->> + * points to a newly allocated node, and all subsequent targets in the subtree
->> + * will be newly allocated nodes.
->> + */
->> +struct target {
->> +       struct device_node *np;
->> +       bool in_livetree;
->> +};
->> +
->> +/**
->>   * struct fragment - info about fragment nodes in overlay expanded device tree
->>   * @target:    target of the overlay operation
->>   * @overlay:   pointer to the __overlay__ node
->> @@ -72,8 +92,7 @@ static int devicetree_corrupt(void)
->>  }
->>
->>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
->> -               struct device_node *target_node,
->> -               const struct device_node *overlay_node);
->> +               struct target *target, const struct device_node *overlay_node);
->>
->>  /*
->>   * of_resolve_phandles() finds the largest phandle in the live tree.
->> @@ -257,14 +276,17 @@ static struct property *dup_and_fixup_symbol_prop(
->>  /**
->>   * add_changeset_property() - add @overlay_prop to overlay changeset
->>   * @ovcs:              overlay changeset
->> - * @target_node:       where to place @overlay_prop in live tree
->> + * @target:            where @overlay_prop will be placed
->>   * @overlay_prop:      property to add or update, from overlay tree
->>   * @is_symbols_prop:   1 if @overlay_prop is from node "/__symbols__"
->>   *
->> - * If @overlay_prop does not already exist in @target_node, add changeset entry
->> - * to add @overlay_prop in @target_node, else add changeset entry to update
->> + * If @overlay_prop does not already exist in live devicetree, add changeset
->> + * entry to add @overlay_prop in @target, else add changeset entry to update
->>   * value of @overlay_prop.
->>   *
->> + * @target may be either in the live devicetree or in a new subtree that
->> + * is contained in the changeset.
->> + *
->>   * Some special properties are not updated (no error returned).
->>   *
->>   * Update of property in symbols node is not allowed.
->> @@ -273,20 +295,22 @@ static struct property *dup_and_fixup_symbol_prop(
->>   * invalid @overlay.
->>   */
->>  static int add_changeset_property(struct overlay_changeset *ovcs,
->> -               struct device_node *target_node,
->> -               struct property *overlay_prop,
->> +               struct target *target, struct property *overlay_prop,
->>                 bool is_symbols_prop)
->>  {
->>         struct property *new_prop = NULL, *prop;
->>         int ret = 0;
->>
->> -       prop = of_find_property(target_node, overlay_prop->name, NULL);
->> -
->>         if (!of_prop_cmp(overlay_prop->name, "name") ||
->>             !of_prop_cmp(overlay_prop->name, "phandle") ||
->>             !of_prop_cmp(overlay_prop->name, "linux,phandle"))
->>                 return 0;
->>
->> +       if (target->in_livetree)
->> +               prop = of_find_property(target->np, overlay_prop->name, NULL);
->> +       else
->> +               prop = NULL;
->> +
->>         if (is_symbols_prop) {
->>                 if (prop)
->>                         return -EINVAL;
->> @@ -299,10 +323,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
->>                 return -ENOMEM;
->>
->>         if (!prop)
->> -               ret = of_changeset_add_property(&ovcs->cset, target_node,
->> +               ret = of_changeset_add_property(&ovcs->cset, target->np,
->>                                                 new_prop);
->>         else
->> -               ret = of_changeset_update_property(&ovcs->cset, target_node,
->> +               ret = of_changeset_update_property(&ovcs->cset, target->np,
->>                                                    new_prop);
->>
->>         if (ret) {
->> @@ -315,14 +339,14 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
->>
->>  /**
->>   * add_changeset_node() - add @node (and children) to overlay changeset
->> - * @ovcs:              overlay changeset
->> - * @target_node:       where to place @node in live tree
->> - * @node:              node from within overlay device tree fragment
->> + * @ovcs:      overlay changeset
->> + * @target:    where @overlay_prop will be placed in live tree or changeset
->> + * @node:      node from within overlay device tree fragment
->>   *
->> - * If @node does not already exist in @target_node, add changeset entry
->> - * to add @node in @target_node.
->> + * If @node does not already exist in @target, add changeset entry
->> + * to add @node in @target.
->>   *
->> - * If @node already exists in @target_node, and the existing node has
->> + * If @node already exists in @target, and the existing node has
->>   * a phandle, the overlay node is not allowed to have a phandle.
->>   *
->>   * If @node has child nodes, add the children recursively via
->> @@ -355,15 +379,16 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
->>   * invalid @overlay.
->>   */
->>  static int add_changeset_node(struct overlay_changeset *ovcs,
->> -               struct device_node *target_node, struct device_node *node)
->> +               struct target *target, struct device_node *node)
->>  {
->>         const char *node_kbasename;
->>         struct device_node *tchild;
->> +       struct target target_child;
->>         int ret = 0;
->>
->>         node_kbasename = kbasename(node->full_name);
->>
->> -       for_each_child_of_node(target_node, tchild)
->> +       for_each_child_of_node(target->np, tchild)
->>                 if (!of_node_cmp(node_kbasename, kbasename(tchild->full_name)))
->>                         break;
->>
->> @@ -372,22 +397,28 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
->>                 if (!tchild)
->>                         return -ENOMEM;
->>
->> -               tchild->parent = target_node;
->> +               tchild->parent = target->np;
->>                 of_node_set_flag(tchild, OF_OVERLAY);
->>
->>                 ret = of_changeset_attach_node(&ovcs->cset, tchild);
->>                 if (ret)
->>                         return ret;
->>
->> -               ret = build_changeset_next_level(ovcs, tchild, node);
->> +               target_child.np = tchild;
->> +               target_child.in_livetree = false;
->> +
->> +               ret = build_changeset_next_level(ovcs, &target_child, node);
->>                 of_node_put(tchild);
->>                 return ret;
->>         }
->>
->> -       if (node->phandle && tchild->phandle)
->> +       if (node->phandle && tchild->phandle) {
->>                 ret = -EINVAL;
->> -       else
->> -               ret = build_changeset_next_level(ovcs, tchild, node);
->> +       } else {
->> +               target_child.np = tchild;
->> +               target_child.in_livetree = target->in_livetree;
->> +               ret = build_changeset_next_level(ovcs, &target_child, node);
->> +       }
->>         of_node_put(tchild);
->>
->>         return ret;
->> @@ -396,7 +427,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
->>  /**
->>   * build_changeset_next_level() - add level of overlay changeset
->>   * @ovcs:              overlay changeset
->> - * @target_node:       where to place @overlay_node in live tree
->> + * @target:            where to place @overlay_node in live tree
->>   * @overlay_node:      node from within an overlay device tree fragment
->>   *
->>   * Add the properties (if any) and nodes (if any) from @overlay_node to the
->> @@ -409,27 +440,26 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
->>   * invalid @overlay_node.
->>   */
->>  static int build_changeset_next_level(struct overlay_changeset *ovcs,
->> -               struct device_node *target_node,
->> -               const struct device_node *overlay_node)
->> +               struct target *target, const struct device_node *overlay_node)
->>  {
->>         struct device_node *child;
->>         struct property *prop;
->>         int ret;
->>
->>         for_each_property_of_node(overlay_node, prop) {
->> -               ret = add_changeset_property(ovcs, target_node, prop, 0);
->> +               ret = add_changeset_property(ovcs, target, prop, 0);
->>                 if (ret) {
->>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
->> -                                target_node, prop->name, ret);
->> +                                target->np, prop->name, ret);
->>                         return ret;
->>                 }
->>         }
->>
->>         for_each_child_of_node(overlay_node, child) {
->> -               ret = add_changeset_node(ovcs, target_node, child);
->> +               ret = add_changeset_node(ovcs, target, child);
->>                 if (ret) {
->>                         pr_debug("Failed to apply node @%pOF/%s, err=%d\n",
->> -                                target_node, child->name, ret);
->> +                                target->np, child->name, ret);
->>                         of_node_put(child);
->>                         return ret;
->>                 }
->> @@ -442,17 +472,17 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
->>   * Add the properties from __overlay__ node to the @ovcs->cset changeset.
->>   */
->>  static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
->> -               struct device_node *target_node,
->> +               struct target *target,
->>                 const struct device_node *overlay_symbols_node)
->>  {
->>         struct property *prop;
->>         int ret;
->>
->>         for_each_property_of_node(overlay_symbols_node, prop) {
->> -               ret = add_changeset_property(ovcs, target_node, prop, 1);
->> +               ret = add_changeset_property(ovcs, target, prop, 1);
->>                 if (ret) {
->>                         pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
->> -                                target_node, prop->name, ret);
->> +                                target->np, prop->name, ret);
->>                         return ret;
->>                 }
->>         }
->> @@ -475,6 +505,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
->>  static int build_changeset(struct overlay_changeset *ovcs)
->>  {
->>         struct fragment *fragment;
->> +       struct target target;
->>         int fragments_count, i, ret;
->>
->>         /*
->> @@ -489,7 +520,9 @@ static int build_changeset(struct overlay_changeset *ovcs)
->>         for (i = 0; i < fragments_count; i++) {
->>                 fragment = &ovcs->fragments[i];
->>
->> -               ret = build_changeset_next_level(ovcs, fragment->target,
->> +               target.np = fragment->target;
->> +               target.in_livetree = true;
->> +               ret = build_changeset_next_level(ovcs, &target,
->>                                                  fragment->overlay);
->>                 if (ret) {
->>                         pr_debug("apply failed '%pOF'\n", fragment->target);
->> @@ -499,7 +532,10 @@ static int build_changeset(struct overlay_changeset *ovcs)
->>
->>         if (ovcs->symbols_fragment) {
->>                 fragment = &ovcs->fragments[ovcs->count - 1];
->> -               ret = build_changeset_symbols_node(ovcs, fragment->target,
->> +
->> +               target.np = fragment->target;
->> +               target.in_livetree = true;
->> +               ret = build_changeset_symbols_node(ovcs, &target,
->>                                                    fragment->overlay);
->>                 if (ret) {
->>                         pr_debug("apply failed '%pOF'\n", fragment->target);
->> @@ -517,7 +553,7 @@ static int build_changeset(struct overlay_changeset *ovcs)
->>   * 1) "target" property containing the phandle of the target
->>   * 2) "target-path" property containing the path of the target
->>   */
->> -static struct device_node *find_target_node(struct device_node *info_node)
->> +static struct device_node *find_target(struct device_node *info_node)
->>  {
->>         struct device_node *node;
->>         const char *path;
->> @@ -623,7 +659,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
->>
->>                 fragment = &fragments[cnt];
->>                 fragment->overlay = overlay_node;
->> -               fragment->target = find_target_node(node);
->> +               fragment->target = find_target(node);
->>                 if (!fragment->target) {
->>                         of_node_put(fragment->overlay);
->>                         ret = -EINVAL;
->> --
->> Frank Rowand <frank.rowand@sony.com>
->>
-> 
+> +static void tmio_mmc_reset(struct tmio_mmc_host *host)
+> +{
+> +	/* FIXME - should we set stop clock reg here */
+> +	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
+> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+> +	usleep_range(10000, 11000);
+> +	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
+> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+> +	usleep_range(10000, 11000);
+> +
+> +	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
+> +		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
+> +		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
+> +	}
+> +}
 
+Yes, looks much safer now.
+
+> +	host->reset = tmio_mmc_reset;
+
+So, you populate the new pointer here...
+
+> +	if (!_host->reset)
+> +		_host->reset = tmio_mmc_reset;
+
+... and here. But it seems never used anywhere? Or am I missing
+something?
+
+
+--oknejck5xq3nafxl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu9PkkACgkQFA3kzBSg
+KbZnuA/+I2qZqk1fuGlq0wqo0xDfpv+d77LyeWBXWDsVa8I8YCjA0qK1Z0Bm7POJ
+L9W+Pv+zvxE1AcEScUagPXLBW6fEK27NrjzKhGO15udXaQEOPVJ9wFNfHcrbKJVy
+WnebEAfESUXoLbQ7CLyyNzoQUsilScErUHFtgLltN95MVYkTpd/8YlVeB+GWl6xj
+MvD+MYtRw0xj+PAmanjtl2dn+oNUE6Tdg4A8VA33+qE8ujXtayOjHw5lmWXYnOav
+bKe5dOMVKNw1Gc7QO0wFWYF6/0b+TYNTvE2WdsbUZx79RcNjL1DYiRRMadLATn2P
+zPDnNiqnZzJsANYugn8ubvtv8XrT/degeXW4eiX6auNy0y8A1FTpD/mtLCQA5SZE
+XemCYB32Pi/uFLUALD79lgP20lQqZvyWrxZd1r02dfhULO9DZ5GEDUlyglvxNWI2
+5xsm5XqIR2MVqmWqwH0FwDOOoRVwYc3uH6Y65trJYMioIWEPP0h4qdfA+n+1aHTJ
+KYJn2aESqgTDBmwW7X+KdtRjw1aNLVU5GnOE9Sacd5pjY9DlX0Ye4RIwyBSRDmkW
+RM7j6sBEEn51sSmPP+J7qFLgM29aSjRsp4AVpCPHkGz0ATv3y55yG+kN7JKnVVjm
+XxaludJs1Rma5SticTpNJPd6GYDfsubj6vU9NYYijX9lGS2mVnU=
+=5rVW
+-----END PGP SIGNATURE-----
+
+--oknejck5xq3nafxl--
