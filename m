@@ -2,111 +2,171 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7F8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DFBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F842087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40874214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbKPDm6K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F842087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0/s5jyk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40874214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJIXVO (ORCPT
+        id S1726967AbeJIXVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:21:14 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43541 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeJIXVN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:21:13 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y20-v6so2184629eds.10;
-        Tue, 09 Oct 2018 09:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mvvdkev32BaIlAbDDS17DKGzCuvIU+cyIKqtYO1MPaA=;
-        b=BbKPDm6KL9ho8uFsJ7poT1fle5GkGEnijT8acnGO9Oc1DGpx2t1B3oI6J+E8cTY8pK
-         dpsBJyYDwmunbdWkrOgX/dspak9zyIuM1ThqSm2NI6zUF/KsnSRzwuOYKlL/YymPWrfP
-         e/26j1TCk3BXliSCQGZpnvlWSpMQyjY6Gmh0M48W2uulRL61MRhRgy27mEiP8A4nLun0
-         BHwt76GAmEynQUDGlv6Dx0P9RR+MOPPqOv+LoFSidvpcqfbyFtsGXRFxetsjNtT5EkC1
-         0vISuo2817fcaFi8//x1oaqJXEJZ05pBuss5rE7DH5mLpm5+Y95iWMjuwV8MVAcsXOf/
-         Wrlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mvvdkev32BaIlAbDDS17DKGzCuvIU+cyIKqtYO1MPaA=;
-        b=GT25pgTOPzCCav9YnwzUz3+DRXw9lSQbni/73x6DIoVhH3vV0RWN9TJud8ZIOFQ+f8
-         c8Q4ofCoJP/wSlsjrUrvANzAfelOqrkwrHbQGSmXgNR/XEbHDxS56r5rPOtQDGhziOQR
-         jtwkM+SJCz/p6Fk2xUZJvyN/FiFBT2wklwBO5+wDR5CNFRSHuXHpTXz/q4ltJq+vYNu7
-         I4Nhy/xI6ElwVT9wQO3ckz7RugsAX/V3F9iTvzr2sOf4VcISZiwBgMqirkaWup06fwJr
-         Mo22VYAi1WgJ+mUOLqXv1OZArkriXnGuMIaj3Fp2I4O3vZQ8rIHrCMnSUtL67PA0X8kt
-         3DwA==
-X-Gm-Message-State: ABuFfoi3umA+50KurcpVJGS+bHIPXc3XVa7XAOVw8Z7BkungJXC0lanS
-        AIgesd63lgzgEgSTI8cUe8rQioLRgTkuZqj1WVA=
-X-Google-Smtp-Source: ACcGV63Jo0FLp/DSlC5RnZ1dduUaYxDY0XGqxLlwPsUw5L/4KeqYCBFqOVyqbDNweHiCv8FfibJGICuDKiBnLofTFA0=
-X-Received: by 2002:a50:f9c7:: with SMTP id a7-v6mr34911936edq.138.1539101015196;
- Tue, 09 Oct 2018 09:03:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000009d47b2057782bab4@google.com> <CAF=yD-+7NxN37Ez=3WXG0+2i6j30uSV8u9D7oJXEhp+SxzYCpA@mail.gmail.com>
- <CAF=yD-+Qh5f9kqmYLY5EyUwNPuyhMpBxz6dh_kfzFZsgE3UijQ@mail.gmail.com>
- <87va6bwlfg.fsf@linux.ibm.com> <48d891dd-3f45-c03c-a55b-bb153080881a@gmail.com>
-In-Reply-To: <48d891dd-3f45-c03c-a55b-bb153080881a@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Tue, 9 Oct 2018 12:02:58 -0400
-Message-ID: <CAF=yD-K3BeuUWf_2RhWoC6fx=+A49Nt1TOFOfzdwKfOdsv=TiQ@mail.gmail.com>
-Subject: Re: general protection fault in __handle_mm_fault
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     aneesh.kumar@linux.ibm.com,
-        syzbot+1577fbe983d20fe2e88f@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Tue, 9 Oct 2018 19:21:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeJIXVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 19:21:42 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 715C82087D;
+        Tue,  9 Oct 2018 16:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539101044;
+        bh=UzXQ6/8VD51eNAXEgCpKhMBwBH9tKxpbgC6c6+hxcYM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S0/s5jyk7uKFbPbNXgRYoKazzsCz4pfrOQO9LewYHv7u82pfYVHreG6exdueEefY5
+         CjvcokmuYpi9rKPZ3M/a7H2O+PDYtLQeiid7KNSL4H/jQ2E6P4YMqlGJCrBpvGRMwC
+         qpVXYQDKzZEhD/7Ggw9Oe98g61BNqE++0keKmdMM=
+Date:   Wed, 10 Oct 2018 01:04:00 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-Id: <20181010010400.0aa342ebdf80bbfa835fb6c5@kernel.org>
+In-Reply-To: <20181008235534.75d37fd8@gandalf.local.home>
+References: <20181006015110.653946300@goodmis.org>
+        <20181006015720.634688468@goodmis.org>
+        <20181009124401.6005e2a39c760851aa54e600@kernel.org>
+        <20181008235534.75d37fd8@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 11:00 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
->
-> On 10/09/2018 01:53 AM, Aneesh Kumar K.V wrote:
-> ...
->
-> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cdb67e400000
-> ...
->
-> >
-> > Can you check with this patch
+On Mon, 8 Oct 2018 23:55:34 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Thanks. With that patch the crash indeed does not occur.
+> On Tue, 9 Oct 2018 12:44:01 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > On Fri, 05 Oct 2018 21:51:11 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > +typedef long dynfunc_t;
+> > > +
+> > > +struct dynfunc_struct;
+> > > +
+> > > +#define arch_dynfunc_trampoline(name, def)	\
+> > > +	asm volatile (				\
+> > > +	".globl dynfunc_" #name "; \n\t"	\
+> > > +	"dynfunc_" #name ": \n\t"		\
+> > > +	"jmp " #def " \n\t"			\
+> > > +	".balign 8 \n \t"			\
+> > > +	: : : "memory" )
+> > > +  
+> > 
+> > I have just a question, what is this different from livepatch? :)
+> 
+> I actually thought about this a bit, but decided against it.
+> 
+> I didn't want to hook another infrastructure into the fentry nop. It's
+> already complex enough with kprobes, live patching and ftrace.
+> 
+> The ideal solution is what Peter suggested, and that's to patch the
+> call sites, and I think that is attainable with objtool modifications.
 
->
-> Well, this is a C repro, you can test this yourself instead of asking Willem who
-> already did a painful bisection.
+OK, the ideal solution sounds good to me. 
 
-Thanks Eric. It does take some effort to get the syzkaller environment
-up and running [1] and I happen to have it ready, so I don't mind testing
-a few patches.
+> 
+> > 
+> > I think we can replace the first 5 bytes of the default function
+> > to jmp instruction (to alternative function) instead of making
+> > this trampoline.
+> > 
+> > IOW, as far as I can see, this is changing
+> > 
+> > ----
+> > call %reg (or retpoline_reg)
+> > ----
+> > 
+> > to 
+> > 
+> > ----
+> > call dynfunc_A
+> > 
+> > dynfunc_A:
+> > jmp func_A or altered_func_A
+> > ----
+> > 
+> > If so, why don't we put the jmp on default func_A directly?
+> > ----
+> > call func_A
+> > 
+> > func_A:
+> > "jmp altered_func" or "original sequence"
+> > ----
+> > (this is idealy same as jprobes did)
+> > 
+> > Of course we have to arbitrate it with ftrace (fentry) but it may
+> > not so hard (simplest way is just adding "notrace" on the default
+> > function)
+> 
+> Then we lose the 5 byte nop.
 
-It just had to wait until I got to the office. Somehow the debug kernel
-produces so much output that it consistently locked up my shell over ssh.
+Yeah, but we can remove the trampoline code.
 
-[1] for reference:
-https://github.com/google/syzkaller/blob/master/docs/linux/setup_ubuntu-host_qemu-vm_x86-64-kernel.md
+> > BTW, I think "dynamic_function" may not correct name, it may be
+> > "alternative_function" or something like that, because this
+> > function must be replaced system-wide and this means we can
+> > not use this for generic function pointer usage which depends
+> > on thread context (like file_operations). But good for something
+> > pluggable code (LSM?).
+> 
+> I don't like the name alternative, as that's usually a one shot deal
+> (SMP vs UP).
+> 
+> It is dynamic, as it's a function that changes dynamically. Yes its
+> global, but that's not mutually exclusive to dynamic.
+
+OK, so we may add a note that this is "global" patching :)
+
+> The use case I want this for is for tracing. But it can be useful for
+> KVM and power management governors. Basically anything that has a
+> global function pointer (hmm, even the idle call can use this).
+
+Indeed.
+
+Thanks,
+
+> 
+> -- Steve
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
