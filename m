@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E06C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C1CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311FE214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48733214C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:14:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="fBjQY923"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311FE214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="whV01Jh6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48733214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeJISa7 (ORCPT
+        id S1727711AbeJISbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:30:59 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37986 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbeJISa6 (ORCPT
+        Tue, 9 Oct 2018 14:31:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41764 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbeJISbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:30:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so653286pgq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:31 -0700 (PDT)
+        Tue, 9 Oct 2018 14:31:01 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q17-v6so665861plr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JqbscpICEB3qbmlv7vntZeO03I5GXAWejKL6RAap3bE=;
-        b=fBjQY923u87dmMt+s6DKoVZsetvuS2K4pKmnWvEfmfmvnwN0YDHYF6qcioAW5NSBfV
-         FlFS8WRplmizZJUgo+6SDYwyCRfTrHvLnIMb06F+oxCvP2cBx7FfDYUhgO/nzWkzSccg
-         j/KFUVmp3OCHSQGJFyrHedTacaQkSPk/r7GmKmA+USwu0X9Y14Ur5AyKzVDe5qNzTz20
-         235tH4espEB+1LPKTQxTiJHoVOMQK4pgjV2RQPK+oNGrrbNbf4zK8cgXIzPg81518Mqc
-         HZqYXTPH1y1qyrfF0GBHM3COxy4t0xwYQ6x5XnwFD4qXK/FE+oR84Jeu6o4GJL/idbzn
-         hoFA==
+        bh=xw/0bX6g1bphl4qCLi3oqhSdmZqGRZB0w26ZEqBFFwM=;
+        b=whV01Jh603VBEE5sBace/+p7wXP/keQz0wD8YVjlSTPYAheayGJSSc8L+afGqPZxOA
+         lQ5p7Ebxk/HyB8OokYUkC5hpMD+l9QxYINNTbThQre3U7fyp3Q/7XhGs8oS4blM9TqyD
+         jc9nkiknQP5C865yMyyMS2lMhIWpcv0Z6IKI9U/YkW8H3+PmgIbhD4lQ9BrRa1qzzy6f
+         v60do2LmUxqqqhEExKbOAWgXFFvnpT6YiLzvylJDsTtAc8BT5o25N+0ZGfgl7uNhnqqf
+         WgNzGJKEpP/xPW5vNLtUuf0aWTO7CKVUj+qJhkTM/OerspCbQNl9b2y6ftnCjjlhgMon
+         U8lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JqbscpICEB3qbmlv7vntZeO03I5GXAWejKL6RAap3bE=;
-        b=OeTc16ixWSrFxhNtLJisLDIeVugWXscfJjF01CuTplxoAmUjw3cjTdB5gsCwzN+qHR
-         57RbhC1iAP7Gkm6LtQ1bbkRTBpA0MJJ5PQv919iQca7cUDGYHh/y/MSZwWLg9EvnfoeM
-         pWsKe+KBjuErtZBA+WnlmBeNtIITaRH0W/mjk9AySEknxjX+AuVgaWdjMF6AyIqp4MJW
-         UBHqERJDbirrHVhDdbsBtDSpLLTgxka1K716F3RJlTPyN7P0gEIAbKZOzHDZLJUlMymb
-         1HlaVRA8wsWGvDWA4eYGn6SdGL7vZBtrr/TG78/c9Y/Yirf+Q8sJkqg+NTSqHwQfh7Gp
-         NMXA==
-X-Gm-Message-State: ABuFfohVdIRxdeoJeHUQ4kK4SuY/ZQjMqh8PZkdsKhpXMyosqwLs2fIf
-        LVLCwZ5LXC+rrjsPdcaWMmlq/383gL2p8Q==
-X-Google-Smtp-Source: ACcGV6146m9BhqdvLDm68//KP/nDmo1QPNXiyLofrPyISdjqF1+tzYv/oVtM7ckmsvdmWMZ84ZUcPg==
-X-Received: by 2002:aa7:8715:: with SMTP id b21-v6mr29325251pfo.250.1539083671217;
-        Tue, 09 Oct 2018 04:14:31 -0700 (PDT)
+        bh=xw/0bX6g1bphl4qCLi3oqhSdmZqGRZB0w26ZEqBFFwM=;
+        b=owbUG4ky+3FRh0gnpnUSuNKeTs08djpArmWXoLaPESBNPKCiaIS2U9btPdnJK4nTUC
+         4nwxBY1QDCTysNPdf/QaRtj+2GfRdP+A6hMNHjIGntpAb7TSvpdlDCWZ2oMXbrrzxhEx
+         W9/VWoBXIzIMG42cVpBQydOGAB2Hgl8USG22wtV0tCiuHVzyrnHHC/hRE1WOU8R8LBmD
+         5Sh4u/8MsaxMswDHAI7Teww2YSCKF74dyATR62EvtQEFH1w057LsZQAH0o+L0g6pSGdj
+         7eeavZFl2g9tDy0lEDMC5DjFDhPCm07z2/mK1o0BJLU+tlP7XmYYORL+i6SsMzc1+KOk
+         tAZg==
+X-Gm-Message-State: ABuFfoj3dvbWJITH9nWJ4Sk9KJ82hm0+aJ/LBN4iMysB77uwapyVQrip
+        DVuVf54dy2kklEqFmbs3VT6WdE6WLH07Mg==
+X-Google-Smtp-Source: ACcGV61yCGKy+3yAb37r9V8Oy1LYL/9OuSQthqrggLMcknxwuSozXT50jOOaFvOu3az0517fp8nw3g==
+X-Received: by 2002:a17:902:7c96:: with SMTP id y22-v6mr28170872pll.321.1539083674443;
+        Tue, 09 Oct 2018 04:14:34 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.28
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.14.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:14:30 -0700 (PDT)
+        Tue, 09 Oct 2018 04:14:33 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 23/45] lightnvm: pblk: add trace events for line state changes
-Date:   Tue,  9 Oct 2018 13:11:53 +0200
-Message-Id: <20181009111215.7653-24-mb@lightnvm.io>
+Subject: [GIT PULL 24/45] lightnvm: pblk: add trace events for pblk state changes
+Date:   Tue,  9 Oct 2018 13:11:54 +0200
+Message-Id: <20181009111215.7653-25-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -80,242 +80,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Add trace events for logging for line state changes.
+Add trace events for tracking pblk state changes.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c     | 19 +++++++++++++++++-
- drivers/lightnvm/pblk-gc.c       |  8 ++++++++
- drivers/lightnvm/pblk-init.c     |  3 +++
- drivers/lightnvm/pblk-recovery.c |  6 ++++++
- drivers/lightnvm/pblk-trace.h    | 33 ++++++++++++++++++++++++++++++++
- 5 files changed, 68 insertions(+), 1 deletion(-)
+ drivers/lightnvm/pblk-core.c  |  3 +++
+ drivers/lightnvm/pblk-init.c  |  1 +
+ drivers/lightnvm/pblk-trace.h | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
 diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 8a5158607467..ef52c1647f88 100644
+index ef52c1647f88..c482ef7dd4b5 100644
 --- a/drivers/lightnvm/pblk-core.c
 +++ b/drivers/lightnvm/pblk-core.c
-@@ -413,6 +413,9 @@ struct list_head *pblk_line_gc_list(struct pblk *pblk, struct pblk_line *line)
- 		}
- 	} else {
- 		line->state = PBLK_LINESTATE_CORRUPT;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
-+
- 		line->gc_group = PBLK_LINEGC_NONE;
- 		move_list =  &l_mg->corrupt_list;
- 		pblk_err(pblk, "corrupted vsc for line %d, vsc:%d (%d/%d/%d)\n",
-@@ -1019,6 +1022,8 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 		spin_lock(&l_mg->free_lock);
- 		spin_lock(&line->lock);
- 		line->state = PBLK_LINESTATE_BAD;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 		spin_unlock(&line->lock);
+@@ -1503,6 +1503,7 @@ static void pblk_stop_writes(struct pblk *pblk, struct pblk_line *line)
  
- 		list_add_tail(&line->list, &l_mg->bad_list);
-@@ -1166,6 +1171,8 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
- 		bitmap_weight(line->invalid_bitmap, lm->sec_per_line)) {
- 		spin_lock(&line->lock);
- 		line->state = PBLK_LINESTATE_BAD;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 		spin_unlock(&line->lock);
- 
- 		list_add_tail(&line->list, &l_mg->bad_list);
-@@ -1218,6 +1225,8 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	if (line->state == PBLK_LINESTATE_NEW) {
- 		blk_to_erase = pblk_prepare_new_line(pblk, line);
- 		line->state = PBLK_LINESTATE_FREE;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 	} else {
- 		blk_to_erase = blk_in_line;
- 	}
-@@ -1235,6 +1244,8 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	}
- 
- 	line->state = PBLK_LINESTATE_OPEN;
-+	trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+				line->state);
- 
- 	atomic_set(&line->left_eblks, blk_to_erase);
- 	atomic_set(&line->left_seblks, blk_to_erase);
-@@ -1331,6 +1342,8 @@ struct pblk_line *pblk_line_get(struct pblk *pblk)
- 	if (unlikely(bit >= lm->blk_per_line)) {
- 		spin_lock(&line->lock);
- 		line->state = PBLK_LINESTATE_BAD;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 		spin_unlock(&line->lock);
- 
- 		list_add_tail(&line->list, &l_mg->bad_list);
-@@ -1650,6 +1663,8 @@ static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
- 	spin_lock(&line->lock);
- 	WARN_ON(line->state != PBLK_LINESTATE_GC);
- 	line->state = PBLK_LINESTATE_FREE;
-+	trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 	line->gc_group = PBLK_LINEGC_NONE;
- 	pblk_line_free(line);
- 
-@@ -1779,7 +1794,6 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
- 	WARN_ON(line->state != PBLK_LINESTATE_OPEN);
- 	line->state = PBLK_LINESTATE_CLOSED;
- 	move_list = pblk_line_gc_list(pblk, line);
--
- 	list_add_tail(&line->list, move_list);
- 
- 	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
-@@ -1798,6 +1812,9 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
- 
- 	spin_unlock(&line->lock);
- 	spin_unlock(&l_mg->gc_lock);
-+
-+	trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
+ 	pblk_set_space_limit(pblk);
+ 	pblk->state = PBLK_STATE_STOPPING;
++	trace_pblk_state(pblk_disk_name(pblk), pblk->state);
  }
  
- void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
-diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-index 157c2567c9e8..b841d84c4342 100644
---- a/drivers/lightnvm/pblk-gc.c
-+++ b/drivers/lightnvm/pblk-gc.c
-@@ -16,8 +16,10 @@
-  */
+ static void pblk_line_close_meta_sync(struct pblk *pblk)
+@@ -1552,6 +1553,7 @@ void __pblk_pipeline_flush(struct pblk *pblk)
+ 		return;
+ 	}
+ 	pblk->state = PBLK_STATE_RECOVERING;
++	trace_pblk_state(pblk_disk_name(pblk), pblk->state);
+ 	spin_unlock(&l_mg->free_lock);
  
- #include "pblk.h"
-+#include "pblk-trace.h"
- #include <linux/delay.h>
+ 	pblk_flush_writer(pblk);
+@@ -1573,6 +1575,7 @@ void __pblk_pipeline_stop(struct pblk *pblk)
  
-+
- static void pblk_gc_free_gc_rq(struct pblk_gc_rq *gc_rq)
- {
- 	if (gc_rq->data)
-@@ -64,6 +66,8 @@ static void pblk_put_line_back(struct pblk *pblk, struct pblk_line *line)
- 	spin_lock(&line->lock);
- 	WARN_ON(line->state != PBLK_LINESTATE_GC);
- 	line->state = PBLK_LINESTATE_CLOSED;
-+	trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 	move_list = pblk_line_gc_list(pblk, line);
- 	spin_unlock(&line->lock);
- 
-@@ -405,6 +409,8 @@ void pblk_gc_free_full_lines(struct pblk *pblk)
- 		spin_lock(&line->lock);
- 		WARN_ON(line->state != PBLK_LINESTATE_CLOSED);
- 		line->state = PBLK_LINESTATE_GC;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 		spin_unlock(&line->lock);
- 
- 		list_del(&line->list);
-@@ -451,6 +457,8 @@ static void pblk_gc_run(struct pblk *pblk)
- 		spin_lock(&line->lock);
- 		WARN_ON(line->state != PBLK_LINESTATE_CLOSED);
- 		line->state = PBLK_LINESTATE_GC;
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 		spin_unlock(&line->lock);
- 
- 		list_del(&line->list);
+ 	spin_lock(&l_mg->free_lock);
+ 	pblk->state = PBLK_STATE_STOPPED;
++	trace_pblk_state(pblk_disk_name(pblk), pblk->state);
+ 	l_mg->data_line = NULL;
+ 	l_mg->data_next = NULL;
+ 	spin_unlock(&l_mg->free_lock);
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 4f2d9b502028..fca37da16266 100644
+index fca37da16266..9aebdee8e4c9 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -985,6 +985,9 @@ static int pblk_lines_init(struct pblk *pblk)
- 			goto fail_free_lines;
+@@ -1109,6 +1109,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 	pblk->dev = dev;
+ 	pblk->disk = tdisk;
+ 	pblk->state = PBLK_STATE_RUNNING;
++	trace_pblk_state(pblk_disk_name(pblk), pblk->state);
+ 	pblk->gc.gc_enabled = 0;
  
- 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
-+
-+		trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+								line->state);
- 	}
- 
- 	if (!nr_free_chks) {
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index cbcc0828517e..0322ab915ddc 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -15,6 +15,7 @@
-  */
- 
- #include "pblk.h"
-+#include "pblk-trace.h"
- 
- int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta_buf)
- {
-@@ -932,6 +933,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 
- 			spin_lock(&line->lock);
- 			line->state = PBLK_LINESTATE_CLOSED;
-+			trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
- 			move_list = pblk_line_gc_list(pblk, line);
- 			spin_unlock(&line->lock);
- 
-@@ -947,6 +950,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			if (open_lines > 1)
- 				pblk_err(pblk, "failed to recover L2P\n");
- 
-+			trace_pblk_line_state(pblk_disk_name(pblk), line->id,
-+					line->state);
-+
- 			open_lines++;
- 			line->meta_line = meta_line;
- 			data_line = line;
+ 	if (!(geo->version == NVM_OCSSD_SPEC_12 ||
 diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
-index d985b729428f..f9aa9e25e428 100644
+index f9aa9e25e428..c171d0450c07 100644
 --- a/drivers/lightnvm/pblk-trace.h
 +++ b/drivers/lightnvm/pblk-trace.h
-@@ -15,6 +15,16 @@ struct ppa_addr;
- 	{ NVM_CHK_ST_OPEN,		"OPEN",		},	\
- 	{ NVM_CHK_ST_OFFLINE,		"OFFLINE",	})
+@@ -25,6 +25,13 @@ struct ppa_addr;
+ 	{ PBLK_LINESTATE_CORRUPT,	"CORRUPT"	})
  
-+#define show_line_state(state) __print_symbolic(state,		\
-+	{ PBLK_LINESTATE_NEW,		"NEW",		},	\
-+	{ PBLK_LINESTATE_FREE,		"FREE",		},	\
-+	{ PBLK_LINESTATE_OPEN,		"OPEN",		},	\
-+	{ PBLK_LINESTATE_CLOSED,	"CLOSED",	},	\
-+	{ PBLK_LINESTATE_GC,		"GC",		},	\
-+	{ PBLK_LINESTATE_BAD,		"BAD",		},	\
-+	{ PBLK_LINESTATE_CORRUPT,	"CORRUPT"	})
+ 
++#define show_pblk_state(state) __print_symbolic(state,		\
++	{ PBLK_STATE_RUNNING,		"RUNNING",	},	\
++	{ PBLK_STATE_STOPPING,		"STOPPING",	},	\
++	{ PBLK_STATE_RECOVERING,	"RECOVERING",	},	\
++	{ PBLK_STATE_STOPPED,		"STOPPED"	})
 +
 +
  TRACE_EVENT(pblk_chunk_state,
  
  	TP_PROTO(const char *name, struct ppa_addr *ppa, int state),
-@@ -41,6 +51,29 @@ TRACE_EVENT(pblk_chunk_state,
+@@ -75,6 +82,27 @@ TRACE_EVENT(pblk_line_state,
  
  );
  
-+TRACE_EVENT(pblk_line_state,
++TRACE_EVENT(pblk_state,
 +
-+	TP_PROTO(const char *name, int line, int state),
++	TP_PROTO(const char *name, int state),
 +
-+	TP_ARGS(name, line, state),
++	TP_ARGS(name, state),
 +
 +	TP_STRUCT__entry(
 +		__string(name, name)
-+		__field(int, line)
 +		__field(int, state);
 +	),
 +
 +	TP_fast_assign(
 +		__assign_str(name, name);
-+		__entry->line = line;
 +		__entry->state = state;
 +	),
 +
-+	TP_printk("dev=%s line=%d state=%s", __get_str(name),
-+			(int)__entry->line,
-+			show_line_state((int)__entry->state))
++	TP_printk("dev=%s state=%s", __get_str(name),
++			show_pblk_state((int)__entry->state))
 +
 +);
- 
++
  #endif /* !defined(_TRACE_PBLK_H) || defined(TRACE_HEADER_MULTI_READ) */
  
+ /* This part must be outside protection */
 -- 
 2.17.1
 
