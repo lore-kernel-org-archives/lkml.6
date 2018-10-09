@@ -2,60 +2,133 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8436AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5093BC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE4B21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CE4B21479
+	by mail.kernel.org (Postfix) with ESMTP id 152862087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152862087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbeJIPSh (ORCPT
+        id S1726642AbeJIPT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:18:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38714 "EHLO mx1.suse.de"
+        Tue, 9 Oct 2018 11:19:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38950 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeJIPSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:18:36 -0400
+        id S1725855AbeJIPT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:19:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6DEFAB03E;
-        Tue,  9 Oct 2018 08:02:54 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 10:02:53 +0200
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 23FB7AEFF;
+        Tue,  9 Oct 2018 08:03:44 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 10:03:43 +0200
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Yong-Taek Lee <ytk.lee@samsung.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find
- processes sharing mm
-Message-ID: <20181009080253.GD8528@dhcp22.suse.cz>
-References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
- <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
- <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
- <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
- <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
- <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009080343.GE8528@dhcp22.suse.cz>
+References: <CGME20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
+ <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
+ <20181009062330.GA8528@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+In-Reply-To: <20181009062330.GA8528@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 08-10-18 17:38:55, Yong-Taek Lee wrote:
-> Do you have any other idea to avoid meaningless loop ? 
+On Tue 09-10-18 08:23:30, Michal Hocko wrote:
+> [Cc Oleg]
 
-I have already asked in the earlier posting but let's follow up here.
-Could you please expand on why this actually matters and what are the
-consequences please?
+JFYI there was new submission http://lkml.kernel.org/r/20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8
+> 
+> On Fri 05-10-18 15:32:08, Yong-Taek Lee wrote:
+> > It is introduced by commit 44a70adec910 ("mm, oom_adj: make sure
+> > processes sharing mm have same view of oom_score_adj"). Most of
+> > user process's mm_users is bigger than 1 but only one thread group.
+> > In this case, for_each_process loop meaninglessly try to find processes
+> > which sharing same mm even though there is only one thread group.
+> > 
+> > My idea is that target task's nr thread is smaller than mm_users if there
+> > are more thread groups sharing the same mm. So we can skip loop
+> 
+> I remember trying to optimize this but ended up with nothing that would
+> work reliable. E.g. what prevents a thread terminating right after we
+> read mm reference count and result in early break and other process
+> not being updated properly?
+> 
+> > if mm_user and nr_thread are same.
+> > 
+> > test result
+> > while true; do count=0; time while [ $count -lt 10000 ]; do echo -1000 > /proc/
+> > 1457/oom_score_adj; count=$((count+1)); done; done;
+> 
+> Is this overhead noticeable in a real work usecases though? Or are you
+> updating oom_score_adj that often really?
+> 
+> > before patch
+> > 0m00.59s real     0m00.09s user     0m00.51s system
+> > 0m00.59s real     0m00.14s user     0m00.45s system
+> > 0m00.58s real     0m00.11s user     0m00.47s system
+> > 0m00.58s real     0m00.10s user     0m00.48s system
+> > 0m00.59s real     0m00.11s user     0m00.48s system
+> > 
+> > after patch
+> > 0m00.15s real     0m00.07s user     0m00.08s system
+> > 0m00.14s real     0m00.10s user     0m00.04s system
+> > 0m00.14s real     0m00.10s user     0m00.05s system
+> > 0m00.14s real     0m00.08s user     0m00.07s system
+> > 0m00.14s real     0m00.08s user     0m00.07s system
+> > 
+> > Signed-off-by: Lee YongTaek <ytk.lee@samsung.com>
+> > ---
+> >  fs/proc/base.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index f9f72aee6d45..54b2fb5e9c51 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj,
+> > bool legacy)
+> >         struct mm_struct *mm = NULL;
+> >         struct task_struct *task;
+> >         int err = 0;
+> > +       int mm_users = 0;
+> > 
+> >         task = get_proc_task(file_inode(file));
+> >         if (!task)
+> > @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj,
+> > bool legacy)
+> >                 struct task_struct *p = find_lock_task_mm(task);
+> > 
+> >                 if (p) {
+> > -                       if (atomic_read(&p->mm->mm_users) > 1) {
+> > +                       mm_users = atomic_read(&p->mm->mm_users);
+> > +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p)))
+> > {
+> >                                 mm = p->mm;
+> >                                 atomic_inc(&mm->mm_count);
+> >                         }
+> > --
+> > 
+> > *
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+
 -- 
 Michal Hocko
 SUSE Labs
