@@ -3,140 +3,274 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010E6C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EF1C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC3B02089D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3B02089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 42F6F2075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F6F2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJIOPi (ORCPT
+        id S1726573AbeJIOQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:15:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:60681 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbeJIOPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:15:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Tp5P1wtPz9s47;
-        Tue,  9 Oct 2018 18:00:08 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     YueHaibing <yuehaibing@huawei.com>, benh@kernel.crashing.org,
-        paulus@samba.org, nfont@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH v2 -next] powerpc/pseries/memory-hotplug: Fix return value type of find_aa_index
-In-Reply-To: <20181004094113.5492-1-yuehaibing@huawei.com>
-References: <20181004094113.5492-1-yuehaibing@huawei.com>
-Date:   Tue, 09 Oct 2018 18:00:08 +1100
-Message-ID: <871s8z38qv.fsf@concordia.ellerman.id.au>
+        Tue, 9 Oct 2018 10:16:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59235 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbeJIOQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 10:16:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9970qRi935322
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 9 Oct 2018 00:00:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9970qaW935319;
+        Tue, 9 Oct 2018 00:00:52 -0700
+Date:   Tue, 9 Oct 2018 00:00:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-49e00eee00612b1357596fed8a88b621a7648c14@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        reinette.chatre@intel.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, reinette.chatre@intel.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
+References: <69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Fix out-of-bounds memory access in
+ CBM tests
+Git-Commit-ID: 49e00eee00612b1357596fed8a88b621a7648c14
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> writes:
-> 'aa_index' is defined as an unsigned value, but find_aa_index
-> may return -1 when dlpar_clone_property fails. So we use an rc
-> value to track the validation of finding the aa_index instead
-> of the 'aa_index' value itself
->
-> Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: use 'rc' track the validation of aa_index
+Commit-ID:  49e00eee00612b1357596fed8a88b621a7648c14
+Gitweb:     https://git.kernel.org/tip/49e00eee00612b1357596fed8a88b621a7648c14
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Thu, 4 Oct 2018 14:05:23 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 9 Oct 2018 08:02:15 +0200
 
-Thanks for sending a v2, some more comments ...
+x86/intel_rdt: Fix out-of-bounds memory access in CBM tests
 
-> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> index 9a15d39..796e68b 100644
-> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> @@ -101,13 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
->  	return new_prop;
->  }
->  
-> -static u32 find_aa_index(struct device_node *dr_node,
-> -			 struct property *ala_prop, const u32 *lmb_assoc)
-> +static int find_aa_index(struct device_node *dr_node, struct property *ala_prop,
-> +			 const u32 *lmb_assoc, u32 *aa_index)
->  {
->  	u32 *assoc_arrays;
-> -	u32 aa_index;
->  	int aa_arrays, aa_array_entries, aa_array_sz;
-> -	int i, index;
-> +	int i, index, rc = -1;
+While the DOC at the beginning of lib/bitmap.c explicitly states that
+"The number of valid bits in a given bitmap does _not_ need to be an
+exact multiple of BITS_PER_LONG.", some of the bitmap operations do
+indeed access BITS_PER_LONG portions of the provided bitmap no matter
+the size of the provided bitmap. For example, if bitmap_intersects()
+is provided with an 8 bit bitmap the operation will access
+BITS_PER_LONG bits from the provided bitmap. While the operation
+ensures that these extra bits do not affect the result, the memory
+is still accessed.
 
-It's preferable to leave rc uninitialised until we actually need to
-initialise it, that gives the compiler the chance to warn us if we use
-it inadvertently before that.
+The capacity bitmasks (CBMs) are typically stored in u32 since they
+can never exceed 32 bits. A few instances exist where a bitmap_*
+operation is performed on a CBM by simply pointing the bitmap operation
+to the stored u32 value.
 
->  
->  	/*
->  	 * The ibm,associativity-lookup-arrays property is defined to be
-> @@ -121,18 +120,18 @@ static u32 find_aa_index(struct device_node *dr_node,
->  	aa_array_entries = be32_to_cpu(assoc_arrays[1]);
->  	aa_array_sz = aa_array_entries * sizeof(u32);
->  
-> -	aa_index = -1;
+The consequence of this pattern is that some bitmap_* operations will
+access out-of-bounds memory when interacting with the provided CBM. This
+is confirmed with a KASAN test that reports:
 
-So that would be here:
-	rc = -1;
+ BUG: KASAN: stack-out-of-bounds in __bitmap_intersects+0xa2/0x100
 
-But ..
+and
 
->  	for (i = 0; i < aa_arrays; i++) {
->  		index = (i * aa_array_entries) + 2;
->  
->  		if (memcmp(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz))
->  			continue;
->  
-> -		aa_index = i;
-> +		*aa_index = i;
-> +		rc = 0;
->  		break;
->  	}
+ BUG: KASAN: stack-out-of-bounds in __bitmap_weight+0x58/0x90
 
-The 'rc' variable is basically a boolean now, it means "we found something".
+Fix this by moving any CBM provided to a bitmap operation needing
+BITS_PER_LONG to an 'unsigned long' variable.
 
-And all we do with it in the found case (rc = 0) is test it below and return.
+[ tglx: Changed related function arguments to unsigned long and got rid
+	of the _cbm extra step ]
 
-So can't we just return directly in the for loop above, rather than breaking?
+Fixes: 72d505056604 ("x86/intel_rdt: Add utilities to test pseudo-locked region possibility")
+Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
+Fixes: d9b48c86eb38 ("x86/intel_rdt: Display resource groups' allocations' size in bytes")
+Fixes: 95f0b77efa57 ("x86/intel_rdt: Initialize new resource group with sane defaults")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/69a428613a53f10e80594679ac726246020ff94f.1538686926.git.reinette.chatre@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/intel_rdt.h             |  6 ++---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 20 ++++++++--------
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++++++++++-----------
+ 3 files changed, 37 insertions(+), 25 deletions(-)
 
-In which case we don't need the rc variable at all.
-
-And the whole function may as well return bool, rather than int.
-
-Does that make sense?
-
-cheers
-
-> -	if (aa_index == -1) {
-> +	if (rc == -1) {
->  		struct property *new_prop;
->  		u32 new_prop_size;
->  
-> @@ -157,10 +156,11 @@ static u32 find_aa_index(struct device_node *dr_node,
->  		 * number of entries - 1 since we added its associativity
->  		 * to the end of the lookup array.
->  		 */
-> -		aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-> +		*aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-> +		rc = 0;
->  	}
->  
-> -	return aa_index;
-> +	return rc;
->  }
->  
->  static int update_lmb_associativity_index(struct drmem_lmb *lmb)
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 285eb3ec4200..3736f6dc9545 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -529,14 +529,14 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
+ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-			   u32 _cbm, int closid, bool exclusive);
++			   unsigned long cbm, int closid, bool exclusive);
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+-				  u32 cbm);
++				  unsigned long cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
+ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
+ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
+ int rdt_pseudo_lock_init(void);
+ void rdt_pseudo_lock_release(void);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 40f3903ae5d9..f8c260d522ca 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -797,25 +797,27 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+ /**
+  * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
+  * @d: RDT domain
+- * @_cbm: CBM to test
++ * @cbm: CBM to test
+  *
+- * @d represents a cache instance and @_cbm a capacity bitmask that is
+- * considered for it. Determine if @_cbm overlaps with any existing
++ * @d represents a cache instance and @cbm a capacity bitmask that is
++ * considered for it. Determine if @cbm overlaps with any existing
+  * pseudo-locked region on @d.
+  *
+- * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
++ * @cbm is unsigned long, even if only 32 bits are used, to make the
++ * bitmap functions work correctly.
++ *
++ * Return: true if @cbm overlaps with pseudo-locked region on @d, false
+  * otherwise.
+  */
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm)
+ {
+-	unsigned long *cbm = (unsigned long *)&_cbm;
+-	unsigned long *cbm_b;
+ 	unsigned int cbm_len;
++	unsigned long cbm_b;
+ 
+ 	if (d->plr) {
+ 		cbm_len = d->plr->r->cache.cbm_len;
+-		cbm_b = (unsigned long *)&d->plr->cbm;
+-		if (bitmap_intersects(cbm, cbm_b, cbm_len))
++		cbm_b = d->plr->cbm;
++		if (bitmap_intersects(&cbm, &cbm_b, cbm_len))
+ 			return true;
+ 	}
+ 	return false;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 1b8e86a5d5e1..b140c68bc14b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -975,33 +975,34 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+  * is false then overlaps with any resource group or hardware entities
+  * will be considered.
+  *
++ * @cbm is unsigned long, even if only 32 bits are used, to make the
++ * bitmap functions work correctly.
++ *
+  * Return: false if CBM does not overlap, true if it does.
+  */
+ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-			   u32 _cbm, int closid, bool exclusive)
++			   unsigned long cbm, int closid, bool exclusive)
+ {
+-	unsigned long *cbm = (unsigned long *)&_cbm;
+-	unsigned long *ctrl_b;
+ 	enum rdtgrp_mode mode;
++	unsigned long ctrl_b;
+ 	u32 *ctrl;
+ 	int i;
+ 
+ 	/* Check for any overlap with regions used by hardware directly */
+ 	if (!exclusive) {
+-		if (bitmap_intersects(cbm,
+-				      (unsigned long *)&r->cache.shareable_bits,
+-				      r->cache.cbm_len))
++		ctrl_b = r->cache.shareable_bits;
++		if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len))
+ 			return true;
+ 	}
+ 
+ 	/* Check for overlap with other resource groups */
+ 	ctrl = d->ctrl_val;
+ 	for (i = 0; i < closids_supported(); i++, ctrl++) {
+-		ctrl_b = (unsigned long *)ctrl;
++		ctrl_b = *ctrl;
+ 		mode = rdtgroup_mode_by_closid(i);
+ 		if (closid_allocated(i) && i != closid &&
+ 		    mode != RDT_MODE_PSEUDO_LOCKSETUP) {
+-			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
++			if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len)) {
+ 				if (exclusive) {
+ 					if (mode == RDT_MODE_EXCLUSIVE)
+ 						return true;
+@@ -1138,15 +1139,18 @@ out:
+  * computed by first dividing the total cache size by the CBM length to
+  * determine how many bytes each bit in the bitmask represents. The result
+  * is multiplied with the number of bits set in the bitmask.
++ *
++ * @cbm is unsigned long, even if only 32 bits are used to make the
++ * bitmap functions work correctly.
+  */
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
+-				  struct rdt_domain *d, u32 cbm)
++				  struct rdt_domain *d, unsigned long cbm)
+ {
+ 	struct cpu_cacheinfo *ci;
+ 	unsigned int size = 0;
+ 	int num_b, i;
+ 
+-	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
++	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
+ 	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
+ 	for (i = 0; i < ci->num_leaves; i++) {
+ 		if (ci->info_list[i].level == r->cache_level) {
+@@ -2353,6 +2357,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 	u32 used_b = 0, unused_b = 0;
+ 	u32 closid = rdtgrp->closid;
+ 	struct rdt_resource *r;
++	unsigned long tmp_cbm;
+ 	enum rdtgrp_mode mode;
+ 	struct rdt_domain *d;
+ 	int i, ret;
+@@ -2390,9 +2395,14 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			 * modify the CBM based on system availability.
+ 			 */
+ 			cbm_ensure_valid(&d->new_ctrl, r);
+-			if (bitmap_weight((unsigned long *) &d->new_ctrl,
+-					  r->cache.cbm_len) <
+-					r->cache.min_cbm_bits) {
++			/*
++			 * Assign the u32 CBM to an unsigned long to ensure
++			 * that bitmap_weight() does not access out-of-bound
++			 * memory.
++			 */
++			tmp_cbm = d->new_ctrl;
++			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
++			    r->cache.min_cbm_bits) {
+ 				rdt_last_cmd_printf("no space on %s:%d\n",
+ 						    r->name, d->id);
+ 				return -ENOSPC;
