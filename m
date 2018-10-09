@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AABC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74667C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A3C214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DE1214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="TkCwfIhT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A3C214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="BlG1+qpf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DE1214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeJIS3v (ORCPT
+        id S1726970AbeJIS3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:29:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33677 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeJIS3u (ORCPT
+        Tue, 9 Oct 2018 14:29:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33928 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbeJIS3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:29:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d4-v6so687243pfn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:24 -0700 (PDT)
+        Tue, 9 Oct 2018 14:29:54 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g12-v6so659407pgs.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sbpLUYkovpvd4K56ZaJIN/SCdn/2o6uCz0wZ+7EaWrI=;
-        b=TkCwfIhTNdE5hP9eFab3BYYrfns5XOa3FKMzZ72TolpTWbX5rSrWzJ0e4CoXlDa8EU
-         17z4VF2+TMJaLkvQQIShmEj2eFr5NDDNxrz8r1+scqoxurlx7AOSLWASfIfe+mt6xZ/8
-         7sARzuqLmuxd8iBzkZBbdyqG2psszilF/m1gFiAcCDgRUc/xF0/CJ+yaAmXxMESY8tSP
-         pVnn2zU9pZIlwo7GN+sD6FGmAkxqZ07yCOeyATJPnOiqYUbcPTejAiy0Ai/OWgSDRTUz
-         VUu+t/JfuYC0o53dEN/BMsInHs0ZtjgqLAbIaDbYmpoI7IA66LZBdgTIdbUndCm2xham
-         yojw==
+        bh=QBiCuSqsQ6+WNR8FSQ49WJsMpNMaJzrhxrzA2Q/GNME=;
+        b=BlG1+qpffgM7kMthTojQIdEQPtFLTeu0V2EPszpeVWWFUvj3VUfV1SYOSM842Z588o
+         a9qbdxea1eGGy5/nfYnmPj6oGwVV7iMPj3fWqO5NoQEtyhvu/C62uOoDgJ7b+chcem3b
+         U7I3wQS1mYvyx3d2X6dBJL44Ya2b9jWFpygzh7hiotfXsStZP1QZoqj3FHsn+89CQO7b
+         8D1TESN3NALLMA2/YLggPdt4m32M/8pUbFp5YQS0FoyKZPkldweTeGmXAB1wNF6hfWx5
+         9EFXdaO2jtwuwPFoJyF9za8jLUDAMvceUI5oVFUZaRTkROSbNt9SGUJ8eAnddtuB0Rze
+         morA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sbpLUYkovpvd4K56ZaJIN/SCdn/2o6uCz0wZ+7EaWrI=;
-        b=CHoU1ap2n5Rz+WospIsuIjq7M7A64HpbVF1A3IFT4Mhct3KgZX6heyvEuqOqvoiA5M
-         maXyp/bL6LqA2d44E9ENVnE37LJuOd3PrTj+zBwyxOWOY2YmgrR/WfEv8vlUUhMutcfE
-         cs8GUxIU7QrypLI5mZUJnppdc8PeZQDg6We1cEvhbo5IVWTTMfzOpNxs9JscyywqkSRl
-         EkYGQt6AwSQDV1/ccOzWFb4yrSnUXaIhnjT1MHO3r/qvWijClSxyKmzFinD1jdH71bhP
-         O6WsIvT7bfZ+Nh+8bS+BUGJBceABAr8RhiiJCO0Zhn4mG+I8sQIT7d6M9qUcTUqu9ZTD
-         WjcA==
-X-Gm-Message-State: ABuFfoj/9Xj8UisV9EiHGdP8IVrWGQzZdvFudJuYgKrpHndYLF23kON3
-        srUuFiQcUpdf8QWurGoG5YtE2Q==
-X-Google-Smtp-Source: ACcGV63F8lTwMJE0YpPel90xK3SESQCu3eVSTwNWTWyxog5PMUYT/57MffrfHKEhxh71UIQi1wNC7A==
-X-Received: by 2002:a63:f5a:: with SMTP id 26-v6mr25058334pgp.100.1539083604193;
-        Tue, 09 Oct 2018 04:13:24 -0700 (PDT)
+        bh=QBiCuSqsQ6+WNR8FSQ49WJsMpNMaJzrhxrzA2Q/GNME=;
+        b=X1oOBrcfcW30cuA0Z0YedY+qqmcgpRnBkUccJzVsDGrgCxng+YDa/lGbEK9wrBgsi8
+         fkEFHjWULg6OQPvmBWJHTGX0OmD8gikbFGauvIEgkFjJohRehHpXJ6z76SekzQIx+JGC
+         nLcQCO8tm2ePCGQ978vgBaKGDElNV+tmrrik5qD0ojDqm9kbllM8MCUuqzJJ/y059OoH
+         rOaPKUhpA0Rcjm73px+GRP6oPjV80IK3lbWKx2kbN7zEzE75qMPQxdfWRodnfUz35LKS
+         oxskr6VU2TtSTYyRR/EPAB3taincj4b+hdS9RG2ul1/++v5dO6CpBb98LK2grioeC5V0
+         M22A==
+X-Gm-Message-State: ABuFfogK3nRvbl+r+HWEgaj0RS767o74aYlcBe8kfF8ZJ091+0q3e7TB
+        XsV0mmrDLaGzc6zk+RngHGZgxw==
+X-Google-Smtp-Source: ACcGV600mZpP5F098LsD2ceh3xX9/sZeD7IOkgKVb5Y3F9S7UxFa2L8eBfoCJNRc2+VYUMfGP41ZfQ==
+X-Received: by 2002:a62:3047:: with SMTP id w68-v6mr5073292pfw.19.1539083607605;
+        Tue, 09 Oct 2018 04:13:27 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.21
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:13:22 -0700 (PDT)
+        Tue, 09 Oct 2018 04:13:26 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 03/45] lightnvm: pblk: fix rqd.error return value in pblk_blk_erase_sync
-Date:   Tue,  9 Oct 2018 13:11:33 +0200
-Message-Id: <20181009111215.7653-4-mb@lightnvm.io>
+Subject: [GIT PULL 04/45] lightnvm: move device L2P detection to core
+Date:   Tue,  9 Oct 2018 13:11:34 +0200
+Message-Id: <20181009111215.7653-5-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -77,61 +77,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rqd.error is masked by the return value of pblk_submit_io_sync.
-The rqd structure is then passed on to the end_io function, which
-assumes that any error should lead to a chunk being marked
-offline/bad. Since the pblk_submit_io_sync can fail before the
-command is issued to the device, the error value maybe not correspond
-to a media failure, leading to chunks being immaturely retired.
+A 1.2 device is able to manage the logical to physical mapping
+table internally or leave it to the host.
 
-Also, the pblk_blk_erase_sync function prints an error message in case
-the erase fails. Since the caller prints an error message by itself,
-remove the error message in this function.
+A target only supports one of those approaches, and therefore must
+check on initialization. Move this check to core to avoid each target
+implement the check.
 
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-Reviewed-by: Javier González <javier@cnexlabs.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-core.c | 19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
+ drivers/lightnvm/core.c      | 5 +++++
+ drivers/lightnvm/pblk-init.c | 7 -------
+ include/linux/lightnvm.h     | 6 ++++++
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 72acf2f6dbd6..72de7456845b 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -886,10 +886,8 @@ static void pblk_setup_e_rq(struct pblk *pblk, struct nvm_rq *rqd,
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 68553c7ae937..964352720a03 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -355,6 +355,11 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
+ 		return -EINVAL;
+ 	}
  
- static int pblk_blk_erase_sync(struct pblk *pblk, struct ppa_addr ppa)
- {
--	struct nvm_rq rqd;
--	int ret = 0;
--
--	memset(&rqd, 0, sizeof(struct nvm_rq));
-+	struct nvm_rq rqd = {NULL};
-+	int ret;
++	if ((tt->flags & NVM_TGT_F_HOST_L2P) != (dev->geo.dom & NVM_RSP_L2P)) {
++		pr_err("nvm: device is incompatible with target L2P type.\n");
++		return -EINVAL;
++	}
++
+ 	if (nvm_target_exists(create->tgtname)) {
+ 		pr_err("nvm: target name already exists (%s)\n",
+ 							create->tgtname);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 537e98f2b24a..039f62d05e84 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1210,13 +1210,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- 	pblk_setup_e_rq(pblk, &rqd, ppa);
- 
-@@ -897,19 +895,6 @@ static int pblk_blk_erase_sync(struct pblk *pblk, struct ppa_addr ppa)
- 	 * with writes. Thus, there is no need to take the LUN semaphore.
- 	 */
- 	ret = pblk_submit_io_sync(pblk, &rqd);
--	if (ret) {
--		struct nvm_tgt_dev *dev = pblk->dev;
--		struct nvm_geo *geo = &dev->geo;
--
--		pblk_err(pblk, "could not sync erase line:%d,blk:%d\n",
--					pblk_ppa_to_line(ppa),
--					pblk_ppa_to_pos(geo, ppa));
--
--		rqd.error = ret;
--		goto out;
+-	if (geo->version == NVM_OCSSD_SPEC_12 && geo->dom & NVM_RSP_L2P) {
+-		pblk_err(pblk, "host-side L2P table not supported. (%x)\n",
+-							geo->dom);
+-		kfree(pblk);
+-		return ERR_PTR(-EINVAL);
 -	}
 -
--out:
- 	rqd.private = pblk;
- 	__pblk_end_io_erase(pblk, &rqd);
+ 	spin_lock_init(&pblk->resubmit_lock);
+ 	spin_lock_init(&pblk->trans_lock);
+ 	spin_lock_init(&pblk->lock);
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 8acc2fe277d6..f4a84694e5e2 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -495,9 +495,15 @@ typedef void (nvm_tgt_exit_fn)(void *, bool);
+ typedef int (nvm_tgt_sysfs_init_fn)(struct gendisk *);
+ typedef void (nvm_tgt_sysfs_exit_fn)(struct gendisk *);
  
++enum {
++	NVM_TGT_F_DEV_L2P = 0,
++	NVM_TGT_F_HOST_L2P = 1 << 0,
++};
++
+ struct nvm_tgt_type {
+ 	const char *name;
+ 	unsigned int version[3];
++	int flags;
+ 
+ 	/* target entry points */
+ 	nvm_tgt_make_rq_fn *make_rq;
 -- 
 2.17.1
 
