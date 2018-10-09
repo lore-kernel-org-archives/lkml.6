@@ -6,50 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF65C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2D4C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A86242075C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:01:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86242075C
+	by mail.kernel.org (Postfix) with ESMTP id EB1242075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:02:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1242075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJIORW (ORCPT
+        id S1726672AbeJIORc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:17:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46325 "EHLO
+        Tue, 9 Oct 2018 10:17:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50607 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeJIORV (ORCPT
+        with ESMTP id S1725855AbeJIORc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:17:21 -0400
+        Tue, 9 Oct 2018 10:17:32 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9971PJ2935374
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9971wHc935424
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Oct 2018 00:01:26 -0700
+        Tue, 9 Oct 2018 00:01:59 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9971Pgu935371;
-        Tue, 9 Oct 2018 00:01:25 -0700
-Date:   Tue, 9 Oct 2018 00:01:25 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9971ww8935419;
+        Tue, 9 Oct 2018 00:01:58 -0700
+Date:   Tue, 9 Oct 2018 00:01:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
-Message-ID: <tip-e054637597ba36d3729ba6a3a3dd7aad8e2a3003@git.kernel.org>
-Cc:     mgorman@techsingularity.net, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, linux-mm@kvack.org,
-        riel@surriel.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, hpa@zytor.com,
-        srikar@linux.vnet.ibm.com
-Reply-To: peterz@infradead.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
-          riel@surriel.com, linux-mm@kvack.org,
-          torvalds@linux-foundation.org, tglx@linutronix.de,
-          srikar@linux.vnet.ibm.com, hpa@zytor.com
-In-Reply-To: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com>
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-521348b011d64cf3febb10b64ba5b472681bef94@git.kernel.org>
+Cc:     mingo@kernel.org, fenghua.yu@intel.com, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        reinette.chatre@intel.com, jithu.joseph@intel.com
+Reply-To: jithu.joseph@intel.com, linux-kernel@vger.kernel.org,
+          reinette.chatre@intel.com, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org, fenghua.yu@intel.com
+In-Reply-To: <9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com>
+References: <9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] mm, sched/numa: Remove remaining traces of NUMA
- rate-limiting
-Git-Commit-ID: e054637597ba36d3729ba6a3a3dd7aad8e2a3003
+Subject: [tip:x86/cache] x86/intel_rdt: Introduce utility to obtain CDP peer
+Git-Commit-ID: 521348b011d64cf3febb10b64ba5b472681bef94
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,76 +58,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e054637597ba36d3729ba6a3a3dd7aad8e2a3003
-Gitweb:     https://git.kernel.org/tip/e054637597ba36d3729ba6a3a3dd7aad8e2a3003
-Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-AuthorDate: Sat, 6 Oct 2018 16:53:19 +0530
+Commit-ID:  521348b011d64cf3febb10b64ba5b472681bef94
+Gitweb:     https://git.kernel.org/tip/521348b011d64cf3febb10b64ba5b472681bef94
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Wed, 3 Oct 2018 15:17:01 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 9 Oct 2018 08:30:51 +0200
+CommitDate: Tue, 9 Oct 2018 08:50:40 +0200
 
-mm, sched/numa: Remove remaining traces of NUMA rate-limiting
+x86/intel_rdt: Introduce utility to obtain CDP peer
 
-Remove the leftover pglist_data::numabalancing_migrate_lock and its
-initialization, we stopped using this lock with:
+Introduce a utility that, when provided with a RDT resource and an
+instance of this RDT resource (a RDT domain), would return pointers to
+the RDT resource and RDT domain that share the same hardware. This is
+specific to the CDP resources that share the same hardware.
 
-  efaffc5e40ae ("mm, sched/numa: Remove rate-limiting of automatic NUMA balancing migration")
+For example, if a pointer to the RDT_RESOURCE_L2DATA resource (struct
+rdt_resource) and a pointer to an instance of this resource (struct
+rdt_domain) is provided, then it will return a pointer to the
+RDT_RESOURCE_L2CODE resource as well as the specific instance that
+shares the same hardware as the provided rdt_domain.
 
-[ mingo: Rewrote the changelog. ]
+This utility is created in support of the "exclusive" resource group
+mode where overlap of resource allocation between resource groups need
+to be avoided. The overlap test need to consider not just the matching
+resources, but also the resources that share the same hardware.
 
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-MM <linux-mm@kvack.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1538824999-31230-1-git-send-email-srikar@linux.vnet.ibm.com
+Temporarily mark it as unused in support of patch testing to avoid
+compile warnings until it is used.
+
+Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jithu Joseph <jithu.joseph@intel.com>
+Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+Cc: tony.luck@intel.com
+Cc: gavin.hindman@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/mmzone.h |  4 ----
- mm/page_alloc.c        | 10 ----------
- 2 files changed, 14 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 72 ++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 3f4c0b167333..d4b0c79d2924 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -667,10 +667,6 @@ typedef struct pglist_data {
- 	enum zone_type kcompactd_classzone_idx;
- 	wait_queue_head_t kcompactd_wait;
- 	struct task_struct *kcompactd;
--#endif
--#ifdef CONFIG_NUMA_BALANCING
--	/* Lock serializing the migrate rate limiting window */
--	spinlock_t numabalancing_migrate_lock;
- #endif
- 	/*
- 	 * This is a per-node reserve of pages that are not available
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 706a738c0aee..e2ef1c17942f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6193,15 +6193,6 @@ static unsigned long __init calc_memmap_size(unsigned long spanned_pages,
- 	return PAGE_ALIGN(pages * sizeof(struct page)) >> PAGE_SHIFT;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 643670fb8943..9d59ee1c444e 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -960,6 +960,78 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+ 	return 0;
  }
  
--#ifdef CONFIG_NUMA_BALANCING
--static void pgdat_init_numabalancing(struct pglist_data *pgdat)
--{
--	spin_lock_init(&pgdat->numabalancing_migrate_lock);
--}
--#else
--static void pgdat_init_numabalancing(struct pglist_data *pgdat) {}
--#endif
--
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static void pgdat_init_split_queue(struct pglist_data *pgdat)
- {
-@@ -6226,7 +6217,6 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
- {
- 	pgdat_resize_init(pgdat);
- 
--	pgdat_init_numabalancing(pgdat);
- 	pgdat_init_split_queue(pgdat);
- 	pgdat_init_kcompactd(pgdat);
- 
++/**
++ * rdt_cdp_peer_get - Retrieve CDP peer if it exists
++ * @r: RDT resource to which RDT domain @d belongs
++ * @d: Cache instance for which a CDP peer is requested
++ * @r_cdp: RDT resource that shares hardware with @r (RDT resource peer)
++ *         Used to return the result.
++ * @d_cdp: RDT domain that shares hardware with @d (RDT domain peer)
++ *         Used to return the result.
++ *
++ * RDT resources are managed independently and by extension the RDT domains
++ * (RDT resource instances) are managed independently also. The Code and
++ * Data Prioritization (CDP) RDT resources, while managed independently,
++ * could refer to the same underlying hardware. For example,
++ * RDT_RESOURCE_L2CODE and RDT_RESOURCE_L2DATA both refer to the L2 cache.
++ *
++ * When provided with an RDT resource @r and an instance of that RDT
++ * resource @d rdt_cdp_peer_get() will return if there is a peer RDT
++ * resource and the exact instance that shares the same hardware.
++ *
++ * Return: 0 if a CDP peer was found, <0 on error or if no CDP peer exists.
++ *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
++ *         and @d_cdp will point to the peer RDT domain.
++ */
++static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
++						    struct rdt_domain *d,
++						    struct rdt_resource **r_cdp,
++						    struct rdt_domain **d_cdp)
++{
++	struct rdt_resource *_r_cdp = NULL;
++	struct rdt_domain *_d_cdp = NULL;
++	int ret = 0;
++
++	switch (r->rid) {
++	case RDT_RESOURCE_L3DATA:
++		_r_cdp = &rdt_resources_all[RDT_RESOURCE_L3CODE];
++		break;
++	case RDT_RESOURCE_L3CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L3DATA];
++		break;
++	case RDT_RESOURCE_L2DATA:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2CODE];
++		break;
++	case RDT_RESOURCE_L2CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2DATA];
++		break;
++	default:
++		ret = -ENOENT;
++		goto out;
++	}
++
++	/*
++	 * When a new CPU comes online and CDP is enabled then the new
++	 * RDT domains (if any) associated with both CDP RDT resources
++	 * are added in the same CPU online routine while the
++	 * rdtgroup_mutex is held. It should thus not happen for one
++	 * RDT domain to exist and be associated with its RDT CDP
++	 * resource but there is no RDT domain associated with the
++	 * peer RDT CDP resource. Hence the WARN.
++	 */
++	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
++	if (WARN_ON(!_d_cdp)) {
++		_r_cdp = NULL;
++		ret = -EINVAL;
++	}
++
++out:
++	*r_cdp = _r_cdp;
++	*d_cdp = _d_cdp;
++
++	return ret;
++}
++
+ /**
+  * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+  * @r: Resource to which domain instance @d belongs.
