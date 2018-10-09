@@ -2,34 +2,34 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7A5C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD0FC00449
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D452086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D452086D
+	by mail.kernel.org (Postfix) with ESMTP id 706BC2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706BC2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbeJIJeY (ORCPT
+        id S1726843AbeJIJeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 9 Oct 2018 05:34:24 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:10298 "EHLO
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:58596 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725887AbeJIJeY (ORCPT
+        with ESMTP id S1726452AbeJIJeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 9 Oct 2018 05:34:24 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w992Lr5Q032591;
-        Tue, 9 Oct 2018 10:21:53 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w992Lha0032580;
+        Tue, 9 Oct 2018 10:21:43 +0800 (GMT-8)
         (envelope-from alankao@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 9 Oct 2018
- 10:19:12 +0800
+ 10:19:01 +0800
 From:   Alan Kao <alankao@andestech.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
@@ -38,142 +38,77 @@ CC:     Greentime Hu <greentime@andestech.com>,
         Vincent Chen <vincentc@andestech.com>,
         Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
         Alan Kao <alankao@andestech.com>
-Subject: [PATCH v8 2/5] Refactor FPU code in signal setup/return procedures
-Date:   Tue, 9 Oct 2018 10:18:31 +0800
-Message-ID: <1539051514-3658-3-git-send-email-alankao@andestech.com>
+Subject: [PATCH v8 0/5] riscv: Add support to no-FPU systems
+Date:   Tue, 9 Oct 2018 10:18:29 +0800
+Message-ID: <1539051514-3658-1-git-send-email-alankao@andestech.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539051514-3658-1-git-send-email-alankao@andestech.com>
-References: <1539051514-3658-1-git-send-email-alankao@andestech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.15.65]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w992Lr5Q032591
+X-MAIL: ATCSQR.andestech.com w992Lha0032580
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FPU-related logic is separated from normal signal handling path in
-this patch.  Kernel can easily be configured to exclude those procedures
-for no-FPU systems.
+This patchset adds an option, CONFIG_FPU, to enable/disable floating-
+point procedures.
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Vincent Chen <vincentc@andestech.com>
-Cc: Zong Li <zong@andestech.com>
-Cc: Nick Hu <nickhu@andestech.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/kernel/signal.c | 68 ++++++++++++++++++++++++++++------------------
- 1 file changed, 41 insertions(+), 27 deletions(-)
+Kernel's new behavior will be as follows:
 
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 718d0c9..6a18b98 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -37,45 +37,63 @@ struct rt_sigframe {
- 	struct ucontext uc;
- };
- 
--static long restore_d_state(struct pt_regs *regs,
--	struct __riscv_d_ext_state __user *state)
-+static long restore_fp_state(struct pt_regs *regs,
-+			     union __riscv_fp_state *sc_fpregs)
- {
- 	long err;
-+	struct __riscv_d_ext_state __user *state = &sc_fpregs->d;
-+	size_t i;
-+
- 	err = __copy_from_user(&current->thread.fstate, state, sizeof(*state));
--	if (likely(!err))
--		fstate_restore(current, regs);
-+	if (unlikely(err))
-+		return err;
-+
-+	fstate_restore(current, regs);
-+
-+	/* We support no other extension state at this time. */
-+	for (i = 0; i < ARRAY_SIZE(sc_fpregs->q.reserved); i++) {
-+		u32 value;
-+
-+		err = __get_user(value, &sc_fpregs->q.reserved[i]);
-+		if (unlikely(err))
-+			break;
-+		if (value != 0)
-+			return -EINVAL;
-+	}
-+
- 	return err;
- }
- 
--static long save_d_state(struct pt_regs *regs,
--	struct __riscv_d_ext_state __user *state)
-+static long save_fp_state(struct pt_regs *regs,
-+			  union __riscv_fp_state *sc_fpregs)
- {
-+	long err;
-+	struct __riscv_d_ext_state __user *state = &sc_fpregs->d;
-+	size_t i;
-+
- 	fstate_save(current, regs);
--	return __copy_to_user(state, &current->thread.fstate, sizeof(*state));
-+	err = __copy_to_user(state, &current->thread.fstate, sizeof(*state));
-+	if (unlikely(err))
-+		return err;
-+
-+	/* We support no other extension state at this time. */
-+	for (i = 0; i < ARRAY_SIZE(sc_fpregs->q.reserved); i++) {
-+		err = __put_user(0, &sc_fpregs->q.reserved[i]);
-+		if (unlikely(err))
-+			break;
-+	}
-+
-+	return err;
- }
- 
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
- {
- 	long err;
--	size_t i;
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
--	if (unlikely(err))
--		return err;
- 	/* Restore the floating-point state. */
--	err = restore_d_state(regs, &sc->sc_fpregs.d);
--	if (unlikely(err))
--		return err;
--	/* We support no other extension state at this time. */
--	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++) {
--		u32 value;
--		err = __get_user(value, &sc->sc_fpregs.q.reserved[i]);
--		if (unlikely(err))
--			break;
--		if (value != 0)
--			return -EINVAL;
--	}
-+	err |= restore_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
-@@ -124,14 +142,10 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- {
- 	struct sigcontext __user *sc = &frame->uc.uc_mcontext;
- 	long err;
--	size_t i;
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
- 	/* Save the floating-point state. */
--	err |= save_d_state(regs, &sc->sc_fpregs.d);
--	/* We support no other extension state at this time. */
--	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++)
--		err |= __put_user(0, &sc->sc_fpregs.q.reserved[i]);
-+	err |= save_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
+* with CONFIG_FPU=y
+  All FPU codes are reserved.  If no FPU is found during booting, a
+  global flag will be set, and those functions will be bypassed with
+  condition check to that flag.
+
+* with CONFIG_FPU=n
+  No floating-point instructions in kernel and all related settings
+  are excluded.
+
+Changes in v8:
+ - Fix a build fail introduced in v7.
+
+Changes in v7:
+ - Remove "fd" attribute from KBUILD_CFLAGS.
+
+Changes in v6 (PATCH 0005 only):
+ - Make the flag checking neater.
+
+Changes in v5:
+ - Invert the polarity of checking flag from no_fpu to has_fpu.
+
+Changes in v4:
+ - Append a new patch to detect existence of FPU and followups.
+ - Add SPDX header to newly created fpu.S.
+ - Fix a build error, sorry for that.
+ - Fix wording, style, etc.
+
+Changes in v3:
+ - Refactor the whole patch into independent ones.
+
+Changes in v2:
+ - Various code cleanups and style fixes.
+
+Alan Kao (5):
+  Extract FPU context operations from entry.S
+  Refactor FPU code in signal setup/return procedures
+  Cleanup ISA string setting
+  Allow to disable FPU support
+  Auto-detect whether a FPU exists
+
+ arch/riscv/Kconfig                 |   9 ++++
+ arch/riscv/Makefile                |  19 +++----
+ arch/riscv/include/asm/switch_to.h |  12 ++++-
+ arch/riscv/kernel/Makefile         |   1 +
+ arch/riscv/kernel/cpufeature.c     |   8 +++
+ arch/riscv/kernel/entry.S          |  87 ------------------------------
+ arch/riscv/kernel/fpu.S            | 106 +++++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/process.c        |   6 ++-
+ arch/riscv/kernel/signal.c         |  75 ++++++++++++++++----------
+ 9 files changed, 196 insertions(+), 127 deletions(-)
+ create mode 100644 arch/riscv/kernel/fpu.S
+
 -- 
 2.7.4
 
