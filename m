@@ -2,76 +2,132 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2ECC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E93C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 971062077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 971062077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 084F5214C2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 03:44:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1PgeYG5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084F5214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbeJIK6r (ORCPT
+        id S1726529AbeJIK64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 06:58:47 -0400
-Received: from ozlabs.org ([203.11.71.1]:54861 "EHLO ozlabs.org"
+        Tue, 9 Oct 2018 06:58:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725759AbeJIK6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 06:58:47 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726393AbeJIK64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 06:58:56 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Tjky33VDz9s7W;
-        Tue,  9 Oct 2018 14:43:54 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Joe Perches <joe@perches.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/xmon/ppc-opc: Use ARRAY_SIZE macro
-In-Reply-To: <8e2f906a85c3cfe0715982370a6d96f08a37987c.camel@perches.com>
-References: <20181004171036.GA1907@embeddedor.com> <8e2f906a85c3cfe0715982370a6d96f08a37987c.camel@perches.com>
-Date:   Tue, 09 Oct 2018 14:43:53 +1100
-Message-ID: <874ldv3hty.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        by mail.kernel.org (Postfix) with ESMTPSA id CA3F62077C;
+        Tue,  9 Oct 2018 03:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539056646;
+        bh=7wj4aMoFQ0dYpT7wtlEKeVqG8wIOflWbhKLJCv9luNk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Y1PgeYG5IVT9H6gyM83PXZn8lQSLfraReBb5ckWXevYrByYzYMlX6fWNk+f+v4lKa
+         ecalwgVY7UTeutfd/Elg0NuS5yn1bmAefERgN4eKwvcyQzytZNpIxSUDTIbaZuKI6e
+         1bTCmacTRhBymVM/ykS9iU5ad2XF85+ZkeeZe+HQ=
+Date:   Tue, 9 Oct 2018 12:44:01 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-Id: <20181009124401.6005e2a39c760851aa54e600@kernel.org>
+In-Reply-To: <20181006015720.634688468@goodmis.org>
+References: <20181006015110.653946300@goodmis.org>
+        <20181006015720.634688468@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joe Perches <joe@perches.com> writes:
+On Fri, 05 Oct 2018 21:51:11 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Thu, 2018-10-04 at 19:10 +0200, Gustavo A. R. Silva wrote:
->> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
-> []
->> diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-opc.c
-> []
->> @@ -966,8 +966,7 @@ const struct powerpc_operand powerpc_operands[] =
->>    { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
->>  };
->>  
->> -const unsigned int num_powerpc_operands = (sizeof (powerpc_operands)
->> -					   / sizeof (powerpc_operands[0]));
->> +const unsigned int num_powerpc_operands = ARRAY_SIZE(powerpc_operands);
->
-> It seems this is unused and could be deleted.
+> +typedef long dynfunc_t;
+> +
+> +struct dynfunc_struct;
+> +
+> +#define arch_dynfunc_trampoline(name, def)	\
+> +	asm volatile (				\
+> +	".globl dynfunc_" #name "; \n\t"	\
+> +	"dynfunc_" #name ": \n\t"		\
+> +	"jmp " #def " \n\t"			\
+> +	".balign 8 \n \t"			\
+> +	: : : "memory" )
+> +
 
-The code in this file is copied from binutils.
+I have just a question, what is this different from livepatch? :)
 
-We don't want to needlessly diverge it.
+I think we can replace the first 5 bytes of the default function
+to jmp instruction (to alternative function) instead of making
+this trampoline.
 
-I've said this before:
+IOW, as far as I can see, this is changing
 
-  https://lore.kernel.org/linuxppc-dev/874lfxjnzl.fsf@concordia.ellerman.id.au/
+----
+call %reg (or retpoline_reg)
+----
 
-Is there some way we can blacklist this file from checkpatch, Coccinelle
-etc?
+to 
 
-cheers
+----
+call dynfunc_A
+
+dynfunc_A:
+jmp func_A or altered_func_A
+----
+
+If so, why don't we put the jmp on default func_A directly?
+----
+call func_A
+
+func_A:
+"jmp altered_func" or "original sequence"
+----
+(this is idealy same as jprobes did)
+
+Of course we have to arbitrate it with ftrace (fentry) but it may
+not so hard (simplest way is just adding "notrace" on the default
+function)
+
+BTW, I think "dynamic_function" may not correct name, it may be
+"alternative_function" or something like that, because this
+function must be replaced system-wide and this means we can
+not use this for generic function pointer usage which depends
+on thread context (like file_operations). But good for something
+pluggable code (LSM?).
+
+
+Thank you,
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
