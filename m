@@ -2,97 +2,160 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EB0ECDE3A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA57ECDFDF
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EE62085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EE62085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4568D2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:31:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QLN55wqy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4568D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeJJBtr (ORCPT
+        id S1727034AbeJJBuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:49:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726460AbeJJBtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:49:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 29EF33002C65;
-        Tue,  9 Oct 2018 18:31:30 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-45.rdu2.redhat.com [10.10.112.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54AD875541;
-        Tue,  9 Oct 2018 18:31:29 +0000 (UTC)
-Message-ID: <5e5e8b964bf9d6234af22f042f647a66868d0449.camel@redhat.com>
-Subject: Re: [PATCH rdma-next 00/18] RDMA: Add support for ib_device_ops
-From:   Doug Ledford <dledford@redhat.com>
-To:     Kamal Heib <kamalheib1@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 14:31:27 -0400
-In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
-References: <20181009162817.4635-1-kamalheib1@gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-qVMBI5ZMdn822WeUHCng"
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 09 Oct 2018 18:31:30 +0000 (UTC)
+        Tue, 9 Oct 2018 21:50:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32932 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbeJJBuD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 21:50:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y18-v6so1243666pge.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 11:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=902PhF52M/Cz6Tu0Ri21LRUdH6aCiX/xSuwLUBdR8ts=;
+        b=QLN55wqy95vfQfu3ELTE4AOFrRezhhBK59GpCWSwIOsxFbNAwjmYqdA85qD9jVibFn
+         A7I/V4JIPKkLuv5Sz5TWsB/VYDKIBi/U+wQANi3MqtHdJDT9W9CEpqfWw/K1vi4G1jyL
+         p8RxgjVI6jM3N+vJ7d9hkwn1nUnFK3hx31WLI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=902PhF52M/Cz6Tu0Ri21LRUdH6aCiX/xSuwLUBdR8ts=;
+        b=Gomzg0BXyNO6qnWQlUU8m6IVX1yjVFcOJAvM1ei1sICT7CzvLju8G5GgmkGiABvxA1
+         u9wORWAEzXOWj0XFmvnzZKEg72/VsDiPitDPOvuFUDaSH/zvF+qlOj5hq7K/P4m2v25/
+         DgG3l6YQOb2yABaL2C7ORe+XOG/N8M9Gj1yEw5kG57p5/tyC/ly0R0KYtv6AxaTOIC6M
+         txXT7OZ4cts/pwlRp5/ix2ma/G2u0oU6NhInmyQQ9p5eKrqzgZkgzp94VugJmh/U+9+O
+         Rt8J601OCVGpk1ivl2hpJRTUdxLhkKYyglRvOpcwqvB0nVxwZGlq+Vh1GbhiFkuN8Mgc
+         g8pQ==
+X-Gm-Message-State: ABuFfogtPcep33nP1FKxEdexlDwElLv7UCyV8faLlrj4OpdnrVPoph/7
+        QOnLxZT26Issw+nJszqzaymURA==
+X-Google-Smtp-Source: ACcGV62FGv5+mRRhnjg9YGiStdG8+taHNLe/5v+BoNk8URpqchtFOAwlxfD6zJwEgMXBfeGyG0mYAQ==
+X-Received: by 2002:a62:798e:: with SMTP id u136-v6mr30611363pfc.95.1539109905997;
+        Tue, 09 Oct 2018 11:31:45 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm39061838pgs.45.2018.10.09.11.31.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 11:31:44 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 11:31:42 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, swboyd@chromium.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
+Message-ID: <20181009183141.GA126050@ban.mtv.corp.google.com>
+References: <20180925210255.172734-1-mka@chromium.org>
+ <20181009010711.GA1577@ban.mtv.corp.google.com>
+ <CAMuHMdWe5JYp5eC2PvuG4xEud908Crhm+BhrtxPJ4Uo1-LCc4g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWe5JYp5eC2PvuG4xEud908Crhm+BhrtxPJ4Uo1-LCc4g@mail.gmail.com>
+User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 09, 2018 at 09:22:07AM +0200, Geert Uytterhoeven wrote:
+> Please note these aliases become cumbersome once you start considering
+> (dynamic) DT overlays.  That's why I made them optional in the sh-sci
+> serial driver, cfr. commit 7678f4c20fa7670f ("serial: sh-sci: Add support
+> for dynamic instances").
 
---=-qVMBI5ZMdn822WeUHCng
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Note that as I understand it, the entire point of documenting this sort
+of thing is to help solidify the interface between a DT aware boot
+program (e.g., bootloader) and a device tree which is provided
+separately, to avoid memorizing node/path hierarchy. It doesn't need to
+(and doesn't, as I read it) enforce an OS's device naming policy.
 
-On Tue, 2018-10-09 at 19:27 +0300, Kamal Heib wrote:
-> This patchset introduce a new structure that will contain all the
-> infiniband device operations, the structure will be used by the
-> providers to initialize their supported operations. This patchset also
-> includes the required changes in the core and ulps to start using it.
->=20
-> Thanks,
-> Kamal
+> Relevant parts of the commit description are:
+> 
+>     On DT platforms, the sh-sci driver requires the presence of "serialN"
+>     aliases in DT, from which instance IDs are derived.  If a DT alias is
+>     missing, the drivers fails to probe the corresponding serial port.
+> 
+>     This becomes cumbersome when considering DT overlays, as currently
+>     there is no upstream support for dynamically updating the /aliases node
+>     in DT.
 
-Hi Kamal,
+That part is not a DT spec problem :)
 
-Please repost this to linux-rdma@vger.kernel.org as that's how this gets
-into patchworks.
+>     Furthermore, even in the presence of such support, hardcoded
+>     instance IDs in independent overlays are prone to conflicts.
+> 
+>     Hence add support for dynamic instance IDs, to be used in the absence of
+>     a DT alias.  This makes serial ports behave similar to I2C and SPI
+>     buses, which already support dynamic instances.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+This seems to be a much different sort of problem. People always love
+having predictable IDs given by the OS (myself included), but that's
+just plain hard to do and impossible in some cases. I don't think that's
+what this document is about though.
 
---=-qVMBI5ZMdn822WeUHCng
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+IOW, this document seems pretty consistent with the above: it doesn't
+require the usage of aliases (and it seems silly to have a driver
+*require* an alias) -- it just documents how one should name such an
+alias if you expect multiple independent software components to
+understand it.
 
------BEGIN PGP SIGNATURE-----
+> To clarify my point: R-Car M2-W has 4 different types of serial ports, for a
+> total of 18 ports, and the two ports on a board labeled 0 and 1 may not
+> correspond to the physical first two ports (what's "first" in a collection of
+> 4 different types?).
+> 
+> Aliases may be fine for referring to the main serial console (labeled
+> port 0 on the device, too), and the primary Ethernet interface (so U-Boot
+> knows where to add the "local-mac-address" property), but beyond that,
+> I think they should be avoided.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlu88/8ACgkQuCajMw5X
-L92HhRAAnTTikU2Gmq98ymV9fLYdvbl2Q8T5Dcak8iW0HCPl6IQnIO3kONhhGB0O
-0hWJrLaGtBLMG59+f5wlBJmJi3FUPQeeAkRuGHrUE/qRss6ujyIE817ALry+Civi
-owL0u7FqtfUaoCXN1GMs4N8T5SfH2XqoDy4LBesSUqwSf4+xYdcDkwxJek9hD0/V
-MZId4WzbsHTuzd/bv/mQtSilc6SLzE4kcCyMyWK+/lMz3iYhvBvOKm5YtRPQIYmw
-snbsykPj0UWrCKdqrOH3OHq/cf0AuaEYKBJ/IPMyqTZVbL3pcL8W4PbMU6RkmRJZ
-4/N0t6JDg6hgCuN/bkhLtDlhzaz0BctzYwg2dcmy3kGZVgXz3Ca1IJNorxvSOCeU
-jRH+hJghi0MZ3tqFqZXEFy6/UBjuhy8/rv26cPbBnNgP+L9fSGmed5+CyTDRyrky
-RsDIzzJacVWyzWeu0adC6fypQQHyOzJeOzw3CH9uTWnl3zLeOVnMhrHQkftngH6z
-Mp55FS6BU3bAyp6a5366QIkZznzRrjZeqa00o2mKZ8TG2lix8Yu/xm86Qa6EjtGw
-+2IWQTR561uT1bVYNWto4sRlT3tvH2TcUSF6QsQZP5HhazZ/xmIizT2zNqGnEUjk
-pnyJ8fQbwWI8AjPJgZzIIsxDyK6+u7Z6gKLMRd2CunCYttdJrTQ=
-=3y66
------END PGP SIGNATURE-----
+That's fair enough. Just because the solution isn't an all-purpose tool
+doesn't mean it shouldn't be documented. The general concept is already
+in ePAPR, but it's just not very specific about property names.
 
---=-qVMBI5ZMdn822WeUHCng--
+> Just my two^H^H^Hfive €c.
 
+Thanks,
+Brian
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
