@@ -2,188 +2,112 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1EEC64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D15DAC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C7F213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:33:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFI+7rly"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C7F213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F9B1213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:34:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9B1213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeJINtF (ORCPT
+        id S1726727AbeJINtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:49:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54290 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbeJINtE (ORCPT
+        Tue, 9 Oct 2018 09:49:24 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:60493 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726057AbeJINtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:49:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so581745wma.4;
-        Mon, 08 Oct 2018 23:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l2Hw+kRVc7h4aPm4XNxXTXYYQHPQcFTfCROAnfJL5CA=;
-        b=mFI+7rlyCPW63rGjNVAy3xE4jd69CJROhWDVFHFOgtQlcdkXHe+Umj81t1GiXlR7JT
-         tgSwiWg3CRGoKThMi9kQfW6XO4/ELiEVlB7WdIjiOsZQ8pMQB4g8MnZA8jOWSw7PsqFM
-         u6TOEUKbK7Isf1w9zCPo4Tjn+KVkix72LEiyYMNBWnDDEbB4KwsZj4iP8sh04Y1JfjS7
-         ey5stjyNqJ+dh+3yl3edJww75C6nf+yAZHncrjAeeEJEzmaGoRIIYTjB3nNsDcyjdkm+
-         zms1lwFFfVXSwRBZy0UvoFweb81FDFQGRDQn0LrvKoESO5iQLtZfFtlPwSoR3Jfi68fk
-         k2SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l2Hw+kRVc7h4aPm4XNxXTXYYQHPQcFTfCROAnfJL5CA=;
-        b=Af6seAvu27aAfKf0ZX0K5P3TgjCafu7CywH7S1eKBTEwWGzwtYGsNlr8s+u538KDzN
-         yrwyTCeYyjGi3iMC1/vgdFBi5Q+rN2GdfP3F6crO/osw6W9WU5jRX48K/X2XCl9aRvfl
-         t2mnEenSe2Gh6aibLwaYY0O9hcn7YV533xLoqPNHefyTko3sSClXaSWJijustNCwS+mk
-         DgB+9LS3vW8Jp36822YQQJBo7nqzYxhW6h/3rqM7g0CxSNRwaU+iwAk/N+Y4tldcYC9x
-         U/n/8GllleBsAPXq5PnW19HZq11MLVA2bA0zU0Zz+o2hQIIqoUEmZgsFh4h2oWwZP6Zf
-         K2mg==
-X-Gm-Message-State: ABuFfoiTTPDz/+Hj1oyVzUMyuA18srZmY195KIUPREC+EKPzvJSABg3F
-        uLWwXxaRg16UqgkD2OXWw3w=
-X-Google-Smtp-Source: ACcGV63gr90YKMgzPCWqKH5n1RkcJmrvIlcXTyoc3ee7WnoVEbNT12CrG5ZwEQnWh9+7m+TDFFGXeg==
-X-Received: by 2002:a1c:80d4:: with SMTP id b203-v6mr800925wmd.100.1539066821092;
-        Mon, 08 Oct 2018 23:33:41 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id u76-v6sm25328508wmd.10.2018.10.08.23.33.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Oct 2018 23:33:40 -0700 (PDT)
-Date:   Mon, 8 Oct 2018 23:33:38 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts
- to prevent latching
-Message-ID: <20181009063338.GA22218@flashbox>
-References: <20181008175530.864641368@linuxfoundation.org>
- <20181008175536.405502473@linuxfoundation.org>
+        Tue, 9 Oct 2018 09:49:23 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 9lafgWJsxSskC9laiglPj6; Tue, 09 Oct 2018 08:34:01 +0200
+Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
+To:     Keiichi Watanabe <keiichiw@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricky Liang <jcliang@chromium.org>,
+        Shik Chen <shik@chromium.org>
+References: <20181003070656.193854-1-keiichiw@chromium.org>
+ <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com>
+ <20181008140302.2239633f@coco.lan>
+ <00b0a8af-b7a5-cb49-0684-0fd0efefa196@xs4all.nl>
+ <20181008152348.7ef6d77e@coco.lan>
+ <931ca67d-3ac6-afc1-f933-c9733d561767@xs4all.nl>
+ <20181008160029.1bd1f5a8@coco.lan>
+ <CAD90VcY+n_jAWqQ09JBSE==aUxNB7Yc2BNNZRGsP4jd74OW3+g@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <609798e1-ab23-75d8-ddc2-40fe55cb85d3@xs4all.nl>
+Date:   Tue, 9 Oct 2018 08:33:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008175536.405502473@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAD90VcY+n_jAWqQ09JBSE==aUxNB7Yc2BNNZRGsP4jd74OW3+g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHIvX00Rs3NmTaxNLgo+Mr+F+0Btc44mvpFREO6AZMGqGFlruIZxSodfVBEISv1b59PfOy0H/ElfSAIlU7qR7ZDnjtp+Xj1kGMOx2o2vqD/NgLsAMH+G
+ XaEbG6Uf8MtR3UcvVgV8ihQTyRzVaWYDJrxx06DIITjEjjguZp2mZ7niLKttDNDaJ+ruEyPVqknfx8X4MkLM5Ub7zPQUulWJODX2sTC9kdu1YvsI68g1pnNv
+ IRUObzQk4oueLiP98NTD01Ip7CO3+Z/+p6d2Zc+2V2Cjg+QiixDzUMZCR5hK8YJsX8QIsQckfTXmq6k0zpVyqtuvs9gvGq7kCWcz6AYrU+Zk6xSsRsvEYG0J
+ Hso22uXL+++jTYLq6hk84tHRsIpGqPlImRidZqB+RcXnG+3h8cRaYYVNwE19A8S4mGp643OiVTBpnU6kVW8VMoCSZzbx1XOLG/YbtOEOQq4POfeUvu8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 08:31:34PM +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
+On 10/09/2018 08:01 AM, Keiichi Watanabe wrote:
+> Let me back to the topic about interval.
+> I'd like to send a nex version of this patch to avoid duplication of intervals.
 > 
-> ------------------
-> 
-> From: Stephen Boyd <swboyd@chromium.org>
-> 
-> [ Upstream commit b55326dc969ea2d704a008d9a97583b128f54f4f ]
-> 
-> The interrupt controller hardware in this pin controller has two status
-> enable bits. The first "normal" status enable bit enables or disables
-> the summary interrupt line being raised when a gpio interrupt triggers
-> and the "raw" status enable bit allows or prevents the hardware from
-> latching an interrupt into the status register for a gpio interrupt.
-> Currently we just toggle the "normal" status enable bit in the mask and
-> unmask ops so that the summary irq interrupt going to the CPU's
-> interrupt controller doesn't trigger for the masked gpio interrupt.
-> 
-> For a level triggered interrupt, the flow would be as follows: the pin
-> controller sees the interrupt, latches the status into the status
-> register, raises the summary irq to the CPU, summary irq handler runs
-> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> When the interrupt handler completes, we expect that the interrupt line
-> level will go back to the deasserted state so the genirq code can unmask
-> the interrupt without it triggering again.
-> 
-> If we only mask the interrupt by clearing the "normal" status enable bit
-> then we'll ack the interrupt but it will continue to show up as pending
-> in the status register because the raw status bit is enabled, the
-> hardware hasn't deasserted the line, and thus the asserted state latches
-> into the status register again. When the hardware deasserts the
-> interrupt the pin controller still thinks there is a pending unserviced
-> level interrupt because it latched it earlier. This behavior causes
-> software to see an extra interrupt for level type interrupts each time
-> the interrupt is handled.
-> 
-> Let's fix this by clearing the raw status enable bit for level type
-> interrupts so that the hardware stops latching the status of the
-> interrupt after we ack it. We don't do this for edge type interrupts
-> because it seems that toggling the raw status enable bit for edge type
-> interrupts causes spurious edge interrupts.
-> 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c |   24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -577,6 +577,29 @@ static void msm_gpio_irq_mask(struct irq
->  	spin_lock_irqsave(&pctrl->lock, flags);
->  
->  	val = readl(pctrl->regs + g->intr_cfg_reg);
-> +	/*
-> +	 * There are two bits that control interrupt forwarding to the CPU. The
-> +	 * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
-> +	 * latched into the interrupt status register when the hardware detects
-> +	 * an irq that it's configured for (either edge for edge type or level
-> +	 * for level type irq). The 'non-raw' status enable bit causes the
-> +	 * hardware to assert the summary interrupt to the CPU if the latched
-> +	 * status bit is set. There's a bug though, the edge detection logic
-> +	 * seems to have a problem where toggling the RAW_STATUS_EN bit may
-> +	 * cause the status bit to latch spuriously when there isn't any edge
-> +	 * so we can't touch that bit for edge type irqs and we have to keep
-> +	 * the bit set anyway so that edges are latched while the line is masked.
-> +	 *
-> +	 * To make matters more complicated, leaving the RAW_STATUS_EN bit
-> +	 * enabled all the time causes level interrupts to re-latch into the
-> +	 * status register because the level is still present on the line after
-> +	 * we ack it. We clear the raw status enable bit during mask here and
-> +	 * set the bit on unmask so the interrupt can't latch into the hardware
-> +	 * while it's masked.
-> +	 */
-> +	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
-> +		val &= ~BIT(g->intr_raw_status_bit);
-> +
->  	val &= ~BIT(g->intr_enable_bit);
->  	writel(val, pctrl->regs + g->intr_cfg_reg);
->  
-> @@ -598,6 +621,7 @@ static void msm_gpio_irq_unmask(struct i
->  	spin_lock_irqsave(&pctrl->lock, flags);
->  
->  	val = readl(pctrl->regs + g->intr_cfg_reg);
-> +	val |= BIT(g->intr_raw_status_bit);
->  	val |= BIT(g->intr_enable_bit);
->  	writel(val, pctrl->regs + g->intr_cfg_reg);
->  
-> 
-> 
+> We need to choose two intervals from the three options: 1/20, 2/25 and 1/40.
+> As Mauro said, we would want to have 2/25 for a fractional rate.
+> Then, I think adding 2/25 and 1/40 will work well.
+> If it's okay, I will send an updated version.
 
-Sigh, sorry, I caught this after I sent my initial all good email but
-this commit breaks NFC on my Pixel 2 XL (toggle becomes greyed out and
-apps that want to use it ask to enable it). I can't say why, I'm more
-than happy to debug but I'm assuming it's some voodoo that Qualcomm has
-done out of tree. I'll leave it up to you how to proceed given that I
-can't run mainline :(
+Fine by me!
 
-Nathan
+	Hans
+
+> 
+> Best regards,
+> Kei
+> 
+> On Tue, Oct 9, 2018 at 4:00 AM, Mauro Carvalho Chehab
+> <mchehab+samsung@kernel.org> wrote:
+>> Em Mon, 8 Oct 2018 20:31:10 +0200
+>> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+>>
+>>>> (gdb) list *vivid_fillbuff+0x1e9b
+>>>> 0x1936b is in vivid_fillbuff (drivers/media/platform/vivid/vivid-kthread-cap.c:495).
+>>>> 490                                 ms % 1000,
+>>>> 491                                 buf->vb.sequence,
+>>>> 492                                 (dev->field_cap == V4L2_FIELD_ALTERNATE) ?
+>>>> 493                                         (buf->vb.field == V4L2_FIELD_TOP ?
+>>>> 494                                          " top" : " bottom") : "");
+>>>> 495                 tpg_gen_text(tpg, basep, line++ * line_height, 16, str);
+>>>> 496         }
+>>>> 497         if (dev->osd_mode == 0) {
+>>>> 498                 snprintf(str, sizeof(str), " %dx%d, input %d ",
+>>>> 499                                 dev->src_rect.width, dev->src_rect.height, dev->input);
+>>>>
+>>>
+>>> There is a bug with hflip handling in that function. Nothing to do with the
+>>> resolution. I could reproduce it by just checking the hflip control.
+>>> I'll investigate.
+>>
+>> Ah! Well, as I said, I got it only once last week while trying to use
+>> vivid for some event racing test. I didn't have time to actually
+>> seek. On that time, the bug only manifested when I changed the frame
+>> rate.
+>>
+>> Thanks,
+>> Mauro
+
