@@ -2,32 +2,33 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0BCC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB36C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D675214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D675214C4
+	by mail.kernel.org (Postfix) with ESMTP id 05E69214D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:25:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E69214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeJIWnP (ORCPT
+        id S1727005AbeJIWnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:43:15 -0400
-Received: from mout.perfora.net ([74.208.4.197]:43933 "EHLO mout.perfora.net"
+        Tue, 9 Oct 2018 18:43:18 -0400
+Received: from mout.perfora.net ([74.208.4.197]:51525 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbeJIWnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:43:15 -0400
+        id S1726607AbeJIWnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:43:17 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LZwwF-1fOlxf3zzB-00lomk; Tue, 09 Oct 2018 17:25:39 +0200
+ 0Lf9bC-1fLD3P1ymm-00orBT; Tue, 09 Oct 2018 17:25:43 +0200
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LZwwF-1fOlxf3zzB-00lomk; Tue, 09 Oct 2018 17:25:39 +0200
+ 0Lf9bC-1fLD3P1ymm-00orBT; Tue, 09 Oct 2018 17:25:43 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -36,27 +37,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v1 5/8] ARM: tegra: apalis-tk1: further regulator clean-up
-Date:   Tue,  9 Oct 2018 17:25:20 +0200
-Message-Id: <20181009152523.3771-6-marcel@ziswiler.com>
+Subject: [PATCH v1 7/8] ARM: tegra: colibri_t30: further regulator clean-up
+Date:   Tue,  9 Oct 2018 17:25:22 +0200
+Message-Id: <20181009152523.3771-8-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181009152523.3771-1-marcel@ziswiler.com>
 References: <20181009152523.3771-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:jZUsxQOc12bYTtYzN2bvLMh1pvVqSpo/qLfcB3ABck2ktu3JPpo
- x33glYIBp4pTgfHuc/WyuiImVXiABeuvCcXmwwNm2E+OK+Nm6xHnppbidMCH1Exv9qumeuJ
- b/8IThGZlzXccb/l7N98zZYD+xV+q6G7gsYhgiG8l8eVlhsFgkwZDfWRMTouKIfdiDjWt2v
- Ta3oF+oc5f7hXKiwEWA8w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:08r0L4282cU=:EKqfy9LQFTQz+COFwUDoPI
- j7U3IuSShtujB0YfbkyqvQzLcMr2mEDhOo/5755j31ds0rI13p4XPqnssW7fSf+G6T4WGwVsy
- lP+rBbcfz6sdjuo4GQXVNwfnoswRS/vQ/BnijDRw3dsKf43IYKmniT7f12xBlVKmXLog4MxBW
- aNSL25sh3CL9eQSf7YhrAgaZcLMS5fWxaxZYG3ul0bh0DHSqjIWtXwDBwytMm9bkn8mFbqPeo
- twUedZVuzv7mFnSVXeZnwgD0onexo+gTVY/G/SdKdkikKrN/8XfrIL8h8WCtR7GuZJfj/jfHv
- k/nHyBdoCc37M2IUfti2ZE+rXFDWH6Eo7ZlbXIeCgs3C0T/H4EuVXVmAknfkYsAIRG7i25919
- 3O608ec8BahF+UuEnMRcpAUKYD10LjbpAyuiXTb+22dgHqElsPBoDUPpoQnJLAjwQztz4x+7f
- S8rohbAKUqk/SpTzuM4ZN4G0EMR8cDzwMfYeWJyFAiqe5w9zpT8wLvMF/xKAyf3UPRYQSH4BK
- JW3sY9QM0AObGFv1LgqDaHco2XjZfworGnstRpExB+WGeRDpQt3/731QSrWN1ue3vyzhA4dMs
- U/MHdknSiRI40fQZEj28dftBMr+a+xYJPJBJZiKI4ZukfvOB3MnZfIfMvClkRUU24WP2aBw/E
- u7o0ivpTJ0B2ktuorqrb4lsaOvgfyv2cvFQD9qdFWvAGYRNqbdfP1OjmEV1wOXJAY36g=
+X-Provags-ID: V03:K1:6Y+hA4GjzESwUtrRRDUH27XhRFqGaWyzcbUBP0HR13qeUufhOkF
+ 9KI8gr6TrOzqJzp4B+MeywlnKfXAK4ADuKoN+WVEzNircizfhVux/8dsIEeLBAY5i5iQpxt
+ bXUlMEqKcU0NTAIaiICYiaB3OFS+NjjYnp72O0Jjs1uprqBGmHG7b7aMigbE17l5DqOumxB
+ cd3KYmdCoZmZqoyVdr19w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Jy+lAzeK7OY=:LPiFghoVzDBjvdLI2oSUdm
+ THrNC3y7FOpwMcqEQ09oc5X5CsHWc9nPbzAubVyMenl64FJRRkfhg0m7w1+UDKapFXQlVJvav
+ m7gSPqM0GIk6TstLxOAP+qOhvGED47ZAp7gTAx7haoUbBXImtgY25bKYR3sU2FP+ZTGnQVaeB
+ 3aEWMD1VPpmyz2g3/Lo8u08FrDKu5BvVc153LjasIlRVNE6v5UgUdBkRCGvdfwLvHBrITL5oD
+ HdBC7bq1P9wUtEv3yyKFUwEN6mh4gFrxiS4XGuB2wYr8QcjaJaqmYt3Vi+y1MjFt94/FQP3E9
+ yPpIh49r63kmaI6aGy4P8KI9T7KZ4z6F9VS9Og8jxF/RlIzp3XULrLfA1WdUNbvke23NWAeH3
+ Djgat0D4RWUSJKPNDmiN1ZP/PIcNoIAcfigsGffZM/4ZcCTmOuBACNYpt9L56z0f2y8Fgu40T
+ dlxpaIEq1FvswR7yu7UtUqoPqLEVNRVRxXS1e3eAm2Uqk9OZyjT77y8HMJe4aFpDejc/wD16T
+ vNcQCCHcwXRBoyvGMyp/vEj72FnS7XKwWGJs75tzMb32kniZkLhuLl3i+QtAFbT0QHvayDNIH
+ xMXcilo7hqF++B955wrriWoxSlMoRdf7v8ADCRm4sMY5J5Pz61/b/6BqXxe3waMO83a7rZ11R
+ XBDp4u2YYKOZ3t7BvANu6F4odFBPkJo/AtW5GnVnIjywGh/xBGZUGbsN4kmsB+Ddlgug=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,8 +65,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add reg_ prefix to vddio_sdmmc1 and vddio_sdmmc3.
-Reorder PMIC properties.
+Drop unused labels.
+Rename regulator tps62362-vout to +V1.2_VDD_CORE.
+Reorder TPS65911 properties.
+Rename +V1.05 to +V1.05_AVDD_PLLE.
+Add ti,en-ck32k-xtal.
+Specify TPS62362 vin-supply.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -73,132 +78,142 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v1: None
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 10 +++++-----
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 10 +++++-----
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 45 ++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index eaee10ef6512..e553eff50499 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -171,7 +171,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
-@@ -180,7 +180,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
- 	};
- 
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 7961eb4bd803..e2f94dc7ff91 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -137,7 +137,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
-@@ -146,7 +146,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
- 	};
- 
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 73a8e117a9b9..e532b564e4c9 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1570,12 +1570,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 963f26071415..d71038ea544f 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -732,16 +732,13 @@
+ 		pmic: pmic@2d {
+ 			compatible = "ti,tps65911";
+ 			reg = <0x2d>;
+-
 +			#gpio-cells = <2>;
 +			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
  			#interrupt-cells = <2>;
  			interrupt-controller;
--			gpio-controller;
+-
++			ti,en-ck32k-xtal;
+ 			ti,system-power-controller;
+-
 -			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
+-			gpio-controller;
+-
+ 			vcc1-supply = <&reg_module_3v3>;
+ 			vcc2-supply = <&reg_module_3v3>;
+ 			vcc3-supply = <&reg_1v8_vio>;
+@@ -752,29 +749,29 @@
+ 			vccio-supply = <&reg_module_3v3>;
  
-@@ -1679,7 +1679,7 @@
- 					ams,ext-control = <1>;
+ 			regulators {
+-				vdd1_reg: vdd1 {
++				reg_1v8_vio: vio {
++					regulator-name = "+V1.8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				vdd1 {
+ 					regulator-name = "+V1.35_VDDIO_DDR";
+ 					regulator-min-microvolt = <1350000>;
+ 					regulator-max-microvolt = <1350000>;
+ 					regulator-always-on;
  				};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1711,7 +1711,7 @@
+-				/* SW2: unused */
++				/* SW2 aka vdd2: unused */
  
- 				/* LDO5 not used */
- 
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 3e3b347afe56..3cab9bda918f 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1600,12 +1600,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			gpio-controller;
--			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
- 
-@@ -1709,7 +1709,7 @@
- 					ams,ext-control = <1>;
+-				vddctrl_reg: vddctrl {
++				vddctrl {
+ 					regulator-name = "+V1.0_VDD_CPU";
+ 					regulator-min-microvolt = <1150000>;
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-always-on;
  				};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1741,7 +1741,7 @@
+-				reg_1v8_vio: vio {
+-					regulator-name = "+V1.8";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+ 				/* LDO1: unused */
  
- 				/* LDO5 not used */
- 
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
+ 				/*
+@@ -782,7 +779,7 @@
+ 				 * +V3.3_AUDIO_AVDD_S, +V3.3 and +V1.8_VDD_LAN
+ 				 * see also +V3.3 fixed supply
+ 				 */
+-				ldo2_reg: ldo2 {
++				ldo2 {
+ 					regulator-name = "EN_+V3.3";
+ 					regulator-min-microvolt = <3300000>;
  					regulator-max-microvolt = <3300000>;
+@@ -791,7 +788,7 @@
+ 
+ 				/* LDO3: unused */
+ 
+-				ldo4_reg: ldo4 {
++				ldo4 {
+ 					regulator-name = "+V1.2_VDD_RTC";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+@@ -802,7 +799,7 @@
+ 				 * +V2.8_AVDD_VDAC:
+ 				 * only required for (unsupported) analog RGB
+ 				 */
+-				ldo5_reg: ldo5 {
++				ldo5 {
+ 					regulator-name = "+V2.8_AVDD_VDAC";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+@@ -814,20 +811,20 @@
+ 				 * but LDO6 can't set voltage in 50mV
+ 				 * granularity
+ 				 */
+-				ldo6_reg: ldo6 {
++				ldo6 {
+ 					regulator-name = "+V1.05_AVDD_PLLE";
+ 					regulator-min-microvolt = <1100000>;
+ 					regulator-max-microvolt = <1100000>;
+ 				};
+ 
+-				ldo7_reg: ldo7 {
++				ldo7 {
+ 					regulator-name = "+V1.2_AVDD_PLL";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo8_reg: ldo8 {
++				ldo8 {
+ 					regulator-name = "+V1.0_VDD_DDR_HS";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+@@ -885,8 +882,7 @@
+ 		regulator@60 {
+ 			compatible = "ti,tps62362";
+ 			reg = <0x60>;
+-
+-			regulator-name = "tps62362-vout";
++			regulator-name = "+V1.2_VDD_CORE";
+ 			regulator-min-microvolt = <900000>;
+ 			regulator-max-microvolt = <1400000>;
+ 			regulator-boot-on;
+@@ -894,6 +890,7 @@
+ 			ti,vsel0-state-low;
+ 			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
+ 			ti,vsel1-state-low;
++			vin-supply =<&reg_module_3v3>;
+ 		};
+ 	};
+ 
 -- 
 2.14.4
 
