@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5565AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED216C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B05720835
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A526214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:21:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="MBvT4fLP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B05720835
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="cNqLnHe0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A526214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeJIShq (ORCPT
+        id S1727869AbeJIShz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:37:46 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40990 "EHLO
+        Tue, 9 Oct 2018 14:37:55 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37979 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbeJIShM (ORCPT
+        with ESMTP id S1727627AbeJIShK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:37:12 -0400
-Received: by mail-ed1-f68.google.com with SMTP id x31-v6so1316033edd.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:20:43 -0700 (PDT)
+        Tue, 9 Oct 2018 14:37:10 -0400
+Received: by mail-ed1-f68.google.com with SMTP id c1-v6so1320368ede.5
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LBUwPwfdLWts77YZu8bq/0EXuP3hIPxvE2iNOPD8lGk=;
-        b=MBvT4fLP7b1NBcJpRV8vz23+nVQM3RHeCw/CNMIp+LAFQCnjlLDonxPSWfBWbB78cq
-         ORVAeFL64SsQHT5C7Jh/CE5Nlo2n8+o7VKEcFitwkydABqzw/6e/GFN3M17BHtg6R0eh
-         D3WtAMyjtBzgpV5KVAzP0bs9V3ddaWxgB47pc=
+        bh=kK4sKLWjwya2/ZhlbmyuPI7vLcvpxI9JR5xc3cmTQtQ=;
+        b=cNqLnHe0pN1KpiV2qDuFc2AeHVwMIQdfJiLivkk3cb0ntoCSqCrFgrKBUuRXt78BAq
+         IcPma7YcLoT+0hrIgwUgvW/ZqH42TNn1lnC0txSBefmsUAJRslI+jjtpcZeU1CRyrGCH
+         Co6QvBgWbT5E7NHc/KVVR8N5nIdjWQE+0Ut5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LBUwPwfdLWts77YZu8bq/0EXuP3hIPxvE2iNOPD8lGk=;
-        b=C9zbEItN0AbZeaiiRe/RImf8tIJ9gefCbMSiUL1NQiITr/bAIqnSXETQ2mNRocveVU
-         0HBaO7AY3b5Eeh9fzRB5ggJc3mhaIsjALw9c8eHqKzyvCrJHInn95J/Eandcq6GVYkB9
-         BrsLxiH6mMM8gpKCtXqr6fQQD9Gh/7MNDhMT3VYl3mzQbwMXgPLDzp4BptHrglmQ+MSw
-         4bLNsNFBHbjOaQJEer2Jv21psGs3kG571gIQRYZyYGclirwAaW4qflVp88HTyh9SGDs+
-         jGQdTF9xX02Lrew204My6q1m/IRMTjrKLiTzJu3kOFJPVaNzPokXtznws6ByjE9E7u0b
-         bbMw==
-X-Gm-Message-State: ABuFfogtrcPZdEJOZtTN8zS9LoeKQqsLm/EoLyOUXyjP2nxvi7mT0KWH
-        v7qMIbaCQ+HIYwIDeCMdbjibgQ==
-X-Google-Smtp-Source: ACcGV63FB+8bUVKA2JCWO05iOyT/Zd2sNRimvPsm9GqIVwyK7effjZBpavytCnDDfazPCus3qBkMuQ==
-X-Received: by 2002:a17:906:830e:: with SMTP id j14-v6mr27367317ejx.6.1539084042802;
-        Tue, 09 Oct 2018 04:20:42 -0700 (PDT)
+        bh=kK4sKLWjwya2/ZhlbmyuPI7vLcvpxI9JR5xc3cmTQtQ=;
+        b=KP6c+Se2NQT6qBgRVNdaePQaJiTTB2p9f5F4cJLo5Bz1XFhZa6kZAsHlmREuIoKzFB
+         aYchTMeuatd/YeF9jmiwByMiQq4Vonyluccc/PLcv0sdw4s1kN4sjCphXHat/ZmIlqR2
+         7XpQC9mWlRe4jogPmSSZtKJ/ObD0VP1tqt8kGmw4zHTCCNwMnzCvF3MB8BE1AhLCLBoZ
+         BKlXqsi/6Wbijt4ju5CK1/9Ceq6TCiEwT3o8j8MJYU8/QbUxS8cFqvujHP1EPvL3QaCL
+         Fl6u+FwRuwjObE+EOUmVnnQwuVbIZLGn8Y2BiVVUYP1cHhUvL7P6x+6HJuKQfOiUpeav
+         DwBg==
+X-Gm-Message-State: ABuFfoiklsuAuWQnJtK4GsxPVqi7mzXO2u/xfE9Cvdh+LR5DUWm/7PNJ
+        z3CZWCBUHIFZoPfbeczsM3A9pQ==
+X-Google-Smtp-Source: ACcGV61YXb9cqShjVXlBVQCk7BuYnrgV7efV30zRz7J2ycx0EcY27DWoYuQPEuw9nT59FotHH+jjPQ==
+X-Received: by 2002:a17:906:7384:: with SMTP id f4-v6mr27222785ejl.8.1539084039942;
+        Tue, 09 Oct 2018 04:20:39 -0700 (PDT)
 Received: from prevas-ravi.vestasvisitor.net ([193.47.71.171])
-        by smtp.gmail.com with ESMTPSA id n23-v6sm3595821eja.41.2018.10.09.04.20.41
+        by smtp.gmail.com with ESMTPSA id n23-v6sm3595821eja.41.2018.10.09.04.20.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 04:20:42 -0700 (PDT)
+        Tue, 09 Oct 2018 04:20:39 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 22/23] x86_64: use relative pointers with dynamic debug
-Date:   Tue,  9 Oct 2018 13:20:12 +0200
-Message-Id: <20181009112013.14238-23-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 19/23] dynamic_debug: drop use of bitfields in struct _ddebug
+Date:   Tue,  9 Oct 2018 13:20:09 +0200
+Message-Id: <20181009112013.14238-20-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.19.1.4.g721af0fda3
 In-Reply-To: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -76,85 +75,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to how x86_64 uses bug_entry-relative pointers to reduce
-sizeof(struct bug_entry), the same thing can now be done for struct
-_ddebug, saving 16 bytes for each of those (i.e., each pr_debug, dev_dbg
-etc. in a CONFIG_DYNAMIC_DEBUG kernel).
+Properly initializing a struct containing bitfields in assembly is
+hard. Instead, merge lineno and flags to a single unsigned int, which we
+mask manually. This should not cause any worse code than what gcc would
+need to generate for accessing the bitfields anyway.
 
-Note the use of .ifndef/.endif in asm to avoid
+Actually, on 64 bit, there is a four byte hole after these fields, so we
+could just give flags and lineno each their own u32. But I don't think
+that's worth the ifdeffery.
 
-fs/aio.c:1382: Error: symbol `__UNIQUE_ID_ddebug112' is already defined
-
-This is due to uses of pr_debug et al in functions that get inlined. In
-such a case, __COUNTER__ is obviously only expanded once, but the asm()
-is repeated once for every inlined instance. Letting all instances share
-the same descriptor object is the right thing to do; that is also what
-happens when it is the compiler that defines a static object inside an
-inline(d) function.
-
-Cc: x86@kernel.org
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/x86/Kconfig                     |  1 +
- arch/x86/include/asm/dynamic_debug.h | 35 ++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 arch/x86/include/asm/dynamic_debug.h
+ include/linux/dynamic_debug.h | 12 ++++------
+ lib/dynamic_debug.c           | 44 +++++++++++++++++++++++------------
+ 2 files changed, 34 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..a44168930e52 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -90,6 +90,7 @@ config X86
- 	select CLOCKSOURCE_WATCHDOG
- 	select DCACHE_WORD_ACCESS
- 	select DMA_DIRECT_OPS
-+	select DYNAMIC_DEBUG_RELATIVE_POINTERS	if X86_64
- 	select EDAC_ATOMIC_SCRUB
- 	select EDAC_SUPPORT
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/x86/include/asm/dynamic_debug.h b/arch/x86/include/asm/dynamic_debug.h
-new file mode 100644
-index 000000000000..350ef6e2feff
---- /dev/null
-+++ b/arch/x86/include/asm/dynamic_debug.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_DYNAMIC_DEBUG_H
-+#define _ASM_X86_DYNAMIC_DEBUG_H
-+
-+#ifdef HAVE_JUMP_LABEL
-+# ifdef DEBUG
-+#  define _DPRINTK_ASM_KEY_INIT ASM_STATIC_KEY_INIT_TRUE
-+# else
-+#  define _DPRINTK_ASM_KEY_INIT ASM_STATIC_KEY_INIT_FALSE
-+# endif
-+#else
-+# define _DPRINTK_ASM_KEY_INIT ""
-+#endif
-+
-+#define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)			\
-+	extern struct _ddebug name;					\
-+	asm volatile(".ifndef " __stringify(name) "\n"			\
-+		     ".pushsection __verbose,\"aw\"\n"			\
-+		     "1:\n"						\
-+		     __stringify(name) ":\n"				\
-+		     "\t.long %c0 - 1b \t# _ddebug::modname_disp\n"	\
-+		     "\t.long %c1 - 1b \t# _ddebug::function_disp\n"	\
-+		     "\t.long %c2 - 1b \t# _ddebug::filename_disp\n"	\
-+		     "\t.long %c3 - 1b \t# _ddebug::format_disp\n"	\
-+		     "\t.long %c4      \t# _ddebug::flags_lineno\n"	\
-+		     "\t.long 0        \t# <padding>\n"			\
-+		     _DPRINTK_ASM_KEY_INIT				\
-+		     ".popsection\n"					\
-+		     ".endif\n"						\
-+		     : : "i" (KBUILD_MODNAME), "i" (__func__),		\
-+		       "i" (__FILE__), "i" (fmt),			\
-+		       "i" (_DPRINTK_FLAGS_LINENO_INIT))
-+
-+#endif /* _ASM_X86_DYNAMIC_DEBUG_H */
-+
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index b9424097df37..e1be30e8422b 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -20,7 +20,6 @@ struct _ddebug {
+ 	const char *function;
+ 	const char *filename;
+ 	const char *format;
+-	unsigned int lineno:18;
+ 	/*
+ 	 * The flags field controls the behaviour at the callsite.
+ 	 * The bits here are changed dynamically when the user
+@@ -37,7 +36,7 @@ struct _ddebug {
+ #else
+ #define _DPRINTK_FLAGS_DEFAULT 0
+ #endif
+-	unsigned int flags:8;
++	unsigned int flags_lineno; /* flags in lower 8 bits, lineno in upper 24 */
+ #ifdef HAVE_JUMP_LABEL
+ 	union {
+ 		struct static_key_true dd_key_true;
+@@ -46,7 +45,7 @@ struct _ddebug {
+ #endif
+ } __attribute__((aligned(8)));
+ 
+-
++#define _DPRINTK_FLAGS_LINENO_INIT (((unsigned)__LINE__ << 8) | _DPRINTK_FLAGS_DEFAULT)
+ 
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
+@@ -78,8 +77,7 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+ 		.function = __func__,				\
+ 		.filename = __FILE__,				\
+ 		.format = (fmt),				\
+-		.lineno = __LINE__,				\
+-		.flags = _DPRINTK_FLAGS_DEFAULT,		\
++		.flags_lineno = _DPRINTK_FLAGS_LINENO_INIT,	\
+ 		_DPRINTK_KEY_INIT				\
+ 	}
+ 
+@@ -104,10 +102,10 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+ 
+ #ifdef DEBUG
+ #define DYNAMIC_DEBUG_BRANCH(descriptor) \
+-	likely(descriptor.flags & _DPRINTK_FLAGS_PRINT)
++	likely(descriptor.flags_lineno & _DPRINTK_FLAGS_PRINT)
+ #else
+ #define DYNAMIC_DEBUG_BRANCH(descriptor) \
+-	unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT)
++	unlikely(descriptor.flags_lineno & _DPRINTK_FLAGS_PRINT)
+ #endif
+ 
+ #endif
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index dbd837f486f9..9d4c840ff0de 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -53,6 +53,18 @@ static inline const char *dd_format(const struct _ddebug *dd)
+ {
+ 	return dd->format;
+ }
++static inline unsigned dd_lineno(const struct _ddebug *dd)
++{
++	return dd->flags_lineno >> 8;
++}
++static inline unsigned dd_flags(const struct _ddebug *dd)
++{
++	return dd->flags_lineno & 0xff;
++}
++static inline void dd_set_flags(struct _ddebug *dd, unsigned newflags)
++{
++	dd->flags_lineno = (dd_lineno(dd) << 8) | newflags;
++}
+ 
+ extern struct _ddebug __start___verbose[];
+ extern struct _ddebug __stop___verbose[];
+@@ -111,7 +123,7 @@ static char *ddebug_describe_flags(struct _ddebug *dp, char *buf,
+ 
+ 	BUG_ON(maxlen < 6);
+ 	for (i = 0; i < ARRAY_SIZE(opt_array); ++i)
+-		if (dp->flags & opt_array[i].flag)
++		if (dd_flags(dp) & opt_array[i].flag)
+ 			*p++ = opt_array[i].opt_char;
+ 	if (p == buf)
+ 		*p++ = '_';
+@@ -157,7 +169,7 @@ static int ddebug_change(const struct ddebug_query *query,
+ {
+ 	int i;
+ 	struct ddebug_table *dt;
+-	unsigned int newflags;
++	unsigned int newflags, oldflags;
+ 	unsigned int nfound = 0;
+ 	char flagbuf[10];
+ 
+@@ -194,27 +206,28 @@ static int ddebug_change(const struct ddebug_query *query,
+ 
+ 			/* match against the line number range */
+ 			if (query->first_lineno &&
+-			    dp->lineno < query->first_lineno)
++			    dd_lineno(dp) < query->first_lineno)
+ 				continue;
+ 			if (query->last_lineno &&
+-			    dp->lineno > query->last_lineno)
++			    dd_lineno(dp) > query->last_lineno)
+ 				continue;
+ 
+ 			nfound++;
+ 
+-			newflags = (dp->flags & mask) | flags;
+-			if (newflags == dp->flags)
++			oldflags = dd_flags(dp);
++			newflags = (oldflags & mask) | flags;
++			if (newflags == oldflags)
+ 				continue;
+ #ifdef HAVE_JUMP_LABEL
+-			if (dp->flags & _DPRINTK_FLAGS_PRINT) {
++			if (oldflags & _DPRINTK_FLAGS_PRINT) {
+ 				if (!(flags & _DPRINTK_FLAGS_PRINT))
+ 					static_branch_disable(&dp->key.dd_key_true);
+ 			} else if (flags & _DPRINTK_FLAGS_PRINT)
+ 				static_branch_enable(&dp->key.dd_key_true);
+ #endif
+-			dp->flags = newflags;
++			dd_set_flags(dp, newflags);
+ 			vpr_info("changed %s:%d [%s]%s =%s\n",
+-				 trim_prefix(dd_filename(dp)), dp->lineno,
++				 trim_prefix(dd_filename(dp)), dd_lineno(dp),
+ 				 dt->mod_name, dd_function(dp),
+ 				 ddebug_describe_flags(dp, flagbuf,
+ 						       sizeof(flagbuf)));
+@@ -537,10 +550,11 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+ {
+ 	int pos_after_tid;
+ 	int pos = 0;
++	unsigned flags = dd_flags(desc);
+ 
+ 	*buf = '\0';
+ 
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_TID) {
++	if (flags & _DPRINTK_FLAGS_INCL_TID) {
+ 		if (in_interrupt())
+ 			pos += snprintf(buf + pos, remaining(pos), "<intr> ");
+ 		else
+@@ -548,15 +562,15 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+ 					task_pid_vnr(current));
+ 	}
+ 	pos_after_tid = pos;
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_MODNAME)
++	if (flags & _DPRINTK_FLAGS_INCL_MODNAME)
+ 		pos += snprintf(buf + pos, remaining(pos), "%s:",
+ 				dd_modname(desc));
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
++	if (flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
+ 		pos += snprintf(buf + pos, remaining(pos), "%s:",
+ 				dd_function(desc));
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_LINENO)
++	if (flags & _DPRINTK_FLAGS_INCL_LINENO)
+ 		pos += snprintf(buf + pos, remaining(pos), "%d:",
+-				desc->lineno);
++				dd_lineno(desc));
+ 	if (pos - pos_after_tid)
+ 		pos += snprintf(buf + pos, remaining(pos), " ");
+ 	if (pos >= PREFIX_SIZE)
+@@ -807,7 +821,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+ 	}
+ 
+ 	seq_printf(m, "%s:%u [%s]%s =%s \"",
+-		   trim_prefix(dd_filename(dp)), dp->lineno,
++		   trim_prefix(dd_filename(dp)), dd_lineno(dp),
+ 		   iter->table->mod_name, dd_function(dp),
+ 		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
+ 	seq_escape(m, dd_format(dp), "\t\r\n\"");
 -- 
 2.19.1.3.g1d92a00e68
 
