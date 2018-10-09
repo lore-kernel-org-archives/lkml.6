@@ -2,130 +2,131 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC55C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A61C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A752150B
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A20213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:28:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D65JMCY9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A752150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="K13LoTm7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A20213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJIVp1 (ORCPT
+        id S1726873AbeJIVpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:45:27 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39512 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeJIVp0 (ORCPT
+        Tue, 9 Oct 2018 17:45:49 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40812 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJIVpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:45:26 -0400
-Received: by mail-ed1-f65.google.com with SMTP id d15-v6so1884470edq.6
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:28:13 -0700 (PDT)
+        Tue, 9 Oct 2018 17:45:49 -0400
+Received: by mail-io1-f65.google.com with SMTP id w16-v6so1298953iom.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=OU6nvOBiKIrqrgu5oHrM9OiOA3cUW3XFg5GvQhU8YAI=;
-        b=D65JMCY9JkOYNB/7paWG3Tz63GGFrlNjZiWW6rOYHzzNSo1i/a08nOspre7QFzqACP
-         4D+uYtoR7csuUrhOFWmbA9YNZicubsDG629fBGVAjmMNvGK1sFDSyfBIXZrx4P+j2SHa
-         s2UW+Zk54cKQUkkgm1i4+JBAUXpHPQoQrKAr10s2grKQpTqCBm+HbNhxUsLEWQ9J0Lrd
-         4yMqv46fDaEJlKcyMx3Rlf40uKDNJr7KYpbOsWbAbwYYPTNPPITKcj9n6OK99VuyCsaT
-         xQ+9mHy+LkpKRtgfJlLTkc6znYlwxMPyU0xBh9+E0qcX137SGfYIbu7xKb9vu/jMtwdo
-         PGsg==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=08NDXM3bDeX775GQaUm9s+d9XSN1uhZl0K+kXRW+W1I=;
+        b=K13LoTm7yUokeJEkHLhMJh1dLPx9q7/KDr3fzubInDwoH+et7jk7pMF1q0QRHD4eug
+         s0etZ1OEaU5dbsvqtUfGL1af/nWBaOEQnuUwdApOMFVabA1lU8i/c8Ew1qfXNEyP/44H
+         T+s7iZj01TY+NRf4DUAbrnAg8gybXx+BIISEwTeYtQw6N5ZVyvK1KOhojMfiFEHSMgqJ
+         OyISNMzZ+SU+p3yLAECDnVjLsZX2VIKhtYZN0R7wHelAZMdFtPC3PK1A6Tt5xIp1yXVJ
+         Qm4khX0nhGt5uqzentT4TK+HDCqCceVbXGbUuusmhhcORn7Ut+PGBRjPax+0zHa2FiW6
+         X65A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OU6nvOBiKIrqrgu5oHrM9OiOA3cUW3XFg5GvQhU8YAI=;
-        b=fi23a5LYHzyiYqHAPl3e9j+bLNXB0Hk8TuoZzBUOPjmZAzkHf0nIJxC91v4Q/qEcVQ
-         TPZzhyuLtj/s978UlFX4gUkIkzKW2CpwOmjD3dJSwNbU6ca++I8IBtyrMDKRAvFr/2Bg
-         Zy+zx0PTYvDV1MoJejlk6wFlt/W5IZNZMG5An6eao22fN8IZmhGd0xT7Fj0N8ALfgNqV
-         86bmkTqnYuPgD53EMEvKn1LY8kYcSYcjHrhvtFJiKIrZtznrc2UkhPbfGkjyVZG0UYif
-         Nk3Yi0g8a7YbkNnNC9ulDouHKLt0J00bbIi6NsI+0WUfkEWPhj1y3j5gZUHJHD1AUQQ9
-         9TRw==
-X-Gm-Message-State: ABuFfog0KrghWuUKZ6Q4zEB2KhOhzBantfWmRf2ieqPsSEhWaCJaRvoK
-        3ETOTUVcr3Tbe6XPuwBQl+j3nZST0fM=
-X-Google-Smtp-Source: ACcGV600ssnW/8MnKkyMaZII3ofdjDzlAwfmM2evgOsJpXBb4HkzJ93KX1tYex3h6Ea5SsjopLM4gg==
-X-Received: by 2002:a50:9fed:: with SMTP id c100-v6mr34916106edf.77.1539095293192;
-        Tue, 09 Oct 2018 07:28:13 -0700 (PDT)
-Received: from jinpu-GA-870A-USB3.pb.local ([2001:1438:4010:254c:1e6f:65ff:fed4:d10])
-        by smtp.googlemail.com with ESMTPSA id x18-v6sm4559005edd.50.2018.10.09.07.28.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 09 Oct 2018 07:28:12 -0700 (PDT)
-From:   Jack Wang <xjtuwjp@gmail.com>
-X-Google-Original-From: Jack Wang <jinpuwang@gmail.com>
-To:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        florian-ewald.mueller@profitbricks.com,
-        linux-kernel@vger.kernel.org
-Cc:     Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH] lib: memcmp optimization
-Date:   Tue,  9 Oct 2018 16:28:11 +0200
-Message-Id: <1539095291-9926-1-git-send-email-jinpuwang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=08NDXM3bDeX775GQaUm9s+d9XSN1uhZl0K+kXRW+W1I=;
+        b=AM5lAzt+0Cx19Bg5HgPTLkAVADkBV07DHyo93fsyP5nWmL2pYi9iLFEw4PurWahjP4
+         yKPfb82gXohgnTrlaCy8vWaSc4qPHX25hKj10yc76GogskO1pt4qSeLBZRPPgvh9q5rz
+         m5VUMXBLbqF3mP6HGUoK1sO0/1f6lq2P8H2qsl6Dc4XoMIe+MP3DhXxbXznlAuaszeG9
+         +IEyK1VRpEQYr4Ogm7cUUlx2D9YxdvroYlLyCcXVgiZsP3AbtH6uDfA8yzpV15wdk7nl
+         YjW1m0qOmGpDPu7TrTaNGBQAtHq4fr8fdmBBLoaXM/2PNwFaSTSsAGLrT/1nfiNBYFwZ
+         Ve5Q==
+X-Gm-Message-State: ABuFfojGAVcqQ2wQM23EtIkiVZFiiofNgm6Bf2bDPKbt0hkukU7T3UIL
+        8vIeqJqU/uGpg3fpLURQps/9xQ==
+X-Google-Smtp-Source: ACcGV62pGbZqYAObM7DOOccZMFbb2H7xr/BeRpqK/Ub33DXCgrC17PvY4VrYbxsQlmr+OTnVWtCb8w==
+X-Received: by 2002:a6b:c085:: with SMTP id q127-v6mr18254087iof.255.1539095316118;
+        Tue, 09 Oct 2018 07:28:36 -0700 (PDT)
+Received: from cisco ([12.226.92.2])
+        by smtp.gmail.com with ESMTPSA id b195-v6sm6159689itc.42.2018.10.09.07.28.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 07:28:34 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 07:28:33 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
+Message-ID: <20181009142833.GA10149@cisco>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-2-tycho@tycho.ws>
+ <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
+ <20180927224839.GF15491@cisco.cisco.com>
+ <20181008145803.ycawjwhc3mwkdogf@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008145803.ycawjwhc3mwkdogf@brauner.io>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian-Ewald Mueller <florian-ewald.mueller@profitbricks.com>
+On Mon, Oct 08, 2018 at 04:58:05PM +0200, Christian Brauner wrote:
+> On Thu, Sep 27, 2018 at 04:48:39PM -0600, Tycho Andersen wrote:
+> > On Thu, Sep 27, 2018 at 02:31:24PM -0700, Kees Cook wrote:
+> > > I have to say, I'm vaguely nervous about changing the semantics here
+> > > for passing back the fd as the return code from the seccomp() syscall.
+> > > Alternatives seem less appealing, though: changing the meaning of the
+> > > uargs parameter when SECCOMP_FILTER_FLAG_NEW_LISTENER is set, for
+> > > example. Hmm.
+> > 
+> > From my perspective we can drop this whole thing. The only thing I'll
+> > ever use is the ptrace version. Someone at some point (I don't
+> > remember who, maybe stgraber) suggested this version would be useful
+> > as well.
+> 
+> So I think we want to have the ability to get an fd via seccomp().
+> Especially, if we all we worry about are weird semantics. When we
+> discussed this we knew the whole patchset was going to be weird. :)
+> 
+> This is a seccomp feature so seccomp should - if feasible - equip you
+> with everything to use it in a meaningful way without having to go
+> through a different kernel api. I know ptrace and seccomp are
+> already connected but I still find this cleaner. :)
+> 
+> Another thing is that the container itself might be traced for some
+> reason while you still might want to get an fd out.
 
-During testing, I have configured 128 md/raid1's and, while under
-heavy IO, I started a check on each of them
-(echo check > /sys/block/mdx/md/sync_action).
+Sure, I don't see the problem here.
 
-The CPU utilization went through the ceiling and when looking for
-the cause (with 'perf top'). I've discovered that ~50% of the time
-was spend in memcmp() called from process_checks().
+> Also, I wonder what happens if you want to filter the ptrace() syscall
+> itself? Then you'd deadlock?
 
-With this patch applied, it drops to 4% - 10%.
+No, are you confusing the tracee with the tracer here? Filtering
+ptrace() will happen just like any other syscall... what would you
+deadlock with?
 
-Signed-off-by: Florian-Ewald Mueller <florian-ewald.mueller@profitbricks.com>
-[jwang: reformat the commit message]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
----
- lib/string.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+> Also, it seems that getting an fd via ptrace requires CAP_SYS_ADMIN in
+> the inital user namespace (which I just realized now) whereas getting
+> the fd via seccomp() doesn't seem to.
 
-diff --git a/lib/string.c b/lib/string.c
-index 2c0900a5d51a..932ef9af2baa 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -852,7 +852,7 @@ EXPORT_SYMBOL(memmove);
-  * @count: The size of the area.
-  */
- #undef memcmp
--__visible int memcmp(const void *cs, const void *ct, size_t count)
-+static inline int __memcmp(const void *cs, const void *ct, size_t count)
- {
- 	const unsigned char *su1, *su2;
- 	int res = 0;
-@@ -862,6 +862,20 @@ __visible int memcmp(const void *cs, const void *ct, size_t count)
- 			break;
- 	return res;
- }
-+__visible int memcmp(const void *cs, const void *ct, size_t count)
-+{
-+	const uint64_t *l1p = cs;
-+	const uint64_t *l2p = ct;
-+
-+	while (count >= sizeof(*l1p)) {
-+		if (*l1p != *l2p)
-+			return __memcmp(l1p, l2p, sizeof(*l1p));
-+		count -= sizeof(*l1p);
-+		++l1p;
-+		++l2p;
-+	}
-+	return __memcmp(l1p, l2p, count);
-+}
- EXPORT_SYMBOL(memcmp);
- #endif
- 
--- 
-2.7.4
+Yep, I'll leave this discussion to the other thread.
 
+Tycho
