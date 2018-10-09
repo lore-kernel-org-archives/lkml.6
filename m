@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9DCC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D80C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3199E214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 379ED214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 11:13:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="VrukCQR+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3199E214C4
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="fWduV7tz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379ED214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeJISaL (ORCPT
+        id S1727251AbeJISaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 14:30:11 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35522 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbeJISaK (ORCPT
+        Tue, 9 Oct 2018 14:30:14 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35527 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbeJISaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:30:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l17-v6so683743pff.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:44 -0700 (PDT)
+        Tue, 9 Oct 2018 14:30:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l17-v6so683804pff.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 04:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dMma1QgoNzYAJWq7mzyuRrx+HVtXHEDnfcf4uhZYrKU=;
-        b=VrukCQR+K4zG+3m9erzdrqhco9bKKjEgvErBy08wMdvMoLUHyGW0BFBaz/MIXr0cT4
-         2n6JWUlIgo6EG0KQXe6seCVpV5hRNc7XCCewO0iMNojj0GU2m3ttR1beVC2EInFSAGZB
-         ept+gN0WhvJxnlQk6xv826fm50u+x5r7PqWXs+W4xLvv+TOBhA4I5Q7KL+SfPPS/ZxvT
-         b4i/eVsH6ctCNWtIH76ofdnlAQV7c6Ofcu4fMiCbTChjVl6NZBs3O9UF4Skw3m5OJ+/I
-         AgDjoOp4H3ojzXYxkKDNE9nrgpCABkRNMErlyWsdhr2XqcemKHogjl2SPetbPUnuN58/
-         T4bA==
+        bh=DtVsjTkvQbAN09oTDSz4hY7949UmQWEI7FEtFfuaV7c=;
+        b=fWduV7tzocHtyTeFvrl06goUFy9SHNN0odLZQ/3+c0MM6BlnsOd4+OMuneJkCesUDQ
+         mwiQAW3qqdwNzeR/a22rzFZgs4yBOi596LWMlrRAKSaMUzCsx3A3/hxP314OLL8/BYQD
+         eZywN2O6HGegG3OKrXZRI9EI5TcuYY8UjNH0hYVy3Uqwpc7WAVrcp8qS5A+wbK8MTeJU
+         KPj+x22oK2u6280E6wPHdQWr2KjKxg1lCrKhFaqxuk0GMJ9RckifxB18WCcAHtMb7cp3
+         4a6wpw+m/fl+jHsIGJq8BEKp2iuPp1xid5YeC3LOlK82atTyu7gNj5MK43VWX2YDXkRZ
+         qVAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dMma1QgoNzYAJWq7mzyuRrx+HVtXHEDnfcf4uhZYrKU=;
-        b=d1pqNROJNwuRM/hJ6mVvZV/uGvpPdBkyn5/I+hT8+dMGMUyyNWgL+sjpHYb2O5yeBq
-         Sju/bdP2NoChhGUF6QvY/B3EWgRogsGKlPEHRkfXLK8vmpz+RoBP4gnhDv06wFgA510c
-         I+WjGe3i8nse7QNzFHPvBtz60/NU7F/EOq6IP6DEQhr8IiqiurjWm5KrwR44sOFre8ze
-         WTDed0bOdrQzrUdbV4A09w1/dKtw5ryAqmOq7HC+WHPha5pBPeY/SYY08qt2114RfCdS
-         QSQh2D3mKMjWKrBeGTfwPJEgfrhgtiDRsVKMbZseCshq2KuytgujPLoslNbp/IFyHRJi
-         LSJA==
-X-Gm-Message-State: ABuFfoiPQFJoeEYthZFa/DJjcMm5FqMGJwOwq8GWtdPdAmwxdhUaNRwv
-        ErgrLYaBN8QJfnOzEpH2n2qNrA==
-X-Google-Smtp-Source: ACcGV63iVZ0TEo9GvllHBPN4OSIrePCrYFk3miPQsnm0tdX40ajEp4xOtUOQi2iyV2uexNH/f/qf/Q==
-X-Received: by 2002:a63:1d10:: with SMTP id d16-v6mr24128416pgd.228.1539083623731;
-        Tue, 09 Oct 2018 04:13:43 -0700 (PDT)
+        bh=DtVsjTkvQbAN09oTDSz4hY7949UmQWEI7FEtFfuaV7c=;
+        b=oGQAwRfqwQjkzrSqJvIkFjEuTU2Olo0/VV7dwNcNPCdPBxxVEOv9EXWjBuCF9KrNG+
+         8mkrV7PzmxkpGZOHc2Cy3NK4MY1TB5FzGTd6A/oJKmDFTqiWCstoNRLGgHmcKPqHIBrs
+         17hzpZqn8DzW8kXLeyjNinMXf9sSLErCN6kn97RmmA0AlyI/fIFXRohdXkpvDn2gJG01
+         ExAWwVC2AlL2KCYQdr1b4x47a6I0fQWOs8E2UiBageGZF1lsqClx9hI44BG1NicCUtNW
+         Fc9nHAgDKW8fmrmy2HFuan9H2FMVWvbK4YEeW9lzBRjO06Hdl7q6woFNnG+H+sdZe9WP
+         44Ug==
+X-Gm-Message-State: ABuFfoiTDi2+nE/kW/iH7Om8xayji1PJTAsYheVMeqKORWf4kGIzMNsk
+        suQW8bTYzU997tvQIf5UywKtLQ==
+X-Google-Smtp-Source: ACcGV63E1SgOO2LujH5mnk02FnPz39IzrrWu28PTMoPtaIND2K7WIAflutPv/kK4B4b6GB2Qfq0SyA==
+X-Received: by 2002:a65:664e:: with SMTP id z14-v6mr24385603pgv.347.1539083626880;
+        Tue, 09 Oct 2018 04:13:46 -0700 (PDT)
 Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.40
+        by smtp.gmail.com with ESMTPSA id p1-v6sm25342380pff.128.2018.10.09.04.13.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 04:13:42 -0700 (PDT)
+        Tue, 09 Oct 2018 04:13:45 -0700 (PDT)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 09/45] lightnvm: pblk: remove size and out of bounds read check
-Date:   Tue,  9 Oct 2018 13:11:39 +0200
-Message-Id: <20181009111215.7653-10-mb@lightnvm.io>
+Subject: [GIT PULL 10/45] lightnvm: pblk: refactor put line fn on read completion
+Date:   Tue,  9 Oct 2018 13:11:40 +0200
+Message-Id: <20181009111215.7653-11-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009111215.7653-1-mb@lightnvm.io>
 References: <20181009111215.7653-1-mb@lightnvm.io>
@@ -77,32 +77,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The I/O size and capacity checks are already done by the block layer.
+The read completion path uses the put_line variable to decide whether
+the reference on a line should be released. The function name used for
+that is pblk_read_put_rqd_kref, which could lead one to believe that it
+is the rqd that is releasing the reference, while it is the line
+reference that is put.
+
+Rename and also split the function in two to account for either rqd or
+single ppa callers and move it to core, such that it later can be used
+in the write path as well.
 
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 Reviewed-by: Javier González <javier@cnexlabs.com>
+Reviewed-by: Heiner Litz <hlitz@ucsc.edu>
 ---
- drivers/lightnvm/pblk-read.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/lightnvm/pblk-core.c | 19 +++++++++++++++++++
+ drivers/lightnvm/pblk-read.c | 18 +-----------------
+ drivers/lightnvm/pblk.h      |  2 ++
+ 3 files changed, 22 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index e0b513d07e14..5f99cf396072 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1426,6 +1426,25 @@ struct pblk_line *pblk_line_get_first_data(struct pblk *pblk)
+ 	return line;
+ }
+ 
++void pblk_ppa_to_line_put(struct pblk *pblk, struct ppa_addr ppa)
++{
++	struct pblk_line *line;
++
++	line = &pblk->lines[pblk_ppa_to_line(ppa)];
++	kref_put(&line->ref, pblk_line_put_wq);
++}
++
++void pblk_rq_to_line_put(struct pblk *pblk, struct nvm_rq *rqd)
++{
++	struct ppa_addr *ppa_list;
++	int i;
++
++	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
++
++	for (i = 0; i < rqd->nr_ppas; i++)
++		pblk_ppa_to_line_put(pblk, ppa_list[i]);
++}
++
+ static void pblk_stop_writes(struct pblk *pblk, struct pblk_line *line)
+ {
+ 	lockdep_assert_held(&pblk->l_mg.free_lock);
 diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 9c61c19be5dc..ba3dcb6be4c3 100644
+index ba3dcb6be4c3..ad1d7713bbda 100644
 --- a/drivers/lightnvm/pblk-read.c
 +++ b/drivers/lightnvm/pblk-read.c
-@@ -449,13 +449,6 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	DECLARE_BITMAP(read_bitmap, NVM_MAX_VLBA);
- 	int ret = NVM_IO_ERR;
+@@ -165,22 +165,6 @@ static void pblk_read_check_rand(struct pblk *pblk, struct nvm_rq *rqd,
+ 	WARN_ONCE(j != rqd->nr_ppas, "pblk: corrupted random request\n");
+ }
  
--	/* logic error: lba out-of-bounds. Ignore read request */
--	if (blba >= pblk->rl.nr_secs || nr_secs > NVM_MAX_VLBA) {
--		WARN(1, "pblk: read lba out of bounds (lba:%llu, nr:%d)\n",
--					(unsigned long long)blba, nr_secs);
--		return NVM_IO_ERR;
--	}
+-static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
+-{
+-	struct ppa_addr *ppa_list;
+-	int i;
 -
- 	generic_start_io_acct(q, REQ_OP_READ, bio_sectors(bio),
- 			      &pblk->disk->part0);
+-	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
+-
+-	for (i = 0; i < rqd->nr_ppas; i++) {
+-		struct ppa_addr ppa = ppa_list[i];
+-		struct pblk_line *line;
+-
+-		line = &pblk->lines[pblk_ppa_to_line(ppa)];
+-		kref_put(&line->ref, pblk_line_put_wq);
+-	}
+-}
+-
+ static void pblk_end_user_read(struct bio *bio)
+ {
+ #ifdef CONFIG_NVM_PBLK_DEBUG
+@@ -208,7 +192,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ 		bio_put(int_bio);
  
+ 	if (put_line)
+-		pblk_read_put_rqd_kref(pblk, rqd);
++		pblk_rq_to_line_put(pblk, rqd);
+ 
+ #ifdef CONFIG_NVM_PBLK_DEBUG
+ 	atomic_long_add(rqd->nr_ppas, &pblk->sync_reads);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 64ae0c7ed3bb..be67bbfa3d0a 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -787,6 +787,8 @@ struct bio *pblk_bio_map_addr(struct pblk *pblk, void *data,
+ struct pblk_line *pblk_line_get(struct pblk *pblk);
+ struct pblk_line *pblk_line_get_first_data(struct pblk *pblk);
+ struct pblk_line *pblk_line_replace_data(struct pblk *pblk);
++void pblk_ppa_to_line_put(struct pblk *pblk, struct ppa_addr ppa);
++void pblk_rq_to_line_put(struct pblk *pblk, struct nvm_rq *rqd);
+ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line);
+ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line);
+ struct pblk_line *pblk_line_get_data(struct pblk *pblk);
 -- 
 2.17.1
 
