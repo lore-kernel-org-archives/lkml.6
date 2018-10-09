@@ -2,71 +2,78 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA52C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54940C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77CF22077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:41:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CF22077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EAE721479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EAE721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeJIP5g (ORCPT
+        id S1726562AbeJIP6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:57:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44576 "EHLO mx1.suse.de"
+        Tue, 9 Oct 2018 11:58:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44700 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeJIP5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:57:36 -0400
+        id S1725855AbeJIP6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:58:32 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E45D8AB4C;
-        Tue,  9 Oct 2018 08:41:45 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 10:41:45 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-cc:     Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH v2 1/2] mfd: cros: add "base attached" MKBP switch
- definition
-In-Reply-To: <20181009062855.GA32033@dell>
-Message-ID: <nycvar.YFH.7.76.1810091041030.14430@cbobk.fhfr.pm>
-References: <20181005184114.207503-1-dtor@chromium.org> <20181009062855.GA32033@dell>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 32AF7AB4C;
+        Tue,  9 Oct 2018 08:42:42 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 10:42:41 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 3/3] printk: do not preliminary split up cont buffer
+Message-ID: <20181009084241.tlmsjxnyxf4zx2fh@pathway.suse.cz>
+References: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
+ <20181002023836.4487-4-sergey.senozhatsky@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002023836.4487-4-sergey.senozhatsky@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Oct 2018, Lee Jones wrote:
-
-> > This adds a "base attached" switch definition to the MKBP protocol that
-> > is used by Whiskers driver to properly determine device state (clamshell
-> > vs tablet mode).
-> > 
-> > Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-> > ---
-> > 
-> > v2 changes: None
-> > 
-> > Lee, I was wondering if it would be OK for cros_ec_commands.h to be
-> > merged through HID tree.
+On Tue 2018-10-02 11:38:36, Sergey Senozhatsky wrote:
+> We have a proper 'overflow' check which tells us that we need to
+> split up existing cont buffer in separate records:
 > 
-> Yes, so long as it goes through in this merge-window.
+> 	if (cont.len + len > sizeof(cont.buf))
+> 		cont_flush();
 > 
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+> At the same time we also have one extra flush: "if cont buffer is
+> 80% full then split it up" in cont_add():
+> 
+> 	if (cont.len > (sizeof(cont.buf) * 80) / 100)
+> 		cont_flush();
+> 
+> This looks to be redundant, since the existing "overflow" check
+> should work just fine, so remove this 80% check and wait for either
+> a normal cont termination \n, for preliminary flush due to
+> possible buffer overflow or for preliminary flush due to cont race.
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Thanks; both patches now queued in hid.git#for-4.20/google
+I wonder if this check ever triggered ;-) It is a nice clean up:
 
--- 
-Jiri Kosina
-SUSE Labs
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
+Best Regards,
+Petr
