@@ -2,449 +2,149 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4DDC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A72AC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916CB21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:11:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="owH7uW8s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916CB21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id D2D50213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D50213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeJIL0a (ORCPT
+        id S1726503AbeJILjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 07:26:30 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:38923 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbeJIL0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 07:26:30 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id f37d052d;
-        Tue, 9 Oct 2018 04:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=2m2hhbnb1RgjSyYB1aQ/pqucqDo=; b=owH7uW
-        8s4FR+CkWqDyJKHOu5RLZVg4f3V1CoO7g/BiwWXjnieLBhTNn4+PoCtLpb1OYqRh
-        whm8jjCGHGRKmej6YqKgbDRmnbVthG3fbGx958GxkdeQLxSOsr81dy2zqfhoYieG
-        d0gA1LjM6mB9v3G+eKDQODNzqk9Coc2Hwt93fN8FOw5BZopjTyNkyiKj75SOgoBm
-        ezpOirl79ZPf3GGCG0yAkMTdQEY6hdavxePEf90KogNSzDgxtBeBY0g3BVS7ain4
-        iqYJJ5nXyitPH7msBPq2MIh+YeXAe1Q8iJN4iOYJa6TYp1EF8ZLcyMnA5e323J51
-        BHLVEx4UlzMX98sg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 00defd27 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 9 Oct 2018 04:10:41 +0000 (UTC)
-Received: by mail-ot1-f48.google.com with SMTP id o14so232553oth.4;
-        Mon, 08 Oct 2018 21:11:32 -0700 (PDT)
-X-Gm-Message-State: ABuFfogH/oF0jXV1/sJtJ31KdFn4rVaVcz4L0UUyihYjOoEUCbP8ATK1
-        F4Z2lNYh6fl5+j54iqQGIJKm0iUxyChxC7aKonY=
-X-Google-Smtp-Source: ACcGV60fACJAbmkU/q2HwleCG4/ZNNkBtHOdVVMUs/Z5HCln29/GBfGx4Qj0oUO0muguqMQcUMEgUtZ4qRnp0KoC0AQ=
-X-Received: by 2002:a9d:48b9:: with SMTP id d54mr15059115otf.144.1539058291530;
- Mon, 08 Oct 2018 21:11:31 -0700 (PDT)
+        Tue, 9 Oct 2018 07:39:00 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:48632 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbeJILjA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 07:39:00 -0400
+Received: by mail-io1-f69.google.com with SMTP id v12-v6so230036iob.15
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Oct 2018 21:24:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=rZqP1fm23mV6a0nmRz2viWF7KZXuarSsE6Oczbs7rqo=;
+        b=OvMG2KXVDlQtxPglcC5f0bUhNw5Zlsf274iDskRYt89m1ByPl3oSxOzCB5MjpbM9bp
+         9iu+4+sUzg1lT6bt5Z8kkhgIM9lKCwwduEc3XEi8YXxKLqbuvUkrdoIWwm+dGs4xoZAx
+         izot5ZmCWP0jGu+vtf9/r28GJ5Kl+U7qe8cq7yM3ddiQ4+tO7LLyML+5QVi/uNvYATX/
+         OyWUv6doBXB76LzFwRQT0y8dKEa3jMq2t2aerTvFPk6pUFQy5cfxAZfJ5r4ZAwdJ9Kp1
+         V+INdV7eLL5nosqQTIGOF5mUzJNz++AcK9R5OiRWody43Jxx5E5kONkCD0/bscMwQK1l
+         QF/g==
+X-Gm-Message-State: ABuFfogDLFiwMKyagZs3u3ufLoju1LHyxsXln34FGw5y7JWrVJ3LdQbT
+        bklyvdV7tkFsqQjaKEOUJa5vozAtxtJH5DTxBoy/0f6T4T8j
+X-Google-Smtp-Source: ACcGV61XkDH1eEhkqikF/+avcxvN9/onbV9ZviX94ZsMeq53IL9DZo/07AJpMb5t2llJJ5+KNvYK0xarH1aE0NRIsIQYH79+LDMv
 MIME-Version: 1.0
-References: <20181008211554.5355-1-ard.biesheuvel@linaro.org> <20181008211554.5355-4-ard.biesheuvel@linaro.org>
-In-Reply-To: <20181008211554.5355-4-ard.biesheuvel@linaro.org>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 9 Oct 2018 06:11:20 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rDfVbGLpeV9-LDOUo1on2UB7UHd8jBKcWycf9HYkar=g@mail.gmail.com>
-Message-ID: <CAHmME9rDfVbGLpeV9-LDOUo1on2UB7UHd8jBKcWycf9HYkar=g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] crypto: siphash - drop _aligned variants
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@linux-mips.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a5e:dd0c:: with SMTP id t12-v6mr18606711iop.16.1539059042860;
+ Mon, 08 Oct 2018 21:24:02 -0700 (PDT)
+Date:   Mon, 08 Oct 2018 21:24:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000089c56e0577c41b4b@google.com>
+Subject: kernel BUG at fs/block_dev.c:LINE!
+From:   syzbot <syzbot+82909b30c4657137bf84@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Hello,
 
-On Mon, Oct 8, 2018 at 11:16 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On ARM v6 and later, we define CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> because the ordinary load/store instructions (ldr, ldrh, ldrb) can
-> tolerate any misalignment of the memory address. However, load/store
-> double and load/store multiple instructions (ldrd, ldm) may still only
-> be used on memory addresses that are 32-bit aligned, and so we have to
-> use the CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS macro with care, or we
-> may end up with a severe performance hit due to alignment traps that
-> require fixups by the kernel.
->
-> Fortunately, the get_unaligned() accessors do the right thing: when
-> building for ARMv6 or later, the compiler will emit unaligned accesses
-> using the ordinary load/store instructions (but avoid the ones that
-> require 32-bit alignment). When building for older ARM, those accessors
-> will emit the appropriate sequence of ldrb/mov/orr instructions. And on
-> architectures that can truly tolerate any kind of misalignment, the
-> get_unaligned() accessors resolve to the leXX_to_cpup accessors that
-> operate on aligned addresses.
->
-> Since the compiler will in fact emit ldrd or ldm instructions when
-> building this code for ARM v6 or later, the solution is to use the
-> unaligned accessors on the aligned code paths. Given the above, this
-> either produces the same code, or better in the ARMv6+ case. However,
-> since that removes the only difference between the aligned and unaligned
-> variants, we can drop the aligned variant entirely.
->
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  include/linux/siphash.h | 106 +++++++++-----------
->  lib/siphash.c           | 103 ++-----------------
->  2 files changed, 54 insertions(+), 155 deletions(-)
->
-> diff --git a/include/linux/siphash.h b/include/linux/siphash.h
-> index fa7a6b9cedbf..ef3c36b0ae0f 100644
-> --- a/include/linux/siphash.h
-> +++ b/include/linux/siphash.h
-> @@ -15,16 +15,14 @@
->
->  #include <linux/types.h>
->  #include <linux/kernel.h>
-> +#include <asm/unaligned.h>
->
->  #define SIPHASH_ALIGNMENT __alignof__(u64)
->  typedef struct {
->         u64 key[2];
->  } siphash_key_t;
->
-> -u64 __siphash_aligned(const void *data, size_t len, const siphash_key_t *key);
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key);
-> -#endif
-> +u64 __siphash(const void *data, size_t len, const siphash_key_t *key);
->
->  u64 siphash_1u64(const u64 a, const siphash_key_t *key);
->  u64 siphash_2u64(const u64 a, const u64 b, const siphash_key_t *key);
-> @@ -48,26 +46,6 @@ static inline u64 siphash_4u32(const u32 a, const u32 b, const u32 c,
->  }
->
->
-> -static inline u64 ___siphash_aligned(const __le64 *data, size_t len,
-> -                                    const siphash_key_t *key)
-> -{
-> -       if (__builtin_constant_p(len) && len == 4)
-> -               return siphash_1u32(le32_to_cpup((const __le32 *)data), key);
-> -       if (__builtin_constant_p(len) && len == 8)
-> -               return siphash_1u64(le64_to_cpu(data[0]), key);
-> -       if (__builtin_constant_p(len) && len == 16)
-> -               return siphash_2u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
-> -                                   key);
-> -       if (__builtin_constant_p(len) && len == 24)
-> -               return siphash_3u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
-> -                                   le64_to_cpu(data[2]), key);
-> -       if (__builtin_constant_p(len) && len == 32)
-> -               return siphash_4u64(le64_to_cpu(data[0]), le64_to_cpu(data[1]),
-> -                                   le64_to_cpu(data[2]), le64_to_cpu(data[3]),
-> -                                   key);
-> -       return __siphash_aligned(data, len, key);
-> -}
-> -
->  /**
->   * siphash - compute 64-bit siphash PRF value
->   * @data: buffer to hash
-> @@ -77,11 +55,30 @@ static inline u64 ___siphash_aligned(const __le64 *data, size_t len,
->  static inline u64 siphash(const void *data, size_t len,
->                           const siphash_key_t *key)
->  {
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -       if (!IS_ALIGNED((unsigned long)data, SIPHASH_ALIGNMENT))
-> -               return __siphash_unaligned(data, len, key);
-> -#endif
-> -       return ___siphash_aligned(data, len, key);
-> +       if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {
-> +               if (__builtin_constant_p(len) && len == 4)
-> +                       return siphash_1u32(get_unaligned_le32(data),
-> +                                           key);
-> +               if (__builtin_constant_p(len) && len == 8)
-> +                       return siphash_1u64(get_unaligned_le64(data),
-> +                                           key);
-> +               if (__builtin_constant_p(len) && len == 16)
-> +                       return siphash_2u64(get_unaligned_le64(data),
-> +                                           get_unaligned_le64(data + 8),
-> +                                           key);
-> +               if (__builtin_constant_p(len) && len == 24)
-> +                       return siphash_3u64(get_unaligned_le64(data),
-> +                                           get_unaligned_le64(data + 8),
-> +                                           get_unaligned_le64(data + 16),
-> +                                           key);
-> +               if (__builtin_constant_p(len) && len == 32)
-> +                       return siphash_4u64(get_unaligned_le64(data),
-> +                                           get_unaligned_le64(data + 8),
-> +                                           get_unaligned_le64(data + 16),
-> +                                           get_unaligned_le64(data + 24),
-> +                                           key);
-> +       }
-> +       return __siphash(data, len, key);
->  }
->
->  #define HSIPHASH_ALIGNMENT __alignof__(unsigned long)
-> @@ -89,12 +86,7 @@ typedef struct {
->         unsigned long key[2];
->  } hsiphash_key_t;
->
-> -u32 __hsiphash_aligned(const void *data, size_t len,
-> -                      const hsiphash_key_t *key);
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -u32 __hsiphash_unaligned(const void *data, size_t len,
-> -                        const hsiphash_key_t *key);
-> -#endif
-> +u32 __hsiphash(const void *data, size_t len, const hsiphash_key_t *key);
->
->  u32 hsiphash_1u32(const u32 a, const hsiphash_key_t *key);
->  u32 hsiphash_2u32(const u32 a, const u32 b, const hsiphash_key_t *key);
-> @@ -103,24 +95,6 @@ u32 hsiphash_3u32(const u32 a, const u32 b, const u32 c,
->  u32 hsiphash_4u32(const u32 a, const u32 b, const u32 c, const u32 d,
->                   const hsiphash_key_t *key);
->
-> -static inline u32 ___hsiphash_aligned(const __le32 *data, size_t len,
-> -                                     const hsiphash_key_t *key)
-> -{
-> -       if (__builtin_constant_p(len) && len == 4)
-> -               return hsiphash_1u32(le32_to_cpu(data[0]), key);
-> -       if (__builtin_constant_p(len) && len == 8)
-> -               return hsiphash_2u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
-> -                                    key);
-> -       if (__builtin_constant_p(len) && len == 12)
-> -               return hsiphash_3u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
-> -                                    le32_to_cpu(data[2]), key);
-> -       if (__builtin_constant_p(len) && len == 16)
-> -               return hsiphash_4u32(le32_to_cpu(data[0]), le32_to_cpu(data[1]),
-> -                                    le32_to_cpu(data[2]), le32_to_cpu(data[3]),
-> -                                    key);
-> -       return __hsiphash_aligned(data, len, key);
-> -}
-> -
->  /**
->   * hsiphash - compute 32-bit hsiphash PRF value
->   * @data: buffer to hash
-> @@ -130,11 +104,27 @@ static inline u32 ___hsiphash_aligned(const __le32 *data, size_t len,
->  static inline u32 hsiphash(const void *data, size_t len,
->                            const hsiphash_key_t *key)
->  {
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -       if (!IS_ALIGNED((unsigned long)data, HSIPHASH_ALIGNMENT))
-> -               return __hsiphash_unaligned(data, len, key);
-> -#endif
-> -       return ___hsiphash_aligned(data, len, key);
-> +       if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {
-> +               if (__builtin_constant_p(len) && len == 4)
-> +                       return hsiphash_1u32(get_unaligned_le32(data),
-> +                                            key);
-> +               if (__builtin_constant_p(len) && len == 8)
-> +                       return hsiphash_2u32(get_unaligned_le32(data),
-> +                                            get_unaligned_le32(data + 4),
-> +                                            key);
-> +               if (__builtin_constant_p(len) && len == 12)
-> +                       return hsiphash_3u32(get_unaligned_le32(data),
-> +                                            get_unaligned_le32(data + 4),
-> +                                            get_unaligned_le32(data + 8),
-> +                                            key);
-> +               if (__builtin_constant_p(len) && len == 16)
-> +                       return hsiphash_4u32(get_unaligned_le32(data),
-> +                                            get_unaligned_le32(data + 4),
-> +                                            get_unaligned_le32(data + 8),
-> +                                            get_unaligned_le32(data + 12),
-> +                                            key);
-> +       }
-> +       return __hsiphash(data, len, key);
->  }
->
->  #endif /* _LINUX_SIPHASH_H */
-> diff --git a/lib/siphash.c b/lib/siphash.c
-> index 3ae58b4edad6..3b2ba1a10ad9 100644
-> --- a/lib/siphash.c
-> +++ b/lib/siphash.c
-> @@ -49,40 +49,7 @@
->         SIPROUND; \
->         return (v0 ^ v1) ^ (v2 ^ v3);
->
-> -u64 __siphash_aligned(const void *data, size_t len, const siphash_key_t *key)
-> -{
-> -       const u8 *end = data + len - (len % sizeof(u64));
-> -       const u8 left = len & (sizeof(u64) - 1);
-> -       u64 m;
-> -       PREAMBLE(len)
-> -       for (; data != end; data += sizeof(u64)) {
-> -               m = le64_to_cpup(data);
-> -               v3 ^= m;
-> -               SIPROUND;
-> -               SIPROUND;
-> -               v0 ^= m;
-> -       }
-> -#if defined(CONFIG_DCACHE_WORD_ACCESS) && BITS_PER_LONG == 64
-> -       if (left)
-> -               b |= le64_to_cpu((__force __le64)(load_unaligned_zeropad(data) &
-> -                                                 bytemask_from_count(left)));
-> -#else
-> -       switch (left) {
-> -       case 7: b |= ((u64)end[6]) << 48;
-> -       case 6: b |= ((u64)end[5]) << 40;
-> -       case 5: b |= ((u64)end[4]) << 32;
-> -       case 4: b |= le32_to_cpup(data); break;
-> -       case 3: b |= ((u64)end[2]) << 16;
-> -       case 2: b |= le16_to_cpup(data); break;
-> -       case 1: b |= end[0];
-> -       }
-> -#endif
-> -       POSTAMBLE
-> -}
-> -EXPORT_SYMBOL(__siphash_aligned);
-> -
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key)
-> +u64 __siphash(const void *data, size_t len, const siphash_key_t *key)
->  {
->         const u8 *end = data + len - (len % sizeof(u64));
->         const u8 left = len & (sizeof(u64) - 1);
-> @@ -112,8 +79,7 @@ u64 __siphash_unaligned(const void *data, size_t len, const siphash_key_t *key)
->  #endif
->         POSTAMBLE
->  }
-> -EXPORT_SYMBOL(__siphash_unaligned);
-> -#endif
-> +EXPORT_SYMBOL(__siphash);
->
->  /**
->   * siphash_1u64 - compute 64-bit siphash PRF value of a u64
-> @@ -250,39 +216,7 @@ EXPORT_SYMBOL(siphash_3u32);
->         HSIPROUND; \
->         return (v0 ^ v1) ^ (v2 ^ v3);
->
-> -u32 __hsiphash_aligned(const void *data, size_t len, const hsiphash_key_t *key)
-> -{
-> -       const u8 *end = data + len - (len % sizeof(u64));
-> -       const u8 left = len & (sizeof(u64) - 1);
-> -       u64 m;
-> -       HPREAMBLE(len)
-> -       for (; data != end; data += sizeof(u64)) {
-> -               m = le64_to_cpup(data);
-> -               v3 ^= m;
-> -               HSIPROUND;
-> -               v0 ^= m;
-> -       }
-> -#if defined(CONFIG_DCACHE_WORD_ACCESS) && BITS_PER_LONG == 64
-> -       if (left)
-> -               b |= le64_to_cpu((__force __le64)(load_unaligned_zeropad(data) &
-> -                                                 bytemask_from_count(left)));
-> -#else
-> -       switch (left) {
-> -       case 7: b |= ((u64)end[6]) << 48;
-> -       case 6: b |= ((u64)end[5]) << 40;
-> -       case 5: b |= ((u64)end[4]) << 32;
-> -       case 4: b |= le32_to_cpup(data); break;
-> -       case 3: b |= ((u64)end[2]) << 16;
-> -       case 2: b |= le16_to_cpup(data); break;
-> -       case 1: b |= end[0];
-> -       }
-> -#endif
-> -       HPOSTAMBLE
-> -}
-> -EXPORT_SYMBOL(__hsiphash_aligned);
-> -
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -u32 __hsiphash_unaligned(const void *data, size_t len,
-> +u32 __hsiphash(const void *data, size_t len,
->                          const hsiphash_key_t *key)
->  {
->         const u8 *end = data + len - (len % sizeof(u64));
-> @@ -312,8 +246,7 @@ u32 __hsiphash_unaligned(const void *data, size_t len,
->  #endif
->         HPOSTAMBLE
->  }
-> -EXPORT_SYMBOL(__hsiphash_unaligned);
-> -#endif
-> +EXPORT_SYMBOL(__hsiphash);
->
->  /**
->   * hsiphash_1u32 - compute 64-bit hsiphash PRF value of a u32
-> @@ -418,30 +351,7 @@ EXPORT_SYMBOL(hsiphash_4u32);
->         HSIPROUND; \
->         return v1 ^ v3;
->
-> -u32 __hsiphash_aligned(const void *data, size_t len, const hsiphash_key_t *key)
-> -{
-> -       const u8 *end = data + len - (len % sizeof(u32));
-> -       const u8 left = len & (sizeof(u32) - 1);
-> -       u32 m;
-> -       HPREAMBLE(len)
-> -       for (; data != end; data += sizeof(u32)) {
-> -               m = le32_to_cpup(data);
-> -               v3 ^= m;
-> -               HSIPROUND;
-> -               v0 ^= m;
-> -       }
-> -       switch (left) {
-> -       case 3: b |= ((u32)end[2]) << 16;
-> -       case 2: b |= le16_to_cpup(data); break;
-> -       case 1: b |= end[0];
-> -       }
-> -       HPOSTAMBLE
-> -}
-> -EXPORT_SYMBOL(__hsiphash_aligned);
-> -
-> -#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-> -u32 __hsiphash_unaligned(const void *data, size_t len,
-> -                        const hsiphash_key_t *key)
-> +u32 __hsiphash(const void *data, size_t len, const hsiphash_key_t *key)
->  {
->         const u8 *end = data + len - (len % sizeof(u32));
->         const u8 left = len & (sizeof(u32) - 1);
-> @@ -460,8 +370,7 @@ u32 __hsiphash_unaligned(const void *data, size_t len,
->         }
->         HPOSTAMBLE
->  }
-> -EXPORT_SYMBOL(__hsiphash_unaligned);
-> -#endif
-> +EXPORT_SYMBOL(__hsiphash);
->
->  /**
->   * hsiphash_1u32 - compute 32-bit hsiphash PRF value of a u32
-> --
-> 2.11.0
->
+syzbot found the following crash on:
 
-As you might expect, when compiling in __siphash_unaligned and
-__siphash_aligned on the x86 at the same time, __siphash_unaligned is
-replaced with just "jmp __siphash_aligned", as gcc recognized that
-indeed the same code is generated.
+HEAD commit:    0854ba5ff5c9 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1554ec06400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
+dashboard link: https://syzkaller.appspot.com/bug?extid=82909b30c4657137bf84
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10331976400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165db54e400000
 
-However, on platforms where get_unaligned_* does do something
-different, it looks to me like this patch now always calls the
-unaligned code, even when the input data _is_ an aligned address
-already, which is worse behaviour than before. While it would be
-possible for the get_unaligned_* function headers to also detect this
-and fallback to the faster version at compile time, by the time
-get_unaligned_* is used in this patch, it's no longer in the header,
-but rather in siphash.c, which means the compiler no longer knows that
-the address is aligned, and so we hit the slow path. This especially
-impacts architectures like MIPS, for example. This is why the original
-code, prior to this patch, checks the alignment in the .h and then
-selects which codepath afterwards. So while this patch might handle
-the ARM use case, it seems like a regression on all other platforms.
-See, for example, the struct passing in net/core/secure_seq.c, which
-sends intentionally aligned and packed structs to siphash, which then
-benefits from using the faster instructions on certain platforms.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+82909b30c4657137bf84@syzkaller.appspotmail.com
 
-It seems like what you're grappling with on the ARM side of things is
-that CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS only half means what it
-says on some ISAs, complicating this logic. It seems like the ideal
-thing to do, given that, would be to just not set
-CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS on those, so that we can fall
-back to the unaligned path always, like this patch suggests. Or if
-that's _too_ drastic, perhaps introduce another variable like
-CONFIG_MOSTLY_EFFICIENT_UNALIGNED_ACCESS.
+  loop1: p1
+  loop4: p1
+  loop3: p1
+  loop5: p1
+------------[ cut here ]------------
+kernel BUG at fs/block_dev.c:1627!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 6913 Comm: syz-executor753 Not tainted 4.19.0-rc7+ #53
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:blkdev_get+0x65f/0xb50 fs/block_dev.c:1627
+Code: ff ff ff 0f 84 4d 03 00 00 48 89 85 f0 fe ff ff e8 f6 fa 9d ff 48 8b  
+85 f0 fe ff ff 48 85 c0 0f 84 9b 00 00 00 e8 e1 fa 9d ff <0f> 0b e8 da fa  
+9d ff 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1
+RSP: 0018:ffff8801c0a8f578 EFLAGS: 00010293
+RAX: ffff8801c083a700 RBX: 0000000000000000 RCX: ffffffff81e0da52
+RDX: 0000000000000000 RSI: ffffffff81e0daaf RDI: 0000000000000005
+RBP: ffff8801c0a8f6a8 R08: ffff8801c083a700 R09: fffffbfff12424f0
+R10: fffffbfff12424f0 R11: ffffffff89212783 R12: ffff8801d3ac0318
+R13: ffff8801d3bee2d8 R14: ffff8801d3bee2c0 R15: ffff8801d3ac0280
+FS:  0000000001359880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000606ed8 CR3: 00000001c12d3000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1775
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x12bf/0x5160 fs/namei.c:3534
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x568/0x700 fs/open.c:1063
+  __do_sys_openat fs/open.c:1090 [inline]
+  __se_sys_openat fs/open.c:1084 [inline]
+  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445589
+Code: fd cd fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb cd fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd31e04eb8 EFLAGS: 00000286 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 0000000000445589
+RDX: 00000000008001a0 RSI: 0000000020000080 RDI: 00000000ffffff9c
+RBP: 706e692f7665642f R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000069554
+R13: 0000000000402870 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace bcaf07e3e9ad4219 ]---
+RIP: 0010:blkdev_get+0x65f/0xb50 fs/block_dev.c:1627
+Code: ff ff ff 0f 84 4d 03 00 00 48 89 85 f0 fe ff ff e8 f6 fa 9d ff 48 8b  
+85 f0 fe ff ff 48 85 c0 0f 84 9b 00 00 00 e8 e1 fa 9d ff <0f> 0b e8 da fa  
+9d ff 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1
+RSP: 0018:ffff8801c0a8f578 EFLAGS: 00010293
+RAX: ffff8801c083a700 RBX: 0000000000000000 RCX: ffffffff81e0da52
+RDX: 0000000000000000 RSI: ffffffff81e0daaf RDI: 0000000000000005
+RBP: ffff8801c0a8f6a8 R08: ffff8801c083a700 R09: fffffbfff12424f0
+R10: fffffbfff12424f0 R11: ffffffff89212783 R12: ffff8801d3ac0318
+R13: ffff8801d3bee2d8 R14: ffff8801d3bee2c0 R15: ffff8801d3ac0280
+FS:  0000000001359880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000606ed8 CR3: 00000001c12d3000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-By the way, have you confirmed that the compiler actually does emit
-ldrd and ldm here?
 
-Jason
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
