@@ -2,133 +2,152 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5093BC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B371EC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152862087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152862087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6DACC2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DACC2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeJIPT1 (ORCPT
+        id S1726434AbeJIPXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:19:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38950 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeJIPT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:19:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23FB7AEFF;
-        Tue,  9 Oct 2018 08:03:44 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 10:03:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yong-Taek Lee <ytk.lee@samsung.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-Message-ID: <20181009080343.GE8528@dhcp22.suse.cz>
-References: <CGME20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
- <20181005063208epcms1p22959cd2f771ad017996e2b18266791ea@epcms1p2>
- <20181009062330.GA8528@dhcp22.suse.cz>
+        Tue, 9 Oct 2018 11:23:41 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:58613 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725855AbeJIPXk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:23:40 -0400
+Received: from [IPv6:2001:420:44c1:2579:9980:eade:362a:f91e] ([IPv6:2001:420:44c1:2579:9980:eade:362a:f91e])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 9n3YgXVqrSskC9n3cgmAWu; Tue, 09 Oct 2018 10:07:57 +0200
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181004081119.102575-1-acourbot@chromium.org>
+ <676a5e92-86c2-cf5a-9409-ef490ad8e828@xs4all.nl>
+ <CAAFQd5AULSY9d0wHXBD227k-F_ER4f+=LkMnp8GOdV3uaCsyeA@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4fc9af27-3086-f4bd-c77c-5515ab872d10@xs4all.nl>
+Date:   Tue, 9 Oct 2018 10:07:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009062330.GA8528@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAAFQd5AULSY9d0wHXBD227k-F_ER4f+=LkMnp8GOdV3uaCsyeA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfPCownw/NNb0u4zkrycEOVxIsolpBZL7ThNbuaGmPqlpiuIHCyb7QQ0LiIrWQFDpc29UPrI6KdDWrUG8FrXL+xm/3ExKVlSM4sFVtmRcBazmxZ7RxZ/x
+ Kmdx9HukT+wTYC/omYPvevwY/dkMWiRvwhTKSUKyDaApgE2UyccuUFLmfP1b3b+uk2zNmiZduyBPHsgb+JjI4fNatlOvv8PsIpFo7L+7o9Q1UMj65i9zmt4d
+ iEeYN6BjHRlGI0SqBPEziUXu2G6/s5JyAjVtCuGCM9yTRhK21K04hC0icREn2T5uw7pNAK2bF93hnLBvFVO+xEfE0mcynRE1K9by/zkRSEg7qtJYMdvP9+Cu
+ FaQwEHL7UDYGeeiVg56JURhFdRDDAOLgIohRrcIwmOaAOEIyhLSFizR9X+Fz6otZT7lY7vTmoHvda2SAA4bkRZ40BkiXOUKcXvnDTyhbx/x4wpxykYdL89uG
+ pBwuEIlwAcvOufec6fX/7+CTi+9ytMkL5eIPMg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09-10-18 08:23:30, Michal Hocko wrote:
-> [Cc Oleg]
+On 10/09/18 09:41, Tomasz Figa wrote:
+> On Mon, Oct 8, 2018 at 8:02 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> On 10/04/2018 10:11 AM, Alexandre Courbot wrote:
+>>> This patch documents the protocol that user-space should follow when
+>>> communicating with stateless video decoders. It is based on the
+>>> following references:
+>>>
+>>> * The current protocol used by Chromium (converted from config store to
+>>>   request API)
+>>>
+>>> * The submitted Cedrus VPU driver
+>>>
+>>> As such, some things may not be entirely consistent with the current
+>>> state of drivers, so it would be great if all stakeholders could point
+>>> out these inconsistencies. :)
+>>>
+>>> This patch is supposed to be applied on top of the Request API V18 as
+>>> well as the memory-to-memory video decoder interface series by Tomasz
+>>> Figa.
+>>>
+>>> Changes since V1:
+>>>
+>>> * Applied fixes received as feedback,
+>>> * Moved controls descriptions to the extended controls file,
+>>> * Document reference frame management and referencing (need Hans' feedback on
+>>>   that).
+>>>
+>>> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+>>> ---
+>>>  .../media/uapi/v4l/dev-stateless-decoder.rst  | 348 ++++++++++++++++++
+>>>  Documentation/media/uapi/v4l/devices.rst      |   1 +
+>>>  .../media/uapi/v4l/extended-controls.rst      |  25 ++
+>>>  .../media/uapi/v4l/pixfmt-compressed.rst      |  54 ++-
+>>>  4 files changed, 424 insertions(+), 4 deletions(-)
+>>>  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+>>>
+>>> diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+>>
+>> <snip>
+>>
+>>> +Buffer management during decoding
+>>> +=================================
+>>> +Contrary to stateful decoder drivers, a stateless decoder driver does not
+>>> +perform any kind of buffer management. In particular, it guarantees that
+>>> +``CAPTURE`` buffers will be dequeued in the same order as they are queued. This
+>>> +allows user-space to know in advance which ``CAPTURE`` buffer will contain a
+>>> +given frame, and thus to use that buffer ID as the key to indicate a reference
+>>> +frame.
+>>> +
+>>> +This also means that user-space is fully responsible for not queuing a given
+>>> +``CAPTURE`` buffer for as long as it is used as a reference frame. Failure to do
+>>> +so will overwrite the reference frame's data while it is still in use, and
+>>> +result in visual corruption of future frames.
+>>> +
+>>> +Note that this applies to all types of buffers, and not only to
+>>> +``V4L2_MEMORY_MMAP`` ones, as drivers supporting ``V4L2_MEMORY_DMABUF`` will
+>>> +typically maintain a map of buffer IDs to DMABUF handles for reference frame
+>>> +management. Queueing a buffer will result in the map entry to be overwritten
+>>> +with the new DMABUF handle submitted in the :c:func:`VIDIOC_QBUF` ioctl.
+>>
+>> The more I think about this, the more I believe that relying on capture buffer
+>> indices is wrong. It's easy enough if there is a straightforward 1-1 relationship,
+>> but what if you have H264 slices as Nicolas mentioned and it becomes a N-1 relationship?
+>>
+>> Yes, you can still do this in userspace, but it becomes a lot more complicated.
+>>
+>> And what if in the future instead of having one capture buffer per decoded frame
+>> there will be multiple capture buffers per decoded frame, each with a single
+>> slice (for example)?
+> 
+> Is there any particular scenario you have in mind, where such case would happen?
 
-JFYI there was new submission http://lkml.kernel.org/r/20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8
-> 
-> On Fri 05-10-18 15:32:08, Yong-Taek Lee wrote:
-> > It is introduced by commit 44a70adec910 ("mm, oom_adj: make sure
-> > processes sharing mm have same view of oom_score_adj"). Most of
-> > user process's mm_users is bigger than 1 but only one thread group.
-> > In this case, for_each_process loop meaninglessly try to find processes
-> > which sharing same mm even though there is only one thread group.
-> > 
-> > My idea is that target task's nr thread is smaller than mm_users if there
-> > are more thread groups sharing the same mm. So we can skip loop
-> 
-> I remember trying to optimize this but ended up with nothing that would
-> work reliable. E.g. what prevents a thread terminating right after we
-> read mm reference count and result in early break and other process
-> not being updated properly?
-> 
-> > if mm_user and nr_thread are same.
-> > 
-> > test result
-> > while true; do count=0; time while [ $count -lt 10000 ]; do echo -1000 > /proc/
-> > 1457/oom_score_adj; count=$((count+1)); done; done;
-> 
-> Is this overhead noticeable in a real work usecases though? Or are you
-> updating oom_score_adj that often really?
-> 
-> > before patch
-> > 0m00.59s real     0m00.09s user     0m00.51s system
-> > 0m00.59s real     0m00.14s user     0m00.45s system
-> > 0m00.58s real     0m00.11s user     0m00.47s system
-> > 0m00.58s real     0m00.10s user     0m00.48s system
-> > 0m00.59s real     0m00.11s user     0m00.48s system
-> > 
-> > after patch
-> > 0m00.15s real     0m00.07s user     0m00.08s system
-> > 0m00.14s real     0m00.10s user     0m00.04s system
-> > 0m00.14s real     0m00.10s user     0m00.05s system
-> > 0m00.14s real     0m00.08s user     0m00.07s system
-> > 0m00.14s real     0m00.08s user     0m00.07s system
-> > 
-> > Signed-off-by: Lee YongTaek <ytk.lee@samsung.com>
-> > ---
-> >  fs/proc/base.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index f9f72aee6d45..54b2fb5e9c51 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj,
-> > bool legacy)
-> >         struct mm_struct *mm = NULL;
-> >         struct task_struct *task;
-> >         int err = 0;
-> > +       int mm_users = 0;
-> > 
-> >         task = get_proc_task(file_inode(file));
-> >         if (!task)
-> > @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj,
-> > bool legacy)
-> >                 struct task_struct *p = find_lock_task_mm(task);
-> > 
-> >                 if (p) {
-> > -                       if (atomic_read(&p->mm->mm_users) > 1) {
-> > +                       mm_users = atomic_read(&p->mm->mm_users);
-> > +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p)))
-> > {
-> >                                 mm = p->mm;
-> >                                 atomic_inc(&mm->mm_count);
-> >                         }
-> > --
-> > 
-> > *
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Video conferencing to reduce the latency, i.e. no need to wait for the full frame
+to be available, just start processing as soon as a decoded slice arrives.
 
--- 
-Michal Hocko
-SUSE Labs
+> 
+>>
+>> I would feel much happier if we used a 'cookie' to refer to buffers.
+> 
+> Hmm, how would this cookie work in a case of N OUTPUT -> 1 CAPTURE case?
+
+The output buffers would use the same cookie.
+
+Regards,
+
+	Hans
+
+> 
+> Best regards,
+> Tomasz
+> 
+
