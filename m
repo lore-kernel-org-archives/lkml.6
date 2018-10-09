@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DE9C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197B3C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF002086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3C552086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 14:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTQ8iaak"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF002086D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R+UTf16z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C552086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeJIVXM (ORCPT
+        id S1727160AbeJIVXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:23:12 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41427 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbeJIVXM (ORCPT
+        Tue, 9 Oct 2018 17:23:16 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39086 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbeJIVXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:23:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 23-v6so864608pgc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:06:04 -0700 (PDT)
+        Tue, 9 Oct 2018 17:23:15 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c25-v6so903402pfe.6
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 07:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ramjEGzY4YO96nqd2/8xdohTx62cvWs5MAFFc07+hXE=;
-        b=DTQ8iaakVTc77iQV8PrO6XrTZoRuyIRf0JxOtp+oj43zEivtEOJE7r4188RevoYNGz
-         lrk2ywKFsq63WbpuDfB/0Klbna8kYlqH0k4m1x8O5v3RzT6Cp+aoJJwzizRdWd5hAeuh
-         Ns/fF7AhoXunIG9qesHtm2pzIUFgDHosvIBI4=
+        bh=Mjns9AO833DdTLlO/vGxzhXmWWgQNDuIJY3ha9Rxc70=;
+        b=R+UTf16zmaJc7ZMBbNHwtbXPuEUJ/r0zyjbirplJ0qwSRSkepl+UXCqxKWAF/JbBl1
+         gX3Ha2zMfEriX1CsQIOnFTX7g8lvRiDEbl+wcI4fl60156xF3nwMV6mg52DGJ77bvOQx
+         /EWNvn4wzKm8echOtZNCPGKaxcacC5F74bYOw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ramjEGzY4YO96nqd2/8xdohTx62cvWs5MAFFc07+hXE=;
-        b=nIBy1a+JTDKgSPiDLPM5XS+M+gvqMj8YsPeg6mQOqA1z8JCaCDPnUkLG7QJBxvfxQ8
-         8W6MPrMStB/35sm/NBjtX90p1LVDC8lGtWU4F47PE1Et3es5aUuYKDOE7xdnPAovrXVz
-         HFplCqukZL5XmPuSkIgVyqqJDxx0FXPfQN1oAhKiFK1RhKYT5kKQ3+7syfTKcDUaaCii
-         Oj+heoieNqF0fVuCMzHuTxlC04tkR4Dyspu4KyhIxcUgQvRJ0FyFWAlSKhvjXWy1Sqw3
-         MDPFTj5InxIsoJHY7mMUOmBIwm2fUAMC7yt6gu6SU6BJztG+xe0x9lgK8sTt4CYgn256
-         1Fug==
-X-Gm-Message-State: ABuFfogKbx/KF/i4wiC18PId3IFr/Go3/wgwZCD0ZkSyQBmCoiNDNMv3
-        AlFqe5Dizafs0SJSJw7RmoN/
-X-Google-Smtp-Source: ACcGV60TGLESIeG2G19goPR7a0QeB+Oam6R+kYUq7sm17wCFmRAXmhTyA9GNYcq9BTeqg6vC00g+cA==
-X-Received: by 2002:a62:8a91:: with SMTP id o17-v6mr30582200pfk.184.1539093964274;
-        Tue, 09 Oct 2018 07:06:04 -0700 (PDT)
+        bh=Mjns9AO833DdTLlO/vGxzhXmWWgQNDuIJY3ha9Rxc70=;
+        b=MwPEdD2+JTKbRXRGLc9wIZTTIVA2T5AmfsNwfPvo6JPhhKLcorRt6UTt/Yt3uOFb1C
+         2I5chT3G3qydLD/gEbsiV2G1zEQc+YL4OthuQVhPEpN5CIlBvUQnMlHT1fzKVmZkcsfM
+         g7R2XwX6qnNqOLCR1VuCxm6snkwuBx7CBaj1SW3thF5jJCS7JM1xuXfs9wJ9aZ/wElsV
+         csXpotHYLM5VzbfjLnScFKz0+4e1HQ+PfjrsUT502XRt/m/9v2H57vtHVoNF+51SQtDJ
+         Vzl0nZojtDf6GlCtOOTkq2nRjVsrMs77QN8zI5prND8fJe6jIM/wZC5RWQZCy/7wDONW
+         b5NA==
+X-Gm-Message-State: ABuFfohQ6/mrCu7bO5Na9+oSbM2sTFhL/t8CZmvZRrrm7GYGY+eoAap4
+        rPvzJKPZmGS3WWcAUIbizKR8
+X-Google-Smtp-Source: ACcGV633CsOIak7VEAeH4jTt7NE2mZQPI6Ve4IekmecaD0HiGsuS+YsQJgrMuEm2gIIyQRpESwaXCg==
+X-Received: by 2002:a63:bf46:: with SMTP id i6-v6mr17390656pgo.378.1539093968247;
+        Tue, 09 Oct 2018 07:06:08 -0700 (PDT)
 Received: from localhost.localdomain ([103.59.133.81])
-        by smtp.googlemail.com with ESMTPSA id e64-v6sm28947722pfe.55.2018.10.09.07.06.00
+        by smtp.googlemail.com with ESMTPSA id e64-v6sm28947722pfe.55.2018.10.09.07.06.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 07:06:03 -0700 (PDT)
+        Tue, 09 Oct 2018 07:06:07 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     robh+dt@kernel.org, heiko@sntech.de, ezequiel@collabora.com,
         xuwei5@hisilicon.com, michal.simek@xilinx.com
@@ -63,9 +63,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         daniel.thompson@linaro.org, amit.kucheria@linaro.org,
         linus.walleij@linaro.org, koen.kooi@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 4/6] arm64: dts: hisilicon: hikey960: Standardize LED labels and triggers
-Date:   Tue,  9 Oct 2018 19:35:20 +0530
-Message-Id: <20181009140522.6492-5-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 5/6] arm64: dts: hisilicon: poplar: Standardize LED labels and triggers
+Date:   Tue,  9 Oct 2018 19:35:21 +0530
+Message-Id: <20181009140522.6492-6-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181009140522.6492-1-manivannan.sadhasivam@linaro.org>
 References: <20181009140522.6492-1-manivannan.sadhasivam@linaro.org>
@@ -84,75 +84,59 @@ device-name:green:user4  default-trigger: none, panic-indicator
 device-name:yellow:wlan  default-trigger: phy0tx
 device-name:blue:bt      default-trigger: hci0-power
 
-So lets adopt the same for HiKey960 which is one of the 96Boards
-CE platform.
+So lets adopt the same for Poplar, which is one of the 96Boards
+Enterprise edition platform.
 
-Since there is no trigger available for onboard-storage UFS now, user2
-trigger is set to none.
+Due to absence of WLAN and BT support, corresponding LED nodes are not
+considered.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../boot/dts/hisilicon/hi3660-hikey960.dts     | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ .../arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-index c98bcbc8dfba..35ce460b3ed4 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-@@ -85,36 +85,36 @@
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
+index d30f6eb8a5ee..f6f3e928a54e 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
+@@ -35,30 +35,31 @@
  		compatible = "gpio-leds";
  
- 		user_led1 {
--			label = "user_led1";
-+			label = "hi3660-hikey960:green:user1";
- 			/* gpio_150_user_led1 */
- 			gpios = <&gpio18 6 0>;
+ 		user-led0 {
+-			label = "USER-LED0";
++			label = "hi3798cv200-poplar:green:user1";
+ 			gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
  			linux,default-trigger = "heartbeat";
+ 			default-state = "off";
  		};
  
- 		user_led2 {
--			label = "user_led2";
-+			label = "hi3660-hikey960:green:user2";
- 			/* gpio_151_user_led2 */
- 			gpios = <&gpio18 7 0>;
--			linux,default-trigger = "mmc0";
-+			linux,default-trigger = "none";
+ 		user-led1 {
+-			label = "USER-LED1";
++			label = "hi3798cv200-poplar:green:user2";
+ 			gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
+ 			linux,default-trigger = "mmc0";
+ 			default-state = "off";
  		};
  
- 		user_led3 {
--			label = "user_led3";
-+			label = "hi3660-hikey960:green:user3";
- 			/* gpio_189_user_led3 */
- 			gpios = <&gpio23 5 0>;
--			default-state = "off";
-+			linux,default-trigger = "mmc0";
+ 		user-led2 {
+-			label = "USER-LED2";
++			label = "hi3798cv200-poplar:green:user3";
+ 			gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
+-			linux,default-trigger = "none";
++			linux,default-trigger = "mmc1";
+ 			default-state = "off";
  		};
  
- 		user_led4 {
--			label = "user_led4";
-+			label = "hi3660-hikey960:green:user4";
- 			/* gpio_190_user_led4 */
- 			gpios = <&gpio23 6 0>;
- 			panic-indicator;
+ 		user-led3 {
+-			label = "USER-LED3";
++			label = "hi3798cv200-poplar:green:user4";
+ 			gpios = <&gpio10 6 GPIO_ACTIVE_LOW>;
 -			linux,default-trigger = "cpu0";
 +			linux,default-trigger = "none";
++			panic-indicator;
+ 			default-state = "off";
  		};
- 
- 		wlan_active_led {
--			label = "wifi_active";
-+			label = "hi3660-hikey960:yellow:wlan";
- 			/* gpio_205_wifi_active */
- 			gpios = <&gpio25 5 0>;
- 			linux,default-trigger = "phy0tx";
-@@ -122,7 +122,7 @@
- 		};
- 
- 		bt_active_led {
--			label = "bt_active";
-+			label = "hi3660-hikey960:blue:bt";
- 			gpios = <&gpio25 7 0>;
- 			/* gpio_207_user_led1 */
- 			linux,default-trigger = "hci0-power";
+ 	};
 -- 
 2.17.1
 
