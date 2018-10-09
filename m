@@ -2,154 +2,157 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74AAECDFAC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2428ECDFAC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7345A21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7345A21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8C5272064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:48:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MoPk65AM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5272064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeJJBGf (ORCPT
+        id S1727396AbeJJBGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:06:35 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:35400 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeJJBGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:06:34 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 4148EBFE24;
-        Tue,  9 Oct 2018 19:48:27 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 27EFEC0FFD; Tue,  9 Oct 2018 19:48:26 +0200 (CEST)
-Received: from shepard (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 4BA82C0FE9;
-        Tue,  9 Oct 2018 19:48:23 +0200 (CEST)
-Message-ID: <21f6b66ea646c6e24e5801023557e8b5db3831d6.camel@paulk.fr>
-Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
- decoder interface
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 09 Oct 2018 19:48:09 +0200
-In-Reply-To: <CAAFQd5A4t1F9kqepJ+11GJj7zJWKTp-bD1aCNL0N1w9Qeqtmuw@mail.gmail.com>
-References: <20181004081119.102575-1-acourbot@chromium.org>
-         <f1fa989b372b514f0a7534057de80b0c453cc8a3.camel@paulk.fr>
-         <CAAFQd5A4t1F9kqepJ+11GJj7zJWKTp-bD1aCNL0N1w9Qeqtmuw@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-NJuvIF4jZV9m01lN8MZm"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
+        Tue, 9 Oct 2018 21:06:38 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37567 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727317AbeJJBGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 21:06:38 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 63-v6so2389217ljs.4
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NXsu0e0GXs1+CpNuUGNKCWpfdjFPFPc+07jPUsU76qo=;
+        b=MoPk65AMOoU+2d9M9Qne8wN/Aoq6SVJ45fIcBAqGgMCV9s1mBdM9YgdtFzvCUcv/LB
+         YPAlT/CGiLWL53Cnfl0Oz1UQxGdlOaxuizN0FQKG///SY5jF2kfFIJFnQFk3VSHGOmoS
+         0bI6Kvi+f/NuF9nb7MpUVZSgl3D8Jfhjm7vIQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NXsu0e0GXs1+CpNuUGNKCWpfdjFPFPc+07jPUsU76qo=;
+        b=O2tb3wO9/Sk8qcj1aI3gp8++U0kt2t/tEGHdnHjIIU/XtxgUlAfoGBRXSlB1zxMy6l
+         E8Zf5GbqHXXMCjOfCuwuDP6iEnKmmb641HY5mGjEZXgx1SXuEK+t3+7/eRB3hfygVMPe
+         VEcApjBFFiUunXBfvlFGOtGESqXF8LvL+JBtYnxf3iSKrENK4MqQhXbn1IVzS5sh7yeW
+         c/zNE6lJYnEYbrE55Fl8nEOoMY9RcSNZCTLmTGZdSK2iB2w2wnPoIJnOSwwhgzL3ppe7
+         1UUfSpmINvEMNYhsU7Losm3FkOpJI3HcwG3XxYT84A4puqMV2P2LeU8k8taXAqAArEHP
+         hZPA==
+X-Gm-Message-State: ABuFfoi51yr+swIgyAyaFbXXfZtqKf/ft8BnY7sYKBESY6933zXBy2+/
+        SMSgXhG0ChVlD5n3C4iPtBXh6r+haOnBcAw94hOfEQ==
+X-Google-Smtp-Source: ACcGV631B/pngTrMqFN9sZppiq7tizL07GMVxYMXtT6MJsMgxapaPZ9lNoPwDTzRnYWAP2V+P9STCYG9H5W4noIhM2M=
+X-Received: by 2002:a2e:7017:: with SMTP id l23-v6mr18247341ljc.160.1539107310228;
+ Tue, 09 Oct 2018 10:48:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539080245-25818-1-git-send-email-svellattu@mvista.com>
+ <20181009172726.GA2182@xps15> <CAJZ5v0gckkg0jyTc7=JYPpUruQQXL_FhEjm03-0mrFcxH60cHA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gckkg0jyTc7=JYPpUruQQXL_FhEjm03-0mrFcxH60cHA@mail.gmail.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 9 Oct 2018 11:48:19 -0600
+Message-ID: <CANLsYkxcUvBBFRFD9Vco559Y5LFw=X0H3Lyzm=nFat6z5yH44g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] Driver core: add bus_find_device_by_fwnode
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Silesh C V <svellattu@mvista.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-spi@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        Lijun Ou <oulijun@huawei.com>,
+        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-NJuvIF4jZV9m01lN8MZm
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Le mardi 09 octobre 2018 =C3=A0 16:30 +0900, Tomasz Figa a =C3=A9crit :
-> On Thu, Oct 4, 2018 at 9:46 PM Paul Kocialkowski <contact@paulk.fr> wrote=
-:
-> >=20
-> > Hi,
-> >=20
-> > Here are a few minor suggestion about H.264 controls.
-> >=20
-> > Le jeudi 04 octobre 2018 =C3=A0 17:11 +0900, Alexandre Courbot a =C3=A9=
-crit :
-> > > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Doc=
-umentation/media/uapi/v4l/extended-controls.rst
-> > > index a9252225b63e..9d06d853d4ff 100644
-> > > --- a/Documentation/media/uapi/v4l/extended-controls.rst
-> > > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
-> > > @@ -810,6 +810,31 @@ enum v4l2_mpeg_video_bitrate_mode -
-> > >      otherwise the decoder expects a single frame in per buffer.
-> > >      Applicable to the decoder, all codecs.
-> > >=20
-> > > +.. _v4l2-mpeg-h264:
+On Tue, 9 Oct 2018 at 11:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Oct 9, 2018 at 7:27 PM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> >
+> > Hi Silesh,
+> >
+> > On Tue, Oct 09, 2018 at 03:47:24PM +0530, Silesh C V wrote:
+> > > Some drivers need to find the device on a bus having a specific firmware
+> > > node. Currently, such drivers have their own implementations to do this.
+> > > Provide a helper similar to bus_find_device_by_name so that each driver
+> > > does not have to reinvent this.
+> > >
+> > > Signed-off-by: Silesh C V <svellattu@mvista.com>
+> > > ---
+> > > Changes since v2:
+> > >       - make use of dev_fwnode in match_fwnode.
+> > >
+> > >  drivers/base/bus.c     | 20 ++++++++++++++++++++
+> > >  include/linux/device.h |  3 +++
+> > >  2 files changed, 23 insertions(+)
+> > >
+> > > diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> > > index 8bfd27e..a2f39db 100644
+> > > --- a/drivers/base/bus.c
+> > > +++ b/drivers/base/bus.c
+> > > @@ -17,6 +17,7 @@
+> > >  #include <linux/string.h>
+> > >  #include <linux/mutex.h>
+> > >  #include <linux/sysfs.h>
+> > > +#include <linux/property.h>
+> > >  #include "base.h"
+> > >  #include "power/power.h"
+> > >
+> > > @@ -373,6 +374,25 @@ struct device *bus_find_device_by_name(struct bus_type *bus,
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(bus_find_device_by_name);
+> > >
+> > > +static int match_fwnode(struct device *dev, void *fwnode)
+> > > +{
+> > > +     return dev_fwnode(dev) == fwnode;
+> > > +}
 > > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_SPS``
-> > > +    Instance of struct v4l2_ctrl_h264_sps, containing the SPS of to =
-use with
-> > > +    the next queued frame. Applicable to the H.264 stateless decoder=
-.
-> > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_PPS``
-> > > +    Instance of struct v4l2_ctrl_h264_pps, containing the PPS of to =
-use with
-> > > +    the next queued frame. Applicable to the H.264 stateless decoder=
-.
-> > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX``
-> >=20
-> > For consistency with MPEG-2 and upcoming JPEG, I think we should call
-> > this "H264_QUANTIZATION".
->=20
-> I'd rather stay consistent with H.264 specification, which uses the
-> wording as defined in Alex's patch. Otherwise it would be difficult to
-> correlate between the controls and the specification, which is
-> something that the userspace developer would definitely need to
-> understand how to properly parse the stream and obtain the decoding
-> parameters.
+> > > +/**
+> > > + * bus_find_device_by_fwnode - device iterator for locating a particular device
+> > > + * having a specific firmware node
+> > > + * @bus: bus type
+> > > + * @start: Device to begin with
+> > > + * @fwnode: firmware node of the device to match
+> > > + */
+> > > +struct device *bus_find_device_by_fwnode(struct bus_type *bus, struct device *start,
+> > > +                                     struct fwnode_handle *fwnode)
+> >
+> > I get the following when running checkpatch on your set:
+> >
+> > mpoirier@xps15:~/work/linaro/coresight/kernel-maint$ ./scripts/checkpatch.pl
+> > 0001-Driver-core-add-bus_find_device_by_fwnode.patch
+> > WARNING: line over 80 characters
+>
+> Lines longer than 80 chars often are legitimate.  No need to send
+> extra reports about those cases in general.
 
-Okay, I agree this makes more sense than trying to keep the names
-consistent across codecs.
+In this case I don't see a reason not to abide to the guideline.
+Wrapping the function declaration to 80 characters would be easy
+without effecting code readability.
 
-> >=20
-> > > +    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the=
- scaling
-> > > +    matrix to use when decoding the next queued frame. Applicable to=
- the H.264
-> > > +    stateless decoder.
-> > > +
-> > > +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
-> >=20
-> > Ditto with "H264_SLICE_PARAMS".
-> >=20
->=20
-> It doesn't seem to be related to the spec in this case and "params"
-> sounds better indeed.
+Mathieu
 
-Cheers,
-
-Paul
-
---=-NJuvIF4jZV9m01lN8MZm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlu86dkACgkQhP3B6o/u
-lQwvgw/+NzUyPZU/e3+Obp5UTRuXVtUTm/zTLzu9q6MRD4VMlAlrs4IEMDwEWk7/
-oBIaNWSTF2cz//wPpfz6RqnqHHK9BsKVOBYi13o1SGUFRZPK2g50H1iloSNvfwRT
-kZ8gZgDOM4UGyly9zwv749pJHoWjcXFzXU+2kFdhdcbpjxJfEVKS9CmgUJH/ZptG
-aixn6UXkToZ24Hm/QazAQcPk4G4gqJHB5tE6AP/QhrgntS3U+JWcPayStSx1zaJp
-UHxDqGjLxHMbw0g7haK7WngsOBbi+v9AQJeFaoHDI/P7VhJd18AirFnuEYr90CjA
-OfAo2MPK900abYmtgm2IRTGO98G5zAwlZ0GlX5TVo0mdIGKeo6oZZGEnsYMhaX3D
-LWR6EY4UBhZT0M6XlK1P+85AHknzw6kcorFtNrD3GRIx4BGL8f4o/gnxD1Fx/yo0
-W/t5ywwgw52M8YOt4ZRNIxuWOUiewzRS79sWNPTHEELTDs8lna2ONUxFIh3CL7w8
-MuVCcQvpCX9vAjRkVAAOdXjZxM11aOfduvKvZIvukDNpSgumqq8W4v3ZHib4TF9s
-rBN/6L/NRoLqX+SupzL4egAfNHSg/OKBDzR3b9BOgbyKAEa0cFPyQXHl+TXx2eld
-qfiO1UUbGCJcSgLP+4KVut6AUX6sZe3BzhBV0gJMu+9o21EfeL0=
-=62QB
------END PGP SIGNATURE-----
-
---=-NJuvIF4jZV9m01lN8MZm--
-
+>
+> Thanks,
+> Rafael
