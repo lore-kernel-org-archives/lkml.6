@@ -2,116 +2,128 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F72ECDFDF
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71059ECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE8F3214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBBE214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 18:55:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SxrOQmHx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE8F3214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6Cd5L1o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBBE214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeJJCJt (ORCPT
+        id S1726798AbeJJCNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 22:09:49 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:38343 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeJJCJs (ORCPT
+        Tue, 9 Oct 2018 22:13:25 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40848 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbeJJCNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:09:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1539111087; x=1570647087;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=TtsfGcDM3h5ap+H9kxy/xjXfnWIH0/v0qN2/iTEdC0c=;
-  b=SxrOQmHxTv8mFcdkj5o0I8zamextg6M7ML3EtOL6pWEpwqCDPnIDClIS
-   jlS+KumiLqyFAvCp2/obTs1DRSdiN/rvquT96mPOQUy5KUlQXgOckiAjD
-   uSCZEqzCrc+OXGDQEQ6lggTwpa7ZKBxagXj2vpVLhXA+j7N9navtEPWUX
-   gO3aYKvhAHWqZrULKY9HFORs662Fp+F8dFm6IzAhAs9cnIWcIUYwYMfS/
-   fqZklGlplLUHSn7QVbJ5kor4zGIcU6u2WlUzbKzEBCSPpUFbEgLl8czzF
-   U/YUoAGKT57uYdwAX3Z+5FNfw9w1xrhSu+S1uni7Y5iaKG7bhgCLzxmuu
-   g==;
-X-IronPort-AV: E=Sophos;i="5.54,361,1534780800"; 
-   d="scan'208";a="195909237"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Oct 2018 02:51:26 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 09 Oct 2018 11:36:36 -0700
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 09 Oct 2018 11:51:26 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        hch@infradead.org, atish.patra@wdc.com
-Subject: [RFC 3/4] gpio: sifive: Add DT documentation for SiFive GPIO.
-Date:   Tue,  9 Oct 2018 11:51:24 -0700
-Message-Id: <1539111085-25502-4-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+        Tue, 9 Oct 2018 22:13:24 -0400
+Received: by mail-io1-f66.google.com with SMTP id w16-v6so1993045iom.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 11:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t0vbDsaEKkIKZq5l2wHrOtVOmgn2viL0y8nScmEDj1A=;
+        b=l6Cd5L1otMYTi1bK9E9RWUqoQG/BuNBmd0t9Wmp6dmuzwyiz7QJtUSgAPY/1f81ZoD
+         /6yFjmrBVhkUQ7dn8yxcXEWlHP8717cRu4e/hD7ffx5xTxtm/AkvDFDLYZSgumxwQotK
+         fR/c4oiNRLLAVc15mbjKAS0PlJKWf+ntE2zyBssOuCk+8sxLxl286Uqsvoqp0cgsdQfZ
+         p0xgodr7fIyKVEFm+4u/6ZHEQzN4D1r6Y5v0IPjVnbEvESahlG3fyJtRPLAhuIuOM0Gk
+         uW9SkX5oRhEJID/pRrUFEp2pKm2rh7Pu9dZ5/RgKy2OeMcms548mT6+ki2CH/jh96vO9
+         lsfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t0vbDsaEKkIKZq5l2wHrOtVOmgn2viL0y8nScmEDj1A=;
+        b=HozPhM35MZdco7P+RnJSl4AgM35pVaf0CmSE3SLnni8YdMlNkXEGRjyk93XvnZskBj
+         3EqogDQMeXLDaVev4H1Qnny+KVzpcrB0RY2zIcQB1m9/Wh0MaNSDZ3jTkSztGUShzbsp
+         9qJ7HsXfym++0asf2TIRiI4meANStvP43gBhn6OPWrme9AaD8fdnDyXL2CQhbQ4fzSFa
+         LE7WzZmN8RpIF/UcOqmdup6CJbNFFnZsZj6vRrBQheYo9P0K9e5rwbOr/4B2GzAYFGtO
+         YHQ9IGkDFZDgpdDbvm2x+m3iYHJkPa6+RYTlY7gD1N+5C9oIsdK9PqRSB4PnIqyj+tBL
+         7xeA==
+X-Gm-Message-State: ABuFfohEF4Xh+XFnmI6gkf4FaZWyPM7KgB3dBETP07SA1YW6HM/pjfqu
+        bVZxVwtsFuus72P65AOFbI25Uv1FrsgFGSLKeKiRqQ==
+X-Google-Smtp-Source: ACcGV60LVr/m6ppL4mERb/dK2iZf/MuAe3zDUNpj5wixFw5/e/9B4d22axu8wtwP5LdFQBSpSJnMvBbXzHm7I69hYuI=
+X-Received: by 2002:a6b:b48f:: with SMTP id d137-v6mr19243105iof.163.1539111301613;
+ Tue, 09 Oct 2018 11:55:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAO49afLqUGuBi_R7BKyojqnkHrMGqXquy-FdVFscOu6Ez0cVFw@mail.gmail.com>
+ <20181009164743.GA22886@krava>
+In-Reply-To: <20181009164743.GA22886@krava>
+From:   Anthony LaTorre <tlatorre9@gmail.com>
+Date:   Tue, 9 Oct 2018 13:54:48 -0500
+Message-ID: <CAO49af+zxxVh9HGfjKxS=vQcD5po7-oLU87Zp0F21M-C64nWUA@mail.gmail.com>
+Subject: Re: perf report segfault
+To:     jolsa@redhat.com
+Cc:     peterz@infradead.org, mingo@redhat.com, jolsa@kernel.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Wesley W. Terpstra" <wesley@sifive.com>
+Can you reproduce the segfault from the perf.data file I provided?
 
-DT documentation for GPIO added with updated compatible
-string.
-
-Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-[Atish: Compatible string update]
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- .../devicetree/bindings/gpio/gpio-sifive.txt       | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sifive.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-sifive.txt b/Documentation/devicetree/bindings/gpio/gpio-sifive.txt
-new file mode 100644
-index 00000000..781fe4ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-sifive.txt
-@@ -0,0 +1,28 @@
-+SiFive GPIO controller bindings
-+
-+Required properties:
-+- compatible: should be one of
-+  	 "sifive,fu540-c000-gpio0","sifive,gpio0"
-+- reg: Physical base address and length of the controller's registers.
-+- #gpio-cells : Should be 2
-+  - The first cell is the GPIO offset number.
-+  - The second cell indicates the polarity of the GPIO
-+- gpio-controller : Marks the device node as a GPIO controller.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells : Should be 2.
-+  - The first cell is the GPIO offset number within the GPIO controller.
-+  - The second cell is the edge/level to use for interrupt generation.
-+- interrupts: Specify the interrupts, one per GPIO
-+
-+Example:
-+
-+gpio: gpio@10060000 {
-+	compatible = "sifive,fu540-c000-gpio0","sifive,gpio0";
-+	interrupt-parent = <&plic>;
-+	interrupts = <7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22>;
-+	reg = <0x0 0x10060000 0x0 0x1000>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+};
--- 
-2.7.4
-
+Tony
+On Tue, Oct 9, 2018 at 11:47 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Tue, Oct 09, 2018 at 11:27:04AM -0500, Anthony LaTorre wrote:
+> > Hi,
+> >
+> > I'm currently running Linux kernel 4.18.10-100.fc27.x86_64 and have a
+> > problem profiling a program that used to work. Currently when I
+> > profile the program with the following command:
+> >
+> > $ perf record -F 99 -p PID --call-graph dwarf sleep 10
+> >
+> > it produces a data file which causes perf report to segfault:
+> >
+> > $ perf report
+> > perf: Segmentation fault
+> > -------- backtrace --------
+> > perf(+0x325302)[0x55860ae79302]
+> > /lib64/libc.so.6(+0x347d0)[0x7fbc8f3987d0]
+> > perf(+0x273e80)[0x55860adc7e80]
+> > perf(unwind__get_entries+0x1d9)[0x55860ae4ace9]
+> > perf(thread__resolve_callchain+0xfd)[0x55860adce7dd]
+> > perf(sample__resolve_callchain+0x58)[0x55860adc45b8]
+> > perf(hist_entry_iter__add+0x98)[0x55860adfa908]
+> > perf(+0x1ab8d9)[0x55860acff8d9]
+> > perf(+0x280603)[0x55860add4603]
+> > perf(+0x283c63)[0x55860add7c63]
+> > perf(+0x280e04)[0x55860add4e04]
+> > perf(perf_session__process_events+0x8ae)[0x55860add6bee]
+> > perf(cmd_report+0x190f)[0x55860ad01a4f]
+> > perf(+0x21a961)[0x55860ad6e961]
+> > perf(+0x21ac6e)[0x55860ad6ec6e]
+> > perf(main+0x361)[0x55860ace8411]
+> > /lib64/libc.so.6(__libc_start_main+0xea)[0x7fbc8f384fea]
+> > perf(_start+0x2a)[0x55860ace889a]
+> >
+> > I've attached the data file which is causing the issue.
+> >
+> > The perf version is:
+> >
+> > $ perf --version
+> > perf version 4.18.10
+> >
+> > and I'm running Fedora 27 if that makes a difference.
+> >
+> > I've tried to reproduce with simpler programs so I could send a
+> > minimal working example, but it doesn't appear to cause the issue.
+>
+> please do, I can't reproduce this
+>
+> thanks,
+> jirka
