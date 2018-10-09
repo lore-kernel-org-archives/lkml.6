@@ -2,108 +2,168 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DFDC00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F9BC00449
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3377213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:27:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3377213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 545B7213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 02:49:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545B7213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeJIJmJ (ORCPT
+        id S1726810AbeJIKEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 05:42:09 -0400
-Received: from smtprelay0080.hostedemail.com ([216.40.44.80]:38579 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726565AbeJIJmJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 05:42:09 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 682E8181D3368;
-        Tue,  9 Oct 2018 02:27:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: north71_72f1545fc415
-X-Filterd-Recvd-Size: 2794
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  9 Oct 2018 02:27:29 +0000 (UTC)
-Message-ID: <8e2f906a85c3cfe0715982370a6d96f08a37987c.camel@perches.com>
-Subject: Re: [PATCH] powerpc/xmon/ppc-opc: Use ARRAY_SIZE macro
-From:   Joe Perches <joe@perches.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Mon, 08 Oct 2018 19:27:28 -0700
-In-Reply-To: <20181004171036.GA1907@embeddedor.com>
-References: <20181004171036.GA1907@embeddedor.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 9 Oct 2018 06:04:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60770 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726616AbeJIKEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 06:04:31 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 09FE785550;
+        Tue,  9 Oct 2018 02:49:50 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ADAC11054FBA;
+        Tue,  9 Oct 2018 02:49:43 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 10:49:38 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, keith.busch@linux.intel.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] blk-mq: adjust debugfs and sysfs register when
+ updating nr_hw_queues
+Message-ID: <20181009024937.GA18673@ming.t460p>
+References: <1538044984-2147-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1538044984-2147-2-git-send-email-jianchao.w.wang@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538044984-2147-2-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 09 Oct 2018 02:49:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 19:10 +0200, Gustavo A. R. Silva wrote:
-> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
-[]
-> diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-opc.c
-[]
-> @@ -966,8 +966,7 @@ const struct powerpc_operand powerpc_operands[] =
->    { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
->  };
+On Thu, Sep 27, 2018 at 06:43:03PM +0800, Jianchao Wang wrote:
+> blk-mq debugfs and sysfs entries need to be removed before updating
+> queue map, otherwise, we get get wrong result there. This patch fixes
+> it and remove the redundant debugfs and sysfs register/unregister
+> operations during __blk_mq_update_nr_hw_queues.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  block/blk-mq.c | 39 ++++++++++++---------------------------
+>  1 file changed, 12 insertions(+), 27 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 85a1c1a..6356455 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -2137,8 +2137,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
+>  		struct blk_mq_tag_set *set,
+>  		struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+>  {
+> -	blk_mq_debugfs_unregister_hctx(hctx);
+> -
+>  	if (blk_mq_hw_queue_mapped(hctx))
+>  		blk_mq_tag_idle(hctx);
 >  
-> -const unsigned int num_powerpc_operands = (sizeof (powerpc_operands)
-> -					   / sizeof (powerpc_operands[0]));
-> +const unsigned int num_powerpc_operands = ARRAY_SIZE(powerpc_operands);
-
-It seems this is unused and could be deleted.
-
->  /* The functions used to insert and extract complicated operands.  */
+> @@ -2165,6 +2163,7 @@ static void blk_mq_exit_hw_queues(struct request_queue *q,
+>  	queue_for_each_hw_ctx(q, hctx, i) {
+>  		if (i == nr_queue)
+>  			break;
+> +		blk_mq_debugfs_unregister_hctx(hctx);
+>  		blk_mq_exit_hctx(q, set, hctx, i);
+>  	}
+>  }
+> @@ -2222,8 +2221,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
+>  	if (hctx->flags & BLK_MQ_F_BLOCKING)
+>  		init_srcu_struct(hctx->srcu);
 >  
-> @@ -6980,8 +6979,7 @@ const struct powerpc_opcode powerpc_opcodes[] = {
->  {"fcfidu.",	XRC(63,974,1),	XRA_MASK, POWER7|PPCA2,	PPCVLE,		{FRT, FRB}},
->  };
+> -	blk_mq_debugfs_register_hctx(q, hctx);
+> -
+>  	return 0;
 >  
-> -const int powerpc_num_opcodes =
-> -  sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-> +const int powerpc_num_opcodes = ARRAY_SIZE(powerpc_opcodes);
-
-This is used once and should probably be replaced where
-it is used with ARRAY_SIZE
-
->  /* The VLE opcode table.
+>   free_fq:
+> @@ -2512,8 +2509,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+>  	int i, j;
+>  	struct blk_mq_hw_ctx **hctxs = q->queue_hw_ctx;
 >  
-> @@ -7219,8 +7217,7 @@ const struct powerpc_opcode vle_opcodes[] = {
->  {"se_bl",	BD8(58,0,1),	BD8_MASK,	PPCVLE,	0,		{B8}},
->  };
+> -	blk_mq_sysfs_unregister(q);
+> -
+>  	/* protect against switching io scheduler  */
+>  	mutex_lock(&q->sysfs_lock);
+>  	for (i = 0; i < set->nr_hw_queues; i++) {
+> @@ -2561,7 +2556,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+>  	}
+>  	q->nr_hw_queues = i;
+>  	mutex_unlock(&q->sysfs_lock);
+> -	blk_mq_sysfs_register(q);
+>  }
 >  
-> -const int vle_num_opcodes =
-> -  sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
-> +const int vle_num_opcodes = ARRAY_SIZE(vle_opcodes);
-
-Also apparently unused and could be deleted.
-
+>  struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+> @@ -2659,25 +2653,6 @@ void blk_mq_free_queue(struct request_queue *q)
+>  	blk_mq_exit_hw_queues(q, set, set->nr_hw_queues);
+>  }
 >  
->  /* The macro table.  This is only used by the assembler.  */
+> -/* Basically redo blk_mq_init_queue with queue frozen */
+> -static void blk_mq_queue_reinit(struct request_queue *q)
+> -{
+> -	WARN_ON_ONCE(!atomic_read(&q->mq_freeze_depth));
+> -
+> -	blk_mq_debugfs_unregister_hctxs(q);
+> -	blk_mq_sysfs_unregister(q);
+> -
+> -	/*
+> -	 * redo blk_mq_init_cpu_queues and blk_mq_init_hw_queues. FIXME: maybe
+> -	 * we should change hctx numa_node according to the new topology (this
+> -	 * involves freeing and re-allocating memory, worth doing?)
+> -	 */
+> -	blk_mq_map_swqueue(q);
+> -
+> -	blk_mq_sysfs_register(q);
+> -	blk_mq_debugfs_register_hctxs(q);
+> -}
+> -
+>  static int __blk_mq_alloc_rq_maps(struct blk_mq_tag_set *set)
+>  {
+>  	int i;
+> @@ -2987,11 +2962,21 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+>  		if (!blk_mq_elv_switch_none(&head, q))
+>  			goto switch_back;
 >  
-> @@ -7288,5 +7285,4 @@ const struct powerpc_macro powerpc_macros[] = {
->  {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
->  };
->  ld
-> -const int powerpc_num_macros =
-> -  sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
-> +const int powerpc_num_macros = ARRAY_SIZE(powerpc_macros);
+> +	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+> +		blk_mq_debugfs_unregister_hctxs(q);
+> +		blk_mq_sysfs_unregister(q);
+> +	}
+> +
+>  	set->nr_hw_queues = nr_hw_queues;
+>  	blk_mq_update_queue_map(set);
+>  	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+>  		blk_mq_realloc_hw_ctxs(set, q);
+> -		blk_mq_queue_reinit(q);
+> +		blk_mq_map_swqueue(q);
+> +	}
+> +
+> +	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+> +		blk_mq_sysfs_register(q);
+> +		blk_mq_debugfs_register_hctxs(q);
+>  	}
+>  
+>  switch_back:
+> -- 
+> 2.7.4
+> 
 
-Also apparently unused and could be deleted.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-
+Thanks,
+Ming
