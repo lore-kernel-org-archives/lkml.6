@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ACDC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297FBC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A34214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34BB214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HAgXDdsW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A34214DA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tbFfGJFn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34BB214DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeJIUma (ORCPT
+        id S1726960AbeJIUmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:42:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48102 "EHLO
+        Tue, 9 Oct 2018 16:42:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48136 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeJIUm3 (ORCPT
+        with ESMTP id S1726861AbeJIUmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:42:29 -0400
+        Tue, 9 Oct 2018 16:42:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=I7FfW7oRTGYeYQGt1279WjcZzqsAXR7/MagLXB6mh8E=; b=HAgXDdsWfPTSakz4RKjH42SE52
-        Kp9hbB43mjlHCBjWa/AE9LVhwdeH0V7avIrhCmxbYBZb3zBdgdzJNtVqoCoaDThn6DZ/vYRJNleT2
-        JwbpyfInrqVp992hkY74bgGXS8gpPi1jxNj1CkM8SYq5JlKb99x0xmQ6DKow8IUoF1h0SkujD1pVf
-        vpmy8de8/0gjbugKEX3cQB49zZlSCi4wYaeh6blkM1Mq2XEV2qKeIRMMYQFea2SS7c0d74mxOnEBW
-        AZAj49oIZEk6sdLOmCNgxZMIsOMzZ+9Rday3tIhUSN298pZ+jyiOvfzqtRv2St5MVWtEGKTUlNh0g
-        K++K9ing==;
+        bh=sm64G9zOzLTVHztS2JfrA+dPUB2AqgJ3QVy7QL6eQdU=; b=tbFfGJFnfB3JeKmr6eXyJMA2lS
+        3iSQtuWsqXxhhGFqjV7CQTDfEvCNa/5HApusniYRWiFIqdjdx54MWVo4zff2QbFa7xbe/NLgeV92g
+        Mtkmgq+Oolp3YaJ1tQ3RgGayY64YWelr6rCDdmHceAqGZBrGAjWWBf+LdNsc1F9lL6OALqGwmpkm7
+        nCYbtK4S/lcNmsu3Ji/jzhfnbmVVqtGWP6e5mMrkSZkVz9Bhw69XDAz5w4QlGYlpg2y5Okc4c1Mwu
+        3OehE8L4l4Ju7IQMR1rzzoaCIPVtKFCjLKOqvrKeFdYSZ0En2BKvYgRoA152b2sgpMDzqumkMYOWT
+        GKd+ybGQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g9s0g-0000mE-6Y; Tue, 09 Oct 2018 13:25:14 +0000
+        id 1g9s0i-000150-Hp; Tue, 09 Oct 2018 13:25:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 05/33] powerpc/dma: split the two __dma_alloc_coherent implementations
-Date:   Tue,  9 Oct 2018 15:24:32 +0200
-Message-Id: <20181009132500.17643-6-hch@lst.de>
+Subject: [PATCH 06/33] powerpc/dma: remove the no-op dma_nommu_unmap_{page,sg} routines
+Date:   Tue,  9 Oct 2018 15:24:33 +0200
+Message-Id: <20181009132500.17643-7-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181009132500.17643-1-hch@lst.de>
 References: <20181009132500.17643-1-hch@lst.de>
@@ -62,166 +62,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The implemementation for the CONFIG_NOT_COHERENT_CACHE case doesn't share
-any code with the one for systems with coherent caches.  Split it off
-and merge it with the helpers in dma-noncoherent.c that have no other
-callers.
+These methods are optional, no need to implement no-op versions.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 ---
- arch/powerpc/include/asm/dma-mapping.h |  5 -----
- arch/powerpc/kernel/dma.c              | 14 ++------------
- arch/powerpc/mm/dma-noncoherent.c      | 15 +++++++--------
- arch/powerpc/platforms/44x/warp.c      |  2 +-
- 4 files changed, 10 insertions(+), 26 deletions(-)
+ arch/powerpc/kernel/dma.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-index f2a4a7142b1e..dacd0f93f2b2 100644
---- a/arch/powerpc/include/asm/dma-mapping.h
-+++ b/arch/powerpc/include/asm/dma-mapping.h
-@@ -39,9 +39,6 @@ extern int dma_nommu_mmap_coherent(struct device *dev,
-  * to ensure it is consistent.
-  */
- struct device;
--extern void *__dma_alloc_coherent(struct device *dev, size_t size,
--				  dma_addr_t *handle, gfp_t gfp);
--extern void __dma_free_coherent(size_t size, void *vaddr);
- extern void __dma_sync(void *vaddr, size_t size, int direction);
- extern void __dma_sync_page(struct page *page, unsigned long offset,
- 				 size_t size, int direction);
-@@ -52,8 +49,6 @@ extern unsigned long __dma_get_coherent_pfn(unsigned long cpu_addr);
-  * Cache coherent cores.
-  */
- 
--#define __dma_alloc_coherent(dev, gfp, size, handle)	NULL
--#define __dma_free_coherent(size, addr)		((void)0)
- #define __dma_sync(addr, size, rw)		((void)0)
- #define __dma_sync_page(pg, off, sz, rw)	((void)0)
- 
 diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-index 6551685a4ed0..d6deb458bb91 100644
+index d6deb458bb91..7078d72baec2 100644
 --- a/arch/powerpc/kernel/dma.c
 +++ b/arch/powerpc/kernel/dma.c
-@@ -62,18 +62,12 @@ static int dma_nommu_dma_supported(struct device *dev, u64 mask)
- #endif
+@@ -197,12 +197,6 @@ static int dma_nommu_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return nents;
  }
  
-+#ifndef CONFIG_NOT_COHERENT_CACHE
- void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
- 				  dma_addr_t *dma_handle, gfp_t flag,
- 				  unsigned long attrs)
+-static void dma_nommu_unmap_sg(struct device *dev, struct scatterlist *sg,
+-				int nents, enum dma_data_direction direction,
+-				unsigned long attrs)
+-{
+-}
+-
+ static u64 dma_nommu_get_required_mask(struct device *dev)
  {
- 	void *ret;
--#ifdef CONFIG_NOT_COHERENT_CACHE
--	ret = __dma_alloc_coherent(dev, size, dma_handle, flag);
--	if (ret == NULL)
--		return NULL;
--	*dma_handle += get_dma_offset(dev);
--	return ret;
--#else
- 	struct page *page;
- 	int node = dev_to_node(dev);
- #ifdef CONFIG_FSL_SOC
-@@ -110,19 +104,15 @@ void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
- 	*dma_handle = __pa(ret) + get_dma_offset(dev);
- 
- 	return ret;
--#endif
+ 	u64 end, mask;
+@@ -228,14 +222,6 @@ static inline dma_addr_t dma_nommu_map_page(struct device *dev,
+ 	return page_to_phys(page) + offset + get_dma_offset(dev);
  }
  
- void __dma_nommu_free_coherent(struct device *dev, size_t size,
- 				void *vaddr, dma_addr_t dma_handle,
- 				unsigned long attrs)
- {
--#ifdef CONFIG_NOT_COHERENT_CACHE
--	__dma_free_coherent(size, vaddr);
--#else
- 	free_pages((unsigned long)vaddr, get_order(size));
--#endif
- }
-+#endif /* !CONFIG_NOT_COHERENT_CACHE */
- 
- static void *dma_nommu_alloc_coherent(struct device *dev, size_t size,
- 				       dma_addr_t *dma_handle, gfp_t flag,
-diff --git a/arch/powerpc/mm/dma-noncoherent.c b/arch/powerpc/mm/dma-noncoherent.c
-index 382528475433..965ce3d19f5a 100644
---- a/arch/powerpc/mm/dma-noncoherent.c
-+++ b/arch/powerpc/mm/dma-noncoherent.c
-@@ -29,7 +29,7 @@
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/highmem.h>
--#include <linux/dma-mapping.h>
-+#include <linux/dma-direct.h>
- #include <linux/export.h>
- 
- #include <asm/tlbflush.h>
-@@ -151,8 +151,8 @@ static struct ppc_vm_region *ppc_vm_region_find(struct ppc_vm_region *head, unsi
-  * Allocate DMA-coherent memory space and return both the kernel remapped
-  * virtual and bus address for that space.
-  */
--void *
--__dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp)
-+void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
-+		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
- {
- 	struct page *page;
- 	struct ppc_vm_region *c;
-@@ -223,7 +223,7 @@ __dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle, gfp_t
- 		/*
- 		 * Set the "dma handle"
- 		 */
--		*handle = page_to_phys(page);
-+		*dma_handle = phys_to_dma(dev, page_to_phys(page));
- 
- 		do {
- 			SetPageReserved(page);
-@@ -249,12 +249,12 @@ __dma_alloc_coherent(struct device *dev, size_t size, dma_addr_t *handle, gfp_t
-  no_page:
- 	return NULL;
- }
--EXPORT_SYMBOL(__dma_alloc_coherent);
- 
- /*
-  * free a page as defined by the above mapping.
-  */
--void __dma_free_coherent(size_t size, void *vaddr)
-+void __dma_nommu_free_coherent(struct device *dev, size_t size, void *vaddr,
-+		dma_addr_t dma_handle, unsigned long attrs)
- {
- 	struct ppc_vm_region *c;
- 	unsigned long flags, addr;
-@@ -309,7 +309,6 @@ void __dma_free_coherent(size_t size, void *vaddr)
- 	       __func__, vaddr);
- 	dump_stack();
- }
--EXPORT_SYMBOL(__dma_free_coherent);
- 
- /*
-  * make an area consistent.
-@@ -401,7 +400,7 @@ EXPORT_SYMBOL(__dma_sync_page);
- 
- /*
-  * Return the PFN for a given cpu virtual address returned by
-- * __dma_alloc_coherent. This is used by dma_mmap_coherent()
-+ * __dma_nommu_alloc_coherent. This is used by dma_mmap_coherent()
-  */
- unsigned long __dma_get_coherent_pfn(unsigned long cpu_addr)
- {
-diff --git a/arch/powerpc/platforms/44x/warp.c b/arch/powerpc/platforms/44x/warp.c
-index a886c2c22097..7e4f8ca19ce8 100644
---- a/arch/powerpc/platforms/44x/warp.c
-+++ b/arch/powerpc/platforms/44x/warp.c
-@@ -47,7 +47,7 @@ static int __init warp_probe(void)
- 	if (!of_machine_is_compatible("pika,warp"))
- 		return 0;
- 
--	/* For __dma_alloc_coherent */
-+	/* For __dma_nommu_alloc_coherent */
- 	ISA_DMA_THRESHOLD = ~0L;
- 
- 	return 1;
+-static inline void dma_nommu_unmap_page(struct device *dev,
+-					 dma_addr_t dma_address,
+-					 size_t size,
+-					 enum dma_data_direction direction,
+-					 unsigned long attrs)
+-{
+-}
+-
+ #ifdef CONFIG_NOT_COHERENT_CACHE
+ static inline void dma_nommu_sync_sg(struct device *dev,
+ 		struct scatterlist *sgl, int nents,
+@@ -261,10 +247,8 @@ const struct dma_map_ops dma_nommu_ops = {
+ 	.free				= dma_nommu_free_coherent,
+ 	.mmap				= dma_nommu_mmap_coherent,
+ 	.map_sg				= dma_nommu_map_sg,
+-	.unmap_sg			= dma_nommu_unmap_sg,
+ 	.dma_supported			= dma_nommu_dma_supported,
+ 	.map_page			= dma_nommu_map_page,
+-	.unmap_page			= dma_nommu_unmap_page,
+ 	.get_required_mask		= dma_nommu_get_required_mask,
+ #ifdef CONFIG_NOT_COHERENT_CACHE
+ 	.sync_single_for_cpu 		= dma_nommu_sync_single,
 -- 
 2.19.0
 
