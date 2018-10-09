@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BADECDE48
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E683BECDE3A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151E3214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAE84214DC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 16:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oh+NT+ff"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151E3214FA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNn7mfry"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE84214DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbeJIXqt (ORCPT
+        id S1727500AbeJIXqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:46:49 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43370 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeJIXqs (ORCPT
+        Tue, 9 Oct 2018 19:46:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36936 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeJIXqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:46:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n1-v6so2509270wrt.10
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:02 -0700 (PDT)
+        Tue, 9 Oct 2018 19:46:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 185-v6so2687440wmt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 09:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pW4H/oLkMUquIMiCs18y3wN7hCaDV3HqSP/jxxq3Qe8=;
-        b=oh+NT+ffx9sCqRLxpzBnJHKQ0adQJlOPjHDvP7MG83Rhf7543pGXk6+cqQMOVq+W8W
-         I+N8jbBPOTwssR2VGrUI2aX8x7oH9xbZO0yhONCs8RZYWqeqvzH9q/1zq6D+lJqPFKO9
-         rkJb4BAlxxYwIWfc/41mHn8nHWQE6lemfqcWEByV6aCN5yNRCOwqVb2QSKHEK2pBcCS+
-         QRWOuItI5vtTCtigpykg88NQDUsI7p75u90DZP6QfBUKob/jYrJ34DSvSTYJWJW8N6cT
-         0mw4m+/z91Ikj4wlEW0SJTDfkbvWa9u6QXYoyy49/KLCiyQSLYO82DYxpoxp1hkrVGL4
-         8dGA==
+        bh=2OWozK8lncn2tVCdlXSBXoTDRtVUMNg77hvggFKV1zs=;
+        b=uNn7mfry3wKSwo98eAar+KCDtaVLI60ohm3SF9HZd0ZkUXTjxx9ra5AgDhBMAQdYAr
+         nwh8xmidlSvg/oh0AcesVsyyfiBe1aXcFFpOoSGYPJFXjoLaZtiEGS0Rz6k5mzt3vtN2
+         OHFUp3Z9PqXmkWolI1MjCVkS/iAioUA/m2rLKWg6fnYrVCyqwU8KFe7m7bZqHc0yymua
+         KYs0H6DM7hZU+2hq5x/nuu3XZdsR941kz3Dy9MvbByFON3gKThsr8WqATOzJu15HklE0
+         eozjjQfk0Avnl4xBHI00vd1msYmqC0gErxSyLfeda3x965SglAdGIdLVv7bQ3yH9BL1+
+         jlLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pW4H/oLkMUquIMiCs18y3wN7hCaDV3HqSP/jxxq3Qe8=;
-        b=QJzlBg0AoRnDIUZy5/vkA18LXcVWT6jSmX2esxWCZoB2BGHjq9kU5JZuo5hWRN2npw
-         JvQ31/NiHg4JoRhhJFw1oTu2ACXIN6/gSgJ0QapelIZwuC0rQmKJKx2bIlVs5RybdMmh
-         XGHagh9sdPs27hLm1xkSsyLcCeJlXXuq+b2bNxG63pes0gAlsNNDt7Z0vZOTdFJ4/a79
-         7nPtGwQF8pAWL59E7hydSZO42iHs3zCvnsEBnFSbh+VUjST04vyBkbhdPObP+LtOzxLQ
-         NNg7ANNP5+jEPiFikUqMSPMVL/mvsi5qEgQ5sjM7xlzHTGMq/+daVDuyyBzqij/eFPmu
-         tcHg==
-X-Gm-Message-State: ABuFfogGWJz3oRJGa4hPkaAQw6aptngeExUpb9zWPBrUti/WNEhXT2Ge
-        FOCVD0uYWOIulZdfdUOJiiA=
-X-Google-Smtp-Source: ACcGV6310TdbnO9GkVwqzDWxWUI9GVWs8FTxF1EvgUNyuyAz0WcXpKt5UGT2dPgSe67cVO++uejSnw==
-X-Received: by 2002:adf:92a6:: with SMTP id 35-v6mr17953310wrn.137.1539102541755;
-        Tue, 09 Oct 2018 09:29:01 -0700 (PDT)
+        bh=2OWozK8lncn2tVCdlXSBXoTDRtVUMNg77hvggFKV1zs=;
+        b=oaSCi4+Hn+ROc45VCn9XoFJY0eTO4hWVhXww8uqgJWSLfPQfmAurzIYmAGIGygA66U
+         Q9Cq7rvbQtn8liQ4vf6K5ev6E3icGsufbN0gHUbpvCs4PNUB8g3nkZ3hEhb3s7vEth5w
+         W/H3RqbIqLQ+IH6JA3ud1s+gUixezrw9gUPPw+g7If/yxVa/p4i2vaMgKAixkunXcV9t
+         T5LoVrmE2K7TMvWQalW4SD17qT0GoBZN4DajU9lvW1KeURZdSDbIg1BXdJeGjPMc1pF9
+         8hpjg2/k6fXRfWa4y8wYzm5NRBxgYvCKDXB6eKj7IO+r7Eyarn9xEQcwsSbEYVyqX7QS
+         8jBw==
+X-Gm-Message-State: ABuFfojd/bKAc2x+em0UlU+hPmNvbkNAzxkwps8LQlvh/uysr5lXGQ2K
+        vqcG3CiadaK4Bke8crDdAvs=
+X-Google-Smtp-Source: ACcGV62NYdp6F+J9tG0w32x+rZAHmesgEYnXpxPAUHKAfW5rDVkcFsKlzq5xPSi7DzAjs5awumk3HA==
+X-Received: by 2002:a1c:af07:: with SMTP id y7-v6mr2641280wme.33.1539102540509;
+        Tue, 09 Oct 2018 09:29:00 -0700 (PDT)
 Received: from kheib-workstation.mynet (bzq-109-64-21-122.red.bezeqint.net. [109.64.21.122])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.29.00
+        by smtp.gmail.com with ESMTPSA id h18-v6sm18082694wrb.82.2018.10.09.09.28.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 09:29:01 -0700 (PDT)
+        Tue, 09 Oct 2018 09:29:00 -0700 (PDT)
 From:   Kamal Heib <kamalheib1@gmail.com>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kamalheib1@gmail.com
-Subject: [PATCH rdma-next 15/18] RDMA/usnic: Initialize ib_device_ops struct
-Date:   Tue,  9 Oct 2018 19:28:14 +0300
-Message-Id: <20181009162817.4635-16-kamalheib1@gmail.com>
+Subject: [PATCH rdma-next 14/18] RDMA/qib: Initialize ib_device_ops struct
+Date:   Tue,  9 Oct 2018 19:28:13 +0300
+Message-Id: <20181009162817.4635-15-kamalheib1@gmail.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181009162817.4635-1-kamalheib1@gmail.com>
 References: <20181009162817.4635-1-kamalheib1@gmail.com>
@@ -76,59 +76,33 @@ Initialize ib_device_ops with the supported operations.
 
 Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
 ---
- drivers/infiniband/hw/usnic/usnic_ib_main.c | 32 +++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/infiniband/hw/qib/qib_verbs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-index e3f98fe2f1e6..e327f5ec818e 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-@@ -330,6 +330,37 @@ static void usnic_get_dev_fw_str(struct ib_device *device, char *str)
- 	snprintf(str, IB_FW_VERSION_NAME_MAX, "%s", info.fw_version);
+diff --git a/drivers/infiniband/hw/qib/qib_verbs.c b/drivers/infiniband/hw/qib/qib_verbs.c
+index 8a45964c4700..8fe2519e34d9 100644
+--- a/drivers/infiniband/hw/qib/qib_verbs.c
++++ b/drivers/infiniband/hw/qib/qib_verbs.c
+@@ -1496,6 +1496,11 @@ static void qib_fill_device_attr(struct qib_devdata *dd)
+ 	dd->verbs_dev.rdi.wc_opcode = ib_qib_wc_opcode;
  }
  
-+static struct ib_device_ops usnic_dev_ops = {
-+	.query_device		= usnic_ib_query_device,
-+	.query_port		= usnic_ib_query_port,
-+	.query_pkey		= usnic_ib_query_pkey,
-+	.query_gid		= usnic_ib_query_gid,
-+	.get_netdev		= usnic_get_netdev,
-+	.get_link_layer		= usnic_ib_port_link_layer,
-+	.alloc_pd		= usnic_ib_alloc_pd,
-+	.dealloc_pd		= usnic_ib_dealloc_pd,
-+	.create_qp		= usnic_ib_create_qp,
-+	.modify_qp		= usnic_ib_modify_qp,
-+	.query_qp		= usnic_ib_query_qp,
-+	.destroy_qp		= usnic_ib_destroy_qp,
-+	.create_cq		= usnic_ib_create_cq,
-+	.destroy_cq		= usnic_ib_destroy_cq,
-+	.reg_user_mr		= usnic_ib_reg_mr,
-+	.dereg_mr		= usnic_ib_dereg_mr,
-+	.alloc_ucontext		= usnic_ib_alloc_ucontext,
-+	.dealloc_ucontext	= usnic_ib_dealloc_ucontext,
-+	.mmap			= usnic_ib_mmap,
-+	.create_ah		= usnic_ib_create_ah,
-+	.destroy_ah		= usnic_ib_destroy_ah,
-+	.post_send		= usnic_ib_post_send,
-+	.post_recv		= usnic_ib_post_recv,
-+	.poll_cq		= usnic_ib_poll_cq,
-+	.req_notify_cq		= usnic_ib_req_notify_cq,
-+	.get_dma_mr		= usnic_ib_get_dma_mr,
-+	.get_port_immutable	= usnic_port_immutable,
-+	.get_dev_fw_str		= usnic_get_dev_fw_str,
++static struct ib_device_ops qib_dev_ops = {
++	.modify_device		= qib_modify_device,
++	.process_mad		= qib_process_mad,
 +};
 +
- /* Start of PF discovery section */
- static void *usnic_ib_device_add(struct pci_dev *dev)
- {
-@@ -415,6 +446,7 @@ static void *usnic_ib_device_add(struct pci_dev *dev)
- 	us_ibdev->ib_dev.get_port_immutable = usnic_port_immutable;
- 	us_ibdev->ib_dev.get_dev_fw_str     = usnic_get_dev_fw_str;
+ /**
+  * qib_register_ib_device - register our device with the infiniband core
+  * @dd: the device data structure
+@@ -1626,6 +1631,7 @@ int qib_register_ib_device(struct qib_devdata *dd)
+ 			      dd->rcd[ctxt]->pkeys);
+ 	}
  
-+	ib_set_device_ops(&us_ibdev->ib_dev, &usnic_dev_ops);
- 
- 	us_ibdev->ib_dev.driver_id = RDMA_DRIVER_USNIC;
- 	if (ib_register_device(&us_ibdev->ib_dev, "usnic_%d", NULL))
++	ib_set_device_ops(ibdev, &qib_dev_ops);
+ 	ret = rvt_register_device(&dd->verbs_dev.rdi, RDMA_DRIVER_QIB);
+ 	if (ret)
+ 		goto err_tx;
 -- 
 2.14.4
 
