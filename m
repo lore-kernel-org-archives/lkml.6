@@ -2,138 +2,104 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0951C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C8BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02FE21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0M5zu2N8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02FE21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id BB46721479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 15:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB46721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJIWRg (ORCPT
+        id S1726943AbeJIWRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 18:17:36 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:48975 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbeJIWRg (ORCPT
+        Tue, 9 Oct 2018 18:17:51 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36158 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726563AbeJIWRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:17:36 -0400
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w99ExxM8025995;
-        Wed, 10 Oct 2018 00:00:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w99ExxM8025995
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539097200;
-        bh=EqLwtVieBTMSBZpDCXpPOCdMKw+P5GfFFeM2l+V5JFM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0M5zu2N8i65f4cYhSgzUE5+c36NHxFvvYcEvpwODpxKclneMuZ/rdFghn09WWgeJo
-         tXlRN7uyrtNqbEX3DztsvuukTDYWfVhXQ4H2ANSTlIYgQddgluCEMaUY+WUtAr+rwz
-         BsAMRtM3S/mI+ao3+aZ8WogR0NYpyoWSNX9P8i3HB98nPGZBYM/6Eiaqp9pcMQdlnb
-         gBFXwjOA8TaId7numTU83AKzmDgp/GYA6VdKoxkl40gtTjczPsgCKkssxEwf3n/ib7
-         0twwF86tC3hs8dAUMvkoUqkYk2jASl50JsNtMZGooZvJIaw8g5ybeiBIqjCfWsE3BJ
-         jpycSLu/s12yw==
-X-Nifty-SrcIP: [209.85.217.52]
-Received: by mail-vs1-f52.google.com with SMTP id c10so1811721vsk.2;
-        Tue, 09 Oct 2018 07:59:59 -0700 (PDT)
-X-Gm-Message-State: ABuFfogYrGcYF/XTbynPetZwMoPtYWTN+LZg29kVCkrTIetfYpKqKH+h
-        g/JDUF1NsDhfoLS7GOnDDyfoY020wGJ0s9LCZLU=
-X-Google-Smtp-Source: ACcGV62NJRYtogzmDrr8xg3J5YUqL6xKiKPXanTtl/+3lTOvUGwKLzQJGAEuLINrCvExiMFLxNqCjuw3Giu4bL58z1I=
-X-Received: by 2002:a67:f1d2:: with SMTP id v18mr10483020vsm.181.1539097198705;
- Tue, 09 Oct 2018 07:59:58 -0700 (PDT)
+        Tue, 9 Oct 2018 18:17:50 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09210706|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D.er2x5_1539097196;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D.er2x5_1539097196)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Tue, 09 Oct 2018 22:59:56 +0800
+Date:   Tue, 9 Oct 2018 22:59:56 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, daniel.lezcano@linaro.org,
+        anurup.m@huawei.com, Jonathan.Cameron@huawei.com,
+        will.deacon@arm.com, zhangshaokun@hisilicon.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V10 1/8] irqchip: add C-SKY SMP interrupt controller
+Message-ID: <20181009145955.GA17681@guoren-Inspiron-7460>
+References: <cover.1538672812.git.ren_guo@c-sky.com>
+ <e06484474231375248e3e7a6ab47cf8ff8893129.1538672812.git.ren_guo@c-sky.com>
+ <404fb433-020e-28f9-2434-a22c6db36a15@arm.com>
+ <20181009022357.GA826@guoren>
+ <a8654ba4-fe46-6842-64f6-d4141bbf8793@arm.com>
 MIME-Version: 1.0
-References: <1538627119-11346-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538627119-11346-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 9 Oct 2018 23:59:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATOf8cp=A+VeDBi=Wn-3DBAnd78Uxc5OL_b-MOkc6dJcw@mail.gmail.com>
-Message-ID: <CAK7LNATOf8cp=A+VeDBi=Wn-3DBAnd78Uxc5OL_b-MOkc6dJcw@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: remove unneeded link_multi_deps
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8654ba4-fe46-6842-64f6-d4141bbf8793@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 4, 2018 at 1:25 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Since commit c8589d1e9e01 ("kbuild: handle multi-objs dependency
-> appropriately"), $^ really represents all the prerequisite of the
-> composite object being built.
->
-> Hence, $(filter %.o,$^) contains all the objects to link together,
-> which is much simpler than link_multi_deps calculation.
->
-> Please note $(filter-out FORCE,$^) does not work here.  When a
-> single object module is turned into a multi object module, $^ will
-> contain header files that were previously included for building the
-> single object, and recorded in the .*.cmd file.  $(filter %.o,$^)
-> should be used to filter out such headers.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> Changes in v2:
->   - Fix regression reported in linux-next.
->     https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1779047.html
+Hi, Marc,
 
+On Tue, Oct 09, 2018 at 09:15:17AM +0100, Marc Zyngier wrote:
 
-V2 replaced V1.
+> >>>+#ifdef CONFIG_SMP
+> >>>+	set_send_ipi(&csky_mpintc_send_ipi);
+> >>>+
+> >>>+	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
+> >>
+> >>Since you seem to be inventing a new set_send_ipi callback, why don't you
+> >>define it as:
+> >>
+> >>void set_send_ipi(void (*func)(const struct cpumask *),
+> >>		  unsigned int ipi_irq);
+> >>after having created the mapping for the IPI interrupt? It would avoid this
+> >>rather pointless mapping callback.
+> >
+> >I'll define it to:
+> >
+> >void set_send_ipi(void (*func)(const struct cpumask *));
+> >
+> >IPI_IRQ only use software-irq-15 in mpintc driver, so arch needn't care
+> >about irq-num.
+> 
+> Except that your SMP code does a request_irq on the result of
+> create_mapping. Who is going to do that if you don't pass the Linux irq
+> around?
+ 
+Yes, My SMP code does a request_irq on the result of create_mapping.
+Here is my smp.c code and it use a result of create_mapping by arch_ipi_irq_mapping()
+callback in irq-csky-mpintc.c
 
+void __init setup_smp_ipi(void)
+{
+	int rc;
 
->  scripts/Makefile.build | 20 ++------------------
->  1 file changed, 2 insertions(+), 18 deletions(-)
->
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index cb03774..f21b48d 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -485,28 +485,12 @@ targets += $(obj)/lib-ksyms.o
->
->  endif
->
-> -#
-> -# Rule to link composite objects
-> -#
-> -#  Composite objects are specified in kbuild makefile as follows:
-> -#    <composite-object>-objs := <list of .o files>
-> -#  or
-> -#    <composite-object>-y    := <list of .o files>
-> -#  or
-> -#    <composite-object>-m    := <list of .o files>
-> -#  The -m syntax only works if <composite object> is a module
-> -link_multi_deps =                     \
-> -$(filter $(addprefix $(obj)/,         \
-> -$($(subst $(obj)/,,$(@:.o=-objs)))    \
-> -$($(subst $(obj)/,,$(@:.o=-y)))       \
-> -$($(subst $(obj)/,,$(@:.o=-m)))), $^)
-> -
->  quiet_cmd_link_multi-m = LD [M]  $@
-> -cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(link_multi_deps) $(cmd_secanalysis)
-> +cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^) $(cmd_secanalysis)
->
->  $(multi-used-m): FORCE
->         $(call if_changed,link_multi-m)
-> -       @{ echo $(@:.o=.ko); echo $(link_multi_deps); \
-> +       @{ echo $(@:.o=.ko); echo $(filter %.o,$^); \
->            $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=.mod)
->  $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
->
-> --
-> 2.7.4
->
+	ipi_irq = arch_ipi_irq_mapping();
+	if (ipi_irq == 0)
+		panic("%s IRQ mapping failed\n", __func__);
 
+	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
+				&ipi_dummy_dev);
+	if (rc)
+		panic("%s IRQ request failed\n", __func__);
 
--- 
+	enable_smp_ipi();
+}
+
 Best Regards
-Masahiro Yamada
+ Guo Ren
