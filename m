@@ -2,146 +2,173 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8C7C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A4FC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2251E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:48:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2251E206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 92451206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 04:48:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92451206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeJIMDp (ORCPT
+        id S1726522AbeJIMD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 08:03:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39600 "EHLO mx1.redhat.com"
+        Tue, 9 Oct 2018 08:03:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:32353 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbeJIMDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 08:03:45 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 80120308424D;
-        Tue,  9 Oct 2018 04:48:43 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C7E764436;
-        Tue,  9 Oct 2018 04:48:42 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 12:48:39 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Garnier <thgarnie@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 4/3 v2] x86/mm/doc: Enhance the x86-64 virtual memory
- layout descriptions
-Message-ID: <20181009044839.GH5140@MiWiFi-R3L-srv>
-References: <20181006084327.27467-1-bhe@redhat.com>
- <20181006122259.GB418@gmail.com>
- <20181006143821.GA72401@gmail.com>
- <20181006170317.GA21297@gmail.com>
- <CALCETrXcsf9fNAkZH29e=p8pTkqE=YR42cbnLWmqqbAbJQ6KbA@mail.gmail.com>
- <20181009003553.GG5140@MiWiFi-R3L-srv>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009003553.GG5140@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 09 Oct 2018 04:48:43 +0000 (UTC)
+        id S1726439AbeJIMD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 08:03:56 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Tl9k5ySGz9ttBx;
+        Tue,  9 Oct 2018 06:48:42 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id X0-h2HsdT6mS; Tue,  9 Oct 2018 06:48:42 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Tl9k4db5z9ttBR;
+        Tue,  9 Oct 2018 06:48:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1ABDC8B775;
+        Tue,  9 Oct 2018 06:48:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id H9hui_TZdzBA; Tue,  9 Oct 2018 06:48:51 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C86FE8B75B;
+        Tue,  9 Oct 2018 06:48:50 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 686416F2C5; Tue,  9 Oct 2018 04:48:50 +0000 (UTC)
+Message-Id: <cover.1539040628.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v7 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue,  9 Oct 2018 04:48:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/18 at 08:35am, Baoquan He wrote:
-> Hi Andy, Ingo
-> 
-> On 10/06/18 at 03:17pm, Andy Lutomirski wrote:
-> > On Sat, Oct 6, 2018 at 10:03 AM Ingo Molnar <mingo@kernel.org> wrote:
-> > > ... but unless I'm missing something it's not really fundamental for it to be at the PGD level
-> > > - it could be two levels lower as well, and it could move back to the same place where it's on
-> > > the 47-bit kernel.
-> > >
-> > 
-> > The subtlety is that, if it's lower than the PGD level, there end up
-> > being some tables that are private to each LDT-using mm that map
-> > things other than the LDT.  Those tables cover the same address range
-> > as some corresponding tables in init_mm, and if those tables in
-> > init_mm change after the LDT mapping is set up, the changes won't
-> > propagate.
-> > 
-> > So it probably could be made to work, but it would take some extra care.
-> 
-> In 4-level paging mode, we reserve 512 GB virtual address space for it to
-> map, the 512 GB is one PGD entry. In 5-level paging mode, we reserve 4
-> PB for mapping LDT, and leave the previous 512 GB space next to
-> cpu_entry_area mapping empty as unused hole. Maybe we can still put LDT
-> map for PTI in the old place, after cpu_entry_area mapping in 5-level.
-> Then in 5-level, 512 GB is only one p4d entry, however it's in the last
-> pgd entry, each pgd points to 256 TB area, and the last pgd entry will
-> points to p4d table which always exists in system since it contains
-> kernel text mapping etc. Now if LDT take one entry in the always
-> existing p4d table, maybe it can still works as before it owns a whole
-> pgd entry, oh, no, 4 PB will cost 16 pgd entries.
+The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+moves the thread_info into task_struct.
 
-Sorry, I am too long-winded. Here I mean that LDT map of 512 GB will
-occupy one p4d entry alone, and the corresponding pgd and p4d table are
-all always presnet and populated and unchanged. It might not need
-any page table change to propagate. Not sure if there's any other risk
-in this case.
+Moving thread_info into task_struct has the following advantages:
+- It protects thread_info from corruption in the case of stack
+overflows.
+- Its address is harder to determine if stack addresses are
+leaked, making a number of attacks more difficult.
 
-Thanks
-Baoquan
+Changes since v6:
+ - Fixed validate_sp() to exclude NULL sp in 'regain entire stack space' patch (early crash with CONFIG_KMEMLEAK)
 
-> 
-> Most importantly, putting LDT map for PTI in KASLR area, won't it cause
-> code bug, if we randomize the direct mapping/vmaloc/vmemmap to make them
-> overlap with LDT map area? We didn't take LDT into consideration when do
-> memory region KASLR.
-> 
-> 
-> 4-level virutal memory layout:
-> 
-> ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-> ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-> ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
-> ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
-> ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-> ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-> ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
-> ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-> fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
->                  |            |                  |         | vaddr_end for KASLR
-> fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-> fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap for PTI
-> 					^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^	
-> ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-> 
-> 5-level virtual memory layout:
-> 
-> ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-> ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap for PTI
-> 					^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ioremap space (vmalloc_base)
-> ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
-> ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
-> ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
-> ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shadow memory
-> fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
->                  |            |                  |         | vaddr_end for KASLR
-> fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-> fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-> ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
+Changes since v5:
+ - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
+ - Fixed PPC_BPF_LOAD_CPU() macro
+
+Changes since v4:
+ - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
+ already existing, was due to spaces instead of a tab in the Makefile
+
+Changes since RFC v3: (based on Nick's review)
+ - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+ - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+ - Removed CURRENT_THREAD_INFO macro completely.
+ - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+ - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+ - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+ - Fixed a few commit logs
+ - Fixed checkpatch report.
+
+Changes since RFC v2:
+ - Removed the modification of names in asm-offsets
+ - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+ - Modified asm/smp.h to use the offset set in CFLAGS
+ - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+ - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
+
+Changes since RFC v1:
+ - Removed the first patch which was modifying header inclusion order in timer
+ - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+ - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+ - Moved some changes from the activation patch to the preparation patch.
+
+Christophe Leroy (9):
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
+
+Christophe Leroy (9):
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
+
+ arch/powerpc/Kconfig                           |  1 +
+ arch/powerpc/Makefile                          |  8 ++-
+ arch/powerpc/include/asm/asm-prototypes.h      |  4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |  2 +-
+ arch/powerpc/include/asm/exception-64s.h       |  4 +-
+ arch/powerpc/include/asm/irq.h                 | 14 ++---
+ arch/powerpc/include/asm/livepatch.h           |  7 ++-
+ arch/powerpc/include/asm/processor.h           | 39 +------------
+ arch/powerpc/include/asm/ptrace.h              |  2 +-
+ arch/powerpc/include/asm/reg.h                 |  2 +-
+ arch/powerpc/include/asm/smp.h                 | 17 +++++-
+ arch/powerpc/include/asm/task_size_user64.h    | 42 ++++++++++++++
+ arch/powerpc/include/asm/thread_info.h         | 19 -------
+ arch/powerpc/kernel/asm-offsets.c              | 10 ++--
+ arch/powerpc/kernel/entry_32.S                 | 66 ++++++++--------------
+ arch/powerpc/kernel/entry_64.S                 | 12 ++--
+ arch/powerpc/kernel/epapr_hcalls.S             |  5 +-
+ arch/powerpc/kernel/exceptions-64e.S           | 13 +----
+ arch/powerpc/kernel/exceptions-64s.S           |  2 +-
+ arch/powerpc/kernel/head_32.S                  | 14 ++---
+ arch/powerpc/kernel/head_40x.S                 |  4 +-
+ arch/powerpc/kernel/head_44x.S                 |  8 +--
+ arch/powerpc/kernel/head_64.S                  |  1 +
+ arch/powerpc/kernel/head_8xx.S                 |  2 +-
+ arch/powerpc/kernel/head_booke.h               | 12 +---
+ arch/powerpc/kernel/head_fsl_booke.S           | 16 +++---
+ arch/powerpc/kernel/idle_6xx.S                 |  8 +--
+ arch/powerpc/kernel/idle_book3e.S              |  2 +-
+ arch/powerpc/kernel/idle_e500.S                |  8 +--
+ arch/powerpc/kernel/idle_power4.S              |  2 +-
+ arch/powerpc/kernel/irq.c                      | 77 +++++---------------------
+ arch/powerpc/kernel/kgdb.c                     | 28 ----------
+ arch/powerpc/kernel/machine_kexec_64.c         |  6 +-
+ arch/powerpc/kernel/misc_32.S                  | 17 +++---
+ arch/powerpc/kernel/process.c                  | 40 ++++++-------
+ arch/powerpc/kernel/setup-common.c             |  2 +-
+ arch/powerpc/kernel/setup_32.c                 | 15 ++---
+ arch/powerpc/kernel/setup_64.c                 | 41 ++++----------
+ arch/powerpc/kernel/smp.c                      | 16 +++---
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +-
+ arch/powerpc/kvm/book3s_hv_hmi.c               |  1 +
+ arch/powerpc/mm/hash_low_32.S                  | 14 ++---
+ arch/powerpc/net/bpf_jit32.h                   |  5 +-
+ arch/powerpc/sysdev/6xx-suspend.S              |  5 +-
+ arch/powerpc/xmon/xmon.c                       |  2 +-
+ 45 files changed, 240 insertions(+), 381 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_user64.h
+
+-- 
+2.13.3
+
