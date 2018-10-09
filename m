@@ -2,112 +2,245 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA093C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39227C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 959A62086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:51:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959A62086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id CD0032086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:51:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LFzoWEmq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0032086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeJIVIH (ORCPT
+        id S1726925AbeJIVIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:08:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55195 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeJIVIH (ORCPT
+        Tue, 9 Oct 2018 17:08:23 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39682 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJIVIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:08:07 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w99Dp3vJ086363;
-        Tue, 9 Oct 2018 22:51:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Tue, 09 Oct 2018 22:51:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w99Dp2OF086359
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 9 Oct 2018 22:51:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
- sharing mm
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
- <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
- <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
- <20181009063541.GB8528@dhcp22.suse.cz> <20181009075015.GC8528@dhcp22.suse.cz>
- <df4b029c-16b4-755f-2672-d7ec116f78ba@i-love.sakura.ne.jp>
- <20181009111005.GK8528@dhcp22.suse.cz>
- <99008444-b6b1-efc9-8670-f3eac4d2305f@i-love.sakura.ne.jp>
- <20181009125841.GP8528@dhcp22.suse.cz>
- <41754dfe-3be7-f64e-45c9-2525d3b20d62@i-love.sakura.ne.jp>
- <20181009132622.GR8528@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0ab96b81-042e-b9d9-8d63-b423941d8072@i-love.sakura.ne.jp>
-Date:   Tue, 9 Oct 2018 22:51:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 17:08:23 -0400
+Received: by mail-oi1-f195.google.com with SMTP id y81-v6so1261473oia.6
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gPy7UKqolrRPivUJOqM7tolFGM7aL9jO+6tsh4SEzPQ=;
+        b=LFzoWEmqBoB6xzQyfv+myh49xVOknO+Kcmsf2193DRi8+SC+zWQnWseMYgt1U+TCj7
+         wNvLp21nkqb5RuPrfa0FcMYheIFG+/6W+yLXsPQvz53FuhFn7agOjfEu5ZLhC1kuFcfv
+         9DgEZ6B71hIY1oMLuuPUuL6CNB51EfyVOnkCLjCHfLOax/bFU+u96xhZFJ8Qz6Qaw7QO
+         ujjSlEkza/Kd7r9tOHPOqooMFFfghpfqhK9aRKvt9xEePNsFmpxbVwE/srOxo/pGzeel
+         4Tyj6UjA3KDbIfMcoIwjdpHX7iqlYcBHBMR3eMsQ8YwN92w3MqjJYPKdKu5WvrHBgdLN
+         QsBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gPy7UKqolrRPivUJOqM7tolFGM7aL9jO+6tsh4SEzPQ=;
+        b=QyucMKcUlk8gUt0D4744qr+ylXPk6MUfQ772Ogkw/uVeC2ZDF4zwZGtONbQS5g4D+t
+         zLAuEmrLQ0Oaau3m3Zht8blaZm55RlPS+Q8/rw5ZBLZWYVJ+zCci0Tjlq+GazZtuj/90
+         Aieqn8XRSboBnADI6bIZw99HqEYUcniFT/TiiXdWZknXBdtJmyr87ZetPmydeyZeeMFG
+         wVivZ30xmX2a8iZqC3EczI0CpRgnpoIaWfptgGfMXj+FUVq4ILuTOFnUeU6+w1e0fQVP
+         VkJUFfU/FUsbXGiiGCClFnduLWmVwp/BFitZIdhSo8GDiOdpUcJ4F4FLukDuoNZhC0uX
+         0C2Q==
+X-Gm-Message-State: ABuFfojSU014E8luabwrKtOSfuq/n6woy0Sp5i+MO9iVzyrHdenXm6tR
+        W2Vc22R1VcvPKC/E5zCTsLP5BmjSnRY3xiGL65gDSA==
+X-Google-Smtp-Source: ACcGV63IKahGKIAJ+SucmGNbuLvFxwsdU+P2LSwu0DCVU9aF88MKSYanvoU7hAlmBN6LfG9r290h2aPoBqlPYICb7TU=
+X-Received: by 2002:aca:bf55:: with SMTP id p82-v6mr7399079oif.39.1539093079425;
+ Tue, 09 Oct 2018 06:51:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181009132622.GR8528@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+ <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <20181009134923.2fvf5roghqgaj5gq@brauner.io>
+In-Reply-To: <20181009134923.2fvf5roghqgaj5gq@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 9 Oct 2018 15:50:53 +0200
+Message-ID: <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     christian@brauner.io
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/09 22:26, Michal Hocko wrote:
-> On Tue 09-10-18 22:14:24, Tetsuo Handa wrote:
->> On 2018/10/09 21:58, Michal Hocko wrote:
->>> On Tue 09-10-18 21:52:12, Tetsuo Handa wrote:
->>>> On 2018/10/09 20:10, Michal Hocko wrote:
->>>>> On Tue 09-10-18 19:00:44, Tetsuo Handa wrote:
->>>>>>> 2) add OOM_SCORE_ADJ_MIN and do not kill tasks sharing mm and do not
->>>>>>> reap the mm in the rare case of the race.
->>>>>>
->>>>>> That is no problem. The mistake we made in 4.6 was that we updated oom_score_adj
->>>>>> to -1000 (and allowed unprivileged users to OOM-lockup the system).
->>>>>
->>>>> I do not follow.
->>>>>
->>>>
->>>> http://tomoyo.osdn.jp/cgi-bin/lxr/source/mm/oom_kill.c?v=linux-4.6.7#L493
->>>
->>> Ahh, so you are not referring to the current upstream code. Do you see
->>> any specific problem with the current one (well, except for the possible
->>> race which I have tried to evaluate).
->>>
->>
->> Yes. "task_will_free_mem(current) in out_of_memory() returns false due to MMF_OOM_SKIP
->> being already set" is a problem for clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
->> with the current code.
-> 
-> a) I fail to see how that is related to your previous post and b) could
-> you be more specific. Is there any other scenario from the two described
-> in my earlier email?
-> 
+On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
+>
+> On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
+> > +cc selinux people explicitly, since they probably have opinions on this
+> >
+> > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
+> > > On Tue, Oct 09, 2018 at 02:39:53PM +0200, Jann Horn wrote:
+> > > > On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
+> > > > > > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > > > > > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > > > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > > > > > > > index 44a31ac8373a..17685803a2af 100644
+> > > > > > > > > > --- a/kernel/seccomp.c
+> > > > > > > > > > +++ b/kernel/seccomp.c
+> > > > > > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > > > > > > > >
+> > > > > > > > > >       return ret;
+> > > > > > > > > >  }
+> > > > > > > > > > +
+> > > > > > > > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > > > > > > > +                       unsigned long filter_off)
+> > > > > > > > > > +{
+> > > > > > > > > > +     struct seccomp_filter *filter;
+> > > > > > > > > > +     struct file *listener;
+> > > > > > > > > > +     int fd;
+> > > > > > > > > > +
+> > > > > > > > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > > > > > > > +             return -EACCES;
+> > > > > > > > >
+> > > > > > > > > I know this might have been discussed a while back but why exactly do we
+> > > > > > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > > > > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > > > > > > > use ptrace from in there?
+> > > > > > > >
+> > > > > > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > > > > > > > . Basically, the problem is that this doesn't just give you capability
+> > > > > > > > over the target task, but also over every other task that has the same
+> > > > > > > > filter installed; you need some sort of "is the caller capable over
+> > > > > > > > the filter and anyone who uses it" check.
+> > > > > > >
+> > > > > > > Thanks.
+> > > > > > > But then this new ptrace feature as it stands is imho currently broken.
+> > > > > > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> > > > > > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> > > > > > > if you are ns_cpabable(CAP_SYS_ADMIN)
+> > > >
+> > > > Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
+> > > > you enable the NNP flag, I think?
+> > >
+> > > Yes, if you turn on NNP you don't even need sys_admin.
+> > >
+> > > >
+> > > > > > > then either the new ptrace() api
+> > > > > > > extension should be fixed to allow for this too or the seccomp() way of
+> > > > > > > retrieving the pid - which I really think we want - needs to be fixed to
+> > > > > > > require capable(CAP_SYS_ADMIN) too.
+> > > > > > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> > > > > > > the preferred way to solve this.
+> > > > > > > Everything else will just be confusing.
+> > > > > >
+> > > > > > First you say "broken", then you say "confusing". Which one do you mean?
+> > > > >
+> > > > > Both. It's broken in so far as it places a seemingly unnecessary
+> > > > > restriction that could be fixed. You outlined one possible fix yourself
+> > > > > in the link you provided.
+> > > >
+> > > > If by "possible fix" you mean "check whether the seccomp filter is
+> > > > only attached to a single task": That wouldn't fundamentally change
+> > > > the situation, it would only add an additional special case.
+> > > >
+> > > > > And it's confusing in so far as there is a way
+> > > > > via seccomp() to get the fd without said requirement.
+> > > >
+> > > > I don't find it confusing at all. seccomp() and ptrace() are very
+> > >
+> > > Fine, then that's a matter of opinion. I find it counterintuitive that
+> > > you can get an fd without privileges via one interface but not via
+> > > another.
+> > >
+> > > > different situations: When you use seccomp(), infrastructure is
+> > >
+> > > Sure. Note, that this is _one_ of the reasons why I want to make sure we
+> > > keep the native seccomp() only based way of getting an fd without
+> > > forcing userspace to switching to a differnet kernel api.
+> > >
+> > > > already in place for ensuring that your filter is only applied to
+> > > > processes over which you are capable, and propagation is limited by
+> > > > inheritance from your task down. When you use ptrace(), you need a
+> > > > pretty different sort of access check that checks whether you're
+> > > > privileged over ancestors, siblings and so on of the target task.
+> > >
+> > > So, don't get me wrong I'm not arguing against the ptrace() interface in
+> > > general. If this is something that people find useful, fine. But, I
+> > > would like to have a simple single-syscall pure-seccomp() based way of
+> > > getting an fd, i.e. what we have in patch 1 of this series.
+> >
+> > Yeah, I also prefer the seccomp() one.
+> >
+> > > > But thinking about it more, I think that CAP_SYS_ADMIN over the saved
+> > > > current->mm->user_ns of the task that installed the filter (stored as
+> > > > a "struct user_namespace *" in the filter) should be acceptable.
+> > >
+> > > Hm... Why not CAP_SYS_PTRACE?
+> >
+> > Because LSMs like SELinux add extra checks that apply even if you have
+> > CAP_SYS_PTRACE, and this would subvert those. The only capability I
+> > know of that lets you bypass LSM checks by design (if no LSM blocks
+> > the capability itself) is CAP_SYS_ADMIN.
+> >
+> > > One more thing. Citing from [1]
+> > >
+> > > > I think there's a security problem here. Imagine the following scenario:
+> > > >
+> > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> > > > 2. task A forks off a child B
+> > > > 3. task B uses setuid(1) to drop its privileges
+> > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> > > > or via execve()
+> > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+> > >
+> > > Sorry, to be late to the party but would this really pass
+> > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
+> > > that it would... Doesn't look like it would get past:
+> > >
+> > >         tcred = __task_cred(task);
+> > >         if (uid_eq(caller_uid, tcred->euid) &&
+> > >             uid_eq(caller_uid, tcred->suid) &&
+> > >             uid_eq(caller_uid, tcred->uid)  &&
+> > >             gid_eq(caller_gid, tcred->egid) &&
+> > >             gid_eq(caller_gid, tcred->sgid) &&
+> > >             gid_eq(caller_gid, tcred->gid))
+> > >                 goto ok;
+> > >         if (ptrace_has_cap(tcred->user_ns, mode))
+> > >                 goto ok;
+> > >         rcu_read_unlock();
+> > >         return -EPERM;
+> > > ok:
+> > >         rcu_read_unlock();
+> > >         mm = task->mm;
+> > >         if (mm &&
+> > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
+> > >              !ptrace_has_cap(mm->user_ns, mode)))
+> > >             return -EPERM;
+> >
+> > Which specific check would prevent task C from attaching to task B? If
+> > the UIDs match, the first "goto ok" executes; and you're dumpable, so
+> > you don't trigger the second "return -EPERM".
+>
+> You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
+> have if you did a setuid to an unpriv user. (But I always find that code
+> confusing.)
 
-I do not follow. Just reverting commit 44a70adec910d692 and commit 97fd49c2355ffded
-is sufficient for closing the copy_process() versus __set_oom_adj() race.
-
-We went too far towards complete "struct mm_struct" based OOM handling. But stepping
-back to "struct signal_struct" based OOM handling solves Yong-Taek's for_each_process()
-latency problem and your copy_process() versus __set_oom_adj() race problem and my
-task_will_free_mem(current) race problem.
-
+Only if the target hasn't gone through execve() since setuid().
