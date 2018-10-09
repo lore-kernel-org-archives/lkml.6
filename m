@@ -5,232 +5,243 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2AAECDFAC
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01323ECDFAC
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BAE2064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A1121479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 17:47:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wtf3xh+9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BAE2064E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHiTeurX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A1121479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJJBF0 (ORCPT
+        id S1727132AbeJJBFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 21:05:26 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41984 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeJJBF0 (ORCPT
+        Tue, 9 Oct 2018 21:05:55 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34001 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJJBFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:05:26 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c8-v6so1181047plo.9;
-        Tue, 09 Oct 2018 10:47:19 -0700 (PDT)
+        Tue, 9 Oct 2018 21:05:54 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w19-v6so2508789eds.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 10:47:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=NFWjmn9TDBkATQaXA+17wcOB9zqUAyWN/ATkHmUsFrI=;
-        b=Wtf3xh+91coxGwz0/GhW5Al1NovWJuWT8wWlaORqbX6i0cwDicJK/YSWNf6qKGcGuZ
-         GEf9dmIRBwb+HuuES1bx2foO/tJRsY4uwnhdNpISaQAoSSVMhIP3OhKttBmL7bhI1Tgs
-         JJgLY36EU6zUM2iwn7pFrwMHJQE6sJYpKoy3RgTEZgEoH+MA/T7VLb3K0jxoGJaK65rQ
-         Xkbg+p/0hNIZ3uTcWSjkhZ574Gj60Ph9fUX/GY1lKMj+EzE66ZwwCnJGMGjl+o7BbbC4
-         oLCAJLpoYkgdHjdeRYR6A5IqAJH8brj7/PATaYc8F1CfeZYGivqX8hCUoJbelI8lknRI
-         QYNw==
+        h=subject:references:to:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Tla7pet3I34OcZVjHR/nVD2DOu8/NEoCygp2kvsRcLk=;
+        b=LHiTeurXHw5zBDt9EG9NrrHzNXD5dmN2YHEmWBuy5OZnUZum1M8ykc8jvPRAmNX9+L
+         ybYI8sjMhrW0Ky5ar3AuhDN+fEf3Ai29k3qy7INRVsAZ/s4gC17oAP834v3DUMfK+Odm
+         FxSjRZ6+RGzM5bcrfaGPkSnjruJJuKZ0H4kjDL/e9usWZAXDn0hfKjFmqHV7QHYqtPzI
+         w4+bADXOkAKxGBzDjNL06xStJuMlvJCd14ro/Eac26Rl6rqkiQDtmUDzqw5rWvZt2/AM
+         i5c2RkmQVkxBp91ptbP5LH09LVt9uURAHRgAAF3YyXwgMgIGzhd0MVGHZJY17dj+xDf0
+         n+jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NFWjmn9TDBkATQaXA+17wcOB9zqUAyWN/ATkHmUsFrI=;
-        b=V51BGKinGzovTSLSFBzn0rtbCINGVkuI1Ir9IFhcZfpGZJVyhpK6HMXSVuAQ95KpqR
-         CBPa/p9j+WRkTNPtQEkDYarthSTTJKXx/6z04KfG8qhvRcS2co5qm+SguoIMSF0Ae003
-         20KIwGPEl1vVKJPRDXa5AOu+Bbxdz4IwQBs1nuFc+8i5iR25XzarwORAMSseia+fs39R
-         w1EEmOLGiXf/c3A00RLJcz4guaED2AzBH9W+u6xZQdMvqTWcZyx6WFe14mAILX/2iu1w
-         PzVvkBqURcYXjaIwfohcNjDQRbIY3Nx6pfSoVyifXlnqWEsceSWaeYWKj/07ThY6HnfB
-         1i0g==
-X-Gm-Message-State: ABuFfogxlht6zSdoNnLB8MOPTwpYfVGNvSbSbmj/DFvhrsCiJRW4FLuZ
-        QtRQxSHhS4pkxvMpzqpeZoOPSm5P
-X-Google-Smtp-Source: ACcGV61Mtsb3n+jsJE1FIsHQJl8zKkJ1GS2z4+mmEGqTlRquTy07L7z/fN7J78akZlcb9/FwKT69lA==
-X-Received: by 2002:a17:902:be11:: with SMTP id r17-v6mr10028510pls.112.1539107239225;
-        Tue, 09 Oct 2018 10:47:19 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm29767184pfl.126.2018.10.09.10.47.17
+        h=x-gm-message-state:subject:references:to:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Tla7pet3I34OcZVjHR/nVD2DOu8/NEoCygp2kvsRcLk=;
+        b=Aq6w2d9rOwkReYOtGU6edX2vkROw/JhZZ7QJV8gjEDqLo4TqMc/ez2OjJu0uwjYRjT
+         n56wZjYjyq2hmBYlXCg5b5OFmsoI1IOVCWmmh+HApWpp9xxuVY9c/5edGdzcSWzwWsM7
+         wHLduY1cjn1YpSI8XStf4+Swo8olCePJjLSA/i2i0rIY4gfPt+MiLcLTrmWYdOjhMXgw
+         Rt2YS4TsWF/FsTeE4XBk3UWxSYQtGx1q57uPTrsVa1yqmbIdgZenKaZd4+K2aC5/Z9FO
+         q2sRqchQuYZkcjVjJcjOdIwravrYMmtZPQN0oHfaPFTz1ysALhRNjJw/7X3Y9Z5I+Pjq
+         SgCQ==
+X-Gm-Message-State: ABuFfogZOYJh57+YvcQg7JyNcxQkQi8TVbYXLL77Uuiut6SFZzleYf5d
+        8WrVgF13SUH+/reaVXCivQfGkKnhEtw=
+X-Google-Smtp-Source: ACcGV61NbMLhy1sPZmNQHwPHjSDvvAMJSg4tFYvrZt9geBrbvPn5KEHkPC3J2T7R4qR2AUiXdptgvw==
+X-Received: by 2002:aa7:d58a:: with SMTP id r10-v6mr37747457edq.161.1539107266886;
+        Tue, 09 Oct 2018 10:47:46 -0700 (PDT)
+Received: from [192.168.1.88] ([194.230.158.33])
+        by smtp.googlemail.com with ESMTPSA id g13-v6sm2358516edv.48.2018.10.09.10.47.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 10:47:18 -0700 (PDT)
-Subject: Re: [PATCH v15 06/16] of/fdt: add helper functions for handling
- properties
-To:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-7-takahiro.akashi@linaro.org>
- <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
- <20181005030849.GK32578@linaro.org>
- <CAL_Jsq+wXU8PCyJhaTKE7ezZhiD0KARUFXVzQBk0ZptEEK7ubQ@mail.gmail.com>
- <20181009003733.GN32578@linaro.org>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <c65e42ce-1a98-7680-3a09-1f737eb26763@gmail.com>
-Date:   Tue, 9 Oct 2018 10:47:15 -0700
+        Tue, 09 Oct 2018 10:47:46 -0700 (PDT)
+Subject: [PATCH] IAD Register is yet readable trough iad sys file. Fix
+ snprintf (%u for unsigned, count for max size).
+References: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     greg@kroah.com, manio@skyboo.net
+From:   Julien Folly <julien.folly@gmail.com>
+X-Forwarded-Message-Id: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
+Message-ID: <1e173939-d95d-c94f-971d-99ff84eb8eb1@gmail.com>
+Date:   Tue, 9 Oct 2018 19:47:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181009003733.GN32578@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <af443df9-b919-24ee-70ac-dbc80566f787@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08/18 17:37, AKASHI, Takahiro wrote:
-> On Fri, Oct 05, 2018 at 08:23:57AM -0500, Rob Herring wrote:
->> On Thu, Oct 4, 2018 at 10:07 PM AKASHI, Takahiro
->> <takahiro.akashi@linaro.org> wrote:
->>>
->>> Rob,
->>>
->>> # I haven't replied to this comment yet.
->>>
->>> On Fri, Sep 28, 2018 at 08:44:42AM -0500, Rob Herring wrote:
->>>> +David Gibson
->>>>
->>>> On Fri, Sep 28, 2018 at 1:48 AM AKASHI Takahiro
->>>> <takahiro.akashi@linaro.org> wrote:
->>>>>
->>>>> These functions will be used later to handle kexec-specific properties
->>>>> in arm64's kexec_file implementation.
->>>>>
->>>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
->>>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>>> Cc: Frank Rowand <frowand.list@gmail.com>
->>>>> Cc: devicetree@vger.kernel.org
->>>>> ---
->>>>>  drivers/of/fdt.c       | 56 ++++++++++++++++++++++++++++++++++++++++++
->>>>>  include/linux/of_fdt.h |  4 +++
->>>>>  2 files changed, 60 insertions(+)
->>>>>
->>>>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
->>>>> index 800ad252cf9c..c65c31562ccb 100644
->>>>> --- a/drivers/of/fdt.c
->>>>> +++ b/drivers/of/fdt.c
->>>>> @@ -25,6 +25,7 @@
->>>>>  #include <linux/debugfs.h>
->>>>>  #include <linux/serial_core.h>
->>>>>  #include <linux/sysfs.h>
->>>>> +#include <linux/types.h>
->>>>>
->>>>>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
->>>>>  #include <asm/page.h>
->>>>> @@ -1323,3 +1324,58 @@ late_initcall(of_fdt_raw_init);
->>>>>  #endif
->>>>>
->>>>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
->>>>> +
->>>>> +#define FDT_ALIGN(x, a)        (((x) + (a) - 1) & ~((a) - 1))
->>>>> +#define FDT_TAGALIGN(x)        (FDT_ALIGN((x), FDT_TAGSIZE))
->>>>> +
->>>>> +int fdt_prop_len(const char *prop_name, int len)
->>>>> +{
->>>>> +       return (strlen(prop_name) + 1) +
->>>>> +               sizeof(struct fdt_property) +
->>>>> +               FDT_TAGALIGN(len);
->>>>
->>>> Looks like you are using this to calculate how much space you need to
->>>> allocate in addition to the current DTB for a couple of new or
->>>> replaced properties. I'm not sure that this calculation is completely
->>>> accurate. And it is strange there doesn't seem to be any libfdt
->>>> function for this already. It would be simpler to just add some fixed
->>>> additional amount.
->>>>
->>>> Maybe David G has comments on this?
->>>>
->>>>> +}
->>>>> +
->>>>
->>>> The rest of this should go in drivers/of/fdt_address.c. Ultimately, it
->>>> should go into libfdt, but I'm fine with having it in the kernel for
->>>> now.
->>>
->>> I'd like to have this function in the kernel for now.
->>>
->>>>> +static void fill_property(void *buf, u64 val64, int cells)
->>>>> +{
->>>>> +       __be32 val32;
->>>>> +
->>>>> +       while (cells) {
->>>>> +               val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
->>>>> +               memcpy(buf, &val32, sizeof(val32));
->>>>> +               buf += sizeof(val32);
->>>>
->>>> This is kind of hard to read. I would copy u-boot's fdt_pack_reg function.
->>>
->>> Are you sure?
->>> I originally implemented this function in a similar way that fdt_pack_reg()
->>> was, but, you suggested, in your past comment[1], that we'd be better to
->>> have of_read_number()-like implementation.
->>>
->>> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579118.html
->>
->> Yeah, you're right. Plus, I'm not sure the u-boot one would work for
->> unaligned accesses with armv5 and earlier h/w.
->>
->> My only comment then is I think you can drop the U32_MAX masking.
-> 
-> Okay, then I will leave this function, yet renaming it to
-> cpu64_to_fdt_cells() after Frank's comment.
+IAD Register is yet readable trough the "iad" sys file.
 
-I have second guessed myself and do not like the name I suggested
-because what the function really does is either cpu32 to be32 or
-cpu64 to be64.
+A write to the "iad" sys file enables or disables the current
+measurement, but it was not possible to get the measured value by
+reading it.
+Fix: %u in snprintf for unsigned values (vdd and vad)
+Fix: Avoid possibles overflows (Usage of the 'count' variables)
 
-I agree with Rob that readability is important here.  Instead of
-having a fill_property() function, how about having inline code,
-something like (untested even for thinkos):
+Signed-off-by: Julien Folly <julien.folly@gmail.com>
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+---
+  drivers/w1/slaves/w1_ds2438.c | 66 ++++++++++++++++++++++++++++++++++---------
+  1 file changed, 52 insertions(+), 14 deletions(-)
 
-	prop = buf;
-
-	if (addr_cells == 1) {
-		*(__be32 *)prop = cpu32_to_be32(addr);
-		prop += 4;
-	} else {
-		*(__be64 *)prop = cpu64_to_be64(addr);
-		prop += 8;
-	}
-
-	if (size_cells == 1)
-		*(__be32 *)prop = cpu32_to_be32(size);
-	else
-		*(__be64 *)prop = cpu64_to_be64(size);
-
-You might want to also give Rob a chance to bike shed on this
-suggestion.
-
--Frank
-
-> 
-> Thanks,
-> -Takahiro Akashi
->>
->> Rob
-> 
+diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
+index bf641a1..7c4e33d 100644
+--- a/drivers/w1/slaves/w1_ds2438.c
++++ b/drivers/w1/slaves/w1_ds2438.c
+@@ -186,8 +186,8 @@ static int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
+  	return -1;
+  }
+  
+-static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
+-				      int adc_input, uint16_t *voltage)
++static int w1_ds2438_get_voltage(struct w1_slave *sl,
++				 int adc_input, uint16_t *voltage)
+  {
+  	unsigned int retries = W1_DS2438_RETRIES;
+  	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
+@@ -235,6 +235,25 @@ static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
+  	return ret;
+  }
+  
++static int w1_ds2438_get_current(struct w1_slave *sl, int16_t *voltage)
++{
++	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
++	int ret;
++
++	mutex_lock(&sl->master->bus_mutex);
++
++	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
++		/* The voltage measured across current sense resistor RSENS. */
++		*voltage = (((int16_t) w1_buf[DS2438_CURRENT_MSB]) << 8) | ((int16_t) w1_buf[DS2438_CURRENT_LSB]);
++		ret = 0;
++	} else
++		ret = -1;
++
++	mutex_unlock(&sl->master->bus_mutex);
++
++	return ret;
++}
++
+  static ssize_t iad_write(struct file *filp, struct kobject *kobj,
+  			 struct bin_attribute *bin_attr, char *buf,
+  			 loff_t off, size_t count)
+@@ -257,6 +276,27 @@ static ssize_t iad_write(struct file *filp, struct kobject *kobj,
+  	return ret;
+  }
+  
++static ssize_t iad_read(struct file *filp, struct kobject *kobj,
++			struct bin_attribute *bin_attr, char *buf,
++			loff_t off, size_t count)
++{
++	struct w1_slave *sl = kobj_to_w1_slave(kobj);
++	int ret;
++	int16_t voltage;
++
++	if (off != 0)
++		return 0;
++	if (!buf)
++		return -EINVAL;
++
++	if (w1_ds2438_get_current(sl, &voltage) == 0) {
++		ret = snprintf(buf, count, "%i\n", voltage);
++	} else
++		ret = -EIO;
++
++	return ret;
++}
++
+  static ssize_t page0_read(struct file *filp, struct kobject *kobj,
+  			  struct bin_attribute *bin_attr, char *buf,
+  			  loff_t off, size_t count)
+@@ -272,9 +312,13 @@ static ssize_t page0_read(struct file *filp, struct kobject *kobj,
+  
+  	mutex_lock(&sl->master->bus_mutex);
+  
++	/* Read no more than page0 size */
++	if (count > DS2438_PAGE_SIZE)
++		count = DS2438_PAGE_SIZE;
++
+  	if (w1_ds2438_get_page(sl, 0, w1_buf) == 0) {
+-		memcpy(buf, &w1_buf, DS2438_PAGE_SIZE);
+-		ret = DS2438_PAGE_SIZE;
++		memcpy(buf, &w1_buf, count);
++		ret = count;
+  	} else
+  		ret = -EIO;
+  
+@@ -289,7 +333,6 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
+  {
+  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
+  	int ret;
+-	ssize_t c = PAGE_SIZE;
+  	int16_t temp;
+  
+  	if (off != 0)
+@@ -298,8 +341,7 @@ static ssize_t temperature_read(struct file *filp, struct kobject *kobj,
+  		return -EINVAL;
+  
+  	if (w1_ds2438_get_temperature(sl, &temp) == 0) {
+-		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", temp);
+-		ret = PAGE_SIZE - c;
++		ret = snprintf(buf, count, "%i\n", temp);
+  	} else
+  		ret = -EIO;
+  
+@@ -312,7 +354,6 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
+  {
+  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
+  	int ret;
+-	ssize_t c = PAGE_SIZE;
+  	uint16_t voltage;
+  
+  	if (off != 0)
+@@ -321,8 +362,7 @@ static ssize_t vad_read(struct file *filp, struct kobject *kobj,
+  		return -EINVAL;
+  
+  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VAD, &voltage) == 0) {
+-		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
+-		ret = PAGE_SIZE - c;
++		ret = snprintf(buf, count, "%u\n", voltage);
+  	} else
+  		ret = -EIO;
+  
+@@ -335,7 +375,6 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
+  {
+  	struct w1_slave *sl = kobj_to_w1_slave(kobj);
+  	int ret;
+-	ssize_t c = PAGE_SIZE;
+  	uint16_t voltage;
+  
+  	if (off != 0)
+@@ -344,15 +383,14 @@ static ssize_t vdd_read(struct file *filp, struct kobject *kobj,
+  		return -EINVAL;
+  
+  	if (w1_ds2438_get_voltage(sl, DS2438_ADC_INPUT_VDD, &voltage) == 0) {
+-		c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", voltage);
+-		ret = PAGE_SIZE - c;
++		ret = snprintf(buf, count, "%u\n", voltage);
+  	} else
+  		ret = -EIO;
+  
+  	return ret;
+  }
+  
+-static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, NULL, iad_write, 1);
++static BIN_ATTR(iad, S_IRUGO | S_IWUSR | S_IWGRP, iad_read, iad_write, 0);
+  static BIN_ATTR_RO(page0, DS2438_PAGE_SIZE);
+  static BIN_ATTR_RO(temperature, 0/* real length varies */);
+  static BIN_ATTR_RO(vad, 0/* real length varies */);
+-- 
+2.7.4
 
