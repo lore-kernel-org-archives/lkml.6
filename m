@@ -2,315 +2,141 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C87BC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9E9C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87DA21479
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:21:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87DA21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1053521479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 10:24:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lJUm8OsQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1053521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeJIRiH (ORCPT
+        id S1726568AbeJIRlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 13:38:07 -0400
-Received: from mga14.intel.com ([192.55.52.115]:52870 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbeJIRiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 13:38:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 03:21:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,360,1534834800"; 
-   d="scan'208";a="270765643"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Oct 2018 03:21:35 -0700
-Received: from tiger-server (unknown [10.239.48.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id ED4395801E6;
-        Tue,  9 Oct 2018 03:21:32 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 01:00:52 +0800
-From:   Yi Zhang <yi.z.zhang@linux.intel.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.hansen@intel.com, jglisse@redhat.com, rppt@linux.vnet.ibm.com,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20181009170051.GA40606@tiger-server>
-Mail-Followup-To: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
-        mhocko@suse.com, dave.hansen@intel.com, jglisse@redhat.com,
-        rppt@linux.vnet.ibm.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
+        Tue, 9 Oct 2018 13:41:07 -0400
+Received: from mail-eopbgr30088.outbound.protection.outlook.com ([40.107.3.88]:42381
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726103AbeJIRlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 13:41:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wxpJ+ECOIvZVG4cb00sYGWgHAhjF8almwUPjZHWRWrs=;
+ b=lJUm8OsQVRh0hsx6swop9aTh13AxzUnWyiRh8i2UnztgSTs0GEsa/wwqysn5/jxfekGwDHDf9L2y2iPj3gxab/Bs6Vl57FpAY41IKFmrdUIHfapCu3k5aOUVTY8aKxVztBOhfEl1QP3DXqUjCpnZuLtaQq4cTg9WFOaFcwOfOjw=
+Received: from AM6PR04MB4357.eurprd04.prod.outlook.com (52.135.167.33) by
+ AM6PR04MB4216.eurprd04.prod.outlook.com (52.135.168.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.21; Tue, 9 Oct 2018 10:24:49 +0000
+Received: from AM6PR04MB4357.eurprd04.prod.outlook.com
+ ([fe80::7dc8:c4f0:3cb6:d466]) by AM6PR04MB4357.eurprd04.prod.outlook.com
+ ([fe80::7dc8:c4f0:3cb6:d466%3]) with mapi id 15.20.1207.024; Tue, 9 Oct 2018
+ 10:24:49 +0000
+From:   Chuanhua Han <chuanhua.han@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "eha@deif.com" <eha@deif.com>
+Subject: RE: [PATCH 1/2] spi: spi-mem: Add the spi_set_xfer_bpw function
+Thread-Topic: [PATCH 1/2] spi: spi-mem: Add the spi_set_xfer_bpw function
+Thread-Index: AQHUUXmVvI4Eamit80qkSTJAtq5nJ6UFSniAgAAAtKCAAAjOgIARcEYwgAAH+wCAAAESEA==
+Date:   Tue, 9 Oct 2018 10:24:49 +0000
+Message-ID: <AM6PR04MB43575B32D7C8FBFC3FD7B45A97E70@AM6PR04MB4357.eurprd04.prod.outlook.com>
+References: <20180921070628.35153-1-chuanhua.han@nxp.com>
+        <20180928084431.300b7bf9@bbrezillon>
+        <AM6PR04MB43573478FFD0E512A117484097EC0@AM6PR04MB4357.eurprd04.prod.outlook.com>
+        <20180928091833.15e95f7f@bbrezillon>
+        <AM6PR04MB4357280CD4F77FCB01AB5C7097E70@AM6PR04MB4357.eurprd04.prod.outlook.com>
+ <20181009120522.6b2bd15a@bbrezillon>
+In-Reply-To: <20181009120522.6b2bd15a@bbrezillon>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=chuanhua.han@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4216;6:ZzfreM0Bhkct6Fozzjhg7Q2lKZaRBjGO4mNaXND1KK+NQpS8+a74kaiN9nJK46N94+yH1aYHenvtXM6HknUdWny6T94m1vNNO/jTWU7EAmxhBHkih2vPdz09qYxRvKsJ20RDDHXvzB15RYLIHMyRrRsuzJ/Ud4UYX/SU2wJEr4za+K4Kp4H4D538KJVfIFbuFD/A1GNFxVzOMxL7DUuAc/KxaZiYIrbQaVoZ2b3vVx4V+6qxlVHrcwTuzRD2OKVSiy+W2oYZPqMiKpw1nKOAYyszDJeRuGMSOU8E+71yO2lOLNw0ZyAjochSIGRplyGg3Y/ojiFi555UvyjWTFYg2YBNJlKJMn/K6qIzH0w5P+ZETmXD4NDD59S8u+aXxADjhTOwInCf51WuSBM427OJSOgmAQtjarLx/hkqs61OvYSJDm6kv0SDG4pymVRbJLfT20nhyftYdtxGvRW2HZAlEw==;5:OLAzRLSuGEr8y6KkntD0pytQBNaga/vR2zea9S4oO4dn95wfHKzseExgYxz8rCJov7NnO1KYMGQhxfOnrfiTsXUP3IWo5K7zP40gFOP4jKpuF5i7pFLAudGLKmH/vmjoaYgm2x8jyxuglusi9p/V6rDcwcVgd+3Ds78AlrQi/84=;7:5iLl0pJ1fX9cEoOmb5i4XaHvLetqbAvs8nA3atsvuYHo+MTuGFF1OZlD8rqDAoeq51HRRRRlSwKhzD5+AD0Pl3YFV7EqgKNi7W910GXOafOPIjmLGaVZgNiwWL76zOpbsi4gVroVLdAeJObBB0Yy1lBOFu8W/z2Gmc26B2py0ECI0TNrG56wb34sCgTLVzkOXZsDy9RUkBgk5EDiP7FIJR6DHj+u7VJuJMgtDVilD7HhwqB66tVYe5AnEB7QlNZ6
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 26434bed-8cc1-46a8-25fd-08d62dd17168
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4216;
+x-ms-traffictypediagnostic: AM6PR04MB4216:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <AM6PR04MB4216928849C1A986293145B997E70@AM6PR04MB4216.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(17755550239193)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051);SRVR:AM6PR04MB4216;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4216;
+x-forefront-prvs: 08200063E9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(366004)(136003)(43544003)(189003)(13464003)(199004)(6506007)(76176011)(6916009)(66066001)(7696005)(256004)(71200400001)(4326008)(86362001)(478600001)(71190400001)(54906003)(26005)(316002)(53546011)(186003)(93886005)(5250100002)(14454004)(102836004)(6246003)(5660300001)(74316002)(8676002)(8936002)(81156014)(81166006)(25786009)(305945005)(7736002)(2900100001)(229853002)(55016002)(486006)(105586002)(9686003)(6436002)(106356001)(6116002)(68736007)(2906002)(476003)(99286004)(44832011)(33656002)(97736004)(446003)(11346002)(3846002)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4216;H:AM6PR04MB4357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: vURn8WDo/ru7970g2xPuc84gW1eVPf7AKt7s6wD0ZIq/Uy9PdKfxLXLJO9BmkyvXcMKfVV78JQNpCe4CqDM6hrYoGcxYZQpd63xEuKbC42JPZ2vP20eSg0VBGPa9dxS1I9qHcmi4aSKdT8jLUEv/wNEgjhwu4ptr0e/ah51jczTt5pRF8ZdodT2+7LeSlC3/KwCnVR0F/KKDWtQGvPD0sDPJBay87i7v1WjfdBR0z476Ge+qALF5yj149pg3ThVlfVQAxh9jdeiiy//QMmw1Zc/AwsI1TTMfjFnHPZup1bBD+5biKWQaRhZwc3smz7sQh4Zjuyl6XbslK2ik3442aXxXlcn6AJUrTJ42X46wGrY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180925202053.3576.66039.stgit@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26434bed-8cc1-46a8-25fd-08d62dd17168
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 10:24:49.2944
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-25 at 13:21:24 -0700, Alexander Duyck wrote:
-> The ZONE_DEVICE pages were being initialized in two locations. One was with
-> the memory_hotplug lock held and another was outside of that lock. The
-> problem with this is that it was nearly doubling the memory initialization
-> time. Instead of doing this twice, once while holding a global lock and
-> once without, I am opting to defer the initialization to the one outside of
-> the lock. This allows us to avoid serializing the overhead for memory init
-> and we can instead focus on per-node init times.
-> 
-> One issue I encountered is that devm_memremap_pages and
-> hmm_devmmem_pages_create were initializing only the pgmap field the same
-> way. One wasn't initializing hmm_data, and the other was initializing it to
-> a poison value. Since this is something that is exposed to the driver in
-> the case of hmm I am opting for a third option and just initializing
-> hmm_data to 0 since this is going to be exposed to unknown third party
-> drivers.
-> 
-> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
-> 
-> v4: Moved moved memmap_init_zone_device to below memmmap_init_zone to avoid
->     merge conflicts with other changes in the kernel.
-> v5: No change
-> 
->  include/linux/mm.h |    2 +
->  kernel/memremap.c  |   24 +++++---------
->  mm/hmm.c           |   12 ++++---
->  mm/page_alloc.c    |   92 ++++++++++++++++++++++++++++++++++++++++++++++++++--
->  4 files changed, 107 insertions(+), 23 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 06d7d7576f8d..7312fb78ef31 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -848,6 +848,8 @@ static inline bool is_zone_device_page(const struct page *page)
->  {
->  	return page_zonenum(page) == ZONE_DEVICE;
->  }
-> +extern void memmap_init_zone_device(struct zone *, unsigned long,
-> +				    unsigned long, struct dev_pagemap *);
->  #else
->  static inline bool is_zone_device_page(const struct page *page)
->  {
-> diff --git a/kernel/memremap.c b/kernel/memremap.c
-> index 5b8600d39931..d0c32e473f82 100644
-> --- a/kernel/memremap.c
-> +++ b/kernel/memremap.c
-> @@ -175,10 +175,10 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
->  	struct vmem_altmap *altmap = pgmap->altmap_valid ?
->  			&pgmap->altmap : NULL;
->  	struct resource *res = &pgmap->res;
-> -	unsigned long pfn, pgoff, order;
-> +	struct dev_pagemap *conflict_pgmap;
->  	pgprot_t pgprot = PAGE_KERNEL;
-> +	unsigned long pgoff, order;
->  	int error, nid, is_ram;
-> -	struct dev_pagemap *conflict_pgmap;
->  
->  	align_start = res->start & ~(SECTION_SIZE - 1);
->  	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
-> @@ -256,19 +256,13 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
->  	if (error)
->  		goto err_add_memory;
->  
-> -	for_each_device_pfn(pfn, pgmap) {
-> -		struct page *page = pfn_to_page(pfn);
-> -
-> -		/*
-> -		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
-> -		 * pointer.  It is a bug if a ZONE_DEVICE page is ever
-> -		 * freed or placed on a driver-private list.  Seed the
-> -		 * storage with LIST_POISON* values.
-> -		 */
-> -		list_del(&page->lru);
-> -		page->pgmap = pgmap;
-> -		percpu_ref_get(pgmap->ref);
-> -	}
-> +	/*
-> +	 * Initialization of the pages has been deferred until now in order
-> +	 * to allow us to do the work while not holding the hotplug lock.
-> +	 */
-> +	memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
-> +				align_start >> PAGE_SHIFT,
-> +				align_size >> PAGE_SHIFT, pgmap);
->  
->  	devm_add_action(dev, devm_memremap_pages_release, pgmap);
->  
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index c968e49f7a0c..774d684fa2b4 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -1024,7 +1024,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
->  	resource_size_t key, align_start, align_size, align_end;
->  	struct device *device = devmem->device;
->  	int ret, nid, is_ram;
-> -	unsigned long pfn;
->  
->  	align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
->  	align_size = ALIGN(devmem->resource->start +
-> @@ -1109,11 +1108,14 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
->  				align_size >> PAGE_SHIFT, NULL);
->  	mem_hotplug_done();
->  
-> -	for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
-> -		struct page *page = pfn_to_page(pfn);
-> +	/*
-> +	 * Initialization of the pages has been deferred until now in order
-> +	 * to allow us to do the work while not holding the hotplug lock.
-> +	 */
-> +	memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
-> +				align_start >> PAGE_SHIFT,
-> +				align_size >> PAGE_SHIFT, &devmem->pagemap);
->  
-> -		page->pgmap = &devmem->pagemap;
-> -	}
->  	return 0;
->  
->  error_add_memory:
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 926ad3083b28..7ec0997ded39 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5489,12 +5489,23 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  	if (highest_memmap_pfn < end_pfn - 1)
->  		highest_memmap_pfn = end_pfn - 1;
->  
-> +#ifdef CONFIG_ZONE_DEVICE
->  	/*
->  	 * Honor reservation requested by the driver for this ZONE_DEVICE
-> -	 * memory
-> +	 * memory. We limit the total number of pages to initialize to just
-> +	 * those that might contain the memory mapping. We will defer the
-> +	 * ZONE_DEVICE page initialization until after we have released
-> +	 * the hotplug lock.
->  	 */
-> -	if (altmap && start_pfn == altmap->base_pfn)
-> -		start_pfn += altmap->reserve;
-> +	if (zone == ZONE_DEVICE) {
-> +		if (!altmap)
-> +			return;
-> +
-> +		if (start_pfn == altmap->base_pfn)
-> +			start_pfn += altmap->reserve;
-> +		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
-> +	}
-> +#endif
->  
->  	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
->  		/*
-> @@ -5538,6 +5549,81 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  	}
->  }
->  
-> +#ifdef CONFIG_ZONE_DEVICE
-> +void __ref memmap_init_zone_device(struct zone *zone,
-> +				   unsigned long start_pfn,
-> +				   unsigned long size,
-> +				   struct dev_pagemap *pgmap)
-> +{
-> +	unsigned long pfn, end_pfn = start_pfn + size;
-> +	struct pglist_data *pgdat = zone->zone_pgdat;
-> +	unsigned long zone_idx = zone_idx(zone);
-> +	unsigned long start = jiffies;
-> +	int nid = pgdat->node_id;
-> +
-> +	if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
-> +		return;
-> +
-> +	/*
-> +	 * The call to memmap_init_zone should have already taken care
-> +	 * of the pages reserved for the memmap, so we can just jump to
-> +	 * the end of that region and start processing the device pages.
-> +	 */
-> +	if (pgmap->altmap_valid) {
-> +		struct vmem_altmap *altmap = &pgmap->altmap;
-> +
-> +		start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
-> +		size = end_pfn - start_pfn;
-> +	}
-> +
-> +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-> +		struct page *page = pfn_to_page(pfn);
-> +
-> +		__init_single_page(page, pfn, zone_idx, nid);
-> +
-> +		/*
-> +		 * Mark page reserved as it will need to wait for onlining
-> +		 * phase for it to be fully associated with a zone.
-> +		 *
-> +		 * We can use the non-atomic __set_bit operation for setting
-> +		 * the flag as we are still initializing the pages.
-> +		 */
-> +		__SetPageReserved(page);
-
-So we need to hold the page reserved flag while memory onlining.
-But after onlined, Do we neeed to clear the reserved flag in the DEV/FS
-DAX memory type?
-@Dan, What will going on with this?
-
-Regards
-Yi.
-
-> +
-> +		/*
-> +		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
-> +		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
-> +		 * page is ever freed or placed on a driver-private list.
-> +		 */
-> +		page->pgmap = pgmap;
-> +		page->hmm_data = 0;
-> +
-> +		/*
-> +		 * Mark the block movable so that blocks are reserved for
-> +		 * movable at startup. This will force kernel allocations
-> +		 * to reserve their blocks rather than leaking throughout
-> +		 * the address space during boot when many long-lived
-> +		 * kernel allocations are made.
-> +		 *
-> +		 * bitmap is created for zone's valid pfn range. but memmap
-> +		 * can be created for invalid pages (for alignment)
-> +		 * check here not to call set_pageblock_migratetype() against
-> +		 * pfn out of zone.
-> +		 *
-> +		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
-> +		 * because this is done early in sparse_add_one_section
-> +		 */
-> +		if (!(pfn & (pageblock_nr_pages - 1))) {
-> +			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
-> +			cond_resched();
-> +		}
-> +	}
-> +
-> +	pr_info("%s initialised, %lu pages in %ums\n", dev_name(pgmap->dev),
-> +		size, jiffies_to_msecs(jiffies - start));
-> +}
-> +
-> +#endif
->  static void __meminit zone_init_free_lists(struct zone *zone)
->  {
->  	unsigned int order, t;
-> 
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQm9yaXMgQnJlemlsbG9u
+IDxib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5jb20+DQo+IFNlbnQ6IDIwMTjE6jEw1MI5yNUgMTg6
+MDUNCj4gVG86IENodWFuaHVhIEhhbiA8Y2h1YW5odWEuaGFuQG54cC5jb20+DQo+IENjOiBicm9v
+bmllQGtlcm5lbC5vcmc7IGxpbnV4LXNwaUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc7IGVoYUBkZWlmLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEv
+Ml0gc3BpOiBzcGktbWVtOiBBZGQgdGhlIHNwaV9zZXRfeGZlcl9icHcgZnVuY3Rpb24NCj4gDQo+
+IE9uIFR1ZSwgOSBPY3QgMjAxOCAwOTo1MjoyMyArMDAwMA0KPiBDaHVhbmh1YSBIYW4gPGNodWFu
+aHVhLmhhbkBueHAuY29tPiB3cm90ZToNCj4gDQo+ID4gMS4gSW4gdGhlIGRzcGkgZHJpdmVyIChz
+cGkgY29udHJvbGxlciksIGJpdHNfcGVyX3dvcmQNCj4gPiAoZHNwaS0+Yml0c19wZXJfd29yZCA9
+IHRyYW5zZmVyLT5iaXRzX3Blcl93b3JkKSBwYXNzZWQgZnJvbSB0aGUgdXBwZXINCj4gPiBsYXll
+ciAoc3BpLW1lbS5jKSBpcyB1c2VkLiBJbiB0aGlzIHdheSwgSSBjYW4gb25seSBhc3NpZ24gdGhl
+DQo+ID4gYXBwcm9wcmlhdGUgdmFsdWUgb2YgdHJhbnNmZXItPmJpdHNfcGVyX3dvcmQgYmVmb3Jl
+IHBhc3NpbmcgdG8gdGhlDQo+ID4gY29udHJvbGxlciwgdGhhdCBpcywgdGhlIGNvbnRyb2xsZXIg
+ZHJpdmVyIGRvZXMgbm90IGtub3cgdGhlIHZhbHVlIG9mDQo+ID4gYml0c19wZXJfd29yZCwgYW5k
+IGl0IHdpbGwgdXNlIHRoaXMgdmFsdWUgd2hlbiB0aGUgdXBwZXIgbGV2ZWwgc2V0cw0KPiA+IHdo
+YXQgdmFsdWUgaXMgcGFzc2VkLg0KPiANCj4gSSB0aGluayB5b3UncmUgbWlzc2luZyBteSBwb2lu
+dDogLT5iaXRzX3Blcl93b3JkIGlzIG5vdCB3aGF0IHlvdSdyZSBsb29raW5nIGZvcg0KPiBpZiB3
+aGF0IHlvdSdyZSB0cnlpbmcgdG8gZG8gaXMgdXNlIDMyLWJpdHMgYWNjZXNzZXMgd2hlbiB0aGlu
+Z3MgYXJlIHByb3Blcmx5DQo+IGFsaWduZWQuDQo+IA0KSW4gdGhlIGRzcGkgZHJpdmVyIChzcGkg
+Y29udHJvbGxlciBkcml2ZXIpLCBpdCBpcyBiYXNlZCBvbiB3aGV0aGVyIC0+Yml0c19wZXJfd29y
+ZCBpcyANCmxhcmdlciB0aGFuIDE2IHRvIGRlY2lkZSB3aGV0aGVyIHRvIHVzZSB0aGUgWFNQSSBt
+b2RlICgzMmJpdCkgdG8gdHJhbnNmZXIgZGF0YS4NCklmIC0+Yml0c19wZXJfd29yZCBpcyBub3Qg
+c2V0IGFuZCB0aGUgZGVmYXVsdCBiaXRzX3Blcl93b3JkID04IGlzIHBhc3NlZCB0byB0aGUgDQpk
+c3BpIGRyaXZlciwgdGhlIFhTUEkgbW9kZSAoMzJiaXQpIGlzIG5vdCB1c2VkIGZvciBkYXRhIHRy
+YW5zZmVyIGluIHRoZSBkc3BpIGRyaXZlcg0KPiA+IDIuIEFzIEkgdW5kZXJzdGFuZCwgYml0c19w
+ZXJfd29yZCBkb2VzIG5vdCBleGlzdCBmb3Igbm9uLWJ5dGUNCj4gPiBhbGlnbm1lbnQsIGJ1dCBm
+b3IgdGhlIG5lZWQgdG8gcmVzZXJ2ZSBub24tYnl0ZSB0cmFuc21pc3Npb24gbW9kZSB0aGF0DQo+
+ID4gbWVldHMgdGhlIGNvbnRyb2xsZXIuDQo+IA0KPiBFeGFjdGx5LiBJdCdzIGFuIG9wdGltaXph
+dGlvbiB5b3UgaGF2ZSB0byB0YWtlIGNhcmUgb2YgaW5zaWRlIHlvdXIgZHJpdmVyLiBUaGUgY29y
+ZQ0KPiBjYW5ub3QgaGVscCB5b3Ugd2l0aCB0aGF0Lg0KPiANClRoZSBjb3JlIGxheWVyIGlzIHRo
+ZSB1cHBlciBsYXllci4gSWYgeW91IGRvbid0IHNldCAtPmJpdHNfcGVyX3dvcmQsIGJpdHNfcGVy
+X3dvcmQNCiB3aWxsIHVzZSB0aGUgZGVmYXVsdCB2YWx1ZSBvZiA4LCBzbyB0aGF0IHRoZSBjb250
+cm9sbGVyJ3Mgc3BlY2lmaWMgbW9kZSBmb3IgdHJhbnNmZXJyaW5nDQogZGF0YSBjYW5ub3QgYmUg
+dXNlZCAoZWc6IFhTUEkgbW9kZSkuDQo+ID4gMy4gSW4gYWRkaXRpb24sIG5vdyB0aGUNCj4gPiBY
+U1BJIG9mIGRzcGkgY2Fubm90IHRyYW5zZmVyIGRhdGEgbm9ybWFsbHksIHNvIHRoaXMgcHJvYmxl
+bSBuZWVkcyB0bw0KPiA+IGJlIHNvbHZlZC4NCj4gDQo+IEkgc3RpbGwgZG9uJ3QgdW5kZXJzdGFu
+ZCB3aGF0IHRoZSBwcm9ibGVtIGlzLg0KPiANClRoZSBwcm9ibGVtIGlzIHRoYXQgSSB0ZXN0ZWQg
+dGhlIFhTUEkgbW9kZSBhbmQgY291bGQgbm90IHdvcmssIHRoYXQgaXMsIHRoZSBkYXRhIGNvdWxk
+DQpub3QgYmUgdHJhbnNtaXR0ZWQgbm9ybWFsbHkuIEkgdXNlZCBzcGkgZmxhc2ggY29ubmVjdGVk
+IG9uIGRzcGkgdG8gY29uZHVjdCB0aGUgdGVzdC4gDQpJbiBhbnkgY2FzZSwgdGhlIGNvbnRyb2xs
+ZXIgaXMgaW5kZXBlbmRlbnQgb2YgY29ubmVjdGVkIHNsYXZlIGRldmljZXMsIGFuZCB0aGUgZGF0
+YSBzaG91bGQNCmJlIHRyYW5zbWl0dGVkIGJ5IHNwaS1mbGFzaCBkZXZpY2VzIGFuZCBvdGhlciBz
+cGkgZGV2aWNlcy4NCg0KPiA+IEFzIGZvciB0aGUgRE1BIHRyYW5zZmVyIG1vZGUsIHNvbWUgY29s
+bGVhZ3VlcyB3aWxsIHN0dWR5IGl0Lg0KDQo=
