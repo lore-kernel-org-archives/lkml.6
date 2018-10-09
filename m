@@ -2,123 +2,138 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCF1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD1DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E22EB214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A3E214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:01:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bwiSvi6+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22EB214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="EfdnyWPz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A3E214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeJJGTS (ORCPT
+        id S1726721AbeJJGVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 02:19:18 -0400
-Received: from mail-eopbgr10065.outbound.protection.outlook.com ([40.107.1.65]:6144
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        Wed, 10 Oct 2018 02:21:02 -0400
+Received: from mail-sn1nam02on0096.outbound.protection.outlook.com ([104.47.36.96]:6381
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725750AbeJJGTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 02:19:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1725750AbeJJGVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 02:21:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5CHBZEV2SUR/q55uWMS/9RKiWa2M4jywsEjdzGjGv0A=;
- b=bwiSvi6+jlQEj1gCdzzmbGasUzVDqCDVwm3VWjA/tWo8VkFFQYzD4PhgeSqy7jfO+CuaLCCDDsAC/8ABLKKfypVZGOOrkuOimLNEmTUtMTjzwsvxnEou0K/eezj6rVM05zg6XLLfK7jxk9x4dKyviQBNL13EnACmTlcla4Fk5po=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB4388.eurprd04.prod.outlook.com (52.135.148.18) with Microsoft SMTP
+ bh=c+HhjWAMCdXZohntLO9fRopZreqMCdmZG2vRYZta1Kc=;
+ b=EfdnyWPzzDMBnFTOgK2eTA7Ccrdf4wqPWM+c7MxgF/bFrenm3rBJzGAEcK8koONFOwpDzsbnvUG1lzuiy5l1y+9hYMmtKckflLW/fuA9qS3D9nQ+/ZFiyaCrH2MBukhX0nF93qd2OuUOMyBc29XZcj2/jrvVcbzz+47oAzNY/OA=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1181.namprd22.prod.outlook.com (10.174.169.39) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.21; Tue, 9 Oct 2018 23:00:00 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1207.029; Tue, 9 Oct 2018
- 23:00:00 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Andy Duan <fugang.duan@nxp.com>
-CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ 15.20.1207.27; Tue, 9 Oct 2018 23:01:41 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::781f:63:481a:efdf]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::781f:63:481a:efdf%10]) with mapi id 15.20.1228.020; Tue, 9 Oct 2018
+ 23:01:41 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Ingo Molnar <mingo@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Thread-Topic: [PATCH v3] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Thread-Index: AQHUXxt/otjVETax2kKjUwsgexWsHKUWGyOAgAFuQYA=
-Date:   Tue, 9 Oct 2018 23:00:00 +0000
-Message-ID: <2e4fd39e1e2271f12f6f11fe644cad7c93d1d363.camel@nxp.com>
-References: <c4478a98b0d2c69d58b4ba5cad3c13d73c5b387f.1539012355.git.leonard.crestez@nxp.com>
-         <20181009010905.GY3587@dragon>
-In-Reply-To: <20181009010905.GY3587@dragon>
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>
+Subject: Re: [PATCH] memblock: stop using implicit alignement to
+ SMP_CACHE_BYTES
+Thread-Topic: [PATCH] memblock: stop using implicit alignement to
+ SMP_CACHE_BYTES
+Thread-Index: AQHUXCY/RflcQuwjxk6Km8qdVUMh/KUXj8OA
+Date:   Tue, 9 Oct 2018 23:01:40 +0000
+Message-ID: <20181009230137.rju3lm2saou5xsa4@pburton-laptop>
+References: <1538687224-17535-1-git-send-email-rppt@linux.vnet.ibm.com>
+In-Reply-To: <1538687224-17535-1-git-send-email-rppt@linux.vnet.ibm.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR0102CA0025.prod.exchangelabs.com (2603:10b6:805:1::38)
+ To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [85.204.4.237]
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2601:647:4100:4687:76db:7cfe:65a3:6aea]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4388;6:zJSOXG9u+6+uipbNr5EWNWqzCANV+eELpKMW5kgzNchkQp8ru1m/N2oEsWo6gxqsau3YQq3ynHii7bHD/9zdyO9NzZaHmkhiJOcF2tIJU/25VgvfIMC5pf+AhVippaHkGVzXsHk/zS2VPEnkBEQ24uoqixcJdF81cFukpuBT8/RnOwS6i+bQlce2CePlmchm4wg26Nz71SCO2M72cTWIElcZUAWV9VuafTSiV67yfkgc99YsKN9xgXdHLrOBQMNG+I6/+K6BhUryZBPUWgz2KMZ6lopiGh06jEc0kU+xDynJm9WzMztULdScPKDHttH1qnSiDDKzHmSnp44eZB3H4bObtk1J6W3l5QK5gqnyW2Ar+NGcXqiGbjgsJn+SJ1zoc+SKla5ACTPbsQx3t7FWUWx7tmoauBlDI6FSoCcFQsbAiGP6LqZMSwQMh+SGER5iZF41P89CI0VlljYjGrWbHQ==;5:CWCNx24htMfJJEtC7q9NUUD9BcHkIlwKLkv5jYse6qEIixITchYTP6ZNJJU3vn4nFSAecNaohWllHHqVI9lWabnyzFaJuBxpuILJsquQojyMMWryQSyl2XIMD52mF1y8qTVrhsLxU9hq7GYZMuVy/lFObGVEH4RvRPZRffk22co=;7:gTfIqKV6JmqVXHfbU4nE9YYCoCizZ9MAXc/bJDlgAKse1nYw2KjfM1LEnpBOsMl4f20idJTgJ3hlWQqScW6c6LJfHld7Cl5gMYp6PVoJ9UB5iqTK/N9XNUJ8Dbs3GkKlQE48j5ftgvLKjsIJJRa4rQzVCpqNxxmdMBMUbe/DgrsnLkCUB6+kPf1ATpN4sKFKPaIuPU1eDSN6XpoGu6WWoThywTKJegWQ0AQKxeS/8bzOwlf3QEMUJWHgcFtHSQTG
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2149b0cd-162b-4093-4d33-08d62e3af0ef
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4388;
-x-ms-traffictypediagnostic: AM0PR04MB4388:
-x-microsoft-antispam-prvs: <AM0PR04MB438826AAE3CF8F5ED333CAE0EEE70@AM0PR04MB4388.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1181;6:gE0TJRoEjPWm6K8r4aVdQ5ub749GUBvebh3oAJRbOgmcF79A3M056LIulOy0AML0q2DvnzT5E2UG22YNBfWWgX6ipSmoVZ8RQwRwHZLxyhYQhRiTYk8byk9USHjAm/EE5tyBKQltsa0MYs/enWT4IOJLpQG/RElTahYAxXqhh00Uvtr6jUTnA+0jdzBTA7m1IM6J82lh+1miRtJjEs2K4iDGnh56pRw7eCqiXk+tiAc15vSOj8lXQhyb8uLxleHOBA0gr5xFe0Q+jKbaGqNV19MdXh4VfCojTpbR9cMoWP/c8pGw/9jWSZKz0UanEwGv0G5j9rCDN4lBLxRuE8RI4ldV+aRaNTIzi+NzgJKVZR4de4P6BhBzJAk0PjTMDGt0YXhelq+2xiZzWypOE3dh1Sb4V5SJQ85I9JyOdPvzHDLJIiNooTmtjIBMr1lWzBWIwN/25wDwQwdeYnBDnF5GYA==;5:n9CYNnQply5QBqok1gMTvLCkmCwVWX4V+9tGr1/aeitTaCaoU5JAsa6G7MM2t5DnPP1MHfn9vB6H3Ai0ktZpJaOIjtQLyqcAU5sEI4mFu/Ut5NDXcrdAALzDjBl6fzuut1DHKinCpNLuCvsJwVnI7cIfZI1FhZHtsUPeExNYRC4=;7:RMqlqCHYIRdnjUhSQH76ftPgvxQtizaicZEdWG2107NqPmz9h1JwW9fJx2jZIYZjYmkMpZzNi2kcIgJboPYUVBZ4MYhJJvPaNJ8dzyZF+P6Ps/Cp11kQCqFXBAosXeHtHYM/Z8u6weAA/i26PctdYVl5xurOF+zHTvZAE4AMsfa9j1JU5y1UhDSFOOyTf2jN/P+qYF2uGhKhD+UaTxUoGXdXD5LD49LftEn/jZhGK3qf4SRjDqBkO4qfwOdr2hUl
+x-ms-office365-filtering-correlation-id: 1dd53e6a-d129-467b-6207-08d62e3b2bff
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1181;
+x-ms-traffictypediagnostic: MWHPR2201MB1181:
+x-microsoft-antispam-prvs: <MWHPR2201MB1181628E9AF119B0FEB27F30C1E70@MWHPR2201MB1181.namprd22.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089)(104084551191319);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:AM0PR04MB4388;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4388;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(10201501046)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(2016111802025)(20161123560045)(6043046)(201708071742011)(7699051);SRVR:MWHPR2201MB1181;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1181;
 x-forefront-prvs: 08200063E9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(136003)(39860400002)(396003)(189003)(199004)(71190400001)(36756003)(316002)(8676002)(4326008)(39060400002)(6116002)(81156014)(81166006)(2501003)(3846002)(256004)(110136005)(5660300001)(14444005)(186003)(44832011)(7736002)(86362001)(71200400001)(25786009)(8936002)(66066001)(105586002)(305945005)(68736007)(54906003)(2616005)(106356001)(53936002)(2906002)(6486002)(76176011)(102836004)(476003)(6436002)(229853002)(97736004)(11346002)(26005)(6246003)(6636002)(5250100002)(486006)(118296001)(6506007)(99286004)(446003)(478600001)(6512007)(14454004)(2900100001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4388;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(366004)(376002)(136003)(346002)(39840400004)(199004)(189003)(68736007)(486006)(446003)(7416002)(11346002)(476003)(46003)(42882007)(7736002)(305945005)(256004)(316002)(6116002)(5660300001)(44832011)(102836004)(6916009)(186003)(8676002)(4326008)(6486002)(81156014)(33716001)(14454004)(2900100001)(8936002)(6436002)(39060400002)(33896004)(386003)(58126008)(99286004)(6512007)(81166006)(6506007)(53936002)(76176011)(9686003)(229853002)(25786009)(54906003)(97736004)(105586002)(2906002)(1076002)(106356001)(71190400001)(71200400001)(5250100002)(52116002)(508600001)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1181;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 2kL+kuwIJUWFtbLUw/R0Jpq7Rl0Glc0t0lMIL3w4MH441QV87NMByqnQmUxCzwltJRt/kKIE1Vvui1n3NK9YN4KYqYICha+3M3HRUcCdWmzrfFIH4/32oKgZef6Iini92u5A+rbhSLxDnsuyGkRrvL7lxK4u3LnEF9jMEbucm4LvKbf2eTeQ+Efr4xmDp4z6p1bmjmmdX+TZg+Shkr8KWTOILjymQ24Qg7vp/ri4S6Y0FdZ0r0E75F7LmEig21n+P6buQAoMzNngS9TZ5+dqEMQmel+Dp/m6USn5/OYTpL3IF6DZZB7FjJ9YPqNdTuED8pJtY/3u5W0OniTJgbCrG7uI+sV8WhsbxFwrYVTh19s=
+x-microsoft-antispam-message-info: V7/fkerKu+UAYOeNyNcoG+j0JGxrX/PMDxDqCpFtGPgGsNosdiyH/sHGuhQnJUELdHTfHaT8E7u6WaSxB5orSLHIoNI2FTfNmg2937YG/fnzKv0GuhMbceZYDTS0le3yp6wv7R+L6RdEWYJWlrO78uyMHW5ocskZvB5Zi92g8rPrrAr8V+k5YLTbQKhpCafz7meRgm1XkTidSrygQxNb89RuuojFFxxtddLGJ6mCmOp3vcG62URYK+46quEQLJX2C2CMJdtIQRNxAnnaYFJ7ikGgEhXDYcC2y3FXXLBXyBWY04KVVeQfD4g9+Tdse1wzjhSG61Q7oF6TI+mbgyePIIGSqNDH5Q674CkQUriYSiI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5FFB843FFAAA1646B5D82CF4BC9B7891@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E3554E11A6C0914FA9C02D46ED897C1C@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2149b0cd-162b-4093-4d33-08d62e3af0ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 23:00:00.3948
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dd53e6a-d129-467b-6207-08d62e3b2bff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 23:01:40.6702
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4388
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTA5IGF0IDA5OjA5ICswODAwLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9u
-IE1vbiwgT2N0IDA4LCAyMDE4IGF0IDAzOjI4OjAxUE0gKzAwMDAsIExlb25hcmQgQ3Jlc3RleiB3
-cm90ZToNCj4gPiBCaW5kaW5ncyBmb3IgImZpeGVkLXJlZ3VsYXRvciIgb25seSBleHBsaWNpdGx5
-IHN1cHBvcnQgImdwaW8iIHByb3BlcnR5LA0KPiA+IG5vdCAiZ3Bpb3MiLiBGaXggYnkgY29ycmVj
-dGluZyB0aGUgcHJvcGVydHkgbmFtZS4NCj4gPiANCj4gPiBUaGUgZW5ldCBQSFlzIG9uIGlteDZz
-eC1zZGIgbmVlZHMgdG8gYmUgZXhwbGljaXRseSByZXNldCBhZnRlciBhIHBvd2VyDQo+ID4gY3lj
-bGUsIHRoaXMgY2FuIGJlIGhhbmRsZWQgYnkgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eS4g
-U2FkbHkgdGhpcw0KPiA+IGlzIG5vdCBoYW5kbGVkIG9uIHN1c3BlbmQ6IHRoZSBmZWMgZHJpdmVy
-IHR1cm5zIHBoeS1zdXBwbHkgb2ZmIGJ1dA0KPiA+IGRvZXNuJ3QgYXNzZXJ0IHBoeS1yZXNldC1n
-cGlvcyBhZ2FpbiBvbiByZXN1bWUuDQo+ID4gDQo+ID4gU2luY2UgYWRkaXRpb25hbCBwaHktbGV2
-ZWwgd29yayBpcyByZXF1aXJlZCB0byBzdXBwb3J0IHBvd2VyaW5nIG9mZiB0aGUNCj4gPiBwaHkg
-aW4gc3VzcGVuZCBmaXggdGhlIHByb2JsZW0gYnkganVzdCBtYXJraW5nIHRoZSByZWd1bGF0b3Ig
-YXMNCj4gPiAiYm9vdC1vbiIgImFsd2F5cy1vbiIgc28gdGhhdCBpdCdzIG5ldmVyIHR1cm5lZCBv
-ZmYuIFRoaXMgYmVoYXZpb3IgaXMNCj4gPiBlcXVpdmFsZW50IHRvIG9sZGVyIHJlbGVhc2VzLg0K
-PiA+IA0KPiA+IEtlZXAgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eSBvbiBmZWMgYW55d2F5
-IGJlY2F1c2UgaXQgaXMgYSBjb3JyZWN0DQo+ID4gZGVzY3JpcHRpb24gb2YgYm9hcmQgZGVzaWdu
-Lg0KPiA+IA0KPiA+IFRoaXMgaXNzdWUgd2FzIGV4cG9zZWQgYnkgY29tbWl0IGVmZGZlYjA3OWNj
-MyAoInJlZ3VsYXRvcjogZml4ZWQ6DQo+ID4gQ29udmVydCB0byB1c2UgR1BJTyBkZXNjcmlwdG9y
-IG9ubHkiKSB3aGljaCBjYXVzZXMgdGhlICJncGlvcyIgcHJvcGVydHkNCj4gPiB0byBhbHNvIGJl
-IHBhcnNlZC4gQmVmb3JlIHRoYXQgY29tbWl0IHRoZSAiZ3Bpb3MiIHByb3BlcnR5IGhhZCBubw0K
-PiA+IGVmZmVjdCwgUEhZIHJlc2V0IHdhcyBvbmx5IGhhbmRsZWQgaW4gdGhlIHRoZSBib290bG9h
-ZGVyLg0KDQo+IFNvIHRoaXMgaXMgYSBmaXggd2Ugb25seSBuZWVkIHRvIGFwcGx5IGZvciA0LjIw
-LXJjLCByaWdodD8NCg0KWWVzLg0KDQpUaGlzIGlzc3VlIHdhcyBleHBvc2VkIGJ5IGdwaW8gY2hh
-bmdlcyBmb3IgNC4yMCBidXQgNC4xOSBSQ3MgYXJlIGZpbmUuDQoNCi0tDQpSZWdhcmRzLA0KTGVv
-bmFyZA0K
+Hi Mike,
+
+On Fri, Oct 05, 2018 at 12:07:04AM +0300, Mike Rapoport wrote:
+> When a memblock allocation APIs are called with align =3D 0, the alignmen=
+t is
+> implicitly set to SMP_CACHE_BYTES.
+>=20
+> Replace all such uses of memblock APIs with the 'align' parameter explici=
+tly
+> set to SMP_CACHE_BYTES and stop implicit alignment assignment in the
+> memblock internal allocation functions.
+>=20
+>%
+>=20
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+
+  Acked-by: Paul Burton <paul.burton@mips.com> # MIPS part
+
+Thanks,
+    Paul
