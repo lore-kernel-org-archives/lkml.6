@@ -2,115 +2,88 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB01C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5FAC64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F553214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F553214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id A0A0720C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 22:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A0720C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeJJF0g (ORCPT
+        id S1728004AbeJJF1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 01:26:36 -0400
-Received: from muru.com ([72.249.23.125]:51864 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeJJF0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:26:36 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 04B8680C3;
-        Tue,  9 Oct 2018 22:07:30 +0000 (UTC)
-Date:   Tue, 9 Oct 2018 15:07:30 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] dt-bindings: phy: add cpsw port interface mode
- selection phy bindings
-Message-ID: <20181009220730.GN5662@atomide.com>
-References: <20181008234949.15416-1-grygorii.strashko@ti.com>
- <20181008234949.15416-3-grygorii.strashko@ti.com>
- <20181009144000.GL5662@atomide.com>
- <3fa09831-0f70-dfcc-3fd9-f877215a4631@ti.com>
- <20181009203017.GM5662@atomide.com>
- <f9dfd775-0679-f82b-b53b-065e9f7be7c7@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9dfd775-0679-f82b-b53b-065e9f7be7c7@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 10 Oct 2018 01:27:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57636 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJJF1t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 01:27:49 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3E75A85;
+        Tue,  9 Oct 2018 22:08:46 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 15:08:45 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH 3/4] mm: workingset: add vmstat counter for shadow nodes
+Message-Id: <20181009150845.8656eb8ede045ca5f4cc4b21@linux-foundation.org>
+In-Reply-To: <20181009184732.762-4-hannes@cmpxchg.org>
+References: <20181009184732.762-1-hannes@cmpxchg.org>
+        <20181009184732.762-4-hannes@cmpxchg.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [181009 22:04]:
-> 
-> 
-> On 10/09/2018 03:30 PM, Tony Lindgren wrote:
-> > * Grygorii Strashko <grygorii.strashko@ti.com> [181009 20:10]:
-> >>
-> >>
-> >> On 10/09/2018 09:40 AM, Tony Lindgren wrote:
-> >>> * Grygorii Strashko <grygorii.strashko@ti.com> [181008 23:54]:
-> >>>> +Examples:
-> >>>> +	phy_gmii_sel: phy-gmii-sel {
-> >>>> +		compatible = "ti,am3352-phy-gmii-sel";
-> >>>> +		syscon-scm = <&scm_conf>;
-> >>>> +		#phy-cells = <2>;
-> >>>> +	};
-> >>>
-> >>> Now that this driver can live in it's proper place in the
-> >>
-> >> right
-> >>
-> >>> dts, you may want to consider just using standard reg
-> >>> property for it instead of the syscon-scm. And also get
-> >>> rid of the syscon reads and writes.
-> >>
-> >> Could you help clarify how to get syscon in this case?
-> >> syscon_node_to_regmap(dev->parent->of_node)?
-> > 
-> > Hmm I don't think you need syscon at all now. You can just
-> > ioremap the register(s) and use readl/writel and that's it.
-> > Or use regmap without syscon if you prefer that.
-> 
-> It will overlap with already remapped SCM syscon and i'd like to avoid this.
-> + it seems common practice to use syscon for devices/drivers which are
-> child to SCM node - makes overall system more consistent.
+On Tue,  9 Oct 2018 14:47:32 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
 
-Well it was just set up with syscon in deperation earlier with
-drivers just blindly mapping registers outside of their
-range..
+> --- a/mm/workingset.c
+> +++ b/mm/workingset.c
+> @@ -378,11 +378,17 @@ void workingset_update_node(struct xa_node *node)
+>  	 * as node->private_list is protected by the i_pages lock.
+>  	 */
+>  	if (node->count && node->count == node->nr_values) {
+> -		if (list_empty(&node->private_list))
+> +		if (list_empty(&node->private_list)) {
+>  			list_lru_add(&shadow_nodes, &node->private_list);
+> +			__inc_lruvec_page_state(virt_to_page(node),
+> +						WORKINGSET_NODES);
+> +		}
+>  	} else {
+> -		if (!list_empty(&node->private_list))
+> +		if (!list_empty(&node->private_list)) {
+>  			list_lru_del(&shadow_nodes, &node->private_list);
+> +			__dec_lruvec_page_state(virt_to_page(node),
+> +						WORKINGSET_NODES);
+> +		}
+>  	}
+>  }
 
-> > The ioremap in this case should be hitting cached ranges
-> > anyways, so no extra overhead there.
-> > 
-> >> Also, there are could be more then one gmii_sel registers in SCM in the future,
-> >> so I hidden offsets in of_match data.
-> >> As result, "reg" not needed at all now.
-> > 
-> > But then you have to patch driver for various SoCs
-> > instead of just configuring the standard reg property
-> > in the dts file :)
-> 
-> Problem is that they are not guarantee to be standard between SoC's families 
-> (number of regs and fields placement), as result it might require to change
-> driver any way for various SoCs to handle properly new fields placement.
-> 
-> I prefer to fix driver then fight with DT ;) as it's static for SoC family
-> and need to be changed only once when new SoC family introduced.
+A bit worried that we're depending on the caller's caller to have
+disabled interrupts to avoid subtle and rare errors.
 
-Fine with me, that can be changed later too no problem.
+Can we do this?
 
-Regards,
+--- a/mm/workingset.c~mm-workingset-add-vmstat-counter-for-shadow-nodes-fix
++++ a/mm/workingset.c
+@@ -377,6 +377,8 @@ void workingset_update_node(struct radix
+ 	 * already where they should be. The list_empty() test is safe
+ 	 * as node->private_list is protected by the i_pages lock.
+ 	 */
++	WARN_ON_ONCE(!irqs_disabled());	/* For __inc_lruvec_page_state */
++
+ 	if (node->count && node->count == node->exceptional) {
+ 		if (list_empty(&node->private_list)) {
+ 			list_lru_add(&shadow_nodes, &node->private_list);
+_
 
-Tony
