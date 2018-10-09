@@ -4,83 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A28C43441
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56230C43441
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA4B52087D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01D6A2087D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 23:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="G8cCCh5h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4B52087D
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="nifWcTpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01D6A2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeJJGYG (ORCPT
+        id S1726781AbeJJG1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 02:24:06 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41790 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbeJJGYF (ORCPT
+        Wed, 10 Oct 2018 02:27:47 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38427 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeJJG1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 02:24:05 -0400
-Received: by mail-pf1-f193.google.com with SMTP id m77-v6so1600051pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 16:04:51 -0700 (PDT)
+        Wed, 10 Oct 2018 02:27:46 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b5-v6so1553669plr.5
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 16:08:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FewfyTptfb0s5WSxMs5n7Qg+lzyT+gQ20EJBgZ1FVkE=;
-        b=G8cCCh5hWze45vvuvbeGbJa0fUcjUbW4JHg6w2ONchlbArSZM3b5Y/PYE5fXdeZCSi
-         m5gNwXFfzh6JW1yUcM+d60p90DFzazhjzuGJzuVQ2leGDgKJ0mKTDwbqnnalDQjBw4QZ
-         yqC0Pi5H9Jc/6U+C3f7/UAZPoA10Ae3cCbjsc=
+        bh=ULY//GBZvi+f3kccvWtwKU1JAZlRFthAzqXIIT6GbOU=;
+        b=nifWcTpgOCqb7M+dEVVMxs6w4vV69BB/kshkK+Og/jHKLgtQUvlHB381+iuJWyv4zu
+         isNTo34VzvYbiE1mze2Dc5hfMYu4dYVj/2dfNPzoXnPl0UYLZ3nh9Aq9qZ7+cZiHCuOd
+         MrOQcAcIsFRyM7bPx5HarB13VBIBgns/b3iA4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FewfyTptfb0s5WSxMs5n7Qg+lzyT+gQ20EJBgZ1FVkE=;
-        b=G9OPuOMTvWsh8RvyIKALjdMcN+ez19XK9Ha77h9Tf4gqaQbbJLjZgWacHC9G0TrCPh
-         bhHO75m3GVuelMVHl/WSWkPyrW6fVE6GSFHn0GrisSwqCYgu0EpZvAQqNA/QiQBccwWY
-         OD6RvbG7GkrhOtObtt0MZiiHXDACtwPtz2u632Cl9vorkUU/SO8Uhauv5bt/pFEa9xQB
-         I2+lEfDiLwx+6BeID18TPqBsuLD65RtcMXi3XogelwDqnlmeOYF6hpUnU1Y6CyJFIFSF
-         3g3S7vUmymiqOIZOcPFgmiUSWNAMkMlSAmlRSD1mw/CMKRKtHiYeYbrqnEXWHh2ZBLwR
-         0tOw==
-X-Gm-Message-State: ABuFfogIEXl2+F9Uh5bGGTIPMduAX5qVaIYlMvVHgID3SFgXmaI1i78v
-        elZ4fERKsyRDToOUPbUSUN9Hbw==
-X-Google-Smtp-Source: ACcGV610O/umbdEui0oxJe1FrFJaCK6us22JP7fSqfu5sYi9HqXMd9xU1FMV7ApHvN4eEkV/QWOedA==
-X-Received: by 2002:a63:a012:: with SMTP id r18-v6mr28021289pge.282.1539126290226;
-        Tue, 09 Oct 2018 16:04:50 -0700 (PDT)
+        bh=ULY//GBZvi+f3kccvWtwKU1JAZlRFthAzqXIIT6GbOU=;
+        b=H/cXn/+HVslhEIspNgdWMh2lhLgM4UrULhfTxH5uCYA8cJpAj/lRv5GbJYD/kEXIt8
+         UyzGLcd6dSJSnVGnklyJaFx/aDktoPd4K9UxZD4RgFqmeYwJKzhTgYcUe4+jku1f/T0u
+         RdUMC4NBVTyYii26Luy2NJd3tqU9qX59yF5Vk/i3vNzbMxH6uP4h1ZlsQ0OIAzeUKRZJ
+         do+jdV3V6shPyDajKTwoLylpumeFR5snKVAC20IxtkbQ5z+s/hUFBLjm64p+1j4sWfWZ
+         ztv5jT+hIQB7b5bfx/5c+XZjp9J5Vs2pxO5i6cuDTLLJttpp60t7hKRepNyXOheumBzo
+         mYUQ==
+X-Gm-Message-State: ABuFfohbbcUU+NDaIPPiiSpJ+fugGV16HfCe/98A2CcK58z68Yu67Ti5
+        ZRv3KZ4aZBiAAqxYoD4FNao9kg==
+X-Google-Smtp-Source: ACcGV60YG/pfhn1yC1xFNMB6WygaN5/F3TTAVOKVEsnN/EF2FSk5pCqcHJmPdVH9+q4Kk8lRfwGLMw==
+X-Received: by 2002:a17:902:bb08:: with SMTP id l8-v6mr29701939pls.252.1539126510940;
+        Tue, 09 Oct 2018 16:08:30 -0700 (PDT)
 Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id h19-v6sm34439934pfk.71.2018.10.09.16.04.48
+        by smtp.gmail.com with ESMTPSA id u62-v6sm28489522pfu.69.2018.10.09.16.08.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 16:04:48 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 16:04:47 -0700
+        Tue, 09 Oct 2018 16:08:29 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 16:08:28 -0700
 From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         kernel-team@android.com, minchan@google.com, hughd@google.com,
-        lokeshgidra@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        lokeshgidra@google.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: [PATCH] mm: Speed up mremap on large regions
-Message-ID: <20181009230447.GA17911@joelaf.mtv.corp.google.com>
+Message-ID: <20181009230828.GB17911@joelaf.mtv.corp.google.com>
 References: <20181009201400.168705-1-joel@joelfernandes.org>
- <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
+ <20181009143859.8b9a700b1caf4e8d1e33a723@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
+In-Reply-To: <20181009143859.8b9a700b1caf4e8d1e33a723@linux-foundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:02:22AM +0300, Kirill A. Shutemov wrote:
-> On Tue, Oct 09, 2018 at 01:14:00PM -0700, Joel Fernandes (Google) wrote:
+On Tue, Oct 09, 2018 at 02:38:59PM -0700, Andrew Morton wrote:
+> On Tue,  9 Oct 2018 13:14:00 -0700 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> 
 > > Android needs to mremap large regions of memory during memory management
 > > related operations. The mremap system call can be really slow if THP is
 > > not enabled. The bottleneck is move_page_tables, which is copying each
@@ -106,41 +107,23 @@ On Wed, Oct 10, 2018 at 01:02:22AM +0300, Kirill A. Shutemov wrote:
 > > determine if the low-level PTEs are dirty. It is seen that the cost of
 > > doing so is not much compared the improvement, on both x86-64 and arm64.
 > 
-> Okay. That's interesting.
+> Looks tasty.
+
+Thanks :)
+
+> > --- a/mm/mremap.c
+> > +++ b/mm/mremap.c
+> > @@ -191,6 +191,54 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+> >  		drop_rmap_locks(vma);
+> >  }
+> >  
+> > +bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
 > 
-> It makes me wounder why do we pass virtual address to pte_alloc() (and
-> pte_alloc_one() inside).
-> 
-> If an arch has real requirement to tight a page table to a virtual address
-> than the optimization cannot be used as it is. Per-arch should be fine
-> for this case, I guess.
-> 
-> If nobody uses the address we should just drop the argument as a
-> preparation to the patch.
+> I'll park this for now, shall plan to add a `static' in there then
+> merge it up after 4.20-rc1.
 
-I couldn't find any use of the address. But I am wondering why you feel
-passing the address is something that can't be done with the optimization.
-The pte_alloc only happens if the optimization is not triggered.
+Thanks, I will also add static to the function in my own tree just for the
+future in case I'm doing another revision.
 
-Also the clean up of the argument that you're proposing is a bit out of scope
-of this patch but yeah we could clean it up in a separate patch if needed. I
-don't feel too strongly about that. It seems cosmetic and in the future if
-the address that's passed in is needed, then the architecture can use it.
-
-> Anyway, I think the optimization requires some groundwork before it can be
-> accepted. At least some explanation why it is safe to move page table from
-> one spot in virtual address space to another.
-
-So I did go through several scenarios and its fine to my eyes. I tested
-it too and couldn't find any issue. Could you describe your concern a bit
-more? The mm->mmap_sem lock is held through out the mremap. Further we are
-acquiring needed rmap locks if needed and the ptl locks of the old new
-page-table pages. And this same path is already copying pmds for hugepages.
-
-thanks,
-
- - Joel
-
-
-
+- Joel
 
