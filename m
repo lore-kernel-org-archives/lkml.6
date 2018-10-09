@@ -2,259 +2,131 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B5AC64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C4CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC8A20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE0B2086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="BjzcmZ3X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC8A20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5aUEDJG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE0B2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbeJIVGf (ORCPT
+        id S1726693AbeJIVHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 17:06:35 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39524 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbeJIVGf (ORCPT
+        Tue, 9 Oct 2018 17:07:52 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39337 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbeJIVHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 17:06:35 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y144-v6so2061679wmd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:49:32 -0700 (PDT)
+        Tue, 9 Oct 2018 17:07:52 -0400
+Received: by mail-ed1-f68.google.com with SMTP id d15-v6so1757359edq.6;
+        Tue, 09 Oct 2018 06:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RximZYZcmHO7yiVmOMoSbdsY8qpW0H4xj2WMK8Caivg=;
-        b=BjzcmZ3XAN7MI3keZj7tj4Tz1FI6Yphy5Ho+2i3RXJB9ceZqIFGu+WlYl1vp3poKcn
-         iic8RyFNY3RaJMcK97sjGLBX15ril8rGqli1x3+aSKz6kujslYIk91B7J2IluAU1gesN
-         kSY5/OLu/RHc4zy3Y0AxKkvoib/RdOA9EPeQM2GngRng1latLQgTXKpluBs2dX2Px5in
-         IMQVWd8wgbPx63Y/mrzFKLTNSinSGSfwDSYb6DVNNSiehPyFyx9tcF/D63RrkFX1cpAJ
-         GAIaMKWhEyEoewL5goE2zdTVpZW0uUwfzHVl2qwU9Fp36U7tfEoaiAJsZpIvkdMkE3hG
-         /6dQ==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:user-agent:date
+         :message-id:mime-version;
+        bh=lg98PekJjJNpsVcYtJkwW/OVYg6wZ+XMQna/VA2K26E=;
+        b=Y5aUEDJGzLYxJRHlX75egSdDE36kmT13x8skOCDlsUvKAvC3gGkazVL52bE/N6uRS2
+         64ENhkVpbSA4ZIN/M36kTiLz93VphhEQpay3qhv8BGkj8BZWhfV6WGAdhmOCBQaUTOYf
+         k+jIcp6VVaxnFqsVe3khJsRbXt4yAAE0z56MrILCfnRtfpQNtP8oH1SdjOENsCNMDD4X
+         IJpSA1C460RtU1HLFOy44AcfYVkEKQMDyJiA4vCrxOxcpEjxTXs5UDyKkVwNXOoY8Kw0
+         jLpFKVLsoRNAX2BNXQDWoAks5O/V9xyrFviWBo/G6o6Btq07q2OU8tMtDf1l/onWXPQR
+         td9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RximZYZcmHO7yiVmOMoSbdsY8qpW0H4xj2WMK8Caivg=;
-        b=lMJDsoA9FOfG/Id4McUQ2mmsoC7KDm+V9aXiEifoWIE2M6mgmWUbzFW9897eSG6S/Z
-         7x5vDR06iiN5ZnN3Akqe1L43321REuPVDvOlmzEsritpYLZi1c4oxybXQjHuxLCEHE41
-         o/MGMz41oTK44am3NhiKPWe6MA5yykhR5KWk5SLPjY3OCoQpjy+F7UvG3YPXkI1AMHsE
-         sGCNsinhMTYwvXlY2N1K0HngRcUJTqT2IbFV8TT4Ql3fyxT/pNmrTxh5r+qkNsFznu4K
-         lvXbGvPWZVqqmCIXDJDkXSdDC81Ut8JnvK+iARXS5tuwHDtpE+Rb5uT5q+a4lxOkLA/7
-         JPog==
-X-Gm-Message-State: ABuFfojEJLTEReZqzaDHDK69v0jmN6g1dvlbat4VAyAKdYbyYrDgoBmo
-        4nDv0eRckCwdoQg1Fgcuu9rlVQ==
-X-Google-Smtp-Source: ACcGV60T1kjERkIM6UKh5uEoDZR+5nS0Fu9awuFfV6oyvxmc/Zlc+DPyi/hgKTb2fq4KDZ81vjxz8A==
-X-Received: by 2002:a1c:88cd:: with SMTP id k196-v6mr1971079wmd.17.1539092971584;
-        Tue, 09 Oct 2018 06:49:31 -0700 (PDT)
-Received: from brauner.io (u-084-c138.eap.uni-tuebingen.de. [134.2.84.138])
-        by smtp.gmail.com with ESMTPSA id z69-v6sm12990055wmz.18.2018.10.09.06.49.30
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :user-agent:date:message-id:mime-version;
+        bh=lg98PekJjJNpsVcYtJkwW/OVYg6wZ+XMQna/VA2K26E=;
+        b=LsEymclzEJgktvd9wMcK311ftklML5AeqN3Biwpa8LvaRw4R4C8N5TZicHRiliZTyo
+         JguAGMoe7F0tWW67MwO/39Mj3O0fW/0YewHw6PWj+Be0hOwCGWwiGXkbVN/M8Qu+QVV2
+         a4YVcF5U0gkCmQxd/MZWEO7NNOoeIU2REoSTNH54zzJAc09TW0u+tNyfVPRnBx/Q3XVp
+         2GFwTRxGQNPfplA8GP9sSRQMg5ksJgoHAMzBLIG1MUh3ShlIm7QvmY7ZJl1XCEMD/Lfq
+         wTgtiXwilwN5htXhAh3XeP8P2JEOM5mnu/jEyk1tOA3rX66q6M39VnpZUe12sLKL9j2g
+         xzvw==
+X-Gm-Message-State: ABuFfohSll6gRH+4/kdTa+iyCCnlUnCa+Qj+P98jHpvWLlZPu/g7XqHh
+        BBuN2ayNHq8P1UC6JehR6vc=
+X-Google-Smtp-Source: ACcGV60iv9HuzTlftjoJiS5PdWI6zvX1hwmISeYsgZ9XRxs9/vJkLEQ+NLUrDQqeStHAJ272PTqi4Q==
+X-Received: by 2002:a17:906:7a4a:: with SMTP id i10-v6mr28247440ejo.234.1539093048437;
+        Tue, 09 Oct 2018 06:50:48 -0700 (PDT)
+Received: from localhost ([87.54.42.112])
+        by smtp.gmail.com with ESMTPSA id d4-v6sm3584063ejd.1.2018.10.09.06.50.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 06:49:30 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 15:49:24 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Jann Horn <jannh@google.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
- ptrace
-Message-ID: <20181009134923.2fvf5roghqgaj5gq@brauner.io>
-References: <20180927151119.9989-1-tycho@tycho.ws>
- <20180927151119.9989-4-tycho@tycho.ws>
- <20181008151629.hkgzzsluevwtuclw@brauner.io>
- <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
- <20181008162147.ubfxxsv2425l2zsp@brauner.io>
- <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
- <20181008181815.pwnqxngj22mhm2vj@brauner.io>
- <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io>
- <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+        Tue, 09 Oct 2018 06:50:47 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Chuanhua Han <chuanhua.han@nxp.com>,
+        "linux-spi\@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] spi: spi-mem: Add the spi_set_xfer_bpw function
+In-Reply-To: <20181009103328.GA20774@sirena.org.uk> (Mark Brown's message of
+        "Tue, 9 Oct 2018 11:33:28 +0100")
+References: <20180921070628.35153-1-chuanhua.han@nxp.com>
+        <20180928084431.300b7bf9@bbrezillon>
+        <AM6PR04MB43573478FFD0E512A117484097EC0@AM6PR04MB4357.eurprd04.prod.outlook.com>
+        <20180928091833.15e95f7f@bbrezillon>
+        <AM6PR04MB4357280CD4F77FCB01AB5C7097E70@AM6PR04MB4357.eurprd04.prod.outlook.com>
+        <20181009120522.6b2bd15a@bbrezillon>
+        <20181009103328.GA20774@sirena.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Date:   Tue, 09 Oct 2018 15:50:45 +0200
+Message-ID: <87o9c32pqi.fsf@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
-> +cc selinux people explicitly, since they probably have opinions on this
-> 
-> On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
-> > On Tue, Oct 09, 2018 at 02:39:53PM +0200, Jann Horn wrote:
-> > > On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
-> > > > > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
-> > > > > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
-> > > > > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > > > > > > > > index 44a31ac8373a..17685803a2af 100644
-> > > > > > > > > --- a/kernel/seccomp.c
-> > > > > > > > > +++ b/kernel/seccomp.c
-> > > > > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
-> > > > > > > > >
-> > > > > > > > >       return ret;
-> > > > > > > > >  }
-> > > > > > > > > +
-> > > > > > > > > +long seccomp_new_listener(struct task_struct *task,
-> > > > > > > > > +                       unsigned long filter_off)
-> > > > > > > > > +{
-> > > > > > > > > +     struct seccomp_filter *filter;
-> > > > > > > > > +     struct file *listener;
-> > > > > > > > > +     int fd;
-> > > > > > > > > +
-> > > > > > > > > +     if (!capable(CAP_SYS_ADMIN))
-> > > > > > > > > +             return -EACCES;
-> > > > > > > >
-> > > > > > > > I know this might have been discussed a while back but why exactly do we
-> > > > > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
-> > > > > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
-> > > > > > > > use ptrace from in there?
-> > > > > > >
-> > > > > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
-> > > > > > > . Basically, the problem is that this doesn't just give you capability
-> > > > > > > over the target task, but also over every other task that has the same
-> > > > > > > filter installed; you need some sort of "is the caller capable over
-> > > > > > > the filter and anyone who uses it" check.
-> > > > > >
-> > > > > > Thanks.
-> > > > > > But then this new ptrace feature as it stands is imho currently broken.
-> > > > > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
-> > > > > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
-> > > > > > if you are ns_cpabable(CAP_SYS_ADMIN)
-> > >
-> > > Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
-> > > you enable the NNP flag, I think?
-> >
-> > Yes, if you turn on NNP you don't even need sys_admin.
-> >
-> > >
-> > > > > > then either the new ptrace() api
-> > > > > > extension should be fixed to allow for this too or the seccomp() way of
-> > > > > > retrieving the pid - which I really think we want - needs to be fixed to
-> > > > > > require capable(CAP_SYS_ADMIN) too.
-> > > > > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
-> > > > > > the preferred way to solve this.
-> > > > > > Everything else will just be confusing.
-> > > > >
-> > > > > First you say "broken", then you say "confusing". Which one do you mean?
-> > > >
-> > > > Both. It's broken in so far as it places a seemingly unnecessary
-> > > > restriction that could be fixed. You outlined one possible fix yourself
-> > > > in the link you provided.
-> > >
-> > > If by "possible fix" you mean "check whether the seccomp filter is
-> > > only attached to a single task": That wouldn't fundamentally change
-> > > the situation, it would only add an additional special case.
-> > >
-> > > > And it's confusing in so far as there is a way
-> > > > via seccomp() to get the fd without said requirement.
-> > >
-> > > I don't find it confusing at all. seccomp() and ptrace() are very
-> >
-> > Fine, then that's a matter of opinion. I find it counterintuitive that
-> > you can get an fd without privileges via one interface but not via
-> > another.
-> >
-> > > different situations: When you use seccomp(), infrastructure is
-> >
-> > Sure. Note, that this is _one_ of the reasons why I want to make sure we
-> > keep the native seccomp() only based way of getting an fd without
-> > forcing userspace to switching to a differnet kernel api.
-> >
-> > > already in place for ensuring that your filter is only applied to
-> > > processes over which you are capable, and propagation is limited by
-> > > inheritance from your task down. When you use ptrace(), you need a
-> > > pretty different sort of access check that checks whether you're
-> > > privileged over ancestors, siblings and so on of the target task.
-> >
-> > So, don't get me wrong I'm not arguing against the ptrace() interface in
-> > general. If this is something that people find useful, fine. But, I
-> > would like to have a simple single-syscall pure-seccomp() based way of
-> > getting an fd, i.e. what we have in patch 1 of this series.
-> 
-> Yeah, I also prefer the seccomp() one.
-> 
-> > > But thinking about it more, I think that CAP_SYS_ADMIN over the saved
-> > > current->mm->user_ns of the task that installed the filter (stored as
-> > > a "struct user_namespace *" in the filter) should be acceptable.
-> >
-> > Hm... Why not CAP_SYS_PTRACE?
-> 
-> Because LSMs like SELinux add extra checks that apply even if you have
-> CAP_SYS_PTRACE, and this would subvert those. The only capability I
-> know of that lets you bypass LSM checks by design (if no LSM blocks
-> the capability itself) is CAP_SYS_ADMIN.
-> 
-> > One more thing. Citing from [1]
-> >
-> > > I think there's a security problem here. Imagine the following scenario:
-> > >
-> > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
-> > > 2. task A forks off a child B
-> > > 3. task B uses setuid(1) to drop its privileges
-> > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
-> > > or via execve()
-> > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
-> > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
-> >
-> > Sorry, to be late to the party but would this really pass
-> > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
-> > that it would... Doesn't look like it would get past:
-> >
-> >         tcred = __task_cred(task);
-> >         if (uid_eq(caller_uid, tcred->euid) &&
-> >             uid_eq(caller_uid, tcred->suid) &&
-> >             uid_eq(caller_uid, tcred->uid)  &&
-> >             gid_eq(caller_gid, tcred->egid) &&
-> >             gid_eq(caller_gid, tcred->sgid) &&
-> >             gid_eq(caller_gid, tcred->gid))
-> >                 goto ok;
-> >         if (ptrace_has_cap(tcred->user_ns, mode))
-> >                 goto ok;
-> >         rcu_read_unlock();
-> >         return -EPERM;
-> > ok:
-> >         rcu_read_unlock();
-> >         mm = task->mm;
-> >         if (mm &&
-> >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> >              !ptrace_has_cap(mm->user_ns, mode)))
-> >             return -EPERM;
-> 
-> Which specific check would prevent task C from attaching to task B? If
-> the UIDs match, the first "goto ok" executes; and you're dumpable, so
-> you don't trigger the second "return -EPERM".
+Mark Brown <broonie@kernel.org> writes:
 
-You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
-have if you did a setuid to an unpriv user. (But I always find that code
-confusing.)
+> On Tue, Oct 09, 2018 at 12:05:22PM +0200, Boris Brezillon wrote:
+>> On Tue, 9 Oct 2018 09:52:23 +0000
+>> Chuanhua Han <chuanhua.han@nxp.com> wrote:
+>
+>> > 1. In the dspi driver (spi controller), bits_per_word
+>> > (dspi->bits_per_word = transfer->bits_per_word) passed from the upper
+>> > layer (spi-mem.c) is used. In this way, I can only assign the
+>> > appropriate value of transfer->bits_per_word before passing to the
+>> > controller, that is, the controller driver does not know the value of
+>> > bits_per_word, and it will use this value when the upper level sets
+>> > what value is passed.
+>
+>> I think you're missing my point: ->bits_per_word is not what you're
+>> looking for if what you're trying to do is use 32-bits accesses when
+>> things are properly aligned.
+>
+> To be clear: bits_per_word affects what goes out on the SPI bus (4 byte
+> words swapped to be in MSB first order), it needn't have any effect on
+> on what goes on inside the SoC - many controllers fill their FIFO in 32
+> bit blocks even when sending 8 bit SPI words.
 
-> 
-> > > 7. because the seccomp filter is shared by task A and task B, task C
-> > > is now able to influence syscall results for syscalls performed by
-> > > task A
-> >
-> > [1]: https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+Exactly.
+
+I believe behind all the confusion here, is the fact that the current
+spi-fsl-dspi.c driver does not utilize all the possible features of the
+DSPI controller.
+
+1. DMA support requires a nasty workaround before it can be enabled for
+   LS1021A.
+2. EOQ mode is not enabled (and not tested) for some platforms which
+   might actually support it.
+3. Cyclic command transfer is not implemented.
+
+So in order to improve performance on LS1021A, I propose to do work on
+above issues.  I believe the performance improvement that can be gained
+is likely to be biggest for 1 (DMA support), and smallest for 3 (cyclic
+command transfer).
+
+I don't have access to any coldfire boards, so I haven't tested EOQ mode
+(it is only enabled for coldfire currently), so I cannot really know if
+there are some bugs hiding there.
+
+/Esben
