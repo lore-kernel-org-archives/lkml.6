@@ -2,102 +2,118 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F29C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD6FC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185B02086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:42:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185B02086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B9382086D
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 13:43:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GNrs8w0T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9382086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeJIU70 (ORCPT
+        id S1726799AbeJIVAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 16:59:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:38094 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbeJIU70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 16:59:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD3A380D;
-        Tue,  9 Oct 2018 06:42:25 -0700 (PDT)
-Received: from [10.163.1.248] (unknown [10.163.1.248])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A51553F5B7;
-        Tue,  9 Oct 2018 06:42:23 -0700 (PDT)
-Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
- PMD migration entry
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
-        mhocko@suse.com, zi.yan@cs.rutgers.edu, will.deacon@arm.com
-References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
- <20181009130421.bmus632ocurn275u@kshutemo-mobl1>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <c0a81be1-4734-2ff8-4167-6d5e219008e6@arm.com>
-Date:   Tue, 9 Oct 2018 19:12:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 9 Oct 2018 17:00:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:47085 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbeJIVAu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 17:00:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r64-v6so856615pfb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 06:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v0tKwxus/drX5kV0Dku9xw8w+RqBKDes35458ovCeko=;
+        b=GNrs8w0TnmS4AmZ9kO0oufL04s14JZVCall9swho5QWJdXZbJ/tSyCDFdkQuucu6h0
+         tR35EKE/9wOWbPxQlczIc7/y2QS8HUTd+u3ydSd5Rd9zso4KKv3LOVOMmiyTn+w2x11w
+         6Spq6jLevOTUcUHBhbcfzzT5WRa37gfa7QOi4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v0tKwxus/drX5kV0Dku9xw8w+RqBKDes35458ovCeko=;
+        b=rGhsirVihqm4lwv7tDfiM3yQ+3mNu5EfmHrsLWY86LERaYbZ85qtKKfBPkz7lUxuc0
+         cCrF9X7ka0NuPljf+dOsqAoczYSsWINxPxkXJ558fQNJxOZV0b+HY2gYbE1AzzjVtOs+
+         7+4x2sA/eNVR9hgQgqbfmbjSzZ5UNdg5oFgdkl93Ph93WOEqMRBES+97yYdh5QD9btIE
+         MbjikXqcMRWr9LdGwQNXCa4I8F5ZAxtZO6QDE0Xs8/aBrnMG3v/6bmi/9sMtswbtYvnZ
+         GVMY5lR8gC7MM8DT60cOkCrJUa50j1mHnvPkYkoEwMP0sY1OWE5XeEq4bepnMywpO9QD
+         zC6g==
+X-Gm-Message-State: ABuFfoglVqv1aoTNpzWFne8AUvqibbxiJStiF8yX4XxZifaP69s7W2yL
+        TE1ZDO7ovP8FrqIxC5k1BApDJA6yo4c=
+X-Google-Smtp-Source: ACcGV62uLqMHR1tagdzZnIm92fx9JV6+OP+aW09uSrzRukfIdvbL5NkhY/zvoDKTIWPP7wqyuF259w==
+X-Received: by 2002:a63:b409:: with SMTP id s9-v6mr25409528pgf.437.1539092629720;
+        Tue, 09 Oct 2018 06:43:49 -0700 (PDT)
+Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
+        by smtp.gmail.com with ESMTPSA id f83-v6sm29850828pfa.109.2018.10.09.06.43.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 06:43:48 -0700 (PDT)
+From:   Keiichi Watanabe <keiichiw@chromium.org>
+To:     linux-media@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com,
+        tfiga@chromium.org, jcliang@chromium.org, shik@chromium.org,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Subject: [PATCH v2] media: vivid: Support 480p for webcam capture
+Date:   Tue,  9 Oct 2018 22:43:39 +0900
+Message-Id: <20181009134339.233238-1-keiichiw@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-In-Reply-To: <20181009130421.bmus632ocurn275u@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Support 640x480 as a frame size for video input devices of vivid.
 
+Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+---
+ drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 10/09/2018 06:34 PM, Kirill A. Shutemov wrote:
-> On Tue, Oct 09, 2018 at 09:28:58AM +0530, Anshuman Khandual wrote:
->> A normal mapped THP page at PMD level should be correctly differentiated
->> from a PMD migration entry while walking the page table. A mapped THP would
->> additionally check positive for pmd_present() along with pmd_trans_huge()
->> as compared to a PMD migration entry. This just adds a new conditional test
->> differentiating the two while walking the page table.
->>
->> Fixes: 616b8371539a6 ("mm: thp: enable thp migration in generic path")
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> On X86, pmd_trans_huge() and is_pmd_migration_entry() are always mutually
->> exclusive which makes the current conditional block work for both mapped
->> and migration entries. This is not same with arm64 where pmd_trans_huge()
->> returns positive for both mapped and migration entries. Could some one
->> please explain why pmd_trans_huge() has to return false for migration
->> entries which just install swap bits and its still a PMD ?
-> 
-> I guess it's just a design choice. Any reason why arm64 cannot do the
-> same?
->
-I think probably it can do. I am happy to look into these in detail what
-will make pmd_trans_huge() return false on migration entries but it does
-not quite sound like a right semantic at the moment.
+diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
+index 58e14dd1dcd3..6cf910a60ecf 100644
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
+ };
+ 
+ /* The number of discrete webcam framesizes */
+-#define VIVID_WEBCAM_SIZES 5
++#define VIVID_WEBCAM_SIZES 6
+ /* The number of discrete webcam frameintervals */
+ #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
+ 
+@@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
+ static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
+ 	{  320, 180 },
+ 	{  640, 360 },
++	{  640, 480 },
+ 	{ 1280, 720 },
+ 	{ 1920, 1080 },
+ 	{ 3840, 2160 },
+@@ -74,9 +75,11 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+ 	{  1, 4 },
+ 	{  1, 5 },
+ 	{  1, 10 },
++	{  2, 25 },
+ 	{  1, 15 },
+ 	{  1, 25 },
+ 	{  1, 30 },
++	{  1, 40 },
+ 	{  1, 50 },
+ 	{  1, 60 },
+ };
+-- 
+2.19.0.605.g01d371f741-goog
 
->> Nonetheless pmd_present() seems to be a better check to distinguish
->> between mapped and (non-mapped non-present) migration entries without
->> any ambiguity.
-> 
-> Can we instead reverse order of check:
-> 
-> if (pmd_trans_huge(pmde) || is_pmd_migration_entry(pmde)) {
-> 	pvmw->ptl = pmd_lock(mm, pvmw->pmd);
-> 	if (!pmd_present(*pvmw->pmd)) {
-> 		...
-> 	} else if (likely(pmd_trans_huge(*pvmw->pmd))) {
-> 		...
-> 	} else {
-> 		...
-> 	}
-> ...
-> 
-> This should cover both imeplementations of pmd_trans_huge().
-
-Yeah it does cover and I have tested it first before proposing the current
-patch. The only problem is that the order saves the code :) Having another
-reasonable check like pmd_present() prevents it from being broken if the
-code block moves around for some reason. But I am happy to do either way.
