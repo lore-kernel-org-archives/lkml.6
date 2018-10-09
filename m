@@ -2,115 +2,106 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0774C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A8CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8136214C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8136214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 06158214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 12:35:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7GqRu75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06158214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeJITtW (ORCPT
+        id S1726882AbeJITwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 15:49:22 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:42710 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726445AbeJITtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 15:49:21 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1g9rBh-0003Sd-9X; Tue, 09 Oct 2018 14:32:33 +0200
-Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
-To:     Chris Clayton <chris2553@googlemail.com>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Azat Khuzhin <a3at.mail@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
- <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
- <98680351-5123-761f-982a-726098da9716@gmail.com>
- <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
- <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
-Date:   Tue, 9 Oct 2018 14:32:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 9 Oct 2018 15:52:00 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40944 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJITwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 15:52:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n31-v6so748831pgm.7
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 05:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ws3c+mOi366Eu0vM1CHgmIxNDfYRZCpV4B9T9jf4DtY=;
+        b=E7GqRu75d2ptDvC5NCP+2cJfGcdgH3+Kfmk01PSSfdYMvqPgp6dbV4NrJaxcLklrhq
+         WmuU9MRdlFTHFRdUkYq2Kd6buD/OnIy3OgH0PvrAM+F+iptEo8vn+lcu0HgPlpKEPSuO
+         2F96TfpKVJyk1tXgTuhjnXnh6KLJXfxW8u+8rpxJm7qHL+JHTKSQevgZRtu7gCdg8K6E
+         1jhI8nYsNwuPPwrTYHlETbYqhfbksJ5BvPa75nEO7thtcGkZskxBosR/4hm+6EfKLE1c
+         lQZA1QIRuZQeCZkHzGJmc199s4Lh3Lwvm+5TEM/9jSyKfZpfWrYvnNAGeAvkfpugWvpS
+         vvow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ws3c+mOi366Eu0vM1CHgmIxNDfYRZCpV4B9T9jf4DtY=;
+        b=e4OboUi3qYJTbYjb+AE7G5M91fv1j1SOMfw814VX6lXIZ9uLlbtTuEcInzbG9T9oYf
+         3k6rCMAcb/M3RopJotwE1k0a+iQmZOXfsiScE++2TpGrHSezPBbKd7HemWiB0TDP4fYO
+         DX6qXSaKphd0+r+xixAKTl/cEFltrsPp1jjcnHUle+XEtNaPHKBLeQKa7yCbP9WaIhma
+         dKg9DGnxV73lK0RPsEFxGiJucLlH9JO2lWHUBQ8mbbuNqTzG1G1UekF0KHOTse0MsPEr
+         oZDa9JtLGyeOFHD9OtaGMTApLcSWRa7dQSEnuBKinRvGl4RSxluyFE/RFMD3S8esJpiI
+         dJRQ==
+X-Gm-Message-State: ABuFfoj2h9G4MQMLku3Uxtxv22vwOAn2kpiT8Vq3mtetTVH2/OpAN5k3
+        kCQU+wXhUOEd77nEuoRMBFU=
+X-Google-Smtp-Source: ACcGV61oif/oQ++4e0GdJ9tpMZDCQ2r6f6wWjAF2QtfmvZ9EJb9NTqLXsa8AbjtgyMjCKSRbZjcLfQ==
+X-Received: by 2002:a62:6801:: with SMTP id d1-v6mr3423679pfc.7.1539088515475;
+        Tue, 09 Oct 2018 05:35:15 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id 6-v6sm22277069pgl.6.2018.10.09.05.35.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 05:35:14 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Tue, 9 Oct 2018 21:35:03 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 2/3] printk: lock/unlock console only for new logbuf
+ entries
+Message-ID: <20181009123503.GB471@tigerII.localdomain>
+References: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
+ <20181002023836.4487-3-sergey.senozhatsky@gmail.com>
+ <20181009083959.rhbxdihzjj44nogk@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009083959.rhbxdihzjj44nogk@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.10.2018 21:36, Chris Clayton wrote:
-> Hi again,
+On (10/09/18 10:39), Petr Mladek wrote:
+> > 
+> > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > ---
+> >  kernel/printk/printk.c | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> I didn't think there was anything in 4.19-rc7 to fix this regression, but tried it anyway. I can confirm that the
-> regression is still present and my network still fails when, after a resume from suspend (to ram or disk), I open my
-> browser or my mail client. In both those cases the failure is almost immediate - e.g. my home page doesn't get displayed
-> in the browser. Pinging one of my ISPs name servers doesn't fail quite so quickly but the reported time increases from
-> 14-15ms to more than 1000ms.
+> The patch makes perfect sense. It looks a bit hacky but I can't
+> think about any less hacky one.
+>
+> I wonder if it is worth it. But if nobody else is against it
+> I am going to push it.
 
-You can try comparing chip registers (ethtool -d eth0) in the working
-state (before a suspend) and in the broken state (after a resume).
-Maybe there will be some obvious in the difference.
+Well, getting to buffered printk may take some time; so I'd probably
+apply it, shouldn't hurt :)
 
-The same goes for the PCI configuration (lspci -d :8168 -vv).
-
-> Chris
-
-Maciej
+	-ss
