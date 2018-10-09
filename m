@@ -2,149 +2,114 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F71C64EB0
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C571FC64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99431213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99431213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FF6B20652
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 06:35:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF6B20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeJINuc convert rfc822-to-8bit (ORCPT
+        id S1726703AbeJINvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 09:50:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36016 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725835AbeJINuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 09:50:32 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w996XwY5053283
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 02:35:09 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0hmkatxw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 02:35:09 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Tue, 9 Oct 2018 07:35:06 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Oct 2018 07:35:03 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w996Z2O663504558
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 9 Oct 2018 06:35:02 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E78542047;
-        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DEB742041;
-        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
-Received: from osiris (unknown [9.152.212.171])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  9 Oct 2018 09:34:39 +0100 (BST)
-Date:   Tue, 9 Oct 2018 08:35:00 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
+        Tue, 9 Oct 2018 09:51:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54032 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725965AbeJINvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 09:51:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 184FCACBC;
+        Tue,  9 Oct 2018 06:35:44 +0000 (UTC)
+Date:   Tue, 9 Oct 2018 08:35:41 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     ytk.lee@samsung.com, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
         David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-next@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [BUG -next 20181008] list corruption with "mm/slub: remove useless
- condition in deactivate_slab"
-X-TM-AS-GCONF: 00
-x-cbid: 18100906-0016-0000-0000-000002105F59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100906-0017-0000-0000-00003267C348
-Message-Id: <20181009063500.GB3555@osiris>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] mm, oom_adj: avoid meaningless loop to find processes
+ sharing mm
+Message-ID: <20181009063541.GB8528@dhcp22.suse.cz>
+References: <67eedc4c-7afa-e845-6c88-9716fd820de6@i-love.sakura.ne.jp>
+ <af7ae9c4-d7f1-69af-58fa-ec6949161f5b@I-love.SAKURA.ne.jp>
+ <20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8>
+ <20181008061407epcms1p519703ae6373a770160c8f912c7aa9521@epcms1p5>
+ <CGME20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p2>
+ <20181008083855epcms1p20e691e5a001f3b94b267997c24e91128@epcms1p2>
+ <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=762 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810090069
+In-Reply-To: <f5bdf4a7-e491-1cda-590c-792526f49050@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+[I have only now noticed that the patch has been reposted]
 
-with linux-next for 20181008 I can reliably crash my system with lot's of
-debugging options enabled on s390. List debugging triggers the list
-corruption below, which I could bisect down to this commit:
+On Mon 08-10-18 18:27:39, Tetsuo Handa wrote:
+> On 2018/10/08 17:38, Yong-Taek Lee wrote:
+> >>
+> >> On 2018/10/08 15:14, Yong-Taek Lee wrote:
+> >>>> On 2018/10/08 10:19, Yong-Taek Lee wrote:
+> >>>>> @@ -1056,6 +1056,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+> >>>>>         struct mm_struct *mm = NULL;
+> >>>>>         struct task_struct *task;
+> >>>>>         int err = 0;
+> >>>>> +       int mm_users = 0;
+> >>>>>
+> >>>>>         task = get_proc_task(file_inode(file));
+> >>>>>         if (!task)
+> >>>>> @@ -1092,7 +1093,8 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+> >>>>>                 struct task_struct *p = find_lock_task_mm(task);
+> >>>>>
+> >>>>>                 if (p) {
+> >>>>> -                       if (atomic_read(&p->mm->mm_users) > 1) {
+> >>>>> +                       mm_users = atomic_read(&p->mm->mm_users);
+> >>>>> +                       if ((mm_users > 1) && (mm_users != get_nr_threads(p))) {
+> >>>>
+> >>>> How can this work (even before this patch)? When clone(CLONE_VM without CLONE_THREAD/CLONE_SIGHAND)
+> >>>> is requested, copy_process() calls copy_signal() in order to copy sig->oom_score_adj and
+> >>>> sig->oom_score_adj_min before calling copy_mm() in order to increment mm->mm_users, doesn't it?
+> >>>> Then, we will get two different "struct signal_struct" with different oom_score_adj/oom_score_adj_min
+> >>>> but one "struct mm_struct" shared by two thread groups.
+> >>>>
+> >>>
+> >>> Are you talking about race between __set_oom_adj and copy_process?
+> >>> If so, i agree with your opinion. It can not set oom_score_adj properly for copied process if __set_oom_adj
+> >>> check mm_users before copy_process calls copy_mm after copy_signal. Please correct me if i misunderstood anything.
+> >>
+> >> You understand it correctly.
+> >>
+> >> Reversing copy_signal() and copy_mm() is not sufficient either. We need to use a read/write lock
+> >> (read lock for copy_process() and write lock for __set_oom_adj()) in order to make sure that
+> >> the thread created by clone() becomes reachable from for_each_process() path in __set_oom_adj().
+> >>
+> > 
+> > Thank you for your suggestion. But i think it would be better to seperate to 2 issues. How about think these
+> > issues separately because there are no dependency between race issue and my patch. As i already explained,
+> > for_each_process path is meaningless if there is only one thread group with many threads(mm_users > 1 but 
+> > no other thread group sharing same mm). Do you have any other idea to avoid meaningless loop ? 
+> 
+> Yes. I suggest reverting commit 44a70adec910d692 ("mm, oom_adj: make sure processes
+> sharing mm have same view of oom_score_adj") and commit 97fd49c2355ffded ("mm, oom:
+> kill all tasks sharing the mm").
 
-fde06e07750477f049f12d7d471ffa505338a3e7 is the first bad commit
-commit fde06e07750477f049f12d7d471ffa505338a3e7
-Author: Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu Oct 4 07:43:01 2018 +1000
+This would require a lot of other work for something as border line as
+weird threading model like this. I will think about something more
+appropriate - e.g. we can take mmap_sem for read while doing this check
+and that should prevent from races with [v]fork.
 
-    mm/slub: remove useless condition in deactivate_slab
-
-    The var l should be used to reflect the original list, on which the page
-    should be.  But c->page is not on any list.  Furthermore, the current code
-    does not update the value of l.  Hence remove the related logic
-
-    Link: http://lkml.kernel.org/r/1537941430-16217-1-git-send-email-kernelfans@gmail.com
-    Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-    Acked-by: Christoph Lameter <cl@linux.com>
-    Cc: Pekka Enberg <penberg@kernel.org>
-    Cc: David Rientjes <rientjes@google.com>
-    Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-list_add double add: new=000003d1029ecc08, prev=000000008ff846d0,next=000003d1029ecc08.
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:31!
-illegal operation: 0001 ilc:1 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 3 PID: 106 Comm: (sd-executor) Not tainted 4.19.0-rc6-00291-gfde06e077504 #21
-Hardware name: IBM 2964 NC9 702 (z/VM 6.4.0)
-Krnl PSW : (____ptrval____) (____ptrval____) (__list_add_valid+0x98/0xa8)
-           R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
-Krnl GPRS: 0000000074311fdf 0000000080000001 0000000000000058 0000000000e7b8b2
-           0000000000000000 0000000075438c64 00000000a7b31928 001c007b00000000
-           000000008fe99d00 00000000a7b31b40 000003d1029ecc08 00000000a7c03a80
-           000003d1029ecc08 000000008ff84680 00000000007b5674 00000000a7c03960
-Krnl Code: 00000000007b5668: c0200034734a        larl    %r2,e43cfc
-           00000000007b566e: c0e5ffd0cf51        brasl   %r14,1cf510
-          #00000000007b5674: a7f40001            brc     15,7b5676
-          >00000000007b5678: a7290001            lghi    %r2,1
-           00000000007b567c: ebcff0a00004        lmg     %r12,%r15,160(%r15)
-           00000000007b5682: 07fe                bcr     15,%r14
-           00000000007b5684: 0707                bcr     0,%r7
-           00000000007b5686: 0707                bcr     0,%r7
-Call Trace:
-([<00000000007b5674>] __list_add_valid+0x94/0xa8)
- [<000000000037d30e>] deactivate_slab.isra.15+0x45e/0x810
- [<000000000037ede4>] ___slab_alloc+0x76c/0x7c0
- [<000000000037eeb0>] __slab_alloc.isra.16+0x78/0xa8
- [<00000000003808c8>] kmem_cache_alloc+0x160/0x458
- [<0000000000141a3a>] vm_area_dup+0x3a/0x60
- [<0000000000142f0a>] copy_process+0xd72/0x2100
- [<000000000014449a>] _do_fork+0xba/0x688
- [<0000000000144bb0>] sys_clone+0x48/0x50
- [<0000000000b8faf0>] system_call+0xd8/0x2d0
-INFO: lockdep is turned off.
-Last Breaking-Event-Address:
- [<00000000007b5674>] __list_add_valid+0x94/0xa8
-
-Kernel panic - not syncing: Fatal exception: panic_on_oops
-
+-- 
+Michal Hocko
+SUSE Labs
