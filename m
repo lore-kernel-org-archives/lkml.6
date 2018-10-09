@@ -2,260 +2,93 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F71C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89048C64EAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F092089D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:58:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F092089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E22121479
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 08:58:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxwFS24A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E22121479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeJIQNz (ORCPT
+        id S1726741AbeJIQN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 12:13:55 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62837 "EHLO mga11.intel.com"
+        Tue, 9 Oct 2018 12:13:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725861AbeJIQNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 12:13:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 01:58:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,359,1534834800"; 
-   d="scan'208";a="79680703"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 09 Oct 2018 01:57:54 -0700
-Received: from [10.125.251.255] (abudanko-mobl.ccr.corp.intel.com [10.125.251.255])
-        by linux.intel.com (Postfix) with ESMTP id DEA435801E6;
-        Tue,  9 Oct 2018 01:57:51 -0700 (PDT)
-Subject: [PATCH v12 1/3] perf util: map data buffer for preserving collected
- data
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <e045b4aa-bff1-4e40-4cdf-4504003ecff5@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <8832e671-1572-2591-fd55-cc7aa6c987a8@linux.intel.com>
-Date:   Tue, 9 Oct 2018 11:57:50 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725861AbeJIQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 9 Oct 2018 12:13:59 -0400
+Received: from localhost (unknown [171.76.86.221])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1CE32089D;
+        Tue,  9 Oct 2018 08:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539075486;
+        bh=rVMi8ADf4R56AynRsbSbjCoK88ANtC5QUfae/Tlnx6A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GxwFS24AD9xtJHz9c/fzT9+YQ0UDMVqD2XRiGgwpywXG5u7amEOfETQEgUoZ2gKgr
+         PsuaE8WDAXVGh+/+2ZUxvgeZqK6UiPYvAURBZAt7qAA+s1rD2SMEwPYrpkYeYcLZZy
+         bczZk2nm4Z0dZlrrVERP8OXXbK4SNdFL8PXpoIdQ=
+Date:   Tue, 9 Oct 2018 14:27:57 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: stm32-dma: Add DMA/MDMA chaining
+ support bindings
+Message-ID: <20181009085757.GI2372@vkoul-mobl>
+References: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
+ <1538139715-24406-2-git-send-email-pierre-yves.mordret@st.com>
+ <20181007145722.GY2372@vkoul-mobl>
+ <5d7a218c-9e96-3931-88ab-0b4dcb3ec4e5@st.com>
 MIME-Version: 1.0
-In-Reply-To: <e045b4aa-bff1-4e40-4cdf-4504003ecff5@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d7a218c-9e96-3931-88ab-0b4dcb3ec4e5@st.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pierre,
 
-The map->data buffer is used to preserve map->base profiling data 
-for writing to disk. AIO map->cblock is used to queue corresponding 
-map->data buffer for asynchronous writing.
+On 09-10-18, 09:18, Pierre Yves MORDRET wrote:
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v12:
- - applied stub functions design for the whole patch kit
- - grouped AIO related data into a struct under struct perf_mmap
-Changes in v10:
- - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
- - adjusted error reporting by using %m
-Changes in v9:
-  - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of 
-    libc implementations without Posix AIO API support
-Changes in v7:
-  - implemented handling record.aio setting from perfconfig file
- Changes in v6:
-  - adjusted setting of priorities for cblocks;
- Changes in v5:
-  - reshaped layout of data structures;
-  - implemented --aio option;
- Changes in v4:
-  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
- Changes in v2:
-  - converted zalloc() to calloc() for allocation of mmap_aio array,
-  - cleared typo and adjusted fallback branch code;
----
- tools/perf/Makefile.config |  5 +++++
- tools/perf/Makefile.perf   |  7 ++++++-
- tools/perf/util/evlist.c   |  2 +-
- tools/perf/util/mmap.c     | 51 +++++++++++++++++++++++++++++++++++++++++++++-
- tools/perf/util/mmap.h     | 11 +++++++++-
- 5 files changed, 72 insertions(+), 4 deletions(-)
+> >>  * DMA client
+> >> @@ -68,7 +84,16 @@ channel: a phandle to the DMA controller plus the following four integer cells:
+> >>  	0x1: 1/2 full FIFO
+> >>  	0x2: 3/4 full FIFO
+> >>  	0x3: full FIFO
+> >> -
+> >> + -bit 2: Intermediate M2M transfer from/to DDR to/from SRAM throughout MDMA
+> >> +	0: MDMA not used to generate an intermediate M2M transfer
+> >> +	1: MDMA used to generate an intermediate M2M transfer.
+> >> + -bit 3-4: indicated SRAM Buffer size in (2^order)*PAGE_SIZE.
+> >> +	PAGE_SIZE is given by Linux at 4KiB: include/asm-generic/page.h.
+> >> +	Order is given by those 2 bits starting at 0.
+> >> +	Valid only whether Intermediate M2M transfer is set.
+> > 
+> > why do we need this as a property?
+> 
+> In some UC, we need more than 4KiB in case of chaining for better performances.
+> Chaining has to be enabled by client if performance is at sacks.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index f6d1a03c7523..2e90f4ce9214 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -355,6 +355,11 @@ endif # NO_LIBELF
- 
- ifeq ($(feature-glibc), 1)
-   CFLAGS += -DHAVE_GLIBC_SUPPORT
-+  ifndef NO_AIO
-+    ifndef BIONIC
-+        CFLAGS += -DHAVE_AIO_SUPPORT
-+    endif
-+  endif
- endif
- 
- ifdef NO_DWARF
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 92514fb3689f..7becc6a72cf2 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -97,8 +97,13 @@ include ../scripts/utilities.mak
- # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
- # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
- # llvm-config is not in $PATH.
--
-+#
- # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
-+#
-+# Define NO_AIO if you do not want support of Posix AIO based trace
-+# streaming for record mode. Currently Posix AIO trace streaming is
-+# supported only when linking with glibc.
-+#
- 
- # As per kernel Makefile, avoid funny character set dependencies
- unexport LC_ALL
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index be440df29615..1a83bf2c069c 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp;
-+	struct mmap_params mp = { .nr_cblocks = 0 };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index cdb95b3a1213..2c997d931106 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -153,8 +153,21 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- {
- }
- 
-+#ifdef HAVE_AIO_SUPPORT
-+static void perf_mmap__aio_munmap(struct perf_mmap *map)
-+{
-+	if (map->aio.data)
-+		zfree(&map->aio.data);
-+}
-+#else
-+static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
-+{
-+}
-+#endif
-+
- void perf_mmap__munmap(struct perf_mmap *map)
- {
-+	perf_mmap__aio_munmap(map);
- 	if (map->base != NULL) {
- 		munmap(map->base, perf_mmap__mmap_len(map));
- 		map->base = NULL;
-@@ -164,6 +177,42 @@ void perf_mmap__munmap(struct perf_mmap *map)
- 	auxtrace_mmap__munmap(&map->auxtrace_mmap);
- }
- 
-+#ifdef HAVE_AIO_SUPPORT
-+static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-+{
-+	int delta_max;
-+
-+	if (mp->nr_cblocks) {
-+		map->aio.data = malloc(perf_mmap__mmap_len(map));
-+		if (!map->aio.data) {
-+			pr_debug2("failed to allocate data buffer, error %m\n");
-+			return -1;
-+		}
-+		/*
-+		 * Use cblock.aio_fildes value different from -1
-+		 * to denote started aio write operation on the
-+		 * cblock so it requires explicit record__aio_sync()
-+		 * call prior the cblock may be reused again.
-+		 */
-+		map->aio.cblock.aio_fildes = -1;
-+		/*
-+		 * Allocate cblock with max priority delta to
-+		 * have faster aio write system calls.
-+		 */
-+		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-+		map->aio.cblock.aio_reqprio = delta_max;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
-+			       struct mmap_params *mp __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif
-+
- int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
- {
- 	/*
-@@ -197,7 +246,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
- 				&mp->auxtrace_mp, map->base, fd))
- 		return -1;
- 
--	return 0;
-+	return perf_mmap__aio_mmap(map, mp);
- }
- 
- static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index e603314dc792..a46dbdcdcc8a 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -6,6 +6,9 @@
- #include <linux/types.h>
- #include <asm/barrier.h>
- #include <stdbool.h>
-+#ifdef HAVE_AIO_SUPPORT
-+#include <aio.h>
-+#endif
- #include "auxtrace.h"
- #include "event.h"
- 
-@@ -26,6 +29,12 @@ struct perf_mmap {
- 	bool		 overwrite;
- 	struct auxtrace_mmap auxtrace_mmap;
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
-+#ifdef HAVE_AIO_SUPPORT
-+	struct {
-+		void 		 *data;
-+		struct aiocb	 cblock;
-+	} aio;
-+#endif
- };
- 
- /*
-@@ -57,7 +66,7 @@ enum bkw_mmap_state {
- };
- 
- struct mmap_params {
--	int			    prot, mask;
-+	int			    prot, mask, nr_cblocks;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
- 
+Okay if that is the case why is the user not taking care of this?
+Creating DMA txn and chaining them up and starting the chain? Why would
+dmaengine driver need to do that?
+
+-- 
+~Vinod
