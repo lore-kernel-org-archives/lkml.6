@@ -2,98 +2,166 @@ Return-Path: <SRS0=T/cj=MV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5006C64EAD
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60B6C64EB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CE52086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67BF4214C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  9 Oct 2018 07:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4az3kTb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CE52086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aC0Gy5Sd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67BF4214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeJIOva (ORCPT
+        id S1726771AbeJIOvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 9 Oct 2018 10:51:30 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36213 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbeJIOv3 (ORCPT
+        Tue, 9 Oct 2018 10:51:53 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:32899 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeJIOvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 9 Oct 2018 10:51:29 -0400
-Received: by mail-io1-f67.google.com with SMTP id p4-v6so440974iom.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:35:54 -0700 (PDT)
+        Tue, 9 Oct 2018 10:51:53 -0400
+Received: by mail-yw1-f68.google.com with SMTP id m127-v6so255448ywb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=p+9dCYLtSmGIiW5613XyqdLDzMzwv+oi/bR453rINUE=;
-        b=Z4az3kTbI8EaHEx1TD5p+BgO3pD8zvwEdN21mDroL2jAK9ZLVs6ggvlMocNJG7T9Lx
-         ViuoEQRF/s6tq85DmL3sv3rpZ7AR7NytY+CMTcOMEZ+Q3lGyzEl4CGPdbxX0RxvnYepQ
-         JHnAgKsv8VVKF4fG9KIPuYNpLHWa1C1+QVPe0=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cW1dQ7JX/79viH31cfUp8J5qXmRot9g3E4BlrCvw0no=;
+        b=aC0Gy5SdWX7P9DFwUvEFezQQ3ns5gO2FCEmObzffcf4mhyf/EVIdlP0uPgVAj9XztH
+         o3DTjReMO9z+npRdL+J0K8AKFBSCmTDUPFrh/+beuYCeASlSy9J2T7m2L+HEjJJdjvss
+         41ZUO0M0VAOLgGMmTq56MLeZM2jpq8OpjdXJs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=p+9dCYLtSmGIiW5613XyqdLDzMzwv+oi/bR453rINUE=;
-        b=IQIU8Z+lPPXKS52AhLAEdMg2xleRzChhO4wFE57qCabsnnj+Zq0yLabjbvvCCmYZbO
-         Phdw0j36Rjtlq6IO6WpCWIP5jL5SfkyXbtHCxs0W0Vm3jyLCmH5wVI/I+OBsW0pe+VyW
-         XElibJknEksv1eZZQ0MBf+k38k+ajR4dbHKO/kCE/4bDio7UJcWXL1vd1/AkHT5DrGlD
-         gdGWI2jpw7E/6Y1cYUCRg6vMJBG3kc3kh+tojE/h/uz3B6+KuRzAIGMXZnK8lX7Sk5e0
-         iJ9CeT0pk3NqIbjwWcM9Fw/tU3PM2XCYbTq58ObQMaJ2UYlFFlFE4f4tJahdIfOGrh1+
-         oF+Q==
-X-Gm-Message-State: ABuFfoj3sHuHld2zh6faBglObK7mCEdNpe7iXUk9HnFSOxOB46VPAy8D
-        LtvKPfTqGLMpwr2WEpOeIAPgqqE8cR1Rpah60rXBtA==
-X-Google-Smtp-Source: ACcGV60ipdTlp4trebdszgb7S92D9G6lWhAqH36qAxLEPZh89sfDuyMPvKgWH+IBEHZ5qs/9uNhsatbhyXpXuOUntyI=
-X-Received: by 2002:a6b:203:: with SMTP id 3-v6mr17670870ioc.131.1539070554226;
- Tue, 09 Oct 2018 00:35:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cW1dQ7JX/79viH31cfUp8J5qXmRot9g3E4BlrCvw0no=;
+        b=IM3t8rDg8a2kDLD+UfI9Z/HtoIBBBwGzvDzLYk49BBEqUPigiBjYLndOPbuVCdv1nM
+         CLG5p1s3iI67eJldzEuWctvrE7pcw53u3pvyeC/69NSTGiKTMgvPk7thNT5zaoqKpDaw
+         N1idRL1fDTWQNOcd4cC3+UL4+l/bNszncIXV1dLxFQYYAy9ntQ08CRWE9RUYqOHzOTA4
+         OwJ1kv8++/uRQKJ4TK+DYVb0rJYZ5yKec/OPC5vVYT1qgGYdKGthUoNVwSD+0obQuwWh
+         4pYHWfbfhLczZuVbbGPih74s4sFLAL7jeGKFAJW9rovTMICPSVziBigbtNNPvSAxaLjq
+         Ms0A==
+X-Gm-Message-State: ABuFfohg5r+WtEE7f6nRTixrj0bjlvhkNg2/qhnRiYwW3EMieDxRtIRo
+        8uBsdILkU/xz6quuN0Ju7uRkTfhUvzakYg==
+X-Google-Smtp-Source: ACcGV606e2uzFQJjPtwlqCZqGkEmOry7JRbnI9dmU6YU0x68jiAv5HwCDDIIsE/aRfnBdnLbPGtNAA==
+X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr12541259ywf.41.1539070577151;
+        Tue, 09 Oct 2018 00:36:17 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id u143-v6sm11489228ywc.28.2018.10.09.00.36.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 00:36:15 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 5-v6so246777ybf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 00:36:15 -0700 (PDT)
+X-Received: by 2002:a25:bd0c:: with SMTP id f12-v6mr15184090ybk.293.1539070575175;
+ Tue, 09 Oct 2018 00:36:15 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Tue, 9 Oct 2018 00:35:13 -0700 (PDT)
-In-Reply-To: <f1979ee5-404b-4397-8acb-837fbda83eec@ti.com>
-References: <20181004111451.9539-1-faiz_abbas@ti.com> <20181004111451.9539-6-faiz_abbas@ti.com>
- <CAPDyKFpRU1bQB6LMt30c8hGhTYnYp7FBVOz092TEzkiXfoDdgQ@mail.gmail.com> <f1979ee5-404b-4397-8acb-837fbda83eec@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 9 Oct 2018 09:35:13 +0200
-Message-ID: <CAPDyKFrt=6da_r3EwX0UxmHkHU0wLN9BME1XTsapU8YjBXpdsQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] mmc: sdhci-of-arasan: Add Support for AM654 MMC and PHY
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Kishon <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
+References: <20181004081119.102575-1-acourbot@chromium.org>
+ <f1fa989b372b514f0a7534057de80b0c453cc8a3.camel@paulk.fr> <5085f73bc44424b20f1bd0dc1332d9baabecb090.camel@ndufresne.ca>
+ <dc1045e5806638d58ae5ace796541cb8a3d29481.camel@paulk.fr>
+In-Reply-To: <dc1045e5806638d58ae5ace796541cb8a3d29481.camel@paulk.fr>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 9 Oct 2018 16:36:03 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Cr4OxVQtzT1NyPm+-buZJHsmF0BM6wMTxOdonUpCC_NA@mail.gmail.com>
+Message-ID: <CAAFQd5Cr4OxVQtzT1NyPm+-buZJHsmF0BM6wMTxOdonUpCC_NA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+To:     contact@paulk.fr
+Cc:     nicolas@ndufresne.ca, Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 October 2018 at 09:35, Faiz Abbas <faiz_abbas@ti.com> wrote:
-> Hi Uffe,
+On Sat, Oct 6, 2018 at 2:09 AM Paul Kocialkowski <contact@paulk.fr> wrote:
 >
-> On Tuesday 09 October 2018 01:00 PM, Ulf Hansson wrote:
->> On 4 October 2018 at 13:14, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>> The current arasan sdhci PHY configuration isn't compatible
->>> with the PHY on TI's AM654 devices.
->>>
->>> Therefore, add a new compatible, AM654 specific quirks
->>> and a new AM654 specific set_clock function which
->>> configures the PHY in a sane way.
->>>
->>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->>
->> Applied for next, thanks!
->>
+> Hi,
 >
-> Do I need to repost these in the v2 ?
+> Le jeudi 04 octobre 2018 =C3=A0 14:10 -0400, Nicolas Dufresne a =C3=A9cri=
+t :
+> > Le jeudi 04 octobre 2018 =C3=A0 14:47 +0200, Paul Kocialkowski a =C3=A9=
+crit :
+> > > > +    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing t=
+he scaling
+> > > > +    matrix to use when decoding the next queued frame. Applicable =
+to the H.264
+> > > > +    stateless decoder.
+> > > > +
+> > > > +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
+> > >
+> > > Ditto with "H264_SLICE_PARAMS".
+> > >
+> > > > +    Array of struct v4l2_ctrl_h264_slice_param, containing at leas=
+t as many
+> > > > +    entries as there are slices in the corresponding ``OUTPUT`` bu=
+ffer.
+> > > > +    Applicable to the H.264 stateless decoder.
+> > > > +
+> > > > +``V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM``
+> > > > +    Instance of struct v4l2_ctrl_h264_decode_param, containing the=
+ high-level
+> > > > +    decoding parameters for a H.264 frame. Applicable to the H.264=
+ stateless
+> > > > +    decoder.
+> > >
+> > > Since we require all the macroblocks to decode one frame to be held i=
+n
+> > > the same OUTPUT buffer, it probably doesn't make sense to keep
+> > > DECODE_PARAM and SLICE_PARAM distinct.
+> > >
+> > > I would suggest merging both in "SLICE_PARAMS", similarly to what I
+> > > have proposed for H.265: https://patchwork.kernel.org/patch/10578023/
+> > >
+> > > What do you think?
+> >
+> > I don't understand why we add this arbitrary restriction of "all the
+> > macroblocks to decode one frame". The bitstream may contain multiple
+> > NALs per frame (e.g. slices), and stateless API shall pass each NAL
+> > separately imho. The driver can then decide to combine them if needed,
+> > or to keep them seperate. I would expect most decoder to decode each
+> > slice independently from each other, even though they write into the
+> > same frame.
+>
+> Well, we sort of always assumed that there is a 1:1 correspondency
+> between request and output frame when implemeting the software for
+> cedrus, which simplified both userspace and the driver. The approach we
+> have taken is to use one of the slice parameters for the whole series
+> of slices and just append the slice data.
+>
+> Now that you bring it up, I realize this is an unfortunate decision.
+> This may have been the cause of bugs and limitations with our driver
+> because the slice parameters may very well be distinct for each slice.
 
-No. It's okay if you drop them from the series.
+I might be misunderstanding something, but, at least for the H.264
+API, there is no relation between the number of buffers/requests and
+number of slice parameters. The V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM
+is an array, with each element describing each slice in the OUTPUT
+buffer. So actually, it could be up to the userspace if it want to
+have 1 OUTPUT buffer per slice or all slices in 1 OUTPUT buffer - the
+former would have v4l2_ctrl_h264_decode_param::num_slices =3D 1 and only
+one valid element in V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS.
 
-Kind regards
-Uffe
+> Moreover, I suppose that just appending the slices data implies that
+> they are coded in the same order as the picture, which is probably
+> often the case but certainly not anything guaranteed.
+
+Again, at least in the H.264 API being proposed here, the order of
+slices is not specified by the order of slice data in the buffer. Each
+entry of the V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS array points to the
+specific offset within the buffer.
+
+Best regards,
+Tomasz
