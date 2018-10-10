@@ -2,133 +2,175 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AF4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A7AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340DA2087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41EB82087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AbgbIrko"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340DA2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="yqTPI7xq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EB82087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeJKCFg (ORCPT
+        id S1727333AbeJKCFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:05:36 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54518 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJKCFf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:05:35 -0400
-Received: by mail-it1-f194.google.com with SMTP id l191-v6so9611882ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 11:42:10 -0700 (PDT)
+        Wed, 10 Oct 2018 22:05:53 -0400
+Received: from mail-co1nam03on0072.outbound.protection.outlook.com ([104.47.40.72]:12637
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726791AbeJKCFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:05:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ajAazKErrzGlccUc71eAb79ImBRVG7tVJ/hvOQwvD/8=;
-        b=AbgbIrkoqXAGciMpbn6th+P0NtBHVpprMmrLkhBYM+DO6I+BDe2+zvB6CamN0789pw
-         p7Z6oOPFcAj/2J1Z7enzF5ygCXdkSPYt/JR2bCsMp0LVh+dAluWIkSOlX6xQuRokxN6g
-         7TXcjQaw0W2svR/Dnn9JoiVVLZCyexaCrp3zFMkF0eMxHKJpBsj3D1jXhKxYTlJVvP42
-         9PzkdujiaywogsQbtUNiGIxKlkpiphY3bNNFevAL7Tdr3po5g0iFWlLlv5bkiJOyi5Rw
-         vjUxHxWXTRh2zuUImV0gkvJ7P+bUVdHGiL+zoAD1WFNS7kLBGuKHrxrf6j44MDqXnVUU
-         kPQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ajAazKErrzGlccUc71eAb79ImBRVG7tVJ/hvOQwvD/8=;
-        b=pFm05Tu+WvWPGeOw3nQtceB9ac7J4VJqCGe5AfpdSSo7vjl7Zv+0eYc2vaomWkmT/B
-         oawedTNRcIrEcnDJA85+n+UwqCJjOJx1nl72wXYzBrjZHWdinNKTj9ktIzURb4Nc9Wqk
-         5GkOcIY6jTUNxHIIacv+Wych7Gy4zVLcjlJo5Uv1b3hcYCnarMFRseLWQqFRmjmXRbZy
-         sydBbX3KZYvwGyuTJ2NYLD/Vot/DIKJTOt3kgeHvGhh9AL0YA/fy9PS9W35mfioI32mB
-         arMkdihbv1btMdBAnvmzAxygtFbdSdeUE3GhXSq3pCyPv+695fMxD/hmoFG5ygAEUNWo
-         7WHA==
-X-Gm-Message-State: ABuFfoho3xQD8/ZwBmOd4tZecv1+CKKzDs+/CgxqIJhezaDkND8vR7BK
-        AZNS8Zbix5oaHezqMMXv7rG+f010VjMDs4umQ09Wog==
-X-Google-Smtp-Source: ACcGV60n5+S2+SFFBQpfeVFnh7BSi66vGSizj5d7O/idqu9Xwg/yPL+l4qdJT5RIzz4wYGiKBBuXOmf8YNBLE4+0zJA=
-X-Received: by 2002:a24:24c9:: with SMTP id f192-v6mr1573647ita.144.1539196930154;
- Wed, 10 Oct 2018 11:42:10 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FTZ9kybPWkyxsi59T9YnNQNPzvhhlD3RAq90vgNSWI8=;
+ b=yqTPI7xq0LcZOOX2IWFcv2ILdIPFZFmoZhU+D0SQjqZBuSqQGrH6NV8hRrVH14gwQXMxOptVnhTle3DKKw+dVFHAfTXkUVho3DT8yK7gARRlfFC4208T8AjoCxtZqg+xSKd2cnNKXf9gxn98eH61HgT8PSuxYrFbYSRCXeXlp1I=
+Received: from BL2PR02MB2130.namprd02.prod.outlook.com (10.167.97.16) by
+ BL2PR02MB2146.namprd02.prod.outlook.com (10.167.97.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.23; Wed, 10 Oct 2018 18:41:46 +0000
+Received: from BL2PR02MB2130.namprd02.prod.outlook.com
+ ([fe80::281b:9a9:7f2:2913]) by BL2PR02MB2130.namprd02.prod.outlook.com
+ ([fe80::281b:9a9:7f2:2913%6]) with mapi id 15.20.1228.020; Wed, 10 Oct 2018
+ 18:41:45 +0000
+From:   Jolly Shah <JOLLYS@xilinx.com>
+To:     Jolly Shah <JOLLYS@xilinx.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "andy.gross@linaro.org" <andy.gross@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "sean.wang@mediatek.com" <sean.wang@mediatek.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        Michal Simek <michals@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC:     Rajan Vaja <RAJANV@xilinx.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP power
+ domain driver
+Thread-Topic: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP
+ power domain driver
+Thread-Index: AQHUXCiXjmE+vCtxy0SnyZbe+Ca6y6UY2Wjg
+Date:   Wed, 10 Oct 2018 18:41:44 +0000
+Message-ID: <BL2PR02MB2130719D4A82F429745DDBEEB8E00@BL2PR02MB2130.namprd02.prod.outlook.com>
+References: <1538688221-9823-1-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1538688221-9823-1-git-send-email-jollys@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=JOLLYS@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL2PR02MB2146;6:ZlvvKCtzuyMezMHm365TVeRQsWZlevSv76wAuveBFkazfoVu/K3itskcmJsHPcTesQtEsopP9mPPkEO0+/w1qiJ3stXo/1SZbSzls0qFi4b1aMumq3ySxk126cQStc2YD2paBG/sUwhI3vyQT/MN2g0oEdz7IeTTuRDDIeWvvEjKAVnL6xdV6FDvez0CfwsM8NxmnpsTtXHPamQvTDZiYyj5/ZLCETYEZkahK7IJk2j0fXz0gOkDKuir3IaK6hXli2oDDdhegaCKIsenFM8BSL1YXmB+6Xh5/p2gk8150AEAb19mpbahN+6SpeCd3ONPVpbV1l8k6bynGeTstjLuL2IkL+WA9xTdz+MgKF4mh9bnYh0sk9PJak1QyOS3uFe1Q+YHlM4lxkYnLk3VGck6kcYcfdn8k6fXG6hiM5FmZ4mCXH2jtJm5fIaHSFxcsNjcKDOTuTjM3ad4hLn0xDB53g==;5:FoVNxA5mBzvxcBE19q0ADd3gNEY+JmG4EWWdrB7jWqgxeTWcD8ZwnqkdXrYogXNrvaRNumex5PVC2tOPVYs0j0MGVSo8LmGwx68PwVGOHKtz/DVEc9KA5oit6rLxjyb8PKTeSSbaf2J9g7VSKsnv2+g4almesnycOIC6l+4DrwE=;7:sLE6+igm2NW9oKqRKYVgyRKpoq9aguWpSdiexUZTEtUfk1COKvL2f4NmXAzp1Lrqt379IvOhHPwiv5jTjALTvtdINrlMtVHm4OVtyj5msnUZrSwWgI6NUWVJq5ackEEtLRHNqSCuNpFPMvxMuPJLNqqJw2vxDoD4lBtGHme+IysOg6zTRnHyqCYkjh4aE5UCV9qq7QtdzK2iaBPLypSU+j8rYEYE5PEKPOfTj5F1BdftrxZTjJCFVINk4m5rvBvB
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(366004)(136003)(13464003)(189003)(199004)(5250100002)(2900100001)(2501003)(478600001)(72206003)(966005)(97736004)(2201001)(102836004)(446003)(476003)(26005)(99286004)(11346002)(6436002)(2906002)(7696005)(486006)(186003)(33656002)(7416002)(55016002)(8676002)(110136005)(6306002)(6246003)(86362001)(74316002)(53936002)(54906003)(9686003)(81156014)(81166006)(7736002)(8936002)(305945005)(71190400001)(71200400001)(105586002)(5660300001)(316002)(229853002)(76176011)(66066001)(14444005)(256004)(14454004)(6506007)(4326008)(39060400002)(53546011)(68736007)(106356001)(3846002)(6116002)(25786009)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR02MB2146;H:BL2PR02MB2130.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: fb9cd176-3a00-4560-2c96-08d62ee0076b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BL2PR02MB2146;
+x-ms-traffictypediagnostic: BL2PR02MB2146:
+x-microsoft-antispam-prvs: <BL2PR02MB21461B2D900A8106A67DA994B8E00@BL2PR02MB2146.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040)(192813158149592)(85827821059158)(7411616537696)(180628864354917)(9452136761055)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:BL2PR02MB2146;BCL:0;PCL:0;RULEID:;SRVR:BL2PR02MB2146;
+x-forefront-prvs: 08213D42D3
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ONCP/DiFo5VWL1loJ9qMvhoZ0AiYAQCwGczWGrzGqD244kZqTpywuYhSoeIGIJRR6Ayg8ptJXM6quPRbcWZbVh+Lra36TRP00tYFKVsnGRSwhgLY30oTJRZhE/GhjtCSc3Mc98WQQF658fwIx7ZvZzL64MwD+cHeUML+yxinstvhuseNO4X715ro/I+t8MH+IUyFt7lsd5j7HxR6Lsc6zfYjhUHp1IecD/y2PtQdar/3Lh+8lhFMGOMa1GvCvyyUSQ1kgrmhoQ0oe7dKDu61DaG52YnrCO6QwIQKWYwkDifCZMbaDAMCT6gV/xmL3helgPKN07RfE6VADhKKQCqEPaBhQCttys5jOrP3aQC7se0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 11:41:49
- -0700 (PDT)
-In-Reply-To: <79b7f7a1-1287-1341-7f30-c9491c4d0e4d@kernel.org>
-References: <0000000000004643360575102706@google.com> <62457d9f-0732-3886-0381-bbf5df738467@kernel.org>
- <CACT4Y+bycsbrkeT8PHYxfooTkw2VyCAONY_BH2dTuZKtvCj3pg@mail.gmail.com> <79b7f7a1-1287-1341-7f30-c9491c4d0e4d@kernel.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 20:41:49 +0200
-Message-ID: <CACT4Y+asX7wquthAmyFO6EjaJq=8VET-WytG7PvZdO2AT5rmWA@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in vhci_hub_control
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     syzbot <syzbot+bccc1fe10b70fadc78d0@syzkaller.appspotmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb9cd176-3a00-4560-2c96-08d62ee0076b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 18:41:45.0199
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR02MB2146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 1:21 AM, Shuah Khan <shuah@kernel.org> wrote:
-> On 10/02/2018 10:42 AM, Dmitry Vyukov wrote:
->> On Tue, Oct 2, 2018 at 6:04 PM, Shuah Khan <shuah@kernel.org> wrote:
->>> On 09/04/2018 12:52 PM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following crash on:
->>>>
->>>> HEAD commit:    420f51f4ab6b Merge tag 'arm64-fixes' of git://git.kernel.o..
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=126a6f0e400000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bccc1fe10b70fadc78d0
->>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121caa46400000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ed8ab6400000
->>>
->>> C producer doesn't reproduce the problem on 4.19-rc5. Does this C producer
->>> depend on state of the machine? i.e what is the status of vhci_hcd - are
->>> there any devices attached?
->>
->> Hi Shuah,
->>
->> syzbot always runs tests reproducers on a clean machine. There is some
->> state are running a Debian wheezy init, but no test/fuzz/stress
->> workload is run before the reproducer.
->> syzbot also uses VMs, so there are no real devices attached. And it's
->> GCE VMs (not qemu), and I think GCE does not even emulate any USB
->> devices.
->>
->> An obvious thing to try would be to use the exact commit and config
->> syzbot gave (rather than 4.19-rc5).
->> You can also take the image syzbot uses here:
->> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#crash-does-not-reproduce
->>
->>
->>> I can see the problem looking at the code and fix is easy. However, I would
->>> like be able to reproduce it and verify the fix works. Also this would be a
->>> good regression for the driver I could consider adding to selftests.
->>
->> syzbot can test fixes for bugs with reproducers:
->> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
->> So it can test your fix. But this obviously won't help with a test.
->>
->
-> Tried the same config and no luck. Any chance you have the complete dmesg?
+Ping for comments
 
-By "complete" you mean "from the boot"? If yes, then no, we don't keep
-it, full output can be huge and it's not a moving part.
+Thanks,
+Jolly Shah
 
-I've captured boot output from another similar machine, unfortunately
-dmesg buffer is not large enough to fit it all, so not sure if you
-will find what you are looking for there:
-https://gist.githubusercontent.com/dvyukov/11b83aeda0466a0f171451d86ab36e15/raw/57121db6cf1bbb5e57c08746241b03904bde95f6/gistfile1.txt
+> -----Original Message-----
+> From: Jolly Shah [mailto:jolly.shah@xilinx.com]
+> Sent: Thursday, October 04, 2018 2:24 PM
+> To: matthias.bgg@gmail.com; andy.gross@linaro.org; shawnguo@kernel.org;
+> geert+renesas@glider.be; bjorn.andersson@linaro.org;
+> sean.wang@mediatek.com; m.szyprowski@samsung.com; Michal Simek
+> <michals@xilinx.com>; robh+dt@kernel.org; mark.rutland@arm.com
+> Cc: Rajan Vaja <RAJANV@xilinx.com>; devicetree@vger.kernel.org; linux-arm=
+-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Jolly Shah
+> <JOLLYS@xilinx.com>
+> Subject: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP powe=
+r
+> domain driver
+>=20
+> The zynqmp power domain driver communicates the usage requirements for
+> logical power domains / devices to the platform FW.
+> FW is responsible for choosing appropriate power states, taking Linux' us=
+age
+> information into account.
+>=20
+> This patch series is based on top of Xilinx firmware patch set:
+> https://patchwork.kernel.org/cover/10555405/
+>=20
+> v3:
+>  - Changed binding to have FW node as a power controller as suggested by =
+Rob
+>  - Updated FW driver to register it as mfd child devices from firmware pr=
+obe
+>  - Move bindings location as suggested
+>=20
+> v2:
+>  - Rebased on top of latest firmware driver patch series
+>  - Updated driver name from zynqmp-genpd to zynqmp-power-controller
+>  - Updated device tree bindings to move power controller node under firmw=
+are
+> node
+>=20
+> Jolly Shah (1):
+>   drivers: soc: xilinx: Add ZynqMP power domain driver
+>=20
+> Rajan Vaja (3):
+>   dt-bindings: power: Add ZynqMP power domain bindings
+>   firmware: xilinx: Add APIs to control node status/power
+>   firmware: xilinx: Add node IDs for zynqmp firmware
+>=20
+>  .../bindings/power/xlnx,zynqmp-genpd.txt           |  34 ++
+>  drivers/firmware/xilinx/Kconfig                    |   1 +
+>  drivers/firmware/xilinx/zynqmp.c                   |  73 ++++
+>  drivers/soc/xilinx/Kconfig                         |   9 +
+>  drivers/soc/xilinx/Makefile                        |   2 +
+>  drivers/soc/xilinx/zynqmp_pm_domains.c             | 403
+> +++++++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h      |  39 ++
+>  include/linux/firmware/xlnx-zynqmp.h               |  98 +++++
+>  8 files changed, 659 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/xlnx,zynqmp-
+> genpd.txt
+>  create mode 100644 drivers/soc/xilinx/zynqmp_pm_domains.c
+>  create mode 100644 include/dt-bindings/power/xlnx-zynqmp-power.h
+>=20
+> --
+> 2.7.4
+
