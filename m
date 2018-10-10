@@ -5,84 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F67C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1691DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999DB206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999DB206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CDEB62085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDEB62085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeJJTwd (ORCPT
+        id S1726830AbeJJTx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:52:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45346 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbeJJTwd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:52:33 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gADd3-0007b0-Hj; Wed, 10 Oct 2018 14:30:17 +0200
-Date:   Wed, 10 Oct 2018 14:30:17 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     David Woodhouse <dwmw2@infradead.org>
-cc:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        boris.ostrovsky@oracle.com, hpa@zytor.com, mingo@redhat.com,
-        bp@alien8.de, stable@vger.kernel.org, Waiman.Long@hp.com,
-        peterz@infradead.org
-Subject: Re: [PATCH 2/2] xen: make xen_qlock_wait() nestable
-In-Reply-To: <47686a61dfc06aa5afb05a893b9a56e6eb46763d.camel@infradead.org>
-Message-ID: <alpine.DEB.2.21.1810101426080.10278@nanos.tec.linutronix.de>
-References: <20181001071641.19282-1-jgross@suse.com>         <20181001071641.19282-3-jgross@suse.com> <47686a61dfc06aa5afb05a893b9a56e6eb46763d.camel@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 10 Oct 2018 15:53:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726206AbeJJTx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:53:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CB3E3C04A597;
+        Wed, 10 Oct 2018 12:32:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0437F17CEB;
+        Wed, 10 Oct 2018 12:31:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
+References: <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <25658.1539174718.1@warthog.procyon.org.uk>
+Date:   Wed, 10 Oct 2018 13:31:58 +0100
+Message-ID: <25659.1539174718@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 10 Oct 2018 12:32:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018, David Woodhouse wrote:
+Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
 
-> On Mon, 2018-10-01 at 09:16 +0200, Juergen Gross wrote:
-> > -       /* If irq pending already clear it and return. */
-> > +       /* Guard against reentry. */
-> > +       local_irq_save(flags);
-> > +
-> > +       /* If irq pending already clear it. */
-> >         if (xen_test_irq_pending(irq)) {
-> >                 xen_clear_irq_pending(irq);
-> > -               return;
-> > +       } else if (READ_ONCE(*byte) == val) {
-> > +               /* Block until irq becomes pending (or a spurious wakeup) */
-> > +               xen_poll_irq(irq);
-> >         }
-> 
-> 
-> Does this still allow other IRQs to wake it from xen_poll_irq()?
-> 
-> In the case where process-context code is spinning for a lock without
-> disabling interrupts, we *should* allow interrupts to occur still...
-> does this?
+> # mount --move . /mnt
 
-Yes. Look at it like idle HLT or WFI. You have to disable interrupt before
-checking the condition and then the hardware or in this case the hypervisor
-has to bring you back when an interrupt is raised.
+is this calling move_mount(2) on your system?
 
-If that would not work then the check would be racy, because the interrupt
-could hit and be handled after the check and before going into
-HLT/WFI/hypercall and then the thing is out until the next interrupt comes
-along, which might be never.
-
-Thanks,
-
-	tglx
-
+David
