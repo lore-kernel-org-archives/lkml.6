@@ -2,77 +2,95 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9A5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF51C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB712214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:15:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB712214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 3684A2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:17:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3684A2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeJJViL (ORCPT
+        id S1727051AbeJJVj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:38:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51734 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeJJViL (ORCPT
+        Wed, 10 Oct 2018 17:39:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45635 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJJVj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:38:11 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gAFH5-0007e8-1d; Wed, 10 Oct 2018 14:15:43 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: cs4236: fix return check from call to pnp_port_start
-Date:   Wed, 10 Oct 2018 15:15:42 +0100
-Message-Id: <20181010141542.16100-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 10 Oct 2018 17:39:26 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gAFHk-00011I-2N; Wed, 10 Oct 2018 16:16:24 +0200
+Date:   Wed, 10 Oct 2018 16:16:23 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
+ generic names
+In-Reply-To: <b2e7630a-db5c-9f69-5d7e-cac3e2bb4014@amd.com>
+Message-ID: <alpine.DEB.2.21.1810101613340.15060@nanos.tec.linutronix.de>
+References: <20181005205512.29545-1-babu.moger@amd.com> <20181005205512.29545-2-babu.moger@amd.com> <2fe2e853-47ef-af2a-6906-9ad7a7b8bba9@intel.com> <ddec0530-59d1-fee0-eb67-528b887ca3f5@amd.com> <ab692687-6398-cf9a-a027-b9ff4b3ffd5f@intel.com>
+ <b2e7630a-db5c-9f69-5d7e-cac3e2bb4014@amd.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Babu,
 
-Currently the return from pnp_port_start is being checked for validity
-by checking if it is greater or equal to zero, however, the return
-is unsigned and hence this check is always true.  An 0 return from
-pnp_port_start is actually an error, so fix the check by checking
-for validity when it is non-zero.
+On Wed, 10 Oct 2018, Moger, Babu wrote:
+> On 10/09/2018 05:01 PM, Reinette Chatre wrote:
+> > As far as all the code you touch is concerned it may be easier and cause
+> > less confusion for now to just follow the current naming conventions as
+> > you have done in patches 3 onwards and have it be included in the later
+> > larger restructuring.
+> 
+> Yes. I am making sure first 3 patches are renamed to "resctrl" wherever
+> applicable. Will send the patches soon.
 
-Detected by CoverityScan, CID#1468334 ("Unsigned compared to 0")
+Please make sure they apply against
 
-Fixes: a9824c868a2c ("[ALSA] Add CS4232 PnP BIOS support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/isa/cs423x/cs4236.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
 
-diff --git a/sound/isa/cs423x/cs4236.c b/sound/isa/cs423x/cs4236.c
-index 70559e59d18f..2211c39d2c18 100644
---- a/sound/isa/cs423x/cs4236.c
-+++ b/sound/isa/cs423x/cs4236.c
-@@ -292,7 +292,7 @@ static int snd_cs423x_pnp_init_mpu(int dev, struct pnp_dev *pdev)
- 		mpu_irq[dev] = SNDRV_AUTO_IRQ;
- 	} else {
- 		mpu_port[dev] = pnp_port_start(pdev, 0);
--		if (mpu_irq[dev] >= 0 &&
-+		if (!mpu_irq[dev] &&
- 		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
- 			mpu_irq[dev] = pnp_irq(pdev, 0);
- 		} else {
--- 
-2.17.1
+which has all the latest updates and fixes to this code.
 
+Thanks,
+
+	tglx
