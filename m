@@ -2,279 +2,118 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09600C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 04:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E54C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 04:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16ED2085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 04:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB551214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 04:20:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux-iscsi.org header.i=@linux-iscsi.org header.b="t4a5lkCj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16ED2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-iscsi.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvJE97hY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB551214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeJJLkb (ORCPT
+        id S1727132AbeJJLkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 07:40:31 -0400
-Received: from mail.linux-iscsi.org ([67.23.28.174]:39385 "EHLO
-        linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbeJJLkb (ORCPT
+        Wed, 10 Oct 2018 07:40:55 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34301 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbeJJLkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 07:40:31 -0400
-Received: from [192.168.1.66] (75-37-194-224.lightspeed.lsatca.sbcglobal.net [75.37.194.224])
-        (using SSLv3 with cipher AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: nab)
-        by linux-iscsi.org (Postfix) with ESMTPSA id A707140ABD;
-        Wed, 10 Oct 2018 04:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=linux-iscsi.org;
-        s=default.private; t=1539145224; bh=1vgxvY9oIQzM/0hTwdQFtbG9tPaBy3O
-        k0NgDosKoQCU=; h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-         References:Content-Type:Mime-Version; b=t4a5lkCjillgN0n75z1qEYrtg0
-        U1I07+3PX99Gzd6gGzvjhg8Ts3UfE60aamS+ruWL7e7p1olbILVW3YNAI2Opv5VhEZ3
-        78a7nHdWj+Z1EU+Dy64qIc/N9MIg9+DzOiWoRXsW3JAi0Y+nILUggTBLIZ5SsA3GrVa
-        7MVABnwn7vE=
-Message-ID: <1539145206.6124.15.camel@haakon3.daterainc.com>
-Subject: Re: [PATCH 0/2] target: Fix v4.19-rc active I/O shutdown deadlock
-From:   "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-To:     target-devel <target-devel@vger.kernel.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Date:   Tue, 09 Oct 2018 21:20:06 -0700
-In-Reply-To: <1539141790-13557-1-git-send-email-nab@linux-iscsi.org>
-References: <1539141790-13557-1-git-send-email-nab@linux-iscsi.org>
-Content-Type: multipart/mixed; boundary="=-mAJjcxyyMXpcSErrgYWS"
-X-Mailer: Evolution 3.4.4-1 
-Mime-Version: 1.0
+        Wed, 10 Oct 2018 07:40:55 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y10-v6so2926116lfj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 21:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GFF7tt01ZngrgQvq5y4xnJd3bIjkL1a+W+xEvV8dALU=;
+        b=dvJE97hYPrmjtYuIVnf4nfhkGSzrG6to57UUCxgsJtY3txa4nbCXkpzbpLC09LUHWv
+         ZX47NCQE5UrNgFLpaioQOUPzGLt9m98ImX3mBBj3kJc22KABGByp0FfFyfdAFnJyYb9N
+         jFVlg4hZNZ0Fk2v4t+5NCh1M+6xUCElh/mGuw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GFF7tt01ZngrgQvq5y4xnJd3bIjkL1a+W+xEvV8dALU=;
+        b=Lkiphgr3iBiTcEGaWxI2R3CYXqVAwcRA/OpWZugsRKm3V4G4IiWkYPRS+OgL+49ajX
+         wZy/LZQe6N+OC2lO7ZjlvRSBRK/x1YKDjhssn2N5aKCqc0tiAlRCpWDc8U9cxsPNPTPq
+         7FEWjEag1dK8fE3O7vOUYakqPQJFrUnXDsgOeg8/v6ITq/ZcBM0rtm+dmFxuUOu5dcIZ
+         rMfvpj2WasLLVaD5VPzM1Z/FSpoD9YEfdyohPCGLnYfSHYZhAtKgVlURA5auWjl0KPCD
+         zFNernCb2PSNXfbFBNGAjTBLP+9CKVMDZ8tykCQDWzeRWIcikWFneF9cm6W1sKNlqy+E
+         byUQ==
+X-Gm-Message-State: ABuFfojOGhSqr/CTkBMYf146cMx02pUoxxgKePheF1jHEQACFFzxgh7I
+        1pfh++P85z3I3j01oJa2rQZXPsPtOl+pI8koMoqVmw==
+X-Google-Smtp-Source: ACcGV60kFM1cv1XO8v2IYJosdU19i7KoJYK5SvFcuj7hrbWIId5cCv3jI7N+wTyKXNT97BTokJz/HM9Mu0dnJCa4x5k=
+X-Received: by 2002:a19:735d:: with SMTP id o90-v6mr17829265lfc.45.1539145239866;
+ Tue, 09 Oct 2018 21:20:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181008175530.864641368@linuxfoundation.org>
+In-Reply-To: <20181008175530.864641368@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 10 Oct 2018 09:50:28 +0530
+Message-ID: <CA+G9fYvmP+6r-Dt86SJbHJpmJmpOso2h7G5Binbe=knanQjXyw@mail.gmail.com>
+Subject: Re: [PATCH 4.4 000/113] 4.4.160-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 9 Oct 2018 at 00:03, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.4.160 release.
+> There are 113 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Oct 10 17:55:13 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.160-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
---=-mAJjcxyyMXpcSErrgYWS
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On Wed, 2018-10-10 at 03:23 +0000, Nicholas A. Bellinger wrote:
-> From: Nicholas Bellinger <nab@linux-iscsi.org>
-> 
-> Hi MNC, MKP & Co,
-> 
-> While testing v4.19-rc recently with simple backend I/O error injection
-> (via delayed BIO completion), I was able to trigger an end-less loop
-> deadlock with recent changes in commit 00d909a107:
-> 
->   Author: Bart Van Assche <bart.vanassche@wdc.com>
->   Date:   Fri Jun 22 14:52:53 2018 -0700
-> 
->       scsi: target: Make the session shutdown code also wait for commands that are being aborted
-> 
-> It comes down to an incorrect assumption wrt signals during session
-> shutdown plus active I/O quiesce, which triggers an endless loop
-> immediately during session shutdown as se_session->sess_list_wq
-> waits for outstanding backend I/O to complete.
-> 
-> The easiest reproduction is with iser-target or simulation with plain
-> old iscsi-target/TCP ports. 
+Summary
+------------------------------------------------------------------------
 
-For reference, attached are two debug patches and instructions to
-trigger the end-less loop deadlock regression on v4.19-rc.
-
-1) Simulate iscsi-target via iscsit_transport->iscsi_wait_conn()
-
-This makes iscsi-target/TCP follow isert_wait_conn() code, and uses
-iscsit_transport->iscsi_wait_conn() during active I/O shutdown to invoke
-target_wait_for_sess_cmds() with signals pending per existing
-iser-target session shutdown logic.
-
-Useful to trigger in a VM, without a RDMA capable NIC.
-
-2) Simulate IBLOCK WRITE delayed completion by 60 seconds
-
-MNC likes to use scsi_debug for this, but I use BRD to add an arbitrary
-completion delay.
-
------------------------------------------------------------------------
-
-So once an /sys/kernel/config/target/core/$IBLOCK_HBA/$IBLOCK_DEV/ has
-been created + exported via /sys/kernel/config/target/iscsi/$IQN/$TPGT/,
-issue a single block WRITE.
-
-Once WRITE completion is delayed by IBLOCK, go ahead and send a 'kill
--SIGINT $PID' to iscsi_trx kthread to trigger usual iscsi/iser session
-shutdown + reconnect for the connection with the outstanding delayed
-I/O.
-
-Once target_wait_for_sess_cmds() is called with signals pending, it will
-immediately kill the machine.
-
---=-mAJjcxyyMXpcSErrgYWS
-Content-Disposition: attachment;
-	filename*0=0001-iscsi-target-Add-iscsit_wait_conn-simulation-for-tes.pat;
-	filename*1=ch
-Content-Type: text/x-patch;
-	name="0001-iscsi-target-Add-iscsit_wait_conn-simulation-for-tes.patch";
-	charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
-
-From 9b1d23148994edb0969a5efd3a131122ad25e39d Mon Sep 17 00:00:00 2001
-From: Nicholas Bellinger <nab@linux-iscsi.org>
-Date: Tue, 9 Oct 2018 01:57:53 -0700
-Subject: [PATCH 1/2] iscsi-target: Add iscsit_wait_conn() simulation for
- testing
-
-Simulate sess_tearing_down put in iscsit_queue_rsp following how
-iser-target isert_put_cmd() works.
-
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
----
- drivers/target/iscsi/iscsi_target.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-index cc756a1..b05d8af 100644
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -485,6 +485,22 @@ int iscsit_del_np(struct iscsi_np *np)
- 
- int iscsit_queue_rsp(struct iscsi_conn *conn, struct iscsi_cmd *cmd)
- {
-+	if (conn && conn->sess && conn->sess->se_sess) {
-+		struct se_session *se_sess = conn->sess->se_sess;
-+
-+		if (se_sess->sess_tearing_down) {
-+			printk("Got iscsit_queue_rsp sess_tearing_down !!!!!!\n");
-+
-+			spin_lock_bh(&conn->cmd_lock);
-+			if (!list_empty(&cmd->i_conn_node))
-+				list_del_init(&cmd->i_conn_node);
-+			spin_unlock_bh(&conn->cmd_lock);
-+
-+			transport_generic_free_cmd(&cmd->se_cmd, 0);
-+			return 0;
-+		}
-+	}
-+
- 	return iscsit_add_cmd_to_response_queue(cmd, cmd->conn, cmd->i_state);
- }
- EXPORT_SYMBOL(iscsit_queue_rsp);
-@@ -667,6 +683,16 @@ static enum target_prot_op iscsit_get_sup_prot_ops(struct iscsi_conn *conn)
- 	return TARGET_PROT_NORMAL;
- }
- 
-+static void iscsit_wait_conn(struct iscsi_conn *conn)
-+{
-+        if (conn->sess) {
-+                target_sess_cmd_list_set_waiting(conn->sess->se_sess);
-+                printk("se_sess: %p before target_wait_for_sess_cmds\n", conn->sess->se_sess);
-+                target_wait_for_sess_cmds(conn->sess->se_sess);
-+                printk("se_sess: %p after target_wait_for_sess_cmds\n", conn->sess->se_sess);
-+        }
-+}
-+
- static struct iscsit_transport iscsi_target_transport = {
- 	.name			= "iSCSI/TCP",
- 	.transport_type		= ISCSI_TCP,
-@@ -686,6 +712,7 @@ static enum target_prot_op iscsit_get_sup_prot_ops(struct iscsi_conn *conn)
- 	.iscsit_xmit_pdu	= iscsit_xmit_pdu,
- 	.iscsit_get_rx_pdu	= iscsit_get_rx_pdu,
- 	.iscsit_get_sup_prot_ops = iscsit_get_sup_prot_ops,
-+	.iscsit_wait_conn	= iscsit_wait_conn,
- };
- 
- static int __init iscsi_target_init_module(void)
--- 
-1.9.1
+kernel: 4.4.160-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: b5eb3855f86e32f79c8034c539bdaafa45832e8b
+git describe: v4.4.159-114-gb5eb3855f86e
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.159-114-gb5eb3855f86e
 
 
---=-mAJjcxyyMXpcSErrgYWS
-Content-Disposition: attachment;
-	filename*0=0002-target-iblock-Delayed-bios-for-active-I-O-shutdown-t.pat;
-	filename*1=ch
-Content-Type: text/x-patch;
-	name="0002-target-iblock-Delayed-bios-for-active-I-O-shutdown-t.patch";
-	charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
-
-From dc01432e1d561a4d20b20fe868fc8df22fcc4601 Mon Sep 17 00:00:00 2001
-From: Nicholas Bellinger <nab@linux-iscsi.org>
-Date: Thu, 9 Feb 2017 20:56:01 -0800
-Subject: [PATCH 2/2] target/iblock: Delayed bios for active I/O shutdown
- testing
-
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
----
- drivers/target/target_core_iblock.c | 21 +++++++++++++++++++++
- drivers/target/target_core_iblock.h |  2 ++
- 2 files changed, 23 insertions(+)
-
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index ce1321a..deef231 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -297,6 +297,19 @@ static void iblock_complete_cmd(struct se_cmd *cmd)
- 	kfree(ibr);
- }
- 
-+static void iblock_delayed_work(struct work_struct *work)
-+{
-+	struct iblock_req *ibr = container_of(work,
-+		struct iblock_req, delayed_work.work);
-+	struct bio *bio = ibr->bio;
-+	struct se_cmd *cmd = bio->bi_private;
-+
-+	printk("iblock_delayed_work: cmd: %p\n", cmd);
-+
-+	bio_put(bio);
-+	iblock_complete_cmd(cmd);
-+}
-+
- static void iblock_bio_done(struct bio *bio)
- {
- 	struct se_cmd *cmd = bio->bi_private;
-@@ -311,6 +324,14 @@ static void iblock_bio_done(struct bio *bio)
- 		smp_mb__after_atomic();
- 	}
- 
-+	if (cmd->data_direction == DMA_TO_DEVICE) {
-+		ibr->bio = bio;
-+		INIT_DELAYED_WORK(&ibr->delayed_work, iblock_delayed_work);
-+		schedule_delayed_work(&ibr->delayed_work, 60 * HZ);
-+		printk("Queued ibr->delayed_work ! :-)\n");
-+		return;
-+	}
-+
- 	bio_put(bio);
- 
- 	iblock_complete_cmd(cmd);
-diff --git a/drivers/target/target_core_iblock.h b/drivers/target/target_core_iblock.h
-index 9cc3843..122b415 100644
---- a/drivers/target/target_core_iblock.h
-+++ b/drivers/target/target_core_iblock.h
-@@ -14,6 +14,8 @@
- struct iblock_req {
- 	refcount_t pending;
- 	atomic_t ib_bio_err_cnt;
-+	struct delayed_work delayed_work;
-+	struct bio *bio;
- } ____cacheline_aligned;
- 
- #define IBDF_HAS_UDEV_PATH		0x01
--- 
-1.9.1
+No regressions (compared to build v4.4.159-114-g20e5d5bcb76b)
 
 
---=-mAJjcxyyMXpcSErrgYWS--
-
+No fixes (compared to build v4.4.159-114-g20e5d5bcb76b)
