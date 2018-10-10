@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BCBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEEAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3258620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 821992085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:26:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maximintegrated.onmicrosoft.com header.i=@maximintegrated.onmicrosoft.com header.b="FkM35Mq5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3258620870
+	dkim=pass (1024-bit key) header.d=maximintegrated.onmicrosoft.com header.i=@maximintegrated.onmicrosoft.com header.b="1jFGXWns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821992085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maximintegrated.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeJKGue (ORCPT
+        id S1726235AbeJKGui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:50:34 -0400
-Received: from mail-bn3nam01on0105.outbound.protection.outlook.com ([104.47.33.105]:51234
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Thu, 11 Oct 2018 02:50:38 -0400
+Received: from mail-eopbgr720104.outbound.protection.outlook.com ([40.107.72.104]:58272
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725989AbeJKGud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:50:33 -0400
+        id S1725989AbeJKGuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:50:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=maximintegrated.onmicrosoft.com; s=selector1-maximintegrated-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b3ilvc0rJ2XjZMEMDaN2ZQnCF7QSRpIXGI5xFRJWA9M=;
- b=FkM35Mq5Lg5aIqlAArx7XpCrgG887wTdCLc2Fi0cvZ6C285OTm7E8TTh9R1kUOhdolk1EWIsQ7dvDvD4ug6aVdlWBbIU+pyysjLv68K94u16QWVpF1gUk3QjRBBHNm3YUnZOahD7PiRebosJMVb3gRNrlC2bHHMTEALjQVi/XAs=
+ bh=88PjDmSy5vl6FCmMfsX0WtbZ68xn1922PFkFWpJ5mdQ=;
+ b=1jFGXWnsdPCX491Fj/MgJ6isCLN0e2sPjV/iviBn8ThP2Z3iBK7cmqOWsmgoZ4rR9ubmD6o4S2G5hiVOY8cMBheWIhxXHPCwzCkSrBo/gGR8yKOY4cIFJDPIRIPSGrJUWSgXV5CcRaGYbBCbh22E7vzPRCjH1/VmXZKT1wzvteU=
 Received: from BY2PR1101MB1126.namprd11.prod.outlook.com (10.164.166.136) by
  BY2PR1101MB1110.namprd11.prod.outlook.com (10.164.166.26) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.22; Wed, 10 Oct 2018 23:26:07 +0000
+ 15.20.1228.22; Wed, 10 Oct 2018 23:26:11 +0000
 Received: from BY2PR1101MB1126.namprd11.prod.outlook.com
  ([fe80::fd98:861a:f053:9930]) by BY2PR1101MB1126.namprd11.prod.outlook.com
  ([fe80::fd98:861a:f053:9930%2]) with mapi id 15.20.1228.020; Wed, 10 Oct 2018
- 23:26:06 +0000
+ 23:26:11 +0000
 From:   Ryan Lee <RyanS.Lee@maximintegrated.com>
 To:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
         "broonie@kernel.org" <broonie@kernel.org>,
@@ -49,11 +49,15 @@ To:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
         "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     "ryan.lee.maxim@gmail.com" <ryan.lee.maxim@gmail.com>
-Subject: [PATCH 1/4] ASoC: max98373: Sort Digital Volume in reverse order
-Thread-Topic: [PATCH 1/4] ASoC: max98373: Sort Digital Volume in reverse order
-Thread-Index: AQHUYPCeL2D60O2lBkW/38fOUICgDQ==
-Date:   Wed, 10 Oct 2018 23:26:06 +0000
-Message-ID: <20181010232222.52340-1-ryans.lee@maximintegrated.com>
+Subject: [PATCH 2/4] ASoC: max98373: Sort BDE Limiter Thresh Volume in reverse
+ order
+Thread-Topic: [PATCH 2/4] ASoC: max98373: Sort BDE Limiter Thresh Volume in
+ reverse order
+Thread-Index: AQHUYPCgDDbjAo1Efk+WSzsvN2iz9Q==
+Date:   Wed, 10 Oct 2018 23:26:10 +0000
+Message-ID: <20181010232222.52340-2-ryans.lee@maximintegrated.com>
+References: <20181010232222.52340-1-ryans.lee@maximintegrated.com>
+In-Reply-To: <20181010232222.52340-1-ryans.lee@maximintegrated.com>
 Accept-Language: en-US, ko-KR
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -66,28 +70,28 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=RyanS.Lee@maximintegrated.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR1101MB1110;6:+Hqo5L/tmt3cdJZVWDJbgXpcRWE3nvKABgsE6tmk4LjRvqUtwI3YDu3JMJXk81+b11mdxpdF87IXgxL38miIQXfgev+LwKR36d+S/kp1sF068Bg2ctZ11rdaSS61mIs+OnQUy/0cxlw1iV0jlCJmMzKVey6eFa2AWLfRe1WvyK86yg0282fph/opWtaOvVpFeLiJawzxQmKsYWtguqvpq4X0NhHz2DD0OxCUXD/Y7NzqViYyD2JB8oogjWx6UJZUYl7vGBTUcm4H1cVHwvz8zpL8G/8WMjCQIZ3TOy7BsuCJIKcU8DNQtbRmBYdwPFpovtP6w8L07rwyJp2G9VaYEkS9818unVfvGZu+oYrPl17EmSAJvTWElsVjxRUQXv5vXfdUc+ODOhFuZPaF9jIVjL/qsmgDStcIuo0kaFpjeqfvNWCmuO2JM4OSjcqxVRJeP2QjW2124XghffdDCWusF+XUuwesqrsRzKqam8aQHuk=;5:eE7P0ywBP4Czr5qn+c5A79M1CsItcq4rMwOnBO5uJLS4dZK/w8kP4t7IgqmnPmBxT3h074feTMsWXobOcDr7exreu7DK5SVfB6Rcwya0B5fV+nDDyr9SlmAGZO45W4KBOyhZzp/Te5/UAXNtU3+RcnxRrspNN3V1JrteoI+rJTc=;7:sNmsMvA8RTsp5wQ0d8fMhUrr0m9yGYwIeHj1K93iXfljZmtwMt7IKq7nFwLEAqoksZEAgz+Kxn9sF9410Nxs27cidZu8CfT9fjuzm3rqg+GppMxR533uFOXIidkPkwQSlMRD4BlmOpNZlz5sOYvF4gIKddXV+SSSK0Ynim6nOFYzVV2HmI8LCekEQksyumNecSkmZ737qS/jzt7OCzHuJtcyUFsQ2clfT01eS8E6kXRoPBCK9GagC5KuZXSIEza4
-x-ms-office365-filtering-correlation-id: 4fe14971-8ccc-491d-f5df-08d62f07c095
+x-microsoft-exchange-diagnostics: 1;BY2PR1101MB1110;6:E+fMMYnXTMfmGp3bNY1TWcfnXKrei61tCSZ2PadmpJcl1ez4dD22VytzDnFDNHWhzMyNLuuPaMtlByMLQTt+b9YAvJnmtRQRk8MwvfSPFMjaqxcvGo1Lp16rGKv10BbnI+EZtMCfWrBtwDR9UZwa7R0tJroUj4Bd1PkqmcoWK15u7W6/BqHIhYT6lCx2M6Ywiot7q30JBLMqAg1CAyPiwzHq9TQ7V2CUMrc8ivZ1ll3QW8s2uvVWgQOTAsoY6EWfpo2L6yKvjTiFwgH44L95Piv0DAUF00hPSnIDeEhfVLzB8qgVrscbpc8asYLynij/QT9xqarGX0pq86oluQHBwioSnKUs81VnLHgRN3A45gRU4QRPFu905Mo/aII6e8+rEOETyXX1eZ6azqAYPcycjQrKJz3Wrng1RL9NWcg/tFM0h1+yBevRShHBp05rzW1INC4KRI5GxvAPOh7+DYjdjUZ40jy57OCr1c8Ekiichk8=;5:tyXnQNAvBu697dLnDdEq1mHgWBtgrnoW4qV0ibT83cDQ+PRAxqj9ddIVpsOo/CfLVdCQfREplhBAZ1TpB732sJexznL6Rpqdk4Z39TcyxiplV6CTyPzlDsgsntQAQXsocHB2U8BH3Je2mVc2QF2vfOO5p3hbwkU0BeVvUzCCZ4w=;7:2cn3lQZQmGgYaAT8ZPBvGhBsi1FC6tKaMoBUqcSMQ7ERYNKs1qSAox/vUL2lyqWJi0gCHW3icerZpAXqRRCHEQJEA/znIj8EB7utYXpnkEwOwrsCrIls9+YlpZBRCFJqoShMbryu9cQClka2fPCaRIRbLRMEKAzyq8ay1iaVvVbxLP+aeZx4UdorKTagceXIqMhHXM6y7c2gVbV4tPwNGg7/9pDnEaU/sCZuljIcbsj03w5hQSQtPRxFqzCTg+PV
+x-ms-office365-filtering-correlation-id: bd56a433-430f-498d-6500-08d62f07c324
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BY2PR1101MB1110;
 x-ms-traffictypediagnostic: BY2PR1101MB1110:
-x-microsoft-antispam-prvs: <BY2PR1101MB11104EC2250995632375A0E4E7E00@BY2PR1101MB1110.namprd11.prod.outlook.com>
+x-microsoft-antispam-prvs: <BY2PR1101MB11100DE2719EBA79F06F615BE7E00@BY2PR1101MB1110.namprd11.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(108721460000369);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:BY2PR1101MB1110;BCL:0;PCL:0;RULEID:;SRVR:BY2PR1101MB1110;
 x-forefront-prvs: 08213D42D3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(136003)(39860400002)(366004)(199004)(189003)(316002)(6512007)(71190400001)(99286004)(105586002)(1076002)(6116002)(3846002)(36756003)(53936002)(26005)(14454004)(102836004)(8676002)(110136005)(186003)(6436002)(66066001)(25786009)(81166006)(106356001)(68736007)(6486002)(81156014)(8936002)(2616005)(476003)(6506007)(5660300001)(7736002)(478600001)(305945005)(72206003)(2900100001)(256004)(386003)(39060400002)(486006)(4326008)(2501003)(2906002)(14444005)(97736004)(71200400001)(86362001)(5250100002)(52116002)(2201001);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR1101MB1110;H:BY2PR1101MB1126.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(136003)(39860400002)(366004)(199004)(189003)(316002)(6512007)(71190400001)(99286004)(105586002)(446003)(1076002)(6116002)(3846002)(11346002)(36756003)(53936002)(26005)(14454004)(102836004)(8676002)(110136005)(186003)(6436002)(66066001)(25786009)(81166006)(106356001)(68736007)(6486002)(81156014)(8936002)(2616005)(476003)(6506007)(5660300001)(7736002)(478600001)(76176011)(305945005)(72206003)(2900100001)(256004)(386003)(39060400002)(486006)(4326008)(2501003)(2906002)(14444005)(97736004)(71200400001)(86362001)(5250100002)(52116002)(2201001);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR1101MB1110;H:BY2PR1101MB1126.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: maximintegrated.com does not
  designate permitted sender hosts)
-x-microsoft-antispam-message-info: ejJoUy0SqtJmsdwHZKN0Ktka8WaRTZHViVTvCv8HFlrAHQm0oopDpVpyID5+cSUCBvDzRrDWQx9jtdRJq21zm6WpnxblJwtwOzptQQqTfeP8H9H22sKPvw9wWqYdgmec+gzKr0ChNs1Be57xMPcragoDtDB6JKr88u+b+0+UMnQTqzVu0BCmpidtT5WHNMOOMZpeiovAj1XMsnQqq+x8cnKX7sV6YuelGONFf9BnrSDRZpchNwz+hAQdx5vSushzzRR7P1LggUkuo737z7LpOk5kpvs/xERZnrFAFH7W8R3c6ZSakFGIcL80Uz9+rAbnMy66M22o3ATE50HoRtvx3DciqS4Zx5DPG8S9CwyNhsc=
+x-microsoft-antispam-message-info: 9SfihfbKmKmz6rS4qNBdZzL8Nhr+skxWpiVzsPA/k5DmnS/xRD+kjJWhQn/f2yq4MDr3N+gbc5XqogZ6W/dE9sgkpsnC4j7fCUoda5fW3+dVlVyW70sjrRRT87iD4Ph4I/CKuZZx+5yt3IlEMKM1SU3tn3wJpVai3lRAyeur+3OU2LRsT7M+pzApzljVHNICPCEhOpSivEQs10XKXHOfj+eMw8Ci7xM/P+EyZNkWxxCeV2aMu12IR8ajEoywyc7JfBZ/FOVxUczFhdsyfe4FjziqjLan5tUmjTDiho5PQsuzOxYEyEzu3rJc9WWn6oqmNcGckBRzAlDnzEYVs9TEmO35RW+aSHVz6H1B9oN3mdM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: maximintegrated.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fe14971-8ccc-491d-f5df-08d62f07c095
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 23:26:06.7598
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd56a433-430f-498d-6500-08d62f07c324
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 23:26:10.9677
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: fbd909df-ea69-4788-a554-f24b7854ad03
@@ -99,37 +103,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
 ---
- Changes : Sort 'max98373_digital_tlv' in reverse order.
+ Changes : Sort 'max98373_limiter_thresh_tlv' in reverse order.
            Fixed wrong use case of 'TLV_DB_SCALE_ITEM' - TLV_DB_SCALE_ITEM(=
 min, step, mute)
 		   Max value was set in min field and negative value was set in step fiel=
 d before.
 
- sound/soc/codecs/max98373.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/max98373.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-index 1093f76..bb5ef52 100644
+index bb5ef52..1f5887b 100644
 --- a/sound/soc/codecs/max98373.c
 +++ b/sound/soc/codecs/max98373.c
-@@ -454,7 +454,7 @@ SND_SOC_DAPM_SIGGEN("IMON"),
- SND_SOC_DAPM_SIGGEN("FBMON"),
- };
+@@ -478,7 +478,7 @@ static const DECLARE_TLV_DB_RANGE(max98373_dht_rotation=
+_point_tlv,
+ 	14, 15, TLV_DB_SCALE_ITEM(-2500, -500, 0),
+ );
+ static const DECLARE_TLV_DB_RANGE(max98373_limiter_thresh_tlv,
+-	0, 15, TLV_DB_SCALE_ITEM(0, -100, 0),
++	0, 15, TLV_DB_SCALE_ITEM(-1500, 100, 0),
+ );
 =20
--static DECLARE_TLV_DB_SCALE(max98373_digital_tlv, 0, -50, 0);
-+static DECLARE_TLV_DB_SCALE(max98373_digital_tlv, -6350, 50, 1);
- static const DECLARE_TLV_DB_RANGE(max98373_spk_tlv,
- 	0, 8, TLV_DB_SCALE_ITEM(0, 50, 0),
- 	9, 10, TLV_DB_SCALE_ITEM(500, 100, 0),
-@@ -604,7 +604,7 @@ SOC_SINGLE("Dither Switch", MAX98373_R203F_AMP_DSP_CFG,
- SOC_SINGLE("DC Blocker Switch", MAX98373_R203F_AMP_DSP_CFG,
- 	MAX98373_AMP_DSP_CFG_DCBLK_SHIFT, 1, 0),
- SOC_SINGLE_TLV("Digital Volume", MAX98373_R203D_AMP_DIG_VOL_CTRL,
--	0, 0x7F, 0, max98373_digital_tlv),
-+	0, 0x7F, 1, max98373_digital_tlv),
- SOC_SINGLE_TLV("Speaker Volume", MAX98373_R203E_AMP_PATH_GAIN,
- 	MAX98373_SPK_DIGI_GAIN_SHIFT, 10, 0, max98373_spk_tlv),
- SOC_SINGLE_TLV("FS Max Volume", MAX98373_R203E_AMP_PATH_GAIN,
+ static const DECLARE_TLV_DB_RANGE(max98373_bde_gain_tlv,
+@@ -669,13 +669,13 @@ SOC_SINGLE_TLV("BDE LVL3 Clip Reduction Volume", MAX9=
+8373_R20B0_BDE_L3_CFG_3,
+ SOC_SINGLE_TLV("BDE LVL4 Clip Reduction Volume", MAX98373_R20B3_BDE_L4_CFG=
+_3,
+ 	0, 0x3C, 0, max98373_bde_gain_tlv),
+ SOC_SINGLE_TLV("BDE LVL1 Limiter Thresh Volume", MAX98373_R20A8_BDE_L1_CFG=
+_1,
+-	0, 0xF, 0, max98373_limiter_thresh_tlv),
++	0, 0xF, 1, max98373_limiter_thresh_tlv),
+ SOC_SINGLE_TLV("BDE LVL2 Limiter Thresh Volume", MAX98373_R20AB_BDE_L2_CFG=
+_1,
+-	0, 0xF, 0, max98373_limiter_thresh_tlv),
++	0, 0xF, 1, max98373_limiter_thresh_tlv),
+ SOC_SINGLE_TLV("BDE LVL3 Limiter Thresh Volume", MAX98373_R20AE_BDE_L3_CFG=
+_1,
+-	0, 0xF, 0, max98373_limiter_thresh_tlv),
++	0, 0xF, 1, max98373_limiter_thresh_tlv),
+ SOC_SINGLE_TLV("BDE LVL4 Limiter Thresh Volume", MAX98373_R20B1_BDE_L4_CFG=
+_1,
+-	0, 0xF, 0, max98373_limiter_thresh_tlv),
++	0, 0xF, 1, max98373_limiter_thresh_tlv),
+ /* Limiter */
+ SOC_SINGLE("Limiter Switch", MAX98373_R20E2_LIMITER_EN,
+ 	MAX98373_LIMITER_EN_SHIFT, 1, 0),
 --=20
 2.7.4
 
