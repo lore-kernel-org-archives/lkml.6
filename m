@@ -2,90 +2,132 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17B7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C9AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A62214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSAudj4N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A62214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 866BF21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866BF21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbeJJOd6 (ORCPT
+        id S1726873AbeJJOeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:33:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51094 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJJOd6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:33:58 -0400
-Received: by mail-it1-f194.google.com with SMTP id k206-v6so465461ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 00:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5OOztqssMVdu7XL6nnv4bDUAo1xUUxYBjbCtDMAg1F4=;
-        b=MSAudj4NVccjSQzGseBLbcx9/GDf3k7lj2bP8Syv1iZT+Xsd9mvRoZuLKXWMGw3GKg
-         0mOazz457V5Aok5iPHtHVQB2jpoKrHuNfc17+Em/EoGbtlEVaX6b7b4xZQPuiEnUkTNX
-         NJvDPGQsdOBMji3wJsonyxjoLf0RUZDBe1xok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5OOztqssMVdu7XL6nnv4bDUAo1xUUxYBjbCtDMAg1F4=;
-        b=pBGZC3VfR2JWocKZGahC3kdHtXxQyXcpamlWQR2kV8WWj5L7rd2jtLihEf5MN6bC6B
-         X3SdBVBTrAxvD5OvjdaeiQMp5vYJqKpdaj1iEzWY34odqstZaYavWtk3PvayFS7L5JhW
-         hHHlXMU7AUH2txm+b9UtgR6WtTBV9pOgyAfMxw98ptyaaTQg8evxq8Uhrw4NS9mPTu0L
-         h1IvhUErbaYWlgwSBkKJtVRF8VpVc2BtSBIMCajgDIam2N0/0Nj5ucx1aOhyLrcd8kTW
-         Dmy6rbCFP6gZmCBqA9G+3HsLm/EAKH2fBIMaHaYnTgoUuKvPDxDCpL8u7/9DyParGXa/
-         4tnQ==
-X-Gm-Message-State: ABuFfogUTfOohtvUQkL3XyzDBNf3j2iTW+1DJjgp1fMCkfGlTb7mEP7K
-        2WDxmxmwAAUa9XTBldza4oisil7pWATxpAC0Bk1YJg==
-X-Google-Smtp-Source: ACcGV62UDzXIjYfwCtPqdh2GpCldOXpsOkg2B7FkgJVBJLUlonYnRmvcIgSDYHcUU/zeKPAMkYGkzBX4UNzmgIokj3U=
-X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr3883115ith.156.1539155590797;
- Wed, 10 Oct 2018 00:13:10 -0700 (PDT)
+        Wed, 10 Oct 2018 10:34:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54950 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726754AbeJJOeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:34:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E83B1AC52;
+        Wed, 10 Oct 2018 07:13:18 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 18:14:47 +1100
+From:   Aleksa Sarai <asarai@suse.de>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
+Message-ID: <20181010071447.whwwxjdv54qfnvsr@mikami>
+References: <20181009103752.21482-1-laurent@vivier.eu>
+ <20181009103752.21482-2-laurent@vivier.eu>
+ <20181009151641.GB10149@cisco>
+ <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
 MIME-Version: 1.0
-References: <20181008175530.864641368@linuxfoundation.org> <20181008175536.405502473@linuxfoundation.org>
- <20181009063338.GA22218@flashbox>
-In-Reply-To: <20181009063338.GA22218@flashbox>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 09:12:58 +0200
-Message-ID: <CACRpkdZVWMAQxrX7CS-JtA9sRYqeNE+8X39yqfCNtYLmN=XDHw@mail.gmail.com>
-Subject: Re: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts to
- prevent latching
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5jn6nwbw5w45hpy6"
+Content-Disposition: inline
+In-Reply-To: <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
+o:      Laurent Vivier <laurent@vivier.eu>
+User-Agent: NeoMutt/20180716
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 8:33 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
 
-> Sigh, sorry, I caught this after I sent my initial all good email but
-> this commit breaks NFC on my Pixel 2 XL (toggle becomes greyed out and
-> apps that want to use it ask to enable it). I can't say why, I'm more
-> than happy to debug but I'm assuming it's some voodoo that Qualcomm has
-> done out of tree. I'll leave it up to you how to proceed given that I
-> can't run mainline :(
+--5jn6nwbw5w45hpy6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Which NFC driver is this?
-Just want to make sure it looks sane.
+On 2018-10-09, Laurent Vivier <laurent@vivier.eu> wrote:
+> Le 09/10/2018 =E0 17:16, Tycho Andersen a =E9crit=A0:
+> > On Tue, Oct 09, 2018 at 12:37:52PM +0200, Laurent Vivier wrote:
+> >> @@ -80,18 +74,32 @@ static int entry_count;
+> >>   */
+> >>  #define MAX_REGISTER_LENGTH 1920
+> >> =20
+> >> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
+> >> +{
+> >> +	struct binfmt_namespace *b_ns;
+> >> +
+> >> +	while (ns) {
+> >> +		b_ns =3D READ_ONCE(ns->binfmt_ns);
+> >> +		if (b_ns)
+> >> +			return b_ns;
+> >> +		ns =3D ns->parent;
+> >> +	}
+> >> +	WARN_ON_ONCE(1);
+> >=20
+> > It looks like we warn here,
+> >=20
+> >> @@ -133,17 +141,18 @@ static int load_misc_binary(struct linux_binprm =
+*bprm)
+> >>  	struct file *interp_file =3D NULL;
+> >>  	int retval;
+> >>  	int fd_binary =3D -1;
+> >> +	struct binfmt_namespace *ns =3D binfmt_ns(current_user_ns());
+> >> =20
+> >>  	retval =3D -ENOEXEC;
+> >> -	if (!enabled)
+> >> +	if (!ns->enabled)
+> >=20
+> > ...but then in cases like this we immediately dereference the pointer
+> > anyways and crash. Can we return some other error code here in the !ns
+> > case so we don't crash?
+>=20
+> My concern here is I don't want to add code to check an error case that
+> cannot happen. The first namespace binfmt_ns pointer is initialized with
+> &init_binfmt_ns, so the return value cannot be NULL.
 
-Yours,
-Linus Walleij
+I'd argue that BUG() is a better thing to do then -- if doing a dummy
+error path makes no sense. Though IIRC BUG() is no longer a popular
+thing to do.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--5jn6nwbw5w45hpy6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlu9puMACgkQnhiqJn3b
+jbRLDBAAstmpL3yvxUBUsp+o1eDUI0ZuTqG4whpTYckWTtCm59TAn4wotIT5Pv0I
+6f1SNATVnxq7U+ot1tCluNr0jXe1u/0S7ZvEY8zpHzWomc9CFUsM+yFENbCgDl0D
+qmKMiKwlSYk8tEI3WnAfWb9l7hwrUoFCHrCmUUucrccDltvhiYaDRufoezcMqpEB
+DtTchJIv+6bf1YcEbVa6xM8pG915ywtavVHlOMcUxtPuybk5RZGEcgZJo8Fn5PgF
+HLCiVgiWdKNBY1Md2gTF6gf1zGp2tSc7e/ARUftL9JlE+hLIWudyLrpwMaXqfBMQ
+4YxTM6xmHuCuW7ZgDg29zvQ4aJxRgoDrx438hYVemkUFxWAub56ZK7HHLv+Ls47Y
+QKO5QAt1jRPGpMtPpABBgfFcb4nD+v4BY6eY3po8/pTpQv8P5by0HjjnV3K7/Jar
+2UnvOCSOeZ6QbPI0gp1LYKkOBoINJSLkn8rHmjeM9xh8VtyktrlVelYTPH9/qdoQ
+FLNVDUlxEig1c7FiKBhzPhNRDGWO5+hF4Ughg3A+kutPumILfuk1j1pCNZJM9HSz
+pIYFmvpReZkFzOHlLeGLNFmym+OCf6q3+/QUX5P9L2saOkyALS4Aww/wxVOeKOrw
+uJ4zc4NzmU48TmhAKlUBcnryN7EE/RhsEXamlcXQcdsGwW6cFok=
+=AzDm
+-----END PGP SIGNATURE-----
+
+--5jn6nwbw5w45hpy6--
