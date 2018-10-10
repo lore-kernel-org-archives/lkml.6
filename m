@@ -2,143 +2,174 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF40C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE30214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58894214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:18:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwjXAHtb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE30214DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UF8YaiOI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58894214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJJWkV (ORCPT
+        id S1726861AbeJJWkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:40:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41730 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeJJWkU (ORCPT
+        Wed, 10 Oct 2018 18:40:47 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:34266 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJJWkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:40:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 23-v6so2667600pgc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:17:42 -0700 (PDT)
+        Wed, 10 Oct 2018 18:40:47 -0400
+Received: by mail-qk1-f196.google.com with SMTP id p6-v6so3390030qkg.1;
+        Wed, 10 Oct 2018 08:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cRO6xWryp9VZ+Z/m1BE0LEBrMcJd0c81mmESyZBjTac=;
-        b=XwjXAHtb0076NrYxue1X96i0pusQL6JnkAJlh5lYIGh1VZtESL0yhZI+fP5lOJ6h/x
-         8rXVXBc4IH7hc/P9Iae0un9x+SQn8K5kdwgTKc4iTMzP0ZISM48JjZvmJoP9Kk6nvxrh
-         vDPpC1G4OqAJ4lLc8c8tzmRuw1LbF28WqNNIXFFLhDnPK0i+ilqe3o+csqKcZyyICqxw
-         6KqpVDO/xQ5GAxyv9C9/1bXJofA1DAiDWnihC4lPHVPQ4hw67bciSmi0mOFmRPxWK3jF
-         Oli9O4uG+JwZ6qW1vwaG4omh08g+gvjbnbg8c8EDyIAWHruTkTTblTO6p4veYB77eTE5
-         yq2w==
+        h=from:to:cc:subject:date:message-id;
+        bh=VOXSbdEt0OVCDUP0MpkXy8V73PRTpYDhkG9mvt9lii0=;
+        b=UF8YaiOIozOCnrtsYvCDx/v8TFe9E8/QHi1a35yxqw/YrXodyZVCsZzfX/a7ZmF7M3
+         R4EAP44aECk6fjCeKxk3JSp3RifpCg5PKb6r787Q/qPI8eWckmpFD3Kzf4Ft6TPeNx+5
+         TYzoConFj+pBN728ptcVNPsg9ZoIQA2WgRfvkG2qtVIn5yHH1KXgh/Un+oMK6UzMvCvm
+         mqxJyUJgpSdhPZ207zBGTOjkDEQXEIb5875LZ4Op6lQsQC8VuExx2+b4s2wxq3bOG/8+
+         /qRG7z/XvRRzYo4NQiPmcfgrrJTRSpSob5XCplKDP4JATr8J4MCzCDw0+jUXqxOA4B9P
+         UNVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cRO6xWryp9VZ+Z/m1BE0LEBrMcJd0c81mmESyZBjTac=;
-        b=AIN0IODpYwARbI6b0+n02WZH+XJrsyJ5IYRlKOQRuPJgF40JHVl6IdC7iipKta6Wg+
-         5q2dTlhXCxzowFV0jjnKtayIo9RxfZN4Qo3DzNoai5y17qF7AnKTE5LFmvj0sObFzZg1
-         glV2sVIqEGfuDzvb4bwmUoHuQB0xMQNZK+0+upk6B59gqQFIlCGocSC7Tv5+TbpotLIA
-         sDR7f3rB3oMMYQKLnzKYTk+EE05rorSrFibZnl/MrcSRmxdJlEsT012vK2uZBcQYecAr
-         RWu/u2Owza7yEYfmrUURY6P9Dg3KvRmbj7IKRKYd24+UvY50wdeymJCxNuUJaZQhIBgB
-         Rg8Q==
-X-Gm-Message-State: ABuFfoiEw5eW2xFuT/PiFvcG3EmtL0QN0eu1285/YiQgJ2KyF7wWeg+X
-        TtisqJ7LkZ+Mz/LA+j2Flnc=
-X-Google-Smtp-Source: ACcGV63cZhwfwsfVC+TaZo4bpjTFvo5bgwHvlTZ7yak1StRjUHEIWq13BRYAIqBcyhwuTjvhxgL69g==
-X-Received: by 2002:a63:4e11:: with SMTP id c17-v6mr29686244pgb.6.1539184661626;
-        Wed, 10 Oct 2018 08:17:41 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm48642136pfk.163.2018.10.10.08.17.40
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VOXSbdEt0OVCDUP0MpkXy8V73PRTpYDhkG9mvt9lii0=;
+        b=k0ZcIB3nG/mQwhHt4xxIzJWS8zZIOET5hYkr8K4fr/zSVkMDwINeRxRm7Knsi7ezJM
+         3W7dn3em7W0iH9/QRtWl7WcFwSzRR7me5UlxCx943ulk7h8ctO9BQHDraXg4vCDTaXy5
+         tKbvG8a3dDwkW4wFuACMEvBdMWlH3pjc5QANknIqSEi48cq8CalvsL0XWm7OEM/O30Qs
+         76nmIfxPO0eBP2LhpkvDGWhTuHmm/nHmLYn1pO4u57xe5caWIajSpW7Tnose9uLeJ+JQ
+         uVGc9ZAFP+ES4ZcCi8CZnAhJ54URgnjhxhxp0zRfMUy0iRpBdUyUhO0A0UOsMbS1z3If
+         2PHg==
+X-Gm-Message-State: ABuFfoioAyIIaRiPXBFJnpuARaQYOpwmzspNmoxa8/o8i3Esr24YxXY7
+        pFbKtWDOpMt3qCkuAC0BtLY=
+X-Google-Smtp-Source: ACcGV63t4TdgMucQbaVJ1dVwZgXx4rfs712LR12CTUB+jDpm1RwbzWcf/ElkNgywWCVkgbPtFQIbYQ==
+X-Received: by 2002:a37:444b:: with SMTP id r72-v6mr13844909qka.332.1539184688262;
+        Wed, 10 Oct 2018 08:18:08 -0700 (PDT)
+Received: from localhost ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id h49-v6sm14717056qth.32.2018.10.10.08.18.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 08:17:40 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Thu, 11 Oct 2018 00:17:29 +0900
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Yang Shi <yang.s@alibaba-inc.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: INFO: rcu detected stall in shmem_fault
-Message-ID: <20181010151729.GC3949@tigerII.localdomain>
-References: <000000000000dc48d40577d4a587@google.com>
- <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
- <20181010085945.GC5873@dhcp22.suse.cz>
- <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
- <20181010113500.GH5873@dhcp22.suse.cz>
- <20181010114833.GB3949@tigerII.localdomain>
- <20181010122539.GI5873@dhcp22.suse.cz>
- <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 10 Oct 2018 08:18:07 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans de Goede <j.w.r.degoede@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev: make FB_BACKLIGHT a tristate
+Date:   Wed, 10 Oct 2018 11:17:41 -0400
+Message-Id: <20181010151801.21489-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/10/18 14:29), Dmitry Vyukov wrote:
-> >> A bit unrelated, but while we are at it:
-> >>
-> >>   I like it when we rate-limit printk-s that lookup the system.
-> >> But it seems that default rate-limit values are not always good enough,
-> >> DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST can still be too
-> >> verbose. For instance, when we have a very slow IPMI emulated serial
-> >> console -- e.g. baud rate at 57600. DEFAULT_RATELIMIT_INTERVAL and
-> >> DEFAULT_RATELIMIT_BURST can add new OOM headers and backtraces faster
-> >> than we evict them.
-> >>
-> >> Does it sound reasonable enough to use larger than default rate-limits
-> >> for printk-s in OOM print-outs? OOM reports tend to be somewhat large
-> >> and the reported numbers are not always *very* unique.
-> >>
-> >> What do you think?
-> >
-> > I do not really care about the current inerval/burst values. This change
-> > should be done seprately and ideally with some numbers.
-> 
-> I think Sergey meant that this place may need to use
-> larger-than-default values because it prints lots of output per
-> instance (whereas the default limit is more tuned for cases that print
-> just 1 line).
-> 
-> I've found at least 1 place that uses DEFAULT_RATELIMIT_INTERVAL*10:
-> https://elixir.bootlin.com/linux/latest/source/fs/btrfs/extent-tree.c#L8365
-> Probably we need something similar here.
+BACKLIGHT_CLASS_DEVICE is already tristate, but a dependency
+FB_BACKLIGHT prevents it from being built as a module.  There
+doesn't seem to be any particularly good reason for this, so
+switch FB_BACKLIGHT over to tristate.
 
-Yes, Dmitry, that's what I meant - to use something like
-DEFAULT_RATELIMIT_INTERVAL * 10 in OOM. I didn't mean to change
-the default values system wide.
-
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 ---
+ drivers/video/fbdev/Kconfig        | 2 +-
+ drivers/video/fbdev/core/fbsysfs.c | 8 ++++----
+ include/linux/fb.h                 | 2 +-
+ include/uapi/linux/fb.h            | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-We are not rate-limiting a single annoying printk() in OOM, but
-functions that do a whole bunch of printks - OOM header, backtraces, etc.
-Thus OOM report can be, I don't know, 50 or 70 or 100 lines (who knows).
-So that's why rate-limit in OOM is more permissive in terms of number of
-printed lines. When we rate-limit a single printk() we let 10 prinks()
-/*10 lines*/ max every 5 seconds. While in OOM this transforms into
-10 dump_header() + 10 oom_kill_process() every 5 seconds. Still can be
-too many printk()-s, enough to lockup the system.
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 591a13a59787..146ab2c347f8 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -198,7 +198,7 @@ config FB_MACMODES
+        default n
+ 
+ config FB_BACKLIGHT
+-	bool
++	tristate
+ 	depends on FB
+ 	select BACKLIGHT_LCD_SUPPORT
+ 	select BACKLIGHT_CLASS_DEVICE
+diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
+index e31a182b42bf..44cca39f2b51 100644
+--- a/drivers/video/fbdev/core/fbsysfs.c
++++ b/drivers/video/fbdev/core/fbsysfs.c
+@@ -60,7 +60,7 @@ struct fb_info *framebuffer_alloc(size_t size, struct device *dev)
+ 	info->device = dev;
+ 	info->fbcon_rotate_hint = -1;
+ 
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ 	mutex_init(&info->bl_curve_mutex);
+ #endif
+ 
+@@ -429,7 +429,7 @@ static ssize_t show_fbstate(struct device *device,
+ 	return snprintf(buf, PAGE_SIZE, "%d\n", fb_info->state);
+ }
+ 
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ static ssize_t store_bl_curve(struct device *device,
+ 			      struct device_attribute *attr,
+ 			      const char *buf, size_t count)
+@@ -510,7 +510,7 @@ static struct device_attribute device_attrs[] = {
+ 	__ATTR(stride, S_IRUGO, show_stride, NULL),
+ 	__ATTR(rotate, S_IRUGO|S_IWUSR, show_rotate, store_rotate),
+ 	__ATTR(state, S_IRUGO|S_IWUSR, show_fbstate, store_fbstate),
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ 	__ATTR(bl_curve, S_IRUGO|S_IWUSR, show_bl_curve, store_bl_curve),
+ #endif
+ };
+@@ -551,7 +551,7 @@ void fb_cleanup_device(struct fb_info *fb_info)
+ 	}
+ }
+ 
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ /* This function generates a linear backlight curve
+  *
+  *     0: off
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index a3cab6dc9b44..7cdd31a69719 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -485,7 +485,7 @@ struct fb_info {
+ 	struct list_head modelist;      /* mode list */
+ 	struct fb_videomode *mode;	/* current mode */
+ 
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ 	/* assigned backlight device */
+ 	/* set before framebuffer registration, 
+ 	   remove after unregister */
+diff --git a/include/uapi/linux/fb.h b/include/uapi/linux/fb.h
+index 6cd9b198b7c6..07f14cd6791a 100644
+--- a/include/uapi/linux/fb.h
++++ b/include/uapi/linux/fb.h
+@@ -393,7 +393,7 @@ struct fb_cursor {
+ 	struct fb_image	image;	/* Cursor image */
+ };
+ 
+-#ifdef CONFIG_FB_BACKLIGHT
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+ /* Settings for the generic backlight code */
+ #define FB_BACKLIGHT_LEVELS	128
+ #define FB_BACKLIGHT_MAX	0xFF
+-- 
+2.17.1
 
-	-ss
