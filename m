@@ -2,196 +2,115 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC8AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281F3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B342087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B342087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CFD4A2082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:31:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nGqFDLJl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD4A2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeJKDyU (ORCPT
+        id S1727860AbeJKDyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 23:54:20 -0400
-Received: from mga03.intel.com ([134.134.136.65]:62250 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbeJKDyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 23:54:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 13:30:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,365,1534834800"; 
-   d="scan'208";a="90930975"
-Received: from irvmail001.ir.intel.com ([163.33.26.43])
-  by orsmga003.jf.intel.com with ESMTP; 10 Oct 2018 13:30:21 -0700
-Received: from mwajdecz-mobl1.ger.corp.intel.com (mwajdecz-mobl1.ger.corp.intel.com [172.28.174.54])
-        by irvmail001.ir.intel.com (8.14.3/8.13.6/MailSET/Hub) with ESMTP id w9AKUKq0019733;
-        Wed, 10 Oct 2018 21:30:20 +0100
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Nick Desaulniers" <ndesaulniers@google.com>,
-        "Nathan Chancellor" <natechancellor@gmail.com>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, rodrigo.vivi@intel.com,
-        lukas.bulwahn@gmail.com
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Convert _print_param to a macro
-References: <20181009171401.14980-1-natechancellor@gmail.com>
- <CAKwvOdm-oiVvuX_QDjQ1QcO3+=XowHEnHgj3PyQ4hY=thrJGNA@mail.gmail.com>
- <87woqqm2mz.fsf@intel.com>
-Date:   Wed, 10 Oct 2018 22:30:20 +0200
+        Wed, 10 Oct 2018 23:54:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbeJKDyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 23:54:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=U2rvBwXW/fPqTsz5DmDd8pPlH/yC7gzw3T/tRBgERV8=; b=nGqFDLJle4CoCQts/KXhHRXQZ
+        jKoWxIyEUqKpYGjrybZSXssgToPDEUKW5QiYUexXrd3qykQIhqBVVoPgwkO7aTiUGyvi6Fp0yrVZQ
+        JRm5ASER7ovOw/ndk+LIoHZtAdFqqjK510Wf/sO6mxANkfe+oe/jMXONS+P3Wv0t8ZAN/ytmMCSJy
+        uKUaIenKksnuA6kiIMltREp/zz3WalMYS6OWFcgQw1yca7uwwK8i3sayzQ2P86o4Q10wk8/0J7Tea
+        plgNgl8o0jkucAXBUwWu1rpU7B+zJcGffGGhGaUYWlZH+Rz2Qkf779KIr3fYJB8jl3ZEdUMt/BJyC
+        hpDNN0oWg==;
+Received: from 177.43.144.224.dynamic.adsl.gvt.net.br ([177.43.144.224] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAL8E-0003rZ-LG; Wed, 10 Oct 2018 20:30:59 +0000
+Date:   Wed, 10 Oct 2018 17:30:55 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
+ enforcement paragraph pending community discussion
+Message-ID: <20181010173055.5ea10f95@coco.lan>
+In-Reply-To: <20181010210948.62ed5ce6@alans-desktop>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+        <1538861851.4088.7.camel@HansenPartnership.com>
+        <20181008172303.4f06cd94@coco.lan>
+        <20181010165308.187aae51@alans-desktop>
+        <20181010141917.611fb5d8@coco.lan>
+        <20181010210948.62ed5ce6@alans-desktop>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-From:   "Michal Wajdeczko" <michal.wajdeczko@intel.com>
-Message-ID: <op.zqoq8ui3xaggs7@mwajdecz-mobl1.ger.corp.intel.com>
-In-Reply-To: <87woqqm2mz.fsf@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 14:01:40 +0200, Jani Nikula  
-<jani.nikula@linux.intel.com> wrote:
+Em Wed, 10 Oct 2018 21:09:48 +0100
+Alan Cox <gnomes@lxorguk.ukuu.org.uk> escreveu:
 
-> On Tue, 09 Oct 2018, Nick Desaulniers <ndesaulniers@google.com> wrote:
->> On Tue, Oct 9, 2018 at 10:14 AM Nathan Chancellor
->> <natechancellor@gmail.com> wrote:
->>>
->>> When building the kernel with Clang with defconfig and CONFIG_64BIT
->>> disabled, vmlinux fails to link because of the BUILD_BUG in
->>> _print_param.
->>>
->>> ld: drivers/gpu/drm/i915/i915_params.o: in function `i915_params_dump':
->>> i915_params.c:(.text+0x56): undefined reference to
->>> `__compiletime_assert_191'
->>>
->>> This function is semantically invalid unless the code is first inlined
->>> then constant folded, which doesn't work for Clang because semantic
->>> analysis happens before optimization/inlining. Converting this function
->>> to a macro avoids this problem and allows Clang to properly remove the
->>> BUILD_BUG during optimization.
->>
->> Thanks Nathan for the patch.  To provide more context, Clang does
->> semantic analysis before optimization, where as GCC does these
->> together (IIUC).  So the above link error is from the naked
->> BUILD_BUG().  Clang can't evaluate the __builtin_strcmp's statically
->> until inlining has occurred, but that optimization happens after
->> semantic analysis.  To do the inlining before semantic analysis, we
->> MUST leverage the preprocessor, which runs before the compiler starts
->> doing semantic analysis.  I suspect this code is not valid for GCC
->> unless optimizations are enabled (the kernel only does compile with
->> optimizations turned on).  This change allows us to build this
->> translation unit with Clang.
->>
->> Acked-by: Nick Desaulniers <ndesaulniers@google.com>
->> (Note: this is the change I suggested, so not sure whether Acked-by or
->> Reviewed-by is more appropriate).
->
-> *Sad trombone*
->
-> I'd rather see us converting more macros to static inlines than the
-> other way round.
->
-> I'll let others chime in if they have any better ideas, otherwise I'll
-> apply this one.
+> On Wed, 10 Oct 2018 14:19:17 -0300
+> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+> 
+> > Em Wed, 10 Oct 2018 16:53:08 +0100
+> > Alan Cox <gnomes@lxorguk.ukuu.org.uk> escreveu:
+> >   
+> > > > -Maintainers have the right and responsibility to remove, edit, or reject
+> > > > +Maintainers may remove, edit, or reject
+> > > >  comments, commits, code, wiki edits, issues, and other contributions that are
+> > > >  not aligned to this Code of Conduct, or to ban temporarily or permanently any
+> > > >  contributor for other behaviors that they deem inappropriate, threatening,
+> > > > 
+> > > > The previous text seems too much legal for my taste.
+> > > >       
+> > > 
+> > > That is just as confusing. Maintainers have the right to remove, edit,
+> > > reject commits that *are* aligned with the code as well.    
+> > 
+> > Good point. Yeah, a maintainer can do whatever he thinks it is 
+> > appropriate for a patch - even when it follows the CoC.
+> >   
+> > > So what exactly is the point here ?    
+> > 
+> > The point is "responsibility" - that sounds like it is bounding a legal
+> > duty to a maintainer.  
+> 
+> If you remove the responsibility aspect you might as well remove the
+> entire clause. It doesn't say anything as it's simply a subset of what
+> maintainers do anyway.
+> 
+> So how about
+> 
+> "Maintainers should remove, edit or reject..."
+> 
+> that keeps the sense that there should be pressure against abusive
+> behaviour.
 
-Option 1: Just drop BUILD_BUG() from _print_param() function.
+Works for me.
 
-Option 2: Use aliases instead of real types in param() macros.
+> except of course someone will attach a zero day exploit and fix to a
+> coc-violating rant and then you are a bit stuffed 8)
 
-Aliases can be same as in linux/moduleparam.h (charp|int|uint|bool)
-We can convert aliases back to real types but it will also allow
-to construct proper names for dedicated functions - see [1]
+:-)
 
-Michal
-
-[1] https://patchwork.freedesktop.org/patch/255928/
-
-
->
-> BR,
-> Jani.
->
->>
->>>
->>> The output of 'objdump -D' is identically before and after this change
->>> for GCC regardless of if CONFIG_64BIT is set and allows Clang to link
->>> the kernel successfully with or without CONFIG_64BIT set.
->>>
->>> Link: https://github.com/ClangBuiltLinux/linux/issues/191
->>> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
->>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->>> ---
->>>  drivers/gpu/drm/i915/i915_params.c | 29 +++++++++++++----------------
->>>  1 file changed, 13 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/i915/i915_params.c  
->>> b/drivers/gpu/drm/i915/i915_params.c
->>> index 295e981e4a39..a0f20b9b6f2d 100644
->>> --- a/drivers/gpu/drm/i915/i915_params.c
->>> +++ b/drivers/gpu/drm/i915/i915_params.c
->>> @@ -174,22 +174,19 @@ i915_param_named(enable_dpcd_backlight, bool,  
->>> 0600,
->>>  i915_param_named(enable_gvt, bool, 0400,
->>>         "Enable support for Intel GVT-g graphics virtualization host  
->>> support(default:false)");
->>>
->>> -static __always_inline void _print_param(struct drm_printer *p,
->>> -                                        const char *name,
->>> -                                        const char *type,
->>> -                                        const void *x)
->>> -{
->>> -       if (!__builtin_strcmp(type, "bool"))
->>> -               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool  
->>> *)x));
->>> -       else if (!__builtin_strcmp(type, "int"))
->>> -               drm_printf(p, "i915.%s=%d\n", name, *(const int *)x);
->>> -       else if (!__builtin_strcmp(type, "unsigned int"))
->>> -               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned  
->>> int *)x);
->>> -       else if (!__builtin_strcmp(type, "char *"))
->>> -               drm_printf(p, "i915.%s=%s\n", name, *(const char **)x);
->>> -       else
->>> -               BUILD_BUG();
->>> -}
->>> +#define _print_param(p, name, type,  
->>> x)                                        \
->>> +do  
->>> {                                                                           
->>> \
->>> +       if (!__builtin_strcmp(type,  
->>> "bool"))                                   \
->>> +               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool  
->>> *)x));  \
->>> +       else if (!__builtin_strcmp(type,  
->>> "int"))                               \
->>> +               drm_printf(p, "i915.%s=%d\n", name, *(const int  
->>> *)x);          \
->>> +       else if (!__builtin_strcmp(type, "unsigned  
->>> int"))                      \
->>> +               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned  
->>> int *)x); \
->>> +       else if (!__builtin_strcmp(type, "char  
->>> *"))                            \
->>> +               drm_printf(p, "i915.%s=%s\n", name, *(const char  
->>> **)x);        \
->>> +        
->>> else                                                                    
->>> \
->>> +                
->>> BUILD_BUG();                                                   \
->>> +} while (0)
->>>
->>>  /**
->>>   * i915_params_dump - dump i915 modparams
->>> --
->>> 2.19.0
->>>
+Thanks,
+Mauro
