@@ -2,193 +2,213 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA4BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9904C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C260A20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:45:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PwgTyaoo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C260A20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B2320835
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:47:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B2320835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJJRHQ (ORCPT
+        id S1726903AbeJJRJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:07:16 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40370 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJRHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:07:15 -0400
-Received: by mail-it1-f196.google.com with SMTP id i191-v6so7037515iti.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=T/Xtc4JDuPxLBVIUSEO2sIVKU497WYVgDA5LVpanvf4=;
-        b=PwgTyaooIHS2IjwWMOedtgGe6bNThHX+ncPldx4G0WfvISb6y5ABK/ddIUoShe7ZIV
-         X9FrlRRwZBDN0HOZa2Dul3Q2VHabWJZA5jTfwzoOD69Cifj/Lq2GWMMu3dBtpn8R9Gr6
-         hRfIB4Hq6TJznQOrijCj5aKlD2fMxTNnai1aWgyzwldwGq0CpvXL2GCysSiE7hO0oisd
-         Znt+7wuskn9QFhcHkdHPKfE9VMv9YoOlt1983fh55KFHPQxX0tMitvoS7VtkQD5GSXLr
-         bpuAvQwILwDlDHK0yO/l5/A2zqP6DBpfPOwZgDr0LNPBV0E3dpWSK0vEcepv2eihhQPk
-         eDXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=T/Xtc4JDuPxLBVIUSEO2sIVKU497WYVgDA5LVpanvf4=;
-        b=ShAjXlvUff3EW/VXGDAjR0yty0pLgp6KCvf9kqsuIePR5Khwm15/HnVMvNSWasJUjd
-         qggLmeduotpFPkDLlbyr9PMUvDFtlohmRKg98DDZq4ygw6vIYO3vLWOsViNbz6P/Fwug
-         4vSHizY7PybGoXZVpHCLYuPVgscGn6bKkPedTgGMOW6gCryCJBrP9SdDdUYjnVVQc2cB
-         pgu78SLZnGgq5zTSZBxxCVix9gA2yYWt6ZGA+FjVX8e5RQrzBwoT3vUxgjk/RU0Tq5bM
-         z2JNsYoS/VxTEwcC4uNkxqd/NTfvYLzb7Ps5w/5zxpyNxg1DMOe6MPESzRaT3s3gWYUu
-         bwVg==
-X-Gm-Message-State: ABuFfogeBeLp3FXyIVDbTp0Yvj2WtKCQHbSZ48lOgho+4OGkxgan9zIF
-        BS9on7jxBQdgEFNATkNkU7SNI6Si71znsxtF5ae/Dg==
-X-Google-Smtp-Source: ACcGV62OBLCfMrJKmdx0SKWiroVRN8oC3O2xxkqmcNzKu02UGmpbXqQq7f0577WM1xVaxpSsDQXoJ25X2vGa7Bqab8Y=
-X-Received: by 2002:a24:940f:: with SMTP id j15-v6mr163814ite.12.1539164753019;
- Wed, 10 Oct 2018 02:45:53 -0700 (PDT)
+        Wed, 10 Oct 2018 13:09:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49442 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726573AbeJJRJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 13:09:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA8BE80D;
+        Wed, 10 Oct 2018 02:47:56 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBC683F5BC;
+        Wed, 10 Oct 2018 02:47:53 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 10:47:51 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 11/16] arm64: kexec_file: allow for loading
+ Image-format kernel
+Message-ID: <20181010094750.sy5byeaykatvvup6@lakrids.cambridge.arm.com>
+References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
+ <20180928064841.14117-12-takahiro.akashi@linaro.org>
+ <20181009152759.x24xuiwb3zsg4jx7@lakrids.cambridge.arm.com>
+ <20181010065235.GY32578@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 02:45:32
- -0700 (PDT)
-In-Reply-To: <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
-References: <20180918152931.17322-1-williams@redhat.com> <20181005163018.icbknlzymwjhdehi@linutronix.de>
- <20181005163320.zkacovxvlih6blpp@linutronix.de> <CACT4Y+YoNCm=0C6PZtQR1V1j4QeQ0cFcJzpJF1hn34Oaht=jwg@mail.gmail.com>
- <20181009142742.ikh7xv2dn5skjjbe@linutronix.de> <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
- <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 11:45:32 +0200
-Message-ID: <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
-Subject: Re: [PATCH] kasan: convert kasan/quarantine_lock to raw_spinlock
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Clark Williams <williams@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010065235.GY32578@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 11:29 AM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 2018-10-10 10:25:42 [+0200], Dmitry Vyukov wrote:
->> > That loop should behave like your on_each_cpu() except it does not
->> > involve the remote CPU.
->>
->>
->> The problem is that it can squeeze in between:
->>
->> +               spin_unlock(&q->lock);
->>
->>                 spin_lock(&quarantine_lock);
->>
->> as far as I see. And then some objects can be left in the quarantine.
->
-> Okay. But then once you are at CPU10 (in the on_each_cpu() loop) there
-> can be objects which are added to CPU0, right? So based on that, I
-> assumed that this would be okay to drop the lock here.
+On Wed, Oct 10, 2018 at 03:52:37PM +0900, AKASHI Takahiro wrote:
+> Mark,
+> 
+> On Tue, Oct 09, 2018 at 04:28:00PM +0100, Mark Rutland wrote:
+> > On Fri, Sep 28, 2018 at 03:48:36PM +0900, AKASHI Takahiro wrote:
+> > > This patch provides kexec_file_ops for "Image"-format kernel. In this
+> > > implementation, a binary is always loaded with a fixed offset identified
+> > > in text_offset field of its header.
+> > > 
+> > > Regarding signature verification for trusted boot, this patch doesn't
+> > > contains CONFIG_KEXEC_VERIFY_SIG support, which is to be added later
+> > > in this series, but file-attribute-based verification is still a viable
+> > > option by enabling IMA security subsystem.
+> > > 
+> > > You can sign(label) a to-be-kexec'ed kernel image on target file system
+> > > with:
+> > >     $ evmctl ima_sign --key /path/to/private_key.pem Image
+> > > 
+> > > On live system, you must have IMA enforced with, at least, the following
+> > > security policy:
+> > >     "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig"
+> > > 
+> > > See more details about IMA here:
+> > >     https://sourceforge.net/p/linux-ima/wiki/Home/
+> > > 
+> > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > Cc: Will Deacon <will.deacon@arm.com>
+> > > Reviewed-by: James Morse <james.morse@arm.com>
+> > > ---
+> > >  arch/arm64/include/asm/kexec.h         |  28 +++++++
+> > >  arch/arm64/kernel/Makefile             |   2 +-
+> > >  arch/arm64/kernel/kexec_image.c        | 108 +++++++++++++++++++++++++
+> > >  arch/arm64/kernel/machine_kexec_file.c |   1 +
+> > >  4 files changed, 138 insertions(+), 1 deletion(-)
+> > >  create mode 100644 arch/arm64/kernel/kexec_image.c
+> > > 
+> > > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> > > index 157b2897d911..5e673481b3a3 100644
+> > > --- a/arch/arm64/include/asm/kexec.h
+> > > +++ b/arch/arm64/include/asm/kexec.h
+> > > @@ -101,6 +101,34 @@ struct kimage_arch {
+> > >  	unsigned long dtb_mem;
+> > >  };
+> > >  
+> > > +/**
+> > > + * struct arm64_image_header - arm64 kernel image header
+> > > + * See Documentation/arm64/booting.txt for details
+> > > + *
+> > > + * @mz_magic: DOS header magic number ('MZ', optional)
+> > 
+> > Please just call this code0. If CONFIG_EFI is disabled, it is not 'MZ'.
+> 
+> How about this?
+> (This definition will go into a new header, asm/image.h.)
+> 
+> ---8<---
+> /*
+>  * struct arm64_image_header - arm64 kernel image header
+>  * See Documentation/arm64/booting.txt for details
+>  *
+>  * @code0:		Executable code, or
+>  *   @mz_header		  alternatively used for part of MZ header
+>  * @code1:		Executable code
+>  * @text_offset:	Image load offset
+>  * @image_size:		Effective Image size
+>  * @flags:		kernel flags
+>  * @reserved:		reserved
+>  * @magic:		Magic number
+>  * @reserved5:		reserved, or
+>  *   @pe_header:	  alternatively used for PE COFF offset
+>  */
+> 
+> struct arm64_image_header {
+> 	union {
+> 		__le32 code0;
+> 		struct {
+> 			__le16 magic;
+> 			__le16 pad;
+> 		} mz_header;
+> 	};
+> 	__le32 code1;
+> 	__le64 text_offset;
+> 	__le64 image_size;
+> 	__le64 flags;
+> 	__le64 reserved[3];
+> 	__le32 magic;
+> 	union {
+> 		__le32 reserved5;
+> 		__le32 pe_header;
+> 	};
+> };
 
-What happens here is a bit tricky.
+Do we care about the MZ header?
 
-When a kmem cache is freed, all objects from the cache must be already
-free. That is kmem_cache_free has returned for all objects (otherwise
-it's a user bug), these calls could have have happened on other CPUs.
-So is we are freeing a cache on CPU10, it is not possible that CPU0
-frees an object from this cache right now/concurrently, the objects
-were already freed but they still can be sitting in per-cpu quarantine
-caches.
-Now a free on an unrelated object on CPU0 can decide to drain CPU
-cache concurrently, it grabs whole CPU cache, unlocks the cache
-spinlock (with your patch), and now proceeds to pushing the batch to
-global quarantine list. At this point CPU10 drains quarantine to evict
-all objects related to the cache, but it misses the batch that CPU0
-transfers from cpu cache to global quarantine, because at this point
-it's referenced from just local stack variable temp in quarantine_put.
-Wrapping the whole transfer sequence with irq disable/enable, ensures
-that the transfer happens atomically wrt quarantine_remove_cache. That
-is, that quarantine_remove_cache will see the object either in cpu
-cache or in global quarantine, but not somewhere in the flight.
+The definition of the Image header in Documentation/arm64/booting.txt is:
 
+  u32 code0;                    /* Executable code */
+  u32 code1;                    /* Executable code */
+  u64 text_offset;              /* Image load offset, little endian */
+  u64 image_size;               /* Effective Image size, little endian */
+  u64 flags;                    /* kernel flags, little endian */
+  u64 res2      = 0;            /* reserved */
+  u64 res3      = 0;            /* reserved */
+  u64 res4      = 0;            /* reserved */
+  u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
+  u32 res5;                     /* reserved (used for PE COFF offset) */
 
->> > But this is debug code anyway, right? And it is highly complex imho.
->> > Well, maybe only for me after I looked at it for the first time=E2=80=
-=A6
->>
->> It is debug code - yes.
->> Nothing about its performance matters - no.
->>
->> That's the way to produce unusable debug tools.
->> With too much overhead timeouts start to fire and code behaves not the
->> way it behaves in production.
->> The tool is used in continuous integration and developers wait for
->> test results before merging code.
->> The tool is used on canary devices and directly contributes to usage exp=
-erience.
->
-> Completely understood. What I meant is that debug code in general (from
-> RT perspective) increases latency to a level where the device can not
-> operate. Take lockdep for instance. Debug facility which is required
-> for RT as it spots locking problems early. It increases the latency
-> (depending on the workload) by 50ms+ and can't be used in production.
-> Same goes for SLUB debug and most other.
->
->> We of course don't want to trade a page of assembly code for cutting
->> few cycles here (something that could make sense for some networking
->> code maybe). But otherwise let's not introduce spinlocks on fast paths
->> just for refactoring reasons.
->
-> Sure. As I said. I'm fine with patch Clark initially proposed. I assumed
-> the refactoring would make things simpler and avoiding the cross-CPU
-> call a good thing.
->
->> > Can you take it as-is or should I repost it with an acked-by?
->>
->> Perhaps it's the problem with the way RT kernel changes things then?
->> This is not specific to quarantine, right?
->
-> We got rid of _a lot_ of local_irq_disable/save() + spin_lock() combos
-> which were there for reasons which are no longer true or due to lack of
-> the API. And this kasan thing is just something Clark stumbled upon
-> recently. And I try to negotiate something where everyone can agree on.
->
->> Should that mutex detect
->> that IRQs are disabled and not try to schedule? If this would happen
->> in some networking code, what would we do?
->
-> It is not only that it is supposed not to schedule. Assuming the "mutex"
-> is not owned you could acquire it right away. No scheduling. However,
-> you would record current() as the owner of the lock which is wrong and
-> you get into other trouble later on. The list goes on :)
-> However, networking. If there is something that breaks then it will be
-> addressed. It will be forwarded upstream if this something where it
-> is likely to assume that RT won't change. So networking isn't special.
->
-> Should I repost Clark's patch?
+I'd prefer that we aligned our header definition with that, rather than
+diverging from it.
 
+If we need to look at the MZ magic to determine if the Image is a valid PE
+binary, can't we just cast to the existing struct mz_hdr from <linux/pe.h> to
+do that?
 
-I am much more comfortable with just changing the type of the lock.
-What are the bad implications of using the raw spinlock? Will it help
-to do something along the following lines:
+[...]
 
-// Because of ...
-#if CONFIG_RT
-#define quarantine_spinlock_t raw_spinlock_t
-#else
-#define quarantine_spinlock_t spinlock_t
-#endif
+> > > +	/* Check cpu features */
+> > > +	flags = le64_to_cpu(h->flags);
+> > > +	value = head_flag_field(flags, HEAD_FLAG_BE);
+> > > +	if (((value == HEAD_FLAG_BE) && !IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) ||
+> > > +	    ((value != HEAD_FLAG_BE) && IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)))
+> > > +		if (!system_supports_mixed_endian())
+> > > +			return ERR_PTR(-EINVAL);
+> > 
+> > I think this can be simplified:
+> > 
+> > 	bool be_image = head_flag_field(flags, HEAD_FLAG_BE);
+> > 	bool be_kernel = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN);
+> > 
+> > 	if ((be_image != be_kernel) && !system_supports_mixed_endian)
+> > 	    		return ERR_PTR(-EINVAL);
+> 
+> Okay.
+> 
+> > ... though do we need to police this at all? It's arguably policy given
+> > the new image has to be signed anyway), and there are other fields that
+> > could fall into that category in future.
+> 
+> The aim here is to prevent any images from being loaded
+> when there is no question that a new image will never be successfully
+> kexec'ed since the core on a given SoC obviously doesn't support cpu
+> features that are assumed and required by a image.
+> 
+> I believe that this check is a good and easy practice to avoid possible
+> failures before execution.
 
-?
+My only concern is that this is arguably placing some policy in the
+kernel, and I don't want to set the expectation that we'll do this for
+other things in future, as that becomes a maintenance nightmare.
+
+I'm not necessarily opposed to these specific checks, given they're
+simple. Just wanted to make sure that we've thought about it.
+
+Thanks,
+Mark.
