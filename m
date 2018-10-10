@@ -2,158 +2,125 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FE0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D0DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C99C2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:53:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C99C2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B6B02086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6B02086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeJKBRC (ORCPT
+        id S1727127AbeJKBRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:17:02 -0400
-Received: from mga05.intel.com ([192.55.52.43]:35645 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbeJKBRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:17:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 10:53:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,365,1534834800"; 
-   d="scan'208";a="96371058"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.109]) ([10.24.14.109])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Oct 2018 10:53:47 -0700
-Subject: Re: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
- generic names
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005205512.29545-1-babu.moger@amd.com>
- <20181005205512.29545-2-babu.moger@amd.com>
- <2fe2e853-47ef-af2a-6906-9ad7a7b8bba9@intel.com>
- <ddec0530-59d1-fee0-eb67-528b887ca3f5@amd.com>
- <ab692687-6398-cf9a-a027-b9ff4b3ffd5f@intel.com>
- <b2e7630a-db5c-9f69-5d7e-cac3e2bb4014@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <6d25a185-66e2-1a54-071a-4937a09c07a8@intel.com>
-Date:   Wed, 10 Oct 2018 10:53:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 21:17:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46874 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727029AbeJKBRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:17:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 930F0ACCA;
+        Wed, 10 Oct 2018 17:53:55 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 19:53:54 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        yi.z.zhang@linux.intel.com
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181010175354.GO5873@dhcp22.suse.cz>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20181009170051.GA40606@tiger-server>
+ <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+ <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+ <20181010095838.GG5873@dhcp22.suse.cz>
+ <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
+ <20181010172451.GK5873@dhcp22.suse.cz>
+ <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <b2e7630a-db5c-9f69-5d7e-cac3e2bb4014@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
-
-On 10/10/2018 7:11 AM, Moger, Babu wrote:
-> On 10/09/2018 05:01 PM, Reinette Chatre wrote:
->> On 10/9/2018 2:17 PM, Moger, Babu wrote:
->>> On 10/09/2018 11:39 AM, Reinette Chatre wrote:
->>>> On 10/5/2018 1:55 PM, Moger, Babu wrote:
->>>>> New generation of AMD processors start support RDT(or QOS) features.
->>>>> With more than one vendors supporting these features, it seems more
->>>>> appropriate to rename these files.
->>>>>
->>>>> Signed-off-by: Babu Moger <babu.moger@amd.com>
->>>>> ---
->>>>>  arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h}     | 0
->>>>>  arch/x86/kernel/cpu/Makefile                                | 6 +++---
->>>>>  arch/x86/kernel/cpu/{intel_rdt.c => rdt.c}                  | 4 ++--
->>>>>  arch/x86/kernel/cpu/{intel_rdt.h => rdt.h}                  | 0
->>>>>  .../cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c}      | 2 +-
->>>>>  arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c}  | 2 +-
->>>>>  .../cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c}      | 6 +++---
->>>>>  ...ntel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} | 2 +-
->>>>>  .../x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} | 4 ++--
->>>>>  arch/x86/kernel/process_32.c                                | 2 +-
->>>>>  arch/x86/kernel/process_64.c                                | 2 +-
->>>>>  11 files changed, 15 insertions(+), 15 deletions(-)
->>>>>  rename arch/x86/include/asm/{intel_rdt_sched.h => rdt_sched.h} (100%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt.c => rdt.c} (99%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt.h => rdt.h} (100%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => rdt_ctrlmondata.c} (99%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => rdt_monitor.c} (99%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => rdt_pseudo_lock.c} (99%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => rdt_pseudo_lock_event.h} (95%)
->>>>>  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => rdt_rdtgroup.c} (99%)
->>>>
->>>> During the RFC it was agreed that "resctrl" will be the neutral name and
->>>> "intel_rdt", "amd_qos", or "arm mpam" would be the vendor specific names.
->>>>
->>>> It is ok to delay that renaming but I think any renaming done from this
->>>> point should respect this agreement.
->>>>
->>>> For example, if you want to rename intel_rdt.c then please rename it to
->>>> resctrl.c instead of just rdt.c which does not represent a generic name
->>>> as expressed as a goal in the subject of this patch.
->>>
->>> I knew this was going to bit tricky. I can change all the places where I
->>> am touching the code to generic names(change from intel_rdt to "resctrl").
->>
->> Yes, "intel_rdt" can be changed to the generic "resctrl" when it is not
->> vendor specific.
+On Wed 10-10-18 10:39:01, Alexander Duyck wrote:
 > 
-> Ok. sure.
 > 
->>
->> As far as all the code you touch is concerned it may be easier and cause
->> less confusion for now to just follow the current naming conventions as
->> you have done in patches 3 onwards and have it be included in the later
->> larger restructuring.
+> On 10/10/2018 10:24 AM, Michal Hocko wrote:
+> > On Wed 10-10-18 09:39:08, Alexander Duyck wrote:
+> > > On 10/10/2018 2:58 AM, Michal Hocko wrote:
+> > > > On Tue 09-10-18 13:26:41, Alexander Duyck wrote:
+> > > > [...]
+> > > > > I would think with that being the case we still probably need the call to
+> > > > > __SetPageReserved to set the bit with the expectation that it will not be
+> > > > > cleared for device-pages since the pages are not onlined. Removing the call
+> > > > > to __SetPageReserved would probably introduce a number of regressions as
+> > > > > there are multiple spots that use the reserved bit to determine if a page
+> > > > > can be swapped out to disk, mapped as system memory, or migrated.
+> > > > 
+> > > > PageReserved is meant to tell any potential pfn walkers that might get
+> > > > to this struct page to back off and not touch it. Even though
+> > > > ZONE_DEVICE doesn't online pages in traditional sense it makes those
+> > > > pages available for further use so the page reserved bit should be
+> > > > cleared.
+> > > 
+> > > So from what I can tell that isn't necessarily the case. Specifically if the
+> > > pagemap type is MEMORY_DEVICE_PRIVATE or MEMORY_DEVICE_PUBLIC both are
+> > > special cases where the memory may not be accessible to the CPU or cannot be
+> > > pinned in order to allow for eviction.
+> > 
+> > Could you give me an example please?
 > 
-> Yes. I am making sure first 3 patches are renamed to "resctrl" wherever
-> applicable. Will send the patches soon.
+> Honestly I am getting a bit beyond my depth here so maybe Dan could explain
+> better. I am basing the above comment on Dan's earlier comment in this
+> thread combined with the comment that explains the "memory_type" field for
+> the pgmap:
+> https://elixir.bootlin.com/linux/v4.19-rc7/source/include/linux/memremap.h#L28
 > 
-> But I am confused about what you meant by "have it be included in the
-> later larger restructuring". Can you please elaborate?
+> > > The specific case that Dan and Yi are referring to is for the type
+> > > MEMORY_DEVICE_FS_DAX. For that type I could probably look at not setting the
+> > > reserved bit. Part of me wants to say that we should wait and clear the bit
+> > > later, but that would end up just adding time back to initialization. At
+> > > this point I would consider the change more of a follow-up optimization
+> > > rather than a fix though since this is tailoring things specifically for DAX
+> > > versus the other ZONE_DEVICE types.
+> > 
+> > I thought I have already made it clear that these zone device hacks are
+> > not acceptable to the generic hotplug code. If the current reserve bit
+> > handling is not correct then give us a specific reason for that and we
+> > can start thinking about the proper fix.
+> 
+> I might have misunderstood your earlier comment then. I thought you were
+> saying that we shouldn't bother with setting the reserved bit. Now it sounds
+> like you were thinking more along the lines of what I was here in my comment
+> where I thought the bit should be cleared later in some code specifically
+> related to DAX when it is exposing it for use to userspace or KVM.
 
-I was referring to the restructuring that was discussed during your
-original RFC submission. Specifically,
-http://lkml.kernel.org/r/874cdcfb-26fa-2bdb-095d-b1b5a88250b9@amd.com
-http://lkml.kernel.org/r/9500445c-019d-9b77-0b51-48922bf47007@arm.com
+I was referring to my earlier comment that if you need to do something
+about struct page initialization (move_pfn_range_to_zone) outside of the
+lock (with the appropriate ground work that is needed) rather than
+pulling more zone device hacks into the generic hotplug code [1]
 
-Reinette
+[1] http://lkml.kernel.org/r/20180926075540.GD6278@dhcp22.suse.cz
 
-
-
+-- 
+Michal Hocko
+SUSE Labs
