@@ -2,131 +2,73 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A4AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F7DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AF721479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:45:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AF721479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B06521479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:45:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucznPo2u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B06521479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeJJOGL (ORCPT
+        id S1726741AbeJJOGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:06:11 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:47402 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726562AbeJJOGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:06:11 -0400
-X-UUID: 49f09ff746db4fd0acd07144aa17668f-20181010
-X-UUID: 49f09ff746db4fd0acd07144aa17668f-20181010
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunhui.li@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 882748398; Wed, 10 Oct 2018 14:45:19 +0800
-Received: from MTKMBS32N1.mediatek.inc (172.27.4.71) by
- MTKMBS32N1.mediatek.inc (172.27.4.71) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 10 Oct 2018 14:45:17 +0800
-Received: from MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e]) by
- MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e%23]) with mapi id
- 15.00.1395.000; Wed, 10 Oct 2018 14:45:17 +0800
-From:   =?gb2312?B?Q2h1bmh1aSBMaSAowO60urvUKQ==?= <chunhui.li@mediatek.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        =?gb2312?B?TWlsZXMgQ2hlbiAo6pDD8ZjlKQ==?= <Miles.Chen@mediatek.com>,
-        =?gb2312?B?V2FsdGVyLVpIIFd1ICiFx9fm5b4p?= 
-        <Walter-ZH.Wu@mediatek.com>,
-        =?gb2312?B?WXUgTGlhbmcgKMG60+4p?= <Yu.Liang@mediatek.com>,
-        =?gb2312?B?TmljaG9sYXMgVGFuZyAo4I3H2N14KQ==?= 
-        <nicholas.tang@mediatek.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBrYXNhbjogYXZvaWQgb3V0LW9mLWJvdW5kcyBpbiB1?=
- =?gb2312?Q?nwind=5Fframe?=
-Thread-Topic: [PATCH] kasan: avoid out-of-bounds in unwind_frame
-Thread-Index: AQHUX7hlcl/5Uvjz3E+Pcy5y9duGWqUWMuaAgAHVINA=
-Date:   Wed, 10 Oct 2018 06:45:17 +0000
-Message-ID: <193a2b2efdaf41f39cb35a72feb3b39e@MTKMBS32N1.mediatek.inc>
-References: <1539079863-19645-1-git-send-email-chunhui.li@mediatek.com>
- <20181009103833.sk2jyhl77f5fb64r@lakrids.cambridge.arm.com>
-In-Reply-To: <20181009103833.sk2jyhl77f5fb64r@lakrids.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.27.4.250]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Wed, 10 Oct 2018 10:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbeJJOGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:06:15 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E9AB21479;
+        Wed, 10 Oct 2018 06:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539153933;
+        bh=qCK7Zfn5/uDeF+X7FSxgjqF0jiJDN3WTpEipb++3yGU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ucznPo2uucdR7T3qT525CiMs7cYrNI1Sq6DyRSHf2efUpGxJ/gSbPEUoXfEFe/xRi
+         sZY+kYxMOE0uNze6VvO/Xv4XKK/Y9W6RfAO+rzfAsq9TI9sKQ/Tgh3ufbyOBKpYnL0
+         GeXrtMN6GMLg6vm26lcuy9uNyCNOaE72KNB/bEyA=
+Date:   Wed, 10 Oct 2018 08:45:31 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [GIT PULL] s390 patches for 4.19 #4
+Message-ID: <20181010064531.GB13182@kroah.com>
+References: <20181010072001.425618eb@mschwideX1>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010072001.425618eb@mschwideX1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWFyaywNCg0Ka2FzYW4gZGV0ZWN0IG91dC1vZi1ib3VuZHMgaW4gc3RhY2t0cmFjZS5jIGxp
-bmUgNzAsIGl0J3MgYWxyZWFkeSBvdmVyIFJFQURfT05DRV9OT0NIRUNLLCBidXQgc3RpbGwgY3Jh
-c2gNCmtlcm5lbC00LjkvYXJjaC9hcm02NC9rZXJuZWwvc3RhY2t0cmFjZS5jDQo2OQlmcmFtZS0+
-c3AgPSBmcCArIDB4MTA7DQo3MAlmcmFtZS0+ZnAgPSBSRUFEX09OQ0VfTk9DSEVDSygqKHVuc2ln
-bmVkIGxvbmcgKikoZnApKTsNCg0Kd2UgdGVzdCBvbiBBbmRyb2lkIHBsYXRmb3JtLCBrZXJuZWwt
-NC45IGJ1aWxkIHdpdGggY2xhbmcgNi4wLjIsIHdlIHdpbGwgZG8gZXhwZXJpbWVudCB0byBjbGFy
-aWZ5IHdoZXRoZXIgY29tcGlsZXIgcmVsYXRlZCBpc3N1ZS4NCg0KUkVBRF9PTkNFX05PQ0hFQ0st
-Pl9fcmVhZF9vbmNlX3NpemVfbm9jaGVjayB3aXRoIF9fbm9fc2FuaXRpemVfYWRkcmVzcyBpZiBl
-bmFibGUgQ09ORklHX0tBU0FODQoNCmtlcm5lbC00LjkvaW5jbHVkZS9saW51eC9jb21waWxlci1n
-Y2MuaA0KI2RlZmluZSBfX25vX3Nhbml0aXplX2FkZHJlc3MgX19hdHRyaWJ1dGVfXygobm9fc2Fu
-aXRpemVfYWRkcmVzcykpDQoNCmtlcm5lbC00LjkvaW5jbHVkZS9saW51eC9jb21waWxlci1jbGFu
-Zy5oDQojZGVmaW5lIF9fbm9fc2FuaXRpemVfYWRkcmVzcyBfX2F0dHJpYnV0ZV9fKChub19zYW5p
-dGl6ZSgiYWRkcmVzcyIpKSkNCg0KdGhlcmUgaXMgcGF0Y2ggZnJvbSBpbnRlcm5ldCwgYXZvaWQg
-a2FzYW4gYnkgd3JhcHBpbmcgd2l0aCBrYXNhbl9kaXNhYmxlX2N1cnJlbnQsIGl0IHNlZW1zIGJl
-dHRlci4NCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC82NDQ0NjMNCnN1
-Y2ggYXM6DQorCWthc2FuX2Rpc2FibGVfY3VycmVudCgpOw0KICAvLyBhY2Nlc3MgZnANCisJa2Fz
-YW5fZW5hYmxlX2N1cnJlbnQoKTsNCg0KVGhhbmtzDQpDaHVuaHVpIExpDQoNCi0tLS0t08q8/tSt
-vP4tLS0tLQ0Kt6K8/sjLOiBNYXJrIFJ1dGxhbmQgW21haWx0bzptYXJrLnJ1dGxhbmRAYXJtLmNv
-bV0gDQq3osvNyrG85DogMjAxOMTqMTDUwjnI1SAxODozOQ0KytW8/sjLOiBDaHVuaHVpIExpICjA
-7rS6u9QpDQqzrcvNOiBDYXRhbGluIE1hcmluYXM7IFdpbGwgRGVhY29uOyBNYXR0aGlhcyBCcnVn
-Z2VyOyBNYXJjIFp5bmdpZXI7IEFyZCBCaWVzaGV1dmVsOyBKYW1lcyBNb3JzZTsgTWFzYWhpcm8g
-WWFtYWRhOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmc7IHdz
-ZF91cHN0cmVhbQ0K1vfM4jogUmU6IFtQQVRDSF0ga2FzYW46IGF2b2lkIG91dC1vZi1ib3VuZHMg
-aW4gdW53aW5kX2ZyYW1lDQoNCk9uIFR1ZSwgT2N0IDA5LCAyMDE4IGF0IDA2OjExOjAzUE0gKzA4
-MDAsIENodW5odWkgTGkgd3JvdGU6DQo+IEZyb206ICJjaHVuaHVpLmxpIiA8Y2h1bmh1aS5saUBt
-ZWRpYXRlay5jb20+DQo+IA0KPiAgICBrYXNhbiBkZXRlY3QgdW53aW5kX2ZyYW1lIG91dC1vZi1i
-b3VuZHMgZXJyb3Igd2hlbiBvbmUgdGFzayBkdW1wIA0KPiBhbm90aGVyLCBsb2cgYXMgYmVsb3cN
-Cj4gQlVHOiBLQVNBTjogb3V0LW9mLWJvdW5kcyBpbiB1bndpbmRfZnJhbWUrMHgxNDAvMHgyMGMg
-UmVhZCBvZiBzaXplIDggDQo+IGF0IGFkZHIgZmZmZmZmZWExZTIzNzhlMCBieSB0YXNrIEFuck1v
-bml0b3JUaHJlYS8xMTExIGF2b2lkIGthc2FuIA0KPiBvdXQtb2YtYm91bmRzIGVycm9yIGJ5IGRp
-c2FibGUga2FzYW4gZm9yIHN0YWNrdHJhY2UuYw0KDQpUaGlzIGRvZXNuJ3QgbG9vayByaWdodC4g
-U2luY2UgdW53aW5kX2ZyYW1lIHVzZXMgUkVBRF9PTkNFX05PQ0hFQ0soKSwgd2Ugc2hvdWxkIG5l
-dmVyIHBlcmZvcm0gYW4gYWNjZXNzIHRoYXQgS0FTQU4gY29tcGxhaW5zIGFib3V0Lg0KDQpJIGRv
-bid0IHRoaW5rIHRoYXQgd2Ugc2hvdWxkIGNvbXBsZXRlbHkgZGlzYWJsZSBpbnN0cnVtZW50YXRp
-b24gb2Ygc3RhY2t0cmFjZS5jLg0KDQpDYW4geW91IHBsZWFzZSBmaWd1cmUgb3V0IHByZWNpc2Vs
-eSB3aGljaCBsaW5lIEtBU0FOIGlzIGNvbXBsYWluaW5nIGFib3V0PyBpLmUuIHVzZSBzY3JpcHRz
-L2ZhZGRyMmxpbmUuDQoNClRoYW5rcywNCk1hcmsuDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IGNo
-dW5odWkubGkgPGNodW5odWkubGlAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtNjQv
-a2VybmVsL01ha2VmaWxlIHwgMiArKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQva2VybmVsL01ha2VmaWxlIGIvYXJjaC9h
-cm02NC9rZXJuZWwvTWFrZWZpbGUgDQo+IGluZGV4IDk1YWM3MzcuLjYwNmQwZTIgMTAwNjQ0DQo+
-IC0tLSBhL2FyY2gvYXJtNjQva2VybmVsL01ha2VmaWxlDQo+ICsrKyBiL2FyY2gvYXJtNjQva2Vy
-bmVsL01ha2VmaWxlDQo+IEBAIC01Nyw2ICs1Nyw4IEBAIGFybTY0LW9iai0kKENPTkZJR19DUkFT
-SF9EVU1QKQkJKz0gY3Jhc2hfZHVtcC5vDQo+ICBhcm02NC1vYmotJChDT05GSUdfQVJNX1NERV9J
-TlRFUkZBQ0UpCSs9IHNkZWkubw0KPiAgYXJtNjQtb2JqLSQoQ09ORklHX0FSTTY0X1NTQkQpCQkr
-PSBzc2JkLm8NCj4gIA0KPiArS0FTQU5fU0FOSVRJWkVfc3RhY2t0cmFjZS5vIDo9IG4NCj4gKw0K
-PiAgb2JqLXkJCQkJCSs9ICQoYXJtNjQtb2JqLXkpIHZkc28vIHByb2Jlcy8NCj4gIG9iai1tCQkJ
-CQkrPSAkKGFybTY0LW9iai1tKQ0KPiAgaGVhZC15CQkJCQk6PSBoZWFkLm8NCj4gLS0NCj4gMS45
-LjENCj4gDQo=
+On Wed, Oct 10, 2018 at 07:20:01AM +0200, Martin Schwidefsky wrote:
+> Hi Greg,
+> 
+> please pull s390 fixes for 4.19:
+> 
+> The following changes since commit 4b92e7fd76e94624e3d5ff56b3d6a5788c4a7ac8:
+> 
+>   Merge tag 'mtd/fixes-for-4.19-rc5' of git://git.infradead.org/linux-mtd (2018-09-20 11:25:20 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-4.19-4
+
+Now merged, thanks.
+
+greg k-h
