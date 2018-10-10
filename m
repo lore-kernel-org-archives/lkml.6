@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCF1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A56C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFD52075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFD52075C
+	by mail.kernel.org (Postfix) with ESMTP id BF3F82075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:35:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3F82075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJJW46 (ORCPT
+        id S1727051AbeJJW56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:56:58 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22727 "EHLO mga18.intel.com"
+        Wed, 10 Oct 2018 18:57:58 -0400
+Received: from mga05.intel.com ([192.55.52.43]:14904 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726970AbeJJW46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:56:58 -0400
+        id S1726479AbeJJW55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:57:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 08:34:14 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 08:35:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,364,1534834800"; 
-   d="scan'208";a="81501405"
+   d="scan'208";a="81501870"
 Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2018 08:34:15 -0700
-Subject: Re: [PATCH i2c-next v7 4/5] i2c: aspeed: Remove hard-coded bus
- timeout value setting
+  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2018 08:35:09 -0700
+Subject: Re: [PATCH i2c-next v7 3/5] dt-bindings: i2c: aspeed: Add
+ 'bus-timeout-ms' property as an optional property
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     Wolfram Sang <wsa@the-dreams.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
@@ -47,15 +47,15 @@ Cc:     Wolfram Sang <wsa@the-dreams.de>,
         jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
         vernon.mauery@linux.intel.com
 References: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com>
- <20181005214507.26315-5-jae.hyun.yoo@linux.intel.com>
- <CAFd5g44vi55oMkif1K+hx=O_J0_jqeQunRNiDARF0=qJ=54jiw@mail.gmail.com>
+ <20181005214507.26315-4-jae.hyun.yoo@linux.intel.com>
+ <CAFd5g44WcAE5oJCmRQKsRmbrfYPx55kdaT6xW1hzCoYAR5YQNg@mail.gmail.com>
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <6282e4e5-188b-fda5-8f71-d4d2f46166d4@linux.intel.com>
-Date:   Wed, 10 Oct 2018 08:34:15 -0700
+Message-ID: <0851b848-415e-6a15-c265-e05f541fc9eb@linux.intel.com>
+Date:   Wed, 10 Oct 2018 08:35:10 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g44vi55oMkif1K+hx=O_J0_jqeQunRNiDARF0=qJ=54jiw@mail.gmail.com>
+In-Reply-To: <CAFd5g44WcAE5oJCmRQKsRmbrfYPx55kdaT6xW1hzCoYAR5YQNg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,5 +68,7 @@ On 10/9/2018 5:00 PM, Brendan Higgins wrote:
 > 
 > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 > 
+> Thanks for putting all the work in to do it this way!
+> 
 
-Thank you!
+Thanks a lot for your review, Brendan!
