@@ -2,103 +2,147 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0369C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A093BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0C521479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:38:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNCsu8wx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0C521479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 64F0D21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F0D21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJJN70 (ORCPT
+        id S1726523AbeJJOA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 09:59:26 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43558 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeJJN70 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 09:59:26 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y20-v6so3853789eds.10;
-        Tue, 09 Oct 2018 23:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=+1mlY4BikLXaa0p0zLfrGADPXuVytukdByLu9pnRbvk=;
-        b=DNCsu8wxOQWcP1y9ObkllZ6vxGbe627OhP9HXJulxowgYebMJ9I6n5hnqrFJ0Us29j
-         2T5aDpI2wBiAGItdxEdTXCMkWSWzTrL2/j4yzKf46txNUR6/9s1w2xRM1iZmLwz7UQ15
-         Of5bq7UHn6UT8ldQJrX+aPKASqFfjQ5qQ/F3tP1ZQF8EMg85WoI539SHTUyTIM1xzoNF
-         jA4E+ber497WsKSF4RzkzdzMlVNUpUupTdgf54l6VN/jB7g0M2BY3fWcMXgJfDBa61YB
-         YBWbRhcfMU2Rl91hYpRGJAwZ1zIVvkgMe/BtHHT/V05SeTJ2nqaffUNQgx0uhX3mzuha
-         B/0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=+1mlY4BikLXaa0p0zLfrGADPXuVytukdByLu9pnRbvk=;
-        b=DfH6SxMVN52yXyjBQcrtX/029UXemzTHCS4F7addVdyENz16+CmI67/+1OQ6EKe03j
-         7L4lzaMgsql4W9IfbxtOujJdxuppOcf5DqnseuMvFMa/OAPhZhLipxGPyd3k5Nrs0bSG
-         ACVsNywthAQKMynwi4uEA4J09s8DEzJx3ZeXnb1NLMTiMmxxlVJZfLGUrcqu1k4PKL4/
-         anGK8SKp/PU/5dzDEScJerXWZP+XMqVnrQv3t0akSpeh8eAbfbfFT2E6+El8X4l5oEFY
-         w8cqn3Ly/SdhXX4AAn4+i5M+uFKrQA29E730Ygn/jilwiWf0v7yg7l0Qt/nZOceCB3iX
-         Jtkg==
-X-Gm-Message-State: ABuFfogHz5LGFK3//xZD+GNyhqEjPYaGVgxHsSohph+N9utEZvHiuHSE
-        K3w+RZlEXIVaM6Y6Q7tSmcM=
-X-Google-Smtp-Source: ACcGV60uEiN4Ncets5H5lFC92GhuaATeS0fsB4Kp1+1ByUGMEINBLzacHPSQpc5Lm90vnP+kjwFb1A==
-X-Received: by 2002:a50:9e26:: with SMTP id z35-v6mr39884327ede.90.1539153524773;
-        Tue, 09 Oct 2018 23:38:44 -0700 (PDT)
-Received: from localhost (80-62-117-210-mobile.dk.customer.tdc.net. [80.62.117.210])
-        by smtp.gmail.com with ESMTPSA id w23sm6746473edv.30.2018.10.09.23.38.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 23:38:44 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Chuanhua Han <chuanhua.han@nxp.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        "broonie\@kernel.org" <broonie@kernel.org>,
-        "linux-spi\@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] spi: spi-mem: Add the spi_set_xfer_bpw function
-References: <20180921070628.35153-1-chuanhua.han@nxp.com>
-        <20180928084431.300b7bf9@bbrezillon>
-        <AM6PR04MB43573478FFD0E512A117484097EC0@AM6PR04MB4357.eurprd04.prod.outlook.com>
-        <20180928091833.15e95f7f@bbrezillon>
-        <AM6PR04MB4357280CD4F77FCB01AB5C7097E70@AM6PR04MB4357.eurprd04.prod.outlook.com>
-        <20181009120522.6b2bd15a@bbrezillon>
-        <AM6PR04MB43575B32D7C8FBFC3FD7B45A97E70@AM6PR04MB4357.eurprd04.prod.outlook.com>
-        <87tvlv2wo7.fsf@gmail.com>
-        <AM6PR04MB435784E00F0C68A310CD281B97E00@AM6PR04MB4357.eurprd04.prod.outlook.com>
-Date:   Wed, 10 Oct 2018 08:38:42 +0200
-In-Reply-To: <AM6PR04MB435784E00F0C68A310CD281B97E00@AM6PR04MB4357.eurprd04.prod.outlook.com>
-        (Chuanhua Han's message of "Wed, 10 Oct 2018 02:42:54 +0000")
-Message-ID: <87d0sii9vx.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 10 Oct 2018 10:00:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50674 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725791AbeJJOA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:00:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D9FC4ACAB;
+        Wed, 10 Oct 2018 06:39:43 +0000 (UTC)
+Subject: Re: [PATCH v5 0/3] x86: make rsdp address accessible via boot params
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, linux-doc@vger.kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, corbet@lwn.net,
+        boris.ostrovsky@oracle.com,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+References: <20181010061456.22238-1-jgross@suse.com>
+ <20181010062352.GC37224@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <12afa65a-9e07-bb2c-5621-85074ea37135@suse.com>
+Date:   Wed, 10 Oct 2018 08:39:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181010062352.GC37224@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chuanhua Han <chuanhua.han@nxp.com> writes:
+On 10/10/2018 08:23, Ingo Molnar wrote:
+> 
+> * Juergen Gross <jgross@suse.com> wrote:
+> 
+>> In the non-EFI boot path the ACPI RSDP table is currently found via
+>> either EBDA or by searching through low memory for the RSDP magic.
+>> This requires the RSDP to be located in the first 1MB of physical
+>> memory. Xen PVH guests, however, get the RSDP address via the start of
+>> day information block.
+>>
+>> In order to support an arbitrary RSDP address this patch series adds
+>> the physical address of the RSDP to the boot params structure filled
+>> by the boot loader.
+>>
+>> Juergen Gross (3):
+>>   x86/xen: fix boot loader version reported for pvh guests
+>>   x86/boot: add acpi rsdp address to setup_header
+>>   x86/acpi: take rsdp address for boot params if available
+>>
+>>  Documentation/x86/boot.txt            | 32 +++++++++++++++++++++++++++++++-
+>>  arch/x86/boot/header.S                |  6 +++++-
+>>  arch/x86/include/asm/acpi.h           |  7 +++++++
+>>  arch/x86/include/asm/x86_init.h       |  2 ++
+>>  arch/x86/include/uapi/asm/bootparam.h |  4 ++++
+>>  arch/x86/kernel/acpi/boot.c           |  6 ++++++
+>>  arch/x86/kernel/head32.c              |  1 +
+>>  arch/x86/kernel/head64.c              |  2 ++
+>>  arch/x86/kernel/setup.c               | 17 +++++++++++++++++
+>>  arch/x86/kernel/x86_init.c            |  3 +--
+>>  arch/x86/xen/enlighten_pvh.c          |  2 +-
+>>  11 files changed, 77 insertions(+), 5 deletions(-)
+> 
+> I have some vague memories of an older variant of this feature breaking stuff and resulting in 
+> me involuntarily participating in an overly long bisection session.
+> 
+> If that memory is right and I'm not confusing it with some other patchset, could you please 
+> provide some more context, what that old problem was, how it was resolved, whether it is 
+> expected to trigger on any machines, etc., to create some warm fuzzy feelings about this 
+> patch-set and to reduce my bisectofobia? ;-)
 
->> I am using XSPI mode on LS1021A, talking to a lot of different SPI devices.
->> And they all work, and I believe everything is quite "normal".
->> 
-> Since I don't have the board of LS1021, I can't test it. I use other boards
-> with DSPI (such as LS1043, LS2088, etc.),
-> and I test sp-flash connected on DSPI. If XSPI mode is used at this time, data
-> cannot be transmitted normally.
+You can just dive into the discussion we had back in February:
 
-Please describe what happens in much more detailed terms that "cannot be
-transmitted normally".  It is simply impossible to assist you when you
-report problems in such general terms.
+https://lore.kernel.org/lkml/20180213163244.j2zuxyhs4kbfhwgj@gmail.com/
 
-/Esben
+The scheme I have used in V5 of the series is the one you agreed to use
+back then.
+
+A quick summary of the problem you mentioned:
+
+There are some downstream variants of grub2 with a patch breaking the
+boot protocol by writing garbage past the end of setup_header. Adding
+a new field at the end of setup_header (here: rsdp_address) resulted in
+those grub2 variants clobbering the preset value of 0.
+
+The solution is to let grub2 report back the used boot protocol version
+with setting a flag "I am reporting back my version". The kernel now is
+capable to know which fields of setup_header are known to grub2 and can
+act accordingly.
+
+The related grub2 patch series is under review right now.
+
+
+Juergen
