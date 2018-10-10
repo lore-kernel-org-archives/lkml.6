@@ -2,131 +2,143 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C209C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 635382150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE30214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:17:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="dbrMdp0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 635382150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwjXAHtb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE30214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbeJJWih (ORCPT
+        id S1726770AbeJJWkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:38:37 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:45127 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJWia (ORCPT
+        Wed, 10 Oct 2018 18:40:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41730 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJJWkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:38:30 -0400
-Received: by mail-yw1-f65.google.com with SMTP id v198-v6so2301283ywg.12
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:15:52 -0700 (PDT)
+        Wed, 10 Oct 2018 18:40:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23-v6so2667600pgc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=fE4xEy53WtuGc23PB6OocrWOqKsA1Ap5tx7Zq7YRJJU=;
-        b=dbrMdp0OT0r7iqxHERFNmoN5KTFysoZSqg3uVsufo0QCVzq9wbVE4BUeV/9tlliYDn
-         QH6mOzdHFPGSy8b6JpQh9dFcIqz7tOgKOWe8qV9jVFxpHHm78dglz9n4K3jima5Pk4lo
-         AVzelP8EVPGhz5jgzz1xifzCeEt3sbtiPxfnuKIvOQ09qzDZncS68RxLkTPHmGgJJ+5U
-         ASX7tvt06nwNOiQrtZMx1kzRzR0OD02R3JlLtxaj5fsiBT294p66a8xU/7GEidVrICmL
-         3b7VfFPqZHfgEH8ECWY6MbiX+iakEVx6aT6OQXVdchW7xlAxXTKbtprnLVY/JiPRHs6d
-         Kbag==
+        bh=cRO6xWryp9VZ+Z/m1BE0LEBrMcJd0c81mmESyZBjTac=;
+        b=XwjXAHtb0076NrYxue1X96i0pusQL6JnkAJlh5lYIGh1VZtESL0yhZI+fP5lOJ6h/x
+         8rXVXBc4IH7hc/P9Iae0un9x+SQn8K5kdwgTKc4iTMzP0ZISM48JjZvmJoP9Kk6nvxrh
+         vDPpC1G4OqAJ4lLc8c8tzmRuw1LbF28WqNNIXFFLhDnPK0i+ilqe3o+csqKcZyyICqxw
+         6KqpVDO/xQ5GAxyv9C9/1bXJofA1DAiDWnihC4lPHVPQ4hw67bciSmi0mOFmRPxWK3jF
+         Oli9O4uG+JwZ6qW1vwaG4omh08g+gvjbnbg8c8EDyIAWHruTkTTblTO6p4veYB77eTE5
+         yq2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fE4xEy53WtuGc23PB6OocrWOqKsA1Ap5tx7Zq7YRJJU=;
-        b=VD7rY6vHcL8dl1ryv2XDZ6xuMLY1PH4Jf2vPjk0+OW+cwKUBgnlDoMFOAGxYbyhUB+
-         9y6CFnzx/yEIvSMBv8FMCc4O3CXx9KIeK27R5CnvlXTEDcCXkP+WfRWj9XaS2oYAqGLU
-         O3m42il2poIKhbWYWYd4HoiqM5U/gBLdo5JdjcxdsI9aeXap94tzPk1boUMfGsq+JuCq
-         HwTu6CBkKHFs4sk4ppJKlOb6BMN28wLA9JlrjCFF7z99MQvsTqRsrtFEfYhFpjWs+iES
-         48YPlFrKDb+imsXXRUAa9QedFV+1L2h6qT41QwNvt7QexWQWtE6UBIKZswEseEeU5cj8
-         XwPg==
-X-Gm-Message-State: ABuFfog2U22yvaMV6utasqktI0fSwpASf+s1GjilJzaOSusbHWhPV06U
-        T6FffNvEjEWd4Vcycwf6ExexR0hqKeo=
-X-Google-Smtp-Source: ACcGV62r6fiPBfckuqJo4BGJhZhHVwnX47nPV3jKkzBIwRU7qg7otvD/ojlEJR49hfLGJJwRCrFttA==
-X-Received: by 2002:a81:7307:: with SMTP id o7-v6mr18698574ywc.183.1539184552080;
-        Wed, 10 Oct 2018 08:15:52 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::6:4a04])
-        by smtp.gmail.com with ESMTPSA id c5-v6sm6070471ywf.73.2018.10.10.08.15.50
+        bh=cRO6xWryp9VZ+Z/m1BE0LEBrMcJd0c81mmESyZBjTac=;
+        b=AIN0IODpYwARbI6b0+n02WZH+XJrsyJ5IYRlKOQRuPJgF40JHVl6IdC7iipKta6Wg+
+         5q2dTlhXCxzowFV0jjnKtayIo9RxfZN4Qo3DzNoai5y17qF7AnKTE5LFmvj0sObFzZg1
+         glV2sVIqEGfuDzvb4bwmUoHuQB0xMQNZK+0+upk6B59gqQFIlCGocSC7Tv5+TbpotLIA
+         sDR7f3rB3oMMYQKLnzKYTk+EE05rorSrFibZnl/MrcSRmxdJlEsT012vK2uZBcQYecAr
+         RWu/u2Owza7yEYfmrUURY6P9Dg3KvRmbj7IKRKYd24+UvY50wdeymJCxNuUJaZQhIBgB
+         Rg8Q==
+X-Gm-Message-State: ABuFfoiEw5eW2xFuT/PiFvcG3EmtL0QN0eu1285/YiQgJ2KyF7wWeg+X
+        TtisqJ7LkZ+Mz/LA+j2Flnc=
+X-Google-Smtp-Source: ACcGV63cZhwfwsfVC+TaZo4bpjTFvo5bgwHvlTZ7yak1StRjUHEIWq13BRYAIqBcyhwuTjvhxgL69g==
+X-Received: by 2002:a63:4e11:: with SMTP id c17-v6mr29686244pgb.6.1539184661626;
+        Wed, 10 Oct 2018 08:17:41 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id d18-v6sm48642136pfk.163.2018.10.10.08.17.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 08:15:50 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 11:15:49 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Rik van Riel <riel@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH 4/4] mm: zero-seek shrinkers
-Message-ID: <20181010151549.GC2527@cmpxchg.org>
-References: <20181009184732.762-1-hannes@cmpxchg.org>
- <20181009184732.762-5-hannes@cmpxchg.org>
- <e01c4f441e24bb31816a3080389dcae7b49cc1ff.camel@fb.com>
+        Wed, 10 Oct 2018 08:17:40 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Thu, 11 Oct 2018 00:17:29 +0900
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Yang Shi <yang.s@alibaba-inc.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: Re: INFO: rcu detected stall in shmem_fault
+Message-ID: <20181010151729.GC3949@tigerII.localdomain>
+References: <000000000000dc48d40577d4a587@google.com>
+ <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
+ <20181010085945.GC5873@dhcp22.suse.cz>
+ <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
+ <20181010113500.GH5873@dhcp22.suse.cz>
+ <20181010114833.GB3949@tigerII.localdomain>
+ <20181010122539.GI5873@dhcp22.suse.cz>
+ <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e01c4f441e24bb31816a3080389dcae7b49cc1ff.camel@fb.com>
+In-Reply-To: <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:03:50AM +0000, Rik van Riel wrote:
-> On Tue, 2018-10-09 at 14:47 -0400, Johannes Weiner wrote:
+On (10/10/18 14:29), Dmitry Vyukov wrote:
+> >> A bit unrelated, but while we are at it:
+> >>
+> >>   I like it when we rate-limit printk-s that lookup the system.
+> >> But it seems that default rate-limit values are not always good enough,
+> >> DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST can still be too
+> >> verbose. For instance, when we have a very slow IPMI emulated serial
+> >> console -- e.g. baud rate at 57600. DEFAULT_RATELIMIT_INTERVAL and
+> >> DEFAULT_RATELIMIT_BURST can add new OOM headers and backtraces faster
+> >> than we evict them.
+> >>
+> >> Does it sound reasonable enough to use larger than default rate-limits
+> >> for printk-s in OOM print-outs? OOM reports tend to be somewhat large
+> >> and the reported numbers are not always *very* unique.
+> >>
+> >> What do you think?
+> >
+> > I do not really care about the current inerval/burst values. This change
+> > should be done seprately and ideally with some numbers.
 > 
-> > These workloads also deal with tens of thousands of open files and
-> > use
-> > /proc for introspection, which ends up growing the proc_inode_cache
-> > to
-> > absurdly large sizes - again at the cost of valuable cache space,
-> > which isn't a reasonable trade-off, given that proc inodes can be
-> > re-created without involving the disk.
-> > 
-> > This patch implements a "zero-seek" setting for shrinkers that
-> > results
-> > in a target ratio of 0:1 between their objects and IO-backed
-> > caches. This allows such virtual caches to grow when memory is
-> > available (they do cache/avoid CPU work after all), but effectively
-> > disables them as soon as IO-backed objects are under pressure.
-> > 
-> > It then switches the shrinkers for procfs and sysfs metadata, as well
-> > as excess page cache shadow nodes, to the new zero-seek setting.
+> I think Sergey meant that this place may need to use
+> larger-than-default values because it prints lots of output per
+> instance (whereas the default limit is more tuned for cases that print
+> just 1 line).
 > 
-> This patch looks like a great step in the right
-> direction, though I do not know whether it is
-> aggressive enough.
-> 
-> Given that internal slab fragmentation will
-> prevent the slab cache from returning a slab to
-> the VM if just one object in that slab is still
-> in use, there may well be workloads where we
-> should just put a hard cap on the number of
-> freeable items these slabs, and reclaim them
-> preemptively.
-> 
-> However, I do not know for sure, and this patch
-> seems like a big improvement over what we had
-> before, so ...
+> I've found at least 1 place that uses DEFAULT_RATELIMIT_INTERVAL*10:
+> https://elixir.bootlin.com/linux/latest/source/fs/btrfs/extent-tree.c#L8365
+> Probably we need something similar here.
 
-Fully agreed, fragmentation is still a concern. I'm still working on
-that part, but artificial caps and pro-active reclaim are trickier to
-get right than prioritization, and since these patches here are useful
-on their own I didn't want to hold them back.
+Yes, Dmitry, that's what I meant - to use something like
+DEFAULT_RATELIMIT_INTERVAL * 10 in OOM. I didn't mean to change
+the default values system wide.
 
-> > Reported-by: Domas Mituzas <dmituzas@fb.com>
-> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> 
-> Reviewed-by: Rik van Riel <riel@surriel.com>
+---
 
-Thanks!
+We are not rate-limiting a single annoying printk() in OOM, but
+functions that do a whole bunch of printks - OOM header, backtraces, etc.
+Thus OOM report can be, I don't know, 50 or 70 or 100 lines (who knows).
+So that's why rate-limit in OOM is more permissive in terms of number of
+printed lines. When we rate-limit a single printk() we let 10 prinks()
+/*10 lines*/ max every 5 seconds. While in OOM this transforms into
+10 dump_header() + 10 oom_kill_process() every 5 seconds. Still can be
+too many printk()-s, enough to lockup the system.
+
+	-ss
