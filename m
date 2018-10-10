@@ -2,148 +2,173 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19180C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CF3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C599D214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C599D214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C89312087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:13:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTmabuYb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89312087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeJKBgd (ORCPT
+        id S1726943AbeJKBgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:36:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:38148 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbeJKBgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:36:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 11:13:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,365,1534834800"; 
-   d="scan'208";a="81546016"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2018 11:13:12 -0700
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
- <20181009170051.GA40606@tiger-server>
- <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
- <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
- <20181010095838.GG5873@dhcp22.suse.cz>
- <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
- <20181010172451.GK5873@dhcp22.suse.cz>
- <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
- <20181010175354.GO5873@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <086eb8d2-70a4-ead5-2ed2-260e98a0376f@linux.intel.com>
-Date:   Wed, 10 Oct 2018 11:13:12 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 10 Oct 2018 21:36:48 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35980 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbeJKBgs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:36:48 -0400
+Received: by mail-qt1-f196.google.com with SMTP id u34-v6so6774734qth.3;
+        Wed, 10 Oct 2018 11:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dLVshSdciuneEtH9iUXf7KeMbwhOUd0vgPurEtL8bPc=;
+        b=OTmabuYbgJc702LapkpM9KutpYprmnrIlUpEmnU3dXYVKhbWKb91p8B7Z+yp/Tyx5A
+         5Xp6AO9wvI1KkjR0XKGyR9zk+OXS3bAuxmghHG/tMRe+qDvUnH0oGXmXJrUsKsO7564B
+         vaO/yft9myj8eLNmBt+uEG27SCKi6jqFWJ80I0Z6LAofgvd0sZ9CnOBt4WN3U4JA4QQ5
+         NDn4sMk612UbolTTwpfEvMoZ66By2GCHdBoNV0CBsIXcMeL4cZCzj+AfneIPmGQ6XIJV
+         Uc/FOIIqDUgwJBxWI/4SxCRd6sLk5NpNDCwUwNUoQAARwUOQBuH0rpDIi+DZp3sVmg6n
+         b5yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dLVshSdciuneEtH9iUXf7KeMbwhOUd0vgPurEtL8bPc=;
+        b=rz2MEP617h7rFCIhdbWW00+WOI+wuTYVdeqF4ZqD5uCgvIgaL6Htgc3U4m7ExDy5Zu
+         8PUtQy3622XMNi+4R802oMuWktu0JSJIrQbkB1DlcHzazyZYzLKcAPSXEYv1H4P3Ns7r
+         hmiwY4gcpIMk1G4vyJSKZagmBUYjU+PvrP9dbdmBgEiAKS2ccymMAlzCNb00AGXu9irH
+         bHZsEeqID6B+pM+BK1JQ9Cc1dD5tM/8yFdj+Zog3c0s8KSXFIMcexhsd0uQsUwBgIUxb
+         MxUZEz5QLWSQVob6AnWLi73tcuRr4j2o3998DOBnEmbo9SVMV1wJ3bblXeMnaJ1Vrj+J
+         yHRQ==
+X-Gm-Message-State: ABuFfoixwSiUOIcx4hJEezwLZRBoPudZw6gAmPxLQB3XYLXwk+xo3enQ
+        2OrKKU7IvjB4s+DQIKo1jCU=
+X-Google-Smtp-Source: ACcGV61aQ9W3Zt+c6mmXq8yzVp7G60M/A6oXq2f4hWmHKTbx79ycsJeQw0QvedH+soMeYp4PF0DKuA==
+X-Received: by 2002:a0c:9c42:: with SMTP id w2-v6mr28331896qve.194.1539195209425;
+        Wed, 10 Oct 2018 11:13:29 -0700 (PDT)
+Received: from localhost.localdomain ([2001:1284:f022:f7f5:3ccf:a328:f8f8:94f8])
+        by smtp.gmail.com with ESMTPSA id l195-v6sm11713501qke.33.2018.10.10.11.13.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 11:13:28 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id A7CE2181183; Wed, 10 Oct 2018 15:13:25 -0300 (-03)
+Date:   Wed, 10 Oct 2018 15:13:25 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Subject: Re: KASAN: use-after-free Read in sctp_id2assoc
+Message-ID: <20181010181325.GD6761@localhost.localdomain>
+References: <0000000000007e767d05776336da@google.com>
+ <20181005145855.GB6761@localhost.localdomain>
+ <CACT4Y+YVRWSF+VyoBB1vwDevt0gwZYz69bSAivmZDG6r4J-kaA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181010175354.GO5873@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YVRWSF+VyoBB1vwDevt0gwZYz69bSAivmZDG6r4J-kaA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/2018 10:53 AM, Michal Hocko wrote:
-> On Wed 10-10-18 10:39:01, Alexander Duyck wrote:
->>
->>
->> On 10/10/2018 10:24 AM, Michal Hocko wrote:
->>> On Wed 10-10-18 09:39:08, Alexander Duyck wrote:
->>>> On 10/10/2018 2:58 AM, Michal Hocko wrote:
->>>>> On Tue 09-10-18 13:26:41, Alexander Duyck wrote:
->>>>> [...]
->>>>>> I would think with that being the case we still probably need the call to
->>>>>> __SetPageReserved to set the bit with the expectation that it will not be
->>>>>> cleared for device-pages since the pages are not onlined. Removing the call
->>>>>> to __SetPageReserved would probably introduce a number of regressions as
->>>>>> there are multiple spots that use the reserved bit to determine if a page
->>>>>> can be swapped out to disk, mapped as system memory, or migrated.
->>>>>
->>>>> PageReserved is meant to tell any potential pfn walkers that might get
->>>>> to this struct page to back off and not touch it. Even though
->>>>> ZONE_DEVICE doesn't online pages in traditional sense it makes those
->>>>> pages available for further use so the page reserved bit should be
->>>>> cleared.
->>>>
->>>> So from what I can tell that isn't necessarily the case. Specifically if the
->>>> pagemap type is MEMORY_DEVICE_PRIVATE or MEMORY_DEVICE_PUBLIC both are
->>>> special cases where the memory may not be accessible to the CPU or cannot be
->>>> pinned in order to allow for eviction.
->>>
->>> Could you give me an example please?
->>
->> Honestly I am getting a bit beyond my depth here so maybe Dan could explain
->> better. I am basing the above comment on Dan's earlier comment in this
->> thread combined with the comment that explains the "memory_type" field for
->> the pgmap:
->> https://elixir.bootlin.com/linux/v4.19-rc7/source/include/linux/memremap.h#L28
->>
->>>> The specific case that Dan and Yi are referring to is for the type
->>>> MEMORY_DEVICE_FS_DAX. For that type I could probably look at not setting the
->>>> reserved bit. Part of me wants to say that we should wait and clear the bit
->>>> later, but that would end up just adding time back to initialization. At
->>>> this point I would consider the change more of a follow-up optimization
->>>> rather than a fix though since this is tailoring things specifically for DAX
->>>> versus the other ZONE_DEVICE types.
->>>
->>> I thought I have already made it clear that these zone device hacks are
->>> not acceptable to the generic hotplug code. If the current reserve bit
->>> handling is not correct then give us a specific reason for that and we
->>> can start thinking about the proper fix.
->>
->> I might have misunderstood your earlier comment then. I thought you were
->> saying that we shouldn't bother with setting the reserved bit. Now it sounds
->> like you were thinking more along the lines of what I was here in my comment
->> where I thought the bit should be cleared later in some code specifically
->> related to DAX when it is exposing it for use to userspace or KVM.
+On Wed, Oct 10, 2018 at 05:28:12PM +0200, Dmitry Vyukov wrote:
+> On Fri, Oct 5, 2018 at 4:58 PM, Marcelo Ricardo Leitner
+> <marcelo.leitner@gmail.com> wrote:
+> > On Thu, Oct 04, 2018 at 01:48:03AM -0700, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
+> >> git tree:       net-next
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
+> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >>
+> >> Unfortunately, I don't have any reproducer for this crash yet.
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
+> >>
+> >> netlink: 'syz-executor1': attribute type 1 has an invalid length.
+> >> ==================================================================
+> >> BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0
+> >> net/sctp/socket.c:276
+> >> Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
+> >>
+> >> CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+> >>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+> >>  kasan_report_error mm/kasan/report.c:354 [inline]
+> >>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >>  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
+> >
+> > I'm not seeing yet how this could happen.
+> > All sockopts here are serialized by sock_lock.
+> > do_peeloff here would create another socket, but the issue was
+> > triggered before that.
+> > The same function that freed this memory, also removes the entry from
+> > idr mapping, so this entry shouldn't be there anymore.
+> >
+> > I have only two theories so far:
+> > - an issue with IDR/RCU.
+> > - something else happened that just the call stacks are not revealing.
 > 
-> I was referring to my earlier comment that if you need to do something
-> about struct page initialization (move_pfn_range_to_zone) outside of the
-> lock (with the appropriate ground work that is needed) rather than
-> pulling more zone device hacks into the generic hotplug code [1]
-> 
-> [1] http://lkml.kernel.org/r/20180926075540.GD6278@dhcp22.suse.cz
+> The "asoc->base.sk != sk" check after idr_find suggests that we don't
+> actually know what sock it belongs to. And if we don't know then
 
-The only issue is if we don't pull the code together we are looking at a 
-massive increase in initialization times. So for example just the loop 
-that was originally there that was setting the pgmap and resetting the 
-LRU prev pointer was adding an additional 20+ seconds per node with 3TB 
-allocated per node. That essentially doubles the initialization time.
+Right. The check is more because the IDR is global and not per socket
+(and we don't want sockets accessing asocs from other sockets), and not
+that the asoc may move to another socket in between, but it also
+protects from such cases, yes.
 
-How would you recommend I address that? Currently it is a few extra 
-lines in the memmap_init_zone_device function. Eventually I was planning 
-to combine the memmap_init_zone hoplug functionality and 
-memmap_init_zone_device core functionality into a single function called 
-__init_pageblock[1] and then reuse that functionality for deferred page 
-init as well.
+> locking this sock can't help keeping another sock association alive.
+> Am I missing something obvious here? Should we take assoc ref while we
 
-[1] 
-http://lkml.kernel.org/r/20181005151224.17473.53398.stgit@localhost.localdomain
+Not sure. Maybe I am.  Thanks for looking into this, btw.
+
+> are still holding sctp_assocs_id_lock?
+
+Shouldn't be needed.
+
+Solely by the call stacks:
+- we tried to establish a new asoc from a sctp_connect() call,
+  blocking one.
+- it slept waiting for the connect
+- (something closed the asoc in between the sleeps, because it freed
+  the asoc right when waking up on sctp_wait_for_connect())
+- it freed the asoc after sleeping on it on sctp_wait_for_connect [A]
+- another thread tried to peeloff that asoc [B]
+
+For [B] to access the asoc in question, it had to take the same sock
+lock [A] had taken, and then the idr should not return an asoc in
+sctp_i2asoc(). Note that we can't peeloff an asoc twice, thus why
+the certainty here.
+
+If [B] actually kicked in before the sleep resumed, that should have
+been fine because it took the same sock lock [A] would have to
+re-take. In this case an asoc would have been returned by
+sctp_id2asoc(), the asoc would have been moved to a new socket, but
+all while holding the original socket sock lock.
 
