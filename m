@@ -2,91 +2,155 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260C5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6989C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B5420835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B5420835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 7386520835
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7386520835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeJJRAb (ORCPT
+        id S1727219AbeJJRAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:00:31 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53224 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeJJRAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:00:31 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 189-v6so4706911wmw.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:39:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q46N/Cig/LEIA9U22CIkDbnUUw9Tof6cjCzl8SQ4bKI=;
-        b=fESkw4BDZZHgGBBouii0K2zQYQMc4xfZfFfvgG/LFYNBF7AH5OLOMxLSukE/ED/z+R
-         8Qy1y+3m6Zct/fU+qc15ZGWtERbfRW8W5ImGkRJKrRh8HNOjVfj09NjwG3ziUGv6n5yN
-         YvzYVAd2RSnwa70NuXCSbpToD24jAgnr1QNDIN1ZwQ9/lx1vZPsu411RrGwbbdxOOtYo
-         63f8thvMrceirwtvpLgFNRqFbAxI/uNH9jgMvOdlFqcnCe1jJy9bRPk92jebqHg6CWNJ
-         nMhsW8Swt0oH/8au12HbjU0PraQdgRl52AHzB6xIkXD+o9BLv4lB93c11O6mAamZrnVo
-         2+MA==
-X-Gm-Message-State: ABuFfogn4a4cSmYb1VNJeJPHCMUVk5Vw02MdXdeTICPeoaoq3vTWYEcw
-        Of0CpHJZw94SjgYN58ccywg=
-X-Google-Smtp-Source: ACcGV62DTXCcbPwJL3wQj2bVrNZNjNfCPyv+sqtoHVPVKzoEsDRYz4S2dqiYVuw0LhcaJIEgP5HCkw==
-X-Received: by 2002:a1c:2dc5:: with SMTP id t188-v6mr219547wmt.94.1539164349444;
-        Wed, 10 Oct 2018 02:39:09 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id u76-v6sm31355346wmd.10.2018.10.10.02.39.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 02:39:08 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 1D817125018; Wed, 10 Oct 2018 11:39:08 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 11:39:08 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     linux-mm@kvack.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH v3 2/3] mm: return zero_resv_unavail optimization
-Message-ID: <20181010093908.GA20663@techadventures.net>
-References: <20181002143821.5112-1-msys.mizuma@gmail.com>
- <20181002143821.5112-3-msys.mizuma@gmail.com>
+        Wed, 10 Oct 2018 13:00:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57502 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727082AbeJJRAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 13:00:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B1477AF12;
+        Wed, 10 Oct 2018 09:39:09 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 11:39:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+Message-ID: <20181010093907.GF5873@dhcp22.suse.cz>
+References: <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+ <20181003105926.GA4714@dhcp22.suse.cz>
+ <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
+ <20181003114842.GD4714@dhcp22.suse.cz>
+ <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
+ <20181003133609.GG4714@dhcp22.suse.cz>
+ <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
+ <20181009141442.GT8528@dhcp22.suse.cz>
+ <b722d14e-d14f-f45d-5722-685d4f21f6e4@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002143821.5112-3-msys.mizuma@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <b722d14e-d14f-f45d-5722-685d4f21f6e4@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 10:38:20AM -0400, Masayoshi Mizuma wrote:
-> From: Pavel Tatashin <pavel.tatashin@microsoft.com>
-> 
-> When checking for valid pfns in zero_resv_unavail(), it is not necessary to
-> verify that pfns within pageblock_nr_pages ranges are valid, only the first
-> one needs to be checked. This is because memory for pages are allocated in
-> contiguous chunks that contain pageblock_nr_pages struct pages.
-> 
-> Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-> Reviewed-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+On Wed 10-10-18 08:39:22, Anshuman Khandual wrote:
+[...]
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 9df1d59..4bcbf1e 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -504,6 +504,16 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>         return arch_hugetlb_migration_supported(h);
+>  }
+>  
+> +static inline bool hugepage_movable_supported(struct hstate *h)
+> +{
+> +       if (!hugepage_migration_supported(h)) --> calls arch override restricting the set
+> +               return false;
+> +
+> +       if (hstate_is_gigantic(h)	--------> restricts the set further
+> +               return false;
+> +       return true;
+> +}
+> +
+>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>                                            struct mm_struct *mm, pte_t *pte)
+>  {
+> @@ -600,6 +610,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>         return false;
+>  }
+>  
+> +static inline bool hugepage_movable_supported(struct hstate *h)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>                                            struct mm_struct *mm, pte_t *pte)
+>  {
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 3c21775..a5a111d 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+>  /* Movability of hugepages depends on migration support. */
+>  static inline gfp_t htlb_alloc_mask(struct hstate *h)
+>  {
+> -       if (hugepage_migration_supported(h))
+> +       if (hugepage_movable_supported(h))
+>                 return GFP_HIGHUSER_MOVABLE;
+>         else
+>                 return GFP_HIGHUSER;
 
-Looks good to me 
+Exactly what I've had in mind. It would be great to have a comment in
+hugepage_movable_supported to explain why we are not supporting giga
+pages even though they are migrateable and why we need that distinction.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> The above patch is in addition to the following later patch in the series.
+[...]
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 9c1b77f..9df1d59 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -479,18 +479,29 @@ static inline pgoff_t basepage_index(struct page *page)
+>  extern int dissolve_free_huge_page(struct page *page);
+>  extern int dissolve_free_huge_pages(unsigned long start_pfn,
+>                                     unsigned long end_pfn);
+> -static inline bool hugepage_migration_supported(struct hstate *h)
+> -{
+> +
+>  #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
+> +#ifndef arch_hugetlb_migration_supported
+> +static inline bool arch_hugetlb_migration_supported(struct hstate *h)
+> +{
+>         if ((huge_page_shift(h) == PMD_SHIFT) ||
+>                 (huge_page_shift(h) == PUD_SHIFT) ||
+>                         (huge_page_shift(h) == PGDIR_SHIFT))
+>                 return true;
+>         else
+>                 return false;
+> +}
+> +#endif
+>  #else
+> +static inline bool arch_hugetlb_migration_supported(struct hstate *h)
+> +{
+>         return false;
+> +}
+>  #endif
+> +
+> +static inline bool hugepage_migration_supported(struct hstate *h)
+> +{
+> +       return arch_hugetlb_migration_supported(h);
+>  }
 
-Thanks
+Yes making hugepage_migration_supported to have an arch override is
+definitely the right thing to do. Whether the above approach rather than
+a weak symbol is better is a matter of taste and I do not feel strongly
+about that.
+
 -- 
-Oscar Salvador
-SUSE L3
+Michal Hocko
+SUSE Labs
