@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F50C46464
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2372C677D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8398A206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5C72151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pojuf1kk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8398A206B2
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kiF8X1WQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D5C72151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeJKCnn (ORCPT
+        id S1727856AbeJKCns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:43:43 -0400
-Received: from mail.efficios.com ([167.114.142.138]:32914 "EHLO
+        Wed, 10 Oct 2018 22:43:48 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33108 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeJKCnm (ORCPT
+        with ESMTP id S1727774AbeJKCnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:43:42 -0400
+        Wed, 10 Oct 2018 22:43:47 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 68508183B8F;
-        Wed, 10 Oct 2018 15:20:09 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 10394183BF4;
+        Wed, 10 Oct 2018 15:20:14 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Cc-RHBPAIvn7; Wed, 10 Oct 2018 15:20:08 -0400 (EDT)
+        with ESMTP id qfTE4puvBF1m; Wed, 10 Oct 2018 15:20:13 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id D9714183B8C;
-        Wed, 10 Oct 2018 15:20:08 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D9714183B8C
+        by mail.efficios.com (Postfix) with ESMTP id A8760183BEE;
+        Wed, 10 Oct 2018 15:20:13 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A8760183BEE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539199208;
-        bh=N3v2LzU7/zfxpIewN1Lf4Ei0VdWx18Nl2AhIPWVI0IE=;
+        s=default; t=1539199213;
+        bh=UuH7rJzlG0cBsTPcfHzzWT3w4eIUtDaw5dmUqgwXqm0=;
         h=From:To:Date:Message-Id;
-        b=pojuf1kk6MRO/Lc3GGHNBSlUm1oXl0KHEDFzI70c+3NmZTyRvFmBSWtRkJyDPkerP
-         3RS7Kw6yS/PRMkyWpvXNRGCYiHv0glP/ms4u/yjTYdsbXHU9WL2ycoA8ac8cGbmoK/
-         g8GwLiZ0cKNOJHXjH0WXQdQ7VwZvjF9LbqsO0dselL4l3lZnC8h3nY3e3wY1QjKBq0
-         WvLJK2sDLpZM3tjBa+STMCbBi1lXAt3WnHunTvQvBu8xfG/8ZhaW5SjXKZ5hkSL71G
-         NUbqWFAMSLHdlgTBT8595h6zRLFX/fFzo9LFTZuOV3xmZ6EwL7WsLmyZWoIWC2FDZX
-         Xqz/RePjhyXeQ==
+        b=kiF8X1WQMLISl+JWhDlGxzeD4+EcLI5+EmGr2XaYnckLB1EIrOSvHbdVxeIDlAXZt
+         84WvY1Vj8xQg+gBnRBr5WfACDS7MeDas9idg7o6toxMkTcpP0G2t1eoWXaVdiHN89Z
+         frCnILCvYjzYeakTjuWM4YDaQ4d1wrJJoiy9VGxcymsvnzyGpv0ifku6vDdgYEicvM
+         /HF9qJkWSzC9BV/wD97x6+pmKHM/n1Yyo2RDWc5Ve+ZvYD1J8DDBIe1uP/OreMmu9q
+         D3IxSTcPDB2wYmAMTxVpcOrU2lA8dj21LsB+TryvBN/m9hCvvcDCcOVMKXDmLsNYHt
+         veVuCb6AxhLWQ==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id ZosSI9PQcR26; Wed, 10 Oct 2018 15:20:08 -0400 (EDT)
+        with ESMTP id 7yyxkxPXKwd6; Wed, 10 Oct 2018 15:20:13 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 59062183B7F;
-        Wed, 10 Oct 2018 15:20:07 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id F147D183BDB;
+        Wed, 10 Oct 2018 15:20:12 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -74,11 +74,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-mm@kvack.org
-Subject: [RFC PATCH for 4.21 05/16] mm: Provide is_vma_noncached
-Date:   Wed, 10 Oct 2018 15:19:25 -0400
-Message-Id: <20181010191936.7495-6-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 10/16] arm: Wire up cpu_opv system call
+Date:   Wed, 10 Oct 2018 15:19:30 -0400
+Message-Id: <20181010191936.7495-11-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
 References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
@@ -87,70 +86,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide is_vma_noncached() static inline to allow generic code to
-check whether the given vma consists of noncached memory.
-
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
 CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Paul Turner <pjt@google.com>
+CC: Peter Zijlstra <peterz@infradead.org>
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-mm@kvack.org
+CC: linux-api@vger.kernel.org
 ---
- include/linux/mm.h | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/tools/syscall.tbl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0416a7204be3..18acf4f339f8 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2551,6 +2551,30 @@ static inline struct page *follow_page(struct vm_area_struct *vma,
- 	return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
- }
- 
-+static inline bool pgprot_same(pgprot_t a, pgprot_t b)
-+{
-+	return pgprot_val(a) == pgprot_val(b);
-+}
-+
-+#ifdef pgprot_noncached
-+static inline bool is_vma_noncached(struct vm_area_struct *vma)
-+{
-+	pgprot_t pgprot = vma->vm_page_prot;
-+
-+	/* Check whether architecture implements noncached pages. */
-+	if (pgprot_same(pgprot_noncached(PAGE_KERNEL), PAGE_KERNEL))
-+		return false;
-+	if (!pgprot_same(pgprot, pgprot_noncached(pgprot)))
-+		return false;
-+	return true;
-+}
-+#else
-+static inline bool is_vma_noncached(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
-+#endif
-+
- #define FOLL_WRITE	0x01	/* check pte is writable */
- #define FOLL_TOUCH	0x02	/* mark page accessed */
- #define FOLL_GET	0x04	/* do get_page on page */
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 8edf93b4490f..da2cb7a12644 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -414,3 +414,4 @@
+ 397	common	statx			sys_statx
+ 398	common	rseq			sys_rseq
+ 399	common	io_pgetevents		sys_io_pgetevents
++400	common	cpu_opv			sys_cpu_opv
 -- 
 2.11.0
 
