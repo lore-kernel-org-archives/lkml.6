@@ -2,218 +2,123 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDA6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E61D21470
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E61D21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5819B2087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5819B2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJJXez (ORCPT
+        id S1726936AbeJJXft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:34:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36974 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726503AbeJJXez (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:34:55 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9AGA2LZ181804
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 12:12:03 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n1knk398b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 12:12:03 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nfont@linux.vnet.ibm.com>;
-        Wed, 10 Oct 2018 12:12:03 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 10 Oct 2018 12:11:59 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9AGBwig66781414
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 16:11:58 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F473124058;
-        Wed, 10 Oct 2018 13:11:45 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7AC42124053;
-        Wed, 10 Oct 2018 13:11:44 -0400 (EDT)
-Received: from oc6428688403.ibm.com (unknown [9.80.235.83])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed, 10 Oct 2018 13:11:44 -0400 (EDT)
-Subject: Re: [PATCH v3 -next] powerpc/pseries/memory-hotplug: Fix return value
- type of find_aa_index
-To:     YueHaibing <yuehaibing@huawei.com>, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20181009135913.14616-1-yuehaibing@huawei.com>
-From:   Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Date:   Wed, 10 Oct 2018 11:11:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 19:35:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:54662 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726717AbeJJXft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 19:35:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34AFBED1;
+        Wed, 10 Oct 2018 09:12:58 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 05D673F5B3;
+        Wed, 10 Oct 2018 09:12:58 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B41281AE088A; Wed, 10 Oct 2018 17:12:57 +0100 (BST)
+Date:   Wed, 10 Oct 2018 17:12:57 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
+        bigeasy@linutronix.de
+Subject: Re: [PATCH v2 4/4] locking/qspinlock, x86: Provide liveness guarantee
+Message-ID: <20181010161257.GD17340@arm.com>
+References: <20181003130257.156322446@infradead.org>
+ <20181003130957.183726335@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20181009135913.14616-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101016-0068-0000-0000-0000034AEBD7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009854; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01100685; UDB=6.00569501; IPR=6.00880734;
- MB=3.00023698; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-10 16:12:01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101016-0069-0000-0000-00004606489F
-Message-Id: <4fe7e5b0-f1f3-5667-b0d5-8c05ffbf5303@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-10_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=850 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810100158
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003130957.183726335@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/2018 08:59 AM, YueHaibing wrote:
-> 'aa_index' is defined as an unsigned value, but find_aa_index
-> may return -1 when dlpar_clone_property fails. So change 
-> find_aa_index return value type to bool, which indicate 'aa_index'
-> whether found or not.
+On Wed, Oct 03, 2018 at 03:03:01PM +0200, Peter Zijlstra wrote:
+> On x86 we cannot do fetch_or with a single instruction and thus end up
+> using a cmpxchg loop, this reduces determinism. Replace the fetch_or
+> with a composite operation: tas-pending + load.
 > 
-> Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Reviewed-by: Nathan Fontenot nfont@linux.vnet.ibm.com>
- 
+> Using two instructions of course opens a window we previously did not
+> have. Consider the scenario:
+> 
+> 
+> 	CPU0		CPU1		CPU2
+> 
+>  1)	lock
+> 	  trylock -> (0,0,1)
+> 
+>  2)			lock
+> 			  trylock /* fail */
+> 
+>  3)	unlock -> (0,0,0)
+> 
+>  4)					lock
+> 					  trylock -> (0,0,1)
+> 
+>  5)			  tas-pending -> (0,1,1)
+> 			  load-val <- (0,1,0) from 3
+> 
+>  6)			  clear-pending-set-locked -> (0,0,1)
+> 
+> 			  FAIL: _2_ owners
+> 
+> where 5) is our new composite operation. When we consider each part of
+> the qspinlock state as a separate variable (as we can when
+> _Q_PENDING_BITS == 8) then the above is entirely possible, because
+> tas-pending will only RmW the pending byte, so the later load is able
+> to observe prior tail and lock state (but not earlier than its own
+> trylock, which operates on the whole word, due to coherence).
+> 
+> To avoid this we need 2 things:
+> 
+>  - the load must come after the tas-pending (obviously, otherwise it
+>    can trivially observe prior state).
+> 
+>  - the tas-pending must be a full word RmW, it cannot be an xchg8 for
+>    example, such that we cannot observe other state prior to setting
+>    pending.
+> 
+> On x86 we can realize this by using "LOCK BTS m32, r32" for
+> tas-pending followed by a regular load.
+> 
+> Note that observing later state is not a problem:
+> 
+>  - if we fail to observe a later unlock, we'll simply spin-wait for
+>    that store to become visible.
+> 
+>  - if we observe a later xchg_tail, there is no difference from that
+>    xchg_tail having taken place before the tas-pending.
+> 
+> Cc: mingo@kernel.org
+> Cc: tglx@linutronix.de
+> Cc: longman@redhat.com
+> Cc: andrea.parri@amarulasolutions.com
+> Suggested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
-> v3: change find_aa_index return type to bool
-> v2: use 'rc' track the validation of aa_index
-> ---
->  arch/powerpc/platforms/pseries/hotplug-memory.c | 61 ++++++++++++-------------
->  1 file changed, 28 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> index d26a771..4db510f 100644
-> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> @@ -101,11 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
->  	return new_prop;
->  }
-> 
-> -static u32 find_aa_index(struct device_node *dr_node,
-> -			 struct property *ala_prop, const u32 *lmb_assoc)
-> +static bool find_aa_index(struct device_node *dr_node,
-> +			 struct property *ala_prop,
-> +			 const u32 *lmb_assoc, u32 *aa_index)
->  {
-> -	u32 *assoc_arrays;
-> -	u32 aa_index;
-> +	u32 *assoc_arrays, new_prop_size;
-> +	struct property *new_prop;
->  	int aa_arrays, aa_array_entries, aa_array_sz;
->  	int i, index;
-> 
-> @@ -121,46 +122,39 @@ static u32 find_aa_index(struct device_node *dr_node,
->  	aa_array_entries = be32_to_cpu(assoc_arrays[1]);
->  	aa_array_sz = aa_array_entries * sizeof(u32);
-> 
-> -	aa_index = -1;
->  	for (i = 0; i < aa_arrays; i++) {
->  		index = (i * aa_array_entries) + 2;
-> 
->  		if (memcmp(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz))
->  			continue;
-> 
-> -		aa_index = i;
-> -		break;
-> +		*aa_index = i;
-> +		return true;
->  	}
-> 
-> -	if (aa_index == -1) {
-> -		struct property *new_prop;
-> -		u32 new_prop_size;
-> -
-> -		new_prop_size = ala_prop->length + aa_array_sz;
-> -		new_prop = dlpar_clone_property(ala_prop, new_prop_size);
-> -		if (!new_prop)
-> -			return -1;
-> -
-> -		assoc_arrays = new_prop->value;
-> +	new_prop_size = ala_prop->length + aa_array_sz;
-> +	new_prop = dlpar_clone_property(ala_prop, new_prop_size);
-> +	if (!new_prop)
-> +		return false;
-> 
-> -		/* increment the number of entries in the lookup array */
-> -		assoc_arrays[0] = cpu_to_be32(aa_arrays + 1);
-> +	assoc_arrays = new_prop->value;
-> 
-> -		/* copy the new associativity into the lookup array */
-> -		index = aa_arrays * aa_array_entries + 2;
-> -		memcpy(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz);
-> +	/* increment the number of entries in the lookup array */
-> +	assoc_arrays[0] = cpu_to_be32(aa_arrays + 1);
-> 
-> -		of_update_property(dr_node, new_prop);
-> +	/* copy the new associativity into the lookup array */
-> +	index = aa_arrays * aa_array_entries + 2;
-> +	memcpy(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz);
-> 
-> -		/*
-> -		 * The associativity lookup array index for this lmb is
-> -		 * number of entries - 1 since we added its associativity
-> -		 * to the end of the lookup array.
-> -		 */
-> -		aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-> -	}
-> +	of_update_property(dr_node, new_prop);
-> 
-> -	return aa_index;
-> +	/*
-> +	 * The associativity lookup array index for this lmb is
-> +	 * number of entries - 1 since we added its associativity
-> +	 * to the end of the lookup array.
-> +	 */
-> +	*aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-> +	return true;
->  }
-> 
->  static int update_lmb_associativity_index(struct drmem_lmb *lmb)
-> @@ -169,6 +163,7 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
->  	struct property *ala_prop;
->  	const u32 *lmb_assoc;
->  	u32 aa_index;
-> +	bool is_found;
-> 
->  	parent = of_find_node_by_path("/");
->  	if (!parent)
-> @@ -200,11 +195,11 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
->  		return -ENODEV;
->  	}
-> 
-> -	aa_index = find_aa_index(dr_node, ala_prop, lmb_assoc);
-> +	is_found = find_aa_index(dr_node, ala_prop, lmb_assoc, &aa_index);
-> 
->  	dlpar_free_cc_nodes(lmb_node);
-> 
-> -	if (aa_index < 0) {
-> +	if (!is_found) {
->  		pr_err("Could not find LMB associativity\n");
->  		return -1;
->  	}
-> 
+>  arch/x86/include/asm/qspinlock.h |   15 +++++++++++++++
+>  kernel/locking/qspinlock.c       |   16 +++++++++++++++-
+>  2 files changed, 30 insertions(+), 1 deletion(-)
 
+I've failed to break this by thinking really hard, so I've updated Catalin's
+TLA model to see if the tools are still happy. I'll get back to you once
+they've finished chewing on it.
+
+Will
