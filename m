@@ -2,253 +2,111 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482D6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80160C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB04B2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04B2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 450EC2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450EC2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeJKBzw (ORCPT
+        id S1727142AbeJKB46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:55:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:11834 "EHLO mga06.intel.com"
+        Wed, 10 Oct 2018 21:56:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55954 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbeJKBzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:55:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 11:32:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,365,1534834800"; 
-   d="scan'208";a="99166375"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 10 Oct 2018 11:32:24 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 10 Oct 2018 21:32:24 +0300
-Date:   Wed, 10 Oct 2018 21:32:24 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, stable@vger.kernel.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/atomic_helper: Allow DPMS On<->Off changes for
- unregistered connectors
-Message-ID: <20181010183224.GS9144@intel.com>
-References: <20181009204424.21462-1-lyude@redhat.com>
+        id S1726525AbeJKB46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:56:58 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8F183083395;
+        Wed, 10 Oct 2018 18:33:35 +0000 (UTC)
+Received: from treble (ovpn-124-83.rdu2.redhat.com [10.10.124.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8146417002;
+        Wed, 10 Oct 2018 18:33:32 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 13:33:30 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-ID: <20181010183330.ootwmz6deazg2k2n@treble>
+References: <20181006093905.46276505@vmware.local.home>
+ <20181008072134.GB5663@hirez.programming.kicks-ass.net>
+ <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
+ <20181008155757.GC5663@hirez.programming.kicks-ass.net>
+ <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
+ <20181009021710.qwt5hpntyeps44h3@treble>
+ <20181008235750.59da83ae@gandalf.local.home>
+ <20181010175237.e7m3sldcu2maoqcq@treble>
+ <CALCETrUOaJ1dAsuX9bQO_+B4G6y5-FAb0=ZYA8QbtAEBZ6MxKg@mail.gmail.com>
+ <20181010181605.arsyjxwdztztrjih@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181009204424.21462-1-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181010181605.arsyjxwdztztrjih@treble>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 10 Oct 2018 18:33:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 04:44:24PM -0400, Lyude Paul wrote:
-> It appears when testing my previous fix for some of the legacy
-> modesetting issues with MST, I misattributed some kernel splats that
-> started appearing on my machine after a rebase as being from upstream.
-> But it appears they actually came from my patch series:
+On Wed, Oct 10, 2018 at 01:16:05PM -0500, Josh Poimboeuf wrote:
+> > > +#define DEFINE_STATIC_CALL(tramp, func)                                        \
+> > > +       DECLARE_STATIC_CALL(tramp, func);                               \
+> > > +       asm(".pushsection .text, \"ax\"                         \n"     \
+> > > +           ".align 4                                           \n"     \
+> > > +           ".globl " #tramp "                                  \n"     \
+> > > +           ".type " #tramp ", @function                        \n"     \
+> > > +           #tramp ":                                           \n"     \
+> > > +           "jmp " #func "                                      \n"     \
+> > 
+> > I think this would be nicer as an indirect call that gets patched to a
+> > direct call so that the update mechanism works even before it's
+> > initialized.  (Currently static_branch blows up horribly if you try to
+> > update one too early, and that's rather annoying IMO.)
 > 
-> [    2.980512] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing for [CONNECTOR:65:eDP-1]
-> [    2.980516] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CONNECTOR:65:eDP-1] is not registered
-> [    2.980516] ------------[ cut here ]------------
-> [    2.980519] Could not determine valid watermarks for inherited state
-> [    2.980553] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
-> [    2.980556] Modules linked in: i915(O+) i2c_algo_bit drm_kms_helper(O) syscopyarea sysfillrect sysimgblt fb_sys_fops drm(O) intel_rapl x86_pkg_temp_thermal iTCO_wdt wmi_bmof coretemp crc32_pclmul psmouse i2c_i801 mei_me mei i2c_core lpc_ich mfd_core tpm_tis tpm_tis_core wmi tpm thinkpad_acpi pcc_cpufreq video ehci_pci crc32c_intel serio_raw ehci_hcd xhci_pci xhci_hcd
-> [    2.980577] CPU: 3 PID: 551 Comm: systemd-udevd Tainted: G           O      4.19.0-rc7Lyude-Test+ #1
-> [    2.980579] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET63WW (1.27 ) 11/10/2016
-> [    2.980605] RIP: 0010:intel_modeset_init+0x14d7/0x19f0 [i915]
-> [    2.980607] Code: 89 df e8 ec 27 02 00 e9 24 f2 ff ff be 03 00 00 00 48 89 df e8 da 27 02 00 e9 26 f2 ff ff 48 c7 c7 c8 d1 34 a0 e8 23 cf dc e0 <0f> 0b e9 7c fd ff ff f6 c4 04 0f 85 37 f7 ff ff 48 8b 83 60 08 00
-> [    2.980611] RSP: 0018:ffffc90000287988 EFLAGS: 00010282
-> [    2.980614] RAX: 0000000000000000 RBX: ffff88031b488000 RCX: 0000000000000006
-> [    2.980617] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff880321ad54d0
-> [    2.980620] RBP: ffffc90000287a10 R08: 000000000000040a R09: 0000000000000065
-> [    2.980623] R10: ffff88030ebb8f00 R11: ffffffff81416590 R12: ffff88031b488000
-> [    2.980626] R13: ffff88031b4883a0 R14: ffffc900002879a8 R15: ffff880319099800
-> [    2.980630] FS:  00007f475620d180(0000) GS:ffff880321ac0000(0000) knlGS:0000000000000000
-> [    2.980633] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    2.980636] CR2: 00007f9ef28018a0 CR3: 000000031b72c001 CR4: 00000000003606e0
-> [    2.980639] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [    2.980642] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [    2.980645] Call Trace:
-> [    2.980675]  i915_driver_load+0xb0e/0xdc0 [i915]
-> [    2.980681]  ? kernfs_add_one+0xe7/0x130
-> [    2.980709]  i915_pci_probe+0x46/0x60 [i915]
-> [    2.980715]  pci_device_probe+0xd4/0x150
-> [    2.980719]  really_probe+0x243/0x3b0
-> [    2.980722]  driver_probe_device+0xba/0x100
-> [    2.980726]  __driver_attach+0xe4/0x110
-> [    2.980729]  ? driver_probe_device+0x100/0x100
-> [    2.980733]  bus_for_each_dev+0x74/0xb0
-> [    2.980736]  driver_attach+0x1e/0x20
-> [    2.980739]  bus_add_driver+0x159/0x230
-> [    2.980743]  ? 0xffffffffa0393000
-> [    2.980746]  driver_register+0x70/0xc0
-> [    2.980749]  ? 0xffffffffa0393000
-> [    2.980753]  __pci_register_driver+0x57/0x60
-> [    2.980780]  i915_init+0x55/0x58 [i915]
-> [    2.980785]  do_one_initcall+0x4a/0x1c4
-> [    2.980789]  ? do_init_module+0x27/0x210
-> [    2.980793]  ? kmem_cache_alloc_trace+0x131/0x190
-> [    2.980797]  do_init_module+0x60/0x210
-> [    2.980800]  load_module+0x2063/0x22e0
-> [    2.980804]  ? vfs_read+0x116/0x140
-> [    2.980807]  ? vfs_read+0x116/0x140
-> [    2.980811]  __do_sys_finit_module+0xbd/0x120
-> [    2.980814]  ? __do_sys_finit_module+0xbd/0x120
-> [    2.980818]  __x64_sys_finit_module+0x1a/0x20
-> [    2.980821]  do_syscall_64+0x5a/0x110
-> [    2.980824]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [    2.980826] RIP: 0033:0x7f4754e32879
-> [    2.980828] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f7 45 2c 00 f7 d8 64 89 01 48
-> [    2.980831] RSP: 002b:00007fff43fd97d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> [    2.980834] RAX: ffffffffffffffda RBX: 0000559a44ca64f0 RCX: 00007f4754e32879
-> [    2.980836] RDX: 0000000000000000 RSI: 00007f475599f4cd RDI: 0000000000000018
-> [    2.980838] RBP: 00007f475599f4cd R08: 0000000000000000 R09: 0000000000000000
-> [    2.980839] R10: 0000000000000018 R11: 0000000000000246 R12: 0000000000000000
-> [    2.980841] R13: 0000559a44c92fd0 R14: 0000000000020000 R15: 0000000000000000
-> [    2.980881] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
-> [    2.980884] ---[ end trace 5eb47a76277d4731 ]---
-> 
-> The cause of this appears to be due to the fact that if there's
-> pre-existing display state that was set by the BIOS when i915 loads, it
-> will attempt to perform a modeset before the driver is registered with
-> userspace. Since this happens before the driver's registered with
-> userspace, it's connectors are also unregistered and thus-states which
-> would turn on DPMS on a connector end up getting rejected since the
-> connector isn't registered.
-> 
-> These bugs managed to get past Intel's CI partially due to the fact it
-> never ran a full test on my patches for some reason, but also because
-> all of the tests unload the GPU once before running.
+> Yeah, that would be better.  It would also allow trampoline function
+> pointers to work, which I think you mentioned elsewhere.  And then I
+> shouldn't trample this code in __static_call_update() -- that was
+> already kind of nasty anyway.
 
-Well, not all all tests, but all the module reload tests. If we can
-change the setup so that the driver isn't loaded until the first test
-executes we should be able catch all these issues as well. Which would
-be nice.
+Re-reading your suggestion, I may have misunderstood what you're
+suggesting here, but I'm thinking about doing something like what you
+proposed earlier:
 
-> Since this bug is
-> only really triggered when the drivers tries to perform a modeset before
-> it's been fully registered with userspace when coming from whatever
-> display configuration the firmware left us with, it likely would never
-> have been picked up by CI in the first place.
-> 
-> After some discussion with vsyrjala, we decided the best course of
-> action would be to just move the unregistered connector checks out of
-> update_connector_routing() and into drm_atomic_set_crtc_for_connector().
-> The reason for this being that legacy modesetting isn't going to be
-> expecting failures anywhere (at least this is the case with X), so
-> ideally we want to ensure that any DPMS changes will still work even on
-> unregistered connectors. Instead, we now only reject new modesets which
-> would change the current CRTC assigned to an unregistered connector
-> unless no new CRTC is being assigned to replace the connector's previous
-> one.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Fixes: 4d80273976bf ("drm/atomic_helper: Disallow new modesets on unregistered connectors")
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 21 +--------------------
->  drivers/gpu/drm/drm_atomic_uapi.c   | 21 +++++++++++++++++++++
->  2 files changed, 22 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index e6a2cf72de5e..6f66777dca4b 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -319,26 +319,6 @@ update_connector_routing(struct drm_atomic_state *state,
->  		return 0;
->  	}
->  
-> -	crtc_state = drm_atomic_get_new_crtc_state(state,
-> -						   new_connector_state->crtc);
-> -	/*
-> -	 * For compatibility with legacy users, we want to make sure that
-> -	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
-> -	 * which would result in anything else must be considered invalid, to
-> -	 * avoid turning on new displays on dead connectors.
-> -	 *
-> -	 * Since the connector can be unregistered at any point during an
-> -	 * atomic check or commit, this is racy. But that's OK: all we care
-> -	 * about is ensuring that userspace can't do anything but shut off the
-> -	 * display on a connector that was destroyed after its been notified,
-> -	 * not before.
-> -	 */
-> -	if (!READ_ONCE(connector->registered) && crtc_state->active) {
-> -		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
-> -				 connector->base.id, connector->name);
-> -		return -EINVAL;
-> -	}
-> -
->  	funcs = connector->helper_private;
->  
->  	if (funcs->atomic_best_encoder)
-> @@ -383,6 +363,7 @@ update_connector_routing(struct drm_atomic_state *state,
->  
->  	set_best_encoder(state, new_connector_state, new_encoder);
->  
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
->  	crtc_state->connectors_changed = true;
->  
->  	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
-> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-> index d5b7f315098c..7acec863b10c 100644
-> --- a/drivers/gpu/drm/drm_atomic_uapi.c
-> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-> @@ -299,6 +299,27 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
->  	struct drm_connector *connector = conn_state->connector;
->  	struct drm_crtc_state *crtc_state;
->  
-> +	/*
-> +	 * For compatibility with legacy users, we want to make sure that
-> +	 * we allow DPMS On<->Off modesets on unregistered connectors, since
-> +	 * legacy modesetting users will not be expecting these to fail. We do
-> +	 * not however, want to allow legacy users to assign a connector
-> +	 * that's been unregistered from sysfs to another CRTC, since doing
-> +	 * this with a now non-existant connector could potentially leave us
-> +	 * in an invalid state.
-> +	 *
-> +	 * Since the connector can be unregistered at any point during an
-> +	 * atomic check or commit, this is racy. But that's OK: all we care
-> +	 * about is ensuring that userspace can't use this connector for new
-> +	 * configurations after it's been notified that the connector is no
-> +	 * longer present.
-> +	 */
-> +	if (!READ_ONCE(connector->registered) && crtc) {
-> +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
-> +				 connector->base.id, connector->name);
-> +		return -EINVAL;
+    GLOBAL(tramp)
+      jmp *current_func(%rip)
+    ENDPROC(tramp)
 
-I was also pondering whether we should make this ENOENT to match the
-errno we use for the "this connector doesn't exist" case. But I guess
-it doesn't really matter.
+That is, doing an indirect jump instead of the above direct jump, so
+that any previous references to the trampoline would still work (and it
+would also work during early boot).
 
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-
-> +	}
-> +
->  	if (conn_state->crtc == crtc)
->  		return 0;
->  
-> -- 
-> 2.17.1
+Though it should probably be a retpoline instead of an indirect jump.
 
 -- 
-Ville Syrjälä
-Intel
+Josh
