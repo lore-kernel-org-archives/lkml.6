@@ -2,123 +2,96 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AA3C46463
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB73C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43F32075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43F32075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5353D21470
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:12:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcdKRQ9F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5353D21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbeJKGdn (ORCPT
+        id S1726656AbeJKGg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:33:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17062 "EHLO mga03.intel.com"
+        Thu, 11 Oct 2018 02:36:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJKGdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:33:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 16:09:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,366,1534834800"; 
-   d="scan'208";a="98329461"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.156])
-  by orsmga001.jf.intel.com with ESMTP; 10 Oct 2018 16:08:59 -0700
-Subject: [workqueue/driver-core PATCH v2 5/5] PM core: Use new
- async_schedule_dev command
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
-        alexander.h.duyck@linux.intel.com
-Date:   Wed, 10 Oct 2018 16:08:59 -0700
-Message-ID: <20181010230846.10609.48506.stgit@localhost.localdomain>
-In-Reply-To: <20181010230435.10609.77825.stgit@localhost.localdomain>
-References: <20181010230435.10609.77825.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1725968AbeJKGg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:36:56 -0400
+Received: from lerouge.suse.de (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E437820870;
+        Wed, 10 Oct 2018 23:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539213155;
+        bh=Gp/mytBByStaW3Zy+6SJaG+plI8dVlpyVSaIApiljpE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZcdKRQ9FZEHR9lgfwo0fObbgvPps4wNmwPrgqVhs2/1kT/3IAQV73Lg8JjcxtVi2B
+         +6nd844SydlGf1ziGPnr42KhwHc8cqzACKFQIUz/P/QKgqn2h6XNwWfeuyhl+R2dU8
+         WAiwgQEcvmqudGcttwECXOge4GSWKe92p6wDaS0Y=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [RFC PATCH 01/30] x86: Revert "x86/irq: Demote irq_cpustat_t::__softirq_pending to u16"
+Date:   Thu, 11 Oct 2018 01:11:48 +0200
+Message-Id: <1539213137-13953-2-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539213137-13953-1-git-send-email-frederic@kernel.org>
+References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it so that we use the device specific version of the
-async_schedule commands to defer various tasks related to power management.
-By doing this we should see a slight improvement in performance as any
-device that is sensitive to latency/locality in the setup will now be
-initializing on the node closest to the device.
+This reverts commit 9aee5f8a7e30330d0a8f4c626dc924ca5590aba5.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+We are going to need the 16 high bits above in order to implement
+a softirq enable mask. x86 is the only architecture that doesn't use
+unsigned int to implement softirq_pending.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- drivers/base/power/main.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/hardirq.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index a690fd400260..ebb8b61b52e9 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -726,7 +726,7 @@ void dpm_noirq_resume_devices(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume_noirq, dev);
-+			async_schedule_dev(async_resume_noirq, dev);
- 		}
- 	}
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index d9069bb..a8e8e12 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -5,7 +5,7 @@
+ #include <linux/threads.h>
  
-@@ -883,7 +883,7 @@ void dpm_resume_early(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume_early, dev);
-+			async_schedule_dev(async_resume_early, dev);
- 		}
- 	}
- 
-@@ -1047,7 +1047,7 @@ void dpm_resume(pm_message_t state)
- 		reinit_completion(&dev->power.completion);
- 		if (is_async(dev)) {
- 			get_device(dev);
--			async_schedule(async_resume, dev);
-+			async_schedule_dev(async_resume, dev);
- 		}
- 	}
- 
-@@ -1366,7 +1366,7 @@ static int device_suspend_noirq(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend_noirq, dev);
-+		async_schedule_dev(async_suspend_noirq, dev);
- 		return 0;
- 	}
- 	return __device_suspend_noirq(dev, pm_transition, false);
-@@ -1569,7 +1569,7 @@ static int device_suspend_late(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend_late, dev);
-+		async_schedule_dev(async_suspend_late, dev);
- 		return 0;
- 	}
- 
-@@ -1833,7 +1833,7 @@ static int device_suspend(struct device *dev)
- 
- 	if (is_async(dev)) {
- 		get_device(dev);
--		async_schedule(async_suspend, dev);
-+		async_schedule_dev(async_suspend, dev);
- 		return 0;
- 	}
- 
+ typedef struct {
+-	u16	     __softirq_pending;
++	unsigned int __softirq_pending;
+ #if IS_ENABLED(CONFIG_KVM_INTEL)
+ 	u8	     kvm_cpu_l1tf_flush_l1d;
+ #endif
+-- 
+2.7.4
 
