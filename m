@@ -2,105 +2,117 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70EFC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3E9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A632077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:36:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A632077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C48472087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48472087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeJJV67 (ORCPT
+        id S1727164AbeJJWAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:58:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43498 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726656AbeJJV66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:58:58 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5CD52307D853;
-        Wed, 10 Oct 2018 14:36:31 +0000 (UTC)
-Received: from redhat.com (ovpn-120-148.rdu2.redhat.com [10.10.120.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DEF95D973;
-        Wed, 10 Oct 2018 14:36:27 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 10:36:26 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Tiwei Bie <tiwei.bie@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [virtio-dev] Re: [PATCH net-next v2 0/5] virtio: support packed
- ring
-Message-ID: <20181010103335-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180827170005-mutt-send-email-mst@kernel.org>
- <20180907012225.GA32677@debian>
- <20180907084509-mutt-send-email-mst@kernel.org>
- <20180910030053.GA15645@debian>
- <f5ef0393-cf02-0795-a51a-8783ee300037@redhat.com>
- <20180911053726.GA7472@debian>
- <20180912121457-mutt-send-email-mst@kernel.org>
- <20180913085919.GA42049@fbsd1.sh.intel.com>
- <98d6bd4d-45e2-4207-e961-782f649e0139@redhat.com>
+        Wed, 10 Oct 2018 18:00:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52313 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbeJJWAC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:00:02 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gAFcC-00018m-2O; Wed, 10 Oct 2018 14:37:32 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: Remove redundant check on status
+Date:   Wed, 10 Oct 2018 15:37:31 +0100
+Message-Id: <20181010143731.16451-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <98d6bd4d-45e2-4207-e961-782f649e0139@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 10 Oct 2018 14:36:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 05:47:29PM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年09月13日 16:59, Tiwei Bie wrote:
-> > > If what you say is true then we should take a careful look
-> > > and not supporting these generic things with packed layout.
-> > > Once we do support them it will be too late and we won't
-> > > be able to get performance back.
-> > I think it's a good point that we don't need to support
-> > everything in packed ring (especially these which would
-> > hurt the performance), as the packed ring aims at high
-> > performance. I'm also wondering about the features. Is
-> > there any possibility that we won't support the out of
-> > order processing (at least not by default) in packed ring?
-> > If I didn't miss anything, the need to support out of order
-> > processing in packed ring will make the data structure
-> > inside the driver not cache friendly which is similar to
-> > the case of the descriptor table in the split ring (the
-> > difference is that, it only happens in driver now).
-> 
-> Out of order is not the only user, DMA is another one. We don't have used
-> ring(len), so we need to maintain buffer length somewhere even for in order
-> device.
+From: Colin Ian King <colin.king@canonical.com>
 
-For a bunch of systems dma unmap is a nop so we do not really
-need to maintain it. It's a question of an API to detect that
-and optimize for it. I posted a proposed patch for that -
-want to try using that?
+The check on statis is redundant as a status has to be zero at
+the point it is being checked because of a previous check and return
+path via label 'unlock'.  Remove the redundant check and the deadcode
+that can never be reached.
 
-> But if it's not too late, I second for a OUT_OF_ORDER feature.
-> Starting from in order can have much simpler code in driver.
-> 
-> Thanks
+Detected by CoverityScan, CID#1471710 ("Logically dead code")
 
-It's tricky to change the flag polarity because of compatibility
-with legacy interfaces. Why is this such a big deal?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bluetooth/hci_event.c | 38 +++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-Let's teach drivers about IN_ORDER, then if devices
-are in order it will get enabled by default.
-
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index f47f8fad757a..ef9928d7b4fb 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -4937,31 +4937,27 @@ static void le_conn_complete_evt(struct hci_dev *hdev, u8 status,
+ 	hci_debugfs_create_conn(conn);
+ 	hci_conn_add_sysfs(conn);
+ 
+-	if (!status) {
+-		/* The remote features procedure is defined for master
+-		 * role only. So only in case of an initiated connection
+-		 * request the remote features.
+-		 *
+-		 * If the local controller supports slave-initiated features
+-		 * exchange, then requesting the remote features in slave
+-		 * role is possible. Otherwise just transition into the
+-		 * connected state without requesting the remote features.
+-		 */
+-		if (conn->out ||
+-		    (hdev->le_features[0] & HCI_LE_SLAVE_FEATURES)) {
+-			struct hci_cp_le_read_remote_features cp;
++	/* The remote features procedure is defined for master
++	 * role only. So only in case of an initiated connection
++	 * request the remote features.
++	 *
++	 * If the local controller supports slave-initiated features
++	 * exchange, then requesting the remote features in slave
++	 * role is possible. Otherwise just transition into the
++	 * connected state without requesting the remote features.
++	 */
++	if (conn->out ||
++	    (hdev->le_features[0] & HCI_LE_SLAVE_FEATURES)) {
++		struct hci_cp_le_read_remote_features cp;
+ 
+-			cp.handle = __cpu_to_le16(conn->handle);
++		cp.handle = __cpu_to_le16(conn->handle);
+ 
+-			hci_send_cmd(hdev, HCI_OP_LE_READ_REMOTE_FEATURES,
+-				     sizeof(cp), &cp);
++		hci_send_cmd(hdev, HCI_OP_LE_READ_REMOTE_FEATURES,
++			     sizeof(cp), &cp);
+ 
+-			hci_conn_hold(conn);
+-		} else {
+-			conn->state = BT_CONNECTED;
+-			hci_connect_cfm(conn, status);
+-		}
++		hci_conn_hold(conn);
+ 	} else {
++		conn->state = BT_CONNECTED;
+ 		hci_connect_cfm(conn, status);
+ 	}
+ 
 -- 
-MST
+2.17.1
+
