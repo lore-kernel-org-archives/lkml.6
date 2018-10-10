@@ -2,159 +2,102 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B955C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD2CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D36EF21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F8921479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:23:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RPl/HDsV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36EF21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ceitY1ni"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F8921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJJSoG (ORCPT
+        id S1726936AbeJJSov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:44:06 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:47046 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeJJSoG (ORCPT
+        Wed, 10 Oct 2018 14:44:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36058 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJJSov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:44:06 -0400
+        Wed, 10 Oct 2018 14:44:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dObbFQZGyXzlMbr1j4fSYsXXVzEUnB0sOQd04tUNgqo=; b=RPl/HDsVX0HPAkWr1phrarQFu
-        jSQSHJGWcswygngA76vjNW23ArKTgo+a7uJs88JteuvED3sDe+CgHZuFP4vSag8dN8tKSJmF6mwf2
-        xekN/7Whqm20LHZMl5HyCNase5P0Q6caA21mYT6UmGIp/zzY267VcS5GrmsqokfjAlMZg=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:40686)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gACZB-0006OF-Lb; Wed, 10 Oct 2018 12:22:13 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gACZ4-0001B8-GC; Wed, 10 Oct 2018 12:22:06 +0100
-Date:   Wed, 10 Oct 2018 12:22:01 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Lucas Stach <l.stach@pengutronix.de>, p.zabel@pengutronix.de,
-        airlied@linux.ie, gregkh@linuxfoundation.org, rafael@kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/imx: make sure to cleanup DRM before unbinding
- components
-Message-ID: <20181010112201.GO30658@n2100.armlinux.org.uk>
-References: <83a28282a3f745a4cd4ca77d0593ad2e61359a5d.1539120077.git.stefan@agner.ch>
- <e08eff2ed53b441c8a6c41758c00c1c91dc48d2c.1539120077.git.stefan@agner.ch>
- <20181010103829.GN30658@n2100.armlinux.org.uk>
- <11a452de8e6b39c80ae8ff6b2cdc4cc8@agner.ch>
+         bh=8VP2OhUAIfWoaz7iej4cE+Z1YVIvqGEQQNjTdH96U64=; b=ceitY1niyTtuxoVE7X5TJEfeN
+        SGNx1xQkTTvGpX1U8zAEYU/u5RDV/DMHbTNphsLUiArCFGMIAj/EMImIWSU28uqJJ1nYyWCGp6tzk
+        0kMpwyZhknNJDr1Spj6+ob6XUVQ91WGBra1e9xs/3wZkkszMWKcbD3v/o8FWy4C2cdWzXVUdG4jRS
+        2UUSC8WFl5yud/cDnD5x7D2ZWPlqwNxp68SOEs+8f79zGToL1JRVT+4MuGhnov0ViehRWphiiUm/D
+        srXtdsUOm86E/L/5x9eJq5bTy9/M1uhkSWIg1p306GJN7OjAKGKgvLH0cYRnOJoAZv6LNe6oYtTnf
+        jlKoK8Gfw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gACZy-0004eJ-TI; Wed, 10 Oct 2018 11:23:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA7D2202A40A9; Wed, 10 Oct 2018 13:23:00 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 13:23:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     luca abeni <luca.abeni@santannapisa.it>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
+        rostedt@goodmis.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, alessio.balsini@gmail.com,
+        bristot@redhat.com, will.deacon@arm.com,
+        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, henrik@austad.us,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [RFD/RFC PATCH 0/8] Towards implementing proxy execution
+Message-ID: <20181010112300.GQ5728@hirez.programming.kicks-ass.net>
+References: <20181009092434.26221-1-juri.lelli@redhat.com>
+ <20181010123417.26c682ef@luca64>
+ <20181010105710.GP5728@hirez.programming.kicks-ass.net>
+ <20181010131629.6623ddb4@luca64>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <11a452de8e6b39c80ae8ff6b2cdc4cc8@agner.ch>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181010131629.6623ddb4@luca64>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:02:16PM +0200, Stefan Agner wrote:
-> [adding Lucas]
+On Wed, Oct 10, 2018 at 01:16:29PM +0200, luca abeni wrote:
+> On Wed, 10 Oct 2018 12:57:10 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> On 10.10.2018 12:38, Russell King - ARM Linux wrote:
-> > On Tue, Oct 09, 2018 at 11:30:49PM +0200, Stefan Agner wrote:
-> >> In situations where a component fails to bind, a previously
-> >> successfully bound component might already registered itself
-> >> with the DRM framework (e.g. an encoder). When the master
-> >> component then calls drm_mode_config_cleanup, we end up in a
-> >> use after free sitution.
-> >>
-> >> Use the cleanup callback to make sure all framework level
-> >> cleanup is done by the time we unbind components.
+> > On Wed, Oct 10, 2018 at 12:34:17PM +0200, luca abeni wrote:
+> > > So, I would propose to make the proxy() function of patch more
+> > > generic, and not strictly bound to mutexes. Maybe a task structure
+> > > can contain a list of tasks for which the task can act as a proxy,
+> > > and we can have a function like "I want to act as a proxy for task
+> > > T" to be invoked when a task blocks?  
 > > 
-> > I'm not sure about this approach - the idea about the component bind
-> > and unbind callbacks is that unbind undoes _everything_ that bind has
-> > done, so everything is correctly ordered.  If bind registers something,
-> > unbind should unregister it.
-> > 
-> > What seems to be going on is that imx is registering stuff in bind()
-> > but not unregistering it in unbind().
+> > Certainly possible, but that's something I'd prefer to look at after
+> > it all 'works'.
 > 
-> Yes indeed, if that can be fixed this seems to be the better approach to
-> me.
+> Of course :)
+> I was mentioning this idea because maybe it can have some impact on the
+> design.
 > 
-> > 
-> > Since imx was one of the drivers that the component helper was
-> > created for, if it's now crashing, that's a regression in the imx
-> > driver.  Looking at the commit log, I'd say:
-> > 
-> > commit 8e3b16e2117409625b89807de3912ff773aea354
-> > Author: Lucas Stach <l.stach@pengutronix.de>
-> > Date:   Thu Aug 11 11:18:49 2016 +0200
-> > 
-> >     drm/imx: don't destroy mode objects manually on driver unbind
-> > 
-> >     Instead let drm_mode_config_cleanup() do the work when taking down
-> >     the master device. This requires all cleanup functions to be
-> >     properly hooked up to the mode object .destroy callback.
-> > 
-> >     Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> >     Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > 
-> > is probably responsible for introducing this problem, since the
-> > explicit calls were added by me when imx was stuck in staging due to
-> > the problems that the component helper solved.
+> BTW, here is another "interesting" issue I had in the past with changes
+> like this one: how do we check if the patchset works as expected?
 > 
-> The commit above does not revert cleanly today, but a quick fixing
-> seemed to resolve the problem I am seeing...
+> "No crashes" is surely a requirement, but I think we also need some
+> kind of testcase that fails if the inheritance mechanism is not working
+> properly, and is successful if the inheritance works.
 > 
-> > 
-> > I think what we have here are different opinions on how cleanup
-> > should be handled.
-> 
-> In the regular case using the framework cleanup function before calling
-> component_unbind_all() works fine.
-> 
-> Its really only the case where a subcomponent fails to bind where unbind
-> happens before calling drm_mode_config_cleanup(drm). I guess Lucas was
-> not aware of that special case...?
+> Maybe we can develop some testcase based on rt-app (if noone has such a
+> testcase already)
 
-As long as ->unbind undoes everything that ->bind does, it's not a
-problem.
+Indeed; IIRC there is a test suite that mostly covers the FIFO-PI stuff,
+that should obviously still pass. Steve, do you know where that lives?
 
-WRT using devres groups in one of your previous mails on this topic,
-consider what would happen if you use devm_* APIs in the bind callback
-and the component helper did not use devres groups.
-
-Any resources taken in the bind callback would not be freed until the
-device was unbound from the driver by the driver model.  This means
-each time the bind callback gets called, new sets of resources are
-attempted to be acquired.  If some resources are exclusive, the first
-bind attempt would succeed, but the second attempt would fail with
--EBUSY for example.  In the case of memory, the allocated memory
-would not be freed, but new memory would be allocated each time a
-bind was attempted.
-
-The alternative would be that devres must not be used at all in the
-bind/unbind callbacks - but then we'll be subject to the same error-
-prone cleanup that we see with driver probe functions prior to devres.
-
-Consider what the LDB bind/unbind callbacks would look like if devres
-was not permitted, and how the memory for the imx_ldb structure would
-be managed - you'd need some sort of ref-counting on the imx_ldb
-structure, and management of that in the encoder and optional connector
-destroy functions so you know when all embedded encoders and connectors
-in that structure have been "destroyed" by drm_mode_config_cleanup(),
-and hence it's safe to free the data structure.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+For the extended DL stuff, we'd need new tests.
