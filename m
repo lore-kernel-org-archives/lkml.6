@@ -2,108 +2,157 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AB8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA50C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AEC52098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7015A2085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:51:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCgCTC1h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEC52098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLpS7wTu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7015A2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJKCNP (ORCPT
+        id S1727197AbeJKCPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:13:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38742 "EHLO mail.kernel.org"
+        Wed, 10 Oct 2018 22:15:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbeJKCNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:13:15 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726734AbeJKCPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:15:04 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3EE02087A;
-        Wed, 10 Oct 2018 18:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BF2B214DA;
+        Wed, 10 Oct 2018 18:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539197389;
-        bh=GM5Xu8UfVbVA7kHf3WFyDKpW6gdPg3aF2GkyLX4+564=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kCgCTC1h+mgp7akaMKm447wwXQQjrXJdfozQQKHzFpRJve7FyDxtF9oHok/6SERto
-         etDlnYZpPAYikG+RoVMAi/SN+qnKetyHBrhjr2xykkREoU0ehcDt2WBcrGkb07yne0
-         otvZTc73mlVGZqzYzkKreDoKSNLBA48vetuyBlz4=
-Date:   Wed, 10 Oct 2018 14:49:47 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "3.8+" <stable@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        alexander.levin@microsoft.com
-Subject: Re: [PATCH AUTOSEL 4.18 24/58] Input: atakbd - fix Atari CapsLock
- behaviour
-Message-ID: <20181010184947.GJ32006@sasha-vm>
-References: <20181008152523.70705-1-sashal@kernel.org>
- <20181008152523.70705-24-sashal@kernel.org>
- <CAKdAkRSoq_U1rkO+6gbautYpS1fFn3icLY3Dtx0geXNC7MwvbA@mail.gmail.com>
- <bec357b5-09d0-5014-d2a3-0ade83499d15@gmail.com>
- <CAKdAkRSuuv_8BOz2m=DSgnV7a2MNY+6ZPera3ROfV3osMUTStQ@mail.gmail.com>
- <20181010142958.GF32006@sasha-vm>
- <20181010170219.GA47260@dtor-ws>
- <20181010181148.GI32006@sasha-vm>
- <20181010182840.GB23517@kroah.com>
- <20181010184039.GH47260@dtor-ws>
+        s=default; t=1539197497;
+        bh=uB0V0LXSDHhFNqF05cL6wKvYwhMrIvYPYHycqFqFjQI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dLpS7wTunaLo35H+I95aB/AYLeb1pJ8nlV0vaG+JTIx+Dtl4RmmBWjWlOdzoU81rD
+         QMfAuo6QPqhQsGmnF/E54dt+XZJq4FjHH/l64TztLpmubWzQF/8AvGpv/o36tqc1ug
+         Wf65NJ9hkeBH1JrEn3sRaflE3XTvNHi5CDc1FxWk=
+Received: by mail-qt1-f170.google.com with SMTP id e10-v6so6904435qtq.12;
+        Wed, 10 Oct 2018 11:51:37 -0700 (PDT)
+X-Gm-Message-State: ABuFfojqDmSRcfts7HHiAr/YM0Gt/ZJWuJMZzk4PcCbtHo9LhOi7mztD
+        j7h55zcK6du5VDcnpFr8iYSXNFGNdiL83YpZXg==
+X-Google-Smtp-Source: ACcGV62k9wWDJmYQoromF3HGCJZSRt0KwS84w8BTg9hReJ8u081BXFoBlX0+Uy+drHwkOAh61dHSh/HFb8WUmvv/B1Y=
+X-Received: by 2002:ac8:440d:: with SMTP id j13-v6mr29073546qtn.257.1539197496400;
+ Wed, 10 Oct 2018 11:51:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181010184039.GH47260@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-14-robh@kernel.org>
+ <20181009115713.GE6248@arm.com> <CAL_JsqLeG3WUa2peOWFGUoMuonWaWJoU-7A6d8cqXp-_e3B3XA@mail.gmail.com>
+ <20181010165048.GB16512@arm.com>
+In-Reply-To: <20181010165048.GB16512@arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 10 Oct 2018 13:51:24 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+NExxsksmhA6z5_eTutVkm_NFthayvHz-vvq1gkSeXNA@mail.gmail.com>
+Message-ID: <CAL_Jsq+NExxsksmhA6z5_eTutVkm_NFthayvHz-vvq1gkSeXNA@mail.gmail.com>
+Subject: Re: [PATCH 13/36] dt-bindings: arm: Convert PMU binding to json-schema
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 11:40:39AM -0700, Dmitry Torokhov wrote:
->On Wed, Oct 10, 2018 at 08:28:40PM +0200, Greg KH wrote:
->> On Wed, Oct 10, 2018 at 02:11:48PM -0400, Sasha Levin wrote:
->> > I think Greg's last estimate was that about 1/3 of the kernels in the
->> > wild are custom based on a kernel.org stable kernel, which means that we
->> > have no visibility as to what they do with the kernel. If you don't know
->> > who your users are, how can you prioritize some subsystems over others?
->>
->> The numbers I had was 75% of the images a major cloud provider was using
->> was either a kernel.org stable kernel release, or Debian.  The remaining
->> 25% was an "enterprise" kernel including CentOS.
->>
->> Also note that all Android devices are now required to follow the stable
->> kernel releases as well, so add a few more million to that number :)
->>
->> That being said, for a well-maintained subsystem like Input, whose
->> maintainer almost always marks patches for stable releases, having them
->> picked up by the autobot is unusual.  Dmitry, if you want your subsytem
->> to be excluded, just let Sasha know, other subsystems have been excluded
->> at the maintainer's request, and that's fine.
+On Wed, Oct 10, 2018 at 11:50 AM Will Deacon <will.deacon@arm.com> wrote:
 >
->I am hesitant to request to exclude input from autosel just yet, on an
->account that I might miss something. But I would like autosel to acquire
->more smarts and be less trigger happy. I think it would be for the best
->for everyone.
+> On Tue, Oct 09, 2018 at 01:14:02PM -0500, Rob Herring wrote:
+> > On Tue, Oct 9, 2018 at 6:57 AM Will Deacon <will.deacon@arm.com> wrote:
+> > >
+> > > Hi Rob,
+> > >
+> > > On Fri, Oct 05, 2018 at 11:58:25AM -0500, Rob Herring wrote:
+> > > > Convert ARM PMU binding to DT schema format using json-schema.
+> > > >
+> > > > Cc: Will Deacon <will.deacon@arm.com>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Cc: linux-arm-kernel@lists.infradead.org
+> > > > Cc: devicetree@vger.kernel.org
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/arm/pmu.txt | 70 --------------
+> > > >  .../devicetree/bindings/arm/pmu.yaml          | 96 +++++++++++++++++++
+> > > >  2 files changed, 96 insertions(+), 70 deletions(-)
+> > > >  delete mode 100644 Documentation/devicetree/bindings/arm/pmu.txt
+> > > >  create mode 100644 Documentation/devicetree/bindings/arm/pmu.yaml
+> > >
+> > > [...]
+> > >
+> > > > -- interrupts : 1 combined interrupt or 1 per core. If the interrupt is a per-cpu
+> > > > -               interrupt (PPI) then 1 interrupt should be specified.
+> > >
+> > > [...]
+> > >
+> > > > +  interrupts:
+> > > > +    oneOf:
+> > > > +      - maxItems: 1
+> > > > +      - minItems: 2
+> > > > +        maxItems: 8
+> > > > +        description: 1 interrupt per core.
+> > > > +
+> > > > +  interrupts-extended:
+> > > > +    $ref: '#/properties/interrupts'
+> > >
+> > > This seems like a semantic different between the two representations, or am
+> > > I missing something here? Specifically, both the introduction of
+> > > interrupts-extended and also dropping any mention of using a single per-cpu
+> > > interrupt (the single combined case is no longer support by Linux; not sure
+> > > if you want to keep it in the binding).
+> >
+> > 'interrupts-extended' was implied before as it is always supported and
+> > outside the scope of the binding. But now it is needed to validate
+> > bindings. There must be some use of it and that's why I added it.
+> > However, thinking some more about this, I think it may be better to
+> > have the tools add this in automatically whenever we have an
+> > interrupts property.
+>
+> To be honest, if you'd included that in the commit message I'd have been
+> happy :)
+>
+> > I guess the single interrupt case is less obvious now with no
+> > description (it's the first list item of 'oneOf'). The schema If the
+> > single interrupt is not supported, then we can drop it here.
+>
+> Well the description says "1 interrupt per core" which is incorrect.
 
-Keep in mind that it learns based on your choices, so maybe in a while
-it will be a perfect fit :)
+You are reading the schema wrong. There are 2 cases supported as
+defined by each '-'. The 2nd case is all the keywords until the
+indentation decreases. So 'description' is just description of the 2nd
+case. The first case is just "maxItems: 1". I probably didn't put a
+description because why write in free form text what the schema says
+(other than of course no one knows json-schema...).
 
-Maybe to make it easier, just reply with NAK on the patch(es) you don't
-want in the tree and I'll drop them.
+YAML combines the best of Makefiles and python. You can't have tabs
+and Indentation is significant. :)
 
-I was discussing more about the general case and stable tree policy
-rather than drivers/input and AUTOSEL, and didn't mean to try and
-dictate what we'll take or not. Sorry!
+> I also
+> don't understand why maxItems is 8.
 
---
-Thanks,
-Sasha
+Humm, I probably just made that up based on GICv2 limitations. What
+should it be? If there's not any inherit maximum, can we put something
+reasonable? There's not really any way to express that it should match
+the number of cores in the system.
+
+Rob
