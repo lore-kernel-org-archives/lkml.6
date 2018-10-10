@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A8BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1591FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AC92087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54D12087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="d0fVlH0B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AC92087A
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="aQA3aFW8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54D12087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeJKCnr (ORCPT
+        id S1727635AbeJKCnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:43:47 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33050 "EHLO
+        Wed, 10 Oct 2018 22:43:40 -0400
+Received: from mail.efficios.com ([167.114.142.138]:32840 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbeJKCnq (ORCPT
+        with ESMTP id S1727583AbeJKCnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:43:46 -0400
+        Wed, 10 Oct 2018 22:43:39 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EBBA2183BD4;
-        Wed, 10 Oct 2018 15:20:12 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id A37A1183B6E;
+        Wed, 10 Oct 2018 15:20:06 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 9TZEPtgdajMC; Wed, 10 Oct 2018 15:20:12 -0400 (EDT)
+        with ESMTP id TSTY1x-0fJit; Wed, 10 Oct 2018 15:20:06 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 862AD183BCA;
-        Wed, 10 Oct 2018 15:20:12 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 862AD183BCA
+        by mail.efficios.com (Postfix) with ESMTP id 25D16183B5E;
+        Wed, 10 Oct 2018 15:20:06 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 25D16183B5E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539199212;
-        bh=2WutoXyHrvzGXjcXsQOs3lf2oUx6tuqmidhYhOytkt8=;
+        s=default; t=1539199206;
+        bh=AM6ze3X0kmmhVIgh8pJVYDD0j6At2CyA49LBJH3hcV8=;
         h=From:To:Date:Message-Id;
-        b=d0fVlH0BiRHLBpIL0JqspONStNbDneUvnxV+vj1v8h0DrvY/GeanuP40O7MOa/E91
-         4gM4/U7rk/WRTYXwd/ZsYYSZaSUYKElu7FCFmk4grUFvNYVfsj4E82aRU5fdZsIldw
-         Yr3HiIu+aybYhIAp4TvhEc1E+/8zdp8NRHrC/wEibZXNr7pp76ZnV7CXWKE/38akXp
-         dlrGajoQnImRDvtYdLs9ei7xZze+BEK5AFobZp5vGt/uDH6lzLtbNQ7psvrJ/FRm8I
-         UdREKdAaYBMTxhZ3E2fM87pe4JPN8Ovs8ni0H2hGdEGWxVYLpvIMgi2qDiGqmiV4Yb
-         aFJOcO+3IS9hA==
+        b=aQA3aFW8AzCPh6wHxSQf3H7Vw9GUOW5efxWoRBe7Z1w3ZqU/96dFb+eNeuzi1FuOC
+         yZwkShJjAqYPKnnxY0O24NbmFbvB0Wf2+6CHkVWIq+zPYf4zPPHuV+2qF4KOMJ3umF
+         X7L/9XMAtveBpb3/QSSwCR2Asfdid189qWTXPclDAKi2eoQhWB2OIZqjPLI5Sfr/mv
+         dGu++MaABHUt0k+EypIU8okS0fMNUDpIjIOt6rgCBOOXRMrGYb48EOw5FejeqP6pqB
+         AeNxXVIh4aLTpiwCqgSAfguvhS46D19NrOjhj4xLgxj290NCO9ulG/4Zw4Tww1Pf3G
+         JxDaxbW73hs9g==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id KQAVw7ZZj7pj; Wed, 10 Oct 2018 15:20:12 -0400 (EDT)
+        with ESMTP id 3Z3X1cTx8lUD; Wed, 10 Oct 2018 15:20:06 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 0591F183BA8;
-        Wed, 10 Oct 2018 15:20:10 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 1429A183B4D;
+        Wed, 10 Oct 2018 15:20:05 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -75,9 +75,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.21 08/16] x86: Wire up cpu_opv system call
-Date:   Wed, 10 Oct 2018 15:19:28 -0400
-Message-Id: <20181010191936.7495-9-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 03/16] sched: Implement push_task_to_cpu (v2)
+Date:   Wed, 10 Oct 2018 15:19:23 -0400
+Message-Id: <20181010191936.7495-4-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
 References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
@@ -85,6 +85,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Implement push_task_to_cpu(), which moves the task received as argument
+to the destination cpu's runqueue. It only does so if the CPU is within
+the CPU allowed mask of the task and if the CPU is active. If the CPU is
+not part of the allowed mask, -EINVAL is returned. If the CPU is not
+active, -EBUSY is returned.
+
+It does not change the CPU allowed mask, and can therefore be used
+within applications which rely on owning the sched_setaffinity() state.
+
+It does not pin the task to the destination CPU, which means that the
+scheduler may choose to move the task away from that CPU before the
+task executes. Code invoking push_task_to_cpu() must be prepared to
+retry in that case.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -108,32 +122,88 @@ CC: Will Deacon <will.deacon@arm.com>
 CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
----
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3cf7b533b3d1..d3253547e15e 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -398,3 +398,4 @@
- 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
-+387	i386	cpu_opv			sys_cpu_opv			__ia32_sys_cpu_opv
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f0b1709a5ffb..1391971b1517 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -343,6 +343,7 @@
- 332	common	statx			__x64_sys_statx
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
-+335	common	cpu_opv			__x64_sys_cpu_opv
+---
+Change since v1:
+- Return -EBUSY if CPU is not active.
+---
+ kernel/sched/core.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h |  9 +++++++++
+ 2 files changed, 51 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ad97f3ba5ec5..ee302988b342 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1036,6 +1036,48 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+ 		set_curr_task(rq, p);
+ }
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
++int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
++{
++	struct rq_flags rf;
++	struct rq *rq;
++	int ret = 0;
++
++	rq = task_rq_lock(p, &rf);
++	update_rq_clock(rq);
++
++	if (!cpumask_test_cpu(dest_cpu, &p->cpus_allowed)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (!cpumask_test_cpu(dest_cpu, cpu_active_mask)) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	if (task_cpu(p) == dest_cpu)
++		goto out;
++
++	if (task_running(rq, p) || p->state == TASK_WAKING) {
++		struct migration_arg arg = { p, dest_cpu };
++		/* Need help from migration thread: drop lock and wait. */
++		task_rq_unlock(rq, p, &rf);
++		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
++		tlb_migrate_finish(p->mm);
++		return 0;
++	} else if (task_on_rq_queued(p)) {
++		/*
++		 * OK, since we're going to drop the lock immediately
++		 * afterwards anyway.
++		 */
++		rq = move_queued_task(rq, &rf, p, dest_cpu);
++	}
++out:
++	task_rq_unlock(rq, p, &rf);
++
++	return ret;
++}
++
+ /*
+  * Change a given task's CPU affinity. Migrate the thread to a
+  * proper CPU and schedule it away if the CPU it's executing on
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 455fa330de04..27ad25780204 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1340,6 +1340,15 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+ #endif
+ }
+ 
++#ifdef CONFIG_SMP
++int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu);
++#else
++static inline int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
++{
++	return 0;
++}
++#endif
++
+ /*
+  * Tunables that become constants when CONFIG_SCHED_DEBUG is off:
+  */
 -- 
 2.11.0
 
