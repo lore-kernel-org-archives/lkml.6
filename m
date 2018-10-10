@@ -2,195 +2,98 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE774C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7EBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED0620841
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:09:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED0620841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 95A6620841
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A6620841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeJJPaE (ORCPT
+        id S1726976AbeJJPaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:30:04 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:51659 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeJJPaE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:30:04 -0400
-Received: by mail-io1-f69.google.com with SMTP id z9-v6so1792411iog.18
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=qj0+OFtWSRhDJVkn2aGIUYNCP1orxYvGSYUruQ3vr/s=;
-        b=Pl6AMQA/zKILCbr9W0XK8TKMu2VbPH6+r0uJFaSAPQyow7Xohm6YLmhgoMiiXVmnue
-         55Pncs6eom95MH1IG/UXC0MJnatCTR+HtLdR+ycpsJTOmWqj03LBGBi6Sw93P5W3+cfr
-         ibuaA70CezF9A4O+s8koBsLk+teJWFVJrsZUX+37oQoNaEGMXh/Uw/Bj8ipGvxMJww7a
-         0l8m7ErgBXPMYUp6Du032ynvyy+0hxhG9lgmCz+jkPNMAUW1vG9vBi5P8OiJphvM/GAD
-         RC/qI46guInyBIUbF/7LOI9Y+fLQCFHL4mJ1u5BvXXM194BpZXdkUwxrLW4pUjsbqgFT
-         4jFQ==
-X-Gm-Message-State: ABuFfohiVmD69vvBzQW7PXIhS/p49ERtzlWYjIjBEhpMnPtoelEWZDIp
-        9wloUA8oD4YhwKYo6OoAzG53ivGDNcrnemcyy7/HjIftZlum
-X-Google-Smtp-Source: ACcGV633f4vdtTgqDRknciMFdxie3dLik4ck4YeNu0J/eaxCBu8MSKYa4+VpETK5p0xxJ73aJ+OBAS4s/iFHeeeMouW6KDHfsEJ+
+        Wed, 10 Oct 2018 11:30:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38220 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725837AbeJJPae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 11:30:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4BFF9AFDA;
+        Wed, 10 Oct 2018 08:09:33 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 10:09:32 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     zhe.he@windriver.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] printk: Give error on attempt to set log buffer
+ length to over 4G
+Message-ID: <20181010080932.h6nln2qsgg4oef4l@pathway.suse.cz>
+References: <1538239553-81805-1-git-send-email-zhe.he@windriver.com>
+ <1538239553-81805-4-git-send-email-zhe.he@windriver.com>
+ <20181008135916.gg4kkmoki5bgtco5@pathway.suse.cz>
+ <20181008145950.GA1473@tigerII.localdomain>
+ <20181009130538.7rtd3du2d7l6m63w@pathway.suse.cz>
+ <20181009135758.GA1419@tigerII.localdomain>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:960b:: with SMTP id a11-v6mr21969619ioq.37.1539158943465;
- Wed, 10 Oct 2018 01:09:03 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 01:09:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000140c370577db5ece@google.com>
-Subject: KASAN: use-after-free Read in debugfs_remove (3)
-From:   syzbot <syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009135758.GA1419@tigerII.localdomain>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue 2018-10-09 22:57:58, Sergey Senozhatsky wrote:
+> On (10/09/18 15:05), Petr Mladek wrote:
+> > > 
+> > > Yeah, I think we gonna have problems even with a 4G logbuf and a 32-bit
+> > > user-space doing syslog(int len).
+> > > 
+> > > I agree on the "not motivated enough" part ;)
+> > 
+> > OK, I have pushed an updated patch that has the limit 2GB
+> > into printk.git, for-4.20 branch.
+> > 
+> > Note that it is slightly different than the yesterday's proposal.
+> > I made a mistake in testing and still compared with UNIT_MAX.
+> > 
+> > The pushed version can be seen at
+> > https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/commit/?h=for-4.20&id=e6fe3e5b7d16e8f146a4ae7fe481bc6e97acde1e
+> 
+> 
+> ---
+> 
+> > +#define LOG_BUF_LEN_MAX (u32)(1 << 31)
+> [..]
+> > +	if (size > (u64)LOG_BUF_LEN_MAX) {
+> > +		size = (u64)LOG_BUF_LEN_MAX;
+> > +		pr_err("log_buf over 2G is not supported.\n");
+> > +	}
+> 
+> Why not INT_MAX?
 
-syzbot found the following crash on:
+INT_MAX is 0x7fffffff but we need 0x80000000. I did not find
+any predefined macro.
 
-HEAD commit:    0854ba5ff5c9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=148516a1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
-dashboard link: https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> > +	pr_info("log_buf_len: %u bytes\n", log_buf_len);
+> > +	pr_info("early log buf free: %u(%u%%)\n",
+> >  		free, (free * 100) / __LOG_BUF_LEN);
+> 
+> Can 'free * 100' overflow?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Good question. It uses the size of the static buffer. If I count
+correctly then we are on the safe side because LOG_BUF_SHIFT
+is limited by
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com
+	range 12 25
 
-QAT: Invalid ioctl
-==================================================================
-BUG: KASAN: use-after-free in debugfs_remove+0x10b/0x130  
-fs/debugfs/inode.c:682
-Read of size 8 at addr ffff880173458460 by task syz-executor0/8436
-
-CPU: 1 PID: 8436 Comm: syz-executor0 Not tainted 4.19.0-rc7+ #274
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  debugfs_remove+0x10b/0x130 fs/debugfs/inode.c:682
-  blk_trace_free+0x35/0x130 kernel/trace/blktrace.c:312
-  blk_trace_cleanup kernel/trace/blktrace.c:339 [inline]
-  __blk_trace_remove+0x7a/0xa0 kernel/trace/blktrace.c:352
-  blk_trace_ioctl+0x243/0x2f0 kernel/trace/blktrace.c:730
-  blkdev_ioctl+0x8bc/0x2010 block/ioctl.c:587
-  block_ioctl+0xee/0x130 fs/block_dev.c:1883
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457579
-dccp_close: ABORT with 1061 bytes unread
-Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f55a7fc7c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-dccp_close: ABORT with 105978 bytes unread
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
-RDX: 0000000000000000 RSI: 0000000000001276 RDI: 0000000000000005
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f55a7fc86d4
-R13: 00000000004bea1e R14: 00000000004ce728 R15: 00000000ffffffff
-
-Allocated by task 8444:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  __d_alloc+0xc8/0xcc0 fs/dcache.c:1614
-  d_alloc+0x96/0x380 fs/dcache.c:1698
-  d_alloc_parallel+0x15a/0x1f40 fs/dcache.c:2441
-  __lookup_slow+0x1e6/0x540 fs/namei.c:1654
-  lookup_one_len+0x1d8/0x220 fs/namei.c:2543
-  start_creating+0xc6/0x200 fs/debugfs/inode.c:308
-  __debugfs_create_file+0x63/0x400 fs/debugfs/inode.c:347
-  debugfs_create_file+0x57/0x70 fs/debugfs/inode.c:399
-  do_blk_trace_setup+0x454/0xda0 kernel/trace/blktrace.c:528
-  __blk_trace_setup+0xd5/0x180 kernel/trace/blktrace.c:577
-  blk_trace_ioctl+0x17a/0x2f0 kernel/trace/blktrace.c:716
-  blkdev_ioctl+0x8bc/0x2010 block/ioctl.c:587
-  block_ioctl+0xee/0x130 fs/block_dev.c:1883
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-QAT: Invalid ioctl
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 8444:
-QAT: Invalid ioctl
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3756
-  __d_free+0x20/0x30 fs/dcache.c:257
-  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
-  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
-  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
-  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff880173458420
-  which belongs to the cache dentry(17:syz0) of size 288
-The buggy address is located 64 bytes inside of
-  288-byte region [ffff880173458420, ffff880173458540)
-The buggy address belongs to the page:
-page:ffffea0005cd1600 count:1 mapcount:0 mapping:ffff8801ca231c80 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0005d3fec8 ffff8801ce0f5848 ffff8801ca231c80
-raw: 0000000000000000 ffff880173458000 000000010000000b ffff880186fa62c0
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff880186fa62c0
-QAT: Invalid ioctl
-
-Memory state around the buggy address:
-  ffff880173458300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff880173458380: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-> ffff880173458400: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff880173458480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff880173458500: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Best Regards,
+Petr
