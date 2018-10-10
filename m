@@ -2,135 +2,112 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D7FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72815C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA6921532
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A47F21550
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="A+5PQQII"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA6921532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRRCQbLh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A47F21550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbeJJHvq (ORCPT
+        id S1726616AbeJJHzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:51:46 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18386 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbeJJHvq (ORCPT
+        Wed, 10 Oct 2018 03:55:55 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35759 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbeJJHzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:51:46 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bbd48940002>; Tue, 09 Oct 2018 17:32:20 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 09 Oct 2018 17:32:18 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 09 Oct 2018 17:32:18 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 10 Oct
- 2018 00:32:16 +0000
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-To:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
-CC:     <john.hubbard@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
- <20181009083025.GE11150@quack2.suse.cz>
- <20181009162012.c662ef0b041993557e150035@linux-foundation.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <62492f47-d51f-5c41-628c-ff17de21829e@nvidia.com>
-Date:   Tue, 9 Oct 2018 17:32:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 10 Oct 2018 03:55:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v133-v6so1641690pgb.2;
+        Tue, 09 Oct 2018 17:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CJ+84DBgLCFMg95PiXPfRB/decEWuZOwuM7HO76FbA4=;
+        b=BRRCQbLhJzNn6N76cN3IGvxD3HhE3E+IpKpFJ2RdStMHuLHYSSFGR3nq8hmY0frs9d
+         iiOrV4srh3md1aZvZh+u9dA6eOK2dueQy13clbRP5w3HuA0stwwDWa8YdUXsOW7i0l18
+         +ruK8ju5dWfBCnVpnZ86113PsJ6ZKBMahPkjk3PiBCfrRKgA+kcab7I0XCXGOrli4rgU
+         7LOTSIT8ZhFnrMZutvz8T+IMNK+cjliX+wdZDieBYYrL4BcTNzdqSiCnQ1iBHlZ82dTi
+         dBdjIx8Ps5pslW9mL1SzBEnfTyjp/rNgD22KKg1QEMRDSdM9+jEbck4bqDUsqVsM32n5
+         18mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CJ+84DBgLCFMg95PiXPfRB/decEWuZOwuM7HO76FbA4=;
+        b=IyXrD/J0gc+vP2NNR1z1xkNtt+vaJWVdNclGBOAPvwBFyfpb+uGNboBMH0rNQtOFfQ
+         OJRBDrDQGlJJdYN7QePLv2YFRonpvu/EmoqfJ6EPxuvSGGzgZm7kLKlKCbkuiN/56hHF
+         3cRaFH/8i1umh6Ymm4rocjj0MXu8LrCIDi2ORiqIoyivR5DJfm7ctgmGpI+zUnaXynuX
+         oH7vqwvSM5RY0k1Ej0G9jAYl4kgoOx3ODb4z/WrNwjAP8DvfERkfqGnxxLc/k2aSl6jT
+         ozoLR6SSmnG99rJdn0Uo1UT/+0etjbUuZ6L5Yd9V9+EsnvkbrmLqNgGyhV7/0bjyGYHX
+         8mUA==
+X-Gm-Message-State: ABuFfojP7ABNpLO7omB6Qj/zFOXej96z2dd7vvH6PlpyR5YsZBLZenVR
+        JCz56npIpXWvri88d5w+bxM=
+X-Google-Smtp-Source: ACcGV60l3hfnL87lAiVtas8zeRf/J+HBDUoECsrFmkIlQxtaRvqY//2vRoIplgvxDRiFGBhttOS7BQ==
+X-Received: by 2002:a63:9855:: with SMTP id l21-v6mr27779104pgo.162.1539131785604;
+        Tue, 09 Oct 2018 17:36:25 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id f81-v6sm40979126pfh.46.2018.10.09.17.36.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Oct 2018 17:36:24 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 17:36:23 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (tmp421) make const array 'names' static
+Message-ID: <20181010003623.GA21661@roeck-us.net>
+References: <20181009121157.21656-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20181009162012.c662ef0b041993557e150035@linux-foundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539131540; bh=GUCg8cPP+mBlc4rVdnuWV5cH6WRG/fccH/MuopV7ZSQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=A+5PQQIIqiXtqldyKeS92AVu8RwHk3BMXUFHGkswDPuthFaCkFHjwbuyEQAzknkjF
-         bZDRgPNWKjvYPS5M7MrcyLSKisyAl9P0IxzNPZXiEQxQbVxrv4CEHfHwNxPdQrpLzR
-         I09voG3prwW+ZT+3H3jT4U09qry6vyD78cyVZaA5EcKTSsuoDUjvlRVNxDT3SDls93
-         OQPRljHA9844DcJFbg4R1Zow+OHqCGb00hvgevwZi6LBRmVlS9lmdsPpAIum3vX1aF
-         Rm6EvB189/7j2oiiblKVD7MbXsGvrCe05D6vp4n2PbMlNBShxO21Hdrs7zmgzUgl4i
-         Hjxn6GzWT1T2w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009121157.21656-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/9/18 4:20 PM, Andrew Morton wrote:
-> On Tue, 9 Oct 2018 10:30:25 +0200 Jan Kara <jack@suse.cz> wrote:
+On Tue, Oct 09, 2018 at 01:11:57PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
->>> Also, maintainability.  What happens if someone now uses put_page() by
->>> mistake?  Kernel fails in some mysterious fashion?  How can we prevent
->>> this from occurring as code evolves?  Is there a cheap way of detecting
->>> this bug at runtime?
->>
->> The same will happen as with any other reference counting bug - the special
->> user reference will leak. It will be pretty hard to debug I agree. I was
->> thinking about whether we could provide some type safety against such bugs
->> such as get_user_pages() not returning struct page pointers but rather some
->> other special type but it would result in a big amount of additional churn
->> as we'd have to propagate this different type e.g. through the IO path so
->> that IO completion routines could properly call put_user_pages(). So I'm
->> not sure it's really worth it.
+> The const array 'names' can be made static, saves populating it on
+> the stack and will make it read-only.
 > 
-> I'm not really understanding.  Patch 3/3 changes just one infiniband
-> driver to use put_user_page().  But the changelogs here imply (to me)
-> that every user of get_user_pages() needs to be converted to
-> s/put_page/put_user_page/.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied to hwmon-next.
+
+Thanks,
+Guenter
+
+> ---
+>  drivers/hwmon/tmp421.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Methinks a bit more explanation is needed in these changelogs?
-> 
-
-OK, yes, it does sound like the explanation is falling short. I'll work on something 
-clearer. Did the proposed steps in the changelogs, such as:
-  
-[2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
-    Proposed steps for fixing get_user_pages() + DMA problems.
-
-help at all, or is it just too many references, and I should write the words
-directly in the changelog?
-
-Anyway, patch 3/3 is a just a working example (which we do want to submit, though), and
-many more conversions will follow. But they don't have to be done all upfront--they
-can be done in follow up patchsets. 
-
-The put_user_page*() routines are, at this point, not going to significantly change
-behavior. 
-
-I'm working on an RFC that will show what the long-term fix to get_user_pages and
-put_user_pages will look like. But meanwhile it's good to get started on converting
-all of the call sites.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+> diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
+> index e36399213324..8844c9565d2a 100644
+> --- a/drivers/hwmon/tmp421.c
+> +++ b/drivers/hwmon/tmp421.c
+> @@ -226,8 +226,10 @@ static int tmp421_detect(struct i2c_client *client,
+>  {
+>  	enum chips kind;
+>  	struct i2c_adapter *adapter = client->adapter;
+> -	const char * const names[] = { "TMP421", "TMP422", "TMP423",
+> -				       "TMP441", "TMP442" };
+> +	static const char * const names[] = {
+> +		"TMP421", "TMP422", "TMP423",
+> +		"TMP441", "TMP442"
+> +	};
+>  	int addr = client->addr;
+>  	u8 reg;
+>  
