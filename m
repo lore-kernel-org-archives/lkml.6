@@ -2,209 +2,185 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE8DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 767A5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 255C0214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 255C0214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 31C32204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:50:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SDNcoxtE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C32204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeJJQIp (ORCPT
+        id S1727302AbeJJQL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:08:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45442 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726722AbeJJQIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:08:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 73B5DB000;
-        Wed, 10 Oct 2018 08:47:33 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 10:47:31 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-Message-ID: <20181010084731.GB5873@dhcp22.suse.cz>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074457.GD22173@dhcp22.suse.cz>
- <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
- <20181009112216.GM8528@dhcp22.suse.cz>
- <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
+        Wed, 10 Oct 2018 12:11:26 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41274 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeJJQL0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 12:11:26 -0400
+Received: by mail-io1-f66.google.com with SMTP id q4-v6so3291743iob.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AObbxNd0OdSi+1w+ILy5OzESNhontvK25MsKd41jHZ8=;
+        b=SDNcoxtEStl9Xq22Yo3sbRgTebsNjLJuGMqlwHoekupkt6vnq8NJofgIlr2xfzqEBD
+         Ev0s7JqnwWUbvTTJ5ae2Ze+BpsVe2+2kK1xJ1XDR8esX1kPSNNWAj+z5ImP3pIEZ9K/p
+         OyiCa5IM7//Sc3dn7aEAdImj1tYGySafQ7W8k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AObbxNd0OdSi+1w+ILy5OzESNhontvK25MsKd41jHZ8=;
+        b=cPlMGNpzN0fxUlcssJT264nT//h7iUs3aAw5M6jLkxZTqjo/0p2El6b2jkdZwv+ArZ
+         1PZEN3LaQSxLK+RXMuWKcKWXNKI0TFSjhB/GHB441D19KP3/XnPoyUDa6X2QgDxkOKxf
+         t1PtJlEh1eDNL/nirkjonpfxVbcCMmfSFnWxQbl6gH0Vz6i8XLmcHGKLL+iM7JP3FiMF
+         jW8FIzm+YJADWUUKdzsE6UT5nOjTrNnmLq8+1bsy47TCR7otbXpUy9mzy003Zc5Vnl2K
+         mZ9rvZT+4JwTiRzoLwc1NrOqisvq0p+PP7K1xCBKyXT8VtI9wk0mU+tVHq970dFzbKkm
+         SKnA==
+X-Gm-Message-State: ABuFfojt5pdknTxiandbGzGuRU9oUI9Hh0rU1W54PkFD/Yv1aevKtMQZ
+        6AXrY4G6F51h/GkYv9mDP5J804xJlh+SVFvKCPSrHXmzsnE=
+X-Google-Smtp-Source: ACcGV622H6L6dVzvJ106LZe4peLMPXFvI6Ou6WQNLnWtJIh+dcPckAx9GJPHh5pDEYf2jrIBt7N6n4yCYIljOq//dfQ=
+X-Received: by 2002:a6b:254:: with SMTP id 81-v6mr16129592ioc.183.1539161416113;
+ Wed, 10 Oct 2018 01:50:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010061751.GA37224@gmail.com> <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
+In-Reply-To: <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 10 Oct 2018 10:50:05 +0200
+Message-ID: <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09-10-18 10:34:55, Dan Williams wrote:
-> On Tue, Oct 9, 2018 at 4:28 AM Michal Hocko <mhocko@kernel.org> wrote:
+On Wed, 10 Oct 2018 at 10:29, Quentin Perret <quentin.perret@arm.com> wrote:
+>
+> Hi Thara,
+>
+> On Wednesday 10 Oct 2018 at 08:17:51 (+0200), Ingo Molnar wrote:
 > >
-> > On Thu 04-10-18 09:44:35, Dan Williams wrote:
-> > > Hi Michal,
-> > >
-> > > On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > On Wed 03-10-18 19:15:18, Dan Williams wrote:
-> > > > > Changes since v1:
-> > > > > * Add support for shuffling hot-added memory (Andrew)
-> > > > > * Update cover letter and commit message to clarify the performance impact
-> > > > >   and relevance to future platforms
-> > > >
-> > > > I believe this hasn't addressed my questions in
-> > > > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
-> > > > "
-> > > > It is the more general idea that I am not really sure about. First of
-> > > > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
-> > > > cannot we simply have it disabled?
-> > >
-> > > I'm not aware of any CVE that this would directly preclude, but that
-> > > said the entropy injected at 4MB boundaries raises the bar on heap
-> > > attacks. Environments that want more can adjust that with the boot
-> > > parameter. Given the potential benefits I think it would only make
-> > > sense to default disable it if there was a significant runtime impact,
-> > > from what I have seen there isn't.
-> > >
-> > > > Then and more concerning question is,
-> > > > does it even make sense to have this randomization applied to higher
-> > > > orders than 0? Attacker might fragment the memory and keep recycling the
-> > > > lowest order and get the predictable behavior that we have right now.
-> > >
-> > > Certainly I expect there are attacks that can operate within a 4MB
-> > > window, as I expect there are attacks that could operate within a 4K
-> > > window that would need sub-page randomization to deter. In fact I
-> > > believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
-> > > Combining that with page allocator randomization makes the kernel less
-> > > predictable.
+> > * Thara Gopinath <thara.gopinath@linaro.org> wrote:
 > >
-> > I am sorry but this hasn't explained anything (at least to me). I can
-> > still see a way to bypass this randomization by fragmenting the memory.
-> > With that possibility in place this doesn't really provide the promissed
-> > additional security. So either I am missing something or the per-order
-> > threshold is simply a wrong interface to a broken security misfeature.
-> 
-> I think a similar argument can be made against
-> CONFIG_SLAB_FREELIST_RANDOM the randomization benefits can be defeated
-> with more effort, and more effort is the entire point.
-
-If there is relatively simple way to achieve that (which I dunno about
-the slab free list randomization because I am not familiar with the
-implementation) then the feature is indeed questionable. I would
-understand an argument about feasibility if bypassing was extremely hard
-but fragmenting the memory is relatively a simple task.
-
-> > > Is that enough justification for this patch on its own?
+> > > Thermal governors can respond to an overheat event for a cpu by
+> > > capping the cpu's maximum possible frequency. This in turn
+> > > means that the maximum available compute capacity of the
+> > > cpu is restricted. But today in linux kernel, in event of maximum
+> > > frequency capping of a cpu, the maximum available compute
+> > > capacity of the cpu is not adjusted at all. In other words, scheduler
+> > > is unware maximum cpu capacity restrictions placed due to thermal
+> > > activity. This patch series attempts to address this issue.
+> > > The benefits identified are better task placement among available
+> > > cpus in event of overheating which in turn leads to better
+> > > performance numbers.
+> > >
+> > > The delta between the maximum possible capacity of a cpu and
+> > > maximum available capacity of a cpu due to thermal event can
+> > > be considered as thermal pressure. Instantaneous thermal pressure
+> > > is hard to record and can sometime be erroneous as there can be mismatch
+> > > between the actual capping of capacity and scheduler recording it.
+> > > Thus solution is to have a weighted average per cpu value for thermal
+> > > pressure over time. The weight reflects the amount of time the cpu has
+> > > spent at a capped maximum frequency. To accumulate, average and
+> > > appropriately decay thermal pressure, this patch series uses pelt
+> > > signals and reuses the available framework that does a similar
+> > > bookkeeping of rt/dl task utilization.
+> > >
+> > > Regarding testing, basic build, boot and sanity testing have been
+> > > performed on hikey960 mainline kernel with debian file system.
+> > > Further aobench (An occlusion renderer for benchmarking realworld
+> > > floating point performance) showed the following results on hikey960
+> > > with debain.
+> > >
+> > >                                         Result          Standard        Standard
+> > >                                         (Time secs)     Error           Deviation
+> > > Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
+> > > Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
 > >
-> > I do not think so from what I have heard so far.
-> 
-> I'm missing what bar you are judging the criteria for these patches,
-> my bar is increased protection against allocation ordering attacks as
-> seconded by Kees, and the memory side caching effects.
-
-As said above, if it is quite easy to bypass the randomization then
-calling and advertizing this as a security feature is a dubious. Not
-enough to ouright nak it of course but also not something I would put my
-stamp on. And arguments would be much more solid if they were backed by
-some numbers (not only for the security aspect but also the side caching
-effects).
-
-> That said I
-> don't have a known CVE in my mind that would be mitigated by 4MB page
-> shuffling.
-> 
-> > > It's
-> > > debatable. Combine that though with the wider availability of
-> > > platforms with memory-side-cache and I think it's a reasonable default
-> > > behavior for the kernel to deploy.
+> > Wow, +13% speedup, impressive! We definitely want this outcome.
 > >
-> > OK, this sounds a bit more interesting. I am going to speculate because
-> > memory-side-cache is way too generic of a term for me to imagine
-> > anything specific.
-> 
-> No need to imagine, a memory side cache shipped on a previous product
-> as Robert linked in his comments.
+> > I'm wondering what happens if we do not track and decay the thermal load at all at the PELT
+> > level, but instantaneously decrease/increase effective CPU capacity in reaction to thermal
+> > events we receive from the CPU.
+>
+> +1, it's not that obvious (to me at least) that averaging the thermal
+> pressure over time is necessarily what we want. Say the thermal governor
+> caps a CPU and 'removes' 70% of its capacity, it will take forever for
+> the PELT signal to ramp-up to that level before the scheduler can react.
+> And the other way around, if you release the cap, it'll take a while
+> before we actually start using the newly available capacity. I can also
+> imagine how reacting too fast can be counter-productive, but I guess
+> having numbers and/or use-cases to show that would be great :-)
 
-Could you make this a part of the changelog? I would really appreciate
-to see justification based on actual numbers rather than quite hand wavy
-"it helps".
+The problem with reflecting directly the capping is that it happens
+far more often than the pace at which cpu_capacity_orig is updated in
+the scheduler. This means that at the moment when scheduler uses the
+value, it might not be correct anymore. Then, this value are also used
+when building the sched_domain and setting max_cpu_capacity which
+would also implies the rebuilt the sched_domain topology ...
 
-> > Many years back while at a university I was playing
-> > with page coloring as a method to reach a more stable performance
-> > results due to reduced cache conflicts. It was not always a performance
-> > gain but it definitely allowed for more stable run-to-run comparable
-> > results. I can imagine that a randomization might lead to a similar effect
-> > although I am not sure how much and it would be more interesting to hear
-> > about that effect.
-> 
-> Cache coloring is effective up until your workload no longer fits in
-> that color.
+The pace of changing the capping is to fast to reflect that in the
+whole scheduler topology
 
-Yes, that was my observation back then more or less. But even when you
-do not fit into the cache a color aware strategy (I was playing with bin
-hoping as well) produced a more deterministic/stable results. But that
-is just a side note as it doesn't directly relate to your change.
+>
+> Thara, have you tried to experiment with a simpler implementation as
+> suggested by Ingo ?
+>
+> Also, assuming that we do want to average things, do we actually want to
+> tie the thermal ramp-up time to the PELT half life ? That provides
+> nice maths properties wrt the other signals, but it's not obvious to me
+> that this thermal 'constant' should be the same on all platforms. Or
+> maybe it should ?
 
-> Randomization helps to attenuate the cache conflict rate
-> when that happens.
+The main interest of using PELT signal is that thermal pressure will
+evolve at the same pace as other signals used in the scheduler. With
+thermal pressure, we have the exact same problem as with RT tasks. The
+thermal will cap the max frequency which will cap the utilization of
+the tasks running on the CPU
 
-I can imagine that. Do we have any numbers to actually back that claim
-though?
-
-> For workloads that may fit in the cache, and/or
-> environments that need more explicit cache control we have the recent
-> changes to numa_emulation [1] to arrange for cache sized numa nodes.
-
-Could you point me to some more documentation. My google-fu is failing
-me and "5.2.27.5 Memory Side Cache Information Structure" doesn't point
-to anything official (except for your patch referencing it).
-
-> > If this is really the case then I would assume on/off
-> > knob to control the randomization without something as specific as
-> > order.
-> 
-> Are we only debating the enabling knob at this point? I'm not opposed
-> to changing that, but I do think we want to keep the rest of the
-> infrastructure to allow for shuffling on a variable page size boundary
-> in case there is enhanced security benefits at smaller buddy-page
-> sizes.
-
-I am still trying to understand the benefit of this change. If the
-caching effects are actually the most important part and there is a
-reasonable cut in allocation order to keep the randomization effective
-during the runtime then I would like to understand the thinking behind
-that. In other words does the randomization at smaller orders than
-biggest order still visible in actual benchmarks? If not then on/off
-knob should be sufficient with potential auto tuning based on actual HW
-rather than to expect poor admin to google for $RANDOM_ORDER to use on a
-specific HW and all the potential cargo cult that will grow around it.
-
-As I've said before, I am not convinced about the security argument but
-even if I am wrong here then I am still quite sure that you do not want
-to expose the security aspect as "chose an order to randomize from"
-because admins will have no real way to know what is the $RANDOM_ORDER
-to set. So even then it should be on/off thing. You are going to pay
-some of the performance because you would lose some page allocator
-optimizations (e.g. pcp lists) but that is unavoidable AFAICS.
-
-With all that being said, I think the overal idea makes sense but you
-should try much harder to explain _why_ we need it and back your
-justification by actual _data_ before I would consider my ack.
-
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cc9aec03e58f
-
--- 
-Michal Hocko
-SUSE Labs
+>
+> Thanks,
+> Quentin
+>
+> >
+> > You describe the averaging as:
+> >
+> > > Instantaneous thermal pressure is hard to record and can sometime be erroneous as there can
+> > > be mismatch between the actual capping of capacity and scheduler recording it.
+> >
+> > Not sure I follow the argument here: are there bogus thermal throttling events? If so then
+> > they are hopefully not frequent enough and should average out over time even if we follow
+> > it instantly.
+> >
+> > I.e. what is 'can sometimes be erroneous', exactly?
+> >
+> > Thanks,
+> >
+> >       Ingo
