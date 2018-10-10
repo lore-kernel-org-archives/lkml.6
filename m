@@ -2,111 +2,197 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E960AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7A920870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC4B120870
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGMBl+US"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7A920870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ayl6kyH8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4B120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJJUQW (ORCPT
+        id S1726976AbeJJUQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 16:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726503AbeJJUQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 16:16:21 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BB3220870;
-        Wed, 10 Oct 2018 12:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539176058;
-        bh=o96/5jiP/BKu9E3KyAAWWGjtpyi4QHKfj/60dZgy6M4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EGMBl+US7jImTMox3Wgxz4DzkufLTkgo/83MZkouiJTa9mHoajR72EM5Y07smqJ/0
-         BjP1gD0FZjFrLAGiSPVflEhi1wz8E5flaX3G4o4pUm+rf+5CFESoUILJealuqREfIh
-         amXAmeBU/zY8rhs4CYBxHHGjm9vyEp13wmaLb3f8=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id B8524142C5E; Wed, 10 Oct 2018 09:54:15 -0300 (-03)
-Date:   Wed, 10 Oct 2018 09:54:15 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Anthony LaTorre <tlatorre9@gmail.com>,
-        andipan Das <sandipan@linux.ibm.com>, peterz@infradead.org,
-        mingo@redhat.com, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: perf report segfault
-Message-ID: <20181010125415.GG10775@kernel.org>
-References: <CAO49afLqUGuBi_R7BKyojqnkHrMGqXquy-FdVFscOu6Ez0cVFw@mail.gmail.com>
- <20181009164743.GA22886@krava>
- <CAO49af+zxxVh9HGfjKxS=vQcD5po7-oLU87Zp0F21M-C64nWUA@mail.gmail.com>
- <CAO49afJVHsywYdosSqceQiMzFdaYivm4kiNnC_+WKq15jsA7Dg@mail.gmail.com>
- <20181009214158.GB31206@krava>
- <CAO49af+5TaWrdYeM3XyHoti0obH--0txq9_a6_9ZPMuB-J=hjg@mail.gmail.com>
- <20181009222004.GA19295@krava>
+        Wed, 10 Oct 2018 16:16:38 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36909 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbeJJUQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 16:16:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 185-v6so5652885wmt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
+        b=Ayl6kyH88HqPGMjfcmRfuOGkCYPMjBnoDdI7GCNNg9fj+qekPYSMwjuiNUOOzcEJTK
+         EodIOqkhIcPhiVOXG9Yb52gdh3cko1SXbSr6h2lXsBiqobKHfXpFWkFlpwU+hF2RH3Wp
+         kMqUPix3XBhM+twn4eEGs/+Tp5SJv+Iab8qLYjY3DfUUYzYleoXdz+OrhYf6oodeckQ4
+         cJY/gGrUkVJ6CQLOPcPP4DiXPwIhL2N8cBK+i/0DFJUbMUUrCHO2wHiSt6wVEj6DYa+y
+         92TghvF4YapmkXmf7910l7rU8G/PJGpwadWikKLMaVAS5InHv3b+5hTdxxozpbpdmKyQ
+         dR1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
+        b=XYUfqutUnyXzF9pjYPRE+eSSrfdhPmVqyckO3QZnPV1028nRVWvm8yRb/lSflatTEu
+         Z2QpifjtDCqZSXZNyVXrlSGMThvd49PPW8wUVPrqoSAgJx/a4yQdd/y/NfsUSJI3VG5v
+         728XuqLRhJ5ziKumHZgGTtUzckLzdSi+XSKsqdY1EvX4iIZgEZNLUAodlJXDBQVoMGcC
+         IQ+EGO9HvOgAjy2BfJ71v9tz0pFsz3R0AsuT+qKAqF+Yz3GshEvllCjoejMxqlUcPl2i
+         dQ/IgtqcHH1yai5lZMAhlOddXL+gijUMV9puwGXQTtQV+oGN0g2nqNTLuhuygC+WRUlz
+         QhQQ==
+X-Gm-Message-State: ABuFfojrURtqWjStvwMsY5eI8swKKvHBwbdbrnmsVv3o4hBKMTqkBtFp
+        v1gb2Hn4FuRGBMXWA5uI22/ziA==
+X-Google-Smtp-Source: ACcGV60GE4e1CUOziycPH4qGJXghj2r264VUZyhU+JCvvzDFRzmBnvyM/pxPLDC+PtcrxJNOhUtMDg==
+X-Received: by 2002:a1c:3795:: with SMTP id e143-v6mr850432wma.9.1539176071111;
+        Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id x66-v6sm6110731wme.35.2018.10.10.05.54.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 05:54:30 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 14:54:23 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181010125422.rouslofknxzvygzr@brauner.io>
+References: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+ <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+ <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <20181009134923.2fvf5roghqgaj5gq@brauner.io>
+ <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
+ <20181009140932.e5w5lgbgucbl72kt@brauner.io>
+ <CAG48ez12SYRUJTWRdzWhpvHBkQion4i8Gpef4r1L6epo9JF-ng@mail.gmail.com>
+ <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
+ <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181009222004.GA19295@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 10, 2018 at 12:20:04AM +0200, Jiri Olsa escreveu:
-> On Tue, Oct 09, 2018 at 04:47:31PM -0500, Anthony LaTorre wrote:
-> > I can try building perf from the latest sources. I've attached the
-> > perf.data and perf.data.tar.bz2 from the test program I sent earlier.
+On Tue, Oct 09, 2018 at 06:26:47PM +0200, Jann Horn wrote:
+> On Tue, Oct 9, 2018 at 6:20 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Tue, Oct 09, 2018 at 05:26:26PM +0200, Jann Horn wrote:
+> > > On Tue, Oct 9, 2018 at 4:09 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
+> > > > > On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
+> > > > > > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > > One more thing. Citing from [1]
+> > > > > > > >
+> > > > > > > > > I think there's a security problem here. Imagine the following scenario:
+> > > > > > > > >
+> > > > > > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> > > > > > > > > 2. task A forks off a child B
+> > > > > > > > > 3. task B uses setuid(1) to drop its privileges
+> > > > > > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> > > > > > > > > or via execve()
+> > > > > > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> > > > > > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+> > > > > > > >
+> > > > > > > > Sorry, to be late to the party but would this really pass
+> > > > > > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
+> > > > > > > > that it would... Doesn't look like it would get past:
+> > > > > > > >
+> > > > > > > >         tcred = __task_cred(task);
+> > > > > > > >         if (uid_eq(caller_uid, tcred->euid) &&
+> > > > > > > >             uid_eq(caller_uid, tcred->suid) &&
+> > > > > > > >             uid_eq(caller_uid, tcred->uid)  &&
+> > > > > > > >             gid_eq(caller_gid, tcred->egid) &&
+> > > > > > > >             gid_eq(caller_gid, tcred->sgid) &&
+> > > > > > > >             gid_eq(caller_gid, tcred->gid))
+> > > > > > > >                 goto ok;
+> > > > > > > >         if (ptrace_has_cap(tcred->user_ns, mode))
+> > > > > > > >                 goto ok;
+> > > > > > > >         rcu_read_unlock();
+> > > > > > > >         return -EPERM;
+> > > > > > > > ok:
+> > > > > > > >         rcu_read_unlock();
+> > > > > > > >         mm = task->mm;
+> > > > > > > >         if (mm &&
+> > > > > > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
+> > > > > > > >              !ptrace_has_cap(mm->user_ns, mode)))
+> > > > > > > >             return -EPERM;
+> > > > > > >
+> > > > > > > Which specific check would prevent task C from attaching to task B? If
+> > > > > > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
+> > > > > > > you don't trigger the second "return -EPERM".
+> > > > > >
+> > > > > > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
+> > > > > > have if you did a setuid to an unpriv user. (But I always find that code
+> > > > > > confusing.)
+> > > > >
+> > > > > Only if the target hasn't gone through execve() since setuid().
+> > > >
+> > > > Sorry if I want to know this in excessive detail but I'd like to
+> > > > understand this properly so bear with me :)
+> > > > - If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
+> > > >   execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
+> > >
+> > > Yeah.
+> > >
+> > > > - If task B has setuid()ed, exeved()ed it will get its dumpable flag set
+> > > >   to /proc/sys/fs/suid_dumpable
+> > >
+> > > Not if you changed all UIDs (e.g. by calling setuid() as root). In
+> > > that case, setup_new_exec() calls "set_dumpable(current->mm,
+> > > SUID_DUMP_USER)".
+> >
+> > Actually, looking at this when C is trying to PTRACE_ATTACH to B as an
+> > unprivileged user even if B execve()ed and it is dumpable C still
+> > wouldn't have CAP_SYS_PTRACE in the mm->user_ns unless it already is
+> > privileged over mm->user_ns which means it must be in an ancestor
+> > user_ns.
 > 
-> cool, reproduced.. it seems to get introduced by:
->   2a9d5050dc84 perf script: Show correct offsets for DWARF-based unwinding
-> 
-> reverting that patch fixes the issue for me, but looks like
-> we could just make th attached check and prevent the crash
-> 
-> adding Sandipan Das to the loop, the author of that commit, any idea?
+> Huh? Why would you need CAP_SYS_PTRACE for anything here? You can
+> ptrace another process running under your UID just fine, no matter
+> what the namespaces are. I'm not sure what you're saying.
 
-commit ff4ce2885af8f9e8e99864d78dbeb4673f089c76
-Author: Milian Wolff <milian.wolff@kdab.com>
-Date:   Wed Sep 26 15:52:05 2018 +0200
+Sorry, I was out the door yesterday when answering this and was too
+brief. I forgot to mention: /proc/sys/kernel/yama/ptrace_scope. It
+should be enabled by default on nearly all distros and even if not -
+which is an administrators choice - you can usually easily enable it via
+sysctl.
 
-    perf report: Don't try to map ip to invalid map
-    
-    Fixes a crash when the report encounters an address that could not be
-    associated with an mmaped region:
-    
-      #0  0x00005555557bdc4a in callchain_srcline (ip=<error reading variable: Cannot access memory at address 0x38>, sym=0x0, map=0x0) at util/machine.c:2329
-      #1  unwind_entry (entry=entry@entry=0x7fffffff9180, arg=arg@entry=0x7ffff5642498) at util/machine.c:2329
-      #2  0x00005555558370af in entry (arg=0x7ffff5642498, cb=0x5555557bdb50 <unwind_entry>, thread=<optimized out>, ip=18446744073709551615) at util/unwind-libunwind-local.c:586
-      #3  get_entries (ui=ui@entry=0x7fffffff9620, cb=0x5555557bdb50 <unwind_entry>, arg=0x7ffff5642498, max_stack=<optimized out>) at util/unwind-libunwind-local.c:703
-      #4  0x0000555555837192 in _unwind__get_entries (cb=<optimized out>, arg=<optimized out>, thread=<optimized out>, data=<optimized out>, max_stack=<optimized out>) at util/unwind-libunwind-
-local.c:725
-      #5  0x00005555557c310f in thread__resolve_callchain_unwind (max_stack=127, sample=0x7fffffff9830, evsel=0x555555c7b3b0, cursor=0x7ffff5642498, thread=0x555555c7f6f0) at util/machine.c:235
-1
-      #6  thread__resolve_callchain (thread=0x555555c7f6f0, cursor=0x7ffff5642498, evsel=0x555555c7b3b0, sample=0x7fffffff9830, parent=0x7fffffff97b8, root_al=0x7fffffff9750, max_stack=127) at 
-util/machine.c:2378
-      #7  0x00005555557ba4ee in sample__resolve_callchain (sample=<optimized out>, cursor=<optimized out>, parent=parent@entry=0x7fffffff97b8, evsel=<optimized out>, al=al@entry=0x7fffffff9750,
-          max_stack=<optimized out>) at util/callchain.c:1085
-    
-    Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-    Tested-by: Sandipan Das <sandipan@linux.ibm.com>
-    Acked-by: Jiri Olsa <jolsa@kernel.org>
-    Cc: Jin Yao <yao.jin@linux.intel.com>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Fixes: 2a9d5050dc84 ("perf script: Show correct offsets for DWARF-based unwinding")
-    Link: http://lkml.kernel.org/r/20180926135207.30263-1-milian.wolff@kdab.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+1 ("restricted ptrace") [default value]
+When  performing an operation that requires a PTRACE_MODE_ATTACH check,
+the calling process must either have the CAP_SYS_PTRACE capability in
+the user namespace of the target process or it must have a prede‐ fined
+relationship with the target process.  By default, the predefined
+relationship is that the target process must be a descendant of the
+caller.
 
+If you don't have it set you're already susceptible to all kinds of
+other attacks and I'm still not convinced we need to bring out the big
+capable(CAP_SYS_ADMIN) gun here.
