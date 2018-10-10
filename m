@@ -2,123 +2,136 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B7AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4D6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349BB2087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349BB2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 80A2C2077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QqRqpIq0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A2C2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeJJTaT (ORCPT
+        id S1727826AbeJJTa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:30:19 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59504 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727254AbeJJT3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:29:55 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8F3C1200226;
-        Wed, 10 Oct 2018 14:08:02 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 824C1200163;
-        Wed, 10 Oct 2018 14:08:02 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CA75920604;
-        Wed, 10 Oct 2018 14:08:01 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        arm@kernel.org
-Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
-        shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
-        bharat.bhushan@nxp.com, arnd@arndb.de,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 21/22] arm64: dts: ls104x: make dma-coherent global to the SoC
-Date:   Wed, 10 Oct 2018 15:07:36 +0300
-Message-Id: <20181010120737.30300-19-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
-References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Wed, 10 Oct 2018 15:30:29 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47622 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeJJTa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:30:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WvBPMxNIuL8Fov3ZIkfuO8ade+/nlk3Rfc6d9Ne/lZ4=; b=QqRqpIq0ANZL1VUfv2H5ZLmKw
+        VtlpJlEd1eDPg1iMM+UiosC55v4PoWa3J8HbDA1LFG5CTbyOVFb5IlITt8USDBAGGccHebt+RmbK7
+        CabGbatk8Mvkmf7p9E3+u6xMzv2UUDNJ0ONYJnw0WalmZYkRgqH2i729Qw9ra9vtFXDo4=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:41183)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gADHQ-0006Zk-KO; Wed, 10 Oct 2018 13:07:56 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gADHM-0001d8-Hi; Wed, 10 Oct 2018 13:07:52 +0100
+Date:   Wed, 10 Oct 2018 13:07:51 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Question] directory for SoC-related DT binding
+Message-ID: <20181010120751.GP30658@n2100.armlinux.org.uk>
+References: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+On Wed, Oct 10, 2018 at 08:07:52PM +0900, Masahiro Yamada wrote:
+> Hi,
+> 
+> 
+> I see a bunch of vendor (or SoC) names in
+> Documentation/device/bindings/arm/
+> 
+> ./Documentation/devicetree/bindings/arm/altera
+> ./Documentation/devicetree/bindings/arm/amlogic
+> ./Documentation/devicetree/bindings/arm/apm
+> ./Documentation/devicetree/bindings/arm/bcm
+> ./Documentation/devicetree/bindings/arm/calxeda
+> ./Documentation/devicetree/bindings/arm/freescale
+> ./Documentation/devicetree/bindings/arm/hisilicon
+> ./Documentation/devicetree/bindings/arm/keystone
+> ./Documentation/devicetree/bindings/arm/marvell
+> ./Documentation/devicetree/bindings/arm/mediatek
+> ./Documentation/devicetree/bindings/arm/mrvl
+> ./Documentation/devicetree/bindings/arm/msm
+> ./Documentation/devicetree/bindings/arm/npcm
+> ./Documentation/devicetree/bindings/arm/nxp
+> ./Documentation/devicetree/bindings/arm/omap
+> ./Documentation/devicetree/bindings/arm/rockchip
+> ./Documentation/devicetree/bindings/arm/samsung
+> ./Documentation/devicetree/bindings/arm/stm32
+> ./Documentation/devicetree/bindings/arm/sunxi
+> ./Documentation/devicetree/bindings/arm/tegra
+> ./Documentation/devicetree/bindings/arm/ti
+> ./Documentation/devicetree/bindings/arm/uniphier
+> ./Documentation/devicetree/bindings/arm/ux500
+> ./Documentation/devicetree/bindings/arm/vt8500
 
-These SoCs are really completely dma coherent in their entirety so add
-the dma-coherent property at the soc level in the device tree and drop
-the instances where it's specifically added to a few select devices.
+These are for arch/arm/mach-* and are the DT root descriptions for the
+various boards and SoCs.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 5 +----
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 +
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> I also see some vendor names in
+> Documentation/device/bindings/soc/
+> 
+> ./Documentation/devicetree/bindings/soc/bcm
+> ./Documentation/devicetree/bindings/soc/dove
+> ./Documentation/devicetree/bindings/soc/fsl
+> ./Documentation/devicetree/bindings/soc/mediatek
+> ./Documentation/devicetree/bindings/soc/qcom
+> ./Documentation/devicetree/bindings/soc/rockchip
+> ./Documentation/devicetree/bindings/soc/ti
+> ./Documentation/devicetree/bindings/soc/xilinx
+> ./Documentation/devicetree/bindings/soc/zte
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index ccadc40a36f4..9fb3ac0fa87c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -215,6 +215,7 @@
- 		#size-cells = <2>;
- 		ranges;
- 		dma-ranges = <0x0 0x0 0x0 0x0 0x10000 0x00000000>;
-+		dma-coherent;
- 
- 		clockgen: clocking@1ee1000 {
- 			compatible = "fsl,ls1043a-clockgen";
-@@ -680,7 +681,6 @@
- 			reg-names = "ahci", "sata-ecc";
- 			interrupts = <0 69 0x4>;
- 			clocks = <&clockgen 4 0>;
--			dma-coherent;
- 		};
- 
- 		msi1: msi-controller1@1571000 {
-@@ -715,7 +715,6 @@
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			device_type = "pci";
--			dma-coherent;
- 			iommu-map = <0 &mmu 0 1>;
- 			num-lanes = <4>;
- 			bus-range = <0x0 0xff>;
-@@ -741,7 +740,6 @@
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			device_type = "pci";
--			dma-coherent;
- 			iommu-map = <0 &mmu 0 1>;
- 			num-lanes = <2>;
- 			bus-range = <0x0 0xff>;
-@@ -767,7 +765,6 @@
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			device_type = "pci";
--			dma-coherent;
- 			iommu-map = <0 &mmu 0 1>;
- 			num-lanes = <2>;
- 			bus-range = <0x0 0xff>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index a12d33362554..f19cf6087235 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -188,6 +188,7 @@
- 		#size-cells = <2>;
- 		ranges;
- 		dma-ranges = <0x0 0x0 0x0 0x0 0x10000 0x00000000>;
-+		dma-coherent;
- 
- 		ddr: memory-controller@1080000 {
- 			compatible = "fsl,qoriq-memory-controller";
+These are for individual drivers in drivers/soc/
+
+> Confusingly, I see bcm, mediatek, rockchip
+> in both locations.
+
+Correct, because one is for the SoC and board as a whole, the other is
+for some subset of the SoC handled via drivers/soc - for example, with
+Broadcom, there's a Raspberry PI power domain driver in drivers/soc,
+which is described by
+
+ Documentation/devicetree/bindings/soc/bcm/raspberrypi,bcm2835-power.txt
+
+whereas
+
+ Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt
+
+describes the bindings for the root DT node BCM2835 as used on the
+Raspberry Pi amongst other boards.
+
 -- 
-2.17.1
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
