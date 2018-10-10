@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470FAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F0EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198092086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:23:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 198092086E
+	by mail.kernel.org (Postfix) with ESMTP id CD5372086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:24:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5372086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJKArC (ORCPT
+        id S1727836AbeJKArG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:47:02 -0400
-Received: from shell.v3.sk ([90.176.6.54]:54589 "EHLO shell.v3.sk"
+        Wed, 10 Oct 2018 20:47:06 -0400
+Received: from shell.v3.sk ([90.176.6.54]:54714 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbeJKArA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:47:00 -0400
+        id S1727164AbeJKArF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 20:47:05 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D2927BCFE8;
-        Wed, 10 Oct 2018 19:23:49 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id AF300AE23F;
+        Wed, 10 Oct 2018 19:23:54 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ce3jWZjeYA_6; Wed, 10 Oct 2018 19:23:26 +0200 (CEST)
+        with ESMTP id vbNj-pXjtM_Q; Wed, 10 Oct 2018 19:23:35 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 61392BCFC6;
-        Wed, 10 Oct 2018 19:23:15 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id D4420BCFAD;
+        Wed, 10 Oct 2018 19:23:18 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id eUHwegwDNKu0; Wed, 10 Oct 2018 19:23:12 +0200 (CEST)
+        with ESMTP id UKlJIzD9Q5Vy; Wed, 10 Oct 2018 19:23:16 +0200 (CEST)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3C161BCFC2;
-        Wed, 10 Oct 2018 19:23:08 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 90E96BCFBE;
+        Wed, 10 Oct 2018 19:23:10 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -56,9 +56,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-pm@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 11/15] x86, olpc: Use a correct version when making up a battery node
-Date:   Wed, 10 Oct 2018 19:22:56 +0200
-Message-Id: <20181010172300.317643-12-lkundrak@v3.sk>
+Subject: [PATCH 15/15] power: supply: olpc_battery: Add OLPC XO 1.75 support
+Date:   Wed, 10 Oct 2018 19:23:00 +0200
+Message-Id: <20181010172300.317643-16-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181010172300.317643-1-lkundrak@v3.sk>
 References: <20181010172300.317643-1-lkundrak@v3.sk>
@@ -69,121 +69,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The XO-1 and XO-1.5 batteries apparently differ in an ability to report
-ambient temperature. Add a different compatible string to the 1.5
-battery.
+The battery and the protocol are essentially the same as OLPC XO 1.5,
+but the responses from the EC are LSB first.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/x86/platform/olpc/olpc_dt.c | 59 +++++++++++++++++++++++---------
- 1 file changed, 42 insertions(+), 17 deletions(-)
+ drivers/power/supply/olpc_battery.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/ol=
-pc_dt.c
-index d6ee92986920..6e54e116b0c5 100644
---- a/arch/x86/platform/olpc/olpc_dt.c
-+++ b/arch/x86/platform/olpc/olpc_dt.c
-@@ -218,10 +218,28 @@ static u32 __init olpc_dt_get_board_revision(void)
- 	return be32_to_cpu(rev);
+diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
+lpc_battery.c
+index dde9863e5c4a..2adf33b9f641 100644
+--- a/drivers/power/supply/olpc_battery.c
++++ b/drivers/power/supply/olpc_battery.c
+@@ -56,6 +56,7 @@ struct olpc_battery_data {
+ 	struct power_supply *olpc_bat;
+ 	char bat_serial[17];
+ 	int new_proto;
++	int little_endian;
+ };
+=20
+ /*********************************************************************
+@@ -321,6 +322,14 @@ static int olpc_bat_get_voltage_max_design(union pow=
+er_supply_propval *val)
+ 	return ret;
  }
 =20
--void __init olpc_dt_fixup(void)
-+int olpc_dt_compatible_match(phandle node, const char *compat)
- {
--	int r;
- 	char buf[64];
-+	int plen;
-+	char *p;
-+	int len;
-+
-+	plen =3D olpc_dt_getproperty(node, "compatible", buf, sizeof(buf));
-+	if (plen <=3D 0)
-+		return 0;
-+
-+	len =3D strlen(compat);
-+	for (p =3D buf; p < buf + plen; p +=3D strlen(p) + 1) {
-+		if (strcmp(p, compat) =3D=3D 0)
-+			return 1;
-+	}
-+
-+	return 0;
++static s16 ecword_to_cpu(struct olpc_battery_data *data, u16 ec_byte)
++{
++	if (data->little_endian)
++		return le16_to_cpu(ec_byte);
++	else
++		return be16_to_cpu(ec_byte);
 +}
 +
-+void __init olpc_dt_fixup(void)
-+{
- 	phandle node;
- 	u32 board_rev;
+ /*********************************************************************
+  *		Battery properties
+  *********************************************************************/
+@@ -393,7 +402,7 @@ static int olpc_bat_get_property(struct power_supply =
+*psy,
+ 		if (ret)
+ 			return ret;
 =20
-@@ -229,32 +247,33 @@ void __init olpc_dt_fixup(void)
- 	if (!node)
- 		return;
+-		val->intval =3D (s16)be16_to_cpu(ec_word) * 9760L / 32;
++		val->intval =3D ecword_to_cpu(data, ec_word) * 9760L / 32;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CURRENT_AVG:
+ 	case POWER_SUPPLY_PROP_CURRENT_NOW:
+@@ -401,7 +410,7 @@ static int olpc_bat_get_property(struct power_supply =
+*psy,
+ 		if (ret)
+ 			return ret;
 =20
--	/*
--	 * If the battery node has a compatible property, we are running a new
--	 * enough firmware and don't have fixups to make.
--	 */
--	r =3D olpc_dt_getproperty(node, "compatible", buf, sizeof(buf));
--	if (r > 0)
--		return;
--
--	pr_info("PROM DT: Old firmware detected, applying fixes\n");
--
--	/* Add olpc,xo1-battery compatible marker to battery node */
--	olpc_dt_interpret("\" /battery@0\" find-device"
--		" \" olpc,xo1-battery\" +compatible"
--		" device-end");
--
- 	board_rev =3D olpc_dt_get_board_revision();
- 	if (!board_rev)
- 		return;
+-		val->intval =3D (s16)be16_to_cpu(ec_word) * 15625L / 120;
++		val->intval =3D ecword_to_cpu(data, ec_word) * 15625L / 120;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY:
+ 		ret =3D olpc_ec_cmd(EC_BAT_SOC, NULL, 0, &ec_byte, 1);
+@@ -432,21 +441,21 @@ static int olpc_bat_get_property(struct power_suppl=
+y *psy,
+ 		if (ret)
+ 			return ret;
 =20
- 	if (board_rev >=3D olpc_board_pre(0xd0)) {
-+		if (olpc_dt_compatible_match(node, "olpc,xo1.5-battery"))
-+			return;
-+
-+		/* Add olpc,xo1.5-battery compatible marker to battery node */
-+		olpc_dt_interpret("\" /battery@0\" find-device"
-+			" \" olpc,xo1.5-battery\" +compatible"
-+			" device-end");
-+
-+		/* We're running a very old firmware if this is missing. */
-+		if (olpc_dt_compatible_match(node, "olpc,xo1-battery"))
-+			return;
-+
- 		/* XO-1.5: add dcon device */
- 		olpc_dt_interpret("\" /pci/display@1\" find-device"
- 			" new-device"
- 			" \" dcon\" device-name \" olpc,xo1-dcon\" +compatible"
- 			" finish-device device-end");
- 	} else {
-+		/* We're running a very old firmware if this is missing. */
-+		if (olpc_dt_compatible_match(node, "olpc,xo1-battery"))
-+			return;
-+
- 		/* XO-1: add dcon device, mark RTC as olpc,xo1-rtc */
- 		olpc_dt_interpret("\" /pci/display@1,1\" find-device"
- 			" new-device"
-@@ -264,6 +283,11 @@ void __init olpc_dt_fixup(void)
- 			" \" olpc,xo1-rtc\" +compatible"
- 			" device-end");
- 	}
-+
-+	/* Add olpc,xo1-battery compatible marker to battery node */
-+	olpc_dt_interpret("\" /battery@0\" find-device"
-+		" \" olpc,xo1-battery\" +compatible"
-+		" device-end");
- }
+-		val->intval =3D (s16)be16_to_cpu(ec_word) * 10 / 256;
++		val->intval =3D ecword_to_cpu(data, ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
+ 		ret =3D olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
+ 		if (ret)
+ 			return ret;
 =20
- void __init olpc_dt_build_devicetree(void)
-@@ -289,6 +313,7 @@ void __init olpc_dt_build_devicetree(void)
- /* A list of DT node/bus matches that we want to expose as platform devi=
-ces */
- static struct of_device_id __initdata of_ids[] =3D {
- 	{ .compatible =3D "olpc,xo1-battery" },
-+	{ .compatible =3D "olpc,xo1.5-battery" },
- 	{ .compatible =3D "olpc,xo1-dcon" },
- 	{ .compatible =3D "olpc,xo1-rtc" },
- 	{},
+-		val->intval =3D (int)be16_to_cpu(ec_word) * 10 / 256;
++		val->intval =3D (int)ecword_to_cpu(data, ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
+ 		ret =3D olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+ 		if (ret)
+ 			return ret;
+=20
+-		val->intval =3D (s16)be16_to_cpu(ec_word) * 6250 / 15;
++		val->intval =3D ecword_to_cpu(data, ec_word) * 6250 / 15;
+ 		break;
+ 	case POWER_SUPPLY_PROP_SERIAL_NUMBER:
+ 		ret =3D olpc_ec_cmd(EC_BAT_SERIAL, NULL, 0, (void *)&ser_buf, 8);
+@@ -626,6 +635,10 @@ static int olpc_battery_probe(struct platform_device=
+ *pdev)
+ 	if (ecver[0] > 0x44) {
+ 		/* XO 1 or 1.5 with a new EC firmware. */
+ 		data->new_proto =3D 1;
++	} else if (of_find_compatible_node(NULL, NULL, "olpc,xo1.75-ec")) {
++		/* XO 1.75 */
++		data->new_proto =3D 1;
++		data->little_endian =3D 1;
+ 	} else if (ecver[0] < 0x44) {
+ 		/*
+ 		 * We've seen a number of EC protocol changes; this driver
 --=20
 2.19.0
 
