@@ -2,102 +2,365 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D43C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8BEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03DF2214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:06:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LG6Rvt1p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DF2214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 71D6621479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:20:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D6621479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJJM1H (ORCPT
+        id S1726515AbeJJMkd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 08:27:07 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50993 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbeJJM1H (ORCPT
+        Wed, 10 Oct 2018 08:40:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43652 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725813AbeJJMkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 08:27:07 -0400
-Received: by mail-it1-f195.google.com with SMTP id k206-v6so122119ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 22:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ptzZzGwT+jK3720mDdBk6zd7IF2Q4iN5sitThOLqStw=;
-        b=LG6Rvt1plqjqD+iZAsKiU0loQmaTm7jK9IzWWXyG6SrZTAFlHz1GmZjSsfFGpH3Hnu
-         X2JCOSRHzBCTffJPUfVcOUTPjhhhZAT+TadXmqK9klFSLeSQpGLAMZ50rD+s1sZpFAcd
-         l2GHqakq4qoIwSoasBixqzaO6aSASltuPbw3E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ptzZzGwT+jK3720mDdBk6zd7IF2Q4iN5sitThOLqStw=;
-        b=eKAJ70iozeP88lLkPR/QtNl0SCsNa+aMQSNfIyhz08E33l2rHQfRDv0n+ua9snUyGQ
-         rx+Dq5YfJsNeU04YF8KHtJx89cu1EsOjG5zTq3oR/NCvM4f5VWP32Tgns2PThw2yAZg/
-         7rHnUHzrgCd62sxMPRSzzNPS/mSlhtkh3tLqXaZ6tXzOZNouBCHUunhBhTm5AtNa9+bf
-         1Pv8k5KZ7uScfMLEqdboqzAMGZ3JCPnoPWtM2KJ0w5ZA2PzS+H8PpI6DOcBUq/zbQYYw
-         wS0BaKgp5yVNXr0GT7UAjJ/eUnjlLDp3TY2/upMsbIqWy1MStR9eT7iu4TuEghZorapD
-         u0Yw==
-X-Gm-Message-State: ABuFfojztscRuQKOv6wUw92Zn/5mHZvjdBzjSWEJ78srY38do4fNAozq
-        vChKwh40DbUfVJQI2NCEpQ82tEwmJUjxYU1wo5Bm3Q==
-X-Google-Smtp-Source: ACcGV629v33euHNxyNt4USuZKHVvVPAzPm4ib+nDfLg/Y1vQhEEaeoUNShGzZ0IWYgVJ130Z9m61L5r/PGzKXhurfms=
-X-Received: by 2002:a24:fdc4:: with SMTP id m187-v6mr3972142ith.117.1539148004981;
- Tue, 09 Oct 2018 22:06:44 -0700 (PDT)
+        Wed, 10 Oct 2018 08:40:33 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9A5IrhY052261
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:20:08 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n18v44h44-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:20:07 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 10 Oct 2018 06:20:06 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 10 Oct 2018 06:20:04 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9A5K3pr4850058
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 10 Oct 2018 05:20:03 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F05952052;
+        Wed, 10 Oct 2018 08:19:37 +0100 (BST)
+Received: from mschwideX1 (unknown [9.145.63.102])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E53C652067;
+        Wed, 10 Oct 2018 08:19:36 +0100 (BST)
+Date:   Wed, 10 Oct 2018 07:20:01 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for 4.19 #4
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+X-TM-AS-GCONF: 00
+x-cbid: 18101005-0020-0000-0000-000002D1EFBF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101005-0021-0000-0000-000021205EE8
+Message-Id: <20181010072001.425618eb@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <13bda116-5766-1340-81e1-48ca899ff41a@baylibre.com> <20181003184318.856-1-jekarlson@gmail.com>
-In-Reply-To: <20181003184318.856-1-jekarlson@gmail.com>
-From:   Benson Leung <bleung@chromium.org>
-Date:   Tue, 9 Oct 2018 22:06:33 -0700
-Message-ID: <CANLzEkucw1KPOw+oRO-7NoxODhnj4BJsGgp4A+aQ7fTRPtxmhQ@mail.gmail.com>
-Subject: Re: [PATCH v3] mfd: cros-ec: copy the whole event in get_next_event_xfer
-To:     Emil Karlson <jekarlson@gmail.com>
-Cc:     kernel@esmil.dk, Neil Armstrong <narmstrong@baylibre.com>,
-        Stefan Adolfsson <sadolfsson@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-10_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810100053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Emil,
-On Wed, Oct 3, 2018 at 11:43 AM Emil Karlson <jekarlson@gmail.com> wrote:
->
-> Commit 57e94c8b974db2d83c60e1139c89a70806abbea0 caused cros-ec keyboard events
-> be truncated on many chromebooks so that Left and Right keys on Column 12 were
-> always 0. Use ret as memcpy len to fix this.
->
-> The old code was using ec_dev->event_size, which is the event payload/data size
-> excluding event_type header, for the length of the memcpy operation. Use ret
-> as memcpy length to avoid the off by one and copy the whole msg->data.
->
-> Fixes: 57e94c8b974d ("mfd: cros-ec: Increase maximum mkbp event size")
->
-> Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Emil Karlson <jekarlson@gmail.com>
+Hi Greg,
 
-Applied. Sent to Greg for rc8, hopefully.
+please pull s390 fixes for 4.19:
 
+The following changes since commit 4b92e7fd76e94624e3d5ff56b3d6a5788c4a7ac8:
 
+  Merge tag 'mtd/fixes-for-4.19-rc5' of git://git.infradead.org/linux-mtd (2018-09-20 11:25:20 +0200)
 
--- 
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-4.19-4
+
+for you to fetch changes up to 7c75544983edece1b745367922cf1053606cd369:
+
+  Merge tag 'vfio-ccw-20181002' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/vfio-ccw into fixes (2018-10-08 09:08:21 +0200)
+
+----------------------------------------------------------------
+s390 fixes for 4.19-rc8
+
+Four more patches for 4.19
+
+ - Fix resume after suspend-to-disk if resume-CPU != suspend-CPU
+
+ - Fix vfio-ccw check for pinned pages
+
+ - Two patches to avoid a usercopy-whitelist warning in vfio-ccw
+
+----------------------------------------------------------------
+Eric Farman (3):
+      s390/cio: Convert ccw_io_region to pointer
+      s390/cio: Refactor alloc of ccw_io_region
+      s390/cio: Fix how vfio-ccw checks pinned pages
+
+Gerald Schaefer (1):
+      s390/hibernate: fix error handling when suspend cpu != resume cpu
+
+Martin Schwidefsky (2):
+      Merge tag 'vfio-ccw-20181001' of git://git.kernel.org/.../kvms390/vfio-ccw into fixes
+      Merge tag 'vfio-ccw-20181002' of git://git.kernel.org/.../kvms390/vfio-ccw into fixes
+
+ arch/s390/include/asm/sclp.h        |  3 ++-
+ arch/s390/kernel/early_printk.c     |  2 +-
+ arch/s390/kernel/swsusp.S           |  8 +++-----
+ drivers/s390/char/sclp_early_core.c | 11 ++++++++---
+ drivers/s390/cio/vfio_ccw_cp.c      |  2 +-
+ drivers/s390/cio/vfio_ccw_drv.c     | 24 +++++++++++++++++++++++-
+ drivers/s390/cio/vfio_ccw_fsm.c     |  6 +++---
+ drivers/s390/cio/vfio_ccw_ops.c     |  4 ++--
+ drivers/s390/cio/vfio_ccw_private.h |  2 +-
+ 9 files changed, 44 insertions(+), 18 deletions(-)
+
+diff --git a/arch/s390/include/asm/sclp.h b/arch/s390/include/asm/sclp.h
+index 3cae916..e44a8d7 100644
+--- a/arch/s390/include/asm/sclp.h
++++ b/arch/s390/include/asm/sclp.h
+@@ -108,7 +108,8 @@ int sclp_early_get_core_info(struct sclp_core_info *info);
+ void sclp_early_get_ipl_info(struct sclp_ipl_info *info);
+ void sclp_early_detect(void);
+ void sclp_early_printk(const char *s);
+-void __sclp_early_printk(const char *s, unsigned int len);
++void sclp_early_printk_force(const char *s);
++void __sclp_early_printk(const char *s, unsigned int len, unsigned int force);
+ 
+ int _sclp_get_core_info(struct sclp_core_info *info);
+ int sclp_core_configure(u8 core);
+diff --git a/arch/s390/kernel/early_printk.c b/arch/s390/kernel/early_printk.c
+index 9431784..40c1dfe 100644
+--- a/arch/s390/kernel/early_printk.c
++++ b/arch/s390/kernel/early_printk.c
+@@ -10,7 +10,7 @@
+ 
+ static void sclp_early_write(struct console *con, const char *s, unsigned int len)
+ {
+-	__sclp_early_printk(s, len);
++	__sclp_early_printk(s, len, 0);
+ }
+ 
+ static struct console sclp_early_console = {
+diff --git a/arch/s390/kernel/swsusp.S b/arch/s390/kernel/swsusp.S
+index a049a7b..c1a080b 100644
+--- a/arch/s390/kernel/swsusp.S
++++ b/arch/s390/kernel/swsusp.S
+@@ -198,12 +198,10 @@ pgm_check_entry:
+ 
+ 	/* Suspend CPU not available -> panic */
+ 	larl	%r15,init_thread_union
+-	ahi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
++	aghi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
++	aghi	%r15,-STACK_FRAME_OVERHEAD
+ 	larl	%r2,.Lpanic_string
+-	lghi	%r1,0
+-	sam31
+-	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
+-	brasl	%r14,sclp_early_printk
++	brasl	%r14,sclp_early_printk_force
+ 	larl	%r3,.Ldisabled_wait_31
+ 	lpsw	0(%r3)
+ 4:
+diff --git a/drivers/s390/char/sclp_early_core.c b/drivers/s390/char/sclp_early_core.c
+index eceba38..2f61f55 100644
+--- a/drivers/s390/char/sclp_early_core.c
++++ b/drivers/s390/char/sclp_early_core.c
+@@ -210,11 +210,11 @@ static int sclp_early_setup(int disable, int *have_linemode, int *have_vt220)
+  * Output one or more lines of text on the SCLP console (VT220 and /
+  * or line-mode).
+  */
+-void __sclp_early_printk(const char *str, unsigned int len)
++void __sclp_early_printk(const char *str, unsigned int len, unsigned int force)
+ {
+ 	int have_linemode, have_vt220;
+ 
+-	if (sclp_init_state != sclp_init_state_uninitialized)
++	if (!force && sclp_init_state != sclp_init_state_uninitialized)
+ 		return;
+ 	if (sclp_early_setup(0, &have_linemode, &have_vt220) != 0)
+ 		return;
+@@ -227,5 +227,10 @@ void __sclp_early_printk(const char *str, unsigned int len)
+ 
+ void sclp_early_printk(const char *str)
+ {
+-	__sclp_early_printk(str, strlen(str));
++	__sclp_early_printk(str, strlen(str), 0);
++}
++
++void sclp_early_printk_force(const char *str)
++{
++	__sclp_early_printk(str, strlen(str), 1);
+ }
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index dbe7c7a..fd77e46 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -163,7 +163,7 @@ static bool pfn_array_table_iova_pinned(struct pfn_array_table *pat,
+ 
+ 	for (i = 0; i < pat->pat_nr; i++, pa++)
+ 		for (j = 0; j < pa->pa_nr; j++)
+-			if (pa->pa_iova_pfn[i] == iova_pfn)
++			if (pa->pa_iova_pfn[j] == iova_pfn)
+ 				return true;
+ 
+ 	return false;
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index 770fa9c..f47d16b 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -22,6 +22,7 @@
+ #include "vfio_ccw_private.h"
+ 
+ struct workqueue_struct *vfio_ccw_work_q;
++struct kmem_cache *vfio_ccw_io_region;
+ 
+ /*
+  * Helpers
+@@ -79,7 +80,7 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+ 		cp_update_scsw(&private->cp, &irb->scsw);
+ 		cp_free(&private->cp);
+ 	}
+-	memcpy(private->io_region.irb_area, irb, sizeof(*irb));
++	memcpy(private->io_region->irb_area, irb, sizeof(*irb));
+ 
+ 	if (private->io_trigger)
+ 		eventfd_signal(private->io_trigger, 1);
+@@ -114,6 +115,14 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
+ 	private = kzalloc(sizeof(*private), GFP_KERNEL | GFP_DMA);
+ 	if (!private)
+ 		return -ENOMEM;
++
++	private->io_region = kmem_cache_zalloc(vfio_ccw_io_region,
++					       GFP_KERNEL | GFP_DMA);
++	if (!private->io_region) {
++		kfree(private);
++		return -ENOMEM;
++	}
++
+ 	private->sch = sch;
+ 	dev_set_drvdata(&sch->dev, private);
+ 
+@@ -139,6 +148,7 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
+ 	cio_disable_subchannel(sch);
+ out_free:
+ 	dev_set_drvdata(&sch->dev, NULL);
++	kmem_cache_free(vfio_ccw_io_region, private->io_region);
+ 	kfree(private);
+ 	return ret;
+ }
+@@ -153,6 +163,7 @@ static int vfio_ccw_sch_remove(struct subchannel *sch)
+ 
+ 	dev_set_drvdata(&sch->dev, NULL);
+ 
++	kmem_cache_free(vfio_ccw_io_region, private->io_region);
+ 	kfree(private);
+ 
+ 	return 0;
+@@ -232,10 +243,20 @@ static int __init vfio_ccw_sch_init(void)
+ 	if (!vfio_ccw_work_q)
+ 		return -ENOMEM;
+ 
++	vfio_ccw_io_region = kmem_cache_create_usercopy("vfio_ccw_io_region",
++					sizeof(struct ccw_io_region), 0,
++					SLAB_ACCOUNT, 0,
++					sizeof(struct ccw_io_region), NULL);
++	if (!vfio_ccw_io_region) {
++		destroy_workqueue(vfio_ccw_work_q);
++		return -ENOMEM;
++	}
++
+ 	isc_register(VFIO_CCW_ISC);
+ 	ret = css_driver_register(&vfio_ccw_sch_driver);
+ 	if (ret) {
+ 		isc_unregister(VFIO_CCW_ISC);
++		kmem_cache_destroy(vfio_ccw_io_region);
+ 		destroy_workqueue(vfio_ccw_work_q);
+ 	}
+ 
+@@ -246,6 +267,7 @@ static void __exit vfio_ccw_sch_exit(void)
+ {
+ 	css_driver_unregister(&vfio_ccw_sch_driver);
+ 	isc_unregister(VFIO_CCW_ISC);
++	kmem_cache_destroy(vfio_ccw_io_region);
+ 	destroy_workqueue(vfio_ccw_work_q);
+ }
+ module_init(vfio_ccw_sch_init);
+diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+index 797a827..f94aa01 100644
+--- a/drivers/s390/cio/vfio_ccw_fsm.c
++++ b/drivers/s390/cio/vfio_ccw_fsm.c
+@@ -93,13 +93,13 @@ static void fsm_io_error(struct vfio_ccw_private *private,
+ 			 enum vfio_ccw_event event)
+ {
+ 	pr_err("vfio-ccw: FSM: I/O request from state:%d\n", private->state);
+-	private->io_region.ret_code = -EIO;
++	private->io_region->ret_code = -EIO;
+ }
+ 
+ static void fsm_io_busy(struct vfio_ccw_private *private,
+ 			enum vfio_ccw_event event)
+ {
+-	private->io_region.ret_code = -EBUSY;
++	private->io_region->ret_code = -EBUSY;
+ }
+ 
+ static void fsm_disabled_irq(struct vfio_ccw_private *private,
+@@ -126,7 +126,7 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+ {
+ 	union orb *orb;
+ 	union scsw *scsw = &private->scsw;
+-	struct ccw_io_region *io_region = &private->io_region;
++	struct ccw_io_region *io_region = private->io_region;
+ 	struct mdev_device *mdev = private->mdev;
+ 	char *errstr = "request";
+ 
+diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
+index 41eeb57..f673e10 100644
+--- a/drivers/s390/cio/vfio_ccw_ops.c
++++ b/drivers/s390/cio/vfio_ccw_ops.c
+@@ -174,7 +174,7 @@ static ssize_t vfio_ccw_mdev_read(struct mdev_device *mdev,
+ 		return -EINVAL;
+ 
+ 	private = dev_get_drvdata(mdev_parent_dev(mdev));
+-	region = &private->io_region;
++	region = private->io_region;
+ 	if (copy_to_user(buf, (void *)region + *ppos, count))
+ 		return -EFAULT;
+ 
+@@ -196,7 +196,7 @@ static ssize_t vfio_ccw_mdev_write(struct mdev_device *mdev,
+ 	if (private->state != VFIO_CCW_STATE_IDLE)
+ 		return -EACCES;
+ 
+-	region = &private->io_region;
++	region = private->io_region;
+ 	if (copy_from_user((void *)region + *ppos, buf, count))
+ 		return -EFAULT;
+ 
+diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+index 78a66d9..078e46f 100644
+--- a/drivers/s390/cio/vfio_ccw_private.h
++++ b/drivers/s390/cio/vfio_ccw_private.h
+@@ -41,7 +41,7 @@ struct vfio_ccw_private {
+ 	atomic_t		avail;
+ 	struct mdev_device	*mdev;
+ 	struct notifier_block	nb;
+-	struct ccw_io_region	io_region;
++	struct ccw_io_region	*io_region;
+ 
+ 	struct channel_program	cp;
+ 	struct irb		irb;
+
