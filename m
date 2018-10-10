@@ -2,113 +2,646 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AC7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01143C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7075921528
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:02:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="wro9h2v2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7075921528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	by mail.kernel.org (Postfix) with ESMTP id 9147D214FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:08:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9147D214FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJJHWH (ORCPT
+        id S1726503AbeJJH13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:22:07 -0400
-Received: from cmta20.telus.net ([209.171.16.93]:42178 "EHLO cmta20.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbeJJHWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:22:07 -0400
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id A1xVgyDXZVltLA1xXgsP5X; Tue, 09 Oct 2018 18:02:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1539129762; bh=pc4F6Ri6V4Wx++1yvB+sBlOqlFOmxJFavlgOytE6Rb4=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=wro9h2v2EUuvqw7EeuElQTbuDM1DaxzTrp9FS3YCEjjLq1zJyYYr8CHuy++eTRkd2
-         E1C2jwYHFE+m7QxJKxPORvpPfj4xrEbYtx9Hgcwj3OhJnHmedfLnmZb+/Hgm02dHbL
-         zFemrqnRweyiMAwmJ0eZsJW1ed96H2t+EwWejCEQTwHsFiWNIJQiu138ZJxNnrAQ9b
-         MeMS85gdcU3Pa4uCHdvR9e3LEZnpKrEI1GCEhZD4flBJ6j+0D5fcIk7bALRLJALxNT
-         1HLEHtgYp3xWMllaA2eO480Sui6RbsqmOL2m+SHOhg0X9lopq7+iuPsmJ3cBsc93l6
-         37PRkGjQ/42Tw==
-X-Authority-Analysis: v=2.3 cv=d60kNirE c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=2mpuXmpUO2dryPSGsbQA:9
- a=CjuIK1q_8ugA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <000301d45ecb$4f002a90$ed007fb0$@net> <003801d45f54$3d9b0c50$b8d124f0$@net> <CAJZ5v0h4sVoen++nF1cYvqQeY3qN0B1aP42e8A4SZwxzBV3NVA@mail.gmail.com> 9pWMgRJJQ3psd9pWRgA8E4
-In-Reply-To: 9pWMgRJJQ3psd9pWRgA8E4
-Subject: RE: [PATCH 0/6] cpuidle: menu: Fixes, optimizations and cleanups
-Date:   Tue, 9 Oct 2018 17:02:36 -0700
-Message-ID: <003d01d4602c$905b5840$b11208c0$@net>
+        Wed, 10 Oct 2018 03:27:29 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46036 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbeJJH13 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 03:27:29 -0400
+Received: by mail-io1-f72.google.com with SMTP id g133-v6so2989746ioa.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 17:08:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=HvFVs9fTuPkK7ZMhOPGqk4c6xDdzqjfvf+/6zEMe/1o=;
+        b=fpaeBVl4zQK9Rbj2rUWdg/exX/5o1K59ifzl+Z+6Dq2V7SfvhD2Ar77NIXpZLpbD5Z
+         3NWwSG5f8AqOjbIkaPlnK1WVTFb3V+wXErF5juaH7vnh8kQhwcywKwl2Eoh0alRFQfqB
+         mczC0BKJcUOo8aF/nPGAFZDm0+rolNZ0gZuNCKSgdxyhouU9eTM5Odp5+6642AiXi+8B
+         r6mkCSYV5sMAcBs1Ezpm6lL+j1EUQ79faGxEtv/Df2R3aoluAOlVYSHWlQzc+L3XE9sC
+         Lka5EFecsjm6dDLTQTSFGOfIi4OjtWYBxCjh3jUo4VkGuD1LNHkpHX4KcVGQs7LnNeNi
+         FTMQ==
+X-Gm-Message-State: ABuFfojGQCGFdzYjF0WPQieSuAsd81CszSwMLvbifuow5yhWkmAG2hBe
+        MtvDGamHqiNq6fRhezIn8alg80S7p6moLM1VAL3GWPoOqqlY
+X-Google-Smtp-Source: ACcGV630d5cK/ZFDWzbUUV9VLP0XmguelVeZTd2t1XS8p5TJAytX+yol6WHvknVw+m1DF0Em72FTd3SnIVE+btxz6nzib9dOXxzq
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdRfvUHrdGrOl1YIROeaUQFDKa5cOQAbmNTg
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfNwoAERTFRcg3EBgkeQ9Jg+3HxB5VxpL5dxkKqXGRIzU2wTeYdfbnErJLk3SVwm2WuOGC/6VWiq+o16080kiPE1ZieyCBGfvErFz+c86OYX2WH9evARa
- jYuVYnVJtF1HNwUxChgt2BRfX5eg20riC0QNAcPoX/WqFrJ2tfm79WQmOr7qlDtUS/cEp5ZbQDPmh5HtrANI5df08Kct65F7egLPvLgyjguEkNHhpDZlOA3R
- DBW02bmJK+vdEK49tSdrw5xW/l1oJqM/u3Qpti60b6jgGk1P5cxs389phJfZ/xekKH11WAjgFjsTa2h6CpHi1a/lmvDVR2eMwX1V3OwYIO0=
+X-Received: by 2002:a24:d7:: with SMTP id 206-v6mr3763789ita.17.1539130082995;
+ Tue, 09 Oct 2018 17:08:02 -0700 (PDT)
+Date:   Tue, 09 Oct 2018 17:08:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc48d40577d4a587@google.com>
+Subject: INFO: rcu detected stall in shmem_fault
+From:   syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, guro@fb.com, hannes@cmpxchg.org,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org,
+        penguin-kernel@i-love.sakura.ne.jp, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, yang.s@alibaba-inc.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.10.09 03:43 Rafael J. Wysocki wrote:
+Hello,
 
-...[snip]...
+syzbot found the following crash on:
 
-> While at it, could you test the appended patch
-> (on top of the previous 8) for me please?
->
-> I think that this code can be simplified now.
->
-> ---
-> drivers/cpuidle/governors/menu.c |    8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
-> Index: linux-pm/drivers/cpuidle/governors/menu.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpuidle/governors/menu.c
-> +++ linux-pm/drivers/cpuidle/governors/menu.c
-> @@ -371,12 +371,12 @@ static int menu_select(struct cpuidle_dr
-> 		if (s->target_residency > predicted_us) {
-> 			/*
-> 			 * Use a physical idle state, not busy polling, unless
-> -			 * a timer is going to trigger really really soon.
-> +			 * a timer is going to trigger soon enough.
-> 			 */
-> 			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> -			    i == idx + 1 && latency_req > s->exit_latency &&
-> -			    data->next_timer_us > max_t(unsigned int, 20,
-> -							s->target_residency)) {
-> +			    s->exit_latency <= latency_req &&
-> +			    s->target_residency <= data->next_timer_us) {
-> +				predicted_us = s->target_residency;
-> 				idx = i;
-> 				break;
-> 			}
+HEAD commit:    570b7bdeaf18 Add linux-next specific files for 20181009
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13eeb685400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9b5a60e1381390c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=77e6b28a7a7106ad0def
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-It seems to work fine.
-I was unable to detect any difference between the 8 patch set and with
-this additional patch for any of the tests that I ran. (at least beyond
-noise and/or experimental error.)
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Note: I didn't publish any of the pretty graphs.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com
 
-... Doug
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (1 GPs behind) idle=cb6/1/0x4000000000000002  
+softirq=64368/64369 fqs=750
+rcu: 	 (t=10505 jiffies g=81341 q=1698)
+NMI backtrace for cpu 0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:162 [inline]
+  rcu_dump_cpu_stacks+0x16f/0x1bc kernel/rcu/tree.c:1195
+  print_cpu_stall.cold.67+0x1f3/0x3c7 kernel/rcu/tree.c:1334
+  check_cpu_stall kernel/rcu/tree.c:1408 [inline]
+  rcu_pending kernel/rcu/tree.c:2961 [inline]
+  rcu_check_callbacks+0xf38/0x13f0 kernel/rcu/tree.c:2506
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x412/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
+  smp_apic_timer_interrupt+0x1a1/0x750 arch/x86/kernel/apic/apic.c:1059
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
+[inline]
+RIP: 0010:dump_stack+0x358/0x3ab lib/dump_stack.c:118
+Code: 74 0c 48 c7 c7 f0 f5 31 89 e8 9f 0e 0e fa 48 83 3d 07 15 7d 01 00 0f  
+84 63 fe ff ff e8 1c 89 c9 f9 48 8b bd 70 ff ff ff 57 9d <0f> 1f 44 00 00  
+e8 09 89 c9 f9 48 8b 8d 68 ff ff ff b8 ff ff 37 00
+RSP: 0018:ffff88017d3a5c70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000040000 RBX: 1ffffffff1263ebe RCX: ffffc90001e5a000
+RDX: 0000000000040000 RSI: ffffffff87b4e0f4 RDI: 0000000000000246
+RBP: ffff88017d3a5d18 R08: ffff8801d7e02480 R09: fffffbfff13da030
+R10: fffffbfff13da030 R11: 0000000000000003 R12: 1ffff1002fa74b96
+R13: 00000000ffffffff R14: 0000000000000200 R15: 0000000000000000
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205164kB, limit 204800kB, failcnt 6901
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:660KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:708KB active_anon:176448KB inactive_file:4KB active_file:0KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205168kB, limit 204800kB, failcnt 6909
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:660KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:712KB active_anon:176448KB inactive_file:0KB active_file:4KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205172kB, limit 204800kB, failcnt 6917
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:716KB active_anon:176448KB inactive_file:4KB active_file:0KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205176kB, limit 204800kB, failcnt 6925
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:720KB active_anon:176448KB inactive_file:0KB active_file:4KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205180kB, limit 204800kB, failcnt 6933
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:724KB active_anon:176448KB inactive_file:4KB active_file:0KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205184kB, limit 204800kB, failcnt 6941
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:728KB active_anon:176448KB inactive_file:0KB active_file:4KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205188kB, limit 204800kB, failcnt 6949
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:732KB active_anon:176448KB inactive_file:4KB active_file:0KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205192kB, limit 204800kB, failcnt 6957
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:736KB active_anon:176448KB inactive_file:0KB active_file:4KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
+  handle_pte_fault mm/memory.c:3762 [inline]
+  __handle_mm_fault+0x3d40/0x5a40 mm/memory.c:3886
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3923
+  faultin_page mm/gup.c:518 [inline]
+  __get_user_pages+0x806/0x1b30 mm/gup.c:718
+  populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+  __mm_populate+0x286/0x4d0 mm/gup.c:1270
+  mm_populate include/linux/mm.h:2311 [inline]
+  vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+  ksys_mmap_pgoff+0xf1/0x660 mm/mmap.c:1606
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9315bfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457579
+RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000072bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007f9315bfc6d4
+R13: 00000000004c284a R14: 00000000004d3bd0 R15: 00000000ffffffff
+Memory limit reached of cgroup /syz0
+memory: usage 205196kB, limit 204800kB, failcnt 6965
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB  
+shmem:740KB mapped_file:792KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:740KB active_anon:176448KB inactive_file:4KB active_file:0KB  
+unevictable:0KB
+Out of memory and no killable processes...
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+  
+#90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x3ab lib/dump_stack.c:113
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
