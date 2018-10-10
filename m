@@ -2,85 +2,171 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E7AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC2EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3EF2087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A082087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfYmnnCb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3EF2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="k4GDWgrQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A082087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJJVYY (ORCPT
+        id S1726933AbeJJVZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:24:24 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36104 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJVYY (ORCPT
+        Wed, 10 Oct 2018 17:25:02 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38784 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeJJVZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:24:24 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u34-v6so5724780qth.3;
-        Wed, 10 Oct 2018 07:02:05 -0700 (PDT)
+        Wed, 10 Oct 2018 17:25:01 -0400
+Received: by mail-yw1-f66.google.com with SMTP id d126-v6so2197209ywa.5
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 07:02:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=n78tZjHG1fs5pevEj6ZUe9W3YQF7QjiC/wyGxJCk7M4=;
-        b=hfYmnnCbiS/6ZMaj7/lFxJnFNX3SlXWb/aQpXyzfn/0uy9iHV7xL+8nDJ3FxyZTDyW
-         YXFjgEMXyEMpLuTc9aQLdwOwQQHVC0xXWJQRFh2Jxuvg5nbpQaAVhm5XJcFugHPMvj2i
-         w7uyy9SiyhIg5sDs5hxpO7r8r6y3J07cSLBKMn/zFPOB/tt2hu/SCraWdIpNf21RgQiw
-         6mBiavfodX8r7rZTY7mbvuIH0/AnPeM4AcVhoJI5y6+xVHEIib3xFz1pH4BoT6u8nHRS
-         ZAKqc6XKCCw8hj/tjoO1gRkumBvw49yxsZ22CKBNv2Xv9/6/1lQQcPHqNhi/fTyC/pqy
-         JTXA==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hHSi2pwfH584jpoiYp3UiOhBqufzdjrZ+8fAT/p/Rng=;
+        b=k4GDWgrQxk8ThiBoQJftcn8rAvBnFPNPq6r39sSkXvMgShaxfO6TGz52RA8oScXaU5
+         eGJUfhRByEmV3hil6B5yQcduoaPtx0PwuwudLRNwZT+YemM5qrndKUb4gVANwCrzF4l/
+         FwzUNJ3nGp/y+ubQN6XOQ+hsuIWEkB4zsIkq5L8BNMWIjv2ITLopotxR3S9xbcj+iyAI
+         nwUWMGgUtbD1NhWozqAcODD27T17MMVyf6VXU/UNGDjbG6JriIOCoBAAQgjNX7JjmXy2
+         foJyttJgQBDBQaWajMrr9YXl2pLFxV84LOX+Jpoamfk2uTJSyXb0jOzSjVbajGRywlw+
+         tXXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=n78tZjHG1fs5pevEj6ZUe9W3YQF7QjiC/wyGxJCk7M4=;
-        b=g+8M0PcSVxeluxuFWrVmnE2EVekXqtLeIms19rUSSDj8Pq4SlFyV/EjL+3QUNOUFYU
-         /l6fbNYonqTGz5mcv5rEt/+Tz1hM8Y96Ecg1OEjXZW16Ic1kXHB/vmTB7kl+LNurFFNA
-         eZ6D6ZjI27aNLJwqE+aKGoQuigRl0mTjAdpITgb4+W6geoth0MlNEVyd7IHOhg8ZCPIZ
-         t4BYWuGxwWSyouMEwvymvZpfghwQ18OjSwpIQWhr0rR49jxf1d7oxXiuG4nRBpjD9yTx
-         LbxZXbM8I91r/Ueu7qqy4qvsROlODjqCR2Z7oSwsHNODdecGMwVTWB5jrr7oF+2VSqmB
-         aizQ==
-X-Gm-Message-State: ABuFfohQGs+IZbc/8L+8/23o+/wzi509UdIpuL0Z7ghB5MIGJdDRxcqM
-        Kl/DONc5sWpS+IF4Z+6NpzvIbw87wQfQqaD+roePjQ==
-X-Google-Smtp-Source: ACcGV63vHrqcvjFZS9VBan8dWTjcEdEFX1EWJaJjNheytWqBymXGHMwta+jgWVssF3aeTtAGGbzS+GUiHYFoEiKhWpo=
-X-Received: by 2002:a0c:e150:: with SMTP id c16mr6115597qvl.161.1539180125373;
- Wed, 10 Oct 2018 07:02:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hHSi2pwfH584jpoiYp3UiOhBqufzdjrZ+8fAT/p/Rng=;
+        b=XNjfzpvFJ3JTXCxEC0w/ETdEAa8GvepE5FD6BPUYk3h3gaKYtLiBMqSFnh8lRYck6f
+         g5RyzPgM2cEx1Ktqz9XJfChqunY/dcvLZfqTCl8CVdpb48zYzzA6pk25c/FCl+gMYNKW
+         vya7IWP5CtvNkGw54fQ/nJCWA7rEYQ/r5n9F8Z/HYsjpMYtqRUdWEnWFkPe0lS53pgh1
+         M0xW+tGFIDy4SJQn7PZEOJJrATjdDaFJd8US4FwGbkE03vjF3LSnS4jCAXl+rjbaA6Nj
+         qjb6fnXm7bmMJZ5jhmu8J/bPPB2tr6d6wSK62Xry9tW7EMm1pzFs6VIZNgY3+iKI20Vz
+         cMbg==
+X-Gm-Message-State: ABuFfoi/iGWi66Uc/z1rIRDfg3QKf3uDE/VRjTRkpkUUIiepkcGKh5u7
+        +RFSjU4r4AQIxAcfmD1s0e/27g==
+X-Google-Smtp-Source: ACcGV60ilCUpDyOWFw9GUiCPl+PGx9ZM7kHBksFm01p9hDBzXoBwisbgxyW9CooWhVXlGC2Ch/v+zw==
+X-Received: by 2002:a81:560a:: with SMTP id k10-v6mr18044450ywb.80.1539180162027;
+        Wed, 10 Oct 2018 07:02:42 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::6:4a04])
+        by smtp.gmail.com with ESMTPSA id w207-v6sm40167509yww.95.2018.10.10.07.02.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 07:02:40 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 10:02:39 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH 3/4] mm: workingset: add vmstat counter for shadow nodes
+Message-ID: <20181010140239.GA2527@cmpxchg.org>
+References: <20181009184732.762-1-hannes@cmpxchg.org>
+ <20181009184732.762-4-hannes@cmpxchg.org>
+ <20181009150401.c72cde05338c1ec80a4b8701@linux-foundation.org>
 MIME-Version: 1.0
-Received: by 2002:ad4:524f:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 07:02:04
- -0700 (PDT)
-In-Reply-To: <20181010134317.8466-3-geert+renesas@glider.be>
-References: <20181010134036.8296-1-geert+renesas@glider.be>
- <20181010134317.8466-1-geert+renesas@glider.be> <20181010134317.8466-3-geert+renesas@glider.be>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 10 Oct 2018 16:02:04 +0200
-X-Google-Sender-Auth: JZC1cuNxeDGnfpqoWIWGWxr9gdE
-Message-ID: <CAK8P3a3XuZ4nZ7FJgi=m1L7tznjue4+77wd2KYe_qGH=zaEZMg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] eeprom: at25: Use spi_message_init_with_transfers()
- instead of open coding
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009150401.c72cde05338c1ec80a4b8701@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> Reduce code duplication in at25_ee_read() by using the
-> spi_message_init_with_transfers() helper.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Oct 09, 2018 at 03:04:01PM -0700, Andrew Morton wrote:
+> On Tue,  9 Oct 2018 14:47:32 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> 
+> > Make it easier to catch bugs in the shadow node shrinker by adding a
+> > counter for the shadow nodes in circulation.
+> > 
+> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> > ---
+> >  include/linux/mmzone.h |  1 +
+> >  mm/vmstat.c            |  1 +
+> >  mm/workingset.c        | 12 ++++++++++--
+> >  3 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> > index 4179e67add3d..d82e80d82aa6 100644
+> > --- a/include/linux/mmzone.h
+> > +++ b/include/linux/mmzone.h
+> > @@ -161,6 +161,7 @@ enum node_stat_item {
+> >  	NR_SLAB_UNRECLAIMABLE,
+> >  	NR_ISOLATED_ANON,	/* Temporary isolated pages from anon lru */
+> >  	NR_ISOLATED_FILE,	/* Temporary isolated pages from file lru */
+> > +	WORKINGSET_NODES,
+> 
+> Documentation/admin-guide/cgroup-v2.rst, please.  And please check for
+> any other missing items while in there?
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The new counter isn't being added to the per-cgroup memory.stat,
+actually, it just shows in /proc/vmstat.
+
+It seemed a bit too low-level for the cgroup interface, and the other
+stats in there are in bytes, which isn't straight-forward to calculate
+with sl*b packing.
+
+Not that I'm against adding a cgroup breakdown in general, but the
+global counter was enough to see if things were working right or not,
+so I'd cross that bridge when somebody needs it per cgroup.
+
+But I checked cgroup-v2.rst anyway: all the exported items are
+documented. Only the reclaim vs. refault stats were in different
+orders: the doc has the refault stats first, the interface leads with
+the reclaim stats. The refault stats go better with the page fault
+stats, and are probably of more interest (since they have higher
+impact on performance) than the LRU shuffling, so maybe this?
+
+---
+Subject: [PATCH] mm: memcontrol: fix memory.stat item ordering
+
+The refault stats go better with the page fault stats, and are of
+higher interest than the stats on LRU operations. In fact they used to
+be grouped together; when the LRU operation stats were added later on,
+they were wedged in between.
+
+Move them back together. Documentation/admin-guide/cgroup-v2.rst
+already lists them in the right order.
+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 81b47d0b14d7..ed15f233d31d 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5575,6 +5575,13 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "pgfault %lu\n", acc.events[PGFAULT]);
+ 	seq_printf(m, "pgmajfault %lu\n", acc.events[PGMAJFAULT]);
+ 
++	seq_printf(m, "workingset_refault %lu\n",
++		   acc.stat[WORKINGSET_REFAULT]);
++	seq_printf(m, "workingset_activate %lu\n",
++		   acc.stat[WORKINGSET_ACTIVATE]);
++	seq_printf(m, "workingset_nodereclaim %lu\n",
++		   acc.stat[WORKINGSET_NODERECLAIM]);
++
+ 	seq_printf(m, "pgrefill %lu\n", acc.events[PGREFILL]);
+ 	seq_printf(m, "pgscan %lu\n", acc.events[PGSCAN_KSWAPD] +
+ 		   acc.events[PGSCAN_DIRECT]);
+@@ -5585,13 +5592,6 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "pglazyfree %lu\n", acc.events[PGLAZYFREE]);
+ 	seq_printf(m, "pglazyfreed %lu\n", acc.events[PGLAZYFREED]);
+ 
+-	seq_printf(m, "workingset_refault %lu\n",
+-		   acc.stat[WORKINGSET_REFAULT]);
+-	seq_printf(m, "workingset_activate %lu\n",
+-		   acc.stat[WORKINGSET_ACTIVATE]);
+-	seq_printf(m, "workingset_nodereclaim %lu\n",
+-		   acc.stat[WORKINGSET_NODERECLAIM]);
+-
+ 	return 0;
+ }
+ 
+
