@@ -2,264 +2,164 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459F5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30E2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E255A2150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE242087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:22:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L7oux7kd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E255A2150C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NKv2kd8h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE242087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeJJIc2 (ORCPT
+        id S1725874AbeJJIlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 04:32:28 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36084 "EHLO
+        Wed, 10 Oct 2018 04:41:47 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38897 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeJJIc2 (ORCPT
+        with ESMTP id S1726015AbeJJIlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 04:32:28 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y11-v6so1669736plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 18:12:46 -0700 (PDT)
+        Wed, 10 Oct 2018 04:41:46 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b5-v6so1685053plr.5
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 18:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4iVSd02n5t82I4fR1/gS3t83JVoLo94UoRFt6l3H8Io=;
-        b=L7oux7kdp2ko0KVpLhGpPTyLn3LS+NuctkpylBPKftIJ9+u+Yj+TET6KlpYVhgrFMV
-         AuQUp/1u2MiOpPUTnor+f1/Et3YjMsyMyEtTchGvMpNN2nTxDemSG12ShVWOu1P0mjCw
-         xU1mGmnaIIg2M185Eu5b+bQKK9n/aic5wYZE0=
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=0R2ZEYs8mcnmKsrDE/Wcut83OmNFs/kPv+xCZo/6axo=;
+        b=NKv2kd8hXoabImMq7Ax55oaIrHLWc0xjlvtz+o4fEagI2omjGDwQoFycZuYKvnDH41
+         g1U55JOVO7s1fkDhZG8Kqn6HuxWS7vJ2Jr5Nhpq/SZE55n0b0q0EpnWK0//sdCWG6B1S
+         QTPx8Ogc1294eC8qg4bz6tW0woCte3i6S97JE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=4iVSd02n5t82I4fR1/gS3t83JVoLo94UoRFt6l3H8Io=;
-        b=kj31bb0+76HfsCmQ+fADgtkvM5ubjCQREyJc5G/m1PUOgU3vjD6dLhUmh+xo6VpBIF
-         IvlWVPiAz7qkIzrC8gurnvqJiqwk9slGcwIgw3jYTSmF83s7JaOXl6ihi2nFSTuzt2Qn
-         4OL9wC0UklsyMurgnK+MQ9Cz5uW912BXt3OwNwV4Ve5AiHM2bXFp7h64ECZxfaMVeJfw
-         +jXGjb5i0VnIcD/uRXvP5dTRC5Bs0etDB9FeXqXStS2egUIFOfo9qHML2obMTUwiUoBz
-         OJzyxL/F/hFBK+Hmd6BjJKcyUWPQlHT3l/13AsKo1MOXyJkxkpuLLw7Rv/p2h55MDblx
-         NWZQ==
-X-Gm-Message-State: ABuFfojxNkmym5G324fnFrUO6b2ZVcrrPLnJuqez3W5hOeET3n+ZWuKD
-        I2b2PcFV8t/fUMLsOEXu+X8Aub6APWg=
-X-Google-Smtp-Source: ACcGV61mJ0BQ1G6iDRpIG3vS75CjqbAM0dc2XdxOIZlK4bi+D9R4OumryZ2o5SbWrKFXqPyFiISiWw==
-X-Received: by 2002:a17:902:a58b:: with SMTP id az11-v6mr30058853plb.93.1539133966313;
-        Tue, 09 Oct 2018 18:12:46 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id 126-v6sm34905003pfd.16.2018.10.09.18.12.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Oct 2018 18:12:45 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 10:14:28 +0900
-From:   "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 06/16] of/fdt: add helper functions for handling
- properties
-Message-ID: <20181010011426.GV32578@linaro.org>
-Mail-Followup-To: "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, prudo@linux.ibm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-7-takahiro.akashi@linaro.org>
- <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
- <20181005030849.GK32578@linaro.org>
- <CAL_Jsq+wXU8PCyJhaTKE7ezZhiD0KARUFXVzQBk0ZptEEK7ubQ@mail.gmail.com>
- <20181009003733.GN32578@linaro.org>
- <c65e42ce-1a98-7680-3a09-1f737eb26763@gmail.com>
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=0R2ZEYs8mcnmKsrDE/Wcut83OmNFs/kPv+xCZo/6axo=;
+        b=QanFXbyoYwcdcPk99mMY77e4EtpmGxfUtY/+gBFAMwJQEnuC98bo65fyLG5JurU2xC
+         15T2hmkt+SlhQhMbIZzZlxi6vJlZsmIb6mE2lXwFTbCt+kJkAGIEAoUT0Oygwdml5470
+         jgkDaO5BiCxqjLuJvIT3Jf98oGaLtC9n97V2fqGh3bk1kW7webwD50V6M63sVdsSuw0H
+         EvBaMCqEarIop6NrjBSYglCUE9i6/rYcLRUzo69OPMU8M7PvuMQ4lYGanqPmvpt3G2+b
+         W/rdEj0jQOOyE6l+UuwlZRZ4JxKcSX4JsrbSBfbT1OOWbweR5P8duU2obNa/LIiMtUJK
+         hfTA==
+X-Gm-Message-State: ABuFfojyw7fPa0kupfHIR9Yfa62WU+26TEeFFLg0XjEH7v3rd/AAeDye
+        3K2petY0uVwnfOVYlz3qHPTmAA==
+X-Google-Smtp-Source: ACcGV60HXgdJg/GJ32r1eWf9HqSwshGY+DDNTqQ9WXGYRG0+IriytO/4vuai8+kQYuHl5PmbLg+/ew==
+X-Received: by 2002:a17:902:3fa5:: with SMTP id a34-v6mr31257645pld.244.1539134523865;
+        Tue, 09 Oct 2018 18:22:03 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id j19-v6sm10039341pfi.137.2018.10.09.18.22.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 18:22:02 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c65e42ce-1a98-7680-3a09-1f737eb26763@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=UAfF2rcqdJv30Vd6WXz1qciNVKj2aGq6YTO3+NLVE7yA@mail.gmail.com>
+Cc:     alokc@codeaurora.org, Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>
+References: <1538574265-30235-1-git-send-email-alokc@codeaurora.org>
+ <1538574265-30235-4-git-send-email-alokc@codeaurora.org>
+ <153904219713.119890.7463642233895152532@swboyd.mtv.corp.google.com>
+ <CAD=FV=XnYucy4JmgATrB89RYHTbzRC_GaouaRjHAocD4-H0ncg@mail.gmail.com>
+ <153910152600.119890.14820584405992384926@swboyd.mtv.corp.google.com>
+ <CAD=FV=U-ZZQhFKR9kxYnw=F1j+dExrsgFvjabYJ8AVmBDM4eXA@mail.gmail.com>
+ <153911433511.119890.17831207059115471972@swboyd.mtv.corp.google.com>
+ <CAD=FV=UAfF2rcqdJv30Vd6WXz1qciNVKj2aGq6YTO3+NLVE7yA@mail.gmail.com>
+Message-ID: <153913452169.119890.11450124419228013575@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH V5 3/3] spi: spi-geni-qcom: Add SPI driver support for GENI based
+ QUP
+Date:   Tue, 09 Oct 2018 18:22:01 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frank, Rob,
+Quoting Doug Anderson (2018-10-09 14:18:26)
+> Hi,
+> On Tue, Oct 9, 2018 at 12:45 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Quoting Doug Anderson (2018-10-09 10:48:55)
+> > >
+> > > Ah, you're suggesting separating the platform_get_irq() and the
+> > > request_irq() so that we call platform_get_irq() as the first thing in
+> > > the function but don't do the request_irq() until later.  Yeah, that
+> > > could be done and I guess if you feel strongly about it I wouldn't
+> > > object to the change, but I don't feel it buys us a lot and I kind of
+> > > like keeping the two next to each other.  Specifically why I don't
+> > > think it buys us a lot:
+> > >
+> > > 1. You still need the "dev_err" print, right?  platform_get_irq()
+> > > doesn't automatically print errors for you I think.
+> >
+> > I usually leave it out. Who cares? Maybe we should throw a dev_err()
+> > into platform_get_irq() on failure so we can keep drivers cleaner and
+> > reduce a bunch of "can't find my IRQ" messages throughout the kernel.
+> =
 
-On Tue, Oct 09, 2018 at 10:47:15AM -0700, Frank Rowand wrote:
-> On 10/08/18 17:37, AKASHI, Takahiro wrote:
-> > On Fri, Oct 05, 2018 at 08:23:57AM -0500, Rob Herring wrote:
-> >> On Thu, Oct 4, 2018 at 10:07 PM AKASHI, Takahiro
-> >> <takahiro.akashi@linaro.org> wrote:
-> >>>
-> >>> Rob,
-> >>>
-> >>> # I haven't replied to this comment yet.
-> >>>
-> >>> On Fri, Sep 28, 2018 at 08:44:42AM -0500, Rob Herring wrote:
-> >>>> +David Gibson
-> >>>>
-> >>>> On Fri, Sep 28, 2018 at 1:48 AM AKASHI Takahiro
-> >>>> <takahiro.akashi@linaro.org> wrote:
-> >>>>>
-> >>>>> These functions will be used later to handle kexec-specific properties
-> >>>>> in arm64's kexec_file implementation.
-> >>>>>
-> >>>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> >>>>> Cc: Rob Herring <robh+dt@kernel.org>
-> >>>>> Cc: Frank Rowand <frowand.list@gmail.com>
-> >>>>> Cc: devicetree@vger.kernel.org
-> >>>>> ---
-> >>>>>  drivers/of/fdt.c       | 56 ++++++++++++++++++++++++++++++++++++++++++
-> >>>>>  include/linux/of_fdt.h |  4 +++
-> >>>>>  2 files changed, 60 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> >>>>> index 800ad252cf9c..c65c31562ccb 100644
-> >>>>> --- a/drivers/of/fdt.c
-> >>>>> +++ b/drivers/of/fdt.c
-> >>>>> @@ -25,6 +25,7 @@
-> >>>>>  #include <linux/debugfs.h>
-> >>>>>  #include <linux/serial_core.h>
-> >>>>>  #include <linux/sysfs.h>
-> >>>>> +#include <linux/types.h>
-> >>>>>
-> >>>>>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
-> >>>>>  #include <asm/page.h>
-> >>>>> @@ -1323,3 +1324,58 @@ late_initcall(of_fdt_raw_init);
-> >>>>>  #endif
-> >>>>>
-> >>>>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
-> >>>>> +
-> >>>>> +#define FDT_ALIGN(x, a)        (((x) + (a) - 1) & ~((a) - 1))
-> >>>>> +#define FDT_TAGALIGN(x)        (FDT_ALIGN((x), FDT_TAGSIZE))
-> >>>>> +
-> >>>>> +int fdt_prop_len(const char *prop_name, int len)
-> >>>>> +{
-> >>>>> +       return (strlen(prop_name) + 1) +
-> >>>>> +               sizeof(struct fdt_property) +
-> >>>>> +               FDT_TAGALIGN(len);
-> >>>>
-> >>>> Looks like you are using this to calculate how much space you need to
-> >>>> allocate in addition to the current DTB for a couple of new or
-> >>>> replaced properties. I'm not sure that this calculation is completely
-> >>>> accurate. And it is strange there doesn't seem to be any libfdt
-> >>>> function for this already. It would be simpler to just add some fixed
-> >>>> additional amount.
-> >>>>
-> >>>> Maybe David G has comments on this?
-> >>>>
-> >>>>> +}
-> >>>>> +
-> >>>>
-> >>>> The rest of this should go in drivers/of/fdt_address.c. Ultimately, it
-> >>>> should go into libfdt, but I'm fine with having it in the kernel for
-> >>>> now.
-> >>>
-> >>> I'd like to have this function in the kernel for now.
-> >>>
-> >>>>> +static void fill_property(void *buf, u64 val64, int cells)
-> >>>>> +{
-> >>>>> +       __be32 val32;
-> >>>>> +
-> >>>>> +       while (cells) {
-> >>>>> +               val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
-> >>>>> +               memcpy(buf, &val32, sizeof(val32));
-> >>>>> +               buf += sizeof(val32);
-> >>>>
-> >>>> This is kind of hard to read. I would copy u-boot's fdt_pack_reg function.
-> >>>
-> >>> Are you sure?
-> >>> I originally implemented this function in a similar way that fdt_pack_reg()
-> >>> was, but, you suggested, in your past comment[1], that we'd be better to
-> >>> have of_read_number()-like implementation.
-> >>>
-> >>> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579118.html
-> >>
-> >> Yeah, you're right. Plus, I'm not sure the u-boot one would work for
-> >> unaligned accesses with armv5 and earlier h/w.
-> >>
-> >> My only comment then is I think you can drop the U32_MAX masking.
-> > 
-> > Okay, then I will leave this function, yet renaming it to
-> > cpu64_to_fdt_cells() after Frank's comment.
-> 
-> I have second guessed myself and do not like the name I suggested
-> because what the function really does is either cpu32 to be32 or
-> cpu64 to be64.
+> Yeah, all the boilerplate code is annoying.  ...of course by hoisting
+> it up then you get a whole bunch of people that have "optional" IRQs
+> suddenly getting error messages spewed which is also no good.  IMO the
+> convention of Linux drivers I've always reviewed is to print errors
+> like this, so unless that changes my vote is to follow convention.
+> =
 
-Okay.
+> =
 
-> I agree with Rob that readability is important here.  Instead of
-> having a fill_property() function, how about having inline code,
-> something like (untested even for thinkos):
-> 
-> 	prop = buf;
-> 
-> 	if (addr_cells == 1) {
-> 		*(__be32 *)prop = cpu32_to_be32(addr);
-> 		prop += 4;
-> 	} else {
-> 		*(__be64 *)prop = cpu64_to_be64(addr);
-> 		prop += 8;
-> 	}
-> 
-> 	if (size_cells == 1)
-> 		*(__be32 *)prop = cpu32_to_be32(size);
-> 	else
-> 		*(__be64 *)prop = cpu64_to_be64(size);
-> 
-> You might want to also give Rob a chance to bike shed on this
-> suggestion.
+> > > 2. You now need a local variable "irq".  By putting the
+> > > platform_get_irq() before the memory allocation you now can't store it
+> > > directly in mas->irq.  We could try using "ret" as a temporary
+> > > variable but that seems worse in this case since it'd be a bit
+> > > fragile.
+> > >
+> > > 3. You don't get rid of any error labels / error handling so we don't
+> > > really save any code
+> > >
+> > > When I tried this my diffstat says 8 lines added and 7 removed, so a
+> > > net increase in LOC FWIW.  I'm relying in gmail so my patch will be
+> > > whitespace-damaged (sigh), but you can find a clean one at:
+> > >
+> > > https://chromium.googlesource.com/chromiumos/third_party/kernel/+/e03=
+25d618e209c22379e3a4269c14627b19243a8%5E%21/#F0
+> > >
+> > > ...the basic idea is this though:
+> > >
+> >
+> > Thanks! Here's an updated patch that I haven't compile tested in any way
+> > that hoists up the IO mapping part too, which shows that the 'se' local
+> > variable is almost entirely useless.
+> =
 
-Basically, I don't care either way, but what Rob suggested
-is that some architecture(s) might not handle correctly
-unaligned memory access here.
+> Yeah, I'd be all for getting rid of "se".  I'm still not really seeing
+> the benefit of hoisting all the rest of the stuff up.  Do you feel
+> strongly about it?
+> =
 
-I just want to stay tuned with Rob.
+> In any case I think we've both said that all of our comments so far
+> are just nits and could be addressed in a followup patch.  Unless Mark
+> Brown wants these nits fixed ahead of time or has other changes he'd
+> like, I don't think we're expecting another spin of this patch from
+> Alok or Dilip, right?  We'd just expect them to post some follow-up
+> patches after Mark lands it?
+> =
 
-Thanks,
--Takahiro Akashi
+> =
 
-> -Frank
-> 
-> > 
-> > Thanks,
-> > -Takahiro Akashi
-> >>
-> >> Rob
-> > 
-> 
+
+Yes this is all nits territory. I don't really care too much, but the
+patch is already written, so might as well roll it all in and make
+things shiny.
+
+Time to get back to real work :P
+
