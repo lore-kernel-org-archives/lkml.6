@@ -2,154 +2,144 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA064C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8253BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8761E2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8761E2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D3422075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:42:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D3422075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeJJS4s (ORCPT
+        id S1726791AbeJJTEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:56:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54900 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726503AbeJJS4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:56:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7398BB06A;
-        Wed, 10 Oct 2018 11:35:02 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 13:35:00 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
-        hannes@cmpxchg.org, akpm@linux-foundation.org, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, yang.s@alibaba-inc.com,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: Re: INFO: rcu detected stall in shmem_fault
-Message-ID: <20181010113500.GH5873@dhcp22.suse.cz>
-References: <000000000000dc48d40577d4a587@google.com>
- <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
- <20181010085945.GC5873@dhcp22.suse.cz>
- <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
+        Wed, 10 Oct 2018 15:04:06 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:35752 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726503AbeJJTEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:04:06 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id F065EBFE87;
+        Wed, 10 Oct 2018 13:42:19 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 228C5C100C; Wed, 10 Oct 2018 13:42:19 +0200 (CEST)
+Received: from localhost.localdomain (collins [192.168.1.129])
+        by gagarine.paulk.fr (Postfix) with ESMTP id 8F5ABC04D1;
+        Wed, 10 Oct 2018 13:41:55 +0200 (CEST)
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
+        Mark Van den Borre <mark@fosdem.org>,
+        Gerry Demaret <gerry@fosdem.org>,
+        Luc Verhaegen <libv@skynet.be>,
+        Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH 1/4] drm/sun4i: tcon: Support an active-low DE signal with RGB interface
+Date:   Wed, 10 Oct 2018 13:41:31 +0200
+Message-Id: <20181010114134.8211-1-contact@paulk.fr>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-10-18 19:43:38, Tetsuo Handa wrote:
-> On 2018/10/10 17:59, Michal Hocko wrote:
-> > On Wed 10-10-18 09:12:45, Tetsuo Handa wrote:
-> >> syzbot is hitting RCU stall due to memcg-OOM event.
-> >> https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
-> > 
-> > This is really interesting. If we do not have any eligible oom victim we
-> > simply force the charge (allow to proceed and go over the hard limit)
-> > and break the isolation. That means that the caller gets back to running
-> > and realease all locks take on the way.
-> 
-> What happens if the caller continued trying to allocate more memory
-> because the caller cannot be noticed by SIGKILL from the OOM killer?
+Some panels need an active-low data enable (DE) signal for the RGB
+interface. This requires flipping a bit in the TCON0 polarity register
+when setting up the mode for the RGB interface.
 
-It could eventually trigger the global OOM.
+Add a new helper function to match specific bus flags and use it to set
+the polarity inversion bit for the DE signal when required.
 
-> >                                         I am wondering how come we are
-> > seeing the RCU stall. Whole is holding the rcu lock? Certainly not the
-> > charge patch and neither should the caller because you have to be in a
-> > sleepable context to trigger the OOM killer. So there must be something
-> > more going on.
-> 
-> Just flooding out of memory messages can trigger RCU stall problems.
-> For example, a severe skbuff_head_cache or kmalloc-512 leak bug is causing
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-[...]
-
-Quite some of them, indeed! I guess we want to rate limit the output.
-What about the following?
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa5360616..4ee393c85e27 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -430,6 +430,9 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 3fb084f802e2..d249a462ec09 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -78,6 +78,24 @@ static int sun4i_tcon_get_pixel_depth(const struct drm_encoder *encoder)
+ 	return -EINVAL;
+ }
  
- static void dump_header(struct oom_control *oc, struct task_struct *p)
++static bool sun4i_tcon_match_bus_flags(const struct drm_encoder *encoder,
++				       u32 bus_flags)
++{
++	struct drm_connector *connector;
++	struct drm_display_info *info;
++
++	connector = sun4i_tcon_get_connector(encoder);
++	if (!connector)
++		return false;
++
++	info = &connector->display_info;
++
++	if ((info->bus_flags & bus_flags) == bus_flags)
++		return true;
++
++	return false;
++}
++
+ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
+ 					  bool enabled)
  {
-+	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
-+					      DEFAULT_RATELIMIT_BURST);
+@@ -415,6 +433,7 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ }
+ 
+ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
++				     const struct drm_encoder *encoder,
+ 				     const struct drm_display_mode *mode)
+ {
+ 	unsigned int bp, hsync, vsync;
+@@ -474,8 +493,13 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
+ 		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
+ 
++	if (sun4i_tcon_match_bus_flags(encoder, DRM_BUS_FLAG_DE_LOW))
++		val |= SUN4I_TCON0_IO_POL_DE_NEGATIVE;
 +
- 	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
- 		current->comm, oc->gfp_mask, &oc->gfp_mask,
- 		nodemask_pr_args(oc->nodemask), oc->order,
-@@ -437,6 +440,9 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
- 		pr_warn("COMPACTION is disabled!!!\n");
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
+-			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE | SUN4I_TCON0_IO_POL_VSYNC_POSITIVE,
++			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE |
++			   SUN4I_TCON0_IO_POL_VSYNC_POSITIVE |
++			   SUN4I_TCON0_IO_POL_DE_NEGATIVE,
+ 			   val);
  
-+	if (!__ratelimit(&oom_rs))
-+		return;
-+
- 	cpuset_print_current_mems_allowed();
- 	dump_stack();
- 	if (is_memcg_oom(oc))
-@@ -931,8 +937,6 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	struct task_struct *t;
- 	struct mem_cgroup *oom_group;
- 	unsigned int victim_points = 0;
--	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
--					      DEFAULT_RATELIMIT_BURST);
+ 	/* Map output pins to channel 0 */
+@@ -596,7 +620,7 @@ void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
+ 		sun4i_tcon0_mode_set_lvds(tcon, encoder, mode);
+ 		break;
+ 	case DRM_MODE_ENCODER_NONE:
+-		sun4i_tcon0_mode_set_rgb(tcon, mode);
++		sun4i_tcon0_mode_set_rgb(tcon, encoder, mode);
+ 		sun4i_tcon_set_mux(tcon, 0, encoder);
+ 		break;
+ 	case DRM_MODE_ENCODER_TVDAC:
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index f6a071cd5a6f..708399c80561 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -113,6 +113,7 @@
  
- 	/*
- 	 * If the task is already exiting, don't alarm the sysadmin or kill
-@@ -949,8 +953,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	}
- 	task_unlock(p);
+ #define SUN4I_TCON0_IO_POL_REG			0x88
+ #define SUN4I_TCON0_IO_POL_DCLK_PHASE(phase)		((phase & 3) << 28)
++#define SUN4I_TCON0_IO_POL_DE_NEGATIVE			BIT(27)
+ #define SUN4I_TCON0_IO_POL_HSYNC_POSITIVE		BIT(25)
+ #define SUN4I_TCON0_IO_POL_VSYNC_POSITIVE		BIT(24)
  
--	if (__ratelimit(&oom_rs))
--		dump_header(oc, p);
-+	dump_header(oc, p);
- 
- 	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
- 		message, task_pid_nr(p), p->comm, points);
- 
-> >> What should we do if memcg-OOM found no killable task because the allocating task
-> >> was oom_score_adj == -1000 ? Flooding printk() until RCU stall watchdog fires 
-> >> (which seems to be caused by commit 3100dab2aa09dc6e ("mm: memcontrol: print proper
-> >> OOM header when no eligible victim left") because syzbot was terminating the test
-> >> upon WARN(1) removed by that commit) is not a good behavior.
-> > 
-> > We definitely want to inform about ineligible oom victim. We might
-> > consider some rate limiting for the memcg state but that is a valuable
-> > information to see under normal situation (when you do not have floods
-> > of these situations).
-> > 
-> 
-> But if the caller cannot be noticed by SIGKILL from the OOM killer,
-> allowing the caller to trigger the OOM killer again and again (until
-> global OOM killer triggers) is bad.
-
-There is simply no other option. Well, except for failing the charge
-which has been considered and refused because it could trigger
-unexpected error paths and that breaking the isolation on rare cases
-when of the misconfiguration is acceptable. We can reconsider that
-but you should bring really good arguments on the table. I was very
-successful doing that.
-
 -- 
-Michal Hocko
-SUSE Labs
+2.19.0
+
