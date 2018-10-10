@@ -2,176 +2,253 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B844C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482D6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD472098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:28:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FDxsqBIa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD472098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DB04B2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04B2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeJKBwG (ORCPT
+        id S1726906AbeJKBzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:52:06 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:33946 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbeJKBwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:52:05 -0400
-Received: by mail-it1-f194.google.com with SMTP id l127-v6so16720701ith.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 11:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Z33oORL6dGlz1hAgvpezWEZKZKvuRO5QH4JW4LBgZmw=;
-        b=FDxsqBIa7ovMy4MWwN4v0UTIUKtes5zHJVNLhMkIQ66U7n1DcwE44c2CbrkPoHQKxQ
-         /XpddStkBzdvkZhFeygkJ78udgOrkiZoLh+fwq25FPzFE/0oM69HcQke8kFZMamqZGl2
-         q09meN70KtjudhGfIVX3fZVD7dz562gtHSaIr9+GGhhcubifMmMJfMmUWIPcUEKDUUR+
-         /dSWOM2atHR1iXrBYhH3bI/rDzySjgQRP1Oe5KX81hOw4DACL8U3HgFvBvUDoOO+JVeK
-         KKL3m9D4htX1VONa5zotO38sAPfCIVJ+slcgx+r/ws7tvzdFdL2N0RAq3JvFR+RfNuL9
-         pS5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Z33oORL6dGlz1hAgvpezWEZKZKvuRO5QH4JW4LBgZmw=;
-        b=PonwEwzJFLVfupahkl3TmAKtHUse2ijj/vD+HFZaFfN7pNbxDo2TK4h1HjisNdlIZy
-         q/hf7Vz6F7U2PW05yuADdgYhSovAdTb71VZtt0ml3i2e+5YmriZIiG5NOVa/mbV9Ey9S
-         yLGBP//nFVDqumuGJK4rJsdBt34uFrm/dltZVjOJw90ectM3isUDnV5wK9o/78WQi0rX
-         v+Ls+V+jQmlrYlRv8ef/advfXwjWTltvIk83RPi9s3+lMWZSdO1BSUq/a45dO67+MGIK
-         oUMyy95cvKlsP9g4IcrRliKmKM9uNz83PqETy/TNhHdpKymAjDSL06x2XBEIQ+y7ycgZ
-         LLjA==
-X-Gm-Message-State: ABuFfohLF3iLkJx+7rHLEZ5Y872Y1SAQmiaD80HGgtsP19YoCl7nkkVf
-        XIvwjPUGSnmgd3WRx/EyJezjD+KljLPhKXCuVsyx+Q==
-X-Google-Smtp-Source: ACcGV60TkhOOdx0Uh87E50pW9GmlkQD+Ooz9GKXddbRCdKxz59WmWQRHp2+KBHtVFUOPvk4fEuChfkm0NYJuwNYv0+w=
-X-Received: by 2002:a02:97c5:: with SMTP id v5-v6mr25226180jaj.72.1539196123394;
- Wed, 10 Oct 2018 11:28:43 -0700 (PDT)
+        Wed, 10 Oct 2018 21:55:52 -0400
+Received: from mga06.intel.com ([134.134.136.31]:11834 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726525AbeJKBzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:55:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 11:32:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,365,1534834800"; 
+   d="scan'208";a="99166375"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga002.jf.intel.com with SMTP; 10 Oct 2018 11:32:24 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 10 Oct 2018 21:32:24 +0300
+Date:   Wed, 10 Oct 2018 21:32:24 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, stable@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/atomic_helper: Allow DPMS On<->Off changes for
+ unregistered connectors
+Message-ID: <20181010183224.GS9144@intel.com>
+References: <20181009204424.21462-1-lyude@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 11:28:22
- -0700 (PDT)
-In-Reply-To: <20181010181325.GD6761@localhost.localdomain>
-References: <0000000000007e767d05776336da@google.com> <20181005145855.GB6761@localhost.localdomain>
- <CACT4Y+YVRWSF+VyoBB1vwDevt0gwZYz69bSAivmZDG6r4J-kaA@mail.gmail.com> <20181010181325.GD6761@localhost.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 20:28:22 +0200
-Message-ID: <CACT4Y+YYpjjvW-UCkHEXWZA50F==7JC1cnMvoAZHKmOqq=9vAw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_id2assoc
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181009204424.21462-1-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:13 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Wed, Oct 10, 2018 at 05:28:12PM +0200, Dmitry Vyukov wrote:
->> On Fri, Oct 5, 2018 at 4:58 PM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > On Thu, Oct 04, 2018 at 01:48:03AM -0700, syzbot wrote:
->> >> Hello,
->> >>
->> >> syzbot found the following crash on:
->> >>
->> >> HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
->> >> git tree:       net-next
->> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
->> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
->> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
->> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> >>
->> >> Unfortunately, I don't have any reproducer for this crash yet.
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
->> >>
->> >> netlink: 'syz-executor1': attribute type 1 has an invalid length.
->> >> ==================================================================
->> >> BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0
->> >> net/sctp/socket.c:276
->> >> Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
->> >>
->> >> CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> >> Google 01/01/2011
->> >> Call Trace:
->> >>  __dump_stack lib/dump_stack.c:77 [inline]
->> >>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->> >>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->> >>  kasan_report_error mm/kasan/report.c:354 [inline]
->> >>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->> >>  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
->> >
->> > I'm not seeing yet how this could happen.
->> > All sockopts here are serialized by sock_lock.
->> > do_peeloff here would create another socket, but the issue was
->> > triggered before that.
->> > The same function that freed this memory, also removes the entry from
->> > idr mapping, so this entry shouldn't be there anymore.
->> >
->> > I have only two theories so far:
->> > - an issue with IDR/RCU.
->> > - something else happened that just the call stacks are not revealing.
->>
->> The "asoc->base.sk != sk" check after idr_find suggests that we don't
->> actually know what sock it belongs to. And if we don't know then
->
-> Right. The check is more because the IDR is global and not per socket
-> (and we don't want sockets accessing asocs from other sockets), and not
-> that the asoc may move to another socket in between, but it also
-> protects from such cases, yes.
->
->> locking this sock can't help keeping another sock association alive.
->> Am I missing something obvious here? Should we take assoc ref while we
->
-> Not sure. Maybe I am.  Thanks for looking into this, btw.
->
->> are still holding sctp_assocs_id_lock?
->
-> Shouldn't be needed.
->
-> Solely by the call stacks:
-> - we tried to establish a new asoc from a sctp_connect() call,
->   blocking one.
-> - it slept waiting for the connect
-> - (something closed the asoc in between the sleeps, because it freed
->   the asoc right when waking up on sctp_wait_for_connect())
-> - it freed the asoc after sleeping on it on sctp_wait_for_connect [A]
-> - another thread tried to peeloff that asoc [B]
->
-> For [B] to access the asoc in question, it had to take the same sock
-> lock [A] had taken, and then the idr should not return an asoc in
-> sctp_i2asoc(). Note that we can't peeloff an asoc twice, thus why
-> the certainty here.
->
-> If [B] actually kicked in before the sleep resumed, that should have
-> been fine because it took the same sock lock [A] would have to
-> re-take. In this case an asoc would have been returned by
-> sctp_id2asoc(), the asoc would have been moved to a new socket, but
-> all while holding the original socket sock lock.
+On Tue, Oct 09, 2018 at 04:44:24PM -0400, Lyude Paul wrote:
+> It appears when testing my previous fix for some of the legacy
+> modesetting issues with MST, I misattributed some kernel splats that
+> started appearing on my machine after a rebase as being from upstream.
+> But it appears they actually came from my patch series:
+> 
+> [    2.980512] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing for [CONNECTOR:65:eDP-1]
+> [    2.980516] [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CONNECTOR:65:eDP-1] is not registered
+> [    2.980516] ------------[ cut here ]------------
+> [    2.980519] Could not determine valid watermarks for inherited state
+> [    2.980553] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
+> [    2.980556] Modules linked in: i915(O+) i2c_algo_bit drm_kms_helper(O) syscopyarea sysfillrect sysimgblt fb_sys_fops drm(O) intel_rapl x86_pkg_temp_thermal iTCO_wdt wmi_bmof coretemp crc32_pclmul psmouse i2c_i801 mei_me mei i2c_core lpc_ich mfd_core tpm_tis tpm_tis_core wmi tpm thinkpad_acpi pcc_cpufreq video ehci_pci crc32c_intel serio_raw ehci_hcd xhci_pci xhci_hcd
+> [    2.980577] CPU: 3 PID: 551 Comm: systemd-udevd Tainted: G           O      4.19.0-rc7Lyude-Test+ #1
+> [    2.980579] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET63WW (1.27 ) 11/10/2016
+> [    2.980605] RIP: 0010:intel_modeset_init+0x14d7/0x19f0 [i915]
+> [    2.980607] Code: 89 df e8 ec 27 02 00 e9 24 f2 ff ff be 03 00 00 00 48 89 df e8 da 27 02 00 e9 26 f2 ff ff 48 c7 c7 c8 d1 34 a0 e8 23 cf dc e0 <0f> 0b e9 7c fd ff ff f6 c4 04 0f 85 37 f7 ff ff 48 8b 83 60 08 00
+> [    2.980611] RSP: 0018:ffffc90000287988 EFLAGS: 00010282
+> [    2.980614] RAX: 0000000000000000 RBX: ffff88031b488000 RCX: 0000000000000006
+> [    2.980617] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff880321ad54d0
+> [    2.980620] RBP: ffffc90000287a10 R08: 000000000000040a R09: 0000000000000065
+> [    2.980623] R10: ffff88030ebb8f00 R11: ffffffff81416590 R12: ffff88031b488000
+> [    2.980626] R13: ffff88031b4883a0 R14: ffffc900002879a8 R15: ffff880319099800
+> [    2.980630] FS:  00007f475620d180(0000) GS:ffff880321ac0000(0000) knlGS:0000000000000000
+> [    2.980633] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    2.980636] CR2: 00007f9ef28018a0 CR3: 000000031b72c001 CR4: 00000000003606e0
+> [    2.980639] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    2.980642] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    2.980645] Call Trace:
+> [    2.980675]  i915_driver_load+0xb0e/0xdc0 [i915]
+> [    2.980681]  ? kernfs_add_one+0xe7/0x130
+> [    2.980709]  i915_pci_probe+0x46/0x60 [i915]
+> [    2.980715]  pci_device_probe+0xd4/0x150
+> [    2.980719]  really_probe+0x243/0x3b0
+> [    2.980722]  driver_probe_device+0xba/0x100
+> [    2.980726]  __driver_attach+0xe4/0x110
+> [    2.980729]  ? driver_probe_device+0x100/0x100
+> [    2.980733]  bus_for_each_dev+0x74/0xb0
+> [    2.980736]  driver_attach+0x1e/0x20
+> [    2.980739]  bus_add_driver+0x159/0x230
+> [    2.980743]  ? 0xffffffffa0393000
+> [    2.980746]  driver_register+0x70/0xc0
+> [    2.980749]  ? 0xffffffffa0393000
+> [    2.980753]  __pci_register_driver+0x57/0x60
+> [    2.980780]  i915_init+0x55/0x58 [i915]
+> [    2.980785]  do_one_initcall+0x4a/0x1c4
+> [    2.980789]  ? do_init_module+0x27/0x210
+> [    2.980793]  ? kmem_cache_alloc_trace+0x131/0x190
+> [    2.980797]  do_init_module+0x60/0x210
+> [    2.980800]  load_module+0x2063/0x22e0
+> [    2.980804]  ? vfs_read+0x116/0x140
+> [    2.980807]  ? vfs_read+0x116/0x140
+> [    2.980811]  __do_sys_finit_module+0xbd/0x120
+> [    2.980814]  ? __do_sys_finit_module+0xbd/0x120
+> [    2.980818]  __x64_sys_finit_module+0x1a/0x20
+> [    2.980821]  do_syscall_64+0x5a/0x110
+> [    2.980824]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [    2.980826] RIP: 0033:0x7f4754e32879
+> [    2.980828] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f7 45 2c 00 f7 d8 64 89 01 48
+> [    2.980831] RSP: 002b:00007fff43fd97d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> [    2.980834] RAX: ffffffffffffffda RBX: 0000559a44ca64f0 RCX: 00007f4754e32879
+> [    2.980836] RDX: 0000000000000000 RSI: 00007f475599f4cd RDI: 0000000000000018
+> [    2.980838] RBP: 00007f475599f4cd R08: 0000000000000000 R09: 0000000000000000
+> [    2.980839] R10: 0000000000000018 R11: 0000000000000246 R12: 0000000000000000
+> [    2.980841] R13: 0000559a44c92fd0 R14: 0000000000020000 R15: 0000000000000000
+> [    2.980881] WARNING: CPU: 3 PID: 551 at drivers/gpu/drm/i915/intel_display.c:14983 intel_modeset_init+0x14d7/0x19f0 [i915]
+> [    2.980884] ---[ end trace 5eb47a76277d4731 ]---
+> 
+> The cause of this appears to be due to the fact that if there's
+> pre-existing display state that was set by the BIOS when i915 loads, it
+> will attempt to perform a modeset before the driver is registered with
+> userspace. Since this happens before the driver's registered with
+> userspace, it's connectors are also unregistered and thus-states which
+> would turn on DPMS on a connector end up getting rejected since the
+> connector isn't registered.
+> 
+> These bugs managed to get past Intel's CI partially due to the fact it
+> never ran a full test on my patches for some reason, but also because
+> all of the tests unload the GPU once before running.
 
-But why A and B use the same lock?
+Well, not all all tests, but all the module reload tests. If we can
+change the setup so that the driver isn't loaded until the first test
+executes we should be able catch all these issues as well. Which would
+be nice.
 
-sctp_assocs_id is global, so it contains asocs from all sockets, right?
-assoc id comes straight from userspaces.
-So isn't it possible that B uses completely different sock but passes
-assoc id from the A sock? Then B should find assoc in sctp_assocs_id,
-and at the point of "asoc->base.sk != sk" check the assoc can be
-already freed.
+> Since this bug is
+> only really triggered when the drivers tries to perform a modeset before
+> it's been fully registered with userspace when coming from whatever
+> display configuration the firmware left us with, it likely would never
+> have been picked up by CI in the first place.
+> 
+> After some discussion with vsyrjala, we decided the best course of
+> action would be to just move the unregistered connector checks out of
+> update_connector_routing() and into drm_atomic_set_crtc_for_connector().
+> The reason for this being that legacy modesetting isn't going to be
+> expecting failures anywhere (at least this is the case with X), so
+> ideally we want to ensure that any DPMS changes will still work even on
+> unregistered connectors. Instead, we now only reject new modesets which
+> would change the current CRTC assigned to an unregistered connector
+> unless no new CRTC is being assigned to replace the connector's previous
+> one.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Fixes: 4d80273976bf ("drm/atomic_helper: Disallow new modesets on unregistered connectors")
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 21 +--------------------
+>  drivers/gpu/drm/drm_atomic_uapi.c   | 21 +++++++++++++++++++++
+>  2 files changed, 22 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index e6a2cf72de5e..6f66777dca4b 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -319,26 +319,6 @@ update_connector_routing(struct drm_atomic_state *state,
+>  		return 0;
+>  	}
+>  
+> -	crtc_state = drm_atomic_get_new_crtc_state(state,
+> -						   new_connector_state->crtc);
+> -	/*
+> -	 * For compatibility with legacy users, we want to make sure that
+> -	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
+> -	 * which would result in anything else must be considered invalid, to
+> -	 * avoid turning on new displays on dead connectors.
+> -	 *
+> -	 * Since the connector can be unregistered at any point during an
+> -	 * atomic check or commit, this is racy. But that's OK: all we care
+> -	 * about is ensuring that userspace can't do anything but shut off the
+> -	 * display on a connector that was destroyed after its been notified,
+> -	 * not before.
+> -	 */
+> -	if (!READ_ONCE(connector->registered) && crtc_state->active) {
+> -		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
+> -				 connector->base.id, connector->name);
+> -		return -EINVAL;
+> -	}
+> -
+>  	funcs = connector->helper_private;
+>  
+>  	if (funcs->atomic_best_encoder)
+> @@ -383,6 +363,7 @@ update_connector_routing(struct drm_atomic_state *state,
+>  
+>  	set_best_encoder(state, new_connector_state, new_encoder);
+>  
+> +	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
+>  	crtc_state->connectors_changed = true;
+>  
+>  	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
+> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+> index d5b7f315098c..7acec863b10c 100644
+> --- a/drivers/gpu/drm/drm_atomic_uapi.c
+> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
+> @@ -299,6 +299,27 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+>  	struct drm_connector *connector = conn_state->connector;
+>  	struct drm_crtc_state *crtc_state;
+>  
+> +	/*
+> +	 * For compatibility with legacy users, we want to make sure that
+> +	 * we allow DPMS On<->Off modesets on unregistered connectors, since
+> +	 * legacy modesetting users will not be expecting these to fail. We do
+> +	 * not however, want to allow legacy users to assign a connector
+> +	 * that's been unregistered from sysfs to another CRTC, since doing
+> +	 * this with a now non-existant connector could potentially leave us
+> +	 * in an invalid state.
+> +	 *
+> +	 * Since the connector can be unregistered at any point during an
+> +	 * atomic check or commit, this is racy. But that's OK: all we care
+> +	 * about is ensuring that userspace can't use this connector for new
+> +	 * configurations after it's been notified that the connector is no
+> +	 * longer present.
+> +	 */
+> +	if (!READ_ONCE(connector->registered) && crtc) {
+> +		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
+> +				 connector->base.id, connector->name);
+> +		return -EINVAL;
+
+I was also pondering whether we should make this ENOENT to match the
+errno we use for the "this connector doesn't exist" case. But I guess
+it doesn't really matter.
+
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+> +	}
+> +
+>  	if (conn_state->crtc == crtc)
+>  		return 0;
+>  
+> -- 
+> 2.17.1
+
+-- 
+Ville Syrjälä
+Intel
