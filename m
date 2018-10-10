@@ -2,106 +2,106 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D977C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B09FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23E320858
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6D12086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHCKMCbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23E320858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ai8e9Zyj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6D12086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJJTI5 (ORCPT
+        id S1726893AbeJJTJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:08:57 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50611 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeJJTI5 (ORCPT
+        Wed, 10 Oct 2018 15:09:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50696 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJJTI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:08:57 -0400
-Received: by mail-it1-f195.google.com with SMTP id k206-v6so1423336ite.0;
-        Wed, 10 Oct 2018 04:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HbU9M+0a2hjK2GKwZklMeGd2mg6bn26VAqBDlvwgtHo=;
-        b=JHCKMCbxO157p2Q42cQI4xb8y5y7FRm2+uMaFHopVz7LtyuJcH9LAql0hFgfk14Y4l
-         DDjluxkG2D5w6yQL9zgar3JQIS03l3vPGUKk5F75xeHP7lIbDs6JSRf8H8K96bCu5VbW
-         HmClzfkXb3+qXIQT1AOAA7mfXCz4MWVjIDSjTG/UcUdH9eBtZ8XgGZMMGnexhTHqAGaK
-         L/PfHOD2yY6TiuHquJQw9GkugsQAwVxb7wQA+9HhfNlRfrQQKS2rTuS4lPPd4FB3wWTX
-         9gkBmZeA+ulqx3QAQb8Z2Z47jvI9HjVsBYF5RIz3fA7dOcYaWL7oItVu0CoxrXfksVm7
-         LHnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HbU9M+0a2hjK2GKwZklMeGd2mg6bn26VAqBDlvwgtHo=;
-        b=pOAbA9l8jagK1HScHgF3Tdrm6nX+SZy8js1UvmFenVLZWM3R0Mdoegen5O4bjH2iCe
-         9k5iY2x95/MiL9hsMFG6K6RiLVcZQydlyClSucAvWIx0dBEehTOYbIWqb1DNogQEGFgj
-         mxg/F3vpVrxM92eW1LLMEUn0gmo0WyNNUcNMdmnS9pMGGdAzxdFukiN7NflK+NGpDQ+p
-         9Y2ekBQJm8AGabjH7LsMgfDtVTITOp9NfIdfqyFMBSlle/WigAU/KmwVX8o4XX/15aHp
-         NebtU2sHpyvGuJYcL+EUtB1JHjnlhOL/3pTNkdS79rdavXm9jrGlLOxi6bRSEAKqipTY
-         pC1A==
-X-Gm-Message-State: ABuFfoit3Uy/PfgX4rqLmsXbViHob8q9j/U55MVzHo4XtDIesG965P4U
-        WXqmCJoHJ4Ch7/LczNA4OVXA44vNhQOcJMvgQuOhFJAX
-X-Google-Smtp-Source: ACcGV61d0eFWIXyx2gsDSlJCSfE+6wH7+3Gcu8kN6WW2NnHM7VQE4QztYllefv3gM4j6BL0CBce0mgLPhVSGVnYABXw=
-X-Received: by 2002:a24:a109:: with SMTP id y9-v6mr408432ite.73.1539172030273;
- Wed, 10 Oct 2018 04:47:10 -0700 (PDT)
+        Wed, 10 Oct 2018 15:08:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ROQ22YeAzEH+f9FA3bsiBp4avpbqC1fjIQ2vUuWWnf0=; b=ai8e9ZyjSGX50WZkNc9jIr39k
+        +fA1jCZ2xWwvMswFptr+8n9v+ymWhs101AlhjxsnZzttg6DMzrCCJNn2qbqktlQRtWw694FvCgAbq
+        zCnM/WBiyjybezGaxzv0d11VFDjCjTWpf6MBmLiLQkBTRvfGmYeoWfaxxRY7iVWGs/fR0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gACxH-0007je-I6; Wed, 10 Oct 2018 11:47:07 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9CA4C1122392; Wed, 10 Oct 2018 12:27:53 +0100 (BST)
+Date:   Wed, 10 Oct 2018 12:27:53 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Talel Shenhar <talel@amazon.com>
+Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ronenk@amazon.com, barakw@amazon.com,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
+Message-ID: <20181010112753.GC6294@sirena.org.uk>
+References: <1539155293-21750-1-git-send-email-talel@amazon.com>
+ <20181010101825.GA6294@sirena.org.uk>
+ <dbac7f00-e9cc-ddac-5734-9763b5985ead@amazon.com>
 MIME-Version: 1.0
-References: <20181009175428.18543-1-lhenriques@suse.com> <CAAM7YAno0s5Z21jagvnFbQdkkwMOYadZG9trPvs4WKZLRLkLxg@mail.gmail.com>
- <CAOi1vP_HmqS3xgAdYSpQYhRg-2q6mhHEaRpQW2+-UyJs9K1UsQ@mail.gmail.com> <87sh1evyii.fsf@suse.com>
-In-Reply-To: <87sh1evyii.fsf@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 10 Oct 2018 13:46:59 +0200
-Message-ID: <CAOi1vP_YxCbb1aP=imNt6uJfEn18+kbG273mKW6A_+qQTnTA6A@mail.gmail.com>
-Subject: Re: [PATCH] ceph: only allow punch hole mode in fallocate
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     "Yan, Zheng" <ukernel@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XWOWbaMNXpFDWE00"
+Content-Disposition: inline
+In-Reply-To: <dbac7f00-e9cc-ddac-5734-9763b5985ead@amazon.com>
+X-Cookie: Phasers locked on target, Captain.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 1:19 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> Ilya Dryomov <idryomov@gmail.com> writes:
->
-> > On Wed, Oct 10, 2018 at 6:21 AM Yan, Zheng <ukernel@gmail.com> wrote:
-> >>
-> >> On Wed, Oct 10, 2018 at 1:54 AM Luis Henriques <lhenriques@suse.com> wrote:
->
-> <snip>
->
-> >> Applied, thanks
-> >
-> > I don't think it should go to stable kernels.  Strictly speaking it's
-> > a behaviour change -- it's been this way for many years and, unless you
-> > are close to ENOSPC, it's sort of appears to work.  I'll take off the
-> > stable tag unless I hear objections.
->
-> Right, it can in fact break applications that rely on the previous
-> (bogus) behaviour.  But it can also be claimed that it *will* break
-> applications anyway with an updated kernel, so backporting it to older
-> kernels will just allow a consistent behaviour.
->
-> Anyway, I'm OK either way.  But if you drop the stable tag make sure you
-> also remove the 'Fixes:' tag as I believe the stable folks will still
-> pick this patch if it includes a valid SHA1 in it.
 
-Yeah, we've run into this in the past.
+--XWOWbaMNXpFDWE00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
+On Wed, Oct 10, 2018 at 02:23:40PM +0300, Talel Shenhar wrote:
+> On 10/10/2018 01:18 PM, Mark Brown wrote:
+> > On Wed, Oct 10, 2018 at 10:08:12AM +0300, Talel Shenhar wrote:
 
-                Ilya
+> >> The dw spi controller has an auto-deselect of Chip-Select, in case there is
+> >> no data inside the Tx FIFO. While working on platforms with Alpine chips,
+
+> > Why would we ever want to use this behaviour?  It will be broken for any
+> > non-trivial SPI message such as those made with multiple transfers
+> > anyway.  Why not just unconditionally control it manually?
+
+> This behavior (auto-deselect of Chip-Select) is the default behavior of dw spi controller hw.
+> On Alpine chip there is additional behavior added to the dw spi controller hw that allows the sw to disable this behavior.
+> This patch allows the dw driver to enable this hw workaround and add the needed sw manual control for it.
+
+If this is a modified IP with additional features then it should be
+given a new compatible string rather than having a property - it's not
+just configuration of the existing IP, it's a new thing and we may find
+there are other quirks that have to be taken care of for it.
+
+--XWOWbaMNXpFDWE00
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu94jgACgkQJNaLcl1U
+h9ApoQf/bZoqz6AzEschlNCke1wLPI98oWSDZLffCSfz9cw1bkrYYqkHInTWRcH6
+kDWI4TUt7/y/Vfe2KZOB5B14B05XJh5y4NB21zLNc7BQCbmY1TPNHKb4Q/ums5qp
+cPnz+jyFf2wUrRBsu9MZ6G5LbwameBAjy0aw1YlIzvtMHovsT1TCoAcazwCWrZoD
+5oe0ZTvJ5L8ht6ML7RQl2nRBVLlTlVmmxqlZwmomnhQ+meM9TkYORREI4AmfM5V1
+CUMMwpg8BB7WA5SYhvgtdd4mZIw3uVrY66Xh1gIOq+zrIOxMDwzvva0pHoWYiuPn
+oiwyTZEzTYPdn4p3yum2O4EvASuj7g==
+=hB4N
+-----END PGP SIGNATURE-----
+
+--XWOWbaMNXpFDWE00--
