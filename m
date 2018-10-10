@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27942C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A80C46463
 	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B132082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E21D2085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kHk8BaUt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B132082B
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gpjC108i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E21D2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeJKCng (ORCPT
+        id S1727681AbeJKCnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:43:36 -0400
-Received: from mail.efficios.com ([167.114.142.138]:60960 "EHLO
+        Wed, 10 Oct 2018 22:43:40 -0400
+Received: from mail.efficios.com ([167.114.142.138]:32792 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeJKCng (ORCPT
+        with ESMTP id S1727579AbeJKCnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:43:36 -0400
+        Wed, 10 Oct 2018 22:43:39 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EBCF4183B3F;
-        Wed, 10 Oct 2018 15:20:02 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id F06FA183B56;
+        Wed, 10 Oct 2018 15:20:05 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ZarWOQeCeu7k; Wed, 10 Oct 2018 15:20:01 -0400 (EDT)
+        with ESMTP id q4DZqpoIpu0W; Wed, 10 Oct 2018 15:20:05 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B935A183B28;
-        Wed, 10 Oct 2018 15:20:01 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B935A183B28
+        by mail.efficios.com (Postfix) with ESMTP id 2AC14183B53;
+        Wed, 10 Oct 2018 15:20:05 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2AC14183B53
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539199201;
-        bh=W9+7YUDhhfJN0h5lP3hptKUVRtrFuDrfUHKAQiTlV2Y=;
+        s=default; t=1539199205;
+        bh=Cfb0if2j7qr27a8wQq79l8o8zLis2u6tHcSE1XnbL0Q=;
         h=From:To:Date:Message-Id;
-        b=kHk8BaUtgcpzWncfzeMvw/MKwjHPUtweBGpZ3m9wWnu0emUK9OYAmv+Rx36f+g/10
-         oNYJfhjmNhcr0cxccT0purUjbk0HU1Y9gPjx/2CHdzQNdiTVXBZ/OIk79I4sEdtgHg
-         mLcbkD/VK/frVRiIWFsiDddaB6CR1Fa7XRphP5n28QhwOFXZn26ijdKD98dI8+eFwu
-         8aPPhasSiM3mwgjyW1+NOLXFFpWZXB+RJmQtf+3YC6kymNX8jHDaFvtp7GTQudRVwl
-         i/z967v3O+k6YvxYXOIP6nI/+MHOPaFcj/hWR5Yz+JV3JoNKnyFuR0nT3x4Baj4Hbr
-         rnZap3bC4G1RA==
+        b=gpjC108iIxTzdhVPF8J7G3bZ7LzBW9DRo6tk6ZTsopfcnZXrsZS2US9xtKLo8ZgJJ
+         Rgb6twi9zHkLtfUk5U6+bNXJykO2o+kPkqZfjbMELhp6awgQc8qkZx8/nvjTv9WrKM
+         EL2/N+i1ylQKroNtgq3A8grSNXu7XC1oZBw1COaq6NO/X3Twhaty7mlUKPmNjS5zMP
+         lLLSrVKwdyg/Ql8IU9+KE7IVFdOsubKdyOf3ix4+MU0ekVi5pHCufe9mKbbr8bjTWD
+         Zc+UWDWuH+RE9h6G7zVjOtowkFl4p82IV+LO6VbiL0FV7RAYZPxslLz1t+E7KkWUfV
+         DOAtCVb7wk2bA==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id BICCTx2yh6d3; Wed, 10 Oct 2018 15:20:01 -0400 (EDT)
+        with ESMTP id tGcDv-7_nAH2; Wed, 10 Oct 2018 15:20:05 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id A1258183B05;
-        Wed, 10 Oct 2018 15:19:57 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 006BE183B32;
+        Wed, 10 Oct 2018 15:20:01 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -75,14 +75,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Carlos O'Donell <carlos@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>
-Subject: [RFC PATCH for 4.21 01/16] rseq/selftests: Add reference counter to coexist with glibc
-Date:   Wed, 10 Oct 2018 15:19:21 -0400
-Message-Id: <20181010191936.7495-2-mathieu.desnoyers@efficios.com>
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Subject: [RFC PATCH for 4.21 02/16] rseq/selftests: Adapt number of threads to the number of detected cpus
+Date:   Wed, 10 Oct 2018 15:19:22 -0400
+Message-Id: <20181010191936.7495-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
 References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
@@ -91,107 +87,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to integrate rseq into user-space applications, add a reference
-counter field after the struct rseq TLS ABI so many rseq users can be
-linked into the same application (e.g. librseq and glibc). The
-reference count ensures that rseq syscall registration/unregistration
-happens only for the most early/late user for each thread, thus ensuring
-that rseq is registered across the lifetime of all rseq users for a
-given thread.
+On smaller systems, running a test with 200 threads can take a long
+time on machines with smaller number of CPUs.
 
-Therefore, struct rseq contains the fields shared between kernel
-and user-space, and represents the ABI between kernel and user-space.
-The extra field added after struct rseq is an ABI between user-space
-executable and libraries, but the kernel does not care about that field,
-so it is not part of the Linux uapi.
+Detect the number of online cpus at test runtime, and multiply that
+by 6 to have 6 rseq threads per cpu preempting each other.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Shuah Khan <shuah@kernel.org>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Joseph Myers <joseph@codesourcery.com>
-CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: linux-api@vger.kernel.org
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- tools/testing/selftests/rseq/rseq.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ tools/testing/selftests/rseq/run_param_test.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
-index 4847e97ed049..7e9ae973f786 100644
---- a/tools/testing/selftests/rseq/rseq.c
-+++ b/tools/testing/selftests/rseq/rseq.c
-@@ -30,13 +30,29 @@
+diff --git a/tools/testing/selftests/rseq/run_param_test.sh b/tools/testing/selftests/rseq/run_param_test.sh
+index 3acd6d75ff9f..e426304fd4a0 100755
+--- a/tools/testing/selftests/rseq/run_param_test.sh
++++ b/tools/testing/selftests/rseq/run_param_test.sh
+@@ -1,6 +1,8 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0+ or MIT
  
- #define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
- 
--__attribute__((tls_model("initial-exec"))) __thread
--volatile struct rseq __rseq_abi = {
-+/*
-+ * linux/rseq.h defines struct rseq as aligned on 32 bytes. The kernel ABI
-+ * size is 20 bytes. For support of multiple rseq users within a process,
-+ * user-space defines an extra 4 bytes field as a reference count, for a
-+ * total of 24 bytes.
-+ */
-+struct libc_rseq {
-+	/* kernel-userspace ABI. */
-+	__u32 cpu_id_start;
-+	__u32 cpu_id;
-+	__u64 rseq_cs;
-+	__u32 flags;
-+	/* user-space ABI. */
-+	__u32 refcount;
-+} __attribute__((aligned(4 * sizeof(__u64))));
++NR_CPUS=`grep '^processor' /proc/cpuinfo | wc -l`
 +
-+__attribute__((visibility("hidden"))) __thread
-+volatile struct libc_rseq __lib_rseq_abi = {
- 	.cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
- };
+ EXTRA_ARGS=${@}
  
--static __attribute__((tls_model("initial-exec"))) __thread
--volatile int refcount;
-+extern __attribute__((weak, alias("__lib_rseq_abi"))) __thread
-+volatile struct rseq __rseq_abi;
+ OLDIFS="$IFS"
+@@ -28,15 +30,16 @@ IFS="$OLDIFS"
  
- static void signal_off_save(sigset_t *oldset)
+ REPS=1000
+ SLOW_REPS=100
++NR_THREADS=$((6*${NR_CPUS}))
+ 
+ function do_tests()
  {
-@@ -70,7 +86,7 @@ int rseq_register_current_thread(void)
- 	sigset_t oldset;
- 
- 	signal_off_save(&oldset);
--	if (refcount++)
-+	if (__lib_rseq_abi.refcount++)
- 		goto end;
- 	rc = sys_rseq(&__rseq_abi, sizeof(struct rseq), 0, RSEQ_SIG);
- 	if (!rc) {
-@@ -78,9 +94,9 @@ int rseq_register_current_thread(void)
- 		goto end;
- 	}
- 	if (errno != EBUSY)
--		__rseq_abi.cpu_id = -2;
-+		__rseq_abi.cpu_id = RSEQ_CPU_ID_REGISTRATION_FAILED;
- 	ret = -1;
--	refcount--;
-+	__lib_rseq_abi.refcount--;
- end:
- 	signal_restore(oldset);
- 	return ret;
-@@ -92,7 +108,7 @@ int rseq_unregister_current_thread(void)
- 	sigset_t oldset;
- 
- 	signal_off_save(&oldset);
--	if (--refcount)
-+	if (--__lib_rseq_abi.refcount)
- 		goto end;
- 	rc = sys_rseq(&__rseq_abi, sizeof(struct rseq),
- 		      RSEQ_FLAG_UNREGISTER, RSEQ_SIG);
+ 	local i=0
+ 	while [ "$i" -lt "${#TEST_LIST[@]}" ]; do
+ 		echo "Running test ${TEST_NAME[$i]}"
+-		./param_test ${TEST_LIST[$i]} -r ${REPS} ${@} ${EXTRA_ARGS} || exit 1
++		./param_test ${TEST_LIST[$i]} -r ${REPS} -t ${NR_THREADS} ${@} ${EXTRA_ARGS} || exit 1
+ 		echo "Running compare-twice test ${TEST_NAME[$i]}"
+-		./param_test_compare_twice ${TEST_LIST[$i]} -r ${REPS} ${@} ${EXTRA_ARGS} || exit 1
++		./param_test_compare_twice ${TEST_LIST[$i]} -r ${REPS} -t ${NR_THREADS} ${@} ${EXTRA_ARGS} || exit 1
+ 		let "i++"
+ 	done
+ }
 -- 
 2.11.0
 
