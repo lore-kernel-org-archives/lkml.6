@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F055C677FC
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE467C46463
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D52B12082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D0B206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="rU4dL5OI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52B12082B
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="U6QCTqv8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D0B206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeJKCnx (ORCPT
+        id S1727994AbeJKCny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:43:53 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33240 "EHLO
+        Wed, 10 Oct 2018 22:43:54 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33348 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbeJKCnv (ORCPT
+        with ESMTP id S1727880AbeJKCnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:43:51 -0400
+        Wed, 10 Oct 2018 22:43:53 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 139BF183C38;
-        Wed, 10 Oct 2018 15:20:17 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id A366E183C69;
+        Wed, 10 Oct 2018 15:20:19 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id umG9iNsW-gsD; Wed, 10 Oct 2018 15:20:16 -0400 (EDT)
+        with ESMTP id B9_bLur915ns; Wed, 10 Oct 2018 15:20:19 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 84934183C2D;
-        Wed, 10 Oct 2018 15:20:16 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 84934183C2D
+        by mail.efficios.com (Postfix) with ESMTP id E8DC5183C60;
+        Wed, 10 Oct 2018 15:20:18 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E8DC5183C60
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539199216;
-        bh=/tkEB8pTPAKnqB+zmd5U6i3WoXW9DZMBZszErwJcPFc=;
+        s=default; t=1539199218;
+        bh=fcGwPM3V/nbkp63q4bvonez6xrbbL/Ahmj9LgwKvEAQ=;
         h=From:To:Date:Message-Id;
-        b=rU4dL5OITQtZiaBux+bsRKkDNh7Urb2XrlTYNrYfjcmsmLaJt05qJXKMf7WJaICsy
-         ZGcmiyYoAG4cM+/yLYvRWjzfLra+L7gPjjgF3Rmg8n/4wi0soSzipNCqCFgHb3+kRA
-         wUK/I40QEjBo/nhEJl2OUXEwwfx9nAd64cHWV4htHFWTq9DYobpxEEksJ54KbbKBaV
-         YOFcawd15OoQuYJCcHIDVE8aKHuLgbS0N4nOvbTFWCWUmQY66s9w/So6J12id7S2wX
-         gJKsjfmPN6X6Cs0YBCnUweM2pGSh4fbA1ONT5xb9V/abMdVHDXa2sE0QnAby178Lql
-         Uv8sR4c4B9Nbw==
+        b=U6QCTqv8ML7jiHQ5ZPmC9w0afF64fRyT4mrp02ArlPJaeuzq92G+0+pZJM1umkMRX
+         qg4NJGbWwju6uXhzrzN1REO7rhhiGudpmIHMekVN7uXFgrYEqkw8F0fIT8mfbGw6Aq
+         L+myDpsxpii6bupRZ37jcGS62RUtvuLUbNIk9flZ5tcOwrzdXCSUCSB9LaSywgAWPx
+         Vb4h51Ebrydd/JGBgxgdTQ5QKngZTEzbB7/QVbSxx+hdY3q/oFH0h5ccMF/aikKvkL
+         /DSy/I0vqBioG012apVmBf7YAE4mGhMDdRGw80y2TMtsPQIPlBFPygJKx9ej5qfl/U
+         HFj4LDUqxQ5jw==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id xXh-aNnbzbiq; Wed, 10 Oct 2018 15:20:16 -0400 (EDT)
+        with ESMTP id jAMhFgSkSx7c; Wed, 10 Oct 2018 15:20:18 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 94491183C22;
-        Wed, 10 Oct 2018 15:20:15 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id BE6AC183C4D;
+        Wed, 10 Oct 2018 15:20:17 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.21 13/16] cpu-opv/selftests: Provide percpu_op API
-Date:   Wed, 10 Oct 2018 15:19:33 -0400
-Message-Id: <20181010191936.7495-14-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 16/16] cpu-opv/selftests: Provide Makefile, scripts, gitignore
+Date:   Wed, 10 Oct 2018 15:19:36 -0400
+Message-Id: <20181010191936.7495-17-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
 References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
@@ -87,213 +87,267 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce percpu-op.h API. It uses rseq internally as fast-path if
-invoked from the right CPU, else cpu_opv as slow-path if called
-from the wrong CPU or if rseq fails.
+A run_param_test.sh script runs many variants of the parametrizable
+tests.
 
-This allows acting on per-cpu data from various CPUs transparently from
-user-space: cpu_opv will take care of migrating the thread to the
-requested CPU. Use-cases such as rebalancing memory across per-cpu
-memory pools, or migrating tasks for a user-space scheduler, are thus
-facilitated. This also handles debugger single-stepping.
-
-The use from userspace is, e.g. for a counter increment:
-
-    int cpu, ret;
-
-    cpu = percpu_current_cpu();
-    ret = percpu_addv(&data->c[cpu].count, 1, cpu);
-    if (unlikely(ret)) {
-         perror("percpu_addv");
-         return -1;
-    }
-    return 0;
+Wire up the cpu-opv Makefile, add directory entry into MAINTAINERS file.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Shuah Khan <shuah@kernel.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Paul Turner <pjt@google.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-kselftest@vger.kernel.org
-CC: linux-api@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: linux-api@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- tools/testing/selftests/cpu-opv/percpu-op.h | 151 ++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
- create mode 100644 tools/testing/selftests/cpu-opv/percpu-op.h
+ MAINTAINERS                                       |   1 +
+ tools/testing/selftests/Makefile                  |   1 +
+ tools/testing/selftests/cpu-opv/.gitignore        |   6 +
+ tools/testing/selftests/cpu-opv/Makefile          |  39 +++++++
+ tools/testing/selftests/cpu-opv/run_param_test.sh | 134 ++++++++++++++++++++++
+ 5 files changed, 181 insertions(+)
+ create mode 100644 tools/testing/selftests/cpu-opv/.gitignore
+ create mode 100644 tools/testing/selftests/cpu-opv/Makefile
+ create mode 100755 tools/testing/selftests/cpu-opv/run_param_test.sh
 
-diff --git a/tools/testing/selftests/cpu-opv/percpu-op.h b/tools/testing/selftests/cpu-opv/percpu-op.h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3b50578fc5d9..206fe4597697 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3864,6 +3864,7 @@ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ F:	kernel/cpu_opv.c
+ F:	include/uapi/linux/cpu_opv.h
++F:	tools/testing/selftests/cpu-opv/
+ 
+ CRAMFS FILESYSTEM
+ M:	Nicolas Pitre <nico@linaro.org>
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index f1fe492c8e17..42bcc6e5fc5d 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -6,6 +6,7 @@ TARGETS += capabilities
+ TARGETS += cgroup
+ TARGETS += cpufreq
+ TARGETS += cpu-hotplug
++TARGETS += cpu-opv
+ TARGETS += efivarfs
+ TARGETS += exec
+ TARGETS += filesystems
+diff --git a/tools/testing/selftests/cpu-opv/.gitignore b/tools/testing/selftests/cpu-opv/.gitignore
 new file mode 100644
-index 000000000000..ffc64b268fd3
+index 000000000000..8c7bb1f8be79
 --- /dev/null
-+++ b/tools/testing/selftests/cpu-opv/percpu-op.h
-@@ -0,0 +1,151 @@
-+/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-+/*
-+ * percpu-op.h
-+ *
-+ * (C) Copyright 2017-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ */
++++ b/tools/testing/selftests/cpu-opv/.gitignore
+@@ -0,0 +1,6 @@
++basic_cpu_opv_test
++basic_percpu_ops_test
++param_test
++param_test_benchmark
++param_test_compare_twice
++param_test_skip_fastpath
+diff --git a/tools/testing/selftests/cpu-opv/Makefile b/tools/testing/selftests/cpu-opv/Makefile
+new file mode 100644
+index 000000000000..46f49bf30bae
+--- /dev/null
++++ b/tools/testing/selftests/cpu-opv/Makefile
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: GPL-2.0+ OR MIT
++CFLAGS += -O2 -Wall -g -I./ -I../rseq/ -I../../../../usr/include/ -L./ -Wl,-rpath=./
++LDLIBS += -lpthread
 +
-+#ifndef PERCPU_OP_H
-+#define PERCPU_OP_H
++# Own dependencies because we only want to build against 1st prerequisite, but
++# still track changes to header files and depend on shared object.
++OVERRIDE_TARGETS = 1
 +
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <errno.h>
-+#include <stdlib.h>
-+#include "rseq.h"
-+#include "cpu-op.h"
++TEST_GEN_PROGS = basic_cpu_opv_test basic_percpu_ops_test \
++		param_test param_test_skip_fastpath \
++		param_test_benchmark param_test_compare_twice
 +
-+static inline uint32_t percpu_current_cpu(void)
++TEST_GEN_PROGS_EXTENDED = librseq.so libcpu-op.so
++
++TEST_PROGS = run_param_test.sh
++
++include ../lib.mk
++
++$(OUTPUT)/libcpu-op.so: cpu-op.c cpu-op.h
++	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
++
++$(OUTPUT)/librseq.so: ../rseq/rseq.c ../rseq/rseq.h ../rseq/rseq-*.h
++	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
++
++$(OUTPUT)/%: %.c $(TEST_GEN_PROGS_EXTENDED) ../rseq/rseq.h ../rseq/rseq-*.h cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_skip_fastpath: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					../rseq/rseq.h ../rseq/rseq-*.h cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DRSEQ_SKIP_FASTPATH $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_benchmark: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					../rseq/rseq.h ../rseq/rseq-*.h cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DBENCHMARK $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_compare_twice: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					../rseq/rseq.h ../rseq/rseq-*.h cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DRSEQ_COMPARE_TWICE $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
+diff --git a/tools/testing/selftests/cpu-opv/run_param_test.sh b/tools/testing/selftests/cpu-opv/run_param_test.sh
+new file mode 100755
+index 000000000000..066d2479893c
+--- /dev/null
++++ b/tools/testing/selftests/cpu-opv/run_param_test.sh
+@@ -0,0 +1,134 @@
++#!/bin/bash
++
++NR_CPUS=`grep '^processor' /proc/cpuinfo | wc -l`
++
++EXTRA_ARGS=${@}
++
++OLDIFS="$IFS"
++IFS=$'\n'
++TEST_LIST=(
++	"-T s"
++	"-T l"
++	"-T b"
++	"-T b -M"
++	"-T m"
++	"-T m -M"
++	"-T i"
++)
++
++TEST_NAME=(
++	"spinlock"
++	"list"
++	"buffer"
++	"buffer with barrier"
++	"memcpy"
++	"memcpy with barrier"
++	"increment"
++)
++IFS="$OLDIFS"
++
++REPS=1000
++SLOW_REPS=100
++NR_THREADS=$((6*${NR_CPUS}))
++
++function do_tests()
 +{
-+	return rseq_current_cpu();
++	local i=0
++	while [ "$i" -lt "${#TEST_LIST[@]}" ]; do
++		echo "Running test ${TEST_NAME[$i]}"
++		./param_test ${TEST_LIST[$i]} -r ${REPS} -t ${NR_THREADS} ${@} ${EXTRA_ARGS} || exit 1
++		echo "Running skip fast-path test ${TEST_NAME[$i]}"
++		./param_test_skip_fastpath ${TEST_LIST[$i]} -r ${SLOW_REPS} -t ${NR_THREADS} ${@} ${EXTRA_ARGS} || exit 1
++		echo "Running compare-twice test ${TEST_NAME[$i]}"
++		./param_test_compare_twice ${TEST_LIST[$i]} -r ${REPS} -t ${NR_THREADS} ${@} ${EXTRA_ARGS} || exit 1
++		let "i++"
++	done
 +}
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv,
-+			 int cpu)
-+{
-+	int ret;
++echo "Default parameters"
++do_tests
 +
-+	ret = rseq_cmpeqv_storev(v, expect, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev(v, expect, newv, cpu);
-+	}
-+	return 0;
++echo "Loop injection: 10000 loops"
++
++OLDIFS="$IFS"
++IFS=$'\n'
++INJECT_LIST=(
++	"1"
++	"2"
++	"3"
++	"4"
++	"5"
++	"6"
++	"7"
++	"8"
++	"9"
++)
++IFS="$OLDIFS"
++
++NR_LOOPS=10000
++
++i=0
++while [ "$i" -lt "${#INJECT_LIST[@]}" ]; do
++	echo "Injecting at <${INJECT_LIST[$i]}>"
++	do_tests -${INJECT_LIST[i]} ${NR_LOOPS}
++	let "i++"
++done
++NR_LOOPS=
++
++function inject_blocking()
++{
++	OLDIFS="$IFS"
++	IFS=$'\n'
++	INJECT_LIST=(
++		"7"
++		"8"
++		"9"
++	)
++	IFS="$OLDIFS"
++
++	NR_LOOPS=-1
++
++	i=0
++	while [ "$i" -lt "${#INJECT_LIST[@]}" ]; do
++		echo "Injecting at <${INJECT_LIST[$i]}>"
++		do_tests -${INJECT_LIST[i]} -1 ${@}
++		let "i++"
++	done
++	NR_LOOPS=
 +}
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+			       off_t voffp, intptr_t *load, int cpu)
-+{
-+	int ret;
++echo "Yield injection (25%)"
++inject_blocking -m 4 -y
 +
-+	ret = rseq_cmpnev_storeoffp_load(v, expectnot, voffp, load, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpnev_storeoffp_load(v, expectnot, voffp,
-+						    load, cpu);
-+	}
-+	return 0;
-+}
++echo "Yield injection (50%)"
++inject_blocking -m 2 -y
 +
-+static inline __attribute__((always_inline))
-+int percpu_addv(intptr_t *v, intptr_t count, int cpu)
-+{
-+	if (rseq_unlikely(rseq_addv(v, count, cpu)))
-+		return cpu_op_addv(v, count, cpu);
-+	return 0;
-+}
++echo "Yield injection (100%)"
++inject_blocking -m 1 -y
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t newv2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
++echo "Kill injection (25%)"
++inject_blocking -m 4 -k
 +
-+	ret = rseq_cmpeqv_trystorev_storev(v, expect, v2, newv2,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_storev(v, expect, v2, newv2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
++echo "Kill injection (50%)"
++inject_blocking -m 2 -k
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev_release(intptr_t *v, intptr_t expect,
-+					intptr_t *v2, intptr_t newv2,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
++echo "Kill injection (100%)"
++inject_blocking -m 1 -k
 +
-+	ret = rseq_cmpeqv_trystorev_storev_release(v, expect, v2, newv2,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_mb_storev(v, expect, v2, newv2,
-+						      newv, cpu);
-+	}
-+	return 0;
-+}
++echo "Sleep injection (1ms, 25%)"
++inject_blocking -m 4 -s 1
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t expect2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
++echo "Sleep injection (1ms, 50%)"
++inject_blocking -m 2 -s 1
 +
-+	ret = rseq_cmpeqv_cmpeqv_storev(v, expect, v2, expect2, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_cmpeqv_storev(v, expect, v2, expect2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
++echo "Sleep injection (1ms, 100%)"
++inject_blocking -m 1 -s 1
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev(intptr_t *v, intptr_t expect,
-+				void *dst, void *src, size_t len,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
++echo "Disable rseq for 25% threads"
++do_tests -D 4
 +
-+	ret = rseq_cmpeqv_trymemcpy_storev(v, expect, dst, src, len,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_storev(v, expect, dst, src, len,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
++echo "Disable rseq for 50% threads"
++do_tests -D 2
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev_release(intptr_t *v, intptr_t expect,
-+					void *dst, void *src, size_t len,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trymemcpy_storev_release(v, expect, dst, src, len,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_mb_storev(v, expect, dst, src, len,
-+						      newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+#endif  /* PERCPU_OP_H_ */
++echo "Disable rseq"
++do_tests -d
 -- 
 2.11.0
 
