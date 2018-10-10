@@ -2,84 +2,95 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B286EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CBAC46462
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848182086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848182086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id BFAC2214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:36:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ox+Ov+Y1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFAC2214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeJKA5H (ORCPT
+        id S1726967AbeJKA7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:57:07 -0400
-Received: from smtprelay0177.hostedemail.com ([216.40.44.177]:35411 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726794AbeJKA5H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:57:07 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 39444100E86C2;
-        Wed, 10 Oct 2018 17:33:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: door09_796789a7ce00d
-X-Filterd-Recvd-Size: 1893
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 10 Oct 2018 17:33:54 +0000 (UTC)
-Message-ID: <40fd3d963820bf96547fa9b5e8c171c6a339674e.camel@perches.com>
-Subject: Re: Question on FIELD_PREP() for static array
-From:   Joe Perches <joe@perches.com>
-To:     John Garry <john.garry@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>, johannes@sipsolutions.net,
-        jakub.kicinski@netronome.com, yamada.masahiro@socionext.com,
-        Arnd Bergmann <arnd@arndb.de>, viro@zeniv.linux.org.uk,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Oct 2018 10:33:53 -0700
-In-Reply-To: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
-References: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Oct 2018 20:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726789AbeJKA7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 20:59:44 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E872082B;
+        Wed, 10 Oct 2018 17:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539192993;
+        bh=payLvY5X4fC6xFTJ0QA/lTT1nD1AkdMFp/wzJSwbpNw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ox+Ov+Y1KPdleiuiM1RnQz03sSOj1FjSDjRO17VBAK6aCTLfEaJyob5zG/cMz9kSQ
+         ikJNGgleBh3CZs0m5N5xc7iWXcaAlnF61PBkZ63vTrOlNBMZNSWJYNdnUwH9vg9B+9
+         B1or1ynbCtDZG1LZTu5QxRGsuGI+/Q17XZ/8iiTA=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180914153421.7090-1-gregory.clement@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20180914153421.7090-1-gregory.clement@bootlin.com>
+Message-ID: <153919299293.119890.9655297515756412545@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: mvebu: armada-37xx-tbg: Balance devm_clk_get in probe
+Date:   Wed, 10 Oct 2018 10:36:32 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-10 at 18:16 +0100, John Garry wrote:
-> (to: get_maintainers -f include/linux/bitfield.h)
-> 
-> Hi,
-> 
-> I would like to use FIELD_PREP() macro for assigning a static array, 
-> like this:
-> function()
-> {
-> 	static u32 val[2] = {FIELD_PREP(GENMASK_ULL(10, 0), 5), 0};
-> 
-> }
-> 
-> However the compiler complains of non-const expression:
-> ./include/linux/bitfield.h:88:2: error: initializer element is not constant
->     ({        \
-> 
-> Specifically it doesn't like the __BF_FIELD_CHECK() in FIELD_PREP().
-> 
-> Any ideas on compiler trickery we could do with the FIELD_PREP() 
-> definition to avoid this issue (i.e. enforce the check but only use the 
-> constant value)?
+Quoting Gregory CLEMENT (2018-09-14 08:34:21)
+> The parent clock is get only to have its name, and then the clock is no
+> more used, so we can safely free it using devm_clk_put.
+> =
 
-Perhaps __bf_shf should not use __builtin_ffsll.
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  drivers/clk/mvebu/armada-37xx-tbg.c | 1 +
+>  1 file changed, 1 insertion(+)
+> =
 
-As mask is known constant, maybe expand the test
-in-place with some switch/case.
+> diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/arma=
+da-37xx-tbg.c
+> index 71f30149e80e..caaa91a41683 100644
+> --- a/drivers/clk/mvebu/armada-37xx-tbg.c
+> +++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+> @@ -102,6 +102,7 @@ static int armada_3700_tbg_clock_probe(struct platfor=
+m_device *pdev)
+>                 return -EINVAL;
+>         }
+>         parent_name =3D __clk_get_name(parent);
+> +       devm_clk_put(dev, parent);
 
+So then why use devm_clk_get()? Please replace both so tha
+devm_clk_put() doesn't need to be used..
 
+>  =
+
+>         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         reg =3D devm_ioremap_resource(dev, res);
