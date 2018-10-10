@@ -2,85 +2,105 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712B1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A0AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332F8214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:31:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFekkP2p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332F8214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 818F2214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818F2214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbeJJPwk (ORCPT
+        id S1727416AbeJJPwt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:52:40 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35377 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeJJPwk (ORCPT
+        Wed, 10 Oct 2018 11:52:49 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.210]:47289 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727128AbeJJPwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:52:40 -0400
-Received: by mail-it1-f196.google.com with SMTP id p64-v6so6814097itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LmSZEaRV1T3eXbgC0D6JgFUlnszILPSLsr3Cbuaq2h0=;
-        b=WFekkP2pbPUevZBvKpFWaarT0zIuVePV9aa2JwosDIU3095darMsb8C5hof4w6jJxk
-         F95Uc54gIjgaxcAJ8KzMsiC5dY4YQ+5O0dfudSiVP77utuUu2pUchxVPZ9sxaITKLfNV
-         3AyWW4/cDKROylvIkDCSeRRPeYunMlGOG0j1o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LmSZEaRV1T3eXbgC0D6JgFUlnszILPSLsr3Cbuaq2h0=;
-        b=rELeZ/K14gGKR6THhphwadKIz4R9SIG8NF1fdVMZWqYRRYUzAmoxgBYR+bd70/MARP
-         2y+UyOBVYj87XFuvpzQAabyOI32EYR7ZhVjy2nAMVVymbwK8QPeXiE3Lbw6gI0Pr31J7
-         SvDUwfbDUbYXeXoj38WIh11wUfeVH6eYWp5FLuLc98n/iB+prj+ObCFTSFtkIKSs1ufh
-         qUr7LcS2zAbm4YJl22sh/PmyudIyl8C+uBFIYHoUJQRfmJhJGZ8tC0NWiP4ALE6hY86U
-         f6qoDW6QeY8TJwkuyqLa5ZvTnU39YcXgNCVSqNJccbIJdL+DhRyYzwU3FAKzk3iDHM+s
-         50Vw==
-X-Gm-Message-State: ABuFfog1BPqbig5y+jXxkg1o6ZVc8yepKvlLD7f1aPzcM43G80FdOJvf
-        iFDNNCViJdUMax+NXc3EveNZfb/15qssaY5woVNpJg==
-X-Google-Smtp-Source: ACcGV60DQaj5jPGPEDSoC2KG0Jq9PEO/6pan2LhWpwM3u26JKmvaxxIhqvWEqZ6c0I9jV8NUpEytL2EbaR5sojZVoT0=
-X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr7331ith.156.1539160295206;
- Wed, 10 Oct 2018 01:31:35 -0700 (PDT)
+        Wed, 10 Oct 2018 11:52:49 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 8EDDA6E1EC4
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 03:31:43 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id A9u9gFePsRPojA9uAgXmnz; Wed, 10 Oct 2018 03:31:43 -0500
+X-Authority-Reason: nr=8
+Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:42514 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gA9u8-000MRb-WB; Wed, 10 Oct 2018 03:31:41 -0500
+Date:   Wed, 10 Oct 2018 10:31:39 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
+ vsc8574_config_pre_init
+Message-ID: <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
+References: <cover.1539159556.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com> <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-In-Reply-To: <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 10:31:23 +0200
-Message-ID: <CACRpkdYhXcHXSkP2DMb0hRFHnZa_iTvf8FiWiX8-fZXY95Lweg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     jhugo@codeaurora.org, timur@kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1539159556.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 109.24.154.57
+X-Source-L: No
+X-Exim-ID: 1gA9u8-000MRb-WB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 57.154.24.109.rev.sfr.net (embeddedor) [109.24.154.57]:42514
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 8:53 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+In case memory resources for *fw* were successfully allocated,
+release them before return.
 
-> Current code assumes that the direction is input if direction_input
-> function is set.
-> This might not be the case on GPIOs with programmable direction.
->
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Addresses-Coverity-ID: 1473968 ("Resource leak")
+Fixes: 00d70d8e0e78 ("net: phy: mscc: add support for VSC8574 PHY")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Jump to out label so all functions in the driver exit with the PHY
+   set to access the standard page. Thanks to Quentin Schulz for
+   pointing this out.
 
-Patch applied with the collected ACKs.
+ drivers/net/phy/mscc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for working so hard on fixing this up.
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index bff56c3..a2e59f4 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -1292,7 +1292,7 @@ static int vsc8574_config_pre_init(struct phy_device *phydev)
+ 				dev_err(dev,
+ 					"%s: failed to assert reset of micro\n",
+ 					__func__);
+-				return ret;
++				goto out;
+ 			}
+ 		}
+ 	} else {
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
