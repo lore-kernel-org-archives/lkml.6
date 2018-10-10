@@ -2,131 +2,131 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86D6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E183C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2DE20644
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B188C2150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="Bs4xG5oH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2DE20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UMbUM0M/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B188C2150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeJJW2C (ORCPT
+        id S1726871AbeJJWbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:28:02 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:38647 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJJW2C (ORCPT
+        Wed, 10 Oct 2018 18:31:49 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55952 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJJWbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:28:02 -0400
-Received: by mail-yb1-f195.google.com with SMTP id e190-v6so2330116ybb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DYfBSvRLWiHjPMJwqQOe3zF+n7IIOPPxHSu7VOnpN7E=;
-        b=Bs4xG5oHaNKaUz0/GJRq1kak3ZweU/shExSAVB1Nkyh/BeoDmF1TfrQcu+luH9YvYE
-         QgVVUs/wV0dfamesUXf4EGOPCb4Vhd/8GuGlOXjSoiEML0WkwMa3dZjTrKOkAiqrI3qP
-         paFMqvS6aeg1cvRpxIJYthJcse9YIwETywTEnGnhi2PD4RFrKzv2W8Hw9lWIcncVw3J3
-         I6S9PbqIfbXBEvDVwrD3jeppo0r0qXr35W2VVxTBBOg9Wq0DHBbswnCWBNEYmBJVsWrB
-         52xCuONiAWY25P78rIjvEmE1vvRljBSpV0kdQvB+jsVf14Qy7lRXOsvzzbTjZG3hoi9J
-         hszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DYfBSvRLWiHjPMJwqQOe3zF+n7IIOPPxHSu7VOnpN7E=;
-        b=G5RM/7cYtpMKZQo5z23Bn0zxMNS9T6jF+BfNwJ+8NqalMLqR9qXkjbatZpeXqI23vH
-         4DMiRXIVoqm6J87V0vrVYvYOW+tSLJEnMNvfZxuQgSfqP3MBHLRFH/EWd1gN1Dt6v/0r
-         6W8HXuHt2OMUp8SkgheIwDIy54bOYi+e6mzcFSEB8p2lnfCxiRIYngU4Aff2afXEtbES
-         7b6Wy1LeCXHbRpKuJ3I+Sfg3G1ze8bWXePmpEwbk1cz7dHEyPhR9E6wRXSwFrPjDeNKk
-         xZ31pZakundjFWFG7/DRoCeeaZvbsKKQj0eaGEtdkm5YGxTZ/0hPbn5yN5zMF5oLuADT
-         mmvA==
-X-Gm-Message-State: ABuFfohx6neX2bF7MqrfvyEuHhQOF9fjD7ZYtnrib/sjW9on//m84Usc
-        b3NBth+cI5gYBOcPH0fqM1BPCw==
-X-Google-Smtp-Source: ACcGV60riX7lqffFT64ZkYLP80HoFqHxQbfqg9wk6nvOEfmY7/zeEppbQK5ZbxdDEabAUk383mY8LA==
-X-Received: by 2002:a25:640a:: with SMTP id y10-v6mr19380580ybb.421.1539183926337;
-        Wed, 10 Oct 2018 08:05:26 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::6:4a04])
-        by smtp.gmail.com with ESMTPSA id f63-v6sm10227650ywc.21.2018.10.10.08.05.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 08:05:25 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 11:05:24 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH 3/4] mm: workingset: add vmstat counter for shadow nodes
-Message-ID: <20181010150524.GB2527@cmpxchg.org>
-References: <20181009184732.762-1-hannes@cmpxchg.org>
- <20181009184732.762-4-hannes@cmpxchg.org>
- <20181009150845.8656eb8ede045ca5f4cc4b21@linux-foundation.org>
+        Wed, 10 Oct 2018 18:31:49 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9AEx5Tw025207;
+        Wed, 10 Oct 2018 15:09:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=YegHVM7DqawRuc0xkrr8YgLxRPBZmWJfnOD9RUSve4s=;
+ b=UMbUM0M/dlV3SWxWuTwIhyq8IeZ2Y4jL5m6PXF/9cLNTw+xonP1j0UydNQn4LRFv0vUy
+ 1zzU79Ow/geKZZwjVMgBK3aRIOGrE9OSSTFM45d7bCrj7mqsK4EI/I7Io8oGqPwkAbXJ
+ AQUx6KRP3J3W8CVdaTtMBbrCYzlaN/NxJJ1mO7tGnhMh3l/jP4eaZeLAu/dkaz1KStba
+ ZhlzptKPibPyyiepCjPEaXrg20lBCJu7F3/1mcL1qjMQZTvaGULcHjpL2+THE313yEms
+ +v7LKh1Q6XsZxPRU458QdII5c4y68r4yEPr2G73bHgV8bemxXvUhBhh83UDQoxeosyrz Zw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mxnpr4kny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Oct 2018 15:09:08 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9AF97Cc013241
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Oct 2018 15:09:07 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9AF96QB005048;
+        Wed, 10 Oct 2018 15:09:07 GMT
+Received: from [10.175.193.46] (/10.175.193.46)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 10 Oct 2018 15:09:06 +0000
+Subject: Re: [Xen-devel] [PATCH] xen: drop writing error messages to xenstore
+To:     Juergen Gross <jgross@suse.com>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com
+References: <20181009160959.31076-1-jgross@suse.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <5126873e-ade5-86b0-4ebf-58cb47c9cbe7@oracle.com>
+Date:   Wed, 10 Oct 2018 16:09:02 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009150845.8656eb8ede045ca5f4cc4b21@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181009160959.31076-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9041 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810100149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 03:08:45PM -0700, Andrew Morton wrote:
-> On Tue,  9 Oct 2018 14:47:32 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+On 10/09/2018 05:09 PM, Juergen Gross wrote:
+> xenbus_va_dev_error() will try to write error messages to Xenstore
+> under the error/<dev-name>/error node (with <dev-name> something like
+> "device/vbd/51872"). This will fail normally and another message
+> about this failure is added to dmesg.
 > 
-> > --- a/mm/workingset.c
-> > +++ b/mm/workingset.c
-> > @@ -378,11 +378,17 @@ void workingset_update_node(struct xa_node *node)
-> >  	 * as node->private_list is protected by the i_pages lock.
-> >  	 */
-> >  	if (node->count && node->count == node->nr_values) {
-> > -		if (list_empty(&node->private_list))
-> > +		if (list_empty(&node->private_list)) {
-> >  			list_lru_add(&shadow_nodes, &node->private_list);
-> > +			__inc_lruvec_page_state(virt_to_page(node),
-> > +						WORKINGSET_NODES);
-> > +		}
-> >  	} else {
-> > -		if (!list_empty(&node->private_list))
-> > +		if (!list_empty(&node->private_list)) {
-> >  			list_lru_del(&shadow_nodes, &node->private_list);
-> > +			__dec_lruvec_page_state(virt_to_page(node),
-> > +						WORKINGSET_NODES);
-> > +		}
-> >  	}
-> >  }
+> I believe this is a remnant from very ancient times, as it was added
+> in the first pvops rush of commits in 2007.
 > 
-> A bit worried that we're depending on the caller's caller to have
-> disabled interrupts to avoid subtle and rare errors.
+> So remove the additional message when writing to Xenstore failed as
+> a minimum step.
 > 
-> Can we do this?
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+> I am considering removing the Xenstore write altogether, but I'm
+> not sure it isn't needed e.g. by xend based installations. So please
+> speak up in case you know why this write is there.
 
-I'm not opposed to it, but the i_pages lock is guaranteed to be held
-during the tree update, and that lock is also taken from the io
-completion irq to maintain the tree's dirty/writeback state. It seems
-like a robust assumption that interrupts will be disabled here.
+So this:
 
-But all that isn't very obvious from the code at hand, so I wouldn't
-mind adding the check for documentation purposes.
+"This will fail normally and another message about this failure is added to dmesg."
 
-It's not a super hot path, but maybe VM_WARN_ON_ONCE()?
+Brings me to the question: What about {stub,driver}domains? Ideally you
+shouldn't be looking at domU's dmesg as a control domain no? I can't remember
+any other error node, but if something fails e.g. netfront fails to allocate an
+unbound event channel - how do you know the cause from the control domain
+perspective?
 
-> --- a/mm/workingset.c~mm-workingset-add-vmstat-counter-for-shadow-nodes-fix
-> +++ a/mm/workingset.c
-> @@ -377,6 +377,8 @@ void workingset_update_node(struct radix
->  	 * already where they should be. The list_empty() test is safe
->  	 * as node->private_list is protected by the i_pages lock.
->  	 */
-> +	WARN_ON_ONCE(!irqs_disabled());	/* For __inc_lruvec_page_state */
-> +
->  	if (node->count && node->count == node->exceptional) {
->  		if (list_empty(&node->private_list)) {
->  			list_lru_add(&shadow_nodes, &node->private_list);
-> _
+Irrespective of xend or not: isn't this 'error' node the only one that
+propagates error causes per device from domU?
+
+	Joao
+
+> ---
+>  drivers/xen/xenbus/xenbus_client.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+> index a1c17000129b..e17ca8156171 100644
+> --- a/drivers/xen/xenbus/xenbus_client.c
+> +++ b/drivers/xen/xenbus/xenbus_client.c
+> @@ -278,10 +278,8 @@ static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
+>  	dev_err(&dev->dev, "%s\n", printf_buffer);
+>  
+>  	path_buffer = kasprintf(GFP_KERNEL, "error/%s", dev->nodename);
+> -	if (!path_buffer ||
+> -	    xenbus_write(XBT_NIL, path_buffer, "error", printf_buffer))
+> -		dev_err(&dev->dev, "failed to write error node for %s (%s)\n",
+> -			dev->nodename, printf_buffer);
+> +	if (path_buffer)
+> +		xenbus_write(XBT_NIL, path_buffer, "error", printf_buffer);
+>  
+>  	kfree(printf_buffer);
+>  	kfree(path_buffer);
+> 
