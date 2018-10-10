@@ -2,155 +2,249 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E41C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F929213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F929213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A3EB2213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB2213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeJJK3O (ORCPT
+        id S1727148AbeJJK32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 06:29:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726827AbeJJK3O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 06:29:14 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9A34EqX177789
-        for <linux-kernel@vger.kernel.org>; Tue, 9 Oct 2018 23:09:12 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n17jqua9e-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 23:09:12 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 9 Oct 2018 23:09:11 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Oct 2018 23:09:08 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9A397wP58916954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 03:09:07 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FD7EB2066;
-        Tue,  9 Oct 2018 23:07:10 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBB93B2064;
-        Tue,  9 Oct 2018 23:07:09 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.167.121])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Oct 2018 23:07:09 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0575A16C4285; Tue,  9 Oct 2018 20:09:07 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 20:09:06 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, tytso@mit.edu,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] docs: rcu: Make reader aware of rcu_dereference_protected
-Reply-To: paulmck@linux.ibm.com
-References: <20181009013341.60111-1-joel@joelfernandes.org>
+        Wed, 10 Oct 2018 06:29:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46032 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727033AbeJJK32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 06:29:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 285A97A9;
+        Tue,  9 Oct 2018 20:09:27 -0700 (PDT)
+Received: from [10.163.1.248] (unknown [10.163.1.248])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55AA03F5B7;
+        Tue,  9 Oct 2018 20:09:24 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <20181002123909.GS18290@dhcp22.suse.cz>
+ <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+ <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+ <20181003105926.GA4714@dhcp22.suse.cz>
+ <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
+ <20181003114842.GD4714@dhcp22.suse.cz>
+ <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
+ <20181003133609.GG4714@dhcp22.suse.cz>
+ <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
+ <20181009141442.GT8528@dhcp22.suse.cz>
+Message-ID: <b722d14e-d14f-f45d-5722-685d4f21f6e4@arm.com>
+Date:   Wed, 10 Oct 2018 08:39:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009013341.60111-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18101003-0052-0000-0000-000003406320
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009851; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01100424; UDB=6.00569344; IPR=6.00880473;
- MB=3.00023688; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-10 03:09:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101003-0053-0000-0000-00005E5BAD40
-Message-Id: <20181010030906.GB2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810100029
+In-Reply-To: <20181009141442.GT8528@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 06:33:41PM -0700, Joel Fernandes (Google) wrote:
-> whatisRCU says rcu_dereference cannot be used outside of rcu read lock
-> protected sections. Its better to mention rcu_dereference_protected when
-> it says that, so that the new reader is aware of this API and is not led
-> to believing that all RCU dereferences in all situations have to be
-> protected by a rcu_read_lock() and rcu_read_unlock().
+
+
+On 10/09/2018 07:44 PM, Michal Hocko wrote:
+> On Fri 05-10-18 13:04:43, Anshuman Khandual wrote:
+>> Does the following sound close enough to what you are looking for ?
 > 
-> Cc: tytso@mit.edu
-> Suggested-by: tytso@mit.edu
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> I do not think so
 
-Good stuff!  I queued and pushed this with some wordsmithing.  Could
-you please check for my having messed something up?
+Okay.
 
-							Thanx, Paul
-
-> ---
->  Documentation/RCU/whatisRCU.txt | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-> index 7c33445fd0e5..da820fc9b307 100644
-> --- a/Documentation/RCU/whatisRCU.txt
-> +++ b/Documentation/RCU/whatisRCU.txt
-> @@ -266,7 +266,7 @@ rcu_dereference()
->  	unnecessary overhead on Alpha CPUs.
->  
->  	Note that the value returned by rcu_dereference() is valid
-> -	only within the enclosing RCU read-side critical section.
-> +	only within the enclosing RCU read-side critical section [1].
->  	For example, the following is -not- legal:
->  
->  		rcu_read_lock();
-> @@ -292,6 +292,24 @@ rcu_dereference()
->  	typically used indirectly, via the _rcu list-manipulation
->  	primitives, such as list_for_each_entry_rcu().
->  
-> +	[1] The variant rcu_dereference_protected() can be used outside
-> +	of an RCU read-side critical section as long as the usage is
-> +	protected by update-side locks. These update-side locks are
-> +	obviously acquired by the update-side code, but may also be used
-> +	to protect other code sequences outside of the reader and the
-> +	updater. If such sequences need to make an rcu_dereference() call,
-> +	they can instead simply call rcu_dereference_protected() without
-> +	needing extra calls to rcu_read_lock() and rcu_read_unlock().
-> +	Another advantage of using rcu_dereference_protected() is it does
-> +	not prevent compiler optimizations unlike rcu_dereference() which
-> +	could result in optimized and the result is assured to be
-> +	functionaly correct due to the update-side locks.
-> +	rcu_dereference_protected() takes a lockdep expression to
-> +	indicate what is providing the protection. If the indicated
-> +	protection is not provided, a lockdep splat is emitted.
-> +	See RCU/Design/Requirements.html and the API's code comments
-> +	for more details and example usage.
-> +
->  The following diagram shows how each API communicates among the
->  reader, updater, and reclaimer.
->  
-> -- 
-> 2.19.0.605.g01d371f741-goog
+>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>> index 9df1d59..070c419 100644
+>> --- a/include/linux/hugetlb.h
+>> +++ b/include/linux/hugetlb.h
+>> @@ -504,6 +504,13 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>>         return arch_hugetlb_migration_supported(h);
+>>  }
+>>  
+>> +static inline bool hugepage_movable_required(struct hstate *h)
+>> +{
+>> +       if (hstate_is_gigantic(h))
+>> +               return true;
+>> +       return false;
+>> +}
+>> +
+> 
+> Apart from naming (hugepage_movable_supported?) the above doesn't do the
+> most essential thing to query whether the hugepage migration is
+> supported at all. Apart from that i would expect the logic to be revers.
+
+My assumption was hugepage_migration_supported() should only be called from
+unmap_and_move_huge_page() but we can add that here as well to limit the
+set further.
+
+> We do not really support giga pages migration enough to support them in
+> movable zone.
+
+Reversing the logic here would change gfp_t for a large number of huge pages.
+Current implementation is very liberal in assigning __GFP_MOVABLE for multiple
+huge page sizes (all most all of them when migration is enabled). But I guess
+it should be okay because after all we are tying to control which all sizes
+should be movable and which all should not be.
+
+static inline bool hugepage_migration_supported(struct hstate *h)
+{
+#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
+        if ((huge_page_shift(h) == PMD_SHIFT) ||
+                (huge_page_shift(h) == PGDIR_SHIFT))
+                return true;
+        else
+                return false;
+#else
+        return false;
+#endif
+}
+
+static inline gfp_t htlb_alloc_mask(struct hstate *h)
+{
+        if (hugepage_migration_supported(h))
+                return GFP_HIGHUSER_MOVABLE;
+        else
+                return GFP_HIGHUSER;
+}
+
+>> @@ -1652,6 +1655,9 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
+>>  {
+>>         gfp_t gfp_mask = htlb_alloc_mask(h);
+>>  
+>> +       if (hugepage_movable_required(h))
+>> +               gfp_mask |= __GFP_MOVABLE;
+>> +
+> 
+> And besides that this really want to live in htlb_alloc_mask because
+> this is really an allocation policy. It would be unmap_and_move_huge_page
+> to call hugepage_migration_supported. The later is the one to allow for
+> an arch specific override.
+> 
+> Makes sense?
 > 
 
+hugepage_migration_supported() will be checked inside hugepage_movable_supported().
+A changed version ....
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 9df1d59..4bcbf1e 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -504,6 +504,16 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+        return arch_hugetlb_migration_supported(h);
+ }
+ 
++static inline bool hugepage_movable_supported(struct hstate *h)
++{
++       if (!hugepage_migration_supported(h)) --> calls arch override restricting the set
++               return false;
++
++       if (hstate_is_gigantic(h)	--------> restricts the set further
++               return false;
++       return true;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+                                           struct mm_struct *mm, pte_t *pte)
+ {
+@@ -600,6 +610,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+        return false;
+ }
+ 
++static inline bool hugepage_movable_supported(struct hstate *h)
++{
++       return false;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+                                           struct mm_struct *mm, pte_t *pte)
+ {
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3c21775..a5a111d 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+ /* Movability of hugepages depends on migration support. */
+ static inline gfp_t htlb_alloc_mask(struct hstate *h)
+ {
+-       if (hugepage_migration_supported(h))
++       if (hugepage_movable_supported(h))
+                return GFP_HIGHUSER_MOVABLE;
+        else
+                return GFP_HIGHUSER;
+
+
+The above patch is in addition to the following later patch in the series.
+
+    mm/hugetlb: Enable arch specific huge page size support for migration
+    
+    Architectures like arm64 have HugeTLB page sizes which are different than
+    generic sizes at PMD, PUD, PGD level and implemented via contiguous bits.
+    At present these special size HugeTLB pages cannot be identified through
+    macros like (PMD|PUD|PGDIR)_SHIFT and hence chosen not be migrated.
+    
+    Enabling migration support for these special HugeTLB page sizes along with
+    the generic ones (PMD|PUD|PGD) would require identifying all of them on a
+    given platform. A platform specific hook can precisely enumerate all huge
+    page sizes supported for migration. Instead of comparing against standard
+    huge page orders let hugetlb_migration_support() function call a platform
+    hook arch_hugetlb_migration_support(). Default definition for the platform
+    hook maintains existing semantics which checks standard huge page order.
+    But an architecture can choose to override the default and provide support
+    for a comprehensive set of huge page sizes.
+    
+    Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 9c1b77f..9df1d59 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -479,18 +479,29 @@ static inline pgoff_t basepage_index(struct page *page)
+ extern int dissolve_free_huge_page(struct page *page);
+ extern int dissolve_free_huge_pages(unsigned long start_pfn,
+                                    unsigned long end_pfn);
+-static inline bool hugepage_migration_supported(struct hstate *h)
+-{
++
+ #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
++#ifndef arch_hugetlb_migration_supported
++static inline bool arch_hugetlb_migration_supported(struct hstate *h)
++{
+        if ((huge_page_shift(h) == PMD_SHIFT) ||
+                (huge_page_shift(h) == PUD_SHIFT) ||
+                        (huge_page_shift(h) == PGDIR_SHIFT))
+                return true;
+        else
+                return false;
++}
++#endif
+ #else
++static inline bool arch_hugetlb_migration_supported(struct hstate *h)
++{
+        return false;
++}
+ #endif
++
++static inline bool hugepage_migration_supported(struct hstate *h)
++{
++       return arch_hugetlb_migration_supported(h);
+ }
