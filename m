@@ -2,158 +2,115 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E14C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55119C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7FA21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:08:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7FA21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A6BB21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:08:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="oMY/3ZyO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6BB21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbeJJO2w (ORCPT
+        id S1726907AbeJJO3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:28:52 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:9176 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeJJO2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:28:52 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 85639499AC;
-        Wed, 10 Oct 2018 09:08:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id cO4zJUEchb6Y; Wed, 10 Oct 2018 09:07:59 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 18:07:47 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] namei: implement O_BENEATH-style AT_* flags
-Message-ID: <20181010070747.byi2itbi4j42gynq@ryuk>
-References: <20181009065300.11053-1-cyphar@cyphar.com>
- <20181009065300.11053-3-cyphar@cyphar.com>
- <CALCETrUZAYw-g+75WAijS+fmRA_DrTahpv156WrxgYuX3KX2xw@mail.gmail.com>
+        Wed, 10 Oct 2018 10:29:20 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:52148 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeJJO3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:29:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1539155313; x=1570691313;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=w+hHEAoJ5hpaW+ULiHQyz7VhyKbzrteZy7qUlDaIHNA=;
+  b=oMY/3ZyOxP63hgz3GP29txgGxCTAqHx00M7mTP9GcA4Xal/QqDGLduSZ
+   IJce/wjYHwwQwJ0ES+ZaTFbrl7eaY+twwVmzKoHYxIvpJzcFFfKp/59iC
+   Pg6bZanhP7LqYUiO+mun6ABMdzJWFK1K42+FY/mPCLLDzpiThC3xD2tqi
+   c=;
+X-IronPort-AV: E=Sophos;i="5.54,363,1534809600"; 
+   d="scan'208";a="763082265"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 10 Oct 2018 07:08:31 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9A78SoF096446
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 10 Oct 2018 07:08:30 GMT
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 10 Oct 2018 07:08:29 +0000
+Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.160.4) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 10 Oct 2018 07:08:24 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <talel@amazon.com>, <ronenk@amazon.com>, <barakw@amazon.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>
+Subject: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
+Date:   Wed, 10 Oct 2018 10:08:12 +0300
+Message-ID: <1539155293-21750-1-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n7emm7xa7e276qdd"
-Content-Disposition: inline
-In-Reply-To: <CALCETrUZAYw-g+75WAijS+fmRA_DrTahpv156WrxgYuX3KX2xw@mail.gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.4]
+X-ClientProxiedBy: EX13d09UWC004.ant.amazon.com (10.43.162.114) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Update the dw-apb-ssi binding document, to add an optional 'cs-override'
+devicetree property.
 
---n7emm7xa7e276qdd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This property adds the ability for dw spi controller driver to work with
+the dw spi controller found on Alpine chips.
 
-On 2018-10-09, Andy Lutomirski <luto@kernel.org> wrote:
-> On Mon, Oct 8, 2018 at 11:53 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > * AT_NO_PROCLINK: Disallows ->get_link "symlink" jumping. This is a very
-> >   specific restriction, and it exists because /proc/$pid/fd/...
-> >   "symlinks" allow for access outside nd->root and pose risk to
-> >   container runtimes that don't want to be tricked into accessing a host
-> >   path (but do want to allow no-funny-business symlink resolution).
->=20
-> Can you elaborate on the use case?
->=20
-> If I'm set up a container namespace and walk it for real (through the
-> outside /proc/PID/root or otherwise starting from an fd that points
-> into that namespace), and I walk through that namespace's /proc, I'm
-> going to see the same thing that the processes in the namespace would
-> see.  So what's the issue?
->=20
-> Similarly, if I somehow manage to walk into the outside /proc, then
-> I've pretty much lost regardless of the links.
+The dw spi controller has an auto-deselect of Chip-Select, in case there is
+no data inside the Tx FIFO. While working on platforms with Alpine chips,
+auto-deselect mode causes an issue for some spi devices that can't handle
+the Chip-Select deselect in the middle of a transaction. It is a normal
+behavior for a Tx FIFO to be empty in the middle of a transaction, due to
+busy cpu. In the Alpine chip family an option to change the default
+behavior was added to the original dw spi controller to prevent this issue
+of de-asserting Chip-Select once TX FIFO is empty. The change was to allow
+SW to force the Chip-Select. With this change, as long as the Slave Enable
+Register is asserted, the Chip-Select will be asserted. As a result, it is
+necessary to deselect the Slave Select Register once the transaction is
+done. This feature is enabled via a device property called 'cs-override'.
+Once the driver identifies the 'cs-override' property, it enables the hw
+fixup logic, by writing to a dedicated register found in the IP reserved
+area and will starts deselecting the Slave Select Register when the
+transfer ends.
 
-Well, there's a couple of reasons:
+Signed-off-by: Talel Shenhar <talel@amazon.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-* The original AT_NO_JUMPS patchset similarly disabled "proclinks" but
-  it was sort of all contained within AT_NO_JUMPS. In order to have a
-  precise 1:1 feature mapping we need this in *some* form (and in v1 the
-  only way to get it was to add a separate flag). According to the
-  original O_BENEATH changelog, both you and Al pushed for this to be
-  part of O_BENEATH. :P
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+index 642d3fb..dd366f5 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+@@ -14,6 +14,8 @@ Optional properties:
+ - num-cs : The number of chipselects. If omitted, this will default to 4.
+ - reg-io-width : The I/O register width (in bytes) implemented by this
+   device.  Supported values are 2 or 4 (the default).
++- cs-override: Enable explicit Chip-Select deselect during transfer instead of
++  default auto-deselect upon tx FIFO becoming empty.
+ 
+ Child nodes as per the generic SPI binding.
+ 
+-- 
+2.7.4
 
-  *However* in v2 of the patchset, proclinks are also disabled by
-  AT_BENEATH (because it's not really safe or consistent to allow them
-  at the moment -- we'd need to add __d_path checks when jumping through
-  them as well if we wanted them to be consistent) -- so the need for
-  this flag (purely for AT_NO_JUMPS compatibility) is reduced.
-
-* There were cases in the past where races caused (temporarily)
-  something like /proc/self/exe (or a file descriptor referencing the
-  host filesystem) to be exposed into a container -- but because of
-  set_dumpable they were blocked. CVE-2016-9962 was an example of this
-  (it wasn't blocked by set_dumpable -- but the fix used set_dumpable).
-
-  In those cases, if you can trick a host-side process to open that
-  procfs file through a symlink/bind-mount (which is technically
-  "accessible" but not actually usable by the container process), you
-  can trick the resolution to resolve the host filesystem (and this
-  might be a file which is unlinked and thus there's no way for __d_path
-  checking to verify whether it is safe or not).
-
-  I think that AT_BENEATH allowing only proclinks that result in you
-  being under the root is something we might want in the future, but I
-  think there are some cases where you want to be _very_ sure you don't
-  follow a proclink (now or in the future).
-
-* And finally, some containers run with the host's pidns. This is not a
-  usecase that I'm particularly fond of, but some folks do use this (as
-  far as I'm aware this is one of the reasons why the subreaper concept
-  exists). In those cases, the procfs mount would be able to see the
-  host processes -- and thus /proc/self would resolve (as would the
-  host's init and so on).
-
-I will admit that this flag is more paranoid than the others though.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---n7emm7xa7e276qdd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlu9pT8ACgkQnhiqJn3b
-jbSBVg//c4KvbXk7YydiFAtNTbwXcmuc0QpBJdnDKNZX8J9MrzVvUv0yhbrsrOj+
-SBIeBvSytBsbRhVohQSJpR3CUL4BgGKRFh2z7YSVgxa9dOSoFJ+NPLR2RkXl/h2x
-59GGaWP/THGOtKheWGMjJgbOJMd31RaNru0w3gZx69kEhU8V3jCFfuTvx1s+RP9O
-sUA4E+nHcoVxPp7lZRtF1odlEBOrqo6V9Nw9gDOPKWK/dI6wiIZMsfzo72Q+xaZh
-7XURnAKdLHTqQX+GQ/ydPfNaBZb2ccn4fAg2dlRmlN27rESfwaqj+wOgPJyNOYPE
-RHYCaJKh6xXbq3KbeIxgIWhHQRjnB+sZt8CdXlikFAWST3vOXIiqwkbh9Whnqrz+
-W75INjqyzstSlgXpEqBQZ0nneHkt94C8hQE8qn3tkEdVmx2reoYK+1ZNBuR0hK7G
-vOvT2xEB1i2Lkd3qhZQjcKDFZ8o0D1oA8tVGL9Nne21c4AFomYlRB7j4C+Pw6K5U
-c94RS53SjMpIpgbmS4EnwYUHPmuuQe98h5O+WxOMvnBrIcs1OqgUTmTFR4/a/De6
-hoFfo1nszzlieolP9lS3fbY/q1DFWtX4XyuxgMW0FxmjkSer2zlPG9khkbfYhwks
-DWRx2nas50uUEWsI9SPSZbFbRrDC+IeJ3UicDXdLOxNE43/R3wU=
-=QM+v
------END PGP SIGNATURE-----
-
---n7emm7xa7e276qdd--
