@@ -2,115 +2,168 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E849FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96782086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:37:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HBNyVYvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96782086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id CB0592086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:37:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0592086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeJJX77 (ORCPT
+        id S1726871AbeJKAAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:59:59 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40157 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbeJJX77 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:59:59 -0400
-Received: by mail-it1-f194.google.com with SMTP id i191-v6so8916288iti.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 09:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=5pLrEX8aKiFORwIa2j4zls0X1nMxYq5uiIukvN+NTys=;
-        b=HBNyVYvhCqMBOQXkU5ZtYA4b2dr7VV8ybDuHC7vJhnmeXxZ/ZNH1xGQsHFrTQysHT2
-         FCzjNphJmJ/xXR3ZWe1zV3p5acwP/LmifgjCD8i1D4Tx3nKJKWN8//sBUBwCMn9Eq2B6
-         jwBDN0r81MF3onWAZqRivB20Vr1pi/E4UCARtmhFfFKwIVQfdo6zKaaHaLwb1f2chibu
-         RRLTk6X7/42wNLHFp1/97CuYJ9zav5MvOr4Wc1h3/GggGdUZyf/qMFa+69hJVi+VUY7p
-         htLVwkv+ntVyqZjHeVeUEzikZUjssObPPbT1dsNpWf+CY3B5qUDSObIkWTfClQF/6wYL
-         cuoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5pLrEX8aKiFORwIa2j4zls0X1nMxYq5uiIukvN+NTys=;
-        b=Hu2xmj1UgHc88l/CSHcYyEPN6QWlB83Zt7VoG7uIoIFKpDSMBBWzNmQgGs2J4Aavq2
-         esfkcwoQPh2nKcUGCn9nD3t54Gf+WFANH9Bqxzfl1MmDWDCyKaZos4xOtgWd3KmXqyLr
-         F8ynpwoCAoi5MwdizzYCwjfJIMmSFzHpq4qx/DgTYY0C7vR2Nd/UiF3QrP5Wf6o91kty
-         uqU+azdG49LwN2SWkPxZnf2hFf6QbumUGrCxIKCI4u+nNWv5alNMr8UMbaTI2DGTknZW
-         gS8KJ789rIyVZsY9Tmz6RRvpRui79t68GxsTUW0Mwi+zPyy9dnfxux2iVHtv016L/FM9
-         L9DA==
-X-Gm-Message-State: ABuFfohzJ30bOH3oH3lujt4AoscsaIMplHQBtLj/kAlgGowgnQmiE/Xl
-        fTXp5d4sit1OI052dfM49VNmWMtHeD9JUTp5jrjHUg==
-X-Google-Smtp-Source: ACcGV61C0GW/Nkulu07rdV3+ygybeuwb5xcseeJGViLyXh2ItZwOh2w9CH5UuHbj23FYcspdOjfWoKm6XXzPl4x2Poo=
-X-Received: by 2002:a24:f584:: with SMTP id k126-v6mr1287821ith.166.1539189421567;
- Wed, 10 Oct 2018 09:37:01 -0700 (PDT)
+        Wed, 10 Oct 2018 20:00:35 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50876 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726525AbeJKAAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 20:00:34 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id IvppudFY23jU; Wed, 10 Oct 2018 18:37:37 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 06EB81EC0104;
+        Wed, 10 Oct 2018 18:37:36 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 18:37:30 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     peterz@infradead.org, x86@kernel.org, eranian@google.com,
+        kan.liang@intel.com, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] x86/cpufeature: Add facility to match microcode
+ revisions
+Message-ID: <20181010163730.GA6125@zn.tnic>
+References: <20181010162608.23899-1-andi@firstfloor.org>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 09:36:40
- -0700 (PDT)
-In-Reply-To: <20181010161003.GA5371@nautica>
-References: <20181010144855.GB20918@nautica> <00000000000010889e0577e0f5f2@google.com>
- <20181010160022.GD20918@nautica> <20181010161003.GA5371@nautica>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 18:36:40 +0200
-Message-ID: <CACT4Y+ayTAyRghU5VmJgBdKaHxNCyoXf0NxXLgMGQf8aiY37Tg@mail.gmail.com>
-Subject: Re: Re: BUG: corrupted list in p9_read_work
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        netdev <netdev@vger.kernel.org>,
-        Ron Minnich <rminnich@sandia.gov>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181010162608.23899-1-andi@firstfloor.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 6:10 PM, Dominique Martinet
-<asmadeus@codewreck.org> wrote:
-> Dominique Martinet wrote on Wed, Oct 10, 2018:
->> It works though, is it just picky because I didn't end it in .git? let's
->> try again, sorry for the noise...
->>
->> #syz test: git://github.com/martinetd/linux.git e4ca13f7d075e551dc158df6af18fb412a1dba0a
->
-> And I guess the commit hash needs to be in the default clone branch to
-> work ?
-> ('git fetch <repo> <hash>' happily fetches the commit in a new clone for
-> me... But that feels like a github specific behaviour maybe)
+Lemme paste some of tglx's review comments from last time.
 
-yeeeep, this is bug:
-https://github.com/google/syzkaller/issues/728
+On Wed, Oct 10, 2018 at 09:26:07AM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> For bug workarounds or checks it is useful to check for specific
+> microcode versions. Add a new table format to check for steppings
 
-Turns out git fetch of a named remote and just a tree work
-differently. The latter only fetches the main branch.
+s/versions/revisions/
 
-'git fetch <repo> <hash>' is it a thing? Is it something that requires
-special server configuration? I remember something similar that wasn't
-able to fetch a random commit hash all the time...
+> with min microcode revisions.
+> 
+> This does not change the existing x86_cpu_id because it's an ABI
+> shared with modutils, and also has quite difference requirements,
 
-The plan was to make a named remote and then fetch it, this should
-fetch everything.
+s/difference/different/
 
+> as in no wildcards, but everything has to be matched exactly.
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+> v2:
+> Remove all CPU match, only check boot cpu
+> Move INTEL_MIN_UCODE macro to header.
+> Minor cleanups.
+> Remove max ucode and driver data
+> ---
+>  arch/x86/include/asm/cpu_device_id.h | 26 ++++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/match.c          | 21 +++++++++++++++++++++
+>  2 files changed, 47 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+> index baeba0567126..1b90bd1d0b95 100644
+> --- a/arch/x86/include/asm/cpu_device_id.h
+> +++ b/arch/x86/include/asm/cpu_device_id.h
+> @@ -11,4 +11,30 @@
+>  
+>  extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
+>  
+> +/*
+> + * Match specific microcodes
 
-> Oh, well; made a branch for it, last try for me.
->
-> #syz test: git://github.com/martinetd/linux.git for-syzbot
->
-> --
-> Dominique
+"What means microcodes or steppings? If you mean microcode revisions then
+please spell it out and use it all over the place. steppings is confusing
+at best as its associated to the CPU stepping."
+
+> + *
+> + * vendor/family/model/stepping must be all set.
+> + * min_ucode is optional and can be 0.
+> + */
+> +
+> +struct x86_ucode_id {
+> +	u8 vendor;
+> +	u8 family;
+> +	u16 model;
+> +	u16 stepping;
+
+"Why u16? The corresponding members in cpuinfo_x86 are 8bit wide so why
+wasting memory for these tables?"
+
+> +	u32 min_ucode;
+> +};
+> +
+> +#define INTEL_MIN_UCODE(mod, step, rev) {			\
+> +	.vendor = X86_VENDOR_INTEL,				\
+> +	.family = 6,						\
+> +	.model = mod,						\
+> +	.stepping = step,					\
+> +	.min_ucode = rev,					\
+> +}
+> +
+> +extern const struct x86_ucode_id *
+> +x86_match_ucode(const struct x86_ucode_id *match);
+> +
+>  #endif
+> diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+> index 3fed38812eea..ec8ee31699cd 100644
+> --- a/arch/x86/kernel/cpu/match.c
+> +++ b/arch/x86/kernel/cpu/match.c
+> @@ -48,3 +48,24 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL(x86_match_cpu);
+> +
+> +const struct x86_ucode_id *x86_match_ucode(const struct x86_ucode_id *match)
+
+s/ucode/microcode/
+
+> +{
+> +	struct cpuinfo_x86 *c = &boot_cpu_data;
+> +	const struct x86_ucode_id *m;
+> +
+> +	for (m = match; m->vendor | m->family | m->model; m++) {
+> +		if (c->x86_vendor != m->vendor)
+> +			continue;
+> +		if (c->x86 != m->family)
+> +			continue;
+> +		if (c->x86_model != m->model)
+> +			continue;
+> +		if (c->x86_stepping != m->stepping)
+> +			continue;
+> +		if (c->microcode < m->min_ucode)
+> +			continue;
+> +		return m;
+> +	}
+> +	return NULL;
+> +}
+> -- 
+> 2.17.1
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
