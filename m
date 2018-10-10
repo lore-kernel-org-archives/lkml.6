@@ -7,71 +7,74 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F420C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D578C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1AFD2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16DFD2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tmJ6NXOV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AFD2075B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZ/mdT8I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16DFD2075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeJKCfX (ORCPT
+        id S1727398AbeJKChp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:35:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50816 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbeJKCfX (ORCPT
+        Wed, 10 Oct 2018 22:37:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40122 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbeJKChp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:35:23 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i8-v6so6579567wmg.0;
-        Wed, 10 Oct 2018 12:11:51 -0700 (PDT)
+        Wed, 10 Oct 2018 22:37:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d2-v6so6968623wro.7;
+        Wed, 10 Oct 2018 12:14:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/hKtcyhbWHVsrPzOxvwmoUwsYt7qkgtSWd46HwOIfqk=;
-        b=tmJ6NXOV2fIuNDwz2bcTyA/1i0721ohyDeyXWQTHdHnlZ7/AV1Q+N4tgLOXwkT7KtE
-         x0hasPR9r/93yJeear/+BHCRa67wlAjNkrUlgkDgFnW0vsQEYkTdLk1oLEWYkIydaHtc
-         R4cD/lKXLMc6VW5/+xfwpkNUrbDiLl2X+EgYTBiKdJ2h6Rj0fRWvekm6Pp3zpsRpDIdY
-         Aeem6LTLnsuiw0fQQkMPp1KXmI+1NCYSnMtXvoZroqClCrVvVkMLWC0epESwrxFnCDHa
-         6ocmwewEDLgqHS7yREGT7zx0xNlJyfXXg96ZbjuWOPPofHaqJkMnQAwBbtLGgEtPGmbp
-         FpEw==
+        bh=Kk66WKvrB1bH26PYcaLXPVSQlyWIi/QeDETFk9Gm9sY=;
+        b=SZ/mdT8Iig9/CML8CpUT7Gn7dtDvIioS54hfthOYo4ljgL83rgRPsPmh3ittg8GFEa
+         GkJt/MkSzWvljVH8En2WAAfD0zciNUrei2pFVX8kcj4oX6z9Y72YUuwtsSvhIcKsYiFh
+         EKWp/QmTaPHs7A+lt2GgiGzJ3q6cAR382R4d4Mw+rs2p2ofWw8Pj8YWS3r39H4X0Zhez
+         0LJ8FBDdWMaI4JT6tYgFHPDHAYzOhei2pPRX4AqgCwxcAQi/0UBcN0wsOAzCaxSxRxeL
+         AyVr0D/+oUHIEoIIw+MK450DLR9/LmWpt5rtGpPoYcYo2E1R1W3qZY1x41s4KELlnohQ
+         Yxmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/hKtcyhbWHVsrPzOxvwmoUwsYt7qkgtSWd46HwOIfqk=;
-        b=GKQXGLp9eSpvmMYnlXCLUK0mXUCs9Tj5C/vAfAoLcSe/bjIvzhj53PF12KDckz9ah2
-         q2OphiYv8bDuy/XzGflaSW0BDUT5hlSAyq4G/8P2Qe1NalJI/xEssiBbIf7t/GRfi5e2
-         6nwl3uo2BhZez5fFVr+K+AXM2wWqI41RlTh/YWn9HTBCJxdGbNPtvai6VOmtQQwwS6Fd
-         4P9uCMKoehezW0V6hmA8rQb+JFjl4Z3o8NEF6QyaAQpLOYF8Rh9L/tbMzDvDqhGToFCO
-         BRdbT3iE3yOGrLY+nzPccr9rFeAktqyWvDK/BPki3uWe23L1IWsf2s7RQI8avIaqEPzP
-         TAzg==
-X-Gm-Message-State: ABuFfog9wvF5jVd/aoRwnUgVNk7Ve7MPNmCqRdmfbJq7tt82CrRr+lB4
-        oeRqLibax0eNol9bLsyHddd/c5XQ5ywOPsHFknA=
-X-Google-Smtp-Source: ACcGV63UfgxWD3L/vz+XIhZYN0p0/FFoprj+ME63G3gcCUk2L+DQUcPoxszsB+EJNUozndqt8EbF++P0L+NvpvSl198=
-X-Received: by 2002:a1c:c1c7:: with SMTP id r190-v6mr1910720wmf.72.1539198710459;
- Wed, 10 Oct 2018 12:11:50 -0700 (PDT)
+        bh=Kk66WKvrB1bH26PYcaLXPVSQlyWIi/QeDETFk9Gm9sY=;
+        b=c8KjVE5oaDfj4uaNOXjNKdb4aBmCAN6ThBdBfJ61Bh4ENGWFb2uQ2clwCnGgIxVY88
+         DR7LPknHQ5/sdU1BpJuGypukCMcGG7gDgrybh91/TxDEXuPAe4fQIESpRMpXMGWqpW3M
+         ZBq6dBe4vTHnTzRMidsVT5ulEWmj0utYJB5eYWOLqkODJ0685BO45qE2qsNVa9l50VXO
+         AK8Ub0nbsX9eu48+ShOX9NtfgsFAmHkT27Xwh2RYWJYpRdZixwPS0x6bJk9nehO67EwK
+         UTSs01O32MYIFQfFZ8Cfd47yULjQNEW7MjKrA56kleMquHrR/7APC67AT5Ewz+kP2+i1
+         KsXQ==
+X-Gm-Message-State: ABuFfohKzAx7vxTTLLP39q2JCEMvPehlH0n5nsvE1bEHKYtQn67unVpR
+        9/Y/vDI8yI3fOJ1/smQeWdaQBUUuxuJJ7WI1nFULztfd
+X-Google-Smtp-Source: ACcGV60IIMu/ciiD9nDvbRw+cAn/6vP8HwYZCnaqyPft7ANjR/bI/vYVY3lk7oNA+v/E8xpLX14hfOqAECkHXUdeaGI=
+X-Received: by 2002:adf:ec83:: with SMTP id z3-v6mr6112817wrn.125.1539198851776;
+ Wed, 10 Oct 2018 12:14:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539049980-186978-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1539049980-186978-1-git-send-email-yuehaibing@huawei.com>
+References: <1538221154-49213-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538221154-49213-1-git-send-email-yuehaibing@huawei.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 10 Oct 2018 15:11:38 -0400
-Message-ID: <CADnq5_MdvZ0DHJ+fRWqw2V595f_kGYRAV1_790OAAiFAsu8hCg@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amdkfd: Remove set but not used variable 'preempt_all_queues'
+Date:   Wed, 10 Oct 2018 15:13:59 -0400
+Message-ID: <CADnq5_MeA5VXnxVwUDfR0eKptf8hxCg0oVUDwLgnFUSKqKDEHA@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
+ in psp_v11_0_ring_stop
 To:     yuehaibing@huawei.com
-Cc:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
+Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
         Christian Koenig <christian.koenig@amd.com>,
         Chunming Zhou <David1.Zhou@amd.com>,
         Dave Airlie <airlied@linux.ie>,
-        kernel-janitors@vger.kernel.org,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Shaoyun Liu <Shaoyun.Liu@amd.com>,
+        "Wang, Ken" <Ken.Wang@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        "Quan, Evan" <evan.quan@amd.com>, kernel-janitors@vger.kernel.org,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,16 +82,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 3:37 AM YueHaibing <yuehaibing@huawei.com> wrote:
+On Mon, Oct 1, 2018 at 3:26 AM YueHaibing <yuehaibing@huawei.com> wrote:
 >
 > Fixes gcc '-Wunused-but-set-variable' warning:
 >
-> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c: In function 'destroy_queue_cpsch':
-> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c:1366:7: warning:
->  variable 'preempt_all_queues' set but not used [-Wunused-but-set-variable]
->
-> It never used since introduct in
-> commit 992839ad64f2 ("drm/amdkfd: Add static user-mode queues support")
+> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c: In function 'psp_v11_0_ring_stop':
+> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c:309:19: warning:
+>  variable 'ring' set but not used [-Wunused-but-set-variable]
 >
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
@@ -97,22 +97,24 @@ Applied.  Thanks!
 Alex
 
 > ---
->  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 3 ---
+>  drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 3 ---
 >  1 file changed, 3 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> index 4f22e74..06d38b7 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-> @@ -1363,9 +1363,6 @@ static int destroy_queue_cpsch(struct device_queue_manager *dqm,
+> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> index 9217af0..3f3fac2 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+> @@ -306,11 +306,8 @@ static int psp_v11_0_ring_stop(struct psp_context *psp,
+>                               enum psp_ring_type ring_type)
 >  {
->         int retval;
->         struct mqd_manager *mqd_mgr;
-> -       bool preempt_all_queues;
-> -
-> -       preempt_all_queues = false;
+>         int ret = 0;
+> -       struct psp_ring *ring;
+>         struct amdgpu_device *adev = psp->adev;
 >
->         retval = 0;
+> -       ring = &psp->km_ring;
+> -
+>         /* Write the ring destroy command to C2PMSG_64 */
+>         WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, GFX_CTRL_CMD_ID_DESTROY_RINGS);
 >
 > _______________________________________________
 > dri-devel mailing list
