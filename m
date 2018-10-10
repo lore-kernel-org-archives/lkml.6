@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A596C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74DFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694242077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694242077C
+	by mail.kernel.org (Postfix) with ESMTP id 88FC72077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FC72077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeJJTa5 (ORCPT
+        id S1727473AbeJJT3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:30:57 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59418 "EHLO inva021.nxp.com"
+        Wed, 10 Oct 2018 15:29:49 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33364 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727447AbeJJT3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:29:50 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEEFE2000A2;
-        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
+        id S1727151AbeJJT3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:29:48 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 873981A0195;
+        Wed, 10 Oct 2018 14:07:55 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D2468200042;
-        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7AF0D1A016E;
+        Wed, 10 Oct 2018 14:07:55 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D1C720604;
-        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C36D520604;
+        Wed, 10 Oct 2018 14:07:54 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -39,9 +39,9 @@ Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, arnd@arndb.de,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 15/22] dpaa_eth: fix SG frame cleanup
-Date:   Wed, 10 Oct 2018 15:07:30 +0300
-Message-Id: <20181010120737.30300-13-laurentiu.tudor@nxp.com>
+Subject: [PATCH v3 12/22] dpaa_eth: base dma mappings on the fman rx port
+Date:   Wed, 10 Oct 2018 15:07:27 +0300
+Message-Id: <20181010120737.30300-10-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
 References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
@@ -53,29 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-Fix issue with the entry indexing in the sg frame cleanup code being
-off-by-1. This problem showed up when doing some basic iperf tests and
-manifested in traffic coming to a halt.
+The dma transactions initiator is the rx fman port so that's the device
+that the dma mappings should be done. Previously the mappings were done
+through the MAC device which makes no sense because it's neither dma-able
+nor connected in any way to smmu.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index ea814feb4666..ebf982283062 100644
+index 1ca4cfb79961..0dc0267844ca 100644
 --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
 +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1663,7 +1663,7 @@ static struct sk_buff *dpaa_cleanup_tx_fd(const struct dpaa_priv *priv,
- 				 qm_sg_entry_get_len(&sgt[0]), dma_dir);
+@@ -2795,8 +2795,15 @@ static int dpaa_eth_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
- 		/* remaining pages were mapped with skb_frag_dma_map() */
--		for (i = 1; i < nr_frags; i++) {
-+		for (i = 1; i <= nr_frags; i++) {
- 			WARN_ON(qm_sg_entry_is_ext(&sgt[i]));
++	mac_dev = dpaa_mac_dev_get(pdev);
++	if (IS_ERR(mac_dev)) {
++		dev_err(&pdev->dev, "dpaa_mac_dev_get() failed\n");
++		err = PTR_ERR(mac_dev);
++		goto probe_err;
++	}
++
+ 	/* device used for DMA mapping */
+-	dev = pdev->dev.parent;
++	dev = fman_port_get_device(mac_dev->port[RX]);
+ 	err = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(40));
+ 	if (err) {
+ 		dev_err(dev, "dma_coerce_mask_and_coherent() failed\n");
+@@ -2821,13 +2828,6 @@ static int dpaa_eth_probe(struct platform_device *pdev)
  
- 			dma_unmap_page(dev, qm_sg_addr(&sgt[i]),
+ 	priv->msg_enable = netif_msg_init(debug, DPAA_MSG_DEFAULT);
+ 
+-	mac_dev = dpaa_mac_dev_get(pdev);
+-	if (IS_ERR(mac_dev)) {
+-		dev_err(dev, "dpaa_mac_dev_get() failed\n");
+-		err = PTR_ERR(mac_dev);
+-		goto free_netdev;
+-	}
+-
+ 	/* If fsl_fm_max_frm is set to a higher value than the all-common 1500,
+ 	 * we choose conservatively and let the user explicitly set a higher
+ 	 * MTU via ifconfig. Otherwise, the user may end up with different MTUs
+@@ -2963,9 +2963,9 @@ static int dpaa_eth_probe(struct platform_device *pdev)
+ 	qman_release_cgrid(priv->cgr_data.cgr.cgrid);
+ free_dpaa_bps:
+ 	dpaa_bps_free(priv);
+-free_netdev:
+ 	dev_set_drvdata(dev, NULL);
+ 	free_netdev(net_dev);
++probe_err:
+ 
+ 	return err;
+ }
 -- 
 2.17.1
 
