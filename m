@@ -2,94 +2,91 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524C2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260C5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BB120835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BB120835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E5B5420835
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:39:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B5420835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeJJRAV (ORCPT
+        id S1727142AbeJJRAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:00:21 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37405 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeJJRAV (ORCPT
+        Wed, 10 Oct 2018 13:00:31 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53224 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbeJJRAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:00:21 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o14so4695971oth.4;
-        Wed, 10 Oct 2018 02:39:00 -0700 (PDT)
+        Wed, 10 Oct 2018 13:00:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 189-v6so4706911wmw.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:39:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hH+8/99u9OXa/5V5UrRTd3XaejdRbgV2PYxl64xEHec=;
-        b=tdbPTo2ChUDi5CS5BC44YxLtGjxR2g1n9MAxm7etUznbNEYfgDJork5yoh8UsLr2Tf
-         D6MVI0pefQunVtedSN590opWTQa39VGIKCS4E9RcXgAGAx35cJ2OqpQ1k0BKHDgmE6me
-         YWU2ZMPczdMp6TDi/uX/chGe/xTktSuK5ACOhPIxZNVIew1ppkqy6Dx/q73oosDdSdhF
-         8hjOtxO87x9QMnaVFrK06Y8m2O12exR4Z2LMGpBgW9RLfiiEJtyl2WZDgc/jivdRR5re
-         SLcrb0hLdCKQcTGTOOSQ3Ats6avs2i2ZG/7B/EluHDxl5+EGKc1zwAxQxeY9UPOrqcTf
-         BdUg==
-X-Gm-Message-State: ABuFfojFeNb/UaLKyX1SUNMmOjyPKJ2S8yHgWdD1NuHuCIV+kXw74DQq
-        hEeHQrnXqW/3ljc5HMKJiU8dIyImWO5sWW5kNpz9YwVg
-X-Google-Smtp-Source: ACcGV62ZK/IjigU+xivdu4wXQ/pbFP8GSttkg42XTXZMrHLlJI0OCnqBHK/0Z3RnBj88k4naPM+1Jw2nTM8THFPlA2k=
-X-Received: by 2002:a9d:538c:: with SMTP id w12mr14462915otg.139.1539164340395;
- Wed, 10 Oct 2018 02:39:00 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q46N/Cig/LEIA9U22CIkDbnUUw9Tof6cjCzl8SQ4bKI=;
+        b=fESkw4BDZZHgGBBouii0K2zQYQMc4xfZfFfvgG/LFYNBF7AH5OLOMxLSukE/ED/z+R
+         8Qy1y+3m6Zct/fU+qc15ZGWtERbfRW8W5ImGkRJKrRh8HNOjVfj09NjwG3ziUGv6n5yN
+         YvzYVAd2RSnwa70NuXCSbpToD24jAgnr1QNDIN1ZwQ9/lx1vZPsu411RrGwbbdxOOtYo
+         63f8thvMrceirwtvpLgFNRqFbAxI/uNH9jgMvOdlFqcnCe1jJy9bRPk92jebqHg6CWNJ
+         nMhsW8Swt0oH/8au12HbjU0PraQdgRl52AHzB6xIkXD+o9BLv4lB93c11O6mAamZrnVo
+         2+MA==
+X-Gm-Message-State: ABuFfogn4a4cSmYb1VNJeJPHCMUVk5Vw02MdXdeTICPeoaoq3vTWYEcw
+        Of0CpHJZw94SjgYN58ccywg=
+X-Google-Smtp-Source: ACcGV62DTXCcbPwJL3wQj2bVrNZNjNfCPyv+sqtoHVPVKzoEsDRYz4S2dqiYVuw0LhcaJIEgP5HCkw==
+X-Received: by 2002:a1c:2dc5:: with SMTP id t188-v6mr219547wmt.94.1539164349444;
+        Wed, 10 Oct 2018 02:39:09 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id u76-v6sm31355346wmd.10.2018.10.10.02.39.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 02:39:08 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 1D817125018; Wed, 10 Oct 2018 11:39:08 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 11:39:08 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     linux-mm@kvack.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH v3 2/3] mm: return zero_resv_unavail optimization
+Message-ID: <20181010093908.GA20663@techadventures.net>
+References: <20181002143821.5112-1-msys.mizuma@gmail.com>
+ <20181002143821.5112-3-msys.mizuma@gmail.com>
 MIME-Version: 1.0
-References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
- <20181009112013.14238-1-linux@rasmusvillemoes.dk> <20181009112013.14238-17-linux@rasmusvillemoes.dk>
-In-Reply-To: <20181009112013.14238-17-linux@rasmusvillemoes.dk>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 10 Oct 2018 11:38:49 +0200
-Message-ID: <CAJZ5v0jA8-5gpWR0spqLzBi-hQeXvt4u4Bie9BgOLWfhgErqBA@mail.gmail.com>
-Subject: Re: [PATCH v2 16/23] ACPI: remove unused __acpi_handle_debug macro
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     jbaron@akamai.com, Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002143821.5112-3-msys.mizuma@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 1:20 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> If CONFIG_DYNAMIC_DEBUG is not set, acpi_handle_debug directly invokes
-> acpi_handle_printk (if DEBUG) or does a no-printk (if !DEBUG). So this
-> macro is never used.
->
-> Cc: linux-acpi@vger.kernel.org
-> Acked-by: Jason Baron <jbaron@akamai.com>
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+On Tue, Oct 02, 2018 at 10:38:20AM -0400, Masayoshi Mizuma wrote:
+> From: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> 
+> When checking for valid pfns in zero_resv_unavail(), it is not necessary to
+> verify that pfns within pageblock_nr_pages ranges are valid, only the first
+> one needs to be checked. This is because memory for pages are allocated in
+> contiguous chunks that contain pageblock_nr_pages struct pages.
+> 
+> Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Reviewed-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Looks good to me 
 
-> ---
->  include/linux/acpi.h | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 21e03aa32aae..e12d5ef1a054 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -948,9 +948,6 @@ acpi_handle_printk(const char *level, void *handle, const char *fmt, ...) {}
->  #if defined(CONFIG_ACPI) && defined(CONFIG_DYNAMIC_DEBUG)
->  __printf(3, 4)
->  void __acpi_handle_debug(struct _ddebug *descriptor, acpi_handle handle, const char *fmt, ...);
-> -#else
-> -#define __acpi_handle_debug(descriptor, handle, fmt, ...)              \
-> -       acpi_handle_printk(KERN_DEBUG, handle, fmt, ##__VA_ARGS__);
->  #endif
->
->  /*
-> --
-> 2.19.1.3.g1d92a00e68
->
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
