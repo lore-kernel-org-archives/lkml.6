@@ -2,115 +2,205 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18A6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1EFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2B42085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 496752086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:38:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4OqGaWw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2B42085B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDGaOSVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496752086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeJKHA2 (ORCPT
+        id S1726102AbeJKHDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:00:28 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45889 "EHLO
+        Thu, 11 Oct 2018 03:03:00 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41322 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbeJKHA2 (ORCPT
+        with ESMTP id S1725968AbeJKHDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:00:28 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u12-v6so3381178pfn.12
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 16:36:02 -0700 (PDT)
+        Thu, 11 Oct 2018 03:03:00 -0400
+Received: by mail-pf1-f195.google.com with SMTP id m77-v6so3394933pfi.8;
+        Wed, 10 Oct 2018 16:38:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=8WXacQOo9G3uk+9/R1PfEhsax8xzhZOR9SEqoRKPi80=;
-        b=a4OqGaWw6SWo0F9e7Lvc4tH9i3e+emFy9rGousFPX94SHkirrC38sUcdbS0SN4Bq/e
-         gK19ZdtdKveD3BUMESrzPQUDwQkwVRLSumscHx/NIO2oNSvpNg6ytSC8e7gGo75Vy2nq
-         wpzBWPFFSPNomzFEy7nh6lksMMky3EI6odE+/kTQ+QvHzIDlw3w3uYR4LBNlKiwSQ1Ec
-         p2GOCM0f6KjVIUEHzrTX60Z+HOoaPflMXYGoiObNBbwmORXIH50M0gY9WGDiM4dXXRhq
-         pVQuivaK8GRsec0hK/lH3/RYDEksxCNVS4aaoxhjPPPL1nlfgA/FqCwZU7ChoNFEbxrA
-         jquw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=4cGv9KSq9spv+wQx2gf6A+VcNeYBZE+cG0/uYugPfAg=;
+        b=pDGaOSVE1g6O14Po+fhe82fIm1YYF39pg1YMdEMO5xKfdTwiIbOa9pvQGkXyUpTLSd
+         KY9ktfxrn9XPn2rEUC4jyJKzc6OTsGekB13iHpFYxFAkQgqMtkYCz6G372Tkgp7dEmrH
+         sVkGzv+QkUcIJWr5Ta0JC1dYZn6wAKjrzzEiAQyIHh/cjtIPxBCumRL+1zKsTTjxoc9n
+         ddRpRvapJHhH7tFWP7lnKjqRvVMqwxUxoOyVb3K2i8oDhcFaLzraJd98zl8wC6bPHP8B
+         EwJP2J1r3PaCpx93CiZzW2wWbWh822L3xaJFU8AyCVd93/UOdXnDSFEal60I2CpQV+eq
+         pHBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8WXacQOo9G3uk+9/R1PfEhsax8xzhZOR9SEqoRKPi80=;
-        b=kUsvOC8ghHO7bt+mV038a8zaJrUYCzZkceMKnsuhycrvrfYnRYtkCgeQuz/Fx7d/yQ
-         cWjeIVcqm51FeRKbzRDs3LeJMAUfNsB5Db7WeRQcgw5oqLY08JIAnm4odm2URLq6gQXw
-         jjAVTG05VX2BrF6j1zMRlCmsTs+p6Vy+3hGqM6SkajfQ7uJjauPz8ULp98bljVl6Gpqm
-         JWo9IqhCDTLRBaQxhGCyh0fC0Jyn1+yjNsCwrVXmkvUOgLLmIm+i+AYqtyKsC6kLfrL1
-         6hs8A8uuayclwnouCmafPYA2BP59CKB/6lX+1p86hbM8Wy26zZC/TLdbl+O+RY6QhHUw
-         CWHg==
-X-Gm-Message-State: ABuFfohgTZ+dXI2R3D0CB36q8HDTmk2JvVFaSu6wOkeD0StcE8xDVuGL
-        nXEBy4xe/l8ZR+N+nY//yH0=
-X-Google-Smtp-Source: ACcGV63P27g6f9qYwMrM7v3yWXyJ4qFJgMR9ZhiWHZf43J7N4lAoUdlh/ey+QBJpuZ7NmH3hO/U0RQ==
-X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr37068018pfb.209.1539214561702;
-        Wed, 10 Oct 2018 16:36:01 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm63474617pfm.23.2018.10.10.16.36.00
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=4cGv9KSq9spv+wQx2gf6A+VcNeYBZE+cG0/uYugPfAg=;
+        b=iynfY6ul0O1hDsVYo18XcM/Ko+iNZnFvlXErPnWj4uHmAIeiRgIChGedsfaKn/rxss
+         3TfDiSZkAWcUSVDhRVcQpmSS0MhDhoL/2On+qo0IWjmCfkwsBdqffFs2OcjKG+Kgj9R9
+         Qu7waepT55bOQ9spZ2kyn5ZZlovYnWJzLzDkJYEs7BOpkw4ccd1DojkRI0iQ7DpYwAnA
+         1JZHecvg5CcuBZeEytbFgokqZDv7YlHGw4OTiHy+o99JKyCS1XoPvuuh0lnCS9ppgxp5
+         SsfiSG+JPA4BZJdUyv/EuI4YGpRGN/8xBvQSzsQ3icMA0WOark67QDT4nDfPFDqn6s0g
+         UbPw==
+X-Gm-Message-State: ABuFfoiKrSVhAgX6H/prP9RC2zT49eLDc5dVUpgn+1OfrJVB2zsGa5NA
+        NigNRY8VsIv+PQMwdHgYYVNKy5/7
+X-Google-Smtp-Source: ACcGV62onWSUbGyBo+v3NA/TgNAgt2tTNnVCZgfjVcdvfYAjJXNxQs2mpdwxWIdjHu51ur1kBRggzw==
+X-Received: by 2002:a62:8891:: with SMTP id l139-v6mr36587056pfd.198.1539214712637;
+        Wed, 10 Oct 2018 16:38:32 -0700 (PDT)
+Received: from ?IPv6:2001:df0:0:200c:bde3:602:d806:663b? ([2001:df0:0:200c:bde3:602:d806:663b])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm60741709pfj.7.2018.10.10.16.38.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 16:36:01 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
- of discrimination factors
-To:     esr@thyrsus.com, Josh Triplett <josh@joshtriplett.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org
-References: <20181007085102.17795-1-geert@linux-m68k.org>
- <f4f7bf39-af34-4375-d6a2-b1f23cad519e@gmail.com>
- <20181010221611.GA5711@localhost> <20181010223319.GA31256@thyrsus.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <22aae042-5ef3-20df-6960-fc8ae3cd5506@gmail.com>
-Date:   Wed, 10 Oct 2018 16:35:58 -0700
+        Wed, 10 Oct 2018 16:38:31 -0700 (PDT)
+Subject: Re: [PATCH AUTOSEL 4.18 24/58] Input: atakbd - fix Atari CapsLock
+ behaviour
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+References: <20181008152523.70705-1-sashal@kernel.org>
+ <20181008152523.70705-24-sashal@kernel.org>
+ <CAKdAkRSoq_U1rkO+6gbautYpS1fFn3icLY3Dtx0geXNC7MwvbA@mail.gmail.com>
+ <bec357b5-09d0-5014-d2a3-0ade83499d15@gmail.com>
+ <CAKdAkRSuuv_8BOz2m=DSgnV7a2MNY+6ZPera3ROfV3osMUTStQ@mail.gmail.com>
+ <1cbc87c6-7920-1f53-879b-79de87d685fc@gmail.com>
+ <CAMuHMdUiAVamY--BMBFprEwdXn1Dyv9sERwMXB7x7F9omiEXkA@mail.gmail.com>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <628c2f56-5381-b526-bad7-fd902acf14d5@gmail.com>
+Date:   Thu, 11 Oct 2018 12:38:26 +1300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181010223319.GA31256@thyrsus.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdUiAVamY--BMBFprEwdXn1Dyv9sERwMXB7x7F9omiEXkA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 15:33, Eric S. Raymond wrote:
-> Josh Triplett <josh@joshtriplett.org>:
->>> The words removed by this patch are a political statement.
+Hi Geert,
+
+
+On 10/10/18 19:59, Geert Uytterhoeven wrote:
+> Hi Michael,
+>
+> On Wed, Oct 10, 2018 at 12:07 AM Michael Schmitz <schmitzmic@gmail.com> wrote:
+>> I agree the bug is neither subtle nor recent, not security relevant and
+>> will affect only a handful of users at best.
 >>
->> Choosing not to say those words is a political statement.
-> 
-> The situation is not symmetrical.  Choosing the protected classes
-> in the CoC is a *change* in its implied politics. 
-> 
-> It's a change that is, obviously from LKML traffic, very contentious.
-> If this were a tpurely technical matter, it would be described as
-> not backwards-compatible.
-> 
-> It's a change that, I submit, should not have been made without a clear
-> consensus *in favor* of the change.
-> 
-> Our culture has a process for this. It's called RFCs. If we want to
-> designate protected classes to be called out in conductt guidelines,
-> an RFC should be floated first and the change should be made only
-> if rough consensus has been achieved.
-> 
+>> If you're worried about weakening the rules around stable releases, by
+>> all means go ahead and veto the inclusion of these patches in the next
+>> stable release.
+> I believe the distro the issue was reported against (Debian ports) will not
+> get the fix until the issue is fixed in the upstream stable release?
 
-Thank you for stating that clearly and concisely Eric.
+That's correct. but there are ways around that. I could petition Ben to 
+add it as a separate patch for now.
 
-I will bow out of further discussion on this specific point as I
-have already seen this concept discussed on many threads already
-in recent weeks.
+Boils down to the same question really - what's the impact of this bug? 
+Will it prevent installation from distribution media f.e.?
 
--Frank
+Given that it's taken ten years for someone to even notice one aspect 
+(missing key mappings), and then I just happened to see the discussion 
+on the ML (which wasn't even about mapping so much as about keys stuck 
+in autorepeat, which I haven't been able to reproduce), I think it's 
+clear that this has minimal impact. m68k users tend to be reasonably 
+computer savvy, and can install a custom built kernel until Debian 
+catches up with current kernel versions.
+
+Having reread Documentation/process/stable-kernel-rules.rst, it's hard 
+for me to argue these patches belong in stable.
+
+Cheers,
+
+     Michael
+
+
+>
+>> On 09/10/18 08:20, Dmitry Torokhov wrote:
+>>> On Mon, Oct 8, 2018 at 12:09 PM Michael Schmitz <schmitzmic@gmail.com> wrote:
+>>>> someone on debian-68k reported the bug, which (to me) indicates that the
+>>>> code is not just used by me.
+>>>>
+>>>> Whether or not a functioning Capslock is essential to have? You be the
+>>>> judge of that. If you are OK with applying the keymap patch, why not
+>>>> this one?
+>>> I have exactly the same concerns about the keymap patch. This all has
+>>> not been working correctly for many many years (and it was not broken
+>>> in a subtly way as far as I understand, but rather quite obvious).
+>>> Thus I do not understand why this belongs to stable release. It is not
+>>> a [recent] regression, nor secutiry bug, nor even enabling of new
+>>> hardware, that is why I myself did not mark it as stable.
+>>>
+>>> I still maintain that we pick up for stable too many patches for no
+>>> clear benefit. This is similar to the patch for Atmel controllers that
+>>> was picked to stable and I asked why, as it is not clear how many
+>>> users might be affected (or if the problem the patch was solving was
+>>> purely theoretical, or only affecting hardware that is not in
+>>> circulation yet).
+>>>
+>>>> Debian will carry stable patches without explicit action on behalf of
+>>>> the maintainer. Unstable patches are a little harder to get accepted.
+>>>>
+>>>> On 09/10/18 06:11, Dmitry Torokhov wrote:
+>>>>> On Mon, Oct 8, 2018 at 8:25 AM Sasha Levin <sashal@kernel.org> wrote:
+>>>>>> From: Michael Schmitz <schmitzmic@gmail.com>
+>>>>>>
+>>>>>> [ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
+>>>>>>
+>>>>>> The CapsLock key on Atari keyboards is not a toggle, it does send the
+>>>>>> normal make and break scancodes.
+>>>>>>
+>>>>>> Drop the CapsLock toggle handling code, which did cause the CapsLock
+>>>>>> key to merely act as a Shift key.
+>>>>> This has been broken for 10+ years. Does it really make sense to
+>>>>> promote it to stable?
+>>>>>
+>>>>>> Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+>>>>>> Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+>>>>>> Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
+>>>>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>>>>> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+>>>>>> ---
+>>>>>>     drivers/input/keyboard/atakbd.c | 10 ++--------
+>>>>>>     1 file changed, 2 insertions(+), 8 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/input/keyboard/atakbd.c b/drivers/input/keyboard/atakbd.c
+>>>>>> index 524a72bee55a..fdeda0b0fbd6 100644
+>>>>>> --- a/drivers/input/keyboard/atakbd.c
+>>>>>> +++ b/drivers/input/keyboard/atakbd.c
+>>>>>> @@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned char scancode, char down)
+>>>>>>
+>>>>>>                    scancode = atakbd_keycode[scancode];
+>>>>>>
+>>>>>> -               if (scancode == KEY_CAPSLOCK) { /* CapsLock is a toggle switch key on Amiga */
+>>>>>> -                       input_report_key(atakbd_dev, scancode, 1);
+>>>>>> -                       input_report_key(atakbd_dev, scancode, 0);
+>>>>>> -                       input_sync(atakbd_dev);
+>>>>>> -               } else {
+>>>>>> -                       input_report_key(atakbd_dev, scancode, down);
+>>>>>> -                       input_sync(atakbd_dev);
+>>>>>> -               }
+>>>>>> +               input_report_key(atakbd_dev, scancode, down);
+>>>>>> +               input_sync(atakbd_dev);
+>>>>>>            } else                          /* scancodes >= 0xf3 are mouse data, most likely */
+>>>>>>                    printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+>>>>>>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+
