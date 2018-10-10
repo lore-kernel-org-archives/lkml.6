@@ -2,295 +2,118 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B0DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B78C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5BB9214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E825B2087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:29:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYLlB1do"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5BB9214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="q1T4ex7A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E825B2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeJJKe6 (ORCPT
+        id S1726810AbeJJKtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 06:34:58 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:45116 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbeJJKe6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 06:34:58 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v198-v6so1588864ywg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 20:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Ht/VbSAI9fmYutKsGFgkGu0EV0IKMMg4jVy9TEApi4=;
-        b=eYLlB1dobR7Sk4IrAGy4l/jq36Fj/jnWgnnDsejfRfb8HmAupB3TQ4d26GmZkANNpX
-         vraO34TBwRvZG0DKTpwZcdcoR16IYjDA+KF+6eq7EKX/TjQHtoyE5uitG9FalcJc+aWF
-         wwT5qD0IPF1YcNUNwlmDpc4YcAooT1rf9WszA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Ht/VbSAI9fmYutKsGFgkGu0EV0IKMMg4jVy9TEApi4=;
-        b=C1oq+zjj+iwc78LjxRtNHHB1DrQAXSYvyCWqPQ5YN0zil7LQM2dtoPrdgfxPiGBOFO
-         30N2zHuQ4WUHXw5/BWzTlA1osX+MqrhLbT6qyyZ5RRMvU1yXcRPKf7th+RWxjrneq31C
-         LPjwRV4y87u73LOWgf9DNuDL+DiQalCo3H9OroT2anZQvvwnYAoC82ugLAvW+7NMENlL
-         Gji3RdrrttGx3FEyl60xo2+LwZbFexYE3WKAEAD5HCzq3hrYr4ZasMQtQ5t1I+L80aeh
-         6Cw9Omt5EUeYqvBJ84md5LL/TZzXIj9Lae1CNVaLzuSqtC6zqJzGlRBznuT/Y4YWszXy
-         5AmQ==
-X-Gm-Message-State: ABuFfoik5FO4egRIKV6SBuAczCNoZyfbPgb7DALofs/VMkXrILipOEiD
-        k5UFxgWgpHku96dSQ5TxF4yMKO8hFGFCRdS38m8sng==
-X-Google-Smtp-Source: ACcGV60r/zlBQcwIal8IVVaq5ZEkJDzIvRhY85YX5yj2RgYMJjl/eJXq4FICN30/gEnN31oaaCPFpnfSQ5KA2zydTJg=
-X-Received: by 2002:a81:5f86:: with SMTP id t128-v6mr17689309ywb.84.1539141294986;
- Tue, 09 Oct 2018 20:14:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538397784-4214-1-git-send-email-firoz.khan@linaro.org>
- <1538397784-4214-4-git-send-email-firoz.khan@linaro.org> <0741f810-58c9-dcf3-8c1c-93860c08e428@xilinx.com>
- <CALxhOnh4__SMm93Lpr13eHxBTvDnocHzdh3YDxtuogEKg355Vw@mail.gmail.com>
- <440fc4a0-cd4e-c8fc-9278-928cf5b7cd92@xilinx.com> <CALxhOnhFyb13YZTRFNsvs9FWD7OCzPtbmdzn+V_YepXACVOxiQ@mail.gmail.com>
-In-Reply-To: <CALxhOnhFyb13YZTRFNsvs9FWD7OCzPtbmdzn+V_YepXACVOxiQ@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Wed, 10 Oct 2018 08:44:43 +0530
-Message-ID: <CALxhOngLfXNvnxXZZJuJVbUGW7peoo3=Ss8ToVWcDCm-g14GTg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] microblaze: uapi header and system call table file generation
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+        Wed, 10 Oct 2018 06:49:03 -0400
+Received: from mail-eopbgr00053.outbound.protection.outlook.com ([40.107.0.53]:41050
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725860AbeJJKtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 06:49:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vc68mUPK/iN2429lIsyzLED+tL5mmJT53WGgkqESFbk=;
+ b=q1T4ex7AXTTXN16jbSDUbTqK5huw8KvkCxijt1NPEvwC2dednkIs98cBCr8nmstX2UlgpQYSqe758pBF0Ozc37bmJaUlrEp5QsmL5OUTw5dS9eEsKiU01LnenEFwDHI6cCdgPLRqWUihl0HzwbVaecNteBtWyC5sXci6spxwd8Y=
+Received: from VI1PR04MB5040.eurprd04.prod.outlook.com (20.177.50.97) by
+ VI1PR04MB5151.eurprd04.prod.outlook.com (20.177.50.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.21; Wed, 10 Oct 2018 03:28:55 +0000
+Received: from VI1PR04MB5040.eurprd04.prod.outlook.com
+ ([fe80::6860:c9a6:abd4:b191]) by VI1PR04MB5040.eurprd04.prod.outlook.com
+ ([fe80::6860:c9a6:abd4:b191%2]) with mapi id 15.20.1207.029; Wed, 10 Oct 2018
+ 03:28:55 +0000
+From:   Bough Chen <haibo.chen@nxp.com>
+To:     Adam Ford <aford173@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "haibo.chen@freescale.com" <haibo.chen@freescale.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: RE: Pinmuxing and SDHC speeds on sdhci-esdhc-imx
+Thread-Topic: Pinmuxing and SDHC speeds on sdhci-esdhc-imx
+Thread-Index: AQHUX9Vmbb1546YVQkGAPZ+1/A9ji6UX0pgQ
+Date:   Wed, 10 Oct 2018 03:28:54 +0000
+Message-ID: <VI1PR04MB5040E64721C3B1EFBFC9A42C90E00@VI1PR04MB5040.eurprd04.prod.outlook.com>
+References: <CAHCN7xJnqbzyx=wFw4XY+NWRP_Y4RTVjeeyU3wSAsGtSUyG9Bw@mail.gmail.com>
+In-Reply-To: <CAHCN7xJnqbzyx=wFw4XY+NWRP_Y4RTVjeeyU3wSAsGtSUyG9Bw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=haibo.chen@nxp.com; 
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5151;6:QTtkqNwWthITQTPOlXNramiIl9APSbD0wBG21di7ss3NIp9wpu1ZD+MqmOhcIBAQYbi+I/jb3snh2HbOuuL47h6pGDDxv1q8gYOz43weScm+GKaGPx0G0wFOL4oJawszKK8UlkmhSLgPoXc50kxzN4xbnk+bbH/KOooD4rXIaYNlWt13cY587P8XQlnYPkjhpJuXdPzD2ZECW0wBz5kbmMhbe7vgKTVPx0R+ormY5I8BPmPtZDYIB9bX4jMMId8wpfJZKqRkQm98PRxEPJP4v5nU3skstAtTSaoqM697hgoXkrlkbDOllXe+RVentdzOFYjdX5hIarQin8Zv4FbyCJ3Zx4vPF9iq8zNVUbrG4TADuky6SfnUfih1er9t4sSLVzleOEXGxgueFPo7uXnyS99F7xqfTSJRHWjnLa2vb4sWEB/zAIguIO54vGysgzlrgb8uv5zXSEyjeO5/03RhkA==;5:TQJyfCNzozFSTwouPQxYfO+1HQKINxalOQAD8SWnKB7tQqRv8lcZ87nszpcamxSZoTguLxoA9h3nYOiMgCFnuqYJTgodZ3Z757K62xhvlpbAncM3A2ovnYOOJGlPj49LSLK7c1Q4UTiT8vAn68ne93zYTSXB8X+Y2YGHm1vhU0k=;7:uG/UmjCA85p+oiRMSoCcPbIaF+TnJRHg03+/T96Sq/SpBdl4VQ8ichwqMikxdCHP7nuJrtOjS65Skt/o2+fFSd6f7bV2DkfljNsasyx9IziWkcdSxT/OH6ikjBtgvH9gWjJ0PDxUzgdl4PxJadDM4gs9FhZqtGX8MwpsKNFFGhHHjsN8Qs31XLlF/8q7wIJAPLIQ6D0akpP6Vvku++BuK6jdjgcpL2rxobh4mHI11hqku3CfpWiW69wTriQTf7Ul
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a88bfadd-0477-467d-f83a-08d62e6081fa
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5151;
+x-ms-traffictypediagnostic: VI1PR04MB5151:
+x-microsoft-antispam-prvs: <VI1PR04MB51513B4737728B1EB22E367690E00@VI1PR04MB5151.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(101931422205132)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR04MB5151;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5151;
+x-forefront-prvs: 08213D42D3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(136003)(376002)(199004)(13464003)(189003)(33656002)(106356001)(66066001)(3846002)(6116002)(316002)(71200400001)(71190400001)(105586002)(14454004)(110136005)(478600001)(6246003)(2906002)(25786009)(68736007)(256004)(229853002)(39060400002)(476003)(6636002)(86362001)(76176011)(9686003)(53546011)(6506007)(102836004)(2900100001)(186003)(6436002)(5250100002)(5660300001)(486006)(26005)(2501003)(99286004)(74316002)(7696005)(97736004)(8676002)(53936002)(305945005)(7736002)(81166006)(81156014)(11346002)(446003)(8936002)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5151;H:VI1PR04MB5040.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wjT3WVVFzbNkW/PzizQRoXno5ecY1jaeMxwKUg6/S7SGvPwyP+Jrtw9pmsO1skRDoXYajE7njuVuX2BSgg1DoPIy2H/J/djaLO3KpXPfoeQ2kq2IyQiyuPDY+naVLyq4rDVrg5qm75suMnwyG51zxi8PRGxjldYZmnNBjWnT/SZHLe+u3Vt712JVEMZNAHFd+mJCUTZDNFAZoIbp/vNrpFHXwtt32eQh7xUZ4UoeqoxazKWw3sU/lW7Nbz2JWAA8Fnwdh2Xre+tS8KRSeG5iFqYq+OwqPUFeodKegbM0a3HIOuDEjnA6h7eYOvr8wUTlf9VcT4cx+t5sksSoEM4PvSFk87OhY6xqNWdlxRj2pks=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a88bfadd-0477-467d-f83a-08d62e6081fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 03:28:55.0029
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
-
-On Thu, 4 Oct 2018 at 16:05, Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> Hi Michal,
->
-> On Wed, 3 Oct 2018 at 16:56, Michal Simek <michal.simek@xilinx.com> wrote:
-> >
-> > On 3.10.2018 07:08, Firoz Khan wrote:
-> > > Hi Michal,
-> > >
-> > > On Tue, 2 Oct 2018 at 19:37, Michal Simek <michal.simek@xilinx.com> wrote:
-> > >>
-> > >> On 1.10.2018 14:43, Firoz Khan wrote:
-> > >>> System call table generation script must be run to generate
-> > >>> unistd_32.h and syscall_table.h files. This patch will have
-> > >>> changes which will invokes the script.
-> > >>>
-> > >>> This patch will generate unistd_32.h and syscall_table.h
-> > >>> files by the syscall table generation script invoked by
-> > >>> arch/microblaze/Makefile and the generated files against the
-> > >>> removed files will be identical.
-> > >>>
-> > >>> The generated uapi header file will be included in
-> > >>> uapi/asm/unistd.h and generated system call table support
-> > >>> file will be included by kernel/syscall_table.S file.
-> > >>>
-> > >>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> > >>> ---
-> > >>>  arch/microblaze/Makefile                  |   3 +
-> > >>>  arch/microblaze/include/asm/Kbuild        |   1 +
-> > >>>  arch/microblaze/include/uapi/asm/Kbuild   |   1 +
-> > >>>  arch/microblaze/include/uapi/asm/unistd.h | 411 +-----------------------------
-> > >>>  arch/microblaze/kernel/syscall_table.S    | 406 +----------------------------
-> > >>>  5 files changed, 10 insertions(+), 812 deletions(-)
-> > >>>
-> > >>> diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
-> > >>> index 4f3ab57..cda5e03 100644
-> > >>> --- a/arch/microblaze/Makefile
-> > >>> +++ b/arch/microblaze/Makefile
-> > >>> @@ -81,6 +81,9 @@ all: linux.bin
-> > >>>  archclean:
-> > >>>       $(Q)$(MAKE) $(clean)=$(boot)
-> > >>>
-> > >>> +archheaders:
-> > >>> +     $(Q)$(MAKE) $(build)=arch/microblaze/kernel/syscalls all
-> > >>> +
-> > >>>  linux.bin linux.bin.gz linux.bin.ub: vmlinux
-> > >>>       $(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-> > >>>
-> > >>> diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
-> > >>> index 569ba9e..d64f5e7 100644
-> > >>> --- a/arch/microblaze/include/asm/Kbuild
-> > >>> +++ b/arch/microblaze/include/asm/Kbuild
-> > >>> @@ -31,3 +31,4 @@ generic-y += trace_clock.h
-> > >>>  generic-y += vga.h
-> > >>>  generic-y += word-at-a-time.h
-> > >>>  generic-y += xor.h
-> > >>> +generic-y += syscall_table.h
-> > >>> \ No newline at end of file
-> > >>
-> > >> Still the problem with "No newline at end of file"
-> > >>
-> > >>> diff --git a/arch/microblaze/include/uapi/asm/Kbuild b/arch/microblaze/include/uapi/asm/Kbuild
-> > >>> index 2c6a6bf..3a40659 100644
-> > >>> --- a/arch/microblaze/include/uapi/asm/Kbuild
-> > >>> +++ b/arch/microblaze/include/uapi/asm/Kbuild
-> > >>> @@ -28,3 +28,4 @@ generic-y += termbits.h
-> > >>>  generic-y += termios.h
-> > >>>  generic-y += types.h
-> > >>>  generic-y += ucontext.h
-> > >>> +generic-y += unistd_32.h
-> > >>> \ No newline at end of file
-> > >>
-> > >> and here too.
-> > >
-> > > Thanks for your comment. checkpatch script didn't warn this one:(
-> > > Hopefully, I can fix this one in the next version.
-> > >
-> > > I would appreciate if you can perform the boot test on the actual
-> > > platform and share the result with me.
-> >
-> > I see one issue there.
-> > Run
-> > make mrproper
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/1/
-> >
-> > And then
-> >
-> > make mrproper
-> > make archheaders V=1
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/2/
-> >
-> > And compare output.
-> > What I see is that in the first part asm/unistd_32.h pointing to
-> > asm-generic/unistd_32.h
-> >
-> > But when archheaders is run before there is expected content.
-> >
-> > That means there is incorrect/missing dependency in Makefiles.
-> >
-> >
-> > Time to time I am able to see compilation warnings
-> > but I didn't find exact steps to replicate this but it also looks like
-> > on missing dependency somewhere.
-> >
-> > [linux](next)$ make mmu_defconfig
-> > #
-> > # configuration written to .config
-> > #
-> > [linux](next)$ make -j8 simpleImage.system
-> >   WRAP    arch/microblaze/include/generated/asm/barrier.h
-> >   WRAP    arch/microblaze/include/generated/asm/bitops.h
-> >   WRAP    arch/microblaze/include/generated/asm/bug.h
-> >   WRAP    arch/microblaze/include/generated/asm/bugs.h
-> >   WRAP    arch/microblaze/include/generated/asm/device.h
-> >   WRAP    arch/microblaze/include/generated/asm/compat.h
-> >   WRAP    arch/microblaze/include/generated/asm/div64.h
-> >   WRAP    arch/microblaze/include/generated/asm/dma-mapping.h
-> >   WRAP    arch/microblaze/include/generated/asm/emergency-restart.h
-> >   WRAP    arch/microblaze/include/generated/asm/exec.h
-> >   WRAP    arch/microblaze/include/generated/asm/extable.h
-> >   WRAP    arch/microblaze/include/generated/asm/fb.h
-> >   WRAP    arch/microblaze/include/generated/asm/hardirq.h
-> >   WRAP    arch/microblaze/include/generated/asm/irq_regs.h
-> >   WRAP    arch/microblaze/include/generated/asm/kdebug.h
-> >   WRAP    arch/microblaze/include/generated/asm/kmap_types.h
-> >   WRAP    arch/microblaze/include/generated/asm/irq_work.h
-> >   WRAP    arch/microblaze/include/generated/asm/kprobes.h
-> >   WRAP    arch/microblaze/include/generated/asm/linkage.h
-> >   WRAP    arch/microblaze/include/generated/asm/local.h
-> >   WRAP    arch/microblaze/include/generated/asm/local64.h
-> >   WRAP    arch/microblaze/include/generated/asm/mcs_spinlock.h
-> >   WRAP    arch/microblaze/include/generated/asm/mm-arch-hooks.h
-> >   WRAP    arch/microblaze/include/generated/asm/parport.h
-> >   WRAP    arch/microblaze/include/generated/asm/percpu.h
-> >   WRAP    arch/microblaze/include/generated/asm/preempt.h
-> >   WRAP    arch/microblaze/include/generated/asm/topology.h
-> >   WRAP    arch/microblaze/include/generated/asm/syscalls.h
-> >   WRAP    arch/microblaze/include/generated/asm/trace_clock.h
-> >   WRAP    arch/microblaze/include/generated/asm/vga.h
-> >   WRAP    arch/microblaze/include/generated/asm/serial.h
-> >   WRAP    arch/microblaze/include/generated/asm/word-at-a-time.h
-> >   WRAP    arch/microblaze/include/generated/asm/xor.h
-> >   HOSTCC  scripts/bin2c
-> >   HOSTCC  scripts/kallsyms
-> >   HOSTCC  scripts/dtc/dtc.o
-> >   HOSTCC  scripts/mod/mk_elfconfig
-> >   HOSTCC  scripts/sortextable
-> >   CC      scripts/mod/empty.o
-> >   HOSTCC  scripts/dtc/flattree.o
-> >   UPD     include/config/kernel.release
-> >   HOSTCC  scripts/dtc/fstree.o
-> >   HOSTCC  scripts/dtc/data.o
-> >   HOSTCC  scripts/dtc/livetree.o
-> >   CC      scripts/mod/devicetable-offsets.s
-> >   HOSTCC  scripts/dtc/treesource.o
-> >   HOSTCC  scripts/dtc/srcpos.o
-> >   MKELF   scripts/mod/elfconfig.h
-> >   UPD     scripts/mod/devicetable-offsets.h
-> >   HOSTCC  scripts/dtc/checks.o
-> >   HOSTCC  scripts/dtc/util.o
-> >   HOSTCC  scripts/mod/sumversion.o
-> >   LEX     scripts/dtc/dtc-lexer.lex.c
-> >   YACC    scripts/dtc/dtc-parser.tab.h
-> >   YACC    scripts/dtc/dtc-parser.tab.c
-> >   UPD     include/generated/utsrelease.h
-> >   HOSTCC  scripts/dtc/dtc-lexer.lex.o
-> >   CC      kernel/bounds.s
-> >   UPD     include/generated/timeconst.h
-> >   HOSTCC  scripts/dtc/dtc-parser.tab.o
-> >   HOSTCC  scripts/mod/file2alias.o
-> >   HOSTCC  scripts/mod/modpost.o
-> >   UPD     include/generated/bounds.h
-> >   CC      arch/microblaze/kernel/asm-offsets.s
-> > In file included from ./arch/microblaze/include/uapi/asm/unistd.h:14:0,
-> >                  from ./arch/microblaze/include/asm/unistd.h:12,
-> >                  from ./include/uapi/linux/unistd.h:8,
-> >                  from ./arch/microblaze/include/asm/seccomp.h:5,
-> >                  from ./include/linux/seccomp.h:14,
-> >                  from ./include/linux/sched.h:21,
-> >                  from arch/microblaze/kernel/asm-offsets.c:13:
-> > ./arch/microblaze/include/generated/uapi/asm/unistd_32.h:1:35: fatal
-> > error: asm-generic/unistd_32.h: No such file or directory
-> >  #include <asm-generic/unistd_32.h>
-> >                                    ^
-> > compilation terminated.
-> > make[1]: *** [arch/microblaze/kernel/asm-offsets.s] Error 1
-> > make: *** [prepare0] Error 2
-> > make: *** Waiting for unfinished jobs....
-> >   HOSTLD  scripts/dtc/dtc
-> >   HOSTLD  scripts/mod/modpost
-> >
-> >
-> >
-> > When build is fine system is booting fine (v4.19-rc6 + your patches).
->
-> Thanks for your support. I'll work on the same which shared above.
-> I'll update you asap with the fix.
-
-I'm bit busy this week, working on parisc and ia64 support.
-Hopefully I can update you next week.
-
-Thanks
-Firoz
-
->
-> - Firoz
->
-> >
-> > Thanks,
-> > Michal
-> >
-> >
+SGkgQWRhbQ0KDQpZZXMsIE1NQ19ERFI1MiBjYW4gdXNlIHBpbnNfMTAwbWh6LiBZb3UgY2FuIGRv
+IHRoYXQsIHRoYW5rcyENCg0KQmVzdCBSZWdhcmRzDQpCb3VnaCBDaGVuDQoNCj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtbW1jLW93bmVyQHZnZXIua2VybmVsLm9y
+Zw0KPiBbbWFpbHRvOmxpbnV4LW1tYy1vd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBP
+ZiBBZGFtIEZvcmQNCj4gU2VudDogMjAxOOW5tDEw5pyIOeaXpSAyMTozOA0KPiBUbzogbGludXgt
+bW1jQHZnZXIua2VybmVsLm9yZzsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdA0KPiA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz47IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+
+Ow0KPiBoYWliby5jaGVuQGZyZWVzY2FsZS5jb207IEZhYmlvIEVzdGV2YW0gPGZhYmlvLmVzdGV2
+YW1AbnhwLmNvbT4NCj4gU3ViamVjdDogUGlubXV4aW5nIGFuZCBTREhDIHNwZWVkcyBvbiBzZGhj
+aS1lc2RoYy1pbXgNCj4gDQo+IEkgaGF2ZSBhIHF1ZXN0aW9uIHJlZ2FyZGluZyB0aGUgcGluc3Rh
+dGUgYW5kIHRoZSBjb3JyZXNwb25kaW5nIHVoc19zaWduYWxpbmcuDQo+IA0KPiBUaGUgdWhzX3Np
+Z25hbGluZyBzaG93cyBhIHZhcmlldHkgb2YgdGltaW5nIG9wdGlvbnMsDQo+IA0KPiAgTU1DX1RJ
+TUlOR19VSFNfU0RSMTIsICBNTUNfVElNSU5HX1VIU19TRFIyNTosDQo+IE1NQ19USU1JTkdfVUhT
+X1NEUjUwLCBNTUNfVElNSU5HX1VIU19TRFIxMDQsDQo+IE1NQ19USU1JTkdfTU1DX0hTMjAwLCAg
+TU1DX1RJTUlOR19VSFNfRERSNTAsDQo+IE1NQ19USU1JTkdfTU1DX0REUjUyLCAgTU1DX1RJTUlO
+R19NTUNfSFM0MDAsIGFuZA0KPiBNTUNfVElNSU5HX0xFR0FDWQ0KPiANCj4gSG93ZXZlciB0aGUg
+ZXNkaGNfY2hhbmdlX3BpbnN0YXRlIGZ1bmN0aW9uIG9ubHkgbGlzdHMNCj4gTU1DX1RJTUlOR19V
+SFNfU0RSNTAsIE1NQ19USU1JTkdfVUhTX0REUjUwLA0KPiBNTUNfVElNSU5HX1VIU19TRFIxMDQs
+IE1NQ19USU1JTkdfTU1DX0hTMjAwLCBhbmQNCj4gTU1DX1RJTUlOR19NTUNfSFM0MCwgYW5kIGEg
+ZGVmYXV0Lg0KPiANCj4gRnJvbSB3aGF0IEkgY2FuIHRlbGwsIHRoaXMgbWVhbnMgdGhhdCAgTU1D
+X1RJTUlOR19NTUNfRERSNTIgdXNlcyB0aGUNCj4gZGVmYXVsdCBwaW5tdXguICBJIGFtIHdvbmRl
+cmluZyBpZiBpdCBzaG91bGQgdXNlIHBpbnNfMTAwbWh6LiAgV2UgaGF2ZSBhbg0KPiBlTU1DIHBh
+cnQgdGhhdCB3ZSB3YW50IHRvIG9wZXJhdGUgYXQgdGhpcyBwb2ludCBhbmQgaXQgc2VlbXMgbGlr
+ZSBpdCBtaXNzaW5nLg0KPiBJZiBzbywgSSBjYW4gc3VibWl0IGEgcGF0Y2guDQo+IA0KPiBJdCBh
+bHNvIHNlZW1zIGxpa2UgdGhhdCBTRFIxMiwgU0RSMjUgdXNlIHRoZSBkZWZhdWx0LiAgSSBhc3N1
+bWUgdGhpcyBpcyBPSy4NCj4gDQo+IGFkYW0NCg==
