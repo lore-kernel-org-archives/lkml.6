@@ -6,91 +6,91 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAAFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57F9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96148214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:21:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96148214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A3663214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3663214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJJQmi (ORCPT
+        id S1726943AbeJJQmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:42:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58808 "EHLO mx1.redhat.com"
+        Wed, 10 Oct 2018 12:42:46 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33183 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJJQmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:42:38 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78FF1300206A;
-        Wed, 10 Oct 2018 09:21:21 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A20268D36;
-        Wed, 10 Oct 2018 09:21:19 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 17:21:17 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1726562AbeJJQmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 12:42:45 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9A83Vtm025917;
+        Wed, 10 Oct 2018 03:03:32 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w9A83QM4025857;
+        Wed, 10 Oct 2018 03:03:26 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Wed, 10 Oct 2018 03:03:25 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Richard Biener <rguenther@suse.de>, Michael Matz <matz@suse.de>,
+        Borislav Petkov <bp@alien8.de>, gcc@gcc.gnu.org,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        Masayoshi Mizuma <msys.mizuma@gmail.com>
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181010092117.GG25297@MiWiFi-R3L-srv>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
- <20181010085920.GB5533@zn.tnic>
- <20181010090620.GF25297@MiWiFi-R3L-srv>
- <20181010091205.GA10618@localhost.localdomain>
-MIME-Version: 1.0
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181010080324.GV29268@gate.crashing.org>
+References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr> <20181009145330.GT29268@gate.crashing.org> <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr> <20181010072240.GB103159@gmail.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181010091205.GA10618@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 10 Oct 2018 09:21:21 +0000 (UTC)
+In-Reply-To: <20181010072240.GB103159@gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 at 05:12pm, Chao Fan wrote:
-> On Wed, Oct 10, 2018 at 05:06:20PM +0800, Baoquan He wrote:
-> >Hi Boris,
-> >
-> >On 10/10/18 at 10:59am, Borislav Petkov wrote:
-> >> ... and we just picked up
-> >> 
-> >> https://lkml.kernel.org/r/20181001140843.26137-1-msys.mizuma@gmail.com
-> >> 
-> >> and without having looked at the rest of your stuff, if people accept
-> >> your solution, we don't need the silly parameter anymore, right?
-> >> 
-> >> Which means, we should not rush the whole thing yet until the whole
-> >> KASLR vs movable memory gets solved properly.
-> >
-> >Masa's patches solves the problem in memory region KASLR which later hot
-> >added memory may be big than the default padding 10 TB.
-> >
-> >Chao's patches is trying to fix a conflict between 'movable_node' and
-> >kernel text KASLR. If 'movable_node' specified, we rely on SRAT to get
-> >which memory region is movable or immovable, and movable region can be
-> >hot removed. But if kernel is randomized into movable memory, it can't
-> >be hot removed any more, this is a regression after KASLR introduced.
-> >So this is a different issue than Masa's.
+On Wed, Oct 10, 2018 at 09:22:40AM +0200, Ingo Molnar wrote:
+> * Richard Biener <rguenther@suse.de> wrote:
+> > Can kernel folks give this a second and third thought please so we
+> > don't implement sth that in the end won't satisfy you guys?
 > 
-> Yes, they are two issues.
-> But if we can get more memory information by the function in
-> the new file acpi.c, semms it's helfpul to Masa's issue.
+> So this basically passes '0 size' to the inliner, which should be better
+> than passing in the explicit size, as we'd inevitably get it wrong
+> in cases.
 
-Hmm, reading SRAT three times during x86 kernel boot? Maybe we try this
-after the function has run a time and proved very stable?
+The code immediately after this makes it size 1, even for things like
+asm(""), I suppose this works better for the inliner.  But that's a detail
+(and it might change); the description says "consider this asm as minimum
+length and cost for inlining decisions", which works for either 0 or 1.
 
-Thanks
-Baoquan
+> I also like 'size 0' for the reason that we tend to write assembly code
+> and mark it 'inline' if we really think it matters to performance,
+> so making it more likely to be inlined when used within another inline
+> function is a plus as well.
+
+You can think of it as meaning "we want this asm inlined always", and then
+whether that actually happens depends on if the function around it is
+inlined or not.
+
+
+Segher
