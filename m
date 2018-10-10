@@ -2,117 +2,194 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84754C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EE1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3910C214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8CDF2085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmLHMYUk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3910C214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="YbkSOozh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8CDF2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJJQk1 (ORCPT
+        id S1726911AbeJJQkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:40:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbeJJQk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:40:27 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE4AD2150D
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 09:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539163151;
-        bh=HyG5azoQDX8JPB7rSiSM9+ipKAwB/nGKef6WreQYce8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YmLHMYUkl84wNk0UwM46bbNnEZQ/V2gb+rabpzJNBWGpBgiZxpsQqbc3eq06iVJ2v
-         G64mS6UcX1d9lL8lf7K6zcfsMonOfUG7COHIScTZtI1a4SOEFGA1B2ANG1zb6xQYq5
-         1yAA9EblGN7+ODg5lSg8r+PAxcjeec25riSUnqBo=
-Received: by mail-wm1-f46.google.com with SMTP id i8-v6so4611408wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:19:10 -0700 (PDT)
-X-Gm-Message-State: ABuFfohNkAHz0jt/0JG8ePSd7fcvpCvFzvrMF1zu8v3VEt0ukHii/46s
-        oeDrm3P1fhCrbpOJCnmCt/f2MhQw5YEuwoqYKmA=
-X-Google-Smtp-Source: ACcGV60rCZ3ovhXqUAkJzUlcOQjjAYL+h5CF3AMkzPBEnTremVJaz6+g/ZRvELolX7qkfH+mWe/XiFW+lMNTCUw2Gh8=
-X-Received: by 2002:a1c:9609:: with SMTP id y9-v6mr140249wmd.67.1539163149245;
- Wed, 10 Oct 2018 02:19:09 -0700 (PDT)
+        Wed, 10 Oct 2018 12:40:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36254 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbeJJQkl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 12:40:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y16so4858436wrw.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sdX5s3PMClvx96LzmrzDEiVzosymhg4ArBBd02bkTtc=;
+        b=YbkSOozhx5eA3FEE8B+lXarR1kWaZyb4ExixjDBVp6m767GbvqRQYLa4p8BgYeL43X
+         RgP6lBG2TWujzj6+VI72WOSXb0U6thmXVIjlO7hgMZXwx33tKv75NyG1WR3ZuJt5mwYS
+         OeCRGPPkbh9+BS/Ogto4qLsA4VixoEVsX5vleLsFpkHDoso2OOBRy6rrvVUZgusBYcb4
+         Hrl5/IgDqNtHEFM1jGfnUSF8RdfzYRvGLNNz1WBfC4HIHr76e2meRhmpKpNq/9nT6a6R
+         v8sw9M7mQDI+WTkRO5UpFS6KcyXdcAvOvaLR4JDR7/mGL8KHfhsOABMsP3+dL6CWpP2R
+         duHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sdX5s3PMClvx96LzmrzDEiVzosymhg4ArBBd02bkTtc=;
+        b=JeDfLu3CkU/VJMV1TYhTL8G7DNczQhkJ0/L3Z5MWeACkQwHBx9UUHkWv6cI/Cip4wj
+         AKzZsnKHi21i+t5TY8jfpIj5PwvKO8Gl+SsdG3fYCEum4xJ8/Sr7fFY2R73uF9qEQ93p
+         JUQmJNeIAud8iJOo3tQWZ7oT95R1kXk/v2vfglHssUr/Sgvg5NQnInxTZAm6SUOcVCQu
+         olfg/g47BxkS4C8vG4VISExD+NaRyMuNN1RYc1kzBt9ftkfxO1fpDsVi1aB6mvEWM3Ar
+         S4I8R+HQStD8aivN4EakLCAK31KCzhdjOvR2QK36mH7J0WIvHh4hsuinVG1IiLk2r/ic
+         AVQQ==
+X-Gm-Message-State: ABuFfoiDLI7JCb0bnzMnkd/0NLAKRkxjLJYcp/2ChRZjvNgD/coM5+0p
+        XT3/t7c+Da/Vb73hNHZMTb+ODfOfwL4=
+X-Google-Smtp-Source: ACcGV60r07Yp31hMmjbrJnAL3S9YpxfklFDzKLINEFSaMPWc9Xv6hvUjMq7z64ANdR3K0Eq2W+sWDg==
+X-Received: by 2002:adf:f3c7:: with SMTP id g7-v6mr21691832wrp.229.1539163163611;
+        Wed, 10 Oct 2018 02:19:23 -0700 (PDT)
+Received: from localhost (jirka.pirko.cz. [84.16.102.26])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm25728729wrb.95.2018.10.10.02.19.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 02:19:23 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 11:13:58 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH net-next v7 28/28] net: WireGuard secure network tunnel
+Message-ID: <20181010091358.GB5027@nanopsycho.orion>
+References: <20181006025709.4019-1-Jason@zx2c4.com>
+ <20181006025709.4019-29-Jason@zx2c4.com>
+ <20181006065819.GD3061@nanopsycho.orion>
+ <CAHmME9pKvUOaAHhe7gb3yH4jdkdTtLv+gUqdnh3bJZcN776UWQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <CGME20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a@eucas1p1.samsung.com>
- <20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a~b_qPT4nMA1415514155eucas1p16@eucas1p1.samsung.com>
-In-Reply-To: <20181009153439eucas1p19956dc093074fb7603ad4b39d7cd215a~b_qPT4nMA1415514155eucas1p16@eucas1p1.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 10 Oct 2018 11:18:57 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeSLxeHR-n0yAqbYMi4y9sZhX0Omk=C6-8du7x27X4aWA@mail.gmail.com>
-Message-ID: <CAJKOXPeSLxeHR-n0yAqbYMi4y9sZhX0Omk=C6-8du7x27X4aWA@mail.gmail.com>
-Subject: Re: [PATCH] config: arm: exynos: remove PROVE_LOCKING from defconfig
-To:     l.luba@partner.samsung.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9pKvUOaAHhe7gb3yH4jdkdTtLv+gUqdnh3bJZcN776UWQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Oct 2018 at 17:34, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+Sun, Oct 07, 2018 at 07:26:47PM CEST, Jason@zx2c4.com wrote:
+>Hi Jiri,
 >
-> PROVE_LOCKING enables LOCKDEP, which causes big overhead on cache and
-> bus transactions.
+>On Sat, Oct 6, 2018 at 9:03 AM Jiri Pirko <jiri@resnulli.us> wrote:
+>> >+
+>> >+      wg->incoming_handshakes_worker =
+>> >+              wg_packet_alloc_percpu_multicore_worker(
+>> >+                              wg_packet_handshake_receive_worker, wg);
+>> >+      if (!wg->incoming_handshakes_worker)
+>> >+              goto error_2;
+>>
+>>
+>> Please consider renaming the label to "what went wrong". In this case,
+>> it would be "err_alloc_worker".
+>>
+>>
+>> >+
+>> >+      wg->handshake_receive_wq = alloc_workqueue("wg-kex-%s",
+>> >+                      WQ_CPU_INTENSIVE | WQ_FREEZABLE, 0, dev->name);
+>> >+      if (!wg->handshake_receive_wq)
+>> >+              goto error_3;
+>> >+
+>> >+      wg->handshake_send_wq = alloc_workqueue("wg-kex-%s",
+>> >+                      WQ_UNBOUND | WQ_FREEZABLE, 0, dev->name);
+>> >+      if (!wg->handshake_send_wq)
+>> >+              goto error_4;
+>> >+
+>> >+      wg->packet_crypt_wq = alloc_workqueue("wg-crypt-%s",
+>> >+                      WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 0, dev->name);
+>> >+      if (!wg->packet_crypt_wq)
+>> >+              goto error_5;
+>> >+
+>> >+      if (wg_packet_queue_init(&wg->encrypt_queue, wg_packet_encrypt_worker,
+>> >+                               true, MAX_QUEUED_PACKETS) < 0)
+>>
+>> You need to have "int err" and always in cases like this to do:
+>> err = wg_packet_queue_init()
+>> if (err)
+>>         goto err_*
+>>
+>>
+>> >+              goto error_6;
+>> >+
+>> >+      if (wg_packet_queue_init(&wg->decrypt_queue, wg_packet_decrypt_worker,
+>> >+                               true, MAX_QUEUED_PACKETS) < 0)
+>> >+              goto error_7;
+>> >+
+>> >+      ret = wg_ratelimiter_init();
+>> >+      if (ret < 0)
+>> >+              goto error_8;
+>> >+
+>> >+      ret = register_netdevice(dev);
+>> >+      if (ret < 0)
+>> >+              goto error_9;
+>> >+
+>> >+      list_add(&wg->device_list, &device_list);
+>> >+
+>> >+      /* We wait until the end to assign priv_destructor, so that
+>> >+       * register_netdevice doesn't call it for us if it fails.
+>> >+       */
+>> >+      dev->priv_destructor = destruct;
+>> >+
+>> >+      pr_debug("%s: Interface created\n", dev->name);
+>> >+      return ret;
+>> >+
+>> >+error_9:
+>> >+      wg_ratelimiter_uninit();
+>> >+error_8:
+>> >+      wg_packet_queue_free(&wg->decrypt_queue, true);
+>> >+error_7:
+>> >+      wg_packet_queue_free(&wg->encrypt_queue, true);
+>> >+error_6:
+>> >+      destroy_workqueue(wg->packet_crypt_wq);
+>> >+error_5:
+>> >+      destroy_workqueue(wg->handshake_send_wq);
+>> >+error_4:
+>> >+      destroy_workqueue(wg->handshake_receive_wq);
+>> >+error_3:
+>> >+      free_percpu(wg->incoming_handshakes_worker);
+>> >+error_2:
+>> >+      free_percpu(dev->tstats);
+>> >+error_1:
+>> >+      return ret;
+>> >+}
 >
-> On some ARM big.LITTLE architecutres (Exynos 5433) the overhead is really big.
-> The overhead can be measures using hackbench test which will speed up
-> by x3 times (11sec -> 3.4sec).
-> When you check transaction on cache or buses, the results are way higher
-> than normal for the same hackbench test:
-> L1d cache invalidations: 26mln vs 4mln
-> L2u cache invalidations: 42mln vs 12mln
-> bus cyc/access: 30cyc/access vs. 20cyc/access
-> context switch is x3 times cheaper
->
-> Enable this option only when you have some locking issue to investigate.
->
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 27ea6dfc..fbf52f3 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -324,7 +324,6 @@ CONFIG_MAGIC_SYSRQ=y
->  CONFIG_DEBUG_KERNEL=y
->  CONFIG_SOFTLOCKUP_DETECTOR=y
->  # CONFIG_DETECT_HUNG_TASK is not set
-> -CONFIG_PROVE_LOCKING=y
+>I'll change away from using error_9,8,7,6,5,4,3,2,1 because of your
+>suggestion -- and because it's the norm in the kernel to use real
+>names. But, I would be interested in your opinion on the numerical
+>errors' reasoning for existing in the first place. The idea was that
+>with so many different failure cases that need to cascade in the
+>correct order, it's much easier to visually inspect that it's been
+>done right by observing up top 1,2,3,4,5,6,7,8,9 and at the bottom
+>9,8,7,6,5,4,3,2,1, rather than having to store in my brain's limited
+>stack space what each name pertains to and keep track of the ordering
+>and such. In light of that, do you still think that following the
+>convention of textual error labels is a good match here? Again, I'm
+>changing this for v8, but I am nonetheless curious about what you
+>think.
 
-You just disabled all debugging around locks (so also basic checks).
-You did not describe this in the message... and it also makes me
-wonder what were you testing? Kernel without any lock debugging (so
-this patch) or kernel without lockdep only (not this patch).
+I think it is perfectly readable when you have:
 
-As for the reason behind this change, I am not sure. We had locking
-issues and this change really helped us to spot them. Most of the
-issues are solved so maybe this is not needed anymore but on the other
-hand - this is development/debugging config, not a distro-ready. It
-might serve as a reference for distro configs but clearly it is not
-for production.
+	err = do_thing_x();
+	if (err)
+		goto err_do_thing_x;
 
-Best regards,
-Krzysztof
 
->  CONFIG_DEBUG_ATOMIC_SLEEP=y
->  CONFIG_DEBUG_USER=y
->  CONFIG_CRYPTO_RSA=m
-> --
-> 2.7.4
+err_do_thing_x;
+
+Rest of the code (at least in netdev subtree) uses this a lot.
+
 >
+>Jason
