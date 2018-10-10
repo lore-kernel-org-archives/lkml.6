@@ -2,104 +2,78 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40498C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53B1220858
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:57:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B1220858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id EAC9A2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC9A2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbeJKFVw (ORCPT
+        id S1726016AbeJKFb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 01:21:52 -0400
-Received: from gate.crashing.org ([63.228.1.57]:36565 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbeJKFVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 01:21:52 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9AJLG7L025576;
-        Wed, 10 Oct 2018 14:21:17 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id w9AJLC8c025535;
-        Wed, 10 Oct 2018 14:21:12 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Wed, 10 Oct 2018 14:21:12 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Richard Biener <rguenther@suse.de>, Michael Matz <matz@suse.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "gcc@gcc.gnu.org" <gcc@gcc.gnu.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-Message-ID: <20181010192111.GD29268@gate.crashing.org>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr> <20181009145330.GT29268@gate.crashing.org> <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
-User-Agent: Mutt/1.4.2.3i
+        Thu, 11 Oct 2018 01:31:26 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:51711 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeJKFb0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 01:31:26 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gAMdQ-0004O6-Pz; Wed, 10 Oct 2018 16:07:16 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gAMdB-00086K-Fd; Wed, 10 Oct 2018 16:07:16 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+References: <20181010020641.GE13396@shao2-debian>
+        <87sh1dvmc5.fsf@xmission.com>
+Date:   Wed, 10 Oct 2018 17:06:52 -0500
+In-Reply-To: <87sh1dvmc5.fsf@xmission.com> (Eric W. Biederman's message of
+        "Wed, 10 Oct 2018 10:43:38 -0500")
+Message-ID: <87h8htv4lf.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1gAMdB-00086K-Fd;;;mid=<87h8htv4lf.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+C8+NQGdDit9eMbrncDKOBGWSbptvxYsE=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [LKP] 4ce5f9c9e7 [ 1.323881] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:1031 kmalloc_slab
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nadav,
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-On Wed, Oct 10, 2018 at 04:31:41PM +0000, Nadav Amit wrote:
-> at 7:53 AM, Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> > How does this look?
-> 
-> It looks good to me in general. I have a couple of reservations, but I
-> suspect you will not want to address them:
-> 
-> 1. It is not backward compatible, requiring a C macro to wrap it, as the 
-> kernel might be built with different compilers.
+> So I am flummoxed.  I am reading through the code and I don't see
+> anything that could trigger this, and when I ran the supplied reproducer
+> it did not reproduce for me.
 
-How *could* it be backward compatible?  There should be an error or at least
-a warning if the compiler does not support this, in general.
+Even more so.  With my tool chain the line that reports the failing
+address is impossible.
 
-For the kernel, the kernel already has plenty of infrastructure to support
-this (compiler.h etc.)  For other applications it is quite trivial, too.
+[   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
 
-> 2. It is specific to asm.
+With the supplied configureation my tool chain only has 0x30 bytes for
+all of copy_siginfo_from_user.  So I can't even begin to guess where
+in that function things are failing.
 
-Yes, and that is on purpose.
+Any additional information that you can provide would be a real help
+in tracking down this strange failure.
 
-> I do not have in mind another use case (excluding
-> the __builtin_constant_p), but it would be nicer IMHO to have a builtin
-> saying “ignore the cost of this statement” for the matter of optimizations.
+Thank you,
+Eric Biederman
 
-That is a hundred or a thousand times more work to design and implement
-(including testing etc.)  I'm not going to do it, but feel free to try
-yourself!
-
-
-Segher
