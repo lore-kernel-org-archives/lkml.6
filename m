@@ -2,127 +2,159 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153B3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B955C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6BBE21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:20:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BBE21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id D36EF21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:22:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RPl/HDsV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36EF21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbeJJSmE (ORCPT
+        id S1726836AbeJJSoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:42:04 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:25449 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726721AbeJJSmE (ORCPT
+        Wed, 10 Oct 2018 14:44:06 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47046 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJJSoG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:42:04 -0400
-X-UUID: 495baa22912342c1b2aacf08a8782bb7-20181010
-X-UUID: 495baa22912342c1b2aacf08a8782bb7-20181010
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <chunhui.li@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 19850537; Wed, 10 Oct 2018 19:20:18 +0800
-Received: from MTKMBS32N1.mediatek.inc (172.27.4.71) by
- MTKMBS32DR.mediatek.inc (172.27.6.104) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 10 Oct 2018 19:20:16 +0800
-Received: from MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e]) by
- MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e%23]) with mapi id
- 15.00.1395.000; Wed, 10 Oct 2018 19:20:16 +0800
-From:   =?utf-8?B?Q2h1bmh1aSBMaSAo5p2O5pil6L6JKQ==?= 
-        <chunhui.li@mediatek.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        =?utf-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <Miles.Chen@mediatek.com>,
-        =?utf-8?B?V2FsdGVyLVpIIFd1ICjlkLPnpZblr7Ap?= 
-        <Walter-ZH.Wu@mediatek.com>,
-        =?utf-8?B?WXUgTGlhbmcgKOaigeWuhyk=?= <Yu.Liang@mediatek.com>,
-        =?utf-8?B?TmljaG9sYXMgVGFuZyAo6YSt56em6LydKQ==?= 
-        <nicholas.tang@mediatek.com>
-Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF0ga2FzYW46IGF2b2lkIG91dC1vZi1i?=
- =?utf-8?Q?ounds_in_unwind=5Fframe?=
-Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGthc2FuOiBhdm9pZCBvdXQtb2YtYm91bmRzIGlu?=
- =?utf-8?Q?_unwind=5Fframe?=
-Thread-Index: AQHUX7hlcl/5Uvjz3E+Pcy5y9duGWqUWMuaAgAHVIND//6kFAIAApc6w
-Date:   Wed, 10 Oct 2018 11:20:16 +0000
-Message-ID: <a96f9343ed35422498432cc24405f39b@MTKMBS32N1.mediatek.inc>
-References: <1539079863-19645-1-git-send-email-chunhui.li@mediatek.com>
- <20181009103833.sk2jyhl77f5fb64r@lakrids.cambridge.arm.com>
- <193a2b2efdaf41f39cb35a72feb3b39e@MTKMBS32N1.mediatek.inc>
- <20181010092618.pwkrqqw7br7762rs@lakrids.cambridge.arm.com>
-In-Reply-To: <20181010092618.pwkrqqw7br7762rs@lakrids.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.27.4.250]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 10 Oct 2018 14:44:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dObbFQZGyXzlMbr1j4fSYsXXVzEUnB0sOQd04tUNgqo=; b=RPl/HDsVX0HPAkWr1phrarQFu
+        jSQSHJGWcswygngA76vjNW23ArKTgo+a7uJs88JteuvED3sDe+CgHZuFP4vSag8dN8tKSJmF6mwf2
+        xekN/7Whqm20LHZMl5HyCNase5P0Q6caA21mYT6UmGIp/zzY267VcS5GrmsqokfjAlMZg=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:40686)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gACZB-0006OF-Lb; Wed, 10 Oct 2018 12:22:13 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gACZ4-0001B8-GC; Wed, 10 Oct 2018 12:22:06 +0100
+Date:   Wed, 10 Oct 2018 12:22:01 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Lucas Stach <l.stach@pengutronix.de>, p.zabel@pengutronix.de,
+        airlied@linux.ie, gregkh@linuxfoundation.org, rafael@kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/imx: make sure to cleanup DRM before unbinding
+ components
+Message-ID: <20181010112201.GO30658@n2100.armlinux.org.uk>
+References: <83a28282a3f745a4cd4ca77d0593ad2e61359a5d.1539120077.git.stefan@agner.ch>
+ <e08eff2ed53b441c8a6c41758c00c1c91dc48d2c.1539120077.git.stefan@agner.ch>
+ <20181010103829.GN30658@n2100.armlinux.org.uk>
+ <11a452de8e6b39c80ae8ff6b2cdc4cc8@agner.ch>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11a452de8e6b39c80ae8ff6b2cdc4cc8@agner.ch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWFyaywNCg0KT2ssIHRoYW5rcyBmb3IgeW91ciBoZWxwDQoNCkJlc3QgcmVnYXJkcywNCkNo
-dW5odWkgTGkNCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBNYXJrIFJ1dGxh
-bmQgW21haWx0bzptYXJrLnJ1dGxhbmRAYXJtLmNvbV0gDQrlj5HpgIHml7bpl7Q6IDIwMTjlubQx
-MOaciDEw5pelIDE3OjI2DQrmlLbku7bkuro6IENodW5odWkgTGkgKOadjuaYpei+iSkNCuaKhOmA
-gTogQ2F0YWxpbiBNYXJpbmFzOyBXaWxsIERlYWNvbjsgTWF0dGhpYXMgQnJ1Z2dlcjsgTWFyYyBa
-eW5naWVyOyBBcmQgQmllc2hldXZlbDsgSmFtZXMgTW9yc2U7IE1hc2FoaXJvIFlhbWFkYTsgbGlu
-dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnOyB3c2RfdXBzdHJlYW07
-IE1pbGVzIENoZW4gKOmZs+awkeaouik7IFdhbHRlci1aSCBXdSAo5ZCz56WW5a+wKTsgWXUgTGlh
-bmcgKOaigeWuhyk7IE5pY2hvbGFzIFRhbmcgKOmEreenpui8nSkNCuS4u+mimDogUmU6IOetlOWk
-jTogW1BBVENIXSBrYXNhbjogYXZvaWQgb3V0LW9mLWJvdW5kcyBpbiB1bndpbmRfZnJhbWUNCg0K
-T24gV2VkLCBPY3QgMTAsIDIwMTggYXQgMDY6NDU6MTdBTSArMDAwMCwgQ2h1bmh1aSBMaSAo5p2O
-5pil6L6JKSB3cm90ZToNCj4gSGkgTWFyaywNCj4gDQo+IGthc2FuIGRldGVjdCBvdXQtb2YtYm91
-bmRzIGluIHN0YWNrdHJhY2UuYyBsaW5lIDcwLCBpdCdzIGFscmVhZHkgb3ZlciANCj4gUkVBRF9P
-TkNFX05PQ0hFQ0ssIGJ1dCBzdGlsbCBjcmFzaCANCj4ga2VybmVsLTQuOS9hcmNoL2FybTY0L2tl
-cm5lbC9zdGFja3RyYWNlLmMNCj4gNjlmcmFtZS0+c3AgPSBmcCArIDB4MTA7DQo+IDcwZnJhbWUt
-PmZwID0gUkVBRF9PTkNFX05PQ0hFQ0soKih1bnNpZ25lZCBsb25nICopKGZwKSk7DQo+IA0KPiB3
-ZSB0ZXN0IG9uIEFuZHJvaWQgcGxhdGZvcm0sIGtlcm5lbC00LjkgYnVpbGQgd2l0aCBjbGFuZyA2
-LjAuMiwgd2Ugd2lsbCBkbyBleHBlcmltZW50IHRvIGNsYXJpZnkgd2hldGhlciBjb21waWxlciBy
-ZWxhdGVkIGlzc3VlLg0KPiANCj4gUkVBRF9PTkNFX05PQ0hFQ0stPl9fcmVhZF9vbmNlX3NpemVf
-bm9jaGVjayB3aXRoIF9fbm9fc2FuaXRpemVfYWRkcmVzcyANCj4gaWYgZW5hYmxlIENPTkZJR19L
-QVNBTg0KPiANCj4ga2VybmVsLTQuOS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWdjYy5oDQo+ICNk
-ZWZpbmUgX19ub19zYW5pdGl6ZV9hZGRyZXNzIF9fYXR0cmlidXRlX18oKG5vX3Nhbml0aXplX2Fk
-ZHJlc3MpKQ0KPiANCj4ga2VybmVsLTQuOS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWNsYW5nLmgN
-Cj4gI2RlZmluZSBfX25vX3Nhbml0aXplX2FkZHJlc3MgX19hdHRyaWJ1dGVfXygobm9fc2FuaXRp
-emUoImFkZHJlc3MiKSkpDQoNCklmIFJFQURfT05DRV9OT0NIRUNLKCkgaXNuJ3Qgd29ya2luZyBh
-cyBpbnRlbmRlZCwgdGhlbiB0aGlzIGlzIGEgY29tcGlsZXIgaXNzdWUsIGFuZCB0aGVyZSBhcmUg
-YmlnZ2VyIHByb2JsZW1zIHJlZ2FyZGxlc3MuDQoNCklmIHdlIG5lZWQgdG8gd29ya2Fyb3VuZCBz
-b21lIGNvbXBpbGVyIGlzc3VlLCB0aGF0IHNob3VsZCBiZSBkb25lIGluIHRoZSBpbXBsZW1lbnRh
-dGlvbiBvZiBSRUFEX09OQ0VfTk9DSEVDSygpLg0KDQpQbGVhc2Ugbm90ZSB0aGF0IHRoZXJlIGFy
-ZSBvdGhlciBpc3N1ZXMgd2l0aCB1c2luZyBjbGFuZyB0byBjb21waWxlIHRoZSBrZXJuZWw7IGF0
-IG1pbmltdW0gNy4wLjAgaXMgcmVxdWlyZWQgdG8gYnVpbGQgYSBtYWlubGluZSBrZXJuZWwgKGFu
-ZCBldmVuIHRoZW4sIHRoZSBMU0UgYXRvbWljcyBoYXZlIHRvIGJlIGV4cGxpY2l0bHkgZGlzYWJs
-ZWQpLCBzbyBpZiB0aGlzIG9ubHkgYWZmZWN0cyA2LjAueCwgSSBkb24ndCB0aGluayB3ZSBuZWVk
-IHRvIGNhcnJ5IGFueSB3b3JrYXJvdW5kIHVwc3RyZWFtLg0KDQo+IHRoZXJlIGlzIHBhdGNoIGZy
-b20gaW50ZXJuZXQsIGF2b2lkIGthc2FuIGJ5IHdyYXBwaW5nIHdpdGgga2FzYW5fZGlzYWJsZV9j
-dXJyZW50LCBpdCBzZWVtcyBiZXR0ZXIuDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNo
-d29yay9wYXRjaC82NDQ0NjMNCj4gc3VjaCBhczoNCj4gK2thc2FuX2Rpc2FibGVfY3VycmVudCgp
-Ow0KPiAgIC8vIGFjY2VzcyBmcA0KPiAra2FzYW5fZW5hYmxlX2N1cnJlbnQoKTsNCg0KUGxlYXNl
-IG5vdGUgdGhhdCB0aGUgc29sdXRpb24gbGF0ZXIgaW4gdGhlIHRocmVhZCBbMV0gd2FzIHRvIHVz
-ZSBSRUFEX09OQ0VfTk9DSEVDSygpLg0KDQpUaGFua3MsDQpNYXJrLg0KDQpbMV0gaHR0cHM6Ly9s
-b3JlLmtlcm5lbC5vcmcvcGF0Y2h3b3JrL3BhdGNoLzY0NDQ2My8jODI5ODU4DQo=
+On Wed, Oct 10, 2018 at 01:02:16PM +0200, Stefan Agner wrote:
+> [adding Lucas]
+> 
+> On 10.10.2018 12:38, Russell King - ARM Linux wrote:
+> > On Tue, Oct 09, 2018 at 11:30:49PM +0200, Stefan Agner wrote:
+> >> In situations where a component fails to bind, a previously
+> >> successfully bound component might already registered itself
+> >> with the DRM framework (e.g. an encoder). When the master
+> >> component then calls drm_mode_config_cleanup, we end up in a
+> >> use after free sitution.
+> >>
+> >> Use the cleanup callback to make sure all framework level
+> >> cleanup is done by the time we unbind components.
+> > 
+> > I'm not sure about this approach - the idea about the component bind
+> > and unbind callbacks is that unbind undoes _everything_ that bind has
+> > done, so everything is correctly ordered.  If bind registers something,
+> > unbind should unregister it.
+> > 
+> > What seems to be going on is that imx is registering stuff in bind()
+> > but not unregistering it in unbind().
+> 
+> Yes indeed, if that can be fixed this seems to be the better approach to
+> me.
+> 
+> > 
+> > Since imx was one of the drivers that the component helper was
+> > created for, if it's now crashing, that's a regression in the imx
+> > driver.  Looking at the commit log, I'd say:
+> > 
+> > commit 8e3b16e2117409625b89807de3912ff773aea354
+> > Author: Lucas Stach <l.stach@pengutronix.de>
+> > Date:   Thu Aug 11 11:18:49 2016 +0200
+> > 
+> >     drm/imx: don't destroy mode objects manually on driver unbind
+> > 
+> >     Instead let drm_mode_config_cleanup() do the work when taking down
+> >     the master device. This requires all cleanup functions to be
+> >     properly hooked up to the mode object .destroy callback.
+> > 
+> >     Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> >     Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > 
+> > is probably responsible for introducing this problem, since the
+> > explicit calls were added by me when imx was stuck in staging due to
+> > the problems that the component helper solved.
+> 
+> The commit above does not revert cleanly today, but a quick fixing
+> seemed to resolve the problem I am seeing...
+> 
+> > 
+> > I think what we have here are different opinions on how cleanup
+> > should be handled.
+> 
+> In the regular case using the framework cleanup function before calling
+> component_unbind_all() works fine.
+> 
+> Its really only the case where a subcomponent fails to bind where unbind
+> happens before calling drm_mode_config_cleanup(drm). I guess Lucas was
+> not aware of that special case...?
+
+As long as ->unbind undoes everything that ->bind does, it's not a
+problem.
+
+WRT using devres groups in one of your previous mails on this topic,
+consider what would happen if you use devm_* APIs in the bind callback
+and the component helper did not use devres groups.
+
+Any resources taken in the bind callback would not be freed until the
+device was unbound from the driver by the driver model.  This means
+each time the bind callback gets called, new sets of resources are
+attempted to be acquired.  If some resources are exclusive, the first
+bind attempt would succeed, but the second attempt would fail with
+-EBUSY for example.  In the case of memory, the allocated memory
+would not be freed, but new memory would be allocated each time a
+bind was attempted.
+
+The alternative would be that devres must not be used at all in the
+bind/unbind callbacks - but then we'll be subject to the same error-
+prone cleanup that we see with driver probe functions prior to devres.
+
+Consider what the LDB bind/unbind callbacks would look like if devres
+was not permitted, and how the memory for the imx_ldb structure would
+be managed - you'd need some sort of ref-counting on the imx_ldb
+structure, and management of that in the encoder and optional connector
+destroy functions so you know when all embedded encoders and connectors
+in that structure have been "destroyed" by drm_mode_config_cleanup(),
+and hence it's safe to free the data structure.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
