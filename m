@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807B5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A08BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218BD2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:14:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED80E2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSLmLxNk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218BD2075C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cycruSSr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED80E2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbeJKGiM (ORCPT
+        id S1727653AbeJKGiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:38:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36412 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 02:38:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727691AbeJKGiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:38:11 -0400
+        id S1727439AbeJKGiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:38:02 -0400
 Received: from lerouge.suse.de (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12B0321526;
-        Wed, 10 Oct 2018 23:13:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3CA52098A;
+        Wed, 10 Oct 2018 23:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539213229;
-        bh=QCITUOR/M/rykBCpevVgO29id+sUFV5Be5gnbG9bQK8=;
+        s=default; t=1539213220;
+        bh=J32Vcu8w0O+q+nniXZLdRpIQODd2lArfnVlR9GBzVnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hSLmLxNknAGHteVK2zCZrz4Hkicr6p4wMAzTipETvLE1a8KMOhKNMQiIEqtJkHAtN
-         FUlPgSp5C5dk3AeU6Fhtx7wv81vic4YruMd2fpZljbnugsXL1AYFUUh9/nGyrbwtNs
-         QMURbMkB70nDBuflPIWibHd2MFIthEI5Sg14rA7Y=
+        b=cycruSSrI8+21z8pCJ0777jxjw7G+a+0aIQfh2rKze5BLwb+X34/88gjpRKip14Xh
+         Kv1sgnWF5Al59MzYbIimvXt5vauOBMS9ueRA3r7/yyvwsnO5xNw/vjChrRs6If18M6
+         nY2tUsc2CWuYYRpYdf1TeYkjCC41K/cs4kJn/NXM=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
+Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
         "David S . Miller" <davem@davemloft.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [RFC PATCH 25/30] softirq: Push down softirq mask to __local_bh_disable_ip()
-Date:   Thu, 11 Oct 2018 01:12:12 +0200
-Message-Id: <1539213137-13953-26-git-send-email-frederic@kernel.org>
+Subject: [RFC PATCH 22/30] seqlock: Prepare write_seq[un]lock_bh() for handling softirq mask
+Date:   Thu, 11 Oct 2018 01:12:09 +0200
+Message-Id: <1539213137-13953-23-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539213137-13953-1-git-send-email-frederic@kernel.org>
 References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
@@ -60,14 +60,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all callers are ready, we can push down the softirq enabled
-mask to the core from callers such as spin_lock_bh(), local_bh_disable(),
-rcu_read_lock_bh(), etc...
+From: Frederic Weisbecker <fweisbec@gmail.com>
 
-It is applied to the CPU vector enabled mask on __local_bh_disable_ip()
-which then returns the old value to be restored on __local_bh_enable_ip().
+This pair of function is implemented on top of spin_[un]lock_bh() that
+is going to handle a softirq mask in order to apply finegrained vector
+disablement. The lock function is going to return the previous vectors
+enabled mask prior to the last call to local_bh_disable(), following a
+similar model to that of local_irq_save/restore. Subsequent calls to
+local_bh_disable() and friends can then stack up:
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+	bh = local_bh_disable(vec_mask);
+		bh2 = write_seqlock_bh(...) {
+			return spin_lock_bh(...);
+		}
+		...
+		write_sequnlock_bh(..., bh2) {
+			spin_unlock_bh(..., bh2);
+		}
+	local_bh_enable(bh);
+
+To prepare for that, make write_seqlock_bh() able to return a saved
+vector enabled mask and pass it back to write_sequnlock_bh(). Then plug
+the whole with spin_[un]lock_bh().
+
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -77,261 +93,192 @@ Cc: David S. Miller <davem@davemloft.net>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/linux/bottom_half.h      | 19 ++++++++++---------
- include/linux/rwlock_api_smp.h   | 14 ++++++++------
- include/linux/spinlock_api_smp.h | 10 +++++-----
- kernel/softirq.c                 | 28 +++++++++++++++++++---------
- 4 files changed, 42 insertions(+), 29 deletions(-)
+ include/linux/seqlock.h    | 21 +++++++++++++--------
+ net/core/neighbour.c       |  5 +++--
+ net/ipv4/inetpeer.c        |  5 +++--
+ net/ipv4/sysctl_net_ipv4.c |  5 +++--
+ net/ipv4/tcp_metrics.c     |  5 +++--
+ net/rxrpc/conn_service.c   |  4 ++--
+ 6 files changed, 27 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
-index 31fcdae..f8a68c8 100644
---- a/include/linux/bottom_half.h
-+++ b/include/linux/bottom_half.h
-@@ -37,9 +37,10 @@ enum
- 
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
--extern void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
-+extern unsigned int __local_bh_disable_ip(unsigned long ip, unsigned int cnt,
-+					  unsigned int mask);
- #else
--static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
-+static __always_inline unsigned int __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
- {
- 	preempt_count_add(cnt);
- 	barrier();
-@@ -48,21 +49,21 @@ static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int
- 
- static inline unsigned int local_bh_disable(unsigned int mask)
- {
--	__local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
--	return 0;
-+	return __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET, mask);
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index c22e19c..720e6e0 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -455,16 +455,19 @@ static inline void write_sequnlock(seqlock_t *sl)
+ 	spin_unlock(&sl->lock);
  }
  
--extern void local_bh_enable_no_softirq(void);
--extern void __local_bh_enable_ip(unsigned long ip, unsigned int cnt);
-+extern void local_bh_enable_no_softirq(unsigned int bh);
-+extern void __local_bh_enable_ip(unsigned long ip,
-+				 unsigned int cnt, unsigned int bh);
- 
--static inline void local_bh_enable_ip(unsigned long ip)
-+static inline void local_bh_enable_ip(unsigned long ip, unsigned int bh)
+-static inline void write_seqlock_bh(seqlock_t *sl)
++static inline unsigned int write_seqlock_bh(seqlock_t *sl, unsigned int mask)
  {
--	__local_bh_enable_ip(ip, SOFTIRQ_DISABLE_OFFSET);
-+	__local_bh_enable_ip(ip, SOFTIRQ_DISABLE_OFFSET, bh);
- }
- 
- static inline void local_bh_enable(unsigned int bh)
- {
--	__local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-+	__local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET, bh);
- }
- 
- extern void local_bh_disable_all(void);
-diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
-index fb66489..90ba7bf 100644
---- a/include/linux/rwlock_api_smp.h
-+++ b/include/linux/rwlock_api_smp.h
-@@ -173,10 +173,11 @@ static inline void __raw_read_lock_irq(rwlock_t *lock)
- static inline unsigned int __raw_read_lock_bh(rwlock_t *lock,
- 					      unsigned int mask)
- {
--	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
+-	spin_lock_bh(&sl->lock, SOFTIRQ_ALL_MASK);
 +	unsigned int bh;
-+	bh = __local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, mask);
- 	rwlock_acquire_read(&lock->dep_map, 0, 0, _RET_IP_);
- 	LOCK_CONTENDED(lock, do_raw_read_trylock, do_raw_read_lock);
--	return 0;
++	bh = spin_lock_bh(&sl->lock, mask);
+ 	write_seqcount_begin(&sl->seqcount);
 +	return bh;
  }
  
- static inline unsigned long __raw_write_lock_irqsave(rwlock_t *lock)
-@@ -202,10 +203,11 @@ static inline void __raw_write_lock_irq(rwlock_t *lock)
- static inline unsigned int  __raw_write_lock_bh(rwlock_t *lock,
- 						unsigned int mask)
+-static inline void write_sequnlock_bh(seqlock_t *sl)
++static inline void write_sequnlock_bh(seqlock_t *sl,
++				      unsigned int bh)
  {
--	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
+ 	write_seqcount_end(&sl->seqcount);
+-	spin_unlock_bh(&sl->lock, 0);
++	spin_unlock_bh(&sl->lock, bh);
+ }
+ 
+ static inline void write_seqlock_irq(seqlock_t *sl)
+@@ -542,14 +545,16 @@ static inline void done_seqretry(seqlock_t *lock, int seq)
+ 		read_sequnlock_excl(lock);
+ }
+ 
+-static inline void read_seqlock_excl_bh(seqlock_t *sl)
++static inline unsigned int read_seqlock_excl_bh(seqlock_t *sl,
++						unsigned int mask)
+ {
+-	spin_lock_bh(&sl->lock, SOFTIRQ_ALL_MASK);
++	return spin_lock_bh(&sl->lock, mask);
+ }
+ 
+-static inline void read_sequnlock_excl_bh(seqlock_t *sl)
++static inline void read_sequnlock_excl_bh(seqlock_t *sl,
++					  unsigned int bh)
+ {
+-	spin_unlock_bh(&sl->lock, 0);
++	spin_unlock_bh(&sl->lock, bh);
+ }
+ 
+ static inline void read_seqlock_excl_irq(seqlock_t *sl)
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index ec55470..733449e 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -1083,6 +1083,7 @@ EXPORT_SYMBOL(__neigh_event_send);
+ static void neigh_update_hhs(struct neighbour *neigh)
+ {
+ 	struct hh_cache *hh;
 +	unsigned int bh;
-+	bh = __local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, mask);
- 	rwlock_acquire(&lock->dep_map, 0, 0, _RET_IP_);
- 	LOCK_CONTENDED(lock, do_raw_write_trylock, do_raw_write_lock);
--	return 0;
-+	return bh;
+ 	void (*update)(struct hh_cache*, const struct net_device*, const unsigned char *)
+ 		= NULL;
+ 
+@@ -1092,9 +1093,9 @@ static void neigh_update_hhs(struct neighbour *neigh)
+ 	if (update) {
+ 		hh = &neigh->hh;
+ 		if (hh->hh_len) {
+-			write_seqlock_bh(&hh->hh_lock);
++			bh = write_seqlock_bh(&hh->hh_lock, SOFTIRQ_ALL_MASK);
+ 			update(hh, neigh->dev, neigh->ha);
+-			write_sequnlock_bh(&hh->hh_lock);
++			write_sequnlock_bh(&hh->hh_lock, bh);
+ 		}
+ 	}
  }
- 
- static inline void __raw_write_lock(rwlock_t *lock)
-@@ -253,7 +255,7 @@ static inline void __raw_read_unlock_bh(rwlock_t *lock,
- {
- 	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_read_unlock(lock);
--	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, bh);
- }
- 
- static inline void __raw_write_unlock_irqrestore(rwlock_t *lock,
-@@ -278,7 +280,7 @@ static inline void __raw_write_unlock_bh(rwlock_t *lock,
- {
- 	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_write_unlock(lock);
--	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, bh);
- }
- 
- #endif /* __LINUX_RWLOCK_API_SMP_H */
-diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
-index 42bbf68..6602a56 100644
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -132,9 +132,9 @@ static inline void __raw_spin_lock_irq(raw_spinlock_t *lock)
- 
- static inline unsigned int __raw_spin_lock_bh(raw_spinlock_t *lock, unsigned int mask)
- {
--	unsigned int bh = 0;
+diff --git a/net/ipv4/inetpeer.c b/net/ipv4/inetpeer.c
+index d757b96..224d30e 100644
+--- a/net/ipv4/inetpeer.c
++++ b/net/ipv4/inetpeer.c
+@@ -182,6 +182,7 @@ struct inet_peer *inet_getpeer(struct inet_peer_base *base,
+ 	struct rb_node **pp, *parent;
+ 	unsigned int gc_cnt, seq;
+ 	int invalidated;
 +	unsigned int bh;
  
--	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	bh = __local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, mask);
- 	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
- 	LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
+ 	/* Attempt a lockless lookup first.
+ 	 * Because of a concurrent writer, we might not find an existing entry.
+@@ -203,7 +204,7 @@ struct inet_peer *inet_getpeer(struct inet_peer_base *base,
+ 	 * At least, nodes should be hot in our cache.
+ 	 */
+ 	parent = NULL;
+-	write_seqlock_bh(&base->lock);
++	bh = write_seqlock_bh(&base->lock, SOFTIRQ_ALL_MASK);
  
-@@ -179,19 +179,19 @@ static inline void __raw_spin_unlock_bh(raw_spinlock_t *lock,
- {
- 	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_spin_unlock(lock);
--	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, bh);
- }
- 
- static inline int __raw_spin_trylock_bh(raw_spinlock_t *lock,
- 					unsigned int *bh,
- 					unsigned int mask)
- {
--	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	*bh = __local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, mask);
- 	if (do_raw_spin_trylock(lock)) {
- 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
- 		return 1;
+ 	gc_cnt = 0;
+ 	p = lookup(daddr, base, seq, gc_stack, &gc_cnt, &parent, &pp);
+@@ -228,7 +229,7 @@ struct inet_peer *inet_getpeer(struct inet_peer_base *base,
  	}
--	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-+	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET, *bh);
- 	return 0;
+ 	if (gc_cnt)
+ 		inet_peer_gc(base, gc_stack, gc_cnt);
+-	write_sequnlock_bh(&base->lock);
++	write_sequnlock_bh(&base->lock, bh);
+ 
+ 	return p;
  }
- 
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 22cc0a7..e2435b0 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -107,13 +107,16 @@ static bool ksoftirqd_running(unsigned long pending)
-  * where hardirqs are disabled legitimately:
-  */
- #ifdef CONFIG_TRACE_IRQFLAGS
--void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
-+unsigned int __local_bh_disable_ip(unsigned long ip, unsigned int cnt,
-+				   unsigned int mask)
+diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+index b92f422..b6d1d52 100644
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -56,15 +56,16 @@ static int sysctl_tcp_low_latency __read_mostly;
+ static void set_local_port_range(struct net *net, int range[2])
  {
- 	unsigned long flags;
-+	unsigned int enabled;
- 
- 	WARN_ON_ONCE(in_irq());
- 
- 	raw_local_irq_save(flags);
-+
- 	/*
- 	 * The preempt tracer hooks into preempt_count_add and will break
- 	 * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
-@@ -127,6 +130,9 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
- 	 */
- 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
- 		trace_softirqs_off(ip);
-+
-+	enabled = local_softirq_enabled();
-+	softirq_enabled_nand(mask);
- 	raw_local_irq_restore(flags);
- 
- 	if (preempt_count() == cnt) {
-@@ -135,6 +141,7 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
- #endif
- 		trace_preempt_off(CALLER_ADDR0, get_lock_parent_ip());
- 	}
-+	return enabled;
- }
- EXPORT_SYMBOL(__local_bh_disable_ip);
- #endif /* CONFIG_TRACE_IRQFLAGS */
-@@ -143,11 +150,13 @@ EXPORT_SYMBOL(__local_bh_disable_ip);
-  * Special-case - softirqs can safely be enabled by __do_softirq(),
-  * without processing still-pending softirqs:
-  */
--void local_bh_enable_no_softirq(void)
-+void local_bh_enable_no_softirq(unsigned int bh)
- {
- 	WARN_ON_ONCE(in_irq());
- 	lockdep_assert_irqs_disabled();
- 
-+	softirq_enabled_set(bh);
-+
- 	if (preempt_count() == SOFTIRQ_DISABLE_OFFSET)
- 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
- 
-@@ -155,17 +164,18 @@ void local_bh_enable_no_softirq(void)
- 		trace_softirqs_on(_RET_IP_);
- 
- 	__preempt_count_sub(SOFTIRQ_DISABLE_OFFSET);
--
- }
- EXPORT_SYMBOL(local_bh_enable_no_softirq);
- 
--void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
-+void __local_bh_enable_ip(unsigned long ip, unsigned int cnt, unsigned int bh)
- {
- 	WARN_ON_ONCE(in_irq());
- 	lockdep_assert_irqs_enabled();
- #ifdef CONFIG_TRACE_IRQFLAGS
- 	local_irq_disable();
- #endif
-+	softirq_enabled_set(bh);
-+
- 	/*
- 	 * Are softirqs going to be turned on now:
- 	 */
-@@ -177,6 +187,7 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
- 	 */
- 	preempt_count_sub(cnt - 1);
- 
-+
- 	if (unlikely(!in_interrupt() && local_softirq_pending())) {
- 		/*
- 		 * Run softirq if any pending. And do it in its own stack
-@@ -246,9 +257,6 @@ static void local_bh_exit(void)
- 	__preempt_count_sub(SOFTIRQ_OFFSET);
- }
- 
--
--
--
- /*
-  * We restart softirq processing for at most MAX_SOFTIRQ_RESTART times,
-  * but break the loop if need_resched() is set or after 2 ms.
-@@ -395,15 +403,17 @@ asmlinkage __visible void do_softirq(void)
-  */
- void irq_enter(void)
- {
+ 	bool same_parity = !((range[0] ^ range[1]) & 1);
 +	unsigned int bh;
-+
- 	rcu_irq_enter();
- 	if (is_idle_task(current) && !in_interrupt()) {
- 		/*
- 		 * Prevent raise_softirq from needlessly waking up ksoftirqd
- 		 * here, as softirq will be serviced on return from interrupt.
- 		 */
--		local_bh_disable(SOFTIRQ_ALL_MASK);
-+		bh = local_bh_disable(SOFTIRQ_ALL_MASK);
- 		tick_irq_enter();
--		local_bh_enable_no_softirq();
-+		local_bh_enable_no_softirq(bh);
- 	}
  
- 	__irq_enter();
+-	write_seqlock_bh(&net->ipv4.ip_local_ports.lock);
++	bh = write_seqlock_bh(&net->ipv4.ip_local_ports.lock, SOFTIRQ_ALL_MASK);
+ 	if (same_parity && !net->ipv4.ip_local_ports.warned) {
+ 		net->ipv4.ip_local_ports.warned = true;
+ 		pr_err_ratelimited("ip_local_port_range: prefer different parity for start/end values.\n");
+ 	}
+ 	net->ipv4.ip_local_ports.range[0] = range[0];
+ 	net->ipv4.ip_local_ports.range[1] = range[1];
+-	write_sequnlock_bh(&net->ipv4.ip_local_ports.lock);
++	write_sequnlock_bh(&net->ipv4.ip_local_ports.lock, bh);
+ }
+ 
+ /* Validate changes from /proc interface. */
+diff --git a/net/ipv4/tcp_metrics.c b/net/ipv4/tcp_metrics.c
+index fd6ba88..c65d499 100644
+--- a/net/ipv4/tcp_metrics.c
++++ b/net/ipv4/tcp_metrics.c
+@@ -574,6 +574,7 @@ void tcp_fastopen_cache_set(struct sock *sk, u16 mss,
+ 			    u16 try_exp)
+ {
+ 	struct dst_entry *dst = __sk_dst_get(sk);
++	unsigned int bh;
+ 	struct tcp_metrics_block *tm;
+ 
+ 	if (!dst)
+@@ -583,7 +584,7 @@ void tcp_fastopen_cache_set(struct sock *sk, u16 mss,
+ 	if (tm) {
+ 		struct tcp_fastopen_metrics *tfom = &tm->tcpm_fastopen;
+ 
+-		write_seqlock_bh(&fastopen_seqlock);
++		bh = write_seqlock_bh(&fastopen_seqlock, SOFTIRQ_ALL_MASK);
+ 		if (mss)
+ 			tfom->mss = mss;
+ 		if (cookie && cookie->len > 0)
+@@ -596,7 +597,7 @@ void tcp_fastopen_cache_set(struct sock *sk, u16 mss,
+ 			tfom->last_syn_loss = jiffies;
+ 		} else
+ 			tfom->syn_loss = 0;
+-		write_sequnlock_bh(&fastopen_seqlock);
++		write_sequnlock_bh(&fastopen_seqlock, bh);
+ 	}
+ 	rcu_read_unlock();
+ }
+diff --git a/net/rxrpc/conn_service.c b/net/rxrpc/conn_service.c
+index 80773a5..e253cd9 100644
+--- a/net/rxrpc/conn_service.c
++++ b/net/rxrpc/conn_service.c
+@@ -71,7 +71,7 @@ static void rxrpc_publish_service_conn(struct rxrpc_peer *peer,
+ 	struct rxrpc_conn_proto k = conn->proto;
+ 	struct rb_node **pp, *parent;
+ 
+-	write_seqlock_bh(&peer->service_conn_lock);
++	write_seqlock_bh(&peer->service_conn_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	pp = &peer->service_conns.rb_node;
+ 	parent = NULL;
+@@ -191,7 +191,7 @@ void rxrpc_unpublish_service_conn(struct rxrpc_connection *conn)
+ {
+ 	struct rxrpc_peer *peer = conn->params.peer;
+ 
+-	write_seqlock_bh(&peer->service_conn_lock);
++	write_seqlock_bh(&peer->service_conn_lock, SOFTIRQ_ALL_MASK);
+ 	if (test_and_clear_bit(RXRPC_CONN_IN_SERVICE_CONNS, &conn->flags))
+ 		rb_erase(&conn->service_node, &peer->service_conns);
+ 	write_sequnlock_bh(&peer->service_conn_lock);
 -- 
 2.7.4
 
