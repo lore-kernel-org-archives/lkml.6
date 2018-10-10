@@ -2,131 +2,172 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E183C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57628C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B188C2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UMbUM0M/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B188C2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id F4228214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F4228214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeJJWbt (ORCPT
+        id S1726827AbeJJWe3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:31:49 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55952 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeJJWbt (ORCPT
+        Wed, 10 Oct 2018 18:34:29 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41203 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJJWe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:31:49 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9AEx5Tw025207;
-        Wed, 10 Oct 2018 15:09:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=YegHVM7DqawRuc0xkrr8YgLxRPBZmWJfnOD9RUSve4s=;
- b=UMbUM0M/dlV3SWxWuTwIhyq8IeZ2Y4jL5m6PXF/9cLNTw+xonP1j0UydNQn4LRFv0vUy
- 1zzU79Ow/geKZZwjVMgBK3aRIOGrE9OSSTFM45d7bCrj7mqsK4EI/I7Io8oGqPwkAbXJ
- AQUx6KRP3J3W8CVdaTtMBbrCYzlaN/NxJJ1mO7tGnhMh3l/jP4eaZeLAu/dkaz1KStba
- ZhlzptKPibPyyiepCjPEaXrg20lBCJu7F3/1mcL1qjMQZTvaGULcHjpL2+THE313yEms
- +v7LKh1Q6XsZxPRU458QdII5c4y68r4yEPr2G73bHgV8bemxXvUhBhh83UDQoxeosyrz Zw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2mxnpr4kny-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Oct 2018 15:09:08 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9AF97Cc013241
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Oct 2018 15:09:07 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9AF96QB005048;
-        Wed, 10 Oct 2018 15:09:07 GMT
-Received: from [10.175.193.46] (/10.175.193.46)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 10 Oct 2018 15:09:06 +0000
-Subject: Re: [Xen-devel] [PATCH] xen: drop writing error messages to xenstore
-To:     Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-References: <20181009160959.31076-1-jgross@suse.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <5126873e-ade5-86b0-4ebf-58cb47c9cbe7@oracle.com>
-Date:   Wed, 10 Oct 2018 16:09:02 +0100
+        Wed, 10 Oct 2018 18:34:29 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x31-v6so5265786edd.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:11:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=33kccVia1YlGhF8vy6H40nEgUB+nCabXE9vEglMNrys=;
+        b=F7wvXTOiXN98feOwNRI6aDBPKu38Dh+L/G5ARSRUOB+gIxke2sRoPF+rMAob6EPZuZ
+         doktL28RQ1glrQee8TUprRjk8IWS5Ftg9t0NiwWH+KKdjUCLgHTDywS8sv6s+UMxgEf3
+         gP8DPw9Wofmo2vPcLwidqzXEkS/N0b//++J36jjTKr6BKveW5UQ1KjWoXQXXiwEGqEl7
+         3IXDcXFj/lzrc5QuTWtrMbiuPLvh59f16VsXXSFvd3CU2TUzR7XzLA0YM9aJFnhkYXE/
+         tqQsAK8iN66/eaViv/MlUU19u+kekpl16DEJektBElV5PSLBO1+8MUDT3jDbYVMEjMLZ
+         ZoSg==
+X-Gm-Message-State: ABuFfogtwrPV51lUzScOO1LnXRVDzQuUmKSmbXST9h1dKmAlfjvzFOzY
+        pyNMO+/hyWk32KkC4BNmy3U=
+X-Google-Smtp-Source: ACcGV60ED4A18OhNQsOQlakjhABE6KSXD+wKRtB3gNFVkXODCjpvzKc0dJP84TARGnge/E3NX1qEfA==
+X-Received: by 2002:a50:ae21:: with SMTP id c30-v6mr20969554edd.20.1539184310207;
+        Wed, 10 Oct 2018 08:11:50 -0700 (PDT)
+Received: from tiehlicka.suse.cz (ip-37-188-149-132.eurotel.cz. [37.188.149.132])
+        by smtp.gmail.com with ESMTPSA id x53-v6sm8129625edx.63.2018.10.10.08.11.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 08:11:48 -0700 (PDT)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     <linux-mm@kvack.org>
+Cc:     syzkaller-bugs@googlegroups.com, Michal Hocko <mhocko@suse.com>,
+        guro@fb.com, hannes@cmpxchg.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        rientjes@google.com, yang.s@alibaba-inc.com
+Subject: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms without eligible tasks
+Date:   Wed, 10 Oct 2018 17:11:35 +0200
+Message-Id: <20181010151135.25766-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <000000000000dc48d40577d4a587@google.com>
+References: <000000000000dc48d40577d4a587@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181009160959.31076-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9041 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810100149
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/2018 05:09 PM, Juergen Gross wrote:
-> xenbus_va_dev_error() will try to write error messages to Xenstore
-> under the error/<dev-name>/error node (with <dev-name> something like
-> "device/vbd/51872"). This will fail normally and another message
-> about this failure is added to dmesg.
-> 
-> I believe this is a remnant from very ancient times, as it was added
-> in the first pvops rush of commits in 2007.
-> 
-> So remove the additional message when writing to Xenstore failed as
-> a minimum step.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
-> I am considering removing the Xenstore write altogether, but I'm
-> not sure it isn't needed e.g. by xend based installations. So please
-> speak up in case you know why this write is there.
+From: Michal Hocko <mhocko@suse.com>
 
-So this:
+syzbot has noticed that it can trigger RCU stalls from the memcg oom
+path:
+RIP: 0010:dump_stack+0x358/0x3ab lib/dump_stack.c:118
+Code: 74 0c 48 c7 c7 f0 f5 31 89 e8 9f 0e 0e fa 48 83 3d 07 15 7d 01 00 0f
+84 63 fe ff ff e8 1c 89 c9 f9 48 8b bd 70 ff ff ff 57 9d <0f> 1f 44 00 00
+e8 09 89 c9 f9 48 8b 8d 68 ff ff ff b8 ff ff 37 00
+RSP: 0018:ffff88017d3a5c70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000040000 RBX: 1ffffffff1263ebe RCX: ffffc90001e5a000
+RDX: 0000000000040000 RSI: ffffffff87b4e0f4 RDI: 0000000000000246
+RBP: ffff88017d3a5d18 R08: ffff8801d7e02480 R09: fffffbfff13da030
+R10: fffffbfff13da030 R11: 0000000000000003 R12: 1ffff1002fa74b96
+R13: 00000000ffffffff R14: 0000000000000200 R15: 0000000000000000
+  dump_header+0x27b/0xf72 mm/oom_kill.c:441
+  out_of_memory.cold.30+0xf/0x184 mm/oom_kill.c:1109
+  mem_cgroup_out_of_memory+0x15e/0x210 mm/memcontrol.c:1386
+  mem_cgroup_oom mm/memcontrol.c:1701 [inline]
+  try_charge+0xb7c/0x1710 mm/memcontrol.c:2260
+  mem_cgroup_try_charge+0x627/0xe20 mm/memcontrol.c:5892
+  mem_cgroup_try_charge_delay+0x1d/0xa0 mm/memcontrol.c:5907
+  shmem_getpage_gfp+0x186b/0x4840 mm/shmem.c:1784
+  shmem_fault+0x25f/0x960 mm/shmem.c:1982
+  __do_fault+0x100/0x6b0 mm/memory.c:2996
+  do_read_fault mm/memory.c:3408 [inline]
+  do_fault mm/memory.c:3531 [inline]
 
-"This will fail normally and another message about this failure is added to dmesg."
+The primary reason of the stall lies in an expensive printk handling
+of oom report flood because a misconfiguration on the syzbot side
+caused that there is simply no eligible task because they have
+OOM_SCORE_ADJ_MIN set. This generates the oom report for each allocation
+from the memcg context.
 
-Brings me to the question: What about {stub,driver}domains? Ideally you
-shouldn't be looking at domU's dmesg as a control domain no? I can't remember
-any other error node, but if something fails e.g. netfront fails to allocate an
-unbound event channel - how do you know the cause from the control domain
-perspective?
+While normal workloads should be much more careful about potential heavy
+memory consumers that are OOM disabled it makes some sense to rate limit
+a potentially expensive oom reports for cases when there is no eligible
+victim found. Do that by moving the rate limit logic inside dump_header.
+We no longer rely on the caller to do that. It was only oom_kill_process
+which has been throttling. Other two call sites simply didn't have to
+care because one just paniced on the OOM when configured that way and
+no eligible task would panic for the global case as well. Memcg changed
+the picture because we do not panic and we might have multiple sources
+of the same event.
 
-Irrespective of xend or not: isn't this 'error' node the only one that
-propagates error causes per device from domU?
+Once we are here, make sure that the reason to trigger the OOM is
+printed without ratelimiting because this is really valuable to
+debug what happened.
 
-	Joao
+Reported-by: syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com
+Cc: guro@fb.com
+Cc: hannes@cmpxchg.org
+Cc: kirill.shutemov@linux.intel.com
+Cc: linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp
+Cc: rientjes@google.com
+Cc: yang.s@alibaba-inc.com
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/oom_kill.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/xen/xenbus/xenbus_client.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-> index a1c17000129b..e17ca8156171 100644
-> --- a/drivers/xen/xenbus/xenbus_client.c
-> +++ b/drivers/xen/xenbus/xenbus_client.c
-> @@ -278,10 +278,8 @@ static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
->  	dev_err(&dev->dev, "%s\n", printf_buffer);
->  
->  	path_buffer = kasprintf(GFP_KERNEL, "error/%s", dev->nodename);
-> -	if (!path_buffer ||
-> -	    xenbus_write(XBT_NIL, path_buffer, "error", printf_buffer))
-> -		dev_err(&dev->dev, "failed to write error node for %s (%s)\n",
-> -			dev->nodename, printf_buffer);
-> +	if (path_buffer)
-> +		xenbus_write(XBT_NIL, path_buffer, "error", printf_buffer);
->  
->  	kfree(printf_buffer);
->  	kfree(path_buffer);
-> 
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa5360616..4ee393c85e27 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -430,6 +430,9 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+ 
+ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ {
++	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
++					      DEFAULT_RATELIMIT_BURST);
++
+ 	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
+ 		current->comm, oc->gfp_mask, &oc->gfp_mask,
+ 		nodemask_pr_args(oc->nodemask), oc->order,
+@@ -437,6 +440,9 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
+ 		pr_warn("COMPACTION is disabled!!!\n");
+ 
++	if (!__ratelimit(&oom_rs))
++		return;
++
+ 	cpuset_print_current_mems_allowed();
+ 	dump_stack();
+ 	if (is_memcg_oom(oc))
+@@ -931,8 +937,6 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	struct task_struct *t;
+ 	struct mem_cgroup *oom_group;
+ 	unsigned int victim_points = 0;
+-	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+-					      DEFAULT_RATELIMIT_BURST);
+ 
+ 	/*
+ 	 * If the task is already exiting, don't alarm the sysadmin or kill
+@@ -949,8 +953,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	}
+ 	task_unlock(p);
+ 
+-	if (__ratelimit(&oom_rs))
+-		dump_header(oc, p);
++	dump_header(oc, p);
+ 
+ 	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
+ 		message, task_pid_nr(p), p->comm, points);
+-- 
+2.19.0
+
