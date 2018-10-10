@@ -2,159 +2,98 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D913C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD80C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1812150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1812150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 439292151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJeKUxfU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439292151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJJQC5 (ORCPT
+        id S1727464AbeJJQC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:02:57 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:44081 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726636AbeJJQC4 (ORCPT
+        Wed, 10 Oct 2018 12:02:59 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44631 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727419AbeJJQC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:02:56 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="45870136"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 10 Oct 2018 16:41:44 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1037F4B6ED40;
-        Wed, 10 Oct 2018 16:41:41 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 10 Oct 2018 16:41:46 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>
-CC:     <rjw@rjwysocki.net>, <lenb@kernel.org>,
-        <ard.biesheuvel@linaro.org>, <indou.takao@jp.fujitsu.com>,
-        <caoj.fnst@cn.fujitsu.com>
-Subject: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr in immovable memory
-Date:   Wed, 10 Oct 2018 16:41:16 +0800
-Message-ID: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 10 Oct 2018 12:02:59 -0400
+Received: by mail-io1-f66.google.com with SMTP id x26-v6so3265077iog.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:41:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9fcc3mQJLQGeOZR/rJDAa/pISBbYSbBj4Ef4Nq4qd2Q=;
+        b=NJeKUxfUS3a7sqNcCwNMoL5mDIZaE4BbGWV+F0nzMJr4cKU5POaDMAic97SFsQVGzE
+         XVL19v/2t+TIGMe1M1nrdGv7AN1hEzfHK/Ekh90vmdK3JwrR2B01IkoqH7AqaO7Ury1n
+         Kea4AbbtuaBu0U0kibMUMIdCdee0PvYf9WsZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9fcc3mQJLQGeOZR/rJDAa/pISBbYSbBj4Ef4Nq4qd2Q=;
+        b=rEsDhv1xe6009yWno+wmRB7jWcL+ufyaj7qqwFtQkkeZv4kwsrkZ/wSEvX36Jnwt24
+         dBEWUXbm6y9HFUbf2rerk7+Q4R/MVHSSNMrNU/dw0jO6D5JiJJnKxeE2qgpMrWLYYDxy
+         fnU73xtkJoMkl1djBJtqW7vlN+pW2REkbx3MIuMHcDTGAAnTSuL7z0NFraobKKF4LTrt
+         m5RyxHKx0cgKWUbivbLKPqNc7yb4v7dr2tHR/RA74yxR7Z+1Rf9tPx8pBA3XIKiqwfQg
+         32pD8UdHQHkiBcv/seQOQf7N98rSllTEFOWXHpDqYRgoXEnlUsHnOK5d68VP6pORCBsP
+         1zLg==
+X-Gm-Message-State: ABuFfogRjKW1TVbHjgFS1aD20fyzigM3LJQoLjwrW4zQbXN5CumAVd/1
+        MLynsrSJobhBY90bPH2H+2EZea1R5LIT+4W4Ru3Phg==
+X-Google-Smtp-Source: ACcGV60s5H4ZHYD2rmnaROT7KXUn5R8RbO5Q9fWtAP6weZ0lAyBppjv7UG94iWauCThjz2YgG3I6xAOQMfXAEj/46DA=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr19776924ioa.277.1539160911234;
+ Wed, 10 Oct 2018 01:41:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 1037F4B6ED40.AB399
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-2-vz@mleia.com>
+In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 10 Oct 2018 10:41:38 +0200
+Message-ID: <CACRpkdb9Lwshpt+haJur_7ESOD50t=8PE-ct-UO5yJFRfrM6Lw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
+ DS90Ux9xx ICs
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-media@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sandeep_Jain@mentor.com,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-***Background:
-People reported that kaslr may randomly chooses some positions
-which are located in movable memory regions. This will break memory
-hotplug feature and make the movable memory chosen by KASLR can't be
-removed.
+ On Mon, Oct 8, 2018 at 11:12 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+> From: Sandeep Jain <Sandeep_Jain@mentor.com>
+(...)
+> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
+> +       Possible values are "<1>" or "<0>".
+> +       If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
+> +       Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
+> +       strobed on the Falling edge of the PCLK.
+> +       If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
+> +       value is not touched and given by hardware pin strapping.
 
-***Solutions:
-There should be a method to limit kaslr to choosing immovable memory
-regions, so there are 2 solutions:
-1) Add a kernel parameter to specify the memory regions.
-2) Get the information of memory hot-remove, then kaslr will know the
-   right regions.
-In method 2, information about memory hot-remove is in ACPI
-tables, which will be parsed after start_kernel(), kaslr can't get
-the information.
-In method 1, users should know the regions address and specify in
-kernel parameter.
+Please use the existing binding in
+Documentation/devicetree/bindings/display/panel/display-timing.txt
+for this: pixelclk-active = [<0>|<1>];
 
-In the earliest time, I tried to dig ACPI tabls to solve this problem.
-But I didn't splite the code in 'compressed/' and ACPI code, so the patch
-is hard to follow so refused by community.
-Somebody suggest to add a kernel parameter to specify the
-immovable memory so that limit kaslr in these regions. Then I make
-a new patchset. After several versions, Ingo gave a suggestion:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
-Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
-tables, so that the kaslr can get necessary memory information in
-ACPI tables.
-I think ACPI code is an independent part, so copy the codes
-and functions to 'compressed/' directory, so that kaslr won't
-influence the initialization of ACPI.
+Please reference the above document in your binding.
 
-PATCH 1/3 Add acpitb.c to provide functions to parse ACPI code.
-PATCH 2/3 If CONFIG_MEMORY_HOTREMOVE enabled, walk all nodes and
-          store the information of immovable memory regions.
-PATCH 3/3 According to the immovable memory regions, filter the
-          immovable regions which KASLR can choose.
-
-***Test results:
- - I did a very simple test, and it can get the memory information in
-   bios and efi KVM guest machine, and put it by early printk. But no
-   more tests, so it's with RFC tag.
-
-v1->v2:
- -  Simplify some code.
-Follow Baoquan He's suggestion:
- - Reuse the head file of acpi code.
-
-v2->v3:
- - Test in more conditions, so remove the 'RFC' tag.
- - Change some comments.
-
-v3->v4:
-Follow Thomas Gleixner's suggetsion:
- - Put the whole efi related function into #define CONFIG_EFI and return
-   false in the other stub.
- - Simplify two functions in head file.
-
-v4->v5:
-Follow Dou Liyang's suggestion:
- - Add more comments about some functions based on kernel code.
- - Change some typo in comments.
- - Clean useless variable.
- - Add check for the boundary of array.
- - Add check for 'movable_node' parameter
-
-v5->v6:
-Follow Baoquan He's suggestion:
- - Change some log.
- - Add the check for acpi_rsdp
- - Change some code logical to make code clear
-
-v6->v7:
-Follow Rafael's suggestion:
- - Add more comments and patch log.
-Follow test robot's suggestion:
- - Add "static" tag for function
-
-v7-v8:
-Follow Kees Cook's suggestion:
- - Use mem_overlaps() to check memory region.
- - Use #ifdef in the definition of function.
-
-Any comments will be welcome.
-
-Chao Fan (3):
-  x86/boot: Add acpitb.c to parse acpi tables
-  x86/boot/KASLR: Walk srat tables to filter immovable memory
-  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
-
- arch/x86/boot/compressed/Makefile |   2 +
- arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/kaslr.c  |  75 +++++-
- arch/x86/boot/compressed/misc.h   |   8 +
- 4 files changed, 479 insertions(+), 11 deletions(-)
- create mode 100644 arch/x86/boot/compressed/acpitb.c
-
--- 
-2.17.1
-
-
-
+Yours,
+Linus Walleij
