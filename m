@@ -2,160 +2,181 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60C1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94BBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8DE214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8DE214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 835DA214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:14:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AbYzbvwS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835DA214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeJJRdi (ORCPT
+        id S1727152AbeJJRgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:33:38 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:45905 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeJJRdh (ORCPT
+        Wed, 10 Oct 2018 13:36:13 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40042 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeJJRgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:33:37 -0400
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MF45G-1fuoKI1ptY-00FX0Q; Wed, 10 Oct 2018 12:11:38 +0200
-Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MF45G-1fuoKI1ptY-00FX0Q; Wed, 10 Oct 2018 12:11:38 +0200
-Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        Jann Horn <jannh@google.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20181009103752.21482-1-laurent@vivier.eu>
- <20181009103752.21482-2-laurent@vivier.eu> <20181009151641.GB10149@cisco>
- <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <485d1157-9d3e-b4e0-4ece-4e80b2f252c4@vivier.eu>
-Date:   Wed, 10 Oct 2018 12:11:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 10 Oct 2018 13:36:12 -0400
+Received: by mail-io1-f68.google.com with SMTP id w16-v6so3436809iom.7
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 03:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yDbLix6E4zGm8ztBoDBEuXfpaANAhua1pwSayu5SJPY=;
+        b=AbYzbvwSgSUvQti3NJxqN4gVptBpJ3ONUrGFaq/QGK4oCxd4tjYQo9JqKeOIAKZ5G9
+         EiOwyF8ruwm5ftu1HUpO78tsSdkNc+KyXXjXCMO+qMSUgIkymEmrjDvxJ4Mqu8lDbUk1
+         aNsShjihZ8ounyZ6/8X1spy1rP0djLbnqd7x8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yDbLix6E4zGm8ztBoDBEuXfpaANAhua1pwSayu5SJPY=;
+        b=oIyqeZiVDznQzPYbQu8Mgduhn2wv2H0AsrCitnVTMN6tuFr+lR1VKwbARWv7Wj3fTo
+         1WKqsQVkPLupWDlFHDXRbJQQny4xc7PMnTwCi7A6T32L+fKi2CBfnArDwOS7COM+Gkxc
+         ZSc6ko4dDQv8LSVqPPbWMHrZX2ZdrlE/P0U1xZjaiX44/5izq4X/RRynpT7jEK2355Ib
+         cbGg2pSpaRwjxlp0brJ7oeB7CKn/dZDW8/dmdJU5HkhealQXG1LtwtgFWLZJcMQGb1rW
+         fed6SF8wOmukupinD07/DTVWfihPMf5PtpQIfEPMxqdKlRUgBIJeJrPGj02fCEZ+9COJ
+         w+9w==
+X-Gm-Message-State: ABuFfojepfMHJFGFL8nCwQhVWhIBJFC9NVLmYEXqGwtW6E4GKEonPyYn
+        bisRFCHeAy6iwtGw0uiPLeIiSUG+y5iGQ7eefv6RyA==
+X-Google-Smtp-Source: ACcGV63gVj9kD4qJOkwxkvaOOuy6h09EIzuZ7cCMib4/msT3KIKgyVMkGJ9R36BXxnjp2k7K+EgNbaDgf/9ISd2p9Eo=
+X-Received: by 2002:a6b:254:: with SMTP id 81-v6mr16276487ioc.183.1539166483957;
+ Wed, 10 Oct 2018 03:14:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RgpptC8ZvNIJIRTylJ3946i3Qb6j6ZiZZVz8n1fw+QPufSf/RyX
- qnIafzYC3eUR+Gw3ya1B7ZtUWyqXGyq38Y0n6igOBwl+M61ceROvbVHJD63pnZLuWWaawLp
- DLEPvlcm2qnE5kWwTMNTBWpy0jyTvWVX+7u4J0s18e1Lwtsu1qJUo2vFCgHiXnJQ4mJ3aib
- BOjVRdi3uVyG9SLBgpsvg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:h2iTG+3WqFQ=:nMv1B5YCTv28t+owGbiRbH
- +amn6gJCihK9/PFlrITkji19SJi9IFj4snenrw0/7W4AW7gm9H6brWX3lWyW8Tu4UDjH+bk7J
- fm6GfqoiRvIswje9fTvw3pIzl0MAGdc3CTB/NyyRmQXAGXP27wq/VlaCVQCSnExFc3+Un0jY9
- 9+OORdTjVcCC2lwlrnwBsvmx/gYndh13XvvWtCZAz43XXkSxrl8ulK3X4p1pomRYDlAQQOCYU
- 5gg6McUk4tt8Dga+R3I+MCPefyKfMv87S+tBKHJjgKXcd6KYV+dJAlhuyZKh0pGdi4joZJp9J
- FnJORk807dtuLxvGg1kgnATpihLcdrZ4dI6348U3U3w8bC+abGCGkyMMqhVI0HZG+UC6rXXlc
- /LfviYrfI64iz5mQYy2Ys95TsrjcISKQfuRus4lFqqfxMgicfa5hzYUyKo6QAtKoBBo9HZlzO
- ++bHLS1vyJ4AjeiHburrq/F/UGhNHac9NKXcae+2VpU0ILrZ6HJvasmL5bzKkh3pId8N4j1lR
- ECchbNpxeDilx9F/D/sy3cumVrIlIUWTo8DerUsVADLHm0uF80omoKYTWX6Av8DO3JUo1wEK1
- 0vXex1qTHyomIns2T7J0CiyAC5pHlhgBNNkfmwjgxC63nIBgg+jIGKYyVc8UryaRcIKNLV2i5
- xeZB+7jBqpexQuyFTIQ8neHD3dFGs91YDNzCu3oLd9ILPrRYvGVXP6bAAVfyDxD+/RCT5RGNJ
- L2KOWv1uRQCuisSH
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010061751.GA37224@gmail.com> <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
+ <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com> <20181010095459.orw2gse75klpwosx@queper01-lin>
+In-Reply-To: <20181010095459.orw2gse75klpwosx@queper01-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 10 Oct 2018 12:14:32 +0200
+Message-ID: <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 17:19, Laurent Vivier wrote:
-> Le 09/10/2018 à 17:16, Tycho Andersen a écrit :
->> On Tue, Oct 09, 2018 at 12:37:52PM +0200, Laurent Vivier wrote:
->>> @@ -80,18 +74,32 @@ static int entry_count;
->>>   */
->>>  #define MAX_REGISTER_LENGTH 1920
->>>  
->>> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
->>> +{
->>> +	struct binfmt_namespace *b_ns;
->>> +
->>> +	while (ns) {
->>> +		b_ns = READ_ONCE(ns->binfmt_ns);
->>> +		if (b_ns)
->>> +			return b_ns;
->>> +		ns = ns->parent;
->>> +	}
->>> +	WARN_ON_ONCE(1);
->>
->> It looks like we warn here,
->>
->>> @@ -133,17 +141,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
->>>  	struct file *interp_file = NULL;
->>>  	int retval;
->>>  	int fd_binary = -1;
->>> +	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
->>>  
->>>  	retval = -ENOEXEC;
->>> -	if (!enabled)
->>> +	if (!ns->enabled)
->>
->> ...but then in cases like this we immediately dereference the pointer
->> anyways and crash. Can we return some other error code here in the !ns
->> case so we don't crash?
-> 
-> My concern here is I don't want to add code to check an error case that
-> cannot happen. The first namespace binfmt_ns pointer is initialized with
-> &init_binfmt_ns, so the return value cannot be NULL.
+On Wed, 10 Oct 2018 at 11:55, Quentin Perret <quentin.perret@arm.com> wrote:
+>
+> Hi Vincent,
+>
+> On Wednesday 10 Oct 2018 at 10:50:05 (+0200), Vincent Guittot wrote:
+> > The problem with reflecting directly the capping is that it happens
+> > far more often than the pace at which cpu_capacity_orig is updated in
+> > the scheduler.
+>
+> Hmm, how can you be so sure ? That most likely depends on the workload,
+> the platform and the thermal governor. Some platforms heat up slowly,
+> some quickly. The pace at which the thermal governor will change things
+> should depend on that I assume.
+>
+> > This means that at the moment when scheduler uses the
+> > value, it might not be correct anymore.
+>
+> And OTOH, when you remove a cap for example, it will take time before
+> the scheduler can see the newly available capacity if you need to wait
+> for the signal to decay. So you are using a wrong information too in
+> that scenario.
 
-Perhaps it could be reasonable to return &init_binfmt_ns rather than
-NULL in this case?
+But we stay consistant with all other metrics. The same happen when a
+task decide to stay idle for a long time after some activity... You
+will have to wait for the signal to decay
 
-Thanks,
-Laurent
+>
+> > Then, this value are also used
+> > when building the sched_domain and setting max_cpu_capacity which
+> > would also implies the rebuilt the sched_domain topology ...
+>
+> Wait what ? I thought the thermal cap was reflected in capacity_of, not
+> capacity_orig_of ... You need to rebuild the sched_domain in case of
+> thermal pressure ?
+>
+> Hmm, let me have a closer look at the patches, I must have missed
+> something ...
+>
+> > The pace of changing the capping is to fast to reflect that in the
+> > whole scheduler topology
+>
+> That's probably true in some cases, but it'd be cool to have numbers to
+> back up that statement, I think.
+>
+> Now, if you do need to rebuild the sched domain topology every time you
+> update the thermal pressure, I think the PELT HL is _way_ too short for
+> that ... You can't rebuild the whole thing every 32ms or so. Or am I
+> misunderstanding something ?
+>
+> > > Thara, have you tried to experiment with a simpler implementation as
+> > > suggested by Ingo ?
+> > >
+> > > Also, assuming that we do want to average things, do we actually want to
+> > > tie the thermal ramp-up time to the PELT half life ? That provides
+> > > nice maths properties wrt the other signals, but it's not obvious to me
+> > > that this thermal 'constant' should be the same on all platforms. Or
+> > > maybe it should ?
+> >
+> > The main interest of using PELT signal is that thermal pressure will
+> > evolve at the same pace as other signals used in the scheduler.
+>
+> Right, I think this is a nice property too (assuming that we actually
+> want to average things out).
+>
+> > With
+> > thermal pressure, we have the exact same problem as with RT tasks. The
+> > thermal will cap the max frequency which will cap the utilization of
+> > the tasks running on the CPU
+>
+> Well, the nature of the signal is slightly different IMO. Yes it's
+> capacity, but you're no actually measuring time spent on the CPU. All
+> other PELT signals are based on time, this thermal thing isn't, so it is
+> kinda different in a way. And I'm still wondering if it could be helpful
 
+hmmm ... it is based on time too.
+Both signals (current ones and thermal one) are really close. The main
+difference with other utilization signal is that instead of providing
+a running/not running boolean that is then weighted by the current
+capacity, the signal uses direclty the capped max capacity to reflect
+the amount of cycle that is stolen by thermal mitigation.
+
+> to be able to have a different HL for that thermal signal. That would
+> 'break' the nice maths properties we have, yes, but is it a problem or is
+> it actually helpful to cope with the thermal characteristics of
+> different platforms ?
+
+If you don't use the sign kind of signal with the same responsiveness,
+you will start to see some OPP toggles as an example when the thermal
+state change because one metrics will change faster than the other one
+and you can't have a correct view of the system. Same problem was
+happening with rt task.
+
+I take the example of RT task because it quite similar in the effect
+except that RT task steal all cycles when it runs whereas thermal
+mitigation steal only some by capping the frequency
+>
+> Thanks,
+> Quentin
