@@ -3,93 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB590C46462
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C987BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F51420870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:04:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F51420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 539A720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 539A720870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbeJKG2U (ORCPT
+        id S1726212AbeJKGba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:28:20 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54198 "EHLO ale.deltatee.com"
+        Thu, 11 Oct 2018 02:31:30 -0400
+Received: from mga03.intel.com ([134.134.136.65]:16823 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeJKG2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:28:19 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gANVy-00063U-CD; Wed, 10 Oct 2018 17:03:39 -0600
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20181004212747.6301-1-logang@deltatee.com>
- <20181010201918.GF5906@bhelgaas-glaptop.roam.corp.google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <5c674a1b-2471-33eb-44f4-fe1bb8807a22@deltatee.com>
-Date:   Wed, 10 Oct 2018 17:03:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1726011AbeJKGba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:31:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 16:07:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,366,1534834800"; 
+   d="scan'208";a="98329137"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 10 Oct 2018 16:07:10 -0700
+Subject: [workqueue/driver-core PATCH v2 0/5] Add NUMA aware async_schedule
+ calls
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
+        alexander.h.duyck@linux.intel.com
+Date:   Wed, 10 Oct 2018 16:07:10 -0700
+Message-ID: <20181010230435.10609.77825.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20181010201918.GF5906@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v9 00/13] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch set provides functionality that will help to improve the
+locality of the async_schedule calls used to provide deferred
+initialization.
+
+This patch set originally started out with me focused on just the one call
+to async_schedule_domain in the nvdimm tree that was being used to
+defer the device_add call however after doing some digging I realized the
+scope of this was much broader than I had originally planned. As such I
+went through and reworked the underlying infrastructure down to replacing
+the queue_work call itself with a function of my own and opted to try and
+provide a NUMA aware solution that would work for a broader audience.
+
+RFC->v1:
+    Dropped nvdimm patch to submit later.
+		It relies on code in libnvdimm development tree.
+    Simplified queue_work_near to just convert node into a CPU.
+	Split up drivers core and PM core patches.
+v1->v2:
+    Renamed queue_work_near to queue_work_node
+    Added WARN_ON_ONCE if we use queue_work_node with per-cpu workqueue
+
+---
+
+Alexander Duyck (5):
+      workqueue: Provide queue_work_node to queue work near a given NUMA node
+      async: Add support for queueing on specific NUMA node
+      driver core: Probe devices asynchronously instead of the driver
+      driver core: Attach devices on CPU local to device node
+      PM core: Use new async_schedule_dev command
 
 
-On 2018-10-10 2:19 p.m., Bjorn Helgaas wrote:
-> I added the reviewed-by tags from Christoph, Jens' ack on the blkdev.h
-> change, and applied these to pci/peer-to-peer with the intent of
-> merging these for v4.20.
-> 
-> I gave up on waiting for an ack for the memremap.h and mm.h changes.
-> 
-> I dropped the "nvme-pci: Add a quirk for a pseudo CMB" quirk because
-> of Christoph's objection.  After this is all merged, I won't need to
-> be involved, and you and the NVMe folks can hash that out.
-> 
-> If there are updates to "nvmet: Optionally use PCI P2P memory" based
-> on Sagi's comments, send an incremental patch and I'll fold them in.
+ drivers/base/bus.c        |   23 ++----------
+ drivers/base/dd.c         |   44 +++++++++++++++++++++++-
+ drivers/base/power/main.c |   12 +++---
+ include/linux/async.h     |   36 ++++++++++++++++++-
+ include/linux/workqueue.h |    2 +
+ kernel/async.c            |   47 ++++++++++++-------------
+ kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 193 insertions(+), 55 deletions(-)
 
-Thanks for picking this up. However, I hate to throw a wrench in the
-works, but I had a v10[1] queued up because kbuild found some problems
-with the series over the weekend. I can send v10 off right away if you
-want to just replace it in your branch or, if you'd like, I can generate
-some incremental patches. Let me know which you'd prefer.
-
-Thanks,
-
-Logan
-
-[1] https://github.com/sbates130272/linux-p2pmem pci-p2p-v10
+--
