@@ -2,193 +2,80 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D546C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33DC214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33DC214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D32382086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:02:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32382086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJJXYC (ORCPT
+        id S1727152AbeJJXYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:24:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:36076 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbeJJXYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:24:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 09:01:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,364,1534834800"; 
-   d="scan'208";a="240200199"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga004.jf.intel.com with ESMTP; 10 Oct 2018 09:00:55 -0700
-Message-ID: <f6dcfb3c548f49cd096088e4366e44f57ec5964e.camel@intel.com>
-Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
- allocation function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 10 Oct 2018 08:56:03 -0700
-In-Reply-To: <20181005172622.GD19360@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
-         <20180921150553.21016-4-yu-cheng.yu@intel.com>
-         <20181003195702.GF32759@asgard.redhat.com>
-         <fc2f98ab46240c0498bdf4d7458b4373c1f02bf8.camel@intel.com>
-         <5BF3AE8F-CC2A-4160-9FF6-FEA171A76371@amacapital.net>
-         <aa5a061c159471f410d677af6a609793906cece1.camel@intel.com>
-         <CALCETrXVdYsJsVy=QWruDYdRc6wb44b=0J3OK3zjR_fT1fQH7w@mail.gmail.com>
-         <20181005172622.GD19360@asgard.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 10 Oct 2018 19:24:51 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:36906 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbeJJXYv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 19:24:51 -0400
+Received: by mail-it1-f197.google.com with SMTP id y73-v6so6398478ita.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 09:02:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=yN3SkKoekkO8hZ3EOBFvf2qZQRBfhmtg7wD54e1qRpU=;
+        b=fpHekaWieFmi5MyByAVL7ilDNzIiXtsx41B2q8Xs7Jl9q6gtUd2vDGfO1tWuQTZ6kB
+         db6/zGGgb6CXO9myExJ590Hu1RUe1nntLlDYYAixy1itzN7Xf5VWX2y8hs7x2ySHwr0y
+         QwirlzjdRFjvaUdjw8rXEPQlzcjMhFq/vqT8ScXGAbhcBeivClbkCWMLbSuk5rFU4fEi
+         H/sWbdeoXJ1OuBpCW2RYEyuUdquswHZSjrMMM6dmf+bHZTTJPfOUFhv2uayhI+RTmF0T
+         i2y6U4ixiSjIqnFCc/FvQTWpBJj+0G49ZJg2PDKgS+A3y/s55urFimOADU+JRmnrP94a
+         K1Aw==
+X-Gm-Message-State: ABuFfogPjqBpUrh9bh4AEdXqJqQkVOgsVAoWtmCiSF+hwBHerO/9eJPZ
+        +h44p2lkPAXDGEl/g3WQNjuS30CaJAcTedGcE3m7bMQsFS1l
+X-Google-Smtp-Source: ACcGV617nI5N1lRu3grwYvKTXgKOaK37/mcDV0Tc9wv3RYuUlxPiHMNO5a9f5J/w5qh5cOaR/yqQLf/h7JA7RqdzRY0+4mwIrDDL
+MIME-Version: 1.0
+X-Received: by 2002:a24:8306:: with SMTP id d6-v6mr1203946ite.24.1539187322899;
+ Wed, 10 Oct 2018 09:02:02 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 09:02:02 -0700
+In-Reply-To: <20181010160022.GD20918@nautica>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009fd54d0577e1f9a0@google.com>
+Subject: Re: BUG: corrupted list in p9_read_work
+From:   syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>
+To:     asmadeus@codewreck.org, davem@davemloft.net, dvyukov@google.com,
+        ericvh@gmail.com, linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-10-05 at 10:26 -0700, Eugene Syromiatnikov wrote:
-> On Fri, Oct 05, 2018 at 10:07:46AM -0700, Andy Lutomirski wrote:
-> > On Fri, Oct 5, 2018 at 10:03 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > > 
-> > > On Fri, 2018-10-05 at 09:28 -0700, Andy Lutomirski wrote:
-> > > > > On Oct 5, 2018, at 9:13 AM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > > > > 
-> > > > > > On Wed, 2018-10-03 at 21:57 +0200, Eugene Syromiatnikov wrote:
-> > > > > > > On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
-> > > > > > > Indirect branch tracking provides an optional legacy code bitmap
-> > > > > > > that indicates locations of non-IBT compatible code.  When set,
-> > > > > > > each bit in the bitmap represents a page in the linear address is
-> > > > > > > legacy code.
-> > > > > > > 
-> > > > > > > We allocate the bitmap only when the application requests it.
-> > > > > > > Most applications do not need the bitmap.
-> > > > > > > 
-> > > > > > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > > > > > > ---
-> > > > > > > arch/x86/kernel/cet.c | 45
-> > > > > > > +++++++++++++++++++++++++++++++++++++++++++
-> > > > > > > 1 file changed, 45 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-> > > > > > > index 6adfe795d692..a65d9745af08 100644
-> > > > > > > --- a/arch/x86/kernel/cet.c
-> > > > > > > +++ b/arch/x86/kernel/cet.c
-> > > > > > > @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
-> > > > > > >    wrmsrl(MSR_IA32_U_CET, r);
-> > > > > > >    current->thread.cet.ibt_enabled = 0;
-> > > > > > > }
-> > > > > > > +
-> > > > > > > +int cet_setup_ibt_bitmap(void)
-> > > > > > > +{
-> > > > > > > +    u64 r;
-> > > > > > > +    unsigned long bitmap;
-> > > > > > > +    unsigned long size;
-> > > > > > > +
-> > > > > > > +    if (!cpu_feature_enabled(X86_FEATURE_IBT))
-> > > > > > > +        return -EOPNOTSUPP;
-> > > > > > > +
-> > > > > > > +    if (!current->thread.cet.ibt_bitmap_addr) {
-> > > > > > > +        /*
-> > > > > > > +         * Calculate size and put in thread header.
-> > > > > > > +         * may_expand_vm() needs this information.
-> > > > > > > +         */
-> > > > > > > +        size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
-> > > > > > 
-> > > > > > TASK_SIZE_MAX is likely needed here, as an application can easily
-> > > > > > switch
-> > > > > > between long an 32-bit protected mode.  And then the case of a CPU
-> > > > > > that
-> > > > > > doesn't support 5LPT.
-> > > > > 
-> > > > > If we had calculated bitmap size from TASK_SIZE_MAX, all 32-bit apps
-> > > > > would
-> > > > > have
-> > > > > failed the allocation for bitmap size > TASK_SIZE.  Please see values
-> > > > > below,
-> > > > > which is printed from the current code.
-> > > > > 
-> > > > > Yu-cheng
-> > > > > 
-> > > > > 
-> > > > > x64:
-> > > > > TASK_SIZE_MAX    = 0000 7fff ffff f000
-> > > > > TASK_SIZE    = 0000 7fff ffff f000
-> > > > > bitmap size    = 0000 0000 ffff ffff
-> > > > > 
-> > > > > x32:
-> > > > > TASK_SIZE_MAX    = 0000 7fff ffff f000
-> > > > > TASK_SIZE    = 0000 0000 ffff e000
-> > > > > bitmap size    = 0000 0000 0001 ffff
-> > > > > 
-> > > > 
-> > > > I haven’t followed all the details here, but I have a general policy of
-> > > > objecting to any new use of TASK_SIZE. If you really really need to
-> > > > depend on
-> > > > 32-bitness in new code, please figure out what exactly you mean by “32-
-> > > > bit”
-> > > > and use an explicit check.
-> > > 
-> > > The explicit check would be:
-> > > 
-> > > test_thread_flag(TIF_ADDR32) ? IA32_PAGE_OFFSET : TASK_SIZE_MAX
-> > > 
-> > > which is the same as TASK_SIZE.
-> > 
-> > But this is only ever done in response to a syscall, right?  So
-> > wouldn't in_compat_syscall() be the right check?
-> > 
-> > Also, this whole thing makes me extremely nervous.  The MSR only
-> > contains the start address, not the size, right?  So what prevents
-> > some goof from causing the CPU to read way past the end of the bitmap
-> > if the bitmap is short because the kernel thought it was supposed to
-> > be 32-bit?
-> 
-> That's what I've mentioned initially: every syscall made with int 0x80
-> is interpreted as compat, even if it was made from long mode.
-> 
-> > I'm inclined to suggest something awful-ish: always allocate the
-> > bitmap as though it's for a 64-bit process, and just let it be at a
-> > high address.  And add a syscall or arch_prctl() to manipulate it for
-> > the benefit of 32-bit programs that can't address it directly.
-> 
-> That's likely the only way to go.
+Hello,
 
-This bitmap is needed only when the app does dlopen() a non-IBT .so file.  Most
-applications do not need it.  Can't we let dlopen mmap() the bitmap when needed
-and pass it to the kernel?
+syzbot tried to test the proposed patch but build/boot failed:
 
-Yu-cheng
+failed to checkout kernel repo git://github.com/martinetd/linux.git on  
+commit e4ca13f7d075e551dc158df6af18fb412a1dba0a: failed to run  
+["git" "checkout" "e4ca13f7d075e551dc158df6af18fb412a1dba0a"]: exit status  
+128
+fatal: reference is not a tree: e4ca13f7d075e551dc158df6af18fb412a1dba0a
+
+
+
+Tested on:
+
+commit:         [unknown]
+git tree:       git://github.com/martinetd/linux.git  
+e4ca13f7d075e551dc158df6af18fb412a1dba0a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
