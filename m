@@ -2,127 +2,119 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2169BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED90C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDFBF2085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE8002085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:44:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ol0F1+bl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFBF2085B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPf6Y40E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE8002085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJKDHb (ORCPT
+        id S1727709AbeJKDIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 23:07:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35619 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbeJKDHb (ORCPT
+        Wed, 10 Oct 2018 23:08:31 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42802 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeJKDIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 23:07:31 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r191-v6so4907648lff.2;
-        Wed, 10 Oct 2018 12:43:51 -0700 (PDT)
+        Wed, 10 Oct 2018 23:08:30 -0400
+Received: by mail-qk1-f195.google.com with SMTP id g20-v6so3949556qke.9;
+        Wed, 10 Oct 2018 12:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=oqRJiHpCqRWOx1xolni62sTvKxZhxB3/HSfZ0G2UOas=;
-        b=ol0F1+blI6hpWURa1+R8LA7yLF7l/u1UuGkQhlydbStOksEOxN1hC3KY6S+nyyEWU6
-         GoN1lA71ciVtVsQoab3XBONweEkIlgFwfJ2oXIuYq1/H7gUdDuVCGdJE8PJqqzyQc0Ya
-         1e8HM/wZFAbWFcxM9ljNsjJgcAqwYymYdz1JLwNSXgdVqha08kRnh/D/x5hK7k++UGeo
-         WCUufJ3DG0BV/wTftv8MCt/PD/vTqJt7NYfjwI4hIX1SMv1FvOi5pV0+aADuv2oMYr5v
-         EfzTLG+G0B0A2Bvyfbg43Wy5MwtvbWp5QWDnFW4q4RwQ3NU/18Y/CMJMkOHfwSY+q0qU
-         e+fg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SdEtrSNLUzoVlhC6ltAanlVd2BPIgn9p3chKH4UQUZc=;
+        b=BPf6Y40EIw6hNuX4h5eNz6BTWxOruTIyVHtBdRfErIFuHrObQELxDQjZwEK5z8CKZe
+         Kwo6RPDDjEQcHUn9/ZgAC2XeItoLDTGQav3u58zkG5ywPVRg/AcNe2jIoqgZbLnjgSGW
+         kQ2gL2WTHZSympq8uc2/pF1IOt2adWo9A+N8bfgrtYy2nNw4WVa653UcLycfH8U1sv4+
+         9Tna7EEUvUhiLi5hDwVLnKwklNBWpz+EchCXkTh3UZMN2NEMHyJ64/o2JFjorI/OMouD
+         WZZ0q6+CHgJq7nlxBcApeDmy9LBAFX5nK6bjoGm1P9CpnowBid7dXqSdiH16hUhRsCXa
+         MJlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=oqRJiHpCqRWOx1xolni62sTvKxZhxB3/HSfZ0G2UOas=;
-        b=uC8LoJlrGEXRk+rJXD686ARWH2sBFPYu15oMfWICSHXHDiCiM1L8XEbOkSX8rMeDxW
-         IpwiO9m64Pqirj4IZC/SQ9lWu1qjg16yalBHUjebEmjw+CZfpk05LmrPtzwh8ZkMRL1G
-         tAc0tZ1rdghYt9fhJWtyy5EZAOQwz3xQFGUgMLRSr+pOidVG5VsAJBF7pOaf7CYGsQyk
-         gp7obZVpu5RBYwgSI3XNh3iHg3K52L/M1wuDOP6dngYx+sYz7lcQGyM5enePGl+DOf7m
-         JgAcfgEX1XlxS7WznB8KOXVPJIRayfwiNbu/nXpxKv/wospiyP1NUFnK65TKNGrOg0su
-         CG1A==
-X-Gm-Message-State: ABuFfogpVG4ED8bdgoOHXSEN+5S9pEfDkgeWG17+ESD/LWo7cf1strEP
-        JtbmCWDQejKJS+v7HtFBRALF46lvaC+NgAn8CuagHYP1
-X-Google-Smtp-Source: ACcGV61935MvaO7h/x0n7hLMAYwoJfyVuNMq9DYhXXOLDsQW5qfgoiyT0ai7udK44Y5eBSxQGpGeDhkFMRmVWUpxLbM=
-X-Received: by 2002:a19:169d:: with SMTP id 29-v6mr18655691lfw.151.1539200630302;
- Wed, 10 Oct 2018 12:43:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SdEtrSNLUzoVlhC6ltAanlVd2BPIgn9p3chKH4UQUZc=;
+        b=oFhembAts9sAidma5bDMTipTDUHh4NPxJlHeS4mSIhJVHKSJ0vl7iK1BgIXYBYESkz
+         ajDwICSCiL0HiVEEfSiVYOa4Nw5SnKDauA1mDLfKod3jzQ3/QE+lu5PTV473eewpBrtK
+         O9hV0R0akxZI0GSv3RdtGoB8kKeldLdkPt2gVEdPfdsm19TP8VzVwOq6ItcUbNg3v4X2
+         YQF0fEYbUrfOb51/JoenkK53VfT2zTlC3JQL/rWlckGyATKUEMi4oaDDUHqyx+8Wqsih
+         XYmDpiw9Ud1sAH6f30HH+Zam7Z3+i90E8afriX7l+8JIGX1AicKJYKi0TSd6BBS5zhKR
+         ZUhw==
+X-Gm-Message-State: ABuFfohkIheuZoxdKhW1m0UL5GI0SPOcXqigMefh/5zuX+UU8S5TXD+A
+        yLHxOH99OssOq1apxA8g9A==
+X-Google-Smtp-Source: ACcGV62tFo2zhS484Uo5gnbPjpAJzyCUIAe1gf3/RjAfV/EXLznnxLdwgGOKgbTTC9bF6TrPVGFDBg==
+X-Received: by 2002:a37:6d41:: with SMTP id i62-v6mr28405205qkc.237.1539200691263;
+        Wed, 10 Oct 2018 12:44:51 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm7420018qkc.96.2018.10.10.12.44.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 12:44:50 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 15:44:44 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-acpi@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, rjw@rjwysocki.net, lenb@kernel.org,
+        ard.biesheuvel@linaro.org, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181010194443.sgdvplwdnltshwwi@gabell>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010085920.GB5533@zn.tnic>
+ <20181010090620.GF25297@MiWiFi-R3L-srv>
+ <alpine.DEB.2.21.1810101113070.10278@nanos.tec.linutronix.de>
+ <20181010091923.GC5533@zn.tnic>
+ <20181010093057.GA22088@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-References: <20181010142813.1918180-1-arnd@arndb.de> <20181010192658.GA27646@thunk.org>
-In-Reply-To: <20181010192658.GA27646@thunk.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 10 Oct 2018 21:43:39 +0200
-Message-ID: <CANiq72nGxH=PTwiEQARiN-iminwECAMYe6-GJzCUh+V0mJ-=YQ@mail.gmail.com>
-Subject: Re: [PATCH] ext4: avoid unused variable warning
-To:     "Ted Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, jack@suse.cz,
-        Eric Biggers <ebiggers@google.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010093057.GA22088@MiWiFi-R3L-srv>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+On Wed, Oct 10, 2018 at 05:30:57PM +0800, Baoquan He wrote:
+> On 10/10/18 at 11:19am, Borislav Petkov wrote:
+> > On Wed, Oct 10, 2018 at 11:14:26AM +0200, Thomas Gleixner wrote:
+> > > Yes, it's different, but if the SRAT information is available early, then
+> > > the command line parameter can go away because then the required
+> > > information for Masa's problem is available as well.
+> > 
+> > Exactly. And I'd prefer we delayed the command line parameter until we
+> > figure out we really need it and not expose it to upstream and then
+> > remove it shortly after.
+> > 
+> > So I'd suggest we move Masa's patches to a separate branch and not send
+> > it up this round.
+> 
+> Yes, sounds more reasonable if we can reuse functions in Chao's patch 1/3
+> to solve the padding issue.
 
-On Wed, Oct 10, 2018 at 9:27 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Wed, Oct 10, 2018 at 04:27:58PM +0200, Arnd Bergmann wrote:
-> > The two new variables are only used in an #ifdef, so they cause a
-> > warning without CONFIG_QUOTA:
-> >
-> > fs/ext4/super.c: In function 'parse_options':
-> > fs/ext4/super.c:1977:26: error: unused variable 'grp_qf_name' [-Werror=unused-variable]
-> >   char *p, *usr_qf_name, *grp_qf_name;
-> >                           ^~~~~~~~~~~
-> > fs/ext4/super.c:1977:12: error: unused variable 'usr_qf_name' [-Werror=unused-variable]
-> >   char *p, *usr_qf_name, *grp_qf_name;
-> >
-> > Fixes: 20cefcdc2040 ("ext4: fix use-after-free race in ext4_remount()'s error path")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Hmm, I wonder if we should do something like:
->
-> #define EXT4_UNUSED_VAR __attribute__ ((unused))
+Thanks for your comments! Yes, immovable_mem[num_immovable_mem] in Chao's
+patch may be useful for calculating the padding size. If so, we don't
+need the new kernel parameter. It's nice!
 
-We have __maybe_unused already, so you can go ahead! :-)
+Do you happen to have ideas how we access immovable_mem[num_immovable_mem]
+from arch/x86/mm/kaslr.c ? It is located to arch/x86/boot/compressed/*, so
+I suppose it is not easy to access it... 
+I would appreciate if you could give some advice.
 
-(Also __always_unused, same definition as well, but here it does not may sense).
-
->
-> and then we could do:
->
->         char *p, *usr_qf_name EXT4_UNUSED_VAR, *grp_qf_name EXT4_UNUSED_VAR;
->
-> More generally, I wonder if this is something we should have defined
-> for the whole kernel, as opposed to a one-off hack that ACPI and ext4
-> subsystems use.  It's a little ugly, but I think it's much nicer than
-> having extra #ifdefs such as:
->
->         char *p;
-> #ifdef CONFIG_QUOTA
->         char *usr_qf_name, *grp_qf_name;
-> #endif
->
-> After all, the compiler is perfectly capable of ignoring variables
-> which are unused.  And if it's only because of an #ifdef later in the
-> function, it would be nice to not have an extra #ifdef in the variable
-> declarations.
-
-Indeed, it looks clean --- I like it.
-
-Although I am not sure how people will feel about that :-) Someone may
-argue that, for consistency, we shouldn't, because inside structs we
-have to use #ifdefs still.
-
-Cheers,
-Miguel
+Thanks!
+Masa
