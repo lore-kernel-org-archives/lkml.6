@@ -2,98 +2,186 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD80C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E60FC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439292151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJeKUxfU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439292151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 142302150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142302150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeJJQC7 (ORCPT
+        id S1727485AbeJJQDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:02:59 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44631 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbeJJQC7 (ORCPT
+        Wed, 10 Oct 2018 12:03:01 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:50528 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726636AbeJJQC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 10 Oct 2018 12:02:59 -0400
-Received: by mail-io1-f66.google.com with SMTP id x26-v6so3265077iog.11
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9fcc3mQJLQGeOZR/rJDAa/pISBbYSbBj4Ef4Nq4qd2Q=;
-        b=NJeKUxfUS3a7sqNcCwNMoL5mDIZaE4BbGWV+F0nzMJr4cKU5POaDMAic97SFsQVGzE
-         XVL19v/2t+TIGMe1M1nrdGv7AN1hEzfHK/Ekh90vmdK3JwrR2B01IkoqH7AqaO7Ury1n
-         Kea4AbbtuaBu0U0kibMUMIdCdee0PvYf9WsZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9fcc3mQJLQGeOZR/rJDAa/pISBbYSbBj4Ef4Nq4qd2Q=;
-        b=rEsDhv1xe6009yWno+wmRB7jWcL+ufyaj7qqwFtQkkeZv4kwsrkZ/wSEvX36Jnwt24
-         dBEWUXbm6y9HFUbf2rerk7+Q4R/MVHSSNMrNU/dw0jO6D5JiJJnKxeE2qgpMrWLYYDxy
-         fnU73xtkJoMkl1djBJtqW7vlN+pW2REkbx3MIuMHcDTGAAnTSuL7z0NFraobKKF4LTrt
-         m5RyxHKx0cgKWUbivbLKPqNc7yb4v7dr2tHR/RA74yxR7Z+1Rf9tPx8pBA3XIKiqwfQg
-         32pD8UdHQHkiBcv/seQOQf7N98rSllTEFOWXHpDqYRgoXEnlUsHnOK5d68VP6pORCBsP
-         1zLg==
-X-Gm-Message-State: ABuFfogRjKW1TVbHjgFS1aD20fyzigM3LJQoLjwrW4zQbXN5CumAVd/1
-        MLynsrSJobhBY90bPH2H+2EZea1R5LIT+4W4Ru3Phg==
-X-Google-Smtp-Source: ACcGV60s5H4ZHYD2rmnaROT7KXUn5R8RbO5Q9fWtAP6weZ0lAyBppjv7UG94iWauCThjz2YgG3I6xAOQMfXAEj/46DA=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr19776924ioa.277.1539160911234;
- Wed, 10 Oct 2018 01:41:51 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="45870141"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 10 Oct 2018 16:41:50 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 399E84B6ED4B;
+        Wed, 10 Oct 2018 16:41:49 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 10 Oct 2018 16:41:54 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>
+CC:     <rjw@rjwysocki.net>, <lenb@kernel.org>,
+        <ard.biesheuvel@linaro.org>, <indou.takao@jp.fujitsu.com>,
+        <caoj.fnst@cn.fujitsu.com>
+Subject: [PATCH v8 3/3] x86/boot/KASLR: Limit kaslr to choosing the immovable memory
+Date:   Wed, 10 Oct 2018 16:41:19 +0800
+Message-ID: <20181010084119.17539-4-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-2-vz@mleia.com>
-In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 10:41:38 +0200
-Message-ID: <CACRpkdb9Lwshpt+haJur_7ESOD50t=8PE-ct-UO5yJFRfrM6Lw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-media@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sandeep_Jain@mentor.com,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 399E84B6ED4B.ADD86
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- On Mon, Oct 8, 2018 at 11:12 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
-> From: Sandeep Jain <Sandeep_Jain@mentor.com>
-(...)
-> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
-> +       Possible values are "<1>" or "<0>".
-> +       If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
-> +       Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
-> +       strobed on the Falling edge of the PCLK.
-> +       If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
-> +       value is not touched and given by hardware pin strapping.
+If CONFIG_MEMORY_HOTREMOVE enabled and the amount of immovable
+memory regions is not zero. Calculate the intersection between memory
+regions from e820/efi memory table and immovable memory regions.
 
-Please use the existing binding in
-Documentation/devicetree/bindings/display/panel/display-timing.txt
-for this: pixelclk-active = [<0>|<1>];
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/compressed/kaslr.c | 72 +++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 11 deletions(-)
 
-Please reference the above document in your binding.
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 573e582e8709..61486aad39b6 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -101,6 +101,11 @@ static bool memmap_too_large;
+ /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+ static unsigned long long mem_limit = ULLONG_MAX;
+ 
++#ifdef CONFIG_MEMORY_HOTREMOVE
++/* Store the immovable memory regions */
++extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
++#endif
++
+ 
+ enum mem_avoid_index {
+ 	MEM_AVOID_ZO_RANGE = 0,
+@@ -575,9 +580,9 @@ static unsigned long slots_fetch_random(void)
+ 	return 0;
+ }
+ 
+-static void process_mem_region(struct mem_vector *entry,
+-			       unsigned long minimum,
+-			       unsigned long image_size)
++static void slots_count(struct mem_vector *entry,
++			unsigned long minimum,
++			unsigned long image_size)
+ {
+ 	struct mem_vector region, overlap;
+ 	unsigned long start_orig, end;
+@@ -653,6 +658,57 @@ static void process_mem_region(struct mem_vector *entry,
+ 	}
+ }
+ 
++static bool process_mem_region(struct mem_vector *region,
++			       unsigned long long minimum,
++			       unsigned long long image_size)
++{
++	int i;
++	/*
++	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
++	 * walk all the regions, so use region directely.
++	 */
++	if (num_immovable_mem == 0) {
++		slots_count(region, minimum, image_size);
++
++		if (slot_area_index == MAX_SLOT_AREA) {
++			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
++			return 1;
++		}
++		return 0;
++	}
++
++#ifdef CONFIG_MEMORY_HOTREMOVE
++	/*
++	 * If immovable memory found, filter the intersection between
++	 * immovable memory and region to slots_count.
++	 * Otherwise, go on old code.
++	 */
++	for (i = 0; i < num_immovable_mem; i++) {
++		struct mem_vector entry;
++		unsigned long long start, end, entry_end, region_end;
++
++		if (!mem_overlaps(region, &immovable_mem[i]))
++			continue;
++
++		start = immovable_mem[i].start;
++		end = start + immovable_mem[i].size;
++		region_end = region->start + region->size;
++
++		entry.start = clamp(region->start, start, end);
++		entry_end = clamp(region_end, start, end);
++		entry.size = entry_end - entry.start;
++
++		slots_count(&entry, minimum, image_size);
++
++		if (slot_area_index == MAX_SLOT_AREA) {
++			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
++			return 1;
++		}
++	}
++	return 0;
++#endif
++}
++
+ #ifdef CONFIG_EFI
+ /*
+  * Returns true if mirror region found (and must have been processed
+@@ -718,11 +774,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+ 
+ 		region.start = md->phys_addr;
+ 		region.size = md->num_pages << EFI_PAGE_SHIFT;
+-		process_mem_region(&region, minimum, image_size);
+-		if (slot_area_index == MAX_SLOT_AREA) {
+-			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
++		if (process_mem_region(&region, minimum, image_size))
+ 			break;
+-		}
+ 	}
+ 	return true;
+ }
+@@ -749,11 +802,8 @@ static void process_e820_entries(unsigned long minimum,
+ 			continue;
+ 		region.start = entry->addr;
+ 		region.size = entry->size;
+-		process_mem_region(&region, minimum, image_size);
+-		if (slot_area_index == MAX_SLOT_AREA) {
+-			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
++		if (process_mem_region(&region, minimum, image_size))
+ 			break;
+-		}
+ 	}
+ }
+ 
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
+
+
