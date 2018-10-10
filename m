@@ -2,123 +2,102 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDA6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93979C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5819B2087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5819B2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 63EE921470
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:13:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EE921470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbeJJXft (ORCPT
+        id S1727033AbeJJXfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:35:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:54662 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbeJJXft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:35:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34AFBED1;
-        Wed, 10 Oct 2018 09:12:58 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 05D673F5B3;
-        Wed, 10 Oct 2018 09:12:58 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B41281AE088A; Wed, 10 Oct 2018 17:12:57 +0100 (BST)
-Date:   Wed, 10 Oct 2018 17:12:57 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-        bigeasy@linutronix.de
-Subject: Re: [PATCH v2 4/4] locking/qspinlock, x86: Provide liveness guarantee
-Message-ID: <20181010161257.GD17340@arm.com>
-References: <20181003130257.156322446@infradead.org>
- <20181003130957.183726335@infradead.org>
+        Wed, 10 Oct 2018 19:35:51 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56043 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbeJJXfu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 19:35:50 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4170C809CD; Wed, 10 Oct 2018 18:12:57 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 18:12:57 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>
+Subject: Re: [Ksummit-discuss] [PATCH 0/2] code of conduct fixes
+Message-ID: <20181010161256.GB19941@amd>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+ <CAKMK7uFvmXtk=WiZJxGrzQQD1RHv7srA-_e8KdwXZ9Kn5rcmiQ@mail.gmail.com>
+ <1538934030.4010.1.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
 Content-Disposition: inline
-In-Reply-To: <20181003130957.183726335@infradead.org>
+In-Reply-To: <1538934030.4010.1.camel@HansenPartnership.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 03:03:01PM +0200, Peter Zijlstra wrote:
-> On x86 we cannot do fetch_or with a single instruction and thus end up
-> using a cmpxchg loop, this reduces determinism. Replace the fetch_or
-> with a composite operation: tas-pending + load.
-> 
-> Using two instructions of course opens a window we previously did not
-> have. Consider the scenario:
-> 
-> 
-> 	CPU0		CPU1		CPU2
-> 
->  1)	lock
-> 	  trylock -> (0,0,1)
-> 
->  2)			lock
-> 			  trylock /* fail */
-> 
->  3)	unlock -> (0,0,0)
-> 
->  4)					lock
-> 					  trylock -> (0,0,1)
-> 
->  5)			  tas-pending -> (0,1,1)
-> 			  load-val <- (0,1,0) from 3
-> 
->  6)			  clear-pending-set-locked -> (0,0,1)
-> 
-> 			  FAIL: _2_ owners
-> 
-> where 5) is our new composite operation. When we consider each part of
-> the qspinlock state as a separate variable (as we can when
-> _Q_PENDING_BITS == 8) then the above is entirely possible, because
-> tas-pending will only RmW the pending byte, so the later load is able
-> to observe prior tail and lock state (but not earlier than its own
-> trylock, which operates on the whole word, due to coherence).
-> 
-> To avoid this we need 2 things:
-> 
->  - the load must come after the tas-pending (obviously, otherwise it
->    can trivially observe prior state).
-> 
->  - the tas-pending must be a full word RmW, it cannot be an xchg8 for
->    example, such that we cannot observe other state prior to setting
->    pending.
-> 
-> On x86 we can realize this by using "LOCK BTS m32, r32" for
-> tas-pending followed by a regular load.
-> 
-> Note that observing later state is not a problem:
-> 
->  - if we fail to observe a later unlock, we'll simply spin-wait for
->    that store to become visible.
-> 
->  - if we observe a later xchg_tail, there is no difference from that
->    xchg_tail having taken place before the tas-pending.
-> 
-> Cc: mingo@kernel.org
-> Cc: tglx@linutronix.de
-> Cc: longman@redhat.com
-> Cc: andrea.parri@amarulasolutions.com
-> Suggested-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/x86/include/asm/qspinlock.h |   15 +++++++++++++++
->  kernel/locking/qspinlock.c       |   16 +++++++++++++++-
->  2 files changed, 30 insertions(+), 1 deletion(-)
 
-I've failed to break this by thinking really hard, so I've updated Catalin's
-TLA model to see if the tools are still happy. I'll get back to you once
-they've finished chewing on it.
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will
+Hi!
+
+> > Personally I'm not happy at all with how the new code of conduct was
+> > rushed in, least because I still don't understand why it happened,
+> > but also for all the other reasons we've discussed here in the past
+> > few weeks.
+
+These are exactly my thoughts.
+
+> > But I also understand that there's lots of people (me included) who
+> > don't want to ship a release with the code of conduct in it's current
+> > in-between state. I think adding a disclaimer at the top, along the
+> > lines of
+> >=20
+> > "Please note that this code of conduct and it's enforcement are still
+> > under discussion."
+>=20
+> I don't disagree with the position, but eliminating our old code of
+> conduct in favour of another we cast doubt on with this disclaimer
+> effectively leaves us with nothing at all, which seems to be a worse
+> situation.  In that case, I think reverting the CoC commit
+> (8a104f8b5867c682) and then restarting the replacement process is
+> better than adding a disclaimer to the new one.
+
+Reverting it then having proper discussion sounds suitable to me.
+
+(And it would be nice to have something on the mailing lists, too, as
+I probably won't make it to kernel summit this year.)
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlu+JQgACgkQMOfwapXb+vIJCACcDvJriHp4ANq5GSyQdbwoo2Cr
+RD0An1TkwQ/aNNJyxXEVtwDnoYQdKoor
+=qTWA
+-----END PGP SIGNATURE-----
+
+--xXmbgvnjoT4axfJE--
