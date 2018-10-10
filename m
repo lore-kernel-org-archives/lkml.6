@@ -2,113 +2,139 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4EEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF56DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B2C2082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:16:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K683UwnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B2C2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 896DC2082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:17:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896DC2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbeJKEkB (ORCPT
+        id S1726046AbeJKEk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 00:40:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 00:40:57 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:52092 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbeJKEkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 00:40:00 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB0482082B;
-        Wed, 10 Oct 2018 21:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539206162;
-        bh=aEqmtlqF6qF0j6CMs1nTA+fpxlGMj5K0eBeQs++i/Jg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K683UwnOV2V7k1hpDsJHaBDrOWuyb0VGQ8HNW0IEB/W1eCXQb7QbHyp7W7r6LtwP0
-         19qaOzgDrvS+VqbmPa7zD6RDrIIoAAmZcANiFnyXHDtLOXXHtI3M55o8qqtL4xYT1J
-         nbN7MZEz41Nwl29kWz4hhxKSCWOybnM7rLx6gCp4=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id B9F3D142D18; Wed, 10 Oct 2018 18:15:47 -0300 (-03)
-Date:   Wed, 10 Oct 2018 18:15:47 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Ksummit-discuss] [PATCH] code-of-conduct: Remove explicit list
- of discrimination factors
-Message-ID: <20181010211547.GB9853@kernel.org>
-References: <20181007085102.17795-1-geert@linux-m68k.org>
- <f4f7bf39-af34-4375-d6a2-b1f23cad519e@gmail.com>
+        id S1725868AbeJKEk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 00:40:57 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1gALqh-0000nR-SD; Wed, 10 Oct 2018 23:16:55 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [RESEND][PATCH v2] cfq: clear queue pointers from cfqg after
+ unpinning them in cfq_pd_offline
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Caspar Zhang <caspar@linux.alibaba.com>,
+        jiufei.xue@linux.alibaba.com, Tejun Heo <tj@kernel.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <befb45da-2a7b-8dff-30e7-59b441f604fe@maciej.szmigiero.name>
+Date:   Wed, 10 Oct 2018 23:16:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4f7bf39-af34-4375-d6a2-b1f23cad519e@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 10, 2018 at 01:55:04PM -0700, Frank Rowand escreveu:
-> On 10/07/18 01:51, Geert Uytterhoeven wrote:
-> > Providing an explicit list of discrimination factors may give the false
-> > impression that discrimination based on other unlisted factors would be
-> > allowed.
-> > 
-> > Avoid any ambiguity by removing the list, to ensure "a harassment-free
-> > experience for everyone", period.
-> > 
-> > Fixes: 8a104f8b5867c682 ("Code of Conduct: Let's revamp it.")
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > ---
-> > The use of "race" may also conflict with the United Nation's views on
-> > this matter, cfr. e.g. the UNESCO's "Four statements on the race
-> > question"[1][2] and "Declaration on Race and Racial Prejudice"[3].
-> > 
-> > [1] https://en.wikipedia.org/wiki/The_Race_Question
-> > [2] http://unesdoc.unesco.org/images/0012/001229/122962eo.pdf
-> > [3] http://portal.unesco.org/en/ev.php-URL_ID=13161&URL_DO=DO_TOPIC&URL_SECTION=201.html
-> > ---
-> >  Documentation/process/code-of-conduct.rst | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-> > index ab7c24b5478c6b30..e472c9f86ff00b34 100644
-> > --- a/Documentation/process/code-of-conduct.rst
-> > +++ b/Documentation/process/code-of-conduct.rst
-> > @@ -6,10 +6,7 @@ Our Pledge
-> >  
-> >  In the interest of fostering an open and welcoming environment, we as
-> >  contributors and maintainers pledge to making participation in our project and
-> > -our community a harassment-free experience for everyone, regardless of age, body
-> > -size, disability, ethnicity, sex characteristics, gender identity and
-> > -expression, level of experience, education, socio-economic status, nationality,
-> > -personal appearance, race, religion, or sexual identity and orientation.
-> > +our community a harassment-free experience for everyone.
-> >  
-> >  Our Standards
-> >  =============
-> > 
-> 
-> 
-> The words removed by this patch are a political statement.  They do not belong
-> in the document.
-> 
-> Acked-by: Frank Rowand <frowand.list@gmail.com>
+BFQ is already doing a similar thing in its .pd_offline_fn() method
+implementation.
 
-Acked-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+While it seems that after commit 4c6994806f70
+("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
+was reverted leaving these pointers intact no longer causes crashes
+clearing them is still a sensible thing to do to make the code more robust.
 
-- Arnaldo
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+Changes from v1: Drop stable and fixes tags, rewrite the commit message
+as after commit 4c6994806f70 was reverted this change is no longer
+required to fix a crash.
+
+ block/cfq-iosched.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index d219e9a1af65..6a3d87dd3c1a 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1644,14 +1644,20 @@ static void cfq_pd_offline(struct blkg_policy_data *pd)
+ 	int i;
+ 
+ 	for (i = 0; i < IOPRIO_BE_NR; i++) {
+-		if (cfqg->async_cfqq[0][i])
++		if (cfqg->async_cfqq[0][i]) {
+ 			cfq_put_queue(cfqg->async_cfqq[0][i]);
+-		if (cfqg->async_cfqq[1][i])
++			cfqg->async_cfqq[0][i] = NULL;
++		}
++		if (cfqg->async_cfqq[1][i]) {
+ 			cfq_put_queue(cfqg->async_cfqq[1][i]);
++			cfqg->async_cfqq[1][i] = NULL;
++		}
+ 	}
+ 
+-	if (cfqg->async_idle_cfqq)
++	if (cfqg->async_idle_cfqq) {
+ 		cfq_put_queue(cfqg->async_idle_cfqq);
++		cfqg->async_idle_cfqq = NULL;
++	}
+ 
+ 	/*
+ 	 * @blkg is going offline and will be ignored by
+-- 
+2.17.0
+
