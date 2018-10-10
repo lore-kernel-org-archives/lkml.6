@@ -2,119 +2,193 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23EAC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34732086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:00:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34732086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id C33DC214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:01:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33DC214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeJJXXk (ORCPT
+        id S1727103AbeJJXYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:23:40 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55659 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbeJJXXj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:23:39 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8CEE7807D6; Wed, 10 Oct 2018 18:00:48 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 18:00:48 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        bjorn.andersson@linaro.org, broonie@kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20181010160041.GA22121@amd>
-References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
- <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
-Content-Disposition: inline
-In-Reply-To: <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 10 Oct 2018 19:24:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36076 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbeJJXYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 19:24:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 09:01:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,364,1534834800"; 
+   d="scan'208";a="240200199"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga004.jf.intel.com with ESMTP; 10 Oct 2018 09:00:55 -0700
+Message-ID: <f6dcfb3c548f49cd096088e4366e44f57ec5964e.camel@intel.com>
+Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
+ allocation function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 10 Oct 2018 08:56:03 -0700
+In-Reply-To: <20181005172622.GD19360@asgard.redhat.com>
+References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
+         <20180921150553.21016-4-yu-cheng.yu@intel.com>
+         <20181003195702.GF32759@asgard.redhat.com>
+         <fc2f98ab46240c0498bdf4d7458b4373c1f02bf8.camel@intel.com>
+         <5BF3AE8F-CC2A-4160-9FF6-FEA171A76371@amacapital.net>
+         <aa5a061c159471f410d677af6a609793906cece1.camel@intel.com>
+         <CALCETrXVdYsJsVy=QWruDYdRc6wb44b=0J3OK3zjR_fT1fQH7w@mail.gmail.com>
+         <20181005172622.GD19360@asgard.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-10-05 at 10:26 -0700, Eugene Syromiatnikov wrote:
+> On Fri, Oct 05, 2018 at 10:07:46AM -0700, Andy Lutomirski wrote:
+> > On Fri, Oct 5, 2018 at 10:03 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > > 
+> > > On Fri, 2018-10-05 at 09:28 -0700, Andy Lutomirski wrote:
+> > > > > On Oct 5, 2018, at 9:13 AM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > > > > 
+> > > > > > On Wed, 2018-10-03 at 21:57 +0200, Eugene Syromiatnikov wrote:
+> > > > > > > On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
+> > > > > > > Indirect branch tracking provides an optional legacy code bitmap
+> > > > > > > that indicates locations of non-IBT compatible code.  When set,
+> > > > > > > each bit in the bitmap represents a page in the linear address is
+> > > > > > > legacy code.
+> > > > > > > 
+> > > > > > > We allocate the bitmap only when the application requests it.
+> > > > > > > Most applications do not need the bitmap.
+> > > > > > > 
+> > > > > > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > > > > > > ---
+> > > > > > > arch/x86/kernel/cet.c | 45
+> > > > > > > +++++++++++++++++++++++++++++++++++++++++++
+> > > > > > > 1 file changed, 45 insertions(+)
+> > > > > > > 
+> > > > > > > diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> > > > > > > index 6adfe795d692..a65d9745af08 100644
+> > > > > > > --- a/arch/x86/kernel/cet.c
+> > > > > > > +++ b/arch/x86/kernel/cet.c
+> > > > > > > @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
+> > > > > > >    wrmsrl(MSR_IA32_U_CET, r);
+> > > > > > >    current->thread.cet.ibt_enabled = 0;
+> > > > > > > }
+> > > > > > > +
+> > > > > > > +int cet_setup_ibt_bitmap(void)
+> > > > > > > +{
+> > > > > > > +    u64 r;
+> > > > > > > +    unsigned long bitmap;
+> > > > > > > +    unsigned long size;
+> > > > > > > +
+> > > > > > > +    if (!cpu_feature_enabled(X86_FEATURE_IBT))
+> > > > > > > +        return -EOPNOTSUPP;
+> > > > > > > +
+> > > > > > > +    if (!current->thread.cet.ibt_bitmap_addr) {
+> > > > > > > +        /*
+> > > > > > > +         * Calculate size and put in thread header.
+> > > > > > > +         * may_expand_vm() needs this information.
+> > > > > > > +         */
+> > > > > > > +        size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
+> > > > > > 
+> > > > > > TASK_SIZE_MAX is likely needed here, as an application can easily
+> > > > > > switch
+> > > > > > between long an 32-bit protected mode.  And then the case of a CPU
+> > > > > > that
+> > > > > > doesn't support 5LPT.
+> > > > > 
+> > > > > If we had calculated bitmap size from TASK_SIZE_MAX, all 32-bit apps
+> > > > > would
+> > > > > have
+> > > > > failed the allocation for bitmap size > TASK_SIZE.  Please see values
+> > > > > below,
+> > > > > which is printed from the current code.
+> > > > > 
+> > > > > Yu-cheng
+> > > > > 
+> > > > > 
+> > > > > x64:
+> > > > > TASK_SIZE_MAX    = 0000 7fff ffff f000
+> > > > > TASK_SIZE    = 0000 7fff ffff f000
+> > > > > bitmap size    = 0000 0000 ffff ffff
+> > > > > 
+> > > > > x32:
+> > > > > TASK_SIZE_MAX    = 0000 7fff ffff f000
+> > > > > TASK_SIZE    = 0000 0000 ffff e000
+> > > > > bitmap size    = 0000 0000 0001 ffff
+> > > > > 
+> > > > 
+> > > > I haven’t followed all the details here, but I have a general policy of
+> > > > objecting to any new use of TASK_SIZE. If you really really need to
+> > > > depend on
+> > > > 32-bitness in new code, please figure out what exactly you mean by “32-
+> > > > bit”
+> > > > and use an explicit check.
+> > > 
+> > > The explicit check would be:
+> > > 
+> > > test_thread_flag(TIF_ADDR32) ? IA32_PAGE_OFFSET : TASK_SIZE_MAX
+> > > 
+> > > which is the same as TASK_SIZE.
+> > 
+> > But this is only ever done in response to a syscall, right?  So
+> > wouldn't in_compat_syscall() be the right check?
+> > 
+> > Also, this whole thing makes me extremely nervous.  The MSR only
+> > contains the start address, not the size, right?  So what prevents
+> > some goof from causing the CPU to read way past the end of the bitmap
+> > if the bitmap is short because the kernel thought it was supposed to
+> > be 32-bit?
+> 
+> That's what I've mentioned initially: every syscall made with int 0x80
+> is interpreted as compat, even if it was made from long mode.
+> 
+> > I'm inclined to suggest something awful-ish: always allocate the
+> > bitmap as though it's for a 64-bit process, and just let it be at a
+> > high address.  And add a syscall or arch_prctl() to manipulate it for
+> > the benefit of 32-bit programs that can't address it directly.
+> 
+> That's likely the only way to go.
 
---pvezYHf7grwyp3Bc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This bitmap is needed only when the app does dlopen() a non-IBT .so file.  Most
+applications do not need it.  Can't we let dlopen mmap() the bitmap when needed
+and pass it to the kernel?
 
-Hi!
+Yu-cheng
 
-[Oops. I wrote this but forgot to send it? Anyway.. I guess it is
-redundant now.]
-
-> > +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-> > @@ -0,0 +1,76 @@
-> > +What:		/sys/class/leds/<led>/pattern
-> > +Date:		September 2018
-> > +KernelVersion:	4.20
-> > +Description:
-> > +		Specify a software pattern for the LED, that supports altering
-> > +		the brightness for the specified duration with one software
-> > +		timer. It can do gradual dimming and constant brightness.
-> > +
-> > +		The pattern is given by a series of tuples, of brightness and
-> > +		duration (ms). The LED is expected to traverse the series and
-> > +		each brightness value for the specified duration. Duration of
-> > +		0 means brightness should immediately change to new value.
-> > +
-> > +		1. When doing gradual dimming, the led brightness will be updated
-> > +		every 50 milliseconds, so the duration of each step should not
-> > +		less than 50 milliseconds.
->=20
-> I'd like to avoid this constraint. Lowest supported delta_t should be 1.
->=20
-> We should only prevent entering dimming mode if current delta_t
-> is lower than UPDATE_INTERVAL.
-
-I agree that documenting it like this is strange. I don't think this
-should be part of ABI as we may want to adjust it in the future.
-
-> I also propose to make the dimming interval configurable via sysfs
-> dimming_interval file.
-
-I believe we should provide "right" dimming_interval. 50msec sounds
-good. If we find it is too low / too high, we might want to adjust it.
-
-If we find out that different users need different values, I guess we
-can still add "dimming_interval" knob, but I'd suggest waiting until
-such need arises.
-
-[Now, I don't have strong feelings here, and patch would probably be
-okay with me even if it has dimming_interval, but I'd prefer to keep
-it simple. We are at v14 of the patch...]
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---pvezYHf7grwyp3Bc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlu+IjAACgkQMOfwapXb+vJKGACgsHAAydYbN5GADkbD3KjEsy91
-qKIAn3vRLOcAeeemxCOYBEwNIcLUlrIG
-=Y0m2
------END PGP SIGNATURE-----
-
---pvezYHf7grwyp3Bc--
