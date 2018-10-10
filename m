@@ -2,35 +2,35 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9A6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15760C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF7F520870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7F520870
+	by mail.kernel.org (Postfix) with ESMTP id D6E5321528
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E5321528
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJJT3u (ORCPT
+        id S1727649AbeJJT3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:29:50 -0400
+        Wed, 10 Oct 2018 15:29:53 -0400
 Received: from inva021.nxp.com ([92.121.34.21]:59528 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727254AbeJJT3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:29:49 -0400
+        id S1727254AbeJJT3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:29:52 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 199DE20009C;
-        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FBF0200173;
+        Wed, 10 Oct 2018 14:07:59 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C9D320009A;
-        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 63521200161;
+        Wed, 10 Oct 2018 14:07:59 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5451320604;
-        Wed, 10 Oct 2018 14:07:56 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id AA35A20604;
+        Wed, 10 Oct 2018 14:07:58 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -39,9 +39,9 @@ Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, arnd@arndb.de,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 14/22] dpaa_eth: fix iova handling for sg frames
-Date:   Wed, 10 Oct 2018 15:07:29 +0300
-Message-Id: <20181010120737.30300-12-laurentiu.tudor@nxp.com>
+Subject: [PATCH v3 17/22] arm64: dts: ls1043a: add smmu node
+Date:   Wed, 10 Oct 2018 15:07:32 +0300
+Message-Id: <20181010120737.30300-15-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
 References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
@@ -53,127 +53,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-The driver relies on the no longer valid assumption that dma addresses
-(iovas) are identical to physical addressees and uses phys_to_virt() to
-make iova -> vaddr conversions. Fix this also for scatter-gather frames
-using the iova -> phys conversion function added in the previous patch.
-While at it, clean-up a redundant dpaa_bpid2pool() and pass the bp
-as parameter.
+This allows for the SMMU device to be probed by the SMMU kernel driver.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- .../net/ethernet/freescale/dpaa/dpaa_eth.c    | 41 +++++++++++--------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+ .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index a9227456f67e..ea814feb4666 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1646,14 +1646,17 @@ static struct sk_buff *dpaa_cleanup_tx_fd(const struct dpaa_priv *priv,
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 7881e3d81a9a..7eea2bace171 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -222,6 +222,48 @@
+ 			clocks = <&sysclk>;
+ 		};
  
- 	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
- 		nr_frags = skb_shinfo(skb)->nr_frags;
--		dma_unmap_single(dev, addr,
--				 qm_fd_get_offset(fd) + DPAA_SGT_SIZE,
--				 dma_dir);
- 
- 		/* The sgt buffer has been allocated with netdev_alloc_frag(),
- 		 * it's from lowmem.
- 		 */
--		sgt = phys_to_virt(addr + qm_fd_get_offset(fd));
-+		sgt = phys_to_virt(dpaa_iova_to_phys(dev,
-+						     addr +
-+						     qm_fd_get_offset(fd)));
++		mmu: iommu@9000000 {
++			compatible = "arm,mmu-500";
++			reg = <0 0x9000000 0 0x400000>;
++			dma-coherent;
++			#global-interrupts = <2>;
++			#iommu-cells = <1>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
++		};
 +
-+		dma_unmap_single(dev, addr,
-+				 qm_fd_get_offset(fd) + DPAA_SGT_SIZE,
-+				 dma_dir);
- 
- 		/* sgt[0] is from lowmem, was dma_map_single()-ed */
- 		dma_unmap_single(dev, qm_sg_addr(&sgt[0]),
-@@ -1668,7 +1671,7 @@ static struct sk_buff *dpaa_cleanup_tx_fd(const struct dpaa_priv *priv,
- 		}
- 
- 		/* Free the page frag that we allocated on Tx */
--		skb_free_frag(phys_to_virt(addr));
-+		skb_free_frag(skbh);
- 	} else {
- 		dma_unmap_single(dev, addr,
- 				 skb_tail_pointer(skb) - (u8 *)skbh, dma_dir);
-@@ -1729,14 +1732,14 @@ static struct sk_buff *contig_fd_to_skb(const struct dpaa_priv *priv,
-  * The page fragment holding the S/G Table is recycled here.
-  */
- static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
--				    const struct qm_fd *fd)
-+				    const struct qm_fd *fd,
-+				    struct dpaa_bp *dpaa_bp,
-+				    void *vaddr)
- {
- 	ssize_t fd_off = qm_fd_get_offset(fd);
--	dma_addr_t addr = qm_fd_addr(fd);
- 	const struct qm_sg_entry *sgt;
- 	struct page *page, *head_page;
--	struct dpaa_bp *dpaa_bp;
--	void *vaddr, *sg_vaddr;
-+	void *sg_vaddr;
- 	int frag_off, frag_len;
- 	struct sk_buff *skb;
- 	dma_addr_t sg_addr;
-@@ -1745,7 +1748,6 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
- 	int *count_ptr;
- 	int i;
- 
--	vaddr = phys_to_virt(addr);
- 	WARN_ON(!IS_ALIGNED((unsigned long)vaddr, SMP_CACHE_BYTES));
- 
- 	/* Iterate through the SGT entries and add data buffers to the skb */
-@@ -1756,14 +1758,18 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
- 		WARN_ON(qm_sg_entry_is_ext(&sgt[i]));
- 
- 		sg_addr = qm_sg_addr(&sgt[i]);
--		sg_vaddr = phys_to_virt(sg_addr);
--		WARN_ON(!IS_ALIGNED((unsigned long)sg_vaddr,
--				    SMP_CACHE_BYTES));
- 
- 		/* We may use multiple Rx pools */
- 		dpaa_bp = dpaa_bpid2pool(sgt[i].bpid);
--		if (!dpaa_bp)
-+		if (!dpaa_bp) {
-+			pr_info("%s: fail to get dpaa_bp for sg bpid %d\n",
-+				__func__, sgt[i].bpid);
- 			goto free_buffers;
-+		}
-+		sg_vaddr = phys_to_virt(dpaa_iova_to_phys(dpaa_bp->dev,
-+							  sg_addr));
-+		WARN_ON(!IS_ALIGNED((unsigned long)sg_vaddr,
-+				    SMP_CACHE_BYTES));
- 
- 		count_ptr = this_cpu_ptr(dpaa_bp->percpu_count);
- 		dma_unmap_single(dpaa_bp->dev, sg_addr, dpaa_bp->size,
-@@ -1835,10 +1841,11 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
- 	/* free all the SG entries */
- 	for (i = 0; i < DPAA_SGT_MAX_ENTRIES ; i++) {
- 		sg_addr = qm_sg_addr(&sgt[i]);
--		sg_vaddr = phys_to_virt(sg_addr);
--		skb_free_frag(sg_vaddr);
- 		dpaa_bp = dpaa_bpid2pool(sgt[i].bpid);
- 		if (dpaa_bp) {
-+			sg_addr = dpaa_iova_to_phys(dpaa_bp->dev, sg_addr);
-+			sg_vaddr = phys_to_virt(sg_addr);
-+			skb_free_frag(sg_vaddr);
- 			count_ptr = this_cpu_ptr(dpaa_bp->percpu_count);
- 			(*count_ptr)--;
- 		}
-@@ -2325,7 +2332,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 	if (likely(fd_format == qm_fd_contig))
- 		skb = contig_fd_to_skb(priv, fd, dpaa_bp, vaddr);
- 	else
--		skb = sg_fd_to_skb(priv, fd);
-+		skb = sg_fd_to_skb(priv, fd, dpaa_bp, vaddr);
- 	if (!skb)
- 		return qman_cb_dqrr_consume;
- 
+ 		scfg: scfg@1570000 {
+ 			compatible = "fsl,ls1043a-scfg", "syscon";
+ 			reg = <0x0 0x1570000 0x0 0x10000>;
 -- 
 2.17.1
 
