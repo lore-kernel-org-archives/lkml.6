@@ -2,112 +2,95 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029CCC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6C8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3D1214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xpOWdy7p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3D1214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 911F12087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911F12087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeJJWC7 (ORCPT
+        id S1727427AbeJJWDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:02:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59464 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJJWC7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:02:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=KtDPrYiUFiY7m/PbXmmTeZc3FLNc/vcxnlbPBr7Ix3A=; b=xpOWdy7pPRyG
-        GzfqynaQ9/ZNa4fUHPLnD6Ne+JIH+SbdrVHfV9P1p4AFCnMcJzdS9LDMGHlu34jKdY9ZlT5zoBykP
-        Er1+5ZoX9LrKLmDRSEPNRmzFbaD3iagU+XuskUi2BEpuod71njD/Atm397ZCi6a+NlIgHEEzJOFd+
-        w1v4M=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAFf2-000825-4J; Wed, 10 Oct 2018 14:40:28 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D61BC1122395; Wed, 10 Oct 2018 15:40:27 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid mode" to the regulator tree
-In-Reply-To: 
-Message-Id: <20181010144027.D61BC1122395@debutante.sirena.org.uk>
-Date:   Wed, 10 Oct 2018 15:40:27 +0100 (BST)
+        Wed, 10 Oct 2018 18:03:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38622 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727094AbeJJWDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:03:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A95C9B0E7;
+        Wed, 10 Oct 2018 14:40:36 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 16:40:26 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Lianbo Jiang <lijiang@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] kdump, proc/vmcore: fix building without
+ CONFIG_ARCH_HAS_MEM_ENCRYPT
+Message-ID: <20181010144026.GB5924@zn.tnic>
+References: <20181010143306.2051406-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181010143306.2051406-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, Oct 10, 2018 at 04:32:45PM +0200, Arnd Bergmann wrote:
+> We get a link failure when calling copy_oldmem_page_encrypted()
+> when the compiler fails to do constant-propagation of the
+> sme_active() result into read_from_oldmem:
+> 
+> fs/proc/vmcore.o: In function `read_from_oldmem.part.0':
+> vmcore.c:(.text+0xb7): undefined reference to `copy_oldmem_page_encrypted'
+> 
+> Adding an IS_ENABLED() check means the compiler will always
+> know when it cannot be enabled.
+> 
+> Fixes: 992b649a3f01 ("kdump, proc/vmcore: Enable kdumping encrypted memory with SME enabled")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> There may be a better way of doing this, not sure what kinds
+> of assumptions we want to make here.
+> ---
+>  fs/proc/vmcore.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index d469ce9d8c0c..92e1e520a52d 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -123,7 +123,9 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
+>  		if (pfn_is_ram(pfn) == 0)
+>  			memset(buf, 0, nr_bytes);
+>  		else {
+> -			if (encrypted)
+> +			if (IS_ENABLED(CONFIG_X86_64) &&
+> +			    IS_ENABLED(CONFIG_ARCH_HAS_MEM_ENCRYPT) &&
+> +			    encrypted)
+>  				tmp = copy_oldmem_page_encrypted(pfn, buf,
+>  								 nr_bytes,
+>  								 offset,
+> -- 
 
-   regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid mode
+Doesn't that fix it?
 
-has been applied to the regulator tree at
+https://git.kernel.org/tip/cf089611f4c446285046fcd426d90c18f37d2905
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c18fb34ae185ad3b2444cd5e308ef5f91d8c9a46 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 9 Oct 2018 16:52:21 +0800
-Subject: [PATCH] regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid
- mode
-
--EINVAL is not a valid return value for .of_map_mode, return
-REGULATOR_MODE_INVALID instead.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/stpmic1_regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
-index 96f18083a3b6..e15634edb8ce 100644
---- a/drivers/regulator/stpmic1_regulator.c
-+++ b/drivers/regulator/stpmic1_regulator.c
-@@ -441,7 +441,7 @@ static unsigned int stpmic1_map_mode(unsigned int mode)
- 	case STPMIC1_BUCK_MODE_LP:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
 -- 
-2.19.0.rc2
+Regards/Gruss,
+    Boris.
 
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
