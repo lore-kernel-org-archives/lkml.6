@@ -2,160 +2,167 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83075C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B40BC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A35F2087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A35F2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E49A02087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:15:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49A02087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeJJXh4 (ORCPT
+        id S1727128AbeJJXiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 19:37:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54714 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeJJXh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 19:37:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB5EDED1;
-        Wed, 10 Oct 2018 09:15:04 -0700 (PDT)
-Received: from [10.1.194.42] (patratel.cambridge.arm.com [10.1.194.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2AD1E3F5B3;
-        Wed, 10 Oct 2018 09:15:02 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Quentin Perret <quentin.perret@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010061751.GA37224@gmail.com>
- <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
- <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
- <20181010095459.orw2gse75klpwosx@queper01-lin>
- <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
- <20181010103623.ttjexasymdpi66lu@queper01-lin>
- <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
- <20181010130549.hzpkaskvlgifbdrp@queper01-lin>
- <CAKfTPtA=GYaiKcJ9N5zEnzxJTKBATG41c0xDjhbA21G-Cv6LvA@mail.gmail.com>
- <20181010134755.jrigtogbxwaz2izb@queper01-lin>
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-Message-ID: <ad3492f2-f5a9-97ea-8068-d4df2d9288ce@arm.com>
-Date:   Wed, 10 Oct 2018 17:15:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181010134755.jrigtogbxwaz2izb@queper01-lin>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Oct 2018 19:38:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:45173 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbeJJXiD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 19:38:03 -0400
+Received: from localhost.localdomain ([78.238.229.36]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1N2Dgk-1fgCoL2SAY-013aSJ; Wed, 10 Oct 2018 18:14:39 +0200
+Received: from localhost.localdomain ([78.238.229.36]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1N2Dgk-1fgCoL2SAY-013aSJ; Wed, 10 Oct 2018 18:14:39 +0200
+From:   Laurent Vivier <laurent@vivier.eu>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jann Horn <jannh@google.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrei Vagin <avagin@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        containers@lists.linux-foundation.org,
+        Dmitry Safonov <dima@arista.com>,
+        Laurent Vivier <laurent@vivier.eu>
+Subject: [PATCH v6 0/1] ns: introduce binfmt_misc namespace
+Date:   Wed, 10 Oct 2018 18:14:29 +0200
+Message-Id: <20181010161430.11633-1-laurent@vivier.eu>
+X-Mailer: git-send-email 2.17.1
+X-Provags-ID: V03:K1:vc1979bSNQL5EburbOm7u8gr5g946Z6pVVthZuBLvswFf/SBOsE
+ Wvj6zfyM9DvKuVZwgiIXoop/ZPMFB5V8CfxnPTrhZgMeXmsK5uDojspmEBvOV1vuL5Xt8kv
+ chBozx0MbprRJ9h33ni3+uhn4o2IAGlX06ON7Dh7FgereAbs2hReWiBF0WXqUioqwg1/FG7
+ +9K5yr+/nIK6Rm0Tgm6OA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WdmLuZV0lnc=:6qQQ8p3bxqajVB1/6jlTLM
+ wcU9TOAtIlR8JAtzBsNmKDmtvKzI885L7UXdRqphAJoYCd5IDFLIdIqQ9fr+TsHkpL2dT3rrS
+ 1ht6EZFVLKY8eQo5TN22RqOroV4IsqpB3jO+X9+0ZZy1u1QzmRB88LaoP4eHk5WaX32nj6nda
+ 95fDgf/hVIuJJC1qBSsxaD+1WQjrVomOJabpHXO2A6SDlMhwaUxsMrRMghZfqW3/0V0GxAqfB
+ +I2069UZskIavqWKoQ8f7qL2pxafW30jZLAwpCS/Iutk3VV1Yss/3srLJSNikLya1daKWqu77
+ XosfML5b2vKnbS5iymTT+Bjr1Dk/Wpijk0dbQHACrURhSQmd4WcEhqJh/kYP65e3XwKOE4EqJ
+ 1H+Y2Q3zKpTITSzohM+ZkJ8sLbu0cprpde3ns6tmPuO6fBYdQROuz9/erTQwBFcbsfR4NqyeF
+ gZTF4gZO9mtrK12KJkE//QqfQROi1PKXcNQapJYLhqW9oBlpRZKTAOikTEDyReN8JiOi5xoGN
+ jAnNu1tDK78FzJjo3+EUPixL9G+0CSeF0c/XhH23zhOPLIzWJ5EebBNoYwOpjqLCFJHljTZJy
+ 27Q4oiGThL8UrKyFc2l1DizNisBXFKo8FfMQckoQ/KEi1116fNUJRhw0v/F0MrT98Bk8NZe7F
+ c8s43qwxRr8AezRKP2E998geoyNXZUqvqVXA1dPbmZgZ5Cw2Z0J5n41RenXfGB1+cecM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+v6: Return &init_binfmt_ns instead of NULL in binfmt_ns()
+    This should never happen, but to stay safe return a
+    value we can use.
+    change subject from "RFC" to "PATCH"
 
-On 10/10/18 14:47, Quentin Perret wrote:
-> On Wednesday 10 Oct 2018 at 15:27:57 (+0200), Vincent Guittot wrote:
->> On Wed, 10 Oct 2018 at 15:05, Quentin Perret <quentin.perret@arm.com> wrote:
->>>
->>> On Wednesday 10 Oct 2018 at 14:04:40 (+0200), Vincent Guittot wrote:
->>>> This patchset doesn't touch cpu_capacity_orig and doesn't need to  as
->>>> it assume that the max capacity is unchanged but some capacity is
->>>> momentary stolen by thermal.
->>>>  If you want to reflect immediately all thermal capping change, you
->>>> have to update this field and all related fields and struct around
->>>
->>> I don't follow you here. I never said I wanted to change
->>> cpu_capacity_orig. I don't think we should do that actually. Changing
->>> capacity_of (which is updated during LB IIRC) is just fine. The question
->>> is about what you want to do there: reflect an averaged value or the
->>> instantaneous one.
->>
->> Sorry I though your were speaking about updating this cpu_capacity_orig.
-> 
-> N/p, communication via email can easily become confusing :-)
-> 
->> With using instantaneous max  value in capacity_of(), we are back to
->> the problem raised by Thara that  the value will most probably not
->> reflect the current capping value when it is used in LB, because LB
->> period can quite long on busy CPU (default max value is 32*sd_weight
->> ms)
-> 
-> But averaging the capping value over time doesn't make LB happen more
-> often ... That will help you account for capping that happened in the
-> past, but it's not obvious this is actually a good thing. Probably not
-> all the time anyway.
-> 
-> Say a CPU was capped at 50% of it's capacity, then the cap is removed.
-> At that point it'll take 100ms+ for the thermal signal to decay and let
-> the scheduler know about the newly available capacity. That can probably
-> be a performance hit in some use cases ... And the other way around, it
-> can also take forever for the scheduler to notice that a CPU has a
-> reduced capacity before reacting to it.
-> 
-> If you want to filter out very short transient capping events to avoid
-> over-reacting in the scheduler (is this actually happening ?), then
-> maybe the average should be done on the cooling device side or something
-> like that ?
-> 
+v5: Use READ_ONCE()/WRITE_ONCE()
+    move mount pointer struct init to bm_fill_super() and add smp_wmb()
+    remove useless NULL value init
+    add WARN_ON_ONCE()
 
-I think there isn't just the issue of the *occasional* overreaction of a
-thermal governor due to noise in the temperature sensors or some spike
-in environmental temperature that determines a delayed reaction in the
-scheduler due to when capacity is updated.
+v4: first user namespace is initialized with &init_binfmt_ns,
+    all new user namespaces are initialized with a NULL and use
+    the one of the first parent that is not NULL. The pointer
+    is initialized to a valid value the first time the binfmt_misc
+    fs is mounted in the current user namespace.
+    This allows to not change the way it was working before:
+    new ns inherits values from its parent, and if parent value is modified
+    (or parent creates its own binfmt entry by mounting the fs) child
+    inherits it (unless it has itself mounted the fs).
 
-I'm seeing a bigger issue for *sustained* high temperatures that are not
-treated effectively by governors. Depending on the platform, heat can
-be dissipated over longer or shorter periods of time. This can determine
-a seesaw effect on the maximum frequency: it determines the temperature
-is over a threshold and it starts capping, but heat is not dissipated
-quickly enough for that to reflect in the value of the temperature sensor,
-so it continues to cap; when the temperature gets to normal, capping
-is lifted, which in turn results access to higher OPPs and a return to
-high temperatures, etc.
+v3: create a structure to store binfmt_misc data,
+    add a pointer to this structure in the user_namespace structure,
+    in init_user_ns structure this pointer points to an init_binfmt_ns
+    structure. And all new user namespaces point to this init structure.
+    A new binfmt namespace structure is allocated if the binfmt_misc
+    filesystem is mounted in a user namespace that is not the initial
+    one but its binfmt namespace pointer points to the initial one.
+    add override_creds()/revert_creds() around open_exec() in
+    bm_register_write()
 
-What will happen is that, *depending on platform* and the moment when
-capacity is updated, you can see either a CPU with a capacity of 1024, or
-let's say 800, or (on hikey960 :)) around 500, and back and forth
-between them.
+v2: no new namespace, binfmt_misc data are now part of
+    the mount namespace
+    I put this in mount namespace instead of user namespace
+    because the mount namespace is already needed and
+    I don't want to force to have the user namespace for that.
+    As this is a filesystem, it seems logic to have it here.
 
-Because of these I tend to think that a regulated (averaged) value of
-thermal pressure is better than an instantaneous one. Thermal mitigation
-measures are there for the well-being and safety of a device, not for
-optimizations so it can and should be allowed to overreact, or have a
-delayed reaction. But ping-pong-ing tasks back and forth between CPUs
-due to changes in CPU capacity is harmful for performance. What would be
-awesome to achieve with this is (close to) optimal use of restricted
-capacities of CPUs, and I tend to believe instantaneous and most probably
-out of date capacity values would not lead to this.
+This allows to define a new interpreter for each new container.
 
-But this is almost a gut feeling and of course it should be validated on
-devices with different thermal characteristics. Given the high variation
-between devices with regards to this I'd be reluctant to tie it to the
-PELT half life.
+But the main goal is to be able to chroot to a directory
+using a binfmt_misc interpreter without being root.
 
-Regards,
-Ionela.
+I have a modified version of unshare at:
 
-> Thanks,
-> Quentin
-> 
+  git@github.com:vivier/util-linux.git branch unshare-chroot
+
+with some new options to unshare binfmt_misc namespace and to chroot
+to a directory.
+
+If you have a directory /chroot/powerpc/jessie containing debian for powerpc
+binaries and a qemu-ppc interpreter, you can do for instance:
+
+ $ uname -a
+ Linux fedora28-wor-2 4.19.0-rc5+ #18 SMP Mon Oct 1 00:32:34 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
+ $ ./unshare --map-root-user --fork --pid \
+   --load-interp ":qemu-ppc:M::\x7fELF\x01\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x14:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff:/qemu-ppc:OC" \
+   --root=/chroot/powerpc/jessie /bin/bash -l
+ # uname -a
+ Linux fedora28-wor-2 4.19.0-rc5+ #18 SMP Mon Oct 1 00:32:34 CEST 2018 ppc GNU/Linux
+ # id
+uid=0(root) gid=0(root) groups=0(root),65534(nogroup)
+ # ls -l
+total 5940
+drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:58 bin
+drwxr-xr-x.   2 nobody nogroup    4096 Jun 17 20:26 boot
+drwxr-xr-x.   4 nobody nogroup    4096 Aug 12 00:08 dev
+drwxr-xr-x.  42 nobody nogroup    4096 Sep 28 07:25 etc
+drwxr-xr-x.   3 nobody nogroup    4096 Sep 28 07:25 home
+drwxr-xr-x.   9 nobody nogroup    4096 Aug 12 00:58 lib
+drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 media
+drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 mnt
+drwxr-xr-x.   3 nobody nogroup    4096 Aug 12 13:09 opt
+dr-xr-xr-x. 143 nobody nogroup       0 Sep 30 23:02 proc
+-rwxr-xr-x.   1 nobody nogroup 6009712 Sep 28 07:22 qemu-ppc
+drwx------.   3 nobody nogroup    4096 Aug 12 12:54 root
+drwxr-xr-x.   3 nobody nogroup    4096 Aug 12 00:08 run
+drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:58 sbin
+drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 srv
+drwxr-xr-x.   2 nobody nogroup    4096 Apr  6  2015 sys
+drwxrwxrwt.   2 nobody nogroup    4096 Sep 28 10:31 tmp
+drwxr-xr-x.  10 nobody nogroup    4096 Aug 12 00:08 usr
+drwxr-xr-x.  11 nobody nogroup    4096 Aug 12 00:08 var
+
+If you want to use the qemu binary provided by your distro, you can use
+
+    --load-interp ":qemu-ppc:M::\x7fELF\x01\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x14:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff:/bin/qemu-ppc-static:OCF"
+
+With the 'F' flag, qemu-ppc-static will be then loaded from the main root
+filesystem before switching to the chroot.
+
+Laurent Vivier (1):
+  ns: add binfmt_misc to the user namespace
+
+ fs/binfmt_misc.c               | 111 ++++++++++++++++++++++++---------
+ include/linux/user_namespace.h |  15 +++++
+ kernel/user.c                  |  14 +++++
+ kernel/user_namespace.c        |   3 +
+ 4 files changed, 115 insertions(+), 28 deletions(-)
+
+-- 
+2.17.1
+
