@@ -2,85 +2,113 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10258C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92E0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA58D214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87A6021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SMZ+Eb/Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA58D214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrH2hIb6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87A6021479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeJJQFG (ORCPT
+        id S1727219AbeJJQHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:05:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49304 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeJJQFF (ORCPT
+        Wed, 10 Oct 2018 12:07:04 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50878 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbeJJQHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:05:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Vk562HwpN6073DhKe/aQen9rxT2/LXMJnfWRg8ItKMI=; b=SMZ+Eb/ZcH7SqlDmq5V8/DSn/
-        idBvgjfBPyydzr87I7sgA5yTxC02BA4AQXorstZeCnqPWDWyr0EuT914+Wb2LGAhARHsOpm5ydkBv
-        iJ0FZKJHIHfWastVU6aji37R6pWVOtEVStLvGqZKaQkvUIEsjcyQQwb2t/RIEx2vkdyMD9xp4eB/Q
-        pDZdRV4K9C45lNTeQ6twJFJq+4Se+59h1Nr9YqH9Cxil2Hrvek9xMVojATxg/6o2T+AvMZfwMzK7A
-        84AZg0J4r9OSzESHNLMs/lL21AZ5OUBbTy/Bk09I1mXq1EcLGPFKFpxTJIE8MDSxg7936rpxTQait
-        C/7N7DWzA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gAA5h-0006am-QJ; Wed, 10 Oct 2018 08:43:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D3AEF20298569; Wed, 10 Oct 2018 10:43:35 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 10:43:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc:     target-devel <target-devel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 2/2] target: Fix target_wait_for_sess_cmds breakage with
- active signals
-Message-ID: <20181010084335.GN5728@hirez.programming.kicks-ass.net>
-References: <1539141790-13557-1-git-send-email-nab@linux-iscsi.org>
- <1539141790-13557-3-git-send-email-nab@linux-iscsi.org>
+        Wed, 10 Oct 2018 12:07:04 -0400
+Received: by mail-it1-f196.google.com with SMTP id k206-v6so773074ite.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f6C6VfVSp5sz2Cj5uAi33BG0XGOYtZCu21hskrBNk8I=;
+        b=BrH2hIb6KJdaCMh4evE3sPbExwtKJ9KKbad6i+OxFXQJsiVclSLHc0R4lemSPhSoC2
+         AgsvJVx0WwgUZ2N84uACXWF1AxyoQOaRHA+MJvJxcNTRp+yQHBW+p6TubF0dRNCIXP70
+         diImL4FChP2s/ufBqf531iXDuTaut87CxLreM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f6C6VfVSp5sz2Cj5uAi33BG0XGOYtZCu21hskrBNk8I=;
+        b=hijtGQYhXt0i2ZM1bGLzeISLfD304gZbRPiCrNnwvtuer1K7hodB8PcepBYlwQQMc2
+         lz2QhbDFgMsrejWFNPO5aciA9muVIeQG4SXUsPDE7Y/x9J8F+TmYqiHU6KrSm4+lO0Fq
+         76gl5wcDDvnNOvegutn3eMp2Ez1CbMURB3wIfNo06fAdNG2Dur0L5RDthuKIhIHclpLA
+         /Sw04HMVwCkjwujVKndrqmJFL4O5yTnIfwNeqPlqVVq8VD0bofSq8mBhxFNylK0ZBSdN
+         rPYofVuC0UdWp5KqCnN9YD5MElG+14kOnUzmWrI4aeudLgV/UcucB9Qw61Ka9rhv2tM/
+         2GTQ==
+X-Gm-Message-State: ABuFfog+TD0nMtPl2nyDsBF2kAP8mgVbl3+U8NFlPo9oUcz0rqIn3dNQ
+        n2uBGC6HQqjd2F2DKvNYB/pCd9bFHLtJlg3YwrHpMQ==
+X-Google-Smtp-Source: ACcGV61UDEnsXtvz42/jd80nmxrJ0YCx222F9AXtVeu1w0rh6w6bIPWF2RDW34M64f8wgAIw+aJ5T8kijRf/hXpi+fw=
+X-Received: by 2002:a24:7b50:: with SMTP id q77-v6mr28326itc.154.1539161155235;
+ Wed, 10 Oct 2018 01:45:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539141790-13557-3-git-send-email-nab@linux-iscsi.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-4-vz@mleia.com>
+In-Reply-To: <20181008211205.2900-4-vz@mleia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 10 Oct 2018 10:45:43 +0200
+Message-ID: <CACRpkdZJMPYWHBUXohjxo12XZpLdz7OzcWRBrrkcB8YLLd5StA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
+ TI DS90Ux9xx pinmux
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-media@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 03:23:10AM +0000, Nicholas A. Bellinger wrote:
-> From: Nicholas Bellinger <nab@linux-iscsi.org>
-> 
-> With the addition of commit 00d909a107 in v4.19-rc, it incorrectly assumes no
-> signals will be pending for task_struct executing the normal session shutdown
-> and I/O quiesce code-path.
-> 
-> For example, iscsi-target and iser-target issue SIGINT to all kthreads as
-> part of session shutdown.  This has been the behaviour since day one.
+Hi Vladimir,
 
-Not knowing much context here; but does it make sense for those
-kthreads to handle signals, ever? Most kthreads should be fine with
-ignore_signals().
+thanks for your patch!
 
+Can we change the subject to something like "add DT bindings" rather than
+"add description" as it is more specific and makes it easier for me as
+maintainer.
+
+On Mon, Oct 8, 2018 at 11:12 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+
+> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>
+> TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
+> in particular a pin may have selectable functions of GPIO, GPIO line
+> transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
+>
+> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
+> controllers.
+>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+(...)
+> +- gpio-ranges: Mapping to pin controller pins (as described in
+> +       Documentation/devicetree/bindings/gpio/gpio.txt)
+> +
+> +Optional properties:
+> +- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
+> +
+> +Available pins, groups and functions (reference to device datasheets):
+
+Please reference the generic binding you're using here:
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+
+Apart from these small nitpicks it looks very standard and good.
+
+Yours,
+Linus Walleij
