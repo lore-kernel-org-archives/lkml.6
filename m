@@ -2,161 +2,160 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CE5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE77C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139CC21570
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B41B21581
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GX6iYlam"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139CC21570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5S+egAE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B41B21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeJJIBm (ORCPT
+        id S1726918AbeJJII7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 04:01:42 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12405 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbeJJIBl (ORCPT
+        Wed, 10 Oct 2018 04:08:59 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41840 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeJJII7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 04:01:41 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bbd4add0000>; Tue, 09 Oct 2018 17:42:05 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 09 Oct 2018 17:42:10 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 09 Oct 2018 17:42:10 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 10 Oct
- 2018 00:42:09 +0000
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-To:     Andrew Morton <akpm@linux-foundation.org>, <john.hubbard@gmail.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
-Date:   Tue, 9 Oct 2018 17:42:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 10 Oct 2018 04:08:59 -0400
+Received: by mail-qk1-f196.google.com with SMTP id 23-v6so2178273qkh.8;
+        Tue, 09 Oct 2018 17:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=S/y2QgbBWQ1jkuNfRAfJafUQ0B5BUpKTSPeonJXg4yU=;
+        b=A5S+egAEDwLKARBsSYBK1PTB6a9F0a8mzeHewhKP4vwPyGqz/qjrOl6SEsOXt+jiWQ
+         r6n4rvuJz4q3cuUhpj+zAwcileb567/fhfbQDSCNoD1hxZGqzRW/Ly98nalAeao9H4jo
+         SwPAyTi+SXK1TnbU5ts91ZQirOeWRMJoRwxiF9rmOsI0DjudZXlR1p7gCCFVFAQT6VrF
+         yhlpB1wTD3U2FG9CP5vXFDdLSy9e2ANLmShggoYWdJrYz75Owlniq3j6sRNGRGmMky4i
+         pjP4lV6Pj8O7Bbrp7O2weqcheRpEC8FzHeHWomwnPdwqv5ZcNUy1os6G+RsVeWnOYLi2
+         wQSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=S/y2QgbBWQ1jkuNfRAfJafUQ0B5BUpKTSPeonJXg4yU=;
+        b=fWeXSwpDr1JxbHzH5EPL8iqQ+U6stO3NOH3WmJfj+OgzkCzLwkzTIk+W2ZErsbZGlu
+         5n0YMxAMh0p+r5pMO9L+U2BKKxiU1ffW7cLms0L2CmbUGcRKQ/hku993K8NBA4F6ZwpY
+         yOfSdFqYlQWynolSKH17Vs1HgOxAarp6S1F1ll/CU+UC733PyXYlyLtM7Zw+PgbMmnws
+         YS+OdnvN/+E0/WIzPeY65yR+0f42uEznBje6tYGpyyBJZzzu72d8RdZcKW8KMclvJq5L
+         iGYUxzGjRl6qFBOhbSGdBzFYHvNH/OlKkBSU95keEq3mN3XDJCqv0KMZiDkWOio4tqtN
+         +ylA==
+X-Gm-Message-State: ABuFfohXma3+IAcofIhYgR7ZFtGB1QvqdIqV0qqeSp75pDfcONnZs9Z4
+        uclfPkzc5SJxNbZOIAB7tiE=
+X-Google-Smtp-Source: ACcGV60h8mCvNhFQIxqNR/4IbS7n5sARrfYWtto1+Z3radnKH1n1OV7Kz9J79wo/PSye2XYda61dDw==
+X-Received: by 2002:a37:5003:: with SMTP id e3-v6mr13630512qkb.102.1539132564852;
+        Tue, 09 Oct 2018 17:49:24 -0700 (PDT)
+Received: from gfm-note (wifi-177-220-84-73.wifi.ic.unicamp.br. [177.220.84.73])
+        by smtp.gmail.com with ESMTPSA id i27-v6sm12708827qti.57.2018.10.09.17.49.24
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 09 Oct 2018 17:49:24 -0700 (PDT)
+Date:   Tue, 9 Oct 2018 21:49:21 -0300
+From:   Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     lkcamp@lists.libreplanetbr.org
+Subject: [PATCH] media: vivid: Improve timestamping
+Message-ID: <20181010004921.GA6532@gfm-note>
 MIME-Version: 1.0
-In-Reply-To: <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539132125; bh=0/cOM5Q11pG20KQwn4TM6fKMNGJ5A6LDYPCfCmX6u+w=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=GX6iYlamPPgXc4j1UWs6eKNoZTNJaWHkRxHFVx8kYOU5FZrYIhkB18pVvd9wr7VA5
-         2smUAc4P/byKYfIR+1ASGs6Ped29vuM5Ie5jCIcJ5MMpwr64BzvQQUaO/sgaqUx+Gk
-         z3VK1I31A1nq9Dr7f177115p9JQRIF6eu6H7yJrIyLki9LYNnH1yDP6nWAxuTV1pME
-         Np9wJeWw44kZvwbql2UgH4TjbA9ZxbBMg+h2gJC6V6869YhU4NlpayWUDTbgec1mHk
-         dueqWTdun1xWb3wZdR9lUL8lSH30SVd7qRDJeksRswsIMmmB02VAsbGasiJ388Orj5
-         VbRl68F1zIkuA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/8/18 5:14 PM, Andrew Morton wrote:
-> On Mon,  8 Oct 2018 14:16:22 -0700 john.hubbard@gmail.com wrote:
-> 
->> From: John Hubbard <jhubbard@nvidia.com>
-[...]
->> +/*
->> + * Pages that were pinned via get_user_pages*() should be released via
->> + * either put_user_page(), or one of the put_user_pages*() routines
->> + * below.
->> + */
->> +static inline void put_user_page(struct page *page)
->> +{
->> +	put_page(page);
->> +}
->> +
->> +static inline void put_user_pages_dirty(struct page **pages,
->> +					unsigned long npages)
->> +{
->> +	unsigned long index;
->> +
->> +	for (index = 0; index < npages; index++) {
->> +		if (!PageDirty(pages[index]))
-> 
-> Both put_page() and set_page_dirty() handle compound pages.  But
-> because of the above statement, put_user_pages_dirty() might misbehave? 
-> Or maybe it won't - perhaps the intent here is to skip dirtying the
-> head page if the sub page is clean?  Please clarify, explain and add
-> comment if so.
-> 
+Simulate a more precise timestamp by calculating it based on the
+current framerate.
 
-Yes, technically, the accounting is wrong: we normally use the head page to 
-track dirtiness, and here, that is not done. (Nor was it done before this
-patch). However, it's not causing problems in code today because sub pages
-are released at about the same time as head pages, so the head page does get 
-properly checked at some point. And that means that set_page_dirty*() gets
-called if it needs to be called. 
+Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+---
+ drivers/media/platform/vivid/vivid-core.h        |  1 +
+ drivers/media/platform/vivid/vivid-kthread-cap.c | 24 ++++++++++++++++--------
+ 2 files changed, 17 insertions(+), 8 deletions(-)
 
-Obviously this is a little fragile, in that it depends on the caller behaving 
-a certain way. And in any case, the long-term fix (coming later) *also* only
-operates on the head page. So actually, instead of a comment, I think it's good 
-to just insert
-
-	page = compound_head(page);
-
-...into these new routines, right now. I'll do that.
-
-[...]
-> 
-> Otherwise looks OK.  Ish.  But it would be nice if that comment were to
-> explain *why* get_user_pages() pages must be released with
-> put_user_page().
-> 
-
-Yes, will do.
-
-> Also, maintainability.  What happens if someone now uses put_page() by
-> mistake?  Kernel fails in some mysterious fashion?  How can we prevent
-> this from occurring as code evolves?  Is there a cheap way of detecting
-> this bug at runtime?
-> 
-
-It might be possible to do a few run-time checks, such as "does page that came 
-back to put_user_page() have the correct flags?", but it's harder (without 
-having a dedicated page flag) to detect the other direction: "did someone page 
-in a get_user_pages page, to put_page?"
-
-As Jan said in his reply, converting get_user_pages (and put_user_page) to 
-work with a new data type that wraps struct pages, would solve it, but that's
-an awfully large change. Still...given how much of a mess this can turn into 
-if it's wrong, I wonder if it's worth it--maybe? 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
+index cd4c823..cbdadd8 100644
+--- a/drivers/media/platform/vivid/vivid-core.h
++++ b/drivers/media/platform/vivid/vivid-core.h
+@@ -384,6 +384,7 @@ struct vivid_dev {
+ 	/* thread for generating video capture stream */
+ 	struct task_struct		*kthread_vid_cap;
+ 	unsigned long			jiffies_vid_cap;
++	u64				cap_stream_start;
+ 	u32				cap_seq_offset;
+ 	u32				cap_seq_count;
+ 	bool				cap_seq_resync;
+diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
+index f06003b..0793b15 100644
+--- a/drivers/media/platform/vivid/vivid-kthread-cap.c
++++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
+@@ -416,6 +416,7 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+ 	char str[100];
+ 	s32 gain;
+ 	bool is_loop = false;
++	u64 soe_time = 0;
  
+ 	if (dev->loop_video && dev->can_loop_video &&
+ 		((vivid_is_svid_cap(dev) &&
+@@ -426,11 +427,11 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+ 
+ 	buf->vb.sequence = dev->vid_cap_seq_count;
+ 	/*
+-	 * Take the timestamp now if the timestamp source is set to
+-	 * "Start of Exposure".
++	 * Store the current time to calculate the delta if source is set to
++	 * "End of Frame".
+ 	 */
+-	if (dev->tstamp_src_is_soe)
+-		buf->vb.vb2_buf.timestamp = ktime_get_ns();
++	if (!dev->tstamp_src_is_soe)
++		soe_time = ktime_get_ns();
+ 	if (dev->field_cap == V4L2_FIELD_ALTERNATE) {
+ 		/*
+ 		 * 60 Hz standards start with the bottom field, 50 Hz standards
+@@ -556,12 +557,18 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+ 	}
+ 
+ 	/*
+-	 * If "End of Frame" is specified at the timestamp source, then take
+-	 * the timestamp now.
++	 * If "End of Frame", then calculate the "exposition time" and add
++	 * it to the timestamp.
+ 	 */
+ 	if (!dev->tstamp_src_is_soe)
+-		buf->vb.vb2_buf.timestamp = ktime_get_ns();
+-	buf->vb.vb2_buf.timestamp += dev->time_wrap_offset;
++		soe_time = ktime_get_ns() - soe_time;
++	buf->vb.vb2_buf.timestamp = dev->timeperframe_vid_cap.numerator *
++				    1000000000 /
++				    dev->timeperframe_vid_cap.denominator *
++				    dev->vid_cap_seq_count +
++				    dev->cap_stream_start +
++				    soe_time +
++				    dev->time_wrap_offset;
+ }
+ 
+ /*
+@@ -759,6 +766,7 @@ static int vivid_thread_vid_cap(void *data)
+ 	dev->cap_seq_count = 0;
+ 	dev->cap_seq_resync = false;
+ 	dev->jiffies_vid_cap = jiffies;
++	dev->cap_stream_start = ktime_get_ns();
+ 
+ 	for (;;) {
+ 		try_to_freeze();
+-- 
+1.9.1
+
