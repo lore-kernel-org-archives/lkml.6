@@ -2,108 +2,127 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB343C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153B3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4AD2087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:19:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEKSf6hv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4AD2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E6BBE21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BBE21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeJJSlZ (ORCPT
+        id S1726960AbeJJSmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:41:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726870AbeJJSlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:41:24 -0400
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D8F21524
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 11:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539170383;
-        bh=0j+fajQexnlp2IqoN+7PRzjwmdbE8hNCtKkuzaSoYbA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bEKSf6hvZqJtMcsj0NETb8BNY3Bqw58wcRADTb0dI3vWXTPlzbOuPMPFixtW2FJ04
-         RUzoBCnRV0IGkvD9/vAJuqej+yHfCdLbtqQ/iRGLFwMWrjldlS38zHCY3QD9YArND1
-         l6j0uEt4T4bdYfqdAtyZVTXL2816QTEry0P8mryY=
-Received: by mail-wr1-f54.google.com with SMTP id n11-v6so5177472wru.13
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 04:19:43 -0700 (PDT)
-X-Gm-Message-State: ABuFfoirRzmdFCD9acSqSPF4uDL8RTnQsY1JVHaf3aFp0Z2Bjzv0A3Tz
-        SAF2JnJ7MN31rXymgqu4etF1TMGOsNj0X10FEdQ/jA==
-X-Google-Smtp-Source: ACcGV61Gy1OG1LZLLVfe/zcBtjGYQekd8y8v4EwQ+TT50j2kFjkMWixs6BsYelTNa+cXxWpODrf+a/uTIv6Uu5iyvbw=
-X-Received: by 2002:adf:df88:: with SMTP id z8-v6mr19035312wrl.113.1539170381621;
- Wed, 10 Oct 2018 04:19:41 -0700 (PDT)
+        Wed, 10 Oct 2018 14:42:04 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:25449 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726721AbeJJSmE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 14:42:04 -0400
+X-UUID: 495baa22912342c1b2aacf08a8782bb7-20181010
+X-UUID: 495baa22912342c1b2aacf08a8782bb7-20181010
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <chunhui.li@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 19850537; Wed, 10 Oct 2018 19:20:18 +0800
+Received: from MTKMBS32N1.mediatek.inc (172.27.4.71) by
+ MTKMBS32DR.mediatek.inc (172.27.6.104) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 10 Oct 2018 19:20:16 +0800
+Received: from MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e]) by
+ MTKMBS32N1.mediatek.inc ([fe80::693d:d64d:d0b8:6f3e%23]) with mapi id
+ 15.00.1395.000; Wed, 10 Oct 2018 19:20:16 +0800
+From:   =?utf-8?B?Q2h1bmh1aSBMaSAo5p2O5pil6L6JKQ==?= 
+        <chunhui.li@mediatek.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        =?utf-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
+        <Miles.Chen@mediatek.com>,
+        =?utf-8?B?V2FsdGVyLVpIIFd1ICjlkLPnpZblr7Ap?= 
+        <Walter-ZH.Wu@mediatek.com>,
+        =?utf-8?B?WXUgTGlhbmcgKOaigeWuhyk=?= <Yu.Liang@mediatek.com>,
+        =?utf-8?B?TmljaG9sYXMgVGFuZyAo6YSt56em6LydKQ==?= 
+        <nicholas.tang@mediatek.com>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF0ga2FzYW46IGF2b2lkIG91dC1vZi1i?=
+ =?utf-8?Q?ounds_in_unwind=5Fframe?=
+Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGthc2FuOiBhdm9pZCBvdXQtb2YtYm91bmRzIGlu?=
+ =?utf-8?Q?_unwind=5Fframe?=
+Thread-Index: AQHUX7hlcl/5Uvjz3E+Pcy5y9duGWqUWMuaAgAHVIND//6kFAIAApc6w
+Date:   Wed, 10 Oct 2018 11:20:16 +0000
+Message-ID: <a96f9343ed35422498432cc24405f39b@MTKMBS32N1.mediatek.inc>
+References: <1539079863-19645-1-git-send-email-chunhui.li@mediatek.com>
+ <20181009103833.sk2jyhl77f5fb64r@lakrids.cambridge.arm.com>
+ <193a2b2efdaf41f39cb35a72feb3b39e@MTKMBS32N1.mediatek.inc>
+ <20181010092618.pwkrqqw7br7762rs@lakrids.cambridge.arm.com>
+In-Reply-To: <20181010092618.pwkrqqw7br7762rs@lakrids.cambridge.arm.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.27.4.250]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
-In-Reply-To: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 10 Oct 2018 06:19:30 -0500
-X-Gmail-Original-Message-ID: <CABGGisx-iLr+CQ=JjmHEe5J_Qqpf0yrgOmSOHa74GnfwE_RKsA@mail.gmail.com>
-Message-ID: <CABGGisx-iLr+CQ=JjmHEe5J_Qqpf0yrgOmSOHa74GnfwE_RKsA@mail.gmail.com>
-Subject: Re: [Question] directory for SoC-related DT binding
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 6:08 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi,
->
->
-> I see a bunch of vendor (or SoC) names in
-> Documentation/device/bindings/arm/
->
-> ./Documentation/devicetree/bindings/arm/altera
-> ./Documentation/devicetree/bindings/arm/amlogic
-
-Yeah, it's kind of a mixture of board/soc bindings mostly with some
-ARM architecture, ARM, Ltd. IP, and SoC system reg bindings.
-
-Eventually, I'd like to not split board bindings by arch and maybe we
-should move all the system/misc reg bindings out.
-
-[,,,]
-
-> I also see some vendor names in
-> Documentation/device/bindings/soc/
->
-> ./Documentation/devicetree/bindings/soc/bcm
-> ./Documentation/devicetree/bindings/soc/dove
-> ./Documentation/devicetree/bindings/soc/fsl
-> ./Documentation/devicetree/bindings/soc/mediatek
-> ./Documentation/devicetree/bindings/soc/qcom
-> ./Documentation/devicetree/bindings/soc/rockchip
-> ./Documentation/devicetree/bindings/soc/ti
-> ./Documentation/devicetree/bindings/soc/xilinx
-> ./Documentation/devicetree/bindings/soc/zte
-
-This I believe is mostly SoC system reg bindings though there's
-probably a few other things.
-
-> Confusingly, I see bcm, mediatek, rockchip
-> in both locations.
->
-> Is there any rule to choose one than the other?
-
-Top-level SoC/board bindings in arm/ and anything else elsewhere ideally.
-
-Rob
+SGkgTWFyaywNCg0KT2ssIHRoYW5rcyBmb3IgeW91ciBoZWxwDQoNCkJlc3QgcmVnYXJkcywNCkNo
+dW5odWkgTGkNCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBNYXJrIFJ1dGxh
+bmQgW21haWx0bzptYXJrLnJ1dGxhbmRAYXJtLmNvbV0gDQrlj5HpgIHml7bpl7Q6IDIwMTjlubQx
+MOaciDEw5pelIDE3OjI2DQrmlLbku7bkuro6IENodW5odWkgTGkgKOadjuaYpei+iSkNCuaKhOmA
+gTogQ2F0YWxpbiBNYXJpbmFzOyBXaWxsIERlYWNvbjsgTWF0dGhpYXMgQnJ1Z2dlcjsgTWFyYyBa
+eW5naWVyOyBBcmQgQmllc2hldXZlbDsgSmFtZXMgTW9yc2U7IE1hc2FoaXJvIFlhbWFkYTsgbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnOyB3c2RfdXBzdHJlYW07
+IE1pbGVzIENoZW4gKOmZs+awkeaouik7IFdhbHRlci1aSCBXdSAo5ZCz56WW5a+wKTsgWXUgTGlh
+bmcgKOaigeWuhyk7IE5pY2hvbGFzIFRhbmcgKOmEreenpui8nSkNCuS4u+mimDogUmU6IOetlOWk
+jTogW1BBVENIXSBrYXNhbjogYXZvaWQgb3V0LW9mLWJvdW5kcyBpbiB1bndpbmRfZnJhbWUNCg0K
+T24gV2VkLCBPY3QgMTAsIDIwMTggYXQgMDY6NDU6MTdBTSArMDAwMCwgQ2h1bmh1aSBMaSAo5p2O
+5pil6L6JKSB3cm90ZToNCj4gSGkgTWFyaywNCj4gDQo+IGthc2FuIGRldGVjdCBvdXQtb2YtYm91
+bmRzIGluIHN0YWNrdHJhY2UuYyBsaW5lIDcwLCBpdCdzIGFscmVhZHkgb3ZlciANCj4gUkVBRF9P
+TkNFX05PQ0hFQ0ssIGJ1dCBzdGlsbCBjcmFzaCANCj4ga2VybmVsLTQuOS9hcmNoL2FybTY0L2tl
+cm5lbC9zdGFja3RyYWNlLmMNCj4gNjlmcmFtZS0+c3AgPSBmcCArIDB4MTA7DQo+IDcwZnJhbWUt
+PmZwID0gUkVBRF9PTkNFX05PQ0hFQ0soKih1bnNpZ25lZCBsb25nICopKGZwKSk7DQo+IA0KPiB3
+ZSB0ZXN0IG9uIEFuZHJvaWQgcGxhdGZvcm0sIGtlcm5lbC00LjkgYnVpbGQgd2l0aCBjbGFuZyA2
+LjAuMiwgd2Ugd2lsbCBkbyBleHBlcmltZW50IHRvIGNsYXJpZnkgd2hldGhlciBjb21waWxlciBy
+ZWxhdGVkIGlzc3VlLg0KPiANCj4gUkVBRF9PTkNFX05PQ0hFQ0stPl9fcmVhZF9vbmNlX3NpemVf
+bm9jaGVjayB3aXRoIF9fbm9fc2FuaXRpemVfYWRkcmVzcyANCj4gaWYgZW5hYmxlIENPTkZJR19L
+QVNBTg0KPiANCj4ga2VybmVsLTQuOS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWdjYy5oDQo+ICNk
+ZWZpbmUgX19ub19zYW5pdGl6ZV9hZGRyZXNzIF9fYXR0cmlidXRlX18oKG5vX3Nhbml0aXplX2Fk
+ZHJlc3MpKQ0KPiANCj4ga2VybmVsLTQuOS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLWNsYW5nLmgN
+Cj4gI2RlZmluZSBfX25vX3Nhbml0aXplX2FkZHJlc3MgX19hdHRyaWJ1dGVfXygobm9fc2FuaXRp
+emUoImFkZHJlc3MiKSkpDQoNCklmIFJFQURfT05DRV9OT0NIRUNLKCkgaXNuJ3Qgd29ya2luZyBh
+cyBpbnRlbmRlZCwgdGhlbiB0aGlzIGlzIGEgY29tcGlsZXIgaXNzdWUsIGFuZCB0aGVyZSBhcmUg
+YmlnZ2VyIHByb2JsZW1zIHJlZ2FyZGxlc3MuDQoNCklmIHdlIG5lZWQgdG8gd29ya2Fyb3VuZCBz
+b21lIGNvbXBpbGVyIGlzc3VlLCB0aGF0IHNob3VsZCBiZSBkb25lIGluIHRoZSBpbXBsZW1lbnRh
+dGlvbiBvZiBSRUFEX09OQ0VfTk9DSEVDSygpLg0KDQpQbGVhc2Ugbm90ZSB0aGF0IHRoZXJlIGFy
+ZSBvdGhlciBpc3N1ZXMgd2l0aCB1c2luZyBjbGFuZyB0byBjb21waWxlIHRoZSBrZXJuZWw7IGF0
+IG1pbmltdW0gNy4wLjAgaXMgcmVxdWlyZWQgdG8gYnVpbGQgYSBtYWlubGluZSBrZXJuZWwgKGFu
+ZCBldmVuIHRoZW4sIHRoZSBMU0UgYXRvbWljcyBoYXZlIHRvIGJlIGV4cGxpY2l0bHkgZGlzYWJs
+ZWQpLCBzbyBpZiB0aGlzIG9ubHkgYWZmZWN0cyA2LjAueCwgSSBkb24ndCB0aGluayB3ZSBuZWVk
+IHRvIGNhcnJ5IGFueSB3b3JrYXJvdW5kIHVwc3RyZWFtLg0KDQo+IHRoZXJlIGlzIHBhdGNoIGZy
+b20gaW50ZXJuZXQsIGF2b2lkIGthc2FuIGJ5IHdyYXBwaW5nIHdpdGgga2FzYW5fZGlzYWJsZV9j
+dXJyZW50LCBpdCBzZWVtcyBiZXR0ZXIuDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNo
+d29yay9wYXRjaC82NDQ0NjMNCj4gc3VjaCBhczoNCj4gK2thc2FuX2Rpc2FibGVfY3VycmVudCgp
+Ow0KPiAgIC8vIGFjY2VzcyBmcA0KPiAra2FzYW5fZW5hYmxlX2N1cnJlbnQoKTsNCg0KUGxlYXNl
+IG5vdGUgdGhhdCB0aGUgc29sdXRpb24gbGF0ZXIgaW4gdGhlIHRocmVhZCBbMV0gd2FzIHRvIHVz
+ZSBSRUFEX09OQ0VfTk9DSEVDSygpLg0KDQpUaGFua3MsDQpNYXJrLg0KDQpbMV0gaHR0cHM6Ly9s
+b3JlLmtlcm5lbC5vcmcvcGF0Y2h3b3JrL3BhdGNoLzY0NDQ2My8jODI5ODU4DQo=
