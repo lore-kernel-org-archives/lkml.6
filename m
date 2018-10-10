@@ -2,121 +2,95 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D578C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D193AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16DFD2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZ/mdT8I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16DFD2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D0862085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D0862085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJKChp (ORCPT
+        id S1727483AbeJKCiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:37:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40122 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbeJKChp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:37:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d2-v6so6968623wro.7;
-        Wed, 10 Oct 2018 12:14:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kk66WKvrB1bH26PYcaLXPVSQlyWIi/QeDETFk9Gm9sY=;
-        b=SZ/mdT8Iig9/CML8CpUT7Gn7dtDvIioS54hfthOYo4ljgL83rgRPsPmh3ittg8GFEa
-         GkJt/MkSzWvljVH8En2WAAfD0zciNUrei2pFVX8kcj4oX6z9Y72YUuwtsSvhIcKsYiFh
-         EKWp/QmTaPHs7A+lt2GgiGzJ3q6cAR382R4d4Mw+rs2p2ofWw8Pj8YWS3r39H4X0Zhez
-         0LJ8FBDdWMaI4JT6tYgFHPDHAYzOhei2pPRX4AqgCwxcAQi/0UBcN0wsOAzCaxSxRxeL
-         AyVr0D/+oUHIEoIIw+MK450DLR9/LmWpt5rtGpPoYcYo2E1R1W3qZY1x41s4KELlnohQ
-         Yxmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kk66WKvrB1bH26PYcaLXPVSQlyWIi/QeDETFk9Gm9sY=;
-        b=c8KjVE5oaDfj4uaNOXjNKdb4aBmCAN6ThBdBfJ61Bh4ENGWFb2uQ2clwCnGgIxVY88
-         DR7LPknHQ5/sdU1BpJuGypukCMcGG7gDgrybh91/TxDEXuPAe4fQIESpRMpXMGWqpW3M
-         ZBq6dBe4vTHnTzRMidsVT5ulEWmj0utYJB5eYWOLqkODJ0685BO45qE2qsNVa9l50VXO
-         AK8Ub0nbsX9eu48+ShOX9NtfgsFAmHkT27Xwh2RYWJYpRdZixwPS0x6bJk9nehO67EwK
-         UTSs01O32MYIFQfFZ8Cfd47yULjQNEW7MjKrA56kleMquHrR/7APC67AT5Ewz+kP2+i1
-         KsXQ==
-X-Gm-Message-State: ABuFfohKzAx7vxTTLLP39q2JCEMvPehlH0n5nsvE1bEHKYtQn67unVpR
-        9/Y/vDI8yI3fOJ1/smQeWdaQBUUuxuJJ7WI1nFULztfd
-X-Google-Smtp-Source: ACcGV60IIMu/ciiD9nDvbRw+cAn/6vP8HwYZCnaqyPft7ANjR/bI/vYVY3lk7oNA+v/E8xpLX14hfOqAECkHXUdeaGI=
-X-Received: by 2002:adf:ec83:: with SMTP id z3-v6mr6112817wrn.125.1539198851776;
- Wed, 10 Oct 2018 12:14:11 -0700 (PDT)
+        Wed, 10 Oct 2018 22:38:12 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56282 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727132AbeJKCiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:38:11 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 7aKTBrTW0tqI; Wed, 10 Oct 2018 21:14:39 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 004E11EC04DE;
+        Wed, 10 Oct 2018 21:14:38 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 21:14:27 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, Richard Biener <rguenther@suse.de>,
+        Michael Matz <matz@suse.de>, gcc@gcc.gnu.org,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181010191427.GF5533@zn.tnic>
+References: <20181007132228.GJ29268@gate.crashing.org>
+ <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de>
+ <20181008073128.GL29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
+ <20181009145330.GT29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
+ <20181010072240.GB103159@gmail.com>
+ <20181010080324.GV29268@gate.crashing.org>
+ <20181010081906.GA5533@zn.tnic>
+ <20181010185432.GB29268@gate.crashing.org>
 MIME-Version: 1.0
-References: <1538221154-49213-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538221154-49213-1-git-send-email-yuehaibing@huawei.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 10 Oct 2018 15:13:59 -0400
-Message-ID: <CADnq5_MeA5VXnxVwUDfR0eKptf8hxCg0oVUDwLgnFUSKqKDEHA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
- in psp_v11_0_ring_stop
-To:     yuehaibing@huawei.com
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Shaoyun Liu <Shaoyun.Liu@amd.com>,
-        "Wang, Ken" <Ken.Wang@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        "Quan, Evan" <evan.quan@amd.com>, kernel-janitors@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181010185432.GB29268@gate.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 3:26 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c: In function 'psp_v11_0_ring_stop':
-> drivers/gpu/drm/amd/amdgpu/psp_v11_0.c:309:19: warning:
->  variable 'ring' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Oct 10, 2018 at 01:54:33PM -0500, Segher Boessenkool wrote:
+> It would be great to hear from kernel people if it works adequately for
+> what you guys want it for :-)
 
-Applied.  Thanks!
+Sure, ping me when you have the final version and I'll try to build gcc
+with it and do some size comparisons.
 
-Alex
+Thx.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-> index 9217af0..3f3fac2 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-> @@ -306,11 +306,8 @@ static int psp_v11_0_ring_stop(struct psp_context *psp,
->                               enum psp_ring_type ring_type)
->  {
->         int ret = 0;
-> -       struct psp_ring *ring;
->         struct amdgpu_device *adev = psp->adev;
->
-> -       ring = &psp->km_ring;
-> -
->         /* Write the ring destroy command to C2PMSG_64 */
->         WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, GFX_CTRL_CMD_ID_DESTROY_RINGS);
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
