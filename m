@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE455C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B432EC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB3820835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 797AE214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:02:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAUp9Mt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB3820835
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX8ftzhc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797AE214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=esmil.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJJQXK (ORCPT
+        id S1727747AbeJJQXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:23:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41659 "EHLO
+        Wed, 10 Oct 2018 12:23:11 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46412 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeJJQXI (ORCPT
+        with ESMTP id S1727493AbeJJQXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:23:08 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q39-v6so3360620lfi.8;
-        Wed, 10 Oct 2018 02:01:55 -0700 (PDT)
+        Wed, 10 Oct 2018 12:23:10 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z144-v6so3360073lff.13;
+        Wed, 10 Oct 2018 02:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TA2hMcCsbnh1Gd9P/xX1f3LeZx7iF3o9MbmxqKWAyAk=;
-        b=GAUp9Mt9TeIwF5R3rhnYGJUHDiV1Qz/t25mpiYrjA7PbOKKMSHW7EKhtkKOpWCUhAf
-         PgXHrmRcHzz/LkNWkS0Zkh7Ip7iuvohCFqt6tYxsCXYLJWI2G+hSjPwuaoYZAAuLc8d8
-         2bzul8GgZQpSk99e0+gRxhVqAs7Gkm8N3ogKc7HjOhktzC37/It4mMM109Vkeo4f5rG3
-         cTrhEBW6eEf+rPrhaJRpd+YyvvKyVkCpvBipg5TlFCICCqGH1ZoAUqnfQeEOAzEUtXqv
-         6tSMzRpzKvIuxBH2LPEAhxPEHQQitXWv6dMYnlC3031bXaoRn35v6V3TwLKH1W9zJ9dh
-         wyrQ==
+        bh=H1wYnlUgcfpcHgJvA96w+RLcQIxhKmNVE/gaATftEyo=;
+        b=YX8ftzhcGVUtGMcOs/GPlyGJsTa82qCFw1D3W72YFq761h+2Hsr0RJjEH4sTqiK1l5
+         v66ua5nUCMbl9V65AVPwJnGWwNaMzV55W52ry4HBkPOTOmx/OFwfC2ZPDPifnmhLtNbK
+         +ix1bDrDrt6hqrrXKV/KXjNrKDfZl/dYalW01ivXIjxvGfVSEm5QXWjv14Qe2zvZDb+W
+         xBy260e4sAtaXzV+WZB9lH0llVpqM7uKHQXaSRSwCLNZbZ6tbQXrBwLY+09RWml29U9s
+         wSak9hExeKWvRovax5RBq/C7PiEbI+dAltZFngsZER4OlJ0rcIa8+Hd410GO6zICp1z8
+         GnSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=TA2hMcCsbnh1Gd9P/xX1f3LeZx7iF3o9MbmxqKWAyAk=;
-        b=HMTBQ7GJvEGFFttIA9x9tHDOUc3o6A6MJvkKE7KJL/V744LmDwYrFKxzkUMUmXR9be
-         /VIvdiGUPWyiqS/I40yD8QYSv0bmSSVoSNZUTUhsdI5+Hj//L9U9DvQUQ62AEtINhjNd
-         RYqczrFq5kliUtgf657JAKcbPRtmsF1h53xrYmnDTlHR7onP/N/U531oBl+oWe/8avvt
-         LwYmS82u6iwyJwTedRV0GMia2l16DpLpkvajbHqh76IJz7YXze74KLqlFY98zp5utyny
-         YJEhhQ6RURQ2WdLbJkKIi2K1CdSzZku0ju/L11Wik+oLfLqxNEcdYM2HQPaCNZ0FSh0s
-         EVAw==
-X-Gm-Message-State: ABuFfojaEoSCvvw3a3pgCzURWdPvnqAkPnonC49ZCWMsbPR9csgyt+lg
-        lxsvPCSqNDZdzFgWgka2Fn4=
-X-Google-Smtp-Source: ACcGV60ge1yDJBedeGV3xpRir0WlnArmlOXWPzpPwkVMFxN7nAgLmV0NdMd+s4oszuybspptIpmt7A==
-X-Received: by 2002:a19:5205:: with SMTP id m5-v6mr17373907lfb.68.1539162114515;
-        Wed, 10 Oct 2018 02:01:54 -0700 (PDT)
+        bh=H1wYnlUgcfpcHgJvA96w+RLcQIxhKmNVE/gaATftEyo=;
+        b=BCYW8JGzxSu8KuhLs9PuQmepBBvjZ2b6J7Daz5XaZ0HBkaq8mbnIQLUOhb0g6+LNZI
+         LOcWMDHVOhCZCHBQHYbmMw5Z9R1zPyF0wdwhgKFwDIX1IWoyxbvEWn5zk5M2ou9cwqpa
+         mbksPzcmWed9iQ21o4f8nz+Sfdsd6qOTCwFZy2tk1Czm6JSU4s5Ub1K/2ZMqo+NCcDjE
+         LyFgH1tig0ryi5BEM5wEEMGU7QX9uPihbTcv3Wpr6EESqPRb+R9unOQAfOucxCz7p3bJ
+         bL8TCP1lP3i8ivs+TcVpJ3zZnNXcbb1nF7h8tjF3gcfJP1NNV67Ocu9quTCSB12J6N6Z
+         CHgw==
+X-Gm-Message-State: ABuFfohJaXI4WMTdPE6l0QG+q/cAffbNb0S2GMRd0XdX1aEYA7kz9MEB
+        Ss7BPpQjmQ9KS/xi3Nqomn8=
+X-Google-Smtp-Source: ACcGV61n5/KgpPFjcr0D0nPzvbXlF4T9M+zjt0qq3dmcy0RcqcjAxHXWT86QY0K2fc8AGUc8OYuTqw==
+X-Received: by 2002:a19:5e5d:: with SMTP id z29-v6mr17336105lfi.110.1539162116518;
+        Wed, 10 Oct 2018 02:01:56 -0700 (PDT)
 Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm2150078lfc.67.2018.10.10.02.01.52
+        by smtp.gmail.com with ESMTPSA id q2-v6sm2150078lfc.67.2018.10.10.02.01.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 02:01:53 -0700 (PDT)
+        Wed, 10 Oct 2018 02:01:55 -0700 (PDT)
 From:   Emil Renner Berthing <kernel@esmil.dk>
 To:     linux-rockchip@lists.infradead.org
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -75,9 +75,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Randy Li <ayaka@soulik.info>, Chris Zhong <zyw@rock-chips.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [PATCH 5/7] spi: rockchip: mark use_dma as bool
-Date:   Wed, 10 Oct 2018 11:00:36 +0200
-Message-Id: <20181010090038.20834-6-kernel@esmil.dk>
+Subject: [PATCH 6/7] spi: rockchip: directly use direction constants
+Date:   Wed, 10 Oct 2018 11:00:37 +0200
+Message-Id: <20181010090038.20834-7-kernel@esmil.dk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181010090038.20834-1-kernel@esmil.dk>
 References: <20181010090038.20834-1-kernel@esmil.dk>
@@ -88,40 +88,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver data has a u32 field use_dma which is
-only ever used as a boolean, so change its type
-to reflect that.
+The dma direction for the tx and rx dma channels never
+change, so just use the constants directly rather
+than storing them in device data.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- drivers/spi/spi-rockchip.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-rockchip.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 85358f96f78f..1d8bf45304a5 100644
+index 1d8bf45304a5..1044849a352d 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -202,7 +202,7 @@ struct rockchip_spi {
+@@ -164,7 +164,6 @@ enum rockchip_ssi_type {
  
- 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
+ struct rockchip_spi_dma_data {
+ 	struct dma_chan *ch;
+-	enum dma_transfer_direction direction;
+ 	dma_addr_t addr;
+ };
  
--	u32 use_dma;
-+	bool use_dma;
- 	struct sg_table tx_sg;
- 	struct sg_table rx_sg;
- 	struct rockchip_spi_dma_data dma_rx;
-@@ -631,9 +631,9 @@ static int rockchip_spi_transfer_one(
+@@ -454,7 +453,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
  
- 	/* we need prepare dma before spi was enabled */
- 	if (master->can_dma && master->can_dma(master, spi, xfer))
--		rs->use_dma = 1;
-+		rs->use_dma = true;
- 	else
--		rs->use_dma = 0;
-+		rs->use_dma = false;
+ 	rxdesc = NULL;
+ 	if (rs->rx) {
+-		rxconf.direction = rs->dma_rx.direction;
++		rxconf.direction = DMA_DEV_TO_MEM;
+ 		rxconf.src_addr = rs->dma_rx.addr;
+ 		rxconf.src_addr_width = rs->n_bytes;
+ 		rxconf.src_maxburst = 1;
+@@ -463,7 +462,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		rxdesc = dmaengine_prep_slave_sg(
+ 				rs->dma_rx.ch,
+ 				rs->rx_sg.sgl, rs->rx_sg.nents,
+-				rs->dma_rx.direction, DMA_PREP_INTERRUPT);
++				DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT);
+ 		if (!rxdesc)
+ 			return -EINVAL;
  
- 	rockchip_spi_config(rs);
+@@ -473,7 +472,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
  
+ 	txdesc = NULL;
+ 	if (rs->tx) {
+-		txconf.direction = rs->dma_tx.direction;
++		txconf.direction = DMA_MEM_TO_DEV;
+ 		txconf.dst_addr = rs->dma_tx.addr;
+ 		txconf.dst_addr_width = rs->n_bytes;
+ 		txconf.dst_maxburst = rs->fifo_len / 2;
+@@ -482,7 +481,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		txdesc = dmaengine_prep_slave_sg(
+ 				rs->dma_tx.ch,
+ 				rs->tx_sg.sgl, rs->tx_sg.nents,
+-				rs->dma_tx.direction, DMA_PREP_INTERRUPT);
++				DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
+ 		if (!txdesc) {
+ 			if (rxdesc)
+ 				dmaengine_terminate_sync(rs->dma_rx.ch);
+@@ -778,8 +777,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 	if (rs->dma_tx.ch && rs->dma_rx.ch) {
+ 		rs->dma_tx.addr = (dma_addr_t)(mem->start + ROCKCHIP_SPI_TXDR);
+ 		rs->dma_rx.addr = (dma_addr_t)(mem->start + ROCKCHIP_SPI_RXDR);
+-		rs->dma_tx.direction = DMA_MEM_TO_DEV;
+-		rs->dma_rx.direction = DMA_DEV_TO_MEM;
+ 
+ 		master->can_dma = rockchip_spi_can_dma;
+ 		master->dma_tx = rs->dma_tx.ch;
 -- 
 2.19.1
 
