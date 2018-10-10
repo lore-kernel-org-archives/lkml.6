@@ -2,132 +2,295 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCB8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E23C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9282082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E1FE2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:13:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="aUzNJhui"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9282082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIlQET9w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1FE2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeJKEhd (ORCPT
+        id S1726088AbeJKEhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 00:37:33 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41652 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbeJKEhd (ORCPT
+        Thu, 11 Oct 2018 00:37:39 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33056 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbeJKEhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 00:37:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x12-v6so7265446wru.8
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 14:13:35 -0700 (PDT)
+        Thu, 11 Oct 2018 00:37:39 -0400
+Received: by mail-ot1-f68.google.com with SMTP id q50so6842704otd.0;
+        Wed, 10 Oct 2018 14:13:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h8A3UipERG3NT0ECb7Z+ZqIoiaKdw+Gx0wMsxByRRS0=;
-        b=aUzNJhui/U7FOOPMqzgdsx+n+Dr7tuJH9MHkftWeMfhFHYYq554bxT+e8AHEOpdAsw
-         au6J0Vg/eLfDLNNiQIfsnKbSmTM5v9AgtJzhtRaS02qt74Bgn58g+6lUqdaF/0tIGAee
-         nSnR9AKz/kKErEbxYBnKt0KDm8oXuXR1PRA4g5Qg8Dz3cJiug22lysRY1uf5yqQpZVl8
-         vbtRVmoK1KFUg9U2kj2vSPQCa3VBjuk8O8ajdxWHdwWeQVUaQhBTSbJ8o9SPr1LuYDqa
-         NtJBNrBITtG2B/H4qLC++8WUCs9LTetK+FftNgraaa4cx/omQz/tJqptdH8EVm9YCjIO
-         ImJQ==
+         :cc:content-transfer-encoding;
+        bh=sV/fBlFx8kl36BM//8wj6UifIbLSOZmhcU+hYFcY/Ts=;
+        b=eIlQET9wQBxFx+VrJ0+N1LJQDxOv0TBt8w37mUYx0yIjoQQe3eto8GNbP5wSG33XrT
+         /9lgr4wRv1DsJVqiWFVYZmYjCqeIqChQXRQWveSwENGOYhXQ4zO35ttYWOlFv4kVPVik
+         6ilo9TMMriUUkFAydaHmQmvstluDqMCe9WyitLQtoRApEJurHt5sLC9NI0jHr66T5l5T
+         siFzoz3Y1xjboSgUYtf4biMKqKqLNdydrR3iuF9C5by8ZEHtn6lazALTDVFre+bJSEPK
+         nBMDFepqHjZPwrxTAgskZG+Rx8Ph0vt1tZSiZvBMflJ9Z+wu8MJ9jEZk4chOf1cBP105
+         f1Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h8A3UipERG3NT0ECb7Z+ZqIoiaKdw+Gx0wMsxByRRS0=;
-        b=ON4H74hdmf/Boj1DvpqacOoBqGVX8KueCMPAw+eyaXrk1usfCuksl5TWWN/6JkBunm
-         +baDYYsDU8zNxj7grLC0zzYwCMOctxflKKW45bR5DA4+9jJwh8W2iDTC4XLUtzZXRzWE
-         8J94LKvnopUBKvMByj5pANLMZl9OA2MWczwj7WIo+wCUvdOVKsidEgWhw6UEccfPV1zG
-         /CpgofwhgTmHO/nnPdfKRw+/6cTceFcFUWxqj8/IQzwwD/RUX7za35Uj0EkzkKdNMtUP
-         /61s7ve/jcIgcbWwfHXB4e5mCvGro4XPtMo7UVfVrg/1JGtke/cODtLMwqipgZdQKVM4
-         XPIw==
-X-Gm-Message-State: ABuFfogSY2woxYCAKyZ8d/N+pHDkkG46TqGqfoT2JdTtpWsaUx/BQQ6S
-        uMvrJAxsFQj3uBB0GDatbmMcylSWTC6zYV9XK4O3yQ==
-X-Google-Smtp-Source: ACcGV63oSePDOUpSpUL1LsAucohPWCGyCpmc2T2woXMOBpS/IGZEn/pbUA1PDXgB5S1eSB109GQKYjC06ouJw9d3veE=
-X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr23853652wrc.131.1539206014436;
- Wed, 10 Oct 2018 14:13:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sV/fBlFx8kl36BM//8wj6UifIbLSOZmhcU+hYFcY/Ts=;
+        b=tQXoUpQRDPwpUKLzGJmKAn4IKPm4sffvfsjxjU0cs+Lw1Gpe7gjMzG7Hr42z6QIfNu
+         Gylf+E9mQaS6mcw4St4l/geK0Gc78ezPxi8XidwQBlG4FfMSGkazduXNvP/vtcYID7XS
+         hV67gYbNJXzZF1yja13fkliJuIbZDirSYlcGTGZRwPPe6pfkIVAjkPoLEWHT0C2rFHsr
+         BJRiHctmZ2m9roPbRKPQdwstkw2xz9k7BPiljU859DIx8wkF53xz5U9pccFh7Cx1MgXn
+         w+tYYW9YCJKOLa1DN4ipNnmDvKL4PQ9lw3XrqOrzoKhvZE8z2kwE3UwMSsftUUbyCjzU
+         5oBg==
+X-Gm-Message-State: ABuFfogkH2EG79yooXd6fDcIbUvjTVDIVASdfKzX8ZLdfM95QitoFiDH
+        XU7zxw6RLmQSZ6MFqmisI3xXGVrwSdg9xhapGNJj140n
+X-Google-Smtp-Source: ACcGV60gCSQLkYjDIa7LHsUC6eNastf6+PI+5Sy5/Ozpvp+8qbwUuz38J0ESL/EEGYPwGqFKw782+j8mFu1VEyagMQM=
+X-Received: by 2002:a9d:5d02:: with SMTP id b2-v6mr15642624oti.237.1539206020436;
+ Wed, 10 Oct 2018 14:13:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181006093905.46276505@vmware.local.home> <20181008072134.GB5663@hirez.programming.kicks-ass.net>
- <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net> <20181008155757.GC5663@hirez.programming.kicks-ass.net>
- <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net> <20181009021710.qwt5hpntyeps44h3@treble>
- <20181008235750.59da83ae@gandalf.local.home> <20181010175237.e7m3sldcu2maoqcq@treble>
- <CALCETrUOaJ1dAsuX9bQO_+B4G6y5-FAb0=ZYA8QbtAEBZ6MxKg@mail.gmail.com>
- <20181010181605.arsyjxwdztztrjih@treble> <20181010181741.lc4l7kjvcmoxrw5b@treble>
-In-Reply-To: <20181010181741.lc4l7kjvcmoxrw5b@treble>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 10 Oct 2018 14:13:22 -0700
-Message-ID: <CALCETrUZMmTDOh5-Mzyj1rk7Q82DgdQLinOfbzF4Sb7OC2aYMQ@mail.gmail.com>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Helsley <mhelsley@vmware.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Lutomirski <luto@kernel.org>
+References: <20180821170629.18408-1-matwey@sai.msu.ru> <20180821170629.18408-3-matwey@sai.msu.ru>
+ <CAJs94EZ5Qh8q3tEABmH89NjDkA=jjzsB63yctRGdEqcvJTnASA@mail.gmail.com> <CAJs94EZBpUmRXnYRiSHJex+UdLX5tUfW-nxm1bWjy1oQW6vuFQ@mail.gmail.com>
+In-Reply-To: <CAJs94EZBpUmRXnYRiSHJex+UdLX5tUfW-nxm1bWjy1oQW6vuFQ@mail.gmail.com>
+From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date:   Thu, 11 Oct 2018 00:13:28 +0300
+Message-ID: <CAJs94EZOFEJFrZCbfL8XZGmx1GfpJD+eZd08_1=3hPy3g8h0Mw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 11:17 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+=D0=B2=D1=82, 11 =D1=81=D0=B5=D0=BD=D1=82. 2018 =D0=B3. =D0=B2 21:58, Matwe=
+y V. Kornilov <matwey.kornilov@gmail.com>:
 >
-> On Wed, Oct 10, 2018 at 01:16:05PM -0500, Josh Poimboeuf wrote:
-> > On Wed, Oct 10, 2018 at 11:03:43AM -0700, Andy Lutomirski wrote:
-> > > > +#define DECLARE_STATIC_CALL(tramp, func)                               \
-> > > > +       extern typeof(func) tramp;                                      \
-> > > > +       static void __used __section(.discard.static_call_tramps)       \
-> > > > +               *__static_call_tramp_##tramp = tramp
-> > > > +
+> =D0=B2=D1=82, 28 =D0=B0=D0=B2=D0=B3. 2018 =D0=B3. =D0=B2 10:17, Matwey V.=
+ Kornilov <matwey.kornilov@gmail.com>:
+> >
+> > =D0=B2=D1=82, 21 =D0=B0=D0=B2=D0=B3. 2018 =D0=B3. =D0=B2 20:06, Matwey =
+V. Kornilov <matwey@sai.msu.ru>:
 > > >
-> > > Confused.  What's the __static_call_tramp_##tramp variable for?  And
-> > > why is a DECLARE_ macro defining a variable?
+> > > DMA cocherency slows the transfer down on systems without hardware
+> > > coherent DMA.
+> > > Instead we use noncocherent DMA memory and explicit sync at data rece=
+ive
+> > > handler.
+> > >
+> > > Based on previous commit the following performance benchmarks have be=
+en
+> > > carried out. Average memcpy() data transfer rate (rate) and handler
+> > > completion time (time) have been measured when running video stream a=
+t
+> > > 640x480 resolution at 10fps.
+> > >
+> > > x86_64 based system (Intel Core i5-3470). This platform has hardware
+> > > coherent DMA support and proposed change doesn't make big difference =
+here.
+> > >
+> > >  * kmalloc:            rate =3D (2.0 +- 0.4) GBps
+> > >                        time =3D (5.0 +- 3.0) usec
+> > >  * usb_alloc_coherent: rate =3D (3.4 +- 1.2) GBps
+> > >                        time =3D (3.5 +- 3.0) usec
+> > >
+> > > We see that the measurements agree within error ranges in this case.
+> > > So theoretically predicted performance downgrade cannot be reliably
+> > > measured here.
+> > >
+> > > armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platf=
+orm
+> > > has no hardware coherent DMA support. DMA coherence is implemented vi=
+a
+> > > disabled page caching that slows down memcpy() due to memory controll=
+er
+> > > behaviour.
+> > >
+> > >  * kmalloc:            rate =3D  (114 +- 5) MBps
+> > >                        time =3D   (84 +- 4) usec
+> > >  * usb_alloc_coherent: rate =3D (28.1 +- 0.1) MBps
+> > >                        time =3D  (341 +- 2) usec
+> > >
+> > > Note, that quantative difference leads (this commit leads to 4 times
+> > > acceleration) to qualitative behavior change in this case. As it was
+> > > stated before, the video stream cannot be successfully received at AM=
+335x
+> > > platforms with MUSB based USB host controller due to performance issu=
+es
+> > > [1].
+> > >
+> > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> > >
+> > > Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
 > >
-> > This is the magic needed for objtool to find all the call sites.
+> > Ping
 > >
-> > The variable itself isn't needed, but the .discard.static_call_tramps
-> > entry is.  Objtool reads that section to find out which function call
-> > sites are targeted to a static call trampoline.
 >
-> To clarify: objtool reads that section to find out which functions are
-> really static call trampolines.  Then it annotates all the instructions
-> which call/jmp to those trampolines.  Those annotations are then read by
-> the kernel.
+> Ping
 >
 
-Ah, right, and objtool runs on a per-object basis so it has no other
-way to know what symbols are actually static calls.
+Ping
 
-There's another way to skin this cat, though:
+> > > ---
+> > >  drivers/media/usb/pwc/pwc-if.c | 57 ++++++++++++++++++++++++++++++++=
+----------
+> > >  1 file changed, 44 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/p=
+wc-if.c
+> > > index 72d2897a4b9f..1360722ab423 100644
+> > > --- a/drivers/media/usb/pwc/pwc-if.c
+> > > +++ b/drivers/media/usb/pwc/pwc-if.c
+> > > @@ -159,6 +159,32 @@ static const struct video_device pwc_template =
+=3D {
+> > >  /*******************************************************************=
+********/
+> > >  /* Private functions */
+> > >
+> > > +static void *pwc_alloc_urb_buffer(struct device *dev,
+> > > +                                 size_t size, dma_addr_t *dma_handle=
+)
+> > > +{
+> > > +       void *buffer =3D kmalloc(size, GFP_KERNEL);
+> > > +
+> > > +       if (!buffer)
+> > > +               return NULL;
+> > > +
+> > > +       *dma_handle =3D dma_map_single(dev, buffer, size, DMA_FROM_DE=
+VICE);
+> > > +       if (dma_mapping_error(dev, *dma_handle)) {
+> > > +               kfree(buffer);
+> > > +               return NULL;
+> > > +       }
+> > > +
+> > > +       return buffer;
+> > > +}
+> > > +
+> > > +static void pwc_free_urb_buffer(struct device *dev,
+> > > +                               size_t size,
+> > > +                               void *buffer,
+> > > +                               dma_addr_t dma_handle)
+> > > +{
+> > > +       dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
+> > > +       kfree(buffer);
+> > > +}
+> > > +
+> > >  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device=
+ *pdev)
+> > >  {
+> > >         unsigned long flags =3D 0;
+> > > @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
+> > >         /* Reset ISOC error counter. We did get here, after all. */
+> > >         pdev->visoc_errors =3D 0;
+> > >
+> > > +       dma_sync_single_for_cpu(&urb->dev->dev,
+> > > +                               urb->transfer_dma,
+> > > +                               urb->transfer_buffer_length,
+> > > +                               DMA_FROM_DEVICE);
+> > > +
+> > >         /* vsync: 0 =3D don't copy data
+> > >                   1 =3D sync-hunt
+> > >                   2 =3D synched
+> > > @@ -428,16 +459,15 @@ static int pwc_isoc_init(struct pwc_device *pde=
+v)
+> > >                 urb->dev =3D udev;
+> > >                 urb->pipe =3D usb_rcvisocpipe(udev, pdev->vendpoint);
+> > >                 urb->transfer_flags =3D URB_ISO_ASAP | URB_NO_TRANSFE=
+R_DMA_MAP;
+> > > -               urb->transfer_buffer =3D usb_alloc_coherent(udev,
+> > > -                                                         ISO_BUFFER_=
+SIZE,
+> > > -                                                         GFP_KERNEL,
+> > > -                                                         &urb->trans=
+fer_dma);
+> > > +               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
+> > > +               urb->transfer_buffer =3D pwc_alloc_urb_buffer(&udev->=
+dev,
+> > > +                                                           urb->tran=
+sfer_buffer_length,
+> > > +                                                           &urb->tra=
+nsfer_dma);
+> > >                 if (urb->transfer_buffer =3D=3D NULL) {
+> > >                         PWC_ERROR("Failed to allocate urb buffer %d\n=
+", i);
+> > >                         pwc_isoc_cleanup(pdev);
+> > >                         return -ENOMEM;
+> > >                 }
+> > > -               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
+> > >                 urb->complete =3D pwc_isoc_handler;
+> > >                 urb->context =3D pdev;
+> > >                 urb->start_frame =3D 0;
+> > > @@ -488,15 +518,16 @@ static void pwc_iso_free(struct pwc_device *pde=
+v)
+> > >
+> > >         /* Freeing ISOC buffers one by one */
+> > >         for (i =3D 0; i < MAX_ISO_BUFS; i++) {
+> > > -               if (pdev->urbs[i]) {
+> > > +               struct urb *urb =3D pdev->urbs[i];
+> > > +
+> > > +               if (urb) {
+> > >                         PWC_DEBUG_MEMORY("Freeing URB\n");
+> > > -                       if (pdev->urbs[i]->transfer_buffer) {
+> > > -                               usb_free_coherent(pdev->udev,
+> > > -                                       pdev->urbs[i]->transfer_buffe=
+r_length,
+> > > -                                       pdev->urbs[i]->transfer_buffe=
+r,
+> > > -                                       pdev->urbs[i]->transfer_dma);
+> > > -                       }
+> > > -                       usb_free_urb(pdev->urbs[i]);
+> > > +                       if (urb->transfer_buffer)
+> > > +                               pwc_free_urb_buffer(&urb->dev->dev,
+> > > +                                                   urb->transfer_buf=
+fer_length,
+> > > +                                                   urb->transfer_buf=
+fer,
+> > > +                                                   urb->transfer_dma=
+);
+> > > +                       usb_free_urb(urb);
+> > >                         pdev->urbs[i] =3D NULL;
+> > >                 }
+> > >         }
+> > > --
+> > > 2.16.4
+> > >
+> >
+> >
+> > --
+> > With best regards,
+> > Matwey V. Kornilov
+>
+>
+>
+> --
+> With best regards,
+> Matwey V. Kornilov
 
-extern typeof(func) __static_call_trampoline_##tramp;
-#define tramp __static_call_trampoline_##tramp
 
-And objtool could recognize it by name.  But, of course, you can't put
-a #define in a macro.  But maybe there's a way to hack it up with a
-static inline?
 
-Anyway, your way is probably fine with a few caveats:
-
- - It won't really work if the call comes from a .S file.
- - There should probably be a comment to help de-confuse future people
-like me :)
+--=20
+With best regards,
+Matwey V. Kornilov
