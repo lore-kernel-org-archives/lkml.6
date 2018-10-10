@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D897CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D3EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C7F22086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45B9F2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="xt4lxVBI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C7F22086E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZwN3safe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B9F2086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeJKDcT (ORCPT
+        id S1727773AbeJKDdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 23:32:19 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57306 "EHLO
+        Wed, 10 Oct 2018 23:33:25 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57324 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726911AbeJKDcT (ORCPT
+        by vger.kernel.org with ESMTP id S1727351AbeJKDdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 23:32:19 -0400
+        Wed, 10 Oct 2018 23:33:24 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A0B278EE303;
-        Wed, 10 Oct 2018 13:08:36 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8A4158EE303;
+        Wed, 10 Oct 2018 13:09:41 -0700 (PDT)
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id afmuKfEQTe9Y; Wed, 10 Oct 2018 13:08:36 -0700 (PDT)
+        with ESMTP id xDmUcAVtI-BT; Wed, 10 Oct 2018 13:09:41 -0700 (PDT)
 Received: from [153.66.254.194] (unknown [50.35.68.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 56D8E8EE0C7;
-        Wed, 10 Oct 2018 13:08:36 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3A9568EE0C7;
+        Wed, 10 Oct 2018 13:09:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539202116;
-        bh=bS6AF6rXsx8WSJdCAZ2/54HujVPR0zhNmgR96wyLhVs=;
+        s=20151216; t=1539202181;
+        bh=1r4jyqzV7ZgkdcFeG86e5al1FKANymopOwKFL9OFcB4=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=xt4lxVBIhgBeBOiF9zvDiOgrgajHVsvNQJNxrVQsgoM8IoGGdyXGrIYCDTa54oINl
-         xGgcuXPeyQszRavX21p0g9iRmcdJWFxPYOUZJFrcuUohSN0BDgmBjoo3kTR56IGC46
-         6oVYDlKOJIax7eq9nUeVg2oonLwtT1/LBeKPoYy0=
-Message-ID: <1539202115.12644.9.camel@HansenPartnership.com>
-Subject: [PATCH v2 1/3] code-of-conduct: Fix the ambiguity about collecting
- email addresses
+        b=ZwN3safeW0c6+6z8YAtXyEs7XfXHBKXSYcjETR31ElQNWkL53NAbKC/G0HkWGth0l
+         QqOz5kRds0e50uooX0AoInukqHqz3Yl8ROCHofdu9CebHNYhiDzfIUUoZ3ZjTswg6w
+         bbCqtfCSCz7IrTsZ33stVx7XMDOc/IUglv2npMSs=
+Message-ID: <1539202180.12644.10.camel@HansenPartnership.com>
+Subject: [PATCH v2 2/3] code-of-conduct: Strip the enforcement paragraph
+ pending community discussion
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     ksummit-discuss@lists.linuxfoundation.org
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Oct 2018 13:08:35 -0700
+Date:   Wed, 10 Oct 2018 13:09:40 -0700
 In-Reply-To: <1539202053.12644.8.camel@HansenPartnership.com>
 References: <1539202053.12644.8.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -62,35 +62,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code of conduct has an ambiguity in the it considers publishing
-private information such as email addresses unacceptable behaviour.  Since
-the Linux kernel collects and publishes email addresses as part of the patch
-process, add an exception clause for email addresses ordinarily collected by
-the project to correct this ambiguity.
+Significant concern has been expressed about the responsibilities outlined in
+the enforcement clause of the new code of conduct.  Since there is concern
+that this becomes binding on the release of the 4.19 kernel, strip the
+enforcement clauses to give the community time to consider and debate how this
+should be handled.
+
+Note, this patch is expected to be the starting point for a discussion not the
+end point, so there is an expectation that an Enforcement section will be
+added again to our code of conduct once we have sufficient community consensus
+on what it should say.
 
 Fixes: 8a104f8b5867c682 ("Code of Conduct: Let's revamp it.")
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Acked-by: Shuah Khan <shuah@kernel.org>
 Acked-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Alan Cox <alan@llwyncelyn.cymru>
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+
 ---
- Documentation/process/code-of-conduct.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+
+v2: Added additional commit paragraph clarifying we do expect eventually to
+    have an enforcement section (as requested by Shuah)
+---
+ Documentation/process/code-of-conduct.rst | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
 diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-index ab7c24b5478c..aa40e34e7785 100644
+index aa40e34e7785..4dd90987305b 100644
 --- a/Documentation/process/code-of-conduct.rst
 +++ b/Documentation/process/code-of-conduct.rst
-@@ -31,7 +31,7 @@ Examples of unacceptable behavior by participants include:
- * Trolling, insulting/derogatory comments, and personal or political attacks
- * Public or private harassment
- * Publishing others’ private information, such as a physical or electronic
--  address, without explicit permission
-+  address not ordinarily collected by the project, without explicit permission
- * Other conduct which could reasonably be considered inappropriate in a
-   professional setting
+@@ -59,21 +59,6 @@ address, posting via an official social media account, or acting as an appointed
+ representative at an online or offline event. Representation of a project may be
+ further defined and clarified by project maintainers.
+ 
+-Enforcement
+-===========
+-
+-Instances of abusive, harassing, or otherwise unacceptable behavior may be
+-reported by contacting the Technical Advisory Board (TAB) at
+-<tab@lists.linux-foundation.org>. All complaints will be reviewed and
+-investigated and will result in a response that is deemed necessary and
+-appropriate to the circumstances. The TAB is obligated to maintain
+-confidentiality with regard to the reporter of an incident.  Further details of
+-specific enforcement policies may be posted separately.
+-
+-Maintainers who do not follow or enforce the Code of Conduct in good faith may
+-face temporary or permanent repercussions as determined by other members of the
+-project’s leadership.
+-
+ Attribution
+ ===========
  
 -- 
 2.13.7
