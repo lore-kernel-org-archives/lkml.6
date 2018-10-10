@@ -2,132 +2,141 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AE7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE437C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16392087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:16:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 956D82087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:17:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AMG1m5Xm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16392087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQ8mxG4O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956D82087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJJNhE (ORCPT
+        id S1726670AbeJJNid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 09:37:04 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40396 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbeJJNhE (ORCPT
+        Wed, 10 Oct 2018 09:38:33 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40375 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725757AbeJJNid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 09:37:04 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 1-v6so1994820plv.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 23:16:28 -0700 (PDT)
+        Wed, 10 Oct 2018 09:38:33 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z204-v6so4348418wmc.5;
+        Tue, 09 Oct 2018 23:17:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=iQwyB6Ede0txptm73heStjghI/GMrnDddsxs4p8aYpA=;
-        b=AMG1m5XmJZV55wO/2aWKq1HngArx927SK+6kJ37e24HY0g8IGBzwSDin4Rem4tYUJP
-         HH7bRPQL7C+ZOS7yojDrOrUa6l9ZJ/1yEoPc6Dy1mVg3J0kN1oM011VwKBXx4/2lOTtg
-         VXFfTgmUpDHhfcsNkCDrcY1YeZ2sF3CNMJeyA=
+        bh=BZT/hDLKrDHEFII2+wPhuw7KJJddC8rhp6VmSHEpHQw=;
+        b=VQ8mxG4OODpqbyjO7RduAwfBnAe8Zy1rKbfPCJ7UtjyWYl2u5SlpY0qkvAcbMTjcPQ
+         g4L5AOOVGY4qunrnH/8TEdPES7U2f9bPdI+20VXjh+BtVTTuQlx4KzP9GpihQLLx5OcM
+         wz4Da4rJfZgrBtugwoHN6garZsP3nLAwnknMFQJ7qgNOPhstRT5DI6q9DKktmnGqvDpf
+         j2kwA2sFiEfxIlRVLfAT6BYENS2GRskkMyIRhEGqnvM1TaH98otMUOOr24A7lUf9tqkC
+         tUZqqrHVbIbvBY+dRcmNpfDYdJPlvYWD1lvpun4K5VK8AU8jvnqBVav1gA6xxWuUi9L5
+         iuuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iQwyB6Ede0txptm73heStjghI/GMrnDddsxs4p8aYpA=;
-        b=SM/cpWjjqYsfZWZdupVr7hddLcannpU5mVJLTjte0q1FzP5eFIKruZakcZ5QwOO2oi
-         sR/+Mu/RY3pvfdYpfin3P/kR0W2Le+r625P62P14PYrcpk54Dy37GWs+R9CUwzbFr/Fz
-         jjFoqCsosdYmVlf/sjwNYaksCrKEQbI6+ivs+f9Jdf5SzVhpD0Lh6fNaUlv8YwXPmJg2
-         3NLr/JhKtRkhJ4vZGFeFfc9FEnoVpeMPo7G0rHpoI3X5mxknwtY0yNSwh57sa8gYegaG
-         +z/966pNZre35d/tqgeBroGPnt4+Ppo248f8sGClrGd8I8lgCT65fc/kNY+DIWb3epV9
-         nong==
-X-Gm-Message-State: ABuFfojGAEcW0mDn5hvOlTEkkhlru25VPJpS6zb3QIBYUCK1oREVmIyt
-        RhIwn65OdOMtw4dFZlGyuWsTnQ==
-X-Google-Smtp-Source: ACcGV60l/WpyeoM23QQvzcWALlvCCQ8KuQh/OE3JJjGrLKGonnETeN+TgOQ0QqwPEvgWVeXlMXlByg==
-X-Received: by 2002:a17:902:b907:: with SMTP id bf7-v6mr21981004plb.259.1539152188080;
-        Tue, 09 Oct 2018 23:16:28 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x17-v6sm27766958pfn.59.2018.10.09.23.16.27
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BZT/hDLKrDHEFII2+wPhuw7KJJddC8rhp6VmSHEpHQw=;
+        b=KRv1y4vUfVqH9g8t9YCZxKv9FBS924VsIFvLLBSE06GGjHIlA66qEfBwCQ9G9CPYxD
+         tGQvzlRRiTeHYwJxiO10fGo7RPv2ura0wIG58ZKgvAxgW+018xjf3A8cVSiB6cB4P4tj
+         EBp4V7lYBqmtsr1POSqqWizxzWsVl8PmYTC2eFbCPBNOQxWJFnwVXLfbXd4holw4SXVn
+         XsIumcMYBODGUT6quPzzJ+7QodIAq+1Bm97FKmJRXaV2nfEeeVa1NLCJGaeLAOCLivtv
+         ISSSMsVKdSD0xJ+g9yw0ObdkSWXdAmnW4o6niWohcgd00QwIYZu411eafd0ny74EopQP
+         U3NA==
+X-Gm-Message-State: ABuFfogSsSNl8pUYFWUYtFFqfzn4E8JRmGvWXYeSR6r1d75BSuhVHV9Y
+        9wxjtsbGzPGOvCKxa2XzpDw=
+X-Google-Smtp-Source: ACcGV61KKnMnMUx/TX1Wef0bXLdMlygfCN2Kcnm2rtOCiO53l06r1kpQ1IfBzQ8xHs6gbspbZL1QuQ==
+X-Received: by 2002:a1c:7913:: with SMTP id l19-v6mr4083336wme.84.1539152274711;
+        Tue, 09 Oct 2018 23:17:54 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 62-v6sm28391967wra.48.2018.10.09.23.17.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 09 Oct 2018 23:16:27 -0700 (PDT)
-Date:   Tue, 9 Oct 2018 23:19:20 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Brian Norris <briannorris@chromium.org>, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        sibis@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
-Message-ID: <20181010061920.GS12063@builder>
-References: <20181009222527.74260-1-briannorris@chromium.org>
- <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
+        Tue, 09 Oct 2018 23:17:53 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 08:17:51 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rui.zhang@intel.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
+        javi.merino@kernel.org, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        quentin.perret@arm.com, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+Message-ID: <20181010061751.GA37224@gmail.com>
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 09 Oct 16:34 PDT 2018, Doug Anderson wrote:
 
-> Hi,
-> 
-> On Tue, Oct 9, 2018 at 3:33 PM Brian Norris <briannorris@chromium.org> wrote:
-> > +       if (q6v5->wdog_irq < 0) {
-> > +               if (q6v5->wdog_irq != -EPROBE_DEFER)
-> > +                       dev_err(&pdev->dev,
-> > +                               "failed to retrieve wdog IRQ: %d\n",
-> > +                               q6v5->wdog_irq);
-> > +               return q6v5->wdog_irq;
-> > +       }
-> 
-> optional: Since there's the same pattern 5 times here, I wonder if we
-> should abstract it out to a helper function that would print the
-> error?
-> 
+* Thara Gopinath <thara.gopinath@linaro.org> wrote:
 
-Before breaking this code out to a common function shared between the
-various q6v5 drivers this was a separate helper function, but that
-wasn't pretty either :/
-
-> ...in the ideal case it would be somewhere that all Linux drivers
-> could use since this is a super common pattern, but that might be a
-> bit too much yak shaving...
+> Thermal governors can respond to an overheat event for a cpu by
+> capping the cpu's maximum possible frequency. This in turn
+> means that the maximum available compute capacity of the
+> cpu is restricted. But today in linux kernel, in event of maximum
+> frequency capping of a cpu, the maximum available compute
+> capacity of the cpu is not adjusted at all. In other words, scheduler
+> is unware maximum cpu capacity restrictions placed due to thermal
+> activity. This patch series attempts to address this issue.
+> The benefits identified are better task placement among available
+> cpus in event of overheating which in turn leads to better
+> performance numbers.
 > 
-
-Yeah I agree, it would be a nice helper but there's a bunch of variants
-involved. I've added it on the "someday/maybe" list.
-
+> The delta between the maximum possible capacity of a cpu and
+> maximum available capacity of a cpu due to thermal event can
+> be considered as thermal pressure. Instantaneous thermal pressure
+> is hard to record and can sometime be erroneous as there can be mismatch
+> between the actual capping of capacity and scheduler recording it.
+> Thus solution is to have a weighted average per cpu value for thermal
+> pressure over time. The weight reflects the amount of time the cpu has
+> spent at a capped maximum frequency. To accumulate, average and
+> appropriately decay thermal pressure, this patch series uses pelt
+> signals and reuses the available framework that does a similar
+> bookkeeping of rt/dl task utilization.
 > 
-> > @@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-> >         disable_irq(q6v5->handover_irq);
-> >
-> >         q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-> > -       if (q6v5->stop_irq == -EPROBE_DEFER)
-> > -               return -EPROBE_DEFER;
-> > +       if (q6v5->stop_irq < 0) {
-> > +               if (q6v5->stop_irq != -EPROBE_DEFER)
-> > +                       dev_err(&pdev->dev,
-> > +                               "failed to retrieve stop IRQ: %d\n",
-> > +                               q6v5->stop_irq);
-> > +               return q6v5->stop_irq;
+> Regarding testing, basic build, boot and sanity testing have been
+> performed on hikey960 mainline kernel with debian file system.
+> Further aobench (An occlusion renderer for benchmarking realworld
+> floating point performance) showed the following results on hikey960
+> with debain.
 > 
-> Nitty nit that it's the "stop-ack" IRQ, not the "stop" IRQ.  The error
-> message below this one calls it stop-ack too so it would be ideal to
-> keep it consistent between the two error messages.
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>                                         Result          Standard        Standard
+>                                         (Time secs)     Error           Deviation
+> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
+> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
 
-I applied the patch with the nit fixed and your r-b.
+Wow, +13% speedup, impressive! We definitely want this outcome.
+
+I'm wondering what happens if we do not track and decay the thermal load at all at the PELT 
+level, but instantaneously decrease/increase effective CPU capacity in reaction to thermal 
+events we receive from the CPU.
+
+You describe the averaging as:
+
+> Instantaneous thermal pressure is hard to record and can sometime be erroneous as there can 
+> be mismatch between the actual capping of capacity and scheduler recording it.
+
+Not sure I follow the argument here: are there bogus thermal throttling events? If so then
+they are hopefully not frequent enough and should average out over time even if we follow
+it instantly.
+
+I.e. what is 'can sometimes be erroneous', exactly?
 
 Thanks,
-Bjorn
+
+	Ingo
