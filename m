@@ -2,157 +2,104 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32637C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B74FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C718D2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoBICkNc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C718D2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CE52D2077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE52D2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJJT1W (ORCPT
+        id S1727168AbeJJT1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:27:22 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51402 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeJJT1W (ORCPT
+        Wed, 10 Oct 2018 15:27:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53005 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeJJT1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:27:22 -0400
-Received: by mail-it1-f196.google.com with SMTP id 74-v6so7600004itw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 05:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YyfZN+0j/z+343HgJOgW8xv2RX3IlS9AJzvnd7co7gs=;
-        b=FoBICkNcwkLCNYO9AI5wYBuaUhHK5fTnb/o64jgCml8y/9biVDPWx/do2HRLIWU2/L
-         GfPfgcgOZrldfQCHz6obrhP91nv5evFyk58Y2Mmr6zMjbHCib+M5TEERd5N6bEPp7CAx
-         K+qJlYfagnan4f/Z26BSo8YA7QsWrefir8Wiw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YyfZN+0j/z+343HgJOgW8xv2RX3IlS9AJzvnd7co7gs=;
-        b=YBXs5SBSTSp2P10PvmJslI/7xxr+WQNNJ+DQxAWORcyo2K4+wfvB/qgl+WqFnqrU3y
-         saKyS2TAVbUq/32cv1es24/lzoVWKvqaQyG8QbIuMn13GhIG0y3GmKeaT+f5TGTi39cw
-         1mooS70XO92TxccVBEUOERVWzMRQxb8a5wWw7k0Y4ZKRF6lhpCpvQzNVBr7AqBHfId8N
-         HJdmB4xHDGcOohKM+SCrEUgPU4lmgDmTQlr3mlzKQyO1LLjrKIXgq3NTXnxvPM5906yw
-         VZStDnEtvnln1znY28rj98j1s8krZ1zMtUQifRaICoYN5TkcyjygSTDQ+PkYQM/WsR2a
-         QtKA==
-X-Gm-Message-State: ABuFfojsB21prDpMJXhR2gIuNGW0A6nxv3yf/8MSrWm76T+M8EA/bFBJ
-        ZzkQKbs8uvEeyKUdiaOYR5idW6Uo73SYCh1oCwq/SbpC
-X-Google-Smtp-Source: ACcGV62072jNgZH+pX3VeY9lDeBn9NVnbJC4YzcSbqbIbHei8FG5mbG5LC9cGgwHrW8RXxVmL9a1Bd2tzbq35vokDug=
-X-Received: by 2002:a02:9643:: with SMTP id c61-v6mr26939494jai.37.1539173130685;
- Wed, 10 Oct 2018 05:05:30 -0700 (PDT)
+        Wed, 10 Oct 2018 15:27:34 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gADFD-000075-OT; Wed, 10 Oct 2018 14:05:39 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gADFD-0007No-8H; Wed, 10 Oct 2018 14:05:39 +0200
+Date:   Wed, 10 Oct 2018 14:05:39 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: max98988: add I2C dependency
+Message-ID: <20181010120539.ija2n7chqrtx2fdh@pengutronix.de>
+References: <20181010083758.2874864-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-2-swboyd@chromium.org>
-In-Reply-To: <20181008163216.97436-2-swboyd@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 14:05:18 +0200
-Message-ID: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        evgreen@chromium.org, Thierry Reding <treding@nvidia.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010083758.2874864-1-arnd@arndb.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:01:13 up 20 days, 15 min, 25 users,  load average: 0.06, 0.03,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
+Hi Arnd,
 
-> gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
-> and then the address of that argument is assigned to the gpio chips
-> gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
-> work, because we've just assigned some stack address to a pointer that
-> we plan to dereference later in gpiochip_irq_map(). I ran into this
-> issue with the KASAN report below when gpiochip_irq_map() tried to setup
-> the parent irq with a total junk pointer for the 'parents' array.
->
-> BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
-> Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
->
-> CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
-> Call trace:
-> [<ffffff9008093638>] dump_backtrace+0x0/0x718
-> [<ffffff9008093da4>] show_stack+0x20/0x2c
-> [<ffffff90096b9224>] __dump_stack+0x20/0x28
-> [<ffffff90096b91c8>] dump_stack+0x80/0xbc
-> [<ffffff900845a350>] print_address_description+0x70/0x238
-> [<ffffff900845a8e4>] kasan_report+0x1cc/0x260
-> [<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
-> [<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
-> [<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
-> [<ffffff900820d13c>] irq_create_mapping+0x120/0x234
-> [<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
-> [<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
-> [<ffffff900917114c>] of_irq_get+0x138/0x198
-> [<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
-> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-> [<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
-> [<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
-> [<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
-> [<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
-> [<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
-> [<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
-> [<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
-> [<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
-> [<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
-> [<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
-> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-> [<ffffff9008ca59cc>] __driver_attach+0x100/0x194
-> [<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
-> [<ffffff9008ca58c0>] driver_attach+0x48/0x54
-> [<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
-> [<ffffff9008ca8448>] driver_register+0x1ac/0x230
-> [<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
-> [<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
-> [<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
-> [<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
-> [<ffffff90096e8240>] kernel_init+0x14/0x110
-> [<ffffff9008086fcc>] ret_from_fork+0x10/0x18
->
-> The buggy address belongs to the page:
-> page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
-> flags: 0x4000000000000000()
-> raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
-> raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
-> >ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
->                                                        ^
->  ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->
-> Let's leave around one unsigned int in the gpio_irq_chip struct for the
-> single parent irq case and repoint the 'parents' array at it. This way
-> code is left mostly intact to setup parents and we waste an extra few
-> bytes per structure of which there should be only a handful in a system.
->
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+On 18-10-10 10:37, Arnd Bergmann wrote:
+> max98988 only builds with I2C support enabled, otherwise we get a build error:
+> 
+> sound/soc/codecs/max98088.c:1789:1: error: data definition has no type or storage class [-Werror]
+>  module_i2c_driver(max98088_i2c_driver);
+>  ^~~~~~~~~~~~~~~~~
+> sound/soc/codecs/max98088.c:1789:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
+> sound/soc/codecs/max98088.c:1789:1: error: parameter names (without types) in function declaration [-Werror]
+> sound/soc/codecs/max98088.c:1780:26: error: 'max98088_i2c_driver' defined but not used [-Werror=unused-variable]
+> 
+> Fixes: 24ae67c58250 ("ASoC: max98988: make it selectable")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-OMG critical fix. I fixed up the thing the kbuild robot was complaining
-about with some vanilla kerneldoc and applied for fixes since it's kind
-of urgent.
+Thanks for covering the issue.
 
-Please check the result.
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Yours,
-Linus Walleij
+Regrads,
+Marco
+
+> ---
+>  sound/soc/codecs/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index 3c6bd6019b92..774d38310875 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -641,6 +641,7 @@ config SND_SOC_LM49453
+>  
+>  config SND_SOC_MAX98088
+>  	tristate "Maxim MAX98088/9 Low-Power, Stereo Audio Codec"
+> +	depends on I2C
+>  
+>  config SND_SOC_MAX98090
+>         tristate
+> -- 
+> 2.18.0
+> 
+> 
