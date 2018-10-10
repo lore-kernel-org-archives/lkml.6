@@ -2,131 +2,141 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AB1C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C20C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7758E2150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:02:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rfzIKClG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7758E2150C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id EF6E3214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:02:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6E3214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeJJWZG (ORCPT
+        id S1727254AbeJJWZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:25:06 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:46188 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbeJJWZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:25:06 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w9AF2MrR023279;
-        Thu, 11 Oct 2018 00:02:22 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9AF2MrR023279
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539183743;
-        bh=3f7GhQWA/IdQP1onQzFkHP8p0yWYF8OnrpHwZ3yxo5Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rfzIKClGiziRw80e5yJTflf3z7tsFPVremz/yIpbesyojdaHchwwWudxnotINzY38
-         UnTKnAPoZ8tNg9bjsnPP7pxQtvkNxXBKeloBPjtwm9twaB4zXOrqdEaMx+2lYHdqIN
-         lbX81jZk0AYvtfR3pqEa0MCXd0BPQeeOygk583ZK3v7v3IJtuF5x4PUCxEk96mSZl4
-         ZzIDocXrySWeOSyioobFCfgISrAHtU/96pnw7nGHNnpkmki5qTik2FFodM98D+NYai
-         WNV+hh6ltn1hi7Zc3htxQwZLpsFhzDIYvIIM7Tz6IqzLA5FzR5iC1ioSbxQ8QhjT4e
-         q9pVDEXX0lR7Q==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id r83so5341757vsc.4;
-        Wed, 10 Oct 2018 08:02:22 -0700 (PDT)
-X-Gm-Message-State: ABuFfogwvrmEGS5Y9k4gp5NJUCv8/bK7QTbXO3tOGwzjzTc2tDxAy/6v
-        ibOiKHIacekBydKTrfDf4woD9Io9ugg0E6efokU=
-X-Google-Smtp-Source: ACcGV63JT4r4heEopgPXV2z+PZ/EUjN0Z1meVp9BqoafdaqeF7ZPDnzJtwlLmfgiqm2X59yJztKqSI2PxU2+omNKIws=
-X-Received: by 2002:a67:61c1:: with SMTP id v184mr8507047vsb.179.1539183741474;
- Wed, 10 Oct 2018 08:02:21 -0700 (PDT)
+        Wed, 10 Oct 2018 18:25:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:53518 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726649AbeJJWZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:25:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33CFCED1;
+        Wed, 10 Oct 2018 08:02:34 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 647983F5B3;
+        Wed, 10 Oct 2018 08:02:30 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 16:02:24 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Saravana Kannan <skannan@codeaurora.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
+        mturquette@baylibre.com, khilman@baylibre.com,
+        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
+Message-ID: <20181010150224.GA3583@e107155-lin>
+References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+ <20180831140151.13972-3-georgi.djakov@linaro.org>
+ <20180925180215.GA12435@bogus>
+ <b67253fb-d86d-2ddd-6c30-0833d6ed62ad@linaro.org>
+ <20180926144830.GB25838@e107155-lin>
+ <fa74c24f-1f22-f11f-60fe-5a4489d9c7c2@codeaurora.org>
+ <20181002111758.GC1086@e107155-lin>
+ <c17450ce-fc25-e792-b91b-51106f032542@codeaurora.org>
+ <20181003093346.GA12570@e107155-lin>
+ <0a276103-15fb-807c-5379-1a35de789290@codeaurora.org>
 MIME-Version: 1.0
-References: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
- <20181010120751.GP30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181010120751.GP30658@n2100.armlinux.org.uk>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 11 Oct 2018 00:01:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASEEJw6Yp9HzSoEOwM4iKC=EEjTefE=VLv-wdNstsMriw@mail.gmail.com>
-Message-ID: <CAK7LNASEEJw6Yp9HzSoEOwM4iKC=EEjTefE=VLv-wdNstsMriw@mail.gmail.com>
-Subject: Re: [Question] directory for SoC-related DT binding
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a276103-15fb-807c-5379-1a35de789290@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 9:09 PM Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> On Wed, Oct 10, 2018 at 08:07:52PM +0900, Masahiro Yamada wrote:
-> > Hi,
-> >
-> >
-> > I see a bunch of vendor (or SoC) names in
-> > Documentation/device/bindings/arm/
-> >
-> > ./Documentation/devicetree/bindings/arm/altera
-> > ./Documentation/devicetree/bindings/arm/amlogic
-> > ./Documentation/devicetree/bindings/arm/apm
-> > ./Documentation/devicetree/bindings/arm/bcm
-> > ./Documentation/devicetree/bindings/arm/calxeda
-> > ./Documentation/devicetree/bindings/arm/freescale
-> > ./Documentation/devicetree/bindings/arm/hisilicon
-> > ./Documentation/devicetree/bindings/arm/keystone
-> > ./Documentation/devicetree/bindings/arm/marvell
-> > ./Documentation/devicetree/bindings/arm/mediatek
-> > ./Documentation/devicetree/bindings/arm/mrvl
-> > ./Documentation/devicetree/bindings/arm/msm
-> > ./Documentation/devicetree/bindings/arm/npcm
-> > ./Documentation/devicetree/bindings/arm/nxp
-> > ./Documentation/devicetree/bindings/arm/omap
-> > ./Documentation/devicetree/bindings/arm/rockchip
-> > ./Documentation/devicetree/bindings/arm/samsung
-> > ./Documentation/devicetree/bindings/arm/stm32
-> > ./Documentation/devicetree/bindings/arm/sunxi
-> > ./Documentation/devicetree/bindings/arm/tegra
-> > ./Documentation/devicetree/bindings/arm/ti
-> > ./Documentation/devicetree/bindings/arm/uniphier
-> > ./Documentation/devicetree/bindings/arm/ux500
-> > ./Documentation/devicetree/bindings/arm/vt8500
->
-> These are for arch/arm/mach-* and are the DT root descriptions for the
-> various boards and SoCs.
->
-> > I also see some vendor names in
-> > Documentation/device/bindings/soc/
-> >
-> > ./Documentation/devicetree/bindings/soc/bcm
-> > ./Documentation/devicetree/bindings/soc/dove
-> > ./Documentation/devicetree/bindings/soc/fsl
-> > ./Documentation/devicetree/bindings/soc/mediatek
-> > ./Documentation/devicetree/bindings/soc/qcom
-> > ./Documentation/devicetree/bindings/soc/rockchip
-> > ./Documentation/devicetree/bindings/soc/ti
-> > ./Documentation/devicetree/bindings/soc/xilinx
-> > ./Documentation/devicetree/bindings/soc/zte
->
-> These are for individual drivers in drivers/soc/
+On Wed, Oct 03, 2018 at 11:06:45AM -0700, Saravana Kannan wrote:
+> 
+> 
+> On 10/03/2018 02:33 AM, Sudeep Holla wrote:
+> > On Tue, Oct 02, 2018 at 11:56:56AM -0700, Saravana Kannan wrote:
+> > > On 10/02/2018 04:17 AM, Sudeep Holla wrote:
+> > [...]
+> > 
+> > > > Yes, I do understand I have made the same point multiple time and it's
+> > > > intentional. We need to get the fragmented f/w support story fixed.
+> > > > Different ARM vendors are doing different things in f/w and ARM sees the
+> > > > same fragmentation story as before. We have come up with new specification
+> > > > and my annoying multiple emails are just to constantly remind the same.
+> > > > 
+> > > > I do understand we have existing implementations to consider, but fixing
+> > > > the functionality in arbitrary way is not a good design and it better
+> > > > to get them fixed for future.
+> > > I believe the fragmentation you are referring to is  in the
+> > > interface/communication protocol. I see the benefit of standardizing that as
+> > > long as the standard actually turns out to be good. But that's completely
+> > > separate from what the FW can/can't do. Asking to standardize what the FW
+> > > can/can't do doesn't seem realistic as each chip vendor will have different
+> > > priorities - power, performance, cost, chip area, etc. It's the conflation
+> > > of these separate topics that doesn't help IMHO.
+> > I agree on interface/communication protocol fragmentation and firmware
+> > can implement whatever the vendor wish. What I was also referring was
+> > the mix-n-match approach which should be avoided.
+> > 
+> > e.g. Device A and B's PM is managed completely by firmware using OSPM hints
+> > Suppose Device X's PM is dependent on Device A and B, in which case it's
+> > simpler and cleaner to leave Device X PM to firmware. Reading the state
+> > of A and B and using that as hint for X is just overhead which firmware
+> > can manage better. That was my main concern here: A=CPU and B=some other
+> > device and X is inter-connect to which A and B are connected.
+> > 
+> > If CPU OPPs are obtained from f/w and this inter-connect from DT, mapping
+> > then is a mess and that's what I was concerned. I am sorry if that's not
+> > the scenario here, I may have mistaken then.
+> > 
+> What you are asking would be an ideal case, but this is not an ideal world.
 
-I see.
+Agreed.
 
-Thanks for helpful info!
+> There are tons of constraints for each chip vendor. Saying you can't mix and
+> match makes perfect the enemy of the good.
 
+We can have endless debate on that.
 
--- 
-Best Regards
-Masahiro Yamada
+> Adding FW support for A and B might make them optimal.
+
+OK...
+
+> But adding support for X might not be possible for
+> multiple real world constraints (chip area, cost, time to market, etc).
+
+but is not a good design though. If f/w blindly changes DVFS for X based
+on OS request, then there's possibility for clkscrew kind of exploits
+still though moving A/B to f/w was to avoid it. The chances are low but
+not zero.
+
+> Saying "either do it all or do nothing" is going to hold back a lot progress
+> that can come in increments. Heck, we do the same thing in the kernel. We'll
+> add basic simple features first and then improve on them. Why is it suddenly
+> frowned up if a FW/HW follows the same approach? I'll just have to agree to
+> disagree with you on this view point.
+>
+
+I agree on adding basic and then improve on that policy. But it's not
+fair to compare this mix-'n'-match approach to that. Sorry but I
+disagree with the comparison here.
+
+--
+Regards,
+Sudeep
