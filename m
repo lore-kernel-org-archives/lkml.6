@@ -2,261 +2,182 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A04B1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5578C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6F52086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:27:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B75B214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:31:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kv9xQMZ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6F52086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X14xApZ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B75B214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbeJKAuk (ORCPT
+        id S1726958AbeJKAyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:50:40 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:32966 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeJKAuk (ORCPT
+        Wed, 10 Oct 2018 20:54:10 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44893 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeJKAyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:50:40 -0400
-Received: by mail-yb1-f194.google.com with SMTP id u88-v6so2536329ybi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 10:27:31 -0700 (PDT)
+        Wed, 10 Oct 2018 20:54:10 -0400
+Received: by mail-qk1-f194.google.com with SMTP id y8-v6so3664428qka.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 10:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PGvn9CnLhpOFTpMI5e3BYHlOocnpI5JpBnaTYLDkkak=;
-        b=Kv9xQMZ5pboLUrfd8znFOPVqLLdJib3XHV5F31GLx6WxcLM899IsccntDxgdT1BElE
-         GPpCWeldyN7KC7IuScOE1lYmayNJJ8dxnyL/WFQdSF1Fb0TXPJ2g6qaENOexfFnNg9d2
-         620Sv9taY7FetYaL9TILZOOC7wl/BYbsaFcX+r/Mpu7n7cJVJBG1YXn8QLIVSlHO2ywA
-         LvE85Ikp3Q4Jv/CrORNeI3/XXkOE21oHdoV14+TTHqQcx4yuPwQ4XtlDKM6qSyYngbtD
-         iy7/SmBMF+5+k18VvDe+OoRXbTyC301emrM8OdLsDvZSVUZRmTIKqCIX5jfYWGfbDs11
-         av+w==
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=AvOu5UtQ+X1loc84g9+TLLQvMEjt3kN5GRi6JKZC6yY=;
+        b=X14xApZ7mZkQpAHiPjOcpyI3/F6G3FVGLMFeQajPWhYAW+VQ7dqdzlzIgmy3afb3SP
+         VrAfhpTM0Dl/bDSQP5P59ev8cZA+KlRXyTe8pwwSHjfU7Mx01HmLR5x9wBGcdELhRUUd
+         NboG4PPM3Z6qp8/tQKu9h+qO0hTzyDtiuAQ6c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PGvn9CnLhpOFTpMI5e3BYHlOocnpI5JpBnaTYLDkkak=;
-        b=uioyckctZD5jhZFnLWwU4KE22uMn1AMh+kRvjrsXqFFJHfvEH+EGYYhgu+GzAqHRlR
-         9KbrMCyZ5THJBSNchLAnbhbZlxHkvb8FeHdoMXQYh/F4gnoKcnvk3pkFr9XlfqBpUoxS
-         3Fo0pD7qFV6Ig6dB6s/ygVpSd2BQApSEoUzJd/66owL5Jf2C6u7rmiiP0KOKgYPO6PQ4
-         Mp9S6WZ/MOaqY5iVI0guvdAyVR+BkWkrvce3ITCg8ZqTHP1xf6JS1vpXedmU4GryOfuT
-         t8ma6qQSvAKBWS4IQbWccGahpcVKpJzafVUs9QRuXz4YC53EyFKWjjIWPSYEQtjqha2+
-         7d5A==
-X-Gm-Message-State: ABuFfohfZBzcrzDOl4owS6gQN99yMYBM6RxrY5ZS5FSgmKhCC66uB+Yw
-        omhU/bF1+9sO0hJ/dlxcd6Q=
-X-Google-Smtp-Source: ACcGV62PxVYF2dmBHAf94ap62wXeYBUHvE0q5688NTGVQ+SxM/ZiM3MQLdkQwuvBg+3AUnKGIhCxHg==
-X-Received: by 2002:a25:3186:: with SMTP id x128-v6mr19727755ybx.227.1539192451027;
-        Wed, 10 Oct 2018 10:27:31 -0700 (PDT)
-Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id o202-v6sm40463212ywo.38.2018.10.10.10.27.29
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=AvOu5UtQ+X1loc84g9+TLLQvMEjt3kN5GRi6JKZC6yY=;
+        b=cUhzIgFGba+1kmswmdXSj+4AtAEehmy6boap4ESBvf/P1q7vSi3Aj7lOPUwrjc6xA1
+         72TpSUkHpoxz5T7XBzv01j8aPG5xHsneEPJkqzbIEXYPz2jSX9vm4BeQsraEz3ZVOo0M
+         SzMBv1qwz4wW5hI24LyKL8tkuDpy3uOGcn1fyEAmIl2HnyX2ll8PoS5DViujtV29Rxk7
+         QHqQSc1ffZRvX3CTIA4Ay6VzVM2A/1KnZJd+D+jcKD7lPXey3mY7mDAVZp14Q7xvqVIw
+         iPRQ39GBZ734X+xJinWYiO9hP8oILd336XLsv3bdxTdLePxc0F+7jNx+sTjHXcg/1IEx
+         qkiA==
+X-Gm-Message-State: ABuFfog8RwRV7MTlKkQdYJEZgbTi/jXloE+tCpyZLHiRAZZMZzeLJ6Be
+        fGaBdqt+3UsLUsLaiFx1wJvHkA==
+X-Google-Smtp-Source: ACcGV62/2pFM4M1XCyXPVAF1mNlBodG8jv0MztD3DJu5bmiNwxtZC0+AsUmD9+V8UWXJePTGanYiBw==
+X-Received: by 2002:a37:7041:: with SMTP id l62-v6mr26625978qkc.294.1539192660440;
+        Wed, 10 Oct 2018 10:31:00 -0700 (PDT)
+Received: from [192.168.1.169] (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
+        by smtp.gmail.com with ESMTPSA id p3-v6sm8414477qtp.55.2018.10.10.10.30.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 10:27:30 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] mm: zero remaining unavailable struct pages
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>, linux-mm@kvack.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-References: <20181002143821.5112-1-msys.mizuma@gmail.com>
- <20181002143821.5112-2-msys.mizuma@gmail.com>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Message-ID: <7a03eb03-89c4-8f78-b169-b6ce18e0d5a7@gmail.com>
-Date:   Wed, 10 Oct 2018 13:27:20 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 10 Oct 2018 10:30:59 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-kernel@vger.kernel.org
+References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
+ <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, rui.zhang@intel.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
+        javi.merino@kernel.org, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        quentin.perret@arm.com, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <5BBE3751.7000908@linaro.org>
+Date:   Wed, 10 Oct 2018 13:30:57 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20181002143821.5112-2-msys.mizuma@gmail.com>
+In-Reply-To: <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Hello Lukasz,
 
-On 10/2/18 10:38 AM, Masayoshi Mizuma wrote:
-> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+On 10/10/2018 11:35 AM, Lukasz Luba wrote:
+> Hi Thara,
 > 
-> There is a kernel panic that is triggered when reading /proc/kpageflags
-> on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+> I have run it on Exynos5433 mainline.
+> When it is enabled with step_wise thermal governor,
+> some of my tests are showing ~30-50% regression (i.e. hackbench),
+> dhrystone ~10%.
+
+That is interesting. If I understand correctly, dhrystone spawns 16
+threads or so and floods the system. In "theory", such a test should not
+see any performance improvement and degradation. What is the thermal
+activity like in your system? I will try running one of these tests on
+hikey960.
 > 
->   BUG: unable to handle kernel paging request at fffffffffffffffe
->   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
->   Oops: 0000 [#1] SMP PTI
->   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
->   RIP: 0010:stable_page_flags+0x27/0x3c0
->   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
->   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
->   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
->   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
->   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
->   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
->   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
->   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
->   Call Trace:
->    kpageflags_read+0xc7/0x120
->    proc_reg_read+0x3c/0x60
->    __vfs_read+0x36/0x170
->    vfs_read+0x89/0x130
->    ksys_pread64+0x71/0x90
->    do_syscall_64+0x5b/0x160
->    entry_SYSCALL_64_after_hwframe+0x44/0xa9
->   RIP: 0033:0x7efc42e75e23
->   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+> Could you tell me which thermal governor was used in your case?
+> Please also share the name of that benchmark, i will give it a try.
+> Is it single threaded compute-intensive?
+
+Step-wise governor.
+I use aobench which is part of phoronix-test-suite.
+
+Regards
+Thara
+
 > 
-> According to kernel bisection, this problem became visible due to commit
-> f7f99100d8d9 which changes how struct pages are initialized.
+> Regards,
+> Lukasz
 > 
-> Memblock layout affects the pfn ranges covered by node/zone. Consider
-> that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
-> the default (no memmap= given) memblock layout is like below:
-> 
->   MEMBLOCK configuration:
->    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
->    memory.cnt  = 0x4
->    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
->    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
->    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
->    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
->    ...
-> 
-> If you give memmap=1G!4G (so it just covers memory[0x2]),
-> the range [0x100000000-0x13fffffff] is gone:
-> 
->   MEMBLOCK configuration:
->    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
->    memory.cnt  = 0x3
->    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
->    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
->    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
->    ...
-> 
-> This causes shrinking node 0's pfn range because it is calculated by
-> the address range of memblock.memory. So some of struct pages in the
-> gap range are left uninitialized.
-> 
-> We have a function zero_resv_unavail() which does zeroing the struct
-> pages outside memblock.memory, but currently it covers only the reserved
-> unavailable range (i.e. memblock.memory && !memblock.reserved).
-> This patch extends it to cover all unavailable range, which fixes
-> the reported issue.
-> 
-> Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Tested-by: Oscar Salvador <osalvador@suse.de>
-> Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> ---
->  include/linux/memblock.h | 15 ---------------
->  mm/page_alloc.c          | 36 +++++++++++++++++++++++++-----------
->  2 files changed, 25 insertions(+), 26 deletions(-)
-> 
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 5169205..2acdd04 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -265,21 +265,6 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
->  	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
->  			       nid, flags, p_start, p_end, p_nid)
->  
-> -/**
-> - * for_each_resv_unavail_range - iterate through reserved and unavailable memory
-> - * @i: u64 used as loop variable
-> - * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-> - * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-> - *
-> - * Walks over unavailable but reserved (reserved && !memory) areas of memblock.
-> - * Available as soon as memblock is initialized.
-> - * Note: because this memory does not belong to any physical node, flags and
-> - * nid arguments do not make sense and thus not exported as arguments.
-> - */
-> -#define for_each_resv_unavail_range(i, p_start, p_end)			\
-> -	for_each_mem_range(i, &memblock.reserved, &memblock.memory,	\
-> -			   NUMA_NO_NODE, MEMBLOCK_NONE, p_start, p_end, NULL)
-> -
->  static inline void memblock_set_region_flags(struct memblock_region *r,
->  					     enum memblock_flags flags)
->  {
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 89d2a2a..3b9d89e 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6446,29 +6446,42 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
->   * struct pages which are reserved in memblock allocator and their fields
->   * may be accessed (for example page_to_pfn() on some configuration accesses
->   * flags). We must explicitly zero those struct pages.
-> + *
-> + * This function also addresses a similar issue where struct pages are left
-> + * uninitialized because the physical address range is not covered by
-> + * memblock.memory or memblock.reserved. That could happen when memblock
-> + * layout is manually configured via memmap=.
->   */
->  void __init zero_resv_unavail(void)
->  {
->  	phys_addr_t start, end;
->  	unsigned long pfn;
->  	u64 i, pgcnt;
-> +	phys_addr_t next = 0;
->  
->  	/*
-> -	 * Loop through ranges that are reserved, but do not have reported
-> -	 * physical memory backing.
-> +	 * Loop through unavailable ranges not covered by memblock.memory.
->  	 */
->  	pgcnt = 0;
-> -	for_each_resv_unavail_range(i, &start, &end) {
-> -		for (pfn = PFN_DOWN(start); pfn < PFN_UP(end); pfn++) {
-> -			if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages))) {
-> -				pfn = ALIGN_DOWN(pfn, pageblock_nr_pages)
-> -					+ pageblock_nr_pages - 1;
-> -				continue;
-> +	for_each_mem_range(i, &memblock.memory, NULL,
-> +			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
-> +		if (next < start) {
-> +			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
-> +				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
-> +					continue;
-> +				mm_zero_struct_page(pfn_to_page(pfn));
-> +				pgcnt++;
->  			}
-> -			mm_zero_struct_page(pfn_to_page(pfn));
-> -			pgcnt++;
->  		}
-> +		next = end;
->  	}
-> +	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
-> +		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
-> +			continue;
-> +		mm_zero_struct_page(pfn_to_page(pfn));
-> +		pgcnt++;
-> +	}
-> +
->  
->  	/*
->  	 * Struct pages that do not have backing memory. This could be because
-> @@ -6478,7 +6491,8 @@ void __init zero_resv_unavail(void)
->  	 * this code can be removed.
->  	 */
->  	if (pgcnt)
-> -		pr_info("Reserved but unavailable: %lld pages", pgcnt);
-> +		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
-> +
->  }
->  #endif /* CONFIG_HAVE_MEMBLOCK && !CONFIG_FLAT_NODE_MEM_MAP */
->  
-> 
+> On 10/09/2018 06:24 PM, Thara Gopinath wrote:
+>> Thermal governors can respond to an overheat event for a cpu by
+>> capping the cpu's maximum possible frequency. This in turn
+>> means that the maximum available compute capacity of the
+>> cpu is restricted. But today in linux kernel, in event of maximum
+>> frequency capping of a cpu, the maximum available compute
+>> capacity of the cpu is not adjusted at all. In other words, scheduler
+>> is unware maximum cpu capacity restrictions placed due to thermal
+>> activity. This patch series attempts to address this issue.
+>> The benefits identified are better task placement among available
+>> cpus in event of overheating which in turn leads to better
+>> performance numbers.
+>>
+>> The delta between the maximum possible capacity of a cpu and
+>> maximum available capacity of a cpu due to thermal event can
+>> be considered as thermal pressure. Instantaneous thermal pressure
+>> is hard to record and can sometime be erroneous as there can be mismatch
+>> between the actual capping of capacity and scheduler recording it.
+>> Thus solution is to have a weighted average per cpu value for thermal
+>> pressure over time. The weight reflects the amount of time the cpu has
+>> spent at a capped maximum frequency. To accumulate, average and
+>> appropriately decay thermal pressure, this patch series uses pelt
+>> signals and reuses the available framework that does a similar
+>> bookkeeping of rt/dl task utilization.
+>>
+>> Regarding testing, basic build, boot and sanity testing have been
+>> performed on hikey960 mainline kernel with debian file system.
+>> Further aobench (An occlusion renderer for benchmarking realworld
+>> floating point performance) showed the following results on hikey960
+>> with debain.
+>>
+>>                                          Result          Standard        Standard
+>>                                          (Time secs)     Error           Deviation
+>> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
+>> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
+>>
+>> Thara Gopinath (7):
+>>    sched/pelt: Add option to make load and util calculations frequency
+>>      invariant
+>>    sched/pelt.c: Add support to track thermal pressure
+>>    sched: Add infrastructure to store and update instantaneous thermal
+>>      pressure
+>>    sched: Initialize per cpu thermal pressure structure
+>>    sched/fair: Enable CFS periodic tick to update thermal pressure
+>>    sched/fair: update cpu_capcity to reflect thermal pressure
+>>    thermal/cpu-cooling: Update thermal pressure in case of a maximum
+>>      frequency capping
+>>
+>>   drivers/base/arch_topology.c  |  1 +
+>>   drivers/thermal/cpu_cooling.c | 20 ++++++++++++-
+>>   include/linux/sched.h         | 14 +++++++++
+>>   kernel/sched/Makefile         |  2 +-
+>>   kernel/sched/core.c           |  2 ++
+>>   kernel/sched/fair.c           |  4 +++
+>>   kernel/sched/pelt.c           | 40 ++++++++++++++++++--------
+>>   kernel/sched/pelt.h           |  7 +++++
+>>   kernel/sched/sched.h          |  1 +
+>>   kernel/sched/thermal.c        | 66 +++++++++++++++++++++++++++++++++++++++++++
+>>   kernel/sched/thermal.h        | 13 +++++++++
+>>   11 files changed, 157 insertions(+), 13 deletions(-)
+>>   create mode 100644 kernel/sched/thermal.c
+>>   create mode 100644 kernel/sched/thermal.h
+>>
+
+
+-- 
+Regards
+Thara
