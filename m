@@ -1,101 +1,84 @@
 Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863F3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58857C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7342152D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:08:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GFXBBhz7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A7342152D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E4878214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4878214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJJH1h (ORCPT
+        id S1726636AbeJJHcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 03:27:37 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38345 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJH1h (ORCPT
+        Wed, 10 Oct 2018 03:32:12 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48823 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeJJHcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 03:27:37 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l1so3581395otj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 17:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FlaQvgYXAYWplrE6GduA7gBJdNzDzsKWyFiNuiUmspo=;
-        b=GFXBBhz7tT3XU7qvIy95wer/iz8fBpS4RCEvFn4GR3kxlbWj9cWjCw0csbuwGx9udh
-         7lo8KeFlQXbOwxhQVc1EJqWKx9cxJFjipFbs6B4JAzv+BNermRpqU6pPNy4NkveHmPeb
-         NL+PFoOEsTodehG/URFFAj2tkGXFrXYDuwa8TjkOAtydd4TXeCXyKzPMIWT8e4+/DBMU
-         1SXFtm43j5DnYspsl+vePEqoZjC+TivuNbF4LuG7JQCSyd7DGYcUwBHvjSXbpWtTx1hh
-         osYtZmpaeul3dmIU6KJDueGuRnbIRwShuSQl6HY+hKVXpT7Auh8g7+JY98Y9C+uJa/MV
-         KmkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FlaQvgYXAYWplrE6GduA7gBJdNzDzsKWyFiNuiUmspo=;
-        b=FRwyamHuvrbTrubK/UziCrbjSTcjMOrIE0VwqGl6c98ffRruMlAEnDVof22Q3hfRu4
-         uAo/wfOumtXfbcZc9ZavQaDeAFg031e3X8Eb0sjJjk9G/tBL7AtqZ7WURgM/q5/uH2+B
-         AcMfiFQA+lONOaXHl1MfWOEcIM1/yxzPYMXYshW7l9Ln7Ao75L5sqRXSf2WTcopyYddi
-         RfnFry3nwl/+J8N/mLWiobWSaYLnK/U+O+jbqpH6MPw05RfM/5ddmjmG09bU2pvPMAid
-         TO2cLUmFUvCHE0XZfqNLTs2j5YZu/uhP+tJOtTDKuiMTiE7mC4IMpmMg/SxK53/x/cG/
-         YtDg==
-X-Gm-Message-State: ABuFfohbsHhFPifq/udVzT/bslBkgYVQ8SCyF58MIo+x9MIihD2IXka2
-        jeT3NS9L6a99syOktjSY2MyWSNU5GneTYce4iQ05MQ==
-X-Google-Smtp-Source: ACcGV60FHXVbmSY5eVdVWkU/c1RwqnqI6JsQ90+S/7jBXxVwqAicXw6HupiEOBLP3G0YkqOSas1NQguzTBLjV7I6q2M=
-X-Received: by 2002:a9d:20e1:: with SMTP id x88-v6mr18437110ota.338.1539130091719;
- Tue, 09 Oct 2018 17:08:11 -0700 (PDT)
+        Wed, 10 Oct 2018 03:32:12 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9A0CjA8047787;
+        Wed, 10 Oct 2018 09:12:45 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Wed, 10 Oct 2018 09:12:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9A0Cjd4047783;
+        Wed, 10 Oct 2018 09:12:45 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w9A0Cjtn047782;
+        Wed, 10 Oct 2018 09:12:45 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: INFO: rcu detected stall in =?ISO-2022-JP?B?c2htZW1fZmF1bHQ=?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
+        hannes@cmpxchg.org, mhocko@kernel.org
+Cc:     akpm@linux-foundation.org, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, yang.s@alibaba-inc.com
 MIME-Version: 1.0
-References: <20181005214507.26315-1-jae.hyun.yoo@linux.intel.com> <20181005214507.26315-6-jae.hyun.yoo@linux.intel.com>
-In-Reply-To: <20181005214507.26315-6-jae.hyun.yoo@linux.intel.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 9 Oct 2018 17:08:00 -0700
-Message-ID: <CAFd5g45JkK4BnGR7yOA3eCazTZ86FyUaNdi81Ew6VBbKxS3EZA@mail.gmail.com>
-Subject: Re: [PATCH i2c-next v7 5/5] i2c: aspeed: Add bus idle waiting logic
- for multi-master use cases
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
-        vernon.mauery@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 10 Oct 2018 09:12:45 +0900
+References: <000000000000dc48d40577d4a587@google.com>
+In-Reply-To: <000000000000dc48d40577d4a587@google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 2:45 PM Jae Hyun Yoo
-<jae.hyun.yoo@linux.intel.com> wrote:
->
-> In multi-master environment, this driver's master cannot know
-> exactly when peer master sends data to this driver's slave so a
-> case can be happened that this master tries to send data through
-> the master_xfer function but slave data from peer master is still
-> being processed by this driver.
->
-> To prevent any state corruption in the case, this patch adds
-> checking code if any slave operation is ongoing and it waits up to
-> the bus timeout duration before starting a master_xfer operation.
->
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+syzbot is hitting RCU stall due to memcg-OOM event.
+https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+What should we do if memcg-OOM found no killable task because the allocating task
+was oom_score_adj == -1000 ? Flooding printk() until RCU stall watchdog fires 
+(which seems to be caused by commit 3100dab2aa09dc6e ("mm: memcontrol: print proper
+OOM header when no eligible victim left") because syzbot was terminating the test
+upon WARN(1) removed by that commit) is not a good behavior.
+
+
+syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=-1000
+syz-executor0 cpuset=syz0 mems_allowed=0
+CPU: 0 PID: 2050 Comm: syz-executor0 Not tainted 4.19.0-rc7-next-20181009+ #90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+(...snipped...)
+Memory limit reached of cgroup /syz0
+memory: usage 205168kB, limit 204800kB, failcnt 6909
+memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz0: cache:680KB rss:176336KB rss_huge:163840KB shmem:740KB mapped_file:660KB dirty:0KB writeback:0KB swap:0KB inactive_anon:712KB active_anon:176448KB inactive_file:0KB active_file:4KB unevictable:0KB
+Out of memory and no killable processes...
