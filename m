@@ -2,425 +2,189 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A70AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9586C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB244214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:50:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB244214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 46DEE2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:51:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MZ8WC5Ll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DEE2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeJJWMn convert rfc822-to-8bit (ORCPT
+        id S1727006AbeJJWOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:12:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55635 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeJJWMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:12:42 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5B617207C3; Wed, 10 Oct 2018 16:50:07 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9B310207B4;
-        Wed, 10 Oct 2018 16:49:56 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 16:49:57 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        David Lechner <david@lechnology.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] arm64: new board - Emlid Neutis N5
-Message-ID: <20181010144957.exrlupoph7ovsmdw@flea>
-References: <1538745949-13188-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-1-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
+        Wed, 10 Oct 2018 18:14:02 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36854 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbeJJWOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:14:01 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181010145128euoutp01e94177f8ba39d46e447f32edc4b0e2ef~cRt0yC3AO1618816188euoutp01g
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 14:51:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181010145128euoutp01e94177f8ba39d46e447f32edc4b0e2ef~cRt0yC3AO1618816188euoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539183088;
+        bh=H6vJmVaF7Uxwz8B0TYvxx7Ttm2fsBC5JpLdNz4tSJoM=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=MZ8WC5LlQP13rbZjFKkV9Vh5kGHkXYThvhqlwr1YPuxpQ6CinwreEHorG7M9iKnaq
+         45U+bUoBftDriMQVP3cLVZvYy9cG0/jBzzIzMb6GpiMOd+wYiTbD5jairVbYSYp/Xc
+         6V+/mqDLanWBjVothyOuq7jcAOUIbVcTUQscoL6M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181010145128eucas1p2e6ab32d6fc6a22f4269d356ed1103170~cRt0bR8mH2949229492eucas1p2D;
+        Wed, 10 Oct 2018 14:51:28 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 0A.7E.04294.FE11EBB5; Wed, 10
+        Oct 2018 15:51:27 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb~cRtzjSAO11833118331eucas1p2t;
+        Wed, 10 Oct 2018 14:51:27 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181010145126eusmtrp1c6d659a6d5e3cd7c462be2fe2a45fcb2~cRtzSzKHM1841718417eusmtrp1c;
+        Wed, 10 Oct 2018 14:51:26 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-7c-5bbe11ef8d63
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 27.C2.04284.EE11EBB5; Wed, 10
+        Oct 2018 15:51:26 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181010145126eusmtip1983b5ae85cb59d49e114506a32db019f~cRtzGDTW11488814888eusmtip1N;
+        Wed, 10 Oct 2018 14:51:26 +0000 (GMT)
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] mfd: remove redundant 'default n' from Kconfig
+Date:   Wed, 10 Oct 2018 16:51:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsWy7djPc7rvBfdFGyzo1LW4//Uoo8XlXXPY
+        HJg87lzbw+bxeZNcAFMUl01Kak5mWWqRvl0CV8ahWRMYC/4IVWy7uIypgXEJXxcjJ4eEgInE
+        p96JTF2MXBxCAisYJZZuW8cMkhAS+MIosWyzO0TiM6PE7bln2GA6JjROg+pYzihxZNcTZgjn
+        PVDHxUtAVRwcIgIqEufemIM0MAuoS2zbd4UVxGYTsJKY2L6KEcQWFrCX+NV5lwnEZhFQlVh/
+        ZxIzSKuoQIRE/xl1kDCvgKDEyZlPWCDGyEtsfzsHbJWEwBk2iXlr17NAFJVJ7JvSzQRxnIvE
+        rK4X7BC2sMSr41ugbBmJ05N7WCCapzNKvPm1FMpZzyix5swxqG5ricPHL7KCXMEsoCmxfpc+
+        iCkh4ChxrdENwuSTuPFWEOIePolJ26YzQ4R5JTrahCBmqElsWLaBDWZr186VzBC2h8TEBy0s
+        kLCNlXg95y3jBEaFWUi+nIXky1kIJyxgZF7FKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kR
+        mBZO/zv+ZQfjrj9JhxgFOBiVeHgbLuyJFmJNLCuuzD3EKMHBrCTCyyCwL1qINyWxsiq1KD++
+        qDQntfgQozQHi5I477J5G6OFBNITS1KzU1MLUotgskwcnFINjNnx1eUBn/NtF83PSfmqbLnA
+        XFO/9oahStmvqmuL7H3lP7EHZxb7F10zLxTqK0qas2bmjVeK9/JzpMRuLMp49SxhoVP+qp2+
+        3wuVOF9dV15YuMMoKzIzTKnFXsYtn4sz6r2p6bH81sPS67nfBl7Zr6DmrdU97+KSszd6Q+4Z
+        /tGa8Vsq53y0EktxRqKhFnNRcSIASEybSAcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsVy+t/xu7rvBPdFG0w4ZWRx/+tRRovLu+aw
+        OTB53Lm2h83j8ya5AKYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU
+        1JzMstQifbsEvYxDsyYwFvwRqth2cRlTA+MSvi5GTg4JAROJCY3TmLoYuTiEBJYySnzqXcna
+        xcgBlJCROL6+DKJGWOLPtS42iJq3jBJTvq1nB6kREVCROPfGHKSGWUBdYtu+K6wgNpuAlcTE
+        9lWMILawgL3Er867TCA2r4CdxKLjL8HiLAKqEuvvTGIGsUUFIiRuPexggagRlDg58wkLzMw/
+        8y4xQ9jyEtvfzmGewMg/C0nZLCRls5CULWBkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREY
+        wNuO/dy8g/HSxuBDjAIcjEo8vA0X9kQLsSaWFVfmHmKU4GBWEuFlENgXLcSbklhZlVqUH19U
+        mpNafIjRFOjwicxSosn5wOjKK4k3NDU0t7A0NDc2NzazUBLnPW9QGSUkkJ5YkpqdmlqQWgTT
+        x8TBKdXAqLz588F79zNt7RY4bkuP/lUXVjubIfnqV6fE1H8//l7bwhh+wZz3tI1p7otT+zb9
+        UJC4qN5RfYArZ3fl3rC5fPkHRA7//VaSse6HtTMrx9yovcXLJXgMF2/puS3c+EVuu5Covn3F
+        yn/7jk7KYHNdYsLj3LmG3ys+e31LNcP+vc7bX37xvyK9RomlOCPRUIu5qDgRADB02m52AgAA
+Message-Id: <20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb~cRtzjSAO11833118331eucas1p2t@eucas1p2.samsung.com>
+X-CMS-MailID: 20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb
+References: <CGME20181010145127eucas1p2fcd5b5f91fa3ac7f763a51c0d5e8b3cb@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+'default n' is the default value for any bool or tristate Kconfig
+setting so there is no need to write it explicitly.
 
-On Mon, Oct 08, 2018 at 06:20:42PM +0300, Aleksandr Aleksandrov wrote:
-> Emlid Neutis N5 is a SoM based on Allwinner H5, has a WiFi & BT
-> module, DDR3 RAM and eMMC.
-> 
-> - add neutis n5 dtsi file for SoM needs
-> - add neutis devboard dts file
-> - add neutis devboard target to dtb makefile
-> - new vendor prefix - emlid
-> 
-> Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+is not set' for visible symbols") the Kconfig behavior is the same
+regardless of 'default n' being present or not:
 
-Your commit prefix is wrong, it should be arm64: dts: allwinner: 
+    ...
+    One side effect of (and the main motivation for) this change is making
+    the following two definitions behave exactly the same:
+    
+        config FOO
+                bool
+    
+        config FOO
+                bool
+                default n
+    
+    With this change, neither of these will generate a
+    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+    That might make it clearer to people that a bare 'default n' is
+    redundant.
+    ...
 
-> ---
->  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->  arch/arm64/boot/dts/allwinner/Makefile             |   1 +
->  .../sun50i-h5-emlid-neutis-n5-devboard.dts         | 184 +++++++++++++++++++++
->  .../dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi   |  96 +++++++++++
->  4 files changed, 282 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 2c3fc51..2336e44 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -112,6 +112,7 @@ edt	Emerging Display Technologies
->  eeti	eGalax_eMPIA Technology Inc
->  elan	Elan Microelectronic Corp.
->  embest	Shenzhen Embest Technology Co., Ltd.
-> +emlid	Emlid, Ltd.
->  emmicro	EM Microelectronic
->  emtrion	emtrion GmbH
->  energymicro	Silicon Laboratories (formerly Energy Micro AS)
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/mfd/Kconfig |    6 ------
+ 1 file changed, 6 deletions(-)
 
-This should be in a separate patch.
-
-> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-> index 9ffa7a0..eefe74c 100644
-> --- a/arch/arm64/boot/dts/allwinner/Makefile
-> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinebook.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
-> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-emlid-neutis-n5-devboard.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-libretech-all-h3-cc.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-> new file mode 100644
-> index 0000000..493947c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-> @@ -0,0 +1,184 @@
-> +/*
-> + * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-
-You should use an SPDX header instead of the full license text.
-
-> +
-> +/dts-v1/;
-> +
-> +#include "sun50i-h5-emlid-neutis-n5.dtsi"
-> +
-> +/ {
-> +	model = "Emlid Neutis N5 Developer board";
-> +	compatible = "emlid,emlid-neutis-n5-devboard",
-> +		"emlid,emlid-neutis-n5",
-
-Do you need the two emlid there? What comes before the comma is the
-vendor, while what is after is the model.
-
-Also, please align those strings
-
-> +		"allwinner,sun50i-h5";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +
-> +	reg_usb0_vbus: usb0-vbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb0-vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		enable-active-high;
-> +		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>;   /* PL9 */
-> +		status = "okay";
-> +	};
-> +
-> +	vdd_cpux: gpio-regulator {
-> +		compatible = "regulator-gpio";
-> +		pinctrl-names = "default";
-> +		regulator-name = "vdd-cpux";
-> +		regulator-type = "voltage";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <1100000>;
-> +		regulator-max-microvolt = <1300000>;
-> +		regulator-ramp-delay = <50>; /* 4ms */
-> +		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
-> +		gpios-states = <0x1>;
-> +		states = <1100000 0x0
-> +			  1300000 0x1>;
-> +	};
-> +};
-> +
-> +&codec {
-> +	allwinner,audio-routing =
-> +		"Line Out", "LINEOUT",
-> +		"LINEIN", "Line In",
-> +		"MIC1", "Mic",
-> +		"MIC2", "Mic",
-> +		"Mic",  "MBIAS";
-> +	status = "okay";
-> +};
-> +
-> +&de {
-> +	status = "okay";
-> +};
-> +
-> +&ehci0 {
-> +	status = "okay";
-> +};
-> +
-> +&ehci1 {
-> +	status = "okay";
-> +};
-> +
-> +&ehci2 {
-> +	status = "okay";
-> +};
-> +
-> +&ehci3 {
-> +	status = "okay";
-> +};
-> +
-> +&ohci0 {
-> +	status = "okay";
-> +};
-> +
-> +&ohci1 {
-> +	status = "okay";
-> +};
-> +
-> +&ohci2 {
-> +	status = "okay";
-> +};
-> +
-> +&ohci3 {
-> +	status = "okay";
-> +};
-> +
-> +&emac {
-> +	phy-handle = <&int_mii_phy>;
-> +	phy-mode = "mii";
-> +	allwinner,leds-active-low;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	vmmc-supply = <&reg_vcc3v3>;
-> +	bus-width = <4>;
-> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-> +	status = "okay";
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_pins_a>;
-> +	status = "okay";
-> +};
-> +
-> +&usb_otg {
-> +	dr_mode = "otg";
-> +	status = "okay";
-> +};
-> +
-> +&usbphy {
-> +	usb0_id_det-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
-> +	usb0_vbus-supply = <&reg_usb0_vbus>;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
-> new file mode 100644
-> index 0000000..8e1e37d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5.dtsi
-> @@ -0,0 +1,96 @@
-> +/*
-> + * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This library is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This library is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sun50i-h5.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +/ {
-> +	reg_vcc3v3: vcc3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +
-> +	wifi_pwrseq: wifi_pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		pinctrl-names = "default";
-> +		reset-gpios = <&pio 2 7 GPIO_ACTIVE_LOW>; /* PC7 */
-> +		post-power-on-delay-ms = <200>;
-> +	};
-> +};
-> +
-> +&mmc1 {
-> +	vmmc-supply = <&reg_vcc3v3>;
-> +	vqmmc-supply = <&reg_vcc3v3>;
-> +	mmc-pwrseq = <&wifi_pwrseq>;
-> +	bus-width = <4>;
-> +	non-removable;
-> +	status = "okay";
-> +
-> +	brcmf: wifi@1 {
-> +		reg = <1>;
-> +		compatible = "brcm,bcm4329-fmac";
-> +		interrupt-parent = <&r_pio>;
-> +		interrupts = <0 5 IRQ_TYPE_LEVEL_LOW>;	/* PL5 */
-> +		interrupt-names = "host-wake";
-> +	};
-> +};
-> +
-> +&mmc2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc2_8bit_pins>;
-> +	vmmc-supply = <&reg_vcc3v3>;
-> +	bus-width = <8>;
-> +	non-removable;
-> +	cap-mmc-hw-reset;
-> +	status = "okay";
-> +};
-> +
-> +&uart1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-> +	status = "okay";
-> +};
-
-I guess this is for bluetooth? Have you tested serdev drivers?
-
-Also, I have a general comments, and it really depends on what your
-intention about the board ecosystem is. Do you expect the SOM to be
-swappable in multiple boards, or do you expect to send it as something
-that is just fixed into a daughter board?
-
-In the former case, you probably want to use overlays instead. In the
-latter, you're fine.
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Index: b/drivers/mfd/Kconfig
+===================================================================
+--- a/drivers/mfd/Kconfig	2018-10-09 15:58:40.547122978 +0200
++++ b/drivers/mfd/Kconfig	2018-10-10 16:49:37.575915230 +0200
+@@ -8,7 +8,6 @@ menu "Multifunction device drivers"
+ config MFD_CORE
+ 	tristate
+ 	select IRQ_DOMAIN
+-	default n
+ 
+ config MFD_CS5535
+ 	tristate "AMD CS5535 and CS5536 southbridge core functions"
+@@ -870,7 +869,6 @@ config MFD_VIPERBOARD
+         tristate "Nano River Technologies Viperboard"
+ 	select MFD_CORE
+ 	depends on USB
+-	default n
+ 	help
+ 	  Say yes here if you want support for Nano River Technologies
+ 	  Viperboard.
+@@ -1575,7 +1573,6 @@ config MFD_TWL4030_AUDIO
+ 	bool "TI TWL4030 Audio"
+ 	depends on TWL4030_CORE
+ 	select MFD_CORE
+-	default n
+ 
+ config TWL6040_CORE
+ 	bool "TI TWL6040 audio codec"
+@@ -1583,7 +1580,6 @@ config TWL6040_CORE
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+-	default n
+ 	help
+ 	  Say yes here if you want support for Texas Instruments TWL6040 audio
+ 	  codec.
+@@ -1605,7 +1601,6 @@ config MFD_WL1273_CORE
+ 	tristate "TI WL1273 FM radio"
+ 	depends on I2C
+ 	select MFD_CORE
+-	default n
+ 	help
+ 	  This is the core driver for the TI WL1273 FM radio. This MFD
+ 	  driver connects the radio-wl1273 V4L2 module and the wl1273
+@@ -1649,7 +1644,6 @@ config MFD_TC3589X
+ 
+ config MFD_TMIO
+ 	bool
+-	default n
+ 
+ config MFD_T7L66XB
+ 	bool "Toshiba T7L66XB"
