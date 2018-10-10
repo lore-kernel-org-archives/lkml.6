@@ -2,171 +2,192 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75405C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA178C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC00D20858
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:49:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 597442087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 11:53:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ucyggiGc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC00D20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YLUswbN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597442087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeJJTLU (ORCPT
+        id S1726944AbeJJTPh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:11:20 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50959 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbeJJTLU (ORCPT
+        Wed, 10 Oct 2018 15:15:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54756 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeJJTPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:11:20 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181010114931euoutp01f941ee22643830c8e434633727efadc9~cPO9rDTlu1453214532euoutp010
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 11:49:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181010114931euoutp01f941ee22643830c8e434633727efadc9~cPO9rDTlu1453214532euoutp010
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539172171;
-        bh=HsqM0qUGvaeZ9T+gCAIiszI0JgSnwkudUxbvRVEKruY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ucyggiGc2xLupDfNATiHur8uC/LdluRtar5Mdb+2ibarnoVOMytBMh3/0UQMfDRY9
-         FLiS7l8waOk4XSjt5IvIktIfjB84zog0AeD40aEN59R/dATFLdp4eVjDpBHWn2fIWb
-         Hjq4GWjCVBC0lECm4ctnWXPdH3mF5o6RQPRCvpXA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181010114930eucas1p2bc4a871fafbfd4d80f0fa8656c9e7c79~cPO8ut1y72074420744eucas1p22;
-        Wed, 10 Oct 2018 11:49:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AC.E7.04441.A47EDBB5; Wed, 10
-        Oct 2018 12:49:30 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181010114929eucas1p26afb68895372532acd98a5fa641c6ab4~cPO77YHJM2672826728eucas1p2V;
-        Wed, 10 Oct 2018 11:49:29 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181010114929eusmtrp2c21500bd0097058e56dec151830c71ec~cPO7qepWh1467214672eusmtrp2F;
-        Wed, 10 Oct 2018 11:49:29 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-8e-5bbde74a6c93
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C1.B6.04128.947EDBB5; Wed, 10
-        Oct 2018 12:49:29 +0100 (BST)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181010114929eusmtip1c937b40e62e53c4296c2c5635a0e2282~cPO7SHfT03113931139eusmtip1V;
-        Wed, 10 Oct 2018 11:49:29 +0000 (GMT)
-Subject: Re: [PATCH] Doc: lockdep: add information about performance impact
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     corbet@lwn.net, b.zolnierkie@samsung.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        linux-arm-kernel@lists.infradead.org
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Date:   Wed, 10 Oct 2018 13:49:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <8a6bed3c-dac5-7031-eedd-2eb5bcc18478@arm.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3d2tuNo43VqPmgYjooS0gQ/HCgkoWCZhB8CpQW28qDinLbj
-        JWXlErwwykylcppTvOa8NG+ppJlK0yIxRUmTCpuIyjBvRYqa80zy2+/5P9c/PBQhbSM9qBh1
-        IqNRK1UygYjf/v7v8JnguW7F2Y0xV9r8vImkrb3ZiG7+OUHSY10lAnq0t4xHWx718uh3v6wk
-        Pb88yL9AyetL65G8pdZH3lKZLq/ILSDlSz3jAnluax2SrzZ7hQqvi85HMqqYZEbjF3hTFD2k
-        M5EJq/huVe2GQIemxXrkRAEOgLcNWzw9ElFSXItAP9Au5II1BCWdC47MKoK8jE3hfktmrYHP
-        JWoQVBXsIC6wIRh4sLkbUJQLvgJ5czw7uuJQMK6n20sIXIygcXOOtOsC7AsddXfsM/n4BCxM
-        ZJB2dsPhMPCjHNlZjJ1hqMjKt7MTPgf9ZS17TGB3mLIaeRwfg9e2EsI+H/CwEL491gm45mRY
-        mjc7jr4IW5OzBMcusGBpdehHYaeTGwSYhU85dQKOtZA91OGo2V1s+bx3M4FPQ1OXHycHQfWi
-        bc8iYAl8sTlz50ggv/0ZwcliyMmSctWnoPXhiGPREaipfyrMQzLDAZOGA8YMB4wZ/u8tQ/w6
-        5M4ksXFRDOuvZlJ8WWUcm6SO8r0dH9eMdp/p47ZlpQOtj97qQ5hCssNi3cgbhZRUJrOpcX0I
-        KELmKp7q71ZIxZHK1DRGEx+hSVIxbB/ypPgyd3F1qVkhxVHKRCaWYRIYzX6WRzl56FCYv1W1
-        Mf5C5n8pIuRrStiicdZkrjikDrL1kt6zCu8BrZfW1OgSeHxF77lluTzo0zZeXpxVGNzwqshZ
-        Mt0ZOOiuTftTOBOwHc4zTVxNi1Wf/N0ZYm4zrcVPVxpnvAJHdmxu929A4ktR/vdrSZErqp6g
-        uSfL8bRkKvPDZNg90YqMz0Yr/X0IDav8B+f5n/hIAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xu7qez/dGG6w/Jm2xccZ6VosnB9oZ
-        LTY9vsZqcXnXHDaLSwcWMFkc7z3AZHHwwxNWi5cfT7A4cHismbeG0WPzCi2PzUvqPRb3TWb1
-        eL/vKptH35ZVjB6fN8kFsEfp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb
-        2aSk5mSWpRbp2yXoZZxsWM1a8FmgYumKX2wNjHd4uxg5OSQETCRaV8xi6WLk4hASWMoo8ebG
-        O3aIhJjEpH3boWxhiT/XuthAbCGB14wSfxqCuhg5OIQFvCUmPGcCCYsI+Ekc2bqcCWQOs8Bs
-        RolPd/4wQQxdxCxx7FEnE0gDm4CexI5VhSANvAJuEveWtrGC2CwCqhKvrjWB2aICERKrl79g
-        hagRlDg58wkLiM0pYC1xeMFmMJtZwExi3uaHzBC2uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKW
-        WUhaZiFpWcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwGrcd+7llB2PXu+BDjAIcjEo8
-        vDcu7YkWYk0sK67MPcQowcGsJMJ76/DeaCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OByaK
-        vJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFCAumJJanZqakFqUUwfUwcnFINjCz7TfIm2f7JV/+3
-        P+f08Zszyz7Yp1bc4VR/0jJjQYyR4oF252fHfpz47zurf5qaxGp1u3MVM19V/U41M7tU5T51
-        lZAWQ7rinDdn59w5MvOV87yUwnSBf1+nRcxdu3wlT/euF/8n+VpufXS090jANTbmGT28X/jS
-        Kt87ites4ph6eefKEtaHVbJKLMUZiYZazEXFiQBL8Jat3AIAAA==
-Message-Id: <20181010114929eucas1p26afb68895372532acd98a5fa641c6ab4~cPO77YHJM2672826728eucas1p2V@eucas1p2.samsung.com>
-X-CMS-MailID: 20181010114929eucas1p26afb68895372532acd98a5fa641c6ab4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056
-References: <CGME20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056@eucas1p2.samsung.com>
-        <20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056~b_ujkjRd31303013030eucas1p2C@eucas1p2.samsung.com>
-        <20181009154359.GB5728@hirez.programming.kicks-ass.net>
-        <20181009160633eucas1p1a597c95256e64bf01de32366afdc59dd~b-GGjOUFN2705527055eucas1p1b@eucas1p1.samsung.com>
-        <8a6bed3c-dac5-7031-eedd-2eb5bcc18478@arm.com>
+        Wed, 10 Oct 2018 15:15:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Mime-Version:Content-Type:References:
+        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LQDciEM9XoQUdLzrY0K74BnBB5+qBSmv2S/ZXVECFNg=; b=YLUswbN0+sEb5nCwuhPJJ3BmA
+        LgR2q8BTs0uv4Wn9cy+UIE7nllhNtT+28zTEfC6rkIYfeXwuOksCb1UYll4xR5wcRlPyd+k8jIsl3
+        6OBiNgeng7Ng+gn/4MEX3lF7Roe6Waf74ICpNXPlDcglEWMb31S2Zdb+XCSj0JhYsYFvU5MZAlA+7
+        QXvhMlixXi9uMW57eMbSpgWMUydts/fwu4xYljTBsFEXpCnQmV45Ne5EzLQYjNwED6bBYwOlN0b8k
+        mailfbKvn4LFkGh/OGrJiGXlbdWwYyUiOo3zhD3hAXpipzW2FX3Om7WM2Dq8wdBhEb8mS104QiU01
+        lbhzGXPmg==;
+Received: from 54-240-197-234.amazon.com ([54.240.197.234] helo=vpn-10-50-135-94.dub4.amazon.com)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAD3f-0000iU-3D; Wed, 10 Oct 2018 11:53:43 +0000
+Message-ID: <47686a61dfc06aa5afb05a893b9a56e6eb46763d.camel@infradead.org>
+Subject: Re: [PATCH 2/2] xen: make xen_qlock_wait() nestable
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, stable@vger.kernel.org,
+        Waiman.Long@hp.com, peterz@infradead.org
+Date:   Wed, 10 Oct 2018 12:53:38 +0100
+In-Reply-To: <20181001071641.19282-3-jgross@suse.com>
+References: <20181001071641.19282-1-jgross@suse.com>
+         <20181001071641.19282-3-jgross@suse.com>
+Content-Type: multipart/signed; micalg="sha-256";
+        protocol="application/x-pkcs7-signature";
+        boundary="=-IO36XmepQYCzFJFDikqE"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
 
-On 10/10/2018 12:31 PM, Robin Murphy wrote:
-> On 09/10/18 17:06, Lukasz Luba wrote:
->> Hi Peter,
->>
->> On 10/09/2018 05:43 PM, Peter Zijlstra wrote:
->>> On Tue, Oct 09, 2018 at 05:39:27PM +0200, Lukasz Luba wrote:
->>>> This patch add some warning related to performance drop.
->>>> It should be mentioned that this is not for free
->>>> and the platfrom resources (cache, bus interconnect, etc.)
->>>> will be used more frequently.
->>>
->>> To me this reads a bit like: water is wet.
->>>
->>> Is this really needed?
->>>
->>>
->> Well, it would be good to know what is the performance drop
->> (10% or 20% or x3 times) when you are enabling different debug options.
->> I have spent some time analyzing these cache and bus strange behavior.
->> Now the developers would know that LOCKDEP might cause constant trashing
->> of your cache in some use cases.
-> 
-> Fair enough, but this is the wrong place for that. Anyone who's got as 
-> far as reading how the internals of lockdep work can probably already 
-> figure out that that brings a non-trivial overhead, whereas Joe 
-> Developer wondering why his kernel is slow seems unlikely to happen 
-> across this document by chance. And the people shipping devices with 
-> PROVE_LOCKING enabled because it happened to mask some tricky bug, well, 
-> they know what they did ;)
-> 
-> If you want to highlight to unwitting users that a tweaking a particular 
-> config knob has a significant performance hit, at least put the warning 
-> next to said knob, i.e. in the Kconfig help. For an example, DMA debug 
-> comes to mind.
-> 
-> Robin.
-> 
-> 
-Thank for the hint.
-I agree, it would not be easy to find in this location.
-I've found it during porting EAS where the
-PROVE_LOCKING is used for arm and arm64
-http://linux-arm.org/git?p=linux-power.git;a=blobdiff;f=arch/arm/configs/multi_v7_defconfig;h=e83c6e5bcfff97f8e9aacc4f2086ed506df63e59;hp=2721877d5a11f7fc41b8eb42d040ccde10eb0f3e;hb=737c15bf13632504e94509f0b9508122c664f3f2;hpb=288ae1d294d314b0aad5e0471605089da0336a77
+--=-IO36XmepQYCzFJFDikqE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I just wanted to give some rough performance impact measurements on
-a real platform.
+On Mon, 2018-10-01 at 09:16 +0200, Juergen Gross wrote:
+> -       /* If irq pending already clear it and return. */
+> +       /* Guard against reentry. */
+> +       local_irq_save(flags);
+> +
+> +       /* If irq pending already clear it. */
+>         if (xen_test_irq_pending(irq)) {
+>                 xen_clear_irq_pending(irq);
+> -               return;
+> +       } else if (READ_ONCE(*byte) =3D=3D val) {
+> +               /* Block until irq becomes pending (or a spurious wakeup)=
+ */
+> +               xen_poll_irq(irq);
+>         }
 
-Regards,
-Lukasz
+
+Does this still allow other IRQs to wake it from xen_poll_irq()?
+
+In the case where process-context code is spinning for a lock without
+disabling interrupts, we *should* allow interrupts to occur still...
+does this?
+
+--=-IO36XmepQYCzFJFDikqE
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODEwMTAxMTUzMzhaMC8GCSqG
+SIb3DQEJBDEiBCAOVZ8hzW2GL+uKKkFVJuxmE5hRu5X2vf8oWe5URqmyVDCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFdxc6P3fihd
+ypHLTWKk6uhTMFmJW3nHqn0s+OK8MwlGT1wbxzTl6syONstJ4edwFZchpg0tzmFAU34qmuch0Czo
+HPrLTRnZ6rv7bpDyIosmNa19boWfF8U51m1kK18nZA2z7FmYBx7qbindsc61amGFlY0XfFGlxByZ
+Hupf39ZlhekwS3r/R5dP8Rij7Zec1rzSIbn+oxmlJMbY+VJMnYcS+dknGQy8NnHPoH6BNp0pTPA2
+I4t3/J/19nq8TW6vVARmWsrQf8L7TbnwRth2qhIc5s4bFKVR/TECy98ZOPYwxVRPVL5Rg0VTLWkK
+TNbHcWdcgTZD6A6ua/yui7qyPxYAAAAAAAA=
+
+
+--=-IO36XmepQYCzFJFDikqE--
+
