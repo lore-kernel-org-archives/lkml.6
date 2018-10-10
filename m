@@ -6,52 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B59C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029CCC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 474E32087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE3D1214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:40:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v2hs+Cuv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474E32087A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xpOWdy7p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3D1214FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbeJJWCx (ORCPT
+        id S1727395AbeJJWC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:02:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59318 "EHLO
+        Wed, 10 Oct 2018 18:02:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59464 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJJWCx (ORCPT
+        with ESMTP id S1726617AbeJJWC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:02:53 -0400
+        Wed, 10 Oct 2018 18:02:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=D+lsshmk95IrPY2X2nba2YoCPgptwLuQ6B+O3ek70y8=; b=v2hs+CuvfeQu
-        0hqQA5EmqU95CvnH8doGdsHZeVjam3ViawA68ri9WQXlYMgmVKFJiFuF+F/1xAv34n1QG3SNfvyS8
-        PAALL8kODuqc4NmpvmKetO/zlIG2xh++VciomykPyuc3SuLomHV+/ED5DnyVVRUQ6FAjDESn6Kw6r
-        BOsvs=;
+        List-Archive; bh=KtDPrYiUFiY7m/PbXmmTeZc3FLNc/vcxnlbPBr7Ix3A=; b=xpOWdy7pPRyG
+        GzfqynaQ9/ZNa4fUHPLnD6Ne+JIH+SbdrVHfV9P1p4AFCnMcJzdS9LDMGHlu34jKdY9ZlT5zoBykP
+        Er1+5ZoX9LrKLmDRSEPNRmzFbaD3iagU+XuskUi2BEpuod71njD/Atm397ZCi6a+NlIgHEEzJOFd+
+        w1v4M=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAFev-00081w-BW; Wed, 10 Oct 2018 14:40:21 +0000
+        id 1gAFf2-000825-4J; Wed, 10 Oct 2018 14:40:28 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 010401122395; Wed, 10 Oct 2018 15:40:20 +0100 (BST)
+        id D61BC1122395; Wed, 10 Oct 2018 15:40:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: max98988: add I2C dependency" to the asoc tree
-In-Reply-To:  <20181010083758.2874864-1-arnd@arndb.de>
-Message-Id: <20181010144021.010401122395@debutante.sirena.org.uk>
-Date:   Wed, 10 Oct 2018 15:40:20 +0100 (BST)
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid mode" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181010144027.D61BC1122395@debutante.sirena.org.uk>
+Date:   Wed, 10 Oct 2018 15:40:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,11 +55,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max98988: add I2C dependency
+   regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid mode
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -84,40 +80,34 @@ to this mail.
 Thanks,
 Mark
 
-From 9641faa2db7e856f50a6d1169e1b9f01e7fcb2b0 Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 10 Oct 2018 10:37:13 +0200
-Subject: [PATCH] ASoC: max98988: add I2C dependency
+From c18fb34ae185ad3b2444cd5e308ef5f91d8c9a46 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Tue, 9 Oct 2018 16:52:21 +0800
+Subject: [PATCH] regulator: stpmic1: Return REGULATOR_MODE_INVALID for invalid
+ mode
 
-max98988 only builds with I2C support enabled, otherwise we get a build error:
+-EINVAL is not a valid return value for .of_map_mode, return
+REGULATOR_MODE_INVALID instead.
 
-sound/soc/codecs/max98088.c:1789:1: error: data definition has no type or storage class [-Werror]
- module_i2c_driver(max98088_i2c_driver);
- ^~~~~~~~~~~~~~~~~
-sound/soc/codecs/max98088.c:1789:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
-sound/soc/codecs/max98088.c:1789:1: error: parameter names (without types) in function declaration [-Werror]
-sound/soc/codecs/max98088.c:1780:26: error: 'max98088_i2c_driver' defined but not used [-Werror=unused-variable]
-
-Fixes: 24ae67c58250 ("ASoC: max98988: make it selectable")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/stpmic1_regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 3c6bd6019b92..774d38310875 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -641,6 +641,7 @@ config SND_SOC_LM49453
+diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
+index 96f18083a3b6..e15634edb8ce 100644
+--- a/drivers/regulator/stpmic1_regulator.c
++++ b/drivers/regulator/stpmic1_regulator.c
+@@ -441,7 +441,7 @@ static unsigned int stpmic1_map_mode(unsigned int mode)
+ 	case STPMIC1_BUCK_MODE_LP:
+ 		return REGULATOR_MODE_STANDBY;
+ 	default:
+-		return -EINVAL;
++		return REGULATOR_MODE_INVALID;
+ 	}
+ }
  
- config SND_SOC_MAX98088
- 	tristate "Maxim MAX98088/9 Low-Power, Stereo Audio Codec"
-+	depends on I2C
- 
- config SND_SOC_MAX98090
-        tristate
 -- 
 2.19.0.rc2
 
