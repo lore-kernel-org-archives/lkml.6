@@ -2,102 +2,80 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099D5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC02C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF30D2085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF30D2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 271E52087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:12:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fjgk8FBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271E52087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeJJUdj (ORCPT
+        id S1726918AbeJJUfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 16:33:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:52232 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeJJUdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 16:33:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1920AED1;
-        Wed, 10 Oct 2018 06:11:31 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B0693F5D3;
-        Wed, 10 Oct 2018 06:11:28 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 14:11:26 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Juri Lelli <juri.lelli@gmail.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ionela Voinescu <ionela.voinescu@arm.com>
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-Message-ID: <20181010131124.isexblzzvkcp26q4@queper01-lin>
-References: <20181010061751.GA37224@gmail.com>
- <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
- <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
- <20181010095459.orw2gse75klpwosx@queper01-lin>
- <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
- <20181010103623.ttjexasymdpi66lu@queper01-lin>
- <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
- <20181010122348.GL9130@localhost.localdomain>
- <CAKfTPtCVryjWWT_M1zEZfJUjGkt2JPUiBK6vt0YiJTK4qVoqbA@mail.gmail.com>
- <20181010125033.GP9130@localhost.localdomain>
+        Wed, 10 Oct 2018 16:35:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52506 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeJJUfF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 16:35:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1GX9ob6juG43I8l/oqCDbkxIrQD4/fh1p0IruqcsEtM=; b=Fjgk8FBlFDBCDkIaw9r5+Zpvo
+        h7OAxx7L5SBiT2RzVv5xmABhr8L2Sb9t7bZBewKRtFvHh2PzsFAK6o50AC2kzV2Cb+tN4GNiIoxV2
+        y+utMlXSGeyx5y5dHbLw7Tdc6/txyY5raPlU0nI406mQYQDRwD8Ejt4Yp9mGHERUrz77WVU9EUAd7
+        fhWCm1JFZ19OqP+TAR0pa9GnBnjX8JTkMRQaF/ZGV0vthbnYDxnf0GxmsSQynYeyJ/uDxbcXmym4D
+        Ds4AOub3M5aISJIniRSykE5DeNMfheylaihYvxSHpCLBjEvcwCC6ckI1IZLBPqnbfpR2vvTUdtlkm
+        rrGjL6x8A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAEIJ-0001wU-NE; Wed, 10 Oct 2018 13:12:55 +0000
+Date:   Wed, 10 Oct 2018 06:12:55 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     Atish Patra <atish.patra@wdc.com>, palmer@sifive.com,
+        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, thierry.reding@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, hch@infradead.org
+Subject: Re: [RFC 4/4] gpio: sifive: Add GPIO driver for SiFive SoCs
+Message-ID: <20181010131255.GB29142@infradead.org>
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-5-git-send-email-atish.patra@wdc.com>
+ <mvmo9c22bx2.fsf@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181010125033.GP9130@localhost.localdomain>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <mvmo9c22bx2.fsf@suse.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 10 Oct 2018 at 14:50:33 (+0200), Juri Lelli wrote:
-> On 10/10/18 14:34, Vincent Guittot wrote:
-> > Hi  Juri,
-> > 
-> > On Wed, 10 Oct 2018 at 14:23, Juri Lelli <juri.lelli@gmail.com> wrote:
-> > >
-> > > On 10/10/18 14:04, Vincent Guittot wrote:
-> > >
-> > > [...]
-> > >
-> > > > The problem was the same with RT, the cfs utilization was lower than
-> > > > reality because RT steals soem cycle to CFS
-> > > > So schedutil was selecting a lower frequency when cfs was running
-> > > > whereas the CPU was fully used.
-> > > > The same can happen with thermal:
-> > > > cap the max freq because of thermal
-> > > > the utilization with decrease.
-> > > > remove the cap
-> > > > the utilization is still low and you will select a low OPP because you
-> > > > don't take into account cycle stolen by thermal like with RT
-> > >
-> > > What if we scale frequency component considering the capped temporary
-> > > max?
-> > 
-> > Do you mean using a kind of scale_thermal_capacity in accumulate_sum
-> > when computing utilization ?
+On Wed, Oct 10, 2018 at 03:01:29PM +0200, Andreas Schwab wrote:
+> On Okt 09 2018, Atish Patra <atish.patra@wdc.com> wrote:
 > 
-> Yeah, something like that I guess. So that we account for temporary
-> "fake" 1024..
+> > +static void sifive_set_ie(struct sifive_gpio *chip, unsigned int offset)
+> > +{
+> > +	unsigned long flags;
+> > +	unsigned int trigger;
+> > +
+> > +	raw_spin_lock_irqsave(&chip->lock, flags);
+> > +	trigger = (chip->enabled & BIT(offset)) ? chip->trigger[offset] : 0;
+> 
+> This should use test_bit instead.
 
-But wouldn't that break frequency invariance ? A task would look bigger
-on a capped CPU than a non-capped one no ?
+Given that this apparently needs the spinlock for atomciy with more than
+just the bitmap test_bit would be rather pointless.
