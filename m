@@ -2,132 +2,107 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C9AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07361C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866BF21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866BF21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C8BE321479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8BE321479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeJJOeI (ORCPT
+        id S1726893AbeJJOft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:34:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54950 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726754AbeJJOeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:34:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E83B1AC52;
-        Wed, 10 Oct 2018 07:13:18 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 18:14:47 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-Cc:     Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC v5 1/1] ns: add binfmt_misc to the user namespace
-Message-ID: <20181010071447.whwwxjdv54qfnvsr@mikami>
-References: <20181009103752.21482-1-laurent@vivier.eu>
- <20181009103752.21482-2-laurent@vivier.eu>
- <20181009151641.GB10149@cisco>
- <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
+        Wed, 10 Oct 2018 10:35:49 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40575 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJJOft (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:35:49 -0400
+Received: by mail-oi1-f196.google.com with SMTP id j68-v6so3277744oib.7;
+        Wed, 10 Oct 2018 00:15:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sXVRBWU9rO4SCaJcCZDPx1kywcBzYhkCgHo+fa4lxMU=;
+        b=Po/DLjtv2vv1CJkAqNEKv6aGU2/F7OkUrTO14SmG9Jvyc+b1XCwBlNAC/jhnbSuC3C
+         mWg9ORvo8UJa3nkDTIabv9CS6XEswy0YwPnLOcjPjLRW0D8VLTGgR8wpRqMzSwReDRiI
+         HPuhd1nNkjy8jVPFe8T0OAQdAXg0vcO8qn1Vl46XiR1HDcFbpfAIbu2RgaCd9V/2Mbpj
+         0wdwrVNSE+pxQzt6Fy51OtmE0OghSv0AuyiZot8x6aLk4kAHbl23P3NI6xVcAXup3lhA
+         j3FYY4RN7tYSUhVenMN8gXT0uqwwoGwnO0YKHptP/y7HB72jzI3Funymbu3tuQLGjQM0
+         RhFw==
+X-Gm-Message-State: ABuFfohWrhCLVf9/oCqNK1klUmCzo7DTUMnSNbNttLNXhz/hctIvJan3
+        wTPnuoPtR/iotno6OEBURCkf133nYQs6/mK/p3g=
+X-Google-Smtp-Source: ACcGV60F5QFZQUyXCyKiVeSDWxIgyb8RI2kwLlC+0UACxNUDdfmEv5IFJAQ8FoTAU39pXEACnn6dLIeh+nTCqEynd6k=
+X-Received: by 2002:aca:e24f:: with SMTP id z76-v6mr995455oig.95.1539155701248;
+ Wed, 10 Oct 2018 00:15:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5jn6nwbw5w45hpy6"
-Content-Disposition: inline
-In-Reply-To: <409c22e3-1df8-cf7f-2462-ead2bb3020cf@vivier.eu>
-o:      Laurent Vivier <laurent@vivier.eu>
-User-Agent: NeoMutt/20180716
-To:     unlisted-recipients:; (no To-header on input)
+References: <000301d45ecb$4f002a90$ed007fb0$@net> <003801d45f54$3d9b0c50$b8d124f0$@net>
+ <CAJZ5v0h4sVoen++nF1cYvqQeY3qN0B1aP42e8A4SZwxzBV3NVA@mail.gmail.com> <003d01d4602c$905b5840$b11208c0$@net>
+In-Reply-To: <003d01d4602c$905b5840$b11208c0$@net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 10 Oct 2018 09:14:49 +0200
+Message-ID: <CAJZ5v0hWqWg0X0A9GUvppRHg4RvFqDGwKOw-8nZUWivPyJn9pA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] cpuidle: menu: Fixes, optimizations and cleanups
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 10, 2018 at 2:02 AM Doug Smythies <dsmythies@telus.net> wrote:
+>
+> On 2018.10.09 03:43 Rafael J. Wysocki wrote:
+>
+> ...[snip]...
+>
+> > While at it, could you test the appended patch
+> > (on top of the previous 8) for me please?
+> >
+> > I think that this code can be simplified now.
+> >
+> > ---
+> > drivers/cpuidle/governors/menu.c |    8 ++++----
+> > 1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > Index: linux-pm/drivers/cpuidle/governors/menu.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/cpuidle/governors/menu.c
+> > +++ linux-pm/drivers/cpuidle/governors/menu.c
+> > @@ -371,12 +371,12 @@ static int menu_select(struct cpuidle_dr
+> >               if (s->target_residency > predicted_us) {
+> >                       /*
+> >                        * Use a physical idle state, not busy polling, unless
+> > -                      * a timer is going to trigger really really soon.
+> > +                      * a timer is going to trigger soon enough.
+> >                        */
+> >                       if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> > -                         i == idx + 1 && latency_req > s->exit_latency &&
+> > -                         data->next_timer_us > max_t(unsigned int, 20,
+> > -                                                     s->target_residency)) {
+> > +                         s->exit_latency <= latency_req &&
+> > +                         s->target_residency <= data->next_timer_us) {
+> > +                             predicted_us = s->target_residency;
+> >                               idx = i;
+> >                               break;
+> >                       }
+>
+> It seems to work fine.
+> I was unable to detect any difference between the 8 patch set and with
+> this additional patch for any of the tests that I ran. (at least beyond
+> noise and/or experimental error.)
 
---5jn6nwbw5w45hpy6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Great, thank you!
 
-On 2018-10-09, Laurent Vivier <laurent@vivier.eu> wrote:
-> Le 09/10/2018 =E0 17:16, Tycho Andersen a =E9crit=A0:
-> > On Tue, Oct 09, 2018 at 12:37:52PM +0200, Laurent Vivier wrote:
-> >> @@ -80,18 +74,32 @@ static int entry_count;
-> >>   */
-> >>  #define MAX_REGISTER_LENGTH 1920
-> >> =20
-> >> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
-> >> +{
-> >> +	struct binfmt_namespace *b_ns;
-> >> +
-> >> +	while (ns) {
-> >> +		b_ns =3D READ_ONCE(ns->binfmt_ns);
-> >> +		if (b_ns)
-> >> +			return b_ns;
-> >> +		ns =3D ns->parent;
-> >> +	}
-> >> +	WARN_ON_ONCE(1);
-> >=20
-> > It looks like we warn here,
-> >=20
-> >> @@ -133,17 +141,18 @@ static int load_misc_binary(struct linux_binprm =
-*bprm)
-> >>  	struct file *interp_file =3D NULL;
-> >>  	int retval;
-> >>  	int fd_binary =3D -1;
-> >> +	struct binfmt_namespace *ns =3D binfmt_ns(current_user_ns());
-> >> =20
-> >>  	retval =3D -ENOEXEC;
-> >> -	if (!enabled)
-> >> +	if (!ns->enabled)
-> >=20
-> > ...but then in cases like this we immediately dereference the pointer
-> > anyways and crash. Can we return some other error code here in the !ns
-> > case so we don't crash?
->=20
-> My concern here is I don't want to add code to check an error case that
-> cannot happen. The first namespace binfmt_ns pointer is initialized with
-> &init_binfmt_ns, so the return value cannot be NULL.
-
-I'd argue that BUG() is a better thing to do then -- if doing a dummy
-error path makes no sense. Though IIRC BUG() is no longer a popular
-thing to do.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---5jn6nwbw5w45hpy6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlu9puMACgkQnhiqJn3b
-jbRLDBAAstmpL3yvxUBUsp+o1eDUI0ZuTqG4whpTYckWTtCm59TAn4wotIT5Pv0I
-6f1SNATVnxq7U+ot1tCluNr0jXe1u/0S7ZvEY8zpHzWomc9CFUsM+yFENbCgDl0D
-qmKMiKwlSYk8tEI3WnAfWb9l7hwrUoFCHrCmUUucrccDltvhiYaDRufoezcMqpEB
-DtTchJIv+6bf1YcEbVa6xM8pG915ywtavVHlOMcUxtPuybk5RZGEcgZJo8Fn5PgF
-HLCiVgiWdKNBY1Md2gTF6gf1zGp2tSc7e/ARUftL9JlE+hLIWudyLrpwMaXqfBMQ
-4YxTM6xmHuCuW7ZgDg29zvQ4aJxRgoDrx438hYVemkUFxWAub56ZK7HHLv+Ls47Y
-QKO5QAt1jRPGpMtPpABBgfFcb4nD+v4BY6eY3po8/pTpQv8P5by0HjjnV3K7/Jar
-2UnvOCSOeZ6QbPI0gp1LYKkOBoINJSLkn8rHmjeM9xh8VtyktrlVelYTPH9/qdoQ
-FLNVDUlxEig1c7FiKBhzPhNRDGWO5+hF4Ughg3A+kutPumILfuk1j1pCNZJM9HSz
-pIYFmvpReZkFzOHlLeGLNFmym+OCf6q3+/QUX5P9L2saOkyALS4Aww/wxVOeKOrw
-uJ4zc4NzmU48TmhAKlUBcnryN7EE/RhsEXamlcXQcdsGwW6cFok=
-=AzDm
------END PGP SIGNATURE-----
-
---5jn6nwbw5w45hpy6--
+Cheers,
+Rafael
