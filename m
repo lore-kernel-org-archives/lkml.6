@@ -7,70 +7,71 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270D5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6128DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BAC2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E722098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hm1Ve/Ym"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BAC2075B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnO75UNx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E722098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeJKCaQ (ORCPT
+        id S1727352AbeJKCb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:30:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44676 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbeJKCaP (ORCPT
+        Wed, 10 Oct 2018 22:31:59 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55507 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeJKCb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:30:15 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 63-v6so6936753wra.11;
-        Wed, 10 Oct 2018 12:06:45 -0700 (PDT)
+        Wed, 10 Oct 2018 22:31:59 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 206-v6so6618373wmb.5;
+        Wed, 10 Oct 2018 12:08:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FcxFELw4Gge1fMrmSblfThZVFGCBovpqW0A4OIVCrrM=;
-        b=hm1Ve/YmZgPbUuQGQJHluK3mVczUMzZpcokOHdmuqC+LDKbT05MW3auWOufJbnevCp
-         WKPXoZ24fU2FqByEeh4mHlupIk1APbSZfFDYMPxXm2oMy3Fy63tdTW2rsIk85fEG2iSZ
-         qVKek8qPugf41tlQJH9On6zvFwpsFQKcQ5p6Ycpi3usTuoKDZWm9m5ad05uXcz1tKAUL
-         /DsFBvxiPX+z5wfaHYWdQN1XFNtppLrHYXFK2MhqLYs1apyDer5L2bXHhUEuZGdzJPRe
-         w7YYhJy9bthwCr0bBKGYyQd015cPpDAhQ3MvDBBoApLWQ3uUxirGRha7MTOuKxw+EUT4
-         2BWw==
+        bh=Wayis21wLrrt8tq09JBpiEWjxujHZPLag+28fCjQGBo=;
+        b=lnO75UNxfIs2rvuhmg732XXJOy//jmTvOnGMpxuH3NJIrY7gb8VBCoRcLlgMfujDRW
+         1VDFMBm+aQQctMqziH+tlf9NrpMMBT6beEGy5o8uRrxOc1tRipn5tLoLBnHSC/44W47G
+         VXqgPyW8oaf47/5BnfXG/Oskp+PgFOr7r46gZPgFlRrLrPAv6NpJd5CTW+rjRehaWJqP
+         SiW/oZxIuHYNcrDuRKvDu5iRN9PHPrJYFFCxriCZv/mprg5lVhJH4sglh1vyOcDek6+e
+         O3iXRDoWmjl9+LeLpeSQLWKVbFrMpPzwENJPxvhCxTPSihyJ+RSJg3rZ0eF1go4HOZ/y
+         u3Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FcxFELw4Gge1fMrmSblfThZVFGCBovpqW0A4OIVCrrM=;
-        b=D/NbpKVXnYG/gv8GM2Eh1NiEmw8QrYg7k7KbY2dyalNJYT/nfliFbYU8jCJ1/dstU/
-         4lHy2sNHsct1hPE0NHytKWY3Un80wq8cOozORIWCfgXcX3k1Z3Sn51CKqPpnLyGUl0yR
-         B2dYOnag9BqFrjeed5HxG75fkYP4SKRQVQ7Oq5dT7fO5B++YwakjhqA1xJfwCEJXT0HB
-         ss/eU5uqdoX/iOfoc7dAWUWYNd1qjBAPTG8sRffAVo4SyNvioyumWStzCYRzYX/uRIuL
-         84IcOOJZNmigO1zgGCa2rQbDtwj0mVjzLas0xTpy+35l6uqwhZr5XQNEpMorj4Qz93bt
-         fGrw==
-X-Gm-Message-State: ABuFfogq+B3lHRxJBFqSYuI1ieYxD1VuwKAqTI4iwPzcvyZ39Wq1l1ht
-        JXYrRHaLVa9XvXJ5mJ/iw8VrrjeiPfdNkm78dj0=
-X-Google-Smtp-Source: ACcGV62QM8S6BBd4UtE1OJ+pOHiu4zhX+XV1RVkyGCy8a+KVoht6GJ9mwfjG20ooG+teWbK0wYgyx622+CruLDCICVE=
-X-Received: by 2002:a5d:52ce:: with SMTP id r14-v6mr23907998wrv.123.1539198404776;
- Wed, 10 Oct 2018 12:06:44 -0700 (PDT)
+        bh=Wayis21wLrrt8tq09JBpiEWjxujHZPLag+28fCjQGBo=;
+        b=D3AmCu4LpgZqy1PytkOg36uDnJZPYZ5Va5R2ymbVPQeO/AMb1fmC671uBNLK3qRxx9
+         YJZwK37qCv82PHfrBArtf7KL4hjYIST7+DE1Pw6EMbZHIOhAnE/pAiUD/+dFCTZ8z8zI
+         9/RF8jw10UDwe9m3dGLaGrVezPX8sxB45t4EowLieBGhBkHMVO0BaaJzzHlBWEqjCap8
+         lDL6hfIuqVEL2qLaHJkyX9WGEMtriK4Y+hFKypPU07Q5ryxkOveLMdtkDf6n9oZLne5p
+         AcrIh0l5aZw+pFemwg/aYPt1JPkTBcKrlj8gHGzHItqSnBm/t0M9kICDiRoqI1FXYtZg
+         iIJg==
+X-Gm-Message-State: ABuFfohgU3cJ+FUj4pBwycznDrUWhP5/pWmMYcI+gBZ5DbxkhDYoY/Xx
+        186JivGjiYXFoSpFPqfdx8eL1gNRJqsUW28pA86+euXb
+X-Google-Smtp-Source: ACcGV605mQ9HweMmIO9xxIIUc7Iq7M1JxXfXMLHVT6xU69KvffpT/+BKdzszQr8e8WcwVI80gnwlpkIJJRyMRMTRj0o=
+X-Received: by 2002:a1c:607:: with SMTP id 7-v6mr1870389wmg.103.1539198506125;
+ Wed, 10 Oct 2018 12:08:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180922004346.12288-1-lyude@redhat.com>
-In-Reply-To: <20180922004346.12288-1-lyude@redhat.com>
+References: <20181008162228.4599-1-colin.king@canonical.com> <20181009104318.GA20785@hr-amur2>
+In-Reply-To: <20181009104318.GA20785@hr-amur2>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 10 Oct 2018 15:06:32 -0400
-Message-ID: <CADnq5_Ohjr2nnX=y2QeiUncVabADnJDdO+MZmT5ag+yCJL+cHA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Suppress keypresses from ACPI_VIDEO events
-To:     Lyude <lyude@redhat.com>
-Cc:     amd-gfx list <amd-gfx@lists.freedesktop.org>,
+Date:   Wed, 10 Oct 2018 15:08:13 -0400
+Message-ID: <CADnq5_N+qw=fwYP=_8XRLVt792tiSALxGWd-scBzJVORkPVaLw@mail.gmail.com>
+Subject: Re: [PATCH][drm-next] drm/amdgpu/powerplay: fix missing break in
+ switch statements
+To:     Huang Rui <ray.huang@amd.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
         Dave Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        "for 3.8" <stable@vger.kernel.org>, "Qu, Jim" <Jim.Qu@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>,
+        "Quan, Evan" <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>,
         Christian Koenig <christian.koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,77 +79,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 8:44 PM Lyude Paul <lyude@redhat.com> wrote:
+On Tue, Oct 9, 2018 at 6:44 AM Huang Rui <ray.huang@amd.com> wrote:
 >
-> Currently we return NOTIFY_DONE for any event which we don't think is
-> ours. However, many laptops will send more then just an ATIF event and
-> will also send an ACPI_VIDEO_NOTIFY_PROBE event as well. Since we don't
-> check for this, we return NOTIFY_DONE which causes a keypress for the
-> ACPI event to be propogated to userspace. This is the equivalent of
-> someone pressing the display key on a laptop every time there's a
-> hotplug event.
+> On Mon, Oct 08, 2018 at 05:22:28PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > There are several switch statements that are missing break statements.
+> > Add missing breaks to handle any fall-throughs corner cases.
+> >
+> > Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+> >
+> > Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >
-> So, check for ACPI_VIDEO_NOTIFY_PROBE events and suppress keypresses
-> from them.
+> Acked-by: Huang Rui <ray.huang@amd.com>
 >
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
 
-Applied.  Thanks!  Sorry for the delay.
+Applied.  thanks!
 
 Alex
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> index 353993218f21..f008804f0b97 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> @@ -358,7 +358,9 @@ static int amdgpu_atif_get_sbios_requests(struct amdgpu_atif *atif,
->   *
->   * Checks the acpi event and if it matches an atif event,
->   * handles it.
-> - * Returns NOTIFY code
-> + *
-> + * Returns:
-> + * NOTIFY_BAD or NOTIFY_DONE, depending on the event.
->   */
->  static int amdgpu_atif_handler(struct amdgpu_device *adev,
->                                struct acpi_bus_event *event)
-> @@ -372,11 +374,16 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
->         if (strcmp(event->device_class, ACPI_VIDEO_CLASS) != 0)
->                 return NOTIFY_DONE;
->
-> +       /* Is this actually our event? */
->         if (!atif ||
->             !atif->notification_cfg.enabled ||
-> -           event->type != atif->notification_cfg.command_code)
-> -               /* Not our event */
-> -               return NOTIFY_DONE;
-> +           event->type != atif->notification_cfg.command_code) {
-> +               /* These events will generate keypresses otherwise */
-> +               if (event->type == ACPI_VIDEO_NOTIFY_PROBE)
-> +                       return NOTIFY_BAD;
-> +               else
-> +                       return NOTIFY_DONE;
-> +       }
->
->         if (atif->functions.sbios_requests) {
->                 struct atif_sbios_requests req;
-> @@ -385,7 +392,7 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
->                 count = amdgpu_atif_get_sbios_requests(atif, &req);
->
->                 if (count <= 0)
-> -                       return NOTIFY_DONE;
-> +                       return NOTIFY_BAD;
->
->                 DRM_DEBUG_DRIVER("ATIF: %d pending SBIOS requests\n", count);
->
-> --
-> 2.17.1
->
+> > ---
+> >  drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
+> >  drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
+> >  drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
+> >  drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
+> >  drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
+> >  5 files changed, 10 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> > index 18643e06bc6f..669bd0c2a16c 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+> > @@ -2269,11 +2269,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
+> >               case DRAM_LOG_BUFF_SIZE:
+> >                       return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+> >               }
+> > +             break;
+> >       case SMU_Discrete_DpmTable:
+> >               switch (member) {
+> >               case LowSclkInterruptThreshold:
+> >                       return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
+> >               }
+> > +             break;
+> >       }
+> >       pr_debug("can't get the offset of type %x member %x\n", type, member);
+> >       return 0;
+> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> > index ec14798e87b6..bddd6d09f887 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+> > @@ -2331,6 +2331,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+> >               case DRAM_LOG_BUFF_SIZE:
+> >                       return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+> >               }
+> > +             break;
+> >       case SMU_Discrete_DpmTable:
+> >               switch (member) {
+> >               case UvdBootLevel:
+> > @@ -2340,6 +2341,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+> >               case LowSclkInterruptThreshold:
+> >                       return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
+> >               }
+> > +             break;
+> >       }
+> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
+> >       return 0;
+> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> > index 73aa368a454e..2d4c7f167b88 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+> > @@ -2237,11 +2237,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
+> >               case DRAM_LOG_BUFF_SIZE:
+> >                       return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+> >               }
+> > +             break;
+> >       case SMU_Discrete_DpmTable:
+> >               switch (member) {
+> >               case LowSclkInterruptThreshold:
+> >                       return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
+> >               }
+> > +             break;
+> >       }
+> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
+> >       return 0;
+> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> > index ae8378ed32ee..a2ba5b012866 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+> > @@ -2619,6 +2619,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+> >               case DRAM_LOG_BUFF_SIZE:
+> >                       return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+> >               }
+> > +             break;
+> >       case SMU_Discrete_DpmTable:
+> >               switch (member) {
+> >               case UvdBootLevel:
+> > @@ -2628,6 +2629,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+> >               case LowSclkInterruptThreshold:
+> >                       return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
+> >               }
+> > +             break;
+> >       }
+> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
+> >       return 0;
+> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> > index 3d415fabbd93..9f71512b2510 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> > @@ -2185,6 +2185,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+> >               case DRAM_LOG_BUFF_SIZE:
+> >                       return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+> >               }
+> > +             break;
+> >       case SMU_Discrete_DpmTable:
+> >               switch (member) {
+> >               case UvdBootLevel:
+> > @@ -2194,6 +2195,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+> >               case LowSclkInterruptThreshold:
+> >                       return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
+> >               }
+> > +             break;
+> >       }
+> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
+> >       return 0;
+> > --
+> > 2.17.1
+> >
+> > _______________________________________________
+> > amd-gfx mailing list
+> > amd-gfx@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/amd-gfx
 > _______________________________________________
 > dri-devel mailing list
 > dri-devel@lists.freedesktop.org
