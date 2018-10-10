@@ -2,160 +2,138 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CAFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F366CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 517D9214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:44:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517D9214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AC4552085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 05:45:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC4552085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJJNE0 (ORCPT
+        id S1726827AbeJJNF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 09:04:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725827AbeJJNE0 (ORCPT
+        Wed, 10 Oct 2018 09:05:27 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38308 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbeJJNF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 09:04:26 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9A5dKwQ003070
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:43:56 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n18f3x3n6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:43:56 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sandipan@linux.ibm.com>;
-        Wed, 10 Oct 2018 06:43:54 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 10 Oct 2018 06:43:51 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9A5ho0164684118
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 05:43:50 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 795B6A4057;
-        Wed, 10 Oct 2018 08:43:23 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B58F4A4055;
-        Wed, 10 Oct 2018 08:43:21 +0100 (BST)
-Received: from [9.124.31.81] (unknown [9.124.31.81])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 10 Oct 2018 08:43:21 +0100 (BST)
-Subject: Re: perf report segfault
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Anthony LaTorre <tlatorre9@gmail.com>, peterz@infradead.org,
-        mingo@redhat.com, jolsa@kernel.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Milian Wolff <milian.wolff@kdab.com>
-References: <CAO49afLqUGuBi_R7BKyojqnkHrMGqXquy-FdVFscOu6Ez0cVFw@mail.gmail.com>
- <20181009164743.GA22886@krava>
- <CAO49af+zxxVh9HGfjKxS=vQcD5po7-oLU87Zp0F21M-C64nWUA@mail.gmail.com>
- <CAO49afJVHsywYdosSqceQiMzFdaYivm4kiNnC_+WKq15jsA7Dg@mail.gmail.com>
- <20181009214158.GB31206@krava>
- <CAO49af+5TaWrdYeM3XyHoti0obH--0txq9_a6_9ZPMuB-J=hjg@mail.gmail.com>
- <20181009222004.GA19295@krava>
-From:   Sandipan Das <sandipan@linux.ibm.com>
-Date:   Wed, 10 Oct 2018 11:13:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 10 Oct 2018 09:05:27 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a13-v6so4173785wrt.5;
+        Tue, 09 Oct 2018 22:44:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Zedsi8hVTKvRzPsXTEkAbR83TTL9EzOiBaJEAe47GEI=;
+        b=IOWaSYhc7pysxMQpiJhIegwECSwgzAhMZe/Ok166hDr592O7sNqO/hvz/BabsN37bh
+         rsUX5yK7uYaxsCTLeS4x2IX66NtM/JbObtLE9iR1SFyD0JPdcKuCvfnzTFinfmQmOEW5
+         1H3Kxf2QtQl490jkcjTR5l/tOjl9BqB4+T/+tPHSxXhrmz2iZj2xvJ3IgJoQXD2rthYB
+         hT0qRyM6VIasaUP3+DtC8PDintW7IO2dBKhVI3MbCH/GBDjs1sb5nzBvkdiG2jvj9YUv
+         RybZ3ZB0Gp9O1BK66oLjdefRXZDUlYrNDWS+BiW/chDy9pA5WG64rXsUYSNLcgCKcLi2
+         YmxA==
+X-Gm-Message-State: ABuFfoixTtGpNdl4VZvx8tmzHuVq5Wj7lVBEj+LZk3NS6S2JjZWU2qSR
+        4IO+3Kj9INRzh2wKtXvpsw==
+X-Google-Smtp-Source: ACcGV60l4syWhYApYdNQ/fVBAGqOoHfuqT+/Y37eESpLL1q23Biv3nXlG6JyO6H9Jt4YEWg8NpD7vA==
+X-Received: by 2002:adf:9304:: with SMTP id 4-v6mr21337477wro.129.1539150296892;
+        Tue, 09 Oct 2018 22:44:56 -0700 (PDT)
+Received: from tesla ([2a02:c7d:8eb4:4100:11b0:632:fc1e:e2c7])
+        by smtp.googlemail.com with ESMTPSA id t198-v6sm11179353wmd.9.2018.10.09.22.44.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Oct 2018 22:44:55 -0700 (PDT)
+Received: from javi by tesla with local (Exim 4.91)
+        (envelope-from <javi@tesla>)
+        id 1gA7If-0001Vg-8v; Wed, 10 Oct 2018 06:44:49 +0100
+Date:   Wed, 10 Oct 2018 06:44:49 +0100
+From:   Javi Merino <javi.merino@kernel.org>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rui.zhang@intel.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
+        edubezval@gmail.com, daniel.lezcano@linaro.org,
+        linux-pm@vger.kernel.org, quentin.perret@arm.com,
+        ionela.voinescu@arm.com, vincent.guittot@linaro.org
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+Message-ID: <20181010054449.GC2768@tesla>
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20181009222004.GA19295@krava>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101005-0016-0000-0000-00000210EE28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101005-0017-0000-0000-000032685998
-Message-Id: <f5ce21f8-6c80-b6a0-8b8a-e7a90c23a98c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-10_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810100057
+Content-Disposition: inline
+In-Reply-To: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
+On Tue, Oct 09, 2018 at 12:24:55PM -0400, Thara Gopinath wrote:
+> Thermal governors can respond to an overheat event for a cpu by
+> capping the cpu's maximum possible frequency. This in turn
+> means that the maximum available compute capacity of the
+> cpu is restricted. But today in linux kernel, in event of maximum
+> frequency capping of a cpu, the maximum available compute
+> capacity of the cpu is not adjusted at all. In other words, scheduler
+> is unware maximum cpu capacity restrictions placed due to thermal
+> activity.
 
-Yes, this happens when entry->map is NULL. While your fix seems correct, the
-following commit from Milian Wolff had already addressed this. I think this
-was pulled in with one of Arnaldo's recent perf/urgent updates.
+Interesting, I would have sworn that I tested this years ago by
+lowering the maximum frequency of a cpufreq domain, and the scheduler
+reacted accordingly to the new maximum capacities of the cpus.
 
-ff4ce2885af8 ("perf report: Don't try to map ip to invalid map")
+>           This patch series attempts to address this issue.
+> The benefits identified are better task placement among available
+> cpus in event of overheating which in turn leads to better
+> performance numbers.
+> 
+> The delta between the maximum possible capacity of a cpu and
+> maximum available capacity of a cpu due to thermal event can
+> be considered as thermal pressure. Instantaneous thermal pressure
+> is hard to record and can sometime be erroneous as there can be mismatch
+> between the actual capping of capacity and scheduler recording it.
+> Thus solution is to have a weighted average per cpu value for thermal
+> pressure over time. The weight reflects the amount of time the cpu has
+> spent at a capped maximum frequency. To accumulate, average and
+> appropriately decay thermal pressure, this patch series uses pelt
+> signals and reuses the available framework that does a similar
+> bookkeeping of rt/dl task utilization.
+> 
+> Regarding testing, basic build, boot and sanity testing have been
+> performed on hikey960 mainline kernel with debian file system.
+> Further aobench (An occlusion renderer for benchmarking realworld
+> floating point performance) showed the following results on hikey960
+> with debain.
+> 
+>                                         Result          Standard        Standard
+>                                         (Time secs)     Error           Deviation
+> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
+> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
+> 
+> Thara Gopinath (7):
+>   sched/pelt: Add option to make load and util calculations frequency
+>     invariant
+>   sched/pelt.c: Add support to track thermal pressure
+>   sched: Add infrastructure to store and update instantaneous thermal
+>     pressure
+>   sched: Initialize per cpu thermal pressure structure
+>   sched/fair: Enable CFS periodic tick to update thermal pressure
+>   sched/fair: update cpu_capcity to reflect thermal pressure
+>   thermal/cpu-cooling: Update thermal pressure in case of a maximum
+>     frequency capping
+> 
+>  drivers/base/arch_topology.c  |  1 +
+>  drivers/thermal/cpu_cooling.c | 20 ++++++++++++-
 
-Adding Milian to the loop as well.
+thermal?  There are other ways in which the maximum frequency of a cpu
+can be limited, for example from userspace via scaling_max_freq.
 
-With Regards,
-Sandipan
+When something (anything) changes the maximum frequency of a cpufreq
+policy, the scheduler should be notified.  I think this change should
+be done in cpufreq instead to make it generic and not particular to
+a given maximum frequency "capper".
 
-On 10/10/18 3:50 AM, Jiri Olsa wrote:
-> On Tue, Oct 09, 2018 at 04:47:31PM -0500, Anthony LaTorre wrote:
->> I can try building perf from the latest sources. I've attached the
->> perf.data and perf.data.tar.bz2 from the test program I sent earlier.
-> 
-> cool, reproduced.. it seems to get introduced by:
->   2a9d5050dc84 perf script: Show correct offsets for DWARF-based unwinding
-> 
-> reverting that patch fixes the issue for me, but looks like
-> we could just make th attached check and prevent the crash
-> 
-> adding Sandipan Das to the loop, the author of that commit, any idea?
-> 
-> thanks,
-> jirka
-> 
-> 
-> ---
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index c4acd2001db0..ea68c805c7ac 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2312,7 +2312,6 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
->  {
->  	struct callchain_cursor *cursor = arg;
->  	const char *srcline = NULL;
-> -	u64 addr;
->  
->  	if (symbol_conf.hide_unresolved && entry->sym == NULL)
->  		return 0;
-> @@ -2320,13 +2319,15 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
->  	if (append_inlines(cursor, entry->map, entry->sym, entry->ip) == 0)
->  		return 0;
->  
-> -	/*
-> -	 * Convert entry->ip from a virtual address to an offset in
-> -	 * its corresponding binary.
-> -	 */
-> -	addr = map__map_ip(entry->map, entry->ip);
-> +	if (entry->map) {
-> +		/*
-> +		 * Convert entry->ip from a virtual address to an offset in
-> +		 * its corresponding binary.
-> +		 */
-> +		u64 addr = map__map_ip(entry->map, entry->ip);
-> +		srcline = callchain_srcline(entry->map, entry->sym, addr);
-> +	}
->  
-> -	srcline = callchain_srcline(entry->map, entry->sym, addr);
->  	return callchain_cursor_append(cursor, entry->ip,
->  				       entry->map, entry->sym,
->  				       false, NULL, 0, 0, 0, srcline);
-> 
-
+Cheers,
+Javi
