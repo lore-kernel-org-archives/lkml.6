@@ -2,146 +2,85 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4965AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B81C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07B320835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:04:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ghYlhOgb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07B320835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4ED48214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED48214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeJJQ0I (ORCPT
+        id S1727444AbeJJQ1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:26:08 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51359 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbeJJQ0G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:26:06 -0400
-Received: by mail-it1-f196.google.com with SMTP id 74-v6so6937521itw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:04:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s9xNZ6ajtGDeVG5ebuIZNGgHb4V6hGnPu7n24WYk+AM=;
-        b=ghYlhOgbiNih2LxITJ/C4IloDpurKzd9kIxEnHyM/PIYLrkCg0RKRGtetSINh+RkkL
-         r/trLYq8mCSbkq3C4S6XBDIshS+hqGaQEyZ6mvaoT1jBhCZgb4j+UGOZz4yw+yrarXrv
-         aToPp+1DU9KzvvBn2nPOZmlLxdKWv6UBQ0Aio=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s9xNZ6ajtGDeVG5ebuIZNGgHb4V6hGnPu7n24WYk+AM=;
-        b=IMe7uAIvWu5g5OJ2AOcjy6386iJKbYjK/QxyMQWW3mOQEANHSrPvmDhKJcbm8MpOd2
-         TETH8thYAKO7JNFbctd1Vo9xDZjW122aAWIDbv8D/Z8BBgQYSBdMtnu7lEdfLes2nGah
-         moXYVdSPqfyy3NZoF/4UTxuqlnqXvyiJ8Edq0lpYeKfLTBLyXEp7KU2z62+UxVblDOsO
-         a0dPr5y4YMGWhrOGz3uaTtytdVa++CiWjoHUnBw1AD1z9npODNeNFOno5+7nI5q3AE83
-         DoGC5Q+953m+6aYg8JF8Jzm6NCm47JZBzhNZCiFVKtqLMtYHUfdyH8T1DeDqVLBEwQSa
-         1uFQ==
-X-Gm-Message-State: ABuFfogCV+DluNoCZ1DwY1iu5Yqr6Rk/Oh/JsmoCB37c17Rq89kfS0b0
-        VPUlRky9e+te61yWExE+pgK8j3Mh0yvqZMCB7RSJrQ==
-X-Google-Smtp-Source: ACcGV60xVHH2GrTyL1WOS5d6M9fVXT9BZ5WF/69o6ITz2pTba05TrdxfgQQjRgwvfP7/0iSHOyJeLRG71RSOlYznGE4=
-X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr61048ith.156.1539162292807;
- Wed, 10 Oct 2018 02:04:52 -0700 (PDT)
+        Wed, 10 Oct 2018 12:27:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51366 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726525AbeJJQ1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 12:27:36 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9EBD307C714;
+        Wed, 10 Oct 2018 09:06:23 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6ED562672;
+        Wed, 10 Oct 2018 09:06:22 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 17:06:20 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        Masayoshi Mizuma <msys.mizuma@gmail.com>
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181010090620.GF25297@MiWiFi-R3L-srv>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010085920.GB5533@zn.tnic>
 MIME-Version: 1.0
-References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-7-vz@mleia.com>
-In-Reply-To: <20181008211205.2900-7-vz@mleia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 11:04:41 +0200
-Message-ID: <CACRpkdbMMnXzA_j_p=nGgT1SyECrhCNRC6wWQ-+COMEkSQdPAA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] pinctrl: ds90ux9xx: add TI DS90Ux9xx pinmux and GPIO
- controller driver
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-media@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010085920.GB5533@zn.tnic>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 10 Oct 2018 09:06:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
+Hi Boris,
 
-thanks for your patch! Some review comments:
+On 10/10/18 at 10:59am, Borislav Petkov wrote:
+> ... and we just picked up
+> 
+> https://lkml.kernel.org/r/20181001140843.26137-1-msys.mizuma@gmail.com
+> 
+> and without having looked at the rest of your stuff, if people accept
+> your solution, we don't need the silly parameter anymore, right?
+> 
+> Which means, we should not rush the whole thing yet until the whole
+> KASLR vs movable memory gets solved properly.
 
-On Mon, Oct 8, 2018 at 11:12 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+Masa's patches solves the problem in memory region KASLR which later hot
+added memory may be big than the default padding 10 TB.
 
-> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->
-> The change adds an MFD cell driver for managing pin functions on
-> TI DS90Ux9xx de-/serializers.
->
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Chao's patches is trying to fix a conflict between 'movable_node' and
+kernel text KASLR. If 'movable_node' specified, we rely on SRAT to get
+which memory region is movable or immovable, and movable region can be
+hot removed. But if kernel is randomized into movable memory, it can't
+be hot removed any more, this is a regression after KASLR introduced.
+So this is a different issue than Masa's.
 
-Please mention in the commit that you are also adding a GPIO
-chip driver.
-
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-
-I prefer the simple "GPL-2.0+" here.
-
-> +#include <linux/of_gpio.h>
-
-You should not need this include. If you do, something is wrong.
-
-> +#define SER_REG_PIN_CTRL               0x12
-> +#define PIN_CTRL_RGB18                 BIT(2)
-> +#define PIN_CTRL_I2S_DATA_ISLAND       BIT(1)
-> +#define PIN_CTRL_I2S_CHANNEL_B         (BIT(0) | BIT(3))
-> +
-> +#define SER_REG_I2S_SURROUND           0x1A
-> +#define PIN_CTRL_I2S_SURR_BIT          BIT(0)
-> +
-> +#define DES_REG_INDIRECT_PASS          0x16
-> +
-> +#define OUTPUT_HIGH                    BIT(3)
-> +#define REMOTE_CONTROL                 BIT(2)
-> +#define DIR_INPUT                      BIT(1)
-> +#define ENABLE_GPIO                    BIT(0)
-> +
-> +#define GPIO_AS_INPUT                  (ENABLE_GPIO | DIR_INPUT)
-> +#define GPIO_AS_OUTPUT                 ENABLE_GPIO
-> +#define GPIO_OUTPUT_HIGH               (GPIO_AS_OUTPUT | OUTPUT_HIGH)
-> +#define GPIO_OUTPUT_LOW                        GPIO_AS_OUTPUT
-> +#define GPIO_OUTPUT_REMOTE             (GPIO_AS_OUTPUT | REMOTE_CONTROL)
-
-These have a creepily generic look, like they hit the global GPIO
-namespace without really clashing. It gets confusing when reading
-the code.
-
-Do you think you could prefix them with DS90_* or something
-so it is clear that these defines belong in this driver?
-
-> +static const struct gpio_chip ds90ux9xx_gpio_chip = {
-> +       .owner                  = THIS_MODULE,
-> +       .get                    = ds90ux9xx_gpio_get,
-> +       .set                    = ds90ux9xx_gpio_set,
-> +       .get_direction          = ds90ux9xx_gpio_get_direction,
-> +       .direction_input        = ds90ux9xx_gpio_direction_input,
-> +       .direction_output       = ds90ux9xx_gpio_direction_output,
-> +       .base                   = -1,
-> +       .can_sleep              = 1,
-
-This is bool so set it = true;
-
-Overall it's a very nice driver. It is pretty complex but pin control
-is complex so that's a fact of life.
-
-Yours,
-Linus Walleij
+Thanks
+Baoquan
