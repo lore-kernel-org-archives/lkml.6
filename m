@@ -2,99 +2,148 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 726BCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89E5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228732077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 910922077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 16:56:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VQzOFXEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228732077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XtVbpkRo";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPRAe2pT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 910922077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeJKASU (ORCPT
+        id S1726781AbeJKATn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:18:20 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45850 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJKASU (ORCPT
+        Wed, 10 Oct 2018 20:19:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45146 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeJKATn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:18:20 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y15-v6so2806766plr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 09:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CsUazj8e/ZQvu767Lde9xfu4UDysKXiIgFVGUwQWDTU=;
-        b=VQzOFXErf9dAQUoo77i5/5X2LefJhDDuTib3m5P7mygOk708bwxjo+kN274f+4a5Q/
-         XTY+lHhdZqqzwbHa9BWwH9CA9pOg79suyVd89TlzGtI6e6wUXMLaL05/vsX9tOSNYd6x
-         SqdZm2lDenn4pkEUiw+Hx3Rtud0aTk6uMZ28g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CsUazj8e/ZQvu767Lde9xfu4UDysKXiIgFVGUwQWDTU=;
-        b=NDh3dmRz7H4sKlTZYuGlQ1hR8dL0ZOVaLt/wk5KLlppqGsSZK77d2/CNyprWL5Lz8s
-         VP344FkThsC/bSTynKtb+xP6s+bF8kupAearMqHTsAz8IKEkgNsLC5mRJnWOQy8lHR+d
-         SaXVxbnhdpy4ZzSe49mtBKAz79XCJcI/piL2pdjtP2I8gYYaDZIhD2k4PxLQ2KrGmJ+4
-         KO8ERUvtBNtcsR28QMspa1OsLsmzuh9vvvLfqSQoeBV+F6CSCSDrVwOZ0j7VGsUlac1t
-         BkZl+6ZYKWGPZQxdljD9mZO1unRoYDy4u0lUS1i5ar8LX1PDrUCQ9fbGVQuFmERIvxps
-         WsyQ==
-X-Gm-Message-State: ABuFfohLCPlQSEuRjpHhg9MAgNVy4A0vSX1Q+vwi+ncmqdCPZhHYJ1op
-        cB07FfFWxSwgO41AweBAnAXogx2aI5o=
-X-Google-Smtp-Source: ACcGV63W8Fi2YvaX8767dvN8DGWugpfDdb1Ii0+GAaZ9mNVkA4OW592PyxXZQN51dUuRr5a/wpdaDw==
-X-Received: by 2002:a17:902:8a4:: with SMTP id 33-v6mr34135506pll.65.1539190520234;
-        Wed, 10 Oct 2018 09:55:20 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm8961180pgo.34.2018.10.10.09.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 09:55:19 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH] Input: elants_i2c - Use DMA safe i2c when possible
-Date:   Wed, 10 Oct 2018 09:55:17 -0700
-Message-Id: <20181010165517.178545-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Wed, 10 Oct 2018 20:19:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A0EC600C1; Wed, 10 Oct 2018 16:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539190602;
+        bh=rTGq1MPcA4dcO+RD/B2LbWZW48cyLy+nfDnbfxXA1ww=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XtVbpkRoEHl7b9QaVc9wVwDg3x0fA8fpZofmWCTy4FtL/y1G/AEAxnFXBM4J1hXRR
+         wtf4hkIP4T720sKwGEHleyOIJQcvjU8DdFAXVcGUExXqw+trjd9UafxKpzmvw7OcWA
+         8PHBOn0vItXcRnEG/aQ1l2q0VbwGJmYmTBTb/XDo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 70230600C1;
+        Wed, 10 Oct 2018 16:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539190601;
+        bh=rTGq1MPcA4dcO+RD/B2LbWZW48cyLy+nfDnbfxXA1ww=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HPRAe2pTi4fIjuP6cbqZBujeqYkRZqLUtZOup/ouA+GCr8xukld3hRtmx29MpMfEb
+         k4mQOCFTTKLAAVIRPNmHsnpoiq7nHG6PudXbXHfHr4T96ZKNvDHDZuouMCslCZLzLy
+         5Tu6EirhAnCYKXRI2vYyOha1R7NWub9G06jeUtA4=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 10 Oct 2018 22:26:41 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, iamjoonsoo.kim@lge.com,
+        gregkh@linuxfoundation.org, osalvador@suse.de, malat@debian.org,
+        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
+        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
+In-Reply-To: <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
+References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
+ <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
+Message-ID: <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This irq handler is always reading bytes from the device into a
-kmalloced buffer, so it's safe to mark this transaction as DMA safe.
-This avoids bouncing the buffer when an i2c controller decides to use
-DMA for a transaction.
+On 2018-10-10 21:00, Vlastimil Babka wrote:
+> On 10/5/18 10:10 AM, Arun KS wrote:
+>> When free pages are done with higher order, time spend on
+>> coalescing pages by buddy allocator can be reduced. With
+>> section size of 256MB, hot add latency of a single section
+>> shows improvement from 50-60 ms to less than 1 ms, hence
+>> improving the hot add latency by 60%. Modify external
+>> providers of online callback to align with the change.
+>> 
+>> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> 
+> [...]
+> 
+>> @@ -655,26 +655,44 @@ void __online_page_free(struct page *page)
+>>  }
+>>  EXPORT_SYMBOL_GPL(__online_page_free);
+>> 
+>> -static void generic_online_page(struct page *page)
+>> +static int generic_online_page(struct page *page, unsigned int order)
+>>  {
+>> -	__online_page_set_limits(page);
+> 
+> This is now not called anymore, although the xen/hv variants still do
+> it. The function seems empty these days, maybe remove it as a followup
+> cleanup?
+> 
+>> -	__online_page_increment_counters(page);
+>> -	__online_page_free(page);
+>> +	__free_pages_core(page, order);
+>> +	totalram_pages += (1UL << order);
+>> +#ifdef CONFIG_HIGHMEM
+>> +	if (PageHighMem(page))
+>> +		totalhigh_pages += (1UL << order);
+>> +#endif
+> 
+> __online_page_increment_counters() would have used
+> adjust_managed_page_count() which would do the changes under
+> managed_page_count_lock. Are we safe without the lock? If yes, there
+> should perhaps be a comment explaining why.
 
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/input/touchscreen/elants_i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks unsafe without managed_page_count_lock. I think better have a 
+similar implementation of free_boot_core() in memory_hotplug.c like we 
+had in version 1 of patch. And use adjust_managed_page_count() instead 
+of page_zone(page)->managed_pages += nr_pages;
 
-diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-index d21ca39b0fdb..be44abb8de33 100644
---- a/drivers/input/touchscreen/elants_i2c.c
-+++ b/drivers/input/touchscreen/elants_i2c.c
-@@ -863,7 +863,7 @@ static irqreturn_t elants_i2c_irq(int irq, void *_dev)
- 	int i;
- 	int len;
- 
--	len = i2c_master_recv(client, ts->buf, sizeof(ts->buf));
-+	len = i2c_master_recv_dmasafe(client, ts->buf, sizeof(ts->buf));
- 	if (len < 0) {
- 		dev_err(&client->dev, "%s: failed to read data: %d\n",
- 			__func__, len);
--- 
-Sent by a computer through tubes
+https://lore.kernel.org/patchwork/patch/989445/
+
+-static void generic_online_page(struct page *page)
++static int generic_online_page(struct page *page, unsigned int order)
+  {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	unsigned long nr_pages = 1 << order;
++	struct page *p = page;
++
++	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
++		__ClearPageReserved(p);
++		set_page_count(p, 0);
++	}
++
++	adjust_managed_page_count(page, nr_pages);
++	set_page_refcounted(page);
++	__free_pages(page, order);
++
++	return 0;
++}
+
+
+Regards,
+Arun
 
