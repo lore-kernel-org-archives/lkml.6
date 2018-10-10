@@ -2,105 +2,92 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E607C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E16C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D0E20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D0E20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E7FB220658
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FB220658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbeJKHRP (ORCPT
+        id S1726352AbeJKHUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:17:15 -0400
-Received: from mga12.intel.com ([192.55.52.136]:56647 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeJKHRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:17:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 16:52:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,366,1534834800"; 
-   d="scan'208";a="87394577"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Oct 2018 16:41:48 -0700
-Date:   Wed, 10 Oct 2018 16:41:48 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
-Subject: Re: [LKP] 4ce5f9c9e7 [ 1.323881] WARNING: CPU: 0 PID: 1 at
- mm/slab_common.c:1031 kmalloc_slab
-Message-ID: <20181010234148.GA25537@linux.intel.com>
-References: <20181010020641.GE13396@shao2-debian>
- <87sh1dvmc5.fsf@xmission.com>
- <87h8htv4lf.fsf@xmission.com>
+        Thu, 11 Oct 2018 03:20:07 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:32591 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726035AbeJKHUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:20:07 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 11 Oct 2018 10:25:35 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gAOKE-0003MO-CR; Thu, 11 Oct 2018 10:55:34 +1100
+Date:   Thu, 11 Oct 2018 10:55:34 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     gregkh@linuxfoundation.org
+Cc:     djwong@kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, sandeen@sandeen.net
+Subject: [GIT PULL] xfs: fixes for v4.19-rc7
+Message-ID: <20181010235534.GA8838@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h8htv4lf.fsf@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 05:06:52PM -0500, Eric W. Biederman wrote:
-> ebiederm@xmission.com (Eric W. Biederman) writes:
-> 
-> > So I am flummoxed.  I am reading through the code and I don't see
-> > anything that could trigger this, and when I ran the supplied reproducer
-> > it did not reproduce for me.
-> 
-> Even more so.  With my tool chain the line that reports the failing
-> address is impossible.
-> 
-> [   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
-> 
-> With the supplied configureation my tool chain only has 0x30 bytes for
-> all of copy_siginfo_from_user.  So I can't even begin to guess where
-> in that function things are failing.
-> 
-> Any additional information that you can provide would be a real help
-> in tracking down this strange failure.
+Hi Greg,
 
-I don't have the exact toolchain, but I was able to get somewhat close
-and may have found a smoking gun.  0x4d in my build is in the general
-vicinity of "sig_sicodes[sig].limit" in known_siginfo_layout().  This
-lines up with the register state from the log, e.g. RDI=0500104d8,
-which is the mask generated by sig_specific_sicodes.  From what I can
-tell, @sig is never bounds checked.  If the compiler generated an AND
-instruction to compare against sig_specific_sicodes then that could
-resolve true with any arbitrary value that happened to collide with
-sig_specific_sicodes and result in an out-of-bounds access to
-@sig_sicodes.  siginfo_layout() for example explicitly checks @sig
-before indexing @sig_sicode, e.g. "sig < ARRAY_SIZE(sig_sicodes)".
+Can you please pull the XFS update from the tag listed below? This
+contains the fix for the clone_file_range data corruption issue I
+mentioned in my -rc6 pull request (zero post-eof blocks), as well as
+fixes for several other equally serious problems we found while
+auditing the clone/dedupe ioctls for other issues. The rest of the
+problems we found (there were a *lot*) will be addressed in the 4.20
+cycle.
 
-Maybe this?
+Cheers,
 
----
- kernel/signal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Dave.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 1c2dd117fee0..6ee7491de906 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2865,7 +2865,8 @@ static bool known_siginfo_layout(int sig, int si_code)
-        if (si_code == SI_KERNEL)
-                return true;
-        else if ((si_code > SI_USER)) {
--               if (sig_specific_sicodes(sig)) {
-+               if (sig < ARRAY_SIZE(sig_sicodes) &&
-+                   sig_specific_sicodes(sig)) {
-                        if (si_code <= sig_sicodes[sig].limit)
-                                return true;
-                }
+The following changes since commit e55ec4ddbef9897199c307dfb23167e3801fdaf5:
+
+  xfs: fix error handling in xfs_bmap_extents_to_btree (2018-10-01 08:11:07 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux tags/xfs-fixes-for-4.19-rc7
+
+for you to fetch changes up to b39989009bdb84992915c9869f58094ed5becf10:
+
+  xfs: fix data corruption w/ unaligned reflink ranges (2018-10-06 11:44:39 +1000)
+
+----------------------------------------------------------------
+xfs: fixes for 4.19-rc7
+
+Update for 4.19-rc7 to fix numerous file clone and deduplication issues.
+
+----------------------------------------------------------------
+Darrick J. Wong (3):
+      xfs: refactor clonerange preparation into a separate helper
+      xfs: zero posteof blocks when cloning above eof
+      xfs: update ctime and remove suid before cloning files
+
+Dave Chinner (2):
+      xfs: fix data corruption w/ unaligned dedupe ranges
+      xfs: fix data corruption w/ unaligned reflink ranges
+
+ fs/xfs/xfs_reflink.c | 200 ++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 165 insertions(+), 35 deletions(-)
+
+-- 
+Dave Chinner
+david@fromorbit.com
