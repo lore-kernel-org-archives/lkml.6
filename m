@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54875C32789
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1E2C4161B
 	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2D4214FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF290214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:49:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Lsq9lUfE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B2D4214FA
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CS7ZTfns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF290214FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJJKJ0 (ORCPT
+        id S1727493AbeJJKJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 06:09:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44310 "EHLO
+        Wed, 10 Oct 2018 06:09:24 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44280 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbeJJKJZ (ORCPT
+        with ESMTP id S1726701AbeJJKJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 06:09:25 -0400
+        Wed, 10 Oct 2018 06:09:23 -0400
 Received: from garnet.amanokami.net (unknown [96.44.9.229])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6547D1C3D;
-        Wed, 10 Oct 2018 04:49:25 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D7A991C1D;
+        Wed, 10 Oct 2018 04:49:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539139766;
-        bh=LQaoT+rmlpkEpS2F515HIOIpAYO4V9yxI7kW1uHehsk=;
+        s=mail; t=1539139765;
+        bh=IFgcyVHcjFLgyNIfLwBnAtX8aNSKPm6W8hUPJslYMg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lsq9lUfEgwo4coUIsp3ownL4+06BUij/gk556FxV34cGDNqj0IVRf0KjUL4QdchBT
-         gLvQEbBFq3Gg/4M2LYy6vpbypu4o80hnMDhhV1jO8ZmYzV5AfA/rT1sE9iOq5ANXWT
-         m1uVb3qGcYpJo5rJMJbiNmcMlYb3VE33ie9qEZic=
+        b=CS7ZTfnsisL/GtZiY/WXTTXdnJX+0vNngeq6fZgmhH6KB4J2Lh423XGe4/W2tF52W
+         xeA6dhTro/ZJhDWNuvrySUTSH42ymJtayo3EsDzoGYoFvw7mOWMp1ruRJOTfqUCOTd
+         JEka7AdGphTE3aYAT/4g1Yt8+GMDlw8YmKqICVM0=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, balbi@kernel.org,
         stern@rowland.harvard.edu, rogerq@ti.com
-Subject: [PATCH 5/6] usb: musb: gadget: implement send_response
-Date:   Tue,  9 Oct 2018 22:49:02 -0400
-Message-Id: <20181010024903.1633-6-paul.elder@ideasonboard.com>
+Subject: [PATCH 4/6] usb: gadget: add functions to signal udc driver to delay status stage
+Date:   Tue,  9 Oct 2018 22:49:01 -0400
+Message-Id: <20181010024903.1633-5-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181010024903.1633-1-paul.elder@ideasonboard.com>
 References: <20181010024903.1633-1-paul.elder@ideasonboard.com>
@@ -53,104 +53,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements a mechanism to signal the MUSB driver to reply to
-a control OUT request with STALL or ACK.
+A usb gadget function driver may or may not want to delay the status
+stage of a control OUT request. An instance it might want to is to
+asynchronously validate the data of a class-specific request.
+
+Add a function usb_ep_delay_status to allow function drivers to choose
+to delay the status stage in the request completion handler. The UDC
+should then check the usb_ep->delayed_status flag and act accordingly to
+delay the status stage.
+
+Also add a function usb_ep_send_response as a wrapper for
+usb_ep->ops->send_response, whose prototype is added as well. This
+function should be called by function drivers to tell the UDC what to
+reply in the status stage that it has requested to be delayed.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/usb/musb/musb_gadget_ep0.c | 41 ++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/usb/gadget/udc/core.c | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/usb/gadget.h    | 11 +++++++++++
+ 2 files changed, 46 insertions(+)
 
-diff --git a/drivers/usb/musb/musb_gadget_ep0.c b/drivers/usb/musb/musb_gadget_ep0.c
-index 91a5027b5c1f..f0ed1f7472a3 100644
---- a/drivers/usb/musb/musb_gadget_ep0.c
-+++ b/drivers/usb/musb/musb_gadget_ep0.c
-@@ -458,6 +458,25 @@ __acquires(musb->lock)
- 	return handled;
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index af88b48c1cea..1ec5ce6b43cd 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -443,6 +443,41 @@ void usb_ep_fifo_flush(struct usb_ep *ep)
  }
+ EXPORT_SYMBOL_GPL(usb_ep_fifo_flush);
  
-+static int ep0_send_response(struct musb *musb, bool stall)
++/**
++ * usb_ep_ep_delay_status - set delay_status flag
++ * @ep: the endpoint whose delay_status flag is being set
++ *
++ * This function instructs the UDC to delay the status stage of a control
++ * request. It can only be called from the request completion handler of a
++ * control request.
++ */
++void usb_ep_delay_status(struct usb_ep *ep)
 +{
-+	void __iomem *regs = musb->control_ep->regs;
-+	u16 ackpend;
++	ep->delayed_status = true;
++}
++EXPORT_SYMBOL_GPL(usb_ep_delay_status);
 +
-+	if (musb->ep0_state != MUSB_EP0_STAGE_RX &&
-+	    musb->ep0_state != MUSB_EP0_STAGE_STATUSIN)
++/**
++ * usb_ep_send_response - reply to control OUT request
++ * @ep: the endpoint to send reply
++ * @stall: true for STALL, false for ACK
++ *
++ * Instruct the UDC to complete the status stage of a control request that was
++ * previously delayed with a call to usb_ep_delay_status().
++ */
++int usb_ep_send_response(struct usb_ep *ep, bool stall)
++{
++	if (!ep->ops->send_response)
++		return -ENOSYS;
++
++	if (!ep->delayed_status)
 +		return -EINVAL;
 +
-+	ackpend = MUSB_CSR0_P_DATAEND
-+		| MUSB_CSR0_P_SVDRXPKTRDY
-+		| (stall ? MUSB_CSR0_P_SENDSTALL : 0);
-+
-+	musb_ep_select(musb->mregs, 0);
-+	musb_writew(regs, MUSB_CSR0, ackpend);
-+
-+	return 0;
++	ep->delayed_status = false;
++	return ep->ops->send_response(ep, stall);
 +}
++EXPORT_SYMBOL_GPL(usb_ep_send_response);
 +
- /* we have an ep0out data packet
-  * Context:  caller holds controller lock
-  */
-@@ -466,10 +485,13 @@ static void ep0_rxstate(struct musb *musb)
- 	void __iomem		*regs = musb->control_ep->regs;
- 	struct musb_request	*request;
- 	struct usb_request	*req;
-+	struct usb_ep		*ep;
- 	u16			count, csr;
-+	bool			last_packet = false;
+ /* ------------------------------------------------------------------------- */
  
- 	request = next_ep0_request(musb);
- 	req = &request->request;
-+	ep = &request->ep->end_point;
+ /**
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index e5cd84a0f84a..d39c221d4b68 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -144,6 +144,8 @@ struct usb_ep_ops {
  
- 	/* read packet and ack; or stall because of gadget driver bug:
- 	 * should have provided the rx buffer before setup() returned.
-@@ -492,6 +514,7 @@ static void ep0_rxstate(struct musb *musb)
- 		if (count < 64 || req->actual == req->length) {
- 			musb->ep0_state = MUSB_EP0_STAGE_STATUSIN;
- 			csr |= MUSB_CSR0_P_DATAEND;
-+			last_packet = true;
- 		} else
- 			req = NULL;
- 	} else
-@@ -508,6 +531,10 @@ static void ep0_rxstate(struct musb *musb)
- 			return;
- 		musb->ackpend = 0;
- 	}
+ 	int (*fifo_status) (struct usb_ep *ep);
+ 	void (*fifo_flush) (struct usb_ep *ep);
 +
-+	if (last_packet && ep->delayed_status)
-+		return;
-+
- 	musb_ep_select(musb->mregs, 0);
- 	musb_writew(regs, MUSB_CSR0, csr);
- }
-@@ -991,6 +1018,19 @@ static int musb_g_ep0_dequeue(struct usb_ep *ep, struct usb_request *req)
- 	return -EINVAL;
- }
- 
-+static int musb_g_ep0_send_response(struct usb_ep *e, bool stall)
-+{
-+	struct musb_ep *ep = to_musb_ep(e);
-+	struct musb *musb = ep->musb;
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&musb->lock, flags);
-+	ret = ep0_send_response(musb, stall);
-+	spin_unlock_irqrestore(&musb->lock, flags);
-+	return ret;
-+}
-+
- static int musb_g_ep0_halt(struct usb_ep *e, int value)
- {
- 	struct musb_ep		*ep;
-@@ -1059,4 +1099,5 @@ const struct usb_ep_ops musb_g_ep0_ops = {
- 	.queue		= musb_g_ep0_queue,
- 	.dequeue	= musb_g_ep0_dequeue,
- 	.set_halt	= musb_g_ep0_halt,
-+	.send_response  = musb_g_ep0_send_response,
++	int (*send_response) (struct usb_ep *ep, bool stall);
  };
+ 
+ /**
+@@ -209,6 +211,8 @@ struct usb_ep_caps {
+  *	enabled and remains valid until the endpoint is disabled.
+  * @comp_desc: In case of SuperSpeed support, this is the endpoint companion
+  *	descriptor that is used to configure the endpoint
++ * @delayed_status: True if status stage is being delayed. Valid only for
++ *	control endpoints.
+  *
+  * the bus controller driver lists all the general purpose endpoints in
+  * gadget->ep_list.  the control endpoint (gadget->ep0) is not in that list,
+@@ -232,6 +236,7 @@ struct usb_ep {
+ 	u8			address;
+ 	const struct usb_endpoint_descriptor	*desc;
+ 	const struct usb_ss_ep_comp_descriptor	*comp_desc;
++	bool			delayed_status;
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -249,6 +254,8 @@ int usb_ep_clear_halt(struct usb_ep *ep);
+ int usb_ep_set_wedge(struct usb_ep *ep);
+ int usb_ep_fifo_status(struct usb_ep *ep);
+ void usb_ep_fifo_flush(struct usb_ep *ep);
++void usb_ep_delay_status(struct usb_ep *ep);
++int usb_ep_send_response(struct usb_ep *ep, bool stall);
+ #else
+ static inline void usb_ep_set_maxpacket_limit(struct usb_ep *ep,
+ 		unsigned maxpacket_limit)
+@@ -278,6 +285,10 @@ static inline int usb_ep_fifo_status(struct usb_ep *ep)
+ { return 0; }
+ static inline void usb_ep_fifo_flush(struct usb_ep *ep)
+ { }
++static inline void usb_ep_delay_status(struct usb_ep *ep)
++{ }
++static inline int usb_ep_send_response(struct usb_ep *ep, bool stall)
++{ }
+ #endif /* USB_GADGET */
+ 
+ /*-------------------------------------------------------------------------*/
 -- 
 2.18.0
 
