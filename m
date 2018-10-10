@@ -2,223 +2,156 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 135C2C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8896DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C430A2077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:13:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C430A2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 480722082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:17:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 480722082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJJTfH (ORCPT
+        id S1726721AbeJJTjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:35:07 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:42814 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbeJJTfG (ORCPT
+        Wed, 10 Oct 2018 15:39:03 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:40059 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbeJJTjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:35:06 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id CCE7972CC5B;
-        Wed, 10 Oct 2018 15:13:10 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 9A6694A4A29;
-        Wed, 10 Oct 2018 15:13:10 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH v2 2/2] crypto: streebog - add Streebog test vectors
-Date:   Wed, 10 Oct 2018 15:12:52 +0300
-Message-Id: <20181010121254.12220-3-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181010121254.12220-1-vt@altlinux.org>
-References: <20181010121254.12220-1-vt@altlinux.org>
+        Wed, 10 Oct 2018 15:39:03 -0400
+Received: from [192.168.178.69] ([109.104.41.19]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MRTIx-1gLz0X2I8j-00NOgB; Wed, 10 Oct 2018 14:16:56 +0200
+Received: from [192.168.178.69] ([109.104.41.19]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MRTIx-1gLz0X2I8j-00NOgB; Wed, 10 Oct 2018 14:16:56 +0200
+Subject: Re: [Question] directory for SoC-related DT binding
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Rob Herring <robh@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+References: <CAK7LNATaD=G8BW316fkBWM2A+YXgP5tabaySR2Fs49Za_0p=3Q@mail.gmail.com>
+ <CABGGisx-iLr+CQ=JjmHEe5J_Qqpf0yrgOmSOHa74GnfwE_RKsA@mail.gmail.com>
+ <93cd9c43-6fe3-c691-005b-e27cf101c7d6@i2se.com>
+ <20181010120955.GQ30658@n2100.armlinux.org.uk>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <af9eec6f-cb31-f23e-61b4-da1364ea7ba5@i2se.com>
+Date:   Wed, 10 Oct 2018 14:16:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181010120955.GQ30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:y5QkTeVl3lfMR16ZQMCsFm9BLC9dYYTrrelOCo1ZM9Q1Z+p8Klr
+ cm4Qct8VWTOUbmE+WwiMK1AXx65CgHr71WxTPErzbuodhe5zeE42oYMEyq6i3x5TbU8oaJj
+ EyPzVyqK850p4tzOKjfYUPCbKxR3KjchfqzqHOaGn9nizIoWSYReERQBwMWnAhDdKjtFH2a
+ cy80uxjy1KQSNms2B4bqg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1PsGH+vt7rw=:+f1GK9FNHuk2bRWA/L4mog
+ MVo3iQThdMKYyU3AusxG6/q7koRsiSB/NpIc535NvFPG8MQKcGnRcoQb+nDCd1ETXXtMAdKJP
+ TV+65KjGXIgr9eA0uSOFxv9oKheyjMhElzZRoDGC8sVceTfTEW7IDH0ZZR8rfKc4j3H3sisLa
+ yJ7iGku7m6wlelesP+rul1i1xb3mKu2hQJ835ZGxMB5UJ9dDF2P9EuZer+a1U99md4Dfa6aDz
+ P7AODGK4cTO1jUd65EnYbz4LK9UL6VdcFLEK8pHS36mC0CNdIA4dUgwLArVzOaN7uRXKU4w8E
+ KNny9D0Joe0XjHbGUmf5oBGB/s3whRux0aQ/XnxJieqwFDPgWdtp3BCXiKdx2TGCWzo7xuxYU
+ mYwlSw9davpXfN8q2HKiqvpGugpgJd6vecZ3qhamL8FTxkDqvVKbUzHgEZy7vgYy5n/P/jAE0
+ NueWkYUJ0Ztku4JnrZ8uVIl0zcdkbQcfsnU23bTyBuPT+qXwi84kJ9s+fQ5//DrA+usyTheSX
+ j0LpofoaC2NjgNyZ9vO3QyoYDLa+Z2qIVWK3/8lHiYTrkGpww61vH4KVzmpdynfyNyMeQWJit
+ 44tcSjFFqJpMLUxqQrvtuu8k+F9pHMXGWrs4byOXgjzdO2fBQDrkA2mfxmVu90AVpqcKbMqok
+ 0w+kt0gHWxQmQ/02p5ELEHzsV661k9mfquQm8sO2DOQlHG2HULYEp1Emd1PUmQHOZkCfEiMR0
+ fsWCiRZEeNdeQdvb
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add testmgr and tcrypt tests and vectors for Streebog hash function
-from RFC 6986 and GOST R 34.11-2012.
+Am 10.10.2018 um 14:09 schrieb Russell King - ARM Linux:
+> On Wed, Oct 10, 2018 at 02:04:14PM +0200, Stefan Wahren wrote:
+>> Hi,
+>>
+>> Am 10.10.2018 um 13:19 schrieb Rob Herring:
+>>> On Wed, Oct 10, 2018 at 6:08 AM Masahiro Yamada
+>>> <yamada.masahiro@socionext.com> wrote:
+>>>> Hi,
+>>>>
+>>>>
+>>>> I see a bunch of vendor (or SoC) names in
+>>>> Documentation/device/bindings/arm/
+>>>>
+>>>> ./Documentation/devicetree/bindings/arm/altera
+>>>> ./Documentation/devicetree/bindings/arm/amlogic
+>>> Yeah, it's kind of a mixture of board/soc bindings mostly with some
+>>> ARM architecture, ARM, Ltd. IP, and SoC system reg bindings.
+>>>
+>>> Eventually, I'd like to not split board bindings by arch and maybe we
+>>> should move all the system/misc reg bindings out.
+>>>
+>>> [,,,]
+>>>
+>>>> I also see some vendor names in
+>>>> Documentation/device/bindings/soc/
+>>>>
+>>>> ./Documentation/devicetree/bindings/soc/bcm
+>>>> ./Documentation/devicetree/bindings/soc/dove
+>>>> ./Documentation/devicetree/bindings/soc/fsl
+>>>> ./Documentation/devicetree/bindings/soc/mediatek
+>>>> ./Documentation/devicetree/bindings/soc/qcom
+>>>> ./Documentation/devicetree/bindings/soc/rockchip
+>>>> ./Documentation/devicetree/bindings/soc/ti
+>>>> ./Documentation/devicetree/bindings/soc/xilinx
+>>>> ./Documentation/devicetree/bindings/soc/zte
+>>> This I believe is mostly SoC system reg bindings though there's
+>>> probably a few other things.
+>>>
+>>>> Confusingly, I see bcm, mediatek, rockchip
+>>>> in both locations.
+>>>>
+>>>> Is there any rule to choose one than the other?
+>>> Top-level SoC/board bindings in arm/ and anything else elsewhere ideally.
+>> in case of Documentation/devicetree/bindings/soc/bcm the directory
+>> contains SoC / board bindings, cpu-enable and a firmware binding.
+> I think you're confused there...
+>
+> $ ls -1 Documentation/devicetree/bindings/soc/bcm/
+> brcm,bcm2835-vchiq.txt
+> raspberrypi,bcm2835-power.txt
+>
+> Doesn't look like SoC/board bindings to me...
+>
+> whereas:
+>
+> $ ls -1 Documentation/devicetree/bindings/arm/bcm/
+> brcm,bcm11351-cpu-method.txt
+> brcm,bcm11351.txt
+> brcm,bcm21664.txt
+> brcm,bcm23550-cpu-method.txt
+> brcm,bcm23550.txt
+> brcm,bcm2835.txt
+> brcm,bcm4708.txt
+> brcm,bcm63138.txt
+> brcm,brcmstb.txt
+> brcm,cygnus.txt
+> brcm,hr2.txt
+> brcm,ns2.txt
+> brcm,nsp-cpu-method.txt
+> brcm,nsp.txt
+> brcm,stingray.txt
+> brcm,vulcan-soc.txt
+> raspberrypi,bcm2835-firmware.txt
+>
+> does fit with your description, except for the directory path...
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
- crypto/tcrypt.c  | 27 +++++++++++++++++++++
- crypto/testmgr.c | 12 ++++++++++
- crypto/testmgr.h | 71 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 110 insertions(+)
+sorry, my fault i copied the wrong path. I actually thought of
+Documentation/devicetree/bindings/arm/bcm/
 
-diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
-index bdde95e8d369..d66cb167daa2 100644
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -77,6 +77,7 @@ static char *check[] = {
- 	"khazad", "wp512", "wp384", "wp256", "tnepres", "xeta",  "fcrypt",
- 	"camellia", "seed", "salsa20", "rmd128", "rmd160", "rmd256", "rmd320",
- 	"lzo", "cts", "zlib", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
-+	"sb256", "sb512",
- 	NULL
- };
- 
-@@ -1914,6 +1915,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		ret += tcrypt_test("sm3");
- 		break;
- 
-+	case 53:
-+		ret += tcrypt_test("sb256");
-+		break;
-+
-+	case 54:
-+		ret += tcrypt_test("sb512");
-+		break;
-+
- 	case 100:
- 		ret += tcrypt_test("hmac(md5)");
- 		break;
-@@ -2392,6 +2401,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		test_hash_speed("sm3", sec, generic_hash_speed_template);
- 		if (mode > 300 && mode < 400) break;
- 		/* fall through */
-+	case 327:
-+		test_hash_speed("sb256", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
-+	case 328:
-+		test_hash_speed("sb512", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
- 	case 399:
- 		break;
- 
-@@ -2505,6 +2522,16 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 				    num_mb);
- 		if (mode > 400 && mode < 500) break;
- 		/* fall through */
-+	case 426:
-+		test_mb_ahash_speed("sb256", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
-+	case 427:
-+		test_mb_ahash_speed("sb512", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
- 	case 499:
- 		break;
- 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index a1d42245082a..6efb0a218b41 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3428,6 +3428,18 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.cipher = __VECS(salsa20_stream_tv_template)
- 		}
- 	}, {
-+		.alg = "sb256",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb256_tv_template)
-+		}
-+	}, {
-+		.alg = "sb512",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb512_tv_template)
-+		}
-+	}, {
- 		.alg = "sha1",
- 		.test = alg_test_hash,
- 		.fips_allowed = 1,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 173111c70746..9f9b7d6e4072 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -2309,6 +2309,77 @@ static const struct hash_testvec crct10dif_tv_template[] = {
- 	}
- };
- 
-+/*
-+ * Streebog test vectors from RFC 6986 and GOST R 34.11-2012
-+ */
-+static const struct hash_testvec sb256_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x9d\x15\x1e\xef\xd8\x59\x0b\x89"
-+			"\xda\xa6\xba\x6c\xb7\x4a\xf9\x27"
-+			"\x5d\xd0\x51\x02\x6b\xb1\x49\xa4"
-+			"\x52\xfd\x84\xe5\xe5\x7b\x55\x00",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x9d\xd2\xfe\x4e\x90\x40\x9e\x5d"
-+			"\xa8\x7f\x53\x97\x6d\x74\x05\xb0"
-+			"\xc0\xca\xc6\x28\xfc\x66\x9a\x74"
-+			"\x1d\x50\x06\x3c\x55\x7e\x8f\x50",
-+	},
-+};
-+
-+static const struct hash_testvec sb512_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x1b\x54\xd0\x1a\x4a\xf5\xb9\xd5"
-+			"\xcc\x3d\x86\xd6\x8d\x28\x54\x62"
-+			"\xb1\x9a\xbc\x24\x75\x22\x2f\x35"
-+			"\xc0\x85\x12\x2b\xe4\xba\x1f\xfa"
-+			"\x00\xad\x30\xf8\x76\x7b\x3a\x82"
-+			"\x38\x4c\x65\x74\xf0\x24\xc3\x11"
-+			"\xe2\xa4\x81\x33\x2b\x08\xef\x7f"
-+			"\x41\x79\x78\x91\xc1\x64\x6f\x48",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x1e\x88\xe6\x22\x26\xbf\xca\x6f"
-+			"\x99\x94\xf1\xf2\xd5\x15\x69\xe0"
-+			"\xda\xf8\x47\x5a\x3b\x0f\xe6\x1a"
-+			"\x53\x00\xee\xe4\x6d\x96\x13\x76"
-+			"\x03\x5f\xe8\x35\x49\xad\xa2\xb8"
-+			"\x62\x0f\xcd\x7c\x49\x6c\xe5\xb3"
-+			"\x3f\x0c\xb9\xdd\xdc\x2b\x64\x60"
-+			"\x14\x3b\x03\xda\xba\xc9\xfb\x28",
-+	},
-+};
-+
- /* Example vectors below taken from
-  * http://www.oscca.gov.cn/UpFile/20101222141857786.pdf
-  *
--- 
-2.11.0
-
+Thanks for pointing out
