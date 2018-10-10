@@ -2,223 +2,119 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB5DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F420C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C9E2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1AFD2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RQ379DNE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C9E2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tmJ6NXOV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AFD2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeJKCem (ORCPT
+        id S1727473AbeJKCfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:34:42 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39631 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbeJKCem (ORCPT
+        Wed, 10 Oct 2018 22:35:23 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50816 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbeJKCfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:34:42 -0400
-Received: by mail-it1-f195.google.com with SMTP id w200-v6so9656236itc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 12:11:11 -0700 (PDT)
+        Wed, 10 Oct 2018 22:35:23 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i8-v6so6579567wmg.0;
+        Wed, 10 Oct 2018 12:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0bKoaG+HxADG+1cIUvsNTbPOnhPe5WRchdPaG5qTeEQ=;
-        b=RQ379DNELP8rJa8Jni7/Pc9HyXcXGWx3t6fgVjYmpNMN6jdtHXXz4TIjVUF6leOqJ3
-         vJ4F6KrM2yRgRt2uFzmlK0nvU7bPOTKC7+4rg7B2HfBF/LnLmhTejiRrKu+pAWGpuetO
-         K6bbmOE+CAe42C5e+kWoI7PyNX/McKvqIU9AD2GOd5POtRyv8k4JMrIvUTJdFIZktrKK
-         VHik2aunFzdEtkUEsRIawPlRyDetoygP5bQmtc3i8G8hr8VR7oPln5tC8OAI2LVHHrUg
-         zSvNfQs3CYKklAFiBbKFqnDkRxe9MDQSrOgGx3XsxGRjMJYeRl2wejGTHK4e/yjSpiE5
-         v/8Q==
+        bh=/hKtcyhbWHVsrPzOxvwmoUwsYt7qkgtSWd46HwOIfqk=;
+        b=tmJ6NXOV2fIuNDwz2bcTyA/1i0721ohyDeyXWQTHdHnlZ7/AV1Q+N4tgLOXwkT7KtE
+         x0hasPR9r/93yJeear/+BHCRa67wlAjNkrUlgkDgFnW0vsQEYkTdLk1oLEWYkIydaHtc
+         R4cD/lKXLMc6VW5/+xfwpkNUrbDiLl2X+EgYTBiKdJ2h6Rj0fRWvekm6Pp3zpsRpDIdY
+         Aeem6LTLnsuiw0fQQkMPp1KXmI+1NCYSnMtXvoZroqClCrVvVkMLWC0epESwrxFnCDHa
+         6ocmwewEDLgqHS7yREGT7zx0xNlJyfXXg96ZbjuWOPPofHaqJkMnQAwBbtLGgEtPGmbp
+         FpEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0bKoaG+HxADG+1cIUvsNTbPOnhPe5WRchdPaG5qTeEQ=;
-        b=pe38cR3xENtNpq2lqoMga5/2FVouXEbeYvBvjBOgRRHIKapP6sbfkafTlyFHPMOlH3
-         C6SNFEQJIZhTGyhq4zIQC3SlHOAxVyoOOzdTggWAxd+SpxZ1iuXChnM0iMeoSWsAiiqT
-         1K6ZXp6+I20+feCPIqgFweV5PWTv4sTnjGjlclOY6+/M3lIYJHW8v6aJy2CytfLZv0tX
-         hTKGGOk6tf7TToUEB1n2VXrl4FeFuYD+D1Msf192WRJBHAVN/W6abd/ubflzH2XFmecW
-         1Hj94MYXoJ1A4Rwqyo7eBHzcm08YdEuwrKbHPntu08WKdtgHRluifWbJ8SzYKMNNVciu
-         tz2A==
-X-Gm-Message-State: ABuFfogKD0mIPliqJv/Tpi0DMr+NlW17RAYMJkp10acGa7gEds71S1ye
-        zbRj+Wc9taHSDDEM7653ANvl2XHbhjuwCqx9XoaCdQ==
-X-Google-Smtp-Source: ACcGV604q1ucqRQZC5J5qf6abFsWTS2L2lh3pwh+6x4Vw/vrkauRFbIj9RADjY54EKJZUfo15nCHXio/uZwBavkBmEo=
-X-Received: by 2002:a24:f584:: with SMTP id k126-v6mr1709826ith.166.1539198670287;
- Wed, 10 Oct 2018 12:11:10 -0700 (PDT)
+        bh=/hKtcyhbWHVsrPzOxvwmoUwsYt7qkgtSWd46HwOIfqk=;
+        b=GKQXGLp9eSpvmMYnlXCLUK0mXUCs9Tj5C/vAfAoLcSe/bjIvzhj53PF12KDckz9ah2
+         q2OphiYv8bDuy/XzGflaSW0BDUT5hlSAyq4G/8P2Qe1NalJI/xEssiBbIf7t/GRfi5e2
+         6nwl3uo2BhZez5fFVr+K+AXM2wWqI41RlTh/YWn9HTBCJxdGbNPtvai6VOmtQQwwS6Fd
+         4P9uCMKoehezW0V6hmA8rQb+JFjl4Z3o8NEF6QyaAQpLOYF8Rh9L/tbMzDvDqhGToFCO
+         BRdbT3iE3yOGrLY+nzPccr9rFeAktqyWvDK/BPki3uWe23L1IWsf2s7RQI8avIaqEPzP
+         TAzg==
+X-Gm-Message-State: ABuFfog9wvF5jVd/aoRwnUgVNk7Ve7MPNmCqRdmfbJq7tt82CrRr+lB4
+        oeRqLibax0eNol9bLsyHddd/c5XQ5ywOPsHFknA=
+X-Google-Smtp-Source: ACcGV63UfgxWD3L/vz+XIhZYN0p0/FFoprj+ME63G3gcCUk2L+DQUcPoxszsB+EJNUozndqt8EbF++P0L+NvpvSl198=
+X-Received: by 2002:a1c:c1c7:: with SMTP id r190-v6mr1910720wmf.72.1539198710459;
+ Wed, 10 Oct 2018 12:11:50 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 12:10:49
- -0700 (PDT)
-In-Reply-To: <20181010184011.GE6761@localhost.localdomain>
-References: <0000000000007e767d05776336da@google.com> <20181005145855.GB6761@localhost.localdomain>
- <CACT4Y+YVRWSF+VyoBB1vwDevt0gwZYz69bSAivmZDG6r4J-kaA@mail.gmail.com>
- <20181010181325.GD6761@localhost.localdomain> <CACT4Y+YYpjjvW-UCkHEXWZA50F==7JC1cnMvoAZHKmOqq=9vAw@mail.gmail.com>
- <20181010184011.GE6761@localhost.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 21:10:49 +0200
-Message-ID: <CACT4Y+bDkg4aBBaSNrh2qtKGNhiWjGCWF_p3dt7CgmBg2q8xpg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_id2assoc
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
+References: <1539049980-186978-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1539049980-186978-1-git-send-email-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 10 Oct 2018 15:11:38 -0400
+Message-ID: <CADnq5_MdvZ0DHJ+fRWqw2V595f_kGYRAV1_790OAAiFAsu8hCg@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amdkfd: Remove set but not used variable 'preempt_all_queues'
+To:     yuehaibing@huawei.com
+Cc:     Oded Gabbay <oded.gabbay@gmail.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:40 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Wed, Oct 10, 2018 at 08:28:22PM +0200, Dmitry Vyukov wrote:
->> On Wed, Oct 10, 2018 at 8:13 PM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > On Wed, Oct 10, 2018 at 05:28:12PM +0200, Dmitry Vyukov wrote:
->> >> On Fri, Oct 5, 2018 at 4:58 PM, Marcelo Ricardo Leitner
->> >> <marcelo.leitner@gmail.com> wrote:
->> >> > On Thu, Oct 04, 2018 at 01:48:03AM -0700, syzbot wrote:
->> >> >> Hello,
->> >> >>
->> >> >> syzbot found the following crash on:
->> >> >>
->> >> >> HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
->> >> >> git tree:       net-next
->> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
->> >> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
->> >> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
->> >> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> >> >>
->> >> >> Unfortunately, I don't have any reproducer for this crash yet.
->> >> >>
->> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> >> Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
->> >> >>
->> >> >> netlink: 'syz-executor1': attribute type 1 has an invalid length.
->> >> >> ==================================================================
->> >> >> BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0
->> >> >> net/sctp/socket.c:276
->> >> >> Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
->> >> >>
->> >> >> CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
->> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> >> >> Google 01/01/2011
->> >> >> Call Trace:
->> >> >>  __dump_stack lib/dump_stack.c:77 [inline]
->> >> >>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->> >> >>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->> >> >>  kasan_report_error mm/kasan/report.c:354 [inline]
->> >> >>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->> >> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->> >> >>  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
->> >> >
->> >> > I'm not seeing yet how this could happen.
->> >> > All sockopts here are serialized by sock_lock.
->> >> > do_peeloff here would create another socket, but the issue was
->> >> > triggered before that.
->> >> > The same function that freed this memory, also removes the entry from
->> >> > idr mapping, so this entry shouldn't be there anymore.
->> >> >
->> >> > I have only two theories so far:
->> >> > - an issue with IDR/RCU.
->> >> > - something else happened that just the call stacks are not revealing.
->> >>
->> >> The "asoc->base.sk != sk" check after idr_find suggests that we don't
->> >> actually know what sock it belongs to. And if we don't know then
->> >
->> > Right. The check is more because the IDR is global and not per socket
->> > (and we don't want sockets accessing asocs from other sockets), and not
->> > that the asoc may move to another socket in between, but it also
->> > protects from such cases, yes.
->> >
->> >> locking this sock can't help keeping another sock association alive.
->> >> Am I missing something obvious here? Should we take assoc ref while we
->> >
->> > Not sure. Maybe I am.  Thanks for looking into this, btw.
->> >
->> >> are still holding sctp_assocs_id_lock?
->> >
->> > Shouldn't be needed.
->> >
->> > Solely by the call stacks:
->> > - we tried to establish a new asoc from a sctp_connect() call,
->> >   blocking one.
->> > - it slept waiting for the connect
->> > - (something closed the asoc in between the sleeps, because it freed
->> >   the asoc right when waking up on sctp_wait_for_connect())
->> > - it freed the asoc after sleeping on it on sctp_wait_for_connect [A]
->> > - another thread tried to peeloff that asoc [B]
->> >
->> > For [B] to access the asoc in question, it had to take the same sock
->> > lock [A] had taken, and then the idr should not return an asoc in
->> > sctp_i2asoc(). Note that we can't peeloff an asoc twice, thus why
->> > the certainty here.
->> >
->> > If [B] actually kicked in before the sleep resumed, that should have
->> > been fine because it took the same sock lock [A] would have to
->> > re-take. In this case an asoc would have been returned by
->> > sctp_id2asoc(), the asoc would have been moved to a new socket, but
->> > all while holding the original socket sock lock.
->>
->> But why A and B use the same lock?
->>
->> sctp_assocs_id is global, so it contains asocs from all sockets, right?
->> assoc id comes straight from userspaces.
->> So isn't it possible that B uses completely different sock but passes
->> assoc id from the A sock? Then B should find assoc in sctp_assocs_id,
->> and at the point of "asoc->base.sk != sk" check the assoc can be
->> already freed.
+On Tue, Oct 9, 2018 at 3:37 AM YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> That explains it. Somehow I was thinking the issue was for reading
-> ->dead instead.  Now it's pretty clear. Then this should be the patch
-> we want. Can you please give it a spin? (only compile tested)
-
-syzbot can only test patches for bug with reproducers, this one
-doesn't have one (not surprising taking into account subtliness of the
-race):
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
-
-It's not possible squeeze in custom patches either:
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
-
-But the change looks good to me.
-
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-
-
-> While holding the spinlock, an entry cannot be removed from the idr
-> and thus it cannot be freed. So even if the app uses an id from
-> another socket, it will still be there.
+> Fixes gcc '-Wunused-but-set-variable' warning:
 >
-> ---8<---
+> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c: In function 'destroy_queue_cpsch':
+> drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c:1366:7: warning:
+>  variable 'preempt_all_queues' set but not used [-Wunused-but-set-variable]
 >
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index f73e9d38d5ba..a7722f43aa69 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -271,11 +271,10 @@ struct sctp_association *sctp_id2assoc(struct sock *sk, sctp_assoc_t id)
+> It never used since introduct in
+> commit 992839ad64f2 ("drm/amdkfd: Add static user-mode queues support")
 >
->         spin_lock_bh(&sctp_assocs_id_lock);
->         asoc = (struct sctp_association *)idr_find(&sctp_assocs_id, (int)id);
-> +       if (asoc && (asoc->base.sk != sk || asoc->base.dead))
-> +               asoc = NULL;
->         spin_unlock_bh(&sctp_assocs_id_lock);
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Applied.  Thanks!
+
+Alex
+
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> -       if (!asoc || (asoc->base.sk != sk) || asoc->base.dead)
-> -               return NULL;
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> index 4f22e74..06d38b7 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> @@ -1363,9 +1363,6 @@ static int destroy_queue_cpsch(struct device_queue_manager *dqm,
+>  {
+>         int retval;
+>         struct mqd_manager *mqd_mgr;
+> -       bool preempt_all_queues;
 > -
->         return asoc;
->  }
+> -       preempt_all_queues = false;
 >
+>         retval = 0;
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
