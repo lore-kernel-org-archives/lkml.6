@@ -6,104 +6,112 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA25C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EEAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BAD720835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:59:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BAD720835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id EF1AF206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1AF206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeJJQUk (ORCPT
+        id S1727489AbeJJQUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:20:40 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33476 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeJJQUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:20:40 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZBHJqpgPW6Yi; Wed, 10 Oct 2018 10:59:27 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9BA991EC00E8;
-        Wed, 10 Oct 2018 10:59:27 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 10:59:20 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, rjw@rjwysocki.net,
-        lenb@kernel.org, ard.biesheuvel@linaro.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        Masayoshi Mizuma <msys.mizuma@gmail.com>
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181010085920.GB5533@zn.tnic>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+        Wed, 10 Oct 2018 12:20:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48394 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726515AbeJJQUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 12:20:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3324DB012;
+        Wed, 10 Oct 2018 08:59:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 063231E3617; Wed, 10 Oct 2018 10:59:36 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 10:59:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, john.hubbard@gmail.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
+ versions
+Message-ID: <20181010085936.GC11507@quack2.suse.cz>
+References: <20181008211623.30796-1-jhubbard@nvidia.com>
+ <20181008211623.30796-3-jhubbard@nvidia.com>
+ <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
+ <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+In-Reply-To: <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 04:41:16PM +0800, Chao Fan wrote:
-> ***Background:
-> People reported that kaslr may randomly chooses some positions
-> which are located in movable memory regions. This will break memory
-> hotplug feature and make the movable memory chosen by KASLR can't be
-> removed.
+On Tue 09-10-18 17:42:09, John Hubbard wrote:
+> On 10/8/18 5:14 PM, Andrew Morton wrote:
+> > Also, maintainability.  What happens if someone now uses put_page() by
+> > mistake?  Kernel fails in some mysterious fashion?  How can we prevent
+> > this from occurring as code evolves?  Is there a cheap way of detecting
+> > this bug at runtime?
+> > 
 > 
-> ***Solutions:
-> There should be a method to limit kaslr to choosing immovable memory
-> regions, so there are 2 solutions:
-> 1) Add a kernel parameter to specify the memory regions.
-> 2) Get the information of memory hot-remove, then kaslr will know the
->    right regions.
-> In method 2, information about memory hot-remove is in ACPI
-> tables, which will be parsed after start_kernel(), kaslr can't get
-> the information.
-> In method 1, users should know the regions address and specify in
-> kernel parameter.
+> It might be possible to do a few run-time checks, such as "does page that came 
+> back to put_user_page() have the correct flags?", but it's harder (without 
+> having a dedicated page flag) to detect the other direction: "did someone page 
+> in a get_user_pages page, to put_page?"
 > 
-> In the earliest time, I tried to dig ACPI tabls to solve this problem.
-> But I didn't splite the code in 'compressed/' and ACPI code, so the patch
-> is hard to follow so refused by community.
-> Somebody suggest to add a kernel parameter to specify the
-> immovable memory so that limit kaslr in these regions. Then I make
-> a new patchset. After several versions, Ingo gave a suggestion:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
-> Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
-> tables, so that the kaslr can get necessary memory information in
-> ACPI tables.
-> I think ACPI code is an independent part, so copy the codes
-> and functions to 'compressed/' directory, so that kaslr won't
-> influence the initialization of ACPI.
+> As Jan said in his reply, converting get_user_pages (and put_user_page) to 
+> work with a new data type that wraps struct pages, would solve it, but that's
+> an awfully large change. Still...given how much of a mess this can turn into 
+> if it's wrong, I wonder if it's worth it--maybe? 
 
-... and we just picked up
+I'm certainly not opposed to looking into it. But after looking into this
+for a while it is not clear to me how to convert e.g. fs/direct-io.c or
+fs/iomap.c. They pass the reference from gup() via
+bio->bi_io_vec[]->bv_page and then release it after IO completion.
+Propagating the new type to ->bv_page is not good as lower layer do not
+really care how the page is pinned in memory. But we do need to somehow
+pass the information to the IO completion functions in a robust manner.
 
-https://lkml.kernel.org/r/20181001140843.26137-1-msys.mizuma@gmail.com
+Hmm, what about the following:
 
-and without having looked at the rest of your stuff, if people accept
-your solution, we don't need the silly parameter anymore, right?
+1) Make gup() return new type - struct user_page *? In practice that would
+be just a struct page pointer with 0 bit set so that people are forced to
+use proper helpers and not just force types (and the setting of bit 0 and
+masking back would be hidden behind CONFIG_DEBUG_USER_PAGE_REFERENCES for
+performance reasons). Also the transition would have to be gradual so we'd
+have to name the function differently and use it from converted code.
 
-Which means, we should not rush the whole thing yet until the whole
-KASLR vs movable memory gets solved properly.
+2) Provide helper bio_add_user_page() that will take user_page, convert it
+to struct page, add it to the bio, and flag the bio as having pages with
+user references. That code would also make sure the bio is consistent in
+having only user-referenced pages in that case. IO completion (like
+bio_check_pages_dirty(), bio_release_pages() etc.) will check the flag and
+use approprite release function.
 
-Ingo, Thomas?
+3) I have noticed fs/direct-io.c may submit zero page for IO when it needs
+to clear stuff so we'll probably need a helper function to acquire 'user pin'
+reference given a page pointer so that that code can be kept reasonably
+simple and pass user_page references all around.
 
+So this way we could maintain reasonable confidence that refcounts didn't
+get mixed up. Thoughts?
+
+								Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
