@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C060FC00449
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FDAC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90E73214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90E73214FE
+	by mail.kernel.org (Postfix) with ESMTP id A5E13214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:27:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E13214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeJJOsc (ORCPT
+        id S1727486AbeJJOse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:48:32 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16354 "EHLO mga14.intel.com"
+        Wed, 10 Oct 2018 10:48:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:16356 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbeJJOsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:48:32 -0400
+        id S1727197AbeJJOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:48:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 00:27:41 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 00:27:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,363,1534834800"; 
-   d="scan'208";a="93870228"
+   d="scan'208";a="93870240"
 Received: from yhuang-mobile.sh.intel.com ([10.239.198.87])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Oct 2018 00:19:30 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 10 Oct 2018 00:19:45 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V6 13/21] swap: Support PMD swap mapping in madvise_free()
-Date:   Wed, 10 Oct 2018 15:19:16 +0800
-Message-Id: <20181010071924.18767-14-ying.huang@intel.com>
+Subject: [PATCH -V6 18/21] swap: Support PMD swap mapping in mincore()
+Date:   Wed, 10 Oct 2018 15:19:21 +0800
+Message-Id: <20181010071924.18767-19-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181010071924.18767-1-ying.huang@intel.com>
 References: <20181010071924.18767-1-ying.huang@intel.com>
@@ -57,12 +57,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When madvise_free() found a PMD swap mapping, if only part of the huge
-swap cluster is operated on, the PMD swap mapping will be split and
-fallback to PTE swap mapping processing.  Otherwise, if all huge swap
-cluster is operated on, free_swap_and_cache() will be called to
-decrease the PMD swap mapping count and probably free the swap space
-and the THP in swap cache too.
+During mincore(), for PMD swap mapping, swap cache will be looked up.
+If the resulting page isn't compound page, the PMD swap mapping will
+be split and fallback to PTE swap mapping processing.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -78,105 +75,99 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/huge_memory.c | 54 +++++++++++++++++++++++++++++++++++++++---------------
- mm/madvise.c     |  2 +-
- 2 files changed, 40 insertions(+), 16 deletions(-)
+ mm/mincore.c | 37 +++++++++++++++++++++++++++++++------
+ 1 file changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0ec71f907fa5..60b4105734b1 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1891,6 +1891,15 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- }
+diff --git a/mm/mincore.c b/mm/mincore.c
+index aa0e542569f9..1d861fac82ee 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -48,7 +48,8 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
+  * and is up to date; i.e. that no page-in operation would be required
+  * at this time if an application were to map and access this page.
+  */
+-static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
++static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff,
++				  bool *compound)
+ {
+ 	unsigned char present = 0;
+ 	struct page *page;
+@@ -86,6 +87,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
  #endif
- 
-+static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
-+{
-+	pgtable_t pgtable;
-+
-+	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
-+	pte_free(mm, pgtable);
-+	mm_dec_nr_ptes(mm);
-+}
-+
- /*
-  * Return true if we do MADV_FREE successfully on entire pmd page.
-  * Otherwise, return false.
-@@ -1911,15 +1920,39 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		goto out_unlocked;
- 
- 	orig_pmd = *pmd;
--	if (is_huge_zero_pmd(orig_pmd))
--		goto out;
--
- 	if (unlikely(!pmd_present(orig_pmd))) {
--		VM_BUG_ON(thp_migration_supported() &&
--				  !is_pmd_migration_entry(orig_pmd));
--		goto out;
-+		swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
-+
-+		if (is_migration_entry(entry)) {
-+			VM_BUG_ON(!thp_migration_supported());
-+			goto out;
-+		} else if (IS_ENABLED(CONFIG_THP_SWAP) &&
-+			   !non_swap_entry(entry)) {
-+			/*
-+			 * If part of THP is discarded, split the PMD
-+			 * swap mapping and operate on the PTEs
-+			 */
-+			if (next - addr != HPAGE_PMD_SIZE) {
-+				unsigned long haddr = addr & HPAGE_PMD_MASK;
-+
-+				__split_huge_swap_pmd(vma, haddr, pmd);
-+				goto out;
-+			}
-+			free_swap_and_cache(entry, HPAGE_PMD_NR);
-+			pmd_clear(pmd);
-+			zap_deposited_table(mm, pmd);
-+			if (current->mm == mm)
-+				sync_mm_rss(mm);
-+			add_mm_counter(mm, MM_SWAPENTS, -HPAGE_PMD_NR);
-+			ret = true;
-+			goto out;
-+		} else
-+			VM_BUG_ON(1);
+ 	if (page) {
+ 		present = PageUptodate(page);
++		if (compound)
++			*compound = PageCompound(page);
+ 		put_page(page);
  	}
  
-+	if (is_huge_zero_pmd(orig_pmd))
-+		goto out;
+@@ -103,7 +106,8 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
+ 
+ 		pgoff = linear_page_index(vma, addr);
+ 		for (i = 0; i < nr; i++, pgoff++)
+-			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
++			vec[i] = mincore_page(vma->vm_file->f_mapping,
++					      pgoff, NULL);
+ 	} else {
+ 		for (i = 0; i < nr; i++)
+ 			vec[i] = 0;
+@@ -127,14 +131,36 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 	pte_t *ptep;
+ 	unsigned char *vec = walk->private;
+ 	int nr = (end - addr) >> PAGE_SHIFT;
++	swp_entry_t entry;
+ 
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+-		memset(vec, 1, nr);
++		unsigned char val = 1;
++		bool compound;
 +
- 	page = pmd_page(orig_pmd);
- 	/*
- 	 * If other processes are mapping this page, we couldn't discard
-@@ -1965,15 +1998,6 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	return ret;
- }
++		if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(*pmd)) {
++			entry = pmd_to_swp_entry(*pmd);
++			if (!non_swap_entry(entry)) {
++				val = mincore_page(swap_address_space(entry),
++						   swp_offset(entry),
++						   &compound);
++				/*
++				 * The huge swap cluster has been
++				 * split under us
++				 */
++				if (!compound) {
++					__split_huge_swap_pmd(vma, addr, pmd);
++					spin_unlock(ptl);
++					goto fallback;
++				}
++			}
++		}
++		memset(vec, val, nr);
+ 		spin_unlock(ptl);
+ 		goto out;
+ 	}
  
--static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
--{
--	pgtable_t pgtable;
++fallback:
+ 	if (pmd_trans_unstable(pmd)) {
+ 		__mincore_unmapped_range(addr, end, vma, vec);
+ 		goto out;
+@@ -150,8 +176,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		else if (pte_present(pte))
+ 			*vec = 1;
+ 		else { /* pte is a swap entry */
+-			swp_entry_t entry = pte_to_swp_entry(pte);
 -
--	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
--	pte_free(mm, pgtable);
--	mm_dec_nr_ptes(mm);
--}
--
- int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 pmd_t *pmd, unsigned long addr)
- {
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 50282ba862e2..20101ff125d0 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -321,7 +321,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
- 	unsigned long next;
- 
- 	next = pmd_addr_end(addr, end);
--	if (pmd_trans_huge(*pmd))
-+	if (pmd_trans_huge(*pmd) || is_swap_pmd(*pmd))
- 		if (madvise_free_huge_pmd(tlb, vma, pmd, addr, next))
- 			goto next;
- 
++			entry = pte_to_swp_entry(pte);
+ 			if (non_swap_entry(entry)) {
+ 				/*
+ 				 * migration or hwpoison entries are always
+@@ -161,7 +186,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 			} else {
+ #ifdef CONFIG_SWAP
+ 				*vec = mincore_page(swap_address_space(entry),
+-						    swp_offset(entry));
++						    swp_offset(entry), NULL);
+ #else
+ 				WARN_ON(1);
+ 				*vec = 1;
 -- 
 2.16.4
 
