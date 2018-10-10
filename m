@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760CAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D5BC46463
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF82B2150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA132150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 23:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxfH8Y44"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF82B2150C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dd51A7OQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA132150C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeJKGhz (ORCPT
+        id S1727689AbeJKGiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:37:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36068 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 02:38:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727500AbeJKGhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:37:54 -0400
+        id S1727503AbeJKGiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:38:01 -0400
 Received: from lerouge.suse.de (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94AB020870;
-        Wed, 10 Oct 2018 23:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55A882087A;
+        Wed, 10 Oct 2018 23:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539213210;
-        bh=hUBxrIGaP7u8TLZxVMCaERuxDOMFk/fR9f2XHLUKEP0=;
+        s=default; t=1539213217;
+        bh=bRmKXsJROfFjbj5rASkB4bzGImi84agKZ7uT4FOslf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PxfH8Y44RdDFF4I6W41cwK6ysP/cyvDTs4R9BtwFOXqz3ny8Wf7fM1/tmnigiHOS0
-         HvBRbnXzzUkERZw3QrC/KPs/DiFF4fZn7lOFhqRaVasKeXAJj7IF7EMqPlBkB9+N9N
-         CmNpIZu43OW6kubSdkMb/OlAsUjiDaskT9zeQf64=
+        b=Dd51A7OQG43ywCnI6v2ahLOPgaH+t86sThDvNgM0u5eo/PNxWIVoz9HAZm1auG9vP
+         LB3p1SmU6lGk1qTLX0ktx01avyWqHxLZE1WwPMVeomLAvE6lO1+PefVrG3ixwmVVS5
+         swwikV85EcQEAw1gfme7tlqacKbHVqZNsIuMmCIU=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -49,9 +49,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [RFC PATCH 19/30] diva: Prepare diva_os_enter_spin_lock() for handling softirq mask
-Date:   Thu, 11 Oct 2018 01:12:06 +0200
-Message-Id: <1539213137-13953-20-git-send-email-frederic@kernel.org>
+Subject: [RFC PATCH 21/30] locking: Prepare spin_lock_bh() for handling softirq mask
+Date:   Thu, 11 Oct 2018 01:12:08 +0200
+Message-Id: <1539213137-13953-22-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539213137-13953-1-git-send-email-frederic@kernel.org>
 References: <1539213137-13953-1-git-send-email-frederic@kernel.org>
@@ -60,42 +60,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This pair of function is implemented on top of spin_lock_bh() that
-is going to handle a softirq mask in order to apply finegrained vector
-disablement. The lock function is going to return the previous vectors
-enabled mask prior to the last call to local_bh_disable(), following a
-similar model to that of local_irq_save/restore. Subsequent calls to
-local_bh_disable() and friends can then stack up:
+This pair of function is implemented on top of __local_bh_disable_ip()
+that is going to handle a softirq mask in order to apply finegrained
+vector disablement. The lock function is going to return the previous
+vectors enabled mask prior to the last call to local_bh_disable(),
+following a similar model to that of local_irq_save/restore. Subsequent
+calls to local_bh_disable() and friends can then stack up:
 
 	bh = local_bh_disable(vec_mask);
-		bh2 = diva_os_enter_spin_lock() {
-			return spin_lock_bh(...)
-		}
+		bh2 = spin_lock_bh(...);
 		...
-		diva_os_leave_spin_lock(bh2) {
-			spin_unlock_bh(bh2, ...);
-		}
+		spin_unlock_bh(..., bh2);
 	local_bh_enable(bh);
 
-To prepare for that, make diva_os_enter_spin_lock() able to return a
-saved vector enabled mask and pass it back to diva_os_leave_spin_lock().
-We'll plug it to spin_lock_bh() in a subsequent patch.
+To prepare for that, make spin_lock_bh() able to return a saved vector
+enabled mask and pass it back to spin_unlock_bh(). We'll plug it to
+__local_bh_disable_ip() in a subsequent patch.
 
 Thanks to coccinelle that helped a lot with scripts such as the
 following:
 
 	@spin exists@
 	identifier func;
-	expression e, e1, e2;
+	expression e;
 	@@
 	func(...) {
 	+ unsigned int bh;
 	...
-	- diva_os_enter_spin_lock(e, e1, e2);
-	+ bh = diva_os_enter_spin_lock(e, e1, e2);
+	- spin_lock_bh(e);
+	+ bh = spin_lock_bh(e, SOFTIRQ_ALL_MASK);
 	...
-	- diva_os_leave_spin_lock(e, e1, e2);
-	+ diva_os_leave_spin_lock(e, e1, e2, bh);
+	- spin_unlock_bh(e);
+	+ spin_unlock_bh(e, bh);
+	...
+	}
+
+	@raw_spin exists@
+	identifier func;
+	expression e;
+	@@
+	func(...) {
+	+ unsigned int bh;
+	...
+	- raw_spin_lock_bh(e);
+	+ bh = raw_spin_lock_bh(e, SOFTIRQ_ALL_MASK);
+	...
+	- raw_spin_unlock_bh(e);
+	+ raw_spin_unlock_bh(e, bh);
 	...
 	}
 
@@ -109,1852 +120,2259 @@ Cc: David S. Miller <davem@davemloft.net>
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- drivers/isdn/hardware/eicon/capifunc.c |  53 ++++++++------
- drivers/isdn/hardware/eicon/dadapter.c |  39 ++++++----
- drivers/isdn/hardware/eicon/debug.c    | 129 +++++++++++++++++++--------------
- drivers/isdn/hardware/eicon/debug_if.h |   6 +-
- drivers/isdn/hardware/eicon/diva.c     |  45 +++++++-----
- drivers/isdn/hardware/eicon/idifunc.c  |  22 +++---
- drivers/isdn/hardware/eicon/io.c       |  88 ++++++++++++----------
- drivers/isdn/hardware/eicon/mntfunc.c  |  13 ++--
- drivers/isdn/hardware/eicon/platform.h |   9 ++-
- drivers/isdn/hardware/eicon/um_idi.c   | 104 ++++++++++++++++----------
- 10 files changed, 304 insertions(+), 204 deletions(-)
+ arch/s390/mm/pgalloc.c                             |  24 +-
+ arch/xtensa/platforms/iss/console.c                |  10 +-
+ arch/xtensa/platforms/iss/network.c                |  28 +-
+ block/genhd.c                                      |  15 +-
+ crypto/ansi_cprng.c                                |  10 +-
+ crypto/mcryptd.c                                   |   5 +-
+ drivers/block/rsxx/core.c                          |   5 +-
+ drivers/block/rsxx/cregs.c                         |  34 ++-
+ drivers/block/rsxx/dma.c                           |  36 +--
+ drivers/block/umem.c                               |  10 +-
+ drivers/connector/cn_queue.c                       |  15 +-
+ drivers/connector/connector.c                      |  15 +-
+ drivers/crypto/atmel-aes.c                         |   5 +-
+ drivers/crypto/atmel-sha.c                         |   5 +-
+ drivers/crypto/atmel-tdes.c                        |   5 +-
+ drivers/crypto/axis/artpec6_crypto.c               |  10 +-
+ drivers/crypto/caam/jr.c                           |   7 +-
+ drivers/crypto/cavium/cpt/cptvf_reqmanager.c       |  22 +-
+ drivers/crypto/cavium/nitrox/nitrox_reqmgr.c       |  25 +-
+ drivers/crypto/ccree/cc_request_mgr.c              |  31 ++-
+ drivers/crypto/chelsio/chtls/chtls_cm.c            |  11 +-
+ drivers/crypto/chelsio/chtls/chtls_hw.c            |  10 +-
+ drivers/crypto/chelsio/chtls/chtls_main.c          |   9 +-
+ drivers/crypto/inside-secure/safexcel.c            |  14 +-
+ drivers/crypto/inside-secure/safexcel_cipher.c     |  15 +-
+ drivers/crypto/inside-secure/safexcel_hash.c       |  15 +-
+ drivers/crypto/marvell/cesa.c                      |  15 +-
+ drivers/crypto/marvell/tdma.c                      |  13 +-
+ drivers/crypto/mediatek/mtk-aes.c                  |   5 +-
+ drivers/crypto/mediatek/mtk-sha.c                  |   5 +-
+ drivers/crypto/mxc-scc.c                           |  10 +-
+ drivers/crypto/nx/nx-842.c                         |  10 +-
+ drivers/crypto/omap-aes.c                          |  15 +-
+ drivers/crypto/omap-des.c                          |   5 +-
+ drivers/crypto/omap-sham.c                         |  10 +-
+ drivers/crypto/qat/qat_common/adf_transport.c      |  15 +-
+ drivers/crypto/qce/core.c                          |   5 +-
+ drivers/crypto/stm32/stm32-cryp.c                  |   5 +-
+ drivers/crypto/stm32/stm32-hash.c                  |   5 +-
+ drivers/crypto/stm32/stm32_crc32.c                 |   5 +-
+ drivers/crypto/sunxi-ss/sun4i-ss-hash.c            |   5 +-
+ drivers/crypto/sunxi-ss/sun4i-ss-prng.c            |   5 +-
+ drivers/dma/at_xdmac.c                             |   5 +-
+ drivers/dma/dmaengine.c                            |   5 +-
+ drivers/dma/fsldma.c                               |  44 ++--
+ drivers/dma/ioat/dma.c                             |  59 +++--
+ drivers/dma/ioat/dma.h                             |   1 +
+ drivers/dma/ioat/init.c                            |  28 +-
+ drivers/dma/iop-adma.c                             |  60 +++--
+ drivers/dma/mv_xor.c                               |  32 ++-
+ drivers/dma/mv_xor_v2.c                            |  24 +-
+ drivers/dma/ppc4xx/adma.c                          |  74 +++---
+ drivers/dma/timb_dma.c                             |  35 ++-
+ drivers/dma/txx9dmac.c                             |  50 ++--
+ drivers/dma/xgene-dma.c                            |  20 +-
+ drivers/dma/xilinx/zynqmp_dma.c                    |  32 ++-
+ drivers/gpu/drm/drm_lock.c                         |  35 +--
+ drivers/gpu/drm/i915/gvt/debugfs.c                 |   5 +-
+ drivers/gpu/drm/i915/gvt/sched_policy.c            |   5 +-
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c              |   9 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_irq.c                |  10 +-
+ drivers/hsi/clients/cmt_speech.c                   |  61 +++--
+ drivers/hsi/clients/ssi_protocol.c                 | 135 +++++-----
+ drivers/hsi/controllers/omap_ssi_port.c            |  60 +++--
+ drivers/infiniband/core/addr.c                     |  29 ++-
+ drivers/infiniband/hw/bnxt_re/qplib_fp.c           |  10 +-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c         |   7 +-
+ drivers/infiniband/hw/mlx4/main.c                  |  35 ++-
+ drivers/infiniband/sw/rxe/rxe_mcast.c              |  33 +--
+ drivers/infiniband/sw/rxe/rxe_mmap.c               |  19 +-
+ drivers/infiniband/sw/rxe/rxe_net.c                |  24 +-
+ drivers/infiniband/sw/rxe/rxe_queue.c              |   5 +-
+ drivers/infiniband/sw/rxe/rxe_recv.c               |  15 +-
+ drivers/infiniband/sw/rxe/rxe_resp.c               |  14 +-
+ drivers/infiniband/ulp/isert/ib_isert.c            |  52 ++--
+ drivers/isdn/capi/capi.c                           |  46 ++--
+ drivers/isdn/hardware/eicon/platform.h             |   4 +-
+ drivers/isdn/i4l/isdn_concap.c                     |   2 +-
+ drivers/isdn/i4l/isdn_net.c                        |  13 +-
+ drivers/isdn/i4l/isdn_ppp.c                        |   3 +-
+ drivers/leds/trigger/ledtrig-netdev.c              |  15 +-
+ drivers/media/pci/ttpci/av7110_av.c                |  10 +-
+ drivers/misc/sgi-xp/xpnet.c                        |   9 +-
+ drivers/misc/vmw_vmci/vmci_doorbell.c              |  15 +-
+ drivers/mmc/host/atmel-mci.c                       |  24 +-
+ drivers/mmc/host/dw_mmc.c                          |  15 +-
+ drivers/mmc/host/wbsd.c                            |  22 +-
+ drivers/net/appletalk/ipddp.c                      |  19 +-
+ drivers/net/bonding/bond_3ad.c                     |  30 ++-
+ drivers/net/bonding/bond_alb.c                     |  60 +++--
+ drivers/net/bonding/bond_debugfs.c                 |   5 +-
+ drivers/net/caif/caif_hsi.c                        |  51 ++--
+ drivers/net/can/slcan.c                            |  24 +-
+ drivers/net/can/softing/softing_main.c             |  15 +-
+ drivers/net/eql.c                                  |  25 +-
+ drivers/net/ethernet/3com/3c59x.c                  |  10 +-
+ drivers/net/ethernet/alacritech/slicoss.c          |  30 ++-
+ drivers/net/ethernet/altera/altera_tse_main.c      |   5 +-
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c       |  10 +-
+ drivers/net/ethernet/broadcom/bnx2.c               | 107 ++++----
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c   |  24 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c     |  39 +--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  12 +-
+ drivers/net/ethernet/broadcom/cnic.c               |  12 +-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c     |   5 +-
+ drivers/net/ethernet/broadcom/tg3.c                |  67 ++---
+ drivers/net/ethernet/calxeda/xgmac.c               |   5 +-
+ drivers/net/ethernet/cavium/liquidio/lio_main.c    |  10 +-
+ drivers/net/ethernet/cavium/liquidio/lio_vf_main.c |  10 +-
+ .../net/ethernet/cavium/liquidio/octeon_device.c   |  32 ++-
+ drivers/net/ethernet/cavium/liquidio/octeon_droq.c |  12 +-
+ drivers/net/ethernet/cavium/liquidio/octeon_nic.c  |  11 +-
+ .../net/ethernet/cavium/liquidio/request_manager.c |  22 +-
+ .../ethernet/cavium/liquidio/response_manager.c    |  11 +-
+ drivers/net/ethernet/cavium/thunder/nicvf_main.c   |   5 +-
+ drivers/net/ethernet/chelsio/cxgb/vsc7326.c        |  10 +-
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c |  34 ++-
+ drivers/net/ethernet/chelsio/cxgb3/l2t.c           |  29 ++-
+ drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c      |   5 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c  |  17 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c    |  37 +--
+ .../net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c   |   5 +-
+ drivers/net/ethernet/chelsio/cxgb4/l2t.c           |  23 +-
+ drivers/net/ethernet/chelsio/cxgb4/sge.c           |   5 +-
+ drivers/net/ethernet/chelsio/cxgb4/smt.c           |   5 +-
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c         |  15 +-
+ drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c |  23 +-
+ drivers/net/ethernet/cisco/enic/enic_api.c         |   5 +-
+ drivers/net/ethernet/cisco/enic/enic_clsf.c        |  25 +-
+ drivers/net/ethernet/cisco/enic/enic_dev.c         |  75 +++---
+ drivers/net/ethernet/cisco/enic/enic_dev.h         |   2 +-
+ drivers/net/ethernet/cisco/enic/enic_ethtool.c     |  18 +-
+ drivers/net/ethernet/cisco/enic/enic_main.c        |  35 ++-
+ drivers/net/ethernet/emulex/benet/be_cmds.c        |  10 +-
+ drivers/net/ethernet/freescale/gianfar.c           |   5 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c |  30 ++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |   7 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |   7 +-
+ drivers/net/ethernet/huawei/hinic/hinic_hw_cmdq.c  |   9 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c        |  49 ++--
+ drivers/net/ethernet/intel/i40e/i40e_ptp.c         |  17 +-
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |  38 +--
+ drivers/net/ethernet/intel/i40evf/i40evf_main.c    |  68 +++--
+ .../net/ethernet/intel/i40evf/i40evf_virtchnl.c    |  36 +--
+ drivers/net/ethernet/intel/igbvf/ethtool.c         |   5 +-
+ drivers/net/ethernet/intel/igbvf/netdev.c          |  51 ++--
+ drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c      |  10 +-
+ drivers/net/ethernet/intel/ixgbevf/ethtool.c       |   5 +-
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c  |  55 ++--
+ drivers/net/ethernet/jme.c                         |  52 ++--
+ drivers/net/ethernet/marvell/mv643xx_eth.c         |   5 +-
+ drivers/net/ethernet/marvell/skge.c                |  29 ++-
+ drivers/net/ethernet/marvell/sky2.c                |  34 ++-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c        |  10 +-
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c    |   5 +-
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c     |  25 +-
+ drivers/net/ethernet/mellanox/mlx4/en_port.c       |   5 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c  |  24 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c   |  16 +-
+ .../ethernet/mellanox/mlx5/core/ipoib/ipoib_vlan.c |  10 +-
+ .../net/ethernet/mellanox/mlx5/core/lib/vxlan.c    |  15 +-
+ drivers/net/ethernet/mellanox/mlxsw/core.c         |  12 +-
+ drivers/net/ethernet/mellanox/mlxsw/pci.c          |   5 +-
+ drivers/net/ethernet/microchip/lan743x_ptp.c       |  30 ++-
+ drivers/net/ethernet/netronome/nfp/flower/cmsg.c   |  14 +-
+ drivers/net/ethernet/netronome/nfp/flower/main.c   |  14 +-
+ .../net/ethernet/netronome/nfp/flower/offload.c    |   5 +-
+ .../ethernet/netronome/nfp/flower/tunnel_conf.c    |  21 +-
+ drivers/net/ethernet/netronome/nfp/nfp_net.h       |   2 +-
+ .../net/ethernet/netronome/nfp/nfp_net_common.c    |  35 ++-
+ drivers/net/ethernet/nvidia/forcedeth.c            |  10 +-
+ .../net/ethernet/qlogic/netxen/netxen_nic_init.c   |   5 +-
+ drivers/net/ethernet/qlogic/qed/qed_dev.c          |   7 +-
+ drivers/net/ethernet/qlogic/qed/qed_fcoe.c         |  19 +-
+ drivers/net/ethernet/qlogic/qed/qed_hw.c           |  12 +-
+ drivers/net/ethernet/qlogic/qed/qed_iscsi.c        |  19 +-
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c        |  91 ++++---
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c          |  10 +-
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c          |  26 +-
+ drivers/net/ethernet/qlogic/qed/qed_rdma.c         |  64 +++--
+ drivers/net/ethernet/qlogic/qed/qed_roce.c         |  16 +-
+ drivers/net/ethernet/qlogic/qed/qed_spq.c          |  26 +-
+ drivers/net/ethernet/qlogic/qede/qede_filter.c     |  25 +-
+ drivers/net/ethernet/qlogic/qede/qede_ptp.c        |  42 +--
+ .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c    |  22 +-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c     |  15 +-
+ .../ethernet/qlogic/qlcnic/qlcnic_sriov_common.c   |  20 +-
+ .../net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c   |   5 +-
+ drivers/net/ethernet/qualcomm/qca_uart.c           |  14 +-
+ drivers/net/ethernet/realtek/8139too.c             |   5 +-
+ drivers/net/ethernet/sfc/ef10.c                    |  15 +-
+ drivers/net/ethernet/sfc/efx.c                     |  15 +-
+ drivers/net/ethernet/sfc/ethtool.c                 |   5 +-
+ drivers/net/ethernet/sfc/falcon/efx.c              |  15 +-
+ drivers/net/ethernet/sfc/falcon/ethtool.c          |   5 +-
+ drivers/net/ethernet/sfc/falcon/falcon.c           |   9 +-
+ drivers/net/ethernet/sfc/falcon/farch.c            |  42 +--
+ drivers/net/ethernet/sfc/farch.c                   |   5 +-
+ drivers/net/ethernet/sfc/mcdi.c                    |  34 ++-
+ drivers/net/ethernet/sfc/ptp.c                     |  22 +-
+ drivers/net/ethernet/sfc/rx.c                      |   5 +-
+ drivers/net/ethernet/silan/sc92031.c               |  60 +++--
+ drivers/net/ethernet/ti/netcp_ethss.c              |  10 +-
+ drivers/net/ethernet/toshiba/tc35815.c             |   5 +-
+ drivers/net/ethernet/via/via-rhine.c               |  25 +-
+ drivers/net/hamradio/6pack.c                       |  15 +-
+ drivers/net/hamradio/mkiss.c                       |  30 ++-
+ drivers/net/ipvlan/ipvlan_core.c                   |   5 +-
+ drivers/net/ipvlan/ipvlan_main.c                   |  22 +-
+ drivers/net/macsec.c                               |  25 +-
+ drivers/net/macvlan.c                              |   5 +-
+ drivers/net/ppp/ppp_async.c                        |  12 +-
+ drivers/net/ppp/ppp_generic.c                      |  28 +-
+ drivers/net/ppp/ppp_synctty.c                      |   5 +-
+ drivers/net/slip/slip.c                            |  53 ++--
+ drivers/net/tun.c                                  |  22 +-
+ drivers/net/usb/cdc_mbim.c                         |   5 +-
+ drivers/net/usb/cdc_ncm.c                          |  24 +-
+ drivers/net/usb/r8152.c                            |   5 +-
+ drivers/net/vxlan.c                                |  32 ++-
+ drivers/net/wan/x25_asy.c                          |  10 +-
+ drivers/net/wireless/ath/ath10k/ce.c               |  49 ++--
+ drivers/net/wireless/ath/ath10k/coredump.c         |   5 +-
+ drivers/net/wireless/ath/ath10k/debug.c            |  47 ++--
+ drivers/net/wireless/ath/ath10k/debugfs_sta.c      |  15 +-
+ drivers/net/wireless/ath/ath10k/htc.c              |  23 +-
+ drivers/net/wireless/ath/ath10k/htt_rx.c           |  79 +++---
+ drivers/net/wireless/ath/ath10k/htt_tx.c           |  25 +-
+ drivers/net/wireless/ath/ath10k/hw.c               |   9 +-
+ drivers/net/wireless/ath/ath10k/mac.c              | 284 ++++++++++++---------
+ drivers/net/wireless/ath/ath10k/p2p.c              |   5 +-
+ drivers/net/wireless/ath/ath10k/pci.c              |  42 +--
+ drivers/net/wireless/ath/ath10k/sdio.c             |  27 +-
+ drivers/net/wireless/ath/ath10k/snoc.c             |  17 +-
+ drivers/net/wireless/ath/ath10k/testmode.c         |  15 +-
+ drivers/net/wireless/ath/ath10k/thermal.c          |  10 +-
+ drivers/net/wireless/ath/ath10k/txrx.c             |  24 +-
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c          |   5 +-
+ drivers/net/wireless/ath/ath10k/wmi.c              |  83 +++---
+ drivers/net/wireless/ath/ath5k/ani.c               |   5 +-
+ drivers/net/wireless/ath/ath5k/base.c              |  34 ++-
+ drivers/net/wireless/ath/ath5k/debug.c             |  10 +-
+ drivers/net/wireless/ath/ath5k/mac80211-ops.c      |  10 +-
+ drivers/net/wireless/ath/ath6kl/cfg80211.c         |  29 ++-
+ drivers/net/wireless/ath/ath6kl/hif.c              |  15 +-
+ drivers/net/wireless/ath/ath6kl/htc_mbox.c         | 107 ++++----
+ drivers/net/wireless/ath/ath6kl/htc_pipe.c         |  89 ++++---
+ drivers/net/wireless/ath/ath6kl/init.c             |   7 +-
+ drivers/net/wireless/ath/ath6kl/main.c             |  49 ++--
+ drivers/net/wireless/ath/ath6kl/sdio.c             |  51 ++--
+ drivers/net/wireless/ath/ath6kl/txrx.c             | 124 +++++----
+ drivers/net/wireless/ath/ath6kl/wmi.c              |  56 ++--
+ drivers/net/wireless/ath/ath9k/ath9k.h             |   2 +-
+ drivers/net/wireless/ath/ath9k/beacon.c            |   5 +-
+ drivers/net/wireless/ath/ath9k/channel.c           |  68 ++---
+ drivers/net/wireless/ath/ath9k/dynack.c            |  12 +-
+ drivers/net/wireless/ath/ath9k/gpio.c              |  10 +-
+ drivers/net/wireless/ath/ath9k/htc_drv_beacon.c    |  33 ++-
+ drivers/net/wireless/ath/ath9k/htc_drv_debug.c     |  10 +-
+ drivers/net/wireless/ath/ath9k/htc_drv_main.c      |  25 +-
+ drivers/net/wireless/ath/ath9k/htc_drv_txrx.c      |  50 ++--
+ drivers/net/wireless/ath/ath9k/main.c              |  44 ++--
+ drivers/net/wireless/ath/ath9k/recv.c              |  17 +-
+ drivers/net/wireless/ath/ath9k/wmi.c               |   7 +-
+ drivers/net/wireless/ath/ath9k/wow.c               |  10 +-
+ drivers/net/wireless/ath/ath9k/xmit.c              |  38 +--
+ drivers/net/wireless/ath/carl9170/debug.c          |  20 +-
+ drivers/net/wireless/ath/carl9170/main.c           |  45 ++--
+ drivers/net/wireless/ath/carl9170/rx.c             |   5 +-
+ drivers/net/wireless/ath/carl9170/tx.c             |  80 +++---
+ drivers/net/wireless/ath/carl9170/usb.c            |  12 +-
+ drivers/net/wireless/ath/dfs_pri_detector.c        |  30 ++-
+ drivers/net/wireless/ath/wcn36xx/main.c            |  13 +-
+ drivers/net/wireless/ath/wil6210/debugfs.c         |   5 +-
+ drivers/net/wireless/ath/wil6210/main.c            |  10 +-
+ drivers/net/wireless/ath/wil6210/rx_reorder.c      |   5 +-
+ drivers/net/wireless/ath/wil6210/txrx.c            |  28 +-
+ drivers/net/wireless/ath/wil6210/txrx_edma.c       |  10 +-
+ drivers/net/wireless/ath/wil6210/wmi.c             |  15 +-
+ drivers/net/wireless/atmel/atmel.c                 |   7 +-
+ .../wireless/broadcom/brcm80211/brcmfmac/sdio.c    |  27 +-
+ .../wireless/broadcom/brcm80211/brcmsmac/debug.c   |   5 +-
+ .../broadcom/brcm80211/brcmsmac/mac80211_if.c      | 135 +++++-----
+ drivers/net/wireless/intel/iwlwifi/dvm/calib.c     |  16 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/debugfs.c   |  20 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c  |   5 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/main.c      |   5 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/sta.c       | 119 +++++----
+ drivers/net/wireless/intel/iwlwifi/dvm/tx.c        |  38 +--
+ drivers/net/wireless/intel/iwlwifi/fw/notif-wait.c |  10 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c   |   5 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |  51 ++--
+ drivers/net/wireless/intel/iwlwifi/mvm/ops.c       |  30 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c        |   5 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c      |  23 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c       | 145 ++++++-----
+ .../net/wireless/intel/iwlwifi/mvm/time-event.c    |  34 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c        |  10 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/utils.c     |  46 ++--
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c    |  15 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c  |  12 +-
+ drivers/net/wireless/intel/iwlwifi/pcie/tx.c       |  29 ++-
+ drivers/net/wireless/intersil/hostap/hostap_ap.c   | 145 ++++++-----
+ drivers/net/wireless/intersil/hostap/hostap_hw.c   |  20 +-
+ .../net/wireless/intersil/hostap/hostap_ioctl.c    |   9 +-
+ drivers/net/wireless/intersil/hostap/hostap_proc.c |   4 +-
+ .../net/wireless/intersil/orinoco/orinoco_usb.c    |   9 +-
+ drivers/net/wireless/mac80211_hwsim.c              |  53 ++--
+ drivers/net/wireless/marvell/mwl8k.c               |  21 +-
+ drivers/net/wireless/mediatek/mt76/agg-rx.c        |  15 +-
+ drivers/net/wireless/mediatek/mt76/dma.c           |  15 +-
+ drivers/net/wireless/mediatek/mt76/mac80211.c      |   5 +-
+ drivers/net/wireless/mediatek/mt76/mt76x0/mac.c    |  10 +-
+ drivers/net/wireless/mediatek/mt76/mt76x0/phy.c    |   5 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_dma.c    |   5 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_mac.c    |   5 +-
+ .../net/wireless/mediatek/mt76/mt76x2_mac_common.c |  10 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_tx.c     |   5 +-
+ drivers/net/wireless/mediatek/mt76/tx.c            |  45 ++--
+ drivers/net/wireless/mediatek/mt76/usb.c           |   5 +-
+ drivers/net/wireless/mediatek/mt7601u/mac.c        |  10 +-
+ drivers/net/wireless/mediatek/mt7601u/phy.c        |  14 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00dev.c     |  15 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00queue.c   |   5 +-
+ .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c       |   5 +-
+ drivers/net/wireless/realtek/rtlwifi/core.c        |  10 +-
+ drivers/net/wireless/realtek/rtlwifi/pci.c         |  17 +-
+ .../net/wireless/realtek/rtlwifi/rtl8188ee/dm.c    |  16 +-
+ .../net/wireless/realtek/rtlwifi/rtl8188ee/hw.c    |  22 +-
+ .../net/wireless/realtek/rtlwifi/rtl8192ee/dm.c    |  10 +-
+ .../net/wireless/realtek/rtlwifi/rtl8192ee/hw.c    |  22 +-
+ .../net/wireless/realtek/rtlwifi/rtl8723be/dm.c    |  10 +-
+ .../net/wireless/realtek/rtlwifi/rtl8723be/hw.c    |  22 +-
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/dm.c    |  10 +-
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/hw.c    |  20 +-
+ drivers/net/wireless/st/cw1200/debug.c             |   5 +-
+ drivers/net/wireless/st/cw1200/pm.c                |  10 +-
+ drivers/net/wireless/st/cw1200/queue.c             |  80 +++---
+ drivers/net/wireless/st/cw1200/sta.c               |  34 ++-
+ drivers/net/wireless/st/cw1200/txrx.c              |  77 +++---
+ drivers/net/wireless/st/cw1200/wsm.c               |   5 +-
+ drivers/net/xen-netfront.c                         |  15 +-
+ drivers/pcmcia/bcm63xx_pcmcia.c                    |  10 +-
+ drivers/rapidio/devices/tsi721_dma.c               |  32 ++-
+ drivers/rapidio/rio_cm.c                           |  92 ++++---
+ drivers/s390/block/dasd.c                          |  38 +--
+ drivers/s390/block/dasd_ioctl.c                    |   7 +-
+ drivers/s390/block/dasd_proc.c                     |   5 +-
+ drivers/s390/char/tty3270.c                        |  40 +--
+ drivers/s390/char/vmlogrdr.c                       |  17 +-
+ drivers/s390/crypto/ap_bus.c                       |  64 +++--
+ drivers/s390/crypto/ap_card.c                      |  25 +-
+ drivers/s390/crypto/ap_queue.c                     |  60 +++--
+ drivers/s390/crypto/pkey_api.c                     |  22 +-
+ drivers/s390/net/qeth_l2_main.c                    |  10 +-
+ drivers/s390/net/qeth_l3_main.c                    |  55 ++--
+ drivers/s390/net/qeth_l3_sys.c                     |  25 +-
+ drivers/s390/net/smsgiucv.c                        |  10 +-
+ drivers/s390/net/smsgiucv_app.c                    |   5 +-
+ drivers/s390/scsi/zfcp_fc.c                        |   5 +-
+ drivers/s390/scsi/zfcp_sysfs.c                     |   7 +-
+ drivers/scsi/be2iscsi/be_main.c                    |  51 ++--
+ drivers/scsi/bnx2fc/bnx2fc_els.c                   |  36 +--
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c                  |  58 +++--
+ drivers/scsi/bnx2fc/bnx2fc_hwi.c                   |  20 +-
+ drivers/scsi/bnx2fc/bnx2fc_io.c                    |  67 ++---
+ drivers/scsi/bnx2fc/bnx2fc_tgt.c                   |  21 +-
+ drivers/scsi/bnx2i/bnx2i.h                         |   2 +-
+ drivers/scsi/bnx2i/bnx2i_hwi.c                     |  12 +-
+ drivers/scsi/bnx2i/bnx2i_init.c                    |   5 +-
+ drivers/scsi/bnx2i/bnx2i_iscsi.c                   |  14 +-
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c                 |  27 +-
+ drivers/scsi/cxgbi/cxgb4i/cxgb4i.c                 |  58 +++--
+ drivers/scsi/cxgbi/libcxgbi.c                      |  61 +++--
+ drivers/scsi/fcoe/fcoe.c                           |  10 +-
+ drivers/scsi/fcoe/fcoe_ctlr.c                      |  20 +-
+ drivers/scsi/fcoe/fcoe_transport.c                 |  14 +-
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c           | 105 ++++----
+ drivers/scsi/iscsi_tcp.c                           |  26 +-
+ drivers/scsi/libfc/fc_exch.c                       | 123 +++++----
+ drivers/scsi/libfc/fc_fcp.c                        |  20 +-
+ drivers/scsi/libiscsi.c                            | 170 ++++++------
+ drivers/scsi/libiscsi_tcp.c                        |  10 +-
+ drivers/scsi/qedi/qedi_fw.c                        |  46 ++--
+ drivers/scsi/qedi/qedi_main.c                      |  27 +-
+ drivers/staging/fwserial/fwserial.c                | 167 +++++++-----
+ drivers/staging/mt7621-dma/mtk-hsdma.c             |  15 +-
+ drivers/staging/rtl8188eu/core/rtw_ap.c            |  69 ++---
+ drivers/staging/rtl8188eu/core/rtw_cmd.c           |  17 +-
+ drivers/staging/rtl8188eu/core/rtw_ioctl_set.c     |  32 ++-
+ drivers/staging/rtl8188eu/core/rtw_mlme.c          |  92 ++++---
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c      |  37 +--
+ drivers/staging/rtl8188eu/core/rtw_recv.c          |  38 +--
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c       |  40 +--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c          |  55 ++--
+ drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c     |  12 +-
+ drivers/staging/rtl8188eu/include/rtw_mlme.h       |   4 +-
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c     |  26 +-
+ drivers/staging/rtl8188eu/os_dep/xmit_linux.c      |  12 +-
+ drivers/staging/rtl8723bs/core/rtw_ap.c            |  65 +++--
+ drivers/staging/rtl8723bs/core/rtw_cmd.c           |  21 +-
+ drivers/staging/rtl8723bs/core/rtw_debug.c         |  12 +-
+ drivers/staging/rtl8723bs/core/rtw_ioctl_set.c     |  37 +--
+ drivers/staging/rtl8723bs/core/rtw_mlme.c          | 101 ++++----
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c      |  68 ++---
+ drivers/staging/rtl8723bs/core/rtw_recv.c          |  53 ++--
+ drivers/staging/rtl8723bs/core/rtw_sta_mgt.c       |  61 +++--
+ drivers/staging/rtl8723bs/core/rtw_wlan_util.c     |  50 ++--
+ drivers/staging/rtl8723bs/core/rtw_xmit.c          |  95 ++++---
+ drivers/staging/rtl8723bs/hal/hal_com.c            |   2 +-
+ drivers/staging/rtl8723bs/hal/hal_sdio.c           |   2 +-
+ drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c     |   2 +-
+ drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c     |  22 +-
+ drivers/staging/rtl8723bs/hal/sdio_ops.c           |   2 +-
+ drivers/staging/rtl8723bs/include/rtw_mlme.h       |   4 +-
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c  |  29 ++-
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c     |  44 ++--
+ drivers/staging/rtl8723bs/os_dep/mlme_linux.c      |   5 +-
+ drivers/staging/rtl8723bs/os_dep/xmit_linux.c      |   5 +-
+ drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c   |   5 +-
+ drivers/staging/rtlwifi/core.c                     |  10 +-
+ drivers/staging/rtlwifi/pci.c                      |  17 +-
+ drivers/staging/rtlwifi/rtl8822be/hw.c             |  22 +-
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c            |  41 +--
+ drivers/target/iscsi/cxgbit/cxgbit_main.c          |  17 +-
+ drivers/target/iscsi/cxgbit/cxgbit_target.c        |  31 ++-
+ drivers/target/iscsi/iscsi_target.c                | 221 +++++++++-------
+ drivers/target/iscsi/iscsi_target_configfs.c       |  19 +-
+ drivers/target/iscsi/iscsi_target_erl0.c           |  49 ++--
+ drivers/target/iscsi/iscsi_target_erl1.c           |  79 +++---
+ drivers/target/iscsi/iscsi_target_erl2.c           |  18 +-
+ drivers/target/iscsi/iscsi_target_login.c          |  68 ++---
+ drivers/target/iscsi/iscsi_target_nodeattrib.c     |   5 +-
+ drivers/target/iscsi/iscsi_target_stat.c           |  45 ++--
+ drivers/target/iscsi/iscsi_target_tmr.c            |  30 ++-
+ drivers/target/iscsi/iscsi_target_util.c           | 208 ++++++++-------
+ drivers/target/sbp/sbp_target.c                    | 141 +++++-----
+ drivers/target/target_core_tpg.c                   |  10 +-
+ drivers/target/target_core_transport.c             |   5 +-
+ drivers/target/target_core_user.c                  |  12 +-
+ drivers/tty/hvc/hvc_iucv.c                         |  40 +--
+ drivers/tty/moxa.c                                 |  21 +-
+ drivers/usb/serial/keyspan_pda.c                   |   7 +-
+ drivers/vhost/vsock.c                              |  45 ++--
+ fs/afs/internal.h                                  |   4 +-
+ fs/afs/rxrpc.c                                     |   5 +-
+ fs/fs-writeback.c                                  |  15 +-
+ fs/jffs2/README.Locking                            |   2 +-
+ fs/nfs/callback.c                                  |   7 +-
+ include/linux/dmaengine.h                          |  16 +-
+ include/linux/netdevice.h                          |  13 +-
+ include/linux/preempt.h                            |   2 +-
+ include/linux/ptr_ring.h                           |  30 ++-
+ include/linux/rhashtable.h                         |  17 +-
+ include/linux/seqlock.h                            |   8 +-
+ include/linux/spinlock.h                           |  23 +-
+ include/linux/spinlock_api_smp.h                   |  26 +-
+ include/linux/spinlock_api_up.h                    |  18 +-
+ include/linux/u64_stats_sync.h                     |   2 +-
+ include/linux/xarray.h                             |   2 +-
+ include/net/gen_stats.h                            |   1 +
+ include/net/netrom.h                               |   9 +-
+ include/net/pkt_cls.h                              |   6 +-
+ include/net/request_sock.h                         |   5 +-
+ include/net/sch_generic.h                          |  19 +-
+ include/net/sock.h                                 |   2 +-
+ include/net/tcp.h                                  |   3 +-
+ include/net/udp.h                                  |   1 +
+ include/target/iscsi/iscsi_target_core.h           |   2 +-
+ kernel/bpf/btf.c                                   |   5 +-
+ kernel/bpf/core.c                                  |  10 +-
+ kernel/bpf/local_storage.c                         |  34 ++-
+ kernel/bpf/reuseport_array.c                       |  10 +-
+ kernel/bpf/sockmap.c                               |  73 +++---
+ kernel/bpf/syscall.c                               |  30 ++-
+ kernel/cgroup/cgroup.c                             |  15 +-
+ kernel/locking/spinlock.c                          |  17 +-
+ kernel/rcu/rcutorture.c                            |  12 +-
+ lib/rhashtable.c                                   |  12 +-
+ mm/backing-dev.c                                   |  22 +-
+ mm/page-writeback.c                                |  10 +-
+ net/6lowpan/debugfs.c                              |  25 +-
+ net/6lowpan/iphc.c                                 |  23 +-
+ net/6lowpan/nhc.c                                  |  31 ++-
+ net/802/garp.c                                     |  19 +-
+ net/802/mrp.c                                      |  19 +-
+ net/802/psnap.c                                    |  10 +-
+ net/ax25/af_ax25.c                                 |  26 +-
+ net/ax25/ax25_dev.c                                |  24 +-
+ net/ax25/ax25_iface.c                              |  38 +--
+ net/ax25/ax25_out.c                                |   7 +-
+ net/batman-adv/bat_iv_ogm.c                        |  51 ++--
+ net/batman-adv/bridge_loop_avoidance.c             |  70 ++---
+ net/batman-adv/distributed-arp-table.c             |   5 +-
+ net/batman-adv/fragmentation.c                     |  10 +-
+ net/batman-adv/gateway_client.c                    |  20 +-
+ net/batman-adv/hash.h                              |   4 +-
+ net/batman-adv/icmp_socket.c                       |  17 +-
+ net/batman-adv/log.c                               |  12 +-
+ net/batman-adv/multicast.c                         |  37 +--
+ net/batman-adv/network-coding.c                    |  37 +--
+ net/batman-adv/originator.c                        |  62 +++--
+ net/batman-adv/routing.c                           |  22 +-
+ net/batman-adv/send.c                              |  21 +-
+ net/batman-adv/soft-interface.c                    |  10 +-
+ net/batman-adv/tp_meter.c                          |  67 +++--
+ net/batman-adv/translation-table.c                 | 158 +++++++-----
+ net/batman-adv/tvlv.c                              |  25 +-
+ net/bluetooth/hci_core.c                           |   5 +-
+ net/bridge/br.c                                    |  13 +-
+ net/bridge/br_device.c                             |   5 +-
+ net/bridge/br_fdb.c                                |  60 +++--
+ net/bridge/br_if.c                                 |  20 +-
+ net/bridge/br_ioctl.c                              |   9 +-
+ net/bridge/br_mdb.c                                |  15 +-
+ net/bridge/br_multicast.c                          |  47 ++--
+ net/bridge/br_netlink.c                            |  24 +-
+ net/bridge/br_stp.c                                |  20 +-
+ net/bridge/br_stp_if.c                             |  25 +-
+ net/bridge/br_sysfs_br.c                           |   5 +-
+ net/bridge/br_sysfs_if.c                           |   9 +-
+ net/bridge/br_vlan.c                               |   5 +-
+ net/bridge/netfilter/ebt_limit.c                   |   7 +-
+ net/bridge/netfilter/ebt_log.c                     |   5 +-
+ net/caif/caif_dev.c                                |  16 +-
+ net/caif/caif_socket.c                             |   5 +-
+ net/caif/cfctrl.c                                  |  40 +--
+ net/caif/cfmuxl.c                                  |  30 ++-
+ net/core/datagram.c                                |   5 +-
+ net/core/dev.c                                     |   5 +-
+ net/core/dev_addr_lists.c                          |  51 ++--
+ net/core/gen_estimator.c                           |   4 +-
+ net/core/gen_stats.c                               |   8 +-
+ net/core/net-procfs.c                              |   5 +-
+ net/core/net_namespace.c                           |  31 ++-
+ net/core/pktgen.c                                  |   4 +-
+ net/core/request_sock.c                            |   7 +-
+ net/core/rtnetlink.c                               |   5 +-
+ net/core/sock.c                                    |  40 +--
+ net/core/sock_reuseport.c                          |  26 +-
+ net/dcb/dcbnl.c                                    |  54 ++--
+ net/dccp/minisocks.c                               |   5 +-
+ net/decnet/dn_fib.c                                |  20 +-
+ net/decnet/dn_route.c                              |  24 +-
+ net/ieee802154/socket.c                            |   5 +-
+ net/ipv4/af_inet.c                                 |  10 +-
+ net/ipv4/cipso_ipv4.c                              |  19 +-
+ net/ipv4/esp4.c                                    |  19 +-
+ net/ipv4/fib_semantics.c                           |  15 +-
+ net/ipv4/igmp.c                                    |  82 +++---
+ net/ipv4/inet_connection_sock.c                    |  23 +-
+ net/ipv4/inet_diag.c                               |   5 +-
+ net/ipv4/inet_fragment.c                           |   5 +-
+ net/ipv4/inet_hashtables.c                         |  20 +-
+ net/ipv4/ipmr.c                                    |  19 +-
+ net/ipv4/ipmr_base.c                               |  17 +-
+ net/ipv4/netfilter/ipt_CLUSTERIP.c                 |   9 +-
+ net/ipv4/netfilter/nf_nat_snmp_basic_main.c        |   5 +-
+ net/ipv4/raw.c                                     |   5 +-
+ net/ipv4/route.c                                   |  30 ++-
+ net/ipv4/tcp_ipv4.c                                |   8 +-
+ net/ipv4/tcp_metrics.c                             |  15 +-
+ net/ipv4/udp.c                                     |  41 +--
+ net/ipv4/udp_diag.c                                |   7 +-
+ net/ipv6/addrconf.c                                |  99 +++----
+ net/ipv6/af_inet6.c                                |  10 +-
+ net/ipv6/calipso.c                                 |  19 +-
+ net/ipv6/esp6.c                                    |  14 +-
+ net/ipv6/ip6_fib.c                                 |  29 ++-
+ net/ipv6/ip6_flowlabel.c                           |  47 ++--
+ net/ipv6/ip6mr.c                                   |  19 +-
+ net/ipv6/mcast.c                                   |  93 ++++---
+ net/ipv6/mip6.c                                    |  15 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c            |   5 +-
+ net/ipv6/raw.c                                     |   5 +-
+ net/ipv6/route.c                                   |  67 +++--
+ net/ipv6/xfrm6_tunnel.c                            |  10 +-
+ net/iucv/af_iucv.c                                 |   5 +-
+ net/iucv/iucv.c                                    |  25 +-
+ net/kcm/kcmproc.c                                  |  10 +-
+ net/kcm/kcmsock.c                                  | 106 ++++----
+ net/key/af_key.c                                   |   5 +-
+ net/l2tp/l2tp_core.c                               |  34 ++-
+ net/l2tp/l2tp_ip.c                                 |   5 +-
+ net/llc/llc_conn.c                                 |  10 +-
+ net/llc/llc_core.c                                 |  10 +-
+ net/llc/llc_proc.c                                 |  10 +-
+ net/llc/llc_sap.c                                  |   5 +-
+ net/mac80211/agg-rx.c                              |   5 +-
+ net/mac80211/agg-tx.c                              |  45 ++--
+ net/mac80211/cfg.c                                 |  31 ++-
+ net/mac80211/debugfs.c                             |   5 +-
+ net/mac80211/debugfs_netdev.c                      |   5 +-
+ net/mac80211/debugfs_sta.c                         |   5 +-
+ net/mac80211/ht.c                                  |   7 +-
+ net/mac80211/ibss.c                                |  14 +-
+ net/mac80211/iface.c                               |  14 +-
+ net/mac80211/main.c                                |   5 +-
+ net/mac80211/mesh_hwmp.c                           |  58 +++--
+ net/mac80211/mesh_pathtbl.c                        |  37 +--
+ net/mac80211/mesh_plink.c                          |  36 +--
+ net/mac80211/mesh_sync.c                           |  15 +-
+ net/mac80211/mlme.c                                |   5 +-
+ net/mac80211/ocb.c                                 |  14 +-
+ net/mac80211/rate.c                                |  20 +-
+ net/mac80211/rx.c                                  |  25 +-
+ net/mac80211/sta_info.c                            |  15 +-
+ net/mac80211/tdls.c                                |   5 +-
+ net/mac80211/tkip.c                                |   5 +-
+ net/mac80211/tx.c                                  |  45 ++--
+ net/mac80211/util.c                                |   5 +-
+ net/mac802154/llsec.c                              |  12 +-
+ net/netfilter/ipset/ip_set_bitmap_gen.h            |   2 +-
+ net/netfilter/ipset/ip_set_core.c                  |  24 +-
+ net/netfilter/ipset/ip_set_hash_gen.h              |   6 +-
+ net/netfilter/ipset/ip_set_list_set.c              |   5 +-
+ net/netfilter/ipvs/ip_vs_app.c                     |   5 +-
+ net/netfilter/ipvs/ip_vs_conn.c                    |  14 +-
+ net/netfilter/ipvs/ip_vs_ctl.c                     |  35 ++-
+ net/netfilter/ipvs/ip_vs_est.c                     |  10 +-
+ net/netfilter/ipvs/ip_vs_lblc.c                    |  10 +-
+ net/netfilter/ipvs/ip_vs_lblcr.c                   |  18 +-
+ net/netfilter/ipvs/ip_vs_proto_sctp.c              |   5 +-
+ net/netfilter/ipvs/ip_vs_proto_tcp.c               |  10 +-
+ net/netfilter/ipvs/ip_vs_rr.c                      |  12 +-
+ net/netfilter/ipvs/ip_vs_sync.c                    |  48 ++--
+ net/netfilter/ipvs/ip_vs_wrr.c                     |  10 +-
+ net/netfilter/ipvs/ip_vs_xmit.c                    |  18 +-
+ net/netfilter/nf_conncount.c                       |  10 +-
+ net/netfilter/nf_conntrack_core.c                  |   5 +-
+ net/netfilter/nf_conntrack_ecache.c                |  10 +-
+ net/netfilter/nf_conntrack_expect.c                |  32 ++-
+ net/netfilter/nf_conntrack_ftp.c                   |   5 +-
+ net/netfilter/nf_conntrack_h323_main.c             |  26 +-
+ net/netfilter/nf_conntrack_helper.c                |  10 +-
+ net/netfilter/nf_conntrack_irc.c                   |   5 +-
+ net/netfilter/nf_conntrack_netlink.c               |  33 ++-
+ net/netfilter/nf_conntrack_pptp.c                  |   5 +-
+ net/netfilter/nf_conntrack_proto_dccp.c            |  21 +-
+ net/netfilter/nf_conntrack_proto_sctp.c            |  19 +-
+ net/netfilter/nf_conntrack_proto_tcp.c             |  31 ++-
+ net/netfilter/nf_conntrack_sane.c                  |   5 +-
+ net/netfilter/nf_conntrack_seqadj.c                |  10 +-
+ net/netfilter/nf_conntrack_sip.c                   |  10 +-
+ net/netfilter/nf_nat_core.c                        |  10 +-
+ net/netfilter/nfnetlink_log.c                      |  52 ++--
+ net/netfilter/nfnetlink_queue.c                    |  36 +--
+ net/netfilter/nft_limit.c                          |   7 +-
+ net/netfilter/xt_RATEEST.c                         |   5 +-
+ net/netfilter/xt_dccp.c                            |   9 +-
+ net/netfilter/xt_hashlimit.c                       |   7 +-
+ net/netfilter/xt_limit.c                           |   7 +-
+ net/netfilter/xt_quota.c                           |   5 +-
+ net/netfilter/xt_recent.c                          |  35 +--
+ net/netrom/af_netrom.c                             |  32 ++-
+ net/netrom/nr_route.c                              |  58 +++--
+ net/nfc/rawsock.c                                  |  15 +-
+ net/openvswitch/flow.c                             |  10 +-
+ net/openvswitch/meter.c                            |  15 +-
+ net/packet/af_packet.c                             |  34 ++-
+ net/rds/af_rds.c                                   |  20 +-
+ net/rose/af_rose.c                                 |  32 ++-
+ net/rose/rose_route.c                              |  73 +++---
+ net/rxrpc/af_rxrpc.c                               |  15 +-
+ net/rxrpc/call_accept.c                            |   5 +-
+ net/rxrpc/call_event.c                             |  16 +-
+ net/rxrpc/call_object.c                            |   5 +-
+ net/rxrpc/conn_client.c                            |   5 +-
+ net/rxrpc/conn_event.c                             |   7 +-
+ net/rxrpc/conn_object.c                            |   5 +-
+ net/rxrpc/input.c                                  |  15 +-
+ net/rxrpc/output.c                                 |  14 +-
+ net/rxrpc/peer_event.c                             |  22 +-
+ net/rxrpc/peer_object.c                            |  10 +-
+ net/rxrpc/recvmsg.c                                |   5 +-
+ net/rxrpc/sendmsg.c                                |   5 +-
+ net/sched/act_bpf.c                                |  12 +-
+ net/sched/act_csum.c                               |  12 +-
+ net/sched/act_gact.c                               |  12 +-
+ net/sched/act_ife.c                                |  22 +-
+ net/sched/act_ipt.c                                |  12 +-
+ net/sched/act_mirred.c                             |  19 +-
+ net/sched/act_nat.c                                |   5 +-
+ net/sched/act_pedit.c                              |  14 +-
+ net/sched/act_police.c                             |  12 +-
+ net/sched/act_sample.c                             |  12 +-
+ net/sched/act_simple.c                             |  12 +-
+ net/sched/act_skbmod.c                             |  12 +-
+ net/sched/act_tunnel_key.c                         |  12 +-
+ net/sched/act_vlan.c                               |  12 +-
+ net/sched/cls_route.c                              |  10 +-
+ net/sched/sch_generic.c                            |  19 +-
+ net/sched/sch_mq.c                                 |   5 +-
+ net/sched/sch_mqprio.c                             |  14 +-
+ net/sched/sch_netem.c                              |   5 +-
+ net/sched/sch_teql.c                               |   5 +-
+ net/sctp/associola.c                               |  10 +-
+ net/sctp/ipv6.c                                    |   9 +-
+ net/sctp/protocol.c                                |  28 +-
+ net/sctp/socket.c                                  |  20 +-
+ net/smc/smc_cdc.c                                  |   5 +-
+ net/smc/smc_core.c                                 |  42 +--
+ net/smc/smc_tx.c                                   |  10 +-
+ net/sunrpc/backchannel_rqst.c                      |  10 +-
+ net/sunrpc/sched.c                                 |  42 +--
+ net/sunrpc/svc.c                                   |  29 ++-
+ net/sunrpc/svc_xprt.c                              |  52 ++--
+ net/sunrpc/svcsock.c                               |   5 +-
+ net/sunrpc/xprt.c                                  |  60 +++--
+ net/sunrpc/xprtrdma/backchannel.c                  |  17 +-
+ net/sunrpc/xprtrdma/svc_rdma_backchannel.c         |   5 +-
+ net/sunrpc/xprtrdma/svc_rdma_transport.c           |  10 +-
+ net/sunrpc/xprtrdma/transport.c                    |   5 +-
+ net/sunrpc/xprtsock.c                              |  25 +-
+ net/switchdev/switchdev.c                          |  10 +-
+ net/tipc/bcast.h                                   |   2 +-
+ net/tipc/discover.c                                |  20 +-
+ net/tipc/msg.h                                     |  10 +-
+ net/tipc/name_distr.c                              |  20 +-
+ net/tipc/name_table.c                              |  71 +++---
+ net/tipc/node.c                                    |  51 ++--
+ net/tipc/socket.c                                  |  14 +-
+ net/tipc/topsrv.c                                  |  50 ++--
+ net/vmw_vsock/af_vsock.c                           |  50 ++--
+ net/vmw_vsock/diag.c                               |   5 +-
+ net/vmw_vsock/virtio_transport.c                   |  36 +--
+ net/vmw_vsock/virtio_transport_common.c            |  44 ++--
+ net/vmw_vsock/vmci_transport.c                     |  17 +-
+ net/wireless/mlme.c                                |  29 ++-
+ net/wireless/nl80211.c                             |  26 +-
+ net/wireless/reg.c                                 |  19 +-
+ net/wireless/scan.c                                |  49 ++--
+ net/xfrm/xfrm_input.c                              |  10 +-
+ net/xfrm/xfrm_output.c                             |   7 +-
+ net/xfrm/xfrm_policy.c                             |  87 ++++---
+ net/xfrm/xfrm_state.c                              | 172 ++++++++-----
+ net/xfrm/xfrm_user.c                               |  15 +-
+ security/selinux/netif.c                           |  15 +-
+ security/selinux/netnode.c                         |  12 +-
+ security/selinux/netport.c                         |  12 +-
+ sound/pci/asihpi/hpios.h                           |   2 +-
+ sound/soc/intel/atom/sst/sst_ipc.c                 |  19 +-
+ sound/soc/omap/ams-delta.c                         |  10 +-
+ tools/virtio/ringtest/ptr_ring.c                   |   2 +-
+ 744 files changed, 10572 insertions(+), 7570 deletions(-)
 
-diff --git a/drivers/isdn/hardware/eicon/capifunc.c b/drivers/isdn/hardware/eicon/capifunc.c
-index 7a0bdbd..c345286 100644
---- a/drivers/isdn/hardware/eicon/capifunc.c
-+++ b/drivers/isdn/hardware/eicon/capifunc.c
-@@ -390,6 +390,7 @@ static void clean_adapter(int id, struct list_head *free_mem_q)
-  */
- static void divacapi_remove_card(DESCRIPTOR *d)
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 76d89ee..9cc2b96 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -79,6 +79,7 @@ static void __crst_table_upgrade(void *arg)
+ 
+ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
  {
 +	unsigned int bh;
- 	diva_card *card = NULL;
- 	diva_os_spin_lock_magic_t old_irql;
- 	LIST_HEAD(free_mem_q);
-@@ -401,7 +402,7 @@ static void divacapi_remove_card(DESCRIPTOR *d)
- 	 * Ensures that there is no call from sendf to CAPI in
- 	 * the time CAPI controller is about to be removed.
- 	 */
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "remove card");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "remove card");
- 	list_for_each(tmp, &cards) {
- 		card = list_entry(tmp, diva_card, list);
- 		if (card->d.request == d->request) {
-@@ -410,7 +411,7 @@ static void divacapi_remove_card(DESCRIPTOR *d)
+ 	unsigned long *table, *pgd;
+ 	int rc, notify;
+ 
+@@ -92,7 +93,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
+ 			rc = -ENOMEM;
  			break;
  		}
+-		spin_lock_bh(&mm->page_table_lock);
++		bh = spin_lock_bh(&mm->page_table_lock, SOFTIRQ_ALL_MASK);
+ 		pgd = (unsigned long *) mm->pgd;
+ 		if (mm->context.asce_limit == _REGION2_SIZE) {
+ 			crst_table_init(table, _REGION2_ENTRY_EMPTY);
+@@ -110,7 +111,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
+ 				_ASCE_USER_BITS | _ASCE_TYPE_REGION1;
+ 		}
+ 		notify = 1;
+-		spin_unlock_bh(&mm->page_table_lock);
++		spin_unlock_bh(&mm->page_table_lock, bh);
  	}
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "remove card");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "remove card", bh);
- 
- 	if (card) {
- 		/*
-@@ -423,7 +424,7 @@ static void divacapi_remove_card(DESCRIPTOR *d)
- 		 * Now get API lock (to ensure stable state of LI tables)
- 		 * and update the adapter map/LI table.
- 		 */
--		diva_os_enter_spin_lock(&api_lock, &old_irql, "remove card");
-+		bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "remove card");
- 
- 		clean_adapter(card->Id - 1, &free_mem_q);
- 		DBG_TRC(("DelAdapterMap (%d) -> (%d)",
-@@ -431,7 +432,7 @@ static void divacapi_remove_card(DESCRIPTOR *d)
- 			ControllerMap[card->Id] = 0;
- 		DBG_TRC(("adapter remove, max_adapter=%d",
- 			 max_adapter));
--		diva_os_leave_spin_lock(&api_lock, &old_irql, "remove card");
-+		diva_os_leave_spin_lock(&api_lock, &old_irql, "remove card", bh);
- 
- 		/* After releasing the lock, we can free the memory */
- 		diva_os_free(0, card);
-@@ -449,13 +450,14 @@ static void divacapi_remove_card(DESCRIPTOR *d)
+ 	if (notify)
+ 		on_each_cpu(__crst_table_upgrade, mm, 0);
+@@ -179,6 +180,7 @@ void page_table_free_pgste(struct page *page)
   */
- static void divacapi_remove_cards(void)
+ unsigned long *page_table_alloc(struct mm_struct *mm)
  {
 +	unsigned int bh;
- 	DESCRIPTOR d;
- 	struct list_head *tmp;
- 	diva_card *card;
- 	diva_os_spin_lock_magic_t old_irql;
- 
- rescan:
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "remove cards");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "remove cards");
- 	list_for_each(tmp, &cards) {
- 		card = list_entry(tmp, diva_card, list);
- 		diva_os_leave_spin_lock(&api_lock, &old_irql, "remove cards");
-@@ -463,7 +465,7 @@ static void divacapi_remove_cards(void)
- 		divacapi_remove_card(&d);
- 		goto rescan;
- 	}
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "remove cards");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "remove cards", bh);
- }
- 
- /*
-@@ -471,13 +473,15 @@ static void divacapi_remove_cards(void)
-  */
- static void sync_callback(ENTITY *e)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 
- 	DBG_TRC(("cb:Id=%x,Rc=%x,Ind=%x", e->Id, e->Rc, e->Ind))
- 
--		diva_os_enter_spin_lock(&api_lock, &old_irql, "sync_callback");
-+		bh = diva_os_enter_spin_lock(&api_lock, &old_irql,
-+					     "sync_callback");
- 	callback(e);
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "sync_callback");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "sync_callback", bh);
- }
- 
- /*
-@@ -485,6 +489,7 @@ static void sync_callback(ENTITY *e)
-  */
- static int diva_add_card(DESCRIPTOR *d)
- {
-+	unsigned int bh;
- 	int k = 0, i = 0;
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_card *card = NULL;
-@@ -521,9 +526,9 @@ static int diva_add_card(DESCRIPTOR *d)
- 		return (0);
- 	}
- 
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "find id");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "find id");
- 	card->Id = find_free_id();
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "find id");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "find id", bh);
- 
- 	strlcpy(ctrl->manu, M_COMPANY, sizeof(ctrl->manu));
- 	ctrl->version.majorversion = 2;
-@@ -630,7 +635,7 @@ static int diva_add_card(DESCRIPTOR *d)
- 	}
- 
- 	/* Prevent access to line interconnect table in process update */
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "add card");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "add card");
- 
- 	j = 0;
- 	for (i = 0; i < k; i++) {
-@@ -686,7 +691,7 @@ static int diva_add_card(DESCRIPTOR *d)
- 	list_add(&(card->list), &cards);
- 	AutomaticLaw(a);
- 
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "add card");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "add card", bh);
- 
- 	if (mem_to_free) {
- 		diva_os_free(0, mem_to_free);
-@@ -733,6 +738,7 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
- 	diva_os_spin_lock_magic_t old_irql;
- 	unsigned int mem_len;
- 	int nconn = rp->level3cnt;
-+	unsigned int bh;
- 
- 
- 	if (diva_os_in_irq()) {
-@@ -809,7 +815,7 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
- 	}
- 
- 	/* initialize application data */
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "register_appl");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "register_appl");
- 
- 	this = &application[appl - 1];
- 	memset(this, 0, sizeof(APPL));
-@@ -838,7 +844,7 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
- 	}
- 
- 	CapiRegister(this->Id);
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "register_appl");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "register_appl", bh);
- 
- }
- 
-@@ -847,6 +853,7 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
-  */
- static void diva_release_appl(struct capi_ctr *ctrl, __u16 appl)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	APPL *this = &application[appl - 1];
- 	void *mem_to_free = NULL;
-@@ -858,14 +865,14 @@ static void diva_release_appl(struct capi_ctr *ctrl, __u16 appl)
- 				return;
- 		}
- 
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "release_appl");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "release_appl");
- 	if (this->Id) {
- 		CapiRelease(this->Id);
- 		mem_to_free = this->DataNCCI;
- 		this->DataNCCI = NULL;
- 		this->Id = 0;
- 	}
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "release_appl");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "release_appl", bh);
- 
- 	if (mem_to_free)
- 		diva_os_free(0, mem_to_free);
-@@ -888,6 +895,7 @@ static u16 diva_send_message(struct capi_ctr *ctrl,
- 	word clength = GET_WORD(&msg->header.length);
- 	word command = GET_WORD(&msg->header.command);
- 	u16 retval = CAPI_NOERROR;
-+	unsigned int bh;
- 
- 	if (diva_os_in_irq()) {
- 		DBG_ERR(("CAPI_SEND_MSG - in irq context !"))
-@@ -900,10 +908,10 @@ static u16 diva_send_message(struct capi_ctr *ctrl,
- 				return CAPI_REGOSRESOURCEERR;
- 		}
- 
--	diva_os_enter_spin_lock(&api_lock, &old_irql, "send message");
-+	bh = diva_os_enter_spin_lock(&api_lock, &old_irql, "send message");
- 
- 	if (!this->Id) {
--		diva_os_leave_spin_lock(&api_lock, &old_irql, "send message");
-+		diva_os_leave_spin_lock(&api_lock, &old_irql, "send message", bh);
- 		return CAPI_ILLAPPNR;
- 	}
- 
-@@ -997,7 +1005,7 @@ static u16 diva_send_message(struct capi_ctr *ctrl,
- 	}
- 
- write_end:
--	diva_os_leave_spin_lock(&api_lock, &old_irql, "send message");
-+	diva_os_leave_spin_lock(&api_lock, &old_irql, "send message", bh);
- 	if (retval == CAPI_NOERROR)
- 		diva_os_free_message_buffer(dmb);
- 	return retval;
-@@ -1163,13 +1171,16 @@ static void remove_main_structs(void)
-  */
- static void do_api_remove_start(void)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	int ret = 1, count = 100;
- 
- 	do {
--		diva_os_enter_spin_lock(&api_lock, &old_irql, "api remove start");
-+		bh = diva_os_enter_spin_lock(&api_lock, &old_irql,
-+					     "api remove start");
- 		ret = api_remove_start();
--		diva_os_leave_spin_lock(&api_lock, &old_irql, "api remove start");
-+		diva_os_leave_spin_lock(&api_lock, &old_irql,
-+					"api remove start", bh);
- 
- 		diva_os_sleep(10);
- 	} while (ret && count--);
-diff --git a/drivers/isdn/hardware/eicon/dadapter.c b/drivers/isdn/hardware/eicon/dadapter.c
-index 5142099..842c1f1 100644
---- a/drivers/isdn/hardware/eicon/dadapter.c
-+++ b/drivers/isdn/hardware/eicon/dadapter.c
-@@ -106,6 +106,7 @@ void diva_didd_load_time_finit(void) {
-    return -1 adapter array overflow
-    -------------------------------------------------------------------------- */
- static int diva_didd_add_descriptor(DESCRIPTOR *d) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t      irql;
- 	int i;
- 	if (d->type == IDI_DIMAINT) {
-@@ -123,16 +124,17 @@ static int diva_didd_add_descriptor(DESCRIPTOR *d) {
- 		return (NEW_MAX_DESCRIPTORS);
- 	}
- 	for (i = 0; i < NEW_MAX_DESCRIPTORS; i++) {
--		diva_os_enter_spin_lock(&didd_spin, &irql, "didd_add");
-+		bh = diva_os_enter_spin_lock(&didd_spin, &irql, "didd_add");
- 		if (HandleTable[i].type == 0) {
- 			memcpy(&HandleTable[i], d, sizeof(*d));
- 			Adapters++;
--			diva_os_leave_spin_lock(&didd_spin, &irql, "didd_add");
-+			diva_os_leave_spin_lock(&didd_spin, &irql, "didd_add",
-+						bh);
- 			diva_notify_adapter_change(d, 0); /* we have new adapter */
- 			DBG_TRC(("Add adapter[%d], request=%08x", (i + 1), d->request))
- 				return (i + 1);
- 		}
--		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_add");
-+		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_add", bh);
- 	}
- 	DBG_ERR(("Can't add adapter, out of resources"))
- 		return (-1);
-@@ -143,6 +145,7 @@ static int diva_didd_add_descriptor(DESCRIPTOR *d) {
-    return 0 on success
-    -------------------------------------------------------------------------- */
- static int diva_didd_remove_descriptor(IDI_CALL request) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t      irql;
- 	int i;
- 	if (request == MAdapter.request) {
-@@ -155,10 +158,12 @@ static int diva_didd_remove_descriptor(IDI_CALL request) {
- 	for (i = 0; (Adapters && (i < NEW_MAX_DESCRIPTORS)); i++) {
- 		if (HandleTable[i].request == request) {
- 			diva_notify_adapter_change(&HandleTable[i], 1); /* About to remove */
--			diva_os_enter_spin_lock(&didd_spin, &irql, "didd_rm");
-+			bh = diva_os_enter_spin_lock(&didd_spin, &irql,
-+						     "didd_rm");
- 			memset(&HandleTable[i], 0x00, sizeof(HandleTable[0]));
- 			Adapters--;
--			diva_os_leave_spin_lock(&didd_spin, &irql, "didd_rm");
-+			diva_os_leave_spin_lock(&didd_spin, &irql, "didd_rm",
-+						bh);
- 			DBG_TRC(("Remove adapter[%d], request=%08x", (i + 1), request))
- 				return (0);
- 		}
-@@ -171,13 +176,14 @@ static int diva_didd_remove_descriptor(IDI_CALL request) {
-    return 1 if not enough space to save all available adapters
-    -------------------------------------------------------------------------- */
- static int diva_didd_read_adapter_array(DESCRIPTOR *buffer, int length) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t      irql;
- 	int src, dst;
- 	memset(buffer, 0x00, length);
- 	length /= sizeof(DESCRIPTOR);
- 	DBG_TRC(("DIDD_Read, space = %d, Adapters = %d", length, Adapters + 2))
- 
--		diva_os_enter_spin_lock(&didd_spin, &irql, "didd_read");
-+		bh = diva_os_enter_spin_lock(&didd_spin, &irql, "didd_read");
- 	for (src = 0, dst = 0;
- 	     (Adapters && (src < NEW_MAX_DESCRIPTORS) && (dst < length));
- 	     src++) {
-@@ -186,7 +192,7 @@ static int diva_didd_read_adapter_array(DESCRIPTOR *buffer, int length) {
- 			dst++;
- 		}
- 	}
--	diva_os_leave_spin_lock(&didd_spin, &irql, "didd_read");
-+	diva_os_leave_spin_lock(&didd_spin, &irql, "didd_read", bh);
- 	if (dst < length) {
- 		memcpy(&buffer[dst], &MAdapter, sizeof(DESCRIPTOR));
- 		dst++;
-@@ -268,19 +274,22 @@ static void IDI_CALL_LINK_T diva_dadapter_request(	\
- static dword diva_register_adapter_callback(		\
- 	didd_adapter_change_callback_t callback,
- 	void IDI_CALL_ENTITY_T *context) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t irql;
- 	dword i;
- 
- 	for (i = 0; i < DIVA_DIDD_MAX_NOTIFICATIONS; i++) {
--		diva_os_enter_spin_lock(&didd_spin, &irql, "didd_nfy_add");
-+		bh = diva_os_enter_spin_lock(&didd_spin, &irql,
-+				             "didd_nfy_add");
- 		if (!NotificationTable[i].callback) {
- 			NotificationTable[i].callback = callback;
- 			NotificationTable[i].context = context;
--			diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy_add");
-+			diva_os_leave_spin_lock(&didd_spin, &irql,
-+						"didd_nfy_add", bh);
- 			DBG_TRC(("Register adapter notification[%d]=%08x", i + 1, callback))
- 				return (i + 1);
- 		}
--		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy_add");
-+		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy_add", bh);
- 	}
- 	DBG_ERR(("Can't register adapter notification, overflow"))
- 		return (0);
-@@ -289,12 +298,13 @@ static dword diva_register_adapter_callback(		\
-    IDI client does register his notification function
-    -------------------------------------------------------------------------- */
- static void diva_remove_adapter_callback(dword handle) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t irql;
- 	if (handle && ((--handle) < DIVA_DIDD_MAX_NOTIFICATIONS)) {
--		diva_os_enter_spin_lock(&didd_spin, &irql, "didd_nfy_rm");
-+		bh = diva_os_enter_spin_lock(&didd_spin, &irql, "didd_nfy_rm");
- 		NotificationTable[handle].callback = NULL;
- 		NotificationTable[handle].context  = NULL;
--		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy_rm");
-+		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy_rm", bh);
- 		DBG_TRC(("Remove adapter notification[%d]", (int)(handle + 1)))
- 			return;
- 	}
-@@ -307,17 +317,18 @@ static void diva_remove_adapter_callback(dword handle) {
-    Step 2: Read Adapter Array
-    -------------------------------------------------------------------------- */
- static void diva_notify_adapter_change(DESCRIPTOR *d, int removal) {
-+	unsigned int bh;
- 	int i, do_notify;
- 	didd_adapter_change_notification_t nfy;
- 	diva_os_spin_lock_magic_t irql;
- 	for (i = 0; i < DIVA_DIDD_MAX_NOTIFICATIONS; i++) {
- 		do_notify = 0;
--		diva_os_enter_spin_lock(&didd_spin, &irql, "didd_nfy");
-+		bh = diva_os_enter_spin_lock(&didd_spin, &irql, "didd_nfy");
- 		if (NotificationTable[i].callback) {
- 			memcpy(&nfy, &NotificationTable[i], sizeof(nfy));
- 			do_notify = 1;
- 		}
--		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy");
-+		diva_os_leave_spin_lock(&didd_spin, &irql, "didd_nfy", bh);
- 		if (do_notify) {
- 			(*(nfy.callback))(nfy.context, d, removal);
- 		}
-diff --git a/drivers/isdn/hardware/eicon/debug.c b/drivers/isdn/hardware/eicon/debug.c
-index 3017881..cbfcd5c 100644
---- a/drivers/isdn/hardware/eicon/debug.c
-+++ b/drivers/isdn/hardware/eicon/debug.c
-@@ -307,19 +307,20 @@ dword diva_dbg_q_length(void) {
-   entry.
- */
- diva_dbg_entry_head_t *diva_maint_get_message(word *size,
--					      diva_os_spin_lock_magic_t *old_irql) {
-+					      diva_os_spin_lock_magic_t *old_irql,
-+					      unsigned int *bh) {
- 	diva_dbg_entry_head_t *pmsg = NULL;
- 
--	diva_os_enter_spin_lock(&dbg_q_lock, old_irql, "read");
-+	*bh = diva_os_enter_spin_lock(&dbg_q_lock, old_irql, "read");
- 	if (dbg_q_busy) {
--		diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_busy");
-+		diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_busy", *bh);
- 		return NULL;
- 	}
- 	dbg_q_busy = 1;
- 
- 	if (!(pmsg = (diva_dbg_entry_head_t *)queuePeekMsg(dbg_queue, size))) {
- 		dbg_q_busy = 0;
--		diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_empty");
-+		diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_empty", *bh);
- 	}
- 
- 	return (pmsg);
-@@ -330,7 +331,8 @@ diva_dbg_entry_head_t *diva_maint_get_message(word *size,
-   acknowledge last message and unlock queue
- */
- void diva_maint_ack_message(int do_release,
--			    diva_os_spin_lock_magic_t *old_irql) {
-+			    diva_os_spin_lock_magic_t *old_irql,
-+			    unsigned int bh) {
- 	if (!dbg_q_busy) {
- 		return;
- 	}
-@@ -338,7 +340,7 @@ void diva_maint_ack_message(int do_release,
- 		queueFreeMsg(dbg_queue);
- 	}
- 	dbg_q_busy = 0;
--	diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_ack");
-+	diva_os_leave_spin_lock(&dbg_q_lock, old_irql, "read_ack", bh);
- }
- 
- 
-@@ -369,6 +371,7 @@ void diva_maint_prtComp(char *format, ...) {
- }
- 
- static void DI_register(void *arg) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	dword sec, usec;
- 	pDbgHandle	hDbg;
-@@ -386,14 +389,15 @@ static void DI_register(void *arg) {
- 		return;
- 	}
- 
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "register");
-+	bh = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "register");
- 
- 	for (id = 1; id < ARRAY_SIZE(clients); id++) {
- 		if (clients[id].hDbg == hDbg) {
- 			/*
- 			  driver already registered
- 			*/
--			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
-+			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql,
-+						"register", bh);
- 			return;
- 		}
- 		if (clients[id].hDbg) { /* slot is busy */
-@@ -476,7 +480,7 @@ static void DI_register(void *arg) {
- 		}
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register", bh);
- }
- 
- static void DI_deregister(pDbgHandle hDbg) {
-@@ -485,11 +489,12 @@ static void DI_deregister(pDbgHandle hDbg) {
- 	int i;
- 	word size;
- 	byte *pmem = NULL;
-+	unsigned int bh, bh2;
- 
- 	diva_os_get_time(&sec, &usec);
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "read");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "read");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read");
- 
- 	for (i = 1; i < ARRAY_SIZE(clients); i++) {
- 		if (clients[i].hDbg == hDbg) {
-@@ -551,8 +556,8 @@ static void DI_deregister(pDbgHandle hDbg) {
- 		}
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_ack");
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "read_ack");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_ack", bh2);
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "read_ack", bh);
- 
- 	if (pmem) {
- 		diva_os_free(0, pmem);
-@@ -571,6 +576,7 @@ static void DI_format(int do_lock,
- 		      int type,
- 		      char *format,
- 		      va_list ap) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	dword sec, usec;
- 	diva_dbg_entry_head_t *pmsg = NULL;
-@@ -595,7 +601,7 @@ static void DI_format(int do_lock,
- 	diva_os_get_time(&sec, &usec);
- 
- 	if (do_lock) {
--		diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "format");
-+		bh = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "format");
- 	}
- 
- 	switch (type) {
-@@ -720,7 +726,7 @@ static void DI_format(int do_lock,
- 	}
- 
- 	if (do_lock) {
--		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "format");
-+		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "format", bh);
- 	}
- }
- 
-@@ -728,6 +734,7 @@ static void DI_format(int do_lock,
-   Write driver ID and driver revision to callers buffer
- */
- int diva_get_driver_info(dword id, byte *data, int data_length) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	byte *p = data;
- 	int to_copy;
-@@ -737,7 +744,7 @@ int diva_get_driver_info(dword id, byte *data, int data_length) {
- 		return (-1);
- 	}
- 
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "driver info");
-+	bh = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "driver info");
- 
- 	if (clients[id].hDbg) {
- 		*p++ = 1;
-@@ -774,19 +781,20 @@ int diva_get_driver_info(dword id, byte *data, int data_length) {
- 	}
- 	*p++ = 0;
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "driver info");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "driver info", bh);
- 
- 	return (p - data);
- }
- 
- int diva_get_driver_dbg_mask(dword id, byte *data) {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	int ret = -1;
- 
- 	if (!data || !id || (id >= ARRAY_SIZE(clients))) {
- 		return (-1);
- 	}
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "driver info");
-+	bh = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "driver info");
- 
- 	if (clients[id].hDbg) {
- 		ret = 4;
-@@ -796,12 +804,13 @@ int diva_get_driver_dbg_mask(dword id, byte *data) {
- 		*data++ = (byte)(clients[id].hDbg->dbgMask >> 24);
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "driver info");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "driver info", bh);
- 
- 	return (ret);
- }
- 
- int diva_set_driver_dbg_mask(dword id, dword mask) {
-+	unsigned int bh, bh2;
- 	diva_os_spin_lock_magic_t old_irql, old_irql1;
- 	int ret = -1;
- 
-@@ -810,8 +819,9 @@ int diva_set_driver_dbg_mask(dword id, dword mask) {
- 		return (-1);
- 	}
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "dbg mask");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1,
-+				     "dbg mask");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "dbg mask");
- 
- 	if (clients[id].hDbg) {
- 		dword old_mask = clients[id].hDbg->dbgMask;
-@@ -823,14 +833,14 @@ int diva_set_driver_dbg_mask(dword id, dword mask) {
- 	}
- 
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "dbg mask");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "dbg mask", bh2);
- 
- 	if (clients[id].request_pending) {
- 		clients[id].request_pending = 0;
- 		(*(clients[id].request))((ENTITY *)(*(clients[id].pIdiLib->DivaSTraceGetHandle))(clients[id].pIdiLib->hLib));
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask");
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask", bh);
- 
- 	return (ret);
- }
-@@ -856,6 +866,7 @@ static int diva_get_idi_adapter_info(IDI_CALL request, dword *serial, dword *log
-   Register XDI adapter as MAINT compatible driver
- */
- void diva_mnt_add_xdi_adapter(const DESCRIPTOR *d) {
-+	unsigned int bh, bh2;
- 	diva_os_spin_lock_magic_t old_irql, old_irql1;
- 	dword sec, usec, logical, serial, org_mask;
- 	int id, free_id = -1;
-@@ -881,13 +892,15 @@ void diva_mnt_add_xdi_adapter(const DESCRIPTOR *d) {
- 	}
- 	memset(pmem, 0x00, DivaSTraceGetMemotyRequirement(d->channels));
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "register");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "register");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1,
-+				     "register");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "register");
- 
- 	for (id = 1; id < ARRAY_SIZE(clients); id++) {
- 		if (clients[id].hDbg && (clients[id].request == d->request)) {
--			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
--			diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "register");
-+			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register", bh2);
-+			diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1,
-+						"register", bh);
- 			diva_os_free(0, pmem);
- 			return;
- 		}
-@@ -908,8 +921,9 @@ void diva_mnt_add_xdi_adapter(const DESCRIPTOR *d) {
- 	}
- 
- 	if (free_id < 0) {
--		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
--		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "register");
-+		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register", bh2);
-+		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1,
-+					"register", bh);
- 		diva_os_free(0, pmem);
- 		return;
- 	}
-@@ -967,8 +981,9 @@ void diva_mnt_add_xdi_adapter(const DESCRIPTOR *d) {
- 		clients[id].request = NULL;
- 		clients[id].request_pending = 0;
- 		clients[id].hDbg    = NULL;
--		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
--		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "register");
-+		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register", bh2);
-+		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1,
-+					"register", bh);
- 		diva_os_free(0, pmem);
- 		return;
- 	}
-@@ -1006,14 +1021,14 @@ void diva_mnt_add_xdi_adapter(const DESCRIPTOR *d) {
- 	org_mask = clients[id].Dbg.dbgMask;
- 	clients[id].Dbg.dbgMask = 0;
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "register", bh2);
- 
- 	if (clients[id].request_pending) {
- 		clients[id].request_pending = 0;
- 		(*(clients[id].request))((ENTITY *)(*(clients[id].pIdiLib->DivaSTraceGetHandle))(clients[id].pIdiLib->hLib));
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "register");
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "register", bh);
- 
- 	diva_set_driver_dbg_mask(id, org_mask);
- }
-@@ -1027,11 +1042,12 @@ void diva_mnt_remove_xdi_adapter(const DESCRIPTOR *d) {
- 	int i;
- 	word size;
- 	byte *pmem = NULL;
-+	unsigned int bh, bh2;
- 
- 	diva_os_get_time(&sec, &usec);
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "read");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "read");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read");
- 
- 	for (i = 1; i < ARRAY_SIZE(clients); i++) {
- 		if (clients[i].hDbg && (clients[i].request == d->request)) {
-@@ -1094,8 +1110,8 @@ void diva_mnt_remove_xdi_adapter(const DESCRIPTOR *d) {
- 		}
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_ack");
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "read_ack");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_ack", bh2);
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "read_ack", bh);
- 
- 	if (pmem) {
- 		diva_os_free(0, pmem);
-@@ -1355,13 +1371,14 @@ static void single_p(byte *P, word *PLength, byte Id) {
- }
- 
- static void diva_maint_xdi_cb(ENTITY *e) {
-+	unsigned int bh, bh2;
- 	diva_strace_context_t *pLib = DIVAS_CONTAINING_RECORD(e, diva_strace_context_t, e);
- 	diva_maint_client_t *pC;
- 	diva_os_spin_lock_magic_t old_irql, old_irql1;
- 
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "xdi_cb");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "xdi_cb");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "xdi_cb");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "xdi_cb");
- 
- 	pC = (diva_maint_client_t *)pLib->hAdapter;
- 
-@@ -1378,7 +1395,7 @@ static void diva_maint_xdi_cb(ENTITY *e) {
- 		}
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "xdi_cb");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "xdi_cb", bh2);
- 
- 
- 	if (pC->request_pending) {
-@@ -1386,7 +1403,7 @@ static void diva_maint_xdi_cb(ENTITY *e) {
- 		(*(pC->request))(e);
- 	}
- 
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "xdi_cb");
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "xdi_cb", bh);
- }
- 
- 
-@@ -1916,6 +1933,7 @@ void diva_mnt_internal_dprintf(dword drv_id, dword type, char *fmt, ...) {
-   Shutdown all adapters before driver removal
- */
- int diva_mnt_shutdown_xdi_adapters(void) {
-+	unsigned int bh, bh2;
- 	diva_os_spin_lock_magic_t old_irql, old_irql1;
- 	int i, fret = 0;
- 	byte *pmem;
-@@ -1924,8 +1942,9 @@ int diva_mnt_shutdown_xdi_adapters(void) {
- 	for (i = 1; i < ARRAY_SIZE(clients); i++) {
- 		pmem = NULL;
- 
--		diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "unload");
--		diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "unload");
-+		bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1,
-+					     "unload");
-+		bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "unload");
- 
- 		if (clients[i].hDbg && clients[i].pIdiLib && clients[i].request) {
- 			if ((*(clients[i].pIdiLib->DivaSTraceLibraryStop))(clients[i].pIdiLib) == 1) {
-@@ -1955,7 +1974,7 @@ int diva_mnt_shutdown_xdi_adapters(void) {
+ 	unsigned long *table;
+ 	struct page *page;
+ 	unsigned int mask, bit;
+@@ -186,7 +188,7 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
+ 	/* Try to get a fragment of a 4K page as a 2K page table */
+ 	if (!mm_alloc_pgste(mm)) {
+ 		table = NULL;
+-		spin_lock_bh(&mm->context.lock);
++		bh = spin_lock_bh(&mm->context.lock, SOFTIRQ_ALL_MASK);
+ 		if (!list_empty(&mm->context.pgtable_list)) {
+ 			page = list_first_entry(&mm->context.pgtable_list,
+ 						struct page, lru);
+@@ -202,7 +204,7 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
+ 				list_del(&page->lru);
  			}
  		}
- 
--		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "unload");
-+		diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "unload", bh2);
- 		if (clients[i].hDbg && clients[i].pIdiLib && clients[i].request && clients[i].request_pending) {
- 			clients[i].request_pending = 0;
- 			(*(clients[i].request))((ENTITY *)(*(clients[i].pIdiLib->DivaSTraceGetHandle))(clients[i].pIdiLib->hLib));
-@@ -1964,7 +1983,8 @@ int diva_mnt_shutdown_xdi_adapters(void) {
- 				clients[i].dma_handle = -1;
- 			}
- 		}
--		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "unload");
-+		diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1,
-+					"unload", bh);
- 
- 		if (pmem) {
- 			diva_os_free(0, pmem);
-@@ -1979,11 +1999,13 @@ int diva_mnt_shutdown_xdi_adapters(void) {
-   Affects B- and Audio Tap trace mask at run time
- */
- int diva_set_trace_filter(int filter_length, const char *filter) {
-+	unsigned int bh, bh2;
- 	diva_os_spin_lock_magic_t old_irql, old_irql1;
- 	int i, ch, on, client_b_on, client_atap_on;
- 
--	diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask");
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
-+	bh = diva_os_enter_spin_lock(&dbg_adapter_lock, &old_irql1,
-+				     "dbg mask");
-+	bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
- 
- 	if (filter_length <= DIVA_MAX_SELECTIVE_FILTER_LENGTH) {
- 		memcpy(&TraceFilter[0], filter, filter_length);
-@@ -2015,29 +2037,30 @@ int diva_set_trace_filter(int filter_length, const char *filter) {
- 
- 	for (i = 1; i < ARRAY_SIZE(clients); i++) {
- 		if (clients[i].hDbg && clients[i].pIdiLib && clients[i].request && clients[i].request_pending) {
--			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
-+			diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "write_filter", bh2);
- 			clients[i].request_pending = 0;
- 			(*(clients[i].request))((ENTITY *)(*(clients[i].pIdiLib->DivaSTraceGetHandle))(clients[i].pIdiLib->hLib));
--			diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
-+			bh2 = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
- 		}
+-		spin_unlock_bh(&mm->context.lock);
++		spin_unlock_bh(&mm->context.lock, bh);
+ 		if (table)
+ 			return table;
  	}
- 
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "write_filter");
--	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "write_filter", bh2);
-+	diva_os_leave_spin_lock(&dbg_adapter_lock, &old_irql1, "dbg mask", bh);
- 
- 	return (filter_length);
+@@ -226,15 +228,16 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
+ 		/* Return the first 2K fragment of the page */
+ 		atomic_xor_bits(&page->_refcount, 1 << 24);
+ 		memset64((u64 *)table, _PAGE_INVALID, 2 * PTRS_PER_PTE);
+-		spin_lock_bh(&mm->context.lock);
++		bh = spin_lock_bh(&mm->context.lock, SOFTIRQ_ALL_MASK);
+ 		list_add(&page->lru, &mm->context.pgtable_list);
+-		spin_unlock_bh(&mm->context.lock);
++		spin_unlock_bh(&mm->context.lock, bh);
+ 	}
+ 	return table;
  }
  
- int diva_get_trace_filter(int max_length, char *filter) {
+ void page_table_free(struct mm_struct *mm, unsigned long *table)
+ {
 +	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
+ 	struct page *page;
+ 	unsigned int bit, mask;
+ 
+@@ -242,14 +245,14 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
+ 	if (!mm_alloc_pgste(mm)) {
+ 		/* Free 2K page table fragment of a 4K page */
+ 		bit = (__pa(table) & ~PAGE_MASK)/(PTRS_PER_PTE*sizeof(pte_t));
+-		spin_lock_bh(&mm->context.lock);
++		bh = spin_lock_bh(&mm->context.lock, SOFTIRQ_ALL_MASK);
+ 		mask = atomic_xor_bits(&page->_refcount, 1U << (bit + 24));
+ 		mask >>= 24;
+ 		if (mask & 3)
+ 			list_add(&page->lru, &mm->context.pgtable_list);
+ 		else
+ 			list_del(&page->lru);
+-		spin_unlock_bh(&mm->context.lock);
++		spin_unlock_bh(&mm->context.lock, bh);
+ 		if (mask != 0)
+ 			return;
+ 	} else {
+@@ -263,6 +266,7 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
+ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table,
+ 			 unsigned long vmaddr)
+ {
++	unsigned int bh;
+ 	struct mm_struct *mm;
+ 	struct page *page;
+ 	unsigned int bit, mask;
+@@ -276,14 +280,14 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table,
+ 		return;
+ 	}
+ 	bit = (__pa(table) & ~PAGE_MASK) / (PTRS_PER_PTE*sizeof(pte_t));
+-	spin_lock_bh(&mm->context.lock);
++	bh = spin_lock_bh(&mm->context.lock, SOFTIRQ_ALL_MASK);
+ 	mask = atomic_xor_bits(&page->_refcount, 0x11U << (bit + 24));
+ 	mask >>= 24;
+ 	if (mask & 3)
+ 		list_add_tail(&page->lru, &mm->context.pgtable_list);
+ 	else
+ 		list_del(&page->lru);
+-	spin_unlock_bh(&mm->context.lock);
++	spin_unlock_bh(&mm->context.lock, bh);
+ 	table = (unsigned long *) (__pa(table) | (1U << bit));
+ 	tlb_remove_table(tlb, table);
+ }
+diff --git a/arch/xtensa/platforms/iss/console.c b/arch/xtensa/platforms/iss/console.c
+index af81a62..9d5c4cc 100644
+--- a/arch/xtensa/platforms/iss/console.c
++++ b/arch/xtensa/platforms/iss/console.c
+@@ -51,13 +51,14 @@ static void rs_poll(struct timer_list *);
+ 
+ static int rs_open(struct tty_struct *tty, struct file * filp)
+ {
++	unsigned int bh;
+ 	tty->port = &serial_port;
+-	spin_lock_bh(&timer_lock);
++	bh = spin_lock_bh(&timer_lock, SOFTIRQ_ALL_MASK);
+ 	if (tty->count == 1) {
+ 		timer_setup(&serial_timer, rs_poll, 0);
+ 		mod_timer(&serial_timer, jiffies + SERIAL_TIMER_VALUE);
+ 	}
+-	spin_unlock_bh(&timer_lock);
++	spin_unlock_bh(&timer_lock, bh);
+ 
+ 	return 0;
+ }
+@@ -75,10 +76,11 @@ static int rs_open(struct tty_struct *tty, struct file * filp)
+  */
+ static void rs_close(struct tty_struct *tty, struct file * filp)
+ {
+-	spin_lock_bh(&timer_lock);
++	unsigned int bh;
++	bh = spin_lock_bh(&timer_lock, SOFTIRQ_ALL_MASK);
+ 	if (tty->count == 1)
+ 		del_timer_sync(&serial_timer);
+-	spin_unlock_bh(&timer_lock);
++	spin_unlock_bh(&timer_lock, bh);
+ }
+ 
+ 
+diff --git a/arch/xtensa/platforms/iss/network.c b/arch/xtensa/platforms/iss/network.c
+index d027ddd..f25ec51 100644
+--- a/arch/xtensa/platforms/iss/network.c
++++ b/arch/xtensa/platforms/iss/network.c
+@@ -364,10 +364,11 @@ static void iss_net_timer(struct timer_list *t)
+ 
+ static int iss_net_open(struct net_device *dev)
+ {
++	unsigned int bh;
+ 	struct iss_net_private *lp = netdev_priv(dev);
+ 	int err;
+ 
+-	spin_lock_bh(&lp->lock);
++	bh = spin_lock_bh(&lp->lock, SOFTIRQ_ALL_MASK);
+ 
+ 	err = lp->tp.open(lp);
+ 	if (err < 0)
+@@ -382,26 +383,27 @@ static int iss_net_open(struct net_device *dev)
+ 	while ((err = iss_net_rx(dev)) > 0)
+ 		;
+ 
+-	spin_unlock_bh(&lp->lock);
+-	spin_lock_bh(&opened_lock);
++	spin_unlock_bh(&lp->lock, bh);
++	bh = spin_lock_bh(&opened_lock, SOFTIRQ_ALL_MASK);
+ 	list_add(&lp->opened_list, &opened);
+-	spin_unlock_bh(&opened_lock);
+-	spin_lock_bh(&lp->lock);
++	spin_unlock_bh(&opened_lock, bh);
++	bh = spin_lock_bh(&lp->lock, SOFTIRQ_ALL_MASK);
+ 
+ 	timer_setup(&lp->timer, iss_net_timer, 0);
+ 	lp->timer_val = ISS_NET_TIMER_VALUE;
+ 	mod_timer(&lp->timer, jiffies + lp->timer_val);
+ 
+ out:
+-	spin_unlock_bh(&lp->lock);
++	spin_unlock_bh(&lp->lock, bh);
+ 	return err;
+ }
+ 
+ static int iss_net_close(struct net_device *dev)
+ {
++	unsigned int bh;
+ 	struct iss_net_private *lp = netdev_priv(dev);
+ 	netif_stop_queue(dev);
+-	spin_lock_bh(&lp->lock);
++	bh = spin_lock_bh(&lp->lock, SOFTIRQ_ALL_MASK);
+ 
+ 	spin_lock(&opened_lock);
+ 	list_del(&opened);
+@@ -411,17 +413,18 @@ static int iss_net_close(struct net_device *dev)
+ 
+ 	lp->tp.close(lp);
+ 
+-	spin_unlock_bh(&lp->lock);
++	spin_unlock_bh(&lp->lock, bh);
+ 	return 0;
+ }
+ 
+ static int iss_net_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
++	unsigned int bh;
+ 	struct iss_net_private *lp = netdev_priv(dev);
  	int len;
  
--	diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read_filter");
-+	bh = diva_os_enter_spin_lock(&dbg_q_lock, &old_irql, "read_filter");
- 	len = strlen(&TraceFilter[0]) + 1;
- 	if (max_length >= len) {
- 		memcpy(filter, &TraceFilter[0], len);
- 	}
--	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_filter");
-+	diva_os_leave_spin_lock(&dbg_q_lock, &old_irql, "read_filter", bh);
+ 	netif_stop_queue(dev);
+-	spin_lock_bh(&lp->lock);
++	bh = spin_lock_bh(&lp->lock, SOFTIRQ_ALL_MASK);
  
- 	return (len);
- }
-diff --git a/drivers/isdn/hardware/eicon/debug_if.h b/drivers/isdn/hardware/eicon/debug_if.h
-index fc5953a..baead0f 100644
---- a/drivers/isdn/hardware/eicon/debug_if.h
-+++ b/drivers/isdn/hardware/eicon/debug_if.h
-@@ -45,9 +45,11 @@ int diva_maint_init(byte *base, unsigned long length, int do_init);
- void *diva_maint_finit(void);
- dword diva_dbg_q_length(void);
- diva_dbg_entry_head_t *diva_maint_get_message(word *size,
--					      diva_os_spin_lock_magic_t *old_irql);
-+					      diva_os_spin_lock_magic_t *old_irql,
-+					      unsigned int *bh);
- void diva_maint_ack_message(int do_release,
--			    diva_os_spin_lock_magic_t *old_irql);
-+			    diva_os_spin_lock_magic_t *old_irql,
-+			    unsigned int bh);
- void diva_maint_prtComp(char *format, ...);
- void diva_maint_wakeup_read(void);
- int diva_get_driver_info(dword id, byte *data, int data_length);
-diff --git a/drivers/isdn/hardware/eicon/diva.c b/drivers/isdn/hardware/eicon/diva.c
-index 1b25d8b..92e11ea 100644
---- a/drivers/isdn/hardware/eicon/diva.c
-+++ b/drivers/isdn/hardware/eicon/diva.c
-@@ -166,6 +166,7 @@ static diva_os_xdi_adapter_t *diva_q_get_next(struct list_head *what)
-    -------------------------------------------------------------------------- */
- void *diva_driver_add_card(void *pdev, unsigned long CardOrdinal)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_os_xdi_adapter_t *pdiva, *pa;
- 	int i, j, max, nr;
-@@ -189,14 +190,14 @@ void *diva_driver_add_card(void *pdev, unsigned long CardOrdinal)
- 				nr = 1;
- 			}
+ 	len = lp->tp.write(lp, &skb);
  
--			diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
-+			bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
- 
- 			for (i = 0; i < max; i++) {
- 				if (!diva_find_free_adapters(i, nr)) {
- 					pdiva->controller = i + 1;
- 					pdiva->xdi_adapter.ANum = pdiva->controller;
- 					IoAdapters[i] = &pdiva->xdi_adapter;
--					diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card");
-+					diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card", bh);
- 					create_adapter_proc(pdiva);	/* add adapter to proc file system */
- 
- 					DBG_LOG(("add %s:%d",
-@@ -204,7 +205,7 @@ void *diva_driver_add_card(void *pdev, unsigned long CardOrdinal)
- 						 [CardOrdinal].Name,
- 						 pdiva->controller))
- 
--						diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
-+						bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
- 					pa = pdiva;
- 					for (j = 1; j < nr; j++) {	/* slave adapters, if any */
- 						pa = diva_q_get_next(&pa->link);
-@@ -212,23 +213,23 @@ void *diva_driver_add_card(void *pdev, unsigned long CardOrdinal)
- 							pa->controller = i + 1 + j;
- 							pa->xdi_adapter.ANum = pa->controller;
- 							IoAdapters[i + j] = &pa->xdi_adapter;
--							diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card");
-+							diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card", bh);
- 							DBG_LOG(("add slave adapter (%d)",
- 								 pa->controller))
- 								create_adapter_proc(pa);	/* add adapter to proc file system */
--							diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
-+							bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add card");
- 						} else {
- 							DBG_ERR(("slave adapter problem"))
- 								break;
- 						}
- 					}
- 
--					diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card");
-+					diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card", bh);
- 					return (pdiva);
- 				}
- 			}
- 
--			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add card", bh);
- 
- 			/*
- 			  Not able to add adapter - remove it and return error
-@@ -260,17 +261,19 @@ int divasa_xdi_driver_entry(void)
-    -------------------------------------------------------------------------- */
- static diva_os_xdi_adapter_t *get_and_remove_from_queue(void)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_os_xdi_adapter_t *a = NULL;
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "driver_unload");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql,
-+				     "driver_unload");
- 
- 	if (!list_empty(&adapter_queue)) {
- 		a = list_entry(adapter_queue.next, diva_os_xdi_adapter_t, link);
- 		list_del(adapter_queue.next);
+@@ -443,7 +446,7 @@ static int iss_net_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		pr_err("%s: %s failed(%d)\n", dev->name, __func__, len);
  	}
  
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "driver_unload");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "driver_unload", bh);
- 	return (a);
+-	spin_unlock_bh(&lp->lock);
++	spin_unlock_bh(&lp->lock, bh);
+ 
+ 	dev_kfree_skb(skb);
+ 	return NETDEV_TX_OK;
+@@ -466,14 +469,15 @@ static void iss_net_tx_timeout(struct net_device *dev)
+ 
+ static int iss_net_set_mac(struct net_device *dev, void *addr)
+ {
++	unsigned int bh;
+ 	struct iss_net_private *lp = netdev_priv(dev);
+ 	struct sockaddr *hwaddr = addr;
+ 
+ 	if (!is_valid_ether_addr(hwaddr->sa_data))
+ 		return -EADDRNOTAVAIL;
+-	spin_lock_bh(&lp->lock);
++	bh = spin_lock_bh(&lp->lock, SOFTIRQ_ALL_MASK);
+ 	memcpy(dev->dev_addr, hwaddr->sa_data, ETH_ALEN);
+-	spin_unlock_bh(&lp->lock);
++	spin_unlock_bh(&lp->lock, bh);
+ 	return 0;
  }
  
-@@ -282,12 +285,13 @@ void diva_driver_remove_card(void *pdiva)
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_os_xdi_adapter_t *a[4];
- 	diva_os_xdi_adapter_t *pa;
+diff --git a/block/genhd.c b/block/genhd.c
+index be5bab2..86cbaa6 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -473,6 +473,7 @@ static int blk_mangle_minor(int minor)
+  */
+ int blk_alloc_devt(struct hd_struct *part, dev_t *devt)
+ {
++	unsigned int bh;
+ 	struct gendisk *disk = part_to_disk(part);
+ 	int idx;
+ 
+@@ -485,9 +486,9 @@ int blk_alloc_devt(struct hd_struct *part, dev_t *devt)
+ 	/* allocate ext devt */
+ 	idr_preload(GFP_KERNEL);
+ 
+-	spin_lock_bh(&ext_devt_lock);
++	bh = spin_lock_bh(&ext_devt_lock, SOFTIRQ_ALL_MASK);
+ 	idx = idr_alloc(&ext_devt_idr, part, 0, NR_EXT_DEVT, GFP_NOWAIT);
+-	spin_unlock_bh(&ext_devt_lock);
++	spin_unlock_bh(&ext_devt_lock, bh);
+ 
+ 	idr_preload_end();
+ 	if (idx < 0)
+@@ -508,13 +509,14 @@ int blk_alloc_devt(struct hd_struct *part, dev_t *devt)
+  */
+ void blk_free_devt(dev_t devt)
+ {
++	unsigned int bh;
+ 	if (devt == MKDEV(0, 0))
+ 		return;
+ 
+ 	if (MAJOR(devt) == BLOCK_EXT_MAJOR) {
+-		spin_lock_bh(&ext_devt_lock);
++		bh = spin_lock_bh(&ext_devt_lock, SOFTIRQ_ALL_MASK);
+ 		idr_remove(&ext_devt_idr, blk_mangle_minor(MINOR(devt)));
+-		spin_unlock_bh(&ext_devt_lock);
++		spin_unlock_bh(&ext_devt_lock, bh);
+ 	}
+ }
+ 
+@@ -817,6 +819,7 @@ static ssize_t disk_badblocks_store(struct device *dev,
+  */
+ struct gendisk *get_gendisk(dev_t devt, int *partno)
+ {
++	unsigned int bh;
+ 	struct gendisk *disk = NULL;
+ 
+ 	if (MAJOR(devt) != BLOCK_EXT_MAJOR) {
+@@ -828,13 +831,13 @@ struct gendisk *get_gendisk(dev_t devt, int *partno)
+ 	} else {
+ 		struct hd_struct *part;
+ 
+-		spin_lock_bh(&ext_devt_lock);
++		bh = spin_lock_bh(&ext_devt_lock, SOFTIRQ_ALL_MASK);
+ 		part = idr_find(&ext_devt_idr, blk_mangle_minor(MINOR(devt)));
+ 		if (part && get_disk_and_module(part_to_disk(part))) {
+ 			*partno = part->partno;
+ 			disk = part_to_disk(part);
+ 		}
+-		spin_unlock_bh(&ext_devt_lock);
++		spin_unlock_bh(&ext_devt_lock, bh);
+ 	}
+ 
+ 	if (!disk)
+diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
+index eff337c..6ecc1a1 100644
+--- a/crypto/ansi_cprng.c
++++ b/crypto/ansi_cprng.c
+@@ -186,12 +186,13 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
+ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
+ 				int do_cont_test)
+ {
++	unsigned int bh;
+ 	unsigned char *ptr = buf;
+ 	unsigned int byte_count = (unsigned int)nbytes;
+ 	int err;
+ 
+ 
+-	spin_lock_bh(&ctx->prng_lock);
++	bh = spin_lock_bh(&ctx->prng_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	err = -EINVAL;
+ 	if (ctx->flags & PRNG_NEED_RESET)
+@@ -267,7 +268,7 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
+ 		goto remainder;
+ 
+ done:
+-	spin_unlock_bh(&ctx->prng_lock);
++	spin_unlock_bh(&ctx->prng_lock, bh);
+ 	dbgprint(KERN_CRIT "returning %d from get_prng_bytes in context %p\n",
+ 		err, ctx);
+ 	return err;
+@@ -282,10 +283,11 @@ static int reset_prng_context(struct prng_context *ctx,
+ 			      const unsigned char *key, size_t klen,
+ 			      const unsigned char *V, const unsigned char *DT)
+ {
++	unsigned int bh;
+ 	int ret;
+ 	const unsigned char *prng_key;
+ 
+-	spin_lock_bh(&ctx->prng_lock);
++	bh = spin_lock_bh(&ctx->prng_lock, SOFTIRQ_ALL_MASK);
+ 	ctx->flags |= PRNG_NEED_RESET;
+ 
+ 	prng_key = (key != NULL) ? key : (unsigned char *)DEFAULT_PRNG_KEY;
+@@ -318,7 +320,7 @@ static int reset_prng_context(struct prng_context *ctx,
+ 	ret = 0;
+ 	ctx->flags &= ~PRNG_NEED_RESET;
+ out:
+-	spin_unlock_bh(&ctx->prng_lock);
++	spin_unlock_bh(&ctx->prng_lock, bh);
+ 	return ret;
+ }
+ 
+diff --git a/crypto/mcryptd.c b/crypto/mcryptd.c
+index 1c8e1b8..911a3f7 100644
+--- a/crypto/mcryptd.c
++++ b/crypto/mcryptd.c
+@@ -150,6 +150,7 @@ static void mcryptd_opportunistic_flush(void)
+  */
+ static void mcryptd_queue_worker(struct work_struct *work)
+ {
++	unsigned int bh;
+ 	struct mcryptd_cpu_queue *cpu_queue;
+ 	struct crypto_async_request *req, *backlog;
+ 	int i;
+@@ -163,10 +164,10 @@ static void mcryptd_queue_worker(struct work_struct *work)
+ 	i = 0;
+ 	while (i < MCRYPTD_BATCH || single_task_running()) {
+ 
+-		spin_lock_bh(&cpu_queue->q_lock);
++		bh = spin_lock_bh(&cpu_queue->q_lock, SOFTIRQ_ALL_MASK);
+ 		backlog = crypto_get_backlog(&cpu_queue->queue);
+ 		req = crypto_dequeue_request(&cpu_queue->queue);
+-		spin_unlock_bh(&cpu_queue->q_lock);
++		spin_unlock_bh(&cpu_queue->q_lock, bh);
+ 
+ 		if (!req) {
+ 			mcryptd_opportunistic_flush();
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index f2c631c..50f8990 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -589,6 +589,7 @@ static int rsxx_eeh_frozen(struct pci_dev *dev)
+ 
+ static void rsxx_eeh_failure(struct pci_dev *dev)
+ {
++	unsigned int bh;
+ 	struct rsxx_cardinfo *card = pci_get_drvdata(dev);
+ 	int i;
+ 	int cnt = 0;
+@@ -599,11 +600,11 @@ static void rsxx_eeh_failure(struct pci_dev *dev)
+ 	card->halt = 1;
+ 
+ 	for (i = 0; i < card->n_targets; i++) {
+-		spin_lock_bh(&card->ctrl[i].queue_lock);
++		bh = spin_lock_bh(&card->ctrl[i].queue_lock, SOFTIRQ_ALL_MASK);
+ 		cnt = rsxx_cleanup_dma_queue(&card->ctrl[i],
+ 					     &card->ctrl[i].queue,
+ 					     COMPLETE_DMA);
+-		spin_unlock_bh(&card->ctrl[i].queue_lock);
++		spin_unlock_bh(&card->ctrl[i].queue_lock, bh);
+ 
+ 		cnt += rsxx_dma_cancel(&card->ctrl[i]);
+ 
+diff --git a/drivers/block/rsxx/cregs.c b/drivers/block/rsxx/cregs.c
+index c148e83..2567387 100644
+--- a/drivers/block/rsxx/cregs.c
++++ b/drivers/block/rsxx/cregs.c
+@@ -167,6 +167,7 @@ static int creg_queue_cmd(struct rsxx_cardinfo *card,
+ 			  creg_cmd_cb callback,
+ 			  void *cb_private)
+ {
++	unsigned int bh;
+ 	struct creg_cmd *cmd;
+ 
+ 	/* Don't queue stuff up if we're halted. */
+@@ -194,11 +195,11 @@ static int creg_queue_cmd(struct rsxx_cardinfo *card,
+ 	cmd->cb_private = cb_private;
+ 	cmd->status	= 0;
+ 
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	list_add_tail(&cmd->list, &card->creg_ctrl.queue);
+ 	card->creg_ctrl.q_depth++;
+ 	creg_kick_queue(card);
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ 
+ 	return 0;
+ }
+@@ -235,6 +236,7 @@ static void creg_cmd_timed_out(struct timer_list *t)
+ 
+ static void creg_cmd_done(struct work_struct *work)
+ {
++	unsigned int bh;
+ 	struct rsxx_cardinfo *card;
+ 	struct creg_cmd *cmd;
+ 	int st = 0;
+@@ -249,10 +251,10 @@ static void creg_cmd_done(struct work_struct *work)
+ 	if (del_timer_sync(&card->creg_ctrl.cmd_timer) == 0)
+ 		card->creg_ctrl.creg_stats.failed_cancel_timer++;
+ 
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	cmd = card->creg_ctrl.active_cmd;
+ 	card->creg_ctrl.active_cmd = NULL;
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ 
+ 	if (cmd == NULL) {
+ 		dev_err(CARD_TO_DEV(card),
+@@ -302,14 +304,15 @@ static void creg_cmd_done(struct work_struct *work)
+ 
+ 	kmem_cache_free(creg_cmd_pool, cmd);
+ 
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	card->creg_ctrl.active = 0;
+ 	creg_kick_queue(card);
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ }
+ 
+ static void creg_reset(struct rsxx_cardinfo *card)
+ {
++	unsigned int bh;
+ 	struct creg_cmd *cmd = NULL;
+ 	struct creg_cmd *tmp;
+ 	unsigned long flags;
+@@ -330,7 +333,7 @@ static void creg_reset(struct rsxx_cardinfo *card)
+ 		"Resetting creg interface for recovery\n");
+ 
+ 	/* Cancel outstanding commands */
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry_safe(cmd, tmp, &card->creg_ctrl.queue, list) {
+ 		list_del(&cmd->list);
+ 		card->creg_ctrl.q_depth--;
+@@ -351,7 +354,7 @@ static void creg_reset(struct rsxx_cardinfo *card)
+ 
+ 		card->creg_ctrl.active = 0;
+ 	}
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ 
+ 	card->creg_ctrl.reset = 0;
+ 	spin_lock_irqsave(&card->irq_lock, flags);
+@@ -707,6 +710,7 @@ int rsxx_reg_access(struct rsxx_cardinfo *card,
+ 
+ void rsxx_eeh_save_issued_creg(struct rsxx_cardinfo *card)
+ {
++	unsigned int bh;
+ 	struct creg_cmd *cmd = NULL;
+ 
+ 	cmd = card->creg_ctrl.active_cmd;
+@@ -715,20 +719,21 @@ void rsxx_eeh_save_issued_creg(struct rsxx_cardinfo *card)
+ 	if (cmd) {
+ 		del_timer_sync(&card->creg_ctrl.cmd_timer);
+ 
+-		spin_lock_bh(&card->creg_ctrl.lock);
++		bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 		list_add(&cmd->list, &card->creg_ctrl.queue);
+ 		card->creg_ctrl.q_depth++;
+ 		card->creg_ctrl.active = 0;
+-		spin_unlock_bh(&card->creg_ctrl.lock);
++		spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ 	}
+ }
+ 
+ void rsxx_kick_creg_queue(struct rsxx_cardinfo *card)
+ {
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	unsigned int bh;
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	if (!list_empty(&card->creg_ctrl.queue))
+ 		creg_kick_queue(card);
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ }
+ 
+ /*------------ Initialization & Setup --------------*/
+@@ -752,12 +757,13 @@ int rsxx_creg_setup(struct rsxx_cardinfo *card)
+ 
+ void rsxx_creg_destroy(struct rsxx_cardinfo *card)
+ {
++	unsigned int bh;
+ 	struct creg_cmd *cmd;
+ 	struct creg_cmd *tmp;
+ 	int cnt = 0;
+ 
+ 	/* Cancel outstanding commands */
+-	spin_lock_bh(&card->creg_ctrl.lock);
++	bh = spin_lock_bh(&card->creg_ctrl.lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry_safe(cmd, tmp, &card->creg_ctrl.queue, list) {
+ 		list_del(&cmd->list);
+ 		if (cmd->cb)
+@@ -782,7 +788,7 @@ void rsxx_creg_destroy(struct rsxx_cardinfo *card)
+ 			"Canceled active creg command\n");
+ 		kmem_cache_free(creg_cmd_pool, cmd);
+ 	}
+-	spin_unlock_bh(&card->creg_ctrl.lock);
++	spin_unlock_bh(&card->creg_ctrl.lock, bh);
+ 
+ 	cancel_work_sync(&card->creg_ctrl.done_work);
+ }
+diff --git a/drivers/block/rsxx/dma.c b/drivers/block/rsxx/dma.c
+index 8fbc1bf..ab6ac00 100644
+--- a/drivers/block/rsxx/dma.c
++++ b/drivers/block/rsxx/dma.c
+@@ -275,14 +275,15 @@ int rsxx_cleanup_dma_queue(struct rsxx_dma_ctrl *ctrl,
+ static void rsxx_requeue_dma(struct rsxx_dma_ctrl *ctrl,
+ 				 struct rsxx_dma *dma)
+ {
++	unsigned int bh;
+ 	/*
+ 	 * Requeued DMAs go to the front of the queue so they are issued
+ 	 * first.
+ 	 */
+-	spin_lock_bh(&ctrl->queue_lock);
++	bh = spin_lock_bh(&ctrl->queue_lock, SOFTIRQ_ALL_MASK);
+ 	ctrl->stats.sw_q_depth++;
+ 	list_add(&dma->list, &ctrl->queue);
+-	spin_unlock_bh(&ctrl->queue_lock);
++	spin_unlock_bh(&ctrl->queue_lock, bh);
+ }
+ 
+ static void rsxx_handle_dma_error(struct rsxx_dma_ctrl *ctrl,
+@@ -395,6 +396,7 @@ static void dma_engine_stalled(struct timer_list *t)
+ 
+ static void rsxx_issue_dmas(struct rsxx_dma_ctrl *ctrl)
+ {
++	unsigned int bh;
+ 	struct rsxx_dma *dma;
+ 	int tag;
+ 	int cmds_pending = 0;
+@@ -408,22 +410,22 @@ static void rsxx_issue_dmas(struct rsxx_dma_ctrl *ctrl)
+ 		return;
+ 
+ 	while (1) {
+-		spin_lock_bh(&ctrl->queue_lock);
++		bh = spin_lock_bh(&ctrl->queue_lock, SOFTIRQ_ALL_MASK);
+ 		if (list_empty(&ctrl->queue)) {
+-			spin_unlock_bh(&ctrl->queue_lock);
++			spin_unlock_bh(&ctrl->queue_lock, bh);
+ 			break;
+ 		}
+-		spin_unlock_bh(&ctrl->queue_lock);
++		spin_unlock_bh(&ctrl->queue_lock, bh);
+ 
+ 		tag = pop_tracker(ctrl->trackers);
+ 		if (tag == -1)
+ 			break;
+ 
+-		spin_lock_bh(&ctrl->queue_lock);
++		bh = spin_lock_bh(&ctrl->queue_lock, SOFTIRQ_ALL_MASK);
+ 		dma = list_entry(ctrl->queue.next, struct rsxx_dma, list);
+ 		list_del(&dma->list);
+ 		ctrl->stats.sw_q_depth--;
+-		spin_unlock_bh(&ctrl->queue_lock);
++		spin_unlock_bh(&ctrl->queue_lock, bh);
+ 
+ 		/*
+ 		 * This will catch any DMAs that slipped in right before the
+@@ -507,6 +509,7 @@ static void rsxx_issue_dmas(struct rsxx_dma_ctrl *ctrl)
+ 
+ static void rsxx_dma_done(struct rsxx_dma_ctrl *ctrl)
+ {
++	unsigned int bh;
+ 	struct rsxx_dma *dma;
+ 	unsigned long flags;
+ 	u16 count;
+@@ -583,10 +586,10 @@ static void rsxx_dma_done(struct rsxx_dma_ctrl *ctrl)
+ 	rsxx_enable_ier(ctrl->card, CR_INTR_DMA(ctrl->id));
+ 	spin_unlock_irqrestore(&ctrl->card->irq_lock, flags);
+ 
+-	spin_lock_bh(&ctrl->queue_lock);
++	bh = spin_lock_bh(&ctrl->queue_lock, SOFTIRQ_ALL_MASK);
+ 	if (ctrl->stats.sw_q_depth)
+ 		queue_work(ctrl->issue_wq, &ctrl->issue_dma_work);
+-	spin_unlock_bh(&ctrl->queue_lock);
++	spin_unlock_bh(&ctrl->queue_lock, bh);
+ }
+ 
+ static void rsxx_schedule_issue(struct work_struct *work)
+@@ -683,6 +686,7 @@ blk_status_t rsxx_dma_queue_bio(struct rsxx_cardinfo *card,
+ 			   rsxx_dma_cb cb,
+ 			   void *cb_data)
+ {
++	unsigned int bh;
+ 	struct list_head dma_list[RSXX_MAX_TARGETS];
+ 	struct bio_vec bvec;
+ 	struct bvec_iter iter;
+@@ -753,10 +757,10 @@ blk_status_t rsxx_dma_queue_bio(struct rsxx_cardinfo *card,
+ 
+ 	for (i = 0; i < card->n_targets; i++) {
+ 		if (!list_empty(&dma_list[i])) {
+-			spin_lock_bh(&card->ctrl[i].queue_lock);
++			bh = spin_lock_bh(&card->ctrl[i].queue_lock, SOFTIRQ_ALL_MASK);
+ 			card->ctrl[i].stats.sw_q_depth += dma_cnt[i];
+ 			list_splice_tail(&dma_list[i], &card->ctrl[i].queue);
+-			spin_unlock_bh(&card->ctrl[i].queue_lock);
++			spin_unlock_bh(&card->ctrl[i].queue_lock, bh);
+ 
+ 			queue_work(card->ctrl[i].issue_wq,
+ 				   &card->ctrl[i].issue_dma_work);
+@@ -995,6 +999,7 @@ int rsxx_dma_cancel(struct rsxx_dma_ctrl *ctrl)
+ 
+ void rsxx_dma_destroy(struct rsxx_cardinfo *card)
+ {
++	unsigned int bh;
+ 	struct rsxx_dma_ctrl *ctrl;
+ 	int i;
+ 
+@@ -1015,9 +1020,9 @@ void rsxx_dma_destroy(struct rsxx_cardinfo *card)
+ 			del_timer_sync(&ctrl->activity_timer);
+ 
+ 		/* Clean up the DMA queue */
+-		spin_lock_bh(&ctrl->queue_lock);
++		bh = spin_lock_bh(&ctrl->queue_lock, SOFTIRQ_ALL_MASK);
+ 		rsxx_cleanup_dma_queue(ctrl, &ctrl->queue, COMPLETE_DMA);
+-		spin_unlock_bh(&ctrl->queue_lock);
++		spin_unlock_bh(&ctrl->queue_lock, bh);
+ 
+ 		rsxx_dma_cancel(ctrl);
+ 
+@@ -1032,6 +1037,7 @@ void rsxx_dma_destroy(struct rsxx_cardinfo *card)
+ 
+ int rsxx_eeh_save_issued_dmas(struct rsxx_cardinfo *card)
+ {
++	unsigned int bh;
+ 	int i;
+ 	int j;
+ 	int cnt;
+@@ -1071,13 +1077,13 @@ int rsxx_eeh_save_issued_dmas(struct rsxx_cardinfo *card)
+ 			cnt++;
+ 		}
+ 
+-		spin_lock_bh(&card->ctrl[i].queue_lock);
++		bh = spin_lock_bh(&card->ctrl[i].queue_lock, SOFTIRQ_ALL_MASK);
+ 		list_splice(&issued_dmas[i], &card->ctrl[i].queue);
+ 
+ 		atomic_sub(cnt, &card->ctrl[i].stats.hw_q_depth);
+ 		card->ctrl[i].stats.sw_q_depth += cnt;
+ 		card->ctrl[i].e_cnt = 0;
+-		spin_unlock_bh(&card->ctrl[i].queue_lock);
++		spin_unlock_bh(&card->ctrl[i].queue_lock, bh);
+ 	}
+ 
+ 	kfree(issued_dmas);
+diff --git a/drivers/block/umem.c b/drivers/block/umem.c
+index 5c7fb8c..33d25af 100644
+--- a/drivers/block/umem.c
++++ b/drivers/block/umem.c
+@@ -410,6 +410,7 @@ static int add_bio(struct cardinfo *card)
+ 
+ static void process_page(unsigned long data)
+ {
++	unsigned int bh;
+ 	/* check if any of the requests in the page are DMA_COMPLETE,
+ 	 * and deal with them appropriately.
+ 	 * If we find a descriptor without DMA_COMPLETE in the semaphore, then
+@@ -421,7 +422,7 @@ static void process_page(unsigned long data)
+ 	struct cardinfo *card = (struct cardinfo *)data;
+ 	unsigned int dma_status = card->dma_status;
+ 
+-	spin_lock_bh(&card->lock);
++	bh = spin_lock_bh(&card->lock, SOFTIRQ_ALL_MASK);
+ 	if (card->Active < 0)
+ 		goto out_unlock;
+ 	page = &card->mm_pages[card->Active];
+@@ -496,7 +497,7 @@ static void process_page(unsigned long data)
+ 		mm_start_io(card);
+ 	}
+  out_unlock:
+-	spin_unlock_bh(&card->lock);
++	spin_unlock_bh(&card->lock, bh);
+ 
+ 	while (return_bio) {
+ 		struct bio *bio = return_bio;
+@@ -720,17 +721,18 @@ static void check_batteries(struct cardinfo *card)
+ 
+ static void check_all_batteries(struct timer_list *unused)
+ {
 +	unsigned int bh;
  	int i;
  
- 	pa = a[0] = (diva_os_xdi_adapter_t *) pdiva;
- 	a[1] = a[2] = a[3] = NULL;
+ 	for (i = 0; i < num_cards; i++)
+ 		if (!(cards[i].flags & UM_FLAG_NO_BATT)) {
+ 			struct cardinfo *card = &cards[i];
+-			spin_lock_bh(&card->lock);
++			bh = spin_lock_bh(&card->lock, SOFTIRQ_ALL_MASK);
+ 			if (card->Active >= 0)
+ 				card->check_batteries = 1;
+ 			else
+ 				check_batteries(card);
+-			spin_unlock_bh(&card->lock);
++			spin_unlock_bh(&card->lock, bh);
+ 		}
  
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "remode adapter");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "remode adapter");
- 
- 	for (i = 1; i < 4; i++) {
- 		if ((pa = diva_q_get_next(&pa->link))
-@@ -302,7 +306,7 @@ void diva_driver_remove_card(void *pdiva)
- 		list_del(&a[i]->link);
- 	}
- 
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "driver_unload");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "driver_unload", bh);
- 
- 	(*(a[0]->interface.cleanup_adapter_proc)) (a[0]);
- 
-@@ -326,6 +330,7 @@ static void *divas_create_pci_card(int handle, void *pci_dev_handle)
- 	diva_supported_cards_info_t *pI = &divas_supported_cards[handle];
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_os_xdi_adapter_t *a;
-+	unsigned int bh;
- 
- 	DBG_LOG(("found %d-%s", pI->CardOrdinal, CardProperties[pI->CardOrdinal].Name))
- 
-@@ -348,14 +353,14 @@ static void *divas_create_pci_card(int handle, void *pci_dev_handle)
- 	  Add master adapter first, so slave adapters will receive higher
- 	  numbers as master adapter
- 	*/
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
- 	list_add_tail(&a->link, &adapter_queue);
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "found_pci_card", bh);
- 
- 	if ((*(pI->init_card)) (a)) {
--		diva_os_enter_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
-+		bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
- 		list_del(&a->link);
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "found_pci_card");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "found_pci_card", bh);
- 		diva_os_free(0, a);
- 		DBG_ERR(("A: can't get adapter resources"));
- 		return NULL;
-@@ -391,6 +396,7 @@ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
- 			    int length, void *mptr,
- 			    divas_xdi_copy_from_user_fn_t cp_fn)
+ 	init_battery_timer();
+diff --git a/drivers/connector/cn_queue.c b/drivers/connector/cn_queue.c
+index 9c54fdf..1a94afb 100644
+--- a/drivers/connector/cn_queue.c
++++ b/drivers/connector/cn_queue.c
+@@ -75,6 +75,7 @@ int cn_queue_add_callback(struct cn_queue_dev *dev, const char *name,
+ 			  void (*callback)(struct cn_msg *,
+ 					   struct netlink_skb_parms *))
  {
 +	unsigned int bh;
- 	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = NULL;
- 	diva_os_spin_lock_magic_t old_irql;
-@@ -405,14 +411,14 @@ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
- 		DBG_ERR(("A: A(?) open, write error"))
- 			return NULL;
+ 	struct cn_callback_entry *cbq, *__cbq;
+ 	int found = 0;
+ 
+@@ -82,7 +83,7 @@ int cn_queue_add_callback(struct cn_queue_dev *dev, const char *name,
+ 	if (!cbq)
+ 		return -ENOMEM;
+ 
+-	spin_lock_bh(&dev->queue_lock);
++	bh = spin_lock_bh(&dev->queue_lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry(__cbq, &dev->queue_list, callback_entry) {
+ 		if (cn_cb_equal(&__cbq->id.id, id)) {
+ 			found = 1;
+@@ -91,7 +92,7 @@ int cn_queue_add_callback(struct cn_queue_dev *dev, const char *name,
  	}
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 	list_for_each(tmp, &adapter_queue) {
- 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
- 		if (a->controller == (int)msg->adapter)
+ 	if (!found)
+ 		list_add_tail(&cbq->callback_entry, &dev->queue_list);
+-	spin_unlock_bh(&dev->queue_lock);
++	spin_unlock_bh(&dev->queue_lock, bh);
+ 
+ 	if (found) {
+ 		cn_queue_release_callback(cbq);
+@@ -106,10 +107,11 @@ int cn_queue_add_callback(struct cn_queue_dev *dev, const char *name,
+ 
+ void cn_queue_del_callback(struct cn_queue_dev *dev, struct cb_id *id)
+ {
++	unsigned int bh;
+ 	struct cn_callback_entry *cbq, *n;
+ 	int found = 0;
+ 
+-	spin_lock_bh(&dev->queue_lock);
++	bh = spin_lock_bh(&dev->queue_lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry_safe(cbq, n, &dev->queue_list, callback_entry) {
+ 		if (cn_cb_equal(&cbq->id.id, id)) {
+ 			list_del(&cbq->callback_entry);
+@@ -117,7 +119,7 @@ void cn_queue_del_callback(struct cn_queue_dev *dev, struct cb_id *id)
  			break;
- 		a = NULL;
- 	}
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter", bh);
- 
- 	if (!a) {
- 		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
-@@ -614,11 +620,12 @@ void diva_xdi_display_adapter_features(int card)
- 
- void diva_add_slave_adapter(diva_os_xdi_adapter_t *a)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add_slave");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "add_slave");
- 	list_add_tail(&a->link, &adapter_queue);
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add_slave");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "add_slave", bh);
- }
- 
- int diva_card_read_xlog(diva_os_xdi_adapter_t *a)
-diff --git a/drivers/isdn/hardware/eicon/idifunc.c b/drivers/isdn/hardware/eicon/idifunc.c
-index fef6586..1c489c3 100644
---- a/drivers/isdn/hardware/eicon/idifunc.c
-+++ b/drivers/isdn/hardware/eicon/idifunc.c
-@@ -60,20 +60,21 @@ static diva_os_spin_lock_t ll_lock;
-  */
- static udiva_card *find_card_in_list(DESCRIPTOR *d)
- {
-+	unsigned int bh;
- 	udiva_card *card;
- 	struct list_head *tmp;
- 	diva_os_spin_lock_magic_t old_irql;
- 
--	diva_os_enter_spin_lock(&ll_lock, &old_irql, "find card");
-+	bh = diva_os_enter_spin_lock(&ll_lock, &old_irql, "find card");
- 	list_for_each(tmp, &cards) {
- 		card = list_entry(tmp, udiva_card, list);
- 		if (card->d.request == d->request) {
- 			diva_os_leave_spin_lock(&ll_lock, &old_irql,
--						"find card");
-+						"find card", bh);
- 			return (card);
  		}
  	}
--	diva_os_leave_spin_lock(&ll_lock, &old_irql, "find card");
-+	diva_os_leave_spin_lock(&ll_lock, &old_irql, "find card", bh);
- 	return ((udiva_card *) NULL);
- }
+-	spin_unlock_bh(&dev->queue_lock);
++	spin_unlock_bh(&dev->queue_lock, bh);
  
-@@ -82,6 +83,7 @@ static udiva_card *find_card_in_list(DESCRIPTOR *d)
-  */
- static void um_new_card(DESCRIPTOR *d)
+ 	if (found)
+ 		cn_queue_release_callback(cbq);
+@@ -143,12 +145,13 @@ struct cn_queue_dev *cn_queue_alloc_dev(const char *name, struct sock *nls)
+ 
+ void cn_queue_free_dev(struct cn_queue_dev *dev)
  {
 +	unsigned int bh;
- 	int adapter_nr = 0;
- 	udiva_card *card = NULL;
- 	IDI_SYNC_REQ sync_req;
-@@ -100,9 +102,9 @@ static void um_new_card(DESCRIPTOR *d)
- 		sync_req.xdi_logical_adapter_number.info.logical_adapter_number;
- 	card->Id = adapter_nr;
- 	if (!(diva_user_mode_idi_create_adapter(d, adapter_nr))) {
--		diva_os_enter_spin_lock(&ll_lock, &old_irql, "add card");
-+		bh = diva_os_enter_spin_lock(&ll_lock, &old_irql, "add card");
- 		list_add_tail(&card->list, &cards);
--		diva_os_leave_spin_lock(&ll_lock, &old_irql, "add card");
-+		diva_os_leave_spin_lock(&ll_lock, &old_irql, "add card", bh);
+ 	struct cn_callback_entry *cbq, *n;
+ 
+-	spin_lock_bh(&dev->queue_lock);
++	bh = spin_lock_bh(&dev->queue_lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry_safe(cbq, n, &dev->queue_list, callback_entry)
+ 		list_del(&cbq->callback_entry);
+-	spin_unlock_bh(&dev->queue_lock);
++	spin_unlock_bh(&dev->queue_lock, bh);
+ 
+ 	while (atomic_read(&dev->refcnt)) {
+ 		pr_info("Waiting for %s to become free: refcnt=%d.\n",
+diff --git a/drivers/connector/connector.c b/drivers/connector/connector.c
+index eeb7d31..b9adef9 100644
+--- a/drivers/connector/connector.c
++++ b/drivers/connector/connector.c
+@@ -74,6 +74,7 @@ static int cn_already_initialized;
+ int cn_netlink_send_mult(struct cn_msg *msg, u16 len, u32 portid, u32 __group,
+ 	gfp_t gfp_mask)
+ {
++	unsigned int bh;
+ 	struct cn_callback_entry *__cbq;
+ 	unsigned int size;
+ 	struct sk_buff *skb;
+@@ -86,7 +87,7 @@ int cn_netlink_send_mult(struct cn_msg *msg, u16 len, u32 portid, u32 __group,
+ 	if (portid || __group) {
+ 		group = __group;
  	} else {
- 		DBG_ERR(("could not create user mode idi card %d",
- 			 adapter_nr));
-@@ -115,6 +117,7 @@ static void um_new_card(DESCRIPTOR *d)
-  */
- static void um_remove_card(DESCRIPTOR *d)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	udiva_card *card = NULL;
- 
-@@ -123,9 +126,9 @@ static void um_remove_card(DESCRIPTOR *d)
- 		return;
- 	}
- 	diva_user_mode_idi_remove_adapter(card->Id);
--	diva_os_enter_spin_lock(&ll_lock, &old_irql, "remove card");
-+	bh = diva_os_enter_spin_lock(&ll_lock, &old_irql, "remove card");
- 	list_del(&card->list);
--	diva_os_leave_spin_lock(&ll_lock, &old_irql, "remove card");
-+	diva_os_leave_spin_lock(&ll_lock, &old_irql, "remove card", bh);
- 	DBG_LOG(("idi proc entry removed for card %d", card->Id));
- 	diva_os_free(0, card);
- }
-@@ -135,11 +138,12 @@ static void um_remove_card(DESCRIPTOR *d)
-  */
- static void __exit remove_all_idi_proc(void)
- {
-+	unsigned int bh;
- 	udiva_card *card;
- 	diva_os_spin_lock_magic_t old_irql;
- 
- rescan:
--	diva_os_enter_spin_lock(&ll_lock, &old_irql, "remove all");
-+	bh = diva_os_enter_spin_lock(&ll_lock, &old_irql, "remove all");
- 	if (!list_empty(&cards)) {
- 		card = list_entry(cards.next, udiva_card, list);
- 		list_del(&card->list);
-@@ -148,7 +152,7 @@ static void __exit remove_all_idi_proc(void)
- 		diva_os_free(0, card);
- 		goto rescan;
- 	}
--	diva_os_leave_spin_lock(&ll_lock, &old_irql, "remove all");
-+	diva_os_leave_spin_lock(&ll_lock, &old_irql, "remove all", bh);
- }
- 
- /*
-diff --git a/drivers/isdn/hardware/eicon/io.c b/drivers/isdn/hardware/eicon/io.c
-index 8851ce5..df3d1f8 100644
---- a/drivers/isdn/hardware/eicon/io.c
-+++ b/drivers/isdn/hardware/eicon/io.c
-@@ -202,6 +202,7 @@ dump_trap_frame(PISDN_ADAPTER IoAdapter, byte __iomem *exceptionFrame)
-    -------------------------------------------------------------------------- */
- void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- {
-+	unsigned int bh;
- 	byte i;
- 	diva_os_spin_lock_magic_t irql;
- /*
-@@ -222,7 +223,7 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- 				pI->descriptor_number = -1;
- 				return;
- 			}
--			diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "dma_op");
-+			bh = diva_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "dma_op");
- 			if (pI->operation == IDI_SYNC_REQ_DMA_DESCRIPTOR_ALLOC) {
- 				pI->descriptor_number = diva_alloc_dma_map_entry(\
- 					(struct _diva_dma_map_entry *)IoAdapter->dma_map);
-@@ -249,7 +250,7 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- 				pI->descriptor_number = -1;
- 				pI->operation         = -1;
- 			}
--			diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "dma_op");
-+			diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "dma_op", bh);
- 		} return;
- #endif
- 		case IDI_SYNC_REQ_XDI_GET_LOGICAL_ADAPTER_NUMBER: {
-@@ -373,7 +374,8 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- 			DBG_FTL(("xdi: uninitialized Adapter used - ignore request"))
- 				return;
- 		}
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_req");
- /*
-  * assign an entity
-  */
-@@ -383,7 +385,8 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- 		{
- 			DBG_FTL(("xdi: all Ids in use (max=%d) --> Req ignored",
- 				 IoAdapter->e_max))
--				diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req");
-+				diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
-+							&irql, "data_req", bh);
- 			return;
- 		}
- /*
-@@ -416,7 +419,8 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
- 					(*(IoAdapter->os_trap_nfy_Fnc))(IoAdapter, IoAdapter->ANum);
- 				}
- 			}
--		diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req");
-+		diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+					"data_req", bh);
- 		return;
- 	}
- /*
-@@ -444,12 +448,14 @@ void request(PISDN_ADAPTER IoAdapter, ENTITY *e)
-  * queue the DPC to process the request
-  */
- 	diva_os_schedule_soft_isr(&IoAdapter->req_soft_isr);
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req",
-+				bh);
- }
- /* ---------------------------------------------------------------------
-    Main DPC routine
-    --------------------------------------------------------------------- */
- void DIDpcRoutine(struct _diva_os_soft_isr *psoft_isr, void *Context) {
-+	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter = (PISDN_ADAPTER)Context;
- 	ADAPTER *a = &IoAdapter->a;
- 	diva_os_atomic_t *pin_dpc = &IoAdapter->in_dpc;
-@@ -469,9 +475,8 @@ void DIDpcRoutine(struct _diva_os_soft_isr *psoft_isr, void *Context) {
- 		if (IoAdapter->pcm_pending) {
- 			struct pc_maint *pcm;
- 			diva_os_spin_lock_magic_t OldIrql;
--			diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
--						&OldIrql,
--						"data_dpc");
-+			bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
-+						     &OldIrql, "data_dpc");
- 			pcm = (struct pc_maint *)IoAdapter->pcm_data;
- 			switch (IoAdapter->pcm_pending) {
- 			case 1: /* ask card for XLOG */
-@@ -489,8 +494,7 @@ void DIDpcRoutine(struct _diva_os_soft_isr *psoft_isr, void *Context) {
+-		spin_lock_bh(&dev->cbdev->queue_lock);
++		bh = spin_lock_bh(&dev->cbdev->queue_lock, SOFTIRQ_ALL_MASK);
+ 		list_for_each_entry(__cbq, &dev->cbdev->queue_list,
+ 				    callback_entry) {
+ 			if (cn_cb_equal(&__cbq->id.id, &msg->id)) {
+@@ -95,7 +96,7 @@ int cn_netlink_send_mult(struct cn_msg *msg, u16 len, u32 portid, u32 __group,
  				break;
  			}
- 			diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
--						&OldIrql,
--						"data_dpc");
-+						&OldIrql, "data_dpc", bh);
  		}
- 		/* ---------------------------------------------------------------- */
- 	}
-@@ -501,6 +505,7 @@ void DIDpcRoutine(struct _diva_os_soft_isr *psoft_isr, void *Context) {
- static void
- pcm_req(PISDN_ADAPTER IoAdapter, ENTITY *e)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t OldIrql;
- 	int              i, rc;
- 	ADAPTER         *a = &IoAdapter->a;
-@@ -511,45 +516,43 @@ pcm_req(PISDN_ADAPTER IoAdapter, ENTITY *e)
+-		spin_unlock_bh(&dev->cbdev->queue_lock);
++		spin_unlock_bh(&dev->cbdev->queue_lock, bh);
+ 
+ 		if (!found)
+ 			return -ENODEV;
+@@ -143,6 +144,7 @@ EXPORT_SYMBOL_GPL(cn_netlink_send);
   */
- 	if (IoAdapter->Properties.Card == CARD_MAE)
- 	{
--		diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
--					&OldIrql,
--					"data_pcm_1");
-+		bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
-+					     &OldIrql, "data_pcm_1");
- 		IoAdapter->pcm_data = (void *)pcm;
- 		IoAdapter->pcm_pending = 1;
- 		diva_os_schedule_soft_isr(&IoAdapter->req_soft_isr);
--		diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
--					&OldIrql,
--					"data_pcm_1");
-+		diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &OldIrql,
-+					"data_pcm_1", bh);
- 		for (rc = 0, i = (IoAdapter->trapped ? 3000 : 250); !rc && (i > 0); --i)
- 		{
- 			diva_os_sleep(1);
- 			if (IoAdapter->pcm_pending == 3) {
--				diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
-+				bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
- 							&OldIrql,
- 							"data_pcm_3");
- 				IoAdapter->pcm_pending = 0;
- 				IoAdapter->pcm_data    = NULL;
- 				diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
- 							&OldIrql,
--							"data_pcm_3");
-+							"data_pcm_3", bh);
- 				return;
- 			}
--			diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
-+			bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
- 						&OldIrql,
- 						"data_pcm_2");
- 			diva_os_schedule_soft_isr(&IoAdapter->req_soft_isr);
- 			diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
- 						&OldIrql,
--						"data_pcm_2");
-+						"data_pcm_2", bh);
- 		}
--		diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
-+		bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
- 					&OldIrql,
- 					"data_pcm_4");
- 		IoAdapter->pcm_pending = 0;
- 		IoAdapter->pcm_data    = NULL;
- 		diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
- 					&OldIrql,
--					"data_pcm_4");
-+					"data_pcm_4", bh);
- 		goto Trapped;
- 	}
- /*
-@@ -755,48 +758,55 @@ void io_inc(ADAPTER *a, void *adr)
- /*------------------------------------------------------------------*/
- void free_entity(ADAPTER *a, byte e_no)
+ static int cn_call_callback(struct sk_buff *skb)
  {
 +	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter;
- 	diva_os_spin_lock_magic_t irql;
- 	IoAdapter = (PISDN_ADAPTER) a->io;
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_free");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_free");
- 	IoAdapter->e_tbl[e_no].e = NULL;
- 	IoAdapter->e_count--;
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_free");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				"data_free", bh);
- }
- void assign_queue(ADAPTER *a, byte e_no, word ref)
- {
-+	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter;
- 	diva_os_spin_lock_magic_t irql;
- 	IoAdapter = (PISDN_ADAPTER) a->io;
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_assign");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_assign");
- 	IoAdapter->e_tbl[e_no].assign_ref = ref;
- 	IoAdapter->e_tbl[e_no].next = (byte)IoAdapter->assign;
- 	IoAdapter->assign = e_no;
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_assign");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				"data_assign", bh);
- }
- byte get_assign(ADAPTER *a, word ref)
- {
-+	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter;
- 	diva_os_spin_lock_magic_t irql;
- 	byte e_no;
- 	IoAdapter = (PISDN_ADAPTER) a->io;
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock,
--				&irql,
--				"data_assign_get");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_assign_get");
- 	for (e_no = (byte)IoAdapter->assign;
- 	    e_no && IoAdapter->e_tbl[e_no].assign_ref != ref;
- 	    e_no = IoAdapter->e_tbl[e_no].next);
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock,
--				&irql,
--				"data_assign_get");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				"data_assign_get", bh);
- 	return e_no;
- }
- void req_queue(ADAPTER *a, byte e_no)
- {
-+	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter;
- 	diva_os_spin_lock_magic_t irql;
- 	IoAdapter = (PISDN_ADAPTER) a->io;
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req_q");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_req_q");
- 	IoAdapter->e_tbl[e_no].next = 0;
- 	if (IoAdapter->head) {
- 		IoAdapter->e_tbl[IoAdapter->tail].next = e_no;
-@@ -806,7 +816,8 @@ void req_queue(ADAPTER *a, byte e_no)
- 		IoAdapter->head = e_no;
- 		IoAdapter->tail = e_no;
- 	}
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req_q");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				"data_req_q", bh);
- }
- byte look_req(ADAPTER *a)
- {
-@@ -816,13 +827,16 @@ byte look_req(ADAPTER *a)
- }
- void next_req(ADAPTER *a)
- {
-+	unsigned int bh;
- 	PISDN_ADAPTER IoAdapter;
- 	diva_os_spin_lock_magic_t irql;
- 	IoAdapter = (PISDN_ADAPTER) a->io;
--	diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req_next");
-+	bh = diva_os_enter_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				     "data_req_next");
- 	IoAdapter->head = IoAdapter->e_tbl[IoAdapter->head].next;
- 	if (!IoAdapter->head) IoAdapter->tail = 0;
--	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql, "data_req_next");
-+	diva_os_leave_spin_lock(&IoAdapter->data_spin_lock, &irql,
-+				"data_req_next", bh);
- }
- /*------------------------------------------------------------------*/
- /* memory map functions                                             */
-diff --git a/drivers/isdn/hardware/eicon/mntfunc.c b/drivers/isdn/hardware/eicon/mntfunc.c
-index 1cd9aff..b7a87ec 100644
---- a/drivers/isdn/hardware/eicon/mntfunc.c
-+++ b/drivers/isdn/hardware/eicon/mntfunc.c
-@@ -137,6 +137,7 @@ int maint_read_write(void __user *buf, int count)
- {
- 	byte data[128];
- 	dword cmd, id, mask;
-+	unsigned int bh;
- 	int ret = 0;
+ 	struct nlmsghdr *nlh;
+ 	struct cn_callback_entry *i, *cbq = NULL;
+ 	struct cn_dev *dev = &cdev;
+@@ -155,7 +157,7 @@ static int cn_call_callback(struct sk_buff *skb)
+ 	if (nlh->nlmsg_len < NLMSG_HDRLEN + sizeof(struct cn_msg) + msg->len)
+ 		return -EINVAL;
  
- 	if (count < (3 * sizeof(dword)))
-@@ -218,17 +219,17 @@ int maint_read_write(void __user *buf, int count)
- 
- 		for (;;) {
- 			if (!(pmsg =
--			      diva_maint_get_message(&size, &old_irql))) {
-+			      diva_maint_get_message(&size, &old_irql, &bh))) {
- 				break;
- 			}
- 			if (size > mask) {
--				diva_maint_ack_message(0, &old_irql);
-+				diva_maint_ack_message(0, &old_irql, bh);
- 				ret = -EINVAL;
- 				break;
- 			}
- 			ret = size;
- 			memcpy(pbuf, pmsg, size);
--			diva_maint_ack_message(1, &old_irql);
-+			diva_maint_ack_message(1, &old_irql, bh);
- 			if ((count < size) ||
- 			    diva_os_copy_to_user(NULL, buf, (void *) pbuf, size))
- 				ret = -EFAULT;
-@@ -255,11 +256,11 @@ int maint_read_write(void __user *buf, int count)
- 
- 		for (;;) {
- 			if (!(pmsg =
--			      diva_maint_get_message(&size, &old_irql))) {
-+			      diva_maint_get_message(&size, &old_irql, &bh))) {
- 				break;
- 			}
- 			if ((size + 8) > mask) {
--				diva_maint_ack_message(0, &old_irql);
-+				diva_maint_ack_message(0, &old_irql, bh);
- 				break;
- 			}
- 			/*
-@@ -273,7 +274,7 @@ int maint_read_write(void __user *buf, int count)
- 			  Write message
- 			*/
- 			memcpy(&pbuf[written], pmsg, size);
--			diva_maint_ack_message(1, &old_irql);
-+			diva_maint_ack_message(1, &old_irql, bh);
- 			written += size;
- 			mask -= (size + 4);
- 		}
-diff --git a/drivers/isdn/hardware/eicon/platform.h b/drivers/isdn/hardware/eicon/platform.h
-index 62e2073..345c901 100644
---- a/drivers/isdn/hardware/eicon/platform.h
-+++ b/drivers/isdn/hardware/eicon/platform.h
-@@ -235,12 +235,13 @@ typedef long diva_os_spin_lock_magic_t;
- typedef spinlock_t diva_os_spin_lock_t;
- static __inline__ int diva_os_initialize_spin_lock(spinlock_t *lock, void *unused) { \
- 	spin_lock_init(lock); return (0); }
--static __inline__ void diva_os_enter_spin_lock(diva_os_spin_lock_t *a, \
--					       diva_os_spin_lock_magic_t *old_irql, \
--					       void *dbg) { spin_lock_bh(a); }
-+static __inline__ unsigned int diva_os_enter_spin_lock(diva_os_spin_lock_t *a, \
-+						       diva_os_spin_lock_magic_t *old_irql, \
-+						       void *dbg) { spin_lock_bh(a); }
- static __inline__ void diva_os_leave_spin_lock(diva_os_spin_lock_t *a, \
- 					       diva_os_spin_lock_magic_t *old_irql, \
--					       void *dbg) { spin_unlock_bh(a); }
-+					       void *dbg,
-+					       unsigned int bh) { spin_unlock_bh(a); }
- 
- #define diva_os_destroy_spin_lock(a, b) do { } while (0)
- 
-diff --git a/drivers/isdn/hardware/eicon/um_idi.c b/drivers/isdn/hardware/eicon/um_idi.c
-index db4dd4f..138be33 100644
---- a/drivers/isdn/hardware/eicon/um_idi.c
-+++ b/drivers/isdn/hardware/eicon/um_idi.c
-@@ -121,6 +121,7 @@ void diva_user_mode_idi_finit(void)
-    ------------------------------------------------------------------------- */
- int diva_user_mode_idi_create_adapter(const DESCRIPTOR *d, int adapter_nr)
- {
-+	unsigned int bh;
- 	diva_os_spin_lock_magic_t old_irql;
- 	diva_um_idi_adapter_t *a =
- 		(diva_um_idi_adapter_t *) diva_os_malloc(0,
-@@ -139,9 +140,11 @@ int diva_user_mode_idi_create_adapter(const DESCRIPTOR *d, int adapter_nr)
- 	DBG_LOG(("DIDD_ADD A(%d), type:%02x, features:%04x, channels:%d",
- 		 adapter_nr, a->d.type, a->d.features, a->d.channels));
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "create_adapter");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql,
-+				     "create_adapter");
- 	list_add_tail(&a->link, &adapter_q);
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "create_adapter");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "create_adapter",
-+				bh);
- 	return (0);
- }
- 
-@@ -208,6 +211,7 @@ static void cleanup_entity(divas_um_idi_entity_t *e)
-    ------------------------------------------------------------------------ */
- void *divas_um_idi_create_entity(dword adapter_nr, void *file)
- {
-+	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	diva_os_spin_lock_magic_t old_irql;
-@@ -235,7 +239,8 @@ void *divas_um_idi_create_entity(dword adapter_nr, void *file)
- 			return NULL;
- 		}
- 
--		diva_os_enter_spin_lock(&adapter_lock, &old_irql, "create_entity");
-+		bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql,
-+					     "create_entity");
- 		/*
- 		  Look for Adapter requested
- 		*/
-@@ -243,7 +248,8 @@ void *divas_um_idi_create_entity(dword adapter_nr, void *file)
- 			/*
- 			  No adapter was found, or this adapter was removed
- 			*/
--			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "create_entity");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+						"create_entity", bh);
- 
- 			DBG_LOG(("A: no adapter(%ld)", adapter_nr));
- 
-@@ -259,7 +265,8 @@ void *divas_um_idi_create_entity(dword adapter_nr, void *file)
- 
- 		list_add_tail(&e->link, &a->entity_q);	/* link from adapter */
- 
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "create_entity");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"create_entity", bh);
- 
- 		DBG_LOG(("A(%ld), create E(%08x)", adapter_nr, e));
- 	}
-@@ -272,6 +279,7 @@ void *divas_um_idi_create_entity(dword adapter_nr, void *file)
-    ------------------------------------------------------------------------ */
- int divas_um_idi_delete_entity(int adapter_nr, void *entity)
- {
-+	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	diva_os_spin_lock_magic_t old_irql;
-@@ -279,11 +287,12 @@ int divas_um_idi_delete_entity(int adapter_nr, void *entity)
- 	if (!(e = (divas_um_idi_entity_t *) entity))
- 		return (-1);
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "delete_entity");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql,
-+				     "delete_entity");
- 	if ((a = e->adapter)) {
- 		list_del(&e->link);
- 	}
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "delete_entity");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "delete_entity", bh);
- 
- 	diva_um_idi_stop_wdog(entity);
- 	cleanup_entity(e);
-@@ -304,6 +313,7 @@ int diva_um_idi_read(void *entity,
- 		     void *dst,
- 		     int max_length, divas_um_idi_copy_to_user_fn_t cp_fn)
- {
-+	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	const void *data;
-@@ -311,14 +321,14 @@ int diva_um_idi_read(void *entity,
- 	diva_um_idi_data_queue_t *q;
- 	diva_os_spin_lock_magic_t old_irql;
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "read");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "read");
- 
- 	e = (divas_um_idi_entity_t *) entity;
- 	if (!e || (!(a = e->adapter)) ||
- 	    (e->status & DIVA_UM_IDI_REMOVE_PENDING) ||
- 	    (e->status & DIVA_UM_IDI_REMOVED) ||
- 	    (a->status & DIVA_UM_IDI_ADAPTER_REMOVED)) {
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "read");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "read", bh);
- 		DBG_ERR(("E(%08x) read failed - adapter removed", e))
- 			return (-1);
- 	}
-@@ -354,7 +364,7 @@ int diva_um_idi_read(void *entity,
- 			DBG_ERR(("A: A(%d) E(%08x) read small buffer",
- 				 a->adapter_nr, e, ret));
- 			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
--						"read");
-+						"read", bh);
- 			return (-2);
- 		}
- 		/*
-@@ -373,7 +383,7 @@ int diva_um_idi_read(void *entity,
- 
- 	DBG_TRC(("A(%d) E(%08x) read=%d", a->adapter_nr, e, ret));
- 
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "read");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "read", bh);
- 
- 	return (ret);
- }
-@@ -384,6 +394,7 @@ int diva_um_idi_write(void *entity,
- 		      const void *src,
- 		      int length, divas_um_idi_copy_from_user_fn_t cp_fn)
- {
-+	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	diva_um_idi_req_hdr_t *req;
-@@ -391,14 +402,14 @@ int diva_um_idi_write(void *entity,
- 	int ret = 0;
- 	diva_os_spin_lock_magic_t old_irql;
- 
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "write");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "write");
- 
- 	e = (divas_um_idi_entity_t *) entity;
- 	if (!e || (!(a = e->adapter)) ||
- 	    (e->status & DIVA_UM_IDI_REMOVE_PENDING) ||
- 	    (e->status & DIVA_UM_IDI_REMOVED) ||
- 	    (a->status & DIVA_UM_IDI_ADAPTER_REMOVED)) {
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 		DBG_ERR(("E(%08x) write failed - adapter removed", e))
- 			return (-1);
- 	}
-@@ -406,13 +417,13 @@ int diva_um_idi_write(void *entity,
- 	DBG_TRC(("A(%d) E(%08x) write(%d)", a->adapter_nr, e, length));
- 
- 	if ((length < sizeof(*req)) || (length > sizeof(e->buffer))) {
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 		return (-2);
- 	}
- 
- 	if (e->status & DIVA_UM_IDI_RC_PENDING) {
- 		DBG_ERR(("A: A(%d) E(%08x) rc pending", a->adapter_nr, e));
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 		return (-1);	/* should wait for RC code first */
- 	}
- 
-@@ -423,7 +434,7 @@ int diva_um_idi_write(void *entity,
- 	if ((ret = (*cp_fn) (os_handle, e->buffer, src, length)) < 0) {
- 		DBG_TRC(("A: A(%d) E(%08x) write error=%d", a->adapter_nr,
- 			 e, ret));
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 		return (ret);
- 	}
- 
-@@ -436,9 +447,8 @@ int diva_um_idi_write(void *entity,
- 		      diva_data_q_get_segment4write(&e->data))) {
- 			DBG_ERR(("A(%d) get_features, no free buffer",
- 				 a->adapter_nr));
--			diva_os_leave_spin_lock(&adapter_lock,
--						&old_irql,
--						"write");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+						"write", bh);
- 			return (0);
- 		}
- 		diva_user_mode_idi_adapter_features(a, &(((diva_um_idi_ind_hdr_t
-@@ -449,7 +459,7 @@ int diva_um_idi_write(void *entity,
- 		diva_data_q_ack_segment4write(&e->data,
- 					      sizeof(diva_um_idi_ind_hdr_t));
- 
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 
- 		diva_os_wakeup_read(e->os_context);
- 	}
-@@ -464,20 +474,23 @@ int diva_um_idi_write(void *entity,
- 			 req->type & DIVA_UM_IDI_REQ_TYPE_MASK));
- 		switch (process_idi_request(e, req)) {
- 		case -1:
--			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+						"write", bh);
- 			return (-1);
- 		case -2:
--			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+						"write", bh);
- 			diva_os_wakeup_read(e->os_context);
- 			break;
- 		default:
--			diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+			diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+						"write", bh);
+-	spin_lock_bh(&dev->cbdev->queue_lock);
++	bh = spin_lock_bh(&dev->cbdev->queue_lock, SOFTIRQ_ALL_MASK);
+ 	list_for_each_entry(i, &dev->cbdev->queue_list, callback_entry) {
+ 		if (cn_cb_equal(&i->id.id, &msg->id)) {
+ 			refcount_inc(&i->refcnt);
+@@ -163,7 +165,7 @@ static int cn_call_callback(struct sk_buff *skb)
  			break;
  		}
- 		break;
- 
- 	default:
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "write", bh);
- 		return (-1);
  	}
+-	spin_unlock_bh(&dev->cbdev->queue_lock);
++	spin_unlock_bh(&dev->cbdev->queue_lock, bh);
  
-@@ -491,13 +504,14 @@ int diva_um_idi_write(void *entity,
-    -------------------------------------------------------------------------- */
- static void diva_um_idi_xdi_callback(ENTITY *entity)
+ 	if (cbq != NULL) {
+ 		cbq->callback(msg, nsp);
+@@ -242,12 +244,13 @@ EXPORT_SYMBOL_GPL(cn_del_callback);
+ 
+ static int __maybe_unused cn_proc_show(struct seq_file *m, void *v)
  {
 +	unsigned int bh;
- 	divas_um_idi_entity_t *e = DIVAS_CONTAINING_RECORD(entity,
- 							   divas_um_idi_entity_t,
- 							   e);
- 	diva_os_spin_lock_magic_t old_irql;
- 	int call_wakeup = 0;
+ 	struct cn_queue_dev *dev = cdev.cbdev;
+ 	struct cn_callback_entry *cbq;
  
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "xdi_callback");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "xdi_callback");
+ 	seq_printf(m, "Name            ID\n");
  
- 	if (e->e.complete == 255) {
- 		if (!(e->status & DIVA_UM_IDI_REMOVE_PENDING)) {
-@@ -509,7 +523,8 @@ static void diva_um_idi_xdi_callback(ENTITY *entity)
+-	spin_lock_bh(&dev->queue_lock);
++	bh = spin_lock_bh(&dev->queue_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	list_for_each_entry(cbq, &dev->queue_list, callback_entry) {
+ 		seq_printf(m, "%-15s %u:%u\n",
+@@ -256,7 +259,7 @@ static int __maybe_unused cn_proc_show(struct seq_file *m, void *v)
+ 			   cbq->id.id.val);
+ 	}
+ 
+-	spin_unlock_bh(&dev->queue_lock);
++	spin_unlock_bh(&dev->queue_lock, bh);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/crypto/atmel-aes.c b/drivers/crypto/atmel-aes.c
+index 801aeab..aaee981 100644
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -423,10 +423,11 @@ static inline size_t atmel_aes_padlen(size_t len, size_t block_size)
+ 
+ static struct atmel_aes_dev *atmel_aes_find_dev(struct atmel_aes_base_ctx *ctx)
+ {
++	unsigned int bh;
+ 	struct atmel_aes_dev *aes_dd = NULL;
+ 	struct atmel_aes_dev *tmp;
+ 
+-	spin_lock_bh(&atmel_aes.lock);
++	bh = spin_lock_bh(&atmel_aes.lock, SOFTIRQ_ALL_MASK);
+ 	if (!ctx->dd) {
+ 		list_for_each_entry(tmp, &atmel_aes.dev_list, list) {
+ 			aes_dd = tmp;
+@@ -437,7 +438,7 @@ static struct atmel_aes_dev *atmel_aes_find_dev(struct atmel_aes_base_ctx *ctx)
+ 		aes_dd = ctx->dd;
+ 	}
+ 
+-	spin_unlock_bh(&atmel_aes.lock);
++	spin_unlock_bh(&atmel_aes.lock, bh);
+ 
+ 	return aes_dd;
+ }
+diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
+index 8a19df2..6c0a754 100644
+--- a/drivers/crypto/atmel-sha.c
++++ b/drivers/crypto/atmel-sha.c
+@@ -406,10 +406,11 @@ static void atmel_sha_fill_padding(struct atmel_sha_reqctx *ctx, int length)
+ 
+ static struct atmel_sha_dev *atmel_sha_find_dev(struct atmel_sha_ctx *tctx)
+ {
++	unsigned int bh;
+ 	struct atmel_sha_dev *dd = NULL;
+ 	struct atmel_sha_dev *tmp;
+ 
+-	spin_lock_bh(&atmel_sha.lock);
++	bh = spin_lock_bh(&atmel_sha.lock, SOFTIRQ_ALL_MASK);
+ 	if (!tctx->dd) {
+ 		list_for_each_entry(tmp, &atmel_sha.dev_list, list) {
+ 			dd = tmp;
+@@ -420,7 +421,7 @@ static struct atmel_sha_dev *atmel_sha_find_dev(struct atmel_sha_ctx *tctx)
+ 		dd = tctx->dd;
+ 	}
+ 
+-	spin_unlock_bh(&atmel_sha.lock);
++	spin_unlock_bh(&atmel_sha.lock, bh);
+ 
+ 	return dd;
+ }
+diff --git a/drivers/crypto/atmel-tdes.c b/drivers/crypto/atmel-tdes.c
+index 97b0423..db2a3b1 100644
+--- a/drivers/crypto/atmel-tdes.c
++++ b/drivers/crypto/atmel-tdes.c
+@@ -198,10 +198,11 @@ static void atmel_tdes_write_n(struct atmel_tdes_dev *dd, u32 offset,
+ 
+ static struct atmel_tdes_dev *atmel_tdes_find_dev(struct atmel_tdes_ctx *ctx)
+ {
++	unsigned int bh;
+ 	struct atmel_tdes_dev *tdes_dd = NULL;
+ 	struct atmel_tdes_dev *tmp;
+ 
+-	spin_lock_bh(&atmel_tdes.lock);
++	bh = spin_lock_bh(&atmel_tdes.lock, SOFTIRQ_ALL_MASK);
+ 	if (!ctx->dd) {
+ 		list_for_each_entry(tmp, &atmel_tdes.dev_list, list) {
+ 			tdes_dd = tmp;
+@@ -211,7 +212,7 @@ static struct atmel_tdes_dev *atmel_tdes_find_dev(struct atmel_tdes_ctx *ctx)
+ 	} else {
+ 		tdes_dd = ctx->dd;
+ 	}
+-	spin_unlock_bh(&atmel_tdes.lock);
++	spin_unlock_bh(&atmel_tdes.lock, bh);
+ 
+ 	return tdes_dd;
+ }
+diff --git a/drivers/crypto/axis/artpec6_crypto.c b/drivers/crypto/axis/artpec6_crypto.c
+index 7f07a50..5912232 100644
+--- a/drivers/crypto/axis/artpec6_crypto.c
++++ b/drivers/crypto/axis/artpec6_crypto.c
+@@ -459,10 +459,11 @@ static inline bool artpec6_crypto_busy(void)
+ 
+ static int artpec6_crypto_submit(struct artpec6_crypto_req_common *req)
+ {
++	unsigned int bh;
+ 	struct artpec6_crypto *ac = dev_get_drvdata(artpec6_crypto_dev);
+ 	int ret = -EBUSY;
+ 
+-	spin_lock_bh(&ac->queue_lock);
++	bh = spin_lock_bh(&ac->queue_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	if (!artpec6_crypto_busy()) {
+ 		list_add_tail(&req->list, &ac->pending);
+@@ -474,7 +475,7 @@ static int artpec6_crypto_submit(struct artpec6_crypto_req_common *req)
+ 		artpec6_crypto_common_destroy(req);
+ 	}
+ 
+-	spin_unlock_bh(&ac->queue_lock);
++	spin_unlock_bh(&ac->queue_lock, bh);
+ 
+ 	return ret;
+ }
+@@ -2084,6 +2085,7 @@ static void artpec6_crypto_timeout(struct timer_list *t)
+ 
+ static void artpec6_crypto_task(unsigned long data)
+ {
++	unsigned int bh;
+ 	struct artpec6_crypto *ac = (struct artpec6_crypto *)data;
+ 	struct artpec6_crypto_req_common *req;
+ 	struct artpec6_crypto_req_common *n;
+@@ -2093,7 +2095,7 @@ static void artpec6_crypto_task(unsigned long data)
+ 		return;
+ 	}
+ 
+-	spin_lock_bh(&ac->queue_lock);
++	bh = spin_lock_bh(&ac->queue_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	list_for_each_entry_safe(req, n, &ac->pending, list) {
+ 		struct artpec6_crypto_dma_descriptors *dma = req->dma;
+@@ -2132,7 +2134,7 @@ static void artpec6_crypto_task(unsigned long data)
+ 
+ 	artpec6_crypto_process_queue(ac);
+ 
+-	spin_unlock_bh(&ac->queue_lock);
++	spin_unlock_bh(&ac->queue_lock, bh);
+ }
+ 
+ static void artpec6_crypto_complete_crypto(struct crypto_async_request *req)
+diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
+index acdd720..e3b83f3 100644
+--- a/drivers/crypto/caam/jr.c
++++ b/drivers/crypto/caam/jr.c
+@@ -327,6 +327,7 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
+ 				u32 status, void *areq),
+ 		    void *areq)
+ {
++	unsigned int bh;
+ 	struct caam_drv_private_jr *jrp = dev_get_drvdata(dev);
+ 	struct caam_jrentry_info *head_entry;
+ 	int head, tail, desc_size;
+@@ -339,14 +340,14 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
+ 		return -EIO;
+ 	}
+ 
+-	spin_lock_bh(&jrp->inplock);
++	bh = spin_lock_bh(&jrp->inplock, SOFTIRQ_ALL_MASK);
+ 
+ 	head = jrp->head;
+ 	tail = READ_ONCE(jrp->tail);
+ 
+ 	if (!rd_reg32(&jrp->rregs->inpring_avail) ||
+ 	    CIRC_SPACE(head, tail, JOBR_DEPTH) <= 0) {
+-		spin_unlock_bh(&jrp->inplock);
++		spin_unlock_bh(&jrp->inplock, bh);
+ 		dma_unmap_single(dev, desc_dma, desc_size, DMA_TO_DEVICE);
+ 		return -EBUSY;
+ 	}
+@@ -379,7 +380,7 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
+ 
+ 	wr_reg32(&jrp->rregs->inpring_jobadd, 1);
+ 
+-	spin_unlock_bh(&jrp->inplock);
++	spin_unlock_bh(&jrp->inplock, bh);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+index b0ba433..f988e66 100644
+--- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
++++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+@@ -342,6 +342,7 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 					 struct pending_qinfo *pqinfo,
+ 					 int qno)
+ {
++	unsigned int bh;
+ 	struct pci_dev *pdev = cptvf->pdev;
+ 	struct pending_queue *pqueue = &pqinfo->queue[qno];
+ 	struct pending_entry *pentry = NULL;
+@@ -350,10 +351,10 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 	unsigned char ccode;
+ 
+ 	while (1) {
+-		spin_lock_bh(&pqueue->lock);
++		bh = spin_lock_bh(&pqueue->lock, SOFTIRQ_ALL_MASK);
+ 		pentry = &pqueue->head[pqueue->front];
+ 		if (unlikely(!pentry->busy)) {
+-			spin_unlock_bh(&pqueue->lock);
++			spin_unlock_bh(&pqueue->lock, bh);
+ 			break;
+ 		}
+ 
+@@ -361,7 +362,7 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 		if (unlikely(!info)) {
+ 			dev_err(&pdev->dev, "Pending Entry post arg NULL\n");
+ 			pending_queue_inc_front(pqinfo, qno);
+-			spin_unlock_bh(&pqueue->lock);
++			spin_unlock_bh(&pqueue->lock, bh);
+ 			continue;
+ 		}
+ 
+@@ -378,7 +379,7 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 			pentry->post_arg = NULL;
+ 			pending_queue_inc_front(pqinfo, qno);
+ 			do_request_cleanup(cptvf, info);
+-			spin_unlock_bh(&pqueue->lock);
++			spin_unlock_bh(&pqueue->lock, bh);
+ 			break;
+ 		} else if (status->s.compcode == COMPLETION_CODE_INIT) {
+ 			/* check for timeout */
+@@ -392,14 +393,14 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 				pentry->post_arg = NULL;
+ 				pending_queue_inc_front(pqinfo, qno);
+ 				do_request_cleanup(cptvf, info);
+-				spin_unlock_bh(&pqueue->lock);
++				spin_unlock_bh(&pqueue->lock, bh);
+ 				break;
+ 			} else if ((*info->alternate_caddr ==
+ 				(~COMPLETION_CODE_INIT)) &&
+ 				(info->extra_time < TIME_IN_RESET_COUNT)) {
+ 				info->time_in = jiffies;
+ 				info->extra_time++;
+-				spin_unlock_bh(&pqueue->lock);
++				spin_unlock_bh(&pqueue->lock, bh);
+ 				break;
  			}
  		}
- 		e->e.Rc = 0;
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "xdi_callback");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"xdi_callback", bh);
+@@ -409,7 +410,7 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 		pentry->post_arg = NULL;
+ 		atomic64_dec((&pqueue->pending_count));
+ 		pending_queue_inc_front(pqinfo, qno);
+-		spin_unlock_bh(&pqueue->lock);
++		spin_unlock_bh(&pqueue->lock, bh);
  
- 		if (call_wakeup) {
- 			diva_os_wakeup_read(e->os_context);
-@@ -523,7 +538,8 @@ static void diva_um_idi_xdi_callback(ENTITY *entity)
- 			call_wakeup = process_idi_ind(e, e->e.Ind);
- 		}
- 		e->e.Ind = 0;
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "xdi_callback");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"xdi_callback", bh);
- 		if (call_wakeup) {
- 			diva_os_wakeup_read(e->os_context);
- 		}
-@@ -759,6 +775,7 @@ static int write_return_code(divas_um_idi_entity_t *e, byte rc)
-    -------------------------------------------------------------------------- */
- int diva_user_mode_idi_ind_ready(void *entity, void *os_handle)
+ 		do_post_process(info->cptvf, info);
+ 		/*
+@@ -422,6 +423,7 @@ static inline void process_pending_queue(struct cpt_vf *cptvf,
+ 
+ int process_request(struct cpt_vf *cptvf, struct cpt_request_info *req)
  {
 +	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	diva_os_spin_lock_magic_t old_irql;
-@@ -766,7 +783,7 @@ int diva_user_mode_idi_ind_ready(void *entity, void *os_handle)
- 
- 	if (!entity)
- 		return (-1);
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "ind_ready");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "ind_ready");
- 	e = (divas_um_idi_entity_t *) entity;
- 	a = e->adapter;
- 
-@@ -774,7 +791,8 @@ int diva_user_mode_idi_ind_ready(void *entity, void *os_handle)
- 		/*
- 		  Adapter was unloaded
- 		*/
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready",
-+					bh);
- 		return (-1);	/* adapter was removed */
- 	}
- 	if (e->status & DIVA_UM_IDI_REMOVED) {
-@@ -782,7 +800,8 @@ int diva_user_mode_idi_ind_ready(void *entity, void *os_handle)
- 		  entity was removed as result of adapter removal
- 		  user should assign this entity again
- 		*/
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready",
-+					bh);
- 		return (-1);
+ 	int ret = 0, clear = 0, queue = 0;
+ 	struct cpt_info_buffer *info = NULL;
+ 	struct cptvf_request *cpt_req = NULL;
+@@ -500,10 +502,10 @@ int process_request(struct cpt_vf *cptvf, struct cpt_request_info *req)
  	}
  
-@@ -792,7 +811,7 @@ int diva_user_mode_idi_ind_ready(void *entity, void *os_handle)
- 		ret = 0;
- 	}
+ get_pending_entry:
+-	spin_lock_bh(&pqueue->lock);
++	bh = spin_lock_bh(&pqueue->lock, SOFTIRQ_ALL_MASK);
+ 	pentry = get_free_pending_entry(pqueue, cptvf->pqinfo.qlen);
+ 	if (unlikely(!pentry)) {
+-		spin_unlock_bh(&pqueue->lock);
++		spin_unlock_bh(&pqueue->lock, bh);
+ 		if (clear == 0) {
+ 			process_pending_queue(cptvf, &cptvf->pqinfo, queue);
+ 			clear = 1;
+@@ -541,7 +543,7 @@ int process_request(struct cpt_vf *cptvf, struct cpt_request_info *req)
+ 	cptinst.s.ei3 = vq_cmd.cptr.u64;
  
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "ind_ready", bh);
- 
- 	return (ret);
- }
-@@ -804,19 +823,21 @@ void *diva_um_id_get_os_context(void *entity)
- 
- int divas_um_idi_entity_assigned(void *entity)
+ 	ret = send_cpt_command(cptvf, &cptinst, queue);
+-	spin_unlock_bh(&pqueue->lock);
++	spin_unlock_bh(&pqueue->lock, bh);
+ 	if (unlikely(ret)) {
+ 		dev_err(&pdev->dev, "Send command failed for AE\n");
+ 		ret = -EFAULT;
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+index 4a362fc..b6cf94f 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+@@ -380,31 +380,34 @@ static inline int softreq_map_iobuf(struct nitrox_softreq *sr,
+ static inline void backlog_list_add(struct nitrox_softreq *sr,
+ 				    struct nitrox_cmdq *cmdq)
  {
 +	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	int ret;
- 	diva_os_spin_lock_magic_t old_irql;
+ 	INIT_LIST_HEAD(&sr->backlog);
  
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "assigned?");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "assigned?");
- 
- 
- 	e = (divas_um_idi_entity_t *) entity;
- 	if (!e || (!(a = e->adapter)) ||
- 	    (e->status & DIVA_UM_IDI_REMOVED) ||
- 	    (a->status & DIVA_UM_IDI_ADAPTER_REMOVED)) {
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "assigned?");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "assigned?",
-+					bh);
- 		return (0);
- 	}
- 
-@@ -828,24 +849,27 @@ int divas_um_idi_entity_assigned(void *entity)
- 	DBG_TRC(("Id:%02x, rc_count:%d, status:%08x", e->e.Id, e->rc_count,
- 		 e->status))
- 
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "assigned?");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "assigned?",
-+					bh);
- 
- 	return (ret);
+-	spin_lock_bh(&cmdq->backlog_lock);
++	bh = spin_lock_bh(&cmdq->backlog_lock, SOFTIRQ_ALL_MASK);
+ 	list_add_tail(&sr->backlog, &cmdq->backlog_head);
+ 	atomic_inc(&cmdq->backlog_count);
+ 	atomic_set(&sr->status, REQ_BACKLOG);
+-	spin_unlock_bh(&cmdq->backlog_lock);
++	spin_unlock_bh(&cmdq->backlog_lock, bh);
  }
  
- int divas_um_idi_entity_start_remove(void *entity)
+ static inline void response_list_add(struct nitrox_softreq *sr,
+ 				     struct nitrox_cmdq *cmdq)
  {
 +	unsigned int bh;
- 	divas_um_idi_entity_t *e;
- 	diva_um_idi_adapter_t *a;
- 	diva_os_spin_lock_magic_t old_irql;
+ 	INIT_LIST_HEAD(&sr->response);
  
--	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "start_remove");
-+	bh = diva_os_enter_spin_lock(&adapter_lock, &old_irql, "start_remove");
- 
- 	e = (divas_um_idi_entity_t *) entity;
- 	if (!e || (!(a = e->adapter)) ||
- 	    (e->status & DIVA_UM_IDI_REMOVED) ||
- 	    (a->status & DIVA_UM_IDI_ADAPTER_REMOVED)) {
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "start_remove");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"start_remove", bh);
- 		return (0);
- 	}
- 
-@@ -853,7 +877,8 @@ int divas_um_idi_entity_start_remove(void *entity)
- 		/*
- 		  Entity BUSY
- 		*/
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "start_remove");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"start_remove", bh);
- 		return (1);
- 	}
- 
-@@ -861,7 +886,8 @@ int divas_um_idi_entity_start_remove(void *entity)
- 		/*
- 		  Remove request was already pending, and arrived now
- 		*/
--		diva_os_leave_spin_lock(&adapter_lock, &old_irql, "start_remove");
-+		diva_os_leave_spin_lock(&adapter_lock, &old_irql,
-+					"start_remove", bh);
- 		return (0);	/* REMOVE was pending */
- 	}
- 
-@@ -880,7 +906,7 @@ int divas_um_idi_entity_start_remove(void *entity)
- 	if (a->d.request)
- 		(*(a->d.request)) (&e->e);
- 
--	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "start_remove");
-+	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "start_remove", bh);
- 
- 	return (0);
+-	spin_lock_bh(&cmdq->response_lock);
++	bh = spin_lock_bh(&cmdq->response_lock, SOFTIRQ_ALL_MASK);
+ 	list_add_tail(&sr->response, &cmdq->response_head);
+-	spin_unlock_bh(&cmdq->response_lock);
++	spin_unlock_bh(&cmdq->response_lock, bh);
  }
+ 
+ static inline void response_list_del(struct nitrox_softreq *sr,
+ 				     struct nitrox_cmdq *cmdq)
+ {
+-	spin_lock_bh(&cmdq->response_lock);
++	unsigned int bh;
++	bh = spin_lock_bh(&cmdq->response_lock, SOFTIRQ_ALL_MASK);
+ 	list_del(&sr->response);
+-	spin_unlock_bh(&cmdq->response_lock);
++	spin_unlock_bh(&cmdq->response_lock, bh);
+ }
+ 
+ static struct nitrox_softreq *
+@@ -435,11 +438,12 @@ static inline bool cmdq_full(struct nitrox_cmdq *cmdq, int qlen)
+ static void post_se_instr(struct nitrox_softreq *sr,
+ 			  struct nitrox_cmdq *cmdq)
+ {
++	unsigned int bh;
+ 	struct nitrox_device *ndev = sr->ndev;
+ 	int idx;
+ 	u8 *ent;
+ 
+-	spin_lock_bh(&cmdq->cmdq_lock);
++	bh = spin_lock_bh(&cmdq->cmdq_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	idx = cmdq->write_idx;
+ 	/* copy the instruction */
+@@ -459,11 +463,12 @@ static void post_se_instr(struct nitrox_softreq *sr,
+ 
+ 	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
+ 
+-	spin_unlock_bh(&cmdq->cmdq_lock);
++	spin_unlock_bh(&cmdq->cmdq_lock, bh);
+ }
+ 
+ static int post_backlog_cmds(struct nitrox_cmdq *cmdq)
+ {
++	unsigned int bh;
+ 	struct nitrox_device *ndev = cmdq->ndev;
+ 	struct nitrox_softreq *sr, *tmp;
+ 	int ret = 0;
+@@ -471,7 +476,7 @@ static int post_backlog_cmds(struct nitrox_cmdq *cmdq)
+ 	if (!atomic_read(&cmdq->backlog_count))
+ 		return 0;
+ 
+-	spin_lock_bh(&cmdq->backlog_lock);
++	bh = spin_lock_bh(&cmdq->backlog_lock, SOFTIRQ_ALL_MASK);
+ 
+ 	list_for_each_entry_safe(sr, tmp, &cmdq->backlog_head, backlog) {
+ 		struct skcipher_request *skreq;
+@@ -494,7 +499,7 @@ static int post_backlog_cmds(struct nitrox_cmdq *cmdq)
+ 		/* backlog requests are posted, wakeup with -EINPROGRESS */
+ 		skcipher_request_complete(skreq, -EINPROGRESS);
+ 	}
+-	spin_unlock_bh(&cmdq->backlog_lock);
++	spin_unlock_bh(&cmdq->backlog_lock, bh);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/crypto/ccree/cc_request_mgr.c b/drivers/crypto/ccree/cc_request_mgr.c
+index 83a8aaae..4c0c135 100644
+--- a/drivers/crypto/ccree/cc_request_mgr.c
++++ b/drivers/crypto/ccree/cc_request_mgr.c
+@@ -335,12 +335,13 @@ static int cc_do_send_request(struct cc_drvdata *drvdata,
+ static void cc_enqueue_backlog(struct cc_drvdata *drvdata,
+ 			       struct cc_bl_item *bli)
+ {
++	unsigned int bh;
+ 	struct cc_req_mgr_handle *mgr = drvdata->request_mgr_handle;
+ 
+-	spin_lock_bh(&mgr->bl_lock);
++	bh = spin_lock_bh(&mgr->bl_lock, SOFTIRQ_ALL_MASK);
+ 	list_add_tail(&bli->list, &mgr->backlog);
+ 	++mgr->bl_len;
+-	spin_unlock_bh(&mgr->bl_lock);
++	spin_unlock_bh(&mgr->bl_lock, bh);
+ 	tasklet_schedule(&mgr->comptask);
+ }
+ 
+@@ -412,6 +413,7 @@ int cc_send_request(struct cc_drvdata *drvdata, struct cc_crypto_req *cc_req,
+ 		    struct cc_hw_desc *desc, unsigned int len,
+ 		    struct crypto_async_request *req)
+ {
++	unsigned int bh;
+ 	int rc;
+ 	struct cc_req_mgr_handle *mgr = drvdata->request_mgr_handle;
+ 	bool ivgen = !!cc_req->ivgen_dma_addr_len;
+@@ -427,7 +429,7 @@ int cc_send_request(struct cc_drvdata *drvdata, struct cc_crypto_req *cc_req,
+ 		return rc;
+ 	}
+ 
+-	spin_lock_bh(&mgr->hw_lock);
++	bh = spin_lock_bh(&mgr->hw_lock, SOFTIRQ_ALL_MASK);
+ 	rc = cc_queues_status(drvdata, mgr, total_len);
+ 
+ #ifdef CC_DEBUG_FORCE_BACKLOG
+@@ -436,7 +438,7 @@ int cc_send_request(struct cc_drvdata *drvdata, struct cc_crypto_req *cc_req,
+ #endif /* CC_DEBUG_FORCE_BACKLOG */
+ 
+ 	if (rc == -ENOSPC && backlog_ok) {
+-		spin_unlock_bh(&mgr->hw_lock);
++		spin_unlock_bh(&mgr->hw_lock, bh);
+ 
+ 		bli = kmalloc(sizeof(*bli), flags);
+ 		if (!bli) {
+@@ -456,7 +458,7 @@ int cc_send_request(struct cc_drvdata *drvdata, struct cc_crypto_req *cc_req,
+ 		rc = cc_do_send_request(drvdata, cc_req, desc, len, false,
+ 					ivgen);
+ 
+-	spin_unlock_bh(&mgr->hw_lock);
++	spin_unlock_bh(&mgr->hw_lock, bh);
+ 	return rc;
+ }
+ 
+@@ -464,6 +466,7 @@ int cc_send_sync_request(struct cc_drvdata *drvdata,
+ 			 struct cc_crypto_req *cc_req, struct cc_hw_desc *desc,
+ 			 unsigned int len)
+ {
++	unsigned int bh;
+ 	int rc;
+ 	struct device *dev = drvdata_to_dev(drvdata);
+ 	struct cc_req_mgr_handle *mgr = drvdata->request_mgr_handle;
+@@ -479,13 +482,13 @@ int cc_send_sync_request(struct cc_drvdata *drvdata,
+ 	}
+ 
+ 	while (true) {
+-		spin_lock_bh(&mgr->hw_lock);
++		bh = spin_lock_bh(&mgr->hw_lock, SOFTIRQ_ALL_MASK);
+ 		rc = cc_queues_status(drvdata, mgr, len + 1);
+ 
+ 		if (!rc)
+ 			break;
+ 
+-		spin_unlock_bh(&mgr->hw_lock);
++		spin_unlock_bh(&mgr->hw_lock, bh);
+ 		if (rc != -EAGAIN) {
+ 			cc_pm_put_suspend(dev);
+ 			return rc;
+@@ -495,7 +498,7 @@ int cc_send_sync_request(struct cc_drvdata *drvdata,
+ 	}
+ 
+ 	rc = cc_do_send_request(drvdata, cc_req, desc, len, true, false);
+-	spin_unlock_bh(&mgr->hw_lock);
++	spin_unlock_bh(&mgr->hw_lock, bh);
+ 
+ 	if (rc != -EINPROGRESS) {
+ 		cc_pm_put_suspend(dev);
+@@ -668,12 +671,13 @@ static void comp_handler(unsigned long devarg)
+ #if defined(CONFIG_PM)
+ int cc_resume_req_queue(struct cc_drvdata *drvdata)
+ {
++	unsigned int bh;
+ 	struct cc_req_mgr_handle *request_mgr_handle =
+ 		drvdata->request_mgr_handle;
+ 
+-	spin_lock_bh(&request_mgr_handle->hw_lock);
++	bh = spin_lock_bh(&request_mgr_handle->hw_lock, SOFTIRQ_ALL_MASK);
+ 	request_mgr_handle->is_runtime_suspended = false;
+-	spin_unlock_bh(&request_mgr_handle->hw_lock);
++	spin_unlock_bh(&request_mgr_handle->hw_lock, bh);
+ 
+ 	return 0;
+ }
+@@ -684,18 +688,19 @@ int cc_resume_req_queue(struct cc_drvdata *drvdata)
+  */
+ int cc_suspend_req_queue(struct cc_drvdata *drvdata)
+ {
++	unsigned int bh;
+ 	struct cc_req_mgr_handle *request_mgr_handle =
+ 						drvdata->request_mgr_handle;
+ 
+ 	/* lock the send_request */
+-	spin_lock_bh(&request_mgr_handle->hw_lock);
++	bh = spin_lock_bh(&request_mgr_handle->hw_lock, SOFTIRQ_ALL_MASK);
+ 	if (request_mgr_handle->req_queue_head !=
+ 	    request_mgr_handle->req_queue_tail) {
+-		spin_unlock_bh(&request_mgr_handle->hw_lock);
++		spin_unlock_bh(&request_mgr_handle->hw_lock, bh);
+ 		return -EBUSY;
+ 	}
+ 	request_mgr_handle->is_runtime_suspended = true;
+-	spin_unlock_bh(&request_mgr_handle->hw_lock);
++	spin_unlock_bh(&request_mgr_handle->hw_lock, bh);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index 8af8c84..67bee49 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1307,7 +1307,9 @@ static DEFINE_SPINLOCK(reap_list_lock);
+  */
+ DECLARE_TASK_FUNC(process_reap_list, task_param)
+ {
+-	spin_lock_bh(&reap_list_lock);
++	unsigned int bh;
++
++	bh = spin_lock_bh(&reap_list_lock, SOFTIRQ_ALL_MASK);
+ 	while (reap_list) {
+ 		struct sock *sk = reap_list;
+ 		struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
+@@ -1326,7 +1328,7 @@ DECLARE_TASK_FUNC(process_reap_list, task_param)
+ 		sock_put(sk);
+ 		spin_lock(&reap_list_lock);
+ 	}
+-	spin_unlock_bh(&reap_list_lock);
++	spin_unlock_bh(&reap_list_lock, bh);
+ }
+ 
+ static DECLARE_WORK(reap_task, process_reap_list);
+@@ -1838,12 +1840,13 @@ static void send_abort_rpl(struct sock *sk, struct sk_buff *skb,
+ static void t4_defer_reply(struct sk_buff *skb, struct chtls_dev *cdev,
+ 			   defer_handler_t handler)
+ {
++	unsigned int bh;
+ 	DEFERRED_SKB_CB(skb)->handler = handler;
+-	spin_lock_bh(&cdev->deferq.lock);
++	bh = spin_lock_bh(&cdev->deferq.lock, SOFTIRQ_ALL_MASK);
+ 	__skb_queue_tail(&cdev->deferq, skb);
+ 	if (skb_queue_len(&cdev->deferq) == 1)
+ 		schedule_work(&cdev->deferq_task);
+-	spin_unlock_bh(&cdev->deferq.lock);
++	spin_unlock_bh(&cdev->deferq.lock, bh);
+ }
+ 
+ static void chtls_send_abort_rpl(struct sock *sk, struct sk_buff *skb,
+diff --git a/drivers/crypto/chelsio/chtls/chtls_hw.c b/drivers/crypto/chelsio/chtls/chtls_hw.c
+index 4909607..2fbe923 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_hw.c
++++ b/drivers/crypto/chelsio/chtls/chtls_hw.c
+@@ -139,6 +139,7 @@ int chtls_init_kmap(struct chtls_dev *cdev, struct cxgb4_lld_info *lldi)
+ 
+ static int get_new_keyid(struct chtls_sock *csk, u32 optname)
+ {
++	unsigned int bh;
+ 	struct net_device *dev = csk->egress_dev;
+ 	struct chtls_dev *cdev = csk->cdev;
+ 	struct chtls_hws *hws;
+@@ -148,7 +149,7 @@ static int get_new_keyid(struct chtls_sock *csk, u32 optname)
+ 	adap = netdev2adap(dev);
+ 	hws = &csk->tlshws;
+ 
+-	spin_lock_bh(&cdev->kmap.lock);
++	bh = spin_lock_bh(&cdev->kmap.lock, SOFTIRQ_ALL_MASK);
+ 	keyid = find_first_zero_bit(cdev->kmap.addr, cdev->kmap.size);
+ 	if (keyid < cdev->kmap.size) {
+ 		__set_bit(keyid, cdev->kmap.addr);
+@@ -160,12 +161,13 @@ static int get_new_keyid(struct chtls_sock *csk, u32 optname)
+ 	} else {
+ 		keyid = -1;
+ 	}
+-	spin_unlock_bh(&cdev->kmap.lock);
++	spin_unlock_bh(&cdev->kmap.lock, bh);
+ 	return keyid;
+ }
+ 
+ void free_tls_keyid(struct sock *sk)
+ {
++	unsigned int bh;
+ 	struct chtls_sock *csk = rcu_dereference_sk_user_data(sk);
+ 	struct net_device *dev = csk->egress_dev;
+ 	struct chtls_dev *cdev = csk->cdev;
+@@ -178,7 +180,7 @@ void free_tls_keyid(struct sock *sk)
+ 	adap = netdev2adap(dev);
+ 	hws = &csk->tlshws;
+ 
+-	spin_lock_bh(&cdev->kmap.lock);
++	bh = spin_lock_bh(&cdev->kmap.lock, SOFTIRQ_ALL_MASK);
+ 	if (hws->rxkey >= 0) {
+ 		__clear_bit(hws->rxkey, cdev->kmap.addr);
+ 		atomic_dec(&adap->chcr_stats.tls_key);
+@@ -189,7 +191,7 @@ void free_tls_keyid(struct sock *sk)
+ 		atomic_dec(&adap->chcr_stats.tls_key);
+ 		hws->txkey = -1;
+ 	}
+-	spin_unlock_bh(&cdev->kmap.lock);
++	spin_unlock_bh(&cdev->kmap.lock, bh);
+ }
+ 
+ unsigned int keyid_to_addr(int start_addr, int keyid)
+diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
+index f59b044..5816d3f 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_main.c
++++ b/drivers/crypto/chelsio/chtls/chtls_main.c
+@@ -170,17 +170,18 @@ static void chtls_unregister_dev(struct chtls_dev *cdev)
+ 
+ static void process_deferq(struct work_struct *task_param)
+ {
++	unsigned int bh;
+ 	struct chtls_dev *cdev = container_of(task_param,
+ 				struct chtls_dev, deferq_task);
+ 	struct sk_buff *skb;
+ 
+-	spin_lock_bh(&cdev->deferq.lock);
++	bh = spin_lock_bh(&cdev->deferq.lock, SOFTIRQ_ALL_MASK);
+ 	while ((skb = __skb_dequeue(&cdev->deferq)) != NULL) {
+-		spin_unlock_bh(&cdev->deferq.lock);
++		spin_unlock_bh(&cdev->deferq.lock, bh);
+ 		DEFERRED_SKB_CB(skb)->handler(cdev, skb);
+-		spin_lock_bh(&cdev->deferq.lock);
++		bh = spin_lock_bh(&cdev->deferq.lock, SOFTIRQ_ALL_MASK);
+ 	}
+-	spin_unlock_bh(&cdev->deferq.lock);
++	spin_unlock_bh(&cdev->deferq.lock, bh);
+ }
+ 
+ static int chtls_get_skb(struct chtls_dev *cdev) 
 -- 
 2.7.4
 
