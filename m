@@ -2,134 +2,156 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7310CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7DCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D842064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D842064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 63C012064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJWTt4bj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C012064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJJUkP (ORCPT
+        id S1726958AbeJJUk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 16:40:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeJJUkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 16:40:15 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32E972064A;
-        Wed, 10 Oct 2018 13:18:05 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 09:18:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nikolay Borisov <nborisov@suse.com>, stable@vger.kernel.org
-Subject: [GIT PULL] vsprintf: Fix off-by-one bug in bstr_printf() processing
- dereferenced pointers
-Message-ID: <20181010091803.16e5312c@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 10 Oct 2018 16:40:28 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37907 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeJJUk1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 16:40:27 -0400
+Received: by mail-it1-f195.google.com with SMTP id i76-v6so7868199ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 06:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=yqPkDfc4/FsaElQ/ahG9Lz9ytpXoIU+2BPWNbeJxY7Y=;
+        b=OJWTt4bjlDpCrnATIxNGvKZXJRe0RWGuvrLHKc4XVHOs6hEtsHcbIT7qVO7AssO+OH
+         wCcXscsibL13NXr1j9/TELN2r9ja857Lz3Z4BZTLWnUk5yKxv/ZIFa4B3Yp+QNC+po3O
+         ut4Gz1GmDYnc+0lw3xECb8aVKZdTiVshqNMX8UB6VrFfjN7ZM2jl1jCAlEOaXUFe4ZOw
+         vVAEcAMop8VLAnZtYE5fbp99fsvctpI5zhXHLpolP+0XG5fCaL9HvWZNTiK0GCoMaHWg
+         WchvImZ5/WpM0e1hASdJiXiKzQ7XLaOkB95U+0bMNTWRTTmGMfuu8HacazzieGzsDAzm
+         kovA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=yqPkDfc4/FsaElQ/ahG9Lz9ytpXoIU+2BPWNbeJxY7Y=;
+        b=iePpHlRnQjF9Y71yPSCaUUiknh21S4if3Ef7v8qU57MSd6lO68swh1Y+Ijbu+yKEYO
+         aUQfkqNFLzFiB+g0YbzPVCHSJFTMle0B/dfEmMjfIZMc+vxELvwPlYPL+FsxWD66LB5D
+         dSbvMl/+QJ6JR4lgqwpOyu/1d3Op88FOeyOscIUhv4T+M8Ushjo0eXEfrFpufPARulUe
+         dBSQGqsnRtZknccYm2VVAreGpsh+6CO/b9KAK55Mh/qvXaZwhd3LV0m/qpc8MTbjUfPd
+         gNesogv+RVzeObLehYJZRO7+WmohGsi/na29w5vQluTG5uxbypA0i77PUJEByQ8xTQP8
+         VbDA==
+X-Gm-Message-State: ABuFfogqUAOfxFsH+PCmv5DDESYT3sqaqrmLcvf+s9MT27z2CwlK2pbv
+        KI95Is9AojwEq1rQHCodfaW7D4mdIV+SJ2XNwpxfgA==
+X-Google-Smtp-Source: ACcGV60pak1h6ynu3WOHQHweAK8k9R1Bx3Q/ztpOo/F5TqL0ZWcc6+O5KC/yBIKSw4lCI16PYb1TjYOHpobnXIXK6VA=
+X-Received: by 2002:a24:24c9:: with SMTP id f192-v6mr640576ita.144.1539177497854;
+ Wed, 10 Oct 2018 06:18:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 06:17:57
+ -0700 (PDT)
+In-Reply-To: <b7727ff0-b34f-25a2-b9e7-56e70d9349c4@i-love.sakura.ne.jp>
+References: <000000000000dc48d40577d4a587@google.com> <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
+ <20181010085945.GC5873@dhcp22.suse.cz> <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
+ <20181010113500.GH5873@dhcp22.suse.cz> <20181010114833.GB3949@tigerII.localdomain>
+ <20181010122539.GI5873@dhcp22.suse.cz> <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
+ <CACT4Y+bqJeKum7jessccWQF+4BmabnVy48aqHEOypioKwQAMTQ@mail.gmail.com> <b7727ff0-b34f-25a2-b9e7-56e70d9349c4@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 10 Oct 2018 15:17:57 +0200
+Message-ID: <CACT4Y+bQOr=+e8y5so3V9K390uJnMy4+FR7_t9G7Fjn12S4hoA@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in shmem_fault
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Yang Shi <yang.s@alibaba-inc.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 10, 2018 at 3:10 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>>>> Just flooding out of memory messages can trigger RCU stall problems.
+>>>>>>> For example, a severe skbuff_head_cache or kmalloc-512 leak bug is causing
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>> Quite some of them, indeed! I guess we want to rate limit the output.
+>>>>>> What about the following?
+>>>>>
+>>>>> A bit unrelated, but while we are at it:
+>>>>>
+>>>>>   I like it when we rate-limit printk-s that lookup the system.
+>>>>> But it seems that default rate-limit values are not always good enough,
+>>>>> DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST can still be too
+>>>>> verbose. For instance, when we have a very slow IPMI emulated serial
+>>>>> console -- e.g. baud rate at 57600. DEFAULT_RATELIMIT_INTERVAL and
+>>>>> DEFAULT_RATELIMIT_BURST can add new OOM headers and backtraces faster
+>>>>> than we evict them.
+>>>>>
+>>>>> Does it sound reasonable enough to use larger than default rate-limits
+>>>>> for printk-s in OOM print-outs? OOM reports tend to be somewhat large
+>>>>> and the reported numbers are not always *very* unique.
+>>>>>
+>>>>> What do you think?
+>>>>
+>>>> I do not really care about the current inerval/burst values. This change
+>>>> should be done seprately and ideally with some numbers.
+>>>
+>>> I think Sergey meant that this place may need to use
+>>> larger-than-default values because it prints lots of output per
+>>> instance (whereas the default limit is more tuned for cases that print
+>>> just 1 line).
+>
+> Yes. The OOM killer tends to print a lot of messages (and I estimate that
+> mutex_trylock(&oom_lock) accelerates wasting more CPU consumption by
+> preemption).
+>
+>>>
+>>> I've found at least 1 place that uses DEFAULT_RATELIMIT_INTERVAL*10:
+>>> https://elixir.bootlin.com/linux/latest/source/fs/btrfs/extent-tree.c#L8365
+>>> Probably we need something similar here.
+>
+> Since printk() is a significantly CPU consuming operation, I think that what
+> we need to guarantee is interval between the end of an OOM killer messages
+> and the beginning of next OOM killer messages is large enough. For example,
+> setup a timer with 5 seconds timeout upon the end of an OOM killer messages
+> and check whether the timer already fired upon the beginning of next OOM killer
+> messages.
+>
+>>
+>>
+>> In parallel with the kernel changes I've also made a change to
+>> syzkaller that (1) makes it not use oom_score_adj=-1000, this hard
+>> killing limit looks like quite risky thing, (2) increase memcg size
+>> beyond expected KASAN quarantine size:
+>> https://github.com/google/syzkaller/commit/adedaf77a18f3d03d695723c86fc083c3551ff5b
+>> If this will stop the flow of hang/stall reports, then we can just
+>> close all old reports as invalid.
+>
+> I don't think so. Only this report was different from others because printk()
+> in this report was from memcg OOM events without eligible tasks whereas printk()
+> in others are from global OOM events triggered by severe slab memory leak.
 
-Linus (aka Greg),
-
-It was reported that trace_printk() was not reporting properly
-values that came after a dereference pointer.
-
-trace_printk() utilizes vbin_printf() and bstr_printf() to keep the
-overhead of tracing down. vbin_printf() does not do any conversions
-and just stors the string format and the raw arguments into the
-buffer. bstr_printf() is used to read the buffer and does the conversions
-to complete the printf() output.
-
-This can be troublesome with dereferenced pointers because the reference
-may be different from the time vbin_printf() is called to the time
-bstr_printf() is called. To fix this, a prior commit changed vbin_printf()
-to convert dereferenced pointers into strings and load the converted
-string into the buffer. But the change to bstr_printf() had an off-by-one
-error and didn't account for the nul character at the end of the string
-and this corrupted the rest of the values in the format that came after
-a dereferenced pointer.
-
-
-Please pull the latest trace-v4.19-rc5 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.19-rc5
-
-Tag SHA1: b5fc80d980ae316323e88c165084deef39afd168
-Head SHA1: 62165600ae73ebd76e2d9b992b36360408d570d8
-
-
-Steven Rostedt (VMware) (1):
-      vsprintf: Fix off-by-one bug in bstr_printf() processing dereferenced pointers
-
-----
- lib/vsprintf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
----------------------------
-commit 62165600ae73ebd76e2d9b992b36360408d570d8
-Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Date:   Fri Oct 5 10:08:03 2018 -0400
-
-    vsprintf: Fix off-by-one bug in bstr_printf() processing dereferenced pointers
-    
-    The functions vbin_printf() and bstr_printf() are used by trace_printk() to
-    try to keep the overhead down during printing. trace_printk() uses
-    vbin_printf() at the time of execution, as it only scans the fmt string to
-    record the printf values into the buffer, and then uses vbin_printf() to do
-    the conversions to print the string based on the format and the saved
-    values in the buffer.
-    
-    This is an issue for dereferenced pointers, as before commit 841a915d20c7b,
-    the processing of the pointer could happen some time after the pointer value
-    was recorded (reading the trace buffer). This means the processing of the
-    value at a later time could show different results, or even crash the
-    system, if the pointer no longer existed.
-    
-    Commit 841a915d20c7b addressed this by processing dereferenced pointers at
-    the time of execution and save the result in the ring buffer as a string.
-    The bstr_printf() would then treat these pointers as normal strings, and
-    print the value. But there was an off-by-one bug here, where after
-    processing the argument, it move the pointer only "strlen(arg)" which made
-    the arg pointer not point to the next argument in the ring buffer, but
-    instead point to the nul character of the last argument. This causes any
-    values after a dereferenced pointer to be corrupted.
-    
-    Cc: stable@vger.kernel.org
-    Fixes: 841a915d20c7b ("vsprintf: Do not have bprintf dereference pointers")
-    Reported-by: Nikolay Borisov <nborisov@suse.com>
-    Tested-by: Nikolay Borisov <nborisov@suse.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index d5b3a3f95c01..812e59e13fe6 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -2794,7 +2794,7 @@ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf)
- 						copy = end - str;
- 					memcpy(str, args, copy);
- 					str += len;
--					args += len;
-+					args += len + 1;
- 				}
- 			}
- 			if (process)
+Ack.
+I guess I just hoped deep down that we somehow magically get rid of
+all these reports with some simple change like this :)
