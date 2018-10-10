@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9494DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74714C46462
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576432075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576432075B
+	by mail.kernel.org (Postfix) with ESMTP id 30626214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30626214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeJKC3v (ORCPT
+        id S1727652AbeJKC34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:29:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13614 "EHLO huawei.com"
+        Wed, 10 Oct 2018 22:29:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13615 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727101AbeJKC3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:29:50 -0400
+        id S1727536AbeJKC34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:29:56 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D96307A8579DB;
-        Thu, 11 Oct 2018 03:06:17 +0800 (CST)
+        by Forcepoint Email with ESMTP id AE2AE99128540;
+        Thu, 11 Oct 2018 03:06:22 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 11 Oct 2018 03:06:08 +0800
+ 14.3.399.0; Thu, 11 Oct 2018 03:06:17 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 1/4] net: hns3: Add new RSS hash algorithm support for PF
-Date:   Wed, 10 Oct 2018 20:05:34 +0100
-Message-ID: <20181010190537.20972-2-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 4/4] net: hns3: Add HW RSS hash information to RX skb
+Date:   Wed, 10 Oct 2018 20:05:37 +0100
+Message-ID: <20181010190537.20972-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181010190537.20972-1-salil.mehta@huawei.com>
 References: <20181010190537.20972-1-salil.mehta@huawei.com>
@@ -49,92 +49,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Peng Li <lipeng321@huawei.com>
 
-This patch adds ETH_RSS_HASH_XOR hash algorithm supports, which
-is supported by hw revision 0x21.
+Drivers should call skb_set_hash to set the hash and its type
+in an skbuff.
 
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  9 ++++---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 31 +++++++++++++++++-----
- 2 files changed, 30 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h            |  1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c        | 17 +++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 18 ++++++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 7d79a07..cbf9a65 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -678,12 +678,13 @@ static int hns3_set_rss(struct net_device *netdev, const u32 *indir,
- 	if (!h->ae_algo || !h->ae_algo->ops || !h->ae_algo->ops->set_rss)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 1b49c5d..3df62a5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -479,6 +479,7 @@ struct hnae3_knic_private_info {
+ 	const struct hnae3_dcb_ops *dcb_ops;
  
--	/* currently we only support Toeplitz hash */
--	if ((hfunc != ETH_RSS_HASH_NO_CHANGE) && (hfunc != ETH_RSS_HASH_TOP)) {
--		netdev_err(netdev,
--			   "hash func not supported (only Toeplitz hash)\n");
-+	if ((h->pdev->revision == 0x20 &&
-+	     hfunc != ETH_RSS_HASH_TOP) || (hfunc != ETH_RSS_HASH_NO_CHANGE &&
-+	     hfunc != ETH_RSS_HASH_TOP && hfunc != ETH_RSS_HASH_XOR)) {
-+		netdev_err(netdev, "hash func not supported\n");
- 		return -EOPNOTSUPP;
+ 	u16 int_rl_setting;
++	enum pkt_hash_types rss_type;
+ };
+ 
+ struct hnae3_roce_private_info {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index e9d4564..9bbb53c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2230,6 +2230,21 @@ static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
  	}
+ }
+ 
++static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
++				     struct sk_buff *skb)
++{
++	struct hns3_desc *desc = &ring->desc[ring->next_to_clean];
++	struct hnae3_handle *handle = ring->tqp->handle;
++	enum pkt_hash_types rss_type;
 +
- 	if (!indir) {
- 		netdev_err(netdev,
- 			   "set rss failed for indir is empty\n");
++	if (le32_to_cpu(desc->rx.rss_hash))
++		rss_type = handle->kinfo.rss_type;
++	else
++		rss_type = PKT_HASH_TYPE_NONE;
++
++	skb_set_hash(skb, le32_to_cpu(desc->rx.rss_hash), rss_type);
++}
++
+ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 			     struct sk_buff **out_skb, int *out_bnum)
+ {
+@@ -2371,6 +2386,8 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	ring->tqp_vector->rx_group.total_bytes += skb->len;
+ 
+ 	hns3_rx_checksum(ring, skb, desc);
++	hns3_set_rx_skb_rss_type(ring, skb);
++
+ 	return 0;
+ }
+ 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index ca1a936..0c5a053 100644
+index 0c5a053..db97f6a 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2806,8 +2806,19 @@ static int hclge_get_rss(struct hnae3_handle *handle, u32 *indir,
- 	int i;
+@@ -2773,6 +2773,22 @@ static int hclge_set_rss_tc_mode(struct hclge_dev *hdev, u16 *tc_valid,
+ 	return ret;
+ }
  
- 	/* Get hash algorithm */
--	if (hfunc)
--		*hfunc = vport->rss_algo;
-+	if (hfunc) {
-+		switch (vport->rss_algo) {
-+		case HCLGE_RSS_HASH_ALGO_TOEPLITZ:
-+			*hfunc = ETH_RSS_HASH_TOP;
-+			break;
-+		case HCLGE_RSS_HASH_ALGO_SIMPLE:
-+			*hfunc = ETH_RSS_HASH_XOR;
-+			break;
-+		default:
-+			*hfunc = ETH_RSS_HASH_UNKNOWN;
-+			break;
-+		}
-+	}
- 
- 	/* Get the RSS Key required by the user */
- 	if (key)
-@@ -2831,12 +2842,20 @@ static int hclge_set_rss(struct hnae3_handle *handle, const u32 *indir,
- 
- 	/* Set the RSS Hash Key if specififed by the user */
- 	if (key) {
--
--		if (hfunc == ETH_RSS_HASH_TOP ||
--		    hfunc == ETH_RSS_HASH_NO_CHANGE)
-+		switch (hfunc) {
-+		case ETH_RSS_HASH_TOP:
- 			hash_algo = HCLGE_RSS_HASH_ALGO_TOEPLITZ;
--		else
-+			break;
-+		case ETH_RSS_HASH_XOR:
-+			hash_algo = HCLGE_RSS_HASH_ALGO_SIMPLE;
-+			break;
-+		case ETH_RSS_HASH_NO_CHANGE:
-+			hash_algo = vport->rss_algo;
-+			break;
-+		default:
- 			return -EINVAL;
-+		}
++static void hclge_get_rss_type(struct hclge_vport *vport)
++{
++	if (vport->rss_tuple_sets.ipv4_tcp_en ||
++	    vport->rss_tuple_sets.ipv4_udp_en ||
++	    vport->rss_tuple_sets.ipv4_sctp_en ||
++	    vport->rss_tuple_sets.ipv6_tcp_en ||
++	    vport->rss_tuple_sets.ipv6_udp_en ||
++	    vport->rss_tuple_sets.ipv6_sctp_en)
++		vport->nic.kinfo.rss_type = PKT_HASH_TYPE_L4;
++	else if (vport->rss_tuple_sets.ipv4_fragment_en ||
++		 vport->rss_tuple_sets.ipv6_fragment_en)
++		vport->nic.kinfo.rss_type = PKT_HASH_TYPE_L3;
++	else
++		vport->nic.kinfo.rss_type = PKT_HASH_TYPE_NONE;
++}
 +
- 		ret = hclge_set_rss_algo_key(hdev, hash_algo, key);
- 		if (ret)
- 			return ret;
+ static int hclge_set_rss_input_tuple(struct hclge_dev *hdev)
+ {
+ 	struct hclge_rss_input_tuple_cmd *req;
+@@ -2792,6 +2808,7 @@ static int hclge_set_rss_input_tuple(struct hclge_dev *hdev)
+ 	req->ipv6_udp_en = hdev->vport[0].rss_tuple_sets.ipv6_udp_en;
+ 	req->ipv6_sctp_en = hdev->vport[0].rss_tuple_sets.ipv6_sctp_en;
+ 	req->ipv6_fragment_en = hdev->vport[0].rss_tuple_sets.ipv6_fragment_en;
++	hclge_get_rss_type(&hdev->vport[0]);
+ 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
+ 	if (ret)
+ 		dev_err(&hdev->pdev->dev,
+@@ -2973,6 +2990,7 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
+ 	vport->rss_tuple_sets.ipv6_udp_en = req->ipv6_udp_en;
+ 	vport->rss_tuple_sets.ipv6_sctp_en = req->ipv6_sctp_en;
+ 	vport->rss_tuple_sets.ipv6_fragment_en = req->ipv6_fragment_en;
++	hclge_get_rss_type(vport);
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
 
