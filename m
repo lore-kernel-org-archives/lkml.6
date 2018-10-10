@@ -2,115 +2,89 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA6DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE82CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D102064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63ECA214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:55:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u/jidccN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D102064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ruu6s5qB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63ECA214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbeJJPOj (ORCPT
+        id S1726770AbeJJPQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:14:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34408 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJPOi (ORCPT
+        Wed, 10 Oct 2018 11:16:09 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36239 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJPQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:14:38 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g12-v6so2124317pgs.1;
-        Wed, 10 Oct 2018 00:53:42 -0700 (PDT)
+        Wed, 10 Oct 2018 11:16:09 -0400
+Received: by mail-it1-f194.google.com with SMTP id c85-v6so6689662itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 00:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WxApTJYchzt1wXbM1o6DjQhoFEC8+juFEY2qnYm40KM=;
-        b=u/jidccNZ6vZziRUrZMwQlfW7f5xBikqQxfdDE3oweBwXTT/mCD+ziyHl/0NdBzEdV
-         DO6N53Af0H2M02eZxz4UP9urdVVopK1TqX99qqjH60w56LlXPgdp1e9tknrQsMpSdAeN
-         MFZTpbdmtS+h8vkoK4V/uS3E8PXl3dmlDT3LylWXWweTJFoYWdzEvg8ExTVvf8BT9YlC
-         fFwA1t2V3SyjLGnrudwcPMFqLLus5fNPr9CJ1LTpKUEdOWGuP1rDnjUyyz5YVbFasQQV
-         kNW65tihrsMqVekEY08m6OMM9uU2/e/1+xBcqvi7MLQPidwDSFhiIJYLrqUtAOxPnAx9
-         vKSg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zWmKHubBBc+QaQzo5Rf+A6+Rdb0fHF0YiELFqFK+/PA=;
+        b=Ruu6s5qBnv7UYDQlrHH09vtgOzmFno4/bj7r0HEHhTsOgese6asbujD2iqlNHWB4VL
+         XjVNZn9OcPKTAKaqskJRRWLFrSTDm56hOd2JNxIWwxTZHXkQczYAiAMwcgCGQlhIWGpK
+         GnTRhEhtkkeiN/7riwAEcPGZ4sWe5GM5Jv5tk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WxApTJYchzt1wXbM1o6DjQhoFEC8+juFEY2qnYm40KM=;
-        b=uBwO7mMZ9V7fUV3qyGLoRw1DuaesJ0hbSVF79UzKPGtRSYnf5v9b0R8esDs6VXwlsc
-         C58YkBVfSQyN7kqRx/VOwt2mCJObuz+D1/eW6jmEr5N40W0Sh5kK8w5b3bEa4i+L/NcS
-         m1kuQL5FrAKQaopIJ2pYR0AvgtEBPYmyGBgYPaNyKGnaEXLy2GUryog/Et6lzmtM9NBf
-         bF1iuAwBfTLsOVXtEwZDM+lfWmMmCj5EIQ56w6FwVEYB8sZaUtSM5a0pXYUpNOSFS4xG
-         Jonm0d2pAW1CpBVi8P+SjtDh7O5glQUj/CUGCFX57WtqxP/Z00pzTP+hkzDRifDXipMo
-         PWog==
-X-Gm-Message-State: ABuFfog6RncehAl5/0qCCHiuJTWB/6HYyBGpIOlHkNw69RME7YaycMnF
-        uGielTA2Z//QsNKH54Od80Q=
-X-Google-Smtp-Source: ACcGV63FZG4vNO9e7ePws3+cnqEJmx3vgT5lvyTWWVCYxVlFGe5ls393wi7bIKneG+hRGMB+vqw8kw==
-X-Received: by 2002:a63:2587:: with SMTP id l129-v6mr19733323pgl.382.1539158021377;
-        Wed, 10 Oct 2018 00:53:41 -0700 (PDT)
-Received: from localhost ([82.102.30.219])
-        by smtp.gmail.com with ESMTPSA id u69-v6sm43340746pfk.68.2018.10.10.00.53.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 00:53:40 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 00:53:37 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts
- to prevent latching
-Message-ID: <20181010075337.GA13524@localhost>
-References: <20181008175530.864641368@linuxfoundation.org>
- <20181008175536.405502473@linuxfoundation.org>
- <20181009063338.GA22218@flashbox>
- <CACRpkdZVWMAQxrX7CS-JtA9sRYqeNE+8X39yqfCNtYLmN=XDHw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zWmKHubBBc+QaQzo5Rf+A6+Rdb0fHF0YiELFqFK+/PA=;
+        b=l7fNmDe6DuUgV0P1A7dFBZtn3lqeA7lkTrzY09grItXkxCDPXJWZTWZ1Nc6FlT8jS3
+         pnOSFMvHz7sOdcn5mHcITytpPSxuOmumK5R9ODvDMhYt5eZOoHhxMvhy68bdHXAorjln
+         LycNcU1P3336dpxM+AWaFlDiYcual0G9tc9cE0hnsdRkiIgZHdZsYy5H7ZyJOEx0rDiJ
+         tHESwg/hhMyxnUCNLU72FDbsejqZsePUdOt2BDWgsAhF+sKCK1o8MAqdju3dFbWrP/jp
+         7uy24nidRL1dlN9/TBGqrfMt+OB+W1v0Ckg/UrEOYhKJtgNgU8PPgfVjMyS8fjoZTgoC
+         ipjQ==
+X-Gm-Message-State: ABuFfojXwQ79ylXIjrTKD/qVrGYMnPU7z45We9K1lpoSv+BtPJdrJli1
+        /eE2yviq6wfDmg0z3DRaljPnmSfoiG8+GpaR0Wc6xA==
+X-Google-Smtp-Source: ACcGV62IvJi3Vr0qRpFeKNl6ukK7VeJXNHItkBEAjVrLX5MfgszqrAbJt1BwJc/HMYOmiBIi1gGDHcgt6HW0+Kh+gQA=
+X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr3949029ith.156.1539158112100;
+ Wed, 10 Oct 2018 00:55:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZVWMAQxrX7CS-JtA9sRYqeNE+8X39yqfCNtYLmN=XDHw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+In-Reply-To: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 10 Oct 2018 09:55:00 +0200
+Message-ID: <CACRpkdZmfR9xBiym8MsQ-6y3bYzXO6xte=wySYDWHZ0YNt9R5Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] gpiolib: Add init_valid_mask exported function
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     jhugo@codeaurora.org, timur@kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 09:12:58AM +0200, Linus Walleij wrote:
-> On Tue, Oct 9, 2018 at 8:33 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> 
-> > Sigh, sorry, I caught this after I sent my initial all good email but
-> > this commit breaks NFC on my Pixel 2 XL (toggle becomes greyed out and
-> > apps that want to use it ask to enable it). I can't say why, I'm more
-> > than happy to debug but I'm assuming it's some voodoo that Qualcomm has
-> > done out of tree. I'll leave it up to you how to proceed given that I
-> > can't run mainline :(
-> 
-> Which NFC driver is this?
-> Just want to make sure it looks sane.
-> 
-> Yours,
-> Linus Walleij
+On Fri, Oct 5, 2018 at 8:53 AM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-Hi Linus and Bjorn,
+> Add a function that allows initializing the valid_mask from
+> gpiochip_add_data.
+>
+> This prevents race conditions during gpiochip initialization.
+>
+> If the function is not exported, then the old behaviour is respected,
+> this is, set all gpios as valid.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-These two files should be it I believe:
-https://android.googlesource.com/kernel/msm/+/android-9.0.0_r0.22/drivers/nfc/nq-nci.c
-https://android.googlesource.com/kernel/msm/+/android-9.0.0_r0.22/drivers/nfc/ese/pn81a.c
+Patch applied,
 
-Sorry I didn't get around to digging into this further today, I will try
-to get to it in the morning.
+thanks a lot for your hard work on this!
 
-Cheers,
-Nathan
+Yours,
+Linus Walleij
