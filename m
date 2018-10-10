@@ -2,195 +2,134 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9BBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D01BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E1922085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E83032086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 22:53:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YhFq4m2y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1922085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="luNcNqs8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83032086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeJKGNz (ORCPT
+        id S1726087AbeJKGRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 02:13:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44780 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbeJKGNy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 02:13:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 63-v6so7472041wra.11
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 15:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H7pC+vF20Ylvcv87BYvPgcsBlcLEpwOgfKi7W2PydvU=;
-        b=YhFq4m2yIpEQ0JOWFKezyMwho+2cQFUKNZXMZp7oBySDmy38UtINHXbfMh1Cpio2H1
-         sxLo9b2hEbj1O3xr1qizGpuinG7RiXbyV5FpmG74EHv8yfN43gRtnWNgeDv2oeS9gdFL
-         60aM8CGuvdR8Y7/UP+RzpKK4zIMuZYjvL6iGjwtqKmZPnvdWxNFv8aFAnAKa/9OTlmSP
-         3Gt9EjReQ5WbIBDjc4C4x6OqvrC2wfaBSWCs5YsT9Rab/iqoimqJ8Tansu+BnymfzGr0
-         ekm2nA4HKGIs3eJ4viDGzTY2icmRBYBrok+dU50KwhTFuql2ypedU+f/GrOCVdL62/7A
-         4b6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H7pC+vF20Ylvcv87BYvPgcsBlcLEpwOgfKi7W2PydvU=;
-        b=c7GYnFe8MCNerA0Axz4XXFnFzf3GdVX8RXQfOHWgHs2Q2lyS+4wPwyxSnyVH+rs0AF
-         EFC+ed+183Ql+p1+Ok7uqSnfuIVO2KS0lDuAbB3ZjOnBJPoVsIRUbsXN1FXZBkH1fQ/r
-         IZno1RiMOf+u50dLVtdfPJX8U6gv5PFCJ/4OwU/dIUkTecQzeedC3AL5xhfkHVszQ+fx
-         F0FWDM6FkCq2gFldQNukFxoAl1IVE+HU2rmbe84msdABj5j9JoRLMYC6oNsrYCuWLcsd
-         RRPaSzbDZ1NczyjkqQVokV5otMaBAPT7brsZ19N3C7KMzhi+wwrMIdlcvilE3n2JUX3Y
-         lcIQ==
-X-Gm-Message-State: ABuFfogSoTMH5JMSbtO1Xxbb4NQ6JfNwRSkDKf49KiihZYGwmnPpUbc+
-        tNEeu5CO3kp8vsQ44OLQl7nvYDSC
-X-Google-Smtp-Source: ACcGV630XVW/eP33l8+OPx53H0nt0Q4T+0JJYAIk+wBI33vQSfSQI0YzV4t0c6g9lqd3ML/ZgGNh4Q==
-X-Received: by 2002:adf:e70f:: with SMTP id c15-v6mr7151438wrm.165.1539211777268;
-        Wed, 10 Oct 2018 15:49:37 -0700 (PDT)
-Received: from [192.168.0.20] ([94.1.125.110])
-        by smtp.googlemail.com with ESMTPSA id b8-v6sm15852861wme.1.2018.10.10.15.49.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 15:49:36 -0700 (PDT)
-Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Azat Khuzhin <a3at.mail@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
- <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
- <98680351-5123-761f-982a-726098da9716@gmail.com>
- <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
- <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
- <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
- <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
- <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
- <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
-From:   Chris Clayton <chris2553@googlemail.com>
-Message-ID: <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
-Date:   Wed, 10 Oct 2018 23:49:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 11 Oct 2018 02:17:22 -0400
+Received: from mail-co1nam03on0110.outbound.protection.outlook.com ([104.47.40.110]:41420
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725968AbeJKGRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 02:17:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TTv+5tZAmDALpvaIKLdC/oWX2Wvof9u2LFlJ+b8DwIM=;
+ b=luNcNqs8T6RrUt+dEpxE8YGERNRG4IcyOIpMeHbuft2F+mPtgrWjFhFpUi8skX9po8YRDk6JcIdeP/com0/KeA1FDtqf74VZSN9rRzrhQjeD3UW/gR63olBo7S7YZ/BH0e/P3DGgzb1LB79AvY1FR0R+I3s63K9Br+zCsNxwXwo=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3675.namprd06.prod.outlook.com (10.167.236.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Wed, 10 Oct 2018 22:52:59 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::f4ee:3633:74c0:ab4]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::f4ee:3633:74c0:ab4%3]) with mapi id 15.20.1228.020; Wed, 10 Oct 2018
+ 22:52:59 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "barakw@amazon.com" <barakw@amazon.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "talel@amazon.com" <talel@amazon.com>,
+        "ronenk@amazon.com" <ronenk@amazon.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
+Thread-Topic: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
+Thread-Index: AQHUYGgRyN3gGcSYHUSF2EMwZYIPcqUYRFiAgAASOwCAAAEugIAAEKJ3gACuxwA=
+Date:   Wed, 10 Oct 2018 22:52:58 +0000
+Message-ID: <1539211978.1944.46.camel@impinj.com>
+References: <1539155293-21750-1-git-send-email-talel@amazon.com>
+         <20181010101825.GA6294@sirena.org.uk>
+         <dbac7f00-e9cc-ddac-5734-9763b5985ead@amazon.com>
+         <20181010112753.GC6294@sirena.org.uk>
+         <ba83a08073614d9244c01218da28fe3e23f3bbc2.camel@amazon.co.uk>
+         <20181010122710.GE6294@sirena.org.uk>
+In-Reply-To: <20181010122710.GE6294@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3675;6:jNKQJn1DxSJ3Ny2a/OI0H2xWi4q9icl9TcG6y2xUFOFFZ6do+hg6bsVCONrEcTt4q16lxdt+PrZYjsTQJk5h8hW/vQE6EKlmaYF/1R5vV/o1GNwo9jTAO5lfalN7d0d8zNMAc84EHyxBsOgmZh54WIMLdRyAjxz2//yIgl8tKWNJFm4TxHnj6Do6UrhoP6uF4UUTauwsqCGU8sg/EpW/kkcNTA9ZWj17fOC7nP+T7ur9vS4PXtYe0meLEOdrZTwMZZSrWJihemMrOtAtnFxCuZZTUdH4Im11p3YwcIeMc6Z+ehX1kjheXVasJHVQXn5rKF7VUHLX6o9D3cekfUYOVKtuv42wHVb/Gk6nCpf32wFgbZNqsCYtqUBoRCc8fWUQb3lnoCmVuM6IYEEE1IloG4PAKGSr69LIfeZ1fZHzmDyENfm+csuFSFvGr6OBY3kw6HyXnB5eBHuC/+5bXok8jw==;5:fzjWduqyFGb6m19sh+/46Yrb/goUEZR7zPUD1sUFrnZ6Rj41Wi2OElPn4POyue91oet3JGnVGrFCUu2ThvKg1r5TsgiJ9U7dwIsNrNDLXHzP1AywQP1U7kcNdLop1VtVtK+9LN8VQ1qfdjYWz8h7Ddj6jOOFKKsfOr4ouoVOD2Q=;7:v9eUpUqmiGuAbsKCWQm/OKjjo3mk/GXia6K27yrERbGQ9OzJI8+lWWIeMNV66NlGgOo/MdkgVhqOFTBfu3hGHYE3PYF5EbB3/HJJbaOfNL1h5eWJ8egFGzEk33f9aLPwvBDiN+LdI+WY861qF9pvJyhFrZ6JaR9YXz6nS5HOpXpeyPQp+VDF+Kqjzuj+RW9sUliuvpPs+2WKlBn8sgkeDboTqGg6eC5q44vsJSdDI+iBx02o6D889+QSgrTBpYDK
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a37315e2-d464-44c3-5168-08d62f032028
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3675;
+x-ms-traffictypediagnostic: MWHPR0601MB3675:
+x-microsoft-antispam-prvs: <MWHPR0601MB3675E22142982358EF56D5AAD3E00@MWHPR0601MB3675.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991055);SRVR:MWHPR0601MB3675;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3675;
+x-forefront-prvs: 08213D42D3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39850400004)(376002)(346002)(189003)(199004)(2501003)(6346003)(97736004)(103116003)(76176011)(6116002)(4001150100001)(8936002)(186003)(5660300001)(3846002)(7416002)(2906002)(7736002)(6506007)(229853002)(102836004)(5250100002)(305945005)(26005)(99286004)(6436002)(14454004)(2900100001)(86362001)(6486002)(68736007)(256004)(106356001)(93886005)(105586002)(66066001)(478600001)(8676002)(81166006)(71190400001)(54906003)(110136005)(316002)(25786009)(4326008)(6512007)(81156014)(486006)(36756003)(71200400001)(2616005)(446003)(11346002)(476003)(6246003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3675;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-microsoft-antispam-message-info: jLGxLQFeZNGVa9BOIxmXMyIl+WwHLcmsp8LLcvmLswzHJaEspAQbFTcdz8y2l9hfYfbGJY2fccwwl0isJBoetufqK75ToR2uJLQBqnHFHk8uYCbFtSh4ENFAIXl8//1QDYud6LN0vA1EjYjArNKISlOd9vAt8ofuSDrYu10OeSE5Uc702IaVT0ZGg3DibNRkXwo/GUHZV0uQiUXyUaIBe+AZrqeKpR47+8/+SJyxSLMbKZsqqBXxIRC5YsANDaSZ0VuElRWrWQ1UcRjfIsDtBLLbEPM23QWVHZ02xgFQUkLQ5GJaEoHtMYm8gjz7BvMM5QLQY8qTNPZgEVduCoRwIOYqxiIm2C7i1JejckrqKDg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <581F67DDB68ED04C916ACC1F0CEA7874@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a37315e2-d464-44c3-5168-08d62f032028
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 22:52:58.8773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OK, right kernel/module used this time. Please see findings below.
-
-On 10/10/2018 01:24, Maciej S. Szmigiero wrote:
-> On 09.10.2018 22:36, Heiner Kallweit wrote:
->> On 09.10.2018 16:40, Chris Clayton wrote:
->>> Thanks to Maciej and Heiner for their replies.
->>>
->>> On 09/10/2018 13:32, Maciej S. Szmigiero wrote:
->>>> On 07.10.2018 21:36, Chris Clayton wrote:
->>>>> Hi again,
->>>>>
->>>>> I didn't think there was anything in 4.19-rc7 to fix this regression, but tried it anyway. I can confirm that the
->>>>> regression is still present and my network still fails when, after a resume from suspend (to ram or disk), I open my
->>>>> browser or my mail client. In both those cases the failure is almost immediate - e.g. my home page doesn't get displayed
->>>>> in the browser. Pinging one of my ISPs name servers doesn't fail quite so quickly but the reported time increases from
->>>>> 14-15ms to more than 1000ms.
->>>>
->>>> You can try comparing chip registers (ethtool -d eth0) in the working
->>>> state (before a suspend) and in the broken state (after a resume).
->>>> Maybe there will be some obvious in the difference.
->>>>
->>>> The same goes for the PCI configuration (lspci -d :8168 -vv).
->>>>
->>> Maciej suggested comparing the output from lspci -vv for the ethernet device. They are identical.
->>>
->>> Both Maciej and Heiner suggested comparing the output from "ethtool -d" pre and post suspend. Again, they are identical.
->>> Heiner specifically suggested looking at the RxConfig. The value of that is 0x0002870e both pre and post suspend.
->>>
->> Hmm, this is very weird, especially taking into account that in your original
->> report you state that removing the call to rtl_init_rxcfg() from rtl_hw_start()
->> fixes the issue. rtl_init_rxcfg() deals with the RxConfig register only and
->> register values seem to be the same before and after resume. So how can the
->> chip behave differently?
->> So far my best guess is that some chip quirk causes it to accept writes to
->> register RxConfig, but to misinterpret or ignore the written value.
->> So far your report is the only one (affecting RTL8411), but we don't know
->> whether other chip versions are affected too.
-> 
-> Also, it is interesting that even if one removes a call to
-> rtl_init_rxcfg() from rtl_hw_start() the RxConfig register will still get
-> written to moments later by rtl_set_rx_mode().
-> 
-> The only chip accesses in the meantime seems to be a write to TxConfig by
-> rtl_set_tx_config_registers() and then a read of RxConfig plus two writes
-> to MAR0 earlier in rtl_set_rx_mode().
-> 
-> My proposals are:
-> 1) Try swapping "rtl_init_rxcfg(tp);" and "rtl_set_tx_config_registers(tp);"
-> in rtl_hw_start().
-> Maybe the chip does not like sometimes that RxConfig is written before
-> TxConfig.
-> 
-
-This change made no difference. Networking still dies if I open a browser or leave ping running long enough.
-
-> 2) Check the original value of RxConfig (after a resume) before
-> rtl_init_rxcfg() overwrites it (compile tested only):
-> --- r8169.c.ori
-> +++ r8169.c
-> @@ -5155,6 +5155,9 @@
->  	/* Initially a 10 us delay. Turned it into a PCI commit. - FR */
->  	RTL_R8(tp, IntrMask);
->  	RTL_W8(tp, ChipCmd, CmdTxEnb | CmdRxEnb);
-> +
-> +	pr_notice("RxConfig before init was %.8x\n",
-> +		(unsigned int)RTL_R32(tp, RxConfig));
->  	rtl_init_rxcfg(tp);
->  	rtl_set_tx_config_registers(tp);
->  
-> 
-> This should be the value that you got when you removed the call to
-> rtl_init_rxcfg() for testing.
-> Now, knowing the "right" value you can experiment with what rtl_init_rxcfg()
-> writes (under the "default:" label for your NIC model).
-> 
-
-This might be more interesting. Through a combination of viewing the output from pr_notice() and the output from
-"ethtool -d", I can see RxConfig with the following values
-
-	During boot:	0x00028700
-	Before suspend:	0x0002870e
-	During resume:	0x00024000
-	Post resume:	0x0002870e
-
-As I did with 4.18.10 early on in the process, I removed the call to rtl_init_rxcfg() from rtl_hw_start() and rebuilt,
-installed and rebooted. Now I see the following values:
-
-	During boot:	0x00028700
-	Before suspend:	0x0002870e
-	During resume:	0x00024000
-	Post resume:	0x0002400e
-
-As with 4.18.10, networking now appears to be stable after the resume. Starting a browser results in my homepage being
-displayed and I've spent a few minutes surfing with no interruptions. Similarly, ping runs without stopping. I simply
-don't know enough to know what might now be enabled or disabled by this change in value, but hopefully it will provide a
-clue to someone as to what is going on.
-
-Chris
-
-> Hope this helps,
-> Maciej
-> 
+T24gV2VkLCAyMDE4LTEwLTEwIGF0IDEzOjI3ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiAN
+Cj4gVGhhdCdzIGdyZWF0IGFuZCB3ZSBnZXQgdG8gcmV1c2UgYWxsIHRoZSBkcml2ZXIgY29kZSB3
+aXRoIGEgcXVpcmsgKGENCj4gcXVpcmsgd2hpY2ggZml4ZXMgdGhlIGhhcmR3YXJlIHRvIGJlIG1v
+cmUgY29tcGF0aWJsZSB3aXRoIGRldmljZXMsIHRoaXMNCj4gaXMgYSByZWFsbHkgZ29vZCBoYXJk
+d2FyZSBjaGFuZ2UpLiAgSWRlYWxseSB3ZSdkIGJlIGFibGUgdG8gZW51bWVyYXRlDQo+IHRoaW5n
+cyBsaWtlIElQIHZlcnNpb25zIGFuZCBvcHRpb25zIGZyb20gaGFyZHdhcmUgYnV0IHRoYXQncyBh
+IG1vcmUNCj4gZW50ZXJ0YWluaW5nIHByb2JsZW0uDQoNCk1pZ2h0IHdlbGwgYmUgcG9zc2libGUg
+aGVyZS4gIFRoZXJlIGFyZSBhbiBpZCBjb2RlIGFuZCB2ZXJzaW9uDQpyZWdpc3RlcnMgdGhhdCBj
+b3VsZCBiZSB1c2VkLiAgRGlkIGFueW9uZSBoYXZlIHRoZSBmb3Jlc2lnaHQgdG8gY2hhbmdlDQp0
+aGVtIHdvdWxkIG1vZGlmeWluZyB0aGUgSVAgaXMgdGhlIHF1ZXN0aW9uLg0KDQoNCj4gSGF2aW5n
+IHNhaWQgYWxsIHRoaXMgaWYgdGhlcmUgYXJlIHByb2R1Y3Rpb24gc3lzdGVtcyB1c2luZyB0aGlz
+DQo+IHByb3BlcnR5LCBlc3BlY2lhbGx5IHByb2R1Y3Rpb24gc3lzdGVtcyB3aGVyZSBwZW9wbGUg
+b3RoZXIgdGhhbiB0aGUNCj4gc3lzdGVtIGludGVncmF0b3IgY2FuIHJlYWxpc3RpY2FsbHkgZGVw
+bG95IHRoZWlyIG93biBrZXJuZWwgc2VwYXJhdGUgdG8NCj4gdGhlIGRldmljZSB0cmVlLCB0aGVu
+IHN1cHBvcnRpbmcgdGhvc2UgZXhpc3RpbmcgRFRzIGV2ZW4gaWYgdGhleSdyZSBub3QNCj4gZG9p
+bmcgdGhlIGlkZWFsIHRoaW5nIG1pZ2h0IGJlIHRoZSBiZXN0IHRoaW5nLiAgWW91IG1lbnRpb25l
+ZCB0aGF0IHRoaXMNCj4gbWlnaHQgYmUgdGhlIGNhc2UsIGNhbiB5b3UgY2hlY2sgd2hhdCB0aGUg
+c3RhdHVzIGlzIHRoZXJlIHBsZWFzZT8NCg0KSSd2ZSBkZXZlbG9wZWQgc3lzdGVtcyB0aGF0IHVz
+ZWQgY2hpcHMgd2l0aCB0aGlzIFNQSSBtYXN0ZXIuICBJIHVzZWQNCkdQSU8gY2hpcCBzZWxlY3Rz
+IHRvIHdvcmsgYXJvdW5kIHRoZSBleGlzdGluZyBiZWhhdmlvciBhbmQgd291bGQgbm90IGJlDQpu
+ZWdhdGl2ZWx5IGFmZmVjdGVkIGlmIHNvbWVvbmUgZml4ZWQgdGhpcyBidWcuDQoNClRoZXJlJ3Mg
+YWxzbyBhbm90aGVyIHF1aXJrIHdoZXJlIGNlcnRhaW4gcGhhc2UvcG9sYXJpdHkgY29tYmluYXRp
+b24NCm1ha2UgaXQgZ2VuZXJhdGUgYSBDUyBwdWxzZSBiZXR3ZWVuIGVhY2ggd29yZC4NCg0KSU1I
+TywgTGludXggU1BJIGhhcyBhIHNwZWNpZmljYXRpb24gZm9yIGhvdyBpdCB3b3Jrcy4gIFNldHVw
+IGFuIHhmZXIgYQ0KY2VydGFpbiB3YXkgYW5kIHlvdSBnZXQgYSBjZXJ0YWluIHdhdmVmb3JtIGZy
+b20gdGhlIG1hc3Rlci4gIElmIHRoZQ0KbWFzdGVyIGdlbmVyYXRlcyB0aGUgd3Jvbmcgd2F2ZWZv
+cm0gdGhlbiBpdCdzIGEgYnVnLiAgRGVzaWduZXJzIHNob3VsZA0Ka25vdyBiZXR0ZXIgdGhhbiB0
+byBkZXNpZ24gYSBzeXN0ZW0gdGhhdCBkZXBlbmRzIG9uIGEgYnVnIG5ldmVyIGJlaW5nDQpmaXhl
+ZCBhbmQgYmUgY2F1Z2h0IG9mZiBndWFyZCB3aGVuIGl0IGlzLiAgSWYgeW91IHdhbnQgQ1MgdG8g
+dHVybiBvZmYNCndoZW5ldmVyIHRoZSBGSUZPIGlzIGVtcHR5ICh3aHk/Pz8pIHRoZW4gZXh0ZW5k
+IHRoZSBzcGVjIHRvIGVuY29tcGFzcw0KdGhlIGJlaGF2aW9yIHlvdSB3YW50LiAgTGlrZSBob3cg
+InB1bHNlIGJldHdlZW4gd29yZHMiIGNhbiBiZSBzcGVjaWZpZWQNCm5vdy4=
