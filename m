@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AC2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254CCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B4C2064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:57:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B4C2064E
+	by mail.kernel.org (Postfix) with ESMTP id DBFDF214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:57:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBFDF214FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeJJPSC (ORCPT
+        id S1726932AbeJJPSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:18:02 -0400
-Received: from mail-it1-f199.google.com ([209.85.166.199]:41372 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeJJPSC (ORCPT
+        Wed, 10 Oct 2018 11:18:04 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:34568 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJJPSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 10 Oct 2018 11:18:02 -0400
-Received: by mail-it1-f199.google.com with SMTP id 207-v6so5008242itj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 00:57:04 -0700 (PDT)
+Received: by mail-it1-f200.google.com with SMTP id p20-v6so11190865itg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 00:57:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=WhSdhkufR7MlphxAC/dLggfiz1KX6Ghnfc62Xsu15nA=;
-        b=Kutwe8Dbzm4f/KDppvEbyg+p0odxrf3AXycGoxKW30JdQ76Ge8I62ANAeiaQZuz/eb
-         D6Dt+veM7ZLNw6IQYgL/aYEUWL8gSyFT0Xo0aj70Q7QNNUQuwxk0J5VHLGdddocb9Wh7
-         NXWSqVOKVeA/zs1l5D8M/bfaE20SFt21uKWrUhUQw5DlmsPsdtxYQAEB4qXep/sb2BtS
-         S/Ip2qFFjDJQLrxssPi2VyrN0tn4BNY3aoPsDroiixEcuaKPxBsTJFzDDiRP9I6qfLxb
-         F7+6rV4RPA3cCT/cMuVswQQNpyYoTi6Vnl91T03t9NJSsGCUoAR5av9t5RB8uo9TEfuE
-         kRGw==
-X-Gm-Message-State: ABuFfoi2TbQB/d+mMn9vxQ/w1xvNKZ4RbENPk11rCKtzn0WQ/0bzmbp+
-        jfPQ+jQs7ltgDD3ER8Rn+C4KNxafA70xrM7xZVS2r7EjaCKc
-X-Google-Smtp-Source: ACcGV62c7pG4KWKtwA5vnsa3QMOUcko6wzhTZBrRPO5VPJu2ZgDgVj7krdAFzB54pDbvOcxdj3p58ouFCkeMeUyZCxfNDCt3brJ9
+        bh=ockJ5V7je4x/ugGrZHqutjqK+GHLzDGzkNPA9uNuNGM=;
+        b=hH740dxsgfBJZrLwbRp4JBXVwFUMJzkhHqJhBL406QqFCWpYOBTUPqOwhkqeCmRRSa
+         hJijgj9yEOVJlA/mmts04HrmmJGh9iUHJqpOHN2+kXSLoV/WcgQbcbGyCI1x4id/DDO+
+         O7jAhPYOPNmBj+bJeDxqEbODuMNzrE58cd5FWGsjNZSHpzKj1E34ujLOSjkfo9hQ0UdO
+         g3gtXfbSIOPSMM9rlFNwJWruHzdXAsnuIfNcaxi69mGnn7+6fVMLwWM/j0BlSFzkccIA
+         siot7MWriX1VKV02cK06u0unrQqZiZsHMhrNz6Eo5BaLxwf5JMPsQYUug222+pJj3/8y
+         yv+A==
+X-Gm-Message-State: ABuFfoh4fKul1iRfFi8cRcLnWrsHidpohYrhBo5u50VcOM1/4YYyHyyv
+        nAFa7k1BlwWYqiPhAp+nD4XMeAihucCrn8GYYFi7UP9LfTfk
+X-Google-Smtp-Source: ACcGV60KcCHzdxISkqRM/IOoVmed/IxRYVmF8tNCcigg2Ux5rYEcitXZegZ4MioV7Onn3CmrCCiJZtYTMyOJUlpsTiF07aVuqbJ7
 MIME-Version: 1.0
-X-Received: by 2002:a24:9ec3:: with SMTP id p186-v6mr4391663itd.11.1539158224023;
+X-Received: by 2002:a24:9192:: with SMTP id i140-v6mr4370319ite.39.1539158224356;
  Wed, 10 Oct 2018 00:57:04 -0700 (PDT)
 Date:   Wed, 10 Oct 2018 00:57:04 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000323c300577db3338@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in sha256_mb_mgr_get_comp_job_avx2
-From:   syzbot <syzbot+2be67c86b63d3bf6e001@syzkaller.appspotmail.com>
-To:     bp@alien8.de, davem@davemloft.net, herbert@gondor.apana.org.au,
-        hpa@zytor.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, megha.dey@linux.intel.com,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, tim.c.chen@linux.intel.com, x86@kernel.org
+Message-ID: <0000000000003752860577db332b@google.com>
+Subject: BUG: unable to handle kernel paging request in refcount_inc_not_zero_checked
+From:   syzbot <syzbot+e593df3bb8f541d497b9@syzkaller.appspotmail.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,73 +60,93 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    64c5e530ac2c Merge tag 'arc-4.19-rc8' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1294e2d6400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
-dashboard link: https://syzkaller.appspot.com/bug?extid=2be67c86b63d3bf6e001
+HEAD commit:    570b7bdeaf18 Add linux-next specific files for 20181009
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f27959400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9b5a60e1381390c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=e593df3bb8f541d497b9
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2be67c86b63d3bf6e001@syzkaller.appspotmail.com
+Reported-by: syzbot+e593df3bb8f541d497b9@syzkaller.appspotmail.com
 
-audit: type=1804 audit(1539118025.521:29867): pid=31406 uid=0  
-auid=4294967295 ses=4294967295 subj==unconfined op=invalid_pcr  
-cause=open_writers comm="syz-executor2"  
-name="/root/syzkaller-testdir968705726/syzkaller.1KeZRV/124/file0/bus"  
-dev="sda1" ino=16590 res=1
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000040
-PGD 1d82fa067 P4D 1d82fa067 PUD 1d937c067 PMD 0
-Oops: 0002 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 3868 Comm: kworker/1:1 Not tainted 4.19.0-rc7+ #275
+BUG: unable to handle kernel paging request at ffffc90001b356b0
+PGD 1da948067 P4D 1da948067 PUD 1da949067 PMD 1ce844067 PTE 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 11542 Comm: syz-executor2 Not tainted 4.19.0-rc7-next-20181009+  
+#90
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: crypto mcryptd_queue_worker
-RIP: 0010:sha256_mb_mgr_get_comp_job_avx2+0x66/0xe3  
-arch/x86/crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S:255
-Code: 3b d3 c4 c1 79 7e d0 49 f7 c0 f0 ff ff ff 0f 85 93 00 00 00 49 6b d8  
-08 48 8d 9c 1f 68 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 40 02 00  
-00 00 48 8b 9f 60 01 00 00 48 c1 e3 04 4c 09 c3 48
-RSP: 0018:ffff88017c5e7370 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: ffff8801d527f728 RCX: ffffffff8184e1ca
-RDX: 1ffffd1ffffa2534 RSI: ffffffff814593ba RDI: ffff8801d527f5c0
-RBP: ffff88017c5e74d0 R08: 0000000000000000 R09: ffffed0037cd50c7
-R10: ffffed0037cd50c7 R11: ffff8801be6a863b R12: ffff88017c5e74a8
-R13: 0000000000000001 R14: ffff8801be6a86e0 R15: 0000000000000200
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+kobject: 'queues' (00000000da0a0759): kobject_uevent_env
+RIP: 0010:__read_once_size include/linux/compiler.h:179 [inline]
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
+RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:22 [inline]
+RIP: 0010:refcount_inc_not_zero_checked+0xbb/0x2f0 lib/refcount.c:120
+Code: e7 e8 89 4b 30 fe 4c 89 e0 48 c1 e8 03 0f b6 14 18 4c 89 e0 83 e0 07  
+83 c0 03 38 d0 7c 08 84 d2 0f 85 0b 02 00 00 49 8d 5d c0 <45> 8b 3c 24 48  
+b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 0f
+kobject: 'queues' (00000000da0a0759): kobject_uevent_env: filter function  
+caused the event to drop!
+RSP: 0018:ffff88017cf9f618 EFLAGS: 00010246
+RAX: 0000000000000003 RBX: ffff88017cf9f690 RCX: ffffffff83929317
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc90001b356b0
+RBP: ffff88017cf9f6f8 R08: fffff52000366ad7 R09: fffff52000366ad6
+R10: fffff52000366ad6 R11: ffffc90001b356b3 R12: ffffc90001b356b0
+R13: ffff88017cf9f6d0 R14: ffffffff892b6d60 R15: ffff8801d4803400
+FS:  00007fb683cfa700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000040 CR3: 00000001d83ec000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'loop1' (00000000bc5d5992): kobject_uevent_env
+CR2: ffffc90001b356b0 CR3: 00000001d2369000 CR4: 00000000001426e0
+netlink: 72 bytes leftover after parsing attributes in process  
+`syz-executor3'.
 Call Trace:
-  sha256_mb_flusher+0x2f4/0x610 arch/x86/crypto/sha256-mb/sha256_mb.c:919
-  mcryptd_opportunistic_flush crypto/mcryptd.c:142 [inline]
-  mcryptd_queue_worker+0x49c/0x71f crypto/mcryptd.c:172
-  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+  refcount_inc_checked+0x15/0x70 lib/refcount.c:153
+kobject: 'loop1' (00000000bc5d5992): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+  kvm_get_kvm arch/x86/kvm/../../../virt/kvm/kvm_main.c:765 [inline]
+  kvm_ioctl_create_device arch/x86/kvm/../../../virt/kvm/kvm_main.c:2923  
+[inline]
+  kvm_vm_ioctl+0xedf/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3113
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fb683cf9c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
+RDX: 00000000200002c0 RSI: 00000000c00caee0 RDI: 0000000000000008
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb683cfa6d4
+R13: 00000000004bfbd1 R14: 00000000004cfc58 R15: 00000000ffffffff
 Modules linked in:
-CR2: 0000000000000040
----[ end trace 8d1a13a59eafe937 ]---
-RIP: 0010:sha256_mb_mgr_get_comp_job_avx2+0x66/0xe3  
-arch/x86/crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S:255
-Code: 3b d3 c4 c1 79 7e d0 49 f7 c0 f0 ff ff ff 0f 85 93 00 00 00 49 6b d8  
-08 48 8d 9c 1f 68 01 00 00 48 8b 03 48 c7 03 00 00 00 00 <c7> 40 40 02 00  
-00 00 48 8b 9f 60 01 00 00 48 c1 e3 04 4c 09 c3 48
-RSP: 0018:ffff88017c5e7370 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: ffff8801d527f728 RCX: ffffffff8184e1ca
-RDX: 1ffffd1ffffa2534 RSI: ffffffff814593ba RDI: ffff8801d527f5c0
-RBP: ffff88017c5e74d0 R08: 0000000000000000 R09: ffffed0037cd50c7
-R10: ffffed0037cd50c7 R11: ffff8801be6a863b R12: ffff88017c5e74a8
-R13: 0000000000000001 R14: ffff8801be6a86e0 R15: 0000000000000200
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CR2: ffffc90001b356b0
+---[ end trace 6ee8acb8091e879f ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:179 [inline]
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
+RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:22 [inline]
+RIP: 0010:refcount_inc_not_zero_checked+0xbb/0x2f0 lib/refcount.c:120
+Code: e7 e8 89 4b 30 fe 4c 89 e0 48 c1 e8 03 0f b6 14 18 4c 89 e0 83 e0 07  
+83 c0 03 38 d0 7c 08 84 d2 0f 85 0b 02 00 00 49 8d 5d c0 <45> 8b 3c 24 48  
+b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 0f
+RSP: 0018:ffff88017cf9f618 EFLAGS: 00010246
+RAX: 0000000000000003 RBX: ffff88017cf9f690 RCX: ffffffff83929317
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc90001b356b0
+RBP: ffff88017cf9f6f8 R08: fffff52000366ad7 R09: fffff52000366ad6
+R10: fffff52000366ad6 R11: ffffc90001b356b3 R12: ffffc90001b356b0
+R13: ffff88017cf9f6d0 R14: ffffffff892b6d60 R15: ffff8801d4803400
+FS:  00007fb683cfa700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000040 CR3: 00000001d83ec000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+CR2: ffffc90001b356b0 CR3: 00000001d2369000 CR4: 00000000001426e0
 
 
 ---
