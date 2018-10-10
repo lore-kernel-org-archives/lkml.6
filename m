@@ -2,101 +2,221 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB8FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95F1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6B22075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6B22075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B7D72075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:27:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7D72075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeJKDu7 (ORCPT
+        id S1727866AbeJKDvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 23:50:59 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:51905 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbeJKDu7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 23:50:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 639E642D8A;
-        Wed, 10 Oct 2018 20:27:11 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XmgSsKzE0xxA; Wed, 10 Oct 2018 20:27:11 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 66AB442CC7;
-        Wed, 10 Oct 2018 20:26:59 +0000 (UTC)
-Subject: Re: KASAN: slab-out-of-bounds Read in vhci_hub_control
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+bccc1fe10b70fadc78d0@syzkaller.appspotmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, sudipm.mukherjee@gmail.com
-References: <0000000000004643360575102706@google.com>
- <62457d9f-0732-3886-0381-bbf5df738467@kernel.org>
- <CACT4Y+ZeN-acGM_Y+W_sWLcd-0NAjQ9qfBfGGrwE85AhB+ne0A@mail.gmail.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <7aab2f8c-a962-8ed3-b8ce-6cf77eb418c2@kernel.org>
-Date:   Wed, 10 Oct 2018 14:26:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZeN-acGM_Y+W_sWLcd-0NAjQ9qfBfGGrwE85AhB+ne0A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Oct 2018 23:51:18 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:50852 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727454AbeJKDvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 23:51:18 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1gAL4n-0000c2-B9; Wed, 10 Oct 2018 22:27:25 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To:     Michael Krufky <mkrufky@linuxtv.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Andy Walls <awalls@md.metrocast.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH v8 0/4] [media] Add analog mode support for Medion MD95700
+Date:   Wed, 10 Oct 2018 22:27:16 +0200
+Message-Id: <cover.1539198675.git.mail@maciej.szmigiero.name>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/2018 01:42 PM, Dmitry Vyukov wrote:
-> On Tue, Oct 2, 2018 at 6:04 PM, Shuah Khan <shuah@kernel.org> wrote:
->> On 09/04/2018 12:52 PM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    420f51f4ab6b Merge tag 'arm64-fixes' of git://git.kernel.o..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=126a6f0e400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=bccc1fe10b70fadc78d0
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121caa46400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ed8ab6400000
->>
->> C producer doesn't reproduce the problem on 4.19-rc5. Does this C producer
->> depend on state of the machine? i.e what is the status of vhci_hcd - are
->> there any devices attached?
->>
->> I can see the problem looking at the code and fix is easy. However, I would
->> like be able to reproduce it and verify the fix works. Also this would be a
->> good regression for the driver I could consider adding to selftests.
-> 
-> 
-> 
-> Are you sure you used the provided config/commit?
-> I've followed these instructions:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#crash-does-not-reproduce
-> and the C repro gave me this in a second:
+This series adds support for analog part of Medion 95700 in the cxusb
+driver.
 
-I managed to reproduce and fix it. I did add reported by tag as well.
+What works:
+* Video capture at various sizes with sequential fields,
+* Input switching (TV Tuner, Composite, S-Video),
+* TV and radio tuning,
+* Video standard switching and auto detection,
+* Radio mode switching (stereo / mono),
+* Unplugging while capturing,
+* DVB / analog coexistence,
+* Raw BT.656 stream support.
 
-Here is fix:
-https://patchwork.kernel.org/patch/10628833/
+What does not work yet:
+* Audio,
+* VBI,
+* Picture controls.
 
-Sudip verified the patch.
+This series (as a one patch) was submitted for inclusion few years ago,
+then waited few months in a patch queue.
+Unfortunately, by the time it was supposed to be merged there
+were enough changes in media that it was no longer mergeable.
 
-thanks,
--- Shuah
+I thought at that time that I will be able to rebase and retest it soon
+but unfortunately up till now I was never able to find enough time to do
+so.
+Also, with the passing of time the implementation diverged more and
+more from the current kernel code, necessitating even more reworking.
+
+That last iteration can be found here:
+https://patchwork.linuxtv.org/patch/8048/
+
+Since that version there had been the following changes:
+* Adaptation to changes in V4L2 / DVB core,
+
+* Radio device was added, with a possibility to tune to a FM radio
+station and switch between stereo and mono modes (tested by taping
+audio signal directly at tuner output pin),
+
+* DVB / analog coexistence was improved - resolved a few cases where
+DVB core would switch off power or reset the tuner when the device
+was still being used but in the analog mode,
+
+* Fixed issues reported by v4l2-compliance,
+
+* Switching to raw BT.656 mode is now done by a custom streaming
+parameter set via VIDIOC_S_PARM ioctl instead of using a
+V4L2_BUF_TYPE_PRIVATE buffer (which was removed from V4L2),
+
+* General small code cleanups (like using BIT() or ARRAY_SIZE() macros
+instead of open coding them, code formatting improvements, etc.).
+
+Changes from v1:
+* Only support configuration of cx25840 pins that the cxusb driver is
+actually using so there is no need for an ugly CX25840_PIN() macro,
+
+* Split cxusb changes into two patches: first one implementing
+digital / analog coexistence in this driver, second one adding the
+actual implementation of the analog mode,
+
+* Fix a warning reported by kbuild test robot.
+
+Changes from v2:
+* Split out ivtv cx25840 platform data zero-initialization to a separate
+commit,
+
+* Add kernel-doc description of struct cx25840_state,
+
+* Make sure that all variables used in CX25840_VCONFIG_OPTION() and
+CX25840_VCONFIG_SET_BIT() macros are their explicit parameters,
+
+* Split out some code from cxusb_medion_copy_field() and
+cxusb_medion_v_complete_work() functions to separate ones to increase
+their readability,
+
+* Generate masks using GENMASK() and BIT() macros in cx25840.h and
+cxusb.h.
+
+Changes from v3:
+Add SPDX tag to a newly added "cxusb-analog.c" file.
+
+Changes from v4:
+* Make analog support conditional on a new DVB_USB_CXUSB_ANALOG Kconfig
+option,
+
+* Use '//' comments in the header of a newly added "cxusb-analog.c"
+file,
+
+* Don't print errors on memory allocation failures,
+
+* Get rid of the driver MODULE_VERSION(),
+
+* Small formating fix of a one line.
+
+Changes from v5:
+Rebase onto current media_tree/master.
+
+Changes from v6:
+Adapt to commit 4eb2f55728abbe changing V4L2_SUBDEV_IO_PIN_* from bit
+masks to bit numbers.
+Thanks to Dan Carpenter's kbuild bot for catching this.
+
+Changes from v7:
+* Simplify cx25840_function_to_pad() assuming that the values of
+individual members of I/O pad enum will always match the actual
+chip register values,
+
+* Add a comment that the above is now a requirement to the I/O pad enum,
+
+* Don't #undef macros in the cx25840 patch,
+
+* Change "generic_mode" variable type in struct cx25840_state to bool,
+
+* Prefix todo-style comments added by the cx25840 patch with "TODO:",
+
+* Add a core init op to the cx25840 driver and use it to turn the
+generic_mode on instead of doing it via the platform data,
+
+* Use the above core init op to also provide a vconfig configuration
+to the cx25840 driver so the cxusb driver does not have to pass this
+(constant) configuration there on every video input change,
+
+* Remove cxusb_auxbuf_advance(), cxusb_auxbuf_begin() and
+cxusb_auxbuf_isend(),
+
+* Add a missing frame sequence counter support,
+
+* Test the driver with v4l2-compliance with streaming tests enabled,
+
+* Set device_caps in struct video_device during probe instead of returning
+it manually in vidioc_querycap handler,
+
+* Don't set the format name in vidioc_enum_fmt_vid_cap handler,
+
+* Drop various memset() zeroing in ioctl handlers, as suggested during
+last review,
+
+* Enforce minimum buffer count via in_buffers_needed field of
+struct vb2_queue instead of doing it in queue_setup callback,
+
+* Rewrite stream starting / stopping / configuration mechanism using a
+'stop_streaming' flag, remove cxusb_medion_stream_busy(),
+
+* Set the lock field in struct vb2_queue so vb2_ops_wait_prepare() /
+vb2_ops_wait_finish() helpers can be utilized,
+
+* Split out raw (unprocessed) BT.656 stream capturing support to a
+separate patch, adapt it to a recent change introduced by
+commit 8a7c5594c020 ("v4l2-ioctl: clear fields in s_parm") that forced
+extendedmode set by VIDIOC_S_PARM to zero,
+
+* Add a comment that if we ever need to support analog mode in similar
+hardware then this code should be made generic,
+
+* Remove a requirement that URB length has to be less than full frame
+size,
+
+* Limit URB length to avoid very high order memory allocations,
+
+* Remove out-of-order incoming URB support: this can't really happen,
+
+* Small cleanups here and there.
+
+ drivers/media/i2c/cx25840/cx25840-core.c |  376 ++++-
+ drivers/media/i2c/cx25840/cx25840-core.h |   12 +
+ drivers/media/i2c/cx25840/cx25840-vbi.c  |    3 +
+ drivers/media/usb/dvb-usb/Kconfig        |   16 +-
+ drivers/media/usb/dvb-usb/Makefile       |    3 +
+ drivers/media/usb/dvb-usb/cxusb-analog.c | 1910 ++++++++++++++++++++++
+ drivers/media/usb/dvb-usb/cxusb.c        |  452 ++++-
+ drivers/media/usb/dvb-usb/cxusb.h        |  157 ++
+ drivers/media/usb/dvb-usb/dvb-usb-dvb.c  |   20 +-
+ drivers/media/usb/dvb-usb/dvb-usb-init.c |   13 +
+ drivers/media/usb/dvb-usb/dvb-usb.h      |    8 +
+ drivers/media/v4l2-core/v4l2-ioctl.c     |    3 +-
+ include/media/drv-intf/cx25840.h         |   66 +-
+ 13 files changed, 2978 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/media/usb/dvb-usb/cxusb-analog.c
