@@ -2,93 +2,102 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B6CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46899C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DF3214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF14B214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:18:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="CI9Wbqr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DF3214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MpHEcJTU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF14B214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeJJRj6 (ORCPT
+        id S1726616AbeJJRkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:39:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43142 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJJRj6 (ORCPT
+        Wed, 10 Oct 2018 13:40:25 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:46292 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbeJJRkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:39:58 -0400
+        Wed, 10 Oct 2018 13:40:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dxqELyW1VANa0moVVDTXQO/UpTTSKNyBzNR+lczCN4I=; b=CI9Wbqr2W04rOhvXYcUyouVmb
-        YYwvBhakKKBJ4mDuEsYCqyC+zUcqWJofy3kI8l9rmLjYA+W8S47wjeVMVn08DuiN5JAVOWSmE05aM
-        RLIwR5oBhaBbbSlFdreT+Vk5WsQfu8iD9/EX4w8m80B4ir5ev0zPeFGZOBctp6TKm/akg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gABZR-0007cY-HU; Wed, 10 Oct 2018 10:18:25 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 456081122394; Wed, 10 Oct 2018 11:18:25 +0100 (BST)
-Date:   Wed, 10 Oct 2018 11:18:25 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Talel Shenhar <talel@amazon.com>
-Cc:     linux-spi@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ronenk@amazon.com, barakw@amazon.com,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
-Message-ID: <20181010101825.GA6294@sirena.org.uk>
-References: <1539155293-21750-1-git-send-email-talel@amazon.com>
+         bh=WdzpGAe1GfXOVXBpxadD7R70TRb1Ea3ietdzXlqfnck=; b=MpHEcJTUO9f1S9DhclxWQ/vhJ
+        i8wktpHPal4rD/NbEmIBbKWBdbEf8dQizLrvEFkt6rk9rqYQaLYo6h9GFQAkZ9I6HM14CmKqebrMf
+        5PuqhN9Lv+F6nRKJMgAXXyXmdnarPp/NiXbKRhgJuPWPqn/7fY3IPqk1bet8uFGUFoZ7A=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:39988)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gABZk-00068F-M6; Wed, 10 Oct 2018 11:18:44 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gABZi-0000XQ-0i; Wed, 10 Oct 2018 11:18:42 +0100
+Date:   Wed, 10 Oct 2018 11:18:40 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, corbet@lwn.net,
+        b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org,
+        Lukasz Luba <l.luba@partner.samsung.com>, mingo@redhat.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] Doc: lockdep: add information about performance impact
+Message-ID: <20181010101840.GM30658@n2100.armlinux.org.uk>
+References: <CGME20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056@eucas1p2.samsung.com>
+ <20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056~b_ujkjRd31303013030eucas1p2C@eucas1p2.samsung.com>
+ <20181009154359.GB5728@hirez.programming.kicks-ass.net>
+ <20181009155818.GD9259@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539155293-21750-1-git-send-email-talel@amazon.com>
-X-Cookie: Phasers locked on target, Captain.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181009155818.GD9259@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 09, 2018 at 04:58:18PM +0100, Will Deacon wrote:
+> On Tue, Oct 09, 2018 at 05:43:59PM +0200, Peter Zijlstra wrote:
+> > On Tue, Oct 09, 2018 at 05:39:27PM +0200, Lukasz Luba wrote:
+> > > This patch add some warning related to performance drop.
+> > > It should be mentioned that this is not for free
+> > > and the platfrom resources (cache, bus interconnect, etc.)
+> > > will be used more frequently.
+> > 
+> > To me this reads a bit like: water is wet.
+> > 
+> > Is this really needed?
+> 
+> I don't think so -- this is a debug option under "kernel hacking". Surely
+> the perf hit comes with the territory.
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Indeed it does - since adding debug code means additional instructions,
+more cache pressure and, therefore, slower execution.
 
-On Wed, Oct 10, 2018 at 10:08:12AM +0300, Talel Shenhar wrote:
+I've already said to people... turn on all debug options for development,
+and when you move to performance evaluation and optimisation for the
+production version, evaluate and turn off debug options.
 
-> The dw spi controller has an auto-deselect of Chip-Select, in case there is
-> no data inside the Tx FIFO. While working on platforms with Alpine chips,
+Unfortunately, turning off PROVE_LOCKING in the defconfigs is going
+to have a negative impact on the automated build/boot testing that
+systems like kernelci.org do for us - these are primarily based
+around the defconfigs, which means we're going to end up building
+with PROVE_LOCKING disabled.  This means kernelci.org will be less
+likely to catch locking issues.
 
-Why would we ever want to use this behaviour?  It will be broken for any
-non-trivial SPI message such as those made with multiple transfers
-anyway.  Why not just unconditionally control it manually?
+Forcing PROVE_LOCKING on also doesn't make sense - there may be (rare)
+bugs, eg race conditions, uncovered by having that disabled.
 
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu90e4ACgkQJNaLcl1U
-h9Bw6gf/QW1tmWlXcmNLTdpo0qIz7z7c3z3/ydzStF3ZHJLeoS6YHY0bu8R5MtlQ
-FkYVdvvF7/Zfqlr8tkOHFjnBh+fiT2+6EKvDu8zyPMZJNxDWBkllWxkdVhHUc75u
-4/l5n9vgzCiedfz1SXfqDmBeBoKZBLl+vmu1w2a3InRcLhKqsDGsnENKdrfGEttO
-0Vc946hptVhHjOKQ3I/XBotjOhqogZ4cr8QwOwLEJK7iBcQq6qhq2zP4EaBf0irD
-aTew8Rff3BJJjASRVpP9EUULMUuhlt93Zea9cFfp8ildUt2sYXVaupf5HTpv+azb
-BNuY0SoMbROx7VARMhHTEfgL1qmK4w==
-=VGYE
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
