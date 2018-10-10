@@ -2,304 +2,90 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D60C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F17B7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944E021479
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944E021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B5A62214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:13:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSAudj4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A62214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJJOdl (ORCPT
+        id S1726752AbeJJOd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:33:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54830 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725837AbeJJOdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:33:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A2D23AE81;
-        Wed, 10 Oct 2018 07:12:50 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 09:12:48 +0200 (CEST)
-From:   Richard Biener <rguenther@suse.de>
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-cc:     Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
-        gcc@gcc.gnu.org, Nadav Amit <namit@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-In-Reply-To: <20181009145330.GT29268@gate.crashing.org>
-Message-ID: <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org>
-User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+        Wed, 10 Oct 2018 10:33:58 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51094 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeJJOd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:33:58 -0400
+Received: by mail-it1-f194.google.com with SMTP id k206-v6so465461ite.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 00:13:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5OOztqssMVdu7XL6nnv4bDUAo1xUUxYBjbCtDMAg1F4=;
+        b=MSAudj4NVccjSQzGseBLbcx9/GDf3k7lj2bP8Syv1iZT+Xsd9mvRoZuLKXWMGw3GKg
+         0mOazz457V5Aok5iPHtHVQB2jpoKrHuNfc17+Em/EoGbtlEVaX6b7b4xZQPuiEnUkTNX
+         NJvDPGQsdOBMji3wJsonyxjoLf0RUZDBe1xok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5OOztqssMVdu7XL6nnv4bDUAo1xUUxYBjbCtDMAg1F4=;
+        b=pBGZC3VfR2JWocKZGahC3kdHtXxQyXcpamlWQR2kV8WWj5L7rd2jtLihEf5MN6bC6B
+         X3SdBVBTrAxvD5OvjdaeiQMp5vYJqKpdaj1iEzWY34odqstZaYavWtk3PvayFS7L5JhW
+         hHHlXMU7AUH2txm+b9UtgR6WtTBV9pOgyAfMxw98ptyaaTQg8evxq8Uhrw4NS9mPTu0L
+         h1IvhUErbaYWlgwSBkKJtVRF8VpVc2BtSBIMCajgDIam2N0/0Nj5ucx1aOhyLrcd8kTW
+         Dmy6rbCFP6gZmCBqA9G+3HsLm/EAKH2fBIMaHaYnTgoUuKvPDxDCpL8u7/9DyParGXa/
+         4tnQ==
+X-Gm-Message-State: ABuFfogUTfOohtvUQkL3XyzDBNf3j2iTW+1DJjgp1fMCkfGlTb7mEP7K
+        2WDxmxmwAAUa9XTBldza4oisil7pWATxpAC0Bk1YJg==
+X-Google-Smtp-Source: ACcGV62UDzXIjYfwCtPqdh2GpCldOXpsOkg2B7FkgJVBJLUlonYnRmvcIgSDYHcUU/zeKPAMkYGkzBX4UNzmgIokj3U=
+X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr3883115ith.156.1539155590797;
+ Wed, 10 Oct 2018 00:13:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20181008175530.864641368@linuxfoundation.org> <20181008175536.405502473@linuxfoundation.org>
+ <20181009063338.GA22218@flashbox>
+In-Reply-To: <20181009063338.GA22218@flashbox>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 10 Oct 2018 09:12:58 +0200
+Message-ID: <CACRpkdZVWMAQxrX7CS-JtA9sRYqeNE+8X39yqfCNtYLmN=XDHw@mail.gmail.com>
+Subject: Re: [PATCH 4.4 093/113] pinctrl: msm: Really mask level interrupts to
+ prevent latching
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Oct 2018, Segher Boessenkool wrote:
+On Tue, Oct 9, 2018 at 8:33 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 
-> On Mon, Oct 08, 2018 at 11:07:46AM +0200, Richard Biener wrote:
-> > On Mon, 8 Oct 2018, Segher Boessenkool wrote:
-> > > On Sun, Oct 07, 2018 at 03:53:26PM +0000, Michael Matz wrote:
-> > > > On Sun, 7 Oct 2018, Segher Boessenkool wrote:
-> > > > > On Sun, Oct 07, 2018 at 11:18:06AM +0200, Borislav Petkov wrote:
-> > > > > > Now, Richard suggested doing something like:
-> > > > > > 
-> > > > > >  1) inline asm ("...")
-> > > > > 
-> > > > > What would the semantics of this be?
-> > > > 
-> > > > The size of the inline asm wouldn't be counted towards the inliner size 
-> > > > limits (or be counted as "1").
-> > > 
-> > > That sounds like a good option.
-> > 
-> > Yes, I also like it for simplicity.  It also avoids the requirement
-> > of translating the number (in bytes?) given by the user to
-> > "number of GIMPLE instructions" as needed by the inliner.
-> 
-> This patch implements this, for C only so far.  And the syntax is
-> "asm inline", which is more in line with other syntax.
-> 
-> How does this look?
+> Sigh, sorry, I caught this after I sent my initial all good email but
+> this commit breaks NFC on my Pixel 2 XL (toggle becomes greyed out and
+> apps that want to use it ask to enable it). I can't say why, I'm more
+> than happy to debug but I'm assuming it's some voodoo that Qualcomm has
+> done out of tree. I'll leave it up to you how to proceed given that I
+> can't run mainline :(
 
-Looks good.  A few nits - you need to document this in extend.texi, the
-tree flag use needs documenting in tree-core.h, and we need a testcase
-(I'd suggest one that shows we inline a function with "large" asm inline 
-() even at -Os).
+Which NFC driver is this?
+Just want to make sure it looks sane.
 
-Oh, and I don't think we want C and C++ to diverge - so you need to
-cook up C++ support as well.
-
-Can kernel folks give this a second and third thought please so we
-don't implement sth that in the end won't satisfy you guys?
-
-Thanks for doing this,
-Richard.
-
-> 
-> Segher
-> 
-> 
-> 
-> diff --git a/gcc/c/c-parser.c b/gcc/c/c-parser.c
-> index 1f173fc..94b1d41 100644
-> --- a/gcc/c/c-parser.c
-> +++ b/gcc/c/c-parser.c
-> @@ -6287,7 +6287,7 @@ static tree
->  c_parser_asm_statement (c_parser *parser)
->  {
->    tree quals, str, outputs, inputs, clobbers, labels, ret;
-> -  bool simple, is_goto;
-> +  bool simple, is_goto, is_inline;
->    location_t asm_loc = c_parser_peek_token (parser)->location;
->    int section, nsections;
->  
-> @@ -6318,6 +6318,13 @@ c_parser_asm_statement (c_parser *parser)
->        is_goto = true;
->      }
->  
-> +  is_inline = false;
-> +  if (c_parser_next_token_is_keyword (parser, RID_INLINE))
-> +    {
-> +      c_parser_consume_token (parser);
-> +      is_inline = true;
-> +    }
-> +
->    /* ??? Follow the C++ parser rather than using the
->       lex_untranslated_string kludge.  */
->    parser->lex_untranslated_string = true;
-> @@ -6393,7 +6400,8 @@ c_parser_asm_statement (c_parser *parser)
->      c_parser_skip_to_end_of_block_or_statement (parser);
->  
->    ret = build_asm_stmt (quals, build_asm_expr (asm_loc, str, outputs, inputs,
-> -					       clobbers, labels, simple));
-> +					       clobbers, labels, simple,
-> +					       is_inline));
->  
->   error:
->    parser->lex_untranslated_string = false;
-> diff --git a/gcc/c/c-tree.h b/gcc/c/c-tree.h
-> index 017c01c..f5629300 100644
-> --- a/gcc/c/c-tree.h
-> +++ b/gcc/c/c-tree.h
-> @@ -677,7 +677,8 @@ extern tree build_compound_literal (location_t, tree, tree, bool,
->  extern void check_compound_literal_type (location_t, struct c_type_name *);
->  extern tree c_start_case (location_t, location_t, tree, bool);
->  extern void c_finish_case (tree, tree);
-> -extern tree build_asm_expr (location_t, tree, tree, tree, tree, tree, bool);
-> +extern tree build_asm_expr (location_t, tree, tree, tree, tree, tree, bool,
-> +			    bool);
->  extern tree build_asm_stmt (tree, tree);
->  extern int c_types_compatible_p (tree, tree);
->  extern tree c_begin_compound_stmt (bool);
-> diff --git a/gcc/c/c-typeck.c b/gcc/c/c-typeck.c
-> index 9d09b8d..e013100 100644
-> --- a/gcc/c/c-typeck.c
-> +++ b/gcc/c/c-typeck.c
-> @@ -10064,7 +10064,7 @@ build_asm_stmt (tree cv_qualifier, tree args)
->     are subtly different.  We use a ASM_EXPR node to represent this.  */
->  tree
->  build_asm_expr (location_t loc, tree string, tree outputs, tree inputs,
-> -		tree clobbers, tree labels, bool simple)
-> +		tree clobbers, tree labels, bool simple, bool is_inline)
->  {
->    tree tail;
->    tree args;
-> @@ -10182,6 +10182,7 @@ build_asm_expr (location_t loc, tree string, tree outputs, tree inputs,
->       as volatile.  */
->    ASM_INPUT_P (args) = simple;
->    ASM_VOLATILE_P (args) = (noutputs == 0);
-> +  ASM_INLINE_P (args) = is_inline;
->  
->    return args;
->  }
-> diff --git a/gcc/gimple-pretty-print.c b/gcc/gimple-pretty-print.c
-> index 83e2273..1a00fa3 100644
-> --- a/gcc/gimple-pretty-print.c
-> +++ b/gcc/gimple-pretty-print.c
-> @@ -2019,6 +2019,8 @@ dump_gimple_asm (pretty_printer *buffer, gasm *gs, int spc, dump_flags_t flags)
->        pp_string (buffer, "__asm__");
->        if (gimple_asm_volatile_p (gs))
->  	pp_string (buffer, " __volatile__");
-> +      if (gimple_asm_inline_p (gs))
-> +	pp_string (buffer, " __inline__");
->        if (gimple_asm_nlabels (gs))
->  	pp_string (buffer, " goto");
->        pp_string (buffer, "(\"");
-> diff --git a/gcc/gimple.h b/gcc/gimple.h
-> index a5dda93..8a58e07 100644
-> --- a/gcc/gimple.h
-> +++ b/gcc/gimple.h
-> @@ -137,6 +137,7 @@ enum gimple_rhs_class
->  enum gf_mask {
->      GF_ASM_INPUT		= 1 << 0,
->      GF_ASM_VOLATILE		= 1 << 1,
-> +    GF_ASM_INLINE		= 1 << 2,
->      GF_CALL_FROM_THUNK		= 1 << 0,
->      GF_CALL_RETURN_SLOT_OPT	= 1 << 1,
->      GF_CALL_TAILCALL		= 1 << 2,
-> @@ -3911,7 +3912,7 @@ gimple_asm_volatile_p (const gasm *asm_stmt)
->  }
->  
->  
-> -/* If VOLATLE_P is true, mark asm statement ASM_STMT as volatile.  */
-> +/* If VOLATILE_P is true, mark asm statement ASM_STMT as volatile.  */
->  
->  static inline void
->  gimple_asm_set_volatile (gasm *asm_stmt, bool volatile_p)
-> @@ -3923,6 +3924,27 @@ gimple_asm_set_volatile (gasm *asm_stmt, bool volatile_p)
->  }
->  
->  
-> +/* Return true ASM_STMT ASM_STMT is an asm statement marked inline.  */
-> +
-> +static inline bool
-> +gimple_asm_inline_p (const gasm *asm_stmt)
-> +{
-> +  return (asm_stmt->subcode & GF_ASM_INLINE) != 0;
-> +}
-> +
-> +
-> +/* If INLINE_P is true, mark asm statement ASM_STMT as inline.  */
-> +
-> +static inline void
-> +gimple_asm_set_inline (gasm *asm_stmt, bool inline_p)
-> +{
-> +  if (inline_p)
-> +    asm_stmt->subcode |= GF_ASM_INLINE;
-> +  else
-> +    asm_stmt->subcode &= ~GF_ASM_INLINE;
-> +}
-> +
-> +
->  /* If INPUT_P is true, mark asm ASM_STMT as an ASM_INPUT.  */
->  
->  static inline void
-> diff --git a/gcc/gimplify.c b/gcc/gimplify.c
-> index 509fc2f..10b80f2 100644
-> --- a/gcc/gimplify.c
-> +++ b/gcc/gimplify.c
-> @@ -6315,6 +6315,7 @@ gimplify_asm_expr (tree *expr_p, gimple_seq *pre_p, gimple_seq *post_p)
->  
->        gimple_asm_set_volatile (stmt, ASM_VOLATILE_P (expr) || noutputs == 0);
->        gimple_asm_set_input (stmt, ASM_INPUT_P (expr));
-> +      gimple_asm_set_inline (stmt, ASM_INLINE_P (expr));
->  
->        gimplify_seq_add_stmt (pre_p, stmt);
->      }
-> diff --git a/gcc/ipa-icf-gimple.c b/gcc/ipa-icf-gimple.c
-> index ba39ea3..5361139 100644
-> --- a/gcc/ipa-icf-gimple.c
-> +++ b/gcc/ipa-icf-gimple.c
-> @@ -993,6 +993,9 @@ func_checker::compare_gimple_asm (const gasm *g1, const gasm *g2)
->    if (gimple_asm_input_p (g1) != gimple_asm_input_p (g2))
->      return false;
->  
-> +  if (gimple_asm_inline_p (g1) != gimple_asm_inline_p (g2))
-> +    return false;
-> +
->    if (gimple_asm_ninputs (g1) != gimple_asm_ninputs (g2))
->      return false;
->  
-> diff --git a/gcc/tree-inline.c b/gcc/tree-inline.c
-> index 9134253..6b1d2ea 100644
-> --- a/gcc/tree-inline.c
-> +++ b/gcc/tree-inline.c
-> @@ -4108,6 +4108,8 @@ estimate_num_insns (gimple *stmt, eni_weights *weights)
->  	   with very long asm statements.  */
->  	if (count > 1000)
->  	  count = 1000;
-> +	if (gimple_asm_inline_p (as_a <gasm *> (stmt)))
-> +	  count = !!count;
->  	return MAX (1, count);
->        }
->  
-> diff --git a/gcc/tree.h b/gcc/tree.h
-> index 2e45f9d..160b3a7 100644
-> --- a/gcc/tree.h
-> +++ b/gcc/tree.h
-> @@ -1245,6 +1245,9 @@ extern tree maybe_wrap_with_location (tree, location_t);
->     ASM_OPERAND with no operands.  */
->  #define ASM_INPUT_P(NODE) (ASM_EXPR_CHECK (NODE)->base.static_flag)
->  #define ASM_VOLATILE_P(NODE) (ASM_EXPR_CHECK (NODE)->base.public_flag)
-> +/* Nonzero if we want to consider this asm as minimum length and cost
-> +   for inlining decisions.  */
-> +#define ASM_INLINE_P(NODE) (ASM_EXPR_CHECK (NODE)->base.protected_flag)
->  
->  /* COND_EXPR accessors.  */
->  #define COND_EXPR_COND(NODE)	(TREE_OPERAND (COND_EXPR_CHECK (NODE), 0))
-> 
-> 
-
--- 
-Richard Biener <rguenther@suse.de>
-SUSE LINUX GmbH, GF: Felix Imendoerffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nuernberg)
+Yours,
+Linus Walleij
