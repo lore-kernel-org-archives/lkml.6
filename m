@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5D9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136C7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D70F214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:43:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D70F214DA
+	by mail.kernel.org (Postfix) with ESMTP id D824020870
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D824020870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeJJVFe (ORCPT
+        id S1727181AbeJJVFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:05:34 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:44134 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbeJJVFe (ORCPT
+        Wed, 10 Oct 2018 17:05:45 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:53964 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbeJJVFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 10 Oct 2018 17:05:34 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id lpjH1y00e3XaVaC06pjHN2; Wed, 10 Oct 2018 15:43:18 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id lpjH1y00R3XaVaC01pjH3h; Wed, 10 Oct 2018 15:43:19 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gAElh-00008I-Rb; Wed, 10 Oct 2018 15:43:17 +0200
+        id 1gAElh-00008O-T9; Wed, 10 Oct 2018 15:43:17 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gAElh-0002DM-QM; Wed, 10 Oct 2018 15:43:17 +0200
+        id 1gAElh-0002DS-Rw; Wed, 10 Oct 2018 15:43:17 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,9 +40,9 @@ To:     Arnd Bergmann <arnd@arndb.de>,
 Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-mtd@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] eeprom: at25: Drop obsolete cast in at25_ee_write()
-Date:   Wed, 10 Oct 2018 15:43:15 +0200
-Message-Id: <20181010134317.8466-2-geert+renesas@glider.be>
+Subject: [PATCH 3/3] eeprom: at25: Split writes in two SPI transfers to optimize DMA
+Date:   Wed, 10 Oct 2018 15:43:17 +0200
+Message-Id: <20181010134317.8466-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181010134317.8466-1-geert+renesas@glider.be>
 References: <20181010134036.8296-1-geert+renesas@glider.be>
@@ -52,28 +52,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 01973a01f9ec34b7 ("eeprom: at25: remove nvmem regmap
-dependency") changed the type of "off" from "loff_t" to "unsigned int",
-there is no longer a need to cast it to "unsigned".
+Currently EEPROM writes are implemented using a single SPI transfer,
+which contains all of command, address, and payload data bytes.
+As some SPI controllers impose limitations on transfers with respect to
+the use of DMA, they may have to fall back to PIO. E.g. DMA may require
+the transfer length to be a multiple of 4 bytes.
+
+Optimize writes for DMA by splitting writes in two SPI transfers:
+  - The first transfer contains command and address bytes,
+  - The second transfer contains the actual payload data, now stored at
+    the start of the (kmalloc() aligned) buffer, to improve payload
+    alignment.
+
+E.g. for a 25LC040 EEPROM with a page size 16 bytes, a 16-byte write
+aligned to the page size was transferred using an 18-byte write.
+After this change, the write is split in a 2-byte and an aligned 16-byte
+write.
+
+Note that EEPROM reads already use a similar scheme, due to the
+different data directions for command and address bytes versus payload
+data.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/misc/eeprom/at25.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/eeprom/at25.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-index 840afb398f9e4c88..7707d3fb49b526d9 100644
+index 5c8dc7ad391435f7..f84d1681835b4ded 100644
 --- a/drivers/misc/eeprom/at25.c
 +++ b/drivers/misc/eeprom/at25.c
-@@ -160,7 +160,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
- 	do {
+@@ -136,6 +136,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 	int			status = 0;
+ 	unsigned		buf_size;
+ 	u8			*bounce;
++	struct spi_transfer	t[2];
+ 
+ 	if (unlikely(off >= at25->chip.byte_len))
+ 		return -EFBIG;
+@@ -160,7 +161,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
  		unsigned long	timeout, retries;
  		unsigned	segment;
--		unsigned	offset = (unsigned) off;
-+		unsigned	offset = off;
- 		u8		*cp = bounce;
+ 		unsigned	offset = off;
+-		u8		*cp = bounce;
++		u8		*cp = bounce + buf_size;
  		int		sr;
  		u8		instr;
+ 
+@@ -194,9 +195,17 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 		segment = buf_size - (offset % buf_size);
+ 		if (segment > count)
+ 			segment = count;
+-		memcpy(cp, buf, segment);
+-		status = spi_write(at25->spi, bounce,
+-				segment + at25->addrlen + 1);
++		memcpy(bounce, buf, segment);
++
++		memset(t, 0, sizeof(t));
++
++		t[0].tx_buf = bounce + buf_size;
++		t[0].len = at25->addrlen + 1;
++
++		t[1].tx_buf = bounce;
++		t[1].len = segment;
++
++		status = spi_sync_transfer(at25->spi, t, ARRAY_SIZE(t));
+ 		dev_dbg(&at25->spi->dev, "write %u bytes at %u --> %d\n",
+ 			segment, offset, status);
+ 		if (status < 0)
 -- 
 2.17.1
 
