@@ -2,141 +2,223 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D45C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5CAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C10020870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B36720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:46:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSWEN3Xw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C10020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LWzZqOPb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f+hb05Ej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B36720870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeJJVGW (ORCPT
+        id S1726770AbeJJVIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:06:22 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:36696 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeJJVGW (ORCPT
+        Wed, 10 Oct 2018 17:08:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38464 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeJJVIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:06:22 -0400
-Received: by mail-wm1-f47.google.com with SMTP id a8-v6so5801219wmf.1;
-        Wed, 10 Oct 2018 06:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cRI3tf5wvOQekpXYB8n3+TpZrmkGzWG2Pqc4L91fjdI=;
-        b=eSWEN3XwITfWXkf1wsYiXIJOcxWuEyg78kYzJJcOWJCq6tb6NCxUnxUFeqrWDmG3db
-         /qyvXMChlwUUPO0pVDZA38aUyrxvnOmhL9C1Jjk5jgEagoRHopLF8aVWzmmX+i4cfPJ9
-         TNgO11ZJk71Mv/y81WEch2OQoLVEUCCwvOXwPjsPKkY8dNn7KbTw+82fniIH3SERH0Th
-         ZBxB9stGI5/xEHyfqvCW4jJrR2EKtGbio7Fsq5kwfDyNI4v8OiTCFSpHkcoS5FOezjEo
-         sRPUDKP52Ks6ovlOc7HnQC05dLhI4F2G+tUkha1j3Rt1qAhRE22fmLmi0ziebu9XztTR
-         hIGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cRI3tf5wvOQekpXYB8n3+TpZrmkGzWG2Pqc4L91fjdI=;
-        b=Mz3og6HpS58jiySs/AJOqVVZiGdldMc+zMkpgysPeNihUpSG7eOjKYK/sZWXZksPiG
-         wFjveSG3r1Q3Wab9f73b+EbeEUiA/OBgXj+YWXr08EPOOBQkK5ixtmLfeODNsL0HYdOp
-         LvpHgXo/+4wkUGFo3H68qYCOolqGQOH5NEFIqnahraQD6lAuE4w+wihPZm/HLieSJ4p1
-         0Uuzgoimba/KjCtuX0C+NMDpuF2sX52exMJKFXewKtb9AfonrT8HVBbFMPih6ej5dq9J
-         +mz0ALtcmdJNXP+GzqrblVInUM9kHv/AucnyWA8smMHuKRdk6wO3CWlv139HkNgO/Rkj
-         S3Uw==
-X-Gm-Message-State: ABuFfojA+BfX/GQeemnWGdOfsReNMmevEn8wfkhYszJ23WE1woEI0aqb
-        vzjZth6xMckwyV3BiKTd84w=
-X-Google-Smtp-Source: ACcGV609DOSwacilKxc3rArUjc10tLfZm6BkGchNc6IARoqAZMMi8X6/1fedznQ5OZirWZ7sUL/g1Q==
-X-Received: by 2002:a1c:9cc9:: with SMTP id f192-v6mr1001719wme.135.1539179045483;
-        Wed, 10 Oct 2018 06:44:05 -0700 (PDT)
-Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id r8-v6sm24989791wrm.14.2018.10.10.06.44.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 06:44:04 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 15:44:04 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Atish Patra <atish.patra@wdc.com>, palmer@sifive.com,
-        linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com
-Subject: Re: [RFC 2/4] pwm: sifive: Add a driver for SiFive SoC PWM
-Message-ID: <20181010134404.GC21134@ulmo>
-References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
- <1539111085-25502-3-git-send-email-atish.patra@wdc.com>
- <20181010131128.GA29142@infradead.org>
+        Wed, 10 Oct 2018 17:08:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A011B60C81; Wed, 10 Oct 2018 13:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539179194;
+        bh=+ADWDA8+00heqYqUb/9q8E280RX/exX+vp9O/wlWzu8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LWzZqOPbOkNDuFlNOMtk8FTuzeb6YE70/zG3QtcgBVeZCnmY4wEQlCSJA0omwRS9C
+         1l4EzELv9sAjYcGORgeJOxNr6Fm4X+NNu3x8/P6yvRorbEK88vxxY2HgLdbckA2q+9
+         ax4D+BOGx8g7UNjrnT58dsOjt77kePtdrQ19hDiY=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 0C19A60C89;
+        Wed, 10 Oct 2018 13:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539179193;
+        bh=+ADWDA8+00heqYqUb/9q8E280RX/exX+vp9O/wlWzu8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f+hb05EjHcQct7mEMZxlv0BiGrSavNim4FprJVu8RQu8MzcTpWavguV1aBnG2NiAG
+         sQxSBgLpyFO7L76FXdWyHpWUrwK988oZD7Vg/vtNIDeZuue/c708J0rYO2cmvYsjwv
+         CdZNakmfV9+M0BKAVe+2fbuPpzJfllDoZLjnvCiE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
-Content-Disposition: inline
-In-Reply-To: <20181010131128.GA29142@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 10 Oct 2018 21:46:33 +0800
+From:   cang@codeaurora.org
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     subhashj@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, venkatg@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] scsi: ufs: make UFS Tx lane1 clock optional
+In-Reply-To: <CAD=FV=Xg4UtkJxvVQ2_ky+6-XnM=FvXcnc8xb=uhHeiP5bdFiw@mail.gmail.com>
+References: <1538973275-5961-1-git-send-email-cang@codeaurora.org>
+ <CAD=FV=Xg4UtkJxvVQ2_ky+6-XnM=FvXcnc8xb=uhHeiP5bdFiw@mail.gmail.com>
+Message-ID: <36c6c1a95ff396ac108501f9fe76ef65@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Doug,
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Really thank you for your review.
 
-On Wed, Oct 10, 2018 at 06:11:29AM -0700, Christoph Hellwig wrote:
-[...]
-> > +static struct platform_driver sifive_pwm_driver =3D {
-> > +	.probe =3D sifive_pwm_probe,
-> > +	.remove =3D sifive_pwm_remove,
-> > +	.driver =3D {
-> > +		.name =3D "pwm-sifivem",
-> > +		.of_match_table =3D of_match_ptr(sifive_pwm_of_match),
-> > +	},
-> > +};
->=20
-> What about using tabs to align this a little more nicely?
->=20
-> static struct platform_driver sifive_pwm_driver =3D {
-> 	.probe			=3D sifive_pwm_probe,
-> 	.remove			=3D sifive_pwm_remove,
-> 	.driver =3D {
-> 		.name		=3D "pwm-sifivem",
-> 		.of_match_table	=3D of_match_ptr(sifive_pwm_of_match),
-> 	},
-> };
+On 2018-10-10 05:56, Doug Anderson wrote:
+> Hi,
+> 
+> On Sun, Oct 7, 2018 at 9:34 PM Can Guo <cang@codeaurora.org> wrote:
+>> 
+>> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>> 
+>> The UFS Tx lane1 clock could be muxed, hence keep it optional by 
+>> ignoring
+>> it if it is not provided in device tree.
+> 
+> Thanks for the updated commit message.  This makes much more sense now! 
+>  :-)
+> 
+> 
 
-I discourage people from doing that because down the road somebody might
-add a field here that's longer than the alignment tabs and then either
-it becomes ugly or they either have to realign everything to keep it
-pretty. Single spaces around '=3D' don't have that problem if used
-consistently.
+Yeah, sorry for making you guys confused. My bad previously.
 
-Thierry
+>> @@ -113,10 +110,10 @@ static void ufs_qcom_disable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>         if (!host->is_lane_clks_enabled)
+>>                 return;
+>> 
+>> -       if (host->hba->lanes_per_direction > 1)
+>> +       if (host->tx_l1_sync_clk)
+>>                 clk_disable_unprepare(host->tx_l1_sync_clk);
+> 
+> I don't believe you need the "if".  A NULL clock is by definition OK
+> to enable / disable which is designed to make optional clocks easier
+> to deal with.
+> 
+> 
 
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature; name="signature.asc"
+You are right, I checked the implemention, clock enable/disable func 
+would
+bail out if clk is NULL just as your comments.
 
------BEGIN PGP SIGNATURE-----
+>>         clk_disable_unprepare(host->tx_l0_sync_clk);
+>> -       if (host->hba->lanes_per_direction > 1)
+>> +       if (host->rx_l1_sync_clk)
+>>                 clk_disable_unprepare(host->rx_l1_sync_clk);
+> 
+> optional: Technically this part of the patch wasn't actually needed,
+> right?  "rx_l1_sync_clk" is not optional so that means that
+> "rx_l1_sync_clk" should be non-NULL exactly when lanes_per_direction >
+> 1.
+> 
+> ...but actually I'm fine with keeping this part of your patch for
+> symmetry.  Especially since you can leverage the
+> clk_disable_unprepare(NULL) to simplify your code.  Please mention in
+> your commit message that this is a cleanup and just for symmetry.
+> Probably also remove the "if" tests that are guarding
+> ufs_qcom_host_clk_enable().
+> 
+> 
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlu+AiMACgkQ3SOs138+
-s6EREg//bWfq+MbsvCFozGTRY2bewO2oXHvxKIEXUcmof2E5bb4d8Nji84cB29oG
-LPQMtazXtr1/3sgvO8z1qd07P97gSHtOmGv5T/pFkMvvDh2bIYzVsvS/qegEabz8
-Tjr0qBOUZfvy2NrsR0okSsYJr/qTWFZ6NyTkLZkwPNTKLInj6LxM1jsu7sxcso0K
-lmdJ6vlYXeHDAzihK503O9sj1qbuYODppXsXrrqvx5bNdQfKmRZod2rs3kh4CsMa
-cQ5hFJI7Kju9j9ndSlhj9s4R85BP00KInQ19+sduOxT490UDX47Fi3CGglQyJDjO
-OEyW66jFsBI7y/bnW8ngLFz86Db5/p5iwRx81mLtE4pfrEONY4vjm8bqsHIF3U9R
-Gcr1JaF+x3U8SYchjJMrxJjz2cdrzKoVD9XG+cGbzlxNEeWWxuALNZDN8paJkN8q
-0QDgxDyc4zdo8mrHgOdlRxY35raBaKZLpUXdm8jYZeUT7oMYRvA0tlAkufbWuKHn
-GpK7ERekVaApyNbabJTmk8gYbWIRrcosEpgrNjOrlSgkS92KBfX0TwOxHOUuVaKs
-zM0rriWqTYEar2SUxqOuBJEckNVkJI8mKGG5Ks0S3i/hswft8+FFW2FCqgw1iau4
-zm5VgMLqmhT+tZ1xFga5rOMQW/zNcBXPOoNqxe8EFvMjJMATjfw=
-=cs39
------END PGP SIGNATURE-----
+Sure, got it.
 
---ZwgA9U+XZDXt4+m+--
+>>         clk_disable_unprepare(host->rx_l0_sync_clk);
+>> 
+>> @@ -141,24 +138,21 @@ static int ufs_qcom_enable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>         if (err)
+>>                 goto disable_rx_l0;
+>> 
+>> -       if (host->hba->lanes_per_direction > 1) {
+>> +       if (host->rx_l1_sync_clk) {
+> 
+> Similar: the above change isn't required but I'm OK if you want to
+> make this change for symmetry / to cleanup clock handling.  Please
+> mention in your commit message.
+> 
+> 
+
+Sure, shall do so.
+
+>> +       /* The tx lane1 clk could be muxed, hence keep this optional 
+>> */
+>> +       if (host->tx_l1_sync_clk)
+>> +               ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+>> +                                        host->tx_l1_sync_clk);
+> 
+> If "host->tx_l1_sync_clk" is provided then you should still check the
+> return value of ufs_qcom_host_clk_enable(), right?  ...so please leave
+> the error path here.
+> 
+> 
+
+Yeah... you are right.
+
+>> @@ -174,23 +168,33 @@ static int ufs_qcom_init_lane_clks(struct 
+>> ufs_qcom_host *host)
+>> 
+>>         err = ufs_qcom_host_clk_get(dev,
+>>                         "rx_lane0_sync_clk", &host->rx_l0_sync_clk);
+>> -       if (err)
+>> +       if (err) {
+>> +               dev_err(dev, "%s: failed to get rx_lane0_sync_clk, err 
+>> %d",
+>> +                               __func__, err);
+> 
+> nit: including "__func__" in dev_xxx() calls is discouraged.  The
+> "dev_xxx" calls already print the device name and the string within a
+> given device driver should be unique enough so __func__ just adds crap
+> to the logs.  If you really feel that __func__ adds something for you,
+> try posting up a patch to make all "dev_err" functions include
+> __func__.  ...but I think you'd probably be rejected.
+> 
+> suggestion: you'd save a few lines of code and simplify your probe if
+> you just passed an "optional" bool to the ufs_qcom_host_clk_get() that
+> controlled the printout.
+> 
+> 
+
+Good idea!
+
+>> -               err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+>> -                       &host->tx_l1_sync_clk);
+>> +               /* The tx lane1 clk could be muxed, hence keep this 
+>> optional */
+>> +               ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+>> +                                       &host->tx_l1_sync_clk);
+> 
+> To be technically correct you should actually check the error value
+> returned by ufs_qcom_host_clk_get().  Specifically figure out what the
+> error value is when "tx_lane1_sync_clk" isn't specified and check for
+> that.
+> 
+> ...one reason this matters is -EPROBE_DEFER.  In theory devm_clk_get()
+> could return -EPROBE_DEFER.  In such a case you'd want to exit the
+> probe, not continue on.  It's also just good coding practice to handle
+> just the error you want though so that if the function returned some
+> other failing case you'd propagate it down instead of eating it.
+> 
+> If you passed "optional" to ufs_qcom_host_clk_get() as suggested above
+> you could put this error-code checking in ufs_qcom_host_clk_get() and
+> return 0 from that function if an optional clock was found to not
+> exist.
+> 
+> -Doug
+
+I think I understand it. Thanks a lot for the thorough review and 
+suggestions.
+
+-Can Guo
