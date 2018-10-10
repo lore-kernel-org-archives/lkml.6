@@ -2,249 +2,295 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B0DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EB2213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:09:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB2213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D5BB9214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 03:14:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYLlB1do"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5BB9214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbeJJK32 (ORCPT
+        id S1727194AbeJJKe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 06:29:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46032 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbeJJK32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 06:29:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 285A97A9;
-        Tue,  9 Oct 2018 20:09:27 -0700 (PDT)
-Received: from [10.163.1.248] (unknown [10.163.1.248])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55AA03F5B7;
-        Tue,  9 Oct 2018 20:09:24 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-References: <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
- <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
- <20181003105926.GA4714@dhcp22.suse.cz>
- <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
- <20181003114842.GD4714@dhcp22.suse.cz>
- <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
- <20181003133609.GG4714@dhcp22.suse.cz>
- <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
- <20181009141442.GT8528@dhcp22.suse.cz>
-Message-ID: <b722d14e-d14f-f45d-5722-685d4f21f6e4@arm.com>
-Date:   Wed, 10 Oct 2018 08:39:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 06:34:58 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:45116 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeJJKe6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 06:34:58 -0400
+Received: by mail-yw1-f67.google.com with SMTP id v198-v6so1588864ywg.12
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 20:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/Ht/VbSAI9fmYutKsGFgkGu0EV0IKMMg4jVy9TEApi4=;
+        b=eYLlB1dobR7Sk4IrAGy4l/jq36Fj/jnWgnnDsejfRfb8HmAupB3TQ4d26GmZkANNpX
+         vraO34TBwRvZG0DKTpwZcdcoR16IYjDA+KF+6eq7EKX/TjQHtoyE5uitG9FalcJc+aWF
+         wwT5qD0IPF1YcNUNwlmDpc4YcAooT1rf9WszA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/Ht/VbSAI9fmYutKsGFgkGu0EV0IKMMg4jVy9TEApi4=;
+        b=C1oq+zjj+iwc78LjxRtNHHB1DrQAXSYvyCWqPQ5YN0zil7LQM2dtoPrdgfxPiGBOFO
+         30N2zHuQ4WUHXw5/BWzTlA1osX+MqrhLbT6qyyZ5RRMvU1yXcRPKf7th+RWxjrneq31C
+         LPjwRV4y87u73LOWgf9DNuDL+DiQalCo3H9OroT2anZQvvwnYAoC82ugLAvW+7NMENlL
+         Gji3RdrrttGx3FEyl60xo2+LwZbFexYE3WKAEAD5HCzq3hrYr4ZasMQtQ5t1I+L80aeh
+         6Cw9Omt5EUeYqvBJ84md5LL/TZzXIj9Lae1CNVaLzuSqtC6zqJzGlRBznuT/Y4YWszXy
+         5AmQ==
+X-Gm-Message-State: ABuFfoik5FO4egRIKV6SBuAczCNoZyfbPgb7DALofs/VMkXrILipOEiD
+        k5UFxgWgpHku96dSQ5TxF4yMKO8hFGFCRdS38m8sng==
+X-Google-Smtp-Source: ACcGV60r/zlBQcwIal8IVVaq5ZEkJDzIvRhY85YX5yj2RgYMJjl/eJXq4FICN30/gEnN31oaaCPFpnfSQ5KA2zydTJg=
+X-Received: by 2002:a81:5f86:: with SMTP id t128-v6mr17689309ywb.84.1539141294986;
+ Tue, 09 Oct 2018 20:14:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181009141442.GT8528@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1538397784-4214-1-git-send-email-firoz.khan@linaro.org>
+ <1538397784-4214-4-git-send-email-firoz.khan@linaro.org> <0741f810-58c9-dcf3-8c1c-93860c08e428@xilinx.com>
+ <CALxhOnh4__SMm93Lpr13eHxBTvDnocHzdh3YDxtuogEKg355Vw@mail.gmail.com>
+ <440fc4a0-cd4e-c8fc-9278-928cf5b7cd92@xilinx.com> <CALxhOnhFyb13YZTRFNsvs9FWD7OCzPtbmdzn+V_YepXACVOxiQ@mail.gmail.com>
+In-Reply-To: <CALxhOnhFyb13YZTRFNsvs9FWD7OCzPtbmdzn+V_YepXACVOxiQ@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Wed, 10 Oct 2018 08:44:43 +0530
+Message-ID: <CALxhOngLfXNvnxXZZJuJVbUGW7peoo3=Ss8ToVWcDCm-g14GTg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] microblaze: uapi header and system call table file generation
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Michal,
 
+On Thu, 4 Oct 2018 at 16:05, Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Hi Michal,
+>
+> On Wed, 3 Oct 2018 at 16:56, Michal Simek <michal.simek@xilinx.com> wrote:
+> >
+> > On 3.10.2018 07:08, Firoz Khan wrote:
+> > > Hi Michal,
+> > >
+> > > On Tue, 2 Oct 2018 at 19:37, Michal Simek <michal.simek@xilinx.com> wrote:
+> > >>
+> > >> On 1.10.2018 14:43, Firoz Khan wrote:
+> > >>> System call table generation script must be run to generate
+> > >>> unistd_32.h and syscall_table.h files. This patch will have
+> > >>> changes which will invokes the script.
+> > >>>
+> > >>> This patch will generate unistd_32.h and syscall_table.h
+> > >>> files by the syscall table generation script invoked by
+> > >>> arch/microblaze/Makefile and the generated files against the
+> > >>> removed files will be identical.
+> > >>>
+> > >>> The generated uapi header file will be included in
+> > >>> uapi/asm/unistd.h and generated system call table support
+> > >>> file will be included by kernel/syscall_table.S file.
+> > >>>
+> > >>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> > >>> ---
+> > >>>  arch/microblaze/Makefile                  |   3 +
+> > >>>  arch/microblaze/include/asm/Kbuild        |   1 +
+> > >>>  arch/microblaze/include/uapi/asm/Kbuild   |   1 +
+> > >>>  arch/microblaze/include/uapi/asm/unistd.h | 411 +-----------------------------
+> > >>>  arch/microblaze/kernel/syscall_table.S    | 406 +----------------------------
+> > >>>  5 files changed, 10 insertions(+), 812 deletions(-)
+> > >>>
+> > >>> diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
+> > >>> index 4f3ab57..cda5e03 100644
+> > >>> --- a/arch/microblaze/Makefile
+> > >>> +++ b/arch/microblaze/Makefile
+> > >>> @@ -81,6 +81,9 @@ all: linux.bin
+> > >>>  archclean:
+> > >>>       $(Q)$(MAKE) $(clean)=$(boot)
+> > >>>
+> > >>> +archheaders:
+> > >>> +     $(Q)$(MAKE) $(build)=arch/microblaze/kernel/syscalls all
+> > >>> +
+> > >>>  linux.bin linux.bin.gz linux.bin.ub: vmlinux
+> > >>>       $(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
+> > >>>
+> > >>> diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
+> > >>> index 569ba9e..d64f5e7 100644
+> > >>> --- a/arch/microblaze/include/asm/Kbuild
+> > >>> +++ b/arch/microblaze/include/asm/Kbuild
+> > >>> @@ -31,3 +31,4 @@ generic-y += trace_clock.h
+> > >>>  generic-y += vga.h
+> > >>>  generic-y += word-at-a-time.h
+> > >>>  generic-y += xor.h
+> > >>> +generic-y += syscall_table.h
+> > >>> \ No newline at end of file
+> > >>
+> > >> Still the problem with "No newline at end of file"
+> > >>
+> > >>> diff --git a/arch/microblaze/include/uapi/asm/Kbuild b/arch/microblaze/include/uapi/asm/Kbuild
+> > >>> index 2c6a6bf..3a40659 100644
+> > >>> --- a/arch/microblaze/include/uapi/asm/Kbuild
+> > >>> +++ b/arch/microblaze/include/uapi/asm/Kbuild
+> > >>> @@ -28,3 +28,4 @@ generic-y += termbits.h
+> > >>>  generic-y += termios.h
+> > >>>  generic-y += types.h
+> > >>>  generic-y += ucontext.h
+> > >>> +generic-y += unistd_32.h
+> > >>> \ No newline at end of file
+> > >>
+> > >> and here too.
+> > >
+> > > Thanks for your comment. checkpatch script didn't warn this one:(
+> > > Hopefully, I can fix this one in the next version.
+> > >
+> > > I would appreciate if you can perform the boot test on the actual
+> > > platform and share the result with me.
+> >
+> > I see one issue there.
+> > Run
+> > make mrproper
+> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/1/
+> >
+> > And then
+> >
+> > make mrproper
+> > make archheaders V=1
+> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/2/
+> >
+> > And compare output.
+> > What I see is that in the first part asm/unistd_32.h pointing to
+> > asm-generic/unistd_32.h
+> >
+> > But when archheaders is run before there is expected content.
+> >
+> > That means there is incorrect/missing dependency in Makefiles.
+> >
+> >
+> > Time to time I am able to see compilation warnings
+> > but I didn't find exact steps to replicate this but it also looks like
+> > on missing dependency somewhere.
+> >
+> > [linux](next)$ make mmu_defconfig
+> > #
+> > # configuration written to .config
+> > #
+> > [linux](next)$ make -j8 simpleImage.system
+> >   WRAP    arch/microblaze/include/generated/asm/barrier.h
+> >   WRAP    arch/microblaze/include/generated/asm/bitops.h
+> >   WRAP    arch/microblaze/include/generated/asm/bug.h
+> >   WRAP    arch/microblaze/include/generated/asm/bugs.h
+> >   WRAP    arch/microblaze/include/generated/asm/device.h
+> >   WRAP    arch/microblaze/include/generated/asm/compat.h
+> >   WRAP    arch/microblaze/include/generated/asm/div64.h
+> >   WRAP    arch/microblaze/include/generated/asm/dma-mapping.h
+> >   WRAP    arch/microblaze/include/generated/asm/emergency-restart.h
+> >   WRAP    arch/microblaze/include/generated/asm/exec.h
+> >   WRAP    arch/microblaze/include/generated/asm/extable.h
+> >   WRAP    arch/microblaze/include/generated/asm/fb.h
+> >   WRAP    arch/microblaze/include/generated/asm/hardirq.h
+> >   WRAP    arch/microblaze/include/generated/asm/irq_regs.h
+> >   WRAP    arch/microblaze/include/generated/asm/kdebug.h
+> >   WRAP    arch/microblaze/include/generated/asm/kmap_types.h
+> >   WRAP    arch/microblaze/include/generated/asm/irq_work.h
+> >   WRAP    arch/microblaze/include/generated/asm/kprobes.h
+> >   WRAP    arch/microblaze/include/generated/asm/linkage.h
+> >   WRAP    arch/microblaze/include/generated/asm/local.h
+> >   WRAP    arch/microblaze/include/generated/asm/local64.h
+> >   WRAP    arch/microblaze/include/generated/asm/mcs_spinlock.h
+> >   WRAP    arch/microblaze/include/generated/asm/mm-arch-hooks.h
+> >   WRAP    arch/microblaze/include/generated/asm/parport.h
+> >   WRAP    arch/microblaze/include/generated/asm/percpu.h
+> >   WRAP    arch/microblaze/include/generated/asm/preempt.h
+> >   WRAP    arch/microblaze/include/generated/asm/topology.h
+> >   WRAP    arch/microblaze/include/generated/asm/syscalls.h
+> >   WRAP    arch/microblaze/include/generated/asm/trace_clock.h
+> >   WRAP    arch/microblaze/include/generated/asm/vga.h
+> >   WRAP    arch/microblaze/include/generated/asm/serial.h
+> >   WRAP    arch/microblaze/include/generated/asm/word-at-a-time.h
+> >   WRAP    arch/microblaze/include/generated/asm/xor.h
+> >   HOSTCC  scripts/bin2c
+> >   HOSTCC  scripts/kallsyms
+> >   HOSTCC  scripts/dtc/dtc.o
+> >   HOSTCC  scripts/mod/mk_elfconfig
+> >   HOSTCC  scripts/sortextable
+> >   CC      scripts/mod/empty.o
+> >   HOSTCC  scripts/dtc/flattree.o
+> >   UPD     include/config/kernel.release
+> >   HOSTCC  scripts/dtc/fstree.o
+> >   HOSTCC  scripts/dtc/data.o
+> >   HOSTCC  scripts/dtc/livetree.o
+> >   CC      scripts/mod/devicetable-offsets.s
+> >   HOSTCC  scripts/dtc/treesource.o
+> >   HOSTCC  scripts/dtc/srcpos.o
+> >   MKELF   scripts/mod/elfconfig.h
+> >   UPD     scripts/mod/devicetable-offsets.h
+> >   HOSTCC  scripts/dtc/checks.o
+> >   HOSTCC  scripts/dtc/util.o
+> >   HOSTCC  scripts/mod/sumversion.o
+> >   LEX     scripts/dtc/dtc-lexer.lex.c
+> >   YACC    scripts/dtc/dtc-parser.tab.h
+> >   YACC    scripts/dtc/dtc-parser.tab.c
+> >   UPD     include/generated/utsrelease.h
+> >   HOSTCC  scripts/dtc/dtc-lexer.lex.o
+> >   CC      kernel/bounds.s
+> >   UPD     include/generated/timeconst.h
+> >   HOSTCC  scripts/dtc/dtc-parser.tab.o
+> >   HOSTCC  scripts/mod/file2alias.o
+> >   HOSTCC  scripts/mod/modpost.o
+> >   UPD     include/generated/bounds.h
+> >   CC      arch/microblaze/kernel/asm-offsets.s
+> > In file included from ./arch/microblaze/include/uapi/asm/unistd.h:14:0,
+> >                  from ./arch/microblaze/include/asm/unistd.h:12,
+> >                  from ./include/uapi/linux/unistd.h:8,
+> >                  from ./arch/microblaze/include/asm/seccomp.h:5,
+> >                  from ./include/linux/seccomp.h:14,
+> >                  from ./include/linux/sched.h:21,
+> >                  from arch/microblaze/kernel/asm-offsets.c:13:
+> > ./arch/microblaze/include/generated/uapi/asm/unistd_32.h:1:35: fatal
+> > error: asm-generic/unistd_32.h: No such file or directory
+> >  #include <asm-generic/unistd_32.h>
+> >                                    ^
+> > compilation terminated.
+> > make[1]: *** [arch/microblaze/kernel/asm-offsets.s] Error 1
+> > make: *** [prepare0] Error 2
+> > make: *** Waiting for unfinished jobs....
+> >   HOSTLD  scripts/dtc/dtc
+> >   HOSTLD  scripts/mod/modpost
+> >
+> >
+> >
+> > When build is fine system is booting fine (v4.19-rc6 + your patches).
+>
+> Thanks for your support. I'll work on the same which shared above.
+> I'll update you asap with the fix.
 
-On 10/09/2018 07:44 PM, Michal Hocko wrote:
-> On Fri 05-10-18 13:04:43, Anshuman Khandual wrote:
->> Does the following sound close enough to what you are looking for ?
-> 
-> I do not think so
+I'm bit busy this week, working on parisc and ia64 support.
+Hopefully I can update you next week.
 
-Okay.
+Thanks
+Firoz
 
-> 
->> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->> index 9df1d59..070c419 100644
->> --- a/include/linux/hugetlb.h
->> +++ b/include/linux/hugetlb.h
->> @@ -504,6 +504,13 @@ static inline bool hugepage_migration_supported(struct hstate *h)
->>         return arch_hugetlb_migration_supported(h);
->>  }
->>  
->> +static inline bool hugepage_movable_required(struct hstate *h)
->> +{
->> +       if (hstate_is_gigantic(h))
->> +               return true;
->> +       return false;
->> +}
->> +
-> 
-> Apart from naming (hugepage_movable_supported?) the above doesn't do the
-> most essential thing to query whether the hugepage migration is
-> supported at all. Apart from that i would expect the logic to be revers.
-
-My assumption was hugepage_migration_supported() should only be called from
-unmap_and_move_huge_page() but we can add that here as well to limit the
-set further.
-
-> We do not really support giga pages migration enough to support them in
-> movable zone.
-
-Reversing the logic here would change gfp_t for a large number of huge pages.
-Current implementation is very liberal in assigning __GFP_MOVABLE for multiple
-huge page sizes (all most all of them when migration is enabled). But I guess
-it should be okay because after all we are tying to control which all sizes
-should be movable and which all should not be.
-
-static inline bool hugepage_migration_supported(struct hstate *h)
-{
-#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-        if ((huge_page_shift(h) == PMD_SHIFT) ||
-                (huge_page_shift(h) == PGDIR_SHIFT))
-                return true;
-        else
-                return false;
-#else
-        return false;
-#endif
-}
-
-static inline gfp_t htlb_alloc_mask(struct hstate *h)
-{
-        if (hugepage_migration_supported(h))
-                return GFP_HIGHUSER_MOVABLE;
-        else
-                return GFP_HIGHUSER;
-}
-
->> @@ -1652,6 +1655,9 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
->>  {
->>         gfp_t gfp_mask = htlb_alloc_mask(h);
->>  
->> +       if (hugepage_movable_required(h))
->> +               gfp_mask |= __GFP_MOVABLE;
->> +
-> 
-> And besides that this really want to live in htlb_alloc_mask because
-> this is really an allocation policy. It would be unmap_and_move_huge_page
-> to call hugepage_migration_supported. The later is the one to allow for
-> an arch specific override.
-> 
-> Makes sense?
-> 
-
-hugepage_migration_supported() will be checked inside hugepage_movable_supported().
-A changed version ....
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 9df1d59..4bcbf1e 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -504,6 +504,16 @@ static inline bool hugepage_migration_supported(struct hstate *h)
-        return arch_hugetlb_migration_supported(h);
- }
- 
-+static inline bool hugepage_movable_supported(struct hstate *h)
-+{
-+       if (!hugepage_migration_supported(h)) --> calls arch override restricting the set
-+               return false;
-+
-+       if (hstate_is_gigantic(h)	--------> restricts the set further
-+               return false;
-+       return true;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
-                                           struct mm_struct *mm, pte_t *pte)
- {
-@@ -600,6 +610,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
-        return false;
- }
- 
-+static inline bool hugepage_movable_supported(struct hstate *h)
-+{
-+       return false;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
-                                           struct mm_struct *mm, pte_t *pte)
- {
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3c21775..a5a111d 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
- /* Movability of hugepages depends on migration support. */
- static inline gfp_t htlb_alloc_mask(struct hstate *h)
- {
--       if (hugepage_migration_supported(h))
-+       if (hugepage_movable_supported(h))
-                return GFP_HIGHUSER_MOVABLE;
-        else
-                return GFP_HIGHUSER;
-
-
-The above patch is in addition to the following later patch in the series.
-
-    mm/hugetlb: Enable arch specific huge page size support for migration
-    
-    Architectures like arm64 have HugeTLB page sizes which are different than
-    generic sizes at PMD, PUD, PGD level and implemented via contiguous bits.
-    At present these special size HugeTLB pages cannot be identified through
-    macros like (PMD|PUD|PGDIR)_SHIFT and hence chosen not be migrated.
-    
-    Enabling migration support for these special HugeTLB page sizes along with
-    the generic ones (PMD|PUD|PGD) would require identifying all of them on a
-    given platform. A platform specific hook can precisely enumerate all huge
-    page sizes supported for migration. Instead of comparing against standard
-    huge page orders let hugetlb_migration_support() function call a platform
-    hook arch_hugetlb_migration_support(). Default definition for the platform
-    hook maintains existing semantics which checks standard huge page order.
-    But an architecture can choose to override the default and provide support
-    for a comprehensive set of huge page sizes.
-    
-    Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 9c1b77f..9df1d59 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -479,18 +479,29 @@ static inline pgoff_t basepage_index(struct page *page)
- extern int dissolve_free_huge_page(struct page *page);
- extern int dissolve_free_huge_pages(unsigned long start_pfn,
-                                    unsigned long end_pfn);
--static inline bool hugepage_migration_supported(struct hstate *h)
--{
-+
- #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-+#ifndef arch_hugetlb_migration_supported
-+static inline bool arch_hugetlb_migration_supported(struct hstate *h)
-+{
-        if ((huge_page_shift(h) == PMD_SHIFT) ||
-                (huge_page_shift(h) == PUD_SHIFT) ||
-                        (huge_page_shift(h) == PGDIR_SHIFT))
-                return true;
-        else
-                return false;
-+}
-+#endif
- #else
-+static inline bool arch_hugetlb_migration_supported(struct hstate *h)
-+{
-        return false;
-+}
- #endif
-+
-+static inline bool hugepage_migration_supported(struct hstate *h)
-+{
-+       return arch_hugetlb_migration_supported(h);
- }
+>
+> - Firoz
+>
+> >
+> > Thanks,
+> > Michal
+> >
+> >
