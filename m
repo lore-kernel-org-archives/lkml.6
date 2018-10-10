@@ -2,108 +2,84 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC12C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B286EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E36882086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36882086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 848182086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 17:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848182086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeJKA4s (ORCPT
+        id S1727094AbeJKA5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:56:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726788AbeJKA4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:56:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0D2CB146;
-        Wed, 10 Oct 2018 17:33:36 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 19:33:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
-        osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-Message-ID: <20181010173334.GL5873@dhcp22.suse.cz>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
- <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
- <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 10 Oct 2018 20:57:07 -0400
+Received: from smtprelay0177.hostedemail.com ([216.40.44.177]:35411 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726794AbeJKA5H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 20:57:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 39444100E86C2;
+        Wed, 10 Oct 2018 17:33:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: door09_796789a7ce00d
+X-Filterd-Recvd-Size: 1893
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 10 Oct 2018 17:33:54 +0000 (UTC)
+Message-ID: <40fd3d963820bf96547fa9b5e8c171c6a339674e.camel@perches.com>
+Subject: Re: Question on FIELD_PREP() for static array
+From:   Joe Perches <joe@perches.com>
+To:     John Garry <john.garry@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>, johannes@sipsolutions.net,
+        jakub.kicinski@netronome.com, yamada.masahiro@socionext.com,
+        Arnd Bergmann <arnd@arndb.de>, viro@zeniv.linux.org.uk,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 10 Oct 2018 10:33:53 -0700
+In-Reply-To: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
+References: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-10-18 22:26:41, Arun KS wrote:
-> On 2018-10-10 21:00, Vlastimil Babka wrote:
-> > On 10/5/18 10:10 AM, Arun KS wrote:
-> > > When free pages are done with higher order, time spend on
-> > > coalescing pages by buddy allocator can be reduced. With
-> > > section size of 256MB, hot add latency of a single section
-> > > shows improvement from 50-60 ms to less than 1 ms, hence
-> > > improving the hot add latency by 60%. Modify external
-> > > providers of online callback to align with the change.
-> > > 
-> > > Signed-off-by: Arun KS <arunks@codeaurora.org>
-> > 
-> > [...]
-> > 
-> > > @@ -655,26 +655,44 @@ void __online_page_free(struct page *page)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(__online_page_free);
-> > > 
-> > > -static void generic_online_page(struct page *page)
-> > > +static int generic_online_page(struct page *page, unsigned int order)
-> > >  {
-> > > -	__online_page_set_limits(page);
-> > 
-> > This is now not called anymore, although the xen/hv variants still do
-> > it. The function seems empty these days, maybe remove it as a followup
-> > cleanup?
-> > 
-> > > -	__online_page_increment_counters(page);
-> > > -	__online_page_free(page);
-> > > +	__free_pages_core(page, order);
-> > > +	totalram_pages += (1UL << order);
-> > > +#ifdef CONFIG_HIGHMEM
-> > > +	if (PageHighMem(page))
-> > > +		totalhigh_pages += (1UL << order);
-> > > +#endif
-> > 
-> > __online_page_increment_counters() would have used
-> > adjust_managed_page_count() which would do the changes under
-> > managed_page_count_lock. Are we safe without the lock? If yes, there
-> > should perhaps be a comment explaining why.
+On Wed, 2018-10-10 at 18:16 +0100, John Garry wrote:
+> (to: get_maintainers -f include/linux/bitfield.h)
 > 
-> Looks unsafe without managed_page_count_lock.
+> Hi,
+> 
+> I would like to use FIELD_PREP() macro for assigning a static array, 
+> like this:
+> function()
+> {
+> 	static u32 val[2] = {FIELD_PREP(GENMASK_ULL(10, 0), 5), 0};
+> 
+> }
+> 
+> However the compiler complains of non-const expression:
+> ./include/linux/bitfield.h:88:2: error: initializer element is not constant
+>     ({        \
+> 
+> Specifically it doesn't like the __BF_FIELD_CHECK() in FIELD_PREP().
+> 
+> Any ideas on compiler trickery we could do with the FIELD_PREP() 
+> definition to avoid this issue (i.e. enforce the check but only use the 
+> constant value)?
 
-Why does it matter actually? We cannot online/offline memory in
-parallel. This is not the case for the boot where we initialize memory
-in parallel on multiple nodes. So this seems to be safe currently unless
-I am missing something. A comment explaining that would be helpful
-though.
--- 
-Michal Hocko
-SUSE Labs
+Perhaps __bf_shf should not use __builtin_ffsll.
+
+As mask is known constant, maybe expand the test
+in-place with some switch/case.
+
+
