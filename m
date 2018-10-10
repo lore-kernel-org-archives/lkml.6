@@ -2,294 +2,92 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4A4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0ABC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1C62064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1C62064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 32E162064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E162064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJJPYn (ORCPT
+        id S1726933AbeJJPY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:24:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:19725 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726573AbeJJPYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:24:43 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C8F4081129;
-        Wed, 10 Oct 2018 08:03:43 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3C5C183868;
-        Wed, 10 Oct 2018 08:03:40 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 10:03:39 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Kan Liang <kan.liang@intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH] perf tools: Fix wrong filter_band* values for uncore events
-Message-ID: <20181010080339.GB15790@krava>
-References: <20181003072046.29276-1-jolsa@kernel.org>
- <20181003143456.GE31725@krava>
- <20181003144550.GI32651@tassilo.jf.intel.com>
- <20181009100144.GG6499@krava>
- <20181009211839.GK32651@tassilo.jf.intel.com>
+        Wed, 10 Oct 2018 11:24:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37130 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726226AbeJJPY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 11:24:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B6E7EAFD3;
+        Wed, 10 Oct 2018 08:03:55 +0000 (UTC)
+Subject: Re: [PATCH] xen/pvh: increase early stack size
+To:     Roger Pau Monne <roger.pau@citrix.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org
+References: <20181009103237.52527-1-roger.pau@citrix.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1d2093b4-1466-5bb8-1de0-1ea11c9433f3@suse.com>
+Date:   Wed, 10 Oct 2018 10:03:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009211839.GK32651@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 10 Oct 2018 08:03:44 +0000 (UTC)
+In-Reply-To: <20181009103237.52527-1-roger.pau@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 02:18:39PM -0700, Andi Kleen wrote:
-> On Tue, Oct 09, 2018 at 12:01:44PM +0200, Jiri Olsa wrote:
-> > On Wed, Oct 03, 2018 at 07:45:50AM -0700, Andi Kleen wrote:
-> > > > note there's couple of changes that actually changed
-> > > > the number completely, like:
-> > > > 
-> > > > -        "Filter": "edge=1,filter_band2=4000",
-> > > > +        "Filter": "edge=1,filter_band2=30",
-> > > 
-> > > Thanks. Looks good. I'll fix the scripts to generate the uncore events.
-> > 
-> > hi,
-> > any idea when you could post an update for this?
+On 09/10/2018 12:32, Roger Pau Monne wrote:
+> While booting on an AMD EPYC box the stack canary would detect stack
+> overflows when using the current PVH early stack size (256). Switch to
+> using the value defined by BOOT_STACK_SIZE, which prevents the stack
+> overflow.
 > 
-> Can just use your patch for the existing event lists. You can add
-> 
-> Acked-by: Andi Kleen <ak@linux.intel.com>
-> 
-> I was mainly worried about future updates, but it doesn't seem to be a problem.
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 
-ok, attaching patch with full changelog
-
-thanks,
-jirka
+Committed to xen.tip for-linus-4.20
 
 
----
-Michael reported that he could not stat following event:
-
-  $ perf stat -e unc_p_freq_ge_1200mhz_cycles -a -- ls
-  event syntax error: '..e_1200mhz_cycles'
-                                    \___ value too big for format, maximum is 255
-  Run 'perf list' for a list of valid events
-
-The event is unwrapped into:
-  uncore_pcu/event=0xb,filter_band0=1200/
-
-where filter_band0 format says it's one byte only:
-
-  # cat uncore_pcu/format/filter_band0
-  config1:0-7
-
-while json files specifies bigger number:
-
-  "Filter": "filter_band0=1200",
-
-all the filter_band* formats show 1 byte width:
-
-  # cat uncore_pcu/format/filter_band1
-  config1:8-15
-  # cat uncore_pcu/format/filter_band2
-  config1:16-23
-  # cat uncore_pcu/format/filter_band3
-  config1:24-31
-
-The reason of the issue is that filter_band* values are
-supposed to be in 100Mhz units.. it's stated in the json
-help for the events, like:
-
-  filter_band3=XXX, with XXX in 100Mhz units
-
-This patch divides the filter_band* values by 100,
-plus there's couple of changes that actually change
-the number completely, like:
-
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Link: http://lkml.kernel.org/n/tip-ujl4yzkexf3i10fjw24maa9e@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- .../arch/x86/ivytown/uncore-power.json           | 16 ++++++++--------
- .../arch/x86/jaketown/uncore-power.json          | 16 ++++++++--------
- 2 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-index d40498f2cb1e..635c09fda1d9 100644
---- a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-@@ -188,7 +188,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -199,7 +199,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -210,7 +210,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -221,7 +221,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -232,7 +232,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -243,7 +243,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -254,7 +254,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -265,7 +265,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-diff --git a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-index 16034bfd06dd..8755693d86c6 100644
---- a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-@@ -187,7 +187,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -198,7 +198,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -209,7 +209,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -220,7 +220,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -231,7 +231,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -242,7 +242,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -253,7 +253,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -264,7 +264,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
--- 
-2.17.1
-
+Juergen
