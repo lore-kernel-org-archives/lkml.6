@@ -2,223 +2,272 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB418C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA00C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772AE2085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:36:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDGegHc5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772AE2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DAA112087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA112087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbeJKB7h (ORCPT
+        id S1727002AbeJKCBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:59:37 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44138 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbeJKB7h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:59:37 -0400
-Received: by mail-pl1-f193.google.com with SMTP id p25-v6so2926714pli.11;
-        Wed, 10 Oct 2018 11:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oiK0EEhORkRTEBxomFkAKkopBwWgvGTz5bp1j/Imd5I=;
-        b=PDGegHc55idA2/P1XAyJ42qb8/wgkSUaN4wWzTOGB4ul612eE+eaMliC3iEy7Tz8TL
-         cQYRlfyd3zW3HkpFvY4+I0bwXPeqfwFOMBydmVgH7M+O71Je95MCPA1oZNStm/pBu7bM
-         TQsFwKNCwgylLS9Dekhh7UbzAZTxSMUhC4DAbvN76KRoE/w4jrmgNutrPEez3HGB0UVk
-         +S4kVJ6J/XLKrvitRUAHKFMLLN/pswlmiQ8uKN+ebKwZYNTTr+8ydawgSgj4TwuuP7Vg
-         pnkMybuh3P5EIPtU55h9bY6h9VHhh9h0DB1fflUvnZyImrOrqFQn2BQ2ueo6ytDPmYsz
-         Wdrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oiK0EEhORkRTEBxomFkAKkopBwWgvGTz5bp1j/Imd5I=;
-        b=hwiOpwABWBHyd4FTU/DJ4v9+6ub+Qpg+4pwl+FHaGmO5FiSp1HQQY4h4ULeW+xsKNz
-         tm+XWJkAlb4zorA+0mXHFpgv8mljPx7xZ+gdJlZmv5F6VYxvZPA+PwdOCSRY/RrmMDF5
-         Rq6YJtavmu5g76mPF77l7e8mNje6UGRJwtdFkfIdq7ru/SSWN81fLvqNkFV40HPLe/fH
-         IEPXF13OyeQbsKd18hDaHbqtlSW1flsGRU1+DBwOD1+28vNbS86mWDt29wO63ZOI/ChT
-         44RevXdMGpEhMEDAIF+mfROJRVLatTB8qmUNIB/mMzf1bP5OTL+T3/FLxE8RKHHUhpiV
-         VK7A==
-X-Gm-Message-State: ABuFfohYGYLwJzu27vkIofxBZ4jtKSBmdPar5GGsCQD8XzxuodMFuBTW
-        NrBqLGj4TqKqNnJQBMTmxLXT79EwCYY=
-X-Google-Smtp-Source: ACcGV63sraa8uHNnna3V3MzOUbiKsyCPF/FYKId4dEVNsaT3XNoMu1jWHUk+q4p/4/59xxF6mn/oJg==
-X-Received: by 2002:a17:902:9896:: with SMTP id s22-v6mr618880plp.113.1539196573386;
-        Wed, 10 Oct 2018 11:36:13 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm25021906pfn.9.2018.10.10.11.36.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 11:36:12 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 11:36:09 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        "3.8+" <stable@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        alexander.levin@microsoft.com
-Subject: Re: [PATCH AUTOSEL 4.18 24/58] Input: atakbd - fix Atari CapsLock
- behaviour
-Message-ID: <20181010183609.GG47260@dtor-ws>
-References: <20181008152523.70705-1-sashal@kernel.org>
- <20181008152523.70705-24-sashal@kernel.org>
- <CAKdAkRSoq_U1rkO+6gbautYpS1fFn3icLY3Dtx0geXNC7MwvbA@mail.gmail.com>
- <bec357b5-09d0-5014-d2a3-0ade83499d15@gmail.com>
- <CAKdAkRSuuv_8BOz2m=DSgnV7a2MNY+6ZPera3ROfV3osMUTStQ@mail.gmail.com>
- <20181010142958.GF32006@sasha-vm>
- <20181010170219.GA47260@dtor-ws>
- <20181010181148.GI32006@sasha-vm>
+        Wed, 10 Oct 2018 22:01:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbeJKCBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:01:14 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5EA74C04F4D6;
+        Wed, 10 Oct 2018 18:37:50 +0000 (UTC)
+Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4644D600C4;
+        Wed, 10 Oct 2018 18:37:49 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 14:37:47 -0400
+From:   Phil Auld <pauld@redhat.com>
+To:     bsegall@google.com
+Cc:     Ingo Molnar <mingo@kernel.org>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [Patch] sched/fair: Avoid throttle_list starvation with low cfs
+ quota
+Message-ID: <20181010183747.GE7852@pauld.bos.csb>
+References: <20181008143639.GA4019@pauld.bos.csb>
+ <20181009083244.GA51643@gmail.com>
+ <xm26in29wv2y.fsf@bsegall-linux.svl.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181010181148.GI32006@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <xm26in29wv2y.fsf@bsegall-linux.svl.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 10 Oct 2018 18:37:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 02:11:48PM -0400, Sasha Levin wrote:
-> On Wed, Oct 10, 2018 at 10:02:19AM -0700, Dmitry Torokhov wrote:
-> > On Wed, Oct 10, 2018 at 10:29:58AM -0400, Sasha Levin wrote:
-> > > On Mon, Oct 08, 2018 at 12:20:26PM -0700, Dmitry Torokhov wrote:
-> > > > Hi Michael,
-> > > >
-> > > > On Mon, Oct 8, 2018 at 12:09 PM Michael Schmitz <schmitzmic@gmail.com> wrote:
-> > > > >
-> > > > > Dmitry,
-> > > > >
-> > > > > someone on debian-68k reported the bug, which (to me) indicates that the
-> > > > > code is not just used by me.
-> > > > >
-> > > > > Whether or not a functioning Capslock is essential to have? You be the
-> > > > > judge of that. If you are OK with applying the keymap patch, why not
-> > > > > this one?
-> > > >
-> > > > I have exactly the same concerns about the keymap patch. This all has
-> > > > not been working correctly for many many years (and it was not broken
-> > > > in a subtly way as far as I understand, but rather quite obvious).
-> > > > Thus I do not understand why this belongs to stable release. It is not
-> > > > a [recent] regression, nor secutiry bug, nor even enabling of new
-> > > > hardware, that is why I myself did not mark it as stable.
-> > > >
-> > > > I still maintain that we pick up for stable too many patches for no
-> > > > clear benefit. This is similar to the patch for Atmel controllers that
-> > > > was picked to stable and I asked why, as it is not clear how many
-> > > > users might be affected (or if the problem the patch was solving was
-> > > > purely theoretical, or only affecting hardware that is not in
-> > > > circulation yet).
-> > > 
-> > > If you belive that a certain piece of code has no actual users, why do
-> > > you keep it in the upstream kernel to begin with?
-> > 
-> > Because obviously there are users. Maybe 5 of them, maybe 10. They do
-> > not follow upstream very closely (otherwise these fixes would have
-> > appeared in mainline long time ago) but they still exist. And it is not
-> > hard to keep the driver in if there are not many changes.
+On Wed, Oct 10, 2018 at 10:49:25AM -0700 bsegall@google.com wrote:
+> Ingo Molnar <mingo@kernel.org> writes:
 > 
-> It, similarily, not hard to backport these changes to stable tree
-> especially if they're in a self-contained driver such as this one.
+> > I've Cc:-ed a handful of gents who worked on CFS bandwidth details to widen the discussion. 
+> > Patch quoted below.
+> >
+> > Looks like a real bug that needs to be fixed - and at first sight the quota of 1000 looks very 
+> > low - could we improve the arithmetics perhaps?
+> >
+> > A low quota of 1000 is used because there's many VMs or containers provisioned on the system 
+> > that is triggering the bug, right?
+> >
+> > Thanks,
+> >
+> > 	Ingo
+> >
+> > * Phil Auld <pauld@redhat.com> wrote:
+> >
+> >> From: "Phil Auld" <pauld@redhat.com>
+> >> 
+> >> sched/fair: Avoid throttle_list starvation with low cfs quota
+> >> 
+> >> With a very low cpu.cfs_quota_us setting, such as the minimum of 1000, 
+> >> distribute_cfs_runtime may not empty the throttled_list before it runs 
+> >> out of runtime to distribute. In that case, due to the change from 
+> >> c06f04c7048 to put throttled entries at the head of the list, later entries 
+> >> on the list will starve.  Essentially, the same X processes will get pulled 
+> >> off the list, given CPU time and then, when expired, get put back on the 
+> >> head of the list where distribute_cfs_runtime will give runtime to the same 
+> >> set of processes leaving the rest.
+> >> 
+> >> Fix the issue by setting a bit in struct cfs_bandwidth when 
+> >> distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can 
+> >> decide to put the throttled entry on the tail or the head of the list.  The 
+> >> bit is set/cleared by the callers of distribute_cfs_runtime while they hold 
+> >> cfs_bandwidth->lock. 
+> >> 
+> >> Signed-off-by: Phil Auld <pauld@redhat.com>
+> >> Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
+> >> Cc: Peter Zijlstra <peterz@infradead.org>
+> >> Cc: Ingo Molnar <mingo@kernel.org>
+> >> Cc: stable@vger.kernel.org
+> 
+> Reviewed-by: Ben Segall <bsegall@google.com>
+> 
+> 
+> In theory this does mean the unfairness could still happen if distribute is still
+> running, but while a tiny quota makes it more likely, the fact that
+> we're not getting through much of the list makes it not really a worry.
+> If you wanted to be even more careful there could be some generation
+> counter or something, but it doesn't seem necessary.
+> 
 
-It is easy to backport, but that should not be a criteria. If we
-backport each end every one patch landing into mainline into stable
-then "backporting" is trivial. It does mean that it should be done.
+Thanks for the review.  Yeah, I thought about a few other approaches, not explicitly
+what you suggested, but they all complicated things. This one seemed the closest to 
+"obviously correct".
 
-> 
-> > > 
-> > > I don't think it makes sense to keep something upstream because it might
-> > > have users, but not backport fixes because there might not have any
-> > > users.
-> > > 
-> > > You haven't seen evidence of anyone using/caring about it for a few
-> > > years? Great! Remove the code and if someone complains we can always
-> > > revert. This is how all those orphaned archs got removed a few releases
-> > > back. I'll even submit the patch if you'd like.
-> > > 
-> > > It doesn't make sense to have "second class citizens" like how you
-> > > suggested.
-> > 
-> > Sure does. Look, one of roles of a mantainer is basically a release
-> > manager. We need to decide what goes into new release, what goes into
-> > maintenance release, what stays until later milestone. Each release has
-> > different criteria. With maintenance release you want to minimize the
-> > disruption while alleviating most recent and critical/high visibility
-> > issues, IOW you want to get the most bang for your buck. And these
-> > particular fixes do not give you any bang, none at all.
-> > 
-> > Same goes for patches that deal with error handling in probe() functions
-> > that your AUTOSEL scripts like to pick. Yes, they are fixing bugs. But
-> > show me actually users affected by them? You encounter these issues with
-> > probe when you do initial device bringup, but once device is stabilized
-> > probes are expected to succeed. There won't be duplicate sysfs
-> > attributes, memory will be allocated, and so on. Fixes to remove() might
-> > be worthwhile if it is a hot-pluggable bus, but otherwise - no. Yes, the
-> > box may OOPS if someone manually unbind device through sysfs, but the
-> > solution is no to patch stable kernels, but simply tell user "dont to
-> > that [yet]".
-> > 
-> > When selecting a patch for stable ask yourself: "if I do not pick this
-> > for stable will a distribution be willing to patch this into their
-> > kernel on their own"? If the answer is "no" it should be pretty strong
-> > indicator whether a patch belongs to stable or not.
-> 
-> There is a big difference between distros and the stable trees. Distros
-> know who their users/customers are, OTOH we have no clue who the users
-> of stable trees are.
-> 
-> I think Greg's last estimate was that about 1/3 of the kernels in the
-> wild are custom based on a kernel.org stable kernel, which means that we
-> have no visibility as to what they do with the kernel. If you don't know
-> who your users are, how can you prioritize some subsystems over others?
 
-You make a judgement call, based on the data you have. And I think if
-you want override maintainer decision you need a decent justification,
-better than "it is easy to backport" or "we do not know if someone might
-use it".
+Cheers,
+Phil
+
 
 > 
-> I don't think we can do any of that because we don't know who uses the
-> kernel and what bugs they hit, or don't hit.
-
-They should file bugs, report on mailing lists, and so on. If they hit
-bugs and do not bother to report them anywhere, it is not our problem.
-They need to be part of community.
-
-> This is one of the reasons
-> we ask everyone to pick everything, if they don't use whatever code we
-> changed they won't be affected at all.
-
-Or there is unexpected behavior change and they are affected. What do
-you do if users of atakbd adjusted their userspace for the broken kernel
-map? From my POV it is OK-ish to change in new kernel release, but
-not in a middle of "stable" series.
-
-> 
-> As a trivial example: we run a few kernels with custom configs in
-> Microsoft. Can you tell which drivers we use and how many machines use
-> them? Us not showing up in git log doesn't mean we don't use something,
-> it just means that the stable process works for us.
-
-I can tell you that you are not using atakbd ;)
-
-Look, if we are talking about Microsoft, what are criteria for changes
-that are going into "patch tuesday" releases? Is it any random junk that
-might land on top of the development tree? Or is it just a bit more
-disciplined? Like Release managers looking at the incoming problem
-report rates and make a judgement call as to whether pull the fix in or
-wait for bigger maintenance release? In ChromeOS land it is the latter.
-
-Thanks.
+> >> ---
+> >> 
+> >> This is easy to reproduce with a handful of cpu consumers. I use crash on 
+> >> the live system. In some cases you can simply look at the throttled list and 
+> >> see the later entries are not changing:
+> >> 
+> >> crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
+> >>   1     ffff90b56cb2d200  -976050
+> >>   2     ffff90b56cb2cc00  -484925
+> >>   3     ffff90b56cb2bc00  -658814
+> >>   4     ffff90b56cb2ba00  -275365
+> >>   5     ffff90b166a45600  -135138
+> >>   6     ffff90b56cb2da00  -282505
+> >>   7     ffff90b56cb2e000  -148065
+> >>   8     ffff90b56cb2fa00  -872591
+> >>   9     ffff90b56cb2c000  -84687
+> >>  10     ffff90b56cb2f000  -87237
+> >>  11     ffff90b166a40a00  -164582
+> >> crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
+> >>   1     ffff90b56cb2d200  -994147
+> >>   2     ffff90b56cb2cc00  -306051
+> >>   3     ffff90b56cb2bc00  -961321
+> >>   4     ffff90b56cb2ba00  -24490
+> >>   5     ffff90b166a45600  -135138
+> >>   6     ffff90b56cb2da00  -282505
+> >>   7     ffff90b56cb2e000  -148065
+> >>   8     ffff90b56cb2fa00  -872591
+> >>   9     ffff90b56cb2c000  -84687
+> >>  10     ffff90b56cb2f000  -87237
+> >>  11     ffff90b166a40a00  -164582
+> >> 
+> >> Sometimes it is easier to see by finding a process getting starved and looking 
+> >> at the sched_info:
+> >> 
+> >> crash> task ffff8eb765994500 sched_info
+> >> PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
+> >>   sched_info = {
+> >>     pcount = 8, 
+> >>     run_delay = 697094208, 
+> >>     last_arrival = 240260125039, 
+> >>     last_queued = 240260327513
+> >>   }, 
+> >> crash> task ffff8eb765994500 sched_info
+> >> PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
+> >>   sched_info = {
+> >>     pcount = 8, 
+> >>     run_delay = 697094208, 
+> >>     last_arrival = 240260125039, 
+> >>     last_queued = 240260327513
+> >>   }, 
+> >> 
+> >> 
+> >>  fair.c  |   22 +++++++++++++++++++---
+> >>  sched.h |    2 ++
+> >>  2 files changed, 21 insertions(+), 3 deletions(-)
+> >> 
+> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> >> index 7fc4a371bdd2..f88e00705b55 100644
+> >> --- a/kernel/sched/fair.c
+> >> +++ b/kernel/sched/fair.c
+> >> @@ -4476,9 +4476,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+> >>  
+> >>  	/*
+> >>  	 * Add to the _head_ of the list, so that an already-started
+> >> -	 * distribute_cfs_runtime will not see us
+> >> +	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
+> >> +	 * not running add to the tail so that later runqueues don't get starved.
+> >>  	 */
+> >> -	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> >> +	if (cfs_b->distribute_running)
+> >> +		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> >> +	else
+> >> +		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+> >>
+> >>  	/*
+> >>  	 * If we're the first throttled task, make sure the bandwidth
+> >> @@ -4622,14 +4626,16 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
+> >>  	 * in us over-using our runtime if it is all used during this loop, but
+> >>  	 * only by limited amounts in that extreme case.
+> >>  	 */
+> >> -	while (throttled && cfs_b->runtime > 0) {
+> >> +	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+> >>  		runtime = cfs_b->runtime;
+> >> +		cfs_b->distribute_running = 1;
+> >>  		raw_spin_unlock(&cfs_b->lock);
+> >>  		/* we can't nest cfs_b->lock while distributing bandwidth */
+> >>  		runtime = distribute_cfs_runtime(cfs_b, runtime,
+> >>  						 runtime_expires);
+> >>  		raw_spin_lock(&cfs_b->lock);
+> >>  
+> >> +		cfs_b->distribute_running = 0;
+> >>  		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+> >>  
+> >>  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
+> >> @@ -4740,6 +4746,11 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >>  
+> >>  	/* confirm we're still not at a refresh boundary */
+> >>  	raw_spin_lock(&cfs_b->lock);
+> >> +	if (cfs_b->distribute_running) {
+> >> +		raw_spin_unlock(&cfs_b->lock);
+> >> +		return;
+> >> +	}
+> >> +
+> >>  	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
+> >>  		raw_spin_unlock(&cfs_b->lock);
+> >>  		return;
+> >> @@ -4749,6 +4760,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >>  		runtime = cfs_b->runtime;
+> >>  
+> >>  	expires = cfs_b->runtime_expires;
+> >> +	if (runtime)
+> >> +		cfs_b->distribute_running = 1;
+> >> +
+> >>  	raw_spin_unlock(&cfs_b->lock);
+> >>  
+> >>  	if (!runtime)
+> >> @@ -4759,6 +4773,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+> >>  	raw_spin_lock(&cfs_b->lock);
+> >>  	if (expires == cfs_b->runtime_expires)
+> >>  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
+> >> +	cfs_b->distribute_running = 0;
+> >>  	raw_spin_unlock(&cfs_b->lock);
+> >>  }
+> >>  
+> >> @@ -4867,6 +4882,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+> >>  	cfs_b->period_timer.function = sched_cfs_period_timer;
+> >>  	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> >>  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
+> >> +	cfs_b->distribute_running = 0;
+> >>  }
+> >>  
+> >>  static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> >> index 455fa330de04..9683f458aec7 100644
+> >> --- a/kernel/sched/sched.h
+> >> +++ b/kernel/sched/sched.h
+> >> @@ -346,6 +346,8 @@ struct cfs_bandwidth {
+> >>  	int			nr_periods;
+> >>  	int			nr_throttled;
+> >>  	u64			throttled_time;
+> >> +
+> >> +	bool                    distribute_running;
+> >>  #endif
+> >>  };
+> >>  
+> >> 
+> >> 
+> >> -- 
 
 -- 
-Dmitry
