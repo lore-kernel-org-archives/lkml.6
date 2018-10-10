@@ -2,215 +2,83 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6128DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECB3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E722098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AC722075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 19:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnO75UNx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E722098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="MqcbE4I4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC722075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeJKCb7 (ORCPT
+        id S1727402AbeJKCdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:31:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55507 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbeJKCb7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:31:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 206-v6so6618373wmb.5;
-        Wed, 10 Oct 2018 12:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wayis21wLrrt8tq09JBpiEWjxujHZPLag+28fCjQGBo=;
-        b=lnO75UNxfIs2rvuhmg732XXJOy//jmTvOnGMpxuH3NJIrY7gb8VBCoRcLlgMfujDRW
-         1VDFMBm+aQQctMqziH+tlf9NrpMMBT6beEGy5o8uRrxOc1tRipn5tLoLBnHSC/44W47G
-         VXqgPyW8oaf47/5BnfXG/Oskp+PgFOr7r46gZPgFlRrLrPAv6NpJd5CTW+rjRehaWJqP
-         SiW/oZxIuHYNcrDuRKvDu5iRN9PHPrJYFFCxriCZv/mprg5lVhJH4sglh1vyOcDek6+e
-         O3iXRDoWmjl9+LeLpeSQLWKVbFrMpPzwENJPxvhCxTPSihyJ+RSJg3rZ0eF1go4HOZ/y
-         u3Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wayis21wLrrt8tq09JBpiEWjxujHZPLag+28fCjQGBo=;
-        b=D3AmCu4LpgZqy1PytkOg36uDnJZPYZ5Va5R2ymbVPQeO/AMb1fmC671uBNLK3qRxx9
-         YJZwK37qCv82PHfrBArtf7KL4hjYIST7+DE1Pw6EMbZHIOhAnE/pAiUD/+dFCTZ8z8zI
-         9/RF8jw10UDwe9m3dGLaGrVezPX8sxB45t4EowLieBGhBkHMVO0BaaJzzHlBWEqjCap8
-         lDL6hfIuqVEL2qLaHJkyX9WGEMtriK4Y+hFKypPU07Q5ryxkOveLMdtkDf6n9oZLne5p
-         AcrIh0l5aZw+pFemwg/aYPt1JPkTBcKrlj8gHGzHItqSnBm/t0M9kICDiRoqI1FXYtZg
-         iIJg==
-X-Gm-Message-State: ABuFfohgU3cJ+FUj4pBwycznDrUWhP5/pWmMYcI+gBZ5DbxkhDYoY/Xx
-        186JivGjiYXFoSpFPqfdx8eL1gNRJqsUW28pA86+euXb
-X-Google-Smtp-Source: ACcGV605mQ9HweMmIO9xxIIUc7Iq7M1JxXfXMLHVT6xU69KvffpT/+BKdzszQr8e8WcwVI80gnwlpkIJJRyMRMTRj0o=
-X-Received: by 2002:a1c:607:: with SMTP id 7-v6mr1870389wmg.103.1539198506125;
- Wed, 10 Oct 2018 12:08:26 -0700 (PDT)
+        Wed, 10 Oct 2018 22:33:19 -0400
+Received: from imap.thunk.org ([74.207.234.97]:42962 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbeJKCdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:33:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=fRWVMAqAEEThnjYzwz9rFJPbidGagUpLN/pVG9RQw24=; b=MqcbE4I4DiIJUEA6UpCU4oOUH2
+        FHuMWaQUYhYnZ+7fFNN+WBqVuDweVh7Gf5djF1mAHqATfZWVZcMgfaS+VU9TK49cgXJQg6gbn3+ud
+        ZLBWx4rGEOvR2Q2KyY86xrnTfhg1iH05TvkQT2R7c85PEJK47avxjpXSTuwIObwxaLfo=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gAJrY-0002m3-Ol; Wed, 10 Oct 2018 19:09:40 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id F07927A7902; Wed, 10 Oct 2018 15:09:39 -0400 (EDT)
+Date:   Wed, 10 Oct 2018 15:09:39 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] docs: rcu: Make reader aware of rcu_dereference_protected
+Message-ID: <20181010190939.GA25315@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20181009013341.60111-1-joel@joelfernandes.org>
+ <20181010030906.GB2674@linux.ibm.com>
+ <20181010040159.GA90259@joelaf.mtv.corp.google.com>
+ <20181010154414.GC2674@linux.ibm.com>
 MIME-Version: 1.0
-References: <20181008162228.4599-1-colin.king@canonical.com> <20181009104318.GA20785@hr-amur2>
-In-Reply-To: <20181009104318.GA20785@hr-amur2>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 10 Oct 2018 15:08:13 -0400
-Message-ID: <CADnq5_N+qw=fwYP=_8XRLVt792tiSALxGWd-scBzJVORkPVaLw@mail.gmail.com>
-Subject: Re: [PATCH][drm-next] drm/amdgpu/powerplay: fix missing break in
- switch statements
-To:     Huang Rui <ray.huang@amd.com>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Dave Airlie <airlied@linux.ie>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        "Quan, Evan" <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010154414.GC2674@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 6:44 AM Huang Rui <ray.huang@amd.com> wrote:
->
-> On Mon, Oct 08, 2018 at 05:22:28PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There are several switch statements that are missing break statements.
-> > Add missing breaks to handle any fall-throughs corner cases.
-> >
-> > Detected by CoverityScan, CID#1457175 ("Missing break in switch")
-> >
-> > Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Acked-by: Huang Rui <ray.huang@amd.com>
->
+Thanks, the update to the documentation looks great!!
 
-Applied.  thanks!
+I think lockdep_is_held() should be better documented, but that should
+be done in the lockdep docs, not the RCU documentation.
 
-Alex
-
-> > ---
-> >  drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
-> >  drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
-> >  drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
-> >  drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
-> >  drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
-> >  5 files changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> > index 18643e06bc6f..669bd0c2a16c 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> > @@ -2269,11 +2269,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
-> >               case DRAM_LOG_BUFF_SIZE:
-> >                       return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
-> >               }
-> > +             break;
-> >       case SMU_Discrete_DpmTable:
-> >               switch (member) {
-> >               case LowSclkInterruptThreshold:
-> >                       return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
-> >               }
-> > +             break;
-> >       }
-> >       pr_debug("can't get the offset of type %x member %x\n", type, member);
-> >       return 0;
-> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-> > index ec14798e87b6..bddd6d09f887 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-> > @@ -2331,6 +2331,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
-> >               case DRAM_LOG_BUFF_SIZE:
-> >                       return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
-> >               }
-> > +             break;
-> >       case SMU_Discrete_DpmTable:
-> >               switch (member) {
-> >               case UvdBootLevel:
-> > @@ -2340,6 +2341,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
-> >               case LowSclkInterruptThreshold:
-> >                       return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
-> >               }
-> > +             break;
-> >       }
-> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
-> >       return 0;
-> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> > index 73aa368a454e..2d4c7f167b88 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> > @@ -2237,11 +2237,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
-> >               case DRAM_LOG_BUFF_SIZE:
-> >                       return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
-> >               }
-> > +             break;
-> >       case SMU_Discrete_DpmTable:
-> >               switch (member) {
-> >               case LowSclkInterruptThreshold:
-> >                       return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
-> >               }
-> > +             break;
-> >       }
-> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
-> >       return 0;
-> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-> > index ae8378ed32ee..a2ba5b012866 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-> > @@ -2619,6 +2619,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
-> >               case DRAM_LOG_BUFF_SIZE:
-> >                       return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
-> >               }
-> > +             break;
-> >       case SMU_Discrete_DpmTable:
-> >               switch (member) {
-> >               case UvdBootLevel:
-> > @@ -2628,6 +2629,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
-> >               case LowSclkInterruptThreshold:
-> >                       return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
-> >               }
-> > +             break;
-> >       }
-> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
-> >       return 0;
-> > diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-> > index 3d415fabbd93..9f71512b2510 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-> > @@ -2185,6 +2185,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
-> >               case DRAM_LOG_BUFF_SIZE:
-> >                       return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
-> >               }
-> > +             break;
-> >       case SMU_Discrete_DpmTable:
-> >               switch (member) {
-> >               case UvdBootLevel:
-> > @@ -2194,6 +2195,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
-> >               case LowSclkInterruptThreshold:
-> >                       return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
-> >               }
-> > +             break;
-> >       }
-> >       pr_warn("can't get the offset of type %x member %x\n", type, member);
-> >       return 0;
-> > --
-> > 2.17.1
-> >
-> > _______________________________________________
-> > amd-gfx mailing list
-> > amd-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/amd-gfx
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+	    	      	  		- Ted
