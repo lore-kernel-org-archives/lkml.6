@@ -2,229 +2,321 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899A1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AE5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3012087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F27F20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nun316VO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3012087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OksymJB5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F27F20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbeJKEYx (ORCPT
+        id S1725988AbeJKE06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 00:24:53 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39763 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbeJKEYx (ORCPT
+        Thu, 11 Oct 2018 00:26:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46426 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbeJKE06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 00:24:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so3231627pfe.6
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 14:00:58 -0700 (PDT)
+        Thu, 11 Oct 2018 00:26:58 -0400
+Received: by mail-pl1-f194.google.com with SMTP id v5-v6so3083374plz.13;
+        Wed, 10 Oct 2018 14:03:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=CDLa69JCcNJtNB64BuSbF97p3HkkBGJVu7c5HN37+Ng=;
-        b=Nun316VO4P6MfL3K11yGcMOlW+/0DYjktkkcbAXX6NS6JkiU3z8ELYIjwJVZ3ZWzQ7
-         bGT7ao34YG/ra8vysi68yg3ybDRRLD22STNOHYnGWk8VzOmeGSCLz8oPIlEalAoHHH7s
-         5b+K/a+YO8nfhhYkaBPvcre9dW8uWhkcmOwY2e1Z2gynvRzf3yWG9p+S6MpCDEXv7i9Z
-         NeEkfZHZ0GLqxosDO7PIcxDitBJPvARzUf1yLH7w5bRKhHY0eYcpFjdnHqFBx93HxYUD
-         BGJrvlxsFLq6dwIHSFOvW2WHp/JO9aD7n+HH/LRbQZTWFH6idsHvMGKg5ZTGWTY+Nycn
-         XGiQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KMqrOoCnzZMR476FmJIyPnG+HE5csbvbrDKYDpL7dV8=;
+        b=OksymJB5RAAawJYWNKfE6inzze7lWPnB8GkuLXv8NJqAcdn+omqRskvYzRvUKTlgze
+         6BB8HvIpmL77UENrOc7nVuczIB36Atlk6qIK4BtEiO4M1WiWc7U49BvGDYSvYP4+fQ4W
+         KziaJf0xF4XCaEUznunM0gn34uxY+23i/YZx/8yEyaSydyFByPBOSYgt5aRC+Uoc3g1+
+         s3s+xbhlvZ573g8SYtrjtiVEpylD5U4JIvfK+WIoZJyP11bYQXnYt3cxocn8sGxKpQ4O
+         bGMJtj5CHLGS/KN87Z4De+m0dOhnxuH2P9YCX5bOyws+rSMf4oC3CBJky9pexL+U4kIq
+         Rn1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=CDLa69JCcNJtNB64BuSbF97p3HkkBGJVu7c5HN37+Ng=;
-        b=kdLPxIQK4uwLrN7C0A3d6GqxFk+sQsmuQUExz/QP0GMVijOcwpEmds1ho3iVWXISFW
-         MOu1vcfefnhB60TkGrcZkwcWvU+LNP5af6QVnWivUdYjwmBNcbf7ZdqngAndArUKXKnH
-         sUkWHVhXApVVJ5pL1nx44V7WNF/jxmvk+vZuniNcbT1Pb/ZFrxXQd0jbsO+SRx1Rbg2Y
-         3BmtoQnuWKV9IgWSrRnxQqWXks0xrpzNk/wYqOONtM5yLqEQFpCsML3YNRBlxyc6Mlz8
-         FqskhWkYbBXYuw9LXyEkkNNfUgBEi+i6a2iat0+QgmSUqTpAMyKwOdnCoytvLcKEA9UX
-         2Yrg==
-X-Gm-Message-State: ABuFfoiFta+CMEuJXhMRkgcT32gkz6OcGbvehBAFOX3MMUaaDAkt1nPx
-        EF7chhg0uQWheSS6DTkcg9+w/A==
-X-Google-Smtp-Source: ACcGV631BcI8b4q+y+2C2qWx8M47GgcnKZHTFTTDxiikpfK+MN4y4D08YKqjp6tBVSkBGaF0de6R0A==
-X-Received: by 2002:a63:7c1d:: with SMTP id x29-v6mr1118841pgc.273.1539205257314;
-        Wed, 10 Oct 2018 14:00:57 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id s13-v6sm33482587pfj.105.2018.10.10.14.00.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 14:00:56 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 14:00:55 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrea Arcangeli <aarcange@redhat.com>
-cc:     Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Argangeli <andrea@kernel.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-In-Reply-To: <20181009225147.GD9307@redhat.com>
-Message-ID: <alpine.DEB.2.21.1810101328550.231964@chino.kir.corp.google.com>
-References: <20180925120326.24392-1-mhocko@kernel.org> <20180925120326.24392-2-mhocko@kernel.org> <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com> <20181005073854.GB6931@suse.de> <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com>
- <20181005232155.GA2298@redhat.com> <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com> <20181009094825.GC6931@suse.de> <alpine.DEB.2.21.1810091424170.57306@chino.kir.corp.google.com> <20181009225147.GD9307@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KMqrOoCnzZMR476FmJIyPnG+HE5csbvbrDKYDpL7dV8=;
+        b=Fd4n2FnMBUj5Fx8wM92cgYM9Y9gPcLSYEwGZuZDbXogR5SugcejPkGgNMq+8UXy6E4
+         5rSkZh/+lrUQD8zcYciDyYMdc5ehRts2J7sKuJ0qYlIxHrQVEqVucuZavRcdYi4OTFDM
+         SbOxMhzztYi/7kq8x12P7t2za5ypRnCBdGuQ/lXsVM2QezE0CwxnUmhqbb80ak5a6bM4
+         Hn99hF23VNgTNwqPRi10QUIJytoou4Mn1FwF4Y5yS29fwI19Ui29rkalPkCjpv3EmlCt
+         Nsah2RItrtsOtvCpJn9IBEBiqsgLT63Sc1nJbkkSwuDfrTG4nTQ20n67GSUHHQ7QKnw5
+         qqoQ==
+X-Gm-Message-State: ABuFfohCxO6rpFyefB/nfpja5YIpvC6139/1Vg1fKrpGmNfNRkak7WG9
+        Vr5sLTTqqCA5z+i6DI8UGxI=
+X-Google-Smtp-Source: ACcGV60AHHDpZiIy9Yzt+Oqel7g+Ct6epmkStbBv7azcMLn84zIrK8TymzPaLyypSYBfk1aFluMZMQ==
+X-Received: by 2002:a17:902:4225:: with SMTP id g34-v6mr34649984pld.161.1539205382190;
+        Wed, 10 Oct 2018 14:03:02 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id a190-v6sm29789679pge.47.2018.10.10.14.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 14:03:01 -0700 (PDT)
+Subject: Re: [PATCH 05.1/16] of:overlay: missing name, phandle, linux,phandle
+ in new nodes
+To:     Alan Tull <atull@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+References: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+ <1539151495-8110-1-git-send-email-frowand.list@gmail.com>
+ <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
+ <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <e32a99a2-1db5-80e6-5022-83cd8fd07180@gmail.com>
+Date:   Wed, 10 Oct 2018 14:03:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Oct 2018, Andrea Arcangeli wrote:
-
-> On Tue, Oct 09, 2018 at 03:17:30PM -0700, David Rientjes wrote:
-> > causes workloads to severely regress both in fault and access latency when 
-> > we know that direct reclaim is unlikely to make direct compaction free an 
-> > entire pageblock.  It's more likely than not that the reclaim was 
-> > pointless and the allocation will still fail.
+On 10/10/18 13:40, Alan Tull wrote:
+> On Wed, Oct 10, 2018 at 1:49 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 10/09/18 23:04, frowand.list@gmail.com wrote:
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>>
+>>> "of: overlay: use prop add changeset entry for property in new nodes"
+>>> fixed a problem where an 'update property' changeset entry was
+>>> created for properties contained in nodes added by a changeset.
+>>> The fix was to use an 'add property' changeset entry.
+>>>
+>>> This exposed more bugs in the apply overlay code.  The properties
+>>> 'name', 'phandle', and 'linux,phandle' were filtered out by
+>>> add_changeset_property() as special properties.  Change the filter
+>>> to be only for existing nodes, not newly added nodes.
+>>>
+>>> The second bug is that the 'name' property does not exist in the
+>>> newest FDT version, and has to be constructed from the node's
+>>> full_name.  Construct an 'add property' changeset entry for
+>>> newly added nodes.
+>>>
+>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>>> ---
+>>>
+>>>
+>>> Hi Alan,
+>>>
+>>> Thanks for reporting the problem with missing node names.
+>>>
+>>> I was able to replicate the problem, and have created this preliminary
+>>> version of a patch to fix the problem.
+>>>
+>>> I have not extensively reviewed the patch yet, but would appreciate
+>>> if you can confirm this fixes your problem.
+>>>
+>>> I created this patch as patch 17 of the series, but have also
+>>> applied it as patch 05.1, immediately after patch 05/16, and
+>>> built the kernel, booted, and verified name and phandle for
+>>> one of the nodes in a unittest overlay for both cases.  So
+>>> minimal testing so far on my part.
+>>>
+>>> I have not verified whether the series builds and boots after
+>>> each of patches 06..16 if this patch is applied as patch 05.1.
+>>>
+>>> There is definitely more work needed for me to complete this
+>>> patch because it allocates some more memory, but does not yet
+>>> free it when the overlay is released.
+>>>
+>>> -Frank
+>>>
+>>>
+>>>  drivers/of/overlay.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++----
+>>>  1 file changed, 67 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>>> index 0b0904f44bc7..9746cea2aa91 100644
+>>> --- a/drivers/of/overlay.c
+>>> +++ b/drivers/of/overlay.c
+>>> @@ -301,10 +301,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+>>>       struct property *new_prop = NULL, *prop;
+>>>       int ret = 0;
+>>>
+>>> -     if (!of_prop_cmp(overlay_prop->name, "name") ||
+>>> -         !of_prop_cmp(overlay_prop->name, "phandle") ||
+>>> -         !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+>>> -             return 0;
+>>> +     if (target->in_livetree)
+>>> +             if (!of_prop_cmp(overlay_prop->name, "name") ||
+>>> +                 !of_prop_cmp(overlay_prop->name, "phandle") ||
+>>> +                 !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+>>> +                     return 0;
+>>
+>> This is a big hammer patch.
+>>
+>> Nobody should waste time reviewing this patch.
 > 
-> How do you know that? If all RAM is full of filesystem cache, but it's
-> not heavily fragmented by slab or other unmovable objects, compaction
-> will succeed every single time after reclaim frees 2M of cache like
-> it's asked to do.
+> I wasn't clear if you still could use the testing so I did re-run my
+> test.  This patch adds back some of the missing properties, but the
+> the kobject names aren't set as dev_name() returns NULL:
 > 
-> reclaim succeeds every time, compaction then succeeds every time.
+> * without this patch some of_node properties don't show up in sysfs:
+> root@arria10:~# ls
+> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+> clocks            compatible        interrupt-parent  interrupts        reg
 > 
-> Not doing reclaim after COMPACT_SKIPPED is returned simply makes
-> compaction unable to compact memory once all nodes are filled by
-> filesystem cache.
+> * with this patch, the of_node properties phandle and name are back:
+> root@arria10:~#  ls
+> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+> clocks            compatible        interrupt-parent  interrupts
+>  name              phandle           reg
+
+Thanks for the testing.  I'll keep chasing after this problem today.
+
+This is useful data for me as I was not looking under the /sys/bus/...
+tree that you reported, but was instead looking at /proc/device-tree/...
+which showed the same type of problem since the overlay I was using
+does not show up under /sys/bus/...
+
+I'll have to create a useful overlay test case that will show up under
+/sys/bus/...
+
+In the meantime, can you send me the base FDT and the overlay FDT for
+your test case?
+
+Thanks,
+
+Frank
+
+
+> 
+> root@arria10:~# cat
+> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node/name
+> freeze_controllerroot@arria10:~#  ("freeze_controller" w/o the \n so
+> the name is correct)
+> 
+> * with or without the patch I see the behavior I reported yesterday,
+> kobj names are NULL.
+> root@arria10:~# ls /sys/bus/platform/drivers/altera_freeze_br/
+> bind             ff200450.<NULL>  uevent           unbind
+> 
+> root@arria10:~# ls /sys/bus/platform/drivers/altera_gpio/
+> bind             ff200010.<NULL>  ff200020.<NULL>  ff200030.<NULL>
+> uevent           unbind
+> 
+> Alan
+> 
+> Alan
+> 
+>>
+>> The following part should not be needed (though the above section might have
+>> to become _slightly_ more complex).
+>>
+>> -Frank
+>>>
+>>>       if (target->in_livetree)
+>>>               prop = of_find_property(target->np, overlay_prop->name, NULL);
+>>> @@ -443,10 +444,13 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>>>               struct target *target, const struct device_node *overlay_node)
+>>>  {
+>>>       struct device_node *child;
+>>> -     struct property *prop;
+>>> +     struct property *prop, *name_prop;
+>>> +     bool has_name = false;
+>>>       int ret;
+>>>
+>>>       for_each_property_of_node(overlay_node, prop) {
+>>> +             if (!strcmp(prop->name, "name"))
+>>> +                     has_name = true;
+>>>               ret = add_changeset_property(ovcs, target, prop, 0);
+>>>               if (ret) {
+>>>                       pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+>>> @@ -455,6 +459,57 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>>>               }
+>>>       }
+>>>
+>>> +     /*
+>>> +      * With FDT version 0x10 we may not have the name property,
+>>> +      * recreate it here from the unit name if absent
+>>> +      */
+>>> +
+>>> +     if (!has_name) {
+>>> +             const char *p = target->np->full_name, *ps = p, *pa = NULL;
+>>> +             int len;
+>>> +
+>>> +             /*
+>>> +              * zzz
+>>> +              * TODO: stash name_prop on a list in ovcs, to be freed
+>>> +              * after overlay removed
+>>> +              */
+>>> +
+>>> +             while (*p) {
+>>> +                     if ((*p) == '@')
+>>> +                             pa = p;
+>>> +                     else if ((*p) == '/')
+>>> +                             ps = p + 1;
+>>> +                     p++;
+>>> +             }
+>>> +
+>>> +             if (pa < ps)
+>>> +                     pa = p;
+>>> +             len = (pa - ps) + 1;
+>>> +
+>>> +             name_prop = kmalloc(sizeof(*name_prop), GFP_KERNEL);
+>>> +             if (!name_prop)
+>>> +                     return -ENOMEM;
+>>> +
+>>> +             name_prop->name = kstrdup("name", GFP_KERNEL);
+>>> +             name_prop->value = kmalloc(len, GFP_KERNEL);
+>>> +             if (!name_prop->name || !name_prop->value) {
+>>> +                     ret = -ENOMEM;
+>>> +                     goto err_free_name_prop;
+>>> +             }
+>>> +
+>>> +             memcpy(name_prop->value, ps, len - 1);
+>>> +             ((char *)name_prop->value)[len - 1] = 0;
+>>> +
+>>> +             name_prop->length = strlen(name_prop->value) + 1;
+>>> +
+>>> +             ret = add_changeset_property(ovcs, target, name_prop, 0);
+>>> +             if (ret) {
+>>> +                     pr_debug("Failed to apply name_prop @%pOF/%s, err=%d\n",
+>>> +                              target->np, name_prop->name, ret);
+>>> +                     goto err_free_name_prop;
+>>> +             }
+>>> +     }
+>>> +
+>>>       for_each_child_of_node(overlay_node, child) {
+>>>               ret = add_changeset_node(ovcs, target, child);
+>>>               if (ret) {
+>>> @@ -466,6 +521,13 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+>>>       }
+>>>
+>>>       return 0;
+>>> +
+>>> +err_free_name_prop:
+>>> +     kfree(name_prop->name);
+>>> +     kfree(name_prop->value);
+>>> +     kfree(name_prop);
+>>> +     return ret;
+>>> +
+>>>  }
+>>>
+>>>  /*
+>>>
+>>
 > 
 
-For reclaim to assist memory compaction based on compaction's current 
-implementation, it would require that the freeing scanner starting at the 
-end of the zone can find these reclaimed pages as migration targets and 
-that compaction will be able to utilize these migration targets to make an 
-entire pageblock free.
-
-In such low on memory conditions when a node is fully saturated, it is 
-much less likely that memory compaction can free an entire pageblock even 
-if the freeing scanner can find these now-free pages.  More likely is that 
-we have unmovable pages in MIGRATE_MOVABLE pageblocks because the 
-allocator allows fallback to pageblocks of other migratetypes to return 
-node local memory (because affinity matters for kernel memory as it 
-matters for thp) rather than fallback to remote memory.
-
-This has caused us significant pain where we have 1.5GB of slab, for 
-example, spread over 100GB of pageblocks once the node has become 
-saturated.
-
-So reclaim is not always "pointless" as you point out, but it should at 
-least only be attempted if memory compaction could free an entire 
-pageblock if it had free memory to migrate to.  It's much harder to make 
-sure that these freed pages can be utilized by the freeing scanner.  Based 
-on how memory compaction is implemented, I do not think any guarantee can 
-be made that reclaim will ever be successful in allowing it to make 
-order-9 memory available, unfortunately.
-
-> > If memory compaction were patched such that it can report that it could 
-> > successfully free a page of the specified order if there were free pages 
-> > at the end of the zone it could migrate to, reclaim might be helpful.  But 
-> > with the current implementation, I don't think that is reliably possible.  
-> > These free pages could easily be skipped over by the migration scanner 
-> > because of the presence of slab pages, for example, and unavailable to the 
-> > freeing scanner.
-> 
-> Yes there's one case where reclaim is "pointless", but it happens once
-> and then COMPACT_DEFERRED is returned and __GFP_NORETRY will skip
-> reclaim then.
-> 
-> So you're right when we hit fragmentation there's one and only one
-> "pointless" reclaim invocation. And immediately after we also
-> exponentially backoff on the compaction invocations with the
-> compaction deferred logic.
-> 
-
-This assumes that every time we get COMPACT_SKIPPED that if we can simply 
-free memory that it'll succeed and that's definitely not the case based on 
-the implementation of memory compaction: compaction_alloc() needs to find 
-the memory and the migration scanner needs to free an entire pageblock.  
-The migration scanner doesn't even look ahead to see if that's possible 
-before starting to migrate pages, it's limited to COMPACT_CLUSTER_MAX.
-
-The scenario we have: compaction returns COMPACT_SKIPPED; reclaim 
-expensively tries to reclaim memory by thrashing the local node; the 
-compaction migration scanner has already passed over the now-freed pages 
-so it's inaccessible; if accessible, the migration scanner migrates memory 
-to the newly freed pages but fails to make a pageblock free; loop.
-
-My contention is that the second step is only justified if we can 
-guarantee the freed memory can be useful for compaction and that it can 
-free an entire pageblock for the hugepage if it can migrate.  Both of 
-those are not possible to determine based on the current implementation.
-
-> > I'd appreciate if Andrea can test this patch, have a rebuttal that we 
-> > should still remove __GFP_THISNODE because we don't care about locality as 
-> > much as forming a hugepage, we can make that change, and then merge this 
-> > instead of causing such massive fault and access latencies.
-> 
-> I can certainly test, but from source review I'm already convinced
-> it'll solve fine the "pathological THP allocation behavior", no
-> argument about that. It's certainly better and more correct your patch
-> than the current upstream (no security issues with lack of permissions
-> for __GFP_THISNODE anymore either).
-> 
-> I expect your patch will run 100% equivalent to __GFP_COMPACT_ONLY
-> alternative I posted, for our testcase that hit into the "pathological
-> THP allocation behavior".
-> 
-> Your patch encodes __GFP_COMPACT_ONLY into the __GFP_NORETRY semantics
-> and hardcodes the __GFP_COMPACT_ONLY for all orders = HPAGE_PMD_SIZE
-> no matter which is the caller.
-> 
-> As opposed I let the caller choose and left __GFP_NORETRY semantics
-> alone and orthogonal to the __GFP_COMPACT_ONLY semantics. I think
-> letting the caller decide instead of hardcoding it for order 9 is
-> better, because __GFP_COMPACT_ONLY made sense to be set only if
-> __GFP_THISNODE was also set by the caller.
-> 
-
-I've hardcoded it directly for pageblock_order because compaction works 
-over pageblocks and we lack the two crucial points of information I've 
-stated that determines whether direct reclaim could possibly be useful.  
-(It's more correctly implemented as order >= pageblock_order as opposed 
-to order == pageblock_order.)
-
-> If a driver does an order 9 allocation with __GFP_THISNODE not set,
-> your patch will prevent it to allocate remote THP if all remote nodes
-> are full of cache (which is a reasonable common assumption as more THP
-> are allocated over time eating in all free memory).
-
-Iff it's using __GFP_NORETRY, yes, the allocation and remote access 
-latency that is incurred is the same as for thp.  Hugetlbfs doesn't use 
-__GFP_NORETRY, it uses __GFP_RETRY_MAYFAIL, so it will attempt to reclaim 
-memory after my patch.
-
-My patch is assuming that a single call to reclaim followed up by another 
-attempt at compaction is not beneficial for pageblock_order sized 
-allocations with __GFP_NORETRY because it's unlikely to either free an 
-entire pageblock and compaction may not be able to access this memory.  
-It's based on how memory compaction is implemented rather than any special 
-heuristic.
-
-I won't argue if you protect this logic with __GFP_COMPACT_ONLY, but I 
-think thp allocations should always have __GFP_NORETRY based on 
-compaction's implementation.
-
-I see removing __GFP_THISNODE as a separate discussion: if, after my patch 
-(perhaps with a modification for __GFP_COMPACT_ONLY on top of it), you 
-still get unacceptable fault latency and can show that remote access 
-latency to remotely allocated hugepage is better on some platform that 
-isn't Haswell, Naples, and Rome, we can address that but it will probably 
-require more work that simply unsetting __GFP_THISNODE because it will 
-depend on the latency to certain remote nodes over others.
