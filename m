@@ -2,116 +2,104 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4098C4161B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18FBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AECD2085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AECD2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 6CDA32085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:27:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DllcVTVv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CDA32085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJJVsA (ORCPT
+        id S1727532AbeJJVti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:48:00 -0400
-Received: from shell.v3.sk ([90.176.6.54]:53494 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeJJVr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:47:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E0105BCF62;
-        Wed, 10 Oct 2018 16:25:31 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BPkrXXem0ap3; Wed, 10 Oct 2018 16:25:21 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 65983BCF5E;
-        Wed, 10 Oct 2018 16:25:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id M16OtDS2XjH9; Wed, 10 Oct 2018 16:25:12 +0200 (CEST)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 8F761BCF6B;
-        Wed, 10 Oct 2018 16:25:11 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 8/8] Input: olpc_apsp: allocate the GPIOs used
-Date:   Wed, 10 Oct 2018 16:25:04 +0200
-Message-Id: <20181010142504.233467-9-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181010142504.233467-1-lkundrak@v3.sk>
-References: <20181010142504.233467-1-lkundrak@v3.sk>
+        Wed, 10 Oct 2018 17:49:38 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43513 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbeJJVti (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 17:49:38 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p34-v6so4125215lfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 07:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hZvxuafgnN9LV74qclQCyNqJ1ARC5Hh1dFCIELTgzjw=;
+        b=DllcVTVvA/uV5u5/YTMrIPmpubNP9T3++RZDFalQzo2v7diYOQhA7SPGdriWKZgJI/
+         P544t9GuFFsqPDl96hDng1zT5Liz9ocoBvdfuXX1pNQIDnBpWgJyqsgyjPnq/wqT53vF
+         P5n+4gyxIwG7o5MF3im7kCOv0l94V5sa2VRKU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hZvxuafgnN9LV74qclQCyNqJ1ARC5Hh1dFCIELTgzjw=;
+        b=DXUwKiGlRxuOvsPtHYxD4gtFmXuVg/2Ox0pqyUAXB1lZpDrCUwsNQNjX/6NNHIEdqI
+         zXRMpMsYeelRrz3Gmoy934Dx1uvWJiqugYPQhHD8rzjNqHxYpllBzX9wqGorXFP7Rdrw
+         zBxp+ZT1u4OgzJzKNL+PIbkcbpuQWJ05Rq/XFB2PO8BPw5ThSYNnZUVFa6oTHOhCCYF1
+         tHLFFuBy3R/mTWAl29bDNE+CNF8SPkj9pQP8LcDCmU+/5EVX+xyNlTsgXq7nrCTzgJkd
+         GfJTNxR8E1ErHTqRcXTUpyUcwWtAux5cr1EMd5gH9oYse1VslDn/+mDIUnxWzcXEA4HU
+         UIzg==
+X-Gm-Message-State: ABuFfogNzhmQ/G2vUqquwV1h45PxJNtkz4vUB90TPAawvsFMtu5wahOF
+        DAzyK4olqTXpQaoBIpakAOPAOQ==
+X-Google-Smtp-Source: ACcGV62/ybPXFWk0Biy/aFjr7dCG/XG3ETci33LJ/CAv9i0vuGGiEYNBErkX908+ocW8aXkMbGRfpA==
+X-Received: by 2002:ac2:5082:: with SMTP id f2-v6mr1924296lfm.47.1539181631122;
+        Wed, 10 Oct 2018 07:27:11 -0700 (PDT)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id x64-v6sm4986784lfa.34.2018.10.10.07.27.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 07:27:10 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: bpf: install script with_addr.sh
+Date:   Wed, 10 Oct 2018 16:27:04 +0200
+Message-Id: <20181010142704.26990-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Take the GPIO lines are used by the SP. The driver doesn't touch the
-lines -- this is done to disallow anything else from fiddling with
-them because that would confuse the SP firmware.
+When test_flow_dissector.sh runs it complains that it can't find script
+with_addr.sh:
 
-Also, the lines are now nicely visible in /sys/kernel/debug/gpio.
+./test_flow_dissector.sh: line 81: ./with_addr.sh: No such file or
+directory
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Rework so that with_addr.sh gets installed, add it to
+TEST_PROGS_EXTENDED variable.
+
+Fixes: 50b3ed57dee9 ("selftests/bpf: test bpf flow dissection")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/input/serio/olpc_apsp.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/testing/selftests/bpf/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_a=
-psp.c
-index fe9e19014e70..287759c5f36d 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/delay.h>
- #include <linux/clk.h>
-+#include <linux/gpio/consumer.h>
-=20
- /*
-  * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 control=
-ler.
-@@ -76,6 +77,8 @@ struct olpc_apsp {
- 	struct serio *padio;
- 	void __iomem *base;
- 	struct clk *clk;
-+	struct gpio_desc *clk_gpio;
-+	struct gpio_desc *data_gpio;
- 	int open_count;
- 	int irq;
- };
-@@ -211,6 +214,16 @@ static int olpc_apsp_probe(struct platform_device *p=
-dev)
- 	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
-=20
-+	priv->clk_gpio =3D devm_gpiod_get_optional(&pdev->dev, "clk",
-+							GPIOD_ASIS);
-+	if (IS_ERR(priv->clk_gpio))
-+		return PTR_ERR(priv->clk_gpio);
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 1381ab81099c..efd108ff737d 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -51,6 +51,8 @@ TEST_PROGS := test_kmod.sh \
+ 	test_skb_cgroup_id.sh \
+ 	test_flow_dissector.sh
+ 
++TEST_PROGS_EXTENDED := with_addr.sh
 +
-+	priv->data_gpio =3D devm_gpiod_get_optional(&pdev->dev, "data",
-+							GPIOD_ASIS);
-+	if (IS_ERR(priv->data_gpio))
-+		return PTR_ERR(priv->data_gpio);
-+
- 	/* KEYBOARD */
- 	kb_serio =3D kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!kb_serio)
---=20
-2.19.0
+ # Compile but not part of 'make run_tests'
+ TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr test_skb_cgroup_id_user \
+ 	flow_dissector_load test_flow_dissector
+-- 
+2.19.1
 
