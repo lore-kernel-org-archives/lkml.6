@@ -2,101 +2,92 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6C7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F51EC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F7D20841
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F7D20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=intra2net.com
+	by mail.kernel.org (Postfix) with ESMTP id 4811020841
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:07:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4811020841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJJP2W (ORCPT
+        id S1726902AbeJJP22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:28:22 -0400
-Received: from rs07.intra2net.com ([85.214.138.66]:39332 "EHLO
-        rs07.intra2net.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJP2V (ORCPT
+        Wed, 10 Oct 2018 11:28:28 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:36103 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJP22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:28:21 -0400
-X-Greylist: delayed 421 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Oct 2018 11:28:20 EDT
-Received: from mail.m.i2n (unknown [172.17.128.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by rs07.intra2net.com (Postfix) with ESMTPS id 7091A15000CA;
-        Wed, 10 Oct 2018 10:00:20 +0200 (CEST)
-Received: from localhost (mail.m.i2n [127.0.0.1])
-        by localhost (Postfix) with ESMTP id 222412D9;
-        Wed, 10 Oct 2018 10:00:20 +0200 (CEST)
-X-Virus-Scanned: by Intra2net Mail Security (AVE=8.3.52.82,VDF=8.15.8.188)
-Received: from storm.m.i2n (storm.m.i2n [172.16.1.2])
-        by mail.m.i2n (Postfix) with ESMTP id BEAD722E;
-        Wed, 10 Oct 2018 10:00:13 +0200 (CEST)
-From:   Thomas Jarosch <thomas.jarosch@intra2net.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bin Meng <bmeng.cn@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt" quirk
-Date:   Wed, 10 Oct 2018 10:00:13 +0200
-Message-ID: <5897590.Qva4cvS4Tx@storm.m.i2n>
-Organization: Intra2net AG
-In-Reply-To: <20181009170158.GA5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com> <CAEUhbmUBic3RJbMH6bukw3NVis4qxMKr_pqJhn14vFtpGvES=w@mail.gmail.com> <20181009170158.GA5906@bhelgaas-glaptop.roam.corp.google.com>
+        Wed, 10 Oct 2018 11:28:28 -0400
+Received: by mail-wm1-f50.google.com with SMTP id a8-v6so4631722wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:07:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=60RjsazI5P2OfbzBraBQxNizSHqCqnbN/t6PHSLvfLo=;
+        b=Hl8K9VHZvBbjEI0SLAxh8JlJgLA7emPfeS8phLNFR+hWNCAYqrX/Yli9yyiOFIel92
+         w7EOWXbMulUtV2NuvxqMElZHdnrEg7k9GFDfvbnrpjoEsI4A2vioaVWHos2ci5UNog4q
+         t8h+0yAkxUk5ylWr5n+Z39pIT63InNM2KaA+Av+XFjP6QHL1e2kGVpdmnUvjrtToCUgk
+         Q062GYW5dLiNtwB8w7uoXMDmr2c29m+Vqtg6Jc394JOvtuMu5m0ijn4LbNR4cb2AyfXA
+         u20Hgn+a7CwXxLAfjGBViw6qYuVftALx+Xdh1rS/JJ1lrkRaWKpN6D5XHoWInMZuyKx2
+         ypFQ==
+X-Gm-Message-State: ABuFfogNe2v4i0Z3fEukMocoA7yRuphhxnmzSPiUXtljsiIHMHrAsDvx
+        sham7wmdCv1xe0OzUB0CtPs=
+X-Google-Smtp-Source: ACcGV63Rpj4T3aKBtdCiwGHXml+ZetJImBiKOQ2zkaI3LfIPYBZFJYO269nuhgZFgPnhqKydJotBBA==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15-v6mr4805370wmc.101.1539158846765;
+        Wed, 10 Oct 2018 01:07:26 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id a205-v6sm12772165wmh.19.2018.10.10.01.07.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 01:07:25 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id F14EB12500C; Wed, 10 Oct 2018 10:07:24 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 10:07:24 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Arun KS <arunks@codeaurora.org>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, vbabka@suse.cz, iamjoonsoo.kim@lge.com,
+        gregkh@linuxfoundation.org, osalvador@suse.de, malat@debian.org,
+        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
+        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
+Message-ID: <20181010080724.GA20338@techadventures.net>
+References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello together,
+On Fri, Oct 05, 2018 at 01:40:05PM +0530, Arun KS wrote:
+> When free pages are done with higher order, time spend on
+> coalescing pages by buddy allocator can be reduced. With
+> section size of 256MB, hot add latency of a single section
+> shows improvement from 50-60 ms to less than 1 ms, hence
+> improving the hot add latency by 60%. Modify external
+> providers of online callback to align with the change.
 
-On Tuesday, 9 October 2018 19:01:58 CEST Bjorn Helgaas wrote:
-> > > Do you happen to know if Windows has the same problem?  I.e., if you
-> > > boot an old version of Windows with a new GPU, and unplug the VGA
-> > > cable, does Windows crash?  If Windows can figure out how to handle
-> > > that situation gracefully, Linux should be able to do it, too.
-> > 
-> > I suspect Windows cannot handle it too. Without the GPU awareness, the
-> > interrupt line is simply on and no driver claims the devices and will
-> > cause issues. I can test this.
-> 
-> If you could test this, that would be great.  I would be quite
-> surprised if Windows crashed when you unplug the VGA cable.
+Hi Arun, out of curiosity:
 
-[original patch author from 2012 chiming in here]
+could you please explain how exactly did you mesure the speed
+improvement?
 
-When doing a test on Windows, I guess it's vital to use a generic VGA / VESA 
-driver. The Intel GPU driver will modify the interrupt configuration 
-registers. Also at least I don't know if Windows has similar logic like Linux 
-to disable spurious interrupts after XX unhandled interrupts.
-Personally I'm unsure if the Windows test is worth the time.
-
-Back in 2012 I tried to report this as a video BIOS bug via the Intel Open 
-Source Technology Center. There was not much interest to report an issue to 
-the BIOS developers. I have private emails from other people with similar 
-problems on "Kenosha Pass" based boards. One of them talked to an actual Intel 
-BIOS engineer in 2014, but still that didn't get anything fixed.
-
-Regarding a generic fix: The problem is testing on real hardware.
-Some Intel GPUs have different configuration registers. The Intel GPU driver 
-could be used as template, but doing a fix without actual hardware to verify 
-it is unsafe (=might mess up the system in unexpected ways).
-
-Related ideas from Daniel Vetter in 2014:
-https://lists.freedesktop.org/archives/intel-gfx/2014-August/050448.html
-
-Cheers,
-Thomas
-
-
-
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
