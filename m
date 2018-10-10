@@ -2,134 +2,86 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2E8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2A8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FA920858
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:25:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="brEKFMPm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FA920858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E8CBC20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8CBC20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeJJTrC (ORCPT
+        id S1726825AbeJJTrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:47:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38918 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbeJJTrB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:47:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=l5HgXudRo/pDiprhmaIgNFDr6UzvKOBYblCMU6cOosY=; b=brEKFMPmZP2NvBIADEaT21Ke/G
-        giCaxdL0kwzbU1j1k+Y30CD+s0d7mRIMtaf6oa+swYFVKsOWh8zEwg2nJdgyvFj5XJeupbtZiXWLE
-        YoO72vgGg6dBEAbnMBu71vyNpRPRfFxinc9YLY/kTmRu4kWuv3nmVW4KOmunxgvjUJERJ7Pf6PZ3U
-        3j4adsj78eUqBN+sHSOjWcQzZ57Qoh11s1H89F+N9kv1zEX55BiBLUGQa1LgDd566H9aw17m+Dt7V
-        x8hEIH9fhc08V9qW5P1Li7lo7363/ZSCobxhugf3e0NR6u4IOlD3tVYHPaHzon497i0mP1QA5GpUG
-        WbecOJbA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gADXs-0000dS-Nn; Wed, 10 Oct 2018 12:24:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8C2C22029856A; Wed, 10 Oct 2018 14:24:54 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 14:24:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Henrik Austad <henrik@austad.us>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        alessio.balsini@gmail.com, bristot@redhat.com, will.deacon@arm.com,
-        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, linux-rt-users@vger.kernel.org
-Subject: Re: [RFD/RFC PATCH 0/8] Towards implementing proxy execution
-Message-ID: <20181010122454.GR5663@hirez.programming.kicks-ass.net>
-References: <20181009092434.26221-1-juri.lelli@redhat.com>
- <20181010115639.GA25534@sisyphus.home.austad.us>
+        Wed, 10 Oct 2018 15:47:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38414 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726649AbeJJTrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:47:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7D4B9B091;
+        Wed, 10 Oct 2018 12:25:41 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 14:25:39 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
+        hannes@cmpxchg.org, akpm@linux-foundation.org, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, yang.s@alibaba-inc.com,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: Re: INFO: rcu detected stall in shmem_fault
+Message-ID: <20181010122539.GI5873@dhcp22.suse.cz>
+References: <000000000000dc48d40577d4a587@google.com>
+ <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
+ <20181010085945.GC5873@dhcp22.suse.cz>
+ <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
+ <20181010113500.GH5873@dhcp22.suse.cz>
+ <20181010114833.GB3949@tigerII.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181010115639.GA25534@sisyphus.home.austad.us>
+In-Reply-To: <20181010114833.GB3949@tigerII.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:56:39PM +0200, Henrik Austad wrote:
-> On Tue, Oct 09, 2018 at 11:24:26AM +0200, Juri Lelli wrote:
-> > Hi all,
->=20
-> Hi, nice series, I have a lot of details to grok, but I like the idea of =
-PE
->=20
-> > Proxy Execution (also goes under several other names) isn't a new
-> > concept, it has been mentioned already in the past to this community
-> > (both in email discussions and at conferences [1, 2]), but no actual
-> > implementation that applies to a fairly recent kernel exists as of today
-> > (of which I'm aware of at least - happy to be proven wrong).
-> >=20
-> > Very broadly speaking, more info below, proxy execution enables a task
-> > to run using the context of some other task that is "willing" to
-> > participate in the mechanism, as this helps both tasks to improve
-> > performance (w.r.t. the latter task not participating to proxy
-> > execution).
->=20
-> From what I remember, PEP was originally proposed for a global EDF, and a=
-s=20
-> far as my head has been able to read this series, this implementation is=
-=20
-> planned for not only deadline, but eventuall also for sched_(rr|fifo|othe=
-r)=20
-> - is that correct?
+On Wed 10-10-18 20:48:33, Sergey Senozhatsky wrote:
+> On (10/10/18 13:35), Michal Hocko wrote:
+> > > Just flooding out of memory messages can trigger RCU stall problems.
+> > > For example, a severe skbuff_head_cache or kmalloc-512 leak bug is causing
+> > 
+> > [...]
+> > 
+> > Quite some of them, indeed! I guess we want to rate limit the output.
+> > What about the following?
+> 
+> A bit unrelated, but while we are at it:
+> 
+>   I like it when we rate-limit printk-s that lookup the system.
+> But it seems that default rate-limit values are not always good enough,
+> DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST can still be too
+> verbose. For instance, when we have a very slow IPMI emulated serial
+> console -- e.g. baud rate at 57600. DEFAULT_RATELIMIT_INTERVAL and
+> DEFAULT_RATELIMIT_BURST can add new OOM headers and backtraces faster
+> than we evict them.
+> 
+> Does it sound reasonable enough to use larger than default rate-limits
+> for printk-s in OOM print-outs? OOM reports tend to be somewhat large
+> and the reported numbers are not always *very* unique.
+> 
+> What do you think?
 
-This implementation covers every scheduling class unconditionally. It
-directly uses the scheduling function to order things; where PI
-re-implements the FIFO scheduling function to order the blocked lists.
-
-> I have a bit of concern when it comes to affinities and and where the=20
-> lock owner will actually execute while in the context of the proxy,=20
-> especially when you run into the situation where you have disjoint CPU=20
-> affinities for _rr tasks to ensure the deadlines.
-
-The affinities of execution contexts are respected.
-
-> I believe there were some papers circulated last year that looked at=20
-> something similar to this when you had overlapping or completely disjoint=
-=20
-> CPUsets I think it would be nice to drag into the discussion. Has this be=
-en=20
-> considered? (if so, sorry for adding line-noise!)
-
-Hurm, was that one of Bjorn's papers? Didn't that deal with AC of
-disjoint/overlapping sets?
-
-> > One can define the scheduling context of a task as all the information
-> > in task_struct that the scheduler needs to implement a policy and the
-> > execution contex as all the state required to actually "run" the task.
-> > An example of scheduling context might be the information contained in
-> > task_struct se, rt and dl fields; affinity pertains instead to execution
-> > context (and I guess decideing what pertains to what is actually up for
-> > discussion as well ;-). Patch 04/08 implements such distinction.
->=20
-> I really like the idea of splitting scheduling ctx and execution context!
-
-Right; so this whole thing relies on 'violating' affinities for
-scheduling contexts, but respects affinities for execution contexts.
-
-The basic observation is that affinities only matter when you execute
-code.
-
-This then also gives a fairly clear definition of what an execution
-context is.
+I do not really care about the current inerval/burst values. This change
+should be done seprately and ideally with some numbers.
+-- 
+Michal Hocko
+SUSE Labs
