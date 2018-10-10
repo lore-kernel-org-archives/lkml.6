@@ -2,230 +2,157 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C064C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32637C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 145552150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C718D2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:05:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifyQwNh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145552150C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoBICkNc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C718D2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbeJJT0n (ORCPT
+        id S1727103AbeJJT1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:26:43 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51131 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbeJJT0n (ORCPT
+        Wed, 10 Oct 2018 15:27:22 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51402 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJJT1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:26:43 -0400
-Received: by mail-it1-f195.google.com with SMTP id k206-v6so1498368ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 05:04:52 -0700 (PDT)
+        Wed, 10 Oct 2018 15:27:22 -0400
+Received: by mail-it1-f196.google.com with SMTP id 74-v6so7600004itw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 05:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OTlklHlMT6t/foWmubxPEEF28fE0Umj3UB/67j3ty14=;
-        b=ifyQwNh4t6USOfmnRYDHLK1nEi6xzOWh1Av5IJ3q6CbqjuMZSowADHio+glgR5XDge
-         /pRiq0+3519ZlwmDtWbcS5amFI1ssxSxDBnke9ma9lwz9QKdlG2NRDXkrzeVdfX1w1jJ
-         OSq0ECNvEZj0PoBr0NPR8+PM5ZglFUOZwEVPA=
+        bh=YyfZN+0j/z+343HgJOgW8xv2RX3IlS9AJzvnd7co7gs=;
+        b=FoBICkNcwkLCNYO9AI5wYBuaUhHK5fTnb/o64jgCml8y/9biVDPWx/do2HRLIWU2/L
+         GfPfgcgOZrldfQCHz6obrhP91nv5evFyk58Y2Mmr6zMjbHCib+M5TEERd5N6bEPp7CAx
+         K+qJlYfagnan4f/Z26BSo8YA7QsWrefir8Wiw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OTlklHlMT6t/foWmubxPEEF28fE0Umj3UB/67j3ty14=;
-        b=KoLimtCoid+iKnGFfblH2sCAuRyBZKcQ+BDKF2rPJbU2i0bxwooH4zNoEnhy187aP9
-         Ay3GYQTe8K6pNuq/43CyghqEThyAeK2uc0/usX5fXGJS/uBngxAOXTnJha8vlUxqaiPI
-         7Vu/dNUSGcmrSNdMyHvTgGCpZc8VtICgNFwz/QC+nKTFwpWoN3D6AT9Xs2t1lQRPU90x
-         hLoLUuDp275FYrDaw6oPtKRWZvu0Y9rwdE78bS9LDRAwC6O6YRpUpYKTctgU7wdjapqh
-         f9b55jRK9A8Z7pX7Nf6r4qqjjPBwRKufA9BELAmRtGDTbINz1RJ9UdYm7jGHbcFTn0K1
-         s9MQ==
-X-Gm-Message-State: ABuFfogzgMNJhkljduaNKBAPYfXszmIBfGlI9PPp/JN9OJzbKIw52RJ3
-        0wh/bGrXJ2UWwayZVD35yLEh/ZWsW9ptq3lwCs1xrw==
-X-Google-Smtp-Source: ACcGV61Xzb/5GvRwGw0dgaxBncol1V1ojeiCFSrX615nWmXSV84hz6gOWK0jdeTT6VtjTYRbkAebNxRJ+eHgNp0uZeI=
-X-Received: by 2002:a02:5a01:: with SMTP id v1-v6mr8054549jaa.11.1539173091456;
- Wed, 10 Oct 2018 05:04:51 -0700 (PDT)
+        bh=YyfZN+0j/z+343HgJOgW8xv2RX3IlS9AJzvnd7co7gs=;
+        b=YBXs5SBSTSp2P10PvmJslI/7xxr+WQNNJ+DQxAWORcyo2K4+wfvB/qgl+WqFnqrU3y
+         saKyS2TAVbUq/32cv1es24/lzoVWKvqaQyG8QbIuMn13GhIG0y3GmKeaT+f5TGTi39cw
+         1mooS70XO92TxccVBEUOERVWzMRQxb8a5wWw7k0Y4ZKRF6lhpCpvQzNVBr7AqBHfId8N
+         HJdmB4xHDGcOohKM+SCrEUgPU4lmgDmTQlr3mlzKQyO1LLjrKIXgq3NTXnxvPM5906yw
+         VZStDnEtvnln1znY28rj98j1s8krZ1zMtUQifRaICoYN5TkcyjygSTDQ+PkYQM/WsR2a
+         QtKA==
+X-Gm-Message-State: ABuFfojsB21prDpMJXhR2gIuNGW0A6nxv3yf/8MSrWm76T+M8EA/bFBJ
+        ZzkQKbs8uvEeyKUdiaOYR5idW6Uo73SYCh1oCwq/SbpC
+X-Google-Smtp-Source: ACcGV62072jNgZH+pX3VeY9lDeBn9NVnbJC4YzcSbqbIbHei8FG5mbG5LC9cGgwHrW8RXxVmL9a1Bd2tzbq35vokDug=
+X-Received: by 2002:a02:9643:: with SMTP id c61-v6mr26939494jai.37.1539173130685;
+ Wed, 10 Oct 2018 05:05:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010061751.GA37224@gmail.com> <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
- <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
- <20181010095459.orw2gse75klpwosx@queper01-lin> <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
- <20181010103623.ttjexasymdpi66lu@queper01-lin>
-In-Reply-To: <20181010103623.ttjexasymdpi66lu@queper01-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 10 Oct 2018 14:04:40 +0200
-Message-ID: <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ionela Voinescu <ionela.voinescu@arm.com>
+References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-2-swboyd@chromium.org>
+In-Reply-To: <20181008163216.97436-2-swboyd@chromium.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 10 Oct 2018 14:05:18 +0200
+Message-ID: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        evgreen@chromium.org, Thierry Reding <treding@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 at 12:36, Quentin Perret <quentin.perret@arm.com> wrote:
->
-> On Wednesday 10 Oct 2018 at 12:14:32 (+0200), Vincent Guittot wrote:
-> > On Wed, 10 Oct 2018 at 11:55, Quentin Perret <quentin.perret@arm.com> wrote:
-> > >
-> > > Hi Vincent,
-> > >
-> > > On Wednesday 10 Oct 2018 at 10:50:05 (+0200), Vincent Guittot wrote:
-> > > > The problem with reflecting directly the capping is that it happens
-> > > > far more often than the pace at which cpu_capacity_orig is updated in
-> > > > the scheduler.
-> > >
-> > > Hmm, how can you be so sure ? That most likely depends on the workload,
-> > > the platform and the thermal governor. Some platforms heat up slowly,
-> > > some quickly. The pace at which the thermal governor will change things
-> > > should depend on that I assume.
-> > >
-> > > > This means that at the moment when scheduler uses the
-> > > > value, it might not be correct anymore.
-> > >
-> > > And OTOH, when you remove a cap for example, it will take time before
-> > > the scheduler can see the newly available capacity if you need to wait
-> > > for the signal to decay. So you are using a wrong information too in
-> > > that scenario.
-> >
-> > But we stay consistant with all other metrics. The same happen when a
-> > task decide to stay idle for a long time after some activity... You
-> > will have to wait for the signal to decay
->
-> Because you see that as a task going idle. You could also say that
-> removing the cap from a CPU is equivalent to migrating a task off that
-> CPU. In this case you should see the newly available cap pretty much
-> immediately.
->
-> Also, I feel like the whole thermal capping story could interest the
-> Intel folks who, IIRC, were discussing how to represent their 'boosted'
-> OPPs in the scheduler some time ago. You can see the Intel boost thing
-> as a cap I think -- some OPPs can be inaccessible in some case. I'd be
-> interested to see what's their take on this.
->
-> > > > Then, this value are also used
-> > > > when building the sched_domain and setting max_cpu_capacity which
-> > > > would also implies the rebuilt the sched_domain topology ...
-> > >
-> > > Wait what ? I thought the thermal cap was reflected in capacity_of, not
-> > > capacity_orig_of ... You need to rebuild the sched_domain in case of
-> > > thermal pressure ?
->
-> I can't locate where you need to do this in the series. Do you actually
-> need to rebuild the sd hierarchy ?
+On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-This patchset doesn't touch cpu_capacity_orig and doesn't need to  as
-it assume that the max capacity is unchanged but some capacity is
-momentary stolen by thermal.
- If you want to reflect immediately all thermal capping change, you
-have to update this field and all related fields and struct around
+> gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
+> and then the address of that argument is assigned to the gpio chips
+> gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
+> work, because we've just assigned some stack address to a pointer that
+> we plan to dereference later in gpiochip_irq_map(). I ran into this
+> issue with the KASAN report below when gpiochip_irq_map() tried to setup
+> the parent irq with a total junk pointer for the 'parents' array.
+>
+> BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
+> Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
+>
+> CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
+> Call trace:
+> [<ffffff9008093638>] dump_backtrace+0x0/0x718
+> [<ffffff9008093da4>] show_stack+0x20/0x2c
+> [<ffffff90096b9224>] __dump_stack+0x20/0x28
+> [<ffffff90096b91c8>] dump_stack+0x80/0xbc
+> [<ffffff900845a350>] print_address_description+0x70/0x238
+> [<ffffff900845a8e4>] kasan_report+0x1cc/0x260
+> [<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
+> [<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
+> [<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
+> [<ffffff900820d13c>] irq_create_mapping+0x120/0x234
+> [<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
+> [<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
+> [<ffffff900917114c>] of_irq_get+0x138/0x198
+> [<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
+> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+> [<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
+> [<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
+> [<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
+> [<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
+> [<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
+> [<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
+> [<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
+> [<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
+> [<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
+> [<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
+> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+> [<ffffff9008ca59cc>] __driver_attach+0x100/0x194
+> [<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
+> [<ffffff9008ca58c0>] driver_attach+0x48/0x54
+> [<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
+> [<ffffff9008ca8448>] driver_register+0x1ac/0x230
+> [<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
+> [<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
+> [<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
+> [<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
+> [<ffffff90096e8240>] kernel_init+0x14/0x110
+> [<ffffff9008086fcc>] ret_from_fork+0x10/0x18
+>
+> The buggy address belongs to the page:
+> page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
+> flags: 0x4000000000000000()
+> raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+> raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
+> >ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+>                                                        ^
+>  ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>
+> Let's leave around one unsigned int in the gpio_irq_chip struct for the
+> single parent irq case and repoint the 'parents' array at it. This way
+> code is left mostly intact to setup parents and we waste an extra few
+> bytes per structure of which there should be only a handful in a system.
+>
+> Cc: Evan Green <evgreen@chromium.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
->
-> > > Hmm, let me have a closer look at the patches, I must have missed
-> > > something ...
-> > >
-> > > > The pace of changing the capping is to fast to reflect that in the
-> > > > whole scheduler topology
-> > >
-> > > That's probably true in some cases, but it'd be cool to have numbers to
-> > > back up that statement, I think.
-> > >
-> > > Now, if you do need to rebuild the sched domain topology every time you
-> > > update the thermal pressure, I think the PELT HL is _way_ too short for
-> > > that ... You can't rebuild the whole thing every 32ms or so. Or am I
-> > > misunderstanding something ?
-> > >
-> > > > > Thara, have you tried to experiment with a simpler implementation as
-> > > > > suggested by Ingo ?
-> > > > >
-> > > > > Also, assuming that we do want to average things, do we actually want to
-> > > > > tie the thermal ramp-up time to the PELT half life ? That provides
-> > > > > nice maths properties wrt the other signals, but it's not obvious to me
-> > > > > that this thermal 'constant' should be the same on all platforms. Or
-> > > > > maybe it should ?
-> > > >
-> > > > The main interest of using PELT signal is that thermal pressure will
-> > > > evolve at the same pace as other signals used in the scheduler.
-> > >
-> > > Right, I think this is a nice property too (assuming that we actually
-> > > want to average things out).
-> > >
-> > > > With
-> > > > thermal pressure, we have the exact same problem as with RT tasks. The
-> > > > thermal will cap the max frequency which will cap the utilization of
-> > > > the tasks running on the CPU
-> > >
-> > > Well, the nature of the signal is slightly different IMO. Yes it's
-> > > capacity, but you're no actually measuring time spent on the CPU. All
-> > > other PELT signals are based on time, this thermal thing isn't, so it is
-> > > kinda different in a way. And I'm still wondering if it could be helpful
-> >
-> > hmmm ... it is based on time too.
->
-> You're not actually measuring the time spent on the CPU by the 'thermal
-> task'. There is no such thing as a 'thermal task'. You're just trying to
-> model things like that, but the thermal stuff isn't actually
-> interrupting running tasks to eat CPU cycles. It just makes thing run
-> slower, which isn't exactly the same thing IMO.
->
-> But maybe that's a detail.
->
-> > Both signals (current ones and thermal one) are really close. The main
-> > difference with other utilization signal is that instead of providing
-> > a running/not running boolean that is then weighted by the current
-> > capacity, the signal uses direclty the capped max capacity to reflect
-> > the amount of cycle that is stolen by thermal mitigation.
-> >
-> > > to be able to have a different HL for that thermal signal. That would
-> > > 'break' the nice maths properties we have, yes, but is it a problem or is
-> > > it actually helpful to cope with the thermal characteristics of
-> > > different platforms ?
-> >
-> > If you don't use the sign kind of signal with the same responsiveness,
-> > you will start to see some OPP toggles as an example when the thermal
-> > state change because one metrics will change faster than the other one
-> > and you can't have a correct view of the system. Same problem was
-> > happening with rt task.
->
-> Well, that wasn't the problem with rt tasks. The problem with RT tasks
-> was that the time they spend on the CPU wasn't accounted _at all_ when
-> selecting frequency for CFS, not that the accounting was at a different
-> pace ...
+OMG critical fix. I fixed up the thing the kbuild robot was complaining
+about with some vanilla kerneldoc and applied for fixes since it's kind
+of urgent.
 
-The problem was the same with RT, the cfs utilization was lower than
-reality because RT steals soem cycle to CFS
-So schedutil was selecting a lower frequency when cfs was running
-whereas the CPU was fully used.
-The same can happen with thermal:
-cap the max freq because of thermal
-the utilization with decrease.
-remove the cap
-the utilization is still low and you will select a low OPP because you
-don't take into account cycle stolen by thermal like with RT
+Please check the result.
 
-Regards,
-Vincent
->
-> Thanks,
-> Quentin
+Yours,
+Linus Walleij
