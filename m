@@ -2,174 +2,91 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5F9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99FAF214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:34:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EvDBTT7n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99FAF214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B892214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B892214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeJJPzM (ORCPT
+        id S1727237AbeJJPzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:55:12 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:37671 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbeJJPzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:55:12 -0400
-Received: by mail-yb1-f195.google.com with SMTP id h1-v6so1867645ybm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/D54NYkwSD4yjpNi2rPABFvSi4zTQPWtZmsvl3VrBMI=;
-        b=EvDBTT7nWnL5qHpRiF/PrDWVXyj1j0geetXoRsh7RYHhZSwQUsg2hAJiP/f8eCwM1f
-         NQLlOGEgQY+twva4PEamWGZy18lgU1A+L/hMcf35S/PAl78osvh+KxEkJBSYrknq4JcH
-         JJ1CmGwVZZdqOxw+uDOxDGItrDLx7XeEV6SbE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/D54NYkwSD4yjpNi2rPABFvSi4zTQPWtZmsvl3VrBMI=;
-        b=Na0NCmgr002qp9xNl6e0ihtmj/+nuRhHiFJupupDEpTEC7yxa1+9wwmql61hmp5o2z
-         5InMcUsiMaLopwFfK2xXSR5XuhmpzkQ0hddC4Ykru7v9a9EEk9OIjUXALOt+Bil8+Tdm
-         vuH+hBzynHReeOPp3rU0+7w3/Rj6GrkxOx4EyXdyFcmRZkVguf40v0giQgK3l93gwoN/
-         REl2ezNIU14Xwp5i4TFbez2/2MF4WLk2tNQ8VdfTuZ7bthBUO6s7AIO80iaDyAJCH6kg
-         OoZgKWvAdg76bDl17O2nY7wrZFl3bIH+TkxlRw2qgFP7pJDANDV5imPXhqu3NL8JxEdy
-         GBPQ==
-X-Gm-Message-State: ABuFfojUM3qjCEZZ7BoliDrxfREHH3MufIkpXSxfyMTWqpdbsqexdZ/2
-        ohTyMSrqGlmJOl6h/FkCSfQX+k7ixj0dzw==
-X-Google-Smtp-Source: ACcGV60snkqIU6C6FULloAQAMBy6ZP+H//jceGKK7Ii/NTcCCe+1lpc41HUYPwBKWNiL2HuaC3CrkQ==
-X-Received: by 2002:a25:4155:: with SMTP id o82-v6mr17318877yba.310.1539160445449;
-        Wed, 10 Oct 2018 01:34:05 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id o195-v6sm8282403ywd.82.2018.10.10.01.34.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 01:34:04 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id y14-v6so1844614ywa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 01:34:04 -0700 (PDT)
-X-Received: by 2002:a0d:fdc6:: with SMTP id n189-v6mr17980009ywf.443.1539160443877;
- Wed, 10 Oct 2018 01:34:03 -0700 (PDT)
+        Wed, 10 Oct 2018 11:55:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45050 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbeJJPzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 11:55:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 57DCF20898; Wed, 10 Oct 2018 10:34:32 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2488F207C3;
+        Wed, 10 Oct 2018 10:34:22 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 10:34:22 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH net-next v2 2/2] net: phy: mscc: fix memory leak in
+ vsc8574_config_pre_init
+Message-ID: <20181010083422.phokcciqdkzm6u7w@qschulz>
+References: <cover.1539159556.git.gustavo@embeddedor.com>
+ <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-References: <20180828080240.10982-1-paul.kocialkowski@bootlin.com> <20180828080240.10982-2-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20180828080240.10982-2-paul.kocialkowski@bootlin.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 10 Oct 2018 17:33:52 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5An1htKNpNJmwHAzw6Oz+Z=T_MuBg+T=_yMbT7SkkokBw@mail.gmail.com>
-Message-ID: <CAAFQd5An1htKNpNJmwHAzw6Oz+Z=T_MuBg+T=_yMbT7SkkokBw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: v4l: Add definitions for the HEVC slice format
- and controls
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devel@driverdev.osuosl.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>, thomas.petazzoni@bootlin.com,
-        linux-sunxi@googlegroups.com, ayaka <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="k52oevuihyj2ev4i"
+Content-Disposition: inline
+In-Reply-To: <6161326e265a99f8ec8e0f7028790a0131c5404e.1539159556.git.gustavo@embeddedor.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
 
-On Tue, Aug 28, 2018 at 5:02 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> This introduces the required definitions for HEVC decoding support with
-> stateless VPUs. The controls associated to the HEVC slice format provide
-> the required meta-data for decoding slices extracted from the bitstream.
->
+--k52oevuihyj2ev4i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for being late to the party. Please see my comments inline. Only
-high level, because I don't know too much about HEVC.
+Hi Gustavo,
 
-[snip]
-> +``V4L2_CID_MPEG_VIDEO_HEVC_SPS (struct)``
-> +    Specifies the Sequence Parameter Set fields (as extracted from the
-> +    bitstream) for the associated HEVC slice data.
-> +    The bitstream parameters are defined according to the ISO/IEC 23008-2 and
-> +    ITU-T Rec. H.265 specifications.
-> +
-> +.. c:type:: v4l2_ctrl_hevc_sps
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_hevc_sps
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u8
-> +      - ``chroma_format_idc``
-> +      - Syntax description inherited from the specification.
+On Wed, Oct 10, 2018 at 10:31:39AM +0200, Gustavo A. R. Silva wrote:
+> In case memory resources for *fw* were successfully allocated,
+> release them before return.
+>=20
+> Addresses-Coverity-ID: 1473968 ("Resource leak")
+> Fixes: 00d70d8e0e78 ("net: phy: mscc: add support for VSC8574 PHY")
 
-I wonder if it wouldn't make sense to instead document this in C code
-using kernel-doc and then have the kernel-doc included in the sphinx
-doc. It seems to be possible, according to
-https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html .
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
 
-Such approach would have the advantage of the person looking through C
-cross reference being able to actually see the documentation of the
-struct in question and also making it easier to ensure the relevant C
-code and documentation are in sync. (Although this is UAPI so it would
-be unlikely to change too often or at all.)
+Thanks!
+Quentin
 
-[snip]
-> +``V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS (struct)``
-> +    Specifies various slice-specific parameters, especially from the NAL unit
-> +    header, general slice segment header and weighted prediction parameter
-> +    parts of the bitstream.
-> +    The bitstream parameters are defined according to the ISO/IEC 23008-2 and
-> +    ITU-T Rec. H.265 specifications.
+--k52oevuihyj2ev4i
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In the Chromium H.264 controls, we define this as an array control, so
-that we can include multiple slices in one buffer and each entry of
-the array has an offset field pointing to the part of the buffer that
-contains corresponding slice data. I've mentioned this in the
-discussion on Alex's stateless decoder interface documentation, so
-let's keep the discussion there, though.
+-----BEGIN PGP SIGNATURE-----
 
-[snip]
-> @@ -1696,6 +1708,11 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->         case V4L2_CTRL_TYPE_H264_DECODE_PARAMS:
->                 return 0;
->
-> +       case V4L2_CTRL_TYPE_HEVC_SPS:
-> +       case V4L2_CTRL_TYPE_HEVC_PPS:
-> +       case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
-> +               return 0;
-> +
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlu9uY0ACgkQhLiadT7g
+8aMohBAAlQkYmbTdzStBkzHF5bBU4ItEg/jl0yjL/1tHSy2l4R/tJTGpatX6h61/
+bwzx/+M/MLxpbcNSPIgUoONRWELGqM8oCSSYYO7sXxNLnB9x7HsNUziPg2X4zDY2
+Ie7Ot/vm+gwdNd+Hs9KzCng98bUC8gR1CQqrd4o0fSQg3sz2GpW2ExC4xGa9s0PZ
+crd88sSjCy9BRou/QKXqQyF2p8mqPGPA36hMnnHEooWkzYJskJkuuwtQOIrvBAZ+
+e459/3bqV5qFeXiT+rxVx7MKZ+Ede7v7v3Ahm9Zjee2yE+us3RDydZXg+TMqtUvu
+UY74G0pJDP6gt6blbN9YhLNqG5q3HBUTPsooYLJOhUCSg+GQ2exQUAaeaAeTf/B6
+6lOuN+vCYotXHVCy5h+TZUeVDbAT748NCM/49NxPzWASAGqtp06OLV4GhCwrwbIf
+CJJWB1+QgnYDoQisTcQ4/AaTOGfTKDCJRU9KSs6ghIDQraQRP6VkUOt4WvZbQ18m
+4h2gDFIfn3jMktifUK6c/EmIde2ILBlQTBYq6SvrHISXDdBaDMvdjn05J260YZZS
+DNwsnFpz56DmByVYDKEpb1lu1MwHpf95fHMgq+kIuevo69PcrB/TGADEeukRUKCu
+cCDEbPPFV7qHFof35GJ31VIRKkfAru9uW2acCmaNwNVnTSj0UkU=
+=Llml
+-----END PGP SIGNATURE-----
 
-I wonder to what extent we should be validating this. I can see 3 options:
-1) Defer validation to drivers completely. - Potentially error prone
-and leading to a lot of code duplication?
-2) Validate completely. - Might need solving some interesting
-problems, e.g. validating reference frame indices in DPB against
-current state of respective VB2 queue...
-3) Validate only what we can easily do, defer more complicated
-validation to the drivers. - Potentially a good middle ground?
-
-Best regards,
-Tomasz
+--k52oevuihyj2ev4i--
