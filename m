@@ -2,103 +2,103 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09D3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94811C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A017D206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A017D206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3513F2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:07:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="OuPDGtBC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3513F2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJKD1Q (ORCPT
+        id S1727649AbeJKDbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 23:27:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39577 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbeJKD1Q (ORCPT
+        Wed, 10 Oct 2018 23:31:17 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57276 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727478AbeJKDbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 23:27:16 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1F26C809C2; Wed, 10 Oct 2018 22:03:32 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 22:03:32 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Subject: Re: -next20181010 regression: thinkpad x60 (32 bit) dies during boot.
-Message-ID: <20181010200331.GA13975@amd>
-References: <20181010195920.GA13860@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <20181010195920.GA13860@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 10 Oct 2018 23:31:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8CEB58EE303;
+        Wed, 10 Oct 2018 13:07:34 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id eCbcbPILmxLB; Wed, 10 Oct 2018 13:07:34 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3BE2D8EE0C7;
+        Wed, 10 Oct 2018 13:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1539202054;
+        bh=vGInqjBjcy0QDZE0ighwmRKXcXbrOC3uzP0ZevZkNlc=;
+        h=Subject:From:To:Cc:Date:From;
+        b=OuPDGtBC5Bgd973zrRGItzTP9Or4BsF6CoXdVzim8D2ch9TG6IGty73FmGCHW1e/v
+         Y2gOBymu1XAnRp7qrf/Nhywvyz1aRZOTXYa8JQ11e+Ym9YyK4ftuzC0k6hWw3B9ABf
+         AnHwVveFz4GnT7ABpeuP1Gr8oKVw1LP+2EUoI6kU=
+Message-ID: <1539202053.12644.8.camel@HansenPartnership.com>
+Subject: [PATCH v2 0/3] code of conduct fixes
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     ksummit-discuss@lists.linuxfoundation.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Wed, 10 Oct 2018 13:07:33 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Resend to show accumulated tags and also to add a third patch listing
+the TAB as the reporting point as a few people seem to want.  If it
+gets the same level of support, I'll send it in with the other two.
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
 
-Hi!
+Previous cover letter:
 
-> I updated to todays next... and boot crashes with
->=20
-> ..
-> Call Trace:
-> kick_ilb
-> trigger_load_balance
-> ? active_load..
-> scheduler_tick
-> update_process_times
-> tick_nohz_handler
->=20
-> -next20181005 worked ok.
 
-Backtrace indicates problem with nohz, so I added idle=3Dpoll.
+We've had several threads discussing potential changes to the code of
+conduct but Mauro is the only person to have proposed an actual patch. 
+In order to move the debate on, I'm presenting two patches, one to fix
+the email problem Mauro identified and the other to strip the
+enforcement section pending community discussion as Shuah suggested.
 
-Now I have
+I'll take responsibility for collecting any tags people want to add
+(review/ack/sign off, etc) and sending the patch in as a signed pull
+request before 4.19 final if they get enough community support.
 
-Run /sbin/init as init process
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted
-in: pgd_alloc...
-=2E..
-dump_stack
-=2E...
-pgd_alloc
-mm_init.isra.
-mm_alloc
-__do_execve_file
-do_execve
-=2E..
+Note, I've sent both patches in as a series to facilitate review and
+discussion, but they are separable if one is looked on with less favour
+than the other.
 
-Good ideas welcome :-).
+It was also a bit unclear which list to send this to, but I finally
+settled on linux-kernel as the catch all and ksummit-discuss since
+that's where most of the current discussion is.  I can add other lists
+as people suggest them.
 
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+James
 
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+---
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+James Bottomley (3):
+  code-of-conduct: Fix the ambiguity about collecting email addresses
+  code-of-conduct: Strip the enforcement paragraph pending community
+    discussion
+  code-of-conduct: Add back the TAB as the central reporting point
 
-iEYEARECAAYFAlu+WxMACgkQMOfwapXb+vJqygCghKP6OHMzCUzQZZOKOG1NZDuF
-S74An36KL2K/ljQKLS3INyNkJeKb97y6
-=0CU2
------END PGP SIGNATURE-----
+ Documentation/process/code-of-conduct.rst | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---ZPt4rx8FFjLCG7dd--
+-- 
+2.13.7
+
