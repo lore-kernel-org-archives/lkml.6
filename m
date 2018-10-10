@@ -2,197 +2,139 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E00C00449
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CA4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E54B2087D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SckED/wg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NlB30NYK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E54B2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id ABF252087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF252087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeJJNdT (ORCPT
+        id S1726871AbeJJNd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 09:33:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40638 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJNdT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 09:33:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9351A60C63; Wed, 10 Oct 2018 06:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539151963;
-        bh=+T79VCL8rQMgdRg0vUhtPIRuPqt6d2LXW1Bs97epAGQ=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=SckED/wg7w7HP0hVQf29py+bQYSSQjl57s11X7TAsM//7A1ZRws80a9LlEMfGXpuB
-         j8FHGMXtOgz7dKhxRnIJua4UgUcA7mTRubWyDOLTiHIz4L50+7H5hDFNiRnCQynHUb
-         mj2nGQdybx/7pxkNI1b25kZnGlvbm+eKxwx2MyBA=
-Received: from [192.168.225.247] (unknown [49.32.132.157])
+        Wed, 10 Oct 2018 09:33:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:27030 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726488AbeJJNd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 09:33:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2018 23:12:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,363,1534834800"; 
+   d="scan'208";a="87153673"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Oct 2018 23:12:54 -0700
+Received: from tiger-server (dazhang1-ssd.sh.intel.com [10.239.48.128])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95AB76021C;
-        Wed, 10 Oct 2018 06:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539151962;
-        bh=+T79VCL8rQMgdRg0vUhtPIRuPqt6d2LXW1Bs97epAGQ=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=NlB30NYKQnaDb0WUzXtwb4iuEg85MIxaJCYD824eSWOeFF7fEtf0QiCkYoUkIbLPA
-         nUhgo2d0FLkzqVkjonkJDEbkFSBFZkEqGNXJwbSwwEvPFA9Nx6O/y7mVfyE0hyWGz4
-         ETfsGlxdPEmufVIJPYWGNwtqz5mILHqBeEKrPoiY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95AB76021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for
- SDM845
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
- <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
- <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
- <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
-Message-ID: <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
-Date:   Wed, 10 Oct 2018 11:42:27 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by linux.intel.com (Postfix) with ESMTPS id 1189758014B;
+        Tue,  9 Oct 2018 23:12:51 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 20:52:12 +0800
+From:   Yi Zhang <yi.z.zhang@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     alexander.h.duyck@linux.intel.com,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181010125211.GA45572@tiger-server>
+Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
+        alexander.h.duyck@linux.intel.com,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20181009170051.GA40606@tiger-server>
+ <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+ <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+ <CAPcyv4gZV_V=iY0mHiiAWwbynqtPxLTwdZ0j0vQ0F95ZZ4nTZg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gZV_V=iY0mHiiAWwbynqtPxLTwdZ0j0vQ0F95ZZ4nTZg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-10-09 at 14:19:32 -0700, Dan Williams wrote:
+> On Tue, Oct 9, 2018 at 1:34 PM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+> >
+> > On 10/9/2018 11:04 AM, Dan Williams wrote:
+> > > On Tue, Oct 9, 2018 at 3:21 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+> [..]
+> > > That comment is incorrect, device-pages are never onlined. So I think
+> > > we can just skip that call to __SetPageReserved() unless the memory
+> > > range is MEMORY_DEVICE_{PRIVATE,PUBLIC}.
+> > >
+> >
+> > When pages are "onlined" via __free_pages_boot_core they clear the
+> > reserved bit, that is the reason for the comment. The reserved bit is
+> > meant to indicate that the page cannot be swapped out or moved based on
+> > the description of the bit.
+> 
+> ...but ZONE_DEVICE pages are never onlined so I would expect
+> memmap_init_zone_device() to know that detail.
+> 
+> > I would think with that being the case we still probably need the call
+> > to __SetPageReserved to set the bit with the expectation that it will
+> > not be cleared for device-pages since the pages are not onlined.
+> > Removing the call to __SetPageReserved would probably introduce a number
+> > of regressions as there are multiple spots that use the reserved bit to
+> > determine if a page can be swapped out to disk, mapped as system memory,
+> > or migrated.
+
+Another things, it seems page_init/set_reserved already been done in the
+move_pfn_range_to_zone
+    |-->memmap_init_zone
+    	|-->for_each_page_in_pfn
+		|-->__init_single_page
+		|-->SetPageReserved
+
+Why we haven't remove these redundant initial in memmap_init_zone?
+
+Correct me if I missed something.
+
+> 
+> Right, this is what Yi is working on... the PageReserved flag is
+> problematic for KVM. Auditing those locations it seems as long as we
+> teach hibernation to avoid ZONE_DEVICE ranges we can safely not set
+> the reserved flag for DAX pages. What I'm trying to avoid is a local
+> KVM hack to check for DAX pages when the Reserved flag is not
+> otherwise needed.
+Thanks Dan. Provide the patch link.
+
+https://lore.kernel.org/lkml/cover.1536342881.git.yi.z.zhang@linux.intel.com
 
 
-On 10/10/2018 2:22 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-10-09 10:26:38)
->> Hello Stephen,
->>
->> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-10-04 05:02:26)
->>>> Add support for the lpass clock controller found on SDM845 based devices.
->>>> This would allow lpass peripheral loader drivers to control the clocks to
->>>> bring the subsystem out of reset.
->>>> LPASS clocks present on the global clock controller would be registered
->>>> with the clock framework based on the device tree flag. Also do not gate
->>>> these clocks if they are left unused.
->>>
->>> Why not gate them? This statement states what the code is doing, not why
->>> it's doing it which is the more crucial information that should be
->>> described in the commit text. Also, please add a comment about it to the
->>> code next to the flag.
->>>
->>> I am concerned that it doesn't make any sense though, so probably it
->>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
->>> other larger bug that needs to be fixed.
->>>
->>
->> It does not have any bug, it is just that to access these lpass
->> registers we would need the GCC lpass registers to be enabled. I would
->> update the same in the commit text.
->>
->> During clock late_init these clocks should not be accessed to check the
->> clock status as they would result in unclocked access. The client would
->> request these clocks in the correct order and it would not have any issue.
->>
-> 
-> That seems like the bug right there. If the LPASS registers can't be
-> accessed unless the clks in GCC are enabled then this driver needs to
-> turn the clks on before reading/writing registers. Marking the clks as
-> ignore unused is skipping around the real problem.
-> 
 
-If the driver requests for the clocks they would maintain the order. But 
-if the clock late init call is invoked before the driver requests, there 
-is no way I could manage this dependency, that is the only reason to 
-mark them unused.
-
->>
->>>>
->>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->>>> ---
->>>> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->>>> index 08d593e..6379b8b 100644
->>>> --- a/drivers/clk/qcom/gcc-sdm845.c
->>>> +++ b/drivers/clk/qcom/gcc-sdm845.c
->>>> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
->>>>           if (ret)
->>>>                   return ret;
->>>>
->>>> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protected")) {
->>>> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =
->>>> +                       &gcc_lpass_q6_axi_clk.clkr;
->>>> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =
->>>> +                       &gcc_lpass_sway_clk.clkr;
-> 
-> For all intents and purposes could we not just mark these two as
-> CLK_IS_CRITICAL and then let the LPASS turn these on and off when it
-> cares (does it ever do so)? Or even just turn them on once in probe here
-> with direct register writes and then not care anymore to touch them
-> again? Or do we need to turn these clks on again later on when the
-> subsystem crashes to read/write the registers and cycle the clks back on
-> and off?
-> 
->>>> +       }
->>>> +
->>>>           return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
->>>>    }
->>>>
->>>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
->>>> new file mode 100644
->>>> index 0000000..f7b9b0f
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
->>>> +               },
->>>> +       },
->>>> +};
->>>> +
->>>> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
->>>> +                                    const struct qcom_cc_desc *desc)
->>>> +{
->>>> +       struct regmap *regmap;
->>>> +       struct resource *res;
->>>> +       void __iomem *base;
->>>> +
->>>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
->>>> +       base = devm_ioremap_resource(&pdev->dev, res);
->>>> +       if (IS_ERR(base))
->>>> +               return PTR_ERR(base);
->>>> +
->>>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
->>>> +       if (IS_ERR(regmap))
->>>> +               return PTR_ERR(regmap);
->>>
->>> If this happens again in the future we should move this into the
->>> common.c file and let qcom_cc_probe_index() exist.
->>>
->>
->> Yes, I agree, could submit a patch to add the new function and then
->> clean it up.
-> 
-> Ok, but please don't do anything now because we don't care yet.
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> _______________________________________________
+> Linux-nvdimm mailing list
+> Linux-nvdimm@lists.01.org
+> https://lists.01.org/mailman/listinfo/linux-nvdimm
