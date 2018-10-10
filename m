@@ -2,100 +2,106 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EF0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051E3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5AD20841
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5AD20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B4AE52087D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4AE52087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbeJJPcp (ORCPT
+        id S1726911AbeJJPkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:32:45 -0400
-Received: from mga04.intel.com ([192.55.52.120]:63188 "EHLO mga04.intel.com"
+        Wed, 10 Oct 2018 11:40:15 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60090 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbeJJPcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:32:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 01:11:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,363,1534834800"; 
-   d="scan'208";a="76863008"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Oct 2018 01:05:18 -0700
-Date:   Wed, 10 Oct 2018 16:02:38 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        jgross@suse.com, chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH v4 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
- Hyper-V
-Message-ID: <20181010080238.GI11769@yi.y.sun>
-References: <1538987374-51217-1-git-send-email-yi.y.sun@linux.intel.com>
- <1538987374-51217-3-git-send-email-yi.y.sun@linux.intel.com>
- <20181009105427.GA102322@gmail.com>
- <20181010022536.GH11769@yi.y.sun>
- <20181010055026.GA17688@gmail.com>
+        id S1726468AbeJJPkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 11:40:15 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9x1sFUDDZZuc; Wed, 10 Oct 2018 10:19:11 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA7500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:7500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 32B241EC0266;
+        Wed, 10 Oct 2018 10:19:11 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 10:19:06 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Richard Biener <rguenther@suse.de>, Michael Matz <matz@suse.de>,
+        gcc@gcc.gnu.org, Nadav Amit <namit@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181010081906.GA5533@zn.tnic>
+References: <20181003213100.189959-1-namit@vmware.com>
+ <20181007091805.GA30687@zn.tnic>
+ <20181007132228.GJ29268@gate.crashing.org>
+ <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de>
+ <20181008073128.GL29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
+ <20181009145330.GT29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
+ <20181010072240.GB103159@gmail.com>
+ <20181010080324.GV29268@gate.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181010055026.GA17688@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181010080324.GV29268@gate.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-10 07:50:26, Ingo Molnar wrote:
-> 
-> * Yi Sun <yi.y.sun@linux.intel.com> wrote:
-> 
-> > On 18-10-09 12:54:27, Ingo Molnar wrote:
-> > > 
-> > > * Yi Sun <yi.y.sun@linux.intel.com> wrote:
-> > > 
-> > > > Follow PV spinlock mechanism to implement the callback functions
-> > > > to allow the CPU idling and kicking operations on Hyper-V.
-> > > 
-> > > > +#if defined(CONFIG_SMP)
-> > > > +	smp_ops.smp_prepare_boot_cpu = hv_smp_prepare_boot_cpu;
-> > > > +#endif
-> > > 
-> > > What's wrong with using the common pattern of:
-> > > 
-> > > 	#ifdef CONFIG_SMP
-> > > 
-> > > ?
-> > 
-> > There is no difference between "#ifdef" and "#if defined". I just copied
-> > it from "hv_smp_prepare_boot_cpu()". Do you need me submit a fix patch
-> > after this set is merged?
-> 
-> It's equivalent code, my point was that '#ifdef CONFIG_XYZ' is the shorter, more canonical 
-> pattern we use in the kernel most of the time, it's shorter, easier to read. We only use 
-> defined() for longer preprocessor directive conditions, and it's a pattern for "there's 
-> something more complex here than a simple CONFIG_XYZ dependency".
-> 
-> Anyway, Thomas fixed it up in the latest iteration.
-> 
-> Thanks,
-> 
-> 	Ingo
+On Wed, Oct 10, 2018 at 03:03:25AM -0500, Segher Boessenkool wrote:
+> The code immediately after this makes it size 1, even for things like
+> asm(""), I suppose this works better for the inliner.  But that's a detail
+> (and it might change); the description says "consider this asm as minimum
+> length and cost for inlining decisions", which works for either 0 or 1.
 
-Thank you! I will notice it in the future.
+Thanks for implementing this, much appreciated. If you need people to
+test stuff, lemme know.
 
-BRs,
-Yi Sun
+> You can think of it as meaning "we want this asm inlined always", and then
+> whether that actually happens depends on if the function around it is
+> inlined or not.
+
+My only concern is how we would catch the other extremity where the
+inline asm grows too big and we end up inlining it everywhere and thus
+getting fat. The 0day bot already builds tinyconfigs but we should be
+looking at vmlinux size growth too.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
