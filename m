@@ -2,173 +2,277 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609CDC46462
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1A1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13ED920870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BB742151C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 20:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sflZ9heF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13ED920870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBrJZ3xw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB742151C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbeJKEEP (ORCPT
+        id S1725988AbeJKEF2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 00:04:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60280 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 00:05:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbeJKEEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 00:04:15 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725769AbeJKEF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 00:05:28 -0400
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB655206B2;
-        Wed, 10 Oct 2018 20:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60F49214DA;
+        Wed, 10 Oct 2018 20:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539204024;
-        bh=+REUhVqudCDZ0ybdWwS79aPg7vizwloVonubyqav3ao=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sflZ9heFGKXjhZEnJivPerpUikJtEeLZAnUQ6dffc22NP1ENLdHcs7pS8ruv/pbo4
-         O9ixjt0eEjPJA6yM+kMr7atVTRuw4OOwwBU6lbwCKWB1bhKS0C8wxbgAqLq0SUmTtq
-         A1PcVx9MFxc9Uy0I9/NJeTSlstctsp7r9cPYFygw=
-Date:   Wed, 10 Oct 2018 15:40:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Steve Wise <swise@chelsio.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] PCI: remove DMA unmap wrappers
-Message-ID: <20181010204022.GG5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <20181009140824.18667-1-hch@lst.de>
- <20181009140824.18667-2-hch@lst.de>
+        s=default; t=1539204096;
+        bh=OrkN7KxkdSvrc20wJ/hQZ38586lSQ2+xdkl1UolA0h0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bBrJZ3xw1TDHbaEGmYsqNwjqFqdExNUfhc8ruLJZes+6Jg6fy1lRoyWzUXb27q4Q8
+         9Hmq3lbJ6FiXDiDwwztDtGuhUhRMSs5T2Nec2XGPoMx/4HrBgkuyViJl3mFEvf22uK
+         9fGUZQbyyIREeO6x81h6QYtXm0z3cIPVQvT+KQeE=
+Received: by mail-ed1-f52.google.com with SMTP id d15-v6so6192879edq.6;
+        Wed, 10 Oct 2018 13:41:36 -0700 (PDT)
+X-Gm-Message-State: ABuFfoj4INexkjKiVbF/b6Pp5QN+UO+RkUifMsbwvaBmvegM1HB+f9EF
+        QsckQjKCheXUHSgYHyU7uSnfZRVTKjsnRz5bAh8=
+X-Google-Smtp-Source: ACcGV63nyI/0I8uFmSBnmEJuKkDRZ+XJXPkaDLjKWvgtGflR9DOorpwtDSz08RqG4ZI0bqe32TNblg7hOFl3SZHYrcQ=
+X-Received: by 2002:a17:906:32d9:: with SMTP id k25-v6mr35353869ejk.211.1539204094756;
+ Wed, 10 Oct 2018 13:41:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181009140824.18667-2-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+ <1539151495-8110-1-git-send-email-frowand.list@gmail.com> <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
+In-Reply-To: <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Wed, 10 Oct 2018 15:40:58 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
+Message-ID: <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
+Subject: Re: [PATCH 05.1/16] of:overlay: missing name, phandle, linux,phandle
+ in new nodes
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc folks from MAINTAINERS]
+On Wed, Oct 10, 2018 at 1:49 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 10/09/18 23:04, frowand.list@gmail.com wrote:
+> > From: Frank Rowand <frank.rowand@sony.com>
+> >
+> >
+> > "of: overlay: use prop add changeset entry for property in new nodes"
+> > fixed a problem where an 'update property' changeset entry was
+> > created for properties contained in nodes added by a changeset.
+> > The fix was to use an 'add property' changeset entry.
+> >
+> > This exposed more bugs in the apply overlay code.  The properties
+> > 'name', 'phandle', and 'linux,phandle' were filtered out by
+> > add_changeset_property() as special properties.  Change the filter
+> > to be only for existing nodes, not newly added nodes.
+> >
+> > The second bug is that the 'name' property does not exist in the
+> > newest FDT version, and has to be constructed from the node's
+> > full_name.  Construct an 'add property' changeset entry for
+> > newly added nodes.
+> >
+> > Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> > ---
+> >
+> >
+> > Hi Alan,
+> >
+> > Thanks for reporting the problem with missing node names.
+> >
+> > I was able to replicate the problem, and have created this preliminary
+> > version of a patch to fix the problem.
+> >
+> > I have not extensively reviewed the patch yet, but would appreciate
+> > if you can confirm this fixes your problem.
+> >
+> > I created this patch as patch 17 of the series, but have also
+> > applied it as patch 05.1, immediately after patch 05/16, and
+> > built the kernel, booted, and verified name and phandle for
+> > one of the nodes in a unittest overlay for both cases.  So
+> > minimal testing so far on my part.
+> >
+> > I have not verified whether the series builds and boots after
+> > each of patches 06..16 if this patch is applied as patch 05.1.
+> >
+> > There is definitely more work needed for me to complete this
+> > patch because it allocates some more memory, but does not yet
+> > free it when the overlay is released.
+> >
+> > -Frank
+> >
+> >
+> >  drivers/of/overlay.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 67 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> > index 0b0904f44bc7..9746cea2aa91 100644
+> > --- a/drivers/of/overlay.c
+> > +++ b/drivers/of/overlay.c
+> > @@ -301,10 +301,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+> >       struct property *new_prop = NULL, *prop;
+> >       int ret = 0;
+> >
+> > -     if (!of_prop_cmp(overlay_prop->name, "name") ||
+> > -         !of_prop_cmp(overlay_prop->name, "phandle") ||
+> > -         !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+> > -             return 0;
+> > +     if (target->in_livetree)
+> > +             if (!of_prop_cmp(overlay_prop->name, "name") ||
+> > +                 !of_prop_cmp(overlay_prop->name, "phandle") ||
+> > +                 !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+> > +                     return 0;
+>
+> This is a big hammer patch.
+>
+> Nobody should waste time reviewing this patch.
 
-On Tue, Oct 09, 2018 at 04:08:22PM +0200, Christoph Hellwig wrote:
-> Only some of these were still used by the cxgb4 driver, and that despite
-> the fact that the driver otherwise uses the generic DMA API.
+I wasn't clear if you still could use the testing so I did re-run my
+test.  This patch adds back some of the missing properties, but the
+the kobject names aren't set as dev_name() returns NULL:
 
-This is trivial and I intend to apply it, so just copying cxgb4 folks
-as FYI.
+* without this patch some of_node properties don't show up in sysfs:
+root@arria10:~# ls
+/sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+clocks            compatible        interrupt-parent  interrupts        reg
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/infiniband/hw/cxgb4/qp.c | 10 +++++-----
->  drivers/infiniband/hw/cxgb4/t4.h |  2 +-
->  include/linux/pci-dma.h          | 12 ------------
->  include/linux/pci.h              |  1 -
->  4 files changed, 6 insertions(+), 19 deletions(-)
->  delete mode 100644 include/linux/pci-dma.h
-> 
-> diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-> index 347fe18b1a41..62d6f197ec0b 100644
-> --- a/drivers/infiniband/hw/cxgb4/qp.c
-> +++ b/drivers/infiniband/hw/cxgb4/qp.c
-> @@ -99,7 +99,7 @@ static void dealloc_oc_sq(struct c4iw_rdev *rdev, struct t4_sq *sq)
->  static void dealloc_host_sq(struct c4iw_rdev *rdev, struct t4_sq *sq)
->  {
->  	dma_free_coherent(&(rdev->lldi.pdev->dev), sq->memsize, sq->queue,
-> -			  pci_unmap_addr(sq, mapping));
-> +			  dma_unmap_addr(sq, mapping));
->  }
->  
->  static void dealloc_sq(struct c4iw_rdev *rdev, struct t4_sq *sq)
-> @@ -132,7 +132,7 @@ static int alloc_host_sq(struct c4iw_rdev *rdev, struct t4_sq *sq)
->  	if (!sq->queue)
->  		return -ENOMEM;
->  	sq->phys_addr = virt_to_phys(sq->queue);
-> -	pci_unmap_addr_set(sq, mapping, sq->dma_addr);
-> +	dma_unmap_addr_set(sq, mapping, sq->dma_addr);
->  	return 0;
->  }
->  
-> @@ -2521,7 +2521,7 @@ static void free_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
->  
->  	dma_free_coherent(&rdev->lldi.pdev->dev,
->  			  wq->memsize, wq->queue,
-> -			pci_unmap_addr(wq, mapping));
-> +			dma_unmap_addr(wq, mapping));
->  	c4iw_rqtpool_free(rdev, wq->rqt_hwaddr, wq->rqt_size);
->  	kfree(wq->sw_rq);
->  	c4iw_put_qpid(rdev, wq->qid, uctx);
-> @@ -2570,7 +2570,7 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
->  		goto err_free_rqtpool;
->  
->  	memset(wq->queue, 0, wq->memsize);
-> -	pci_unmap_addr_set(wq, mapping, wq->dma_addr);
-> +	dma_unmap_addr_set(wq, mapping, wq->dma_addr);
->  
->  	wq->bar2_va = c4iw_bar2_addrs(rdev, wq->qid, T4_BAR2_QTYPE_EGRESS,
->  				      &wq->bar2_qid,
-> @@ -2649,7 +2649,7 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
->  err_free_queue:
->  	dma_free_coherent(&rdev->lldi.pdev->dev,
->  			  wq->memsize, wq->queue,
-> -			pci_unmap_addr(wq, mapping));
-> +			dma_unmap_addr(wq, mapping));
->  err_free_rqtpool:
->  	c4iw_rqtpool_free(rdev, wq->rqt_hwaddr, wq->rqt_size);
->  err_free_pending_wrs:
-> diff --git a/drivers/infiniband/hw/cxgb4/t4.h b/drivers/infiniband/hw/cxgb4/t4.h
-> index e42021fd6fd6..fff6d48d262f 100644
-> --- a/drivers/infiniband/hw/cxgb4/t4.h
-> +++ b/drivers/infiniband/hw/cxgb4/t4.h
-> @@ -397,7 +397,7 @@ struct t4_srq_pending_wr {
->  struct t4_srq {
->  	union t4_recv_wr *queue;
->  	dma_addr_t dma_addr;
-> -	DECLARE_PCI_UNMAP_ADDR(mapping);
-> +	DEFINE_DMA_UNMAP_ADDR(mapping);
->  	struct t4_swrqe *sw_rq;
->  	void __iomem *bar2_va;
->  	u64 bar2_pa;
-> diff --git a/include/linux/pci-dma.h b/include/linux/pci-dma.h
-> deleted file mode 100644
-> index 0f7aa7353ca3..000000000000
-> --- a/include/linux/pci-dma.h
-> +++ /dev/null
-> @@ -1,12 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> -#ifndef _LINUX_PCI_DMA_H
-> -#define _LINUX_PCI_DMA_H
-> -
-> -#define DECLARE_PCI_UNMAP_ADDR(ADDR_NAME) DEFINE_DMA_UNMAP_ADDR(ADDR_NAME);
-> -#define DECLARE_PCI_UNMAP_LEN(LEN_NAME)   DEFINE_DMA_UNMAP_LEN(LEN_NAME);
-> -#define pci_unmap_addr             dma_unmap_addr
-> -#define pci_unmap_addr_set         dma_unmap_addr_set
-> -#define pci_unmap_len              dma_unmap_len
-> -#define pci_unmap_len_set          dma_unmap_len_set
-> -
-> -#endif
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 6925828f9f25..e938e80e59c1 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1342,7 +1342,6 @@ int pci_set_vga_state(struct pci_dev *pdev, bool decode,
->  
->  /* kmem_cache style wrapper around pci_alloc_consistent() */
->  
-> -#include <linux/pci-dma.h>
->  #include <linux/dmapool.h>
->  
->  #define	pci_pool dma_pool
-> -- 
-> 2.19.0
-> 
+* with this patch, the of_node properties phandle and name are back:
+root@arria10:~#  ls
+/sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+clocks            compatible        interrupt-parent  interrupts
+ name              phandle           reg
+
+root@arria10:~# cat
+/sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node/name
+freeze_controllerroot@arria10:~#  ("freeze_controller" w/o the \n so
+the name is correct)
+
+* with or without the patch I see the behavior I reported yesterday,
+kobj names are NULL.
+root@arria10:~# ls /sys/bus/platform/drivers/altera_freeze_br/
+bind             ff200450.<NULL>  uevent           unbind
+
+root@arria10:~# ls /sys/bus/platform/drivers/altera_gpio/
+bind             ff200010.<NULL>  ff200020.<NULL>  ff200030.<NULL>
+uevent           unbind
+
+Alan
+
+Alan
+
+>
+> The following part should not be needed (though the above section might have
+> to become _slightly_ more complex).
+>
+> -Frank
+> >
+> >       if (target->in_livetree)
+> >               prop = of_find_property(target->np, overlay_prop->name, NULL);
+> > @@ -443,10 +444,13 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+> >               struct target *target, const struct device_node *overlay_node)
+> >  {
+> >       struct device_node *child;
+> > -     struct property *prop;
+> > +     struct property *prop, *name_prop;
+> > +     bool has_name = false;
+> >       int ret;
+> >
+> >       for_each_property_of_node(overlay_node, prop) {
+> > +             if (!strcmp(prop->name, "name"))
+> > +                     has_name = true;
+> >               ret = add_changeset_property(ovcs, target, prop, 0);
+> >               if (ret) {
+> >                       pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
+> > @@ -455,6 +459,57 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+> >               }
+> >       }
+> >
+> > +     /*
+> > +      * With FDT version 0x10 we may not have the name property,
+> > +      * recreate it here from the unit name if absent
+> > +      */
+> > +
+> > +     if (!has_name) {
+> > +             const char *p = target->np->full_name, *ps = p, *pa = NULL;
+> > +             int len;
+> > +
+> > +             /*
+> > +              * zzz
+> > +              * TODO: stash name_prop on a list in ovcs, to be freed
+> > +              * after overlay removed
+> > +              */
+> > +
+> > +             while (*p) {
+> > +                     if ((*p) == '@')
+> > +                             pa = p;
+> > +                     else if ((*p) == '/')
+> > +                             ps = p + 1;
+> > +                     p++;
+> > +             }
+> > +
+> > +             if (pa < ps)
+> > +                     pa = p;
+> > +             len = (pa - ps) + 1;
+> > +
+> > +             name_prop = kmalloc(sizeof(*name_prop), GFP_KERNEL);
+> > +             if (!name_prop)
+> > +                     return -ENOMEM;
+> > +
+> > +             name_prop->name = kstrdup("name", GFP_KERNEL);
+> > +             name_prop->value = kmalloc(len, GFP_KERNEL);
+> > +             if (!name_prop->name || !name_prop->value) {
+> > +                     ret = -ENOMEM;
+> > +                     goto err_free_name_prop;
+> > +             }
+> > +
+> > +             memcpy(name_prop->value, ps, len - 1);
+> > +             ((char *)name_prop->value)[len - 1] = 0;
+> > +
+> > +             name_prop->length = strlen(name_prop->value) + 1;
+> > +
+> > +             ret = add_changeset_property(ovcs, target, name_prop, 0);
+> > +             if (ret) {
+> > +                     pr_debug("Failed to apply name_prop @%pOF/%s, err=%d\n",
+> > +                              target->np, name_prop->name, ret);
+> > +                     goto err_free_name_prop;
+> > +             }
+> > +     }
+> > +
+> >       for_each_child_of_node(overlay_node, child) {
+> >               ret = add_changeset_node(ovcs, target, child);
+> >               if (ret) {
+> > @@ -466,6 +521,13 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
+> >       }
+> >
+> >       return 0;
+> > +
+> > +err_free_name_prop:
+> > +     kfree(name_prop->name);
+> > +     kfree(name_prop->value);
+> > +     kfree(name_prop);
+> > +     return ret;
+> > +
+> >  }
+> >
+> >  /*
+> >
+>
