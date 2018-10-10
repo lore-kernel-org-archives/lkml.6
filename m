@@ -2,155 +2,86 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC29C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED061C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B362086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B362086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B1DBD2077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DBD2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJJT2H (ORCPT
+        id S1727031AbeJJT3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:28:07 -0400
-Received: from mga17.intel.com ([192.55.52.151]:5317 "EHLO mga17.intel.com"
+        Wed, 10 Oct 2018 15:29:42 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33002 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeJJT2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:28:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 05:06:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,364,1534834800"; 
-   d="scan'208";a="97942193"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Oct 2018 05:01:51 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>, lukas.bulwahn@gmail.com
-Subject: Re: [PATCH] drm/i915: Convert _print_param to a macro
-In-Reply-To: <CAKwvOdm-oiVvuX_QDjQ1QcO3+=XowHEnHgj3PyQ4hY=thrJGNA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181009171401.14980-1-natechancellor@gmail.com> <CAKwvOdm-oiVvuX_QDjQ1QcO3+=XowHEnHgj3PyQ4hY=thrJGNA@mail.gmail.com>
-Date:   Wed, 10 Oct 2018 15:01:40 +0300
-Message-ID: <87woqqm2mz.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726562AbeJJT3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:29:42 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 583A71A014A;
+        Wed, 10 Oct 2018 14:07:49 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4BBB71A0093;
+        Wed, 10 Oct 2018 14:07:49 +0200 (CEST)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8ABA520619;
+        Wed, 10 Oct 2018 14:07:48 +0200 (CEST)
+From:   laurentiu.tudor@nxp.com
+To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        arm@kernel.org
+Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
+        shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
+        bharat.bhushan@nxp.com, arnd@arndb.de,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH v3 01/22] soc/fsl/qman: fixup liodns only on ppc targets
+Date:   Wed, 10 Oct 2018 15:07:19 +0300
+Message-Id: <20181010120737.30300-2-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
+References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 09 Oct 2018, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> On Tue, Oct 9, 2018 at 10:14 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
->>
->> When building the kernel with Clang with defconfig and CONFIG_64BIT
->> disabled, vmlinux fails to link because of the BUILD_BUG in
->> _print_param.
->>
->> ld: drivers/gpu/drm/i915/i915_params.o: in function `i915_params_dump':
->> i915_params.c:(.text+0x56): undefined reference to
->> `__compiletime_assert_191'
->>
->> This function is semantically invalid unless the code is first inlined
->> then constant folded, which doesn't work for Clang because semantic
->> analysis happens before optimization/inlining. Converting this function
->> to a macro avoids this problem and allows Clang to properly remove the
->> BUILD_BUG during optimization.
->
-> Thanks Nathan for the patch.  To provide more context, Clang does
-> semantic analysis before optimization, where as GCC does these
-> together (IIUC).  So the above link error is from the naked
-> BUILD_BUG().  Clang can't evaluate the __builtin_strcmp's statically
-> until inlining has occurred, but that optimization happens after
-> semantic analysis.  To do the inlining before semantic analysis, we
-> MUST leverage the preprocessor, which runs before the compiler starts
-> doing semantic analysis.  I suspect this code is not valid for GCC
-> unless optimizations are enabled (the kernel only does compile with
-> optimizations turned on).  This change allows us to build this
-> translation unit with Clang.
->
-> Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-> (Note: this is the change I suggested, so not sure whether Acked-by or
-> Reviewed-by is more appropriate).
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-*Sad trombone*
+ARM SoCs use SMMU so the liodn fixup done in the qman driver is no
+longer making sense and it also breaks the ICID settings inherited
+from u-boot. Do the fixups only for PPC targets.
 
-I'd rather see us converting more macros to static inlines than the
-other way round.
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+---
+ drivers/soc/fsl/qbman/qman_ccsr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I'll let others chime in if they have any better ideas, otherwise I'll
-apply this one.
-
-BR,
-Jani.
-
->
->>
->> The output of 'objdump -D' is identically before and after this change
->> for GCC regardless of if CONFIG_64BIT is set and allows Clang to link
->> the kernel successfully with or without CONFIG_64BIT set.
->>
->> Link: https://github.com/ClangBuiltLinux/linux/issues/191
->> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> ---
->>  drivers/gpu/drm/i915/i915_params.c | 29 +++++++++++++----------------
->>  1 file changed, 13 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i915_params.c
->> index 295e981e4a39..a0f20b9b6f2d 100644
->> --- a/drivers/gpu/drm/i915/i915_params.c
->> +++ b/drivers/gpu/drm/i915/i915_params.c
->> @@ -174,22 +174,19 @@ i915_param_named(enable_dpcd_backlight, bool, 0600,
->>  i915_param_named(enable_gvt, bool, 0400,
->>         "Enable support for Intel GVT-g graphics virtualization host support(default:false)");
->>
->> -static __always_inline void _print_param(struct drm_printer *p,
->> -                                        const char *name,
->> -                                        const char *type,
->> -                                        const void *x)
->> -{
->> -       if (!__builtin_strcmp(type, "bool"))
->> -               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool *)x));
->> -       else if (!__builtin_strcmp(type, "int"))
->> -               drm_printf(p, "i915.%s=%d\n", name, *(const int *)x);
->> -       else if (!__builtin_strcmp(type, "unsigned int"))
->> -               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned int *)x);
->> -       else if (!__builtin_strcmp(type, "char *"))
->> -               drm_printf(p, "i915.%s=%s\n", name, *(const char **)x);
->> -       else
->> -               BUILD_BUG();
->> -}
->> +#define _print_param(p, name, type, x)                                        \
->> +do {                                                                          \
->> +       if (!__builtin_strcmp(type, "bool"))                                   \
->> +               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool *)x));  \
->> +       else if (!__builtin_strcmp(type, "int"))                               \
->> +               drm_printf(p, "i915.%s=%d\n", name, *(const int *)x);          \
->> +       else if (!__builtin_strcmp(type, "unsigned int"))                      \
->> +               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned int *)x); \
->> +       else if (!__builtin_strcmp(type, "char *"))                            \
->> +               drm_printf(p, "i915.%s=%s\n", name, *(const char **)x);        \
->> +       else                                                                   \
->> +               BUILD_BUG();                                                   \
->> +} while (0)
->>
->>  /**
->>   * i915_params_dump - dump i915 modparams
->> --
->> 2.19.0
->>
-
+diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
+index 79cba58387a5..619e22030460 100644
+--- a/drivers/soc/fsl/qbman/qman_ccsr.c
++++ b/drivers/soc/fsl/qbman/qman_ccsr.c
+@@ -597,6 +597,7 @@ static int qman_init_ccsr(struct device *dev)
+ #define LIO_CFG_LIODN_MASK 0x0fff0000
+ void qman_liodn_fixup(u16 channel)
+ {
++#ifdef CONFIG_PPC
+ 	static int done;
+ 	static u32 liodn_offset;
+ 	u32 before, after;
+@@ -616,6 +617,7 @@ void qman_liodn_fixup(u16 channel)
+ 		qm_ccsr_out(REG_REV3_QCSP_LIO_CFG(idx), after);
+ 	else
+ 		qm_ccsr_out(REG_QCSP_LIO_CFG(idx), after);
++#endif
+ }
+ 
+ #define IO_CFG_SDEST_MASK 0x00ff0000
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
