@@ -2,108 +2,149 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8901C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCC62085B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51CA21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 07:07:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ti3rUWRP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BCC62085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tTuN4VaY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51CA21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeJJOYm (ORCPT
+        id S1726799AbeJJO1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 10:24:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44608 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeJJOYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 10:24:42 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v6-v6so3849885ljc.11;
-        Wed, 10 Oct 2018 00:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TnneXrSTs9EAPeLL/QnFlKTqpwck/2HpDg6uUEsy0CU=;
-        b=Ti3rUWRPxlfO3oeQqKvk3PWUSKc/4dyAEI40TxWeAGEmVI+GxYZBaINGoCaPuNONaE
-         y0GwKLgdpAZ4MWZXCOVutnjWpge+BAbgYLRuKtqAuXq+3FepZb9BE9RgRLPAka6cLCqI
-         YLNZ0hjyvuQBQRLzL2M42pWXsk4CXNYameg316hgVctW1h+voiiBuYwflWKGVWWGUYas
-         wX0P9/pXCX0Cc8odPx2tEhSxgnj604+PtOovBJBsZ7J8bm3i5//qwPzC9h+btDk6n0XN
-         MYtPQVcr2oc0yIQOZAVJg66JRbdr7i/TtYkkwIBwzyKZlR4jPxxFWoEgNU+GJulxCOcP
-         q9gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TnneXrSTs9EAPeLL/QnFlKTqpwck/2HpDg6uUEsy0CU=;
-        b=pIRDzSyZ5pSNSNdM+FMPxr1VY2SaLwFnR73uCCIehDarBZFoVUcH5vkyaDzP9xWByB
-         zAV36GyJgDScYPvgm1idXDauqPyat2DjFXeLLx6Wq50DcPVaek7BI9mWG2ioADvHW8dJ
-         mDTipFVudeZgQ2lb35UqudWE/ufWXq67UqemFEIlWzTeBLDdn1no2OgG9FyZbjFJPVRf
-         1z/b6nT3Hf95ioE8lFo6WKmK8Ng0BLXJpm3yK1VTR9eIVM6r1XYyXVo4K+D41r+PVmtM
-         Y+zL0BlPyFtU6dCWLv/alevzX6Z9vQGGS4SK6EEZo/PCmptPrfbvL4KY3kSYAeuRvobD
-         OobQ==
-X-Gm-Message-State: ABuFfohTtauwt6p3wpvlbcz4q3a69pFvB0jwqe5dd2rCqKH8kt7fVosJ
-        gcpre7PsQYMKG8bKS1Xq78delpxy2F7K1+9CUMM=
-X-Google-Smtp-Source: ACcGV61uwL9llDF7E7tUBTKG0UWbh9ARpyuHYNKlq0/syHNwwpnuL3LX4NGVNncIKoGo65obZBCo7KUO/WPzmEmTC6s=
-X-Received: by 2002:a2e:9615:: with SMTP id v21-v6mr19501228ljh.150.1539155034717;
- Wed, 10 Oct 2018 00:03:54 -0700 (PDT)
+        Wed, 10 Oct 2018 10:27:48 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:65052 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbeJJO1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 10:27:48 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id A5C2D49980;
+        Wed, 10 Oct 2018 09:07:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-transfer-encoding:content-type:content-type:in-reply-to
+        :mime-version:date:date:message-id:from:from:references:subject
+        :subject:received; s=mail20150812; t=1539155219; bh=kw1l/GFQjUDE
+        Vkze6FrcT/pdhwehIJ1iTRke+w/s+Y8=; b=tTuN4VaYZ6K+d1ORmW0WqPJGxIa7
+        xUcbirrHj34yDZzrb9NPQST/4sikcEauu8sGrsBGEws6jxILLMLhGSuLWd/74yXr
+        6TXFpllwFzebdfytAgWZCb9EaKsOmrUIH+oFS2Pya5QJSypj46CHuNFI3OBX2M0Q
+        Bf8z8EPtHgxXHEmCcvxPL2JQGKV+gBq16CC/Vl5cfcA9GN+7I8E8L4DzvLeFf2gs
+        OGL6U//3BF9owOc4rczZQTsJsHf+JsJxfFE0Yklv/tNyOoht73I5nG0zC6eKblK0
+        pbkZ0mbjwYMTz45UVuoOmzyKSLnQK7EdphbCZ3wp1K8VpTZEvu/PdQrRrw==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id 3_oX_Uvyl-N4; Wed, 10 Oct 2018 09:06:59 +0200 (CEST)
+Subject: Re: [Ksummit-discuss] [PATCH 1/2] code-of-conduct: Fix the ambiguity
+ about collecting email addresses
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     james.bottomley@hansenpartnership.com,
+        linux-kernel@vger.kernel.org,
+        ksummit-discuss@lists.linuxfoundation.org
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+ <1538861799.4088.6.camel@HansenPartnership.com>
+ <20181008152043.GA5796@localhost> <1718828.OxLgMoHbrt@siriux>
+ <20181009185622.GA20960@localhost>
+From:   Rainer Fiebig <jrf@mailbox.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jrf@mailbox.org; keydata=
+ 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
+ 6/dT7HxuwnVIkER8kg==
+Message-ID: <e1389e7f-590c-cb10-0fbe-db8d6c366b83@mailbox.org>
+Date:   Wed, 10 Oct 2018 09:08:20 +0200
 MIME-Version: 1.0
-References: <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com>
- <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
- <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com> <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
- <CAKwvOdnyA=Y_+KnJrDc5mu7twTAEOMXvb8cAZhwzsXTi7a9sEA@mail.gmail.com>
- <20180926180019.GD22824@google.com> <CAKwvOd=xYG+r4KU+QurUTyaxkPB2AMane4YfWxuvKtONvVtLxQ@mail.gmail.com>
- <CAGXu5jLBz1YanL5X4HFZjhb8NZe5QK=Q1ySfBkBDNWqEg4hs5g@mail.gmail.com>
- <20180926184259.GB14797@kroah.com> <CAGXu5jJaJ+1Sg3uwaZ8hzw3wFbiLrftpZDO8vdjY9_tB+P-HPQ@mail.gmail.com>
- <20180926190303.GA18293@kroah.com> <CAKwvOdnx6D+_LeSZ-1v_s8dLErXq4B5Nx1UQozdr1+ZaGYWnrA@mail.gmail.com>
- <CAGXu5jKRn2EsPwNMtVTPyKyDnt+vqHZF=jdr+DajN_iN1DWjSw@mail.gmail.com> <CACPK8XeAbiMk_yW-t+8HdW_WLqaFJFX-xnNnDSZJ5ZfhK63euA@mail.gmail.com>
-In-Reply-To: <CACPK8XeAbiMk_yW-t+8HdW_WLqaFJFX-xnNnDSZJ5ZfhK63euA@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 10 Oct 2018 09:03:43 +0200
-Message-ID: <CANiq72nGrNMEqnPrxGXCp_iKf1_FuJLMvoV1+bbfYYCKnfTPVw@mail.gmail.com>
-Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Christopher Li <sparse@chrisli.org>,
-        linux-sparse@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        daniel.santos@pobox.com, chris@chris-wilson.co.uk,
-        jani.nikula@intel.com, Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181009185622.GA20960@localhost>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:12 AM Joel Stanley <joel@jms.id.au> wrote:
->
-> On Thu, 27 Sep 2018 at 05:07, Kees Cook <keescook@chromium.org> wrote:
-> >
-> > Yeah, that's what I'd linked to in the patchwork URL. Andrew, can you take this?
->
-> clang built -next is blowing up now that Kees' -Wvla patch has been
-> included. This patch fixes it.
->
-> Kees, perhaps it should go in your tree along side of the -Wvla patch
-> if no one else wants to take it?
->
+Josh Triplett schrieb:
+> On Tue, Oct 09, 2018 at 08:29:24PM +0200, Rainer Fiebig wrote:
+>> Am Montag, 8. Oktober 2018, 08:20:44 schrieb Josh Triplett:
+>>> On Sat, Oct 06, 2018 at 02:36:39PM -0700, James Bottomley wrote:
+>>>> The current code of conduct has an ambiguity in the it considers publishing
+>>>> private information such as email addresses unacceptable behaviour.  Since
+>>>> the Linux kernel collects and publishes email addresses as part of the patch
+>>>> process, add an exception clause for email addresses ordinarily collected by
+>>>> the project to correct this ambiguity.
+>>>
+>>> Upstream has now adopted a FAQ, which addresses this and many other
+>>> questions. See https://www.contributor-covenant.org/faq .
+>>>
+>>> Might I suggest adding that link to the bottom of the document, instead?
+>>> (And then, optionally, submitting entries for that FAQ.)
+>>>
+>>
+>> The Code of Conflict has 28 lines, including the heading. 
+>> The Code of Conduct has 81 lines, including the heading. And it needs a FAQ. Hm.
+> 
 
-I can take it along in the compiler attributes tree, since that
-touches the compiler*.h stuff. Although that would make it
-not-only-attributes, i.e. slightly lying :-)
+> Yes, it turns out to be a more complicated problem than it was
+> previously oversimplified to. People don't automatically share a common
+> understanding.
+> 
 
-Cheers,
-Miguel
+I don't know what that complicated problem was. The commit message is a bit vaque in that respect.
+But I bet that in the end it *was* simple. And it probably wasn't that people felt discriminated
+because of their "body size".
+
+I also think that people actually do share a common understanding. Otherwise *no* CoC would work -
+however explicit it would be. We're not that different after all.
+
+A CoC that needs a FAQ to be understood may create more problems that it solves.
+
+So long!
+
+
+Rainer Fiebig
