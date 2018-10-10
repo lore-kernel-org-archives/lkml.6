@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073F3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A596C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB1A22086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1A22086D
+	by mail.kernel.org (Postfix) with ESMTP id 694242077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:09:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694242077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeJJTap (ORCPT
+        id S1727853AbeJJTa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:30:45 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59504 "EHLO inva021.nxp.com"
+        Wed, 10 Oct 2018 15:30:57 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:59418 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbeJJT3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:29:53 -0400
+        id S1727447AbeJJT3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:29:50 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3948B20018B;
-        Wed, 10 Oct 2018 14:08:00 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEEFE2000A2;
+        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D3E4200174;
-        Wed, 10 Oct 2018 14:08:00 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D2468200042;
+        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 736A320604;
-        Wed, 10 Oct 2018 14:07:59 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D1C720604;
+        Wed, 10 Oct 2018 14:07:57 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -39,9 +39,9 @@ Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, arnd@arndb.de,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 18/22] arm64: dts: ls104xa: set mask to drop TBU ID from StreamID
-Date:   Wed, 10 Oct 2018 15:07:33 +0300
-Message-Id: <20181010120737.30300-16-laurentiu.tudor@nxp.com>
+Subject: [PATCH v3 15/22] dpaa_eth: fix SG frame cleanup
+Date:   Wed, 10 Oct 2018 15:07:30 +0300
+Message-Id: <20181010120737.30300-13-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
 References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
@@ -53,43 +53,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-The StreamID entering the SMMU is actually a concatenation of the
-SMMU TBU ID and the ICID configured in software.
-Since the TBU ID is internal to the SoC and since we want that the
-actual the ICID configured in software to enter the SMMU witout any
-additional set bits, mask out the TBU ID bits and leave only the
-relevant ICID bits to enter SMMU.
+Fix issue with the entry indexing in the sg frame cleanup code being
+off-by-1. This problem showed up when doing some basic iperf tests and
+manifested in traffic coming to a halt.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 1 +
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 7eea2bace171..1f9b385007a8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -226,6 +226,7 @@
- 			compatible = "arm,mmu-500";
- 			reg = <0 0x9000000 0 0x400000>;
- 			dma-coherent;
-+			stream-match-mask = <0x7f00>;
- 			#global-interrupts = <2>;
- 			#iommu-cells = <1>;
- 			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 07a853a0aeaa..22bf3975492a 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -232,6 +232,7 @@
- 			compatible = "arm,mmu-500";
- 			reg = <0 0x9000000 0 0x400000>;
- 			dma-coherent;
-+			stream-match-mask = <0x7f00>;
- 			#global-interrupts = <2>;
- 			#iommu-cells = <1>;
- 			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index ea814feb4666..ebf982283062 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1663,7 +1663,7 @@ static struct sk_buff *dpaa_cleanup_tx_fd(const struct dpaa_priv *priv,
+ 				 qm_sg_entry_get_len(&sgt[0]), dma_dir);
+ 
+ 		/* remaining pages were mapped with skb_frag_dma_map() */
+-		for (i = 1; i < nr_frags; i++) {
++		for (i = 1; i <= nr_frags; i++) {
+ 			WARN_ON(qm_sg_entry_is_ext(&sgt[i]));
+ 
+ 			dma_unmap_page(dev, qm_sg_addr(&sgt[i]),
 -- 
 2.17.1
 
