@@ -2,87 +2,136 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA677C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFDAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3D120645
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:14:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3D120645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CF8592085B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:17:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8592085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeJJQfq (ORCPT
+        id S1726697AbeJJQiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:35:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44986 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbeJJQfq (ORCPT
+        Wed, 10 Oct 2018 12:38:50 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:51193 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeJJQiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:35:46 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gAAZW-0004Fw-O6; Wed, 10 Oct 2018 11:14:27 +0200
-Date:   Wed, 10 Oct 2018 11:14:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Baoquan He <bhe@redhat.com>
-cc:     Borislav Petkov <bp@alien8.de>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-acpi@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, rjw@rjwysocki.net, lenb@kernel.org,
-        ard.biesheuvel@linaro.org, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com, Masayoshi Mizuma <msys.mizuma@gmail.com>
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-In-Reply-To: <20181010090620.GF25297@MiWiFi-R3L-srv>
-Message-ID: <alpine.DEB.2.21.1810101113070.10278@nanos.tec.linutronix.de>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com> <20181010085920.GB5533@zn.tnic> <20181010090620.GF25297@MiWiFi-R3L-srv>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 10 Oct 2018 12:38:50 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gAAcV-0000Qy-4n from Jiada_Wang@mentor.com ; Wed, 10 Oct 2018 02:17:31 -0700
+Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 10 Oct 2018 02:17:27 -0700
+From:   <jiada_wang@mentor.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+CC:     <jiada_wang@mentor.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH linux-next v3 1/1] ASoC: rsnd: ssi: Request dedicated dma channels for busif0 to 7
+Date:   Wed, 10 Oct 2018 18:17:25 +0900
+Message-ID: <20181010091725.10016-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018, Baoquan He wrote:
+From: Jiada Wang <jiada_wang@mentor.com>
 
-> Hi Boris,
-> 
-> On 10/10/18 at 10:59am, Borislav Petkov wrote:
-> > ... and we just picked up
-> > 
-> > https://lkml.kernel.org/r/20181001140843.26137-1-msys.mizuma@gmail.com
-> > 
-> > and without having looked at the rest of your stuff, if people accept
-> > your solution, we don't need the silly parameter anymore, right?
-> > 
-> > Which means, we should not rush the whole thing yet until the whole
-> > KASLR vs movable memory gets solved properly.
-> 
-> Masa's patches solves the problem in memory region KASLR which later hot
-> added memory may be big than the default padding 10 TB.
-> 
-> Chao's patches is trying to fix a conflict between 'movable_node' and
-> kernel text KASLR. If 'movable_node' specified, we rely on SRAT to get
-> which memory region is movable or immovable, and movable region can be
-> hot removed. But if kernel is randomized into movable memory, it can't
-> be hot removed any more, this is a regression after KASLR introduced.
-> So this is a different issue than Masa's.
+Currently ssi driver only requests dma channel for SSI_0, with
+naming of 'rxu/txu', which is used to transfer data to/from busif0.
+But for GEN2/GEN3, there are also busif1 ~ busif7, which need to
+be used when SSI works in TDM Split/Ex-Split mode.
 
-Yes, it's different, but if the SRAT information is available early, then
-the command line parameter can go away because then the required
-information for Masa's problem is available as well.
+This patch adds support to firstly try to request busif indexed
+dma channel with naming "rxu[busif]/txu[busif]", if these dma channel
+don't exist, then try to request 'rxu/txu' dma channel to keep
+compatibility with platform hasn't had device-tree updated.
 
-Thanks,
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+v3:
+- Drop device-tree changes
+- Drop automatic busif selection
 
-	tglx
+v2:
+- Instead of configure BUSIF by kctl interface "SSI Out/In BUSIF",
+  use rsnd_ssi_select_busif() to automatically select BUSIF.
+- Keep 'rxu/txu' dma request, to keep compatibility with GEN2 series
+- Re-order patch-set to satisfy git bisect
+
+v1: initial version
+---
+ sound/soc/sh/rcar/ssi.c | 37 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 3adcc4f778f7..7e21b29249d7 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -76,6 +76,8 @@
+ 
+ #define SSI_NAME "ssi"
+ 
++#define SSI_DMA_NAME_SIZE	10
++
+ struct rsnd_ssi {
+ 	struct rsnd_mod mod;
+ 
+@@ -938,12 +940,37 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
+ {
+ 	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+ 	int is_play = rsnd_io_is_play(io);
+-	char *name;
++	char name[SSI_DMA_NAME_SIZE];
+ 
+-	if (rsnd_ssi_use_busif(io))
+-		name = is_play ? "rxu" : "txu";
+-	else
+-		name = is_play ? "rx" : "tx";
++	if (rsnd_ssi_use_busif(io)) {
++		int busif = rsnd_ssi_get_busif(io);
++		struct dma_chan *chan = NULL;
++
++		/* try to request rxu/txu channel with busif index first */
++		if (is_play)
++			snprintf(name, SSI_DMA_NAME_SIZE, "rxu%d", busif);
++		else
++			snprintf(name, SSI_DMA_NAME_SIZE, "txu%d", busif);
++
++		chan = rsnd_dma_request_channel(rsnd_ssi_of_node(priv),
++						mod, name);
++		if (!IS_ERR(chan))
++			return chan;
++
++		/*
++		 * If dma channel with busif index doesn't exist
++		 * request rxu/txu dma channel
++		 */
++		if (is_play)
++			snprintf(name, SSI_DMA_NAME_SIZE, "rxu");
++		else
++			snprintf(name, SSI_DMA_NAME_SIZE, "txu");
++	} else {
++		if (is_play)
++			snprintf(name, SSI_DMA_NAME_SIZE, "rx");
++		else
++			snprintf(name, SSI_DMA_NAME_SIZE, "tx");
++	}
+ 
+ 	return rsnd_dma_request_channel(rsnd_ssi_of_node(priv),
+ 					mod, name);
+-- 
+2.17.0
+
