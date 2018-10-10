@@ -2,156 +2,229 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7DCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E7EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C012064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F077F214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 13:18:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJWTt4bj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C012064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="bcjsOpho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F077F214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeJJUk2 (ORCPT
+        id S1727007AbeJJUks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 16:40:28 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37907 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJJUk1 (ORCPT
+        Wed, 10 Oct 2018 16:40:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34765 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbeJJUks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 16:40:27 -0400
-Received: by mail-it1-f195.google.com with SMTP id i76-v6so7868199ita.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 06:18:18 -0700 (PDT)
+        Wed, 10 Oct 2018 16:40:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l6-v6so5299921wrt.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 06:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=yqPkDfc4/FsaElQ/ahG9Lz9ytpXoIU+2BPWNbeJxY7Y=;
-        b=OJWTt4bjlDpCrnATIxNGvKZXJRe0RWGuvrLHKc4XVHOs6hEtsHcbIT7qVO7AssO+OH
-         wCcXscsibL13NXr1j9/TELN2r9ja857Lz3Z4BZTLWnUk5yKxv/ZIFa4B3Yp+QNC+po3O
-         ut4Gz1GmDYnc+0lw3xECb8aVKZdTiVshqNMX8UB6VrFfjN7ZM2jl1jCAlEOaXUFe4ZOw
-         vVAEcAMop8VLAnZtYE5fbp99fsvctpI5zhXHLpolP+0XG5fCaL9HvWZNTiK0GCoMaHWg
-         WchvImZ5/WpM0e1hASdJiXiKzQ7XLaOkB95U+0bMNTWRTTmGMfuu8HacazzieGzsDAzm
-         kovA==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=mrNWOe4D332Ao3uTuRsJGgtjrAka4HbmLpkdyldlMQE=;
+        b=bcjsOphoOHTGWG312QANtPLIwMDdataW2a1nU958uGzG+sw9gVD/1rnxNPVaZGkZ1b
+         bmBgarh1SQ0SYDktmGXSbJ5VajrPqnqDQqXkTWy44yDKeo825w1xyR0HJ7V1jOuU6QOc
+         55d/H0/AVsf6Tto3kaWyhb+n6oPJLX3QNPizN8iGJP+mwlz/0hjFk0WtXvd9f+goG9UY
+         +SLPDYst/src4XOKDMhXLH1f5YpTbZHOAbYpWzMlQqNVfDRzUwOLjFkoBm3zXh63Okuc
+         O2txvrx4Noih4/qF6f+3kV6D/Y6KXDAp38uCEoQn7wB36//odpAO1aQ1Vfh+yQe2FCiN
+         d3Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yqPkDfc4/FsaElQ/ahG9Lz9ytpXoIU+2BPWNbeJxY7Y=;
-        b=iePpHlRnQjF9Y71yPSCaUUiknh21S4if3Ef7v8qU57MSd6lO68swh1Y+Ijbu+yKEYO
-         aUQfkqNFLzFiB+g0YbzPVCHSJFTMle0B/dfEmMjfIZMc+vxELvwPlYPL+FsxWD66LB5D
-         dSbvMl/+QJ6JR4lgqwpOyu/1d3Op88FOeyOscIUhv4T+M8Ushjo0eXEfrFpufPARulUe
-         dBSQGqsnRtZknccYm2VVAreGpsh+6CO/b9KAK55Mh/qvXaZwhd3LV0m/qpc8MTbjUfPd
-         gNesogv+RVzeObLehYJZRO7+WmohGsi/na29w5vQluTG5uxbypA0i77PUJEByQ8xTQP8
-         VbDA==
-X-Gm-Message-State: ABuFfogqUAOfxFsH+PCmv5DDESYT3sqaqrmLcvf+s9MT27z2CwlK2pbv
-        KI95Is9AojwEq1rQHCodfaW7D4mdIV+SJ2XNwpxfgA==
-X-Google-Smtp-Source: ACcGV60pak1h6ynu3WOHQHweAK8k9R1Bx3Q/ztpOo/F5TqL0ZWcc6+O5KC/yBIKSw4lCI16PYb1TjYOHpobnXIXK6VA=
-X-Received: by 2002:a24:24c9:: with SMTP id f192-v6mr640576ita.144.1539177497854;
- Wed, 10 Oct 2018 06:18:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=mrNWOe4D332Ao3uTuRsJGgtjrAka4HbmLpkdyldlMQE=;
+        b=pvzeKTm9fOGgUr4B+X/2+h+PRJC8x8nRLQVPPGQW7iAWhiLQOz5/t9QfwdKilj3R4E
+         5+7XNj2zOpS8IsV7lxk24xU13l5EiYoFlWWTSp7CBb8P4OaeNpg76LESLan87oOWJ0Gz
+         ihBX+OeQHqIx+XWuttJxuRJ2Xownp5M2V6NriKRQXU0d3s+9VtZj+7dNSsoJY+UoWCg8
+         oDLlGUofKUHpsDeDS26y2Q9oyweqAPcxHMYgbZsw2R20fXFZIOj+qMFWC24VBl6K21QV
+         rrpUz7jUphq7vfvSb4STkDqjS4ZbCp7a1Jo9QFs8hTF7mVx00/xkGxkF+2O9qQxxysNI
+         58mg==
+X-Gm-Message-State: ABuFfohHudlGomoCnMNNXbYN0M0kz+pN7/D1F0PCM18edP5gHOZwellk
+        DAM0VuVE26d1UndEkOTcdypzptRnkDACnw==
+X-Google-Smtp-Source: ACcGV63H48agUJ1un3WFx3Ad2N8e7J3MCPDHE1TkSVigtVvaG6M2m/wqJDznLfHedn+zFP81QqbiOA==
+X-Received: by 2002:a5d:47cb:: with SMTP id l11-v6mr23627970wrs.195.1539177517344;
+        Wed, 10 Oct 2018 06:18:37 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id a18sm17792956wrx.55.2018.10.10.06.18.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 06:18:36 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 15:18:30 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181010131829.rlczow555y6gig5p@brauner.io>
+References: <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+ <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <20181009134923.2fvf5roghqgaj5gq@brauner.io>
+ <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
+ <20181009140932.e5w5lgbgucbl72kt@brauner.io>
+ <CAG48ez12SYRUJTWRdzWhpvHBkQion4i8Gpef4r1L6epo9JF-ng@mail.gmail.com>
+ <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
+ <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
+ <20181010125422.rouslofknxzvygzr@brauner.io>
+ <CAG48ez0ct7_i1U0=vr1Z=4WhVH7GQKFzhtuxR+1oknmPiDTqKg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 06:17:57
- -0700 (PDT)
-In-Reply-To: <b7727ff0-b34f-25a2-b9e7-56e70d9349c4@i-love.sakura.ne.jp>
-References: <000000000000dc48d40577d4a587@google.com> <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
- <20181010085945.GC5873@dhcp22.suse.cz> <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
- <20181010113500.GH5873@dhcp22.suse.cz> <20181010114833.GB3949@tigerII.localdomain>
- <20181010122539.GI5873@dhcp22.suse.cz> <CACT4Y+ZfVdeB-WNeLCWJvTHNeCUtR3r1R+3Qjv9XjZXPxaV2WA@mail.gmail.com>
- <CACT4Y+bqJeKum7jessccWQF+4BmabnVy48aqHEOypioKwQAMTQ@mail.gmail.com> <b7727ff0-b34f-25a2-b9e7-56e70d9349c4@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 10 Oct 2018 15:17:57 +0200
-Message-ID: <CACT4Y+bQOr=+e8y5so3V9K390uJnMy4+FR7_t9G7Fjn12S4hoA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in shmem_fault
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>, guro@fb.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Yang Shi <yang.s@alibaba-inc.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez0ct7_i1U0=vr1Z=4WhVH7GQKFzhtuxR+1oknmPiDTqKg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 3:10 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>>>>> Just flooding out of memory messages can trigger RCU stall problems.
->>>>>>> For example, a severe skbuff_head_cache or kmalloc-512 leak bug is causing
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>> Quite some of them, indeed! I guess we want to rate limit the output.
->>>>>> What about the following?
->>>>>
->>>>> A bit unrelated, but while we are at it:
->>>>>
->>>>>   I like it when we rate-limit printk-s that lookup the system.
->>>>> But it seems that default rate-limit values are not always good enough,
->>>>> DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST can still be too
->>>>> verbose. For instance, when we have a very slow IPMI emulated serial
->>>>> console -- e.g. baud rate at 57600. DEFAULT_RATELIMIT_INTERVAL and
->>>>> DEFAULT_RATELIMIT_BURST can add new OOM headers and backtraces faster
->>>>> than we evict them.
->>>>>
->>>>> Does it sound reasonable enough to use larger than default rate-limits
->>>>> for printk-s in OOM print-outs? OOM reports tend to be somewhat large
->>>>> and the reported numbers are not always *very* unique.
->>>>>
->>>>> What do you think?
->>>>
->>>> I do not really care about the current inerval/burst values. This change
->>>> should be done seprately and ideally with some numbers.
->>>
->>> I think Sergey meant that this place may need to use
->>> larger-than-default values because it prints lots of output per
->>> instance (whereas the default limit is more tuned for cases that print
->>> just 1 line).
->
-> Yes. The OOM killer tends to print a lot of messages (and I estimate that
-> mutex_trylock(&oom_lock) accelerates wasting more CPU consumption by
-> preemption).
->
->>>
->>> I've found at least 1 place that uses DEFAULT_RATELIMIT_INTERVAL*10:
->>> https://elixir.bootlin.com/linux/latest/source/fs/btrfs/extent-tree.c#L8365
->>> Probably we need something similar here.
->
-> Since printk() is a significantly CPU consuming operation, I think that what
-> we need to guarantee is interval between the end of an OOM killer messages
-> and the beginning of next OOM killer messages is large enough. For example,
-> setup a timer with 5 seconds timeout upon the end of an OOM killer messages
-> and check whether the timer already fired upon the beginning of next OOM killer
-> messages.
->
->>
->>
->> In parallel with the kernel changes I've also made a change to
->> syzkaller that (1) makes it not use oom_score_adj=-1000, this hard
->> killing limit looks like quite risky thing, (2) increase memcg size
->> beyond expected KASAN quarantine size:
->> https://github.com/google/syzkaller/commit/adedaf77a18f3d03d695723c86fc083c3551ff5b
->> If this will stop the flow of hang/stall reports, then we can just
->> close all old reports as invalid.
->
-> I don't think so. Only this report was different from others because printk()
-> in this report was from memcg OOM events without eligible tasks whereas printk()
-> in others are from global OOM events triggered by severe slab memory leak.
+On Wed, Oct 10, 2018 at 03:10:11PM +0200, Jann Horn wrote:
+> On Wed, Oct 10, 2018 at 2:54 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Tue, Oct 09, 2018 at 06:26:47PM +0200, Jann Horn wrote:
+> > > On Tue, Oct 9, 2018 at 6:20 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > On Tue, Oct 09, 2018 at 05:26:26PM +0200, Jann Horn wrote:
+> > > > > On Tue, Oct 9, 2018 at 4:09 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
+> > > > > > > On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
+> > > > > > > > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > > > > One more thing. Citing from [1]
+> > > > > > > > > >
+> > > > > > > > > > > I think there's a security problem here. Imagine the following scenario:
+> > > > > > > > > > >
+> > > > > > > > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> > > > > > > > > > > 2. task A forks off a child B
+> > > > > > > > > > > 3. task B uses setuid(1) to drop its privileges
+> > > > > > > > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> > > > > > > > > > > or via execve()
+> > > > > > > > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> > > > > > > > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+> > > > > > > > > >
+> > > > > > > > > > Sorry, to be late to the party but would this really pass
+> > > > > > > > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
+> > > > > > > > > > that it would... Doesn't look like it would get past:
+> > > > > > > > > >
+> > > > > > > > > >         tcred = __task_cred(task);
+> > > > > > > > > >         if (uid_eq(caller_uid, tcred->euid) &&
+> > > > > > > > > >             uid_eq(caller_uid, tcred->suid) &&
+> > > > > > > > > >             uid_eq(caller_uid, tcred->uid)  &&
+> > > > > > > > > >             gid_eq(caller_gid, tcred->egid) &&
+> > > > > > > > > >             gid_eq(caller_gid, tcred->sgid) &&
+> > > > > > > > > >             gid_eq(caller_gid, tcred->gid))
+> > > > > > > > > >                 goto ok;
+> > > > > > > > > >         if (ptrace_has_cap(tcred->user_ns, mode))
+> > > > > > > > > >                 goto ok;
+> > > > > > > > > >         rcu_read_unlock();
+> > > > > > > > > >         return -EPERM;
+> > > > > > > > > > ok:
+> > > > > > > > > >         rcu_read_unlock();
+> > > > > > > > > >         mm = task->mm;
+> > > > > > > > > >         if (mm &&
+> > > > > > > > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
+> > > > > > > > > >              !ptrace_has_cap(mm->user_ns, mode)))
+> > > > > > > > > >             return -EPERM;
+> > > > > > > > >
+> > > > > > > > > Which specific check would prevent task C from attaching to task B? If
+> > > > > > > > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
+> > > > > > > > > you don't trigger the second "return -EPERM".
+> > > > > > > >
+> > > > > > > > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
+> > > > > > > > have if you did a setuid to an unpriv user. (But I always find that code
+> > > > > > > > confusing.)
+> > > > > > >
+> > > > > > > Only if the target hasn't gone through execve() since setuid().
+> > > > > >
+> > > > > > Sorry if I want to know this in excessive detail but I'd like to
+> > > > > > understand this properly so bear with me :)
+> > > > > > - If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
+> > > > > >   execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
+> > > > >
+> > > > > Yeah.
+> > > > >
+> > > > > > - If task B has setuid()ed, exeved()ed it will get its dumpable flag set
+> > > > > >   to /proc/sys/fs/suid_dumpable
+> > > > >
+> > > > > Not if you changed all UIDs (e.g. by calling setuid() as root). In
+> > > > > that case, setup_new_exec() calls "set_dumpable(current->mm,
+> > > > > SUID_DUMP_USER)".
+> > > >
+> > > > Actually, looking at this when C is trying to PTRACE_ATTACH to B as an
+> > > > unprivileged user even if B execve()ed and it is dumpable C still
+> > > > wouldn't have CAP_SYS_PTRACE in the mm->user_ns unless it already is
+> > > > privileged over mm->user_ns which means it must be in an ancestor
+> > > > user_ns.
+> > >
+> > > Huh? Why would you need CAP_SYS_PTRACE for anything here? You can
+> > > ptrace another process running under your UID just fine, no matter
+> > > what the namespaces are. I'm not sure what you're saying.
+> >
+> > Sorry, I was out the door yesterday when answering this and was too
+> > brief. I forgot to mention: /proc/sys/kernel/yama/ptrace_scope. It
+> > should be enabled by default on nearly all distros
+> 
+> "nearly all distros"? AFAIK it's off on Debian, for starters. And Yama
+> still doesn't help you if one of the tasks enters a new user namespace
+> or whatever.
+> 
+> Yama is a little bit of extra, heuristic, **opt-in** hardening enabled
+> in some configurations. It is **not** a fundamental building block you
+> can rely on.
+> 
+> > and even if not -
+> > which is an administrators choice - you can usually easily enable it via
+> > sysctl.
+> 
+> Opt-in security isn't good enough. Kernel interfaces should still be
+> safe to use even on a system that has all the LSM stuff disabled in
+> the kernel config.
 
-Ack.
-I guess I just hoped deep down that we somehow magically get rid of
-all these reports with some simple change like this :)
+Then ptrace() isn't, I guess?
+
+But see https://lists.linuxfoundation.org/pipermail/containers/2018-October/039567.html
+I don't care as long as we have a way of getting the fd without the
+CAP_SYS_ADMIN requirement throught seccomp().
+
+> 
+> > 1 ("restricted ptrace") [default value]
+> > When  performing an operation that requires a PTRACE_MODE_ATTACH check,
+> > the calling process must either have the CAP_SYS_PTRACE capability in
+> > the user namespace of the target process or it must have a prede‐ fined
+> > relationship with the target process.  By default, the predefined
+> > relationship is that the target process must be a descendant of the
+> > caller.
+> >
+> > If you don't have it set you're already susceptible to all kinds of
+> > other attacks
+> 
+> Oh? Can you be more specific, please?
+
+I was referring to attacks where you attach to processes that run as
+your user but might expose in-memory credentials or other sensitive
+information, (essentially what the manpage is outlining).
+
+> 
+> > and I'm still not convinced we need to bring out the big
+> > capable(CAP_SYS_ADMIN) gun here.
