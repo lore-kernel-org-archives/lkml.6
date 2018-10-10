@@ -2,151 +2,195 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95937C46462
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1521C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602BF2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602BF2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lisas.de
+	by mail.kernel.org (Postfix) with ESMTP id 8017F2151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:06:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="TDbYo10m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8017F2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeJKB2z (ORCPT
+        id S1726964AbeJKB3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:28:55 -0400
-Received: from rhlx01.hs-esslingen.de ([129.143.116.10]:39328 "EHLO
-        rhlx01.hs-esslingen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeJKB2z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:28:55 -0400
-X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Oct 2018 21:28:51 EDT
-Received: by rhlx01.hs-esslingen.de (Postfix, from userid 102)
-        id 463BA210EA5A; Wed, 10 Oct 2018 20:00:29 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 20:00:29 +0200
-From:   Andreas Mohr <andi@lisas.de>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [BUG] Bluetooth 4.14.74-v7+: hci_connect_le_scan_cleanup() crash
- NULL deref Raspberry Pi 3B+
-Message-ID: <20181010180029.GA13522@rhlx01.hs-esslingen.de>
+        Wed, 10 Oct 2018 21:29:41 -0400
+Received: from mail-bn3nam01on0065.outbound.protection.outlook.com ([104.47.33.65]:47858
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726567AbeJKB3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:29:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S+xPls+/nlOKJgqeufcMui7k60xVJRHMi9tmCAc78BA=;
+ b=TDbYo10mKnHh0yNOrrQlk+csxoVlv1375fpP5WvbNULu+kFrxJTl28jvJRG8aB3+RE2lGjB6ypkEBY4aXkLQJKEZCVTRBu5XUEf3wOJFQzU7zjhOExAQlYemm25bgp506a4SiwswnNqtJkcqxZCYPKcYYuFlUaYI0m2VhtfkFTQ=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1177.namprd12.prod.outlook.com (10.168.236.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.28; Wed, 10 Oct 2018 18:06:17 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1228.020; Wed, 10 Oct 2018
+ 18:06:17 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
+ generic names
+Thread-Topic: [PATCH v2 01/11] arch/x86: Start renaming the rdt files to more
+ generic names
+Thread-Index: AQHUXO3FhE3rddQXr0iDhqiTp63CXqUXI24A///5xICAAGAdgIABDwGAgAA+NgCAAAN3AA==
+Date:   Wed, 10 Oct 2018 18:06:17 +0000
+Message-ID: <e232e5cc-a5eb-5544-426b-b66e52505af7@amd.com>
+References: <20181005205512.29545-1-babu.moger@amd.com>
+ <20181005205512.29545-2-babu.moger@amd.com>
+ <2fe2e853-47ef-af2a-6906-9ad7a7b8bba9@intel.com>
+ <ddec0530-59d1-fee0-eb67-528b887ca3f5@amd.com>
+ <ab692687-6398-cf9a-a027-b9ff4b3ffd5f@intel.com>
+ <b2e7630a-db5c-9f69-5d7e-cac3e2bb4014@amd.com>
+ <6d25a185-66e2-1a54-071a-4937a09c07a8@intel.com>
+In-Reply-To: <6d25a185-66e2-1a54-071a-4937a09c07a8@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0030.prod.exchangelabs.com (2603:10b6:a02:80::43)
+ To DM5PR12MB2471.namprd12.prod.outlook.com (2603:10b6:4:b5::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1177;20:E+AqxTM7pDVUVJFfiNNERUGTQkZuyO4q1ToYcp//xnamMBhmW4J3O4I+0/MAbYHQMhesG1eWoOel+ahWUwq0Bb/T2sg15wVWUdWIM1JXIcAeImtQrXC3n5dWgs0ZS7XbbNiX13CaTfMfsGDuE/fbAIY8byQov6ck5cfrjRPkvKhjy3l1/MJVD0F0bROZF6HdcIG0NOnaqF/ItAOgjmhaTR2JZEPBeXyn4GykVyOu9f5ACPkXW3jMzF/+Eauhpzzk
+x-ms-office365-filtering-correlation-id: 976d2dfc-2a36-4e01-8c93-08d62edb12e6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1177;
+x-ms-traffictypediagnostic: DM5PR12MB1177:
+x-microsoft-antispam-prvs: <DM5PR12MB1177F80BD90E5EB467D0736595E00@DM5PR12MB1177.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(42068640409301)(767451399110)(180628864354917);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(4982022)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:DM5PR12MB1177;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1177;
+x-forefront-prvs: 08213D42D3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(366004)(136003)(346002)(396003)(189003)(199004)(4326008)(8936002)(106356001)(11346002)(316002)(2501003)(6436002)(2906002)(6246003)(68736007)(36756003)(31696002)(5250100002)(93886005)(6486002)(7416002)(5660300001)(966005)(66066001)(229853002)(72206003)(6116002)(2201001)(86362001)(3846002)(97736004)(71200400001)(14454004)(71190400001)(26005)(486006)(31686004)(105586002)(102836004)(14444005)(186003)(6512007)(256004)(2616005)(99286004)(52116002)(6346003)(7736002)(2900100001)(76176011)(110136005)(53936002)(478600001)(81156014)(53546011)(6506007)(446003)(305945005)(25786009)(6306002)(386003)(476003)(54906003)(8676002)(81166006)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1177;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-microsoft-antispam-message-info: j+Vtn95KJLhZJdiY9QXRt9uJfGHmrsSZLm6gK2LyrRhMbN3CFYbc9RS/3P0qg0ZfZxjd3GJ2DDyGfIwbBAW2Il6YwGCGjrzrjnJecncBTu3wvdULuRd5esT5lh7Ty/+YMMSmaluacGRU9e/9uDKDyqOHI6aFQfpq9bleDAQuCWGw+BZ4RkUAn/BKOchsmB9UCWMdzR2QugMzS/Cb6CyylaQur/3Wk46pud1EsfqAgXBOr4YJ9uwTgTeYeHQD9Oojas68nhhscx2DrlVQfs6itVd8r2shvqWM5yUACVj+tuDWwAfkm5haD3erOaJdYQ9jCbMgJz+sogPVU15IF9f/oTqs/R3fdYuxG/Dew9mcUJA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CFB30752E7DE834CB5ED9C54DA251EC0@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Priority: none
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 976d2dfc-2a36-4e01-8c93-08d62edb12e6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2018 18:06:17.8264
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
-
-[long time no see, good to be back!]
-
-just newly got the following crash with a new setup:
-
-[    6.234357] Adding 102396k swap on /var/swap.  Priority:-2 extents:1 across:102396k SSFS
-[    7.114565] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
-[    7.114582] brcmfmac: power management disabled
-[    7.522803] smsc95xx 1-1.1:1.0 eth0: hardware isn't capable of remote wakeup
-[    9.102052] smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0x45E1
-[   11.887650] Bluetooth: HCI UART driver ver 2.3
-[   11.887660] Bluetooth: HCI UART protocol H4 registered
-[   11.887663] Bluetooth: HCI UART protocol Three-wire (H5) registered
-[   11.887811] Bluetooth: HCI UART protocol Broadcom registered
-[   13.399873] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
-[   13.402896] Bridge firewalling registered
-[   13.424852] nf_conntrack version 0.5.0 (15360 buckets, 61440 max)
-[   14.284667] Netfilter messages via NETLINK v0.30.
-[   14.290169] ctnetlink v0.93: registering with nfnetlink.
-[   14.405316] IPv6: ADDRCONF(NETDEV_UP): docker0: link is not ready
-[   33.422932] NET: Registered protocol family 38
-[75215.105699] Unable to handle kernel NULL pointer dereference at virtual address 00000012
-[75215.109883] pgd = 80004000
-[75215.112020] [00000012] *pgd=00000000
-[75215.114129] Internal error: Oops: 17 [#1] SMP ARM
-[75215.116262] Modules linked in: aes_arm_bs crypto_simd cryptd algif_skcipher af_alg ipt_MASQUERADE nf_nat_masquerade_ipv4 nf_conntrack_netlink nfnetlink iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack nf_nat nf_conntrack br_netfilter bridge stp llc overlay hci_uart serdev rfcomm cmac bnep brcmfmac brcmutil cfg80211 snd_bcm2835(C) snd_pcm snd_timer snd uio_pdrv_genirq uio fixed ftdi_sio usbserial btusb btrtl btintel btbcm bluetooth ecdh_generic rfkill i2c_dev ip_tables x_tables ipv6
-[75215.133930] CPU: 2 PID: 167 Comm: kworker/u9:2 Tainted: G         C      4.14.74-v7+ #1149
-[75215.139286] Hardware name: BCM2835
-[75215.142121] Workqueue: hci0 hci_rx_work [bluetooth]
-[75215.144853] task: b9315a00 task.stack: b71f8000
-[75215.147707] PC is at hci_connect_le_scan_cleanup+0x14/0x124 [bluetooth]
-[75215.150642] LR is at create_le_conn_complete+0xcc/0xd8 [bluetooth]
-[75215.153455] pc : [<7f0dd0cc>]    lr : [<7f0df4d4>]    psr: 60000013
-[75215.156326] sp : b71f9df0  ip : b71f9e10  fp : b71f9e0c
-[75215.159124] r10: b2e86180  r9 : 00000088  r8 : b924b780
-[75215.161834] r7 : b9da97e8  r6 : b9da9008  r5 : 00000000  r4 : b9da98b4
-[75215.164616] r3 : 00200400  r2 : b9da98b4  r1 : 00000000  r0 : 00000000
-[75215.167400] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-[75215.170254] Control: 10c5383d  Table: 195ac06a  DAC: 00000055
-[75215.173069] Process kworker/u9:2 (pid: 167, stack limit = 0xb71f8210)
-[75215.175869] Stack: (0xb71f9df0 to 0xb71fa000)
-[75215.178574] 9de0:                                     b9da98b4 00000000 b9da9008 b9da97e8
-[75215.183810] 9e00: b71f9e2c b71f9e10 7f0df4d4 7f0dd0c4 7f0df408 b9da9000 b2e86180 0000000e
-[75215.188960] 9e20: b71f9ebc b71f9e30 7f0e57bc 7f0df414 b71f9e70 b71f9e74 b9315a80 b9315a00
-[75215.194193] 9e40: ba372d78 00000000 b9315e60 80b8ed40 b71f9e8c 80b8ed40 a72136c0 b9da97f4
-[75215.199699] 9e60: 60000013 00000000 00da97e8 b9da200d 7f0df408 00000000 b71f9e9c b71f9e88
-[75215.205455] 9e80: 807a3eec 801ee19c b9da97e8 b2e86180 b71f9ebc b9da9708 b9da98b4 b9da9000
-[75215.211367] 9ea0: b9da97e8 b9da9008 00000088 b2e86180 b71f9efc b71f9ec0 7f0d8b3c 7f0e54f4
-[75215.217508] 9ec0: b9da9718 b9da901c b908c300 80137520 b71f9efc b9092580 b9da9708 b70dae00
-[75215.223972] 9ee0: b908c300 00000000 00000088 00000000 b71f9f34 b71f9f00 801376f0 7f0d89d0
-[75215.230596] 9f00: b70dae18 80c02d00 00000088 b70dae00 b9092598 b70dae00 b70dae18 80c02d00
-[75215.237352] 9f20: 00000088 b9092580 b71f9f7c b71f9f38 80137a50 801375a4 b71f9f5c b71f8000
-[75215.244292] 9f40: 00000000 80c02d00 80c88562 b71f8038 b979b01c b979b000 00000000 b722f300
-[75215.251303] 9f60: b9092580 801379ec b979b01c b732fe80 b71f9fac b71f9f80 8013dad4 801379f8
-[75215.258312] 9f80: 80102d94 b722f300 8013d998 00000000 00000000 00000000 00000000 00000000
-[75215.265319] 9fa0: 00000000 b71f9fb0 8010810c 8013d9a4 00000000 00000000 00000000 00000000
-[75215.272327] 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[75215.279336] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[75215.286614] [<7f0dd0cc>] (hci_connect_le_scan_cleanup [bluetooth]) from [<7f0df4d4>] (create_le_conn_complete+0xcc/0xd8 [bluetooth])
-[75215.293988] [<7f0df4d4>] (create_le_conn_complete [bluetooth]) from [<7f0e57bc>] (hci_event_packet+0x2d4/0x2de8 [bluetooth])
-[75215.301354] [<7f0e57bc>] (hci_event_packet [bluetooth]) from [<7f0d8b3c>] (hci_rx_work+0x178/0x250 [bluetooth])
-[75215.308585] [<7f0d8b3c>] (hci_rx_work [bluetooth]) from [<801376f0>] (process_one_work+0x158/0x454)
-[75215.315681] [<801376f0>] (process_one_work) from [<80137a50>] (worker_thread+0x64/0x5b8)
-[75215.322757] [<80137a50>] (worker_thread) from [<8013dad4>] (kthread+0x13c/0x16c)
-[75215.329829] [<8013dad4>] (kthread) from [<8010810c>] (ret_from_fork+0x14/0x28)
-[75215.333466] Code: e92dd8f0 e24cb004 e52de004 e8bd4000 (e5d04012) 
-[75215.337146] ---[ end trace f3a6771e5232874d ]---
-
-
-
-Context notes:
-- Raspberry Pi 3B (not 3B+), Raspbian
-- Linux [HOSTNAME] 4.14.74-v7+ #1149 SMP Mon Oct 8 17:39:42 BST 2018 armv7l GNU/Linux
-- updated to *custom* manual setup (very newish kernel) yesterday (via rpi-update), rebooted
-- builtin Bluetooth (hci0)
-- external Bluetooth (hci1, CSR I believe)
-- FHEM, with various modules regularly polling various Bluetooth clients, via hci0 only
-- very newly erected wiring (relocated to different location, new external Bluetooth, etc., yesterday) setup
-
-Returned to the location today, merely to
-find external Bluetooth LED blinking *very* rapidly, then
-fumbled the stick, at which moment LED went solid.
-I returned a couple seconds later, LED had gone dark.
-
-Few minutes later, connected to box, only to find this crash dump trace there.
-It seems quite obvious that
-this crash may have happened due to
-implementation stack mis-handling a (temporary??) connector disconnect/power-loss issue.
-
-Ran
-git log v4.14..master -- net/bluetooth/hci_conn.c
-, did not immediately see (m)any obviously relevant items.
-
-Thus now reporting here (get_maintainer.pl...).
-
-Thank you!
-
-Greetings,
-
-Andreas Mohr
-
--- 
-GNU/Linux. It's not the software that's free, it's you.
+DQoNCk9uIDEwLzEwLzIwMTggMTI6NTMgUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4gSGkg
+QmFidSwNCj4gDQo+IE9uIDEwLzEwLzIwMTggNzoxMSBBTSwgTW9nZXIsIEJhYnUgd3JvdGU6DQo+
+PiBPbiAxMC8wOS8yMDE4IDA1OjAxIFBNLCBSZWluZXR0ZSBDaGF0cmUgd3JvdGU6DQo+Pj4gT24g
+MTAvOS8yMDE4IDI6MTcgUE0sIE1vZ2VyLCBCYWJ1IHdyb3RlOg0KPj4+PiBPbiAxMC8wOS8yMDE4
+IDExOjM5IEFNLCBSZWluZXR0ZSBDaGF0cmUgd3JvdGU6DQo+Pj4+PiBPbiAxMC81LzIwMTggMTo1
+NSBQTSwgTW9nZXIsIEJhYnUgd3JvdGU6DQo+Pj4+Pj4gTmV3IGdlbmVyYXRpb24gb2YgQU1EIHBy
+b2Nlc3NvcnMgc3RhcnQgc3VwcG9ydCBSRFQob3IgUU9TKSBmZWF0dXJlcy4NCj4+Pj4+PiBXaXRo
+IG1vcmUgdGhhbiBvbmUgdmVuZG9ycyBzdXBwb3J0aW5nIHRoZXNlIGZlYXR1cmVzLCBpdCBzZWVt
+cyBtb3JlDQo+Pj4+Pj4gYXBwcm9wcmlhdGUgdG8gcmVuYW1lIHRoZXNlIGZpbGVzLg0KPj4+Pj4+
+DQo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogQmFidSBNb2dlciA8YmFidS5tb2dlckBhbWQuY29tPg0K
+Pj4+Pj4+IC0tLQ0KPj4+Pj4+ICBhcmNoL3g4Ni9pbmNsdWRlL2FzbS97aW50ZWxfcmR0X3NjaGVk
+LmggPT4gcmR0X3NjaGVkLmh9ICAgICB8IDANCj4+Pj4+PiAgYXJjaC94ODYva2VybmVsL2NwdS9N
+YWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA2ICsrKy0tLQ0KPj4+Pj4+
+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L3tpbnRlbF9yZHQuYyA9PiByZHQuY30gICAgICAgICAgICAg
+ICAgICB8IDQgKystLQ0KPj4+Pj4+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L3tpbnRlbF9yZHQuaCA9
+PiByZHQuaH0gICAgICAgICAgICAgICAgICB8IDANCj4+Pj4+PiAgLi4uL2NwdS97aW50ZWxfcmR0
+X2N0cmxtb25kYXRhLmMgPT4gcmR0X2N0cmxtb25kYXRhLmN9ICAgICAgfCAyICstDQo+Pj4+Pj4g
+IGFyY2gveDg2L2tlcm5lbC9jcHUve2ludGVsX3JkdF9tb25pdG9yLmMgPT4gcmR0X21vbml0b3Iu
+Y30gIHwgMiArLQ0KPj4+Pj4+ICAuLi4vY3B1L3tpbnRlbF9yZHRfcHNldWRvX2xvY2suYyA9PiBy
+ZHRfcHNldWRvX2xvY2suY30gICAgICB8IDYgKysrLS0tDQo+Pj4+Pj4gIC4uLm50ZWxfcmR0X3Bz
+ZXVkb19sb2NrX2V2ZW50LmggPT4gcmR0X3BzZXVkb19sb2NrX2V2ZW50Lmh9IHwgMiArLQ0KPj4+
+Pj4+ICAuLi4veDg2L2tlcm5lbC9jcHUve2ludGVsX3JkdF9yZHRncm91cC5jID0+IHJkdF9yZHRn
+cm91cC5jfSB8IDQgKystLQ0KPj4+Pj4+ICBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc18zMi5jICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKy0NCj4+Pj4+PiAgYXJjaC94ODYva2Vy
+bmVsL3Byb2Nlc3NfNjQuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyICstDQo+
+Pj4+Pj4gIDExIGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygt
+KQ0KPj4+Pj4+ICByZW5hbWUgYXJjaC94ODYvaW5jbHVkZS9hc20ve2ludGVsX3JkdF9zY2hlZC5o
+ID0+IHJkdF9zY2hlZC5ofSAoMTAwJSkNCj4+Pj4+PiAgcmVuYW1lIGFyY2gveDg2L2tlcm5lbC9j
+cHUve2ludGVsX3JkdC5jID0+IHJkdC5jfSAoOTklKQ0KPj4+Pj4+ICByZW5hbWUgYXJjaC94ODYv
+a2VybmVsL2NwdS97aW50ZWxfcmR0LmggPT4gcmR0Lmh9ICgxMDAlKQ0KPj4+Pj4+ICByZW5hbWUg
+YXJjaC94ODYva2VybmVsL2NwdS97aW50ZWxfcmR0X2N0cmxtb25kYXRhLmMgPT4gcmR0X2N0cmxt
+b25kYXRhLmN9ICg5OSUpDQo+Pj4+Pj4gIHJlbmFtZSBhcmNoL3g4Ni9rZXJuZWwvY3B1L3tpbnRl
+bF9yZHRfbW9uaXRvci5jID0+IHJkdF9tb25pdG9yLmN9ICg5OSUpDQo+Pj4+Pj4gIHJlbmFtZSBh
+cmNoL3g4Ni9rZXJuZWwvY3B1L3tpbnRlbF9yZHRfcHNldWRvX2xvY2suYyA9PiByZHRfcHNldWRv
+X2xvY2suY30gKDk5JSkNCj4+Pj4+PiAgcmVuYW1lIGFyY2gveDg2L2tlcm5lbC9jcHUve2ludGVs
+X3JkdF9wc2V1ZG9fbG9ja19ldmVudC5oID0+IHJkdF9wc2V1ZG9fbG9ja19ldmVudC5ofSAoOTUl
+KQ0KPj4+Pj4+ICByZW5hbWUgYXJjaC94ODYva2VybmVsL2NwdS97aW50ZWxfcmR0X3JkdGdyb3Vw
+LmMgPT4gcmR0X3JkdGdyb3VwLmN9ICg5OSUpDQo+Pj4+Pg0KPj4+Pj4gRHVyaW5nIHRoZSBSRkMg
+aXQgd2FzIGFncmVlZCB0aGF0ICJyZXNjdHJsIiB3aWxsIGJlIHRoZSBuZXV0cmFsIG5hbWUgYW5k
+DQo+Pj4+PiAiaW50ZWxfcmR0IiwgImFtZF9xb3MiLCBvciAiYXJtIG1wYW0iIHdvdWxkIGJlIHRo
+ZSB2ZW5kb3Igc3BlY2lmaWMgbmFtZXMuDQo+Pj4+Pg0KPj4+Pj4gSXQgaXMgb2sgdG8gZGVsYXkg
+dGhhdCByZW5hbWluZyBidXQgSSB0aGluayBhbnkgcmVuYW1pbmcgZG9uZSBmcm9tIHRoaXMNCj4+
+Pj4+IHBvaW50IHNob3VsZCByZXNwZWN0IHRoaXMgYWdyZWVtZW50Lg0KPj4+Pj4NCj4+Pj4+IEZv
+ciBleGFtcGxlLCBpZiB5b3Ugd2FudCB0byByZW5hbWUgaW50ZWxfcmR0LmMgdGhlbiBwbGVhc2Ug
+cmVuYW1lIGl0IHRvDQo+Pj4+PiByZXNjdHJsLmMgaW5zdGVhZCBvZiBqdXN0IHJkdC5jIHdoaWNo
+IGRvZXMgbm90IHJlcHJlc2VudCBhIGdlbmVyaWMgbmFtZQ0KPj4+Pj4gYXMgZXhwcmVzc2VkIGFz
+IGEgZ29hbCBpbiB0aGUgc3ViamVjdCBvZiB0aGlzIHBhdGNoLg0KPj4+Pg0KPj4+PiBJIGtuZXcg
+dGhpcyB3YXMgZ29pbmcgdG8gYml0IHRyaWNreS4gSSBjYW4gY2hhbmdlIGFsbCB0aGUgcGxhY2Vz
+IHdoZXJlIEkNCj4+Pj4gYW0gdG91Y2hpbmcgdGhlIGNvZGUgdG8gZ2VuZXJpYyBuYW1lcyhjaGFu
+Z2UgZnJvbSBpbnRlbF9yZHQgdG8gInJlc2N0cmwiKS4NCj4+Pg0KPj4+IFllcywgImludGVsX3Jk
+dCIgY2FuIGJlIGNoYW5nZWQgdG8gdGhlIGdlbmVyaWMgInJlc2N0cmwiIHdoZW4gaXQgaXMgbm90
+DQo+Pj4gdmVuZG9yIHNwZWNpZmljLg0KPj4NCj4+IE9rLiBzdXJlLg0KPj4NCj4+Pg0KPj4+IEFz
+IGZhciBhcyBhbGwgdGhlIGNvZGUgeW91IHRvdWNoIGlzIGNvbmNlcm5lZCBpdCBtYXkgYmUgZWFz
+aWVyIGFuZCBjYXVzZQ0KPj4+IGxlc3MgY29uZnVzaW9uIGZvciBub3cgdG8ganVzdCBmb2xsb3cg
+dGhlIGN1cnJlbnQgbmFtaW5nIGNvbnZlbnRpb25zIGFzDQo+Pj4geW91IGhhdmUgZG9uZSBpbiBw
+YXRjaGVzIDMgb253YXJkcyBhbmQgaGF2ZSBpdCBiZSBpbmNsdWRlZCBpbiB0aGUgbGF0ZXINCj4+
+PiBsYXJnZXIgcmVzdHJ1Y3R1cmluZy4NCj4+DQo+PiBZZXMuIEkgYW0gbWFraW5nIHN1cmUgZmly
+c3QgMyBwYXRjaGVzIGFyZSByZW5hbWVkIHRvICJyZXNjdHJsIiB3aGVyZXZlcg0KPj4gYXBwbGlj
+YWJsZS4gV2lsbCBzZW5kIHRoZSBwYXRjaGVzIHNvb24uDQo+Pg0KPj4gQnV0IEkgYW0gY29uZnVz
+ZWQgYWJvdXQgd2hhdCB5b3UgbWVhbnQgYnkgImhhdmUgaXQgYmUgaW5jbHVkZWQgaW4gdGhlDQo+
+PiBsYXRlciBsYXJnZXIgcmVzdHJ1Y3R1cmluZyIuIENhbiB5b3UgcGxlYXNlIGVsYWJvcmF0ZT8N
+Cj4gDQo+IEkgd2FzIHJlZmVycmluZyB0byB0aGUgcmVzdHJ1Y3R1cmluZyB0aGF0IHdhcyBkaXNj
+dXNzZWQgZHVyaW5nIHlvdXINCj4gb3JpZ2luYWwgUkZDIHN1Ym1pc3Npb24uIFNwZWNpZmljYWxs
+eSwNCj4gaHR0cDovL2xrbWwua2VybmVsLm9yZy9yLzg3NGNkY2ZiLTI2ZmEtMmJkYi0wOTVkLWIx
+YjVhODgyNTBiOUBhbWQuY29tDQo+IGh0dHA6Ly9sa21sLmtlcm5lbC5vcmcvci85NTAwNDQ1Yy0w
+MTlkLTliNzctMGI1MS00ODkyMmJmNDcwMDdAYXJtLmNvbQ0KDQpPay4gR290IGl0LiBUaGFua3Mu
+DQoNCj4gDQo+IFJlaW5ldHRlDQo+IA0KPiANCj4gDQo=
