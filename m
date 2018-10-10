@@ -2,182 +2,116 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0683FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD81BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEDB520858
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:22:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEDB520858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 7D8C120858
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:23:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mR2P/1CF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8C120858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeJJToP (ORCPT
+        id S1726791AbeJJTpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:44:15 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:47399 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726579AbeJJToP (ORCPT
+        Wed, 10 Oct 2018 15:45:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38642 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbeJJTpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:44:15 -0400
-Received: from [IPv6:2001:420:44c1:2579:144:1d36:11b8:bf53] ([IPv6:2001:420:44c1:2579:144:1d36:11b8:bf53])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id ADVFg2NqZ0ZZEADVJgFMtb; Wed, 10 Oct 2018 14:22:17 +0200
-Subject: Re: [PATCH] media: vivid: Improve timestamping
-To:     Gabriel Francisco Mandaji <gfmandaji@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     lkcamp@lists.libreplanetbr.org
-References: <20181010004921.GA6532@gfm-note>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <dc6fa92d-2c11-e4df-e287-39d0944f5ea7@xs4all.nl>
-Date:   Wed, 10 Oct 2018 14:22:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 10 Oct 2018 15:45:50 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a13-v6so5506496wrt.5;
+        Wed, 10 Oct 2018 05:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KUtgjgh84pBHEsdGFr+PrRX3I1tGdmZZalV4HF4dWQ0=;
+        b=mR2P/1CFJK6pZ1ekvNp19LgZTowr1IdHnppGE97ifAVO9cWmxG0/Nv7aewS0spKxBb
+         5WtJcSNF90Lw3QK/G+Q0sbranE/Ilf00MTktO9xmjyPirAEM9Gc9/OggltZ3tawkJsvK
+         Jspt/SSfYp3jCtfAg/6Vea/+Qad+k6aZ0hBh4fZldWYDEriNqLiCPrm0s+GPAi1CU9L8
+         AjAzEBCgwJaYtpvQ2Y9u037CM6uuNWlg4EvCy7IyyQqLdiZo1xonZwuHwzqdSWN7mqSE
+         TOK2wFb2EuqTnZ2JMO0UNbPjqsTEC3zq+bny6fFU9KA80OOE1AofRZyyGXZ05MRoeSs0
+         lQJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KUtgjgh84pBHEsdGFr+PrRX3I1tGdmZZalV4HF4dWQ0=;
+        b=IB0FSFaXNLYBbWmB3X+aSAaO3yBOgXLmxs794aFSmqArkRYzL4q5pfmueVN+giC1C/
+         KcsgT/+FlOSDqiRZxQym60XyvWb44YZa/G0+f4B9JKjnwQYKindICMbr/MOEkdm4XNeV
+         kqtyiFUi3nxCcebEB7Tp4S5NSOQUVFHpt9LLo8GGLqBU/NRX45g/EIU22AZr9lrbrYOS
+         WmytSfZegZzv7It3qmqZ/Vd9EPuyDqb7TLE/KHF/ZehYgtM1tuqJ8K5vr/6N6WG24ETj
+         vI81YpV8CIIPfm8yNLC1YaKxBupXdJu7DxIiNSi3rBSneOLjH7dAROYCmwrdSgbeGDNm
+         jpTg==
+X-Gm-Message-State: ABuFfogftynQ4a0LxkY1lUDcotsAEFk+E1h6ArSdtVY8QkEurQ+SK0M8
+        3DRDQvN3CWeU0ULWCZ3PJIs=
+X-Google-Smtp-Source: ACcGV61crBgj4KKL92VboXC8lskgX3cA4AyeCTYOHLV0FWHMCmVnPWdVFrwKdMxOz8y9omM0GTNsow==
+X-Received: by 2002:adf:9e09:: with SMTP id u9-v6mr22913105wre.51.1539174232573;
+        Wed, 10 Oct 2018 05:23:52 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD31613C1F2E846AEDA540D.dip0.t-ipconnect.de. [2003:ef:2bd3:1613:c1f2:e846:aeda:540d])
+        by smtp.gmail.com with ESMTPSA id m12sm15391240wrx.75.2018.10.10.05.23.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 05:23:51 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 14:23:48 +0200
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Quentin Perret <quentin.perret@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+Message-ID: <20181010122348.GL9130@localhost.localdomain>
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010061751.GA37224@gmail.com>
+ <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
+ <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
+ <20181010095459.orw2gse75klpwosx@queper01-lin>
+ <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
+ <20181010103623.ttjexasymdpi66lu@queper01-lin>
+ <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181010004921.GA6532@gfm-note>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBEYAYsVsNlVn56T5cyvldktHGsYqXZPrxVixl2pzz7Ar5LCHjo3d8fuD9ZEnfdsR1dZGKFM7vg6gOl2F4/tYr/5igCgzSHtoqPXxjVRsvWWpXSVyD14
- Evpvu+E064NHcdk/lokvfPb4/2eAPnpKIti60cBK1LDDBExioJugjfDDzjiKY0ZZkCERvHpyP2KaOKDmzaLVn2HRYNZzv5GIboXqNfKHHmYn6/SjISCK1gLi
- UtR9IYcXQXYiZuLWUxUDPtqD2BPm0yoS3xHHLEIN2lnya/xyHoBFeMFefddyNfGFmgQMQ1sKEyUqbGHpL8PbuT7ujX9OK2wqn69OiauH8gklw1p1lxjcp+0m
- GD6ywzpwqJyMAfR4Sz3gmDGRT6aqc8zWOGyYK8565+I09lEnDHAI+IfgF3MAop/83KLXUHq4juJb70NYuN0Q6T3noyRZAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gabriel,
+On 10/10/18 14:04, Vincent Guittot wrote:
 
-Thank for you this patch!
+[...]
 
-I do have some comments, see below...
+> The problem was the same with RT, the cfs utilization was lower than
+> reality because RT steals soem cycle to CFS
+> So schedutil was selecting a lower frequency when cfs was running
+> whereas the CPU was fully used.
+> The same can happen with thermal:
+> cap the max freq because of thermal
+> the utilization with decrease.
+> remove the cap
+> the utilization is still low and you will select a low OPP because you
+> don't take into account cycle stolen by thermal like with RT
 
-On 10/10/18 02:49, Gabriel Francisco Mandaji wrote:
-> Simulate a more precise timestamp by calculating it based on the
-> current framerate.
-> 
-> Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
-> ---
->  drivers/media/platform/vivid/vivid-core.h        |  1 +
->  drivers/media/platform/vivid/vivid-kthread-cap.c | 24 ++++++++++++++++--------
->  2 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
-> index cd4c823..cbdadd8 100644
-> --- a/drivers/media/platform/vivid/vivid-core.h
-> +++ b/drivers/media/platform/vivid/vivid-core.h
-> @@ -384,6 +384,7 @@ struct vivid_dev {
->  	/* thread for generating video capture stream */
->  	struct task_struct		*kthread_vid_cap;
->  	unsigned long			jiffies_vid_cap;
-> +	u64				cap_stream_start;
->  	u32				cap_seq_offset;
->  	u32				cap_seq_count;
->  	bool				cap_seq_resync;
-> diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
-> index f06003b..0793b15 100644
-> --- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-> +++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-> @@ -416,6 +416,7 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
->  	char str[100];
->  	s32 gain;
->  	bool is_loop = false;
-> +	u64 soe_time = 0;
->  
->  	if (dev->loop_video && dev->can_loop_video &&
->  		((vivid_is_svid_cap(dev) &&
-> @@ -426,11 +427,11 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
->  
->  	buf->vb.sequence = dev->vid_cap_seq_count;
->  	/*
-> -	 * Take the timestamp now if the timestamp source is set to
-> -	 * "Start of Exposure".
-> +	 * Store the current time to calculate the delta if source is set to
-> +	 * "End of Frame".
->  	 */
-> -	if (dev->tstamp_src_is_soe)
-> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
-> +	if (!dev->tstamp_src_is_soe)
-> +		soe_time = ktime_get_ns();
->  	if (dev->field_cap == V4L2_FIELD_ALTERNATE) {
->  		/*
->  		 * 60 Hz standards start with the bottom field, 50 Hz standards
-> @@ -556,12 +557,18 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
->  	}
->  
->  	/*
-> -	 * If "End of Frame" is specified at the timestamp source, then take
-> -	 * the timestamp now.
-> +	 * If "End of Frame", then calculate the "exposition time" and add
-
-exposition -> exposure
-
-> +	 * it to the timestamp.
->  	 */
->  	if (!dev->tstamp_src_is_soe)
-> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
-> -	buf->vb.vb2_buf.timestamp += dev->time_wrap_offset;
-> +		soe_time = ktime_get_ns() - soe_time;
-
-This isn't going to work. The soe_time is variable since the time it takes
-vivid to fill the buffer will be variable. And the whole purpose of this
-patch is to make it constant (since that's what happens in a real webcam).
-
-I would just set soe_time to 0.9 times the frame period, and then add this
-constant to the calculated timestamp.
-
-> +	buf->vb.vb2_buf.timestamp = dev->timeperframe_vid_cap.numerator *
-> +				    1000000000 /
-> +				    dev->timeperframe_vid_cap.denominator *
-
-I would first calculate the frame period in ns and store it in a temporary
-variable, then use that to calculate the timestamp.
-
-Note that the current code is wrong in case of FIELD_ALTERNATE (i.e. each
-buffer contains a top or bottom field: in that case you first need to divide
-the frame period by 2 to get the field period.
-
-> +				    dev->vid_cap_seq_count +
-> +				    dev->cap_stream_start +
-> +				    soe_time +
-> +				    dev->time_wrap_offset;
->  }
->  
->  /*
-> @@ -759,6 +766,7 @@ static int vivid_thread_vid_cap(void *data)
->  	dev->cap_seq_count = 0;
->  	dev->cap_seq_resync = false;
->  	dev->jiffies_vid_cap = jiffies;
-> +	dev->cap_stream_start = ktime_get_ns();
-
-You also need to do this in the 'if (dev->cap_seq_resync) {' a few lines below this.
-cap_seq_resync is set to true whenever the framerate is modified by userspace.
-
-In fact, I think it would help if the timestamp calculation is moved from
-vivid_fillbuff() to vivid_thread_vid_cap_tick(), since the same timestamp should
-be used for both video and vbi (with the vbi timestamp slightly later compared
-to the video timestamp, 0.05*frame_period would be reasonable offset).
-
-That means that vivid_sliced_vbi_cap_process() and vivid_raw_vbi_cap_process()
-no longer set the timestamp there.
-
-The same exercise should also be done for video output, but let's get video
-capture right first.
-
->  
->  	for (;;) {
->  		try_to_freeze();
-> 
-
-Did you check what happens when you drop frames? And wrapping the timestamp around?
-
-I think those corner cases will work fine, but make sure you test it.
-
-Regards,
-
-	Hans
+What if we scale frequency component considering the capped temporary
+max?
