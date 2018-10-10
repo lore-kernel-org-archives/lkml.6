@@ -2,272 +2,215 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA00C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53212C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA112087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:38:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA112087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 039562087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:40:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQL1Ifbr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039562087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeJKCBO (ORCPT
+        id S1727151AbeJKCDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 22:01:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37684 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726750AbeJKCBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 22:01:14 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5EA74C04F4D6;
-        Wed, 10 Oct 2018 18:37:50 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4644D600C4;
-        Wed, 10 Oct 2018 18:37:49 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 14:37:47 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     bsegall@google.com
-Cc:     Ingo Molnar <mingo@kernel.org>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [Patch] sched/fair: Avoid throttle_list starvation with low cfs
- quota
-Message-ID: <20181010183747.GE7852@pauld.bos.csb>
-References: <20181008143639.GA4019@pauld.bos.csb>
- <20181009083244.GA51643@gmail.com>
- <xm26in29wv2y.fsf@bsegall-linux.svl.corp.google.com>
+        Wed, 10 Oct 2018 22:03:40 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46222 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbeJKCDk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 22:03:40 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d8-v6so6862305qtk.13;
+        Wed, 10 Oct 2018 11:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vPLZBrdyBxi2FWx0yEgEmHUbRdmPHdk0mdju5rgVGtw=;
+        b=qQL1IfbromwOI2wFYAeVDbbnhK6CjgnBqFC+bVBBEHLZbgRcoz8LFcSGnwkwSMUPRj
+         F68PfK2CekvQ6sNUyuf536E+HBe0IH066xCFMPBQi234/f0sHGN4jiB5EEDdnu8NFCnw
+         vniZONqq/gXyD/AOvroRnI4y0m805pzwBDTSVHKKv+q54Wud8Op3stsqif0aD/VduayZ
+         CU9+gHc/2CyStTSRAB8y5jn88/NmVNSKeDWgCsIU6i1z9/1eLj/DKMLllfFvo3BlyJkV
+         4KgA4HnJS+55ym9r21XVgRbdPeBB+c/KaNG0DDc4L0MAlP7OF6WCymPJfvCSYocz+/FM
+         UD2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vPLZBrdyBxi2FWx0yEgEmHUbRdmPHdk0mdju5rgVGtw=;
+        b=INjD2DXulWKBqk8/jlKA/YRCBPIDgkgntIwelGjleLSiM/hdqqmVr3s8fMtWnCjPdf
+         DeiczxwUWLvgWJhKJw4DV9SjO84cQrB6KRaKd1iTEJyoOpbZ/TBRegar+p2maDLv9RJT
+         E/8OU4m68rbXxuY5TAiwhWCiWwSA303kmxRHkyMxRLjbDW9dMPfpDCGeYWD1P0E32jWp
+         XgrbI/I3lAW7CCWrY3Q9zKet2ZODF65LrM1+hwrD4XGJ45mJiXFgGfuTKh8VSmqrwM57
+         ky8AHM68qL0+MnjLBZJ7Zhu4/kwiGRKpTtm0pVtA7H3CjLqj+m1TVXP81ciowFfaeTlG
+         uncg==
+X-Gm-Message-State: ABuFfogBpuQ2viKYsK91X0EPowR3HfoQfo+qXKG9KxhB+kjjBC0XP3S0
+        KIOh4lgx7An/YhT/xP4zYsc=
+X-Google-Smtp-Source: ACcGV613GQGJX8bU0Qsqoip8EYUQg7M9+7nHOT/g3t+L0WKhm1ZTp3ZqzAPCDqpbhlojIBKv6BOMSA==
+X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr28539566qvb.26.1539196815341;
+        Wed, 10 Oct 2018 11:40:15 -0700 (PDT)
+Received: from localhost.localdomain ([2001:1284:f022:f7f5:3ccf:a328:f8f8:94f8])
+        by smtp.gmail.com with ESMTPSA id r7-v6sm14715374qta.82.2018.10.10.11.40.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 11:40:14 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id A35ED181183; Wed, 10 Oct 2018 15:40:11 -0300 (-03)
+Date:   Wed, 10 Oct 2018 15:40:11 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Subject: Re: KASAN: use-after-free Read in sctp_id2assoc
+Message-ID: <20181010184011.GE6761@localhost.localdomain>
+References: <0000000000007e767d05776336da@google.com>
+ <20181005145855.GB6761@localhost.localdomain>
+ <CACT4Y+YVRWSF+VyoBB1vwDevt0gwZYz69bSAivmZDG6r4J-kaA@mail.gmail.com>
+ <20181010181325.GD6761@localhost.localdomain>
+ <CACT4Y+YYpjjvW-UCkHEXWZA50F==7JC1cnMvoAZHKmOqq=9vAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xm26in29wv2y.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 10 Oct 2018 18:37:50 +0000 (UTC)
+In-Reply-To: <CACT4Y+YYpjjvW-UCkHEXWZA50F==7JC1cnMvoAZHKmOqq=9vAw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 10:49:25AM -0700 bsegall@google.com wrote:
-> Ingo Molnar <mingo@kernel.org> writes:
-> 
-> > I've Cc:-ed a handful of gents who worked on CFS bandwidth details to widen the discussion. 
-> > Patch quoted below.
-> >
-> > Looks like a real bug that needs to be fixed - and at first sight the quota of 1000 looks very 
-> > low - could we improve the arithmetics perhaps?
-> >
-> > A low quota of 1000 is used because there's many VMs or containers provisioned on the system 
-> > that is triggering the bug, right?
-> >
-> > Thanks,
-> >
-> > 	Ingo
-> >
-> > * Phil Auld <pauld@redhat.com> wrote:
-> >
-> >> From: "Phil Auld" <pauld@redhat.com>
-> >> 
-> >> sched/fair: Avoid throttle_list starvation with low cfs quota
-> >> 
-> >> With a very low cpu.cfs_quota_us setting, such as the minimum of 1000, 
-> >> distribute_cfs_runtime may not empty the throttled_list before it runs 
-> >> out of runtime to distribute. In that case, due to the change from 
-> >> c06f04c7048 to put throttled entries at the head of the list, later entries 
-> >> on the list will starve.  Essentially, the same X processes will get pulled 
-> >> off the list, given CPU time and then, when expired, get put back on the 
-> >> head of the list where distribute_cfs_runtime will give runtime to the same 
-> >> set of processes leaving the rest.
-> >> 
-> >> Fix the issue by setting a bit in struct cfs_bandwidth when 
-> >> distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can 
-> >> decide to put the throttled entry on the tail or the head of the list.  The 
-> >> bit is set/cleared by the callers of distribute_cfs_runtime while they hold 
-> >> cfs_bandwidth->lock. 
-> >> 
-> >> Signed-off-by: Phil Auld <pauld@redhat.com>
-> >> Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Ingo Molnar <mingo@kernel.org>
-> >> Cc: stable@vger.kernel.org
-> 
-> Reviewed-by: Ben Segall <bsegall@google.com>
-> 
-> 
-> In theory this does mean the unfairness could still happen if distribute is still
-> running, but while a tiny quota makes it more likely, the fact that
-> we're not getting through much of the list makes it not really a worry.
-> If you wanted to be even more careful there could be some generation
-> counter or something, but it doesn't seem necessary.
-> 
-
-Thanks for the review.  Yeah, I thought about a few other approaches, not explicitly
-what you suggested, but they all complicated things. This one seemed the closest to 
-"obviously correct".
-
-
-Cheers,
-Phil
-
-
-> 
-> >> ---
-> >> 
-> >> This is easy to reproduce with a handful of cpu consumers. I use crash on 
-> >> the live system. In some cases you can simply look at the throttled list and 
-> >> see the later entries are not changing:
-> >> 
-> >> crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-> >>   1     ffff90b56cb2d200  -976050
-> >>   2     ffff90b56cb2cc00  -484925
-> >>   3     ffff90b56cb2bc00  -658814
-> >>   4     ffff90b56cb2ba00  -275365
-> >>   5     ffff90b166a45600  -135138
-> >>   6     ffff90b56cb2da00  -282505
-> >>   7     ffff90b56cb2e000  -148065
-> >>   8     ffff90b56cb2fa00  -872591
-> >>   9     ffff90b56cb2c000  -84687
-> >>  10     ffff90b56cb2f000  -87237
-> >>  11     ffff90b166a40a00  -164582
-> >> crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-> >>   1     ffff90b56cb2d200  -994147
-> >>   2     ffff90b56cb2cc00  -306051
-> >>   3     ffff90b56cb2bc00  -961321
-> >>   4     ffff90b56cb2ba00  -24490
-> >>   5     ffff90b166a45600  -135138
-> >>   6     ffff90b56cb2da00  -282505
-> >>   7     ffff90b56cb2e000  -148065
-> >>   8     ffff90b56cb2fa00  -872591
-> >>   9     ffff90b56cb2c000  -84687
-> >>  10     ffff90b56cb2f000  -87237
-> >>  11     ffff90b166a40a00  -164582
-> >> 
-> >> Sometimes it is easier to see by finding a process getting starved and looking 
-> >> at the sched_info:
-> >> 
-> >> crash> task ffff8eb765994500 sched_info
-> >> PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-> >>   sched_info = {
-> >>     pcount = 8, 
-> >>     run_delay = 697094208, 
-> >>     last_arrival = 240260125039, 
-> >>     last_queued = 240260327513
-> >>   }, 
-> >> crash> task ffff8eb765994500 sched_info
-> >> PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-> >>   sched_info = {
-> >>     pcount = 8, 
-> >>     run_delay = 697094208, 
-> >>     last_arrival = 240260125039, 
-> >>     last_queued = 240260327513
-> >>   }, 
-> >> 
-> >> 
-> >>  fair.c  |   22 +++++++++++++++++++---
-> >>  sched.h |    2 ++
-> >>  2 files changed, 21 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index 7fc4a371bdd2..f88e00705b55 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -4476,9 +4476,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
-> >>  
-> >>  	/*
-> >>  	 * Add to the _head_ of the list, so that an already-started
-> >> -	 * distribute_cfs_runtime will not see us
-> >> +	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
-> >> +	 * not running add to the tail so that later runqueues don't get starved.
-> >>  	 */
-> >> -	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-> >> +	if (cfs_b->distribute_running)
-> >> +		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-> >> +	else
-> >> +		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
+On Wed, Oct 10, 2018 at 08:28:22PM +0200, Dmitry Vyukov wrote:
+> On Wed, Oct 10, 2018 at 8:13 PM, Marcelo Ricardo Leitner
+> <marcelo.leitner@gmail.com> wrote:
+> > On Wed, Oct 10, 2018 at 05:28:12PM +0200, Dmitry Vyukov wrote:
+> >> On Fri, Oct 5, 2018 at 4:58 PM, Marcelo Ricardo Leitner
+> >> <marcelo.leitner@gmail.com> wrote:
+> >> > On Thu, Oct 04, 2018 at 01:48:03AM -0700, syzbot wrote:
+> >> >> Hello,
+> >> >>
+> >> >> syzbot found the following crash on:
+> >> >>
+> >> >> HEAD commit:    4e6d47206c32 tls: Add support for inplace records encryption
+> >> >> git tree:       net-next
+> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13834b81400000
+> >> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=e569aa5632ebd436
+> >> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd55d7aec49d48e49a
+> >> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >> >>
+> >> >> Unfortunately, I don't have any reproducer for this crash yet.
+> >> >>
+> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> >> Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
+> >> >>
+> >> >> netlink: 'syz-executor1': attribute type 1 has an invalid length.
+> >> >> ==================================================================
+> >> >> BUG: KASAN: use-after-free in sctp_id2assoc+0x3a7/0x3e0
+> >> >> net/sctp/socket.c:276
+> >> >> Read of size 8 at addr ffff880195b3eb20 by task syz-executor2/15454
+> >> >>
+> >> >> CPU: 1 PID: 15454 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #242
+> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> >> Google 01/01/2011
+> >> >> Call Trace:
+> >> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >> >>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+> >> >>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+> >> >>  kasan_report_error mm/kasan/report.c:354 [inline]
+> >> >>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+> >> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >> >>  sctp_id2assoc+0x3a7/0x3e0 net/sctp/socket.c:276
+> >> >
+> >> > I'm not seeing yet how this could happen.
+> >> > All sockopts here are serialized by sock_lock.
+> >> > do_peeloff here would create another socket, but the issue was
+> >> > triggered before that.
+> >> > The same function that freed this memory, also removes the entry from
+> >> > idr mapping, so this entry shouldn't be there anymore.
+> >> >
+> >> > I have only two theories so far:
+> >> > - an issue with IDR/RCU.
+> >> > - something else happened that just the call stacks are not revealing.
 > >>
-> >>  	/*
-> >>  	 * If we're the first throttled task, make sure the bandwidth
-> >> @@ -4622,14 +4626,16 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
-> >>  	 * in us over-using our runtime if it is all used during this loop, but
-> >>  	 * only by limited amounts in that extreme case.
-> >>  	 */
-> >> -	while (throttled && cfs_b->runtime > 0) {
-> >> +	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
-> >>  		runtime = cfs_b->runtime;
-> >> +		cfs_b->distribute_running = 1;
-> >>  		raw_spin_unlock(&cfs_b->lock);
-> >>  		/* we can't nest cfs_b->lock while distributing bandwidth */
-> >>  		runtime = distribute_cfs_runtime(cfs_b, runtime,
-> >>  						 runtime_expires);
-> >>  		raw_spin_lock(&cfs_b->lock);
-> >>  
-> >> +		cfs_b->distribute_running = 0;
-> >>  		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
-> >>  
-> >>  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-> >> @@ -4740,6 +4746,11 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
-> >>  
-> >>  	/* confirm we're still not at a refresh boundary */
-> >>  	raw_spin_lock(&cfs_b->lock);
-> >> +	if (cfs_b->distribute_running) {
-> >> +		raw_spin_unlock(&cfs_b->lock);
-> >> +		return;
-> >> +	}
-> >> +
-> >>  	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
-> >>  		raw_spin_unlock(&cfs_b->lock);
-> >>  		return;
-> >> @@ -4749,6 +4760,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
-> >>  		runtime = cfs_b->runtime;
-> >>  
-> >>  	expires = cfs_b->runtime_expires;
-> >> +	if (runtime)
-> >> +		cfs_b->distribute_running = 1;
-> >> +
-> >>  	raw_spin_unlock(&cfs_b->lock);
-> >>  
-> >>  	if (!runtime)
-> >> @@ -4759,6 +4773,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
-> >>  	raw_spin_lock(&cfs_b->lock);
-> >>  	if (expires == cfs_b->runtime_expires)
-> >>  		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-> >> +	cfs_b->distribute_running = 0;
-> >>  	raw_spin_unlock(&cfs_b->lock);
-> >>  }
-> >>  
-> >> @@ -4867,6 +4882,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-> >>  	cfs_b->period_timer.function = sched_cfs_period_timer;
-> >>  	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> >>  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
-> >> +	cfs_b->distribute_running = 0;
-> >>  }
-> >>  
-> >>  static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> >> index 455fa330de04..9683f458aec7 100644
-> >> --- a/kernel/sched/sched.h
-> >> +++ b/kernel/sched/sched.h
-> >> @@ -346,6 +346,8 @@ struct cfs_bandwidth {
-> >>  	int			nr_periods;
-> >>  	int			nr_throttled;
-> >>  	u64			throttled_time;
-> >> +
-> >> +	bool                    distribute_running;
-> >>  #endif
-> >>  };
-> >>  
-> >> 
-> >> 
-> >> -- 
+> >> The "asoc->base.sk != sk" check after idr_find suggests that we don't
+> >> actually know what sock it belongs to. And if we don't know then
+> >
+> > Right. The check is more because the IDR is global and not per socket
+> > (and we don't want sockets accessing asocs from other sockets), and not
+> > that the asoc may move to another socket in between, but it also
+> > protects from such cases, yes.
+> >
+> >> locking this sock can't help keeping another sock association alive.
+> >> Am I missing something obvious here? Should we take assoc ref while we
+> >
+> > Not sure. Maybe I am.  Thanks for looking into this, btw.
+> >
+> >> are still holding sctp_assocs_id_lock?
+> >
+> > Shouldn't be needed.
+> >
+> > Solely by the call stacks:
+> > - we tried to establish a new asoc from a sctp_connect() call,
+> >   blocking one.
+> > - it slept waiting for the connect
+> > - (something closed the asoc in between the sleeps, because it freed
+> >   the asoc right when waking up on sctp_wait_for_connect())
+> > - it freed the asoc after sleeping on it on sctp_wait_for_connect [A]
+> > - another thread tried to peeloff that asoc [B]
+> >
+> > For [B] to access the asoc in question, it had to take the same sock
+> > lock [A] had taken, and then the idr should not return an asoc in
+> > sctp_i2asoc(). Note that we can't peeloff an asoc twice, thus why
+> > the certainty here.
+> >
+> > If [B] actually kicked in before the sleep resumed, that should have
+> > been fine because it took the same sock lock [A] would have to
+> > re-take. In this case an asoc would have been returned by
+> > sctp_id2asoc(), the asoc would have been moved to a new socket, but
+> > all while holding the original socket sock lock.
+> 
+> But why A and B use the same lock?
+> 
+> sctp_assocs_id is global, so it contains asocs from all sockets, right?
+> assoc id comes straight from userspaces.
+> So isn't it possible that B uses completely different sock but passes
+> assoc id from the A sock? Then B should find assoc in sctp_assocs_id,
+> and at the point of "asoc->base.sk != sk" check the assoc can be
+> already freed.
 
--- 
+That explains it. Somehow I was thinking the issue was for reading
+->dead instead.  Now it's pretty clear. Then this should be the patch
+we want. Can you please give it a spin? (only compile tested)
+
+While holding the spinlock, an entry cannot be removed from the idr
+and thus it cannot be freed. So even if the app uses an id from
+another socket, it will still be there.
+
+---8<---
+
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index f73e9d38d5ba..a7722f43aa69 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -271,11 +271,10 @@ struct sctp_association *sctp_id2assoc(struct sock *sk, sctp_assoc_t id)
+ 
+ 	spin_lock_bh(&sctp_assocs_id_lock);
+ 	asoc = (struct sctp_association *)idr_find(&sctp_assocs_id, (int)id);
++	if (asoc && (asoc->base.sk != sk || asoc->base.dead))
++		asoc = NULL;
+ 	spin_unlock_bh(&sctp_assocs_id_lock);
+ 
+-	if (!asoc || (asoc->base.sk != sk) || asoc->base.dead)
+-		return NULL;
+-
+ 	return asoc;
+ }
+ 
