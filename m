@@ -3,35 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0ABC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE541C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E162064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E162064E
+	by mail.kernel.org (Postfix) with ESMTP id A2F202064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 08:04:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F202064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeJJPY4 (ORCPT
+        id S1727006AbeJJPZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 11:24:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37130 "EHLO mx1.suse.de"
+        Wed, 10 Oct 2018 11:25:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37196 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726226AbeJJPY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:24:56 -0400
+        id S1726647AbeJJPZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 11:25:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6E7EAFD3;
-        Wed, 10 Oct 2018 08:03:55 +0000 (UTC)
-Subject: Re: [PATCH] xen/pvh: increase early stack size
-To:     Roger Pau Monne <roger.pau@citrix.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AECFEAFD3;
+        Wed, 10 Oct 2018 08:04:25 +0000 (UTC)
+Subject: Re: [PATCH] xen/balloon: Support xend-based toolstack
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         xen-devel@lists.xenproject.org
-References: <20181009103237.52527-1-roger.pau@citrix.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20181007200538.19320-1-boris.ostrovsky@oracle.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -65,27 +64,27 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <1d2093b4-1466-5bb8-1de0-1ea11c9433f3@suse.com>
-Date:   Wed, 10 Oct 2018 10:03:54 +0200
+Message-ID: <438923a2-d25c-79fa-dfc9-8008a79f7ce7@suse.com>
+Date:   Wed, 10 Oct 2018 10:04:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181009103237.52527-1-roger.pau@citrix.com>
+In-Reply-To: <20181007200538.19320-1-boris.ostrovsky@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/10/2018 12:32, Roger Pau Monne wrote:
-> While booting on an AMD EPYC box the stack canary would detect stack
-> overflows when using the current PVH early stack size (256). Switch to
-> using the value defined by BOOT_STACK_SIZE, which prevents the stack
-> overflow.
+On 07/10/2018 22:05, Boris Ostrovsky wrote:
+> Xend-based toolstacks don't have static-max entry in xenstore. The
+> equivalent node for those toolstacks is memory_static_max.
 > 
-> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> Fixes: 5266b8e4445c (xen: fix booting ballooned down hvm guest)
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: <stable@vger.kernel.org> # 4.13
 
 Committed to xen.tip for-linus-4.20
 
