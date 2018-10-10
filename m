@@ -2,149 +2,157 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB2AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA56C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ACDD214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:19:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CkK9Zk+5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ACDD214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E0B8D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B8D2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeJJWma (ORCPT
+        id S1726712AbeJJWpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:42:30 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54491 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJWma (ORCPT
+        Wed, 10 Oct 2018 18:45:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45781 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbeJJWpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:42:30 -0400
-Received: by mail-it1-f195.google.com with SMTP id l191-v6so8598652ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YqZNGkJBI3w2FyVhG/oP0c9Bt8VrqtJEYeeYlT2jZkI=;
-        b=CkK9Zk+5Mm5RbfCq8zrQzXzCQZst5P6xbK/cfM79t9TqnacRRSGm8uyzjdlDl//9ND
-         Z7aPzJwLVmNGRcUafvUN9C51SGmbJOCqp/5/TPebPb57jpQkm6HcFc75C51Dofml+mZ6
-         U3xFOq3GvJiRIFOCXmtt7rXFLgL37xtnwg0BE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YqZNGkJBI3w2FyVhG/oP0c9Bt8VrqtJEYeeYlT2jZkI=;
-        b=Kpb4/6mndat4iWo2BY3ZUBnxUmumFoQiDFoObiRwszYB+/vR0ILLSK+4IVfStdwPdW
-         VNij05eYEcHA07RT2Kx3jF7nEZwiJOoZmmvYeUsSycQVvWcdBFge9q8ixazjbqJpTQEb
-         60vuW6upodED8efijCILrjHn2YeWkj2dBBdC72rZR0XIEqlu8exK6tcwpVsuj4n4Xv/S
-         FcBTPsDMxrPbYito8YzEJnbscnIlHXXkCUVJCRZIWwmQ/TUFttxNa329yqfXovi2vDlf
-         oi1YT0OM6fllB1AbD9Za5MUshjnmuWSZA1zoz+IumA/xxUFgzEnbmhIIc+D3zOIRtI3A
-         EpTQ==
-X-Gm-Message-State: ABuFfohuJWD8cZOpOwzLt1lVb+s4Q+JluOJ71WOOuttwXOc+hpkVZuIy
-        WBKCqLxnhT9sQSx3sB0nqCZA+voISxn8nnfv4f2VKA==
-X-Google-Smtp-Source: ACcGV61Mf/eTNqeuduefzXtoMC4U3GCO5MmBh769dP786MkRLk2yUoUyHFnB80cw+tqrZrIe/7Iv4AO6iXUpL/89+fQ=
-X-Received: by 2002:a24:bd41:: with SMTP id x62-v6mr1153916ite.152.1539184790069;
- Wed, 10 Oct 2018 08:19:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010061751.GA37224@gmail.com> <20181010082933.4ful4dzk7rkijcwu@queper01-lin>
- <CAKfTPtA1sgf77xLUPr74iEEb+W8PGCMCkgu+Kw8xM_Jxx7_hjQ@mail.gmail.com>
- <20181010095459.orw2gse75klpwosx@queper01-lin> <CAKfTPtA+FWrMnerQhrNQhvmvVSK_S86da=8shpdET-807zZgVg@mail.gmail.com>
- <20181010103623.ttjexasymdpi66lu@queper01-lin> <CAKfTPtBM24F99OhtjWU-cx4DdFFpvUMMDYuqZH_vaJg9HEpPTw@mail.gmail.com>
- <20181010130549.hzpkaskvlgifbdrp@queper01-lin> <CAKfTPtA=GYaiKcJ9N5zEnzxJTKBATG41c0xDjhbA21G-Cv6LvA@mail.gmail.com>
- <20181010134755.jrigtogbxwaz2izb@queper01-lin>
-In-Reply-To: <20181010134755.jrigtogbxwaz2izb@queper01-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 10 Oct 2018 17:19:38 +0200
-Message-ID: <CAKfTPtAjS+D7L9ckDw4bYayPf29EEkFLAzx1SeEa6Ue_V+iPyg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Wed, 10 Oct 2018 18:45:31 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gAGJf-0001y0-Uq; Wed, 10 Oct 2018 17:22:28 +0200
+Date:   Wed, 10 Oct 2018 17:22:27 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     syzbot <syzbot+ff03fe05c717b82502d0@syzkaller.appspotmail.com>
+cc:     Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
         Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ionela Voinescu <ionela.voinescu@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        syzkaller-bugs@googlegroups.com, x86@kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Subject: Re: kernel BUG at arch/x86/mm/physaddr.c:LINE!
+In-Reply-To: <0000000000000542c10577e14e22@google.com>
+Message-ID: <alpine.DEB.2.21.1810101721430.15060@nanos.tec.linutronix.de>
+References: <0000000000000542c10577e14e22@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 at 15:48, Quentin Perret <quentin.perret@arm.com> wrote:
->
-> On Wednesday 10 Oct 2018 at 15:27:57 (+0200), Vincent Guittot wrote:
-> > On Wed, 10 Oct 2018 at 15:05, Quentin Perret <quentin.perret@arm.com> wrote:
-> > >
-> > > On Wednesday 10 Oct 2018 at 14:04:40 (+0200), Vincent Guittot wrote:
-> > > > This patchset doesn't touch cpu_capacity_orig and doesn't need to  as
-> > > > it assume that the max capacity is unchanged but some capacity is
-> > > > momentary stolen by thermal.
-> > > >  If you want to reflect immediately all thermal capping change, you
-> > > > have to update this field and all related fields and struct around
-> > >
-> > > I don't follow you here. I never said I wanted to change
-> > > cpu_capacity_orig. I don't think we should do that actually. Changing
-> > > capacity_of (which is updated during LB IIRC) is just fine. The question
-> > > is about what you want to do there: reflect an averaged value or the
-> > > instantaneous one.
-> >
-> > Sorry I though your were speaking about updating this cpu_capacity_orig.
->
-> N/p, communication via email can easily become confusing :-)
->
-> > With using instantaneous max  value in capacity_of(), we are back to
-> > the problem raised by Thara that  the value will most probably not
-> > reflect the current capping value when it is used in LB, because LB
-> > period can quite long on busy CPU (default max value is 32*sd_weight
-> > ms)
->
-> But averaging the capping value over time doesn't make LB happen more
-> often ... That will help you account for capping that happened in the
+On Wed, 10 Oct 2018, syzbot wrote:
 
-But you know what happens in average between 2 LB
+Cc+: Miklos
 
-> past, but it's not obvious this is actually a good thing. Probably not
-> all the time anyway.
->
-> Say a CPU was capped at 50% of it's capacity, then the cap is removed.
-> At that point it'll take 100ms+ for the thermal signal to decay and let
-> the scheduler know about the newly available capacity. That can probably
-
-But the point is that you don't know:
-- if the capping will not happen soon. If the pressure has reached the
-50%,  it means that it already happened quite often in the past 100ms.
-- if there is really available capacity as the current sum of
-utilization reflects what was available for tasks and not what the
-tasks really wants to use
-
-
-> be a performance hit in some use cases ... And the other way around, it
-> can also take forever for the scheduler to notice that a CPU has a
-
-What do you mean by forever ?
-
-> reduced capacity before reacting to it.
->
-> If you want to filter out very short transient capping events to avoid
-> over-reacting in the scheduler (is this actually happening ?), then
-> maybe the average should be done on the cooling device side or something
-> like that ?
->
-> Thanks,
-> Quentin
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    0854ba5ff5c9 Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15e64ea1400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ff03fe05c717b82502d0
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e516a1400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d6e93a400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+ff03fe05c717b82502d0@syzkaller.appspotmail.com
+> 
+> RBP: 00007ffc881226c0 R08: 0000000020000100 R09: 0000000000000100
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+> overlayfs: failed to verify origin (syzkaller.Ry8w8Y/file0, ino=16483,
+> err=-12)
+> ------------[ cut here ]------------
+> kernel BUG at arch/x86/mm/physaddr.c:22!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 5918 Comm: syz-executor189 Not tainted 4.19.0-rc7+ #53
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> 01/01/2011
+> RIP: 0010:__phys_addr+0xff/0x120 arch/x86/mm/physaddr.c:22
+> Code: 3c 02 00 75 31 4c 8b 25 ff c3 ee 07 48 89 de bf ff ff ff 1f e8 a2 7a 46
+> 00 49 01 dc 48 81 fb ff ff ff 1f 76 a7 e8 61 79 46 00 <0f> 0b e8 6a e9 89 00
+> e9 7a ff ff ff e8 c0 e9 89 00 eb c8 0f 1f 40
+> RSP: 0018:ffff8801c3387770 EFLAGS: 00010093
+> RAX: ffff8801c323a080 RBX: 000000007ffffff4 RCX: ffffffff81385c1e
+> RDX: 0000000000000000 RSI: ffffffff81385c2f RDI: 0000000000000007
+> RBP: ffff8801c3387788 R08: ffff8801c323a080 R09: ffffed003b5c4fe8
+> R10: ffffed003b5c4fe8 R11: ffff8801dae27f47 R12: 000000007ffffff4
+> R13: 0000000000000001 R14: ffffffff882f8c80 R15: 0000000000004063
+> FS:  000000000148d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000619570 CR3: 00000001c4ab0000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> virt_to_head_page include/linux/mm.h:658 [inline]
+> virt_to_cache mm/slab.c:399 [inline]
+> kfree+0x7b/0x230 mm/slab.c:3809
+> ovl_verify_set_fh+0xba/0x180 fs/overlayfs/namei.c:435
+> ovl_verify_origin fs/overlayfs/overlayfs.h:316 [inline]
+> ovl_get_indexdir fs/overlayfs/super.c:1139 [inline]
+> ovl_fill_super+0x3026/0x3f7b fs/overlayfs/super.c:1441
+> mount_nodev+0x6b/0x110 fs/super.c:1204
+> ovl_mount+0x2c/0x40 fs/overlayfs/super.c:1518
+> mount_fs+0xae/0x31d fs/super.c:1261
+> vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+> vfs_kern_mount fs/namespace.c:951 [inline]
+> do_new_mount fs/namespace.c:2457 [inline]
+> do_mount+0x581/0x31f0 fs/namespace.c:2787
+> ksys_mount+0x12d/0x140 fs/namespace.c:3003
+> __do_sys_mount fs/namespace.c:3017 [inline]
+> __se_sys_mount fs/namespace.c:3014 [inline]
+> __x64_sys_mount+0xbe/0x150 fs/namespace.c:3014
+> do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4418e9
+> Code: 26 02 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7 48
+> 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f
+> 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ffc88122678 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004418e9
+> RDX: 00000000200000c0 RSI: 0000000020000000 RDI: 0000000000400000
+> RBP: 00007ffc881226c0 R08: 0000000020000100 R09: 0000000000000100
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace 25e838f694c8a24f ]---
+> RIP: 0010:__phys_addr+0xff/0x120 arch/x86/mm/physaddr.c:22
+> Code: 3c 02 00 75 31 4c 8b 25 ff c3 ee 07 48 89 de bf ff ff ff 1f e8 a2 7a 46
+> 00 49 01 dc 48 81 fb ff ff ff 1f 76 a7 e8 61 79 46 00 <0f> 0b e8 6a e9 89 00
+> e9 7a ff ff ff e8 c0 e9 89 00 eb c8 0f 1f 40
+> RSP: 0018:ffff8801c3387770 EFLAGS: 00010093
+> RAX: ffff8801c323a080 RBX: 000000007ffffff4 RCX: ffffffff81385c1e
+> RDX: 0000000000000000 RSI: ffffffff81385c2f RDI: 0000000000000007
+> RBP: ffff8801c3387788 R08: ffff8801c323a080 R09: ffffed003b5c4fe8
+> R10: ffffed003b5c4fe8 R11: ffff8801dae27f47 R12: 000000007ffffff4
+> R13: 0000000000000001 R14: ffffffff882f8c80 R15: 0000000000004063
+> FS:  000000000148d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000619570 CR3: 00000001c4ab0000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
