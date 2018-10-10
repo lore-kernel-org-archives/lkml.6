@@ -6,153 +6,127 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA56C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C652C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B8D2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:22:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B8D2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BA9BE2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA9BE2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeJJWpc (ORCPT
+        id S1726728AbeJJWup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:45:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45781 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbeJJWpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:45:31 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gAGJf-0001y0-Uq; Wed, 10 Oct 2018 17:22:28 +0200
-Date:   Wed, 10 Oct 2018 17:22:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     syzbot <syzbot+ff03fe05c717b82502d0@syzkaller.appspotmail.com>
-cc:     Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs@googlegroups.com, x86@kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org
-Subject: Re: kernel BUG at arch/x86/mm/physaddr.c:LINE!
-In-Reply-To: <0000000000000542c10577e14e22@google.com>
-Message-ID: <alpine.DEB.2.21.1810101721430.15060@nanos.tec.linutronix.de>
-References: <0000000000000542c10577e14e22@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 10 Oct 2018 18:50:45 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14158 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726666AbeJJWup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:50:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 08:28:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,364,1534834800"; 
+   d="scan'208";a="98198130"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 10 Oct 2018 08:27:59 -0700
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20181009170051.GA40606@tiger-server>
+ <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+ <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+ <CAPcyv4gZV_V=iY0mHiiAWwbynqtPxLTwdZ0j0vQ0F95ZZ4nTZg@mail.gmail.com>
+ <20181010125211.GA45572@tiger-server>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <deb1264e-5a42-3467-9073-e829b8eab8ca@linux.intel.com>
+Date:   Wed, 10 Oct 2018 08:27:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181010125211.GA45572@tiger-server>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018, syzbot wrote:
 
-Cc+: Miklos
 
-> Hello,
+On 10/10/2018 5:52 AM, Yi Zhang wrote:
+> On 2018-10-09 at 14:19:32 -0700, Dan Williams wrote:
+>> On Tue, Oct 9, 2018 at 1:34 PM Alexander Duyck
+>> <alexander.h.duyck@linux.intel.com> wrote:
+>>>
+>>> On 10/9/2018 11:04 AM, Dan Williams wrote:
+>>>> On Tue, Oct 9, 2018 at 3:21 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+>> [..]
+>>>> That comment is incorrect, device-pages are never onlined. So I think
+>>>> we can just skip that call to __SetPageReserved() unless the memory
+>>>> range is MEMORY_DEVICE_{PRIVATE,PUBLIC}.
+>>>>
+>>>
+>>> When pages are "onlined" via __free_pages_boot_core they clear the
+>>> reserved bit, that is the reason for the comment. The reserved bit is
+>>> meant to indicate that the page cannot be swapped out or moved based on
+>>> the description of the bit.
+>>
+>> ...but ZONE_DEVICE pages are never onlined so I would expect
+>> memmap_init_zone_device() to know that detail.
+>>
+>>> I would think with that being the case we still probably need the call
+>>> to __SetPageReserved to set the bit with the expectation that it will
+>>> not be cleared for device-pages since the pages are not onlined.
+>>> Removing the call to __SetPageReserved would probably introduce a number
+>>> of regressions as there are multiple spots that use the reserved bit to
+>>> determine if a page can be swapped out to disk, mapped as system memory,
+>>> or migrated.
 > 
-> syzbot found the following crash on:
+> Another things, it seems page_init/set_reserved already been done in the
+> move_pfn_range_to_zone
+>      |-->memmap_init_zone
+>      	|-->for_each_page_in_pfn
+> 		|-->__init_single_page
+> 		|-->SetPageReserved
 > 
-> HEAD commit:    0854ba5ff5c9 Merge git://git.kernel.org/pub/scm/linux/kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15e64ea1400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ff03fe05c717b82502d0
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e516a1400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d6e93a400000
+> Why we haven't remove these redundant initial in memmap_init_zone?
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+ff03fe05c717b82502d0@syzkaller.appspotmail.com
+> Correct me if I missed something.
+
+In this case it isn't redundant as only the vmmemmap pages are 
+initialized in memmap_init_zone now. So all of the pages that are going 
+to be used as device pages are not initialized until the call to 
+memmap_init_zone_device. What I did is split the initialization of the 
+pages into two parts in order to allow us to initialize the pages 
+outside of the hotplug lock.
+
+>>
+>> Right, this is what Yi is working on... the PageReserved flag is
+>> problematic for KVM. Auditing those locations it seems as long as we
+>> teach hibernation to avoid ZONE_DEVICE ranges we can safely not set
+>> the reserved flag for DAX pages. What I'm trying to avoid is a local
+>> KVM hack to check for DAX pages when the Reserved flag is not
+>> otherwise needed.
+> Thanks Dan. Provide the patch link.
 > 
-> RBP: 00007ffc881226c0 R08: 0000000020000100 R09: 0000000000000100
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> overlayfs: failed to verify origin (syzkaller.Ry8w8Y/file0, ino=16483,
-> err=-12)
-> ------------[ cut here ]------------
-> kernel BUG at arch/x86/mm/physaddr.c:22!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 5918 Comm: syz-executor189 Not tainted 4.19.0-rc7+ #53
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> 01/01/2011
-> RIP: 0010:__phys_addr+0xff/0x120 arch/x86/mm/physaddr.c:22
-> Code: 3c 02 00 75 31 4c 8b 25 ff c3 ee 07 48 89 de bf ff ff ff 1f e8 a2 7a 46
-> 00 49 01 dc 48 81 fb ff ff ff 1f 76 a7 e8 61 79 46 00 <0f> 0b e8 6a e9 89 00
-> e9 7a ff ff ff e8 c0 e9 89 00 eb c8 0f 1f 40
-> RSP: 0018:ffff8801c3387770 EFLAGS: 00010093
-> RAX: ffff8801c323a080 RBX: 000000007ffffff4 RCX: ffffffff81385c1e
-> RDX: 0000000000000000 RSI: ffffffff81385c2f RDI: 0000000000000007
-> RBP: ffff8801c3387788 R08: ffff8801c323a080 R09: ffffed003b5c4fe8
-> R10: ffffed003b5c4fe8 R11: ffff8801dae27f47 R12: 000000007ffffff4
-> R13: 0000000000000001 R14: ffffffff882f8c80 R15: 0000000000004063
-> FS:  000000000148d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000619570 CR3: 00000001c4ab0000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> virt_to_head_page include/linux/mm.h:658 [inline]
-> virt_to_cache mm/slab.c:399 [inline]
-> kfree+0x7b/0x230 mm/slab.c:3809
-> ovl_verify_set_fh+0xba/0x180 fs/overlayfs/namei.c:435
-> ovl_verify_origin fs/overlayfs/overlayfs.h:316 [inline]
-> ovl_get_indexdir fs/overlayfs/super.c:1139 [inline]
-> ovl_fill_super+0x3026/0x3f7b fs/overlayfs/super.c:1441
-> mount_nodev+0x6b/0x110 fs/super.c:1204
-> ovl_mount+0x2c/0x40 fs/overlayfs/super.c:1518
-> mount_fs+0xae/0x31d fs/super.c:1261
-> vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-> vfs_kern_mount fs/namespace.c:951 [inline]
-> do_new_mount fs/namespace.c:2457 [inline]
-> do_mount+0x581/0x31f0 fs/namespace.c:2787
-> ksys_mount+0x12d/0x140 fs/namespace.c:3003
-> __do_sys_mount fs/namespace.c:3017 [inline]
-> __se_sys_mount fs/namespace.c:3014 [inline]
-> __x64_sys_mount+0xbe/0x150 fs/namespace.c:3014
-> do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4418e9
-> Code: 26 02 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7 48
-> 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f
-> 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffc88122678 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004418e9
-> RDX: 00000000200000c0 RSI: 0000000020000000 RDI: 0000000000400000
-> RBP: 00007ffc881226c0 R08: 0000000020000100 R09: 0000000000000100
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace 25e838f694c8a24f ]---
-> RIP: 0010:__phys_addr+0xff/0x120 arch/x86/mm/physaddr.c:22
-> Code: 3c 02 00 75 31 4c 8b 25 ff c3 ee 07 48 89 de bf ff ff ff 1f e8 a2 7a 46
-> 00 49 01 dc 48 81 fb ff ff ff 1f 76 a7 e8 61 79 46 00 <0f> 0b e8 6a e9 89 00
-> e9 7a ff ff ff e8 c0 e9 89 00 eb c8 0f 1f 40
-> RSP: 0018:ffff8801c3387770 EFLAGS: 00010093
-> RAX: ffff8801c323a080 RBX: 000000007ffffff4 RCX: ffffffff81385c1e
-> RDX: 0000000000000000 RSI: ffffffff81385c2f RDI: 0000000000000007
-> RBP: ffff8801c3387788 R08: ffff8801c323a080 R09: ffffed003b5c4fe8
-> R10: ffffed003b5c4fe8 R11: ffff8801dae27f47 R12: 000000007ffffff4
-> R13: 0000000000000001 R14: ffffffff882f8c80 R15: 0000000000004063
-> FS:  000000000148d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000619570 CR3: 00000001c4ab0000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> https://lore.kernel.org/lkml/cover.1536342881.git.yi.z.zhang@linux.intel.com
+
+So it looks like your current logic is just working around the bit then 
+since it just allows for reserved DAX pages.
+
+
