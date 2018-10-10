@@ -2,229 +2,134 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2338C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B36C32788
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF442064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 892EA214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ciel9o+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF442064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="mX0ac9DU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892EA214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbeJJJev (ORCPT
+        id S1727279AbeJJJfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 05:34:51 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:40886 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbeJJJev (ORCPT
+        Wed, 10 Oct 2018 05:35:48 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:21359 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727193AbeJJJfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 05:34:51 -0400
-Received: by mail-lf1-f51.google.com with SMTP id t22-v6so2774246lfb.7
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Oct 2018 19:14:57 -0700 (PDT)
+        Wed, 10 Oct 2018 05:35:47 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 10 Oct 2018 11:15:52 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 5FD877802D;
+        Wed, 10 Oct 2018 11:15:51 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,362,1534777200"; 
+   d="scan'208";a="294715616"
+Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 10 Oct 2018 11:15:51 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=P/Sho3JimvBd+HdzjYQQ7EgIOkz14mUaOsYtQlmE5TQ=;
-        b=ciel9o+tGb+dAx+CweXfwJzOd3gyaQ8RHgcvwndZ2/axzXNh7UreHAL2CH6NHje1Rn
-         aZKussyjP6JIOsP8y2vgDjkdZaFp+c7O6+iZfQbBtTxLxHkevHiCS/vV39Q2Lz4A0aGb
-         k6WQmU1q7wM6CfgnyxQtEJPpr1kb5frJqL6uI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=P/Sho3JimvBd+HdzjYQQ7EgIOkz14mUaOsYtQlmE5TQ=;
-        b=PhYEnbZ76zg8bhjlehF6q/g4z001DlMrIPnFJ+o4lE6LUdZZU2mLy/4DPJBGQv9usC
-         R1wuJVngCr6XNJ7xui+XZXrXaB8HaBzu1PcW5hO4KbasWrz8p9eoYThmG7lWzc8QHRyR
-         8zu3ka14RpyV3KbGqndAsQuzkqkh6+UVUZTawicbsxfdfJ8/HSFWmfTtdHFosBn5jI4A
-         OEUQPvRF1YIgAkHQRFytHJgZoXRrUS0w/ss4oOJTA2561OUTDUa39v7Aw7hBYskd5xmb
-         lOQRL592m8TLdKaE6PdSyH/kqWiGm3ARaVf9t+TtUEmBZmJ6dAjaS0ZQhA8ubNLwC6Zh
-         1IcQ==
-X-Gm-Message-State: ABuFfojlFVGcqhyv5nCqer+HE8enU4d1m9vekPWdGXU2q79xEgZrFDQk
-        5HI+H83MYv7ObP5JN81IHjrfE9lUkO+eFrzv6gmKZw==
-X-Google-Smtp-Source: ACcGV603whLAoJZ04xPRK5txiYiSizHpKAylU9X9K45JSgybySRfFOZ1dkYPnFeM5JexIRuyaeI9k8ZQMqa185Ipy4s=
-X-Received: by 2002:a19:1941:: with SMTP id 62-v6mr15119371lfz.99.1539137696528;
- Tue, 09 Oct 2018 19:14:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Tue, 9 Oct 2018 19:14:56 -0700 (PDT)
-In-Reply-To: <931be52e-fa7e-72f8-0e5f-9a8a006d6ccd@gmail.com>
-References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
- <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com> <CAMz4kuJ4iB7pn+i29aypnbxxPK_UDjus=EiNZ2WefBB0onZPTg@mail.gmail.com>
- <7051613e-f2db-260f-85d7-d40278fd11cb@gmail.com> <CAMz4kuKJ73mHzYotwmx08h1sJJiKAZNCspo0_v7L-2Ec+5rEQg@mail.gmail.com>
- <931be52e-fa7e-72f8-0e5f-9a8a006d6ccd@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 10 Oct 2018 10:14:56 +0800
-Message-ID: <CAMz4kuKHRXNC=K4j01ReGHi1Zm=Q8UQfCAHppG3wqymmjbOL-Q@mail.gmail.com>
-Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1FNwJyw77//AoYOD6omFyZf8X53mpudZVhFybWnl4e4=;
+ b=mX0ac9DU3BlQO+e6gHgKpaia9ZSg56nie/rk757iHoFFj2VV4Ncjgs5Bv7bddPUO1OSCaMWWHZqEclzfRyWi35oFA1caWhb+i4HM00A158WX8ahlfqtuxrFoKwglWf6Lbh14MT7eAdUJITMCm+wfubK38xO/pkBWrvSatMnKdnE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1866.jpnprd01.prod.outlook.com (2603:1096:403:2::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.23; Wed, 10 Oct 2018 02:15:48 +0000
+Message-ID: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 0/2] add 74aup1g157gw 2-input multiplexer as clock driver
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Wed, 10 Oct 2018 02:15:48 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: KAWPR01CA0076.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::12) To TY1PR01MB1866.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::22)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 439acd58-cca3-43ec-ae72-08d62e564b71
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1866;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;3:rFVpUv7LUWPsTZCgBrSYVqy6fIEGweFuwOHyKIbE25f52seoqxSLwIOSqxUUEVvkuU+UTVLeSGkB948bPLZx4+LB6dGl5F/aTjn9rlCe5XSXjI94Xx88asJzv8F61JabMHdHpSp3xYqo3xfZwtRK3YlfG+J6UcACzWy/wlSoDedv2wc7L4E5IuW073RYA2azyLvLNOedPGcBmO2EBfpg6uInuXAkkB/wp1j478yMfOe3GMqy/+TGMg+bxCe6fHKX;25:+H6UG/pgA3RZ4qC+vHAfB43zhF/Jt86QqD29Z5tt5sEy1Ct66bOEJjtAE8VB6ybNdqkjascWCQ/7p3F2v75VUURCkqJ9SXIyzIlBgiWE3hYmBtZ6BlFD29D+LEnlLmNjycyi9XrNOzHOWoYJV9Qu9vTBgWJtffZqGwpurpuLXHCORAv+1Xf5esa57+CwcgZzJhKUDtQRV8u4NkYa2oKzhD7SNPdwMRQcJ1hxVXd69dRWzuQalV1Z16lqPh6dBPKvK12vW5EgJUUEQX9fb8VkCeWBkf8fVEJix5odqTGvhFa6Smlz9WgL2rX0lghuuOVUDTIKEedefmriSWhW94XpQg==;31:PdqiIqnc+hm+LZf3MBLDly6O9lTJdFaI5yD2UyCHa+NEcUFqYRF1wG0TrcZgpAgaNuSX9la0CBulinBSBTcIbEr2p5kgfFIPSIzjqMhF7EvoLE7DOWHebqzyHpylexR5TYLLxIeCN5gkNfCXcuzEU1kHnIXonj5tPbqFA9XfNQWshkqQjdze38yECMIV0fyNaf8VCL+eDJn58MjiKhwCDYJ5gLfhx5NXPWRLbohXsGE=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1866:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:rIOLcOYIno9ZdwAKgsNe4qPnfRZX5sT0z0lSNb3w2IA0m+5/Uydlsq4gEhjLc+VTcn5fYLswUUtewVN7sbK975sBLR6TfLtEM/VY5jiD2LQX7kwSPBITPkRinN4aR3wZUp+tG8yikGrf3O2ZRS92WN5F2b7FgjyuGC6qmfVpifEfaY3pFe7sRzMq2vMYTGSAn9e4m0zSFU0cpD8TqR0Wa2Evn47xE4KY/e5YQI/LJQ6fkqP9pBSnEXgf+Z0j68ajamp8sPONAL0MMc6J7tFREsPa4kN264Eiw2e3umUigO87P1xmbrFrYw+EYv7Gk4cgCjmWuQ0mSrz2gQ/iBNr7AwQ5Xk9Uh+U27/g3wCBVfRYWv3arQo0o52UYPvOudAKKHZktJcO6FOWZksUl2Pe09O5zJmM2cryeXO9OmSCGiRsqPuhgOa1J6dYGVKXpaDPSguO09EJJgLlPd+SUaIKvACKZ1VzM/lDltMM7FdIMQ3PuD7hBfU7abUK4v+QY7d5t;4:HSojHqBZzUWfIgubt+HuUHVFBoRtW27BlG4mrcqA4ofo2HjXlJKTFU3WUvTcNtrW699kMF7CRQP9uI2xZ8dXwJWW0qLo8XJoXdpzbN/kDvmbJuSbUfkPQ4Bf3oGb9PZgG3wmHS6ujOiNZPlNprzmSN4wLg3mk8P8C61mkrqXQS5e5gNWr75MhGJkGEzBp1S5ydaUUwyGnR1XDA6RgSd2dWON4pVVBqyB5VrWrNeRpZkB0TwO0//CIxYDdEcS6i11KxTePv3ytf+V1wmuBRmLVQ==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB1866A05F7576DF89336CA779D4E00@TY1PR01MB1866.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:TY1PR01MB1866;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1866;
+X-Forefront-PRVS: 08213D42D3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(16526019)(8676002)(81166006)(7736002)(8936002)(186003)(14444005)(81156014)(305945005)(4326008)(50466002)(486006)(36756003)(2616005)(26005)(86362001)(956004)(68736007)(476003)(47776003)(97736004)(66066001)(386003)(478600001)(7696005)(23726003)(5660300001)(53936002)(3846002)(6116002)(110136005)(16586007)(316002)(106356001)(52116002)(2906002)(58126008)(53416004)(105586002)(6486002)(25786009)(69596002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1866;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1866;23:ezrAH3hUVaVfNP6x9BdorDGYJMTDdrTSaGZHzEvgG?=
+ =?us-ascii?Q?FgeACkKfeiBZpjbVuFrQZ5lxyd7zHMXmIcuTmF4LVuMzvK9YktWOD7OR36uR?=
+ =?us-ascii?Q?Bs7FP8SFB7OraUdZVw44iuTzvYod9uJhBxh24exVLZ13WjfvmMTEZrUfVqEE?=
+ =?us-ascii?Q?ScAzJohKohIC34d0mHWO07dxVVWiFhH33E2o1AcopcfUlLKxcKtwshNe+Kxj?=
+ =?us-ascii?Q?nG2dozpK1fftT8dwO95/7I8OeOSksNGy0L7SqKslpVGQyfOd3ngTjMgI5zNp?=
+ =?us-ascii?Q?oXpuwOuMCouzgLqBkLOV0VfV8NHlK5YjJqrD7tMBO24upYyo/9OuyqN0da9m?=
+ =?us-ascii?Q?9VRkYYC9ribeZRTO2KARzoksuKgJkWrTyonuUI+mQsh/Vqp4ZQ8uxZ/H5m7C?=
+ =?us-ascii?Q?eNzMWM7KTTDJEBavzh0Z99LSo9G4tzeYVhpyN4jTmFBQ/2Fyt7NlLQRqLk/C?=
+ =?us-ascii?Q?qUbCOaeGNT/dha1bDQ2R4ytYogKoUJgPQbFM19EjDOYSFkZRrZUcVI0je69X?=
+ =?us-ascii?Q?BQc0nTjX4VN08lio7j6zLaD6/IrPa0zWRRWuNiWju8SljHWwoZYccX1/0fDs?=
+ =?us-ascii?Q?RGYj5Ao7glIN/BOJRQMFiHTjCwJDZkiXm3vSFUWMaXHXdhI5++afSjZhpPHb?=
+ =?us-ascii?Q?ThPJ44MgQ9vfck+rNC1KwXXVcoNQlTgormv+lqNSXhsVyiH+w/SqFYWqUtVe?=
+ =?us-ascii?Q?Hf0ObhUwvlNp2hpSzxEE4FtzT77odBigMng4ZxNv8EHLbx0aFP4nCE3m+Mlz?=
+ =?us-ascii?Q?J53gB/2Xyzzfh/EyPG4o5Hjul8+Amv8Y33zRdgI8r5TIFxYU8QdZqTa7+TFe?=
+ =?us-ascii?Q?7SJ0jdHZIDwkgfJ9QyEX8Z4yWwkl8Npg5WXF12chvOVFM7O4IWPjgSRxAWJh?=
+ =?us-ascii?Q?AobJt4oQBURjwAaHm9yLAnEkbugO/k7NQfQSA/arZsYjfle2GZGsxKLNop4/?=
+ =?us-ascii?Q?WhrVcUtgrqXzsw0wmOOUt4jO5quQoLCT/WVI2EWgiyn8YnQGL24/gFP7zjPo?=
+ =?us-ascii?Q?eLq0dTymfWz8//5WPA+MBgOd24vVnoDf5HupAUu5CxKdpcd7pZd+1HaCC5AO?=
+ =?us-ascii?Q?aTdXsR+ZUltMhefUzvP6ptVK8R2qd6gbJGWWjDW8a8pVDCKfiAonCC4x2FFI?=
+ =?us-ascii?Q?ARfH5Wm0dA7GZqT1PWzIGSyanBbBRt3?=
+X-Microsoft-Antispam-Message-Info: d4eNQuxHBIW8r+C+KktxFGxR+4GQsQoNNGOlKldmtpGepb2GDmRwyxwBV+9XY5U1Kh8OWeAHvJ87in8C1xbqXV35BD+tK/4GydxQOJaVGryF1WfM2wwD28bgLNXzCDRXdqSt0JnnGwH8C4IGwGUiewpoSRnpS6QDxdZ4129G6GsPBYHOM69njeH0OV3BSfYg6LLh4YzQUni+8DuLdMXswKCylBNMXY1jXmfttIfNMtU8wpe3IXivdSYq44eFvak1MifRPG0J1BFh1hH7snUE77OXVmuUCF2QL2ydqXSpWAA93p8Mvjg1g5svcP9uLoXE+1Oy0bW8/5xLucxqMdPXfzyn2wCB/NqUS18C44bxAvU=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;6:1o/yIQm2TcyX7lHHgYYn+VSYkIwP6GJJKOaUUggl8IaM0wxJiAgGiZuPJ8zY5vFNQuu6VzOER6rhMdhMitYR1cwArLm+WD0VghMFsGSNDQxWZUrsWvbHTBGsfBtE5G3hz328JcwJ1NaexHA30H8465l8ufqcgztt6xnaWzqCNeyw+nILeJKPylDenI8kyEHWhDRFPm7oSMR2tmO/ybORZIALLvdvzartHhqr0g8t3TITD/azR24EmihOef1nhixQB09VGJOZtIYLyI1ipYWy03gBeX/n+A9DMJ4mb1WGzOB6vOFz2pSiy+Vz023PVgU8upwtBhyy8uorsmSZ+cdI574I44VdRXCBeyCFFp91yK+AMkwt2HEQ3zUP/3GrTIa0mXgZDV6MAdWR9Xb+Y0FgNp7PD91Ys7Cl8XtNwYdKlO3EWCAhR4YPJ/lDQaur0VAXmjX34tk7g4ZdTqNUNHy7yg==;5:5M/m7Xo7y4108Dga0xd+YeqQ3WjAlScpnrIohyIFmswlwqKX5MEnBBOW7pk4lkkJ4u+kn0VgRkRvD0/ft9hjEcXU97fYcAOLAFZbCMgVrfLJzwMtL6yv5T5VbaUv+KSkzeIp2h8uRVlec+VnGkdIRDKcHCLiOetPZhLhYmN5kQY=;7:3BoUvCiLhm0ZhzzYjmf8Z9fgkLdVp06PMK5OwlqvZ+LSstwAU9VVh1K+3O0tJZFsio+1dTTB/H1oQ6ckjulztlosRXq8IkowaGQnr3LwulnE1btGNPjWoHXb+PJBn8CthtXCuS9o0ErzK8OSdF6AoLFf++F7Dhw06mw+ck/VomP1AJbX8PPSvHFuuHU+wXWYv6Zwgi0yGopLNFgc+AI1hZPKCTcFj1qTOLfPKZwaNDhsNxrgQVtS46F7dWfK4g3w
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:TOEAlrmfpYtvkfv1bAQ8VbSguagxZUyBCI/9WLVROZTfT01f2WRZ1dw4EMcX+zWNWJV7owUgAq1xp12edK0W06t9zCONfXv+yaLO6kFmGQdFe3V6Rm4p/Ir3ioZTq/KlXo4ON7t5kzFeo3ZGPwNGqF0p+6F5f3Jo+7X7CAZL6iA=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2018 02:15:48.6239 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 439acd58-cca3-43ec-ae72-08d62e564b71
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1866
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
 
-On 10 October 2018 at 02:37, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
->
-> On 10/09/2018 02:01 PM, Baolin Wang wrote:
->> Hi Jacek and Pavel,
->>
->> On 5 October 2018 at 04:00, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>> Hi Baolin,
->>>
->>> On 10/03/2018 03:21 AM, Baolin Wang wrote:
->>>> Hi Jacek,
->>>>
->>>> On 3 October 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>>>> Hi Baolin,
->>>>>
->>>>> Thank you for the v14. We'll probably need v15, though :-)
->>>>>
->>>>> I added the comments in the code below.
->>>>>
->>>>> On 10/02/2018 05:43 PM, Baolin Wang wrote:
->>>>>> This patch adds one new led trigger that LED device can configure
->>>>>> the software or hardware pattern and trigger it.
->>>>>>
->>>>>> Consumers can write 'pattern' file to enable the software pattern
->>>>>> which alters the brightness for the specified duration with one
->>>>>> software timer.
->>>>>>
->>>>>> Moreover consumers can write 'hw_pattern' file to enable the hardware
->>>>>> pattern for some LED controllers which can autonomously control
->>>>>> brightness over time, according to some preprogrammed hardware
->>>>>> patterns.
->>>>>>
->>>>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->>>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>>>>> ---
->>>>>> Changes from v13:
->>>>>>  - Add duration validation for gradual dimming.
->>>>>>  - Coding style optimization.
->>>>>>
->>>>>> Changes from v12:
->>>>>>  - Add gradual dimming support for software pattern.
->>>>>>
->>>>>> Changes from v11:
->>>>>>  - Change -1 means repeat indefinitely.
->>>>>>
->>>>>> Changes from v10:
->>>>>>  - Change 'int' to 'u32' for delta_t field.
->>>>>>
->>>>>> Changes from v9:
->>>>>>  - None.
->>>>>>
->>>>>> Changes from v8:
->>>>>>  - None.
->>>>>>
->>>>>> Changes from v7:
->>>>>>  - Move the SC27XX hardware patterns description into its own ABI file.
->>>>>>
->>>>>> Changes from v6:
->>>>>>  - Improve commit message.
->>>>>>  - Optimize the description of the hw_pattern file.
->>>>>>  - Simplify some logics.
->>>>>>
->>>>>> Changes from v5:
->>>>>>  - Add one 'hw_pattern' file for hardware patterns.
->>>>>>
->>>>>> Changes from v4:
->>>>>>  - Change the repeat file to return the originally written number.
->>>>>>  - Improve comments.
->>>>>>  - Fix some build warnings.
->>>>>>
->>>>>> Changes from v3:
->>>>>>  - Reset pattern number to 0 if user provides incorrect pattern string.
->>>>>>  - Support one pattern.
->>>>>>
->>>>>> Changes from v2:
->>>>>>  - Remove hardware_pattern boolen.
->>>>>>  - Chnage the pattern string format.
->>>>>>
->>>>>> Changes from v1:
->>>>>>  - Use ATTRIBUTE_GROUPS() to define attributes.
->>>>>>  - Introduce hardware_pattern flag to determine if software pattern
->>>>>>  or hardware pattern.
->>>>>>  - Re-implement pattern_trig_store_pattern() function.
->>>>>>  - Remove pattern_get() interface.
->>>>>>  - Improve comments.
->>>>>>  - Other small optimization.
->>>>>> ---
->>>>>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |  76 ++++
->>>>>>  drivers/leds/trigger/Kconfig                       |   7 +
->>>>>>  drivers/leds/trigger/Makefile                      |   1 +
->>>>>>  drivers/leds/trigger/ledtrig-pattern.c             | 431 +++++++++++++++++++++
->>>>>>  include/linux/leds.h                               |  15 +
->>>>>>  5 files changed, 530 insertions(+)
->>>>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>>>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
->>>>>>
->>>>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>>>> new file mode 100644
->>>>>> index 0000000..22d7af7
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>>>>> @@ -0,0 +1,76 @@
->>>>>> +What:                /sys/class/leds/<led>/pattern
->>>>>> +Date:                September 2018
->>>>>> +KernelVersion:       4.20
->>>>>> +Description:
->>>>>> +             Specify a software pattern for the LED, that supports altering
->>>>>> +             the brightness for the specified duration with one software
->>>>>> +             timer. It can do gradual dimming and constant brightness.
->>>>>> +
->>>>>> +             The pattern is given by a series of tuples, of brightness and
->>>>>> +             duration (ms). The LED is expected to traverse the series and
->>>>>> +             each brightness value for the specified duration. Duration of
->>>>>> +             0 means brightness should immediately change to new value.
->>>>>> +
->>>>>> +             1. When doing gradual dimming, the led brightness will be updated
->>>>>> +             every 50 milliseconds, so the duration of each step should not
->>>>>> +             less than 50 milliseconds.
->>>>>
->>>>> I'd like to avoid this constraint. Lowest supported delta_t should be 1.
->>>>>
->>>>> We should only prevent entering dimming mode if current delta_t
->>>>> is lower than UPDATE_INTERVAL.
->>>>
->>>> I do not think so. If the pattern format is used for dimming and the
->>>> delta_t is lower than UPDATE_INTERVAL, we should return errors. Since
->>>> in this case, we can not change to constant mode.
->>>
->>> I'll play with the code at weekend and will let you know my findings.
->>
->> Thanks Jacek. Do you have any more suggestion?
->
-> Sorry to say, but I had really busy weekend and failed to carve out
-> time for looking into that. It's queued up with the highest priority
-> on my todo list of things needing more than five minutes of attention.
+Hi Michael, Stephen, Rob, Mark
 
-Ah, okay, no hurry :)
+These adds 74aup1g157gw 2-input multiplexer as clock driver.
 
->> BTW, we have not get a consensus about adding one 'dimming_interval'
->> file to set the dimming interval instead of fixed 50 ms.
->> Pavel, I want to hear your suggestion before I submit new patch set? Thanks.
->
-> I think that this feature belongs to the "nice to have" category,
-> and lack of it will not prevent us from merging the patch set.
+Kuninori Morimoto (2):
+      dt-bindings: clock: add description of 74aup1g157gw
+      clk: add 74aup1g157gw 2-input multiplexer as clock driver
 
-OK. Thanks.
+ Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt |  19 ++++++
+ drivers/clk/Kconfig                                          |   1 +
+ drivers/clk/Makefile                                         |   2 +-
+ drivers/clk/nxp/Kconfig                                      |   4 ++
+ drivers/clk/nxp/Makefile                                     |   1 +
+ drivers/clk/nxp/clk-74aup1g157gw.c                           | 213 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 239 insertions(+), 1 deletion(-)
 
 -- 
-Baolin Wang
-Best Regards
+2.7.4
+
