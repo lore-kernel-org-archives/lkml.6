@@ -2,128 +2,128 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59547C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347B1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBED2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 00:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C28862054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 01:02:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="gApRPLY/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBED2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNYSXDFY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C28862054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeJJISY (ORCPT
+        id S1726625AbeJJIVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 04:18:24 -0400
-Received: from ozlabs.org ([203.11.71.1]:54973 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbeJJISX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 04:18:23 -0400
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 42VG1w0dGwz9sBk; Wed, 10 Oct 2018 11:58:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1539133124;
-        bh=eNJ+qXTZO1bdO840NM4sNN7AbJ3oLaurTjaJO0cSD9U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gApRPLY/llAvAukWzg6dK55JUaNPTNWW5zNy1F1LiR9MffMwQHKrBUPCFJK0mhdKW
-         rMV10A2aT/qbHdLfgBIFvVNaemGX7fe4gRyQ45gv+19tDEyK9nHG6ESi3yjDRJ21JP
-         FBdMAhHABEt9rp3aMnYRjYotZqPwyaElglauv9Wk=
-Date:   Wed, 10 Oct 2018 11:30:16 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Wed, 10 Oct 2018 04:21:41 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34555 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbeJJIVk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 04:21:40 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i12-v6so3693690otl.1;
+        Tue, 09 Oct 2018 18:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C2EZPhvngUO5S1nk+0jkQ/A5iTdmqdn3ctiJa31CT5k=;
+        b=eNYSXDFY/arDb/NUg9EJqXxPbG9oFmdTyRmI4YRoPZYFA/47m6AUrBPPLdwkIwwB25
+         vzowguZUNJH4VKLwyp9Gm/ndAXLMj1znotOoxVAGWimyjZJbcJj4UiIjKtrYeKlv0uwS
+         MzYw1etWN006eyazcwShUpxFpHG1MsusLQb3ZqXt9qsXraYw1E+Sg19fazjDBbfncGHi
+         75fk92WE6rglklvuxkAOMtoTrQII+C6XtQzpeUVoNOonmDRFGzvcN6d/zcGPdupx/Gpw
+         q/MG28ev46fBoHHsWUphYDx0tG+5V1GTRGE6KN1ILTwWQGwDpZsP1yuUve6YTaW2y6al
+         etfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C2EZPhvngUO5S1nk+0jkQ/A5iTdmqdn3ctiJa31CT5k=;
+        b=twiXpEEeFyDcIG7AYFc+R1A+6zDzSGZy3jLkenIH7IvA6faifQd6ndIMlXZvZl0DUm
+         VXOjPx1eGbwQyt48PcjKvhJALc1gITZb5LzFnvPwNGvszbFyr+qvfxHQBXXVYSw2+yb2
+         Rk0LhYVknZfsBiAPpJ2Sa52yrW5vsZLypRS6iFfjQjBDicLc3uf4c03x//8aVKyFmrVs
+         LxqY+U4L3SR03vKL+iBZVRmUQy2CU8wIhBm9EuBcJpayAU2UmvaTtVMBoiqNdo7MpNtl
+         e9X3J9vpNKayRdy+ZQKNNb1Q9BQo3G2hEwIh930ob7+mDZg+zTTgbjqoox6rutRclLHc
+         q3pQ==
+X-Gm-Message-State: ABuFfoiq73yCtsyNJU97VneEUOFNa7LggmPBTGDMKqwZHT6IaFlfvBlo
+        RrRVLKvPnQuogBfRYjNEgFyu9QTEZ7C3CuhEfKA=
+X-Google-Smtp-Source: ACcGV61yblPs/HS7OkyOSrx6Boit8YWSGpgeTZPLMI0kLIw1cg+vfQm88DSvV4BA1ua/rD/YjXvs1LAjBBe6X6dWL4k=
+X-Received: by 2002:a9d:38d4:: with SMTP id k20mr3219082ote.289.1539133321511;
+ Tue, 09 Oct 2018 18:02:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180928020816.11251-1-leobras.c@gmail.com> <20180928020816.11251-4-leobras.c@gmail.com>
+ <1538118915.3593.4.camel@HansenPartnership.com> <CADvQ+rGQenkoE0xCRTwjA5BuKZbZ2Upkyx=+qWFUGnUcit-aCQ@mail.gmail.com>
+ <1538628062.18776.5.camel@HansenPartnership.com> <CADvQ+rG0WQjFTU=A4tAACvqFevw51DX_-yq2-9j78T8pSrjcXQ@mail.gmail.com>
+ <765df6c3-0339-ebf3-6446-cef4fc1eb1cc@gmail.com>
+In-Reply-To: <765df6c3-0339-ebf3-6446-cef4fc1eb1cc@gmail.com>
+From:   Leonardo Bras <leobras.c@gmail.com>
+Date:   Tue, 9 Oct 2018 22:01:50 -0300
+Message-ID: <CADvQ+rG0wn5_msc5Z_QgqV0+Qvr4kueF32T69qS0UjvHRz+Y+g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] drivers: parisc: Avoids building driver if
+ CONFIG_PARISC is disabled
+To:     schmitzmic@gmail.com
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        lkcamp@lists.libreplanetbr.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Robert Richter <rric@kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 06/16] of/fdt: add helper functions for handling
- properties
-Message-ID: <20181010003016.GH7004@umbus.fritz.box>
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-7-takahiro.akashi@linaro.org>
- <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
- <6a8d3ddb-c3bc-c044-4d6c-55e110d89e72@gmail.com>
- <20181005050627.GL32578@linaro.org>
- <bd3d0472-1bd7-52ed-b9f6-b5edae8c8b6d@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d3slIU+tL1lDaIh/"
-Content-Disposition: inline
-In-Reply-To: <bd3d0472-1bd7-52ed-b9f6-b5edae8c8b6d@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-m68k@lists.linux-m68k.org, oprofile-list@lists.sf.net,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Michael,
 
---d3slIU+tL1lDaIh/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> That already works, doesn't it? So all that you'd need is an offline
+> tool to precompute what drivers to actually build with a given config.
+>
+> 'make -n' with some suitable output mangling might do the job.
+>
+> There may well be other ways to achieve your stated goal, without any
+> need to make changes to the kernel build process (which is the result of
+> many years of evolution and tuning, BTW).
 
-On Tue, Oct 09, 2018 at 11:02:29AM -0700, Frank Rowand wrote:
-> On 10/04/18 22:06, AKASHI, Takahiro wrote:
-[snip]
-> >>>> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
-> >>>> +                                               u64 addr, u64 size)
-> >>>> +{
-> >>>> +       int addr_cells, size_cells;
-> >>
-> >> unsigned
-> >=20
-> > fdt_[address|size]_cell() returns an int.
->=20
-> I stand corrected.  They take advantage of the fact that valid values
-> are in the range 0..4 and return a negative value for error.
+Thanks for the info, I will try to use it.
 
-I'm not sure if the spec formally defines that these values will fit
-in a positive 'int'.  But if addresses are 8GiB each, you're going to
-have much bigger problems putting it in a device tree than this
-function.
+> > This change is not supposed to bother the usual way of building the kernel, and
+>
+> Enough people have voiced their concern to warrant that you should back
+> up that claim, IMO. Have you verified that your patchset does not change
+> current behaviour when building the entire set of default configurations
+> for each supported architecture? Does it reduce or increase overall
+> complexity of the build process?
+>
+I have tried in some ARCHs and it worked fine. Out of curiosity, I
+will try on all
+of them.
 
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+> > it is not even supposed to add overhead to kernel compilation. And it would,
+> > at least, solve my problem with the 3h limit, and enable the tool
+> > I am building on GiltabCI to help other developers.
+>
+> (Apropos of nothing: Am I the only one who thinks gitlab might take a
+> rather dim view of your creativity in dealing with their limit?)
+>
 
---d3slIU+tL1lDaIh/
-Content-Type: application/pgp-signature; name="signature.asc"
+They make available 50k minutes a month for OSS projects. I don't believe they
+care how it's spent if its used to build/deploy the project. They even
+allow using
+several 'jobs' in parallel in order to speed up the process.
 
------BEGIN PGP SIGNATURE-----
+Thanks for your help,
 
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlu9SBgACgkQbDjKyiDZ
-s5Joog/+Mp4GTHh8MV62ufe3LUp5dlUtwKaKypnCp0sN4DKEcqwzn/GHlv/FxZ1f
-4FWaF/NOJQ3tvqHrX/uS9S2YNe0EILpEz4dllcVBi31MRwwP3XRsPriKSD1JLFFu
-MJSiNVztKYw91UwbOo6e2etdRlNytAfNz6BMiBCtZUlwxqlsB4svjNLifTeazhEk
-UuzPeekac6W4sSRqExSR/vX8jR8yl9S0VhftH83nDZrHyjwZYeLgW0o8iINHkUGJ
-YxvtyL6kEX7uMn1JtqPxHfBxZlKOLrxSasbziqJVvUwzAV9DU40Rp761YbjUlrkV
-zGAOswcB351l58jf3EQOVnmszeXK0ZeeyOABr0WD8z0VHt67sBL6gFkNcS8OLOjm
-KMTwAyRz99tmUW044RAJREY907NJGiO69MJyJzWn9JMyk+E/rWto8Q4AkrmNpzrz
-KsYuwymXIjFFKMdDdnfamf3YLjx86pa7Q5Tu8xmh1HEjrUaYwFqptaFpjDBAFRAR
-C5EY14p/ftKrl4O1LhqRDj2Xe0/+ZWeXPlCLlHYejNFqWBPlyE6ukrRLAg1TF0Sv
-cbyylJams/EaC2VIv6ztpyVf5T/fgPf49mXof67scxnmiMzgN9WhH6V8wKHCFZ4V
-7ElFrHb4WK+YB6CY7U61SuVvpBJuwH8a0XBJoh1h+e9EdSm2UMM=
-=lNt5
------END PGP SIGNATURE-----
-
---d3slIU+tL1lDaIh/--
+Leonardo Bras
