@@ -2,136 +2,76 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5052BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1A0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F393420835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:36:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F71TO2/2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F393420835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4300420835
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 09:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4300420835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeJJQ6B (ORCPT
+        id S1726958AbeJJQ7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:58:01 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:33122 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJJQ6A (ORCPT
+        Wed, 10 Oct 2018 12:59:13 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40948 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbeJJQ7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:58:00 -0400
-Received: by mail-it1-f194.google.com with SMTP id h6-v6so15595377ith.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 02:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wWQakzbU9Qzis9UPCqPf26XF/Uq9wf2e0KdctGoJRUY=;
-        b=F71TO2/2nqgpMNeVxk9mRJo9yX74nFevcT1YC5TuliVTVyWXBztK1kNmfVdw0M2yS7
-         jvTRTIgp0NXr1hD7WjEDp2AYNEIZIrY36aNUCwg35MVfHbh15Rcrgf8Oi/5iUOqpfNuF
-         /vEI1Zr3SzXmRs/rRf8yRRZqdY2rYUasZxKI4=
+        Wed, 10 Oct 2018 12:59:13 -0400
+Received: by mail-oi1-f193.google.com with SMTP id j68-v6so3554822oib.7;
+        Wed, 10 Oct 2018 02:37:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wWQakzbU9Qzis9UPCqPf26XF/Uq9wf2e0KdctGoJRUY=;
-        b=mko02p7xva0etZDShtz+UDzcoOkCcQRjg4cQtLCt/0a0RsktK/3WZFfW3V1PtpaHmZ
-         7DVs0fx1NWIJ0lrqrZlqzJ9n25WLp5WphMnF2QF/IxxSueAiO0qaqXRk3D+5MK9uipOJ
-         OOm51MCHXNdnroRb05dC7Fq14GAY0DVupMfJfnRA6xBzsKRbz8XJmAWaxysJlg19pBIw
-         bKVJ2lyFdRtT2PZbJDXX9l06cfWJ4UWqsfVutkhH3flaxREnxUaMstkkV2mUdEHKZ8n7
-         hxCgOBEKM2K9MpB3KDQEmc9o4ZuhbYkXQf0F2d3sHBSajUvQDX4Wk3pqM6Kc0du2xPLT
-         5VmQ==
-X-Gm-Message-State: ABuFfoiHgxCrf6Ez+w+EAdOTsdQi0caKYe8ngVbRYfiI56bNw/U97Qmt
-        IoIP2nqZH7rQUd6Sxc61RX8/GBpnImMvUfwAbjzpzQ==
-X-Google-Smtp-Source: ACcGV60y14KIrMiufCQ+WranYLRlxAXwOZUhkR2gu4fNVQ7CldiEzZFDnYJV0GI34KpXUHlD2FBnzSs7vdALQC4LF0A=
-X-Received: by 2002:a02:9643:: with SMTP id c61-v6mr26540127jai.37.1539164200057;
- Wed, 10 Oct 2018 02:36:40 -0700 (PDT)
+        bh=tnkT4izmftR5GAe0cowLcCY1pNJ+dLUIOXbSQLCpn9w=;
+        b=fhMs1NT+mLuQLS0rwbYDOJiVti/GU4OMlvraVPlHCiuRTNi9Kln+U63ljvJu89TVRY
+         eR0VCngfK0g5h8m7HDj6mOTWgPvLehL+s11CoofX9d3M6igL90uahjRm6Gzi5jqygRlk
+         uAALftflCrDf9gYLvX6rMJJAGWNblOTlKV9DxoTKUGh+/OExCJC5iZmjaxkRuUP6U6s4
+         e1n2GeRSZWsPQ8efo32HTJoapbe0bj3D5ORvv4Br5CSuVCHhnox3OJfzSVe5QYyBm6Xn
+         p6uHen4p/avBDhjwx2W6WPkgw7Sr1vTt68LhFX5wkCg94TVKwF8VV+NwW9YcSeWjCRCG
+         faxQ==
+X-Gm-Message-State: ABuFfohtISH4Mbyue9cio6xGTvbu4XX+BhGtm/cCyhIT6fFR7Tc0Cflc
+        dwZrf+fDVcTJv/8BRra74urspkNr/jMs22jrH84=
+X-Google-Smtp-Source: ACcGV620VNaHa2ODB19mWW61iA6JpJj1h+DV3pSLC13xTKD5RrtP1PXacHw887xAGnqo56R0CZo4Z0ggQqG5VoawjUo=
+X-Received: by 2002:aca:af91:: with SMTP id y139-v6mr1084766oie.322.1539164272549;
+ Wed, 10 Oct 2018 02:37:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180930122703.7115-1-johan@kernel.org> <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
- <20181005134014.GH3774@localhost>
-In-Reply-To: <20181005134014.GH3774@localhost>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Oct 2018 11:36:28 +0200
-Message-ID: <CACRpkdbxShE3XEXNaKoFKWgAUVGUHU8rf0KaYV44coucu4=cRA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio support
-To:     Johan Hovold <johan@kernel.org>
-Cc:     linux-usb@vger.kernel.org, pados@pados.hu,
-        Loic Poulain <loic.poulain@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180919220444.23190-1-linux@rasmusvillemoes.dk> <20181009112013.14238-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 10 Oct 2018 11:37:41 +0200
+Message-ID: <CAJZ5v0js_Lp6zh3b1O3R_oM6F9RehAj4wr5xz26hTg=A6zHDBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/23] various dynamic_debug patches
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     jbaron@akamai.com, Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev <netdev@vger.kernel.org>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-btrfs@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 5, 2018 at 3:40 PM Johan Hovold <johan@kernel.org> wrote:
-> On Mon, Oct 01, 2018 at 11:43:55AM +0200, Linus Walleij wrote:
-
-> > The idea is to make it possible for userspace to look up a GPIO
-> > on a chip by name, so if the gpiochip has a unique name,
-> > and the line name is unique on that chip it should be good
-> > enough.
+On Tue, Oct 9, 2018 at 1:20 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
 >
-> I haven't really had time do dig into this again, but is this also an
-> issue with the chardev interface?
+> v2: Added various acks/reviews. I'll follow up with rewriting the x86
+> part as asm macros once that work is in mainline.
 >
-> I thought this was one of the things
-> you wanted to get right with the new interface, so hopefully that's
-> already taken care of.
+> Patches 15, 16 are in next-20181009; in hindsight I should probably
+> have asked Rafael not to pick those.
 
-It is always possible to use /dev/gpiochipN and offet M on
-that gpiochip to pick a unique line. That is a unique offset
-on a unique chip. The gpiochip also has a "label" which may
-be something user-readable such as part numer, but the unique
-string is its name such as "gpiochip0".
+So I have dropped them (which was easy enough to do).
 
-For symbolic look-up though, like a file has to have a unique
-path, the name of the line should be unique.
-
-It is allowed to have unnamed lines though, so it is only a
-hint. While I would like all drivers to uniquely name their
-lines in DT or ACPI, or using the .names array in the gpio_chip
-struct, it cannot be enforced because of legacy support,
-so many old systems had no names specified, and
-the DT and ACPI properties to name lines were introduced
-after the chardev actually.
-
-All I enforce is that if names are added, they should be
-unique.
-
-What we *could* do is conjure a unique name per line if
-the hardware description doesn't provice one... like
-"line0", "line1", "line2"... "lineN" on the chip.
-
-Should we add a patch like that? The only side effect
-I can see if that maybe the footprint increase is not so
-nice.
-
-I had it in mind but it slipped of my radar. It would make
-all lines always have unique names.
-
-> If the flat name space is only an issue with the legacy interface we
-> might get away with simply not using the line names in sysfs when a new
-> chip flag is set (unless we can resue .can_sleep, but there seems to be
-> some i2c devices already using line names).
-
-Hm. So you mean it is bad that the exporting GPIOs in the old
-sysfs brings out the line name in sysfs if the line is named.
-
-I just want the sysfs to die, but yeah what you say makes
-sense. I don't know if it's such a big issue, my focus has been
-on making the chardev more appetizing and the sysfs
-uncomfortably oldschool amongst users. This would make it
-even more uncomfortable.
-
-But I don't know if the old sysfs users actually use the line
-names much?
-
-Yours,
-Linus Walleij
+Thanks,
+Rafael
