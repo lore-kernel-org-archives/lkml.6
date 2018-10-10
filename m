@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C57C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF54C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E2E214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:15:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E2E214DC
+	by mail.kernel.org (Postfix) with ESMTP id E5372214FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 06:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5372214FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeJJNfi (ORCPT
+        id S1727219AbeJJNfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 09:35:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47898 "EHLO mx1.suse.de"
+        Wed, 10 Oct 2018 09:35:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47876 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726525AbeJJNfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 09:35:37 -0400
+        id S1726488AbeJJNfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 09:35:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B60AAF0D;
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 35129AF41;
         Wed, 10 Oct 2018 06:15:00 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         x86@kernel.org, linux-doc@vger.kernel.org
 Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         corbet@lwn.net, boris.ostrovsky@oracle.com,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH v5 1/3] x86/xen: fix boot loader version reported for pvh guests
-Date:   Wed, 10 Oct 2018 08:14:54 +0200
-Message-Id: <20181010061456.22238-2-jgross@suse.com>
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH v5 2/3] x86/boot: add acpi rsdp address to setup_header
+Date:   Wed, 10 Oct 2018 08:14:55 +0200
+Message-Id: <20181010061456.22238-3-jgross@suse.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181010061456.22238-1-jgross@suse.com>
 References: <20181010061456.22238-1-jgross@suse.com>
@@ -43,32 +43,227 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The boot loader version reported via sysfs is wrong in case of the
-kernel being booted via the Xen PVH boot entry. it should be 2.12
-(0x020c), but it is reported to be 2.18 (0x0212).
+Xen PVH guests receive the address of the RSDP table from Xen. In order
+to support booting a Xen PVH guest via Grub2 using the standard x86
+boot entry we need a way for Grub2 to pass the RSDP address to the
+kernel.
 
-As the current way to set the version is error prone use the more
-readable variant (2 << 8) | 12.
+For this purpose expand the struct setup_header to hold the physical
+address of the RSDP address. Being zero means it isn't specified and
+has to be located the legacy way (searching through low memory or
+EBDA).
 
-Cc: <stable@vger.kernel.org> # 4.12
+While documenting the new setup_header layout and protocol version
+2.14 add the missing documentation of protocol version 2.13.
+
+There are grub2 versions in several distros with a downstream patch
+violating the boot protocol by writing past the end of setup_header.
+This requires another update of the boot protocol to enable the kernel
+to distinguish between a specified RSDP address and one filled with
+garbage by such a broken grub2.
+
+From protocol 2.14 on grub2 will write the version it is supporting
+(but never a higher value than found to be supported by the kernel)
+ored with 0x8000 to the version field of setup_header. This enables
+the kernel to know up to which field grub2 has written information
+to. All fields after that are supposed to be clobbered.
+
 Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/xen/enlighten_pvh.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V3: fix commit message and some documentation bits (Ingo Molnar)
 
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index c85d1a88f476..f7f77023288a 100644
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -75,7 +75,7 @@ static void __init init_pvh_bootparams(void)
- 	 * Version 2.12 supports Xen entry point but we will use default x86/PC
- 	 * environment (i.e. hardware_subarch 0).
- 	 */
--	pvh_bootparams.hdr.version = 0x212;
-+	pvh_bootparams.hdr.version = (2 << 8) | 12;
- 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
+V4: add version feedback from bootloader
+---
+ Documentation/x86/boot.txt            | 32 +++++++++++++++++++++++++++++++-
+ arch/x86/boot/header.S                |  6 +++++-
+ arch/x86/include/asm/x86_init.h       |  2 ++
+ arch/x86/include/uapi/asm/bootparam.h |  4 ++++
+ arch/x86/kernel/head32.c              |  1 +
+ arch/x86/kernel/head64.c              |  2 ++
+ arch/x86/kernel/setup.c               | 17 +++++++++++++++++
+ 7 files changed, 62 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
+index 5e9b826b5f62..c8f8d7e7a60c 100644
+--- a/Documentation/x86/boot.txt
++++ b/Documentation/x86/boot.txt
+@@ -61,6 +61,18 @@ Protocol 2.12:	(Kernel 3.8) Added the xloadflags field and extension fields
+ 	 	to struct boot_params for loading bzImage and ramdisk
+ 		above 4G in 64bit.
  
- 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
++Protocol 2.13:	(Kernel 3.14) Support 32- and 64-bit flags being set in
++		xloadflags to support booting a 64-bit kernel from 32-bit
++		EFI
++
++Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
++		address of the ACPI RSDP table.
++		The bootloader updates version with:
++		0x8000 | min(kernel-version, bootloader-version)
++		kernel-version being the protocol version supported by
++		the kernel and bootloader-version the protocol version
++		supported by the bootloader.
++
+ **** MEMORY LAYOUT
+ 
+ The traditional memory map for the kernel loader, used for Image or
+@@ -197,6 +209,7 @@ Offset	Proto	Name		Meaning
+ 0258/8	2.10+	pref_address	Preferred loading address
+ 0260/4	2.10+	init_size	Linear memory required during initialization
+ 0264/4	2.11+	handover_offset	Offset of handover entry point
++0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+ 
+ (1) For backwards compatibility, if the setup_sects field contains 0, the
+     real value is 4.
+@@ -309,7 +322,7 @@ Protocol:	2.00+
+   Contains the magic number "HdrS" (0x53726448).
+ 
+ Field name:	version
+-Type:		read
++Type:		modify
+ Offset/size:	0x206/2
+ Protocol:	2.00+
+ 
+@@ -317,6 +330,12 @@ Protocol:	2.00+
+   e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
+   10.17.
+ 
++  Up to protocol version 2.13 this information is only read by the
++  bootloader. From protocol version 2.14 onwards the bootloader will
++  write the used protocol version ored with 0x8000 to the field. The
++  used protocol version will be the minimum of the supported protocol
++  versions of the bootloader and the kernel.
++
+ Field name:	realmode_swtch
+ Type:		modify (optional)
+ Offset/size:	0x208/4
+@@ -744,6 +763,17 @@ Offset/size:	0x264/4
+ 
+   See EFI HANDOVER PROTOCOL below for more details.
+ 
++Field name:	acpi_rsdp_addr
++Type:		write
++Offset/size:	0x268/8
++Protocol:	2.14+
++
++  This field can be set by the boot loader to tell the kernel the
++  physical address of the ACPI RSDP table.
++
++  A value of 0 indicates the kernel should fall back to the standard
++  methods to locate the RSDP.
++
+ 
+ **** THE IMAGE CHECKSUM
+ 
+diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+index 850b8762e889..4c881c850125 100644
+--- a/arch/x86/boot/header.S
++++ b/arch/x86/boot/header.S
+@@ -300,7 +300,7 @@ _start:
+ 	# Part 2 of the header, from the old setup.S
+ 
+ 		.ascii	"HdrS"		# header signature
+-		.word	0x020d		# header version number (>= 0x0105)
++		.word	0x020e		# header version number (>= 0x0105)
+ 					# or else old loadlin-1.5 will fail)
+ 		.globl realmode_swtch
+ realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
+@@ -558,6 +558,10 @@ pref_address:		.quad LOAD_PHYSICAL_ADDR	# preferred load addr
+ init_size:		.long INIT_SIZE		# kernel initialization size
+ handover_offset:	.long 0			# Filled in by build.c
+ 
++acpi_rsdp_addr:		.quad 0			# 64-bit physical pointer to the
++						# ACPI RSDP table, added with
++						# version 2.14
++
+ # End of setup header #####################################################
+ 
+ 	.section ".entrytext", "ax"
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index b85a7c54c6a1..0f842104862c 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -303,4 +303,6 @@ extern void x86_init_noop(void);
+ extern void x86_init_uint_noop(unsigned int unused);
+ extern bool x86_pnpbios_disabled(void);
+ 
++void x86_verify_bootdata_version(void);
++
+ #endif
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index a06cbf019744..22f89d040ddd 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -16,6 +16,9 @@
+ #define RAMDISK_PROMPT_FLAG		0x8000
+ #define RAMDISK_LOAD_FLAG		0x4000
+ 
++/* version flags */
++#define VERSION_WRITTEN	0x8000
++
+ /* loadflags */
+ #define LOADED_HIGH	(1<<0)
+ #define KASLR_FLAG	(1<<1)
+@@ -86,6 +89,7 @@ struct setup_header {
+ 	__u64	pref_address;
+ 	__u32	init_size;
+ 	__u32	handover_offset;
++	__u64	acpi_rsdp_addr;
+ } __attribute__((packed));
+ 
+ struct sys_desc_table {
+diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
+index ec6fefbfd3c0..76fa3b836598 100644
+--- a/arch/x86/kernel/head32.c
++++ b/arch/x86/kernel/head32.c
+@@ -37,6 +37,7 @@ asmlinkage __visible void __init i386_start_kernel(void)
+ 	cr4_init_shadow();
+ 
+ 	sanitize_boot_params(&boot_params);
++	x86_verify_bootdata_version();
+ 
+ 	x86_early_init_platform_quirks();
+ 
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index ddee1f0870c4..5dc377dc9d7b 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -457,6 +457,8 @@ void __init x86_64_start_reservations(char *real_mode_data)
+ 	if (!boot_params.hdr.version)
+ 		copy_bootdata(__va(real_mode_data));
+ 
++	x86_verify_bootdata_version();
++
+ 	x86_early_init_platform_quirks();
+ 
+ 	switch (boot_params.hdr.hardware_subarch) {
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index b4866badb235..20321710efb4 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1281,6 +1281,23 @@ void __init setup_arch(char **cmdline_p)
+ 	unwind_init();
+ }
+ 
++/*
++ * From boot protocol 2.14 onwards we expect the bootloader to set the
++ * version to 0x8000 | <used version>. In case we find a version >= 2.14
++ * without the 0x8000 we assume the boot loader supports 2.13 only and
++ * reset the version accordingly. The 0x8000 flag is removed in any case.
++ */
++void __init x86_verify_bootdata_version(void)
++{
++	if (boot_params.hdr.version & VERSION_WRITTEN)
++		boot_params.hdr.version &= ~VERSION_WRITTEN;
++	else if (boot_params.hdr.version >= 0x020e)
++		boot_params.hdr.version = 0x020d;
++
++	if (boot_params.hdr.version < 0x020e)
++		boot_params.hdr.acpi_rsdp_addr = 0;
++}
++
+ #ifdef CONFIG_X86_32
+ 
+ static struct resource video_ram_resource = {
 -- 
 2.16.4
 
