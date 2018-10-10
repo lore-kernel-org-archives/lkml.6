@@ -2,197 +2,139 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5581AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC4B120870
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE4821479
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:55:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ayl6kyH8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4B120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWXFWIaZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE4821479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeJJUQi (ORCPT
+        id S1726983AbeJJURO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 16:16:38 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36909 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeJJUQh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 16:16:37 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 185-v6so5652885wmt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
-        b=Ayl6kyH88HqPGMjfcmRfuOGkCYPMjBnoDdI7GCNNg9fj+qekPYSMwjuiNUOOzcEJTK
-         EodIOqkhIcPhiVOXG9Yb52gdh3cko1SXbSr6h2lXsBiqobKHfXpFWkFlpwU+hF2RH3Wp
-         kMqUPix3XBhM+twn4eEGs/+Tp5SJv+Iab8qLYjY3DfUUYzYleoXdz+OrhYf6oodeckQ4
-         cJY/gGrUkVJ6CQLOPcPP4DiXPwIhL2N8cBK+i/0DFJUbMUUrCHO2wHiSt6wVEj6DYa+y
-         92TghvF4YapmkXmf7910l7rU8G/PJGpwadWikKLMaVAS5InHv3b+5hTdxxozpbpdmKyQ
-         dR1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
-        b=XYUfqutUnyXzF9pjYPRE+eSSrfdhPmVqyckO3QZnPV1028nRVWvm8yRb/lSflatTEu
-         Z2QpifjtDCqZSXZNyVXrlSGMThvd49PPW8wUVPrqoSAgJx/a4yQdd/y/NfsUSJI3VG5v
-         728XuqLRhJ5ziKumHZgGTtUzckLzdSi+XSKsqdY1EvX4iIZgEZNLUAodlJXDBQVoMGcC
-         IQ+EGO9HvOgAjy2BfJ71v9tz0pFsz3R0AsuT+qKAqF+Yz3GshEvllCjoejMxqlUcPl2i
-         dQ/IgtqcHH1yai5lZMAhlOddXL+gijUMV9puwGXQTtQV+oGN0g2nqNTLuhuygC+WRUlz
-         QhQQ==
-X-Gm-Message-State: ABuFfojrURtqWjStvwMsY5eI8swKKvHBwbdbrnmsVv3o4hBKMTqkBtFp
-        v1gb2Hn4FuRGBMXWA5uI22/ziA==
-X-Google-Smtp-Source: ACcGV60GE4e1CUOziycPH4qGJXghj2r264VUZyhU+JCvvzDFRzmBnvyM/pxPLDC+PtcrxJNOhUtMDg==
-X-Received: by 2002:a1c:3795:: with SMTP id e143-v6mr850432wma.9.1539176071111;
-        Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
-Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
-        by smtp.gmail.com with ESMTPSA id x66-v6sm6110731wme.35.2018.10.10.05.54.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 05:54:30 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 14:54:23 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Jann Horn <jannh@google.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
- ptrace
-Message-ID: <20181010125422.rouslofknxzvygzr@brauner.io>
-References: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
- <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io>
- <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <20181009134923.2fvf5roghqgaj5gq@brauner.io>
- <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
- <20181009140932.e5w5lgbgucbl72kt@brauner.io>
- <CAG48ez12SYRUJTWRdzWhpvHBkQion4i8Gpef4r1L6epo9JF-ng@mail.gmail.com>
- <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
- <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
+        Wed, 10 Oct 2018 16:17:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbeJJURO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 16:17:14 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C73F20870;
+        Wed, 10 Oct 2018 12:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539176110;
+        bh=RGqt/6Ys5JqeCROojocnaV/+aVQBt2TABZzqbiuHCnU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WWXFWIaZZguR9BENGWJv/7NyAeHJkic7ycVDt7rG0jvt2qBTVILlrlIOeVMyA3Il5
+         o/1Dt9DYrEcpivzKbpxOvjT8TqtH+BpolHFtWYr7T98CKBWZ00voKhm6lJ8Ea97vWf
+         ahVAd+84HDnbdgbz0/bseNo73CasBZYpzTwVraN8=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 69397142C5E; Wed, 10 Oct 2018 09:55:06 -0300 (-03)
+Date:   Wed, 10 Oct 2018 09:55:06 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Benjamin Peterson <benjamin@python.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf trace beautify: Beautify flags of mount(2) and
+ umount(2).
+Message-ID: <20181010125506.GH10775@kernel.org>
+References: <20180828035344.31500-1-benjamin@python.org>
+ <20180830182848.GE6097@kernel.org>
+ <1535665851.2058334.1491869472.4E860103@webmail.messagingengine.com>
+ <1539143546.2716467.1536750504.65ADF11A@webmail.messagingengine.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1539143546.2716467.1536750504.65ADF11A@webmail.messagingengine.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 06:26:47PM +0200, Jann Horn wrote:
-> On Tue, Oct 9, 2018 at 6:20 PM Christian Brauner <christian@brauner.io> wrote:
-> > On Tue, Oct 09, 2018 at 05:26:26PM +0200, Jann Horn wrote:
-> > > On Tue, Oct 9, 2018 at 4:09 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
-> > > > > On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
-> > > > > > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > > One more thing. Citing from [1]
-> > > > > > > >
-> > > > > > > > > I think there's a security problem here. Imagine the following scenario:
-> > > > > > > > >
-> > > > > > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
-> > > > > > > > > 2. task A forks off a child B
-> > > > > > > > > 3. task B uses setuid(1) to drop its privileges
-> > > > > > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
-> > > > > > > > > or via execve()
-> > > > > > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
-> > > > > > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
-> > > > > > > >
-> > > > > > > > Sorry, to be late to the party but would this really pass
-> > > > > > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
-> > > > > > > > that it would... Doesn't look like it would get past:
-> > > > > > > >
-> > > > > > > >         tcred = __task_cred(task);
-> > > > > > > >         if (uid_eq(caller_uid, tcred->euid) &&
-> > > > > > > >             uid_eq(caller_uid, tcred->suid) &&
-> > > > > > > >             uid_eq(caller_uid, tcred->uid)  &&
-> > > > > > > >             gid_eq(caller_gid, tcred->egid) &&
-> > > > > > > >             gid_eq(caller_gid, tcred->sgid) &&
-> > > > > > > >             gid_eq(caller_gid, tcred->gid))
-> > > > > > > >                 goto ok;
-> > > > > > > >         if (ptrace_has_cap(tcred->user_ns, mode))
-> > > > > > > >                 goto ok;
-> > > > > > > >         rcu_read_unlock();
-> > > > > > > >         return -EPERM;
-> > > > > > > > ok:
-> > > > > > > >         rcu_read_unlock();
-> > > > > > > >         mm = task->mm;
-> > > > > > > >         if (mm &&
-> > > > > > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> > > > > > > >              !ptrace_has_cap(mm->user_ns, mode)))
-> > > > > > > >             return -EPERM;
-> > > > > > >
-> > > > > > > Which specific check would prevent task C from attaching to task B? If
-> > > > > > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
-> > > > > > > you don't trigger the second "return -EPERM".
-> > > > > >
-> > > > > > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
-> > > > > > have if you did a setuid to an unpriv user. (But I always find that code
-> > > > > > confusing.)
-> > > > >
-> > > > > Only if the target hasn't gone through execve() since setuid().
-> > > >
-> > > > Sorry if I want to know this in excessive detail but I'd like to
-> > > > understand this properly so bear with me :)
-> > > > - If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
-> > > >   execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
-> > >
-> > > Yeah.
-> > >
-> > > > - If task B has setuid()ed, exeved()ed it will get its dumpable flag set
-> > > >   to /proc/sys/fs/suid_dumpable
-> > >
-> > > Not if you changed all UIDs (e.g. by calling setuid() as root). In
-> > > that case, setup_new_exec() calls "set_dumpable(current->mm,
-> > > SUID_DUMP_USER)".
-> >
-> > Actually, looking at this when C is trying to PTRACE_ATTACH to B as an
-> > unprivileged user even if B execve()ed and it is dumpable C still
-> > wouldn't have CAP_SYS_PTRACE in the mm->user_ns unless it already is
-> > privileged over mm->user_ns which means it must be in an ancestor
-> > user_ns.
-> 
-> Huh? Why would you need CAP_SYS_PTRACE for anything here? You can
-> ptrace another process running under your UID just fine, no matter
-> what the namespaces are. I'm not sure what you're saying.
+Em Tue, Oct 09, 2018 at 08:52:26PM -0700, Benjamin Peterson escreveu:
+> Hi Arnaldo,
+> Did you get a chance to look at this again?
 
-Sorry, I was out the door yesterday when answering this and was too
-brief. I forgot to mention: /proc/sys/kernel/yama/ptrace_scope. It
-should be enabled by default on nearly all distros and even if not -
-which is an administrators choice - you can usually easily enable it via
-sysctl.
+Thanks, for pinging me about it, will check.
 
-1 ("restricted ptrace") [default value]
-When  performing an operation that requires a PTRACE_MODE_ATTACH check,
-the calling process must either have the CAP_SYS_PTRACE capability in
-the user namespace of the target process or it must have a prede‐ fined
-relationship with the target process.  By default, the predefined
-relationship is that the target process must be a descendant of the
-caller.
-
-If you don't have it set you're already susceptible to all kinds of
-other attacks and I'm still not convinced we need to bring out the big
-capable(CAP_SYS_ADMIN) gun here.
+- Arnaldo
+ 
+> On Thu, Aug 30, 2018, at 14:50, Benjamin Peterson wrote:
+> > Thanks for the review.
+> > 
+> > On Thu, Aug 30, 2018, at 11:28, Arnaldo Carvalho de Melo wrote:
+> > > Em Mon, Aug 27, 2018 at 08:53:44PM -0700, Benjamin Peterson escreveu:
+> > > > Example output of perf trace -e mount,umount2:
+> > > > 
+> > > >   6243.930 ( 0.052 ms): mount/30976 mount(dev_name: 0x55dc541bb920, dir_name: 0x55dc541bc960, type: 0x55dc541b9c40, flags: BIND) = 0
+> > > >   7851.821 (26.015 ms): umount/30983 umount2(name: 0x558daa82cf50, flags: MNT_FORCE                        ) = 0
+> > > > 
+> > > > Signed-off-by: Benjamin Peterson <benjamin@python.org>
+> > > 
+> > > So, I tried:
+> > > 
+> > > Before your patch:
+> > > 
+> > >   # perf trace -e *mount* mount /dev/mapper/fedora-home /s
+> > >      0.000 ( 4.335 ms): mount/3126 mount(dev_name: 0x55deecc4d480, 
+> > > dir_name: 0x55deecc4d4a0, type: 0x55deecc53880, flags: 3236757504) = 0
+> > >   #
+> > >   # perf trace -e *mount* umount /dev/mapper/fedora-home /s
+> > >          ? (         ): umount/3138  ... [continued]: umount2()) = 0
+> > >     11.576 (umount:  0.004 ms): /s: not mounted.umount/
+> > > 3138 umount2(arg0: 94501956754656, arg1: 0, arg2: 1, arg3: 
+> > > 140051050083104, arg4: 4, arg5: 94501956755136) = -1 EINVAL Invalid 
+> > > argument
+> > >   #
+> > > 
+> > > After:
+> > > 
+> > > [root@jouet ~]# perf trace -e *mount* mount /dev/mapper/fedora-home /s
+> > >      0.000 ( 1.213 ms): mount/5244 mount(dev_name: 0x5558c1169480, 
+> > > dir_name: 0x5558c11694a0, type: 0x5558c116f880, flags: ) = 0
+> > > [root@jouet ~]# perf trace -e *mount* umount /s
+> > >      0.000 ( 9.241 ms): umount/5251 umount2(name: 
+> > > 0x55f74a986480                                          ) = 0
+> > > 
+> > > The flags for mount got empty? Can you pleaes check that? I.e. using the
+> > > default mount options, not specifying a 'bind' mount like you did.
+> > 
+> > That comes from these lines in syscall_arg__scnprintf_mount_flags:
+> > 
+> > if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+> > 	flags &= ~MS_MGC_MSK;
+> > 
+> > The reason for this is explained in the comment for do_mount in fs/namespace.c:
+> > 
+> > /*
+> >  * Pre-0.97 versions of mount() didn't have a flags word.
+> >  * When the flags word was introduced its top half was required
+> >  * to have the magic value 0xC0ED, and this remained so until 2.4.0-test9.
+> >  * Therefore, if this magic number is present, it carries no information
+> >  * and must be discarded.
+> > */
+> > 
+> > (I used a bind mount for my commit message example because a "default" 
+> > mount() doesn't use any flags.)
+> > 
+> > > 
+> > > I'm splitting this patch so that the aliasing of 'umount2' to 'umount'
+> > > gets merged now,
+> > > 
+> > > Check my perf/core branch at:
+> > > 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+> > 
+> > LGTM. Thanks
+> > 
