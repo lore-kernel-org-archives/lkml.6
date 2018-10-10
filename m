@@ -2,152 +2,198 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC18C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48C2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2E7214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2E7214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 7F380214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:43:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmRF1fIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F380214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeJJSFQ (ORCPT
+        id S1726902AbeJJSF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:05:16 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:44739 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbeJJSFQ (ORCPT
+        Wed, 10 Oct 2018 14:05:27 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36423 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJJSF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:05:16 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9AAhfUM066809;
-        Wed, 10 Oct 2018 19:43:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Wed, 10 Oct 2018 19:43:41 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9AAheZP066805
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 10 Oct 2018 19:43:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: rcu detected stall in shmem_fault
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>,
-        hannes@cmpxchg.org, akpm@linux-foundation.org, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, yang.s@alibaba-inc.com,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-References: <000000000000dc48d40577d4a587@google.com>
- <201810100012.w9A0Cjtn047782@www262.sakura.ne.jp>
- <20181010085945.GC5873@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <e72f799e-0634-f958-1af0-291f8577f4e8@i-love.sakura.ne.jp>
-Date:   Wed, 10 Oct 2018 19:43:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 10 Oct 2018 14:05:26 -0400
+Received: by mail-io1-f67.google.com with SMTP id p4-v6so3501769iom.3;
+        Wed, 10 Oct 2018 03:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pfC4EWDvMvVG20MYWuy/ExxD/ybhTLTB6orOZndwgaI=;
+        b=PmRF1fIyGnJN80QnxsnoNZYYunP22i0sQkD9RvE0tWn054gSY9VW2xM/Xea6d0LOFs
+         Vckf1WfO3BQ4+0QwmtyWcVYAAnfv+QKAXUDlkiLMFruATs4EDmX6Mgfmb5Eh4Is80Vgq
+         17D8zx9Isf/uS6x1de220m24LgypDWSIVK74lVrG0sGOuan+rJ/BNccKmwMooaO3t9kn
+         T+zxOXqpPlRtMFrVxCg4fMApZrP7LiFA1HP9Mw044xyqAfuU7oICA/gN5YWehO2X5sJ0
+         wq0a/6BMGltMX3lucqX2BNl7W/o/6vRsEbu4E6yLmMVpNj9KTQHOZqO9UDgQ1zEM/CR5
+         bWKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pfC4EWDvMvVG20MYWuy/ExxD/ybhTLTB6orOZndwgaI=;
+        b=jS7o4EaL6Xxd1s60P5F07JkJLDt8mVyb97NX/ZLiqZRv1u9P6HDeE/bv+nxfOw674E
+         Px9eAuwBS+VDduZ659SdvwnyKJ2ktx4Mcs6xPtSahahKy1A9H4wtmnKTSGvaFN+YLkLc
+         CbgUxvUu1Mgz/BE+GkhE/453NhbaNIB6GIjUyveZ3B/8Qc31aKKNzxaLQ+IGX4yxzMgv
+         9CVF8pwUbWmQraGxXB4MxIwtkUFCJPurP+s5+9nDjBv8wsUEp0yptq/ktfC7l2cbl92c
+         hXuw4XQSTwPPsfgq/SIt25u4p7YErTdXPVKsZPhTDQJSjvQuYYdncZlN4ZJyjHOGOrIm
+         renw==
+X-Gm-Message-State: ABuFfoisqrEchpm/F3XRyMCyPdhcTbRHuiW5x3VFLTqQU35UyHrOs8FB
+        Lh7MDoVwZKRP54fpe7KS4JRJmMyayWpSF5QtqVo=
+X-Google-Smtp-Source: ACcGV63MN2Q/xFBtXlxKDLkHy4WMfzhpW7sjXYONx/AXnp550khQUgSEakpQPUvsMyVOJM2kMLdMLERDxMV//Hu8bfU=
+X-Received: by 2002:a6b:7906:: with SMTP id i6-v6mr22815842iop.241.1539168232051;
+ Wed, 10 Oct 2018 03:43:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181010085945.GC5873@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181009175428.18543-1-lhenriques@suse.com> <CAAM7YAno0s5Z21jagvnFbQdkkwMOYadZG9trPvs4WKZLRLkLxg@mail.gmail.com>
+In-Reply-To: <CAAM7YAno0s5Z21jagvnFbQdkkwMOYadZG9trPvs4WKZLRLkLxg@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 10 Oct 2018 12:43:40 +0200
+Message-ID: <CAOi1vP_HmqS3xgAdYSpQYhRg-2q6mhHEaRpQW2+-UyJs9K1UsQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: only allow punch hole mode in fallocate
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/10 17:59, Michal Hocko wrote:
-> On Wed 10-10-18 09:12:45, Tetsuo Handa wrote:
->> syzbot is hitting RCU stall due to memcg-OOM event.
->> https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
-> 
-> This is really interesting. If we do not have any eligible oom victim we
-> simply force the charge (allow to proceed and go over the hard limit)
-> and break the isolation. That means that the caller gets back to running
-> and realease all locks take on the way.
+On Wed, Oct 10, 2018 at 6:21 AM Yan, Zheng <ukernel@gmail.com> wrote:
+>
+> On Wed, Oct 10, 2018 at 1:54 AM Luis Henriques <lhenriques@suse.com> wrote:
+> >
+> > Current implementation of cephfs fallocate isn't correct as it doesn't
+> > really reserve the space in the cluster, which means that a subsequent
+> > call to a write may actually fail due to lack of space.  In fact, it is
+> > currently possible to fallocate an amount space that is larger than the
+> > free space in the cluster.
+> >
+> > Since there's no easy solution to fix this at the moment, this patch
+> > simply removes support for all fallocate operations but
+> > FALLOC_FL_PUNCH_HOLE (which implies FALLOC_FL_KEEP_SIZE).
+> >
+> > Link: https://tracker.ceph.com/issues/36317
+> > Cc: stable@vger.kernel.org
+> > Fixes: ad7a60de882a ("ceph: punch hole support")
+> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > ---
+> >  fs/ceph/file.c | 45 +++++++++------------------------------------
+> >  1 file changed, 9 insertions(+), 36 deletions(-)
+> >
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 92ab20433682..91a7ad259bcf 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1735,7 +1735,6 @@ static long ceph_fallocate(struct file *file, int mode,
+> >         struct ceph_file_info *fi = file->private_data;
+> >         struct inode *inode = file_inode(file);
+> >         struct ceph_inode_info *ci = ceph_inode(inode);
+> > -       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> >         struct ceph_cap_flush *prealloc_cf;
+> >         int want, got = 0;
+> >         int dirty;
+> > @@ -1743,10 +1742,7 @@ static long ceph_fallocate(struct file *file, int mode,
+> >         loff_t endoff = 0;
+> >         loff_t size;
+> >
+> > -       if ((offset + length) > max(i_size_read(inode), fsc->max_file_size))
+> > -               return -EFBIG;
+> > -
+> > -       if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+> > +       if (mode != (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+> >                 return -EOPNOTSUPP;
+> >
+> >         if (!S_ISREG(inode->i_mode))
+> > @@ -1763,18 +1759,6 @@ static long ceph_fallocate(struct file *file, int mode,
+> >                 goto unlock;
+> >         }
+> >
+> > -       if (!(mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE)) &&
+> > -           ceph_quota_is_max_bytes_exceeded(inode, offset + length)) {
+> > -               ret = -EDQUOT;
+> > -               goto unlock;
+> > -       }
+> > -
+> > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL) &&
+> > -           !(mode & FALLOC_FL_PUNCH_HOLE)) {
+> > -               ret = -ENOSPC;
+> > -               goto unlock;
+> > -       }
+> > -
+> >         if (ci->i_inline_version != CEPH_INLINE_NONE) {
+> >                 ret = ceph_uninline_data(file, NULL);
+> >                 if (ret < 0)
+> > @@ -1782,12 +1766,12 @@ static long ceph_fallocate(struct file *file, int mode,
+> >         }
+> >
+> >         size = i_size_read(inode);
+> > -       if (!(mode & FALLOC_FL_KEEP_SIZE)) {
+> > -               endoff = offset + length;
+> > -               ret = inode_newsize_ok(inode, endoff);
+> > -               if (ret)
+> > -                       goto unlock;
+> > -       }
+> > +
+> > +       /* Are we punching a hole beyond EOF? */
+> > +       if (offset >= size)
+> > +               goto unlock;
+> > +       if ((offset + length) > size)
+> > +               length = size - offset;
+> >
+> >         if (fi->fmode & CEPH_FILE_MODE_LAZY)
+> >                 want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
+> > @@ -1798,16 +1782,8 @@ static long ceph_fallocate(struct file *file, int mode,
+> >         if (ret < 0)
+> >                 goto unlock;
+> >
+> > -       if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > -               if (offset < size)
+> > -                       ceph_zero_pagecache_range(inode, offset, length);
+> > -               ret = ceph_zero_objects(inode, offset, length);
+> > -       } else if (endoff > size) {
+> > -               truncate_pagecache_range(inode, size, -1);
+> > -               if (ceph_inode_set_size(inode, endoff))
+> > -                       ceph_check_caps(ceph_inode(inode),
+> > -                               CHECK_CAPS_AUTHONLY, NULL);
+> > -       }
+> > +       ceph_zero_pagecache_range(inode, offset, length);
+> > +       ret = ceph_zero_objects(inode, offset, length);
+> >
+> >         if (!ret) {
+> >                 spin_lock(&ci->i_ceph_lock);
+> > @@ -1817,9 +1793,6 @@ static long ceph_fallocate(struct file *file, int mode,
+> >                 spin_unlock(&ci->i_ceph_lock);
+> >                 if (dirty)
+> >                         __mark_inode_dirty(inode, dirty);
+> > -               if ((endoff > size) &&
+> > -                   ceph_quota_is_max_bytes_approaching(inode, endoff))
+> > -                       ceph_check_caps(ci, CHECK_CAPS_NODELAY, NULL);
+> >         }
+> >
+> >         ceph_put_cap_refs(ci, got);
+>
+> Applied, thanks
 
-What happens if the caller continued trying to allocate more memory
-because the caller cannot be noticed by SIGKILL from the OOM killer?
+I don't think it should go to stable kernels.  Strictly speaking it's
+a behaviour change -- it's been this way for many years and, unless you
+are close to ENOSPC, it's sort of appears to work.  I'll take off the
+stable tag unless I hear objections.
 
->                                         I am wondering how come we are
-> seeing the RCU stall. Whole is holding the rcu lock? Certainly not the
-> charge patch and neither should the caller because you have to be in a
-> sleepable context to trigger the OOM killer. So there must be something
-> more going on.
+Thanks,
 
-Just flooding out of memory messages can trigger RCU stall problems.
-For example, a severe skbuff_head_cache or kmalloc-512 leak bug is causing
-
-  INFO: rcu detected stall in filemap_fault
-  https://syzkaller.appspot.com/bug?id=8e7f5412a78197a2e0f848fa513c2e7f0071ffa2
-
-  INFO: rcu detected stall in show_free_areas
-  https://syzkaller.appspot.com/bug?id=b2cc06dd0a76e7ca92aa8d13ef4227cb7fd0d217
-
-  INFO: rcu detected stall in proc_reg_read
-  https://syzkaller.appspot.com/bug?id=0d6a21d39c8ef7072c695dea11095df6c07c79af
-
-  INFO: rcu detected stall in call_timer_fn
-  https://syzkaller.appspot.com/bug?id=88a07e525266567efe221f7a4a05511c032e5822
-
-  INFO: rcu detected stall in br_multicast_port_group_expired (2)
-  https://syzkaller.appspot.com/bug?id=15c7ad8cf35a07059e8a697a22527e11d294bc94
-
-  INFO: rcu detected stall in br_multicast_port_group_expired (2)
-  https://syzkaller.appspot.com/bug?id=15c7ad8cf35a07059e8a697a22527e11d294bc94
-
-  INFO: rcu detected stall in tun_chr_close
-  https://syzkaller.appspot.com/bug?id=6c50618bde03e5a2eefdd0269cf9739c5ebb8270
-
-  INFO: rcu detected stall in discover_timer
-  https://syzkaller.appspot.com/bug?id=55da031ddb910e58ab9c6853a5784efd94f03b54
-
-  INFO: rcu detected stall in ret_from_fork (2)
-  https://syzkaller.appspot.com/bug?id=c83129a6683b44b39f5b8864a1325893c9218363
-
-  INFO: rcu detected stall in addrconf_rs_timer
-  https://syzkaller.appspot.com/bug?id=21c029af65f81488edbc07a10ed20792444711b6
-
-  INFO: rcu detected stall in kthread (2)
-  https://syzkaller.appspot.com/bug?id=6accd1ed11c31110fed1982f6ad38cc9676477d2
-
-  INFO: rcu detected stall in ext4_filemap_fault
-  https://syzkaller.appspot.com/bug?id=817e38d20e9ee53390ac361bf0fd2007eaf188af
-
-  INFO: rcu detected stall in run_timer_softirq (2)
-  https://syzkaller.appspot.com/bug?id=f5a230a3ff7822f8d39fddf8485931bd06ae47fe
-
-  INFO: rcu detected stall in bpf_prog_ADDR
-  https://syzkaller.appspot.com/bug?id=fb4911fd0e861171cc55124e209f810a0dd68744
-
-  INFO: rcu detected stall in __run_timers (2)
-  https://syzkaller.appspot.com/bug?id=65416569ddc8d2feb8f19066aa761f5a47f7451a
-
-reports.
-
-> 
->> What should we do if memcg-OOM found no killable task because the allocating task
->> was oom_score_adj == -1000 ? Flooding printk() until RCU stall watchdog fires 
->> (which seems to be caused by commit 3100dab2aa09dc6e ("mm: memcontrol: print proper
->> OOM header when no eligible victim left") because syzbot was terminating the test
->> upon WARN(1) removed by that commit) is not a good behavior.
-> 
-> We definitely want to inform about ineligible oom victim. We might
-> consider some rate limiting for the memcg state but that is a valuable
-> information to see under normal situation (when you do not have floods
-> of these situations).
-> 
-
-But if the caller cannot be noticed by SIGKILL from the OOM killer,
-allowing the caller to trigger the OOM killer again and again (until
-global OOM killer triggers) is bad.
-
+                Ilya
