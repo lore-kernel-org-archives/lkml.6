@@ -2,162 +2,131 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C17C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C209C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B10E0214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635382150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 15:16:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QCUG4uT5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10E0214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="dbrMdp0O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 635382150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbeJJWib (ORCPT
+        id S1726990AbeJJWih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:38:31 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:45416 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbeJJWia (ORCPT
+        Wed, 10 Oct 2018 18:38:37 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45127 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeJJWia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 10 Oct 2018 18:38:30 -0400
+Received: by mail-yw1-f65.google.com with SMTP id v198-v6so2301283ywg.12
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 08:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1539184552; x=1570720552;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=Fn3QrxPgQJDHEYNKmSe6DpSUJ0XH+yTqsoAizieQwQ4=;
-  b=QCUG4uT5zvnnA3rgGWhHVa88ZyeECUZyBZSQ4kjrIpiZgfz82fLGsH8C
-   nlDdeRR/GxCp7JdJrbdY1qYl3s56Y3cu82zGmi89TCzGF53MDhhGGtUJn
-   gt/4zOET/h4l3Lqr3Az1A756nGGIbxTh4RZeRhA5lmFaxlRBV9rFXKl4+
-   g=;
-X-IronPort-AV: E=Sophos;i="5.54,364,1534809600"; 
-   d="scan'208";a="635417528"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 10 Oct 2018 15:15:44 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9AFFew5042244
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 15:15:42 GMT
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 10 Oct 2018 15:15:41 +0000
-Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.160.173) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 10 Oct 2018 15:15:35 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <talel@amazon.com>, <jonnyc@amazon.com>, <ronenk@amazon.com>,
-        <barakw@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 2/2] dw: spi: add support for Alpine spi controller
-Date:   Wed, 10 Oct 2018 18:15:16 +0300
-Message-ID: <1539184516-8200-2-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539184516-8200-1-git-send-email-talel@amazon.com>
-References: <1539155293-21750-1-git-send-email-talel@amazon.com>
- <1539184516-8200-1-git-send-email-talel@amazon.com>
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fE4xEy53WtuGc23PB6OocrWOqKsA1Ap5tx7Zq7YRJJU=;
+        b=dbrMdp0OT0r7iqxHERFNmoN5KTFysoZSqg3uVsufo0QCVzq9wbVE4BUeV/9tlliYDn
+         QH6mOzdHFPGSy8b6JpQh9dFcIqz7tOgKOWe8qV9jVFxpHHm78dglz9n4K3jima5Pk4lo
+         AVzelP8EVPGhz5jgzz1xifzCeEt3sbtiPxfnuKIvOQ09qzDZncS68RxLkTPHmGgJJ+5U
+         ASX7tvt06nwNOiQrtZMx1kzRzR0OD02R3JlLtxaj5fsiBT294p66a8xU/7GEidVrICmL
+         3b7VfFPqZHfgEH8ECWY6MbiX+iakEVx6aT6OQXVdchW7xlAxXTKbtprnLVY/JiPRHs6d
+         Kbag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fE4xEy53WtuGc23PB6OocrWOqKsA1Ap5tx7Zq7YRJJU=;
+        b=VD7rY6vHcL8dl1ryv2XDZ6xuMLY1PH4Jf2vPjk0+OW+cwKUBgnlDoMFOAGxYbyhUB+
+         9y6CFnzx/yEIvSMBv8FMCc4O3CXx9KIeK27R5CnvlXTEDcCXkP+WfRWj9XaS2oYAqGLU
+         O3m42il2poIKhbWYWYd4HoiqM5U/gBLdo5JdjcxdsI9aeXap94tzPk1boUMfGsq+JuCq
+         HwTu6CBkKHFs4sk4ppJKlOb6BMN28wLA9JlrjCFF7z99MQvsTqRsrtFEfYhFpjWs+iES
+         48YPlFrKDb+imsXXRUAa9QedFV+1L2h6qT41QwNvt7QexWQWtE6UBIKZswEseEeU5cj8
+         XwPg==
+X-Gm-Message-State: ABuFfog2U22yvaMV6utasqktI0fSwpASf+s1GjilJzaOSusbHWhPV06U
+        T6FffNvEjEWd4Vcycwf6ExexR0hqKeo=
+X-Google-Smtp-Source: ACcGV62r6fiPBfckuqJo4BGJhZhHVwnX47nPV3jKkzBIwRU7qg7otvD/ojlEJR49hfLGJJwRCrFttA==
+X-Received: by 2002:a81:7307:: with SMTP id o7-v6mr18698574ywc.183.1539184552080;
+        Wed, 10 Oct 2018 08:15:52 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::6:4a04])
+        by smtp.gmail.com with ESMTPSA id c5-v6sm6070471ywf.73.2018.10.10.08.15.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 08:15:50 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 11:15:49 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Rik van Riel <riel@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH 4/4] mm: zero-seek shrinkers
+Message-ID: <20181010151549.GC2527@cmpxchg.org>
+References: <20181009184732.762-1-hannes@cmpxchg.org>
+ <20181009184732.762-5-hannes@cmpxchg.org>
+ <e01c4f441e24bb31816a3080389dcae7b49cc1ff.camel@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.173]
-X-ClientProxiedBy: EX13D18UWA001.ant.amazon.com (10.43.160.11) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e01c4f441e24bb31816a3080389dcae7b49cc1ff.camel@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for a new devicetree compatible string called
-'al,alpine-apb-ssi', which is necessary for the Amazon Alpine spi
-controller. 'al,alpine-dw-apb-ssi' is used in the dw spi driver if
-specified in the devicetree.  Otherwise, fall back to driver default
-behavior, i.e. original dw IP hw driver behavior.
+On Wed, Oct 10, 2018 at 01:03:50AM +0000, Rik van Riel wrote:
+> On Tue, 2018-10-09 at 14:47 -0400, Johannes Weiner wrote:
+> 
+> > These workloads also deal with tens of thousands of open files and
+> > use
+> > /proc for introspection, which ends up growing the proc_inode_cache
+> > to
+> > absurdly large sizes - again at the cost of valuable cache space,
+> > which isn't a reasonable trade-off, given that proc inodes can be
+> > re-created without involving the disk.
+> > 
+> > This patch implements a "zero-seek" setting for shrinkers that
+> > results
+> > in a target ratio of 0:1 between their objects and IO-backed
+> > caches. This allows such virtual caches to grow when memory is
+> > available (they do cache/avoid CPU work after all), but effectively
+> > disables them as soon as IO-backed objects are under pressure.
+> > 
+> > It then switches the shrinkers for procfs and sysfs metadata, as well
+> > as excess page cache shadow nodes, to the new zero-seek setting.
+> 
+> This patch looks like a great step in the right
+> direction, though I do not know whether it is
+> aggressive enough.
+> 
+> Given that internal slab fragmentation will
+> prevent the slab cache from returning a slab to
+> the VM if just one object in that slab is still
+> in use, there may well be workloads where we
+> should just put a hard cap on the number of
+> freeable items these slabs, and reclaim them
+> preemptively.
+> 
+> However, I do not know for sure, and this patch
+> seems like a big improvement over what we had
+> before, so ...
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- drivers/spi/spi-dw-mmio.c | 9 +++++++++
- drivers/spi/spi-dw.c      | 6 ++++++
- drivers/spi/spi-dw.h      | 2 ++
- 3 files changed, 17 insertions(+)
+Fully agreed, fragmentation is still a concern. I'm still working on
+that part, but artificial caps and pro-active reclaim are trickier to
+get right than prioritization, and since these patches here are useful
+on their own I didn't want to hold them back.
 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index a768461..88b04d2 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -126,6 +126,14 @@ static int dw_spi_mscc_jaguar2_init(struct platform_device *pdev,
- 				JAGUAR2_IF_SI_OWNER_OFFSET);
- }
- 
-+static int dw_spi_alpine_init(struct platform_device *pdev,
-+			      struct dw_spi_mmio *dwsmmio)
-+{
-+	dwsmmio->dws.cs_override = 1;
-+
-+	return 0;
-+}
-+
- static int dw_spi_mmio_probe(struct platform_device *pdev)
- {
- 	int (*init_func)(struct platform_device *pdev,
-@@ -230,6 +238,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "snps,dw-apb-ssi", },
- 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
- 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
-+	{ .compatible = "al,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 3e205ab..b705f2b 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -144,6 +144,8 @@ void dw_spi_set_cs(struct spi_device *spi, bool enable)
- 
- 	if (!enable)
- 		dw_writel(dws, DW_SPI_SER, BIT(spi->chip_select));
-+	else if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_SER, 0);
- }
- EXPORT_SYMBOL_GPL(dw_spi_set_cs);
- 
-@@ -463,6 +465,10 @@ static void spi_hw_init(struct device *dev, struct dw_spi *dws)
- 		dws->fifo_len = (fifo == 1) ? 0 : fifo;
- 		dev_dbg(dev, "Detected FIFO size: %u bytes\n", dws->fifo_len);
- 	}
-+
-+	/* enable HW fixup for explicit CS deselect for Amazon's alpine chip */
-+	if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_CS_OVERRIDE, 0xF);
- }
- 
- int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
-diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-index 0168b08..c9c1588 100644
---- a/drivers/spi/spi-dw.h
-+++ b/drivers/spi/spi-dw.h
-@@ -32,6 +32,7 @@
- #define DW_SPI_IDR			0x58
- #define DW_SPI_VERSION			0x5c
- #define DW_SPI_DR			0x60
-+#define DW_SPI_CS_OVERRIDE		0xf4
- 
- /* Bit fields in CTRLR0 */
- #define SPI_DFS_OFFSET			0
-@@ -109,6 +110,7 @@ struct dw_spi {
- 	u32			fifo_len;	/* depth of the FIFO buffer */
- 	u32			max_freq;	/* max bus freq supported */
- 
-+	int			cs_override;
- 	u32			reg_io_width;	/* DR I/O width in bytes */
- 	u16			bus_num;
- 	u16			num_cs;		/* supported slave numbers */
--- 
-2.7.4
+> > Reported-by: Domas Mituzas <dmituzas@fb.com>
+> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> 
+> Reviewed-by: Rik van Riel <riel@surriel.com>
 
+Thanks!
