@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED061C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFC9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DBD2077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DBD2077C
+	by mail.kernel.org (Postfix) with ESMTP id 6D7872151C
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 12:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7872151C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeJJT3m (ORCPT
+        id S1727194AbeJJT3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 15:29:42 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:33002 "EHLO inva020.nxp.com"
+        Wed, 10 Oct 2018 15:29:44 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33072 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJJT3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:29:42 -0400
+        id S1726625AbeJJT3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 15:29:43 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 583A71A014A;
-        Wed, 10 Oct 2018 14:07:49 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 20AC81A0159;
+        Wed, 10 Oct 2018 14:07:50 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4BBB71A0093;
-        Wed, 10 Oct 2018 14:07:49 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 143D11A0195;
+        Wed, 10 Oct 2018 14:07:50 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8ABA520619;
-        Wed, 10 Oct 2018 14:07:48 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5CA1E20619;
+        Wed, 10 Oct 2018 14:07:49 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -39,9 +39,9 @@ Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, arnd@arndb.de,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 01/22] soc/fsl/qman: fixup liodns only on ppc targets
-Date:   Wed, 10 Oct 2018 15:07:19 +0300
-Message-Id: <20181010120737.30300-2-laurentiu.tudor@nxp.com>
+Subject: [PATCH v3 02/22] soc/fsl/bman: map FBPR area in the iommu
+Date:   Wed, 10 Oct 2018 15:07:20 +0300
+Message-Id: <20181010120737.30300-3-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
 References: <20181010120737.30300-1-laurentiu.tudor@nxp.com>
@@ -53,35 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-ARM SoCs use SMMU so the liodn fixup done in the qman driver is no
-longer making sense and it also breaks the ICID settings inherited
-from u-boot. Do the fixups only for PPC targets.
+Add a one-to-one iommu mapping for bman private data memory (FBPR).
+This is required for BMAN to work without faults behind an iommu.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/soc/fsl/qbman/qman_ccsr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/fsl/qbman/bman_ccsr.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
-index 79cba58387a5..619e22030460 100644
---- a/drivers/soc/fsl/qbman/qman_ccsr.c
-+++ b/drivers/soc/fsl/qbman/qman_ccsr.c
-@@ -597,6 +597,7 @@ static int qman_init_ccsr(struct device *dev)
- #define LIO_CFG_LIODN_MASK 0x0fff0000
- void qman_liodn_fixup(u16 channel)
- {
-+#ifdef CONFIG_PPC
- 	static int done;
- 	static u32 liodn_offset;
- 	u32 before, after;
-@@ -616,6 +617,7 @@ void qman_liodn_fixup(u16 channel)
- 		qm_ccsr_out(REG_REV3_QCSP_LIO_CFG(idx), after);
- 	else
- 		qm_ccsr_out(REG_QCSP_LIO_CFG(idx), after);
-+#endif
- }
+diff --git a/drivers/soc/fsl/qbman/bman_ccsr.c b/drivers/soc/fsl/qbman/bman_ccsr.c
+index 05c42235dd41..d180da003e4a 100644
+--- a/drivers/soc/fsl/qbman/bman_ccsr.c
++++ b/drivers/soc/fsl/qbman/bman_ccsr.c
+@@ -29,6 +29,7 @@
+  */
  
- #define IO_CFG_SDEST_MASK 0x00ff0000
+ #include "bman_priv.h"
++#include <linux/iommu.h>
+ 
+ u16 bman_ip_rev;
+ EXPORT_SYMBOL(bman_ip_rev);
+@@ -171,6 +172,7 @@ static int fsl_bman_probe(struct platform_device *pdev)
+ 	int ret, err_irq;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = dev->of_node;
++	struct iommu_domain *domain;
+ 	struct resource *res;
+ 	u16 id, bm_pool_cnt;
+ 	u8 major, minor;
+@@ -216,6 +218,15 @@ static int fsl_bman_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(dev, "Allocated FBPR 0x%llx 0x%zx\n", fbpr_a, fbpr_sz);
+ 
++	/* Create an 1-to-1 iommu mapping for FBPR area */
++	domain = iommu_get_domain_for_dev(dev);
++	if (domain) {
++		ret = iommu_map(domain, fbpr_a, fbpr_a, fbpr_sz,
++				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
++		if (ret)
++			dev_warn(dev, "failed to iommu_map() %d\n", ret);
++	}
++
+ 	bm_set_memory(fbpr_a, fbpr_sz);
+ 
+ 	err_irq = platform_get_irq(pdev, 0);
 -- 
 2.17.1
 
