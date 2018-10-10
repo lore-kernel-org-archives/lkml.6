@@ -2,96 +2,191 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AB7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44F8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA83B2087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:41:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA83B2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 85358214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 14:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsScUGKW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85358214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeJJWDp (ORCPT
+        id S1727094AbeJJWED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:03:45 -0400
-Received: from nautica.notk.org ([91.121.71.147]:50540 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726625AbeJJWDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:03:44 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 33598C009; Wed, 10 Oct 2018 16:41:14 +0200 (CEST)
-Date:   Wed, 10 Oct 2018 16:40:59 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        netdev <netdev@vger.kernel.org>,
-        Ron Minnich <rminnich@sandia.gov>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: BUG: corrupted list in p9_read_work
-Message-ID: <20181010144059.GA20918@nautica>
-References: <000000000000ca61cd0571178677@google.com>
- <000000000000fddb150577c15af6@google.com>
- <20181009020949.GA29622@nautica>
- <CACT4Y+bv5dWx0JwCzTPD3mWJRaMHOtRVcvpV5fdQ5KS7zAF_fA@mail.gmail.com>
+        Wed, 10 Oct 2018 18:04:03 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33610 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbeJJWED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 18:04:03 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181010144133euoutp02465a19e6ddc17e55a2cd1d6d6f3a4c49~cRlKdrNsZ1970619706euoutp02G
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 14:41:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181010144133euoutp02465a19e6ddc17e55a2cd1d6d6f3a4c49~cRlKdrNsZ1970619706euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1539182493;
+        bh=MiPCfUa1HrmoxemD1A9JuzW3ZiWLvzynHiEV+uBE+4U=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=lsScUGKWkLPq86EgO6tepMes8238Wxt1RzaVhYrzwrUFItyJ2Bp32H5oKkjVxofEM
+         Sg8RigvYeSHclAGjxg2kCqUYchuJWZfQqkRLN2TkrgscG0P0GifSkSGBZQSS5mT4L6
+         CxBin1cR3lZ0sTBaT9O4to02VnVgT/iuqiW0wZqw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181010144132eucas1p2c904cb0b5b94d37117895eb6dbaa4963~cRlKA9ZTz3027230272eucas1p2x;
+        Wed, 10 Oct 2018 14:41:32 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E1.21.04806.C9F0EBB5; Wed, 10
+        Oct 2018 15:41:32 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da~cRlJN49vs2486624866eucas1p1i;
+        Wed, 10 Oct 2018 14:41:31 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181010144131eusmtrp25d7f4fdb627e3a55e56262de874a7037~cRlI9UOm02620426204eusmtrp2l;
+        Wed, 10 Oct 2018 14:41:31 +0000 (GMT)
+X-AuditID: cbfec7f5-79db79c0000012c6-03-5bbe0f9c71e1
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4E.61.04284.B9F0EBB5; Wed, 10
+        Oct 2018 15:41:31 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181010144131eusmtip2caa1ce12b62b42c6386a1c8247fbee73~cRlIuO3xj0958209582eusmtip2W;
+        Wed, 10 Oct 2018 14:41:31 +0000 (GMT)
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ACPI: remove redundant 'default n' from Kconfig
+Date:   Wed, 10 Oct 2018 16:41:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+bv5dWx0JwCzTPD3mWJRaMHOtRVcvpV5fdQ5KS7zAF_fA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleLIzCtJLcpLzFFi42LZduzned05/PuiDfqmKVjsfPiWzWL5vn5G
+        i8u75rBZnDl9idWBxWPTqk42jy1X21k8Pm+SC2CO4rJJSc3JLEst0rdL4Mq4Mnkbe8FMsYo9
+        Sz+xNTA2C3YxcnJICJhIPJrxkx3EFhJYwSgx6YBrFyMXkP2FUeLR8fssEM5nRon9k7czw3Rc
+        nrqfFSKxnFHi282dzBDOe6Cq5umsIFUiAh4Sj77fBpvLLGAj0TDnEZjNJmAlMbF9FSOILSzg
+        IDH39HywqSwCqhIXJnQA1XBwiApESPSfUQcJ8woISpyc+YQFYoy8xPa3c6COeM0m8emUK0RN
+        mUTjy0uMIK0SAi4Si6a7Q5QIS7w6voUdwpaR+L9zPhPImRIC0xkl3vxaygLhrGeUWHPmGBNE
+        lbXE4eMXWUEGMQtoSqzfpQ8RdpTYf2Q9C8R8PokbbwUhzuGTmLRtOjNEmFeio00IolpNYsOy
+        DWwwa7t2roS62ENiZkMXIySgYyUmfr7OPIFRYRaSJ2cheXIWwg0LGJlXMYqnlhbnpqcWG+el
+        lusVJ+YWl+al6yXn525iBCaN0/+Of93BuO9P0iFGAQ5GJR7ehgt7ooVYE8uKK3MPMUpwMCuJ
+        8N46vDdaiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+yeRujhQTSE0tSs1NTC1KLYLJMHJxSDYyi
+        vOvvbGKyuiKQ2Hp76/yWyW+2XEk7HSZaMOX+Hd2zlx5IK/Mfec3poWVUseKe+UnDwLyZ+yaf
+        i0iYHWqzIKpMgtcw9Vlfss6E/hZvtvk5OmkrXD6VCvuu1S2eaFFax7qQ52r49Z/b45XlqvXM
+        n/follr97josbXXmTHquk9kR3reXF7yp8VBiKc5INNRiLipOBADTulU6FgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsVy+t/xe7qz+fdFG5zfqG6x8+FbNovl+/oZ
+        LS7vmsNmceb0JVYHFo9NqzrZPLZcbWfx+LxJLoA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
+        yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/jyuRt7AUzxSr2LP3E1sDYLNjFyMkhIWAicXnq
+        ftYuRi4OIYGljBI35pxi72LkAErISBxfXwZRIyzx51oXG0TNW0aJs3desIAkRAQ8JB59v80O
+        YjML2Eg0zHkEZrMJWElMbF/FCGILCzhIzD09nxlkJq+AncS2GVwgYRYBVYkLEzrAykUFIiRu
+        PewAG8krIChxcuYTFoiR6hJ/5l1ihrDlJba/ncM8gZF/FpKyWUjKZiEpW8DIvIpRJLW0ODc9
+        t9hQrzgxt7g0L10vOT93EyMwvLcd+7l5B+OljcGHGAU4GJV4eBsu7IkWYk0sK67MPcQowcGs
+        JMJ76/DeaCHelMTKqtSi/Pii0pzU4kOMpkCHT2SWEk3OB8ZeXkm8oamhuYWlobmxubGZhZI4
+        73mDyighgfTEktTs1NSC1CKYPiYOTqkGxurMfSY/VHrfHyswt2Tv8X5W5bqMy/D20YVHpTo5
+        FBYW1cx9382uJbh67cllzge6jp1M7jlTp+y79Rd/ckKUAOe+exKuXNcu2IULPFrw7xpzrt2P
+        LOPwf/MMDQ7NnxA87Ro/c97BgOkxf78/+v6jZ0ILw++nh7zZnm/+EzfzavJSJqE8kSNvziqx
+        FGckGmoxFxUnAgAwScNlhQIAAA==
+Message-Id: <20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da~cRlJN49vs2486624866eucas1p1i@eucas1p1.samsung.com>
+X-CMS-MailID: 20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da
+References: <CGME20181010144131eucas1p1974d23e4f09a49ed772575b9cc3770da@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote on Wed, Oct 10, 2018:
-> How can they be faked?
-> If we could create a private rdma/virtio stub instance per test
-> process, then we could I think easily use that instance for 9p. But is
-> it possible?
+'default n' is the default value for any bool or tristate Kconfig
+setting so there is no need to write it explicitly.
 
-"RDMA" itself can be faked pretty easily nowadays, there's a "rxe"
-driver that is soft RDMA over ethernet and can run over anything.
+Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+is not set' for visible symbols") the Kconfig behavior is the same
+regardless of 'default n' being present or not:
 
-The problem is that you can't just give the client a file like trans fd;
-you'd need to open an ""rdma socket"" (simplifying wording a bit), and
-afaik there is no standard tool for it ; or rather, the problem is that
-RDMA is packet based so even if there were you can't just write stuff
-in a fd and hope it'll work, so you need a server.
+    ...
+    One side effect of (and the main motivation for) this change is making
+    the following two definitions behave exactly the same:
+    
+        config FOO
+                bool
+    
+        config FOO
+                bool
+                default n
+    
+    With this change, neither of these will generate a
+    '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
+    That might make it clearer to people that a bare 'default n' is
+    redundant.
+    ...
 
-If you're interested, 9p is trivial enough that I could provide you with
-a trivial server that works like your file (just need to reimplement
-something that parses header to packetize it properly; so you could
-write to its stdin for example) ; that'd require some setup in the VM
-(configure rxe and install that tool), but it would definitely be
-possible.
-What do you think ?
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/acpi/Kconfig |    6 ------
+ 1 file changed, 6 deletions(-)
 
-
-For virtio, I'm not as familiar with the environment so I do not know if
-there are ways to fake it as easily unfortunately.
-
-> Testing on real hardware is mostly outside of our priorities at the
-> moment. I mean syzkaller itself can be run on anything, and one could
-> extend descriptions to use a known rdma interface and run on a real
-> hardware. But we can't afford this at the moment.
-
-Sure, I understand that.
-
-> As far as I understand RDMA maintainers run syzkaller on real
-> hardware, but I don't know if they are up to including 9p into
-> testing. +Leon
-
-I'd be interested in knowing what kind of tests runs there :)
-
--- 
-Dominique Martinet
+Index: b/drivers/acpi/Kconfig
+===================================================================
+--- a/drivers/acpi/Kconfig	2018-09-26 15:54:31.942819766 +0200
++++ b/drivers/acpi/Kconfig	2018-10-10 16:38:09.691897907 +0200
+@@ -138,7 +138,6 @@ config ACPI_REV_OVERRIDE_POSSIBLE
+ 
+ config ACPI_EC_DEBUGFS
+ 	tristate "EC read/write access through /sys/kernel/debug/ec"
+-	default n
+ 	help
+ 	  Say N to disable Embedded Controller /sys/kernel/debug interface
+ 
+@@ -283,7 +282,6 @@ config ACPI_PROCESSOR
+ config ACPI_IPMI
+ 	tristate "IPMI"
+ 	depends on IPMI_HANDLER
+-	default n
+ 	help
+ 	  This driver enables the ACPI to access the BMC controller. And it
+ 	  uses the IPMI request/response message to communicate with BMC
+@@ -361,7 +359,6 @@ config ACPI_TABLE_UPGRADE
+ 
+ config ACPI_DEBUG
+ 	bool "Debug Statements"
+-	default n
+ 	help
+ 	  The ACPI subsystem can produce debug output.  Saying Y enables this
+ 	  output and increases the kernel size by around 50K.
+@@ -374,7 +371,6 @@ config ACPI_DEBUG
+ config ACPI_PCI_SLOT
+ 	bool "PCI slot detection driver"
+ 	depends on SYSFS
+-	default n
+ 	help
+ 	  This driver creates entries in /sys/bus/pci/slots/ for all PCI
+ 	  slots in the system.  This can help correlate PCI bus addresses,
+@@ -436,7 +432,6 @@ config ACPI_HED
+ config ACPI_CUSTOM_METHOD
+ 	tristate "Allow ACPI methods to be inserted/replaced at run time"
+ 	depends on DEBUG_FS
+-	default n
+ 	help
+ 	  This debug facility allows ACPI AML methods to be inserted and/or
+ 	  replaced without rebooting the system. For details refer to:
+@@ -481,7 +476,6 @@ config ACPI_EXTLOG
+ 	tristate "Extended Error Log support"
+ 	depends on X86_MCE && X86_LOCAL_APIC && EDAC
+ 	select UEFI_CPER
+-	default n
+ 	help
+ 	  Certain usages such as Predictive Failure Analysis (PFA) require
+ 	  more information about the error than what can be described in
