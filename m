@@ -3,96 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F9AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91EDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11FD020835
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11FD020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7F24320835
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 10:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F24320835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeJJRui (ORCPT
+        id S1726700AbeJJRxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 13:50:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726022AbeJJRui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:50:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0D4B2AFBB;
-        Wed, 10 Oct 2018 10:29:06 +0000 (UTC)
-Date:   Wed, 10 Oct 2018 12:29:03 +0200 (CEST)
-From:   Richard Biener <rguenther@suse.de>
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-cc:     Ingo Molnar <mingo@kernel.org>, Michael Matz <matz@suse.de>,
-        Borislav Petkov <bp@alien8.de>, gcc@gcc.gnu.org,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-In-Reply-To: <20181010080324.GV29268@gate.crashing.org>
-Message-ID: <alpine.LSU.2.20.1810101228180.16707@zhemvz.fhfr.qr>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org> <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr> <20181010072240.GB103159@gmail.com> <20181010080324.GV29268@gate.crashing.org>
-User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+        Wed, 10 Oct 2018 13:53:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50068 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726523AbeJJRxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 10 Oct 2018 13:53:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43AED80D;
+        Wed, 10 Oct 2018 03:31:46 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D788C3F5BC;
+        Wed, 10 Oct 2018 03:31:44 -0700 (PDT)
+Subject: Re: [PATCH] Doc: lockdep: add information about performance impact
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     corbet@lwn.net, b.zolnierkie@samsung.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        linux-arm-kernel@lists.infradead.org
+References: <CGME20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056@eucas1p2.samsung.com>
+ <20181009153935eucas1p2dec146575ed5fefd4a0b2b6cb9bac056~b_ujkjRd31303013030eucas1p2C@eucas1p2.samsung.com>
+ <20181009154359.GB5728@hirez.programming.kicks-ass.net>
+ <20181009160633eucas1p1a597c95256e64bf01de32366afdc59dd~b-GGjOUFN2705527055eucas1p1b@eucas1p1.samsung.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8a6bed3c-dac5-7031-eedd-2eb5bcc18478@arm.com>
+Date:   Wed, 10 Oct 2018 11:31:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181009160633eucas1p1a597c95256e64bf01de32366afdc59dd~b-GGjOUFN2705527055eucas1p1b@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018, Segher Boessenkool wrote:
-
-> On Wed, Oct 10, 2018 at 09:22:40AM +0200, Ingo Molnar wrote:
-> > * Richard Biener <rguenther@suse.de> wrote:
-> > > Can kernel folks give this a second and third thought please so we
-> > > don't implement sth that in the end won't satisfy you guys?
-> > 
-> > So this basically passes '0 size' to the inliner, which should be better
-> > than passing in the explicit size, as we'd inevitably get it wrong
-> > in cases.
+On 09/10/18 17:06, Lukasz Luba wrote:
+> Hi Peter,
 > 
-> The code immediately after this makes it size 1, even for things like
-> asm(""), I suppose this works better for the inliner.  But that's a detail
-> (and it might change); the description says "consider this asm as minimum
-> length and cost for inlining decisions", which works for either 0 or 1.
+> On 10/09/2018 05:43 PM, Peter Zijlstra wrote:
+>> On Tue, Oct 09, 2018 at 05:39:27PM +0200, Lukasz Luba wrote:
+>>> This patch add some warning related to performance drop.
+>>> It should be mentioned that this is not for free
+>>> and the platfrom resources (cache, bus interconnect, etc.)
+>>> will be used more frequently.
+>>
+>> To me this reads a bit like: water is wet.
+>>
+>> Is this really needed?
+>>
+>>
+> Well, it would be good to know what is the performance drop
+> (10% or 20% or x3 times) when you are enabling different debug options.
+> I have spent some time analyzing these cache and bus strange behavior.
+> Now the developers would know that LOCKDEP might cause constant trashing
+> of your cache in some use cases.
 
-It was made 1 as otherwise the inliner happily explodes on
+Fair enough, but this is the wrong place for that. Anyone who's got as 
+far as reading how the internals of lockdep work can probably already 
+figure out that that brings a non-trivial overhead, whereas Joe 
+Developer wondering why his kernel is slow seems unlikely to happen 
+across this document by chance. And the people shipping devices with 
+PROVE_LOCKING enabled because it happened to mask some tricky bug, well, 
+they know what they did ;)
 
-void foo () { asm(""); foo(); }
+If you want to highlight to unwitting users that a tweaking a particular 
+config knob has a significant performance hit, at least put the warning 
+next to said knob, i.e. in the Kconfig help. For an example, DMA debug 
+comes to mind.
 
-> > I also like 'size 0' for the reason that we tend to write assembly code
-> > and mark it 'inline' if we really think it matters to performance,
-> > so making it more likely to be inlined when used within another inline
-> > function is a plus as well.
-> 
-> You can think of it as meaning "we want this asm inlined always", and then
-> whether that actually happens depends on if the function around it is
-> inlined or not.
-
-Richard.
+Robin.
