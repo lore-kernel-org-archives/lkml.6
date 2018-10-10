@@ -2,90 +2,113 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AA8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6D4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120162082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38EFC2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 21:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="vR76brfa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120162082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rE2KReM8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EFC2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725967AbeJKEnA (ORCPT
+        id S1726047AbeJKEnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 00:43:00 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58022 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725769AbeJKEnA (ORCPT
+        Thu, 11 Oct 2018 00:43:25 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46003 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbeJKEnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 00:43:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 907F28EE303;
-        Wed, 10 Oct 2018 14:19:01 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1IUI3QKx2JWE; Wed, 10 Oct 2018 14:19:01 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 241FD8EE0C7;
-        Wed, 10 Oct 2018 14:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539206341;
-        bh=dIviYvgw74yVjKOXItvrsq91dlcOGAtJOqiOmUoxEzA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=vR76brfad5dIDcl+d/eshIfyeqrhTUEgQxkyBengOoqCR9STx66iWEZ+2mkUW+Zkz
-         CbNdBGdor4V1okE7SkUe/LBtytytzJt4pyc5r7jrso3/h0jWrfHypDkzFvNQCtYNIn
-         EPtksM5xdxgv5zNrkolU2t87IQf1kNROpxkNaFRU=
-Message-ID: <1539206340.12644.20.camel@HansenPartnership.com>
-Subject: Re: [Ksummit-discuss] [PATCH v2 2/3] code-of-conduct: Strip the
- enforcement paragraph pending community discussion
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     "Luck, Tony" <tony.luck@intel.com>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Oct 2018 14:19:00 -0700
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D40E4F6@ORSMSX107.amr.corp.intel.com>
-References: <1539202053.12644.8.camel@HansenPartnership.com>
-         <1539202180.12644.10.camel@HansenPartnership.com>
-         <3908561D78D1C84285E8C5FCA982C28F7D40E4F6@ORSMSX107.amr.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 11 Oct 2018 00:43:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u12-v6so3234194pfn.12
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 14:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=yykrxpRV78qYBMeciCEpmSX4PlMFziSN3/u/DsL14co=;
+        b=rE2KReM8SKUmjyZ5+iZ8QevgmS68Nu9hgs7Xfhq8ajnE5v6wX34L176CXOfWMjcad6
+         2nuo2FxQAMG1ke3ZXJWW0c+79jMnN4TRWsQtD/NcDyOO78Ekj8vp7yaE2qT/iS7hrfSn
+         N8f9w8JP9bVQ+lWS9dyyMb8jcTfklE2KDdoUIYGx3ssQEuBPZ+4Zwceif/hbSXdnQA7z
+         Rc3zlijkY2kPVxBiSg8uyjTCSEd4DtCLd1ImUiUGe8q+7YFbopWlsKeyLCs4v5SGWhSI
+         JLSt+DH5td1ycoEEPcfsjMOx/H0T3VXX3QOs2Lpogc66mETuDaMhTviFrkIo6N8hAj4f
+         Z+8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=yykrxpRV78qYBMeciCEpmSX4PlMFziSN3/u/DsL14co=;
+        b=e6DXOf9OL2HpxKvvT6sRks3WDBbtrlk4C6a2amNlo8lCK6o8dDTiviXXxjEaEhI2br
+         n+9PeYTqxuHVGBOFnuLZGAr5YZzIwG/ef6shk0buDOd/irtL9DcToPswVWo7thPZWhC/
+         6OZxF8l9qQi2kWcGR3uhpBrrPWF1mYCLM1iMH1hnpn70A0yTCM/O72e1dqkykEyPgRfM
+         5IC4KQUwGCG0ggrKUux1wjWcFQveLO9HFCQ8G8AzEbpLUl9S7p+a9oJjKyp1V+2b4/yV
+         bqUibBgf0EUIvKBWCPMdkiHZkTzpfyFrBm0qcJTMSaKAIkImTOuRLM7SOjdw/GCA8FZ+
+         t6Fw==
+X-Gm-Message-State: ABuFfoh6885yhTLOi4Tp7CP5dNNAjeLh3CkR3pKzQ0pe53/sLaciYU4m
+        ympOblRDViQ/OKrWEGoJqz5Hiw==
+X-Google-Smtp-Source: ACcGV60QU7HSKuii+89okZz3B5J5c/4uT+5OM2/bpbJgOJRXFQyIfLo83fDraQEaO7f3V0yKyBk0XQ==
+X-Received: by 2002:a62:939d:: with SMTP id r29-v6mr36555578pfk.55.1539206365920;
+        Wed, 10 Oct 2018 14:19:25 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm36621902pfa.159.2018.10.10.14.19.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 14:19:25 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 14:19:24 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrea Arcangeli <aarcange@redhat.com>
+cc:     Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+In-Reply-To: <20181009230352.GE9307@redhat.com>
+Message-ID: <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+References: <20180925120326.24392-2-mhocko@kernel.org> <alpine.DEB.2.21.1810041302330.16935@chino.kir.corp.google.com> <20181005073854.GB6931@suse.de> <alpine.DEB.2.21.1810051320270.202739@chino.kir.corp.google.com> <20181005232155.GA2298@redhat.com>
+ <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com> <20181009094825.GC6931@suse.de> <20181009122745.GN8528@dhcp22.suse.cz> <20181009130034.GD6931@suse.de> <20181009142510.GU8528@dhcp22.suse.cz> <20181009230352.GE9307@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-10 at 21:04 +0000, Luck, Tony wrote:
-> > the enforcement clause of the new code of conduct.  Since there is
-> > concern that this becomes binding on the release of the 4.19 kernel
+On Tue, 9 Oct 2018, Andrea Arcangeli wrote:
+
+> I think "madvise vs mbind" is more an issue of "no-permission vs
+> permission" required. And if the processes ends up swapping out all
+> other process with their memory already allocated in the node, I think
+> some permission is correct to be required, in which case an mbind
+> looks a better fit. MPOL_PREFERRED also looks a first candidate for
+> investigation as it's already not black and white and allows spillover
+> and may already do the right thing in fact if set on top of
+> MADV_HUGEPAGE.
 > 
-> Is there some logic behind that concern?
 
-Well, yes, Linux as a project goes through numbered releases, so
-releases are the usual official points we try to stop changing stuff,
-so if we want to reset the expectation the committed CoC is final,
-doing it before the release is helpful.
+We would never want to thrash the local node for hugepages because there 
+is no guarantee that any swapping is useful.  On COMPACT_SKIPPED due to 
+low memory, we have very clear evidence that pageblocks are already 
+sufficiently fragmented by unmovable pages such that compaction itself, 
+even with abundant free memory, fails to free an entire pageblock due to 
+the allocator's preference to fragment pageblocks of fallback migratetypes 
+over returning remote free memory.
 
->  What's magic about the release of 4.19?
-
-It's the first one after the CoC change.
-
-> Our benevolent dictator committed that patch. Didn't it take effect
-> as soon as he ran "git push" to make it visible to the world
-
-Not usually: people usually have to agree to a change like this.  Of
-course "agree" is a variable concept and can be as simple as not object
-by a certain time or by using certain infrastructure.
-
-James
-
+As I've stated, we do not want to reclaim pointlessly when compaction is 
+unable to access the freed memory or there is no guarantee it can free an 
+entire pageblock.  Doing so allows thrashing of the local node, or remote 
+nodes if __GFP_THISNODE is removed, and the hugepage still cannot be 
+allocated.  If this proposed mbind() that requires permissions is geared 
+to me as the user, I'm afraid the details of what leads to the thrashing 
+are not well understood because I certainly would never use this.
