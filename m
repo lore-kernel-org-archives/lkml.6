@@ -2,240 +2,151 @@ Return-Path: <SRS0=PZ5q=MW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB40C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95937C46462
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1902086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:04:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="MBVoqKuq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1902086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 602BF2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 10 Oct 2018 18:05:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602BF2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lisas.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeJKB1N (ORCPT
+        id S1726907AbeJKB2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:27:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40280 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKB1N (ORCPT
+        Wed, 10 Oct 2018 21:28:55 -0400
+Received: from rhlx01.hs-esslingen.de ([129.143.116.10]:39328 "EHLO
+        rhlx01.hs-esslingen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeJKB2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:27:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d2-v6so6762667wro.7
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 11:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1shNk7n2oOgD9+BO00oSqO5Hb98+635hkuFoxp4xFkI=;
-        b=MBVoqKuqCpi/HjZ28fUwBU/eHrKf7RnLF90cKeOgJ7vfBGIhQmWMlZUNg3SvjKeI/v
-         RZH9bEQu10rjQd4P45imZQeEXALihEDVhJlOQpr+NoGcbewcgZam4Lw+2TChUFnYBmBY
-         vDnwpRKCNo757wPMYDolbu9yZABRKnkPyLk171p8+bUOCyR9HdpmCSTNeihQ2mLcmdcp
-         cDqMcYIC0A2LhvIXh582ojR0bGpI/H8DifqxS4zk0GiHc+Gb0qw5O2Pc/BvZgB62tITt
-         iKo9GYVOSsJb1eOYPIH4+Y1hTuzLXPKQoQbRD/JPmR39Lb76dbgc6hDRYkMdQpGIr3Ab
-         8Ssw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1shNk7n2oOgD9+BO00oSqO5Hb98+635hkuFoxp4xFkI=;
-        b=n4Od97ToDk+WPsfpsc425OqL6ar4ydLwJnjpvXFL0UmrPylFyDP/GBOgcQAHNPPZ6Y
-         /wYfN5po9wVE6mJkJ8ISHhQmTYDLAbFfedNkurDZU/8srXTOAjDwyIwiDWH/KqvN7l1A
-         NA18AKV/2FfWjdLyNEFcFuwWu4131XBa8zKZHVShcOSNyrmIB2QEKlU2tHWvnVv8QWft
-         gWRKtZsAEFI08o57EEm3hTYaJihh+yBrW4uIJN8WcDM3RINjietO8UuUOJAFS3lC/Tsn
-         LFpeN1yHDFsJf8qzDgPFJcPF9uTfW1vVqA+qW+CQ12bin23hhSIsDYlH2mr5byQHlx5a
-         IpYg==
-X-Gm-Message-State: ABuFfoiNguvRFNs+eEXv2BRj8AdUd4r+iDRq2roF7/OXjEPpCYu4uhw4
-        NUzXyg0e4OQAoH1H/iAfk2JSiosEWsOV0KcYMVrqUg==
-X-Google-Smtp-Source: ACcGV60KWyfm7cQOzNDgBo2Hz6y93HAGZOWRNvdnRSOpw874kTXctmuLeFpUL0jO9JPWWvbOcs5+1K/SAHjm+h7aSmY=
-X-Received: by 2002:adf:82e3:: with SMTP id 90-v6mr23421227wrc.131.1539194635834;
- Wed, 10 Oct 2018 11:03:55 -0700 (PDT)
+        Wed, 10 Oct 2018 21:28:55 -0400
+X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Oct 2018 21:28:51 EDT
+Received: by rhlx01.hs-esslingen.de (Postfix, from userid 102)
+        id 463BA210EA5A; Wed, 10 Oct 2018 20:00:29 +0200 (CEST)
+Date:   Wed, 10 Oct 2018 20:00:29 +0200
+From:   Andreas Mohr <andi@lisas.de>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [BUG] Bluetooth 4.14.74-v7+: hci_connect_le_scan_cleanup() crash
+ NULL deref Raspberry Pi 3B+
+Message-ID: <20181010180029.GA13522@rhlx01.hs-esslingen.de>
 MIME-Version: 1.0
-References: <20181006015110.653946300@goodmis.org> <20181006015720.634688468@goodmis.org>
- <20181006121211.GA5663@hirez.programming.kicks-ass.net> <20181006093905.46276505@vmware.local.home>
- <20181008072134.GB5663@hirez.programming.kicks-ass.net> <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
- <20181008155757.GC5663@hirez.programming.kicks-ass.net> <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
- <20181009021710.qwt5hpntyeps44h3@treble> <20181008235750.59da83ae@gandalf.local.home>
- <20181010175237.e7m3sldcu2maoqcq@treble>
-In-Reply-To: <20181010175237.e7m3sldcu2maoqcq@treble>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 10 Oct 2018 11:03:43 -0700
-Message-ID: <CALCETrUOaJ1dAsuX9bQO_+B4G6y5-FAb0=ZYA8QbtAEBZ6MxKg@mail.gmail.com>
-Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature "jump_function"
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Helsley <mhelsley@vmware.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Priority: none
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 10:52 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> On Mon, Oct 08, 2018 at 11:57:50PM -0400, Steven Rostedt wrote:
-> > On Mon, 8 Oct 2018 21:17:10 -0500
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > > I'm not really convinced we need objtool for this, maybe I'll try
-> > > whipping up a POC.
-> >
-> > Awesome!
-> >
-> > I wasn't thinking of actually having objtool itself perform this task,
-> > but instead breaking the internals of objtool up into more of a generic
-> > infrastructure, that recordmcount.c, objtool, and whatever this does
-> > can use.
->
-> So I had been thinking that we could find the call sites at runtime, by
-> looking at the relocations.  But I managed to forget that vmlinux
-> relocations are resolved during linking.  So yeah, some kind of tooling
-> magic would be needed.
->
-> I worked up a POC using objtool.  It doesn't *have* to be done with
-> objtool, but since it's already reading/writing all the ELF stuff
-> anyway, it was pretty easy to add this on.
->
-> This patch has at least a few issues:
->
-> - No module support.
->
-> - For some reason, the sync_cores in text_poke_bp() don't always seem to
->   be working as expected.  Running this patch on my VM, the test code in
->   cmdline_proc_show() works *most* of the time, but it occasionally
->   branches off into the weeds.  I have no idea what the problem is yet.
->
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 9d329608913e..20ff5624dad7 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -865,6 +865,9 @@ config HAVE_ARCH_PREL32_RELOCATIONS
->           architectures, and don't require runtime relocation on relocatable
->           kernels.
->
-> +config HAVE_ARCH_STATIC_CALL
-> +       bool
-> +
->  source "kernel/gcov/Kconfig"
->
->  source "scripts/gcc-plugins/Kconfig"
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 5136a1281870..1a14c8f87876 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -128,6 +128,7 @@ config X86
->         select HAVE_ARCH_COMPAT_MMAP_BASES      if MMU && COMPAT
->         select HAVE_ARCH_PREL32_RELOCATIONS
->         select HAVE_ARCH_SECCOMP_FILTER
-> +       select HAVE_ARCH_STATIC_CALL            if X86_64
->         select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->         select HAVE_ARCH_TRACEHOOK
->         select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-> diff --git a/arch/x86/include/asm/static_call.h b/arch/x86/include/asm/static_call.h
-> new file mode 100644
-> index 000000000000..40fec631b760
-> --- /dev/null
-> +++ b/arch/x86/include/asm/static_call.h
-> @@ -0,0 +1,35 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_STATIC_CALL_H
-> +#define _ASM_STATIC_CALL_H
-> +
-> +#ifdef CONFIG_X86_64
-> +
-> +#include <linux/frame.h>
-> +
-> +void static_call_init(void);
-> +extern void __static_call_update(void *tramp, void *func);
-> +
-> +#define DECLARE_STATIC_CALL(tramp, func)                               \
-> +       extern typeof(func) tramp;                                      \
-> +       static void __used __section(.discard.static_call_tramps)       \
-> +               *__static_call_tramp_##tramp = tramp
-> +
+Hello all,
 
-Confused.  What's the __static_call_tramp_##tramp variable for?  And
-why is a DECLARE_ macro defining a variable?
+[long time no see, good to be back!]
 
-> +#define DEFINE_STATIC_CALL(tramp, func)                                        \
-> +       DECLARE_STATIC_CALL(tramp, func);                               \
-> +       asm(".pushsection .text, \"ax\"                         \n"     \
-> +           ".align 4                                           \n"     \
-> +           ".globl " #tramp "                                  \n"     \
-> +           ".type " #tramp ", @function                        \n"     \
-> +           #tramp ":                                           \n"     \
-> +           "jmp " #func "                                      \n"     \
+just newly got the following crash with a new setup:
 
-I think this would be nicer as an indirect call that gets patched to a
-direct call so that the update mechanism works even before it's
-initialized.  (Currently static_branch blows up horribly if you try to
-update one too early, and that's rather annoying IMO.)
+[    6.234357] Adding 102396k swap on /var/swap.  Priority:-2 extents:1 across:102396k SSFS
+[    7.114565] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
+[    7.114582] brcmfmac: power management disabled
+[    7.522803] smsc95xx 1-1.1:1.0 eth0: hardware isn't capable of remote wakeup
+[    9.102052] smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0x45E1
+[   11.887650] Bluetooth: HCI UART driver ver 2.3
+[   11.887660] Bluetooth: HCI UART protocol H4 registered
+[   11.887663] Bluetooth: HCI UART protocol Three-wire (H5) registered
+[   11.887811] Bluetooth: HCI UART protocol Broadcom registered
+[   13.399873] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   13.402896] Bridge firewalling registered
+[   13.424852] nf_conntrack version 0.5.0 (15360 buckets, 61440 max)
+[   14.284667] Netfilter messages via NETLINK v0.30.
+[   14.290169] ctnetlink v0.93: registering with nfnetlink.
+[   14.405316] IPv6: ADDRCONF(NETDEV_UP): docker0: link is not ready
+[   33.422932] NET: Registered protocol family 38
+[75215.105699] Unable to handle kernel NULL pointer dereference at virtual address 00000012
+[75215.109883] pgd = 80004000
+[75215.112020] [00000012] *pgd=00000000
+[75215.114129] Internal error: Oops: 17 [#1] SMP ARM
+[75215.116262] Modules linked in: aes_arm_bs crypto_simd cryptd algif_skcipher af_alg ipt_MASQUERADE nf_nat_masquerade_ipv4 nf_conntrack_netlink nfnetlink iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack nf_nat nf_conntrack br_netfilter bridge stp llc overlay hci_uart serdev rfcomm cmac bnep brcmfmac brcmutil cfg80211 snd_bcm2835(C) snd_pcm snd_timer snd uio_pdrv_genirq uio fixed ftdi_sio usbserial btusb btrtl btintel btbcm bluetooth ecdh_generic rfkill i2c_dev ip_tables x_tables ipv6
+[75215.133930] CPU: 2 PID: 167 Comm: kworker/u9:2 Tainted: G         C      4.14.74-v7+ #1149
+[75215.139286] Hardware name: BCM2835
+[75215.142121] Workqueue: hci0 hci_rx_work [bluetooth]
+[75215.144853] task: b9315a00 task.stack: b71f8000
+[75215.147707] PC is at hci_connect_le_scan_cleanup+0x14/0x124 [bluetooth]
+[75215.150642] LR is at create_le_conn_complete+0xcc/0xd8 [bluetooth]
+[75215.153455] pc : [<7f0dd0cc>]    lr : [<7f0df4d4>]    psr: 60000013
+[75215.156326] sp : b71f9df0  ip : b71f9e10  fp : b71f9e0c
+[75215.159124] r10: b2e86180  r9 : 00000088  r8 : b924b780
+[75215.161834] r7 : b9da97e8  r6 : b9da9008  r5 : 00000000  r4 : b9da98b4
+[75215.164616] r3 : 00200400  r2 : b9da98b4  r1 : 00000000  r0 : 00000000
+[75215.167400] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+[75215.170254] Control: 10c5383d  Table: 195ac06a  DAC: 00000055
+[75215.173069] Process kworker/u9:2 (pid: 167, stack limit = 0xb71f8210)
+[75215.175869] Stack: (0xb71f9df0 to 0xb71fa000)
+[75215.178574] 9de0:                                     b9da98b4 00000000 b9da9008 b9da97e8
+[75215.183810] 9e00: b71f9e2c b71f9e10 7f0df4d4 7f0dd0c4 7f0df408 b9da9000 b2e86180 0000000e
+[75215.188960] 9e20: b71f9ebc b71f9e30 7f0e57bc 7f0df414 b71f9e70 b71f9e74 b9315a80 b9315a00
+[75215.194193] 9e40: ba372d78 00000000 b9315e60 80b8ed40 b71f9e8c 80b8ed40 a72136c0 b9da97f4
+[75215.199699] 9e60: 60000013 00000000 00da97e8 b9da200d 7f0df408 00000000 b71f9e9c b71f9e88
+[75215.205455] 9e80: 807a3eec 801ee19c b9da97e8 b2e86180 b71f9ebc b9da9708 b9da98b4 b9da9000
+[75215.211367] 9ea0: b9da97e8 b9da9008 00000088 b2e86180 b71f9efc b71f9ec0 7f0d8b3c 7f0e54f4
+[75215.217508] 9ec0: b9da9718 b9da901c b908c300 80137520 b71f9efc b9092580 b9da9708 b70dae00
+[75215.223972] 9ee0: b908c300 00000000 00000088 00000000 b71f9f34 b71f9f00 801376f0 7f0d89d0
+[75215.230596] 9f00: b70dae18 80c02d00 00000088 b70dae00 b9092598 b70dae00 b70dae18 80c02d00
+[75215.237352] 9f20: 00000088 b9092580 b71f9f7c b71f9f38 80137a50 801375a4 b71f9f5c b71f8000
+[75215.244292] 9f40: 00000000 80c02d00 80c88562 b71f8038 b979b01c b979b000 00000000 b722f300
+[75215.251303] 9f60: b9092580 801379ec b979b01c b732fe80 b71f9fac b71f9f80 8013dad4 801379f8
+[75215.258312] 9f80: 80102d94 b722f300 8013d998 00000000 00000000 00000000 00000000 00000000
+[75215.265319] 9fa0: 00000000 b71f9fb0 8010810c 8013d9a4 00000000 00000000 00000000 00000000
+[75215.272327] 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[75215.279336] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[75215.286614] [<7f0dd0cc>] (hci_connect_le_scan_cleanup [bluetooth]) from [<7f0df4d4>] (create_le_conn_complete+0xcc/0xd8 [bluetooth])
+[75215.293988] [<7f0df4d4>] (create_le_conn_complete [bluetooth]) from [<7f0e57bc>] (hci_event_packet+0x2d4/0x2de8 [bluetooth])
+[75215.301354] [<7f0e57bc>] (hci_event_packet [bluetooth]) from [<7f0d8b3c>] (hci_rx_work+0x178/0x250 [bluetooth])
+[75215.308585] [<7f0d8b3c>] (hci_rx_work [bluetooth]) from [<801376f0>] (process_one_work+0x158/0x454)
+[75215.315681] [<801376f0>] (process_one_work) from [<80137a50>] (worker_thread+0x64/0x5b8)
+[75215.322757] [<80137a50>] (worker_thread) from [<8013dad4>] (kthread+0x13c/0x16c)
+[75215.329829] [<8013dad4>] (kthread) from [<8010810c>] (ret_from_fork+0x14/0x28)
+[75215.333466] Code: e92dd8f0 e24cb004 e52de004 e8bd4000 (e5d04012) 
+[75215.337146] ---[ end trace f3a6771e5232874d ]---
 
-Also, I think you're looking for "jmp.d32", which is available in
-newer toolchains.  For older toolchains, you could use .byte 0xe9 or
-you could use a different section (I think) to force a real 32-bit
-jump.
 
-> +void __init static_call_init(void)
-> +{
-> +       struct static_call_entry *entry;
-> +       unsigned long insn, tramp, func;
-> +       unsigned char insn_opcode, tramp_opcode;
-> +       s32 call_dest;
-> +
-> +       for (entry = __start_static_call_table;
-> +            entry < __stop_static_call_table; entry++) {
-> +
-> +               insn = (long)entry->insn + (unsigned long)&entry->insn;
-> +               tramp = (long)entry->tramp + (unsigned long)&entry->tramp;
-> +
-> +               insn_opcode = *(unsigned char *)insn;
-> +               if (insn_opcode != 0xe8 && insn_opcode != 0xe9) {
-> +                       WARN_ONCE(1, "unexpected static call insn opcode %x at %pS",
-> +                                 insn_opcode, (void *)insn);
-> +                       continue;
-> +               }
-> +
-> +               tramp_opcode = *(unsigned char *)tramp;
-> +               if (tramp_opcode != 0xeb && tramp_opcode != 0xe9) {
-> +                       WARN_ONCE(1, "unexpected trampoline jump opcode %x at %ps",
-> +                                tramp_opcode, (void *)tramp);
-> +                       continue;
-> +               }
-> +
-> +               if (tramp_opcode == 0xeb)
-> +                       func = *(s8 *)(tramp + 1) + (tramp + 2);
 
-I realize you expect some instances of 0xeb due to the assembler
-messing you up (see above), but this seems a bit too permissive, since
-a 0xeb without the appropriate set of NOPs is going to explode.  And:
+Context notes:
+- Raspberry Pi 3B (not 3B+), Raspbian
+- Linux [HOSTNAME] 4.14.74-v7+ #1149 SMP Mon Oct 8 17:39:42 BST 2018 armv7l GNU/Linux
+- updated to *custom* manual setup (very newish kernel) yesterday (via rpi-update), rebooted
+- builtin Bluetooth (hci0)
+- external Bluetooth (hci1, CSR I believe)
+- FHEM, with various modules regularly polling various Bluetooth clients, via hci0 only
+- very newly erected wiring (relocated to different location, new external Bluetooth, etc., yesterday) setup
 
-> +               else
-> +                       func = *(s32 *)(tramp + 1) + (tramp + 5);
-> +
-> +               call_dest = (long)(func) - (long)(insn + 5);
-> +
-> +               printk("static_call_init: poking %lx at %lx\n", (unsigned long)call_dest, (insn+1));
-> +
-> +               text_poke_early((void *)(insn + 1), &call_dest, 4);
+Returned to the location today, merely to
+find external Bluetooth LED blinking *very* rapidly, then
+fumbled the stick, at which moment LED went solid.
+I returned a couple seconds later, LED had gone dark.
 
-If you really are going to rewrite an 8-bit jump to a 32-bit jump, I
-think you need to actually patch the opcode byte :)
+Few minutes later, connected to box, only to find this crash dump trace there.
+It seems quite obvious that
+this crash may have happened due to
+implementation stack mis-handling a (temporary??) connector disconnect/power-loss issue.
+
+Ran
+git log v4.14..master -- net/bluetooth/hci_conn.c
+, did not immediately see (m)any obviously relevant items.
+
+Thus now reporting here (get_maintainer.pl...).
+
+Thank you!
+
+Greetings,
+
+Andreas Mohr
+
+-- 
+GNU/Linux. It's not the software that's free, it's you.
