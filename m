@@ -5,111 +5,111 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233F9C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE0AC677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF74E2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF74E2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F8262085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:17:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8262085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbeJKXns (ORCPT
+        id S1729844AbeJKXox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:43:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:29477 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:43:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 09:15:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="77286405"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 09:15:53 -0700
-Received: from [10.252.28.165] (abudanko-mobl.ccr.corp.intel.com [10.252.28.165])
-        by linux.intel.com (Postfix) with ESMTP id 64EDE580496;
-        Thu, 11 Oct 2018 09:15:51 -0700 (PDT)
-Subject: Re: [PATCH v12 2/3]: perf record: enable asynchronous trace writing
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <e045b4aa-bff1-4e40-4cdf-4504003ecff5@linux.intel.com>
- <50fed9ff-adc4-d9d6-36bc-b6b27bf58c17@linux.intel.com>
- <20181011134544.GA29634@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9fc9227f-0853-8ed8-6f06-a9ecc9b2965d@linux.intel.com>
-Date:   Thu, 11 Oct 2018 19:15:50 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 19:44:53 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59768 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726700AbeJKXox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:44:53 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B381CEB5075A2;
+        Fri, 12 Oct 2018 00:16:55 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Fri, 12 Oct 2018
+ 00:17:17 +0800
+Subject: Re: Question on FIELD_PREP() for static array
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        <jakub.kicinski@netronome.com>, <yamada.masahiro@socionext.com>,
+        "Arnd Bergmann" <arnd@arndb.de>, <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
+ <40fd3d963820bf96547fa9b5e8c171c6a339674e.camel@perches.com>
+ <1539195207.3687.178.camel@sipsolutions.net>
+ <830ff9fb-07b1-86b6-4f57-af549a37a8c0@huawei.com>
+ <1539271422.3687.217.camel@sipsolutions.net>
+CC:     <linux-wireless@vger.kernel.org>, <nbd@nbd.name>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <ef2d37ab-bef4-fd3f-a6f7-e68e60695e9b@huawei.com>
+Date:   Thu, 11 Oct 2018 17:16:41 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181011134544.GA29634@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1539271422.3687.217.camel@sipsolutions.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 16:45, Jiri Olsa wrote:
-> On Tue, Oct 09, 2018 at 11:58:53AM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> @@ -329,7 +469,7 @@ static int record__mmap_evlist(struct record *rec,
->>  
->>  	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
->>  				 opts->auxtrace_mmap_pages,
->> -				 opts->auxtrace_snapshot_mode) < 0) {
->> +				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
->>  		if (errno == EPERM) {
->>  			pr_err("Permission error mapping pages.\n"
->>  			       "Consider increasing "
->> @@ -513,6 +653,29 @@ static struct perf_event_header finished_round_event = {
->>  	.type = PERF_RECORD_FINISHED_ROUND,
->>  };
->>  
->> +#ifdef HAVE_AIO_SUPPORT
->> +static void record__mmap_read_sync(struct record *rec)
->> +{
->> +	int i;
->> +	struct perf_evlist *evlist = rec->evlist;
->> +	struct perf_mmap *maps = evlist->mmap;
->> +
->> +	if (!rec->opts.nr_cblocks)
->> +		return;
->> +
->> +	for (i = 0; i < evlist->nr_mmaps; i++) {
->> +		struct perf_mmap *map = &maps[i];
->> +
->> +		if (map->base)
->> +			record__aio_sync(map);
->> +	}
->> +}
->> +#else
->> +static void record__mmap_read_sync(struct record *rec __maybe_unused)
->> +{
->> +}
->> +#endif
-> 
-> please move this up so we have just one  'ifdef HAVE_AIO_SUPPORT' block
-> 
-> and change the name to record__aio_mmap_read_sync, so it's obvious it's
-> aio related, like the rest of the functions you added
+On 11/10/2018 16:23, Johannes Berg wrote:
 
-Accepted.
+Hi
 
-> 
-> thanks,
-> jirka
-> 
+> On Thu, 2018-10-11 at 15:24 +0100, John Garry wrote:
+>>
+>>> +#define BUILD_BUG_ON_RET_ZERO(cond) (sizeof(char[1 - 2*!!(cond)]) - 1)
+>>> +#define BUILD_BUG_ON_NOT_POW2_RET_ZERO(n)	BUILD_BUG_ON_RET_ZERO(((n) & ((n) - 1)) != 0)
+>
+>> Seems reasonable. However I did try this and was getting compiler
+>> warnings about VLA, from a non-constant being fed into
+>> BUILD_BUG_ON_RET_ZERO(), related to sizeof char[]:
+>> drivers/iio/adc/meson_saradc.c:375:2: warning: ISO C90 forbids variable
+>> length array [-Wvla]
+>>    regval = FIELD_PREP(MESON_SAR_ADC_CHAN_LIST_ENTRY_MASK(0),
+>
+> Hmm, what's the code there?
+
+Nothing special, it was just a sample. Here'e the code:
+     regval = FIELD_PREP(MESON_SAR_ADC_CHAN_LIST_ENTRY_MASK(0),
+                 chan->address);
+
+So val is a variable, and I find if remove both of the 
+BUILD_BUG_ON_RET_ZERO()' which use __bf_shf() then it goes away.
+
+>
+> I don't see why the compiler should think it's a variable length?
+>
+>> Surely __NLA_ENSURE is getting a similar issue as it uses a similar
+>> principle, no? I see that this is in -next now, but could not this macro
+>> or derivatives being referenced.
+>
+> Yeah, I have a patch now to reference it, but I don't see anything from
+> -Wvla with gcc 8.1?
+
+I'm using a 7.3.1-based toolchain
+
+>
+> See
+> https://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git/commit/?id=3d7af878357acd9e37fc156928106f1a969c8942
+> and its parent.
+>
+> Do you see -Wvla warnings there? Any idea how I could reproduce them?
+
+I'll try it, thanks
+
+John
+
+>
+> johannes
+>
+> .
+>
+
+
