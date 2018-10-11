@@ -2,99 +2,87 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EEAC28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6F6C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A4C2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A4C2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DD3B92085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3B92085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeJLHKT (ORCPT
+        id S1726989AbeJLHNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:10:19 -0400
-Received: from mga06.intel.com ([134.134.136.31]:35467 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbeJLHJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:09:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 16:40:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,370,1534834800"; 
-   d="scan'208";a="96792934"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Oct 2018 16:40:03 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        keescook@chromium.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, arnd@arndb.de,
-        jeyu@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 3/7] arm/modules: Add rlimit checking for arm modules
-Date:   Thu, 11 Oct 2018 16:31:13 -0700
-Message-Id: <20181011233117.7883-4-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
-References: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
+        Fri, 12 Oct 2018 03:13:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48858 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbeJLHNN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 03:13:13 -0400
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gAkbx-0004Iz-Nr; Fri, 12 Oct 2018 01:43:21 +0200
+Date:   Fri, 12 Oct 2018 01:43:21 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Kristen C Accardi <kristen@linux.intel.com>
+cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+In-Reply-To: <1539293003.3566.15.camel@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810120116090.1457@nanos.tec.linutronix.de>
+References: <20181011185458.10186-1-kristen@linux.intel.com>  <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com>  <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com> <1539293003.3566.15.camel@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds in the rlimit checking for the arm module allocator.
+On Thu, 11 Oct 2018, Kristen C Accardi wrote:
+> On Thu, 2018-10-11 at 13:55 -0700, Kees Cook wrote:
+> > I think this looks like a good idea. It might be worth adding a
+> > comment about the checks to explain why those errors are whitelisted.
+> > It's a cheap and effective mitigation for "unknown future problems"
+> > that doesn't degrade normal workloads.
+> > 
+> > > > +                       return;
+> > > > +
+> > > > +               wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
+> > 
+> > What about CPUs without FLUSH_L1D? Could it be done manually with a
+> > memcpy or something?
+> 
+> It could - my original implementation (pre l1d_flush msr) did, but it
+> did come with some additional cost in that I allocated per-cpu memory
+> to keep a 32K buffer around that I could memcpy. It also sacrificed
+> completeness for simplicity by not taking into account cases where L1
+> was not 32K. As far as I know this msr is pretty widely deployed, even
+> on older hardware.
 
-This has not been tested.
+You don't need that per cpu thing, really. We have both the MSR flush and
+the software fallback in KVM vmx_l1d_flush(). The performance impact is
+pretty much the same between the MSR flush and the software fallback.
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/arm/kernel/module.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Vs. deployment of the MSR. I'm not sure how wide this is supported on older
+CPUs as there have been limitations on microcode patch space, but I can't
+find the support matrix right now. Thanks Intel for reshuffling the webpage
+every other week!
 
-diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
-index 3ff571c2c71c..e331863553d2 100644
---- a/arch/arm/kernel/module.c
-+++ b/arch/arm/kernel/module.c
-@@ -43,6 +43,9 @@ void *module_alloc(unsigned long size)
- 	gfp_t gfp_mask = GFP_KERNEL;
- 	void *p;
- 
-+	if (check_inc_mod_rlimit(size))
-+		return NULL;
-+
- 	/* Silence the initial allocation */
- 	if (IS_ENABLED(CONFIG_ARM_MODULE_PLTS))
- 		gfp_mask |= __GFP_NOWARN;
-@@ -51,10 +54,15 @@ void *module_alloc(unsigned long size)
- 				gfp_mask, PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
- 				__builtin_return_address(0));
- 	if (!IS_ENABLED(CONFIG_ARM_MODULE_PLTS) || p)
--		return p;
--	return __vmalloc_node_range(size, 1,  VMALLOC_START, VMALLOC_END,
-+		goto done;
-+	p = __vmalloc_node_range(size, 1,  VMALLOC_START, VMALLOC_END,
- 				GFP_KERNEL, PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
- 				__builtin_return_address(0));
-+
-+done:
-+	update_mod_rlimit(p, size);
-+
-+	return p;
- }
- #endif
- 
--- 
-2.17.1
+Thanks,
+
+	tglx
+
 
