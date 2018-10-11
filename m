@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C7C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D198C677FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF7C21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30EED214C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUiGUiK+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF7C21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXtE2b2y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30EED214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbeJKXLi (ORCPT
+        id S1731100AbeJKXLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:11:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43700 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:11:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728523AbeJKXLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:11:37 -0400
+        id S1731090AbeJKXLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:11:39 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E351321477;
-        Thu, 11 Oct 2018 15:43:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C7382147C;
+        Thu, 11 Oct 2018 15:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272632;
-        bh=yIRBNAnqhEMODUYOG93Zmquu8qWL3RjWBATX7jjNTh0=;
+        s=default; t=1539272635;
+        bh=XKgFHoyeta1tpE9x4c1lei9U2RR1lHtnZWHhIE4IbD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mUiGUiK+pXhVrjRGlHt50dHioYuKfOlHjGgj8mOBQYKn4H6b4T3mi61vLz//2kVtx
-         mTZH+P1Rq8zlz3+dlbc9aqoA5K17UkyQ0A71rdaDxl07+v08cjfz8C9PmW6qrGTmwx
-         mWHPgITvVmjhdrkCtmEP7XeLHM4gWUlbEN6TAdvw=
+        b=YXtE2b2yaSlvjpN/BHe8dUAZvTE2CN+V1zIOUjkPWQl2lBIM5I1vGxqmQPvB3RJ7f
+         japMlCYtvEF8j/7+jJOwtrW5jvbukli6NwyUOA+MXwQ772lpYHRahHIZgVZN6V4nnl
+         zpnz3gDLcrKU5MUbqjO02HhKV1xUoMMJXmfW41vk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        Jan Beulich <jbeulich@suse.com>,
-        Paul Durrant <paul.durrant@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/35] xen-netback: fix input validation in xenvif_set_hash_mapping()
-Date:   Thu, 11 Oct 2018 17:35:05 +0200
-Message-Id: <20181011152520.309425121@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 04/35] x86/vdso: Fix asm constraints on vDSO syscall fallbacks
+Date:   Thu, 11 Oct 2018 17:35:06 +0200
+Message-Id: <20181011152520.348093806@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -64,63 +62,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Beulich <JBeulich@suse.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 780e83c259fc33e8959fed8dfdad17e378d72b62 upstream.
+commit 715bd9d12f84d8f5cc8ad21d888f9bc304a8eb0b upstream.
 
-Both len and off are frontend specified values, so we need to make
-sure there's no overflow when adding the two for the bounds check. We
-also want to avoid undefined behavior and hence use off to index into
-->hash.mapping[] only after bounds checking. This at the same time
-allows to take care of not applying off twice for the bounds checking
-against vif->num_queues.
+The syscall fallbacks in the vDSO have incorrect asm constraints.
+They are not marked as writing to their outputs -- instead, they are
+marked as clobbering "memory", which is useless.  In particular, gcc
+is smart enough to know that the timespec parameter hasn't escaped,
+so a memory clobber doesn't clobber it.  And passing a pointer as an
+asm *input* does not tell gcc that the pointed-to value is changed.
 
-It is also insufficient to bounds check copy_op.len, as this is len
-truncated to 16 bits.
+Add in the fact that the asm instructions weren't volatile, and gcc
+was free to omit them entirely unless their sole output (the return
+value) is used.  Which it is (phew!), but that stops happening with
+some upcoming patches.
 
-This is XSA-270 / CVE-2018-15471.
+As a trivial example, the following code:
 
-Reported-by: Felix Wilhelm <fwilhelm@google.com>
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Reviewed-by: Paul Durrant <paul.durrant@citrix.com>
-Tested-by: Paul Durrant <paul.durrant@citrix.com>
-Cc: stable@vger.kernel.org [4.7 onwards]
-Signed-off-by: David S. Miller <davem@davemloft.net>
+void test_fallback(struct timespec *ts)
+{
+	vdso_fallback_gettime(CLOCK_MONOTONIC, ts);
+}
+
+compiles to:
+
+00000000000000c0 <test_fallback>:
+  c0:   c3                      retq
+
+To add insult to injury, the RCX and R11 clobbers on 64-bit
+builds were missing.
+
+The "memory" clobber is also unnecessary -- no ordering with respect to
+other memory operations is needed, but that's going to be fixed in a
+separate not-for-stable patch.
+
+Fixes: 2aae950b21e4 ("x86_64: Add vDSO for x86-64 with gettimeofday/clock_gettime/getcpu")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/2c0231690551989d2fafa60ed0e7b5cc8b403908.1538422295.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/xen-netback/hash.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/entry/vdso/vclock_gettime.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/drivers/net/xen-netback/hash.c
-+++ b/drivers/net/xen-netback/hash.c
-@@ -332,20 +332,22 @@ u32 xenvif_set_hash_mapping_size(struct
- u32 xenvif_set_hash_mapping(struct xenvif *vif, u32 gref, u32 len,
- 			    u32 off)
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -37,8 +37,9 @@ extern u8 pvclock_page
+ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
  {
--	u32 *mapping = &vif->hash.mapping[off];
-+	u32 *mapping = vif->hash.mapping;
- 	struct gnttab_copy copy_op = {
- 		.source.u.ref = gref,
- 		.source.domid = vif->domid,
--		.dest.u.gmfn = virt_to_gfn(mapping),
- 		.dest.domid = DOMID_SELF,
--		.dest.offset = xen_offset_in_page(mapping),
--		.len = len * sizeof(u32),
-+		.len = len * sizeof(*mapping),
- 		.flags = GNTCOPY_source_gref
- 	};
+ 	long ret;
+-	asm("syscall" : "=a" (ret) :
+-	    "0" (__NR_clock_gettime), "D" (clock), "S" (ts) : "memory");
++	asm ("syscall" : "=a" (ret), "=m" (*ts) :
++	     "0" (__NR_clock_gettime), "D" (clock), "S" (ts) :
++	     "memory", "rcx", "r11");
+ 	return ret;
+ }
  
--	if ((off + len > vif->hash.size) || copy_op.len > XEN_PAGE_SIZE)
-+	if ((off + len < off) || (off + len > vif->hash.size) ||
-+	    len > XEN_PAGE_SIZE / sizeof(*mapping))
- 		return XEN_NETIF_CTRL_STATUS_INVALID_PARAMETER;
+@@ -46,8 +47,9 @@ notrace static long vdso_fallback_gtod(s
+ {
+ 	long ret;
  
-+	copy_op.dest.u.gmfn = virt_to_gfn(mapping + off);
-+	copy_op.dest.offset = xen_offset_in_page(mapping + off);
-+
- 	while (len-- != 0)
- 		if (mapping[off++] >= vif->num_queues)
- 			return XEN_NETIF_CTRL_STATUS_INVALID_PARAMETER;
+-	asm("syscall" : "=a" (ret) :
+-	    "0" (__NR_gettimeofday), "D" (tv), "S" (tz) : "memory");
++	asm ("syscall" : "=a" (ret), "=m" (*tv), "=m" (*tz) :
++	     "0" (__NR_gettimeofday), "D" (tv), "S" (tz) :
++	     "memory", "rcx", "r11");
+ 	return ret;
+ }
+ 
+@@ -58,12 +60,12 @@ notrace static long vdso_fallback_gettim
+ {
+ 	long ret;
+ 
+-	asm(
++	asm (
+ 		"mov %%ebx, %%edx \n"
+ 		"mov %2, %%ebx \n"
+ 		"call __kernel_vsyscall \n"
+ 		"mov %%edx, %%ebx \n"
+-		: "=a" (ret)
++		: "=a" (ret), "=m" (*ts)
+ 		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
+ 		: "memory", "edx");
+ 	return ret;
+@@ -73,12 +75,12 @@ notrace static long vdso_fallback_gtod(s
+ {
+ 	long ret;
+ 
+-	asm(
++	asm (
+ 		"mov %%ebx, %%edx \n"
+ 		"mov %2, %%ebx \n"
+ 		"call __kernel_vsyscall \n"
+ 		"mov %%edx, %%ebx \n"
+-		: "=a" (ret)
++		: "=a" (ret), "=m" (*tv), "=m" (*tz)
+ 		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
+ 		: "memory", "edx");
+ 	return ret;
 
 
