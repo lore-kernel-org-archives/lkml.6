@@ -6,88 +6,162 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB8FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA74C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F91620652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:23:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F91620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EE2E20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE2E20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeJKVue (ORCPT
+        id S1728643AbeJKVw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:50:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:38318 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbeJKVue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:50:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BD94EBD;
-        Thu, 11 Oct 2018 07:23:09 -0700 (PDT)
-Received: from [10.1.214.49] (unknown [10.1.214.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B41393F5B3;
-        Thu, 11 Oct 2018 07:23:06 -0700 (PDT)
-Subject: Re: [RFC 17/17] arm64: compile the kernel with ptrauth
- -msign-return-address
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-arch@vger.kernel.org, Jacob Bramley <jacob.bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-18-kristina.martsenko@arm.com>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <d0e36e1f-fa1a-f4ab-5a83-11e095801fef@arm.com>
-Date:   Thu, 11 Oct 2018 15:23:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 17:52:27 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13622 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726537AbeJKVw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:52:27 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E9F406B25A1EC;
+        Thu, 11 Oct 2018 22:24:54 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Thu, 11 Oct 2018
+ 22:24:55 +0800
+Subject: Re: Question on FIELD_PREP() for static array
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        <jakub.kicinski@netronome.com>, <yamada.masahiro@socionext.com>,
+        "Arnd Bergmann" <arnd@arndb.de>, <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <c8594a75-964b-01b0-382e-88bcb5b462f2@huawei.com>
+ <40fd3d963820bf96547fa9b5e8c171c6a339674e.camel@perches.com>
+ <1539195207.3687.178.camel@sipsolutions.net>
+CC:     <linux-wireless@vger.kernel.org>, <nbd@nbd.name>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <830ff9fb-07b1-86b6-4f57-af549a37a8c0@huawei.com>
+Date:   Thu, 11 Oct 2018 15:24:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181005084754.20950-18-kristina.martsenko@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1539195207.3687.178.camel@sipsolutions.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kristina,
+On 10/10/2018 19:13, Johannes Berg wrote:
+> On Wed, 2018-10-10 at 10:33 -0700, Joe Perches wrote:
+>>
+>>> Specifically it doesn't like the __BF_FIELD_CHECK() in FIELD_PREP().
+>>>
+>>> Any ideas on compiler trickery we could do with the FIELD_PREP()
+>>> definition to avoid this issue (i.e. enforce the check but only use the
+>>> constant value)?
+>>
 
-On 05/10/18 09:47, Kristina Martsenko wrote:
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 106039d25e2f..dbcd43ea99d8 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -56,6 +56,10 @@ KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
->  KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
->  KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
->  
-> +ifeq ($(CONFIG_ARM64_PTR_AUTH),y)
-> +KBUILD_CFLAGS	+= -msign-return-address=all
-> +endif
+thanks guys
 
-Should not it be done via cc-option so old toolchains keep working [1]?
+>> Perhaps __bf_shf should not use __builtin_ffsll.
+>
+> __bf_shf() is a constant expression, and is fine in this context.
+>
+> The problem is the use of the compound statement here:
+>
+> static int x[2] = {
+> 	({ (void)(0); 1; }),
+> 	0,
+> }
+>
+> similarly fails to compile.
+>
+> I've recently run into a similar situation, namely in
+> include/net/netlink.h, and the applicable way to solve it here would be
+> something like this:
+>
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 3f1ef4450a7c..0680d641923f 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -49,19 +49,16 @@
+>
+>  #define __bf_shf(x) (__builtin_ffsll(x) - 1)
+>
+> +#define BUILD_BUG_ON_RET_ZERO(cond) (sizeof(char[1 - 2*!!(cond)]) - 1)
+> +#define BUILD_BUG_ON_NOT_POW2_RET_ZERO(n)	BUILD_BUG_ON_RET_ZERO(((n) & ((n) - 1)) != 0)
+> +
 
-[1]
-$ aarch64-linux-gnu-gcc --version
-aarch64-linux-gnu-gcc (Linaro GCC 2014.11) 4.9.3 20141031 (prerelease)
-Copyright (C) 2014 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+>  #define __BF_FIELD_CHECK(_mask, _reg, _val, _pfx)			\
+> -	({								\
+> -		BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),		\
+> -				 _pfx "mask is not constant");		\
+> -		BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");	\
+> -		BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?		\
+> -				 ~((_mask) >> __bf_shf(_mask)) & (_val) : 0, \
+> -				 _pfx "value too large for the field"); \
+> -		BUILD_BUG_ON_MSG((_mask) > (typeof(_reg))~0ull,		\
+> -				 _pfx "type of reg too small for mask"); \
+> -		__BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +			\
+> -					      (1ULL << __bf_shf(_mask))); \
+> -	})
+> +	BUILD_BUG_ON_RET_ZERO(!__builtin_constant_p(_mask)) +		\
+> +	BUILD_BUG_ON_RET_ZERO((_mask) == 0) +				\
+> +	BUILD_BUG_ON_RET_ZERO(__builtin_constant_p(_val) ?		\
+> +			      ~((_mask) >> __bf_shf(_mask)) & (_val) : 0) + \
+> +	BUILD_BUG_ON_RET_ZERO((_mask) > (typeof(_reg))~0ull) +	\
+> +	BUILD_BUG_ON_NOT_POW2_RET_ZERO((_mask) + (1ULL << __bf_shf(_mask)))
+>
+>  /**
+>   * FIELD_FIT() - check if value fits in the field
+> @@ -85,10 +82,8 @@
+>   * be combined with other fields of the bitfield using logical OR.
+>   */
+>  #define FIELD_PREP(_mask, _val)						\
+> -	({								\
+> -		__BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");	\
+> -		((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);	\
+> -	})
+> +	(__BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ") +		\
+> +	 (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)))
+>
+>  /**
+>   * FIELD_GET() - extract a bitfield element
+>
+>
+> Note that this is an incomplete patch - everything but FIELD_PREP will
+> not compile with this.
+>
+> Also, BUILD_BUG_ON_RET_ZERO and BUILD_BUG_ON_NOT_POW2_RET_ZERO should
+> probably have better names, or perhaps do the positive way that I did in
+> __NLA_ENSURE, e.g. CONST_ASSERT()/CONST_ASSERT_IS_POWER_OF_2()? I guess
+> they should go to build_bug.h as well...
 
-$ aarch64-linux-gnu-gcc -msign-return-address=all
-aarch64-linux-gnu-gcc: error: unrecognized command line option '-msign-return-address=all'
-...
+Seems reasonable. However I did try this and was getting compiler 
+warnings about VLA, from a non-constant being fed into 
+BUILD_BUG_ON_RET_ZERO(), related to sizeof char[]:
+drivers/iio/adc/meson_saradc.c:375:2: warning: ISO C90 forbids variable 
+length array [-Wvla]
+   regval = FIELD_PREP(MESON_SAR_ADC_CHAN_LIST_ENTRY_MASK(0),
 
-Cheers
-Vladimir
+Surely __NLA_ENSURE is getting a similar issue as it uses a similar 
+principle, no? I see that this is in -next now, but could not this macro 
+or derivatives being referenced.
+
+>
+
+Much appreciated,
+John
+
+> johannes
+>
+> .
+>
+
+
