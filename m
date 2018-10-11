@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D361C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A145C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB6A22098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60B232098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJscor7d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6A22098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oosLF4IF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B232098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731405AbeJKXNa (ORCPT
+        id S1731419AbeJKXNd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:29 -0400
+        id S1726700AbeJKXNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A89152098A;
-        Thu, 11 Oct 2018 15:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CD662085B;
+        Thu, 11 Oct 2018 15:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272744;
-        bh=vkSOm6663bzhsPSSfHAkAe/qkTiOAqSGOUiAt99XMhA=;
+        s=default; t=1539272747;
+        bh=WLjmzrQlaEf1rXsXRLjFF+p+cdLlYAk3HxdITBpZDjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rJscor7dbfELJJkXs5nqwsZCwBbLvTD7aUrgDXn9o9/hWi8h3AOqYyIL9E5kpupmQ
-         CP7LcrtM0tC3lS979MM77tqQgXTohab7W3lVaZ4uPrOrHoGGbaj0ITj6Yirtqyfwgi
-         AiqQr6TCRQsuq/LiCcbvJItuDj1LjXnkBNvWszRs=
+        b=oosLF4IFX8GZkpwNH7N/uOb9YdfH3llfAJZ9PEx4l1L9Fa1C3tQg7cG4awgJ6CaOb
+         wOCcmymyEVjGhKoDd9NL17vGiJzLmaJIhGokRPxAPoprbFungFV26AFUGrW0Kf6FD5
+         I5dXeWZoI0gCFU9GjR/4eSCXbPyjTA3NgOBFpRyo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Hult <hanshult35@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 23/45] USB: serial: simple: add Motorola Tetra MTP6550 id
-Date:   Thu, 11 Oct 2018 17:39:50 +0200
-Message-Id: <20181011152509.870890588@linuxfoundation.org>
+        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.14 24/45] usb: cdc_acm: Do not leak URB buffers
+Date:   Thu, 11 Oct 2018 17:39:51 +0200
+Message-Id: <20181011152509.911971518@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -62,129 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-commit f5fad711c06e652f90f581fc7c2caee327c33d31 upstream.
+commit f2924d4b16ae138c2de6a0e73f526fb638330858 upstream.
 
-Add device-id for the Motorola Tetra radio MTP6550.
+When the ACM TTY port is disconnected, the URBs it uses must be killed, and
+then the buffers must be freed. Unfortunately a previous refactor removed
+the code freeing the buffers because it looked extremely similar to the
+code killing the URBs.
 
-Bus 001 Device 004: ID 0cad:9012 Motorola CGISS
-Device Descriptor:
-  bLength                18
-  bDescriptorType         1
-  bcdUSB               2.00
-  bDeviceClass            0 (Defined at Interface level)
-  bDeviceSubClass         0
-  bDeviceProtocol         0
-  bMaxPacketSize0        64
-  idVendor           0x0cad Motorola CGISS
-  idProduct          0x9012
-  bcdDevice           24.16
-  iManufacturer           1 Motorola Solutions, Inc.
-  iProduct                2 TETRA PEI interface
-  iSerial                 0
-  bNumConfigurations      1
-  Configuration Descriptor:
-    bLength                 9
-    bDescriptorType         2
-    wTotalLength           55
-    bNumInterfaces          2
-    bConfigurationValue     1
-    iConfiguration          3 Generic Serial config
-    bmAttributes         0x80
-      (Bus Powered)
-    MaxPower              500mA
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        0
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass      0
-      bInterfaceProtocol      0
-      iInterface              0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x81  EP 1 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x01  EP 1 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        1
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass      0
-      bInterfaceProtocol      0
-      iInterface              0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x82  EP 2 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x02  EP 2 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-Device Qualifier (for other device speed):
-  bLength                10
-  bDescriptorType         6
-  bcdUSB               2.00
-  bDeviceClass            0 (Defined at Interface level)
-  bDeviceSubClass         0
-  bDeviceProtocol         0
-  bMaxPacketSize0        64
-  bNumConfigurations      1
-Device Status:     0x0000
-  (Bus Powered)
+As a result, there were many new leaks for each plug/unplug cycle of a
+CDC-ACM device, that were detected by kmemleak.
 
-Reported-by: Hans Hult <hanshult35@gmail.com>
+Restore the missing code, and the memory leak is removed.
+
+Fixes: ba8c931ded8d ("cdc-acm: refactor killing urbs")
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial-simple.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/class/cdc-acm.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -87,7 +87,8 @@ DEVICE(moto_modem, MOTO_IDS);
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1527,6 +1527,7 @@ static void acm_disconnect(struct usb_in
+ {
+ 	struct acm *acm = usb_get_intfdata(intf);
+ 	struct tty_struct *tty;
++	int i;
  
- /* Motorola Tetra driver */
- #define MOTOROLA_TETRA_IDS()			\
--	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
-+	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
-+	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
- DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 	/* sibling interface is already cleaning up */
+ 	if (!acm)
+@@ -1557,6 +1558,11 @@ static void acm_disconnect(struct usb_in
  
- /* Novatel Wireless GPS driver */
+ 	tty_unregister_device(acm_tty_driver, acm->minor);
+ 
++	usb_free_urb(acm->ctrlurb);
++	for (i = 0; i < ACM_NW; i++)
++		usb_free_urb(acm->wb[i].urb);
++	for (i = 0; i < acm->rx_buflimit; i++)
++		usb_free_urb(acm->read_urbs[i]);
+ 	acm_write_buffers_free(acm);
+ 	usb_free_coherent(acm->dev, acm->ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
+ 	acm_read_buffers_free(acm);
 
 
