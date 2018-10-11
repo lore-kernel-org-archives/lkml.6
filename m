@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAB1C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4D5C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83393213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F46B213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bl6mdmks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83393213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5+C4J3+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F46B213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbeJKXEK (ORCPT
+        id S1728989AbeJKXEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:04:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJKXEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:04:09 -0400
+        id S1726562AbeJKXEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:04:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6161D213A2;
-        Thu, 11 Oct 2018 15:36:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4382C20652;
+        Thu, 11 Oct 2018 15:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272186;
-        bh=q4sjU91q3VoQaJkdTQDnH5GQUHrkqH+j4OrpMUAl4a8=;
+        s=default; t=1539272190;
+        bh=4DGq5dCid/vOQAiPlfiahWejRjKC23ItipCwGN+mxI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bl6mdmks93jxqRgLeYRHytlp66NQLW+sWyeRP21sRQhEs5sxZsaUYfkdeCmADX7go
-         TDUL2bn97zvL4GRYFvOxj4uLIvwR/TnXYMI8XmTDZOZJXJVVMwdWXOAGtF0Eiq/DBb
-         x1x4dwsKlofg52oJ8mVFpD/aa911MxOSF20LHKsQ=
+        b=Y5+C4J3+9WprmetTsae9pZT7ZBDSL6O7/frQthwUQ+7+xKaCN1uD38dOTF//5991X
+         2iGqbNez4Ppo0ulvOYAZaQDkuOD2cvpAqnUrj+9FkmNi6wQfxcKyJogoio34MSefj1
+         hoxkyCREZ6aAuHmQ1vD4o4xQj/iomq86RVIi1oNw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 002/120] ALSA: bebob: use address returned by kmalloc() instead of kernel stack for streaming DMA mapping
-Date:   Thu, 11 Oct 2018 17:33:03 +0200
-Message-Id: <20181011152549.596948174@linuxfoundation.org>
+        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
+        Jann Horn <jannh@google.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 003/120] ALSA: emu10k1: fix possible info leak to userspace on SNDRV_EMU10K1_IOCTL_INFO
+Date:   Thu, 11 Oct 2018 17:33:04 +0200
+Message-Id: <20181011152549.645737249@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,86 +62,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Willy Tarreau <w@1wt.eu>
 
-commit 493626f2d87a74e6dbea1686499ed6e7e600484e upstream.
+commit 49434c6c575d2008c0abbc93e615019f39e01252 upstream.
 
-When executing 'fw_run_transaction()' with 'TCODE_WRITE_BLOCK_REQUEST',
-an address of 'payload' argument is used for streaming DMA mapping by
-'firewire_ohci' module if 'size' argument is larger than 8 byte.
-Although in this case the address should not be on kernel stack, current
-implementation of ALSA bebob driver uses data in kernel stack for a cue
-to boot M-Audio devices. This often brings unexpected result, especially
-for a case of CONFIG_VMAP_STACK=y.
+snd_emu10k1_fx8010_ioctl(SNDRV_EMU10K1_IOCTL_INFO) allocates
+memory using kmalloc() and partially fills it by calling
+snd_emu10k1_fx8010_info() before returning the resulting
+structure to userspace, leaving uninitialized holes. Let's
+just use kzalloc() here.
 
-This commit fixes the bug.
-
-Reference: https://bugzilla.kernel.org/show_bug.cgi?id=201021
-Reference: https://forum.manjaro.org/t/firewire-m-audio-410-driver-wont-load-firmware/51165
-Fixes: a2b2a7798fb6('ALSA: bebob: Send a cue to load firmware for M-Audio Firewire series')
-Cc: <stable@vger.kernel.org> # v3.16+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+BugLink: http://blog.infosectcbr.com.au/2018/09/linux-kernel-infoleaks.html
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Cc: Jann Horn <jannh@google.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/bebob/bebob_maudio.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ sound/pci/emu10k1/emufx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/firewire/bebob/bebob_maudio.c
-+++ b/sound/firewire/bebob/bebob_maudio.c
-@@ -96,17 +96,13 @@ int snd_bebob_maudio_load_firmware(struc
- 	struct fw_device *device = fw_parent_device(unit);
- 	int err, rcode;
- 	u64 date;
--	__le32 cues[3] = {
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE1),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE2),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE3)
--	};
-+	__le32 *cues;
- 
- 	/* check date of software used to build */
- 	err = snd_bebob_read_block(unit, INFO_OFFSET_SW_DATE,
- 				   &date, sizeof(u64));
- 	if (err < 0)
--		goto end;
-+		return err;
- 	/*
- 	 * firmware version 5058 or later has date later than "20070401", but
- 	 * 'date' is not null-terminated.
-@@ -114,20 +110,28 @@ int snd_bebob_maudio_load_firmware(struc
- 	if (date < 0x3230303730343031LL) {
- 		dev_err(&unit->device,
- 			"Use firmware version 5058 or later\n");
--		err = -ENOSYS;
--		goto end;
-+		return -ENXIO;
- 	}
- 
-+	cues = kmalloc_array(3, sizeof(*cues), GFP_KERNEL);
-+	if (!cues)
-+		return -ENOMEM;
-+
-+	cues[0] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE1);
-+	cues[1] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE2);
-+	cues[2] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE3);
-+
- 	rcode = fw_run_transaction(device->card, TCODE_WRITE_BLOCK_REQUEST,
- 				   device->node_id, device->generation,
- 				   device->max_speed, BEBOB_ADDR_REG_REQ,
--				   cues, sizeof(cues));
-+				   cues, 3 * sizeof(*cues));
-+	kfree(cues);
- 	if (rcode != RCODE_COMPLETE) {
- 		dev_err(&unit->device,
- 			"Failed to send a cue to load firmware\n");
- 		err = -EIO;
- 	}
--end:
-+
- 	return err;
- }
- 
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -2521,7 +2521,7 @@ static int snd_emu10k1_fx8010_ioctl(stru
+ 		emu->support_tlv = 1;
+ 		return put_user(SNDRV_EMU10K1_VERSION, (int __user *)argp);
+ 	case SNDRV_EMU10K1_IOCTL_INFO:
+-		info = kmalloc(sizeof(*info), GFP_KERNEL);
++		info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 		if (!info)
+ 			return -ENOMEM;
+ 		snd_emu10k1_fx8010_info(emu, info);
 
 
