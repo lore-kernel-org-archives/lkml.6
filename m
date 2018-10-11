@@ -7,44 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABCDC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8415C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8A0213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB1021476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8/SrpWc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8A0213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ySSg5wNV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB1021476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731551AbeJKXOH (ORCPT
+        id S1731564AbeJKXOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:14:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46960 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:14:06 -0400
+        id S1726700AbeJKXOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:08 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FD7A213A2;
-        Thu, 11 Oct 2018 15:46:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A15262098A;
+        Thu, 11 Oct 2018 15:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272780;
-        bh=G0uoaUDUxND654t5BaMUOVWvuhUdZkj8weVxmbG4gKY=;
+        s=default; t=1539272783;
+        bh=Xt08oS1lbPh7bA1vcCtJbgo6RJbPoCGOQgaPFybRnAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W8/SrpWcbLbHWRg1zEa+NlYWTEaasuCrsdUw3XOSN7w3a9m5NR9eBmODrBv26e5wT
-         vyZmMuisMtaLhbGtGFOffgMODJ27LVxSG7GbKmvEL12nkFGtfAocMXOR2RS+1iSZyR
-         hcufMUT2gLXQ1+53eOxMSxS7JryPHFn0oJSlyNo4=
+        b=ySSg5wNVZLz+cmxytfBEf82qYwRNjPGuW0CtcRDVelXW8N9d/ykuNHYukItJC7xdG
+         rY0brW559Gbb92oafY054GIc6PfoOLQnub4FAvBHcO6uhpyOLHjYMw9px/M897iy4/
+         gdpayXfk8KB8s0R6hdz8NvEFKWZGo9VecFpg+lTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 35/45] powerpc/lib: fix book3s/32 boot failure due to code patching
-Date:   Thu, 11 Oct 2018 17:40:02 +0200
-Message-Id: <20181011152510.450697383@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 04/45] mm/vmstat.c: skip NR_TLB_REMOTE_FLUSH* properly
+Date:   Thu, 11 Oct 2018 17:39:31 +0200
+Message-Id: <20181011152509.051116433@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -62,79 +70,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Jann Horn <jannh@google.com>
 
-commit b45ba4a51cde29b2939365ef0c07ad34c8321789 upstream.
+commit 58bc4c34d249bf1bc50730a9a209139347cfacfe upstream.
 
-Commit 51c3c62b58b3 ("powerpc: Avoid code patching freed init
-sections") accesses 'init_mem_is_free' flag too early, before the
-kernel is relocated. This provokes early boot failure (before the
-console is active).
+5dd0b16cdaff ("mm/vmstat: Make NR_TLB_REMOTE_FLUSH_RECEIVED available even
+on UP") made the availability of the NR_TLB_REMOTE_FLUSH* counters inside
+the kernel unconditional to reduce #ifdef soup, but (either to avoid
+showing dummy zero counters to userspace, or because that code was missed)
+didn't update the vmstat_array, meaning that all following counters would
+be shown with incorrect values.
 
-As it is not necessary to do this verification that early, this
-patch moves the test into patch_instruction() instead of
-__patch_instruction().
+This only affects kernel builds with
+CONFIG_VM_EVENT_COUNTERS=y && CONFIG_DEBUG_TLBFLUSH=y && CONFIG_SMP=n.
 
-This modification also has the advantage of avoiding unnecessary
-remappings.
-
-Fixes: 51c3c62b58b3 ("powerpc: Avoid code patching freed init sections")
-Cc: stable@vger.kernel.org # 4.13+
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/20181001143138.95119-2-jannh@google.com
+Fixes: 5dd0b16cdaff ("mm/vmstat: Make NR_TLB_REMOTE_FLUSH_RECEIVED available even on UP")
+Signed-off-by: Jann Horn <jannh@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Christoph Lameter <clameter@sgi.com>
+Cc: Kemi Wang <kemi.wang@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/lib/code-patching.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ mm/vmstat.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/lib/code-patching.c
-+++ b/arch/powerpc/lib/code-patching.c
-@@ -28,12 +28,6 @@ static int __patch_instruction(unsigned
- {
- 	int err;
- 
--	/* Make sure we aren't patching a freed init section */
--	if (init_mem_is_free && init_section_contains(exec_addr, 4)) {
--		pr_debug("Skipping init section patching addr: 0x%px\n", exec_addr);
--		return 0;
--	}
--
- 	__put_user_size(instr, patch_addr, 4, err);
- 	if (err)
- 		return err;
-@@ -148,7 +142,7 @@ static inline int unmap_patch_area(unsig
- 	return 0;
- }
- 
--int patch_instruction(unsigned int *addr, unsigned int instr)
-+static int do_patch_instruction(unsigned int *addr, unsigned int instr)
- {
- 	int err;
- 	unsigned int *patch_addr = NULL;
-@@ -188,12 +182,22 @@ out:
- }
- #else /* !CONFIG_STRICT_KERNEL_RWX */
- 
--int patch_instruction(unsigned int *addr, unsigned int instr)
-+static int do_patch_instruction(unsigned int *addr, unsigned int instr)
- {
- 	return raw_patch_instruction(addr, instr);
- }
- 
- #endif /* CONFIG_STRICT_KERNEL_RWX */
-+
-+int patch_instruction(unsigned int *addr, unsigned int instr)
-+{
-+	/* Make sure we aren't patching a freed init section */
-+	if (init_mem_is_free && init_section_contains(addr, 4)) {
-+		pr_debug("Skipping init section patching addr: 0x%px\n", addr);
-+		return 0;
-+	}
-+	return do_patch_instruction(addr, instr);
-+}
- NOKPROBE_SYMBOL(patch_instruction);
- 
- int patch_branch(unsigned int *addr, unsigned long target, int flags)
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1203,6 +1203,9 @@ const char * const vmstat_text[] = {
+ #ifdef CONFIG_SMP
+ 	"nr_tlb_remote_flush",
+ 	"nr_tlb_remote_flush_received",
++#else
++	"", /* nr_tlb_remote_flush */
++	"", /* nr_tlb_remote_flush_received */
+ #endif /* CONFIG_SMP */
+ 	"nr_tlb_local_flush_all",
+ 	"nr_tlb_local_flush_one",
 
 
