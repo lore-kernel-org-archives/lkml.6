@@ -2,111 +2,106 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09D4C28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B17C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0E92085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056AA2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:06:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DI8vBZUO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0E92085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qk4ueTpd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 056AA2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbeJLFfu (ORCPT
+        id S1726643AbeJLFfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 01:35:50 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:35272 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbeJLFfu (ORCPT
+        Fri, 12 Oct 2018 01:35:55 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42296 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbeJLFfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 01:35:50 -0400
-Received: by mail-wr1-f41.google.com with SMTP id w5-v6so11330915wrt.2;
-        Thu, 11 Oct 2018 15:06:35 -0700 (PDT)
+        Fri, 12 Oct 2018 01:35:54 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i4-v6so4805456pgq.9;
+        Thu, 11 Oct 2018 15:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X0Hh7b2Lu1/pDyN98Jci6WGRTRZXC930AegybeA2rPM=;
-        b=DI8vBZUOMy2WkufiXRoXXbQKKx4vauU3RDHimoopVEuY1+BeZzo3KEnF+5PniVle+d
-         4GixUjORVHaEw/MyI/pEIY9x7Kg9IZ2XWo5HeeZXHoxMn3f1XyxKsSO1hpSGEB3vOR3g
-         FkIBAsBv1ECvNZrV1TrzFsGhgL6RTESGq/kBjMwiiZ9nZyinAhrZhIIyaTCyU3WFo86K
-         JCJf/Sihgvd6mUoJoGPKiIVTmS14ltYoXj8cvPpsQd/h4/2Q440H/HK/k0kdiLncJA6L
-         080K0MzrQU/bnsmRAWMQ1sZeObUbH8nSwCpYK7MFKypaAVUxNgySxdQE7sCsmtffi+pk
-         7WPw==
+        h=from:to:cc:subject:date:message-id;
+        bh=3C6u/ShLXSWtgH8qvX758ST7lZ3kV9q8XVqgGADVtoM=;
+        b=Qk4ueTpdZv51r7bW9KbdF7G2hlKFh4J2Gr/xLV/rmm40aYmYv/dqrsFYrV/toNoh4o
+         DFVgB6ZQOtgCKYc1kPdl+05WY7D5Frl9RBJ/YIyWceNZromIpxfCbK6tUOQ8cggui3ge
+         1SrN29rm40Qp1PEh9yX0ZrMacLFJJ4BbIsVApBCyDqRH9qNV+v6IwQoOp8g/dc5MmYG/
+         x9rlve3ZPb9TECCLrx9/N6VdOebQxxL8fP8a2jfmVPDV95w788ZlsX7ecZKEtqWLFz0u
+         b4J7AeP5iZ6HAIF5S20KLJ1UXbqFPe538eVGsCLIizMutM4NghVun6AN1Vo1aDUUZ0CF
+         Hc2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X0Hh7b2Lu1/pDyN98Jci6WGRTRZXC930AegybeA2rPM=;
-        b=N1jUd1WTNmN7dxfzt0tr3p0t+7gv76hyUK6E69O/drdqkVRE6xkXh6nbt6ZZWLEish
-         w6RpznrFzl/HL9ORAFDaKUPVBudg+vFDTh+RZG3sX+PGyvp8SdNIY0GvEBDV7W0HYAdD
-         /BM4cjiwMgSrHeQXVLP5fotJmpNXkQplEncp6vvGtg1niCn92n5a2r9jwIF3FHyhn7Xt
-         2Bb3Zw4i3kSOL07PmCgD1/rSgFfIu2tuY4FIp2sqRYyVMCIww1RmEdgW9tUm+BW5aFRw
-         hhijhGJcYxw3fNvTmRNJQEEWwxFdmFh6NNXpS/+w61PGyYeyOzh2nxwXsTLIo0/ZNGIm
-         F6lw==
-X-Gm-Message-State: ABuFfoj/eOGV6E21gsnljjasOR/KzsG75W5bBtBxx7tGhm2rW9nQz2Hx
-        Q3pwqcDlKygIidk/v92PPLc=
-X-Google-Smtp-Source: ACcGV62UbOQa4C2GcYeVoB8O/jBSMNiYe6RP8VmLZ8mvdTvatBtmpziOWGiwp6y2TrIg/T6/8WhJAw==
-X-Received: by 2002:adf:f111:: with SMTP id r17-v6mr3214922wro.303.1539295594820;
-        Thu, 11 Oct 2018 15:06:34 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j128-v6sm18676661wmb.43.2018.10.11.15.06.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 15:06:34 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 00:06:31 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     peterz@infradead.org, hofrat@osadl.org,
-        torvalds@linux-foundation.org, john.garry@huawei.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com
-Cc:     linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:sched/core] sched/completions/Documentation: Clean up the
- document some more
-Message-ID: <20181011220631.GB128397@gmail.com>
-References: <1539183392-239389-1-git-send-email-john.garry@huawei.com>
- <tip-0c373344b5c1eaa9e186368a32a169a2802be3ca@git.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-0c373344b5c1eaa9e186368a32a169a2802be3ca@git.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3C6u/ShLXSWtgH8qvX758ST7lZ3kV9q8XVqgGADVtoM=;
+        b=pbr8Acbw9sE+ym8wvSGU4+RnXbMm1ATTse4WS98vrZvoZhFdd9W9UUFlHLaUJdnkyW
+         +v+b+CZhnBmr6bw3bsEPAMkG/Ff12sOI+prrto6Pz4H6eSH5b+BigrG7lze02O9Pkbdo
+         dq0v9MqXWEw+eonz+WyS9piDYm409hlkRgBAilzj6yhO0lEk+mvh7qaRNE0uxuxghGfo
+         NWIqoal2xUzoww8qqtmuGHdQ7u+2oiY1iXlNDOVjk1YutRomb4TxdSgqba9+7eGTyDau
+         xsW5MLSEPXtPVXw2QyuwgRboLUsWoS9wLMk/GgYjR1SbZsX0OvSdV+IitzIBBlnn0za7
+         +KsQ==
+X-Gm-Message-State: ABuFfogH/EtpwVZu79BNDN8rTHtxHgK+lvHRJmmvIfXeCDeO5x1VrzCC
+        4cRuUzI9aIcos0ZvdppWaCEHQmbs
+X-Google-Smtp-Source: ACcGV60ZN/0tHhGAbgWXy+bTmShJulaYWEFSIKlM5peREPsWs0OYt0AO/pRy38L3wnf0qNypl1P/Xw==
+X-Received: by 2002:a63:78cc:: with SMTP id t195-v6mr3012223pgc.329.1539295599861;
+        Thu, 11 Oct 2018 15:06:39 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id v38-v6sm60250233pgn.57.2018.10.11.15.06.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 15:06:38 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: bcmgenet: Poll internal PHY for GENETv5
+Date:   Thu, 11 Oct 2018 15:06:33 -0700
+Message-Id: <20181011220633.24450-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On GENETv5, there is a hardware issue which prevents the GENET hardware
+from generating a link UP interrupt when the link is operating at
+10Mbits/sec. Since we do not have any way to configure the link
+detection logic, fallback to polling in that case.
 
-hi Nicholas,
+Fixes: 421380856d9c ("net: bcmgenet: add support for the GENETv5 hardware")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/broadcom/genet/bcmmii.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-I was wondering about this paragraph:
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+index 4241ae928d4a..34af5f1569c8 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -321,9 +321,12 @@ int bcmgenet_mii_probe(struct net_device *dev)
+ 	phydev->advertising = phydev->supported;
+ 
+ 	/* The internal PHY has its link interrupts routed to the
+-	 * Ethernet MAC ISRs
++	 * Ethernet MAC ISRs. On GENETv5 there is a hardware issue
++	 * that prevents the signaling of link UP interrupts when
++	 * the link operates at 10Mbps, so fallback to polling for
++	 * those versions of GENET.
+ 	 */
+-	if (priv->internal_phy)
++	if (priv->internal_phy && !GENET_IS_V5(priv))
+ 		dev->phydev->irq = PHY_IGNORE_INTERRUPT;
+ 
+ 	return 0;
+-- 
+2.17.1
 
-> Using on-stack completions for code that calls any of the _timeout or
-> _interruptible/_killable variants is not advisable as they will require
-> additional synchronization to prevent the on-stack completion object in
-> the timeout/signal cases from going out of scope. Consider using dynamically
-> allocated completions when intending to use the _interruptible/_killable
-> or _timeout variants of wait_for_completion().
-
-What exact race related to _timeout()/_interruptible() waits and on-stack
-completions were you trying to highlight here?
-
-Is it the fact that if a signal is already pending for the current task,
-that the _interruptible() variant might return prematurely, while any
-kthread that has the completion pointer passed to it might still be using
-it?
-
-In that case the kthread should indeed be waited for.
-
-How would a dynamically allocated completion object help in this case - or do
-you mean a refcounted dynamic object?
-
-A specific example might be useful here, instead of this rather vague,
-generic description.
-
-Thanks,
-
-	Ingo
