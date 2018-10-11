@@ -2,82 +2,217 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012B7C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E6EC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B613F205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B613F205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E998C2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:03:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+5c2I05"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E998C2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeJKT3I (ORCPT
+        id S1728142AbeJKTah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:29:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44118 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727182AbeJKT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:29:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20EFAACE1;
-        Thu, 11 Oct 2018 12:02:11 +0000 (UTC)
-Date:   Thu, 11 Oct 2018 14:02:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-team@android.com, minchan@google.com, hughd@google.com,
-        lokeshgidra@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] mm: Speed up mremap on large regions
-Message-ID: <20181011120209.GV5873@dhcp22.suse.cz>
-References: <20181009201400.168705-1-joel@joelfernandes.org>
- <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
- <20181009230447.GA17911@joelaf.mtv.corp.google.com>
- <20181010100011.6jqjvgeslrvvyhr3@kshutemo-mobl1>
- <20181011004618.GA237677@joelaf.mtv.corp.google.com>
- <20181011081719.77f7ihcy6mu2vkkc@kshutemo-mobl1>
+        Thu, 11 Oct 2018 15:30:37 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55379 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeJKTah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:30:37 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 206-v6so8733155wmb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 05:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/MGODQWupRFp3ivTTqHI0aavG641+71/uDj7XngGFGg=;
+        b=C+5c2I05jSUqxANNB3NqXT8WI2wpxGAsfPQxfTK55p8V+0WSQtmDVy8PFQyAkiMw3l
+         ZiF1tGQCYK4Pu3JjLis3/SJc9kotg2LihaWehrllXnJScN/BEM5khS2sRBNYF7CSba7l
+         PpE+DkRofX0SwHpNNCQWygEZTr6uORNidxi5c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/MGODQWupRFp3ivTTqHI0aavG641+71/uDj7XngGFGg=;
+        b=tJkbG5yd1jUjVs84kG7yBI9o08CFj0kcUlNsrg+jYLMe4R2Pp6j+Bl+EsXD5TExWCf
+         ZfoK77GcubT6VySf9NnMoRbGOvi2mS/hxYWybDAUCRnhN/GqsgaoxECjoSoPJ8FFyopM
+         cj08gb59+N6ic1p7pFMRmKkOYzx5U8yH3hpW9pbpO/vIw6ca6irl/McvnXUfTBcgVoRp
+         t0oRNaNV9fHxDCdBiOzX2pVH95ziMm/MLL1Z19Ai51e97uttZiWBnaDBnUWAtSVClP/6
+         o8H53OxVdZLvowSlwHVCka0XWNLInhx9CMqKlCRNyKXyvWmkfXGZ6vD5A1AIdWwn9a7V
+         G29A==
+X-Gm-Message-State: ABuFfohFhzBHY0NvAv1bzweLOwXJhl1fgL4Dt3DVfVSIsNMlIxJZUaxF
+        PAAc51jgLpIIkphwCj0ZB0V3Xw==
+X-Google-Smtp-Source: ACcGV60hBJuj1AU1kIkP3QWJUoiHVEGJiZsOnMKnzDqjuIQHmryh5JujlrhAOtpDw9ORdzB2XGt/nQ==
+X-Received: by 2002:a1c:f010:: with SMTP id a16-v6mr1378710wmb.5.1539259418847;
+        Thu, 11 Oct 2018 05:03:38 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id 193-v6sm21983286wmj.21.2018.10.11.05.03.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 11 Oct 2018 05:03:38 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org,
+        mturquette@baylibre.com, khilman@baylibre.com,
+        vincent.guittot@linaro.org, skannan@codeaurora.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
+        maxime.ripard@bootlin.com, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, ulf.hansson@linaro.org,
+        adrian.hunter@intel.com, linux-mmc@vger.kernel.org,
+        georgi.djakov@linaro.org
+Subject: [RFC] mmc: host: sdhci-msm: Use the interconnect API
+Date:   Thu, 11 Oct 2018 15:03:36 +0300
+Message-Id: <20181011120336.9129-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011081719.77f7ihcy6mu2vkkc@kshutemo-mobl1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 11-10-18 11:17:19, Kirill A. Shutemov wrote:
-[...]
-> > The thing is its quite a lot of change, I wrote a coccinelle script to do it
-> > tree wide, following is the diffstat:
-> >  48 files changed, 91 insertions(+), 124 deletions(-)
-> > 
-> > Imagine then having to add the address argument back in the future in case
-> > its ever needed. Is it really worth doing it?
-> 
-> This is the point. It will get us chance to consider if the optimization
-> is still safe.
-> 
-> And it shouldn't be hard: [partially] revert the commit and get the address
-> back into the interface.
+The interconnect API provides an interface for consumer drivers to express
+their bandwidth needs in the SoC. This data is aggregated and the on-chip
+interconnect hardware is configured to the appropriate power/performance
+profile.
 
-I agree with Kirill. This will also remove quite a lot of pointless
-code and make it more clear. It is impossible to see what is the address
-good for and I couldn't really trace back to commit introducing it to
-guess that either. So making sure nobody does anything with it is a good
-pre-requisite to make further changes on top.
+Use the interconnect API to get() the path between the endpoints used for
+data transfers by the SD host controller and report the needed bandwidth
+based on the clock rate, bus width and mode.
 
-The chage itself is really interesting, I still have to digest it
-completely to see there are no cornercases but from a quick glance it
-looks reasonable.
--- 
-Michal Hocko
-SUSE Labs
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+
+This depends on the interconnect API: https://lkml.org/lkml/2018/8/31/444
+
+TODO: Use macros for converting and rounding to icc units instead of
+converting between kilobits and kilobytes in the consumer drivers.
+
+ drivers/mmc/host/sdhci-msm.c | 46 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 3cc8bfee6c18..8ca99ccdb035 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -20,6 +20,7 @@
+ #include <linux/mmc/mmc.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/interconnect.h>
+ #include <linux/iopoll.h>
+ #include <linux/regulator/consumer.h>
+ 
+@@ -258,6 +259,7 @@ struct sdhci_msm_host {
+ 	bool mci_removed;
+ 	const struct sdhci_msm_variant_ops *var_ops;
+ 	const struct sdhci_msm_offset *offset;
++	struct icc_path *path;
+ };
+ 
+ static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+@@ -1627,6 +1629,30 @@ static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
+ 	.offset = &sdhci_msm_v5_offset,
+ };
+ 
++static int sdhci_msm_icc_update(struct sdhci_msm_host *msm_host)
++{
++	struct sdhci_host *host = dev_get_drvdata(&msm_host->pdev->dev);
++	struct mmc_host *mmc = host->mmc;
++	struct mmc_ios *ios = &mmc->ios;
++	unsigned char bus_width = 1 << ios->bus_width;
++	u32 bw;
++
++	/* calculate the needed bandwidth */
++	bw = host->clock;
++
++	if (host->timing == MMC_TIMING_UHS_DDR50 ||
++	    host->timing == MMC_TIMING_MMC_DDR52) {
++		bw *= 2;
++	}
++
++	if (bus_width == 4)
++		bw /= 2;
++	else if (bus_width == 1)
++		bw /= 8;
++
++	return icc_set(msm_host->path, 0, bw / 1000);
++}
++
+ static const struct of_device_id sdhci_msm_dt_match[] = {
+ 	{.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
+ 	{.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
+@@ -1698,16 +1724,27 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 
+ 	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
+ 
++	msm_host->path = of_icc_get(&pdev->dev, "sdhc-mem");
++	if (IS_ERR(msm_host->path)) {
++		ret = PTR_ERR(msm_host->path);
++		goto pltfm_free;
++	}
++	ret = sdhci_msm_icc_update(msm_host);
++	if (ret) {
++		dev_warn(&pdev->dev, "Interconnect setup failed (%d)\n", ret);
++		goto icc_disable;
++	}
++
+ 	/* Setup SDCC bus voter clock. */
+ 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
+ 	if (!IS_ERR(msm_host->bus_clk)) {
+ 		/* Vote for max. clk rate for max. performance */
+ 		ret = clk_set_rate(msm_host->bus_clk, INT_MAX);
+ 		if (ret)
+-			goto pltfm_free;
++			goto icc_disable;
+ 		ret = clk_prepare_enable(msm_host->bus_clk);
+ 		if (ret)
+-			goto pltfm_free;
++			goto icc_disable;
+ 	}
+ 
+ 	/* Setup main peripheral bus clock */
+@@ -1883,6 +1920,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ bus_clk_disable:
+ 	if (!IS_ERR(msm_host->bus_clk))
+ 		clk_disable_unprepare(msm_host->bus_clk);
++icc_disable:
++	icc_put(msm_host->path);
+ pltfm_free:
+ 	sdhci_pltfm_free(pdev);
+ 	return ret;
+@@ -1902,6 +1941,7 @@ static int sdhci_msm_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 
++	icc_put(msm_host->path);
+ 	clk_bulk_disable_unprepare(ARRAY_SIZE(msm_host->bulk_clks),
+ 				   msm_host->bulk_clks);
+ 	if (!IS_ERR(msm_host->bus_clk))
+@@ -1917,6 +1957,7 @@ static int sdhci_msm_runtime_suspend(struct device *dev)
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 
++	icc_set(msm_host->path, 0, 0);
+ 	clk_bulk_disable_unprepare(ARRAY_SIZE(msm_host->bulk_clks),
+ 				   msm_host->bulk_clks);
+ 
+@@ -1929,6 +1970,7 @@ static int sdhci_msm_runtime_resume(struct device *dev)
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 
++	sdhci_msm_icc_update(msm_host);
+ 	return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
+ 				       msm_host->bulk_clks);
+ }
