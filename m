@@ -2,100 +2,99 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09E6C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A717BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E082085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63CE320841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:04:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iTw680NP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E082085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQbza69q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63CE320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeJKVaz (ORCPT
+        id S1728495AbeJKVcN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:30:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42390 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbeJKVaz (ORCPT
+        Thu, 11 Oct 2018 17:32:13 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45273 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeJKVcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:30:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ITY0VBBx+UmjNYjEr82AVdYD2etvHDjOdOvRUCOnu+I=; b=iTw680NPXcHe4TZ783NbJmrX2
-        60eAgq6JxiKsna0otHMza+qSidI+LOKT2UbSO/A695lrUnHFzSpiwqwPKuyk5CUfjYKj3rSZPqKYV
-        nTEkIel5BspLVMlFPvNldFdq33t9pXPT0h3uKrZCmrQE95ZUhE0/7o6jA3WoETjHtZntg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAbYk-0001ie-QZ; Thu, 11 Oct 2018 14:03:26 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6A3E811223ED; Thu, 11 Oct 2018 15:03:26 +0100 (BST)
-Date:   Thu, 11 Oct 2018 15:03:26 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Ryan Case <ryandcase@chromium.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI)
- documentation
-Message-ID: <20181011140326.GD25351@sirena.org.uk>
-References: <20181002013142.209751-1-ryandcase@chromium.org>
+        Thu, 11 Oct 2018 17:32:13 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m8-v6so5470145qka.12;
+        Thu, 11 Oct 2018 07:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=HNXf9W7V/wD40YRTGMxzc7Qog2qrZ2B59zvSLziNQsI=;
+        b=kQbza69qoHg4mSxP16YrB5IA9iITCg6RyCUaJEGPqBhgWuOgVHxPp1PKl6YrepMg+k
+         2Ky2iG2tFf9GD5XYQLM3AWq7kdeMx4sBrAbIK73KSKVWRGZC48kpN+xpFBzRdI7E0b7n
+         qDZqtsCLdH0kZoiwHHP2dbBqGNifPqaV7Tjvq0Jd7VZ+yKW9RBJKiUIHQeJy5wAHoFia
+         mplmW8q5vBf+hJq5UR3Xc6ndM6g8Lp0KrJbZt6/xwPjrKxJ5w4LCBBEMXfjDdFOV3z5Q
+         9ZYs3uVYYg+aFKFyhZU6Eq05GAE7gUipblHK+UhgBe7daiVZrqqlvS0Ldy3u/YWjQ0zz
+         sinQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=HNXf9W7V/wD40YRTGMxzc7Qog2qrZ2B59zvSLziNQsI=;
+        b=f7rtLVbGJa/BVvGCZCkILTkKCwZRWkNsaC22iSnrg8VoZUjI8ZjIaXa1NpnkpIGXof
+         W3N25MX3zg7CuNpAUiykNr2Pd0vvrnh7bG55YGz7hb+EitmUzmuImkhCQMaHJFrZKTme
+         0zOWBA/lZwqb0azNtsjaDSTj1BJ0v5s47d1UpB1SrLmmNpJznWmBSYVpN2neqB0LaBGO
+         5JyCAmhhzVIiR7dKgrwk+jyyMfURhtlTu8DeYsOuGKzzZwR0fds3HcVSrmJEDKAXfvXJ
+         oAi1DPMtkpvYluMFNsJNKGCVMHE6LM4cecY0+WQHeRZ4CnKeEnhoxvFuF2PNI79bOezq
+         KdbA==
+X-Gm-Message-State: ABuFfohKoDla0kQz8XLvUWeeBy3U5ecPY5vWI86PkDm96tijzqeq/Hm8
+        53zhJtw+waQc6JZiiMkWKX27+fdfgU/shsY98aA=
+X-Google-Smtp-Source: ACcGV63j++AupoF2gZzNJxB6/TINlzmnWVJMf6zqCa0r6RSgrcyhT4ie31sK4TxfGYkCQ+icQDEF2saqwrSj7/ucbcw=
+X-Received: by 2002:a37:2b12:: with SMTP id r18-v6mr1502068qkh.343.1539266692647;
+ Thu, 11 Oct 2018 07:04:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rz+pwK2yUstbofK6"
-Content-Disposition: inline
-In-Reply-To: <20181002013142.209751-1-ryandcase@chromium.org>
-X-Cookie: Use at own risk.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 07:04:51
+ -0700 (PDT)
+In-Reply-To: <20181010182558.7034-2-krzk@kernel.org>
+References: <20181010182558.7034-1-krzk@kernel.org> <20181010182558.7034-2-krzk@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Oct 2018 16:04:51 +0200
+X-Google-Sender-Auth: h9ymsoN9iNBuwxjYtZPCfwTrL0Q
+Message-ID: <CAK8P3a2_i+iwrtiZ8o053C+7uML=ULb9oaTr56hy359X_4ZtPA@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] ARM: dts: exynos: Second round for v4.20
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/10/18, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+>   ARM: dts: exynos: Correct audio subsystem parent clock on Peach
+> Chromebooks (2018-09-24 18:55:16 +0200)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+> tags/samsung-dt-4.20-3
+>
+> for you to fetch changes up to 48ab742ce3b0312f2ee23ed825d3c8820eda7acf:
+>
+>   ARM: dts: exynos: Add pin configuration for SD write protect on Odroid XU
+> (2018-10-01 18:51:51 +0200)
+>
+> ----------------------------------------------------------------
+> Samsung DTS ARM changes for v4.20, second round
+>
+> Add proper configuration for Odroid XU SD write-protect pin.
 
---rz+pwK2yUstbofK6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pulled into next/dt, thanks!
 
-On Mon, Oct 01, 2018 at 06:31:41PM -0700, Ryan Case wrote:
-> From: Girish Mahadevan <girishm@codeaurora.org>
->=20
-> Bindings for Qualcomm Quad SPI used on SoCs such as sdm845.
-
-Please use subject lines matching the style for the subsystem.  This
-makes it easier for people to identify relevant patches.
-
---rz+pwK2yUstbofK6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/WC0ACgkQJNaLcl1U
-h9AQDAf/asGDMITdhuub89ozUv4SieeIlSiOEahee2IehmSJH2cR/mWpMHH0TF6Z
-ZSoTWpBiCDro6aZ8djGInltrUdc/NbA7RJSIYwWnTwxvrCUEVpGEMsrt3D2vPuFy
-EYbLB8ktQnbhgOKQJBq7fQ2/Z0ih/IM1EYTTj9kgLUhW/c+3jSOSusHashDihg6r
-+e4ItEFrByxAQEfRAWbiew+ylkqYJOhUBl3KCryKciu1bcKBdQ37BSY8XaSe3Sc9
-RMtUuKjE/IKHKFXtKtvWgD+sskA4UARP8ZSnTSIX5vPQKzd5lP7xOaKxCcqO7GFm
-6tjCBf6vhySDwO4DmDMUr4olw8ywkA==
-=7uB7
------END PGP SIGNATURE-----
-
---rz+pwK2yUstbofK6--
+     Arnd
