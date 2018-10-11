@@ -2,170 +2,217 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC83C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A956C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDD120645
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2574D20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:06:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EMQYVCw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDD120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gkyt5Xi1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2574D20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeJKWdX (ORCPT
+        id S1728446AbeJKWeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:33:23 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55608 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbeJKWdX (ORCPT
+        Thu, 11 Oct 2018 18:34:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51708 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728287AbeJKWeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:33:23 -0400
-Received: by mail-it1-f196.google.com with SMTP id c23-v6so13944522itd.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=q5EYi3sEo+VMLfN3sb7sUtd8lA98dKNZ3KXGrSXNCd0=;
-        b=EMQYVCw5h+veM9/Ddghv0ijNN9BOIElm/LXq0OJ13Kl2Ar7pfyee6unfaznBB4b+WV
-         qFkKbzfSnoN+yhqrCSW1PiN0coxdSmTTGR+8Bb4g6gIh+OB01yPY7gbpsnvzLySGdDfH
-         +SlMRaCLIqDEIn+OW6gVec9hKneeVt+2PRdZw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=q5EYi3sEo+VMLfN3sb7sUtd8lA98dKNZ3KXGrSXNCd0=;
-        b=rWbfnjFBBtjXpILiVNSY01DdnvxNCPTe2uWeXNEyGJxCplhN1emqjgJBZVhV+R1WB0
-         lJEJQXjvoMzwprDd+vEVLKrWFgp8HkJF1giVrSxIhw1ccGyet4ILE6BfuQyF+hcZB9sX
-         1ITSLc/GMara49eskzvjx3EBudGlHBa8BS1KjGvalHbPvAVKpmpe17xJPQ2h/rJNcKX6
-         17/QVlysrq7ZauhOFpbtIyfFeHFcU8ZTgrmCRTWGwu0JBQ4yTBgD6Hvvw2TD4B3lpuS8
-         U6hXmodcTYFedCdYIt6D7ttQiiDfuuGWL9RL9wipaiHCtvTjoQdrJLtVlvyAvDdRNGRf
-         bGFQ==
-X-Gm-Message-State: ABuFfogRBSVb5C+p0rmb2bPJlPgdQOa2fsbPfKlVYybKFyISou6y2DdW
-        yaMnkEa03Oti03xOp7o3ERS2X4HP6fKn3OdK2vLzsA==
-X-Google-Smtp-Source: ACcGV62k75YASUf4d5LzfLSjXlUdEFbBif3OmzzXZ3uM1NbsIW7rBJaSpp0aL03nyiBjMoDZFWl/Ngaq588GT9SZlUo=
-X-Received: by 2002:a02:c909:: with SMTP id t9-v6mr1607929jao.95.1539270348261;
- Thu, 11 Oct 2018 08:05:48 -0700 (PDT)
+        Thu, 11 Oct 2018 18:34:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9Qg+mRxSs68jZftvWXk66psSHf2issgdL/rZd+qWYjA=; b=Gkyt5Xi1ohxInU87YYXqWvscE
+        /OkbqR60/o58Z7eIVKC84gheOf+pKMrS5IE7pmxXteyXhadQJCWUOYZ0u2pcbhSqa7pQXAMENfP3P
+        lCGvBtN7JT9SF4cvbqQRdDMkJw6EW2+BRv2TgEu+REl0N+gWXRE80WI0moC9D3epMwO5koNzf9kUv
+        xPAx7XE04+rwbUWFLlp5OZbqLBGPSbrgPCCRUqt6nbmSNMORICxJFPq8YdoRgroOx1QstAr4uu3vY
+        pQgWQZ5FSOsq/ZlLqSNE1VmKTdK/94EZ6vBh7KRJbgTwH/1Zo7McXubNBajDQZGjzGnpRwZu35Llb
+        carrkafcg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAcVV-0004Qf-3S; Thu, 11 Oct 2018 15:04:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B5FDC20277343; Thu, 11 Oct 2018 17:04:06 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 17:04:06 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Mark Salter <msalter@redhat.com>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Ley Foon Tan <lftan@altera.com>,
+        Jonas Bonn <jonas@southpole.se>, Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>, Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH 12/18] arch/tlb: Clean up simple architectures
+Message-ID: <20181011150406.GL9848@hirez.programming.kicks-ass.net>
+References: <20180926113623.863696043@infradead.org>
+ <20180926114801.146189550@infradead.org>
+ <C2D7FE5348E1B147BCA15975FBA23075012B09A59E@us01wembx1.internal.synopsys.com>
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 08:05:07
- -0700 (PDT)
-In-Reply-To: <20181010150331.GB4844@e107155-lin>
-References: <20181003143824.13059-1-ulf.hansson@linaro.org>
- <20181003143824.13059-6-ulf.hansson@linaro.org> <20181010150331.GB4844@e107155-lin>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 11 Oct 2018 17:05:07 +0200
-Message-ID: <CAPDyKFq7bNJM5Y4y78tnOEvg7ntmYFtJoDvFH8uR2yUUK9o4HA@mail.gmail.com>
-Subject: Re: [PATCH v9 05/11] of: base: Add of_get_cpu_state_node() to get
- idle states for a CPU node
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B09A59E@us01wembx1.internal.synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10 October 2018 at 17:03, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Wed, Oct 03, 2018 at 04:38:18PM +0200, Ulf Hansson wrote:
->> The CPU's idle state nodes are currently parsed at the common cpuidle DT
->> library, but also when initializing back-end data for the arch specific CPU
->> operations, as in the PSCI driver case.
->>
->> To avoid open-coding, let's introduce of_get_cpu_state_node(), which takes
->> the device node for the CPU and the index to the requested idle state node,
->> as in-parameters. In case a corresponding idle state node is found, it
->> returns the node with the refcount incremented for it, else it returns
->> NULL.
->>
->> Moreover, for ARM, there are two generic methods, to describe the CPU's
->> idle states, either via the flattened description through the
->> "cpu-idle-states" binding [1] or via the hierarchical layout, using the
->> "power-domains" and the "domain-idle-states" bindings [2]. Hence, let's
->> take both options into account.
->>
->> [1]
->> Documentation/devicetree/bindings/arm/idle-states.txt
->> [2]
->> Documentation/devicetree/bindings/arm/psci.txt
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: Lina Iyer <ilina@codeaurora.org>
->> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
->> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->>  drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
->>  include/linux/of.h |  8 ++++++++
->>  2 files changed, 43 insertions(+)
->>
->> diff --git a/drivers/of/base.c b/drivers/of/base.c
->> index 74eaedd5b860..bf1d5fa34899 100644
->> --- a/drivers/of/base.c
->> +++ b/drivers/of/base.c
->> @@ -424,6 +424,41 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
->>  }
->>  EXPORT_SYMBOL(of_cpu_node_to_id);
->>
->> +/**
->> + * of_get_cpu_state_node - Get CPU's idle state node at the given index
->> + *
->> + * @cpu_node: The device node for the CPU
->> + * @index: The index in the list of the idle states
->> + *
->> + * Two generic methods can be used to describe a CPU's idle states, either via
->> + * a flattened description through the "cpu-idle-states" binding or via the
->> + * hierarchical layout, using the "power-domains" and the "domain-idle-states"
->> + * bindings. This function check for both and returns the idle state node for
->> + * the requested index.
->> + *
->> + * In case and idle state node is found at index, the refcount incremented for
->> + * it, so call of_node_put() on it when done. Returns NULL if not found.
->> + */
->> +struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
->
-> No strong opinion but I am wondering if it makes sense to get cpu
-> logical index and fetch the cpu of_node here to contain the refcount on
-> it within this function while we are trying to consolidate. I do see
-> that may not be so useful in psci.c but keeping refcount for cpu of_node
-> here keeps the user free from that.
+On Wed, Oct 03, 2018 at 05:03:50PM +0000, Vineet Gupta wrote:
+> On 09/26/2018 04:56 AM, Peter Zijlstra wrote:
+> > There are generally two cases:
+> >
+> >  1) either the platform has an efficient flush_tlb_range() and
+> >     asm-generic/tlb.h doesn't need any overrides at all.
+> >
+> >  2) or an architecture lacks an efficient flush_tlb_range() and
+> >     we override tlb_end_vma() and tlb_flush().
+> >
+> > Convert all 'simple' architectures to one of these two forms.
+> >
 
-I see your point.
+> > --- a/arch/arc/include/asm/tlb.h
+> > +++ b/arch/arc/include/asm/tlb.h
+> > @@ -9,29 +9,6 @@
+> >  #ifndef _ASM_ARC_TLB_H
+> >  #define _ASM_ARC_TLB_H
+> >  
+> > -#define tlb_flush(tlb)				\
+> > -do {						\
+> > -	if (tlb->fullmm)			\
+> > -		flush_tlb_mm((tlb)->mm);	\
+> > -} while (0)
+> > -
+> > -/*
+> > - * This pair is called at time of munmap/exit to flush cache and TLB entries
+> > - * for mappings being torn down.
+> > - * 1) cache-flush part -implemented via tlb_start_vma( ) for VIPT aliasing D$
+> > - * 2) tlb-flush part - implemted via tlb_end_vma( ) flushes the TLB range
+> > - *
+> > - * Note, read https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.org_lkml_2004_1_15_6&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=c14YS-cH-kdhTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=5jiyvgRek4SKK5DUWDBGufVcuLez5G-jJCh3K-ndHsg&s=7uAzzw_jdAXMfb07B-vGPh3V1vggbTAsB7xL6Kie47A&e=
+> > - */
+> > -
+> > -#define tlb_end_vma(tlb, vma)						\
+> > -do {									\
+> > -	if (!tlb->fullmm)						\
+> > -		flush_tlb_range(vma, vma->vm_start, vma->vm_end);	\
+> > -} while (0)
+> > -
+> > -#define __tlb_remove_tlb_entry(tlb, ptep, address)
+> > -
+> >  #include <linux/pagemap.h>
+> >  #include <asm-generic/tlb.h>
+> 
+> LGTM per discussion in an earlier thread. However given that for "simpler" arches
+> the whole series doesn't apply can you please beef up the changelog so I don't go
+> scratching my head 2 years down the line. It currently describes the hows of
+> things but not exactly whys: shift_arg_pages missing tlb_start_vma,
+> move_page_tables look dodgy, yady yadda ?
 
-However, I am hesitating doing that change, as it would be a waste for
-the psci case, but I also think that it may becomes a bit less
-straight forward to use this helper function.
+Right you are. Thanks for pointing out the somewhat sparse Changelog;
+typically I end up kicking myself a few years down the line.
 
-Although, no strong opinions from my side either, but since Rob is
-happy with this, there is no need to change it, I think.
+I think I will in fact change the implementation a little and provide a
+symbol/Kconfig to switch the default implementation between
+flush_tlb_vma() and flush_tlb_mm().
 
->
-> I am fine as it is if there are reasons not to do that.
->
+That avoids some of the repetition. But see here a preview of the new
+Changelog, does that clarify things enough?
 
-Right.
+---
+Subject: arch/tlb: Clean up simple architectures
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Tue Sep 4 17:04:07 CEST 2018
 
-Kind regards
-Uffe
+The generic mmu_gather implementation is geared towards range tracking
+and provided the architecture provides a fairly efficient
+flush_tlb_range() implementation (or provides a custom tlb_flush()
+implementation) things will work well.
+
+The one case this doesn't cover well is where there is no (efficient)
+range invalidate at all. In this case we can select
+MMU_GATHER_NO_RANGE.
+
+So this reduces to two cases:
+
+ 1) either the platform has an efficient flush_tlb_range() and
+    asm-generic/tlb.h doesn't need any overrides at all.
+
+ 2) or an architecture lacks an efficient flush_tlb_range() and
+    we need to select MMU_GATHER_NO_RANGE.
+
+Convert all 'simple' architectures to one of these two forms.
+
+alpha:	    has no range invalidate -> 2
+arc:	    already used flush_tlb_range() -> 1
+c6x:	    has no range invalidate -> 2
+hexagon:    has an efficient flush_tlb_range() -> 1
+            (flush_tlb_mm() is in fact a full range invalidate,
+	     so no need to shoot down everything)
+m68k:	    has inefficient flush_tlb_range() -> 2
+microblaze: has no flush_tlb_range() -> 2
+mips:	    has efficient flush_tlb_range() -> 1
+	    (even though it currently seems to use flush_tlb_mm())
+nds32:	    already uses flush_tlb_range() -> 1
+nios2:	    has inefficient flush_tlb_range() -> 2
+	    (no limit on range iteration)
+openrisc:   has inefficient flush_tlb_range() -> 2
+	    (no limit on range iteration)
+parisc:	    already uses flush_tlb_range() -> 1
+sparc32:    already uses flush_tlb_range() -> 1
+unicore32:  has inefficient flush_tlb_range() -> 2
+	    (no limit on range iteration)
+xtensa:	    has efficient flush_tlb_range() -> 1
+
+Note this also fixes a bug in the existing code for a number
+platforms. Those platforms that did:
+
+  tlb_end_vma() -> if (!fullmm) flush_tlb_*()
+  tlb_flush -> if (full_mm) flush_tlb_mm()
+
+missed the case of shift_arg_pages(), which doesn't have @fullmm set,
+nor calls into tlb_*vma(), but still frees page-tables and thus needs
+an invalidate. The new code handles this by detecting a non-empty
+range, and either issuing the matching range invalidate or a full
+invalidate, depending on the capabilities.
+
+Cc: Nick Piggin <npiggin@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Michal Simek <monstr@monstr.eu>
+Cc: Helge Deller <deller@gmx.de>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Ley Foon Tan <lftan@altera.com>
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Richard Kuo <rkuo@codeaurora.org
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
