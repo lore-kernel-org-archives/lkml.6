@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B91C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5663DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 290C12098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DBC321470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNOYtbhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 290C12098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDiWo952"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBC321470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbeJKXH0 (ORCPT
+        id S1730009AbeJKXH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:07:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37076 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:07:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:07:24 -0400
+        id S1726721AbeJKXH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:07:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8739213A2;
-        Thu, 11 Oct 2018 15:39:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BAA821470;
+        Thu, 11 Oct 2018 15:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272381;
-        bh=Ewz1bHPZO7Zl+A3Q+ag7hv+1whRFw1/Cwj5BKQlr/RI=;
+        s=default; t=1539272383;
+        bh=aC07MhHE9x88qhvU2XhtFhC7hU8KCUv4h3+Rl3bxtQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pNOYtbhnR5p5Non/VqQ9wCGuJ9oWo0p2eQugxvcSf3UoIY8QRSmkUf/xccSVJYdfd
-         8GyhaXbbBeOGOvOWGaaFUYtl0fG6NCe/Xpz5LLtr/3MBqMRVoojZ/x3CDSESh2CkDy
-         ro7xrsMtrPDqWbVQ+7UdcwG6H+Ns4ph8HGtjJWPc=
+        b=TDiWo952vvkEj4yJNTklHnLB90cKoAI/LY6fNXL5W91ymOSZ+BSbrPAVg3AgJngSl
+         Awv0+BGz1eTKYE1FMB6d3f+nVPcNayr8w69B+sRr4G7hcDW2m07XSTLQ4ERnqamEyo
+         ID7Y2Vd9A5YkEtc4hVUldTffvDcJMMbuELReBVl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linux-hexagon@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 089/120] hexagon: modify ffs() and fls() to return int
-Date:   Thu, 11 Oct 2018 17:34:30 +0200
-Message-Id: <20181011152553.492490731@linuxfoundation.org>
+Subject: [PATCH 3.18 090/120] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
+Date:   Thu, 11 Oct 2018 17:34:31 +0200
+Message-Id: <20181011152553.531483562@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,56 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 5c41aaad409c097cf1ef74f2c649fed994744ef5 ]
+[ Upstream commit 6ad569019999300afd8e614d296fdc356550b77f ]
 
-Building drivers/mtd/nand/raw/nandsim.c on arch/hexagon/ produces a
-printk format build warning.  This is due to hexagon's ffs() being
-coded as returning long instead of int.
+After system suspend, sometimes the r8169 doesn't work when ethernet
+cable gets pluggued.
 
-Fix the printk format warning by changing all of hexagon's ffs() and
-fls() functions to return int instead of long.  The variables that
-they return are already int instead of long.  This return type
-matches the return type in <asm-generic/bitops/>.
+This issue happens because rtl_reset_work() doesn't get called from
+rtl8169_runtime_resume(), after system suspend.
 
-../drivers/mtd/nand/raw/nandsim.c: In function 'init_nandsim':
-../drivers/mtd/nand/raw/nandsim.c:760:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long int' [-Wformat]
+In rtl_task(), RTL_FLAG_TASK_* only gets cleared if this condition is
+met:
+if (!netif_running(dev) ||
+    !test_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags))
+    ...
 
-There are no ffs() or fls() allmodconfig build errors after making this
-change.
+If RTL_FLAG_TASK_ENABLED was cleared during system suspend while
+RTL_FLAG_TASK_RESET_PENDING was set, the next rtl_schedule_task() won't
+schedule task as the flag is still there.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: linux-hexagon@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Patch-mainline: linux-kernel @ 07/22/2018, 16:03
-Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
+So in addition to clearing RTL_FLAG_TASK_ENABLED, also clears other
+flags.
+
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/hexagon/include/asm/bitops.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/hexagon/include/asm/bitops.h
-+++ b/arch/hexagon/include/asm/bitops.h
-@@ -211,7 +211,7 @@ static inline long ffz(int x)
-  * This is defined the same way as ffs.
-  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
-  */
--static inline long fls(int x)
-+static inline int fls(int x)
- {
- 	int r;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -749,7 +749,7 @@ struct rtl8169_counters {
+ };
  
-@@ -232,7 +232,7 @@ static inline long fls(int x)
-  * the libc and compiler builtin ffs routines, therefore
-  * differs in spirit from the above ffz (man ffs).
-  */
--static inline long ffs(int x)
-+static inline int ffs(int x)
- {
- 	int r;
+ enum rtl_flag {
+-	RTL_FLAG_TASK_ENABLED,
++	RTL_FLAG_TASK_ENABLED = 0,
+ 	RTL_FLAG_TASK_SLOW_PENDING,
+ 	RTL_FLAG_TASK_RESET_PENDING,
+ 	RTL_FLAG_TASK_PHY_PENDING,
+@@ -7523,7 +7523,8 @@ static int rtl8169_close(struct net_devi
+ 	rtl8169_update_counters(dev);
  
+ 	rtl_lock_work(tp);
+-	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
++	/* Clear all task flags */
++	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
+ 
+ 	rtl8169_down(dev);
+ 	rtl_unlock_work(tp);
+@@ -7679,7 +7680,9 @@ static void rtl8169_net_suspend(struct n
+ 
+ 	rtl_lock_work(tp);
+ 	napi_disable(&tp->napi);
+-	clear_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
++	/* Clear all task flags */
++	bitmap_zero(tp->wk.flags, RTL_FLAG_MAX);
++
+ 	rtl_unlock_work(tp);
+ 
+ 	rtl_pll_power_down(tp);
 
 
