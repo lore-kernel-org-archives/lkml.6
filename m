@@ -2,223 +2,74 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4B9C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8F1C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC7A720659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7A720659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 49FCF20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FCF20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeJKSqt (ORCPT
+        id S1728479AbeJKSrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:46:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60207 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726135AbeJKSqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:46:49 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1B3E22D6FD4AA;
-        Thu, 11 Oct 2018 19:20:00 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 11 Oct
- 2018 19:19:52 +0800
-Subject: Re: [PATCH] staging: erofs: harden inode lookup for 32-bit platforms
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>
-References: <20181009140713.29629-1-gaoxiang25@huawei.com>
- <20181011084413.3sovzgsj6pzyrml7@mwanda>
- <b6baf932-64e5-c902-7e7f-02094b96a8d6@huawei.com>
- <20181011101807.hydncp6nhzjlzznr@mwanda>
- <6318156d-4a3d-e5d0-93c1-90be2345565b@huawei.com>
- <20181011111204.zhxh5tw66pdxb3zh@mwanda>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <97a7da46-212f-f1d3-548f-44cf8d9ee36d@huawei.com>
-Date:   Thu, 11 Oct 2018 19:19:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 11 Oct 2018 14:47:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:35954 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeJKSrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 14:47:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 629157A9;
+        Thu, 11 Oct 2018 04:20:19 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CA6B3F5BC;
+        Thu, 11 Oct 2018 04:20:16 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 12:20:13 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        ulf.hansson@linaro.org, khilman@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181011112013.GC32752@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20181011111204.zhxh5tw66pdxb3zh@mwanda>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Thu, Oct 11, 2018 at 02:50:54AM +0530, Raju P.L.S.S.S.N wrote:
+> Use cpu hotplug callback mechanism to attach/dettach the cpu in
+> the cpu power domain. During cpu hotplug callback registration,
+> the starting callback is invoked on all online cpus. So there is
+> no need to attach from device probe.
+>
 
-On 2018/10/11 19:12, Dan Carpenter wrote:
-> On Thu, Oct 11, 2018 at 06:49:57PM +0800, Gao Xiang wrote:
->> Hi Dan,
->>
->> On 2018/10/11 18:18, Dan Carpenter wrote:
->>> On Thu, Oct 11, 2018 at 05:46:26PM +0800, Gao Xiang wrote:
->>>>
->>>>
->>>> On 2018/10/11 16:44, Dan Carpenter wrote:
->>>>> On Tue, Oct 09, 2018 at 10:07:13PM +0800, Gao Xiang wrote:
->>>>>> This patch introduces inode hash function, test and set callbacks,
->>>>>> and iget5_locked to find the right inode for 32-bit platforms.
->>>>>>
->>>>>
->>>>> The way I read this changelog, we're trying to deal with corrupt file
->>>>> systems?  Is that correct?  Presumably in the current code it could lead
->>>>> to a Oops or something?
->>>>
->>>> No, this commit isn't trying to deal with corrupt file systems.
->>>> In EROFS, the nid is not continuous and it represents the inode offset
->>>> inode offset = nid * 32.
->>>> Therefore the nid is 64-bit both for 32-bit and 64-bit platforms. However,
->>>> i_ino is 'unsigned long', which means for 32-bit platforms, i_ino is not enough
->>>> to contain the nid.
->>>>
->>>> Therefore, we should use iget5_locked for this case.
->>>
->>> I guess what I'm saying is, what are the user visible effects of this
->>> patch?  It's hard for me to tell from the patch description.  Could you
->>> please re-write the description and send a v2?
->>
->> Sorry for my just hurry reply. It seems I really misunderstood your point :-(
->>
->> If all nids are less than 32-bit, the user will see the correct inode/nid number
->> for all 32-bit platforms, but if some nids are greater than 32-bit, it could be
->> collisions without this patch for 32-bit platforms.
->>
->> This patch switch the inode number by XOR the high 32-bit and the low 32-bit,
->> use customized tester to avoid collisions for 32-bit platforms.
->>
->> I will send v2 to fix the commit message...but it seems Greg is already merged in
->> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-testing&id=2abd7814138774eb56319e9dcc0abd08ece45424
->>
-> 
-> Oh.  Then that's fine then.  If Greg already merged it, then it's too
-> late to change.  Thanks for the explanation, though.
+To be more explicit, NACK to this series(patches 4-8 to be more specific)
+unless you provide details on:
 
-I appended the v2 patch in the end of this reply for reference...
+1. Why this is not in PSCI implementation ?
+2. If PSCI is used on this platform, how does it work/co-exist ?
+3. Is this a shortcut approached taken to bypass the CPU genpd attempts
+   from Lina/Ulf ?
 
-Thanks,
-Gao Xiang
-
-> 
-> regards,
-> dan carpenter
-> 
-
-
-From 175eb3f1c6e1cddf8292853ab0fb7644320c3ae2 Mon Sep 17 00:00:00 2001
-From: Gao Xiang <gaoxiang25@huawei.com>
-Date: Mon, 1 Oct 2018 12:32:55 +0800
-Subject: [PATCH v2] staging: erofs: harden inode lookup for 32-bit platforms
-
-Each erofs inode has a unique 64-bit nid to distinguish from others.
-However, the inode number is usually defined as `unsigned long',
-which means some collisions could happen if we directly use iget_locked
-for 32-bit platforms.
-
-Therefore, this patch introduces a inode hash function, test and set
-callbacks, and iget5_locked to avoid potential collisions
-for 32-bit platforms.
-
-In addition, if the value of a nid is greater than 32-bit, users from
-32-bit platforms will see XOR-ed inode numbers after this patch.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-
-change log v2:
- - add more infos to the commit message as pointed out by Dan Carpenter.
-
-Thanks,
-Gao Xiang
-
- drivers/staging/erofs/inode.c    | 37 ++++++++++++++++++++++++++++++++++++-
- drivers/staging/erofs/internal.h |  9 +++++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index da8693a7c3d3..04c61a9d7b76 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -232,10 +232,45 @@ static int fill_inode(struct inode *inode, int isdir)
- 	return err;
- }
- 
-+/*
-+ * erofs nid is 64bits, but i_ino is 'unsigned long', therefore
-+ * we should do more for 32-bit platform to find the right inode.
-+ */
-+#if BITS_PER_LONG == 32
-+static int erofs_ilookup_test_actor(struct inode *inode, void *opaque)
-+{
-+	const erofs_nid_t nid = *(erofs_nid_t *)opaque;
-+
-+	return EROFS_V(inode)->nid == nid;
-+}
-+
-+static int erofs_iget_set_actor(struct inode *inode, void *opaque)
-+{
-+	const erofs_nid_t nid = *(erofs_nid_t *)opaque;
-+
-+	inode->i_ino = erofs_inode_hash(nid);
-+	return 0;
-+}
-+#endif
-+
-+static inline struct inode *erofs_iget_locked(struct super_block *sb,
-+					      erofs_nid_t nid)
-+{
-+	const unsigned long hashval = erofs_inode_hash(nid);
-+
-+#if BITS_PER_LONG >= 64
-+	/* it is safe to use iget_locked for >= 64-bit platform */
-+	return iget_locked(sb, hashval);
-+#else
-+	return iget5_locked(sb, hashval, erofs_ilookup_test_actor,
-+		erofs_iget_set_actor, &nid);
-+#endif
-+}
-+
- struct inode *erofs_iget(struct super_block *sb,
- 	erofs_nid_t nid, bool isdir)
- {
--	struct inode *inode = iget_locked(sb, nid);
-+	struct inode *inode = erofs_iget_locked(sb, nid);
- 
- 	if (unlikely(inode == NULL))
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 5096b27bcf0d..57575c7f5635 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -517,6 +517,15 @@ erofs_get_inline_page(struct inode *inode,
- }
- 
- /* inode.c */
-+static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
-+{
-+#if BITS_PER_LONG == 32
-+	return (nid >> 32) ^ (nid & 0xffffffff);
-+#else
-+	return nid;
-+#endif
-+}
-+
- extern struct inode *erofs_iget(struct super_block *sb,
- 	erofs_nid_t nid, bool dir);
- 
--- 
-2.14.4
-
+--
+Regards,
+Sudeep
