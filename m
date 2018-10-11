@@ -2,131 +2,141 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804FFC28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8625BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35CAA20644
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 301DB2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:47:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hWjGC38R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35CAA20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Eu1iZYTU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301DB2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeJLHOk (ORCPT
+        id S1727061AbeJLHRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:14:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:36909 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbeJLHOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:14:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42WSHy2fG9z9s8J;
-        Fri, 12 Oct 2018 10:45:01 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539301502;
-        bh=EWvEQtX7e2SqwjqkAvR4VCZ+gmnAqgCv4hloMnkx+t8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hWjGC38RBaH4Bn38+gTnGwsGHDx3NsOAf6/blmfOwwyZMEKoS8z1GVdqQkR6O1QDP
-         4SaBqyl+SkRQcYeN/MeJLUyOEqQdYWfcslL0YsIeTmNMP+WokgYhn2GR/2DzD3V08a
-         Dr6GtZEzqi1tJm6pAqyNawhGVk3pn4z24laoGWMAWijT5Ppkk1f3W7r+y9X0OXyNJ5
-         4LOTr/lfuE/KODr14MANpLlVGM3OoW+qqelo2h4MR3JiWE4EvDk101253bUgZhiXw6
-         VJFW19Iof25xmeU2JpByqxPRfuXXVw0alfleMB1Gm3kQHWAY87iP5RGId7XqMW4cIL
-         bqWIRyCX6mimg==
-Date:   Fri, 12 Oct 2018 10:45:01 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arthur Kiyanovski <akiyano@amazon.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20181012104501.063dcc4a@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0DFU4xM79nqYEe4lM7o4//4"; protocol="application/pgp-signature"
+        Fri, 12 Oct 2018 03:17:20 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:48820 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725830AbeJLHRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 03:17:20 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie3.idc.renesas.com with ESMTP; 12 Oct 2018 08:47:41 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id A8E514D060;
+        Fri, 12 Oct 2018 08:47:41 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,370,1534777200"; 
+   d="scan'208";a="294905264"
+Received: from mail-os2jpn01lp0147.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.147])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 12 Oct 2018 08:47:41 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x/zIuLEeSZLQU+oB0ngKSiaKn7cloBhCgR6uMl0wHCY=;
+ b=Eu1iZYTUUyouFrMS/JRgxMu3VTYcxLrh9UkKSX9szV7qAjUFgwWTLmlCDJupBU46ryuwrDhcoZlvEDLmLQOJQZO7U2Pk4lmr9qu2NV+YuvJA+IqfH/ePg359IjDlPUz53qU1kUYIzXbA4pHuRcpIsoAR0B1a40hwuMVXdxIwSYI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSAPR01MB1859.jpnprd01.prod.outlook.com (2603:1096:603:2d::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Thu, 11 Oct 2018 23:47:39 +0000
+Message-ID: <871s8wcatk.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     <jiada_wang@mentor.com>
+Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH linux-next v3 1/1] ASoC: rsnd: ssi: Request dedicated dma channels for busif0 to 7
+In-Reply-To: <20181010091725.10016-1-jiada_wang@mentor.com>
+References: <20181010091725.10016-1-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Thu, 11 Oct 2018 23:47:39 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: TY2PR06CA0009.apcprd06.prod.outlook.com
+ (2603:1096:404:42::21) To OSAPR01MB1859.jpnprd01.prod.outlook.com
+ (2603:1096:603:2d::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 34132878-595a-4a7e-abe4-08d62fd3edee
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB1859;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;3:SIvHgCNFOVV51QqoZ4YFZ15QKox7ZWp6ULmKWbm3lLc/BVAeWOjzM9zPPbasrKw8vUMvKKonCN1m9eg/1C7723L2x5Ozd9872QDANfKgTqjA9B6nxmABu/+CJJpJgb6hrrTDPaoloNhlAF8bZmTnad3AToaYPtHZ5CvcuI93HzaBs++DwTMH7b/EDkDx81by/yx8LekHbxxHRIyuIN2ciNwfwFHFSde3jAoQ6gacDZlFVbr089yAxKUPhNlWcHsY;25:3w8MvjXNc6FrNfohGGDnjI+WEJojPaZKw2Kr4LW/LIB2weypJbgdtyNegb1Hy6g/riTh5b04I6n4j2wTo5WaoBKdu6s1yThz+ftfuRtfy6RHZ60/07L6bG0FhydIF71/u93/u+4ginIMEvv/x/HryBloIWf5px8iX8rqhHTebrZ6uVXSWAOxdgLskfRCV+yDWv55P2bXrA3SujF5OaWBf+pTBJdWjFQUnryV8oLWkLAu9+STpqn8ohVoUyAChpcSGEV15tqMNzRG0+8V5cNLQtsc9usUq4KrimZQL3g/ekHCGfkLETru9Qkq+T0UyaMY5qAn2qm4cD7nWsf6/464xw==;31:TgUKh9c+tOmTjdsoU1g9ZZTuTaeLmY+fqrsx+0KRAKTDuyyEWNCgVbfa8OBy8SGKx6qpsqN26dzkFS3yz0uUTg4c0Azjzrwy+45OBOUwJwsFY29vOM9R33bvt3fDem7PjTc3vWfwu80wHLnxMyvmzuOAqGnNA/fgeOIbK/X6R6hYpBfJraf1RKqvXqriQn2kUIb6cek7OiosVWSRu/27YFhdy+WzrIHwq5uYeZEZDg4=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB1859:
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;20:No4xHNXoIeQQfo3FMnxtK5qso9VG40tMDsux8iAyiFX8ts+1dL1OdhJsMVO/fBAlGkF+H4z5iztKyXZVz4lj6+R2c3+HK9kKejBwCvPcKoNAGWycGpDVafyD7eXsDGNiW01Zpc07gPf2Lc/FHMEJEII7rkg0+43DQd2lf1H86E/uXRFurfr8WGV3AYfzrbYxfHKqPt+Ik4PImvuPpmDrUsBOFD7/d/1e0v2LVmV5BEF9lhG1TxjLXksiPgA25dqm2Xbz3ckU0TK1jGqq13TJYtyFtBJykhPQjlypNBkQ0cKEhlGrJidA4CDXIVl2TJLpypaLak6iku6pSK4Rk08lb8hpnCmcCGEWnwqWkuQgiYkHKAPUN1llyX85VIynZsYOXGz0L8KPc1GkRxAr7hq0ylkPAvt4sv6HLFd3WlON+ftY/A3dnyqevgJscJIPF6Qyws2T5xa8vkZhhxOpPcykCvX7zRTa0m0Ug2Mx0BGG/ATPnaJ3grm5YGv72SAp7U6P;4:izf+35qMpVRWx1VwJQiltfRhnpgUPurQ8gabqVdHSQGRmWkr8/2Gvp6+Cu4GjnAox2Yc25DAe3NJM6LqrjkS5IGde8mEwPeSXRWW0dsLCbn4ssnDbNB7Kh8smxMW+QJ8NNhlwFXx/Cq9A42YIHa68Lu5xL8OxwZxS53qEwsvpMDBgHN5KSKlZViWdnFCdjEwka9yY+cCBQTrHhMwjVhn8Qy+aeYA8wFBYi7N1pKMHTTit6iH1up24VA3FOjhkkjMHGQo+qlaEQVMJCsh/DAL0A==
+X-Microsoft-Antispam-PRVS: <OSAPR01MB1859536FA93A1524EE3ECC70D4E10@OSAPR01MB1859.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991067);SRVR:OSAPR01MB1859;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB1859;
+X-Forefront-PRVS: 08220FA8D6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(366004)(136003)(39860400002)(189003)(199004)(76176011)(36756003)(11346002)(446003)(956004)(2616005)(14444005)(229853002)(25786009)(486006)(53936002)(5660300001)(7696005)(6916009)(52116002)(39060400002)(86362001)(386003)(478600001)(4326008)(6486002)(97736004)(69596002)(316002)(3846002)(6116002)(53416004)(58126008)(54906003)(81166006)(81156014)(47776003)(6246003)(8676002)(8936002)(16586007)(23726003)(66066001)(2351001)(26005)(16526019)(186003)(476003)(305945005)(50466002)(7736002)(106356001)(68736007)(105586002)(2906002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1859;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB1859;23:EizOAIvb4XwTsyC+2dLevMPgefxFygCZ3Ll1U65/g?=
+ =?us-ascii?Q?dHSiDHiwVKeYqSw02A7inntMrV+lU0PLqFbYZA6xav9c0fb42ucpVTFixAKN?=
+ =?us-ascii?Q?F+OGBRyh87+G/klgKHklcjDsDouWQSZuCcDCdw1P5eSmK4+crTWi5jH3KKur?=
+ =?us-ascii?Q?lvQOc+7zxo3DDSMkxIe6WipjtlS8IClFD2byIVFvTbjauV0dJYpOtkxjjxUj?=
+ =?us-ascii?Q?RMbdEn1u+h9cJhc9N6tUPGQOml1lA8siQ2S9wPjMaD7qbs232jfFKI7LBGjI?=
+ =?us-ascii?Q?qb0FlqSP1E46Z5LU4WDHIUed0mERwXaUDhWyOIYfZ6p7wgQV3ynD2KnU16Ft?=
+ =?us-ascii?Q?UmFlOGFbUlxgpHt1leEc2ITtWiam0iR0FVTp7rLJRMrXjJ4DICjRYwXT4XM2?=
+ =?us-ascii?Q?1yy9YWirzhs2yog0Hv5usmdbkNVUeyTuMwT6dsdD7VK2PJ1w9pu57qpq45bW?=
+ =?us-ascii?Q?RqcCV8S/YKZMcdbi3Gc6TNERt3ALQaxps21FaMyFrVwXvRMKTPS1pZACBn2z?=
+ =?us-ascii?Q?8+Q7LRIvgzR8v+yvvYe9t6XuuoWq2uwHwQbpScE+4QqKQlqqj0JXjvEFMucn?=
+ =?us-ascii?Q?8evl6zp7uWkoKpaK0mSe0ATiRbYwaxI9WLWtd4dBoBxQJGxP3rMAe8/s1yxp?=
+ =?us-ascii?Q?HzC/MYs8Y6XHUxaMG0FLry4y31oDFWv1ifCkVCCXDYI2285doYTMyGYRfikk?=
+ =?us-ascii?Q?z0BSye6eLAfQEwqF2vU7H9nLnkMgmGR96HzR9o8lrVT9Bl2ZfgK2KiM9wK+F?=
+ =?us-ascii?Q?jYvhtlQkH4bx+sa/Db7/MKkv3ITyC4+G+iEeDTT8jq2UxjV6+nGPRaNRDBw7?=
+ =?us-ascii?Q?H1q0WHWAlHDcBUw1DXJMJf5mYNkWGjoRQYPkx/Wbdvqf+rMunedfdrwd4Nul?=
+ =?us-ascii?Q?vNBb0K0EPadsGqlUcBl7yssdjWvbAKi5ynU+g2HcVwQoDWGd9Rtoa9Gtd3mP?=
+ =?us-ascii?Q?f0a32k/fcVXwUS8INpLzVLz4LQLbcdVPiG1tDkiuqNsm/b1dgwNjx8FtaMPb?=
+ =?us-ascii?Q?YJCpU/xFpZWfxfNvEVenBuL5Capv3uQtE+doRwOQBE435cc5qmRqis8t8Hhl?=
+ =?us-ascii?Q?Zqa211cNbRi7vHaF4mGYg42Gxx6WPxAkSnI1rNBjDjCXqI3DmFiWcKbIP8Jt?=
+ =?us-ascii?Q?uoLyYTlFRp5t1o/NIfii8Il2VuyXXiGZcE2+sDlPP762kMwfhbvfYNFQVcZF?=
+ =?us-ascii?Q?neuH5LR9n1UzHij31+jpeb0bM/yp8aFZ1W1s4BBSMVvf6iDJmOveyLFGxkgB?=
+ =?us-ascii?Q?GvjQGKQ3Zy4ARyVjgqaBgSTJmrNn98VKSPuEdnpYE7ezmBNXdKzeB067eCSI?=
+ =?us-ascii?Q?EeGEBpGGyoRhL5iF38r20M=3D?=
+X-Microsoft-Antispam-Message-Info: lIT5JYfU1ngJabp45gq68I3pVZAiyaw3YzF0mdHcoOuX21UAs1sCeHVLLwW5l3b8IU3kcgPCCXdWx9coFFL4hm3CUVq++T6xLlbimBm6MkZMZC9mLxm4hu4gvX7jLIcIlkP6TG5tXOmEpeAQJq+J2hza19YDd9ZdBT9CGpeGs3iBGpMV1HPByIygNKV+weflRd7itovM2CWm9KY0OM7BJgyxNOHFK5X95TDAa+HzqrmDU2s0TyaQc/X865Caa2XF3fLq5T2A1IzqRmIbEeB9jO1nDBvlPrZYunQid9t9RzTq4YbZNUbEptcyVumssM3Ge/DXzioGLtlP/z/Ge+W/jtw9uB+jqSo9JCVkS1TmCTU=
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;6:Wmh1MpuXnhB5hCK/1DyuvGn1DHQ0u/VbQvlnskIM8tV549qRVTOkN6Euka9N+ya0Py7U1CAUs93Nph0hmAtpBg4PL02qcUNgSqpBS2jqObA75ZvzoCjU7DFvZ1mWuUnz1YhU97RerIH4Bqjto7ZReA9wFA/dG22PO/uvFCtCZYz2s9qf62owdlt3he8kOAZVWhxPiXZpDk0El07F9JxJ69vzoKGhZhvi3TwEaO6SW/Kxmg9ChDndpENHHtEoUGLwpGFHBWe5XWYLYGQg/M0GAuU786MUhjgPOryKCJ3c1H/KntMBTC0dfWLEPv7pizOhVMacxAduJUSCbxLVF45TcpfjlRqKd++yNbIO8w1sd2uWXqCm73RYV3lrEVXriHXqssBwIS0bPDR5R0Z4NOcScfGe+cgtU3rJ6Y8soUbfivSjGJd42K0ey9jylkNdFX4tB4rW/3K7uGjp8ZF6aHIijQ==;5:26/ekc8tGdu5bW5M20dUSxC6uHV48qeKVW0M+r2V1oLmkzGU2sPs0Q2PHcyJPTz4reUdH9pK6/qC6afhP9moRPeu9YiHRU9J81oOsVrGRFPlmglfh8A42IsSXyN5nDR/W3xmLOVtFC7zmtPfs66Nl29tZqeELOk1/87UVfwB9yM=;7:VcOg9MAOCoL62p8CHX+1T0eTqEOJvcoFyTLsxWYacB/WbTu7xEJIWAzT98nvhe6+4Ppj9RUvXJ3q81KaArO9V/HvTT/yD6iYv+ROMl/8T/LrNOq05SojDpWpXlHY0feRjdJ/ogxa4RwN8mExOJt9qbx/WJCc4ejPyCfWVq/Dgi6ejXYp4EJb104rbSKfaB90lj5xF2pjidBDTWeS4GBQkswEWJxUDgb5Gma6XR/QOpgRuQSB9Z+UVizUIIssv4Tc
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;20:0DSoyJl99/yOzA3iWI3nEIY79eANDJ4WD1n0WmqOtW/3S02g/28DLHL2rGVpwYxvnYAXxcBI+PJ/X6UyCcJLUzjxeoVx3t6sI146L7oRLY8BXE9fmBJrs/XbFBDbCy+1Sdbe+92TwUf5Hgp05i8Xk1fzmRI1nkJENnySlkVjx48=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2018 23:47:39.4329 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34132878-595a-4a7e-abe4-08d62fd3edee
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1859
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0DFU4xM79nqYEe4lM7o4//4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi
 
-Today's linux-next merge of the net-next tree got a conflict in:
+> Currently ssi driver only requests dma channel for SSI_0, with
+> naming of 'rxu/txu', which is used to transfer data to/from busif0.
+> But for GEN2/GEN3, there are also busif1 ~ busif7, which need to
+> be used when SSI works in TDM Split/Ex-Split mode.
+> 
+> This patch adds support to firstly try to request busif indexed
+> dma channel with naming "rxu[busif]/txu[busif]", if these dma channel
+> don't exist, then try to request 'rxu/txu' dma channel to keep
+> compatibility with platform hasn't had device-tree updated.
+> 
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
 
-  drivers/net/ethernet/amazon/ena/ena_eth_com.c
+In my understanding, we agreed that we will have new "ssiu" on DT.
+This means "ssi" side expansion is no longer needed.
 
-between commit:
+Of course we need to consider about compatibility then.
 
-  248ab77342d0 ("net: ena: fix auto casting to boolean")
-
-from the net tree and commit:
-
-  cb36bb36e1f1 ("net: ena: use CSUM_CHECKED device indication to report skb=
-'s checksum status")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/amazon/ena/ena_eth_com.c
-index 2b3ff0c20155,6f8e15b9b3cf..000000000000
---- a/drivers/net/ethernet/amazon/ena/ena_eth_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_eth_com.c
-@@@ -245,11 -349,14 +349,14 @@@ static inline void ena_com_rx_set_flags
-  		(cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L4_PROTO_IDX_MASK) >>
-  		ENA_ETH_IO_RX_CDESC_BASE_L4_PROTO_IDX_SHIFT;
-  	ena_rx_ctx->l3_csum_err =3D
- -		(cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L3_CSUM_ERR_MASK) >>
- -		ENA_ETH_IO_RX_CDESC_BASE_L3_CSUM_ERR_SHIFT;
- +		!!((cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L3_CSUM_ERR_MASK) >>
- +		ENA_ETH_IO_RX_CDESC_BASE_L3_CSUM_ERR_SHIFT);
-  	ena_rx_ctx->l4_csum_err =3D
- -		(cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_ERR_MASK) >>
- -		ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_ERR_SHIFT;
- +		!!((cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_ERR_MASK) >>
- +		ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_ERR_SHIFT);
-+ 	ena_rx_ctx->l4_csum_checked =3D
-+ 		!!((cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_CHECKED_MASK) >>
-+ 		ENA_ETH_IO_RX_CDESC_BASE_L4_CSUM_CHECKED_SHIFT);
-  	ena_rx_ctx->hash =3D cdesc->hash;
-  	ena_rx_ctx->frag =3D
-  		(cdesc->status & ENA_ETH_IO_RX_CDESC_BASE_IPV4_FRAG_MASK) >>
-
---Sig_/0DFU4xM79nqYEe4lM7o4//4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu/4H0ACgkQAVBC80lX
-0GykpAf/a6LXMoIH0u5WKc6AlljvaZ+VCJzRrsYeRAZXiw95LHgL6UXYbjKcQEZR
-nDpAk1i7NTyauY97uQZ29tcOjBTnNZyxvwh7wTu9LNhDF0HvNT0IDvgiH0XM6wiy
-eiRQLjvKIRzR2IBHgdawBGeGdJS3WXXsFDhBanT6ojAnJ/mr8N5HX8lPwP6CC/Am
-ykuibzW4TfaeEO/IsaixwR9XoZEsOaZG7+5MsKmb1QlUADVfZAwe3/lz8ER1QT6F
-KzMWUwYvdl5F3YHPj17EBjCtIAv0sSB1tavHDVvPFE2hgp8JJjWIHdjZWCYX7/o3
-OOmmEgMKHHlQ4n+AlFftiWUnprjbtg==
-=7hS8
------END PGP SIGNATURE-----
-
---Sig_/0DFU4xM79nqYEe4lM7o4//4--
+Best regards
+---
+Kuninori Morimoto
