@@ -2,178 +2,315 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FE9C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE0CC46463
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0842085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0842085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 57AE820865
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:08:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LiyBs8Li"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AE820865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJKLSz (ORCPT
+        id S1727182AbeJKLdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 07:18:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49518 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727303AbeJKLSz (ORCPT
+        Thu, 11 Oct 2018 07:33:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45838 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeJKLdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 07:18:55 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9B3morJ021184
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:53:37 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n1v48nvkh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:53:36 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 10 Oct 2018 21:53:36 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 10 Oct 2018 21:53:32 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9B3rV611900912
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 20:53:31 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9285C7805C;
-        Wed, 10 Oct 2018 21:53:31 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2BC6A7806A;
-        Wed, 10 Oct 2018 21:53:29 -0600 (MDT)
-Received: from skywalker.ibmuc.com (unknown [9.85.73.187])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 10 Oct 2018 21:53:28 -0600 (MDT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH 5/5] arch/powerpc/mm/hugetlb: NestMMU workaround for hugetlb mprotect RW upgrade
-Date:   Thu, 11 Oct 2018 09:22:47 +0530
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181011035247.30687-1-aneesh.kumar@linux.ibm.com>
-References: <20181011035247.30687-1-aneesh.kumar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18101103-0020-0000-0000-00000E76A6E8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009857; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01100919; UDB=6.00569641; IPR=6.00880964;
- MB=3.00023702; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-11 03:53:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101103-0021-0000-0000-00006354F454
-Message-Id: <20181011035247.30687-6-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=531 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110036
+        Thu, 11 Oct 2018 07:33:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u12-v6so3678102pfn.12
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 21:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=Y1z040teZXbVx397cgxHjqCbnJIMjUJ89S7fThWuHrw=;
+        b=LiyBs8LirpsDqXBbGKe93UE8bzcC9hsp2x3ghuD6Abdzk6Htbomq5QV2a36aoWmzNS
+         xL65DcWoEr7/oSaMjTJ4+QbVFgKcmlWQG1+2vCi6gqNq/q2IGwoHfLkEfTolj0Si7TbL
+         jIs7SAmKq6goCDJDW4pHLXeEueuwgJpC42d8c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=Y1z040teZXbVx397cgxHjqCbnJIMjUJ89S7fThWuHrw=;
+        b=Cg9nRx47Zq8oUgzWA7VY9iEAL6qg7j3NcDs7U0aVReYLnmlcExzwKUT37/0yv0X9R3
+         dxE757KshsBxYc0FHuH/IfblT+VDlMHjCf7gIx8BpNQe7T7+/VnL5mZtSpCJGGDQtrhm
+         UYRC1iFf+YpBM9pwC6loUlyDUvhoXKEgf/JpnUOrnRrPvdkKaZdJNCHdR3b7oFVb9q4I
+         rQ26UfmXklawZBJUCL0B6AKcmpExLQ8awePzBLlq3k5nWVtDTN6YaCQXAppJCDMY0Vob
+         EZVWJ5MwuqSrJbiTMV98n4nsN1aM09gt59AL4upQ459yDfC1UVA0bAqLeRHerzAEJjnG
+         kCZA==
+X-Gm-Message-State: ABuFfoiDh1o8x7aIjrL9HMKT1/CqxhynjE7He4mCMcoX8MbqtVKRzdBq
+        v0C0yFQJ0Sa9kSNB0ni7Nj5c/w==
+X-Google-Smtp-Source: ACcGV603/o/y4zQ+GQXlGMD7gCBlQhF5n0KjdbkSpeW0dhCYuDi0TaNGxUawkVBjs9St5jHuTwJ81g==
+X-Received: by 2002:a63:d0e:: with SMTP id c14-v6mr31800387pgl.281.1539230896016;
+        Wed, 10 Oct 2018 21:08:16 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id r22-v6sm66056714pfd.174.2018.10.10.21.08.12
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 10 Oct 2018 21:08:15 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
+        baolin.wang@linaro.org, broonie@kernel.org,
+        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v15 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
+Date:   Thu, 11 Oct 2018 12:07:15 +0800
+Message-Id: <062eedb00fd7fc14291e4b72a07616f6abbf98a7.1539230481.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+In-Reply-To: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NestMMU requires us to mark the pte invalid and flush the tlb when we do a
-RW upgrade of pte. We fixed a variant of this in the fault path in commit
-Fixes: bd5050e38aec ("powerpc/mm/radix: Change pte relax sequence to handle nest MMU hang")
+This patch implements the 'pattern_set'and 'pattern_clear'
+interfaces to support SC27XX LED breathing mode.
 
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Pavel Machek <pavel@ucw.c>
 ---
- arch/powerpc/include/asm/book3s/64/hugetlb.h |  8 +++++
- arch/powerpc/include/asm/hugetlb.h           |  2 +-
- arch/powerpc/mm/hugetlbpage.c                | 35 ++++++++++++++++++++
- 3 files changed, 44 insertions(+), 1 deletion(-)
+Chnages from v14:
+ - None.
 
-diff --git a/arch/powerpc/include/asm/book3s/64/hugetlb.h b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-index 5b0177733994..a12bde29a5f0 100644
---- a/arch/powerpc/include/asm/book3s/64/hugetlb.h
-+++ b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-@@ -42,4 +42,12 @@ static inline bool gigantic_page_supported(void)
- /* hugepd entry valid bit */
- #define HUGEPD_VAL_BITS		(0x8000000000000000UL)
- 
-+#define huge_ptep_modify_prot_start huge_ptep_modify_prot_start
-+extern pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma,
-+					 unsigned long addr, pte_t *ptep);
+Changes from v13:
+ - None.
+
+Changes from v12:
+ - None.
+
+Changes from v11:
+ - None.
+
+Changes from v10:
+ - Add duration alignment function suggested by Jacek.
+ - Add acked tag from Pavel.
+
+Changes from v9:
+ - Optimize the ABI documentation file.
+ - Update the brightness value in hardware pattern mode.
+
+Changes from v8:
+ - Optimize the ABI documentation file.
+
+Changes from v7:
+ - Add its own ABI documentation file.
+
+Changes from v6:
+ - None.
+
+Changes from v5:
+ - None.
+
+Changes from v4:
+ - None.
+
+Changes from v3:
+ - None.
+
+Changes from v2:
+ - None.
+
+Changes from v1:
+ - Remove pattern_get interface.
+---
+ .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 ++++
+ drivers/leds/leds-sc27xx-bltc.c                    |  121 ++++++++++++++++++++
+ 2 files changed, 143 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+
+diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+new file mode 100644
+index 0000000..45b1e60
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+@@ -0,0 +1,22 @@
++What:		/sys/class/leds/<led>/hw_pattern
++Date:		September 2018
++KernelVersion:	4.20
++Description:
++		Specify a hardware pattern for the SC27XX LED. For the SC27XX
++		LED controller, it only supports 4 stages to make a single
++		hardware pattern, which is used to configure the rise time,
++		high time, fall time and low time for the breathing mode.
 +
-+#define huge_ptep_modify_prot_commit huge_ptep_modify_prot_commit
-+extern void huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
-+					 unsigned long addr, pte_t *ptep,
-+					 pte_t old_pte, pte_t new_pte);
- #endif
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 2d00cc530083..60c1d37e446a 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -4,7 +4,6 @@
++		For the breathing mode, the SC27XX LED only expects one brightness
++		for the high stage. To be compatible with the hardware pattern
++		format, we should set brightness as 0 for rise stage, fall
++		stage and low stage.
++
++		Min stage duration: 125 ms
++		Max stage duration: 31875 ms
++
++		Since the stage duration step is 125 ms, the duration should be
++		a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
++
++		Thus the format of the hardware pattern values should be:
++		"0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 9d9b7aa..fecf27f 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -32,8 +32,18 @@
+ #define SC27XX_DUTY_MASK	GENMASK(15, 0)
+ #define SC27XX_MOD_MASK		GENMASK(7, 0)
  
- #ifdef CONFIG_HUGETLB_PAGE
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
++#define SC27XX_CURVE_SHIFT	8
++#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
++#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
++
+ #define SC27XX_LEDS_OFFSET	0x10
+ #define SC27XX_LEDS_MAX		3
++#define SC27XX_LEDS_PATTERN_CNT	4
++/* Stage duration step, in milliseconds */
++#define SC27XX_LEDS_STEP	125
++/* Minimum and maximum duration, in milliseconds */
++#define SC27XX_DELTA_T_MIN	SC27XX_LEDS_STEP
++#define SC27XX_DELTA_T_MAX	(SC27XX_LEDS_STEP * 255)
  
- extern struct kmem_cache *hugepte_cache;
+ struct sc27xx_led {
+ 	char name[LED_MAX_NAME_SIZE];
+@@ -122,6 +132,113 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
+ 	return err;
+ }
  
-@@ -176,6 +175,7 @@ static inline void arch_clear_hugepage_flags(struct page *page)
++static void sc27xx_led_clamp_align_delta_t(u32 *delta_t)
++{
++	u32 v, offset, t = *delta_t;
++
++	v = t + SC27XX_LEDS_STEP / 2;
++	v = clamp_t(u32, v, SC27XX_DELTA_T_MIN, SC27XX_DELTA_T_MAX);
++	offset = v - SC27XX_DELTA_T_MIN;
++	offset = SC27XX_LEDS_STEP * (offset / SC27XX_LEDS_STEP);
++
++	*delta_t = SC27XX_DELTA_T_MIN + offset;
++}
++
++static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
++{
++	struct sc27xx_led *leds = to_sc27xx_led(ldev);
++	struct regmap *regmap = leds->priv->regmap;
++	u32 base = sc27xx_led_get_offset(leds);
++	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
++	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
++	int err;
++
++	mutex_lock(&leds->priv->lock);
++
++	/* Reset the rise, high, fall and low time to zero. */
++	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
++	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
++
++	err = regmap_update_bits(regmap, ctrl_base,
++			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
++
++	ldev->brightness = LED_OFF;
++
++	mutex_unlock(&leds->priv->lock);
++
++	return err;
++}
++
++static int sc27xx_led_pattern_set(struct led_classdev *ldev,
++				  struct led_pattern *pattern,
++				  u32 len, int repeat)
++{
++	struct sc27xx_led *leds = to_sc27xx_led(ldev);
++	u32 base = sc27xx_led_get_offset(leds);
++	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
++	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
++	struct regmap *regmap = leds->priv->regmap;
++	int err;
++
++	/*
++	 * Must contain 4 tuples to configure the rise time, high time, fall
++	 * time and low time to enable the breathing mode.
++	 */
++	if (len != SC27XX_LEDS_PATTERN_CNT)
++		return -EINVAL;
++
++	mutex_lock(&leds->priv->lock);
++
++	sc27xx_led_clamp_align_delta_t(&pattern[0].delta_t);
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
++				 SC27XX_CURVE_L_MASK,
++				 pattern[0].delta_t / SC27XX_LEDS_STEP);
++	if (err)
++		goto out;
++
++	sc27xx_led_clamp_align_delta_t(&pattern[1].delta_t);
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
++				 SC27XX_CURVE_L_MASK,
++				 pattern[1].delta_t / SC27XX_LEDS_STEP);
++	if (err)
++		goto out;
++
++	sc27xx_led_clamp_align_delta_t(&pattern[2].delta_t);
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
++				 SC27XX_CURVE_H_MASK,
++				 (pattern[2].delta_t / SC27XX_LEDS_STEP) <<
++				 SC27XX_CURVE_SHIFT);
++	if (err)
++		goto out;
++
++	sc27xx_led_clamp_align_delta_t(&pattern[3].delta_t);
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
++				 SC27XX_CURVE_H_MASK,
++				 (pattern[3].delta_t / SC27XX_LEDS_STEP) <<
++				 SC27XX_CURVE_SHIFT);
++	if (err)
++		goto out;
++
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
++				 SC27XX_DUTY_MASK,
++				 (pattern[1].brightness << SC27XX_DUTY_SHIFT) |
++				 SC27XX_MOD_MASK);
++	if (err)
++		goto out;
++
++	/* Enable the LED breathing mode */
++	err = regmap_update_bits(regmap, ctrl_base,
++				 SC27XX_LED_RUN << ctrl_shift,
++				 SC27XX_LED_RUN << ctrl_shift);
++	if (!err)
++		ldev->brightness = pattern[1].brightness;
++
++out:
++	mutex_unlock(&leds->priv->lock);
++
++	return err;
++}
++
+ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
  {
- }
+ 	int i, err;
+@@ -140,6 +257,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
+ 		led->priv = priv;
+ 		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
++		led->ldev.pattern_set = sc27xx_led_pattern_set;
++		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
++		led->ldev.default_trigger = "pattern";
  
-+#include <asm-generic/hugetlb.h>
- #else /* ! CONFIG_HUGETLB_PAGE */
- static inline void flush_hugetlb_page(struct vm_area_struct *vma,
- 				      unsigned long vmaddr)
-diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-index a7226ed9cae6..8b098bedaff5 100644
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -913,3 +913,38 @@ int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
+ 		err = devm_led_classdev_register(dev, &led->ldev);
+ 		if (err)
+@@ -241,4 +361,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
  
- 	return 1;
- }
-+
-+#ifdef CONFIG_PPC_BOOK3S_64
-+pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma,
-+				  unsigned long addr, pte_t *ptep)
-+{
-+	unsigned long pte_val;
-+	/*
-+	 * Clear the _PAGE_PRESENT so that no hardware parallel update is
-+	 * possible. Also keep the pte_present true so that we don't take
-+	 * wrong fault.
-+	 */
-+	pte_val = pte_update(vma->vm_mm, addr, ptep,
-+			     _PAGE_PRESENT, _PAGE_INVALID, 1);
-+
-+	return __pte(pte_val);
-+}
-+EXPORT_SYMBOL(huge_ptep_modify_prot_start);
-+
-+void huge_ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr,
-+				  pte_t *ptep, pte_t old_pte, pte_t pte)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+
-+	/*
-+	 * To avoid NMMU hang while relaxing access we need to flush the tlb before
-+	 * we set the new value.
-+	 */
-+	if (is_pte_upgrade(pte_val(old_pte), pte_val(pte)) &&
-+	    (atomic_read(&mm->context.copros) > 0))
-+		flush_hugetlb_page(vma, addr);
-+
-+	set_huge_pte_at(vma->vm_mm, addr, ptep, pte);
-+}
-+EXPORT_SYMBOL(huge_ptep_modify_prot_commit);
-+#endif
+ MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
+ MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
++MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
+ MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+1.7.9.5
 
