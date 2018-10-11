@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D60C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E188C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5952098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1547420652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoKjGDcB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5952098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5Y/I/Ne"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1547420652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730575AbeJKXJl (ORCPT
+        id S1730587AbeJKXJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:09:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:09:40 -0400
+        id S1726700AbeJKXJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:09:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1652720652;
-        Thu, 11 Oct 2018 15:41:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C688E20652;
+        Thu, 11 Oct 2018 15:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272516;
-        bh=NKNTzb/iWI4WwqEnrxaRMFVqtnHadjJRY9HR1aCydGo=;
+        s=default; t=1539272519;
+        bh=wdup2sR3RUsnIma6w2CIx/gtKrAdmTti8CeByfkauf0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OoKjGDcBkjZe7JvyyEsqMbgZ1VUL50Uy8ggnDioO5IWJW5NxUNC0MvWcl4YTjokCj
-         DlESZ5kZZ2+U9hBjbqdetCmKZcCFDqVHnRzN/SmyZ3lp5Lsq/Lp95iZu8NwLobtdZ1
-         /QDHmDQE4qZnI2iLs1PfaYfdae59nwsgrwdPGu7w=
+        b=q5Y/I/Ne8rVCDbrCLuqowZDQijt01uQVepQEA22UFzW3yIxu5ePn4k/INIp4tQmuT
+         h9gmRNTpCUKVZGq8Yd0/37VZnX6B6Zf4rgxvdfbOQT16snl1Tv3fDkCdvqVDvflqUh
+         yOl4X8zzBoAWhdmd/IBYM0G7bp2p2UL55nSqpACg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikita Sobolev <sobolev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.4 17/27] ARC: clone syscall to setp r25 as thread pointer
-Date:   Thu, 11 Oct 2018 17:35:04 +0200
-Message-Id: <20181011152534.854496311@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.4 18/27] ucma: fix a use-after-free in ucma_resolve_ip()
+Date:   Thu, 11 Oct 2018 17:35:05 +0200
+Message-Id: <20181011152534.899814582@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
@@ -62,69 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit c58a584f05e35d1d4342923cd7aac07d9c3d3d16 upstream.
+commit 5fe23f262e0548ca7f19fb79f89059a60d087d22 upstream.
 
-Per ARC TLS ABI, r25 is designated TP (thread pointer register).
-However so far kernel didn't do any special treatment, like setting up
-usermode r25, even for CLONE_SETTLS. We instead relied on libc runtime
-to do this, in say clone libc wrapper [1]. This was deliberate to keep
-kernel ABI agnostic (userspace could potentially change TP, specially
-for different ARC ISA say ARCompact vs. ARCv2 with different spare
-registers etc)
+There is a race condition between ucma_close() and ucma_resolve_ip():
 
-However userspace setting up r25, after clone syscall opens a race, if
-child is not scheduled and gets a signal instead. It starts off in
-userspace not in clone but in a signal handler and anything TP sepcific
-there such as pthread_self() fails which showed up with uClibc
-testsuite nptl/tst-kill6 [2]
+CPU0				CPU1
+ucma_resolve_ip():		ucma_close():
 
-Fix this by having kernel populate r25 to TP value. So this locks in
-ABI, but it was not going to change anyways, and fwiw is same for both
-ARCompact (arc700 core) and ARCvs (HS3x cores)
+ctx = ucma_get_ctx(file, cmd.id);
 
-[1] https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/libc/sysdeps/linux/arc/clone.S
-[2] https://github.com/wbx-github/uclibc-ng-test/blob/master/test/nptl/tst-kill6.c
+        list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
+                mutex_lock(&mut);
+                idr_remove(&ctx_idr, ctx->id);
+                mutex_unlock(&mut);
+		...
+                mutex_lock(&mut);
+                if (!ctx->closing) {
+                        mutex_unlock(&mut);
+                        rdma_destroy_id(ctx->cm_id);
+		...
+                ucma_free_ctx(ctx);
 
-Fixes: ARC STAR 9001378481
-Cc: stable@vger.kernel.org
-Reported-by: Nikita Sobolev <sobolev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+ret = rdma_resolve_addr();
+ucma_put_ctx(ctx);
+
+Before idr_remove(), ucma_get_ctx() could still find the ctx
+and after rdma_destroy_id(), rdma_resolve_addr() may still
+access id_priv pointer. Also, ucma_put_ctx() may use ctx after
+ucma_free_ctx() too.
+
+ucma_close() should call ucma_put_ctx() too which tests the
+refcnt and waits for the last one releasing it. The similar
+pattern is already used by ucma_destroy_id().
+
+Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/kernel/process.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/infiniband/core/ucma.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arc/kernel/process.c
-+++ b/arch/arc/kernel/process.c
-@@ -153,6 +153,26 @@ int copy_thread(unsigned long clone_flag
- 		task_thread_info(current)->thr_ptr;
- 	}
- 
-+
-+	/*
-+	 * setup usermode thread pointer #1:
-+	 * when child is picked by scheduler, __switch_to() uses @c_callee to
-+	 * populate usermode callee regs: this works (despite being in a kernel
-+	 * function) since special return path for child @ret_from_fork()
-+	 * ensures those regs are not clobbered all the way to RTIE to usermode
-+	 */
-+	c_callee->r25 = task_thread_info(p)->thr_ptr;
-+
-+#ifdef CONFIG_ARC_CURR_IN_REG
-+	/*
-+	 * setup usermode thread pointer #2:
-+	 * however for this special use of r25 in kernel, __switch_to() sets
-+	 * r25 for kernel needs and only in the final return path is usermode
-+	 * r25 setup, from pt_regs->user_r25. So set that up as well
-+	 */
-+	c_regs->user_r25 = c_callee->r25;
-+#endif
-+
- 	return 0;
- }
- 
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1709,6 +1709,8 @@ static int ucma_close(struct inode *inod
+ 		mutex_lock(&mut);
+ 		if (!ctx->closing) {
+ 			mutex_unlock(&mut);
++			ucma_put_ctx(ctx);
++			wait_for_completion(&ctx->comp);
+ 			/* rdma_destroy_id ensures that no event handlers are
+ 			 * inflight for that id before releasing it.
+ 			 */
 
 
