@@ -2,139 +2,154 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220F3C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13535C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE65F2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB02C213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K7hfwrEJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE65F2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C658Mv4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB02C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeJKWnZ (ORCPT
+        id S1728389AbeJKWnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:43:25 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43576 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbeJKWnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:43:24 -0400
-Received: by mail-yb1-f196.google.com with SMTP id w80-v6so3733242ybe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=08iS1Ysr1zICRogT714u/UPMyNfLX1/ki5+JwH70t44=;
-        b=K7hfwrEJR1s/MWti7kcej9QF0qXM+7ATB9L73dR6O3XTenVXbw4+rmCYZflLiRBTgs
-         CiXtmSfQrWSGO0CwhG98U2FmdI5XDlWzwKgrwzju0IZ8qk61wkCnIoY9acSgiUUAhYdt
-         xEywmq8Zh1M+gPLuNuuqNQuMV9jBi1LXoe0jk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=08iS1Ysr1zICRogT714u/UPMyNfLX1/ki5+JwH70t44=;
-        b=Ea1gZFLX8kIq55eZALCjMQLMn7cxoMVP1nl9FtZOYa62L/RfcvhtpQLUrxf14X9wTQ
-         e/B4rGPv6/dZgCmOVSLPw6VqB0ix+8SVj+78N1T3WUmiXA1RxMYgvUIjqnrtod96WH9s
-         DFs2d+QZJBhum+ssbniSc7ztj8ZkQ/07REPM0GgE7hbVMLkp/9MN3lPeNdXnhw/onPxj
-         TEND0I2GRYm1gLL45nqiRALQ8uH4JHs/RLHso41WSZK4vgKgWGIRaVOsftpQlR06Djq8
-         QIe8VhHUGfT0OvBAz/WvfFCnqSoJq+Vp7OA8xEOIoqwhwcAJWIbFhxcHhV4BIOmI1GVl
-         I3mQ==
-X-Gm-Message-State: ABuFfoiqVzOAQbUydkKPL8LOw8lbDNVGaNvKAE/8cRqiifUqeTbcXIvF
-        zhT8T9u7Kdw8F5NG5fkcy/x9RYJUaP8=
-X-Google-Smtp-Source: ACcGV60Yz94DzJVWrSXw43eqyW8KLmCftLxh6PDtoZ0K5YU0F28cM96WukbKU+4L+uADCajNvwbOtg==
-X-Received: by 2002:a25:4bc3:: with SMTP id y186-v6mr1026584yba.18.1539270947126;
-        Thu, 11 Oct 2018 08:15:47 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id o202-v6sm42799258ywo.38.2018.10.11.08.15.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 08:15:45 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id w80-v6so3733183ybe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:15:45 -0700 (PDT)
-X-Received: by 2002:a25:2395:: with SMTP id j143-v6mr1046482ybj.137.1539270945243;
- Thu, 11 Oct 2018 08:15:45 -0700 (PDT)
+        Thu, 11 Oct 2018 18:43:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbeJKWnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 18:43:49 -0400
+Received: from localhost (unknown [204.56.7.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CA7E2087A;
+        Thu, 11 Oct 2018 15:16:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539270972;
+        bh=DptqWW1WxEbR39mwz5GXwHw+TiQ0F9ApQDa3GVdhhYo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C658Mv4pSllGaggmZww19aUbrdj8nngEEdwGId+nmMJWtd7P59XO4181r4yD54u4o
+         v8r2R+BDJP4Tt0eL2Tv1r17TzE+17RmiQVu7Jm+zAG+a/1gW86lbXKX5Nol0ktjiuX
+         eKnoAqMAf0sYWn1rt9bkfNkkq7h4UBxtDuyjcVQ8=
+Date:   Thu, 11 Oct 2018 10:16:10 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Dongdong Liu <liudongdong3@huawei.com>
+Cc:     "Derrick, Jonathan" <jonathan.derrick@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "okaya@kernel.org" <okaya@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "hch@lst.de" <hch@lst.de>, "lukas@wunner.de" <lukas@wunner.de>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "poza@codeaurora.org" <poza@codeaurora.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Busch, Keith" <keith.busch@intel.com>
+Subject: Re: [PATCH] PCI/portdrv: Enable error reporting on managed ports
+Message-ID: <20181011151610.GM5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
+ <20181009175632.GB5906@bhelgaas-glaptop.roam.corp.google.com>
+ <1539114641.8364.34.camel@intel.com>
+ <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
+ <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 08:15:44
- -0700 (PDT)
-In-Reply-To: <CAK7LNATXiJkXa4bfrCMb-kuWrn2gg-7jJg3qT3UR6HVSpC3Y3w@mail.gmail.com>
-References: <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com>
- <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
- <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com> <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
- <CAKwvOdnyA=Y_+KnJrDc5mu7twTAEOMXvb8cAZhwzsXTi7a9sEA@mail.gmail.com>
- <20180926180019.GD22824@google.com> <CAKwvOd=xYG+r4KU+QurUTyaxkPB2AMane4YfWxuvKtONvVtLxQ@mail.gmail.com>
- <CAGXu5jLBz1YanL5X4HFZjhb8NZe5QK=Q1ySfBkBDNWqEg4hs5g@mail.gmail.com>
- <20180926184259.GB14797@kroah.com> <CAGXu5jJaJ+1Sg3uwaZ8hzw3wFbiLrftpZDO8vdjY9_tB+P-HPQ@mail.gmail.com>
- <20180926190303.GA18293@kroah.com> <CAKwvOdnx6D+_LeSZ-1v_s8dLErXq4B5Nx1UQozdr1+ZaGYWnrA@mail.gmail.com>
- <CAGXu5jKRn2EsPwNMtVTPyKyDnt+vqHZF=jdr+DajN_iN1DWjSw@mail.gmail.com>
- <CACPK8XeAbiMk_yW-t+8HdW_WLqaFJFX-xnNnDSZJ5ZfhK63euA@mail.gmail.com>
- <CANiq72nGrNMEqnPrxGXCp_iKf1_FuJLMvoV1+bbfYYCKnfTPVw@mail.gmail.com>
- <CAGXu5jKShFRJcP3vroEcZUevcHBSi53Towgs-t0v1JyEqmHJCA@mail.gmail.com> <CAK7LNATXiJkXa4bfrCMb-kuWrn2gg-7jJg3qT3UR6HVSpC3Y3w@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 11 Oct 2018 08:15:44 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKxF4AmA3GCuijqryca6fYgJYFZJUNf9vnvgJAYCUUiuw@mail.gmail.com>
-Message-ID: <CAGXu5jKxF4AmA3GCuijqryca6fYgJYFZJUNf9vnvgJAYCUUiuw@mail.gmail.com>
-Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 7:48 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> On Wed, Oct 10, 2018 at 11:51 PM Kees Cook <keescook@chromium.org> wrote:
->>
->> On Wed, Oct 10, 2018 at 12:03 AM, Miguel Ojeda
->> <miguel.ojeda.sandonis@gmail.com> wrote:
->> > On Wed, Oct 10, 2018 at 8:12 AM Joel Stanley <joel@jms.id.au> wrote:
->> >>
->> >> On Thu, 27 Sep 2018 at 05:07, Kees Cook <keescook@chromium.org> wrote:
->> >> >
->> >> > Yeah, that's what I'd linked to in the patchwork URL. Andrew, can you take this?
->> >>
->> >> clang built -next is blowing up now that Kees' -Wvla patch has been
->> >> included. This patch fixes it.
->> >>
->> >> Kees, perhaps it should go in your tree along side of the -Wvla patch
->> >> if no one else wants to take it?
->> >>
->> >
->> > I can take it along in the compiler attributes tree, since that
->> > touches the compiler*.h stuff. Although that would make it
->> > not-only-attributes, i.e. slightly lying :-)
->>
->> Oh, I had assumed Masahiro was going to carry it.
->
-> No, I am not.
->
-> Putting all sort of things into kbuild basket
-> is painful for me.
+On Thu, Oct 11, 2018 at 07:58:47PM +0800, Dongdong Liu wrote:
+> Hi Bjorn
+> 
+> > commit 15a6711649915ca3e9d1086dc88ff4b616b99aac
+> > Author: Bjorn Helgaas <bhelgaas@google.com>
+> > Date:   Tue Oct 9 17:25:25 2018 -0500
+> > 
+> >     PCI/AER: Enable reporting for ports enumerated after AER driver registration
+> > 
+> >     Previously we enabled AER error reporting only for Switch Ports that were
+> >     enumerated prior to registering the AER service driver.  Switch Ports
+> >     enumerated after AER driver registration were left with error reporting
+> >     disabled.
+> > 
+> >     A common order, which works correctly, is that we enumerate devices before
+> >     registering portdrv and the AER driver:
+> > 
+> >       - Enumerate all the devices at boot-time
+> > 
+> >       - Register portdrv and bind it to all Root Ports and Switch Ports, which
+> >         disables error reporting for these Ports
+> > 
+> >       - Register AER service driver and bind it to all Root Ports, which
+> >         enables error reporting for the Root Ports and any Switch Ports below
+> >         them
+> > 
+> >     But if we enumerate devices *after* registering portdrv and the AER driver,
+> >     e.g., if a host bridge driver is loaded as a module, error reporting is not
+> >     enabled correctly:
+> > 
+> >       - Register portdrv and AER driver (this happens at boot-time)
+> > 
+> >       - Enumerate a Root Port
+> > 
+> >       - Bind portdrv to Root Port, disabling its error reporting
+> > 
+> >       - Bind AER service driver to Root Port, enabling error reporting for it
+> >         and its children (none, since we haven't enumerated them yet)
+> > 
+> >       - Enumerate Switch Port below the Root Port
+> > 
+> >       - Bind portdrv to Switch Port, disabling its error reporting
+> > 
+> >       - AER service driver doesn't bind to Switch Ports, so error reporting
+> >         remains disabled
+> > 
+> >     Hot-adding a Switch fails similarly: error reporting is enabled correctly
+> >     for the Root Port, but when the Switch is enumerated, the AER service
+> >     driver doesn't claim it, so there's nothing to enable error reporting for
+> >     the Switch Ports.
+> > 
+> >     Change the AER service driver so it binds to *all* PCIe ports, including
+> >     Switch Upstream and Downstream Ports.  For Switch Ports, enable AER error
+> >     reporting.
+> > 
+> >     Link: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
+> >     Based-on-patch-by: Jon Derrick <jonathan.derrick@intel.com>
+> >     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> > index 90b53abf621d..fe6c16461367 100644
+> > --- a/drivers/pci/pcie/aer.c
+> > +++ b/drivers/pci/pcie/aer.c
+> > @@ -1316,12 +1316,6 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
+> >  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, &reg32);
+> >  	pci_write_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, reg32);
+> > 
+> > -	/*
+> > -	 * Enable error reporting for the root port device and downstream port
+> > -	 * devices.
+> > -	 */
+> > -	set_downstream_devices_error_reporting(pdev, true);
+> > -
+> 
+> Delete the code will also disable error reporting for the root port as
+> the portdrv to Root Port has disabled its error reporting,
+> so need to enable enable error reporting for the root port.
+> +pci_enable_pcie_error_reporting(pdev);
 
-Okay, I'll take it for the VLA series.
+Oh, you're right, thank you!
 
--Kees
+I'll post a "v3" to fix this, i.e.,
 
--- 
-Kees Cook
-Pixel Security
+  v1 - Jon's original post, https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
+  v2 - My rework, https://lore.kernel.org/linux-pci/20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com
+  v3 - My rework + enable error reporting for Root Ports
+
+Bjorn
