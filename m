@@ -2,74 +2,115 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8F1C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E83AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49FCF20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FCF20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E78132087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="n4X2Kc7w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E78132087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeJKSrG (ORCPT
+        id S1728501AbeJKSrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:47:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:35954 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeJKSrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:47:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 629157A9;
-        Thu, 11 Oct 2018 04:20:19 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CA6B3F5BC;
-        Thu, 11 Oct 2018 04:20:16 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 12:20:13 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        ulf.hansson@linaro.org, khilman@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
- the domain
-Message-ID: <20181011112013.GC32752@e107155-lin>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
- <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+        Thu, 11 Oct 2018 14:47:16 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:24622 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJKSrP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 14:47:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1539256828; x=1570792828;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=SmdW1HQJHQDSVi6FD1SR32M8B9tET1DkS7+cPRajD5c=;
+  b=n4X2Kc7wHdWNdl+szwUAotBOtBcByjI2S5XbBWeDRhg+S4A2qi0XN4YF
+   kPkLpRAdAvqUhX7fhWfHgd05nvdITJs/viIz+aVHh/gQf+6mt7v/cZqTX
+   pBlixwjZvuuZLhn72ELH+cotAObA/Pa+Hth12zFEBUiFdkux1smvkmu1J
+   0=;
+X-IronPort-AV: E=Sophos;i="5.54,368,1534809600"; 
+   d="scan'208";a="362030531"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 11:20:26 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9BBKOOr115508
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 11 Oct 2018 11:20:25 GMT
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 11 Oct 2018 11:20:25 +0000
+Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.161.25) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 11 Oct 2018 11:20:19 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <talel@amazon.com>, <jonnyc@amazon.com>, <ronenk@amazon.com>,
+        <barakw@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 1/2] dt-bindings: spi: dw: add compatible for Amazon's Alpine spi controller
+Date:   Thu, 11 Oct 2018 14:20:06 +0300
+Message-ID: <1539256807-25676-1-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539209339.1944.23.camel@impinj.com>
+References: <1539209339.1944.23.camel@impinj.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.25]
+X-ClientProxiedBy: EX13D08UWC004.ant.amazon.com (10.43.162.90) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 02:50:54AM +0530, Raju P.L.S.S.S.N wrote:
-> Use cpu hotplug callback mechanism to attach/dettach the cpu in
-> the cpu power domain. During cpu hotplug callback registration,
-> the starting callback is invoked on all online cpus. So there is
-> no need to attach from device probe.
->
+This compatible adds the ability for dw spi controller driver to work with
+the dw spi controller found on Alpine chips.
 
-To be more explicit, NACK to this series(patches 4-8 to be more specific)
-unless you provide details on:
+The dw spi controller has an auto-deselect of Chip-Select, in case there is
+no data inside the Tx FIFO. While working on platforms with Alpine chips,
+auto-deselect mode causes an issue for some spi devices that can't handle
+the Chip-Select deselect in the middle of a transaction. It is a normal
+behavior for a Tx FIFO to be empty in the middle of a transaction, due to
+busy cpu. In the Alpine chip family an option to change the default
+behavior was added to the original dw spi controller to prevent this issue
+of de-asserting Chip-Select once TX FIFO is empty. The change was to allow
+SW manual control of the Chip-Select. With this change, as long as the
+Slave Enable Register is asserted, the Chip-Select will be asserted. As a
+result, it is necessary to deselect the Slave Select Register once the
+transaction is done. This feature is enabled via a new device compatible
+string called 'amazon,alpine-dw-apb-ssi'.  Once the driver identifies the
+new compatible string, it enables the hw fixup logic, by writing to a
+dedicated register found in the IP reserved area and will start manual
+deselecting the Slave Select Register when the transfer ends.
 
-1. Why this is not in PSCI implementation ?
-2. If PSCI is used on this platform, how does it work/co-exist ?
-3. Is this a shortcut approached taken to bypass the CPU genpd attempts
-   from Lina/Ulf ?
+Signed-off-by: Talel Shenhar <talel@amazon.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Regards,
-Sudeep
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+index 642d3fb..2864bc6 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+@@ -2,7 +2,7 @@ Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
+ 
+ Required properties:
+ - compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi", where soc is "ocelot" or
+-  "jaguar2"
++  "jaguar2", or "amazon,alpine-dw-apb-ssi"
+ - reg : The register base for the controller. For "mscc,<soc>-spi", a second
+   register set is required (named ICPU_CFG:SPI_MST)
+ - interrupts : One interrupt, used by the controller.
+-- 
+2.7.4
+
