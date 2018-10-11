@@ -2,101 +2,97 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CDBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C355C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C7421470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C317320870
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hcWA8xoX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C7421470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0XgLSyr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C317320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeJKKmp (ORCPT
+        id S1727215AbeJKKoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 06:42:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:45255 "EHLO ozlabs.org"
+        Thu, 11 Oct 2018 06:44:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbeJKKmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 06:42:45 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726384AbeJKKoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 06:44:12 -0400
+Received: from localhost (246.sub-174-234-138.myvzw.com [174.234.138.246])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Vx3Z0yS3z9s9J;
-        Thu, 11 Oct 2018 14:17:29 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539227852;
-        bh=grh4/HbiMAGGsVyo5+aYdKepY2GFrnhIiyee8m430UA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hcWA8xoXH5xFjpeS00pxPvKWNBb8IiQnwL3o89OUGgQ7dAo1fz28cT7M2mLjWUrui
-         fPU5hfbqIo1Rz22O+OieJQ+TiVYzyQjZoFWqYxbOwpoMcTEhtOQgQJ5k7Kv+eSHd9i
-         lJjJ3QEtpVvWOqs6WR82KgJPrnDy9UOnGer6rAO4YX1WsjCms3/8/w9S7aT6geHdHh
-         1BPj6Hc++9ZhpQ84o9TwPGAWa8j8cRufMeVL3peK3H9j7mJH2YQR16cqEZlSPZ1z8f
-         C2MdoqWp2ox0NJUsyBSxnrWJhYaAFVBL6bmSuGmqdfpOJ1YxZaII/wI0asQ84w447c
-         seYow+AUmYg1Q==
-Date:   Thu, 11 Oct 2018 14:17:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJl?= =?UTF-8?B?Y2tp?= <rafal@milecki.pl>
-Subject: linux-next: build warning after merge of the pinctrl tree
-Message-ID: <20181011141728.50b2d17c@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 84B8F2085B;
+        Thu, 11 Oct 2018 03:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539227940;
+        bh=E49epR5WKdqwOJmODbNZu7O4dUouVK7BncRNbda9nKQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i0XgLSyrhTah6cc9nF2wHkdGQdjBp/XFob82auiz64YBeEj4dk3UnDJcIPHaK4iag
+         qGvj0tdjMJ//ApsetqN1eTu/uZ/S6E37OaBO7xmYp3t5fyuLBHmNek83J2Km5CKuWY
+         riNc3jvltiUCd+gKDwZAyX9PiA+C8B2gNaVA3XAI=
+Date:   Wed, 10 Oct 2018 22:18:58 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v9 00/13] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20181011031858.GL5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <20181004212747.6301-1-logang@deltatee.com>
+ <20181010201918.GF5906@bhelgaas-glaptop.roam.corp.google.com>
+ <5c674a1b-2471-33eb-44f4-fe1bb8807a22@deltatee.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8.DqxVfOzuY8hRVXYWhqNy0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c674a1b-2471-33eb-44f4-fe1bb8807a22@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8.DqxVfOzuY8hRVXYWhqNy0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 10, 2018 at 05:03:33PM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 2018-10-10 2:19 p.m., Bjorn Helgaas wrote:
+> > I added the reviewed-by tags from Christoph, Jens' ack on the blkdev.h
+> > change, and applied these to pci/peer-to-peer with the intent of
+> > merging these for v4.20.
+> > 
+> > I gave up on waiting for an ack for the memremap.h and mm.h changes.
+> > 
+> > I dropped the "nvme-pci: Add a quirk for a pseudo CMB" quirk because
+> > of Christoph's objection.  After this is all merged, I won't need to
+> > be involved, and you and the NVMe folks can hash that out.
+> > 
+> > If there are updates to "nvmet: Optionally use PCI P2P memory" based
+> > on Sagi's comments, send an incremental patch and I'll fold them in.
+> 
+> Thanks for picking this up. However, I hate to throw a wrench in the
+> works, but I had a v10[1] queued up because kbuild found some problems
+> with the series over the weekend. I can send v10 off right away if you
+> want to just replace it in your branch or, if you'd like, I can generate
+> some incremental patches. Let me know which you'd prefer.
 
-Hi Linus,
+I applied the updates from your v10 to my pci/peer-to-peer branch.
 
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-drivers/pinctrl/bcm/pinctrl-ns.c: In function 'ns_pinctrl_probe':
-drivers/pinctrl/bcm/pinctrl-ns.c:288:29: warning: cast from pointer to inte=
-ger of different size [-Wpointer-to-int-cast]
-  ns_pinctrl->chipset_flag =3D (unsigned int)of_id->data;
-                             ^
-drivers/pinctrl/bcm/pinctrl-ns.c:310:27: warning: cast from pointer to inte=
-ger of different size [-Wpointer-to-int-cast]
-   unsigned int chipsets =3D (unsigned int)src->drv_data;
-                           ^
-
-Introduced by commit
-
-  c12fb1774dea ("pinctrl: bcm: add Northstar driver")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8.DqxVfOzuY8hRVXYWhqNy0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu+wMgACgkQAVBC80lX
-0Gw/wgf9Fxbmn2osdiFhONHX+ecrEpvks39dvxzEBHBHAcL0VoZ5/HqKNg1zxpwp
-DULh6/9Y3HeoBKq8FuM5kKuZj84dIo/wqEhOpVeA0jrpEMldK+LaoMu0tA4FX7cN
-jtdjA1cz9Epv+J8cIiqC0yildKSEgyCpNRduLS8uaymxW43SLYiCZB7za92zC8+z
-Qs+J/n6DGKTKasU4msEG6SVTNO+jI2rarroW/dV8BG6FYokZB+9qrEzvkY7sCsHy
-OtR53RX1Q/W/duMIJbud+9u/Z/5gvWr+7Z0YyZipZWv+tiFNyG34pmn38dJn2wwV
-z2RtrA0pPWxqunQ4o49UHrzeTFzfAA==
-=xsJW
------END PGP SIGNATURE-----
-
---Sig_/8.DqxVfOzuY8hRVXYWhqNy0--
+> [1] https://github.com/sbates130272/linux-p2pmem pci-p2p-v10
