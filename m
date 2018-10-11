@@ -2,115 +2,109 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740D4C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F97DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163EB20659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:17:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163EB20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 40C1B213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C1B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeJLDol (ORCPT
+        id S1726647AbeJLDqs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:44:41 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20288 "EHLO mga12.intel.com"
+        Thu, 11 Oct 2018 23:46:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42098 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbeJLDol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:44:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 13:15:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="264936467"
-Received: from kcaccard-mobl3.jf.intel.com ([10.24.8.209])
-  by orsmga005.jf.intel.com with ESMTP; 11 Oct 2018 13:15:50 -0700
-Message-ID: <1539288950.3566.11.camel@linux.intel.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-From:   Kristen C Accardi <kristen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 11 Oct 2018 13:15:50 -0700
-In-Reply-To: <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-References: <20181011185458.10186-1-kristen@linux.intel.com>
-         <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726040AbeJLDqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:46:48 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5964A1152B;
+        Thu, 11 Oct 2018 20:17:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8133787379;
+        Thu, 11 Oct 2018 20:17:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87sh1cqqfs.fsf@xmission.com>
+References: <87sh1cqqfs.fsf@xmission.com> <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <17405.1539272035@warthog.procyon.org.uk>
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     dhowells@redhat.com,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15323.1539289074.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 11 Oct 2018 21:17:54 +0100
+Message-ID: <15324.1539289074@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 11 Oct 2018 20:17:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 12:25 -0700, Andy Lutomirski wrote:
-> On Thu, Oct 11, 2018 at 11:55 AM Kristen Carlson Accardi
-> <kristen@linux.intel.com> wrote:
-> > 
-> > This patch aims to make it harder to perform cache timing attacks
-> > on data
-> > left behind by system calls. If we have an error returned from a
-> > syscall,
-> > flush the L1 cache.
-> > 
-> > It's important to note that this patch is not addressing any
-> > specific
-> > exploit, nor is it intended to be a complete defense against
-> > anything.
-> > It is intended to be a low cost way of eliminating some of side
-> > effects
-> > of a failed system call.
-> > 
-> > A performance test using sysbench on one hyperthread and a script
-> > which
-> > attempts to repeatedly access files it does not have permission to
-> > access
-> > on the other hyperthread found no significant performance impact.
-> > 
-> > +__visible inline void l1_cache_flush(struct pt_regs *regs)
-> > +{
-> > +       if (IS_ENABLED(CONFIG_SYSCALL_FLUSH) &&
-> > +           static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
-> > +               if (regs->ax == 0 || regs->ax == -EAGAIN ||
-> > +                   regs->ax == -EEXIST || regs->ax == -ENOENT ||
-> > +                   regs->ax == -EXDEV || regs->ax == -ETIMEDOUT ||
-> > +                   regs->ax == -ENOTCONN || regs->ax ==
-> > -EINPROGRESS)
-> > +                       return;
-> > +
-> > +               wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
-> > +       }
-> > +}
-> 
-> Ugh.
-> 
-> What exactly is this trying to protect against?  And how many cycles
-> should we expect L1D_FLUSH to take?
+Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-As I mentioned in the commit message, this is not addressing any
-specific exploit. It is removing any side effects from a failed system
-call in the L1 cache.
+> It should just be a matter of replacing the test
+> "if (p->mnt.mnt_sb->s_type == &nsfs)" with "if mnt_ns_loop(p->mnt.mnt_root)"
 
-> 
-> ISTM that, if we have a situation where the L1D can be read by user
-> code, we lose, via hyperthreading, successful syscalls, /dev/random,
-> and may other vectors.  This seems like a small mitigation at a
-> rather
-> large cost.
+Okay, the attached seems to work.
 
-I pinned an evil task to one hyperthread that just caused L1 flushes by
-issuing failed system calls. On the other hyperthread, I ran a
-performance benchmark (sysbench). I did not see any difference between
-the baseline and the kernel with the patch applied. Is there a more
-appropriate test you'd be interested in seeing the results of? I'd be
-happy to design a different test.
+Thanks,
+David
+---
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e969ded7d54b..5548fb9b7de2 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2388,6 +2388,27 @@ static inline int tree_contains_unbindable(struct mount *mnt)
+ 	return 0;
+ }
+ 
++/*
++ * Object if there are any nsfs mounts in the specified subtree.  These can act
++ * as pins for mount namespaces that aren't checked by the mount-cycle checking
++ * code, thereby allowing cycles to be made.
++ */
++static bool check_for_nsfs_mounts(struct mount *subtree)
++{
++	struct mount *p;
++	bool ret = false;
++
++	lock_mount_hash();
++	for (p = subtree; p; p = next_mnt(p, subtree))
++		if (mnt_ns_loop(p->mnt.mnt_root))
++			goto out;
++
++	ret = true;
++out:
++	unlock_mount_hash();
++	return ret;
++}
++
+ static int do_move_mount(struct path *old_path, struct path *new_path)
+ {
+ 	struct path parent_path = {.mnt = NULL, .dentry = NULL};
+@@ -2442,6 +2463,8 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	if (IS_MNT_SHARED(p) && tree_contains_unbindable(old))
+ 		goto out1;
+ 	err = -ELOOP;
++	if (!check_for_nsfs_mounts(old))
++		goto out1;
+ 	for (; mnt_has_parent(p); p = p->mnt_parent)
+ 		if (p == old)
+ 			goto out1;
