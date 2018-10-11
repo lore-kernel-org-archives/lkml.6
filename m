@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE38C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF1AC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E04A2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47DF321480
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtDF0jIC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E04A2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+sxSGVQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DF321480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbeJKXOB (ORCPT
+        id S1731542AbeJKXOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:14:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46842 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:14:00 -0400
+        id S1726700AbeJKXOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A45C2085B;
-        Thu, 11 Oct 2018 15:46:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA4D32098A;
+        Thu, 11 Oct 2018 15:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272774;
-        bh=9Ml3iNPT1TotYWP7bTmpSA9Wsp4Gn8KUUdkNbsE5xq4=;
+        s=default; t=1539272777;
+        bh=H4ojDd3USm+c9RxreegqtI/+VjhD6Pn/8PydQEFkkv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rtDF0jIClnZ0Y+AgO0zp/6Pklz+ZHOaVv4w/HZVg+40ChmVOUttDK+Y0hk74B2A6T
-         SH0SHEvoIzAb8zGbGjVyljlEU9GBK1INv1ildgNoN3C3tg9o8aNFhRy5BRxtxbL9pe
-         3bkI9+NstedxLr4YfViS530U2ZDCz+F5sKSwAVew=
+        b=i+sxSGVQztL572fSEWgX83f3bR7svluQHKdsOx/5L9mwNhE1KDRRW31pfWAJSpM/x
+         T78vD1NL+Vabch+Fmq+oTgKQWdcTL/0XAZ6tzuWEnG9YdGiPAwyr/pdZYHK8v2FIlD
+         wTi7meXmqODEhRnb2DD3QurUyMh1tBZ6L4m/19Aw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Balbir Singh <bsingharora@gmail.com>,
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 33/45] powerpc/lib/code-patching: refactor patch_instruction()
-Date:   Thu, 11 Oct 2018 17:40:00 +0200
-Message-Id: <20181011152510.361835278@linuxfoundation.org>
+Subject: [PATCH 4.14 34/45] powerpc: Avoid code patching freed init sections
+Date:   Thu, 11 Oct 2018 17:40:01 +0200
+Message-Id: <20181011152510.405902802@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -63,103 +64,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 8cf4c05712f04a405f0dacebcca8f042b391694a upstream.
+commit 51c3c62b58b357e8d35e4cc32f7b4ec907426fe3 upstream.
 
-patch_instruction() uses almost the same sequence as
-__patch_instruction()
+This stops us from doing code patching in init sections after they've
+been freed.
 
-This patch refactor it so that patch_instruction() uses
-__patch_instruction() instead of duplicating code.
+In this chain:
+  kvm_guest_init() ->
+    kvm_use_magic_page() ->
+      fault_in_pages_readable() ->
+	 __get_user() ->
+	   __get_user_nocheck() ->
+	     barrier_nospec();
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
+We have a code patching location at barrier_nospec() and
+kvm_guest_init() is an init function. This whole chain gets inlined,
+so when we free the init section (hence kvm_guest_init()), this code
+goes away and hence should no longer be patched.
+
+We seen this as userspace memory corruption when using a memory
+checker while doing partition migration testing on powervm (this
+starts the code patching post migration via
+/sys/kernel/mobility/migration). In theory, it could also happen when
+using /sys/kernel/debug/powerpc/barrier_nospec.
+
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/lib/code-patching.c |   30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ arch/powerpc/include/asm/setup.h |    1 +
+ arch/powerpc/lib/code-patching.c |    6 ++++++
+ arch/powerpc/mm/mem.c            |    2 ++
+ 3 files changed, 9 insertions(+)
 
+--- a/arch/powerpc/include/asm/setup.h
++++ b/arch/powerpc/include/asm/setup.h
+@@ -9,6 +9,7 @@ extern void ppc_printk_progress(char *s,
+ 
+ extern unsigned int rtas_data;
+ extern unsigned long long memory_limit;
++extern bool init_mem_is_free;
+ extern unsigned long klimit;
+ extern void *zalloc_maybe_bootmem(size_t size, gfp_t mask);
+ 
 --- a/arch/powerpc/lib/code-patching.c
 +++ b/arch/powerpc/lib/code-patching.c
-@@ -23,19 +23,26 @@
- #include <asm/code-patching.h>
- #include <asm/setup.h>
- 
--static int __patch_instruction(unsigned int *addr, unsigned int instr)
-+static int __patch_instruction(unsigned int *exec_addr, unsigned int instr,
-+			       unsigned int *patch_addr)
+@@ -28,6 +28,12 @@ static int __patch_instruction(unsigned
  {
  	int err;
  
--	__put_user_size(instr, addr, 4, err);
-+	__put_user_size(instr, patch_addr, 4, err);
++	/* Make sure we aren't patching a freed init section */
++	if (init_mem_is_free && init_section_contains(exec_addr, 4)) {
++		pr_debug("Skipping init section patching addr: 0x%px\n", exec_addr);
++		return 0;
++	}
++
+ 	__put_user_size(instr, patch_addr, 4, err);
  	if (err)
  		return err;
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -63,6 +63,7 @@
+ #endif
  
--	asm ("dcbst 0, %0; sync; icbi 0,%0; sync; isync" :: "r" (addr));
-+	asm ("dcbst 0, %0; sync; icbi 0,%1; sync; isync" :: "r" (patch_addr),
-+							    "r" (exec_addr));
+ unsigned long long memory_limit;
++bool init_mem_is_free;
  
- 	return 0;
+ #ifdef CONFIG_HIGHMEM
+ pte_t *kmap_pte;
+@@ -405,6 +406,7 @@ void free_initmem(void)
+ {
+ 	ppc_md.progress = ppc_printk_progress;
+ 	mark_initmem_nx();
++	init_mem_is_free = true;
+ 	free_initmem_default(POISON_FREE_INITMEM);
  }
  
-+static int raw_patch_instruction(unsigned int *addr, unsigned int instr)
-+{
-+	return __patch_instruction(addr, instr, addr);
-+}
-+
- #ifdef CONFIG_STRICT_KERNEL_RWX
- static DEFINE_PER_CPU(struct vm_struct *, text_poke_area);
- 
-@@ -138,7 +145,7 @@ static inline int unmap_patch_area(unsig
- int patch_instruction(unsigned int *addr, unsigned int instr)
- {
- 	int err;
--	unsigned int *dest = NULL;
-+	unsigned int *patch_addr = NULL;
- 	unsigned long flags;
- 	unsigned long text_poke_addr;
- 	unsigned long kaddr = (unsigned long)addr;
-@@ -149,7 +156,7 @@ int patch_instruction(unsigned int *addr
- 	 * to allow patching. We just do the plain old patching
- 	 */
- 	if (!this_cpu_read(*PTRRELOC(&text_poke_area)))
--		return __patch_instruction(addr, instr);
-+		return raw_patch_instruction(addr, instr);
- 
- 	local_irq_save(flags);
- 
-@@ -159,17 +166,10 @@ int patch_instruction(unsigned int *addr
- 		goto out;
- 	}
- 
--	dest = (unsigned int *)(text_poke_addr) +
-+	patch_addr = (unsigned int *)(text_poke_addr) +
- 			((kaddr & ~PAGE_MASK) / sizeof(unsigned int));
- 
--	/*
--	 * We use __put_user_size so that we can handle faults while
--	 * writing to dest and return err to handle faults gracefully
--	 */
--	__put_user_size(instr, dest, 4, err);
--	if (!err)
--		asm ("dcbst 0, %0; sync; icbi 0,%0; icbi 0,%1; sync; isync"
--			::"r" (dest), "r"(addr));
-+	__patch_instruction(addr, instr, patch_addr);
- 
- 	err = unmap_patch_area(text_poke_addr);
- 	if (err)
-@@ -184,7 +184,7 @@ out:
- 
- int patch_instruction(unsigned int *addr, unsigned int instr)
- {
--	return __patch_instruction(addr, instr);
-+	return raw_patch_instruction(addr, instr);
- }
- 
- #endif /* CONFIG_STRICT_KERNEL_RWX */
 
 
