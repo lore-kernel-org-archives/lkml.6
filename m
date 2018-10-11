@@ -2,50 +2,49 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5653CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAB1C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100AB21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83393213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4kTS1Dn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100AB21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bl6mdmks"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83393213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeJKXEH (ORCPT
+        id S1728944AbeJKXEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:04:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58646 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJKXEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:04:06 -0400
+        id S1726562AbeJKXEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:04:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88D3120652;
-        Thu, 11 Oct 2018 15:36:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6161D213A2;
+        Thu, 11 Oct 2018 15:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272184;
-        bh=8tFRixWEsqxgW2NEY9Bu51pCk/4B8Ya9bGLn1xs192c=;
+        s=default; t=1539272186;
+        bh=q4sjU91q3VoQaJkdTQDnH5GQUHrkqH+j4OrpMUAl4a8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h4kTS1Dn/V3mMOrqP1hh9ickurRZUQfcNOcFTgBAdVPXS/Xori//xPP9i1tsgMTZ6
-         IvDLM5jt1SYxNQw5dXU75WCddwFIEqHTQYJQozsw80x48RZNug+J0/w6zn6pzb0TyB
-         LYwMEi4bSYCFz7n0OsIFTeLcSQdvjpYvIh8A7QC4=
+        b=Bl6mdmks93jxqRgLeYRHytlp66NQLW+sWyeRP21sRQhEs5sxZsaUYfkdeCmADX7go
+         TDUL2bn97zvL4GRYFvOxj4uLIvwR/TnXYMI8XmTDZOZJXJVVMwdWXOAGtF0Eiq/DBb
+         x1x4dwsKlofg52oJ8mVFpD/aa911MxOSF20LHKsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roderick Colenbrander <roderick.colenbrander@sony.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 3.18 019/120] HID: sony: Support DS4 dongle
-Date:   Thu, 11 Oct 2018 17:33:20 +0200
-Message-Id: <20181011152550.453303916@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 002/120] ALSA: bebob: use address returned by kmalloc() instead of kernel stack for streaming DMA mapping
+Date:   Thu, 11 Oct 2018 17:33:03 +0200
+Message-Id: <20181011152549.596948174@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -63,54 +62,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roderick Colenbrander <roderick.colenbrander@sony.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit de66a1a04c25f2560a8dca7a95e2a150b0d5e17e upstream.
+commit 493626f2d87a74e6dbea1686499ed6e7e600484e upstream.
 
-Add support for USB based DS4 dongle device, which allows connecting
-a DS4 through Bluetooth, but hides Bluetooth from the host system.
+When executing 'fw_run_transaction()' with 'TCODE_WRITE_BLOCK_REQUEST',
+an address of 'payload' argument is used for streaming DMA mapping by
+'firewire_ohci' module if 'size' argument is larger than 8 byte.
+Although in this case the address should not be on kernel stack, current
+implementation of ALSA bebob driver uses data in kernel stack for a cue
+to boot M-Audio devices. This often brings unexpected result, especially
+for a case of CONFIG_VMAP_STACK=y.
 
-Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+This commit fixes the bug.
+
+Reference: https://bugzilla.kernel.org/show_bug.cgi?id=201021
+Reference: https://forum.manjaro.org/t/firewire-m-audio-410-driver-wont-load-firmware/51165
+Fixes: a2b2a7798fb6('ALSA: bebob: Send a cue to load firmware for M-Audio Firewire series')
+Cc: <stable@vger.kernel.org> # v3.16+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/hid/hid-core.c |    1 +
- drivers/hid/hid-ids.h  |    1 +
- drivers/hid/hid-sony.c |    2 ++
- 3 files changed, 4 insertions(+)
+ sound/firewire/bebob/bebob_maudio.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1937,6 +1937,7 @@ static const struct hid_device_id hid_ha
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_VAIO_VGX_MOUSE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_VAIO_VGP_MOUSE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_SRWS1) },
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -847,6 +847,7 @@
- #define USB_DEVICE_ID_SONY_PS3_CONTROLLER	0x0268
- #define USB_DEVICE_ID_SONY_PS4_CONTROLLER	0x05c4
- #define USB_DEVICE_ID_SONY_PS4_CONTROLLER_2	0x09cc
-+#define USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE	0x0ba0
- #define USB_DEVICE_ID_SONY_NAVIGATION_CONTROLLER	0x042f
- #define USB_DEVICE_ID_SONY_BUZZ_CONTROLLER		0x0002
- #define USB_DEVICE_ID_SONY_WIRELESS_BUZZ_CONTROLLER	0x1000
---- a/drivers/hid/hid-sony.c
-+++ b/drivers/hid/hid-sony.c
-@@ -2046,6 +2046,8 @@ static const struct hid_device_id sony_d
- 		.driver_data = DUALSHOCK4_CONTROLLER_USB },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2),
- 		.driver_data = DUALSHOCK4_CONTROLLER_BT },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE),
-+		.driver_data = DUALSHOCK4_CONTROLLER_USB },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, sony_devices);
+--- a/sound/firewire/bebob/bebob_maudio.c
++++ b/sound/firewire/bebob/bebob_maudio.c
+@@ -96,17 +96,13 @@ int snd_bebob_maudio_load_firmware(struc
+ 	struct fw_device *device = fw_parent_device(unit);
+ 	int err, rcode;
+ 	u64 date;
+-	__le32 cues[3] = {
+-		cpu_to_le32(MAUDIO_BOOTLOADER_CUE1),
+-		cpu_to_le32(MAUDIO_BOOTLOADER_CUE2),
+-		cpu_to_le32(MAUDIO_BOOTLOADER_CUE3)
+-	};
++	__le32 *cues;
+ 
+ 	/* check date of software used to build */
+ 	err = snd_bebob_read_block(unit, INFO_OFFSET_SW_DATE,
+ 				   &date, sizeof(u64));
+ 	if (err < 0)
+-		goto end;
++		return err;
+ 	/*
+ 	 * firmware version 5058 or later has date later than "20070401", but
+ 	 * 'date' is not null-terminated.
+@@ -114,20 +110,28 @@ int snd_bebob_maudio_load_firmware(struc
+ 	if (date < 0x3230303730343031LL) {
+ 		dev_err(&unit->device,
+ 			"Use firmware version 5058 or later\n");
+-		err = -ENOSYS;
+-		goto end;
++		return -ENXIO;
+ 	}
+ 
++	cues = kmalloc_array(3, sizeof(*cues), GFP_KERNEL);
++	if (!cues)
++		return -ENOMEM;
++
++	cues[0] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE1);
++	cues[1] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE2);
++	cues[2] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE3);
++
+ 	rcode = fw_run_transaction(device->card, TCODE_WRITE_BLOCK_REQUEST,
+ 				   device->node_id, device->generation,
+ 				   device->max_speed, BEBOB_ADDR_REG_REQ,
+-				   cues, sizeof(cues));
++				   cues, 3 * sizeof(*cues));
++	kfree(cues);
+ 	if (rcode != RCODE_COMPLETE) {
+ 		dev_err(&unit->device,
+ 			"Failed to send a cue to load firmware\n");
+ 		err = -EIO;
+ 	}
+-end:
++
+ 	return err;
+ }
+ 
 
 
