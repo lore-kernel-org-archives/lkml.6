@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484B8C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D63C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000E2213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3020213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5bp9Lre"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000E2213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3VTrGtU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3020213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbeJKXM4 (ORCPT
+        id S1731274AbeJKXM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:12:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45252 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:12:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729994AbeJKXMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:12:55 -0400
+        id S1729994AbeJKXM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:12:59 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8681121470;
-        Thu, 11 Oct 2018 15:45:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8EC62098A;
+        Thu, 11 Oct 2018 15:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272710;
-        bh=im0MgOQJgNbGAVqm5McwCrLaoSojpYi3j6Yi3Xd80wE=;
+        s=default; t=1539272713;
+        bh=ia0MviSSNglJR8SaQFXttDrNBlSsszZ9NCh4MA4khEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a5bp9Lrexpu+T7xJ4H7EVyeLtGRS6HTMpXVbDQsYnKHxMapiCFb4aHlE9c/hh4hwh
-         B+rzrUEeUxLVrL7JdjzvGj6YZrRjUay5Xcwvstnr+4qXcr+8TfRK1QMgfc6baO9Q6H
-         azXLWPPo8HABSCl3U/PqhrslmTwVPRE0CiqUqvC4=
+        b=r3VTrGtUTTPADmEUcJvvsQtpZmEygtKXqmX6zA4l+0mcDCkqj5W7YwbTo0UzF1del
+         xPfOJ/pwXS5XgP/Knk/V4c6utvoz+odLevcBlbUeWwZkXqwAVHJ9XzIQFaPY6tyeve
+         XBj4eqm5i045Ut5dWP5AdcpGC83QmKAeVNwUlzJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 12/45] x86/vdso: Fix asm constraints on vDSO syscall fallbacks
-Date:   Thu, 11 Oct 2018 17:39:39 +0200
-Message-Id: <20181011152509.371371812@linuxfoundation.org>
+Subject: [PATCH 4.14 13/45] selftests/x86: Add clock_gettime() tests to test_vdso
+Date:   Thu, 11 Oct 2018 17:39:40 +0200
+Message-Id: <20181011152509.415931947@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -64,105 +64,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit 715bd9d12f84d8f5cc8ad21d888f9bc304a8eb0b upstream.
+commit 7c03e7035ac1cf2a6165754e4f3a49c2f1977838 upstream.
 
-The syscall fallbacks in the vDSO have incorrect asm constraints.
-They are not marked as writing to their outputs -- instead, they are
-marked as clobbering "memory", which is useless.  In particular, gcc
-is smart enough to know that the timespec parameter hasn't escaped,
-so a memory clobber doesn't clobber it.  And passing a pointer as an
-asm *input* does not tell gcc that the pointed-to value is changed.
+Now that the vDSO implementation of clock_gettime() is getting
+reworked, add a selftest for it.  This tests that its output is
+consistent with the syscall version.
 
-Add in the fact that the asm instructions weren't volatile, and gcc
-was free to omit them entirely unless their sole output (the return
-value) is used.  Which it is (phew!), but that stops happening with
-some upcoming patches.
+This is marked for stable to serve as a test for commit
 
-As a trivial example, the following code:
+  715bd9d12f84 ("x86/vdso: Fix asm constraints on vDSO syscall fallbacks")
 
-void test_fallback(struct timespec *ts)
-{
-	vdso_fallback_gettime(CLOCK_MONOTONIC, ts);
-}
-
-compiles to:
-
-00000000000000c0 <test_fallback>:
-  c0:   c3                      retq
-
-To add insult to injury, the RCX and R11 clobbers on 64-bit
-builds were missing.
-
-The "memory" clobber is also unnecessary -- no ordering with respect to
-other memory operations is needed, but that's going to be fixed in a
-separate not-for-stable patch.
-
-Fixes: 2aae950b21e4 ("x86_64: Add vDSO for x86-64 with gettimeofday/clock_gettime/getcpu")
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/2c0231690551989d2fafa60ed0e7b5cc8b403908.1538422295.git.luto@kernel.org
+Link: https://lkml.kernel.org/r/082399674de2619b2befd8c0dde49b260605b126.1538422295.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/vdso/vclock_gettime.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ tools/testing/selftests/x86/test_vdso.c |   99 ++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -43,8 +43,9 @@ extern u8 hvclock_page
- notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- {
- 	long ret;
--	asm("syscall" : "=a" (ret) :
--	    "0" (__NR_clock_gettime), "D" (clock), "S" (ts) : "memory");
-+	asm ("syscall" : "=a" (ret), "=m" (*ts) :
-+	     "0" (__NR_clock_gettime), "D" (clock), "S" (ts) :
-+	     "memory", "rcx", "r11");
- 	return ret;
+--- a/tools/testing/selftests/x86/test_vdso.c
++++ b/tools/testing/selftests/x86/test_vdso.c
+@@ -17,6 +17,7 @@
+ #include <errno.h>
+ #include <sched.h>
+ #include <stdbool.h>
++#include <limits.h>
+ 
+ #ifndef SYS_getcpu
+ # ifdef __x86_64__
+@@ -31,6 +32,10 @@
+ 
+ int nerrs = 0;
+ 
++typedef int (*vgettime_t)(clockid_t, struct timespec *);
++
++vgettime_t vdso_clock_gettime;
++
+ typedef long (*getcpu_t)(unsigned *, unsigned *, void *);
+ 
+ getcpu_t vgetcpu;
+@@ -95,6 +100,10 @@ static void fill_function_pointers()
+ 		printf("Warning: failed to find getcpu in vDSO\n");
+ 
+ 	vgetcpu = (getcpu_t) vsyscall_getcpu();
++
++	vdso_clock_gettime = (vgettime_t)dlsym(vdso, "__vdso_clock_gettime");
++	if (!vdso_clock_gettime)
++		printf("Warning: failed to find clock_gettime in vDSO\n");
  }
  
-@@ -52,8 +53,9 @@ notrace static long vdso_fallback_gtod(s
- {
- 	long ret;
- 
--	asm("syscall" : "=a" (ret) :
--	    "0" (__NR_gettimeofday), "D" (tv), "S" (tz) : "memory");
-+	asm ("syscall" : "=a" (ret), "=m" (*tv), "=m" (*tz) :
-+	     "0" (__NR_gettimeofday), "D" (tv), "S" (tz) :
-+	     "memory", "rcx", "r11");
- 	return ret;
+ static long sys_getcpu(unsigned * cpu, unsigned * node,
+@@ -103,6 +112,11 @@ static long sys_getcpu(unsigned * cpu, u
+ 	return syscall(__NR_getcpu, cpu, node, cache);
  }
  
-@@ -64,12 +66,12 @@ notrace static long vdso_fallback_gettim
++static inline int sys_clock_gettime(clockid_t id, struct timespec *ts)
++{
++	return syscall(__NR_clock_gettime, id, ts);
++}
++
+ static void test_getcpu(void)
  {
- 	long ret;
+ 	printf("[RUN]\tTesting getcpu...\n");
+@@ -155,10 +169,95 @@ static void test_getcpu(void)
+ 	}
+ }
  
--	asm(
-+	asm (
- 		"mov %%ebx, %%edx \n"
- 		"mov %2, %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
--		: "=a" (ret)
-+		: "=a" (ret), "=m" (*ts)
- 		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
- 		: "memory", "edx");
- 	return ret;
-@@ -79,12 +81,12 @@ notrace static long vdso_fallback_gtod(s
++static bool ts_leq(const struct timespec *a, const struct timespec *b)
++{
++	if (a->tv_sec != b->tv_sec)
++		return a->tv_sec < b->tv_sec;
++	else
++		return a->tv_nsec <= b->tv_nsec;
++}
++
++static char const * const clocknames[] = {
++	[0] = "CLOCK_REALTIME",
++	[1] = "CLOCK_MONOTONIC",
++	[2] = "CLOCK_PROCESS_CPUTIME_ID",
++	[3] = "CLOCK_THREAD_CPUTIME_ID",
++	[4] = "CLOCK_MONOTONIC_RAW",
++	[5] = "CLOCK_REALTIME_COARSE",
++	[6] = "CLOCK_MONOTONIC_COARSE",
++	[7] = "CLOCK_BOOTTIME",
++	[8] = "CLOCK_REALTIME_ALARM",
++	[9] = "CLOCK_BOOTTIME_ALARM",
++	[10] = "CLOCK_SGI_CYCLE",
++	[11] = "CLOCK_TAI",
++};
++
++static void test_one_clock_gettime(int clock, const char *name)
++{
++	struct timespec start, vdso, end;
++	int vdso_ret, end_ret;
++
++	printf("[RUN]\tTesting clock_gettime for clock %s (%d)...\n", name, clock);
++
++	if (sys_clock_gettime(clock, &start) < 0) {
++		if (errno == EINVAL) {
++			vdso_ret = vdso_clock_gettime(clock, &vdso);
++			if (vdso_ret == -EINVAL) {
++				printf("[OK]\tNo such clock.\n");
++			} else {
++				printf("[FAIL]\tNo such clock, but __vdso_clock_gettime returned %d\n", vdso_ret);
++				nerrs++;
++			}
++		} else {
++			printf("[WARN]\t clock_gettime(%d) syscall returned error %d\n", clock, errno);
++		}
++		return;
++	}
++
++	vdso_ret = vdso_clock_gettime(clock, &vdso);
++	end_ret = sys_clock_gettime(clock, &end);
++
++	if (vdso_ret != 0 || end_ret != 0) {
++		printf("[FAIL]\tvDSO returned %d, syscall errno=%d\n",
++		       vdso_ret, errno);
++		nerrs++;
++		return;
++	}
++
++	printf("\t%llu.%09ld %llu.%09ld %llu.%09ld\n",
++	       (unsigned long long)start.tv_sec, start.tv_nsec,
++	       (unsigned long long)vdso.tv_sec, vdso.tv_nsec,
++	       (unsigned long long)end.tv_sec, end.tv_nsec);
++
++	if (!ts_leq(&start, &vdso) || !ts_leq(&vdso, &end)) {
++		printf("[FAIL]\tTimes are out of sequence\n");
++		nerrs++;
++	}
++}
++
++static void test_clock_gettime(void)
++{
++	for (int clock = 0; clock < sizeof(clocknames) / sizeof(clocknames[0]);
++	     clock++) {
++		test_one_clock_gettime(clock, clocknames[clock]);
++	}
++
++	/* Also test some invalid clock ids */
++	test_one_clock_gettime(-1, "invalid");
++	test_one_clock_gettime(INT_MIN, "invalid");
++	test_one_clock_gettime(INT_MAX, "invalid");
++}
++
+ int main(int argc, char **argv)
  {
- 	long ret;
+ 	fill_function_pointers();
  
--	asm(
-+	asm (
- 		"mov %%ebx, %%edx \n"
- 		"mov %2, %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
--		: "=a" (ret)
-+		: "=a" (ret), "=m" (*tv), "=m" (*tz)
- 		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
- 		: "memory", "edx");
- 	return ret;
++	test_clock_gettime();
++
++	/*
++	 * Test getcpu() last so that, if something goes wrong setting affinity,
++	 * we still run the other tests.
++	 */
+ 	test_getcpu();
+ 
+ 	return nerrs ? 1 : 0;
 
 
