@@ -2,83 +2,181 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0507AC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C697C67837
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0645213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:02:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0645213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 05C66213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:02:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qo8vMMmx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C66213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbeJLEbO (ORCPT
+        id S1726770AbeJLEbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:31:14 -0400
-Received: from sauhun.de ([88.99.104.3]:41594 "EHLO pokefinder.org"
+        Fri, 12 Oct 2018 00:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeJLEbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:31:14 -0400
-Received: from localhost (p54B3377B.dip0.t-ipconnect.de [84.179.55.123])
-        by pokefinder.org (Postfix) with ESMTPSA id 7A0DE2E3577;
-        Thu, 11 Oct 2018 23:02:11 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 23:02:10 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: Fix kerneldoc for renamed i2c dma put function
-Message-ID: <20181011210210.hsrxwqbc2loultks@katana>
-References: <20181008145520.36810-1-swboyd@chromium.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dng3cjxcefyt7pl7"
-Content-Disposition: inline
-In-Reply-To: <20181008145520.36810-1-swboyd@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1725819AbeJLEbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 00:31:21 -0400
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34C8220835;
+        Thu, 11 Oct 2018 21:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539291740;
+        bh=xfyXn6qhgY43MAqUHFyEcauaAalnCf6URkICiXUY4iY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qo8vMMmxv5eqWvIL3ySXiZHE5HQ++vuBz8JHs41MXQe+DwcJjqL3MoTFFtC8+XAIg
+         aq8T/YQ9s1pFy0GrtAtMhr5nBVnagSc8hQPU3Vi3r2jE6PYHAYbo4Ra25F+nDH1rqa
+         ATvT5SseXbSHgZLFTz8fmkoAvn7wAkHJFKzCTxEY=
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     rostedt@goodmis.org
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v6 00/15] tracing: Hist trigger snapshot and onchange additions
+Date:   Thu, 11 Oct 2018 16:01:57 -0500
+Message-Id: <cover.1539288364.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
---dng3cjxcefyt7pl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Mon, Oct 08, 2018 at 07:55:20AM -0700, Stephen Boyd wrote:
-> This function was renamed in commit 82fe39a6bc7b ("i2c: refactor
-> function to release a DMA safe buffer") but this kernel doc wasn't
-> updated to point at the new function. Rename it.
->=20
-> Fixes: 82fe39a6bc7b ("i2c: refactor function to release a DMA safe buffer=
-")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+This is v6 of the hist trigger snapshot and onchange additions
+patchset.  It breaks up the onchange patch into separate code,
+Documentation, and test case patches, and adds a README-based check
+for onchange functionality as suggested by Masami.
 
-Applied to for-current, thanks!
+In addition to adding the above, I updated the README code with the
+other new recent actions and handlers, as well as corresponding
+updates to Documentation.
+
+I also added a new snapshot() test case, and moved the new trace()
+test case into its own file, to allow it to fail separately if
+unsupported.
+
+Also rebased to lastest ftrace/core.
+
+v5->v6 changes:
+
+  - Added new Documentation patch explaining handler.action
+  - Added new README patch explaining handler.action
+  - Added separate snapshot() Documentation
+  - Added new snapshot() test case
+  - Updated README with snapshote()
+  - Added separate onchange() Documentation
+  - Added separate onchange() test case
+  - Updated README with onchange()
+  - Added separate trace() test case
+  - Updated README with trace() and <synthetic_event>() syntax
+
+v4->v5 changes:
+
+  - added 'trace' keyword test case
+  - added 'onchange' handler test case
+
+v3->v4 changes:
+
+  - added 'trace' keyword for generating synthetic events
+  - fix elt_data leak
+  - changed cond_update to cond_update_fn_t
+
+v2->v3 changes:
+
+  - fixed problem where trace actions were only being allowed for
+    onmatch handlers - now trace actions can be used with any handler.
+  - fixed problem where no action was being assigned to onmatch
+    handlers if save or snapshot actions were specified.
+
+v1->v2 changes:
+
+  - added missing tracing_cond_snapshot_data() definition for when
+    CONFIG_TRACER_SNAPSHOT not defined
+  - removed an unnecessary WARN_ON() in track_data_snapshot_print()
 
 
---dng3cjxcefyt7pl7
-Content-Type: application/pgp-signature; name="signature.asc"
+Original text:
 
------BEGIN PGP SIGNATURE-----
+This patchset adds some useful new functions to the hist
+trigger code: a snapshot action and an onchange handler.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu/ukwACgkQFA3kzBSg
-KbYecRAAlUpqMldRD91/4Bpapu7M0C7rwGJ6PJPw43VweR9JQD/x0r/YE/6//EHs
-4thzz2Ip7bUI/cQ8XfkfVLO/XylnIHRF9x+DbAyUO4yXWQiUBEoFMp179ZYSyrzp
-Y8QdJNq8ykpNRezjJI4UjMudKLcwhoXFxOegFyXyN++IpUnru8QvyKz6ddgPSEJE
-SQLpVlh1r/9U7r310ozxJi3VQMCd+saYekgXj5Vl0OO8MKlgX5vxK2+CrlD448v2
-/Jazywg8l6CFCZLfsIzfMxpagRFAx2zmcIkI0EdVrcrZ8St8pPhl9+m7/2t+/ub/
-ThHBm/fi+vjlfi5JllbbABTRlksHPaFivh39r1o5mzer/eRMbWT2huCBzXfmlbnx
-rLiXPaGfYdI0Kr2B1c1nmDncRyAUsrPtYQ584kLHOD/urdvhFQ5+AYW24UhJ4tft
-MaHPyKRxVVPqsTASeMrVCbiN/etfvruX+O/WkXp1Sjba+aHFPERZe8cFnib5D8w/
-7sIS7CiUjhuR+dPau46n07qylx0i7y92UTQ8KJT+8BU6i+jHYXr0Bbf6TYWeU1sb
-acxqiNeD9ydOZrcBJc3z1iZk27lvbeNQsju3z2jQ1Qu9hgK9VGuaY0wzT7IO3ynZ
-WQlfiQWEiPE/aZ/8Krr5PQUO1G4X1ZrUjxcxIEZSuen9ElbolXQ=
-=wISp
------END PGP SIGNATURE-----
+In order to make it easier to add these and in the process make the
+code more generic, I separated the code into explicit 'handlers' and
+'actions', handlers being things like 'onmax' and 'onchange', and
+'actions' being things like 'take a snapshot' or 'save some fields'.
 
---dng3cjxcefyt7pl7--
+The first few patches do that basic refactoring, which make it easier
+to add the subsequent changes that arbitrarily combine actions and
+handlers.
+
+The fourth patch adds a 'conditional snapshot' capability that via a
+new tracing_snaphot_cond() function extends the existing snapshot
+code.  It allows the caller to associate some user data with the
+snapshot that can be checked and saved in an update() callback whose
+return value determines whether the snapshot should be taken or not.
+
+The remaining patches finally add the new snapshot action and onchange
+handler functionality - please see those patches for details and some
+examples.
+
+Thanks,
+
+Tom
+
+The following changes since commit a6ca88b241d5e929e6e60b12ad8cd288f0ffa256:
+
+  trace_uprobe: support reference counter in fd-based uprobe (2018-10-10 22:14:17 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v6
+
+Tom Zanussi (15):
+  tracing: Refactor hist trigger action code
+  tracing: Make hist trigger Documentation better reflect
+    actions/handlers
+  tracing: Add hist trigger handler.action documentation to README
+  tracing: Split up onmatch action data
+  tracing: Generalize hist trigger onmax and save action
+  tracing: Add conditional snapshot
+  tracing: Move hist trigger key printing into a separate function
+  tracing: Add hist trigger snapshot() action
+  tracing: Add hist trigger snapshot() action Documentation
+  tracing: Add hist trigger snapshot() action test case
+  tracing: Add hist trigger onchange() handler
+  tracing: Add hist trigger onchange() handler Documentation
+  tracing: Add hist trigger onchange() handler test case
+  tracing: Add alternative synthetic event trace action syntax
+  tracing: Add alternative synthetic event trace action test case
+
+ Documentation/trace/histogram.rst                  |  285 +++++-
+ kernel/trace/trace.c                               |  177 +++-
+ kernel/trace/trace.h                               |   56 +-
+ kernel/trace/trace_events_hist.c                   | 1062 +++++++++++++++-----
+ kernel/trace/trace_events_trigger.c                |    2 +-
+ kernel/trace/trace_sched_wakeup.c                  |    2 +-
+ .../inter-event/trigger-onchange-action-hist.tc    |   39 +
+ .../inter-event/trigger-snapshot-action-hist.tc    |   55 +
+ .../inter-event/trigger-trace-action-hist.tc       |   52 +
+ 9 files changed, 1430 insertions(+), 300 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
+
+-- 
+2.14.1
+
