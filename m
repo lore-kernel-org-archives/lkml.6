@@ -2,501 +2,93 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F00C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57D6C677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0171F21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0171F21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A91872148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:59:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91872148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeJLB1D (ORCPT
+        id S1728969AbeJLB1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:27:03 -0400
-Received: from mga04.intel.com ([192.55.52.120]:4230 "EHLO mga04.intel.com"
+        Thu, 11 Oct 2018 21:27:41 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59679 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbeJLB1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:27:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 10:58:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="98589993"
-Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 11 Oct 2018 10:58:43 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2] mm/gup: Cache dev_pagemap while pinning pages
-Date:   Thu, 11 Oct 2018 11:55:42 -0600
-Message-Id: <20181011175542.13045-1-keith.busch@intel.com>
-X-Mailer: git-send-email 2.13.6
+        id S1726090AbeJLB1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 21:27:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 29F14BD113;
+        Thu, 11 Oct 2018 19:59:19 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id pLbrhro3LOfk; Thu, 11 Oct 2018 19:59:16 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5D556BD114;
+        Thu, 11 Oct 2018 19:59:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id AEdencj8ZIWZ; Thu, 11 Oct 2018 19:59:15 +0200 (CEST)
+Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 36E89BD113;
+        Thu, 11 Oct 2018 19:59:15 +0200 (CEST)
+Message-ID: <8cafa3f97fbe2a01ccf968b39469751b449e324b.camel@v3.sk>
+Subject: Re: [PATCH v2 01/11] dt-bindings: spi/spi-pxa2xx: add PXA2xx SSP
+ SPI Controller
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        James Cameron <quozl@laptop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date:   Thu, 11 Oct 2018 19:59:15 +0200
+In-Reply-To: <20181011142719.GE25351@sirena.org.uk>
+References: <20181010170936.316862-1-lkundrak@v3.sk>
+         <20181010170936.316862-2-lkundrak@v3.sk>
+         <20181011142719.GE25351@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Getting pages from ZONE_DEVICE memory needs to check the backing device's
-live-ness, which is tracked in the device's dev_pagemap metadata. This
-metadata is stored in a radix tree and looking it up adds measurable
-software overhead.
+On Thu, 2018-10-11 at 15:27 +0100, Mark Brown wrote:
+> On Wed, Oct 10, 2018 at 07:09:26PM +0200, Lubomir Rintel wrote:
+> > This is the SPI controller found on Marvel MMP2 and perhaps more
+> > platforms.
+> 
+> *Way* more.
+> 
+> Please use subject lines matching the style for the subsystem.  This
+> makes it easier for people to identify relevant patches.
 
-This patch avoids repeating this relatively costly operation when
-dev_pagemap is used by caching the last dev_pagemap while getting user
-pages. The gup_benchmark kernel self test reports this reduces time to
-get user pages to as low as 1/3 of the previous time.
+Thanks for the response.
 
-Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
----
-Changes from previous version:
+I'm a little confused here. Why I chose this subject line is because I
+did this:
 
-  Fixed CONFIG_NOMMU compile error from bad copy-paste
+  git log --no-merges Documentation/devicetree/bindings/
 
- include/linux/huge_mm.h |   8 ++--
- include/linux/mm.h      |  12 +----
- mm/gup.c                | 113 +++++++++++++++++++++++++++++-------------------
- mm/huge_memory.c        |  16 +++----
- mm/nommu.c              |   6 +--
- 5 files changed, 82 insertions(+), 73 deletions(-)
+to figure out what's the typical subject for the DT binding changes.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 99c19b06d9a4..5cbabdebe9af 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -213,9 +213,9 @@ static inline int hpage_nr_pages(struct page *page)
- }
- 
- struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
--		pmd_t *pmd, int flags);
-+		pmd_t *pmd, int flags, struct dev_pagemap **pgmap);
- struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
--		pud_t *pud, int flags);
-+		pud_t *pud, int flags, struct dev_pagemap **pgmap);
- 
- extern vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t orig_pmd);
- 
-@@ -344,13 +344,13 @@ static inline void mm_put_huge_zero_page(struct mm_struct *mm)
- }
- 
- static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
--		unsigned long addr, pmd_t *pmd, int flags)
-+	unsigned long addr, pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
- {
- 	return NULL;
- }
- 
- static inline struct page *follow_devmap_pud(struct vm_area_struct *vma,
--		unsigned long addr, pud_t *pud, int flags)
-+	unsigned long addr, pud_t *pud, int flags, struct dev_pagemap **pgmap)
- {
- 	return NULL;
- }
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a61ebe8ad4ca..d63ac2b7f853 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2534,16 +2534,8 @@ static inline vm_fault_t vmf_error(int err)
- 	return VM_FAULT_SIGBUS;
- }
- 
--struct page *follow_page_mask(struct vm_area_struct *vma,
--			      unsigned long address, unsigned int foll_flags,
--			      unsigned int *page_mask);
--
--static inline struct page *follow_page(struct vm_area_struct *vma,
--		unsigned long address, unsigned int foll_flags)
--{
--	unsigned int unused_page_mask;
--	return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
--}
-+struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-+			 unsigned int foll_flags);
- 
- #define FOLL_WRITE	0x01	/* check pte is writable */
- #define FOLL_TOUCH	0x02	/* mark page accessed */
-diff --git a/mm/gup.c b/mm/gup.c
-index 1abc8b4afff6..d2700dff6f66 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -20,6 +20,11 @@
- 
- #include "internal.h"
- 
-+struct follow_page_context {
-+	struct dev_pagemap *pgmap;
-+	unsigned int page_mask;
-+};
-+
- static struct page *no_page_table(struct vm_area_struct *vma,
- 		unsigned int flags)
- {
-@@ -71,10 +76,10 @@ static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
- }
- 
- static struct page *follow_page_pte(struct vm_area_struct *vma,
--		unsigned long address, pmd_t *pmd, unsigned int flags)
-+		unsigned long address, pmd_t *pmd, unsigned int flags,
-+		struct dev_pagemap **pgmap)
- {
- 	struct mm_struct *mm = vma->vm_mm;
--	struct dev_pagemap *pgmap = NULL;
- 	struct page *page;
- 	spinlock_t *ptl;
- 	pte_t *ptep, pte;
-@@ -116,8 +121,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 		 * Only return device mapping pages in the FOLL_GET case since
- 		 * they are only valid while holding the pgmap reference.
- 		 */
--		pgmap = get_dev_pagemap(pte_pfn(pte), NULL);
--		if (pgmap)
-+		*pgmap = get_dev_pagemap(pte_pfn(pte), *pgmap);
-+		if (*pgmap)
- 			page = pte_page(pte);
- 		else
- 			goto no_page;
-@@ -152,15 +157,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 		goto retry;
- 	}
- 
--	if (flags & FOLL_GET) {
-+	if (flags & FOLL_GET)
- 		get_page(page);
--
--		/* drop the pgmap reference now that we hold the page */
--		if (pgmap) {
--			put_dev_pagemap(pgmap);
--			pgmap = NULL;
--		}
--	}
- 	if (flags & FOLL_TOUCH) {
- 		if ((flags & FOLL_WRITE) &&
- 		    !pte_dirty(pte) && !PageDirty(page))
-@@ -210,7 +208,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 
- static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 				    unsigned long address, pud_t *pudp,
--				    unsigned int flags, unsigned int *page_mask)
-+				    unsigned int flags,
-+				    struct follow_page_context *ctx)
- {
- 	pmd_t *pmd, pmdval;
- 	spinlock_t *ptl;
-@@ -258,13 +257,13 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 	}
- 	if (pmd_devmap(pmdval)) {
- 		ptl = pmd_lock(mm, pmd);
--		page = follow_devmap_pmd(vma, address, pmd, flags);
-+		page = follow_devmap_pmd(vma, address, pmd, flags, &ctx->pgmap);
- 		spin_unlock(ptl);
- 		if (page)
- 			return page;
- 	}
- 	if (likely(!pmd_trans_huge(pmdval)))
--		return follow_page_pte(vma, address, pmd, flags);
-+		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
- 
- 	if ((flags & FOLL_NUMA) && pmd_protnone(pmdval))
- 		return no_page_table(vma, flags);
-@@ -284,7 +283,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 	}
- 	if (unlikely(!pmd_trans_huge(*pmd))) {
- 		spin_unlock(ptl);
--		return follow_page_pte(vma, address, pmd, flags);
-+		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
- 	}
- 	if (flags & FOLL_SPLIT) {
- 		int ret;
-@@ -307,18 +306,18 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 		}
- 
- 		return ret ? ERR_PTR(ret) :
--			follow_page_pte(vma, address, pmd, flags);
-+			follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
- 	}
- 	page = follow_trans_huge_pmd(vma, address, pmd, flags);
- 	spin_unlock(ptl);
--	*page_mask = HPAGE_PMD_NR - 1;
-+	ctx->page_mask = HPAGE_PMD_NR - 1;
- 	return page;
- }
- 
--
- static struct page *follow_pud_mask(struct vm_area_struct *vma,
- 				    unsigned long address, p4d_t *p4dp,
--				    unsigned int flags, unsigned int *page_mask)
-+				    unsigned int flags,
-+				    struct follow_page_context *ctx)
- {
- 	pud_t *pud;
- 	spinlock_t *ptl;
-@@ -344,7 +343,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
- 	}
- 	if (pud_devmap(*pud)) {
- 		ptl = pud_lock(mm, pud);
--		page = follow_devmap_pud(vma, address, pud, flags);
-+		page = follow_devmap_pud(vma, address, pud, flags, &ctx->pgmap);
- 		spin_unlock(ptl);
- 		if (page)
- 			return page;
-@@ -352,13 +351,13 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
- 	if (unlikely(pud_bad(*pud)))
- 		return no_page_table(vma, flags);
- 
--	return follow_pmd_mask(vma, address, pud, flags, page_mask);
-+	return follow_pmd_mask(vma, address, pud, flags, ctx);
- }
- 
--
- static struct page *follow_p4d_mask(struct vm_area_struct *vma,
- 				    unsigned long address, pgd_t *pgdp,
--				    unsigned int flags, unsigned int *page_mask)
-+				    unsigned int flags,
-+				    struct follow_page_context *ctx)
- {
- 	p4d_t *p4d;
- 	struct page *page;
-@@ -378,7 +377,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
- 			return page;
- 		return no_page_table(vma, flags);
- 	}
--	return follow_pud_mask(vma, address, p4d, flags, page_mask);
-+	return follow_pud_mask(vma, address, p4d, flags, ctx);
- }
- 
- /**
-@@ -396,13 +395,13 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
-  */
- struct page *follow_page_mask(struct vm_area_struct *vma,
- 			      unsigned long address, unsigned int flags,
--			      unsigned int *page_mask)
-+			      struct follow_page_context *ctx)
- {
- 	pgd_t *pgd;
- 	struct page *page;
- 	struct mm_struct *mm = vma->vm_mm;
- 
--	*page_mask = 0;
-+	ctx->page_mask = 0;
- 
- 	/* make this handle hugepd */
- 	page = follow_huge_addr(mm, address, flags & FOLL_WRITE);
-@@ -431,7 +430,22 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
- 		return no_page_table(vma, flags);
- 	}
- 
--	return follow_p4d_mask(vma, address, pgd, flags, page_mask);
-+	return follow_p4d_mask(vma, address, pgd, flags, ctx);
-+}
-+
-+struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-+			 unsigned int foll_flags)
-+{
-+	struct page *page;
-+	struct follow_page_context ctx = {
-+		.pgmap = NULL,
-+		.page_mask = 0,
-+	};
-+
-+	page = follow_page_mask(vma, address, foll_flags, &ctx);
-+	if (ctx.pgmap)
-+		put_dev_pagemap(ctx.pgmap);
-+	return page;
- }
- 
- static int get_gate_page(struct mm_struct *mm, unsigned long address,
-@@ -659,9 +673,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		unsigned int gup_flags, struct page **pages,
- 		struct vm_area_struct **vmas, int *nonblocking)
- {
--	long i = 0;
--	unsigned int page_mask;
-+	long ret = 0, i = 0;
- 	struct vm_area_struct *vma = NULL;
-+	struct follow_page_context ctx = {};
- 
- 	if (!nr_pages)
- 		return 0;
-@@ -691,12 +705,14 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 						pages ? &pages[i] : NULL);
- 				if (ret)
- 					return i ? : ret;
--				page_mask = 0;
-+				ctx.page_mask = 0;
- 				goto next_page;
- 			}
- 
--			if (!vma || check_vma_flags(vma, gup_flags))
--				return i ? : -EFAULT;
-+			if (!vma || check_vma_flags(vma, gup_flags)) {
-+				ret = -EFAULT;
-+				goto out;
-+			}
- 			if (is_vm_hugetlb_page(vma)) {
- 				i = follow_hugetlb_page(mm, vma, pages, vmas,
- 						&start, &nr_pages, i,
-@@ -709,23 +725,26 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		 * If we have a pending SIGKILL, don't keep faulting pages and
- 		 * potentially allocating memory.
- 		 */
--		if (unlikely(fatal_signal_pending(current)))
--			return i ? i : -ERESTARTSYS;
-+		if (unlikely(fatal_signal_pending(current))) {
-+			ret = -ERESTARTSYS;
-+			goto out;
-+		}
- 		cond_resched();
--		page = follow_page_mask(vma, start, foll_flags, &page_mask);
-+
-+		page = follow_page_mask(vma, start, foll_flags, &ctx);
- 		if (!page) {
--			int ret;
- 			ret = faultin_page(tsk, vma, start, &foll_flags,
- 					nonblocking);
- 			switch (ret) {
- 			case 0:
- 				goto retry;
-+			case -EBUSY:
-+				ret = 0;
-+				/* FALLTHRU */
- 			case -EFAULT:
- 			case -ENOMEM:
- 			case -EHWPOISON:
--				return i ? i : ret;
--			case -EBUSY:
--				return i;
-+				goto out;
- 			case -ENOENT:
- 				goto next_page;
- 			}
-@@ -737,27 +756,31 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			 */
- 			goto next_page;
- 		} else if (IS_ERR(page)) {
--			return i ? i : PTR_ERR(page);
-+			ret = PTR_ERR(page);
-+			goto out;
- 		}
- 		if (pages) {
- 			pages[i] = page;
- 			flush_anon_page(vma, page, start);
- 			flush_dcache_page(page);
--			page_mask = 0;
-+			ctx.page_mask = 0;
- 		}
- next_page:
- 		if (vmas) {
- 			vmas[i] = vma;
--			page_mask = 0;
-+			ctx.page_mask = 0;
- 		}
--		page_increm = 1 + (~(start >> PAGE_SHIFT) & page_mask);
-+		page_increm = 1 + (~(start >> PAGE_SHIFT) & ctx.page_mask);
- 		if (page_increm > nr_pages)
- 			page_increm = nr_pages;
- 		i += page_increm;
- 		start += page_increm * PAGE_SIZE;
- 		nr_pages -= page_increm;
- 	} while (nr_pages);
--	return i;
-+out:
-+	if (ctx.pgmap)
-+		put_dev_pagemap(ctx.pgmap);
-+	return i ? i : ret;
- }
- 
- static bool vma_permits_fault(struct vm_area_struct *vma,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 533f9b00147d..d2b510fe5156 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -852,11 +852,10 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
- }
- 
- struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
--		pmd_t *pmd, int flags)
-+		pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
- {
- 	unsigned long pfn = pmd_pfn(*pmd);
- 	struct mm_struct *mm = vma->vm_mm;
--	struct dev_pagemap *pgmap;
- 	struct page *page;
- 
- 	assert_spin_locked(pmd_lockptr(mm, pmd));
-@@ -886,12 +885,11 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		return ERR_PTR(-EEXIST);
- 
- 	pfn += (addr & ~PMD_MASK) >> PAGE_SHIFT;
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (!pgmap)
-+	*pgmap = get_dev_pagemap(pfn, *pgmap);
-+	if (!*pgmap)
- 		return ERR_PTR(-EFAULT);
- 	page = pfn_to_page(pfn);
- 	get_page(page);
--	put_dev_pagemap(pgmap);
- 
- 	return page;
- }
-@@ -1000,11 +998,10 @@ static void touch_pud(struct vm_area_struct *vma, unsigned long addr,
- }
- 
- struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
--		pud_t *pud, int flags)
-+		pud_t *pud, int flags, struct dev_pagemap **pgmap)
- {
- 	unsigned long pfn = pud_pfn(*pud);
- 	struct mm_struct *mm = vma->vm_mm;
--	struct dev_pagemap *pgmap;
- 	struct page *page;
- 
- 	assert_spin_locked(pud_lockptr(mm, pud));
-@@ -1028,12 +1025,11 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
- 		return ERR_PTR(-EEXIST);
- 
- 	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (!pgmap)
-+	*pgmap = get_dev_pagemap(pfn, *pgmap);
-+	if (!*pgmap)
- 		return ERR_PTR(-EFAULT);
- 	page = pfn_to_page(pfn);
- 	get_page(page);
--	put_dev_pagemap(pgmap);
- 
- 	return page;
- }
-diff --git a/mm/nommu.c b/mm/nommu.c
-index e4aac33216ae..749276beb109 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1709,11 +1709,9 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 	return ret;
- }
- 
--struct page *follow_page_mask(struct vm_area_struct *vma,
--			      unsigned long address, unsigned int flags,
--			      unsigned int *page_mask)
-+struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-+			 unsigned int foll_flags)
- {
--	*page_mask = 0;
- 	return NULL;
- }
- 
--- 
-2.14.4
+I also believed that's the right way to get Rob Herring's and Mark
+Rutland's attention. Do the device tree binding documentation typically
+go in with the associated drivers, or via their tree ("OPEN FIRMWARE
+AND FLATTENED DEVICE TREE BINDINGS" in MAINTIANERS)?
+
+Lubo
 
