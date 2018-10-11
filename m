@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E014C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC31C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA3332087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A168D2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwTUv9OW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA3332087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKpk+rRM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A168D2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbeJKXFR (ORCPT
+        id S1729404AbeJKXFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:17 -0400
+        id S1727569AbeJKXFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 222402098A;
-        Thu, 11 Oct 2018 15:37:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC2A920652;
+        Thu, 11 Oct 2018 15:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272254;
-        bh=TojgQUO8NqMKD0NhKHtSNIpaPvarZpXTIH8gtbZ+wx4=;
+        s=default; t=1539272257;
+        bh=JFpH9zvlx/2Wp76ZFJn0cJw6IKOi9UnPsRDYUzgWUrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwTUv9OWJgkJyB1VWHSD6ZjD3AbsUIhVtVNV9RsOgOPJgHBC7tMc3pRmttX4Lh12/
-         ELVuheWHUQdZ8nLVVGBHNC6OojGm4F031gc2N/v+9jFIhoJSLn1b3j8pmCsoEVgXa7
-         +XmeZNEEOd4M4fjLgrtyXk0stQc8HJcnU3mosKBs=
+        b=cKpk+rRM+DztYmSaNS3Qn4AnK7wGLj3PMcusYUmNMU7ikswAOWANLK5AF3006tHgf
+         tRGFlPcuo+3nI6J1VCXZlr2EKHmrFlV/aNuGTwq/vNl6psIhlG99wINl5/p6PAgeM7
+         dlGsm1hPOQYLOLRq+d8Yd5pTGQsRaCGPnUVoxHX4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Manish Rangankar <Manish.Rangankar@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 043/120] HID: hid-ntrig: add error handling for sysfs_create_group
-Date:   Thu, 11 Oct 2018 17:33:44 +0200
-Message-Id: <20181011152551.527614835@linuxfoundation.org>
+Subject: [PATCH 3.18 044/120] scsi: bnx2i: add error handling for ioremap_nocache
+Date:   Thu, 11 Oct 2018 17:33:45 +0200
+Message-Id: <20181011152551.565776044@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,31 +67,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 44d4d51de9a3534a2b63d69efda02a10e66541e4 ]
+[ Upstream commit aa154ea885eb0c2407457ce9c1538d78c95456fa ]
 
-When sysfs_create_group fails, the lack of error-handling code may
-cause unexpected results.
+When ioremap_nocache fails, the lack of error-handling code may cause
+unexpected results.
 
-This patch adds error-handling code after calling sysfs_create_group.
+This patch adds error-handling code after calling ioremap_nocache.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Manish Rangankar <Manish.Rangankar@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-ntrig.c |    2 ++
+ drivers/scsi/bnx2i/bnx2i_hwi.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/hid/hid-ntrig.c
-+++ b/drivers/hid/hid-ntrig.c
-@@ -953,6 +953,8 @@ static int ntrig_probe(struct hid_device
+--- a/drivers/scsi/bnx2i/bnx2i_hwi.c
++++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
+@@ -2742,6 +2742,8 @@ int bnx2i_map_ep_dbell_regs(struct bnx2i
+ 					      BNX2X_DOORBELL_PCI_BAR);
+ 		reg_off = (1 << BNX2X_DB_SHIFT) * (cid_num & 0x1FFFF);
+ 		ep->qp.ctx_base = ioremap_nocache(reg_base + reg_off, 4);
++		if (!ep->qp.ctx_base)
++			return -ENOMEM;
+ 		goto arm_cq;
+ 	}
  
- 	ret = sysfs_create_group(&hdev->dev.kobj,
- 			&ntrig_attribute_group);
-+	if (ret)
-+		hid_err(hdev, "cannot create sysfs group\n");
- 
- 	return 0;
- err_free:
 
 
