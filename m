@@ -2,96 +2,102 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4D0C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D38C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E24020841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D704D2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="OyperUh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E24020841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DltcYvgs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D704D2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeJKVhp (ORCPT
+        id S1728545AbeJKVjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:37:45 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:37686 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKVhp (ORCPT
+        Thu, 11 Oct 2018 17:39:05 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36460 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeJKVjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:37:45 -0400
-Received: by mail-wr1-f49.google.com with SMTP id y11-v6so9859595wrd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 07:10:23 -0700 (PDT)
+        Thu, 11 Oct 2018 17:39:05 -0400
+Received: by mail-qt1-f196.google.com with SMTP id u34-v6so9954530qth.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 07:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=pdYBk+dezCgk8ON1mox5hLprXM3lnDsejSHwPVeWrvw=;
-        b=OyperUh5YuWSjE2j+nCHvajz5r2Q6WxD0ul8+UL8NbyLrTr5uh6Onxum9EJTYuKQGq
-         qkovjEun95qu4HKjIct/BaJlQ2X9UUpwfhSdJHLX7B3u7XgJX4u7B6sxnFs/Y8SRjlas
-         5ZQ1aepfmdor+CMlaMbSHRs51maaJQHN0LkYttCTnhHpr5V97Q06JcULl3Hxqas2Rscc
-         6UcTjVRaUCbibmKGVL+vzS3VhyvuRgJgdyQHeSG+PG45BxSnrgvAdQpzp8esX4oM3kUu
-         Kw5BjqaB6qyBd9zJputH23y2zs2/qddaWz3KEEX9YAzvaG+bA6wn2jUWkl66saYXQJaO
-         HQAw==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=bMrhvhQG5l6P5OBNLqmHXyVFNugrzPHDUyoEC5+s8QY=;
+        b=DltcYvgsr8uOEbLtDzR/T2rJMGIYZmpFJu06DDSwlFdpLuNaUFdkOOvL1+WVSqFA1E
+         PnwByHPDMw24A26zMKHfrd/FLA63meFPQDYVoCuSq9040y14ug0j/L8MAWfQgC1nOZno
+         aXQLnP+RchC85LYdR6LWGD/6yNRKgsxpV3SY6Ajqmq2+Nzdj6RKaYSH1e+HspH5U4NPe
+         qA8MKNQIRy/tC+96sX0iynif91P1wEjYD2WG+SaHqTFglfBVsx72TCaiLU+jWYpiiR3d
+         w3lQWg8/gRAB4nacn98/iHvX7p/8FZX/WyXC2eukij291EBqAf+XM/i7BKLOuz1TRqQF
+         5HuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=pdYBk+dezCgk8ON1mox5hLprXM3lnDsejSHwPVeWrvw=;
-        b=ITKC0BfKtTqoAPw1yYfGQSa0L+Omz+VHJSUXSVHtxI9B6E/pmFoZod2sPQISD8PPtZ
-         CJwup7GY2O8N/+yH+t+BJdzQur+AbBWTen/veM5+LLT2J8AittTp2Mds4Efps/RS5yqn
-         IkZHK3JnAnLKYjfTYDX9G2EjOGe4OqAuyf1Pq4CSbdzwJ35tahFztimew04qEhT4/8ca
-         YskmdudW9qfAOr7KyBXve74u66cfytAMKTNLyG/r13bG6aUr76Fw+u4HXk12KIUzeNfo
-         QHopfQqQXJK5cO67/Cm5Xrvpxa5FmV7LgQ/WNfvBe9BgnvrDf8zrV/Z2rw2ZZR1hTYXB
-         CRAQ==
-X-Gm-Message-State: ABuFfogfpPR3zvG1LlhlHQGxGpjiildCLT6FOjMcG/MSzpdKjV8FgdQR
-        hrjeBIgY3+hltZHRhas+sGabwZIA38rHZQ==
-X-Google-Smtp-Source: ACcGV61km9z1WrV8vaYq4A6xfb6uKDhnVMNPAyTs9wtFLkMsELkGoiE6EHjGo6iMyQknz0p3EO5K6w==
-X-Received: by 2002:a5d:4409:: with SMTP id z9-v6mr1636846wrq.227.1539267022430;
-        Thu, 11 Oct 2018 07:10:22 -0700 (PDT)
-Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm16828844wmt.16.2018.10.11.07.10.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 07:10:21 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 16:10:15 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Subject: overflow on proc_nr_files
-Message-ID: <20181011141014.4big6jogmsnx25z5@brauner.io>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=bMrhvhQG5l6P5OBNLqmHXyVFNugrzPHDUyoEC5+s8QY=;
+        b=n2gSJa8zhQuuN6dzgdmRKipzMs9NGgA2BikSnXl7Ap8wiMnY24zkLdiYKGqWwp9xeI
+         asa0Yt3G9BpXKMosJjwx0eHOLF8mXHmnmp3C5IXhDcpX058pwHUIo0z2/ACcVE3kbXnM
+         gdWNEyQjK4sX3jdgL8lqiUsm1KBtsUklxtv5Pg4qjdiIjIFen3smnOzNbKe3gaqyFUuv
+         whYc2jUBSuVEAVCsog2IG4RM7SI59I3qp2HOMC9s6UhVvGTVcLNW32XQZIjmi3AdmCpH
+         RPSLTu9LuBleUukT8YlKsJx2Z1G7EleUc80osWe3sIO9+OYnYM1aSA2HS3bxXaX1l1GI
+         6cZA==
+X-Gm-Message-State: ABuFfohhPM9a9Blt5rOoRv6hNzdr29F9I2HqAMnkdEpT3kQRqeOMSKZo
+        Spi1jNwzNKKbGqsEbVaiNiwRRqEc2Nme1OZrxLQ=
+X-Google-Smtp-Source: ACcGV60bWC2x3Y9HpmKNWl0rLYHA06vWR5KMgBRuHxmUB/xBFY12dQrJpfqSGMwMQAHgyfqGmxOYDbqk89x6AlJFn8k=
+X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr1647025qtl.343.1539267102764;
+ Thu, 11 Oct 2018 07:11:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 07:11:42
+ -0700 (PDT)
+In-Reply-To: <20181011123116.24885-1-vz@mleia.com>
+References: <20181011123116.24885-1-vz@mleia.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Oct 2018 16:11:42 +0200
+X-Google-Sender-Auth: 5Bcwqz8HlGzsSiFRYB4gKGoCch8
+Message-ID: <CAK8P3a3pbpEX1BjKvn179pTYtYEtiQnd=SmD5NYkAtpdZAonkA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Assign myself as a maintainer of ARM/LPC18XX architecture
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     arm@kernel.org, Joachim Eastwood <manabian@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+On 10/11/18, Vladimir Zapolskiy <vz@mleia.com> wrote:
+> To all appearance Joachim Eastwood abandoned the maintenance of NXP
+> LPC18xx/LPC43xx archtecture about two years ago, and for me it would be
+> possible to continue the support, fortunately the quality of platform
+> drivers written by Joachim is exceptionally high.
+>
+> The change is based on https://lkml.org/lkml/2018/9/24/1398 discussion.
+>
+> At the same time two redundant explicit driver file paths are dropped
+> from the list, clk-lpc18xx* drivers are covered by "lpc18xx" search
+> pattern and timer-lpc32xx driver is covered by "lpc32xx" pattern and it
+> goes into ARM/LPC32XX entry, which is also under my wing, in other words
+> LPC18xx/LPC43xx clocksource and CCF drivers will remain maintained.
+>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Joachim Eastwood <manabian@gmail.com>
+> ---
 
-I've just got pinged by Lennart who discovered that you can get your
-system into an unuseable state by writing something that exceeds a s64
-into /proc/sys/fs/file-max. Say,
+I could not automatically apply this with 'git am', not sure what the
+problem was, but I managed to apply it by patching the file manually.
 
-echo 20000000000000000000 > /proc/sys/fs/file-max
+Thanks for taking over the platform!
 
-which will trigger an overflow and percpu_counter_read_positive() will
-return 0 and cat /proc/sys/fs/file-max will return 0.
-
-That effectively means you write that number and it succeeds and all is
-well and a few seconds/minutes later your system just dies or gets into
-an unuseable state pretty quickly
-
-I wonder if we shouldn't accept overflows or - if we have no way in this
-codepath to detect them - set it to some pre-defined hard-coded value.
-
-Or maybe this is even a known issue and by design but before I work on a
-patch here I just wanted to check.
-
-Christian
+      Arnd
