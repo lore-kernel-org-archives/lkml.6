@@ -2,90 +2,118 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5FCC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE2DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8016120659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8016120659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3203920659
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:03:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtX2SYIY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3203920659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbeJKX3S (ORCPT
+        id S1729497AbeJKXat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:29:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40262 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbeJKX3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:29:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C759CED1;
-        Thu, 11 Oct 2018 09:01:27 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07E153F5D3;
-        Thu, 11 Oct 2018 09:01:24 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 17:01:22 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v9 05/11] of: base: Add of_get_cpu_state_node() to get
- idle states for a CPU node
-Message-ID: <20181011160122.GB28583@e107155-lin>
-References: <20181003143824.13059-1-ulf.hansson@linaro.org>
- <20181003143824.13059-6-ulf.hansson@linaro.org>
- <20181010150331.GB4844@e107155-lin>
- <CAPDyKFq7bNJM5Y4y78tnOEvg7ntmYFtJoDvFH8uR2yUUK9o4HA@mail.gmail.com>
+        Thu, 11 Oct 2018 19:30:49 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38120 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbeJKXas (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:30:48 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l9-v6so10446096qtf.5;
+        Thu, 11 Oct 2018 09:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=LnaAFkpRwfLe/B3ufddRI6x2C60FFqK2USjNFtglROM=;
+        b=RtX2SYIY9/F4KMY9fFD6hkoSXS9xkmJR+NjF7W0DustGxN9/NGQSyO7F2kWlQf4hOB
+         XIL3LZsniNnkX4uyXjBLIkDgeXI9tP5YYPguZkumlHmUc6jI4XOAYH0ngIHvN9PpOe5p
+         zD0CUiD4lWqBZj9VZuxio1zmLX5CNzlPthXUcdoqxig/4EZ8u89HARWaeH0T37bQ4Rou
+         lchIth1X8VU3Ad7tgbxAuG2UFguMrLuD1/ERfDdS0j3aEjLY9T3tdYSY7qK992F7dLTs
+         hqQRCa/jhDSm5Yj14X727q18sM1g3XyeMUvvXxg/HL8Ty1i9izgcdl3/cZSuLUowtqRN
+         2QIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=LnaAFkpRwfLe/B3ufddRI6x2C60FFqK2USjNFtglROM=;
+        b=dgR+/wl4UhLjjyBo8kaIPEMbwG2UBAowXPmVIgBbU3IQYSHnUOeUwWcrl8yyOTJ5Df
+         QxHqRV2h/HQMYT9ykCaaeu0PnUKaKocJny83887C2G779BejkKh/90aAn7a8rjIkY0zw
+         3c8eo5qgCSCMbTq5tXXaaNkpBvHboGXNnVt3y7fHFzI8fF6boiPOq9aWGn/r59rozaFU
+         eGKqEvnYWO2iNNs0UF5TH2VES3A5xXjqID8ngk4IIzaaj/ifg+ft074SlopYUftA3Upl
+         numq5hjqKOz/h955UxxK+4zOulUAbrBMRgqXeeSZGN0rmaTotQrFZB/Gn96xUt9s8ngA
+         YMVw==
+X-Gm-Message-State: ABuFfohSlJC+oCj+LpVK54UpWU+928rvseGJ/X6W1cBtbbEXAwsl05/W
+        XyNmoeH1kjWns47aoVAlytZjkJGHVlhrDmr5oQ0=
+X-Google-Smtp-Source: ACcGV616GRSiwSaW+vTBm+Y+8bjGHIPxO7n9YOCXe7zL2JKRlrn3zCrC1ufs6kZYFRDVehpCvZaHE0SwL2lb7VaNK9g=
+X-Received: by 2002:a0c:881c:: with SMTP id 28mr2179099qvl.40.1539273777384;
+ Thu, 11 Oct 2018 09:02:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFq7bNJM5Y4y78tnOEvg7ntmYFtJoDvFH8uR2yUUK9o4HA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 09:02:56
+ -0700 (PDT)
+In-Reply-To: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
+References: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Oct 2018 18:02:56 +0200
+X-Google-Sender-Auth: resRB1-556fg3xjU8OHo0VbLWmE
+Message-ID: <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
+Subject: Re: undefined behavior (-Wvarargs) in security/keys/trusted.c#TSS_authhmac()
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 05:05:07PM +0200, Ulf Hansson wrote:
-> On 10 October 2018 at 17:03, Sudeep Holla <sudeep.holla@arm.com> wrote:
-[...]
-> >
-> > No strong opinion but I am wondering if it makes sense to get cpu
-> > logical index and fetch the cpu of_node here to contain the refcount on
-> > it within this function while we are trying to consolidate. I do see
-> > that may not be so useful in psci.c but keeping refcount for cpu of_node
-> > here keeps the user free from that.
-> 
-> I see your point.
-> 
-> However, I am hesitating doing that change, as it would be a waste for
-> the psci case, but I also think that it may becomes a bit less
-> straight forward to use this helper function.
-> 
-> Although, no strong opinions from my side either, but since Rob is
-> happy with this, there is no need to change it, I think.
+On 10/10/18, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> Hello,
+> I noticed that compiling with
+> CONFIG_TCG_TPM=y
+> CONFIG_HW_RANDOM_TPM=y
+> and Clang produced the warning:
 >
+>   CC      security/keys/trusted.o
+> security/keys/trusted.c:146:17: warning: passing an object that
+> undergoes default
+>       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+>         va_start(argp, h3);
+>                        ^
+> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> char' is declared here
+> unsigned char *h2, unsigned char h3, ...)
+>                                ^
+>
+> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> standards explicitly call this out as undefined behavior:
+>
+> The parameter parmN is the identifier of the rightmost parameter in
+> the variable parameter list in the function definition (the one just
+> before the ...). If the parameter parmN is declared with ... or with a
+> type that is not compatible with the type that results after
+> application of the default argument promotions, the behavior is
+> undefined.
+>
+> So if I understand my C promotion/conversion rules correctly, unsigned
+> char would be promoted to int?
+>
+> We had a few ideas for possible fixes in:
+> https://github.com/ClangBuiltLinux/linux/issues/41
 
-Sure, no problem.
+I arrived at a similar patch as the one cited there, but it broke again
+after an 'extern' declaration was added in include/keys/trusted.h,
+so that has to be patched as well now.
 
---
-Regards,
-Sudeep
+       Arnd
