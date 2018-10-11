@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CAAC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61EEC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 482CA214C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67C3921470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi2IrYTM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482CA214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NI0riSf9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C3921470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeJKXIm (ORCPT
+        id S1730340AbeJKXIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39160 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:41 -0400
+        id S1726647AbeJKXIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:45 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7970A2098A;
-        Thu, 11 Oct 2018 15:40:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A937E20652;
+        Thu, 11 Oct 2018 15:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272458;
-        bh=rMjTbxfrjWK7wleyAiBkdznwFb/1TWLLuayte8hVswc=;
+        s=default; t=1539272461;
+        bh=/cnBi5pNXOyKFgJyQ/CSrD93UwUv0+BXqZlA3jpmvbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bi2IrYTM+DzY+Ub8x2ufz/OWMMLd+xxtr19ssqVH8G0RA90udxUIAQaBALPu0z1vM
-         7QRAdBvsNdmtD+fywH063BSYTvg6sHmUSrca+tMsuYgjiZg+hO1E+FBOEQDGZSPk0v
-         8a/4ccyXiyoldkStmSXbvPyCs3ba+HPZH5T3IYyg=
+        b=NI0riSf9WMcT25sH8aecjfLHxfAhRMxO+JnNCwo8DL2e992+MVcblz1MRZW8kIhgm
+         ZtR+GG+RgKtWI8mlWfcf4/0dNS6US5tVezucQ2Z5qNdbaPO5OLnbJlwGJTTdf+1E80
+         0PbypR7NpGuoSABOQrrJJUXsTo2VHe2mtATI4N3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 3.18 117/120] ext4: avoid running out of journal credits when appending to an inline file
-Date:   Thu, 11 Oct 2018 17:34:58 +0200
-Message-Id: <20181011152554.630158762@linuxfoundation.org>
+        stable@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>,
+        Tejun Heo <tj@kernel.org>, Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 3.18 118/120] cgroup: Fix deadlock in cpu hotplug path
+Date:   Thu, 11 Oct 2018 17:34:59 +0200
+Message-Id: <20181011152554.667496109@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,125 +61,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Prateek Sood <prsood@codeaurora.org>
 
-commit 8bc1379b82b8e809eef77a9fedbb75c6c297be19 upstream.
+commit 116d2f7496c51b2e02e8e4ecdd2bdf5fb9d5a641 upstream.
 
-Use a separate journal transaction if it turns out that we need to
-convert an inline file to use an data block.  Otherwise we could end
-up failing due to not having journal credits.
+Deadlock during cgroup migration from cpu hotplug path when a task T is
+being moved from source to destination cgroup.
 
-This addresses CVE-2018-10883.
+kworker/0:0
+cpuset_hotplug_workfn()
+   cpuset_hotplug_update_tasks()
+      hotplug_update_tasks_legacy()
+        remove_tasks_in_empty_cpuset()
+          cgroup_transfer_tasks() // stuck in iterator loop
+            cgroup_migrate()
+              cgroup_migrate_add_task()
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200071
+In cgroup_migrate_add_task() it checks for PF_EXITING flag of task T.
+Task T will not migrate to destination cgroup. css_task_iter_start()
+will keep pointing to task T in loop waiting for task T cg_list node
+to be removed.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Task T
+do_exit()
+  exit_signals() // sets PF_EXITING
+  exit_task_namespaces()
+    switch_task_namespaces()
+      free_nsproxy()
+        put_mnt_ns()
+          drop_collected_mounts()
+            namespace_unlock()
+              synchronize_rcu()
+                _synchronize_rcu_expedited()
+                  schedule_work() // on cpu0 low priority worker pool
+                  wait_event() // waiting for work item to execute
+
+Task T inserted a work item in the worklist of cpu0 low priority
+worker pool. It is waiting for expedited grace period work item
+to execute. This work item will only be executed once kworker/0:0
+complete execution of cpuset_hotplug_workfn().
+
+kworker/0:0 ==> Task T ==>kworker/0:0
+
+In case of PF_EXITING task being migrated from source to destination
+cgroup, migrate next available task in source cgroup.
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+[AmitP: Upstream commit cherry-pick failed, so I picked the
+        backported changes from CAF/msm-4.9 tree instead:
+        https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?id=49b74f1696417b270c89cd893ca9f37088928078]
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/ext4.h   |    3 ---
- fs/ext4/inline.c |   38 +-------------------------------------
- fs/ext4/xattr.c  |   18 ++----------------
- 3 files changed, 3 insertions(+), 56 deletions(-)
+This patch can be cleanly applied and build tested on 4.4.y and 3.18.y
+as well but I couldn't find it in msm-4.4 and msm-3.18 trees. So this
+patch is really untested on those stable trees.
+Build tested on 4.9.131, 4.4.159 and 3.18.123 for ARCH=arm/arm64 allmodconfig.
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2663,9 +2663,6 @@ extern struct buffer_head *ext4_get_firs
- extern int ext4_inline_data_fiemap(struct inode *inode,
- 				   struct fiemap_extent_info *fieinfo,
- 				   int *has_inline);
--extern int ext4_try_to_evict_inline_data(handle_t *handle,
--					 struct inode *inode,
--					 int needed);
- extern void ext4_inline_data_truncate(struct inode *inode, int *has_inline);
- 
- extern int ext4_convert_inline_data(struct inode *inode);
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -873,11 +873,11 @@ retry_journal:
- 	}
- 
- 	if (ret == -ENOSPC) {
-+		ext4_journal_stop(handle);
- 		ret = ext4_da_convert_inline_data_to_extent(mapping,
- 							    inode,
- 							    flags,
- 							    fsdata);
--		ext4_journal_stop(handle);
- 		if (ret == -ENOSPC &&
- 		    ext4_should_retry_alloc(inode->i_sb, &retries))
- 			goto retry_journal;
-@@ -1842,42 +1842,6 @@ out:
- 	return (error < 0 ? error : 0);
- }
- 
--/*
-- * Called during xattr set, and if we can sparse space 'needed',
-- * just create the extent tree evict the data to the outer block.
-- *
-- * We use jbd2 instead of page cache to move data to the 1st block
-- * so that the whole transaction can be committed as a whole and
-- * the data isn't lost because of the delayed page cache write.
-- */
--int ext4_try_to_evict_inline_data(handle_t *handle,
--				  struct inode *inode,
--				  int needed)
--{
--	int error;
--	struct ext4_xattr_entry *entry;
--	struct ext4_inode *raw_inode;
--	struct ext4_iloc iloc;
--
--	error = ext4_get_inode_loc(inode, &iloc);
--	if (error)
--		return error;
--
--	raw_inode = ext4_raw_inode(&iloc);
--	entry = (struct ext4_xattr_entry *)((void *)raw_inode +
--					    EXT4_I(inode)->i_inline_off);
--	if (EXT4_XATTR_LEN(entry->e_name_len) +
--	    EXT4_XATTR_SIZE(le32_to_cpu(entry->e_value_size)) < needed) {
--		error = -ENOSPC;
--		goto out;
--	}
--
--	error = ext4_convert_inline_data_nolock(handle, inode, &iloc);
--out:
--	brelse(iloc.bh);
--	return error;
--}
--
- void ext4_inline_data_truncate(struct inode *inode, int *has_inline)
- {
- 	handle_t *handle;
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1045,22 +1045,8 @@ int ext4_xattr_ibody_inline_set(handle_t
- 	if (EXT4_I(inode)->i_extra_isize == 0)
- 		return -ENOSPC;
- 	error = ext4_xattr_set_entry(i, s, inode);
--	if (error) {
--		if (error == -ENOSPC &&
--		    ext4_has_inline_data(inode)) {
--			error = ext4_try_to_evict_inline_data(handle, inode,
--					EXT4_XATTR_LEN(strlen(i->name) +
--					EXT4_XATTR_SIZE(i->value_len)));
--			if (error)
--				return error;
--			error = ext4_xattr_ibody_find(inode, i, is);
--			if (error)
--				return error;
--			error = ext4_xattr_set_entry(i, s, inode);
--		}
--		if (error)
--			return error;
--	}
-+	if (error)
-+		return error;
- 	header = IHDR(inode, ext4_raw_inode(&is->iloc));
- 	if (!IS_LAST_ENTRY(s->first)) {
- 		header->h_magic = cpu_to_le32(EXT4_XATTR_MAGIC);
+ kernel/cgroup.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -3669,7 +3669,11 @@ int cgroup_transfer_tasks(struct cgroup
+ 	 */
+ 	do {
+ 		css_task_iter_start(&from->self, &it);
+-		task = css_task_iter_next(&it);
++
++		do {
++			task = css_task_iter_next(&it);
++		} while (task && (task->flags & PF_EXITING));
++
+ 		if (task)
+ 			get_task_struct(task);
+ 		css_task_iter_end(&it);
 
 
