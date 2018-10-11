@@ -7,49 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BD0C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA65C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C77B213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D286921476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4N+BGpP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C77B213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oB/gOMYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D286921476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732148AbeJKXQ3 (ORCPT
+        id S1732160AbeJKXQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50328 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:16:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbeJKXQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:29 -0400
+        id S1726794AbeJKXQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473D521470;
-        Thu, 11 Oct 2018 15:48:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A2A72085B;
+        Thu, 11 Oct 2018 15:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272922;
-        bh=YoW6FyINE6+TYjx4KZzHlt4aAFa3f3sBPPtzE0nB0BQ=;
+        s=default; t=1539272925;
+        bh=LEzw4FQ3ZScLP2FPHSA7VvMJQuyFG3Up9q/HQV6X0/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W4N+BGpPsg88oYW3uEbsMsCLXqo5JPiSiqGWoApXe2CFJPJyPGLYHr0m2rtkaiT0s
-         zhan6dadCxTVh4HjzcjiFfcyJvo/+9VSkGEGMfTsJTteMHe8Cc6hcOib1r8E3aAdys
-         QqRkHT5fNq5Rxn0pAxSFVZ7VhgnYV0dFN1piRE7A=
+        b=oB/gOMYGVIEoB7Yk8mGmz1vSgzYB9BR4Txpf9cNlhUKQ3XMZiv5lJwSDpRAADJETg
+         H7pvL05qW7TDLxb9AEBy1fFJagp4I5cmJ7vgg5kN/HvIbNyh8G6UB6xM6k/sLMOV76
+         AbQ1+cw5B1d52Ant6MhwKwEEOMIHGc3BCSZSDgUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, nixiaoming <nixiaoming@huawei.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.18 08/44] pstore/ram: Fix failure-path memory leak in ramoops_init
-Date:   Thu, 11 Oct 2018 17:39:46 +0200
-Message-Id: <20181011152452.886432310@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 4.18 09/44] clocksource/drivers/timer-atmel-pit: Properly handle error cases
+Date:   Thu, 11 Oct 2018 17:39:47 +0200
+Message-Id: <20181011152452.921242512@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -67,94 +63,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit bac6f6cda206ad7cbe0c73c35e494377ce9c4749 upstream.
+commit 52bf4a900d9cede3eb14982d0f2c5e6db6d97cc3 upstream.
 
-As reported by nixiaoming, with some minor clarifications:
+The smatch utility reports a possible leak:
 
-1) memory leak in ramoops_register_dummy():
-   dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
-   but no kfree() if platform_device_register_data() fails.
+smatch warnings:
+drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
 
-2) memory leak in ramoops_init():
-   Missing platform_device_unregister(dummy) and kfree(dummy_data)
-   if platform_driver_register(&ramoops_driver) fails.
+Ensure data is freed before exiting with an error.
 
-I've clarified the purpose of ramoops_register_dummy(), and added a
-common cleanup routine for all three failure paths to call.
-
-Reported-by: nixiaoming <nixiaoming@huawei.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc: stable@vger.kernel.org
-Cc: Anton Vorontsov <anton@enomsg.org>
-Cc: Colin Cross <ccross@android.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Geliang Tang <geliangtang@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/ram.c |   29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ drivers/clocksource/timer-atmel-pit.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -898,8 +898,22 @@ static struct platform_driver ramoops_dr
- 	},
- };
- 
--static void ramoops_register_dummy(void)
-+static inline void ramoops_unregister_dummy(void)
- {
-+	platform_device_unregister(dummy);
-+	dummy = NULL;
-+
-+	kfree(dummy_data);
-+	dummy_data = NULL;
-+}
-+
-+static void __init ramoops_register_dummy(void)
-+{
-+	/*
-+	 * Prepare a dummy platform data structure to carry the module
-+	 * parameters. If mem_size isn't set, then there are no module
-+	 * parameters, and we can skip this.
-+	 */
- 	if (!mem_size)
- 		return;
- 
-@@ -932,21 +946,28 @@ static void ramoops_register_dummy(void)
- 	if (IS_ERR(dummy)) {
- 		pr_info("could not create platform device: %ld\n",
- 			PTR_ERR(dummy));
-+		dummy = NULL;
-+		ramoops_unregister_dummy();
+--- a/drivers/clocksource/timer-atmel-pit.c
++++ b/drivers/clocksource/timer-atmel-pit.c
+@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_ini
+ 	data->base = of_iomap(node, 0);
+ 	if (!data->base) {
+ 		pr_err("Could not map PIT address\n");
+-		return -ENXIO;
++		ret = -ENXIO;
++		goto exit;
  	}
- }
  
- static int __init ramoops_init(void)
- {
-+	int ret;
+ 	data->mck = of_clk_get(node, 0);
+ 	if (IS_ERR(data->mck)) {
+ 		pr_err("Unable to get mck clk\n");
+-		return PTR_ERR(data->mck);
++		ret = PTR_ERR(data->mck);
++		goto exit;
+ 	}
+ 
+ 	ret = clk_prepare_enable(data->mck);
+ 	if (ret) {
+ 		pr_err("Unable to enable mck\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Get the interrupts property */
+ 	data->irq = irq_of_parse_and_map(node, 0);
+ 	if (!data->irq) {
+ 		pr_err("Unable to get IRQ from DT\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto exit;
+ 	}
+ 
+ 	/*
+@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_ini
+ 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
+ 	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Set up irq handler */
+@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_ini
+ 			  "at91_tick", data);
+ 	if (ret) {
+ 		pr_err("Unable to setup IRQ\n");
+-		return ret;
++		clocksource_unregister(&data->clksrc);
++		goto exit;
+ 	}
+ 
+ 	/* Set up and register clockevents */
+@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_ini
+ 	clockevents_register_device(&data->clkevt);
+ 
+ 	return 0;
 +
- 	ramoops_register_dummy();
--	return platform_driver_register(&ramoops_driver);
-+	ret = platform_driver_register(&ramoops_driver);
-+	if (ret != 0)
-+		ramoops_unregister_dummy();
-+
++exit:
++	kfree(data);
 +	return ret;
  }
- late_initcall(ramoops_init);
- 
- static void __exit ramoops_exit(void)
- {
- 	platform_driver_unregister(&ramoops_driver);
--	platform_device_unregister(dummy);
--	kfree(dummy_data);
-+	ramoops_unregister_dummy();
- }
- module_exit(ramoops_exit);
- 
+ TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
+ 		       at91sam926x_pit_dt_init);
 
 
