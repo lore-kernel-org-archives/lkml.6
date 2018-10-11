@@ -2,127 +2,335 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44F6C28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3F8C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6C020644
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:38:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rZHJJbm3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6C020644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76EE920644
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EE920644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeJLHIH (ORCPT
+        id S1727006AbeJLHJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:08:07 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46252 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbeJLHIG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:08:06 -0400
-Received: by mail-pl1-f196.google.com with SMTP id v5-v6so4953038plz.13;
-        Thu, 11 Oct 2018 16:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t6GwcdCmvHVmWHnU8eJW6l7ZDMJAfp7RCaTcJxdx/zA=;
-        b=rZHJJbm3PvBVSdCMZP8qXB3sKbmgQ/EjNxIJDWKai5O84gWTGJinMy2urG5VEE3DSQ
-         z8gRL634ALxT0lZB+MmIz2xts27L0BEC5eJMRIIgMpjqtib3kHJTtNHPFfJnERieRM3I
-         EIxUCsOKqKuhrss+UaTOAnS5DBHCvW3ibJOHYoFqHXyP0IiQyK44E7n9/LOleqncGg2d
-         x+T1KEz9n64ThnqPR3GUU86pLwqSgSpeW/qZormkcizBNqDXonx4ZFn1VxdBn7GLs1JN
-         MUYYztbtWMIDgAmqqCFRPwcXJ4wPxcQjj1jdZRcfHrCIP7egGqvRvdQJ7XFMKAJlv6Vd
-         rn6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t6GwcdCmvHVmWHnU8eJW6l7ZDMJAfp7RCaTcJxdx/zA=;
-        b=LCcHzoDqrpdcGFO2v+OaGPzBPMjLkvQGejhd4fMVo/cfJ/BZfURvyD4b9Z3d4poyOF
-         5k2CREmPG6L40qhMRZ6M/s5qof8Wa3kIBa6QZSSBs9bnoAFbtBjswsUEC0Ln5O1KD/B2
-         HRCJ0CVJHN/uAe/2D976yxfqWbnL/LtC4BZGDiqLfzZyGazE5/p8hiUzKao0KQM1AWI0
-         4sEhKLspdio9U32GtigjfsSGSqln5l5OcOspU5Tzi8HrmXSYkSX+JQpxaWlCtJDQ5Ph3
-         lj1HqsH2/aKSYtvSyoiUbfFV25faOoiJeKJErm16Q/5ts35G3gc4UJWBuGj9HrvXVvGd
-         UHeg==
-X-Gm-Message-State: ABuFfoi9PsyFxwFrpcDvIW0PMjKsPy/ZnaVmcmG4vW0pwfwDRWzdFjSt
-        QNvSM32frWjI0hhX5zSB8J32m7tB
-X-Google-Smtp-Source: ACcGV61ftv77dVVnQZzKYqpNBpEg+lWfsMpFPOy7DsX3qEnOtIO6FppfQ+CLsdxXXJgYUwKhKLFJgg==
-X-Received: by 2002:a17:902:4a0c:: with SMTP id w12-v6mr3400664pld.289.1539301112384;
-        Thu, 11 Oct 2018 16:38:32 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm40069238pfd.100.2018.10.11.16.38.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 16:38:31 -0700 (PDT)
-Subject: Re: [PATCH 05.1/16] of:overlay: missing name, phandle, linux,phandle
- in new nodes
-To:     Alan Tull <atull@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-References: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
- <1539151495-8110-1-git-send-email-frowand.list@gmail.com>
- <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
- <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
- <e32a99a2-1db5-80e6-5022-83cd8fd07180@gmail.com>
- <bcbba4ca-0656-aa27-c058-064fb7175d38@gmail.com>
- <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <3f36468b-676a-558d-4180-7129d2bf2c6c@gmail.com>
-Date:   Thu, 11 Oct 2018 16:38:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 03:09:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:35467 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbeJLHJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 03:09:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 16:40:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,370,1534834800"; 
+   d="scan'208";a="96792919"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Oct 2018 16:40:02 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
+        keescook@chromium.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, arnd@arndb.de,
+        jeyu@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 1/7] modules: Create rlimit for module space
+Date:   Thu, 11 Oct 2018 16:31:11 -0700
+Message-Id: <20181011233117.7883-2-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
+References: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/18 12:33, Alan Tull wrote:
-> On Thu, Oct 11, 2018 at 12:39 AM Frank Rowand <frowand.list@gmail.com> wrote:
-> 
-> [resend of my messed up rejected email of a minute ago, sorry]
-> 
->>
->> On 10/10/18 14:03, Frank Rowand wrote:
+This introduces a new rlimit, RLIMIT_MODSPACE, which limits the amount of
+module space a user can use. The intention is to be able to limit module space
+allocations that may come from un-privlidged users inserting e/BPF filters.
 
-< snip >
+There is unfortunately no cross platform place to perform this accounting
+during allocation in the module space, so instead two helpers are created to be
+inserted into the various arch’s that implement module_alloc. These
+helpers perform the checks and help with tracking. The intention is that they
+an be added to the various arch’s as easily as possible.
 
-> I understand you're quite busy with all this, but I'm wondering
-> whether it might be worth it go ahead and make the properties be
-> kernel objects also at this point.  That would be an improvement for
-> the case of overlay properties added to non-overlay nodes, so the
-> lifespan of the overlay property memory can be coupled with the
-> properties kobj's instead of the node kobj's.
-> 
-> Alan
-> 
+Since filters attached to sockets can be passed to other processes via domain
+sockets and freed there, there is new tracking for the uid of each allocation.
+This way if the allocation is freed by a different user, it will not throw off
+the accounting.
 
-That is one of the approaches that I am thinking about to handle
-the potential memory leaks from those properties.
+For decrementing the module space usage when an area is free, there is a
+cross-platform place to do this. The behavior is that if the helpers to
+increment and check are not added into an arch’s module_alloc, then the
+decrement should have no effect. This is due to the allocation being missing
+from the allocation-uid tracking.
 
-I'd like to make these changes in a step wise fashion, to let each
-major change get some exposure and use before moving on to the
-next step.  Making properties into kernel objects would impact
-a lot of code.
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ fs/proc/base.c                      |   1 +
+ include/asm-generic/resource.h      |   8 ++
+ include/linux/moduleloader.h        |   3 +
+ include/linux/sched/user.h          |   4 +
+ include/uapi/asm-generic/resource.h |   3 +-
+ kernel/module.c                     | 141 +++++++++++++++++++++++++++-
+ 6 files changed, 158 insertions(+), 2 deletions(-)
 
-So not in this series.  But thanks for thinking about it.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 7e9f07bf260d..84824f50e9f8 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -562,6 +562,7 @@ static const struct limit_names lnames[RLIM_NLIMITS] = {
+ 	[RLIMIT_NICE] = {"Max nice priority", NULL},
+ 	[RLIMIT_RTPRIO] = {"Max realtime priority", NULL},
+ 	[RLIMIT_RTTIME] = {"Max realtime timeout", "us"},
++	[RLIMIT_MODSPACE] = {"Max module space", "bytes"},
+ };
+ 
+ /* Display limits for a process */
+diff --git a/include/asm-generic/resource.h b/include/asm-generic/resource.h
+index 8874f681b056..94c150e3dd12 100644
+--- a/include/asm-generic/resource.h
++++ b/include/asm-generic/resource.h
+@@ -4,6 +4,13 @@
+ 
+ #include <uapi/asm-generic/resource.h>
+ 
++/*
++ * If the module space rlimit is not defined in an arch specific way, leave
++ * room for 10000 large eBPF filters.
++ */
++#ifndef MODSPACE_LIMIT
++#define MODSPACE_LIMIT (5*PAGE_SIZE*10000)
++#endif
+ 
+ /*
+  * boot-time rlimit defaults for the init task:
+@@ -26,6 +33,7 @@
+ 	[RLIMIT_NICE]		= { 0, 0 },				\
+ 	[RLIMIT_RTPRIO]		= { 0, 0 },				\
+ 	[RLIMIT_RTTIME]		= {  RLIM_INFINITY,  RLIM_INFINITY },	\
++	[RLIMIT_MODSPACE]	= {  MODSPACE_LIMIT,  MODSPACE_LIMIT },	\
+ }
+ 
+ #endif
+diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
+index 31013c2effd3..206539e97579 100644
+--- a/include/linux/moduleloader.h
++++ b/include/linux/moduleloader.h
+@@ -86,6 +86,9 @@ void module_arch_cleanup(struct module *mod);
+ /* Any cleanup before freeing mod->module_init */
+ void module_arch_freeing_init(struct module *mod);
+ 
++int check_inc_mod_rlimit(unsigned long size);
++void update_mod_rlimit(void *addr, unsigned long size);
++
+ #ifdef CONFIG_KASAN
+ #include <linux/kasan.h>
+ #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
+diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
+index 39ad98c09c58..4c6d99d066fe 100644
+--- a/include/linux/sched/user.h
++++ b/include/linux/sched/user.h
+@@ -44,6 +44,10 @@ struct user_struct {
+ 	atomic_long_t locked_vm;
+ #endif
+ 
++#ifdef CONFIG_MODULES
++	atomic_long_t module_vm;
++#endif
++
+ 	/* Miscellaneous per-user rate limit */
+ 	struct ratelimit_state ratelimit;
+ };
+diff --git a/include/uapi/asm-generic/resource.h b/include/uapi/asm-generic/resource.h
+index f12db7a0da64..3f998340ed30 100644
+--- a/include/uapi/asm-generic/resource.h
++++ b/include/uapi/asm-generic/resource.h
+@@ -46,7 +46,8 @@
+ 					   0-39 for nice level 19 .. -20 */
+ #define RLIMIT_RTPRIO		14	/* maximum realtime priority */
+ #define RLIMIT_RTTIME		15	/* timeout for RT tasks in us */
+-#define RLIM_NLIMITS		16
++#define RLIMIT_MODSPACE		16	/* max module space address usage */
++#define RLIM_NLIMITS		17
+ 
+ /*
+  * SuS says limits have to be unsigned.
+diff --git a/kernel/module.c b/kernel/module.c
+index 6746c85511fe..2ef9ed95bf60 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2110,9 +2110,139 @@ static void free_module_elf(struct module *mod)
+ }
+ #endif /* CONFIG_LIVEPATCH */
+ 
++struct mod_alloc_user {
++	struct rb_node node;
++	unsigned long addr;
++	unsigned long pages;
++	kuid_t uid;
++};
++
++static struct rb_root alloc_users = RB_ROOT;
++static DEFINE_SPINLOCK(alloc_users_lock);
++
++static unsigned int get_mod_page_cnt(unsigned long size)
++{
++	/* Add one for guard page */
++	return (PAGE_ALIGN(size) >> PAGE_SHIFT) + 1;
++}
++
++void update_mod_rlimit(void *addr, unsigned long size)
++{
++	unsigned long addrl = (unsigned long) addr;
++	struct rb_node **new = &(alloc_users.rb_node), *parent = NULL;
++	struct mod_alloc_user *track = kmalloc(sizeof(struct mod_alloc_user),
++				GFP_KERNEL);
++	unsigned int pages = get_mod_page_cnt(size);
++
++	/*
++	 * If addr is NULL, then we need to reverse the earlier increment that
++	 * would have happened in an check_inc_mod_rlimit call.
++	 */
++	if (!addr) {
++		struct user_struct *user = get_current_user();
++
++		atomic_long_sub(pages, &user->module_vm);
++		free_uid(user);
++		return;
++	}
++
++	/* Now, add tracking for the uid that allocated this */
++	track->uid = current_uid();
++	track->addr = addrl;
++	track->pages = pages;
++
++	spin_lock(&alloc_users_lock);
++
++	while (*new) {
++		struct mod_alloc_user *cur =
++				rb_entry(*new, struct mod_alloc_user, node);
++		parent = *new;
++		if (cur->addr > addrl)
++			new = &(*new)->rb_left;
++		else
++			new = &(*new)->rb_right;
++	}
++
++	rb_link_node(&(track->node), parent, new);
++	rb_insert_color(&(track->node), &alloc_users);
++
++	spin_unlock(&alloc_users_lock);
++}
++
++/* Remove user allocation tracking, return NULL if allocation untracked */
++static struct user_struct *remove_user_alloc(void *addr, unsigned long *pages)
++{
++	struct rb_node *cur_node = alloc_users.rb_node;
++	unsigned long addrl = (unsigned long) addr;
++	struct mod_alloc_user *cur_alloc_user = NULL;
++	struct user_struct *user;
++
++	spin_lock(&alloc_users_lock);
++	while (cur_node) {
++		cur_alloc_user =
++			rb_entry(cur_node, struct mod_alloc_user, node);
++		if (cur_alloc_user->addr > addrl)
++			cur_node = cur_node->rb_left;
++		else if (cur_alloc_user->addr < addrl)
++			cur_node = cur_node->rb_right;
++		else
++			goto found;
++	}
++	spin_unlock(&alloc_users_lock);
++
++	return NULL;
++found:
++	rb_erase(&cur_alloc_user->node, &alloc_users);
++	spin_unlock(&alloc_users_lock);
++
++	user = find_user(cur_alloc_user->uid);
++	*pages = cur_alloc_user->pages;
++	kfree(cur_alloc_user);
++
++	return user;
++}
++
++int check_inc_mod_rlimit(unsigned long size)
++{
++	struct user_struct *user = get_current_user();
++	unsigned long modspace_pages = rlimit(RLIMIT_MODSPACE) >> PAGE_SHIFT;
++	unsigned long cur_pages = atomic_long_read(&user->module_vm);
++	unsigned long new_pages = get_mod_page_cnt(size);
++
++	if (rlimit(RLIMIT_MODSPACE) != RLIM_INFINITY
++			&& cur_pages + new_pages > modspace_pages) {
++		free_uid(user);
++		return 1;
++	}
++
++	atomic_long_add(new_pages, &user->module_vm);
++
++	if (atomic_long_read(&user->module_vm) > modspace_pages) {
++		atomic_long_sub(new_pages, &user->module_vm);
++		free_uid(user);
++		return 1;
++	}
++
++	free_uid(user);
++	return 0;
++}
++
++void dec_mod_rlimit(void *addr)
++{
++	unsigned long pages;
++	struct user_struct *user = remove_user_alloc(addr, &pages);
++
++	if (!user)
++		return;
++
++	atomic_long_sub(pages, &user->module_vm);
++	free_uid(user);
++}
++
+ void __weak module_memfree(void *module_region)
+ {
+ 	vfree(module_region);
++	dec_mod_rlimit(module_region);
+ }
+ 
+ void __weak module_arch_cleanup(struct module *mod)
+@@ -2730,7 +2860,16 @@ static void dynamic_debug_remove(struct module *mod, struct _ddebug *debug)
+ 
+ void * __weak module_alloc(unsigned long size)
+ {
+-	return vmalloc_exec(size);
++	void *p;
++
++	if (check_inc_mod_rlimit(size))
++		return NULL;
++
++	p = vmalloc_exec(size);
++
++	update_mod_rlimit(p, size);
++
++	return p;
+ }
+ 
+ #ifdef CONFIG_DEBUG_KMEMLEAK
+-- 
+2.17.1
 
--Frank
