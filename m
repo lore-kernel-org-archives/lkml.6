@@ -2,122 +2,88 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69D4C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253C321470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:52:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253C321470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CFB420835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:53:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFB420835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeJKNSS (ORCPT
+        id S1728088AbeJKNSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 09:18:18 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:7730 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727529AbeJKNSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 09:18:17 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="45914224"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Oct 2018 13:52:32 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 0F56B4B6ED95;
-        Thu, 11 Oct 2018 13:52:34 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 11 Oct 2018 13:52:39 +0800
-Date:   Thu, 11 Oct 2018 13:51:54 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Baoquan He <bhe@redhat.com>
-CC:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <linux-efi@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <rjw@rjwysocki.net>, <lenb@kernel.org>,
-        <ard.biesheuvel@linaro.org>, <indou.takao@jp.fujitsu.com>,
-        <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181011055154.GB6667@localhost.localdomain>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
- <20181010085920.GB5533@zn.tnic>
- <20181010090620.GF25297@MiWiFi-R3L-srv>
- <alpine.DEB.2.21.1810101113070.10278@nanos.tec.linutronix.de>
- <20181010091923.GC5533@zn.tnic>
- <20181010093057.GA22088@MiWiFi-R3L-srv>
- <20181010194443.sgdvplwdnltshwwi@gabell>
- <20181011002955.GJ25297@MiWiFi-R3L-srv>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181011002955.GJ25297@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 0F56B4B6ED95.AE540
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+        Thu, 11 Oct 2018 09:18:48 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:57810 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbeJKNSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 09:18:48 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id CE45F1E727696511D213;
+        Thu, 11 Oct 2018 13:53:00 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9B5qrrk049030;
+        Thu, 11 Oct 2018 13:52:53 +0800 (GMT-8)
+        (envelope-from zhang.xianwei8@zte.com.cn)
+Received: from localhost.localdomain ([10.75.9.60])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018101113532264-3776416 ;
+          Thu, 11 Oct 2018 13:53:22 +0800 
+From:   Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+To:     ibm-acpi@hmh.eng.br, dvhart@infradead.org, andy@infradead.org
+Cc:     ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, zhang.xianwei8@zte.com.cn
+Subject: [PATCH] platform/x86: thinkpad_acpi: Change the keymap for Favorites hotkey
+Date:   Thu, 11 Oct 2018 13:59:31 +0800
+Message-Id: <1539237571-28926-1-git-send-email-zhang.xianwei8@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-11 13:53:22,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-11 13:52:41,
+        Serialize complete at 2018-10-11 13:52:41
+X-MAIL: mse01.zte.com.cn w9B5qrrk049030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 08:29:55AM +0800, Baoquan He wrote:
->On 10/10/18 at 03:44pm, Masayoshi Mizuma wrote:
->> On Wed, Oct 10, 2018 at 05:30:57PM +0800, Baoquan He wrote:
->> > On 10/10/18 at 11:19am, Borislav Petkov wrote:
->> > > On Wed, Oct 10, 2018 at 11:14:26AM +0200, Thomas Gleixner wrote:
->> > > > Yes, it's different, but if the SRAT information is available early, then
->> > > > the command line parameter can go away because then the required
->> > > > information for Masa's problem is available as well.
->> > > 
->> > > Exactly. And I'd prefer we delayed the command line parameter until we
->> > > figure out we really need it and not expose it to upstream and then
->> > > remove it shortly after.
->> > > 
->> > > So I'd suggest we move Masa's patches to a separate branch and not send
->> > > it up this round.
->> > 
->> > Yes, sounds more reasonable if we can reuse functions in Chao's patch 1/3
->> > to solve the padding issue.
->> 
->> Thanks for your comments! Yes, immovable_mem[num_immovable_mem] in Chao's
->> patch may be useful for calculating the padding size. If so, we don't
->> need the new kernel parameter. It's nice!
->> 
->> Do you happen to have ideas how we access immovable_mem[num_immovable_mem]
->> from arch/x86/mm/kaslr.c ? It is located to arch/x86/boot/compressed/*, so
->> I suppose it is not easy to access it... 
->> I would appreciate if you could give some advice.
->
->Hmm, they are living in different life cycle and space. So we can only
->reuse the code from Chao's patch, but not the variable. Means we need
->go through the SRAT accessing again in arch/x86/mm/kaslr.c and fill
->immovable_mem[num_immovable_mem] for mm/kaslr.c usage, if we decide to
->do like that.
+The keycode KEY_FAVORITES(0x16c) used in thinkpad_acpi driver is too
+big (out of range > 255) for xorg to handle.
+xkeyboard-config has already mapped KEY_BOOKMARKS(156) to
+XF86Favorites:
 
-Reading three times is redundant, but reading two times is needed.
-Becasue the ACPI code run very stable, but we need more information
-before that.
-As for Masa's issue, I am wondering whether we can tranfer the
-information or only the address of SRAT table from compressed period
-to the period after start_kernel().
+keycodes/evdev:
+    <I164> = 164;   // #define KEY_BOOKMARKS           156
 
-Thanks,
-Chao Fan
+symbols/inet:
+    key <I164>   {      [ XF86Favorites         ]       };
 
->
->Thanks
->Baoquan
->
->
+So change the keymap to KEY_BOOKMARKS for Favorites hotkey.
 
+Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index fde08a9..a86cf47 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -3457,7 +3457,7 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
+ 		KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN, KEY_UNKNOWN,
+ 		KEY_UNKNOWN,
+ 
+-		KEY_FAVORITES,       /* Favorite app, 0x311 */
++		KEY_BOOKMARKS,       /* Favorite app, 0x311 */
+ 		KEY_RESERVED,        /* Clipping tool */
+ 		KEY_CALC,            /* Calculator (above numpad, P52) */
+ 		KEY_BLUETOOTH,       /* Bluetooth */
+-- 
+2.9.5
 
