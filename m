@@ -6,52 +6,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4ACDC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99970C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D2E21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB8D21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEkAhVKv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D2E21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="izFuWBY6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB8D21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731002AbeJKXLS (ORCPT
+        id S1731016AbeJKXLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:11:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43142 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:11:18 -0400
+        id S1730152AbeJKXLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:11:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CB5C20652;
-        Thu, 11 Oct 2018 15:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 655C82098A;
+        Thu, 11 Oct 2018 15:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272613;
-        bh=TdRQ/mLCS+LiKIrCuM+2+uVhHDSXed36P0mYxOwFH9Y=;
+        s=default; t=1539272615;
+        bh=iV2snrFFDVR7LC11FxlR7GtqJVwldPzVHu3ZhW4EzyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vEkAhVKvZkLkK6zfVXuGp5dI17JM74Jdyy2bl6fdIrttgdfqoZxu/QdtPHBonLdcO
-         vWwiFQXt/U6dHPZhTMpM77lvXmG+Zr0RlLKJiJVEwYFhaDIIlcdEOQnUGrpvzRWNkT
-         JUPUX+aK2+IIn6JlZjSRjLfnU04YiUP28CJbSvHE=
+        b=izFuWBY6q5xHM3qvvN7LGgs+qV5Jj3McpxiJgOOQr+dC60qhRzVfAqufPgHJxKuRS
+         JgXh0/uPvFT0K+hVfIGmVy6FQSIbpjqBnycwkAoW51qzfNFtuQtlHoJrE0DM5OHi1k
+         uBVVbaQPfLTeIubJ8wxIG6CxtQNbTKsMthb4rfus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Feng Tang <feng.tang@intel.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andy Lutomirsky <luto@kernel.org>
-Subject: [PATCH 4.9 23/35] x86/mm: Expand static page table for fixmap space
-Date:   Thu, 11 Oct 2018 17:35:25 +0200
-Message-Id: <20181011152521.098965859@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.9 24/35] f2fs: fix invalid memory access
+Date:   Thu, 11 Oct 2018 17:35:26 +0200
+Message-Id: <20181011152521.139641174@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -69,158 +62,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Feng Tang <feng.tang@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 05ab1d8a4b36ee912b7087c6da127439ed0a903e upstream.
+commit d3f07c049dab1a3f1740f476afd3d5e5b738c21c upstream.
 
-We met a kernel panic when enabling earlycon, which is due to the fixmap
-address of earlycon is not statically setup.
+syzbot found the following crash on:
 
-Currently the static fixmap setup in head_64.S only covers 2M virtual
-address space, while it actually could be in 4M space with different
-kernel configurations, e.g. when VSYSCALL emulation is disabled.
+HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-So increase the static space to 4M for now by defining FIXMAP_PMD_NUM to 2,
-and add a build time check to ensure that the fixmap is covered by the
-initial static page tables.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Fixes: 1ad83c858c7d ("x86_64,vsyscall: Make vsyscall emulation configurable")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: kernel test robot <rong.a.chen@intel.com>
-Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
-Cc: H Peter Anvin <hpa@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andy Lutomirsky <luto@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180920025828.23699-1-feng.tang@intel.com
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
+
+loop7: rw=12288, want=8200, limit=20
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+openvswitch: netlink: Message has 8 unknown bytes.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
+ f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
+ mount_bdev+0x314/0x3e0 fs/super.c:1344
+ f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
+ legacy_get_tree+0x131/0x460 fs/fs_context.c:729
+ vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
+ do_new_mount fs/namespace.c:2603 [inline]
+ do_mount+0x6f2/0x1e20 fs/namespace.c:2927
+ ksys_mount+0x12d/0x140 fs/namespace.c:3143
+ __do_sys_mount fs/namespace.c:3157 [inline]
+ __se_sys_mount fs/namespace.c:3154 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45943a
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
+RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
+RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
+R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+---[ end trace bd8550c129352286 ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+openvswitch: netlink: Message has 8 unknown bytes.
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
+will pass returned invalid page pointer into f2fs_put_page, cause accessing
+invalid memory, this patch tries to handle error path correctly to fix this
+issue.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/fixmap.h     |   10 ++++++++++
- arch/x86/include/asm/pgtable_64.h |    3 ++-
- arch/x86/kernel/head_64.S         |   16 ++++++++++++----
- arch/x86/mm/pgtable.c             |    9 +++++++++
- arch/x86/xen/mmu.c                |    8 ++++++--
- 5 files changed, 39 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -14,6 +14,16 @@
- #ifndef _ASM_X86_FIXMAP_H
- #define _ASM_X86_FIXMAP_H
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+---
+ fs/f2fs/checkpoint.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -676,6 +676,7 @@ static int get_checkpoint_version(struct
  
-+/*
-+ * Exposed to assembly code for setting up initial page tables. Cannot be
-+ * calculated in assembly code (fixmap entries are an enum), but is sanity
-+ * checked in the actual fixmap C code to make sure that the fixmap is
-+ * covered fully.
-+ */
-+#define FIXMAP_PMD_NUM	2
-+/* fixmap starts downwards from the 507th entry in level2_fixmap_pgt */
-+#define FIXMAP_PMD_TOP	507
-+
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- #include <asm/acpi.h>
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -13,13 +13,14 @@
- #include <asm/processor.h>
- #include <linux/bitops.h>
- #include <linux/threads.h>
-+#include <asm/fixmap.h>
- 
- extern pud_t level3_kernel_pgt[512];
- extern pud_t level3_ident_pgt[512];
- extern pmd_t level2_kernel_pgt[512];
- extern pmd_t level2_fixmap_pgt[512];
- extern pmd_t level2_ident_pgt[512];
--extern pte_t level1_fixmap_pgt[512];
-+extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
- extern pgd_t init_level4_pgt[];
- 
- #define swapper_pg_dir init_level4_pgt
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -23,6 +23,7 @@
- #include "../entry/calling.h"
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
-+#include <asm/fixmap.h>
- 
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -493,13 +494,20 @@ NEXT_PAGE(level2_kernel_pgt)
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
- 
- NEXT_PAGE(level2_fixmap_pgt)
--	.fill	506,8,0
--	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE
--	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
--	.fill	5,8,0
-+	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
-+	pgtno = 0
-+	.rept (FIXMAP_PMD_NUM)
-+	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
-+		+ _PAGE_TABLE;
-+	pgtno = pgtno + 1
-+	.endr
-+	/* 6 MB reserved space + a 2MB hole */
-+	.fill	4,8,0
- 
- NEXT_PAGE(level1_fixmap_pgt)
-+	.rept (FIXMAP_PMD_NUM)
- 	.fill	512,8,0
-+	.endr
- 
- #undef PMDS
- 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -536,6 +536,15 @@ void __native_set_fixmap(enum fixed_addr
- {
- 	unsigned long address = __fix_to_virt(idx);
- 
-+#ifdef CONFIG_X86_64
-+       /*
-+	* Ensure that the static initial page tables are covering the
-+	* fixmap completely.
-+	*/
-+	BUILD_BUG_ON(__end_of_permanent_fixed_addresses >
-+		     (FIXMAP_PMD_NUM * PTRS_PER_PTE));
-+#endif
-+
- 	if (idx >= __end_of_fixed_addresses) {
- 		BUG();
- 		return;
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -1936,7 +1936,7 @@ void __init xen_setup_kernel_pagetable(p
- 		 * L3_k[511] -> level2_fixmap_pgt */
- 		convert_pfn_mfn(level3_kernel_pgt);
- 
--		/* L3_k[511][506] -> level1_fixmap_pgt */
-+		/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
- 		convert_pfn_mfn(level2_fixmap_pgt);
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+ 	if (crc_offset >= blk_size) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"invalid crc_offset: %zu", crc_offset);
+ 		return -EINVAL;
+@@ -684,6 +685,7 @@ static int get_checkpoint_version(struct
+ 	crc = le32_to_cpu(*((__le32 *)((unsigned char *)*cp_block
+ 							+ crc_offset)));
+ 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+ 		return -EINVAL;
  	}
- 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
-@@ -1970,7 +1970,11 @@ void __init xen_setup_kernel_pagetable(p
- 		set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
- 		set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
- 		set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
--		set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
-+
-+		for (i = 0; i < FIXMAP_PMD_NUM; i++) {
-+			set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
-+				      PAGE_KERNEL_RO);
-+		}
+@@ -703,14 +705,14 @@ static struct page *validate_checkpoint(
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_1, version);
+ 	if (err)
+-		goto invalid_cp1;
++		return NULL;
+ 	pre_version = *version;
  
- 		/* Pin down new L4 */
- 		pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
+ 	cp_addr += le32_to_cpu(cp_block->cp_pack_total_block_count) - 1;
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_2, version);
+ 	if (err)
+-		goto invalid_cp2;
++		goto invalid_cp;
+ 	cur_version = *version;
+ 
+ 	if (cur_version == pre_version) {
+@@ -718,9 +720,8 @@ static struct page *validate_checkpoint(
+ 		f2fs_put_page(cp_page_2, 1);
+ 		return cp_page_1;
+ 	}
+-invalid_cp2:
+ 	f2fs_put_page(cp_page_2, 1);
+-invalid_cp1:
++invalid_cp:
+ 	f2fs_put_page(cp_page_1, 1);
+ 	return NULL;
+ }
 
 
