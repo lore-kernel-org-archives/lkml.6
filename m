@@ -2,100 +2,111 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2821CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB070C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8B020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB8B020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E72120644
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T6Q4nYlw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T6Q4nYlw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E72120644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeJKHyl (ORCPT
+        id S1726775AbeJKHyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:54:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeJKHyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:54:41 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 11 Oct 2018 03:54:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38348 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbeJKHyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:54:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DD44360C60; Thu, 11 Oct 2018 00:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539217812;
+        bh=0aXyiwe1SAE8Xcd6d95PVJLduLYfURYgIbvrjJ+4CgI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T6Q4nYlwCWgPBqNS043ljrC9ys/hwqzR2RMlDQaHR4pvAhZBOl6I+yubQA4cwLzHp
+         5k54CUoSsll9EOeWp20K7uS7C07INANVzHbFYWge0tnjM/rwcpo88d5tCWXBKeO71K
+         o6vOkC1cwF0EDtij5QpaQ5KhFPtQVlRJ3izUSWpk=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E6D7888319;
-        Thu, 11 Oct 2018 00:30:03 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1704D89E6A;
-        Thu, 11 Oct 2018 00:30:01 +0000 (UTC)
-Date:   Thu, 11 Oct 2018 08:29:55 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-acpi@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, rjw@rjwysocki.net, lenb@kernel.org,
-        ard.biesheuvel@linaro.org, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181011002955.GJ25297@MiWiFi-R3L-srv>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
- <20181010085920.GB5533@zn.tnic>
- <20181010090620.GF25297@MiWiFi-R3L-srv>
- <alpine.DEB.2.21.1810101113070.10278@nanos.tec.linutronix.de>
- <20181010091923.GC5533@zn.tnic>
- <20181010093057.GA22088@MiWiFi-R3L-srv>
- <20181010194443.sgdvplwdnltshwwi@gabell>
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24E62600E6;
+        Thu, 11 Oct 2018 00:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539217812;
+        bh=0aXyiwe1SAE8Xcd6d95PVJLduLYfURYgIbvrjJ+4CgI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T6Q4nYlwCWgPBqNS043ljrC9ys/hwqzR2RMlDQaHR4pvAhZBOl6I+yubQA4cwLzHp
+         5k54CUoSsll9EOeWp20K7uS7C07INANVzHbFYWge0tnjM/rwcpo88d5tCWXBKeO71K
+         o6vOkC1cwF0EDtij5QpaQ5KhFPtQVlRJ3izUSWpk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24E62600E6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     sboyd@kernel.org, evgreen@chromium.org, marc.zyngier@arm.com
+Cc:     linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RFC 0/1] QCOM: GPIO IRQ wakeup using PDC irqchip
+Date:   Wed, 10 Oct 2018 18:29:57 -0600
+Message-Id: <20181011002958.2597-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010194443.sgdvplwdnltshwwi@gabell>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 11 Oct 2018 00:30:04 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 at 03:44pm, Masayoshi Mizuma wrote:
-> On Wed, Oct 10, 2018 at 05:30:57PM +0800, Baoquan He wrote:
-> > On 10/10/18 at 11:19am, Borislav Petkov wrote:
-> > > On Wed, Oct 10, 2018 at 11:14:26AM +0200, Thomas Gleixner wrote:
-> > > > Yes, it's different, but if the SRAT information is available early, then
-> > > > the command line parameter can go away because then the required
-> > > > information for Masa's problem is available as well.
-> > > 
-> > > Exactly. And I'd prefer we delayed the command line parameter until we
-> > > figure out we really need it and not expose it to upstream and then
-> > > remove it shortly after.
-> > > 
-> > > So I'd suggest we move Masa's patches to a separate branch and not send
-> > > it up this round.
-> > 
-> > Yes, sounds more reasonable if we can reuse functions in Chao's patch 1/3
-> > to solve the padding issue.
-> 
-> Thanks for your comments! Yes, immovable_mem[num_immovable_mem] in Chao's
-> patch may be useful for calculating the padding size. If so, we don't
-> need the new kernel parameter. It's nice!
-> 
-> Do you happen to have ideas how we access immovable_mem[num_immovable_mem]
-> from arch/x86/mm/kaslr.c ? It is located to arch/x86/boot/compressed/*, so
-> I suppose it is not easy to access it... 
-> I would appreciate if you could give some advice.
+Hi all,
 
-Hmm, they are living in different life cycle and space. So we can only
-reuse the code from Chao's patch, but not the variable. Means we need
-go through the SRAT accessing again in arch/x86/mm/kaslr.c and fill
-immovable_mem[num_immovable_mem] for mm/kaslr.c usage, if we decide to
-do like that.
+This is a second attempt at enabling wakeup using GPIO IRQs. On the QCOM
+SDM845i SoC, even when the TLMM gpiochip is powered off the the PDC always-on
+interrupt controller can sense the GPIO interrupt as a signal, wakeup the
+interrupt and replay the interrupt at the GIC.
 
-Thanks
-Baoquan
+Since, the wakeup interrupt is replayed at the GIC and not at the TLMM, it
+would have to be considered as a separate interrupt line and not in hierarchy
+with the GPIO interrupt line which is chained to the GIC, using a single
+summary line.
+
+The earlier approach [1] was based on configuring a PDC interrupt whenever a
+GPIO was requested as an IRQ and the PDC irq line was kept disabled. During
+suspend and resume, the TLMM line was disabled and the PDC line was enabled.
+While this works for suspend/resume, it becomes an additional complexity to
+handle when entering a system low power mode where the TLMM could be powered
+off when the CPUs are idle.
+
+The approach here is to use PDC interrupt at all times (while keeping the GPIO
+irq disabled). The PDC interrupt handler invokes the action handler of the GPIO
+IRQ instead. This allows us to avoid interrupt hand-offs while entering idle
+states and keeps things very simple. The wake_irq_gpio_handler() is the crux of
+this new revision.
+
+This submission does not include the DT bindings and associated documentation.
+Once the core design is resolved I will send a complete set with dependencies
+for this SoC. Please let me know if this approach would work or do you see any
+issues that I may have missed.
+
+Thanks,
+Lina
+
+[1]. https://lkml.org/lkml/2018/9/4/846
+
+Lina Iyer (1):
+  drivers: pinctrl: qcom: add wakeup capability to GPIO
+
+ drivers/pinctrl/qcom/pinctrl-msm.c | 91 +++++++++++++++++++++++++++++-
+ 1 file changed, 90 insertions(+), 1 deletion(-)
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
