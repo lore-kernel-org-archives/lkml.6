@@ -2,484 +2,142 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF1CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE60DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1192087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:36:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dEvO144U";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ib45BDdN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1192087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D4072077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:38:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4072077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeJKTDW (ORCPT
+        id S1728103AbeJKTFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:03:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59054 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKTDW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:03:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 80AD460C62; Thu, 11 Oct 2018 11:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539257790;
-        bh=pCxr4hM6Szt5aqUq22mPTFRthOcyYDmAZioJdvT3ne8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dEvO144U9pTwKQNJ9OYBajTHtVEWFDXszz69u4wZ8/AyFhtIa1EYNpOp5CgHgwOmU
-         XFdjuwVYbImF+8mwcDNZKf1gnIoQZ+mdCL9jvy1tSD+gwQUIIHBZG10uddKjsdR1OU
-         Tpd+Fi4zUa4gxLTz3f5HYVlF67baCD4JFYY5k34c=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9B876072E;
-        Thu, 11 Oct 2018 11:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539257787;
-        bh=pCxr4hM6Szt5aqUq22mPTFRthOcyYDmAZioJdvT3ne8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ib45BDdN8ZKX9lT0lLFRjx5d5EEW9u32wXg/uz4a4oAmLiPuHEcdX5nq6QIBM9vnV
-         slIcTyWgM50305rOc81W6vW7PH3zl5oVn9VMPLD+QDYiTjG5Qm9fZYEsi8hqUBus99
-         2M9P47ZIGlLOqiuigr6Fl1lIiQJjp9/i9FQjDtCc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9B876072E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Thu, 11 Oct 2018 17:06:01 +0530
-Message-Id: <1539257761-23023-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
-References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
+        Thu, 11 Oct 2018 15:05:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36196 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727056AbeJKTFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:05:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A918ED1;
+        Thu, 11 Oct 2018 04:38:15 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0B583F5BC;
+        Thu, 11 Oct 2018 04:38:12 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 12:38:00 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Honghui Zhang <honghui.zhang@mediatek.com>
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        ulf.hansson@linaro.org, marc.zyngier@arm.com,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        youlin.pei@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com
+Subject: Re: [PATCH v6 2/9] PCI: mediatek: Fixup class ID for MT7622 as
+ PCI_CLASS_BRIDGE_PCI
+Message-ID: <20181011113748.GA3574@e107981-ln.cambridge.arm.com>
+References: <1538969088-7136-1-git-send-email-honghui.zhang@mediatek.com>
+ <1538969088-7136-3-git-send-email-honghui.zhang@mediatek.com>
+ <20181008172337.GA13538@e107981-ln.cambridge.arm.com>
+ <1539054495.6246.31.camel@mhfsdcap03>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539054495.6246.31.camel@mhfsdcap03>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-for changing the frequency of CPUs. The driver implements the cpufreq
-driver interface for this hardware engine.
+On Tue, Oct 09, 2018 at 11:08:15AM +0800, Honghui Zhang wrote:
+> On Mon, 2018-10-08 at 18:23 +0100, Lorenzo Pieralisi wrote:
+> > On Mon, Oct 08, 2018 at 11:24:41AM +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > The PCIe controller of MT7622 has TYPE 1 configuration space type, but
+> > > the HW default class type values is invalid.
+> > > 
+> > > The commit 101c92dc80c8 ("PCI: mediatek: Set up vendor ID and class
+> > > type for MT7622") have set the class ID for MT7622 as
+> > > PCI_CLASS_BRIDGE_HOSTe, but it's not workable for MT7622:
+> > > 
+> > > In __pci_bus_assign_resources, the framework only setup bridge's
+> > > resource window only if class type is PCI_CLASS_BRIDGE_PCI. Or it
+> > > will leave the subordinary PCIe device's MMIO window un-touched.
 
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/cpufreq/Kconfig.arm       |  11 ++
- drivers/cpufreq/Makefile          |   1 +
- drivers/cpufreq/qcom-cpufreq-hw.c | 354 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 366 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+Can you please provide me with a full log of the issue ?
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 0cd8eb7..c379c7f 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -121,6 +121,17 @@ config ARM_QCOM_CPUFREQ_KRYO
+What is the bug this patch is actually fixing ?
 
- 	  If in doubt, say N.
+> > > Fixup the class type to PCI_CLASS_BRIDGE_PCI as most of the controller
+> > > driver do.
+> > 
+> > I think that this patch is correct but the commit log fails to pin point
+> > the problem. The IP you are programming is a root port, that's why you
+> > have to have the proper class code, the patch looks fine but I would
+> > like to peek Bjorn's brain on this since it is a fundamental concept.
+> > 
+> 
+> I'm a bit confused with the concepts of PCI_CLASS_BRIDGE_HOST and
+> PCI_CLASS_BRIDGE_PCI, from PCI express spec,
+> 4.0r1.0(PCI_Express_Base_4.0r1.0_September-27-2017-c), Host Bridge is
+> "part of a Root Complex that connects a host CPU or CPUs to a
+> Hierarchy". While Root Complex defines as "A defined System Element that
+> includes at least one Host Bridge, Root port, or Root complex Integrated
+> Endpoint".
+> 
+> But according to my understanding, most of the root port IPs integrated
+> with a "PCI_CLASS_BRIDGE_PCI", which has type 1 configuration space and
+> could be saw as a pci device when using lspci.
+> 
+> And for MT7622, it integrated with block of internal control registers,
+> type 1 configuration space, and is considered as a root complex.
 
-+config ARM_QCOM_CPUFREQ_HW
-+	bool "QCOM CPUFreq HW driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  Support for the CPUFreq HW driver.
-+	  Some QCOM chipsets have a HW engine to offload the steps
-+	  necessary for changing the frequency of the CPUs. Firmware loaded
-+	  in this engine exposes a programming interface to the OS.
-+	  The driver implements the cpufreq interface for this HW engine.
-+	  Say Y if you want to support CPUFreq HW.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index c1ffeab..3882908 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
- obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-new file mode 100644
-index 0000000..fe1c264
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -0,0 +1,354 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/cpufreq.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+
-+#define LUT_MAX_ENTRIES			40U
-+#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
-+#define LUT_ROW_SIZE			32
-+#define CLK_HW_DIV			2
-+
-+enum {
-+	REG_ENABLE,
-+	REG_LUT_TABLE,
-+	REG_PERF_STATE,
-+
-+	REG_ARRAY_SIZE,
-+};
-+
-+struct cpufreq_qcom {
-+	struct cpufreq_frequency_table *table;
-+	void __iomem *reg_bases[REG_ARRAY_SIZE];
-+	cpumask_t related_cpus;
-+	unsigned int max_cores;
-+	unsigned long xo_rate;
-+	unsigned long cpu_hw_rate;
-+};
-+
-+static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
-+	[REG_ENABLE]		= 0x0,
-+	[REG_LUT_TABLE]		= 0x110,
-+	[REG_PERF_STATE]	= 0x920,
-+};
-+
-+static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-+
-+static int
-+qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-+			     unsigned int index)
-+{
-+	struct cpufreq_qcom *c = policy->driver_data;
-+
-+	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-+
-+	return 0;
-+}
-+
-+static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-+{
-+	struct cpufreq_qcom *c;
-+	struct cpufreq_policy *policy;
-+	unsigned int index;
-+
-+	policy = cpufreq_cpu_get_raw(cpu);
-+	if (!policy)
-+		return 0;
-+
-+	c = policy->driver_data;
-+
-+	index = readl_relaxed(c->reg_bases[REG_PERF_STATE]);
-+	index = min(index, LUT_MAX_ENTRIES - 1);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static unsigned int
-+qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-+			    unsigned int target_freq)
-+{
-+	struct cpufreq_qcom *c = policy->driver_data;
-+	int index;
-+
-+	index = policy->cached_resolved_idx;
-+	if (index < 0)
-+		return 0;
-+
-+	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-+{
-+	struct cpufreq_qcom *c;
-+
-+	c = qcom_freq_domain_map[policy->cpu];
-+	if (!c) {
-+		pr_err("No scaling support for CPU%d\n", policy->cpu);
-+		return -ENODEV;
-+	}
-+
-+	cpumask_copy(policy->cpus, &c->related_cpus);
-+
-+	policy->fast_switch_possible = true;
-+	policy->freq_table = c->table;
-+	policy->driver_data = c;
-+
-+	return 0;
-+}
-+
-+static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	&cpufreq_freq_attr_scaling_boost_freqs,
-+	NULL
-+};
-+
-+static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-+	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-+	.verify		= cpufreq_generic_frequency_table_verify,
-+	.target_index	= qcom_cpufreq_hw_target_index,
-+	.get		= qcom_cpufreq_hw_get,
-+	.init		= qcom_cpufreq_hw_cpu_init,
-+	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-+	.name		= "qcom-cpufreq-hw",
-+	.attr		= qcom_cpufreq_hw_attr,
-+	.boost_enabled	= true,
-+};
-+
-+static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
-+				    struct cpufreq_qcom *c)
-+{
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
-+
-+	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-+				sizeof(*c->table), GFP_KERNEL);
-+	if (!c->table)
-+		return -ENOMEM;
-+
-+	base = c->reg_bases[REG_LUT_TABLE];
-+
-+	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-+		data = readl_relaxed(base + i * LUT_ROW_SIZE);
-+		src = (data & GENMASK(31, 30)) >> 30;
-+		lval = data & GENMASK(7, 0);
-+		core_count = CORE_COUNT_VAL(data);
-+
-+		if (src)
-+			c->table[i].frequency = c->xo_rate * lval / 1000;
-+		else
-+			c->table[i].frequency = c->cpu_hw_rate / 1000;
-+
-+		cur_freq = c->table[i].frequency;
-+
-+		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-+			i, c->table[i].frequency, core_count);
-+
-+		if (core_count != c->max_cores)
-+			cur_freq = CPUFREQ_ENTRY_INVALID;
-+
-+		/*
-+		 * Two of the same frequencies with the same core counts means
-+		 * end of table.
-+		 */
-+		if (i > 0 && c->table[i - 1].frequency ==
-+		   c->table[i].frequency && prev_cc == core_count) {
-+			struct cpufreq_frequency_table *prev = &c->table[i - 1];
-+
-+			if (prev_freq == CPUFREQ_ENTRY_INVALID)
-+				prev->flags = CPUFREQ_BOOST_FREQ;
-+			break;
-+		}
-+		prev_cc = core_count;
-+		prev_freq = cur_freq;
-+	}
-+
-+	c->table[i].frequency = CPUFREQ_TABLE_END;
-+
-+	return 0;
-+}
-+
-+static int qcom_get_related_cpus(int index, struct cpumask *m)
-+{
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	int cpu, ret;
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_np = of_cpu_device_node_get(cpu);
-+		if (!cpu_np)
-+			continue;
-+
-+		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+						 "#freq-domain-cells", 0,
-+						  &args);
-+		of_node_put(cpu_np);
-+		if (ret < 0)
-+			continue;
-+
-+		if (index == args.args[0])
-+			cpumask_set_cpu(cpu, m);
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_cpu_resources_init(struct platform_device *pdev,
-+				   unsigned int cpu, int index,
-+				   unsigned long xo_rate,
-+				   unsigned long cpu_hw_rate)
-+{
-+	struct cpufreq_qcom *c;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	const u16 *offsets;
-+	int ret, i, cpu_r;
-+	void __iomem *base;
-+
-+	if (qcom_freq_domain_map[cpu])
-+		return 0;
-+
-+	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	offsets = of_device_get_match_data(&pdev->dev);
-+	if (!offsets)
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
-+		c->reg_bases[i] = base + offsets[i];
-+
-+	/* HW should be in enabled state to proceed */
-+	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
-+		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
-+		return -ENODEV;
-+	}
-+
-+	ret = qcom_get_related_cpus(index, &c->related_cpus);
-+	if (ret) {
-+		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
-+		return ret;
-+	}
-+
-+	c->max_cores = cpumask_weight(&c->related_cpus);
-+	if (!c->max_cores)
-+		return -ENOENT;
-+
-+	c->xo_rate = xo_rate;
-+	c->cpu_hw_rate = cpu_hw_rate;
-+
-+	ret = qcom_cpufreq_hw_read_lut(pdev, c);
-+	if (ret) {
-+		dev_err(dev, "Domain-%d failed to read LUT\n", index);
-+		return ret;
-+	}
-+
-+	for_each_cpu(cpu_r, &c->related_cpus)
-+		qcom_freq_domain_map[cpu_r] = c;
-+
-+	return 0;
-+}
-+
-+static int qcom_resources_init(struct platform_device *pdev)
-+{
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	struct clk *clk;
-+	unsigned int cpu;
-+	unsigned long xo_rate, cpu_hw_rate;
-+	int ret;
-+
-+	clk = clk_get(&pdev->dev, "xo");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	xo_rate = clk_get_rate(clk);
-+
-+	clk_put(clk);
-+
-+	clk = clk_get(&pdev->dev, "cpu_clk");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
-+
-+	clk_put(clk);
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_np = of_cpu_device_node_get(cpu);
-+		if (!cpu_np) {
-+			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
-+				cpu);
-+			continue;
-+		}
-+
-+		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+						 "#freq-domain-cells", 0,
-+						  &args);
-+		of_node_put(cpu_np);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
-+					      xo_rate, cpu_hw_rate);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
-+{
-+	int rc;
-+
-+	/* Get the bases of cpufreq for domains */
-+	rc = qcom_resources_init(pdev);
-+	if (rc) {
-+		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
-+		return rc;
-+	}
-+
-+	rc = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
-+	if (rc) {
-+		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
-+		return rc;
-+	}
-+
-+	dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_cpufreq_hw_match[] = {
-+	{ .compatible = "qcom,cpufreq-hw", .data = &cpufreq_qcom_std_offsets },
-+	{}
-+};
-+
-+static struct platform_driver qcom_cpufreq_hw_driver = {
-+	.probe = qcom_cpufreq_hw_driver_probe,
-+	.driver = {
-+		.name = "qcom-cpufreq-hw",
-+		.of_match_table = qcom_cpufreq_hw_match,
-+	},
-+};
-+
-+static int __init qcom_cpufreq_hw_init(void)
-+{
-+	return platform_driver_register(&qcom_cpufreq_hw_driver);
-+}
-+subsys_initcall(qcom_cpufreq_hw_init);
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+I assume you mean a type 1 config header here. I do not think it
+is mandatory for a host bridge to have a type 1 config header
+(and related bridge windows + primary/secondary/subordinate bus
+numbers) but I do not know how the IP you are programming is
+designed.
 
+If the host bridge needs its memory window to be configured you can
+easily do that in the driver (with driver specific code) without
+requiring the generic PCI resource core to do that for you, the host
+bridge is the root of the bus I do not see any reason why it should
+be up to core PCI code to assign it, it is preprogrammed.
+
+> I'm not sure which CLASS type it should have:
+> From PCI_Code-ID_r_1_10__v8-Nov_2017, class type of
+> 0x0604(PCI_CLASS_BRIDGE_PCI) is defined as a PCI-to-PCI bridge, not
+> literally suitable for MT7622(which is a root complex)(In my personal
+> opinion). But it is the only workable CLASS type for MT7622 in current
+> kernel.
+> 
+> > If the kernel does not assign resources unless it detects a
+> > PCI_CLASS_BRIDGE_PCI this means that for components that are
+> > actually PCI_CLASS_BRIDGE_HOST their register set must come
+> > preprogrammed unless I am missing something.
+> > 
+> 
+> In the function pci_request_resource_alignment, it will by pass the
+> resource assignment for PCI_CLASS_BRIDGE_HOST, though I'm not figured
+> out why.
+> 
+> > I would like to get to the bottom of this since it is a fundamental
+> > enumeration concept.
+> > 
+> 
+> Do you like me to re-write the commit message for this patch and put the
+> above information in? Or just not mention the PCI_CLASS_BRIDGE_HOST
+> assign resource routine?
+
+I want to understand where the problem is and whether it is right to
+define the component as a PCI bridge rather than a host bridge.
+
+Lorenzo
