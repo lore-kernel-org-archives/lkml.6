@@ -2,84 +2,162 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C94AC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970A4C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A10D20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:56:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A10D20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 48F532087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:00:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hzPsHIJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F532087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeJKPWr (ORCPT
+        id S1728082AbeJKP0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:22:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41620 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbeJKPWr (ORCPT
+        Thu, 11 Oct 2018 11:26:15 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54997 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbeJKP0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:22:47 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gAVpl-0005cf-LZ; Thu, 11 Oct 2018 07:56:38 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jikos@kernel.org
-Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] HID: usbhid: Add quirk for Redragon/Dragonrise Seymur 2
-Date:   Thu, 11 Oct 2018 15:56:33 +0800
-Message-Id: <20181011075633.18868-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 11 Oct 2018 11:26:15 -0400
+Received: by mail-it1-f194.google.com with SMTP id l191-v6so12124532ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=IS+Qe1yflYjxnUGUxVEesbSqF9cTj5GBtrEheCKgRQ0=;
+        b=hzPsHIJB+rCWbuYyTNW7i9SxSTnMtAL2bTfufvTHUVuAJoSf+G0Yvk666p0m9ucuaB
+         ImPNa4L2+1VdEINlrG5XLtOfpcSUCDhKDw8loHGNZynzUHRlDZjSXS3XoDT6uWXm4MY4
+         yyU0jl2LBMfrrILOjX+Z6DHyGJPNscCuTshjmo/Dr0GSN2dxBkKGVU79oOZP30tCcp9p
+         Xzbzsb42mNky7+fQGYj0vDBSU+a8RT0xzj9gOAIij7l5ZebqSoGurw+C3Mgp9DP2RsEf
+         rbAcMjVuM3teJBDrD4u0Hz7a+qMSUHl6DezL0eMkEDFQSAtKH524tAQ/o72ZG7EuUkv6
+         tAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=IS+Qe1yflYjxnUGUxVEesbSqF9cTj5GBtrEheCKgRQ0=;
+        b=btdb32fXkofUhjuhxY6mc/yH4rK666c+GW1607ydDKohxgBNoQUn0MVaeNGaGiUFTp
+         +qryIEvgHlYZLaiE7Y0lR6KWFbDQVw4eSP9raaCBxOLh+rQAynudibEWT4OB6EsT/N/d
+         AXQr7Mk+7Oh/OJktjS6zSVPrQu9PvPeRevGqAXLXraxsPpA4NuR/8t7DWeDyqdTucqAy
+         DM3Cw5a825GeUM5bvggxbk/R0lqMGlNyZb0I9XZKPST28Ikv713YaHOyU9Y7u04oVEKo
+         x46yAQDVYNUo/499qfPAmR87qRPkeV27Rz9v3/5E8DZJH0ilJZsvM1OucfAjoT173YFz
+         ksZQ==
+X-Gm-Message-State: ABuFfohEfTyPUHRv9Dh6TtZM4H2LfPHRpCyVfosnSoX8dpf/NiG+goyt
+        df/YAdLCfrjqT4zvioGLtONoYNIMmk2eTleDxiXjRw==
+X-Google-Smtp-Source: ACcGV616NCVHUH7QeCYECpJ1choxV1yo8jQZ0FtbhzhYr6N+JIDQkMLH6YB9SFUQ1pY05GZilFTDo+mkrSp1zWS9tNA=
+X-Received: by 2002:a02:9716:: with SMTP id x22-v6mr401480jai.82.1539244807442;
+ Thu, 11 Oct 2018 01:00:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 00:59:46
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
+References: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 11 Oct 2018 09:59:46 +0200
+Message-ID: <CACT4Y+Ym3_NuqWrgHXWfTahWTm17xi_2gjy8hvuDeyUCPuYXUQ@mail.gmail.com>
+Subject: Re: net/tipc: recursive locking in tipc_link_reset
+To:     Jon Maloy <jon.maloy@ericsson.com>,
+        David Miller <davem@davemloft.net>,
+        Ying Xue <ying.xue@windriver.com>,
+        netdev <netdev@vger.kernel.org>,
+        tipc-discussion@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Redragon Seymur 2 stops working since commit 190d7f02ce8e ("HID: input:
-do not increment usages when a duplicate is found").
+On Thu, Oct 11, 2018 at 9:55 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> Hi,
+>
+> I am getting the following error while booting the latest kernel on
+> bb2d8f2f61047cbde08b78ec03e4ebdb01ee5434 (Oct 10). Config is attached.
+>
+> Since this happens during boot, this makes LOCKDEP completely
+> unusable, does not allow to discover any other locking issues and
+> masks all new bugs being introduced into kernel.
+> Please fix asap.
+> Thanks
 
-Use quirk HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE suggested by the commit
-can solve the issue.
+-parthasarathy.bhuvaragan address as it gives me bounces
+but this is highly likely due to:
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200995
-BugLink: https://bugs.launchpad.net/bugs/1793846
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/hid/hid-ids.h    | 1 +
- drivers/hid/hid-quirks.c | 1 +
- 2 files changed, 2 insertions(+)
+commit 3f32d0be6c16b902b687453c962d17eea5b8ea19
+Author: Parthasarathy Bhuvaragan
+Date:   Tue Sep 25 22:09:10 2018 +0200
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index bc49909aba8e..0e0aa7f0e6fc 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -342,6 +342,7 @@
- #define USB_DEVICE_ID_DMI_ENC		0x5fab
- 
- #define USB_VENDOR_ID_DRAGONRISE		0x0079
-+#define USB_DEVICE_ID_REDRAGON_SEYMUR2		0x0006
- #define USB_DEVICE_ID_DRAGONRISE_WIIU		0x1800
- #define USB_DEVICE_ID_DRAGONRISE_PS3		0x1801
- #define USB_DEVICE_ID_DRAGONRISE_DOLPHINBAR	0x1803
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index 249d49b6b16c..52c3b01917e7 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -70,6 +70,7 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DMI, USB_DEVICE_ID_DMI_ENC), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DRACAL_RAPHNET, USB_DEVICE_ID_RAPHNET_2NES2SNES), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DRACAL_RAPHNET, USB_DEVICE_ID_RAPHNET_4NES4SNES), HID_QUIRK_MULTI_INPUT },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_DRAGONRISE, USB_DEVICE_ID_REDRAGON_SEYMUR2), HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DRAGONRISE, USB_DEVICE_ID_DRAGONRISE_DOLPHINBAR), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DRAGONRISE, USB_DEVICE_ID_DRAGONRISE_GAMECUBE1), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_DRAGONRISE, USB_DEVICE_ID_DRAGONRISE_PS3), HID_QUIRK_MULTI_INPUT },
--- 
-2.17.1
+    tipc: lock wakeup & inputq at tipc_link_reset()
 
+
+> WARNING: possible recursive locking detected
+> 4.19.0-rc7+ #14 Not tainted
+> --------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+> 00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
+> include/linux/spinlock.h:334 [inline]
+> 00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at:
+> tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
+>
+> but task is already holding lock:
+> 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
+> include/linux/spinlock.h:334 [inline]
+> 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+> tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(&(&list->lock)->rlock#4);
+>   lock(&(&list->lock)->rlock#4);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
+>
+> 2 locks held by swapper/0/1:
+>  #0: 00000000f7539d34 (pernet_ops_rwsem){+.+.}, at:
+> register_pernet_subsys+0x19/0x40 net/core/net_namespace.c:1051
+>  #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+> spin_lock_bh include/linux/spinlock.h:334 [inline]
+>  #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+> tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+>
+> stack backtrace:
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7+ #14
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1af/0x295 lib/dump_stack.c:113
+>  print_deadlock_bug kernel/locking/lockdep.c:1759 [inline]
+>  check_deadlock kernel/locking/lockdep.c:1803 [inline]
+>  validate_chain kernel/locking/lockdep.c:2399 [inline]
+>  __lock_acquire+0xf1e/0x3c60 kernel/locking/lockdep.c:3411
+>  lock_acquire+0x1db/0x520 kernel/locking/lockdep.c:3900
+>  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+>  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+>  spin_lock_bh include/linux/spinlock.h:334 [inline]
+>  tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
+>  tipc_link_bc_create+0xb5/0x1f0 net/tipc/link.c:526
+>  tipc_bcast_init+0x59b/0xab0 net/tipc/bcast.c:521
+>  tipc_init_net+0x472/0x610 net/tipc/core.c:82
+>  ops_init+0xf7/0x520 net/core/net_namespace.c:129
+>  __register_pernet_operations net/core/net_namespace.c:940 [inline]
+>  register_pernet_operations+0x453/0xac0 net/core/net_namespace.c:1011
+>  register_pernet_subsys+0x28/0x40 net/core/net_namespace.c:1052
+>  tipc_init+0x83/0x104 net/tipc/core.c:140
+>  do_one_initcall+0x109/0x70a init/main.c:885
+>  do_initcall_level init/main.c:953 [inline]
+>  do_initcalls init/main.c:961 [inline]
+>  do_basic_setup init/main.c:979 [inline]
+>  kernel_init_freeable+0x4bd/0x57f init/main.c:1144
+>  kernel_init+0x13/0x180 init/main.c:1063
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
