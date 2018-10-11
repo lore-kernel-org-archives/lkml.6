@@ -2,103 +2,172 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED0CC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5F8C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589BD2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 505AD2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:39:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EC57ybGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589BD2075C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltGJ1qE5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505AD2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeJLDFp (ORCPT
+        id S1727401AbeJLDHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:05:45 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37545 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJLDFo (ORCPT
+        Thu, 11 Oct 2018 23:07:41 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38804 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbeJLDHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:05:44 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u6-v6so1969219plz.4;
-        Thu, 11 Oct 2018 12:37:04 -0700 (PDT)
+        Thu, 11 Oct 2018 23:07:41 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v7-v6so9312220ljg.5;
+        Thu, 11 Oct 2018 12:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l7ToRFdrb/9GJxkM06I5rmAqxSUBEYH5cNDOc++YDOE=;
-        b=EC57ybGIrJ+5LGOQ35hCRP93FZ1hNP3hx1IF9Z1WX6pDCJX06YAsXxpy2dVIuubivs
-         22SGx+2kCFuO3Yv4KVnXtjBkRDojZ8FHWRO7P1xVazWwidzes7Ujta0prApO1e9xEDze
-         Tj0FYc93TltLEKP8cJHia+sabVIMlSXRZdhJpYjTqEXI3w5jyQaEZBO2X7AcPZuseF7U
-         wojSpjG2OC+iid8aAXyPrMD9J3HBJ3QV/kkT2wIcX93S9Q7pHgzYCchDTDq56oZB7NIU
-         YAobeHwYaZj3DCR1LI0L7DeaJGMYw4lwhbeVp6d9J3u294/B0RWBeYb6rt/HMhW00YyM
-         1XvQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RVD1QeC4Rgyzzsq0lIDVEru40UkmjvaVTLg9ogzMLSI=;
+        b=ltGJ1qE52kub4dwDDvURr74OaByDn/ibcWGcMpT2a+9q1HvodD4BgF42eCGSQzHKJq
+         eZ18y8DLUAjFPUW3glsP4pe87GK0oHpJjHiHsxWewEx+ICpzq8FyoXe0tbie6oonoU+6
+         oAP/g34c7ZipYjqhbnbHY+6+EJakkv+oid0H/+a2FAA1TzLO62mf6u8BCz+9Tubf8Db6
+         QlFSAZuOzQS4AQy4pGvFJwNyS6eYFwaxIM9Aly2FqHDDrKIssSdrwS7jHyHUFpfwdM01
+         McGiU+giRdJzbz86oaZeD8q7+E5ylI0k6IDdU1pDZ1LcPAMlA+iXVmnvgmo2L2d+dvg5
+         MuMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l7ToRFdrb/9GJxkM06I5rmAqxSUBEYH5cNDOc++YDOE=;
-        b=A7AJghd3hk8VFmp/TuRXFUj4m2dbHHjNyhjdZsb67bYsgGqTlhCXm1+RxoEoiR4ZKR
-         foow4YmJ9K2AIGvM5+EfFcruUuearM+gHX/pgYQuEDJQvohvAqEuDvSFveu77I49qpAw
-         V5+xXubJ87seXv/iKiQGrhQOCIrrDu4atYRvvhv1do2bnnv+xvJ5veU2DFjaebHdXvJS
-         LGgClzuOb9lZLixBuhkcYXn23NDi3Kuo0narDiyfSiahV0K+h8uHfZHKY7dFlc42TuOO
-         S/Vn2IuCCm8p9d2p63PJt7/KZmIxS96iXJgOzOJq9SDbKhmwuigOXYT2Wkio8u2BwAti
-         ES7w==
-X-Gm-Message-State: ABuFfoiEdgFPqhw8UxXs9+MLhG9zf3QvQG8JiTjUayKdAacGphdXi0fI
-        u5YGEkeBLGuMokX7jIheAZ4=
-X-Google-Smtp-Source: ACcGV62WWUzLN/iYc3zCyYWvG5TMzFIVBaUuySSEPL+XsvsXKnbbsMZAWkNkNK8i6SAGBH85lt+usA==
-X-Received: by 2002:a17:902:7007:: with SMTP id y7-v6mr2783429plk.185.1539286623472;
-        Thu, 11 Oct 2018 12:37:03 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm30172893pfg.188.2018.10.11.12.37.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 12:37:03 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 12:36:59 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (ina3221) Add operating mode support
-Message-ID: <20181011193658.GA3828@Asurada-Nvidia.nvidia.com>
-References: <20181010043310.30873-1-nicoleotsuka@gmail.com>
- <20181010043310.30873-3-nicoleotsuka@gmail.com>
- <32c22986-544e-aca1-12bf-9080667cf499@roeck-us.net>
- <20181010230906.GB1706@Asurada-Nvidia.nvidia.com>
- <20181010234300.GA25480@roeck-us.net>
- <20181011002411.GA10379@Asurada-Nvidia.nvidia.com>
- <20181011193152.GA4854@roeck-us.net>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RVD1QeC4Rgyzzsq0lIDVEru40UkmjvaVTLg9ogzMLSI=;
+        b=H6+s+bvvJsWcpCwsjl4MLRcljQWqMigGWY0L9r2Jf2bZ7753FMGsAvWwQFuFBSi6ce
+         fsb4gY6hr17DSZ0ibsb6ud8x/GxIe4CeAXF6HqReGyJEKVd/Ftzdy0oYWVzE4J8AnlXB
+         zT8KK+dAQUf5rog0PNMpwZAep7LpT00Og4f2oxdUaSErk8u8L7wC/wPbZjKcNLkZAgOH
+         acsj9XqlNqQ7SbqwBtI7yUf7CGkqQNomwWmtK7Hsc2wlSzBKVdB9PYzaq+JlaZbA4kBg
+         d9GmM5krbKqb7l77YoYsXyNKe1aoJqDCEDs2jlzak6h2PjI1qgVzTrVWQs4tfcHvf/Ul
+         nJVw==
+X-Gm-Message-State: ABuFfohPlwf+WTmI8BSCt6KrfCJtwbdcXN6mN1Dp+NvF6vMxHzyHV6Uy
+        +ADWttMm1d3684ekxTg50oVpVlNd
+X-Google-Smtp-Source: ACcGV61B2XjcEvfIiN0FDb9JSStIYCVZ8X/htfcDzW7O/WiJTl09Kj1fNBG2v72JlOachgF7zqHqug==
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr2261896ljj.80.1539286737381;
+        Thu, 11 Oct 2018 12:38:57 -0700 (PDT)
+Received: from [192.168.1.18] (dkt144.neoplus.adsl.tpnet.pl. [83.24.23.144])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm6521271lji.87.2018.10.11.12.38.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 12:38:56 -0700 (PDT)
+Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
+To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     robh+dt@kernel.org, lee.jones@linaro.org, tony@atomide.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20181011165123.32198-1-dmurphy@ti.com>
+ <20181011165123.32198-3-dmurphy@ti.com> <20181011182734.GA7973@amd>
+ <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
+Date:   Thu, 11 Oct 2018 21:38:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011193152.GA4854@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 12:31:52PM -0700, Guenter Roeck wrote:
-
-> > One more question here, and this might sound a bit abuse of using
-> > the existing hwmon ABI: would it sound plausible to you that the
-> > driver powers down the chip when all three channels get disabled
-> > via in[123]_enable nodes? :)
-> > 
+On 10/11/2018 08:34 PM, Dan Murphy wrote:
+> Pavel
 > 
-> I would not call that an abuse, no.
+> On 10/11/2018 01:27 PM, Pavel Machek wrote:
+>> On Thu 2018-10-11 11:51:16, Dan Murphy wrote:
+>>> Remove support for the LM3697 LED device
+>>> from the ti-lmu.  The LM3697 will be supported
+>>> via a stand alone LED driver.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>
+>> NAK.
+> 
+> Thanks for the NAK.
+> 
+> This NAK was NAK'd by other maintainer in the V2 RFC patchset
+> 
+> https://lore.kernel.org/patchwork/patch/993171/
 
-Hmm..do you mean that you aren't in favor of powering down the chip
-after all channels get disabled?
+I confirm. LM3697 is a standalone device and not a cell of any
+MFD device.
 
-I was thinking about having pm_runtime_get_sync()/put() for channel
-enabling/disabling routine of in[123]_enable.
+Waiting for DT maintainer's ack.
 
-Thanks
-Nicolin
+Best regards,
+Jacek Anaszewski
+								
+>>> index c885cf89b8ce..920f910be4e9 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>>> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>>> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+>>>    LM3632       Backlight and regulator
+>>>    LM3633       Backlight, LED and fault monitor
+>>>    LM3695       Backlight
+>>> -  LM3697       Backlight and fault monitor
+>>>  
+>>>  Required properties:
+>>>    - compatible: Should be one of:
+>>> @@ -18,11 +17,10 @@ Required properties:
+>>>                  "ti,lm3632"
+>>>                  "ti,lm3633"
+>>>                  "ti,lm3695"
+>>> -                "ti,lm3697"
+>>>    - reg: I2C slave address.
+>>>           0x11 for LM3632
+>>>           0x29 for LM3631
+>>> -         0x36 for LM3633, LM3697
+>>> +         0x36 for LM3633
+>>>           0x38 for LM3532
+>>>           0x63 for LM3695
+>>>  
+>>> @@ -38,7 +36,6 @@ Optional nodes:
+>>>      Required properties:
+>>>        - compatible: Should be one of:
+>>>                      "ti,lm3633-fault-monitor"
+>>> -                    "ti,lm3697-fault-monitor"
+>>>    - leds: LED properties for LM3633. Please refer to [2].
+>>>    - regulators: Regulator properties for LM3631 and LM3632.
+>>>                  Please refer to [3].
+>>> @@ -220,24 +217,3 @@ lm3695@63 {
+>>>  		};
+>>>  	};
+>>>  };
+>>> -
+>>> -lm3697@36 {
+>>> -	compatible = "ti,lm3697";
+>>> -	reg = <0x36>;
+>>> -
+>>> -	enable-gpios = <&pioC 2 GPIO_ACTIVE_HIGH>;
+>>> -
+>>> -	backlight {
+>>> -		compatible = "ti,lm3697-backlight";
+>>> -
+>>> -		lcd {
+>>> -			led-sources = <0 1 2>;
+>>> -			ramp-up-msec = <200>;
+>>> -			ramp-down-msec = <200>;
+>>> -		};
+>>> -	};
+>>> -
+>>> -	fault-monitor {
+>>> -		compatible = "ti,lm3697-fault-monitor";
+>>> -	};
+>>> -};
+>>
+> 
+> 
+
