@@ -2,82 +2,55 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7DEC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25191C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCC420658
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0v7a3ey"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCC420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C4295213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4295213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbeJLAk2 (ORCPT
+        id S1730974AbeJLAko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 20:40:28 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36769 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbeJLAk1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 20:40:27 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so10209097wmf.1;
-        Thu, 11 Oct 2018 10:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Wt6XDug3a2Whd2hPfLVPjkQJ6sRHiT5VPmB8S6YbAYo=;
-        b=R0v7a3eyWNjbjP/u9UH+98TT0DNwARFtmv35O9JhecM+zrY16rfULjbIZh62EpPF3o
-         HSeUlNrU4tpiStH8yjpa/o3kAm0SPODF7qkrkAe/h2mbD9fVWemcG/GT/JyU82Fa9380
-         aVxvZeuzyJS2uBbH1wWdsxEv98rnkM0zAlNkuzovdyQcDY3BXb4aq4tXscknD5AlTlE8
-         9GdAOT9PKjKpN9cNAziAAqDibcETfDECTwrLGP/EHLBSHDo+JGtT2fPzjwYjn69EtAi6
-         otXn4DD0RWzjnQzWDbxrfaQDOjrAYUmpfpQfiLuM1WXOdIYoH5eOZTKfU/AkJqWfARxf
-         JPcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Wt6XDug3a2Whd2hPfLVPjkQJ6sRHiT5VPmB8S6YbAYo=;
-        b=CoenzA6sBN95TtzODneKlwd/8hqy6Gy0cx8WQW+29BWXaN2vrxbzBbeOd8P+Z6tiHJ
-         5VBgerwF6+F7I20A3bagTXayE+HYmZ1EBUteXZKDy7MTN6Tjf4oRbqlZSuIvk+h02KHb
-         jWZsYmKbH015bcZAfNLrj5oDwH8HYck4VHVfpHQtkX0SDaZXb3csYf8PSBHQAhHSkXjS
-         I0XGt71WDk3vsUBGt3HBdXrUaWBoWLLmmVcdkhFe0SFPCraMptnU09uRUV2891a68974
-         NXU5OFmW2zYIgZ/iLbT6N7pfQm05R5p36P8ljnUTIgHqdsmXNDEZVyKJNL6TYwVfqfXr
-         rqGA==
-X-Gm-Message-State: ABuFfohNeaCj6yrx0Or73duwAC1lh/EoNzQsSYzmtFhDWawgOTSlQS8P
-        FHmATZpQtvCe1q51Po8QERM5YlH5DcA=
-X-Google-Smtp-Source: ACcGV60cNETjr8Y81HaTf4ntKmJYmfwrn4gPUI7+29aCSEHTh7+ff4ruIlgdrB1PkK7vfVHr7x4/Ow==
-X-Received: by 2002:a1c:be09:: with SMTP id o9-v6mr2493276wmf.109.1539277937296;
-        Thu, 11 Oct 2018 10:12:17 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:3f00:25fe:afe7:c50d:f0b8? (p200300EA8BD43F0025FEAFE7C50DF0B8.dip0.t-ipconnect.de. [2003:ea:8bd4:3f00:25fe:afe7:c50d:f0b8])
-        by smtp.googlemail.com with ESMTPSA id e196-v6sm16715522wmf.43.2018.10.11.10.12.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 10:12:16 -0700 (PDT)
-Subject: Re: [PATCH] r8169: set RX_MULTI_EN bit in RxConfig for 8168F-family
- chips
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        "David S. Miller" <davem@davemloft.net>,
-        Chris Clayton <chris2553@googlemail.com>
-Cc:     Azat Khuzhin <a3at.mail@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <73ee1d68-2a27-aee9-d8b5-79ba3eda8187@maciej.szmigiero.name>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <b5b99886-0015-c13d-31a7-2901b827f48c@gmail.com>
-Date:   Thu, 11 Oct 2018 19:12:10 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Thu, 11 Oct 2018 20:40:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:41370 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbeJLAko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 20:40:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B1D9EBD;
+        Thu, 11 Oct 2018 10:12:36 -0700 (PDT)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB31C3F5D3;
+        Thu, 11 Oct 2018 10:12:34 -0700 (PDT)
+Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com>
+ <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com>
+ <c77e9601-71ca-ff09-f21d-b2493ca7c40b@arm.com>
+ <CAKTKpr41udk9dGyLVZjO5pj_J7sf_sU_Td3t2R60UMxJatDDXA@mail.gmail.com>
+ <3e9ab774-71db-d81d-5f0a-15fe942dfdb0@arm.com>
+ <CAKTKpr5iFHVbfOq1d1E=bcwxK4=UdExXh=QyyyJ_zE4s_5bz=w@mail.gmail.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <57165c0c-1a26-0886-0831-56baeb7cfa19@arm.com>
+Date:   Thu, 11 Oct 2018 18:12:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <73ee1d68-2a27-aee9-d8b5-79ba3eda8187@maciej.szmigiero.name>
-Content-Type: text/plain; charset=iso-8859-2
+In-Reply-To: <CAKTKpr5iFHVbfOq1d1E=bcwxK4=UdExXh=QyyyJ_zE4s_5bz=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,42 +58,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 16:02, Maciej S. Szmigiero wrote:
-> It has been reported that since
-> commit 05212ba8132b42 ("r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices")
-> at least RTL_GIGA_MAC_VER_38 NICs work erratically after a resume from
-> suspend.
-> The problem has been traced to a missing RX_MULTI_EN bit in the RxConfig
-> register.
-> We already set this bit for RTL_GIGA_MAC_VER_35 NICs of the same 8168F
-> chip family so let's do it also for its other siblings: RTL_GIGA_MAC_VER_36
-> and RTL_GIGA_MAC_VER_38.
+Hi Ganpatrao,
+
+On 11/10/18 17:06, Ganapatrao Kulkarni wrote:
+> On Thu, Oct 11, 2018 at 2:43 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> Hi Ganapatrao,
+>>
+>> On 11/10/18 07:39, Ganapatrao Kulkarni wrote:
+>>>>> +
+>>>>> +/*
+>>>>> + * We must NOT create groups containing events from multiple hardware PMUs,
+>>>>> + * although mixing different software and hardware PMUs is allowed.
+>>>>> + */
+>>>>> +static bool thunderx2_uncore_validate_event_group(struct perf_event *event)
+>>>>> +{
+>>>>> +     struct pmu *pmu = event->pmu;
+>>>>> +     struct perf_event *leader = event->group_leader;
+>>>>> +     struct perf_event *sibling;
+>>>>> +     int counters = 0;
+>>>>> +
+>>>>> +     if (leader->pmu != event->pmu && !is_software_event(leader))
+>>>>> +             return false;
+>>>>> +
+>>>>> +     for_each_sibling_event(sibling, event->group_leader) {
+>>>>> +             if (is_software_event(sibling))
+>>>>> +                     continue;
+>>>>> +             if (sibling->pmu != pmu)
+>>>>> +                     return false;
+>>>>> +             counters++;
+>>>>> +     }
+>>>>
+>>>> The above loop will not account for :
+>>>> 1) The leader event
+>>>> 2) The event that we are about to add.
+>>>>
+>>>> So you need to allocate counters for both the above to make sure we can
+>>>> accommodate the events.
+>>>
+>>> Is leader also part of sibling list?
+>>
+>> No.
 > 
-> Curiously, the NIC seems to work fine after a system boot without having
-> this bit set as long as the system isn't suspended and resumed.
+> not sure, what you are expecting here,
+
+
+The purpose of the validate_group is to ensure if a group of events can
+be scheduled together. That implies, if the new event is added to the
+group, do we have enough counters to profile. So, you have :
+
+1 (leader) + number-of-siblings-in-the-group + 1(this_new) events
+
+But you only account for the number-of-siblings.
+
+> this function is inline with other perf driver code added in driver/perf
+
+No, it is not. arm-cci, arm-dsu-pmu, arm-pmu, all do separate accounting
+for leader, siblings and the "new event".
+
+>>>> Are we guaranteed that the counter0 is always allocated ? What if the
+>>>> event is deleted and there are other events active ? A better check
 > 
-> Fixes: 05212ba8132b42 ("r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices")
-> Reported-by: Chris Clayton <chris2553@googlemail.com>
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> ---
->  drivers/net/ethernet/realtek/r8169.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> timer will be active/restarted, till last bit is cleared( till last
+> counter is released).
+
+Ok, so you kick off the timer when you start the first active event,
+which is assumed to be on the counter0 and the timeout handler would
+restart the counters when at least one event is active, as you don't
+have a PMU pmu_{enable/disable} call back. But I am still not convinced
+that assuming the "first counter" is always 0. I would rather use:
+bitmap_weight() == 1 check.
+
+>>>> would be :
+>>>>           if (find_last_bit(...) != pmu_uncore->uncore_dev->max_counters)
+>>>>
+>>> IIUC, find_last_bit will return  zero if none of the counters are
+>>> active and we want to start timer for first active counter.
+>>>
+>>
+>> Well, if that was the case, how do you know if the bit zero is the only
+>> bit set ?
+>>
+>> AFAICS, lib/find_bit.c has :
+>>
+>> unsigned long find_last_bit(const unsigned long *addr, unsigned long size)
+>> {
+>>           if (size) {
+>>                   unsigned long val = BITMAP_LAST_WORD_MASK(size);
+>>                   unsigned long idx = (size-1) / BITS_PER_LONG;
+>>
+>>                   do {
+>>                           val &= addr[idx];
+>>                           if (val)
+>>                                   return idx * BITS_PER_LONG + __fls(val);
+>>
+>>                           val = ~0ul;
+>>                   } while (idx--);
+>>           }
+>>           return size;
+>> }
+>>
+>>
+>> It returns "size" when it can't find a set bit.
 > 
-> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-> index 7d3f671e1bb3..b68e32186d67 100644
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -4269,8 +4269,8 @@ static void rtl_init_rxcfg(struct rtl8169_private *tp)
->  		RTL_W32(tp, RxConfig, RX_FIFO_THRESH | RX_DMA_BURST);
->  		break;
->  	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_24:
-> -	case RTL_GIGA_MAC_VER_34:
-> -	case RTL_GIGA_MAC_VER_35:
-> +	case RTL_GIGA_MAC_VER_34 ... RTL_GIGA_MAC_VER_36:
-> +	case RTL_GIGA_MAC_VER_38:
->  		RTL_W32(tp, RxConfig, RX128_INT_EN | RX_MULTI_EN | RX_DMA_BURST);
->  		break;
->  	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
+> before start, alloc_counter is called to set, it seems we never hit
+> case where at-least one bit is not set.
+> timer will be started for first bit set and will continue till all
+> bits are cleared.
+>>
+>>
+
+>>>>> +static enum hrtimer_restart thunderx2_uncore_hrtimer_callback(
+>>>>> +             struct hrtimer *hrt)
+>>>>> +{
+>>>>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
+>>>>> +     unsigned long irqflags;
+>>>>> +     int idx;
+>>>>> +     bool restart_timer = false;
+>>>>> +
+>>>>> +     pmu_uncore = container_of(hrt, struct thunderx2_pmu_uncore_channel,
+>>>>> +                     hrtimer);
+>>>>> +
+>>>>> +     raw_spin_lock_irqsave(&pmu_uncore->uncore_dev->lock, irqflags);
+>>>>> +     for_each_set_bit(idx, pmu_uncore->active_counters,
+>>>>> +                     pmu_uncore->uncore_dev->max_counters) {
+>>>>> +             struct perf_event *event = pmu_uncore->events[idx];
+>>>>
+>>>> Do we need to check if the "event" is not NULL ? Couldn't this race with
+>>>> an event_del() operation ?
+>>>
+>>> i dont think so, i have not come across any such race condition during
+>>> my testing.
+>>
+>> Thinking about it further, we may not hit it, as the PMU is "disable"d,
+>> before "add/del", which implies that the IRQ won't be triggered.
+
+Taking another look, since you don't have pmu_disable/enable callbacks,
+the events could still be running. However, you are protected by the
+free_counter() which holds the uncore_dev->lock to prevent the race.
+
+>>
+>> Btw, in general, not hitting a race condition doesn't prove there cannot
+>> be a race ;)
 > 
-Patch should have been flagged as "net". Apart from that:
-Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
+> want to avoid, unnecessary defensive programming.
+
+Of course.
+
+Suzuki
