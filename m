@@ -2,98 +2,153 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E31C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDE9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2BA20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:15:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2BA20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5701E2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:19:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uh67muk5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5701E2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeJKOlA (ORCPT
+        id S1727281AbeJKOp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:41:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43594 "EHLO mail.bootlin.com"
+        Thu, 11 Oct 2018 10:45:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeJKOlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:41:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A7DFA20726; Thu, 11 Oct 2018 09:15:00 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 78E1A20379;
-        Thu, 11 Oct 2018 09:15:00 +0200 (CEST)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
-        quentin.schulz@bootlin.com, allan.nielsen@microchip.com,
-        f.fainelli@gmail.com, andrew@lunn.ch
-Subject: [PATCH net-next v2] net: mscc: allow extracting the FCS into the skb
-Date:   Thu, 11 Oct 2018 09:12:24 +0200
-Message-Id: <20181011071224.28646-1-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726008AbeJKOp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 10:45:27 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D08720841;
+        Thu, 11 Oct 2018 07:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539242369;
+        bh=bfIoTAeZnIU4SbKiAAJRAQ4ELaMwo9AbHJaFI46F32U=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=Uh67muk5ityVGvT8v256PnsIPp1+zQ3fltxO3SQ99MsbslOZV+po1txlFG+J9TWWe
+         wZjovQO2OZ+3mOqAqWuSP9Jv+lyOBcJ786uAZxSg87cNqWbapRnR8FS40RKmGfLllw
+         EAke/9V1SHHXFlyVSAXROaqhowLxoPHo4WALbOec=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Vinod <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181008035144.GD2372@vkoul-mobl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Shefali Jain <shefjain@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+References: <20180921185936.9590-1-vkoul@kernel.org>
+ <20180921185936.9590-2-vkoul@kernel.org>
+ <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
+ <20181003062103.GN19792@vkoul-mobl>
+ <153896630923.119890.17169150168947487135@swboyd.mtv.corp.google.com>
+ <20181008035144.GD2372@vkoul-mobl>
+Message-ID: <153924236897.5275.4858274509208170603@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver for QCS404
+Date:   Thu, 11 Oct 2018 00:19:28 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the NETIF_F_RXFCS feature in the Mscc
-Ethernet driver. This feature is disabled by default and allow a user
-to request the driver not to drop the FCS and to extract it into the skb
-for debugging purposes.
+Quoting Vinod (2018-10-07 20:51:44)
+> On 07-10-18, 19:38, Stephen Boyd wrote:
+> > Quoting Vinod (2018-10-02 23:21:03)
+> > > Hi Stephen,
+> > > =
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
+> > > Thanks for the comments,
+> > > =
 
-Since v1:
-  - Rebased on top of the latest net-next.
+> > > On 01-10-18, 10:19, Stephen Boyd wrote:
+> > > > Quoting Vinod Koul (2018-09-21 11:59:36)
+> > > > > From: Shefali Jain <shefjain@codeaurora.org>
+> > > > > =
 
- drivers/net/ethernet/mscc/ocelot.c       | 2 +-
- drivers/net/ethernet/mscc/ocelot_board.c | 7 ++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+> > > > > Add the clocks supported in global clock controller which clock t=
+he
+> > > > > peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clo=
+cks
+> > > > > to the clock framework for the clients to be able to request for =
+them.
+> > > > > =
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-index 8f11fdba8d0e..9b8a17ee3cb3 100644
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -1620,7 +1620,7 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
- 	dev->ethtool_ops = &ocelot_ethtool_ops;
- 	dev->switchdev_ops = &ocelot_port_switchdev_ops;
- 
--	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-+	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_RXFCS;
- 	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
- 
- 	memcpy(dev->dev_addr, ocelot->base_mac, ETH_ALEN);
-diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
-index 0cf0b0935b3b..4c23d18bbf44 100644
---- a/drivers/net/ethernet/mscc/ocelot_board.c
-+++ b/drivers/net/ethernet/mscc/ocelot_board.c
-@@ -128,11 +128,16 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
- 			len += sz;
- 		} while (len < buf_len);
- 
--		/* Read the FCS and discard it */
-+		/* Read the FCS */
- 		sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
- 		/* Update the statistics if part of the FCS was read before */
- 		len -= ETH_FCS_LEN - sz;
- 
-+		if (unlikely(dev->features & NETIF_F_RXFCS)) {
-+			buf = (u32 *)skb_put(skb, ETH_FCS_LEN);
-+			*buf = val;
-+		}
-+
- 		if (sz < 0) {
- 			err = sz;
- 			break;
--- 
-2.17.1
+> > > > > Signed-off-by: Shefali Jain <shefjain@codeaurora.org>
+> > > > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > > > > Co-developed-by: Taniya Das <tdas@codeaurora.org>
+> > > > > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+> > > > > [rebase and tidyup for upstream]
+> > > > =
+
+> > > > Who did the tidying?
+> > > =
+
+> > > both of us :)
+> > =
+
+> > OK, please add the username of both people per the kernel sign off
+> > standards.
+> > =
+
+> > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> =
+
+> Sorry not sure I understand, Bjorn and me did cleanup and we signed-off
+> per process, did I miss something?
+
+I mean doing something like:
+
+[bjorn.andersson@linaro.org: Clean and tidy]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+[vkoul@kernel.org: Clean and tidy even more]
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+
+Would be the kernel standard for maintainer tags.
+
+> =
+
+> > > > > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] =3D &gcc_usb_hs_phy_cfg_ahb_=
+clk.clkr,
+> > > > > +       [GCC_USB_HS_SYSTEM_CLK] =3D &gcc_usb_hs_system_clk.clkr,
+> > > > > +       [GFX3D_CLK_SRC] =3D &gfx3d_clk_src.clkr,
+> > > > > +       [GP1_CLK_SRC] =3D &gp1_clk_src.clkr,
+> > > > =
+
+> > > > Why are some of these missing GCC_ prefix?
+> > > =
+
+> > > will add..
+> > =
+
+> > Thanks!
+> =
+
+> Btw Taniya also commented on this, do you want this as GCC_ or as per hw
+> documentation?
+> =
+
+
+I don't care. Either way is fine with me.
 
