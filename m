@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68146C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDC5C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FCE42085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F167C2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2u8pQW99"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FCE42085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0K3B/XV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F167C2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbeJKXPk (ORCPT
+        id S1731966AbeJKXPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49256 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJKXPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:39 -0400
+        id S1726727AbeJKXPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C69A2098A;
-        Thu, 11 Oct 2018 15:47:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 539EB2098A;
+        Thu, 11 Oct 2018 15:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272874;
-        bh=zQccNuwkOhlYa9aUO9Xt/S+mHMxSFB0ilpEbw7NpMx0=;
+        s=default; t=1539272876;
+        bh=3e9j3LzU2eVbbwbY4xJWGkiJxsMpleI0UAcxW1/++oc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2u8pQW99lifYyglCK5UmJa1xP7e1Sb8LFdxGZyPRABfXAHu8kyBTXAbySArfBIpoM
-         Fx9CCL/bf28VMhdpFK+ryJxRu9TWeliJ3HlCaIREm1SEaWPQxp+IwARi7TTyt8juBg
-         KbpwClDbaSEVWV/Atmf4RbAc5SbLh00j2uGd2HoI=
+        b=K0K3B/XVTmTlnGHfM2Gj7P0a9Jl5HH4LFqhABXAMRo2O+HVMwQfDCOCrcPJr5CkK7
+         Wg0Mubw6f4wJnNf8/HUPR98n3zjxS6KkSShyOrBdZFAf9XhrhOsuJYaQDDyYE6Emwi
+         VVbEvMnjwr1l5+U96yZqntJGOSIpUhZoN0YJBvDI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 24/44] PM / core: Clear the direct_complete flag on errors
-Date:   Thu, 11 Oct 2018 17:40:02 +0200
-Message-Id: <20181011152453.500486180@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 25/44] dm mpath: fix attached_handler_name leak and dangling hw_handler_name pointer
+Date:   Thu, 11 Oct 2018 17:40:03 +0200
+Message-Id: <20181011152453.538311351@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -63,54 +62,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
+commit b592211c33f745af67a3271ce77c10fc1e6d6241 upstream.
 
-If __device_suspend() runs asynchronously (in which case the device
-passed to it is in dpm_suspended_list at that point) and it returns
-early on an error or pending wakeup, and the power.direct_complete
-flag has been set for the device already, the subsequent
-device_resume() will be confused by that and it will call
-pm_runtime_enable() incorrectly, as runtime PM has not been
-disabled for the device by __device_suspend().
+Commit e8f74a0f0011 ("dm mpath: eliminate need to use
+scsi_device_from_queue") introduced 2 regressions:
+1) memory leak occurs if attached_handler_name is not assigned to
+   m->hw_handler_name
+2) m->hw_handler_name can become a dangling pointer if the
+   RETAIN_ATTACHED_HW_HANDLER flag is set and scsi_dh_attach() returns
+   -EBUSY.
 
-To avoid that, clear power.direct_complete if __device_suspend()
-is not going to disable runtime PM for the device before returning.
+Fix both of these by clearing 'attached_handler_name' pointer passed to
+setup_scsi_dh() after it is assigned to m->hw_handler_name.  And if
+setup_scsi_dh() doesn't consume 'attached_handler_name' parse_path()
+will kfree() it.
 
-Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
-Reported-by: Al Cooper <alcooperx@gmail.com>
-Tested-by: Al Cooper <alcooperx@gmail.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: e8f74a0f0011 ("dm mpath: eliminate need to use scsi_device_from_queue")
+Cc: stable@vger.kernel.org # 4.16+
+Reported-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/md/dm-mpath.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1713,8 +1713,10 @@ static int __device_suspend(struct devic
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -806,19 +806,19 @@ static int parse_path_selector(struct dm
+ }
  
- 	dpm_wait_for_subordinate(dev, async);
+ static int setup_scsi_dh(struct block_device *bdev, struct multipath *m,
+-			 const char *attached_handler_name, char **error)
++			 const char **attached_handler_name, char **error)
+ {
+ 	struct request_queue *q = bdev_get_queue(bdev);
+ 	int r;
  
--	if (async_error)
-+	if (async_error) {
-+		dev->power.direct_complete = false;
- 		goto Complete;
-+	}
- 
- 	/*
- 	 * If a device configured to wake up the system from sleep states
-@@ -1726,6 +1728,7 @@ static int __device_suspend(struct devic
- 		pm_wakeup_event(dev, 0);
- 
- 	if (pm_wakeup_pending()) {
-+		dev->power.direct_complete = false;
- 		async_error = -EBUSY;
- 		goto Complete;
+ 	if (test_bit(MPATHF_RETAIN_ATTACHED_HW_HANDLER, &m->flags)) {
+ retain:
+-		if (attached_handler_name) {
++		if (*attached_handler_name) {
+ 			/*
+ 			 * Clear any hw_handler_params associated with a
+ 			 * handler that isn't already attached.
+ 			 */
+-			if (m->hw_handler_name && strcmp(attached_handler_name, m->hw_handler_name)) {
++			if (m->hw_handler_name && strcmp(*attached_handler_name, m->hw_handler_name)) {
+ 				kfree(m->hw_handler_params);
+ 				m->hw_handler_params = NULL;
+ 			}
+@@ -830,7 +830,8 @@ retain:
+ 			 * handler instead of the original table passed in.
+ 			 */
+ 			kfree(m->hw_handler_name);
+-			m->hw_handler_name = attached_handler_name;
++			m->hw_handler_name = *attached_handler_name;
++			*attached_handler_name = NULL;
+ 		}
  	}
+ 
+@@ -867,7 +868,7 @@ static struct pgpath *parse_path(struct
+ 	struct pgpath *p;
+ 	struct multipath *m = ti->private;
+ 	struct request_queue *q;
+-	const char *attached_handler_name;
++	const char *attached_handler_name = NULL;
+ 
+ 	/* we need at least a path arg */
+ 	if (as->argc < 1) {
+@@ -890,7 +891,7 @@ static struct pgpath *parse_path(struct
+ 	attached_handler_name = scsi_dh_attached_handler_name(q, GFP_KERNEL);
+ 	if (attached_handler_name || m->hw_handler_name) {
+ 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
+-		r = setup_scsi_dh(p->path.dev->bdev, m, attached_handler_name, &ti->error);
++		r = setup_scsi_dh(p->path.dev->bdev, m, &attached_handler_name, &ti->error);
+ 		if (r) {
+ 			dm_put_device(ti, p->path.dev);
+ 			goto bad;
+@@ -905,6 +906,7 @@ static struct pgpath *parse_path(struct
+ 
+ 	return p;
+  bad:
++	kfree(attached_handler_name);
+ 	free_pgpath(p);
+ 	return ERR_PTR(r);
+ }
 
 
