@@ -2,144 +2,97 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ABAC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A77C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E37420835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E37420835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 2C3E520841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:06:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bN/4zJVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3E520841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJKOa7 (ORCPT
+        id S1726933AbeJKOcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:30:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47644 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725995AbeJKOa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:30:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1190B10D;
-        Thu, 11 Oct 2018 07:05:01 +0000 (UTC)
-Date:   Thu, 11 Oct 2018 09:04:58 +0200 (CEST)
-From:   Richard Biener <rguenther@suse.de>
-To:     Nadav Amit <namit@vmware.com>
-cc:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
-        "gcc@gcc.gnu.org" <gcc@gcc.gnu.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-In-Reply-To: <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
-Message-ID: <alpine.LSU.2.20.1810110901350.16707@zhemvz.fhfr.qr>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org> <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
-User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+        Thu, 11 Oct 2018 10:32:33 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57888 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeJKOcd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 10:32:33 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9B74AW3009984;
+        Thu, 11 Oct 2018 07:06:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=FAZ69ZQhwwhOejyfTQeZxMYjg1BpydXlJKO5hO5lnIg=;
+ b=bN/4zJVE3RATVFYF2t5QrZErmMKX6e4bUchjjmKW10vKjXcM3ri1rlqFJ7Sn14YUM93R
+ H1/PJKV89XepYvNfPTmC67YwX0YmSuQ3J0VYS3LEty7ptZMZ7ICLOnlgM+D3+N4ijAti
+ ZKTwf3u8Ps05g+aEKeigVBGIK+DQ9/6JEKxAiS+lXOkT/FJLoWE/nLuKQ8DwQ/5uo8aY
+ H/KD9KgN49Fvj4vWE2COkd2H6wldSzYKr+kglqjwgVvBzC2OXAC7V/37frTorhJPOjaX
+ 1cy/S6DJFdDHlIHxUqAXD6VDgG7Y8xTOybkmlj1ZA842hWNIP8O24nK8vauDbMWwOEI7 Cg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2mxn0qa76c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Oct 2018 07:06:32 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9B76QbX002126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Oct 2018 07:06:26 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9B76PpS022209;
+        Thu, 11 Oct 2018 07:06:25 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 11 Oct 2018 07:06:24 +0000
+Date:   Thu, 11 Oct 2018 10:06:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][drm-next] drm/vmwgfx: remove redundant return ret
+ statement
+Message-ID: <20181011070614.n2nwp36gbhket34z@mwanda>
+References: <20181004174953.28107-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="-1609908220-1536231581-1539241501=:16707"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004174953.28107-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9042 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=759
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810110070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1609908220-1536231581-1539241501=:16707
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-On Wed, 10 Oct 2018, Nadav Amit wrote:
-
-> at 7:53 AM, Segher Boessenkool <segher@kernel.crashing.org> wrote:
+On Thu, Oct 04, 2018 at 06:49:53PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> > On Mon, Oct 08, 2018 at 11:07:46AM +0200, Richard Biener wrote:
-> >> On Mon, 8 Oct 2018, Segher Boessenkool wrote:
-> >>> On Sun, Oct 07, 2018 at 03:53:26PM +0000, Michael Matz wrote:
-> >>>> On Sun, 7 Oct 2018, Segher Boessenkool wrote:
-> >>>>> On Sun, Oct 07, 2018 at 11:18:06AM +0200, Borislav Petkov wrote:
-> >>>>>> Now, Richard suggested doing something like:
-> >>>>>> 
-> >>>>>> 1) inline asm ("...")
-> >>>>> 
-> >>>>> What would the semantics of this be?
-> >>>> 
-> >>>> The size of the inline asm wouldn't be counted towards the inliner size 
-> >>>> limits (or be counted as "1").
-> >>> 
-> >>> That sounds like a good option.
-> >> 
-> >> Yes, I also like it for simplicity.  It also avoids the requirement
-> >> of translating the number (in bytes?) given by the user to
-> >> "number of GIMPLE instructions" as needed by the inliner.
-> > 
-> > This patch implements this, for C only so far.  And the syntax is
-> > "asm inline", which is more in line with other syntax.
-> > 
-> > How does this look?
+> The return statement is redundant as there is a return statement
+> immediately before it so we have dead code that can be removed.
+> Also remove the unused declaration of ret.
 > 
-> It looks good to me in general. I have a couple of reservations, but I
-> suspect you will not want to address them:
+> Detected by CoverityScan, CID#1473793 ("Structurally dead code")
 > 
-> 1. It is not backward compatible, requiring a C macro to wrap it, as the 
-> kernel might be built with different compilers.
-> 
-> 2. It is specific to asm. I do not have in mind another use case (excluding
-> the __builtin_constant_p), but it would be nicer IMHO to have a builtin
-> saying “ignore the cost of this statement” for the matter of optimizations.
 
-The only easy possibility that comes to my mid is sth like
+Introduced by commit b139d43dacef ("drm/vmwgfx: Make buffer object
+lookups reference-free during validation").  The fix looks good.
 
-__attribute__((always_inline, zero_cost)) foo ()
-{
-  ... your stmts ...
-}
+regards,
+dan carpenter
 
-and us, upon inlining, marking the inlined stmts properly.  That would
-also work for the asm() case and it would be backwards compatible
-(well, you'd get a diagnostic for the unknown zero_cost attribute).
-
-There's the slight complication that if you have, say
-
- _1 = _2 * 3; // zero-cost
- _4 = _1 * 2;
-
-and optimization ends up combining those to
-
- _4 = _2 * 6;
-
-then is this stmt supposed to be zero-cost or not?  Compare that to
-
- _1 = _2 * 3;
- _4 = _1 * 2; // zero-cost
-
-So outside of asm() there are new issues that come up with respect
-to expected (cost) semantics.
-
-Richard.
----1609908220-1536231581-1539241501=:16707--
