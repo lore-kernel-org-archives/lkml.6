@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8992C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F177AC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A561820652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A157B20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLH9YatK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A561820652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEKLmgRK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A157B20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbeJKXHs (ORCPT
+        id S1730106AbeJKXHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37666 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:07:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:07:46 -0400
+        id S1726721AbeJKXHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:07:49 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEE8F20652;
-        Thu, 11 Oct 2018 15:40:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 614622087A;
+        Thu, 11 Oct 2018 15:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272403;
-        bh=plpPJS/Ee95oBvxI/8Z5jqflM9CpgslQOBUpjakIyqE=;
+        s=default; t=1539272406;
+        bh=iuG5u/z8PhQO9iRjlsyQh4xtE6pswnmT/XE1ejrDVLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qLH9YatKPGBpB6PxJ/yArYtvEBLvTiJ9sTfWC0sifRawQh27UQF1GmemDJ0wsvJGu
-         4NVigj5luA3R9rjbWWVtyBlDB/higGNGUjqZeFlcdd44NVdDJYllk8mtcUdx0ZD+E8
-         CPBVVD5vh1uFX64QGs14bjLmCwzmrPf4MizNE6Rw=
+        b=fEKLmgRKrnJComswph+6R1v3c1hYNM6bCnRzvPZwclFzmtqsAtHaESrQdniVt7HZB
+         RtKmLpGfUim6LeoieQvOT1Q6izyeSPaRhuGtpqG5At5eWglXyQIpxdqZYo5oPAiaDU
+         PCNXLP0PmfvKLQhR9Nnxe23acxLReo37ejoRuaiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 3.18 096/120] crypto: mxs-dcp - Fix wait logic on chan threads
-Date:   Thu, 11 Oct 2018 17:34:37 +0200
-Message-Id: <20181011152553.761973860@linuxfoundation.org>
+        stable@vger.kernel.org, Ashish Samant <ashish.samant@oracle.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 3.18 097/120] ocfs2: fix locking for res->tracking and dlm->tracking_list
+Date:   Thu, 11 Oct 2018 17:34:38 +0200
+Message-Id: <20181011152553.799286612@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,154 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Ashish Samant <ashish.samant@oracle.com>
 
-commit d80771c08363ad7fbf0f56f5301e7ca65065c582 upstream.
+commit cbe355f57c8074bc4f452e5b6e35509044c6fa23 upstream.
 
-When compiling with CONFIG_DEBUG_ATOMIC_SLEEP=y the mxs-dcp driver
-prints warnings such as:
+In dlm_init_lockres() we access and modify res->tracking and
+dlm->tracking_list without holding dlm->track_lock.  This can cause list
+corruptions and can end up in kernel panic.
 
-WARNING: CPU: 0 PID: 120 at kernel/sched/core.c:7736 __might_sleep+0x98/0x9c
-do not call blocking ops when !TASK_RUNNING; state=1 set at [<8081978c>] dcp_chan_thread_sha+0x3c/0x2ec
+Fix this by locking res->tracking and dlm->tracking_list with
+dlm->track_lock instead of dlm->spinlock.
 
-The problem is that blocking ops will manipulate current->state
-themselves so it is not allowed to call them between
-set_current_state(TASK_INTERRUPTIBLE) and schedule().
-
-Fix this by converting the per-chan mutex to a spinlock (it only
-protects tiny list ops anyway) and rearranging the wait logic so that
-callbacks are called current->state as TASK_RUNNING. Those callbacks
-will indeed call blocking ops themselves so this is required.
-
+Link: http://lkml.kernel.org/r/1529951192-4686-1-git-send-email-ashish.samant@oracle.com
+Signed-off-by: Ashish Samant <ashish.samant@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Acked-by: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/mxs-dcp.c |   53 ++++++++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
+ fs/ocfs2/dlm/dlmmaster.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/mxs-dcp.c
-+++ b/drivers/crypto/mxs-dcp.c
-@@ -63,7 +63,7 @@ struct dcp {
- 	struct dcp_coherent_block	*coh;
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -599,9 +599,9 @@ static void dlm_init_lockres(struct dlm_
  
- 	struct completion		completion[DCP_MAX_CHANS];
--	struct mutex			mutex[DCP_MAX_CHANS];
-+	spinlock_t			lock[DCP_MAX_CHANS];
- 	struct task_struct		*thread[DCP_MAX_CHANS];
- 	struct crypto_queue		queue[DCP_MAX_CHANS];
- };
-@@ -349,13 +349,20 @@ static int dcp_chan_thread_aes(void *dat
+ 	res->last_used = 0;
  
- 	int ret;
+-	spin_lock(&dlm->spinlock);
++	spin_lock(&dlm->track_lock);
+ 	list_add_tail(&res->tracking, &dlm->tracking_list);
+-	spin_unlock(&dlm->spinlock);
++	spin_unlock(&dlm->track_lock);
  
--	do {
--		__set_current_state(TASK_INTERRUPTIBLE);
-+	while (!kthread_should_stop()) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--		mutex_lock(&sdcp->mutex[chan]);
-+		spin_lock(&sdcp->lock[chan]);
- 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
- 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
--		mutex_unlock(&sdcp->mutex[chan]);
-+		spin_unlock(&sdcp->lock[chan]);
-+
-+		if (!backlog && !arq) {
-+			schedule();
-+			continue;
-+		}
-+
-+		set_current_state(TASK_RUNNING);
- 
- 		if (backlog)
- 			backlog->complete(backlog, -EINPROGRESS);
-@@ -363,11 +370,8 @@ static int dcp_chan_thread_aes(void *dat
- 		if (arq) {
- 			ret = mxs_dcp_aes_block_crypt(arq);
- 			arq->complete(arq, ret);
--			continue;
- 		}
--
--		schedule();
--	} while (!kthread_should_stop());
-+	}
- 
- 	return 0;
- }
-@@ -407,9 +411,9 @@ static int mxs_dcp_aes_enqueue(struct ab
- 	rctx->ecb = ecb;
- 	actx->chan = DCP_CHAN_CRYPTO;
- 
--	mutex_lock(&sdcp->mutex[actx->chan]);
-+	spin_lock(&sdcp->lock[actx->chan]);
- 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
--	mutex_unlock(&sdcp->mutex[actx->chan]);
-+	spin_unlock(&sdcp->lock[actx->chan]);
- 
- 	wake_up_process(sdcp->thread[actx->chan]);
- 
-@@ -645,13 +649,20 @@ static int dcp_chan_thread_sha(void *dat
- 	struct ahash_request *req;
- 	int ret, fini;
- 
--	do {
--		__set_current_state(TASK_INTERRUPTIBLE);
-+	while (!kthread_should_stop()) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--		mutex_lock(&sdcp->mutex[chan]);
-+		spin_lock(&sdcp->lock[chan]);
- 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
- 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
--		mutex_unlock(&sdcp->mutex[chan]);
-+		spin_unlock(&sdcp->lock[chan]);
-+
-+		if (!backlog && !arq) {
-+			schedule();
-+			continue;
-+		}
-+
-+		set_current_state(TASK_RUNNING);
- 
- 		if (backlog)
- 			backlog->complete(backlog, -EINPROGRESS);
-@@ -663,12 +674,8 @@ static int dcp_chan_thread_sha(void *dat
- 			ret = dcp_sha_req_to_buf(arq);
- 			fini = rctx->fini;
- 			arq->complete(arq, ret);
--			if (!fini)
--				continue;
- 		}
--
--		schedule();
--	} while (!kthread_should_stop());
-+	}
- 
- 	return 0;
- }
-@@ -726,9 +733,9 @@ static int dcp_sha_update_fx(struct ahas
- 		rctx->init = 1;
- 	}
- 
--	mutex_lock(&sdcp->mutex[actx->chan]);
-+	spin_lock(&sdcp->lock[actx->chan]);
- 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
--	mutex_unlock(&sdcp->mutex[actx->chan]);
-+	spin_unlock(&sdcp->lock[actx->chan]);
- 
- 	wake_up_process(sdcp->thread[actx->chan]);
- 	mutex_unlock(&actx->mutex);
-@@ -984,7 +991,7 @@ static int mxs_dcp_probe(struct platform
- 	platform_set_drvdata(pdev, sdcp);
- 
- 	for (i = 0; i < DCP_MAX_CHANS; i++) {
--		mutex_init(&sdcp->mutex[i]);
-+		spin_lock_init(&sdcp->lock[i]);
- 		init_completion(&sdcp->completion[i]);
- 		crypto_init_queue(&sdcp->queue[i], 50);
- 	}
+ 	memset(res->lvb, 0, DLM_LVB_LEN);
+ 	memset(res->refmap, 0, sizeof(res->refmap));
 
 
