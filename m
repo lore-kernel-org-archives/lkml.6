@@ -2,246 +2,177 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9639C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE27C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 818812087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818812087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 49B202087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B202087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeJKTZW (ORCPT
+        id S1727953AbeJKTZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:25:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38540 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727593AbeJKTZV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:25:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id a13-v6so9375279wrt.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 04:58:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7Deer8wddkzPpEFZ1Ggysg2mwjebzRPxe/eBL0pp0js=;
-        b=mRI1BEGbVrHfB7CqmRiOg8V6ozVvzhUZcqZixOiErsW5z1JrySoakMikx3JnkDXQCd
-         Ws2H8NIA+dCH9ybVfmd6O1xLrLedayjROs+pGyskA4hJiRIhRUzjXLTWQFXZdCYh81hb
-         oEfYYXm+nCX3nfG3ARBNmx1XJ6oOf2Juoh7x5yunZUVj6rZuVKh4gu08UUSKxzCGPf6s
-         UEGRtfipMsFQn43KB65518ToL9mr/X+19hKXBkc1c6KqH8SNCHqfm1m6dqsH4vkJpN08
-         DnYJyjYoPndNnly6s+7PcwQbRR8tStS3BAzcsWLxVEEdGNyNL+O5ZvivZKIhZnmkFCUy
-         Jqng==
-X-Gm-Message-State: ABuFfogZ/JRtej+HnGVa8oo+I7BbRbOacrWOxaMKGJSvcA72CB5wXloh
-        7NdBDkywEJMdPBUTDAeUEQImMMFUt/E=
-X-Google-Smtp-Source: ACcGV61yc2o3RBevuDv69o6iszUp1CoWmY+lnUpc8XFi7faCqVx3yTYdcFu3BkOahAgLR55T2g4hvg==
-X-Received: by 2002:adf:a706:: with SMTP id c6-v6mr1405859wrd.56.1539259104990;
-        Thu, 11 Oct 2018 04:58:24 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm18406125wmd.1.2018.10.11.04.58.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 04:58:24 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
- PMIC bus semaphore code
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181011102627.7418-1-hdegoede@redhat.com>
- <20181011102627.7418-2-hdegoede@redhat.com>
- <20181011104151.GA31491@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <6c7d650d-b65f-da70-ecef-474137369ae3@redhat.com>
-Date:   Thu, 11 Oct 2018 13:58:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 11 Oct 2018 15:25:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13619 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726908AbeJKTZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:25:50 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 38FC4B639D36D;
+        Thu, 11 Oct 2018 19:58:50 +0800 (CST)
+Received: from [127.0.0.1] (10.63.141.25) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Thu, 11 Oct 2018
+ 19:58:48 +0800
+Subject: Re: [PATCH] PCI/portdrv: Enable error reporting on managed ports
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Derrick, Jonathan" <jonathan.derrick@intel.com>
+References: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
+ <20181009175632.GB5906@bhelgaas-glaptop.roam.corp.google.com>
+ <1539114641.8364.34.camel@intel.com>
+ <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "okaya@kernel.org" <okaya@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "hch@lst.de" <hch@lst.de>, "lukas@wunner.de" <lukas@wunner.de>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "poza@codeaurora.org" <poza@codeaurora.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Busch, Keith" <keith.busch@intel.com>
+From:   Dongdong Liu <liudongdong3@huawei.com>
+Message-ID: <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
+Date:   Thu, 11 Oct 2018 19:58:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <20181011104151.GA31491@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.141.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Bjorn
 
-On 11-10-18 12:41, Ingo Molnar wrote:
-> 
-> * Hans de Goede <hdegoede@redhat.com> wrote:
-> 
->> +int iosf_mbi_block_punit_i2c_access(void)
->> +{
->> +	unsigned long start, end;
->> +	int ret = 0;
->> +	u32 sem;
->> +
->> +	if (WARN_ON(!mbi_pdev || !iosf_mbi_sem_address))
->> +		return -ENXIO;
->> +
->> +	mutex_lock(&iosf_mbi_block_punit_i2c_access_count_mutex);
->> +
->> +	if (iosf_mbi_block_punit_i2c_access_count > 0)
->> +		goto out;
->> +
->> +	mutex_lock(&iosf_mbi_punit_mutex);
->> +	blocking_notifier_call_chain(&iosf_mbi_pmic_bus_access_notifier,
->> +				     MBI_PMIC_BUS_ACCESS_BEGIN, NULL);
->> +
->> +	/*
->> +	 * Disallow the CPU to enter C6 or C7 state, entering these states
->> +	 * requires the punit to talk to the pmic and if this happens while
->> +	 * we're holding the semaphore, the SoC hangs.
->> +	 */
->> +	pm_qos_update_request(&iosf_mbi_pm_qos, 0);
->> +
->> +	/* host driver writes to side band semaphore register */
->> +	ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE,
->> +			     iosf_mbi_sem_address, PUNIT_SEMAPHORE_ACQUIRE);
->> +	if (ret) {
->> +		dev_err(&mbi_pdev->dev, "Error punit semaphore request failed\n");
->> +		goto out;
->> +	}
-> 
-> Isn't this error path leaking the iosf_mbi_punit_mutex held mutex? The 'out' label only unlocks
-> iosf_mbi_block_punit_i2c_access_count_mutex:
+> commit 15a6711649915ca3e9d1086dc88ff4b616b99aac
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date:   Tue Oct 9 17:25:25 2018 -0500
+>
+>     PCI/AER: Enable reporting for ports enumerated after AER driver registration
+>
+>     Previously we enabled AER error reporting only for Switch Ports that were
+>     enumerated prior to registering the AER service driver.  Switch Ports
+>     enumerated after AER driver registration were left with error reporting
+>     disabled.
+>
+>     A common order, which works correctly, is that we enumerate devices before
+>     registering portdrv and the AER driver:
+>
+>       - Enumerate all the devices at boot-time
+>
+>       - Register portdrv and bind it to all Root Ports and Switch Ports, which
+>         disables error reporting for these Ports
+>
+>       - Register AER service driver and bind it to all Root Ports, which
+>         enables error reporting for the Root Ports and any Switch Ports below
+>         them
+>
+>     But if we enumerate devices *after* registering portdrv and the AER driver,
+>     e.g., if a host bridge driver is loaded as a module, error reporting is not
+>     enabled correctly:
+>
+>       - Register portdrv and AER driver (this happens at boot-time)
+>
+>       - Enumerate a Root Port
+>
+>       - Bind portdrv to Root Port, disabling its error reporting
+>
+>       - Bind AER service driver to Root Port, enabling error reporting for it
+>         and its children (none, since we haven't enumerated them yet)
+>
+>       - Enumerate Switch Port below the Root Port
+>
+>       - Bind portdrv to Switch Port, disabling its error reporting
+>
+>       - AER service driver doesn't bind to Switch Ports, so error reporting
+>         remains disabled
+>
+>     Hot-adding a Switch fails similarly: error reporting is enabled correctly
+>     for the Root Port, but when the Switch is enumerated, the AER service
+>     driver doesn't claim it, so there's nothing to enable error reporting for
+>     the Switch Ports.
+>
+>     Change the AER service driver so it binds to *all* PCIe ports, including
+>     Switch Upstream and Downstream Ports.  For Switch Ports, enable AER error
+>     reporting.
+>
+>     Link: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
+>     Based-on-patch-by: Jon Derrick <jonathan.derrick@intel.com>
+>     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 90b53abf621d..fe6c16461367 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1316,12 +1316,6 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
+>  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, &reg32);
+>  	pci_write_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, reg32);
+>
+> -	/*
+> -	 * Enable error reporting for the root port device and downstream port
+> -	 * devices.
+> -	 */
+> -	set_downstream_devices_error_reporting(pdev, true);
+> -
 
-Yes you're right, I messed this up when adding the handling for the new
-iosf_mbi_block_punit_i2c_access_count[_mutex] which is new compared to the
-code from i2c-designware-baytrail.c (the rest of the code is just moved
-from there).
+Delete the code will also disable error reporting for the root port as
+the portdrv to Root Port has disabled its error reporting,
+so need to enable enable error reporting for the root port.
++pci_enable_pcie_error_reporting(pdev);
 
-This is fixed in the upcoming v3 of the patch.
+The patch looks good to me except this.
 
->> +	/* host driver waits for bit 0 to be set in semaphore register */
->> +	start = jiffies;
->> +	end = start + msecs_to_jiffies(SEMAPHORE_TIMEOUT);
->> +	do {
->> +		ret = iosf_mbi_get_sem(&sem);
->> +		if (!ret && sem) {
->> +			iosf_mbi_sem_acquired = jiffies;
->> +			dev_dbg(&mbi_pdev->dev, "punit semaphore acquired after %ums\n",
->> +				jiffies_to_msecs(jiffies - start));
->> +			/*
->> +			 * Success, keep iosf_mbi_punit_mutex locked till
->> +			 * iosf_mbi_unblock_punit_i2c_access() gets called.
->> +			 */
->> +			goto out;
-> 
-> Ditto - although this does claim that this is done intentionally.
+Thanks
+Dongdong.
 
-Right, we have 2 sets of functions:
-
-iosf_mbi_punit_acquire()
-iosf_mbi_punit_release()
-
-iosf_mbi_block_punit_i2c_access()
-iosf_mbi_unblock_punit_i2c_access()
-
-The first 2 are for code which sends request to the P-Unit
-which may make it access the shared I2C bus to the PMIC, calling
-these will stop any kernel I2C code from accessing the bus.
-
-The latter 2 are for I2C code which wants to access the
-shared I2C bus to the PMIC, such as e.g. the fuel-gauge driver,
-these block any callers of iosf_mbi_punit_acquire() from
-continuing until iosf_mbi_unblock_punit_i2c_access() gets
-called.
-
-Basically we have 2 groups of code trying to access the same
-shared resource (the PMIC I2C bus), code talking to the P-Unit
-(which has its own access to the I2C bus at some level) and
-I2C client drivers (or ACPI OpRegions).
-
-If both happen at the same time bad things happen, so we
-need to arbitrate and exclusively allow accesses of one kind
-at a time. This is implemetned by both type of accesses acquiring
-the iosf_mbi_punit_mutex and keeping it locked over the access,
-hence the exit from the function keeps the mutex locked on success.
-
->> +		}
->> +
->> +		usleep_range(1000, 2000);
->> +	} while (time_before(jiffies, end));
->> +
->> +	ret = -ETIMEDOUT;
->> +	dev_err(&mbi_pdev->dev, "Error punit semaphore timed out, resetting\n");
->> +	iosf_mbi_reset_semaphore();
->> +	mutex_unlock(&iosf_mbi_punit_mutex);
->> +
->> +	if (!iosf_mbi_get_sem(&sem))
->> +		dev_err(&mbi_pdev->dev, "PUNIT SEM: %d\n", sem);
->> +out:
->> +	if (!WARN_ON(ret))
->> +		iosf_mbi_block_punit_i2c_access_count++;
->> +
->> +	mutex_unlock(&iosf_mbi_block_punit_i2c_access_count_mutex);
->> +
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL(iosf_mbi_block_punit_i2c_access);
-> 
-> So this is a rather unusual looking locking pattern.
-> 
-> So if this is all intended and works fine then at minimum the semantics of the function should
-> be explained - right now it has no description whatsoever.
-
-Ok, for v3 I've added the following comment above the new
-iosf_mbi_block_punit_i2c_access() to explain things:
-
-/*
-  * This function blocks P-Unit accesses to the PMIC I2C bus, so that kernel
-  * I2C code, such as e.g. a fuel-gauge driver, can access it safely.
-  *
-  * This function may be called by I2C controller code while an I2C driver has
-  * already blocked P-Unit accesses because it wants them blocked over multiple
-  * i2c-transfers, for e.g. read-modify-write of an I2C client register.
-  *
-  * The P-Unit accesses already being blocked is tracked through the
-  * iosf_mbi_block_punit_i2c_access_count variable which is protected by the
-  * iosf_mbi_block_punit_i2c_access_count_mutex this mutex is hold for the
-  * entire duration of the function.
-  *
-  * If access is not blocked yet, this function takes the following steps:
-  *
-  * 1) Some code sends request to the P-Unit which make it access the PMIC
-  *    I2C bus. Testing has shown that the P-Unit does not check its internal
-  *    PMIC bus semaphore for these requests. Callers of these requests call
-  *    iosf_mbi_punit_acquire()/_release() around their P-Unit accesses, these
-  *    functions lock/unlock the iosf_mbi_punit_mutex.
-  *    As the first step we lock the iosf_mbi_punit_mutex, to wait for any in
-  *    flight requests to finish and to block any new requests.
-  *
-  * 2) Some code makes such P-Unit requests from atomic contexts where it
-  *    cannot call iosf_mbi_punit_acquire() as that may sleep.
-  *    As the second step we call a notifier chain which allows any code
-  *    needing P-Unit resources from atomic context to acquire them before
-  *    we take control over the PMIC I2C bus.
-  *
-  * 3) When CPU cores enter C6 or C7 the P-Unit needs to talk to the PMIC
-  *    if this happens while the kernel itself is accessing the PMIC I2C bus
-  *    the SoC hangs.
-  *    As the third step we call pm_qos_update_request() to disallow the CPU
-  *    to enter C6 or C7.
-  *
-  * 4) The P-Unit has a PMIC bus semaphore which we can request to stop
-  *    autonomous P-Unit tasks from accessing the PMIC I2C bus while we hold it.
-  *    As the fourth and final step we request this semaphore and wait for our
-  *    request to be acknowledged.
-  */
-
-Regards,
-
-Hans
+>  	/* Enable Root Port's interrupt in response to error messages */
+>  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_ROOT_COMMAND, &reg32);
+>  	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
+> @@ -1378,10 +1372,17 @@ static void aer_remove(struct pcie_device *dev)
+>   */
+>  static int aer_probe(struct pcie_device *dev)
+>  {
+> +	struct pci_dev *pdev = dev->port;
+> +	int type = pci_pcie_type(pdev);
+>  	int status;
+>  	struct aer_rpc *rpc;
+>  	struct device *device = &dev->device;
+>
+> +	if (type == PCI_EXP_TYPE_UPSTREAM || type == PCI_EXP_TYPE_DOWNSTREAM) {
+> +		pci_enable_pcie_error_reporting(pdev);
+> +		return 0;
+> +	}
+> +
+>  	rpc = devm_kzalloc(device, sizeof(struct aer_rpc), GFP_KERNEL);
+>  	if (!rpc) {
+>  		dev_printk(KERN_DEBUG, device, "alloc AER rpc failed\n");
+> @@ -1439,7 +1440,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+>
+>  static struct pcie_port_service_driver aerdriver = {
+>  	.name		= "aer",
+> -	.port_type	= PCI_EXP_TYPE_ROOT_PORT,
+> +	.port_type	= PCIE_ANY_PORT,
+>  	.service	= PCIE_PORT_SERVICE_AER,
+>
+>  	.probe		= aer_probe,
+>
+> .
+>
 
