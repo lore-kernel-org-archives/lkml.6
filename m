@@ -2,105 +2,91 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D515CC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5799CC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2D021470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EE3C2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:31:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD4yB7Lm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2D021470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gGDQgHpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE3C2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbeJLCyJ (ORCPT
+        id S1728173AbeJLDA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 22:54:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726861AbeJLCyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 22:54:09 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C1E221470
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 19:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539285932;
-        bh=YJo/qxuGm+DW/D8051DkEp1KmIgUQc8LeJ4cGi/xPBg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vD4yB7LmdaqYAPUJlz+e2T7pHKpb2ucjCK40MFMXPd78r5a4zZ9CqLRsEGL6kWwFl
-         OUQJXsHTeiiYnM3qZQkGxR+xcRM7h3mJMPhdD5tD+TcqrAx821c48BOMpHHRzG5+I5
-         s3VAiD5WtChGgeRFCs4Q5gqvrjq+4ghIX23OC8Ls=
-Received: by mail-wr1-f45.google.com with SMTP id a13-v6so10933284wrt.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 12:25:32 -0700 (PDT)
-X-Gm-Message-State: ABuFfojxe/SPYj6Gt8BIYUgbQdrV3HFLaNFMUUtCSiUbO9TumabfBRTS
-        brxDuDKCoFxnMbo9+6n4lfGYqKhkuMsQzWy/2k9WFA==
-X-Google-Smtp-Source: ACcGV635e8kUOFuGxJpz93vjamKoGxtV+KoKHR4LWQeJg9R8YHA7b9vtDAfRtHnb1JTOGq6yXbkPNlHOm9STJ4X1kz8=
-X-Received: by 2002:adf:9792:: with SMTP id s18-v6mr2857469wrb.283.1539285930778;
- Thu, 11 Oct 2018 12:25:30 -0700 (PDT)
+        Thu, 11 Oct 2018 23:00:26 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41822 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeJLDA0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:00:26 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9BJVgT4108560;
+        Thu, 11 Oct 2018 14:31:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539286302;
+        bh=FyhPFQ8evN8rekXTVKKA9BeT6FCLx/5FwsEeV/kiDDY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=gGDQgHpgA0/sfmOG5lcPKJik3Kxqt8OPGaXK9NOavuBsOlgjYDAQnF2iLBuw86qCz
+         sw14GmW+mXTgLQAgPI1dzNq1sTwOxG+IaNwr9MH3iAOeMs3yrFtlgZ9R7QxRWtDj2t
+         /O98SuOKQzWe6owraw+UPyO3+Ge9trMx75QFn8/o=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BJVgOx017444;
+        Thu, 11 Oct 2018 14:31:42 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 11
+ Oct 2018 14:31:42 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 11 Oct 2018 14:31:42 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BJVgPC017840;
+        Thu, 11 Oct 2018 14:31:42 -0500
+Date:   Thu, 11 Oct 2018 14:31:42 -0500
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Elder <paul.elder@ideasonboard.com>
+CC:     <laurent.pinchart@ideasonboard.com>,
+        <kieran.bingham@ideasonboard.com>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <balbi@kernel.org>, <stern@rowland.harvard.edu>, <rogerq@ti.com>
+Subject: Re: [PATCH 0/6] usb: gadget: add mechanism to asynchronously
+ validate data stage of ctrl out request
+Message-ID: <20181011193142.GC8763@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, balbi@kernel.org,
+        stern@rowland.harvard.edu, rogerq@ti.com
+References: <20181010024903.1633-1-paul.elder@ideasonboard.com>
 MIME-Version: 1.0
-References: <20181011185458.10186-1-kristen@linux.intel.com>
-In-Reply-To: <20181011185458.10186-1-kristen@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 11 Oct 2018 12:25:18 -0700
-X-Gmail-Original-Message-ID: <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-Message-ID: <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181010024903.1633-1-paul.elder@ideasonboard.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 11:55 AM Kristen Carlson Accardi
-<kristen@linux.intel.com> wrote:
->
-> This patch aims to make it harder to perform cache timing attacks on data
-> left behind by system calls. If we have an error returned from a syscall,
-> flush the L1 cache.
->
-> It's important to note that this patch is not addressing any specific
-> exploit, nor is it intended to be a complete defense against anything.
-> It is intended to be a low cost way of eliminating some of side effects
-> of a failed system call.
->
-> A performance test using sysbench on one hyperthread and a script which
-> attempts to repeatedly access files it does not have permission to access
-> on the other hyperthread found no significant performance impact.
->
+Hi,
 
-> +__visible inline void l1_cache_flush(struct pt_regs *regs)
-> +{
-> +       if (IS_ENABLED(CONFIG_SYSCALL_FLUSH) &&
-> +           static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
-> +               if (regs->ax == 0 || regs->ax == -EAGAIN ||
-> +                   regs->ax == -EEXIST || regs->ax == -ENOENT ||
-> +                   regs->ax == -EXDEV || regs->ax == -ETIMEDOUT ||
-> +                   regs->ax == -ENOTCONN || regs->ax == -EINPROGRESS)
-> +                       return;
-> +
-> +               wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
-> +       }
-> +}
+On Tue, Oct 09, 2018 at 10:48:57PM -0400, Paul Elder wrote:
+> This patch series adds a mechanism to allow asynchronously validating
+> the data stage of a control out request, and for stalling or suceeding
+> the request accordingly. This mechanism is implemented for MUSB, and is
+> used by UVC. At the same time, UVC packages the setup stage and data
 
-Ugh.
+Why is this for MUSB only? Other UDC such as DWC3 doesn't need this?
 
-What exactly is this trying to protect against?  And how many cycles
-should we expect L1D_FLUSH to take?
+Regards,
+-Bin.
 
-ISTM that, if we have a situation where the L1D can be read by user
-code, we lose, via hyperthreading, successful syscalls, /dev/random,
-and may other vectors.  This seems like a small mitigation at a rather
-large cost.
