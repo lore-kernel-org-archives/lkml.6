@@ -5,94 +5,84 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29486C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B68C677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5E52098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5E52098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A62DB2064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A62DB2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbeJKXwh (ORCPT
+        id S1729864AbeJKXwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:52:37 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54762 "EHLO mga04.intel.com"
+        Thu, 11 Oct 2018 19:52:46 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:59084 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728081AbeJKXwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:52:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 09:24:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="98562887"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 11 Oct 2018 09:24:20 -0700
-Received: from [10.252.28.165] (abudanko-mobl.ccr.corp.intel.com [10.252.28.165])
-        by linux.intel.com (Postfix) with ESMTP id 24159580496;
-        Thu, 11 Oct 2018 09:24:17 -0700 (PDT)
-Subject: Re: [PATCH v12 3/3]: perf record: extend trace writing to multi AIO
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <e045b4aa-bff1-4e40-4cdf-4504003ecff5@linux.intel.com>
- <39da34d3-7198-7514-b000-7bfbf382e526@linux.intel.com>
- <20181011134605.GD29634@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <f2e5b55c-5dd8-84e0-dd95-cbb8e17bb888@linux.intel.com>
-Date:   Thu, 11 Oct 2018 19:24:16 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728081AbeJKXwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:52:46 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gAdlL-0001QI-0m; Thu, 11 Oct 2018 10:24:35 -0600
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Rob Herring <robh@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Waterman <andrew@sifive.com>, linux-sh@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-kernel@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Zong Li <zong@andestech.com>, linux-mm@kvack.org,
+        Olof Johansson <olof@lixom.net>,
+        linux-riscv@lists.infradead.org,
+        Michael Clark <michaeljclark@mac.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181005161642.2462-1-logang@deltatee.com>
+ <20181005161642.2462-6-logang@deltatee.com> <20181011133730.GB7276@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <8cea5ffa-5fbf-8ea2-b673-20e2d09a910d@deltatee.com>
+Date:   Thu, 11 Oct 2018 10:24:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181011134605.GD29634@krava>
+In-Reply-To: <20181011133730.GB7276@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, michaeljclark@mac.com, linux-riscv@lists.infradead.org, olof@lixom.net, linux-mm@kvack.org, zong@andestech.com, sbates@raithlin.com, linux-kernel@vger.kernel.org, palmer@sifive.com, linux-sh@vger.kernel.org, andrew@sifive.com, aou@eecs.berkeley.edu, robh@kernel.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 5/5] RISC-V: Implement sparsemem
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 16:46, Jiri Olsa wrote:
-> On Tue, Oct 09, 2018 at 11:59:31AM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> @@ -709,12 +729,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  					goto out;
->>  				}
->>  			} else {
->> +				int idx;
->>  				/*
->>  				 * Call record__aio_sync() to wait till map->data buffer
->>  				 * becomes available after previous aio write request.
->>  				 */
->> -				record__aio_sync(map);
->> -				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
->> +				idx = record__aio_sync(map, false);
-> 
-> looks like record__aio_sync can return -1,
-> how is it not breaking the perf_mmap__aio_push call below?
 
-Currently -1 may be returned only when calling with 
-sync_all==true i.e. record__aio_sync(, true).
+
+On 2018-10-11 7:37 a.m., Christoph Hellwig wrote:
+>> +/*
+>> + * Log2 of the upper bound of the size of a struct page. Used for sizing
+>> + * the vmemmap region only, does not affect actual memory footprint.
+>> + * We don't use sizeof(struct page) directly since taking its size here
+>> + * requires its definition to be available at this point in the inclusion
+>> + * chain, and it may not be a power of 2 in the first place.
+>> + */
+>> +#define STRUCT_PAGE_MAX_SHIFT	6
+> 
+> I know this is copied from arm64, but wouldn't this be a good time
+> to move this next to the struct page defintion?
+> 
+> Also this:
+> 
+> arch/arm64/mm/init.c:   BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
+> 
+> should move to comment code (or would have to be duplicated for riscv)
+
+Makes sense. Where is a good place for the BUILD_BUG_ON in common code?
+
+I've queued up changes for your other feedback.
 
 Thanks,
-Alexey
 
-> 
->> +				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
->>  					record__aio_set_pos(trace_fd, off);
->>  					rc = -1;
->>  					goto out;
-> 
-> SNIP
-> 
+Logan
