@@ -2,127 +2,125 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF12C67837
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDDCC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969DC2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B98D2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="kBWsvDEA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969DC2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ps2MNiUQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B98D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeJLHXf (ORCPT
+        id S1727278AbeJLH1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:23:35 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:51856 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbeJLHXf (ORCPT
+        Fri, 12 Oct 2018 03:27:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39370 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbeJLH1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:23:35 -0400
-Date:   Thu, 11 Oct 2018 23:53:50 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1539302035;
-        bh=lN2vmUpxuPGPGbURIafWIutb7qhAGlM0IS9B1QVUfCc=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=kBWsvDEApBaY2XPyP5/btJBNaOnqPj5qnQruYpvny0DGJgt1Q37emKq8nih/QYOwv
-         heXGIEfCAsTykVusrRpLs8+p3tEQBwFggXmSo33giPznd9PMGm2exNvqIf5U3HVSpU
-         CEz8sjcQdyVRP07xaoAwJr6Uc1nfNRAb1XAHoGYw=
-To:     Kees Cook <keescook@chromium.org>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-Message-ID: <37rRa7F7i2XcwVPiT6gLC8cX8p0732iDiT6mGjstlbBi3mcJsQCLA6A8HcDMNjR0SGheErloJl8z-Z5c57XxtJRBF9-LO_fUTUf41EcAGC4=@protonmail.ch>
-In-Reply-To: <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Fri, 12 Oct 2018 03:27:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so4924766pgv.6;
+        Thu, 11 Oct 2018 16:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=wFerhbmL2lQShuvM3iuTsT3OZlBVk0izBsw+j10zL7s=;
+        b=ps2MNiUQuQfSjU+UFpQC9pltcgupMK7JCFXoDNLltUi0mF/YMZtXlORMbG6zYSniK3
+         gfP89ScBXApSUZQlcOtdHvdmNXT7+M2npY1QzPKNKx748As1uzHMPdzGKNFKBkerRieN
+         G6qElVW64HGnMhDWpdPopcJtxnKtPGPa+emsxhSgQCHRFERqHMEGC0ec/m6S08udTNXm
+         UjCjRGgTc9GZ1aYHCdy4oz4LxSMcGqoatrZ5+UqwGM+XywZ4Jfs9/aOa0Xl5FTP0NJi1
+         5aFZyRayDMKtrbz6kgxsnctY67154LEgEXLMFrpwm7O2ncK372RWqUFMq2W3k2pJheYZ
+         i+Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=wFerhbmL2lQShuvM3iuTsT3OZlBVk0izBsw+j10zL7s=;
+        b=am2hXnQvcEeDv2kS+IbKMYq5BOH5G51n2kjB2myNrTqPX3KCzOKXLf24UNtJk1pqW7
+         At0O5RtJO39nDGeFo2vQ92HKda9g944Xekcqro7FfMREgyla0eGhdl5QkPnN11BW66ei
+         PoBErZ59Mr/tAfn44MbM7R5cCn8XUbLpuGBojpUtb0UaEf4vfCHQ11eZHzStnvFKtsx2
+         TNbWTyxaFxMiqcAHOvmvCa1rCwk5UMasXfHOKW5j7bjre0aopwsNcHMsJ+us0RWxpyYt
+         vjj+Urv6eUlqP04s/tXxyRXMpyqFis1M4okBMNpflzqPODElXfEsRwH+Y6ufwWt+81qx
+         J9hg==
+X-Gm-Message-State: ABuFfogO5dpR+uN4k/IUZi18zQKjIqY0NIPJ/jG8drv9q611v7jK5hfi
+        dKs5YA7q9/137yoSvst/cdw=
+X-Google-Smtp-Source: ACcGV63TwdgYTbn4lzznhjV4k1wm90DMMN0BegKHfy+cLKbw19qXBkB+qa9NdUu2FwLe6mqyzIrZyg==
+X-Received: by 2002:a63:e04d:: with SMTP id n13-v6mr3366419pgj.426.1539302259654;
+        Thu, 11 Oct 2018 16:57:39 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b10-v6sm40160228pfe.148.2018.10.11.16.57.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 16:57:38 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 16:57:36 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v4.19-rc7
+Message-ID: <20181011235736.GA68543@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Friday, October 12, 2018 1:09 AM, Kees Cook <keescook@chromium.org> wrot=
-e:
+Hi Greg,
 
-> We've had things sort of like this proposed, but if you can convince
-> James and others, I'm all for it. I think the standing objection from
-> James and John about this is that the results of booting with
-> "lsm=3Dsomething" ends up depending on CONFIG_LSM=3D for that distro. So
-> you end up with different behaviors instead of a consistent behavior
-> across all distros.
->
+Please pull from:
 
-Ok, I'll try :)
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 
-The final lsm string contains two parts: Kconfig "CONFIG_LSM=3D" and boot
-param "lsm=3D". Changing even only one of those parts also changes the
-final string.
+to receive updates for the input subsystem:
 
-In case of distros, it's the "CONFIG_LSM=3D" which changes. Even when "lsm=
-=3D"
-stays constant, the behavior will be different, example:
+- we added a few scheduling points into various input interfaces to
+  ensure that large writes will not cause RCU stalls
 
-Distro A has: CONFIG_LSM=3Dloadpin,integrity,selinux
-Distro B has CONFIG_LSM=3Dyama,loadpin,integrity,selinux
+- fixed configuring PS/2 keyboards as wakeup devices on newer platforms
 
-User on distro A wants to enable apparmor with:
+- added a new Xbox gamepad ID.
 
-lsm=3Dloadpin,integrity,apparmor
+Changelog:
+---------
 
-which they do and add it to howto on wiki.
+Daniel Drake (1):
+      Input: i8042 - enable keyboard wakeups by default when s2idle is used
 
-User on distro B want to enable apparmor, they found info on some wiki and =
-do:
+Dmitry Torokhov (2):
+      Input: evdev - add a schedule point in evdev_write()
+      Input: uinput - add a schedule point in uinput_inject_events()
 
-lsm=3Dloadpin,integrity,apparmor
+Eric Dumazet (1):
+      Input: mousedev - add a schedule point in mousedev_write()
+
+Ramses Ramírez (1):
+      Input: xpad - add support for Xbox1 PDP Camo series gamepad
+
+Diffstat:
+--------
+
+ drivers/input/evdev.c         |  1 +
+ drivers/input/joystick/xpad.c |  3 +++
+ drivers/input/misc/uinput.c   |  1 +
+ drivers/input/mousedev.c      |  1 +
+ drivers/input/serio/i8042.c   | 29 ++++++++++++++++++++---------
+ include/linux/suspend.h       |  2 ++
+ kernel/power/suspend.c        |  6 ++++++
+ 7 files changed, 34 insertions(+), 9 deletions(-)
+
+Thanks.
 
 
-Puff, yama got disabled!
-
-Above example shows why I think "consistent behavior across all distros"
-argument for current approach is flawed -  because distros aren't
-consistent. In my proposition the user will just use "lsm=3Dapparmor" and
-it will consistently enable apparmor on all distros which is what they
-really wanted, but all pre-existing differences across distros will
-remain unchanged.
-
-The current approach requires that everyone who dares to touch "lsm=3D"
-knows about existence of all lsm, their enabled/disabled status on
-target distro and their order. I doubt there are many people other
-than recipients of this mail who fit for the above.
-
-I it's better to assume that average user has rather vague knowledge
-about lsm and don't delve deep into Kconfig's of their chosen distro.
-If they want to use "lsm=3D" their goal is to disable/enable on or more
-things. My proposition will work better for those. More advanced users
-still will may pass any "lsm=3D" string as they like, this having full
-control.
-
-Jordan
+-- 
+Dmitry
