@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE1CC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F155C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AF82075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E2102085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wP/UC873"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AF82075C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Toxw/12v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E2102085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbeJKWX6 (ORCPT
+        id S1728673AbeJKWX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:23:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46830 "EHLO
+        Thu, 11 Oct 2018 18:23:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46860 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJKWX5 (ORCPT
+        with ESMTP id S1728267AbeJKWX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:23:57 -0400
+        Thu, 11 Oct 2018 18:23:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=+yFzsTIYiPNfVv4c7496e+wAx5tirB9XqAlADWztz4M=; b=wP/UC873p1KE
-        ufJuL3XwPBZp2L63wpZOfV6+BKO5SGpFFOC3jiL4+e4l0tiKsV3+4/tqTDYgLVPuO1NODwyTLkCaV
-        dkrThZJkY0DgUTpGh5Kc/rIe3HJKhbB2rc15fTdBWBnQjpoVfsS8hcp47t3TPNnmsZz4nlCErx6vN
-        EHnsI=;
+        List-Archive; bh=6mzytH+J8Cw6AUzUWgDuNGQurFFAHpCh17Gtts8/qdE=; b=Toxw/12vG/2c
+        BC8Z4BsoCl6eMsty/PjtpF0BCqMtcare1HZi2yHtx+/7GSXz+9mwsAM1jQXuCcfHQsLNG/psOc1cV
+        mzxvRXDJOMngVtQeCNJ6GjZveXhs3LjWE4H+pCv/GppvMebh+OBNHalZQpN1w3pyqFNGqNSMzjWWP
+        c+7eA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcNY-0001sX-WA; Thu, 11 Oct 2018 14:55:57 +0000
+        id 1gAcNc-0001sm-SA; Thu, 11 Oct 2018 14:56:00 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B71F911223ED; Thu, 11 Oct 2018 15:55:56 +0100 (BST)
+        id 9F3DC11223ED; Thu, 11 Oct 2018 15:56:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Emil Renner Berthing <kernel@esmil.dk>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -59,10 +59,10 @@ Cc:     Mark Brown <broonie@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: directly use direction constants" to the spi tree
-In-Reply-To:  <20181010090038.20834-7-kernel@esmil.dk>
-Message-Id: <20181011145556.B71F911223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:55:56 +0100 (BST)
+Subject: Applied "spi: rockchip: mark use_dma as bool" to the spi tree
+In-Reply-To:  <20181010090038.20834-6-kernel@esmil.dk>
+Message-Id: <20181011145600.9F3DC11223ED@debutante.sirena.org.uk>
+Date:   Thu, 11 Oct 2018 15:56:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: directly use direction constants
+   spi: rockchip: mark use_dma as bool
 
 has been applied to the spi tree at
 
@@ -95,78 +95,46 @@ to this mail.
 Thanks,
 Mark
 
-From d9071b7e9fc474e474e3b865428a8d30d88daaf4 Mon Sep 17 00:00:00 2001
+From f340b920511a666b02d371e88801d3817ea7a880 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
-Date: Wed, 10 Oct 2018 11:00:37 +0200
-Subject: [PATCH] spi: rockchip: directly use direction constants
+Date: Wed, 10 Oct 2018 11:00:36 +0200
+Subject: [PATCH] spi: rockchip: mark use_dma as bool
 
-The dma direction for the tx and rx dma channels never
-change, so just use the constants directly rather
-than storing them in device data.
+The driver data has a u32 field use_dma which is
+only ever used as a boolean, so change its type
+to reflect that.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/spi/spi-rockchip.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 99943aa71bc1..6fa809da61dd 100644
+index 6a53b940f2f5..99943aa71bc1 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -164,7 +164,6 @@ enum rockchip_ssi_type {
+@@ -202,7 +202,7 @@ struct rockchip_spi {
  
- struct rockchip_spi_dma_data {
- 	struct dma_chan *ch;
--	enum dma_transfer_direction direction;
- 	dma_addr_t addr;
- };
+ 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
  
-@@ -451,7 +450,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+-	u32 use_dma;
++	bool use_dma;
+ 	struct sg_table tx_sg;
+ 	struct sg_table rx_sg;
+ 	struct rockchip_spi_dma_data dma_rx;
+@@ -628,9 +628,9 @@ static int rockchip_spi_transfer_one(
  
- 	rxdesc = NULL;
- 	if (rs->rx) {
--		rxconf.direction = rs->dma_rx.direction;
-+		rxconf.direction = DMA_DEV_TO_MEM;
- 		rxconf.src_addr = rs->dma_rx.addr;
- 		rxconf.src_addr_width = rs->n_bytes;
- 		rxconf.src_maxburst = 1;
-@@ -460,7 +459,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 		rxdesc = dmaengine_prep_slave_sg(
- 				rs->dma_rx.ch,
- 				rs->rx_sg.sgl, rs->rx_sg.nents,
--				rs->dma_rx.direction, DMA_PREP_INTERRUPT);
-+				DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT);
- 		if (!rxdesc)
- 			return -EINVAL;
+ 	/* we need prepare dma before spi was enabled */
+ 	if (master->can_dma && master->can_dma(master, spi, xfer))
+-		rs->use_dma = 1;
++		rs->use_dma = true;
+ 	else
+-		rs->use_dma = 0;
++		rs->use_dma = false;
  
-@@ -470,7 +469,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 	rockchip_spi_config(rs);
  
- 	txdesc = NULL;
- 	if (rs->tx) {
--		txconf.direction = rs->dma_tx.direction;
-+		txconf.direction = DMA_MEM_TO_DEV;
- 		txconf.dst_addr = rs->dma_tx.addr;
- 		txconf.dst_addr_width = rs->n_bytes;
- 		txconf.dst_maxburst = rs->fifo_len / 2;
-@@ -479,7 +478,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 		txdesc = dmaengine_prep_slave_sg(
- 				rs->dma_tx.ch,
- 				rs->tx_sg.sgl, rs->tx_sg.nents,
--				rs->dma_tx.direction, DMA_PREP_INTERRUPT);
-+				DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
- 		if (!txdesc) {
- 			if (rxdesc)
- 				dmaengine_terminate_sync(rs->dma_rx.ch);
-@@ -775,8 +774,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 	if (rs->dma_tx.ch && rs->dma_rx.ch) {
- 		rs->dma_tx.addr = (dma_addr_t)(mem->start + ROCKCHIP_SPI_TXDR);
- 		rs->dma_rx.addr = (dma_addr_t)(mem->start + ROCKCHIP_SPI_RXDR);
--		rs->dma_tx.direction = DMA_MEM_TO_DEV;
--		rs->dma_rx.direction = DMA_DEV_TO_MEM;
- 
- 		master->can_dma = rockchip_spi_can_dma;
- 		master->dma_tx = rs->dma_tx.ch;
 -- 
 2.19.0.rc2
 
