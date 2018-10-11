@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63913C32788
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970BFC677FD
 	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A2121524
+	by mail.kernel.org (Postfix) with ESMTP id 64FF72152D
 	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A2121524
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FF72152D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbeJKWsZ (ORCPT
+        id S1728599AbeJKWs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:48:25 -0400
+        Thu, 11 Oct 2018 18:48:26 -0400
 Received: from mga05.intel.com ([192.55.52.43]:3990 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728006AbeJKWsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728304AbeJKWsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Oct 2018 18:48:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:20:43 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:20:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="78019091"
+   d="scan'208";a="78019105"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Oct 2018 08:20:43 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 11 Oct 2018 08:20:44 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v5 05/27] Documentation/x86: Add CET description
-Date:   Thu, 11 Oct 2018 08:15:01 -0700
-Message-Id: <20181011151523.27101-6-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 09/27] mm: Introduce VM_SHSTK for shadow stack memory
+Date:   Thu, 11 Oct 2018 08:15:05 -0700
+Message-Id: <20181011151523.27101-10-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151523.27101-1-yu-cheng.yu@intel.com>
 References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
@@ -66,337 +66,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explain how CET works and the no_cet_shstk/no_cet_ibt kernel
-parameters.
+VM_SHSTK indicates a shadow stack memory area.
+The shadow stack is implemented only for the 64-bit kernel.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         |   6 +
- Documentation/index.rst                       |   1 +
- Documentation/x86/index.rst                   |  11 +
- Documentation/x86/intel_cet.rst               | 266 ++++++++++++++++++
- 4 files changed, 284 insertions(+)
- create mode 100644 Documentation/x86/index.rst
- create mode 100644 Documentation/x86/intel_cet.rst
+ fs/proc/task_mmu.c | 3 +++
+ include/linux/mm.h | 8 ++++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 92eb1f42240d..3854423f7c86 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2764,6 +2764,12 @@
- 			noexec=on: enable non-executable mappings (default)
- 			noexec=off: disable non-executable mappings
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 5ea1d64cb0b4..b20450dde5b7 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -652,6 +652,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_PKEY_BIT4)]	= "",
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++		[ilog2(VM_SHSTK)]	= "ss"
++#endif
+ 	};
+ 	size_t i;
  
-+	no_cet_ibt	[X86-64] Disable indirect branch tracking for user-mode
-+			applications
-+
-+	no_cet_shstk	[X86-64] Disable shadow stack support for user-mode
-+			applications
-+
- 	nosmap		[X86]
- 			Disable SMAP (Supervisor Mode Access Prevention)
- 			even if it is supported by processor.
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index 5db7e87c7cb1..1cdc139adb40 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -104,6 +104,7 @@ implementation.
-    :maxdepth: 2
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 53cfc104c0fb..f658923e76ad 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -224,11 +224,13 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_BIT_2	34	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
++#define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+ #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+ #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+ #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
++#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
  
-    sh/index
-+   x86/index
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -266,6 +268,12 @@ extern unsigned int kobjsize(const void *objp);
+ # define VM_MPX		VM_NONE
+ #endif
  
- Filesystem Documentation
- ------------------------
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-new file mode 100644
-index 000000000000..9c34d8cbc8f0
---- /dev/null
-+++ b/Documentation/x86/index.rst
-@@ -0,0 +1,11 @@
-+=======================
-+X86 Documentation
-+=======================
-+
-+Control Flow Enforcement
-+========================
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   intel_cet
-diff --git a/Documentation/x86/intel_cet.rst b/Documentation/x86/intel_cet.rst
-new file mode 100644
-index 000000000000..946f4802a51f
---- /dev/null
-+++ b/Documentation/x86/intel_cet.rst
-@@ -0,0 +1,266 @@
-+=========================================
-+Control Flow Enforcement Technology (CET)
-+=========================================
-+
-+[1] Overview
-+============
-+
-+Control Flow Enforcement Technology (CET) provides protection against
-+return/jump-oriented programming (ROP) attacks.  It can be implemented
-+to protect both the kernel and applications.  In the first phase,
-+only the user-mode protection is implemented on the 64-bit kernel.
-+However, 32-bit applications are supported under the compatibility
-+mode.
-+
-+CET includes shadow stack (SHSTK) and indirect branch tracking (IBT).
-+The SHSTK is a secondary stack allocated from memory.  The processor
-+automatically pushes/pops a secure copy to the SHSTK every return
-+address and, by comparing the secure copy to the program stack copy,
-+verifies function returns are as intended.  The IBT verifies all
-+indirect CALL/JMP targets are intended and marked by the compiler with
-+'ENDBR' op codes.
-+
-+There are two kernel configuration options:
-+
-+    INTEL_X86_SHADOW_STACK_USER, and
-+    INTEL_X86_BRANCH_TRACKING_USER.
-+
-+To build a CET-enabled kernel, Binutils v2.31 and GCC v8.1 or later
-+are required.  To build a CET-enabled application, GLIBC v2.28 or
-+later is also required.
-+
-+There are two command-line options for disabling CET features:
-+
-+    no_cet_shstk - disables SHSTK, and
-+    no_cet_ibt - disables IBT.
-+
-+At run time, /proc/cpuinfo shows the availability of SHSTK and IBT.
-+
-+[2] CET assembly instructions
-+=============================
-+
-+RDSSP %r
-+    Read the SHSTK pointer into %r.
-+
-+INCSSP %r
-+    Unwind (increment) the SHSTK pointer (0 ~ 255) steps as indicated
-+    in the operand register.  The GLIBC longjmp uses INCSSP to unwind
-+    the SHSTK until that matches the program stack.  When it is
-+    necessary to unwind beyond 255 steps, longjmp divides and repeats
-+    the process.
-+
-+RSTORSSP (%r)
-+    Switch to the SHSTK indicated in the 'restore token' pointed by
-+    the operand register and replace the 'restore token' with a new
-+    token to be saved (with SAVEPREVSSP) for the outgoing SHSTK.
-+
-+::
-+
-+                               Before RSTORSSP
-+
-+             Incoming SHSTK                   Current/Outgoing SHSTK
-+
-+        |----------------------|             |----------------------|
-+ addr=x |                      |       ssp-> |                      |
-+        |----------------------|             |----------------------|
-+ (%r)-> | rstor_token=(x|Lg)   |    addr=y-8 |                      |
-+        |----------------------|             |----------------------|
-+
-+                               After RSTORSSP
-+
-+        |----------------------|             |----------------------|
-+        |                      |             |                      |
-+        |----------------------|             |----------------------|
-+  ssp-> | rstor_token=(y|Bz|Lg)|    addr=y-8 |                      |
-+        |----------------------|             |----------------------|
-+
-+    note:
-+        1. Only valid addresses and restore tokens can be on the
-+           user-mode SHSTK.
-+        2. A token is always of type u64 and must align to u64.
-+        3. The incoming SHSTK pointer in a rstor_token must point to
-+           immediately above the token.
-+        4. 'Lg' is bit[0] of a rstor_token indicating a 64-bit SHSTK.
-+        5. 'Bz' is bit[1] of a rstor_token indicating the token is to
-+           be used only for the next SAVEPREVSSP and invalid for the
-+           RSTORSSP.
-+
-+SAVEPREVSSP
-+    Store the SHSTK 'restore token' pointed by
-+        (current_SHSTK_pointer + 8).
-+
-+::
-+
-+                             After SAVEPREVSSP
-+
-+        |----------------------|             |----------------------|
-+  ssp-> |                      |             |                      |
-+        |----------------------|             |----------------------|
-+        | rstor_token=(y|Bz|Lg)|    addr=y-8 | rstor_token(y|Lg)    |
-+        |----------------------|             |----------------------|
-+
-+WRUSS %r0, (%r1)
-+    Write the value in %r0 to the SHSTK address pointed by (%r1).
-+    This is a kernel-mode only instruction.
-+
-+ENDBR
-+    The compiler inserts an ENDBR at all valid branch targets.  Any
-+    CALL/JMP to a target without an ENDBR triggers a control
-+    protection fault.
-+
-+[3] Application Enabling
-+========================
-+
-+An application's CET capability is marked in its ELF header and can
-+be verified from the following command output, in the
-+NT_GNU_PROPERTY_TYPE_0 field:
-+
-+    readelf -n <application>
-+
-+If an application supports CET and is statically linked, it will run
-+with CET protection.  If the application needs any shared libraries,
-+the loader checks all dependencies and enables CET only when all
-+requirements are met.
-+
-+[4] Legacy Libraries
-+====================
-+
-+GLIBC provides a few tunables for backward compatibility.
-+
-+GLIBC_TUNABLES=glibc.tune.hwcaps=-SHSTK,-IBT
-+    Turn off SHSTK/IBT for the current shell.
-+
-+GLIBC_TUNABLES=glibc.tune.x86_shstk=<on, permissive>
-+    This controls how dlopen() handles SHSTK legacy libraries:
-+        on: continue with SHSTK enabled;
-+        permissive: continue with SHSTK off.
-+
-+[5] CET system calls
-+====================
-+
-+The following arch_prctl() system calls are added for CET:
-+
-+arch_prctl(ARCH_X86_CET_STATUS, unsigned long *addr)
-+    Return CET feature status.
-+
-+    The parameter 'addr' is a pointer to a user buffer.
-+    On returning to the caller, the kernel fills the following
-+    information:
-+
-+    *addr = SHSTK/IBT status
-+    *(addr + 1) = SHSTK base address
-+    *(addr + 2) = SHSTK size
-+
-+arch_prctl(ARCH_X86_CET_DISABLE, unsigned long features)
-+    Disable SHSTK and/or IBT specified in 'features'.  Return -EPERM
-+    if CET is locked.
-+
-+arch_prctl(ARCH_X86_CET_LOCK)
-+    Lock in CET feature.
-+
-+arch_prctl(ARCH_X86_CET_ALLOC_SHSTK, unsigned long *addr)
-+    Allocate a new SHSTK and put a restore token at top.
-+
-+    The parameter 'addr' is a pointer to a user buffer and indicates
-+    the desired SHSTK size to allocate.  On returning to the caller,
-+    the kernel fills *addr with the base address of the new SHSTK.
-+
-+arch_prctl(ARCH_X86_CET_GET_LEGACY_BITMAP, unsigned long *addr)
-+    Allocate an IBT legacy code bitmap if the current task does not
-+    have one.
-+
-+    The parameter 'addr' is a pointer to a user buffer.
-+    On returning to the caller, the kernel fills the following
-+    information:
-+
-+    *addr = IBT bitmap base address
-+    *(addr + 1) = IBT bitmap size
-+
-+Note:
-+  There is no CET enabling arch_prctl function.  By design, CET is
-+  enabled automatically if the binary and the system can support it.
-+
-+  The parameters passed are always unsigned 64-bit.  When an ia32
-+  application passing pointers, it should only use the lower 32 bits.
-+
-+[6] The implementation of the SHSTK
-+===================================
-+
-+SHSTK size
-+----------
-+
-+A task's SHSTK is allocated from memory to a fixed size of
-+RLIMIT_STACK.
-+
-+Signal
-+------
-+
-+The main program and its signal handlers use the same SHSTK.  Because
-+the SHSTK stores only return addresses, we can use a large SHSTK to
-+cover the condition that both the program stack and the sigaltstack
-+run out.
-+
-+The kernel creates a restore token at the SHSTK restoring address and
-+verifies that token when restoring from the signal handler.
-+
-+Fork
-+----
-+
-+The SHSTK's vma has VM_SHSTK flag set; its PTEs are required to be
-+read-only and dirty.  When a SHSTK PTE is not present, RO, and dirty,
-+a SHSTK access triggers a page fault with an additional SHSTK bit set
-+in the page fault error code.
-+
-+When a task forks a child, its SHSTK PTEs are copied and both the
-+parent's and the child's SHSTK PTEs are cleared of the dirty bit.
-+Upon the next SHSTK access, the resulting SHSTK page fault is handled
-+by page copy/re-use.
-+
-+When a pthread child is created, the kernel allocates a new SHSTK for
-+the new thread.
-+
-+Setjmp/Longjmp
-+--------------
-+
-+Longjmp unwinds SHSTK until it matches the program stack.
-+
-+Ucontext
-+--------
-+
-+In GLIBC, getcontext/setcontext is implemented in similar way as
-+setjmp/longjmp.
-+
-+When makecontext creates a new ucontext, a new SHSTK is allocated for
-+that context with ARCH_X86_CET_ALLOC_SHSTK the syscall.  The kernel
-+creates a restore token at the top of the new SHSTK and the user-mode
-+code switches to the new SHSTK with the RSTORSSP instruction.
-+
-+[7] The management of read-only & dirty PTEs for SHSTK
-+======================================================
-+
-+A RO and dirty PTE exists in the following cases:
-+
-+(a) A page is modified and then shared with a fork()'ed child;
-+(b) A R/O page that has been COW'ed;
-+(c) A SHSTK page.
-+
-+The processor only checks the dirty bit for (c).  To prevent the use
-+of non-SHSTK memory as SHSTK, we use a spare bit of the 64-bit PTE as
-+DIRTY_SW for (a) and (b) above.  This results to the following PTE
-+settings:
-+
-+Modified PTE:             (R/W + DIRTY_HW)
-+Modified and shared PTE:  (R/O + DIRTY_SW)
-+R/O PTE, COW'ed:          (R/O + DIRTY_SW)
-+SHSTK PTE:                (R/O + DIRTY_HW)
-+SHSTK PTE, COW'ed:        (R/O + DIRTY_HW)
-+SHSTK PTE, shared:        (R/O + DIRTY_SW)
-+
-+Note that DIRTY_SW is only used in R/O PTEs but not R/W PTEs.
-+
-+[8] The implementation of IBT
-+=============================
-+
-+The kernel provides IBT support in mmap() of the legacy code bit map.
-+However, the management of the bitmap is done in the GLIBC or the
-+application.
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++# define VM_SHSTK	VM_HIGH_ARCH_5
++#else
++# define VM_SHSTK	VM_NONE
++#endif
++
+ #ifndef VM_GROWSUP
+ # define VM_GROWSUP	VM_NONE
+ #endif
 -- 
 2.17.1
 
