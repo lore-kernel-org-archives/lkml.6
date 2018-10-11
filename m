@@ -2,217 +2,161 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E6EC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2980CC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E998C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:03:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+5c2I05"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E998C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D8AC6205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:05:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8AC6205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeJKTah (ORCPT
+        id S1728206AbeJKTb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:30:37 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55379 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKTah (ORCPT
+        Thu, 11 Oct 2018 15:31:57 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:63727 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728145AbeJKTb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:30:37 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 206-v6so8733155wmb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 05:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/MGODQWupRFp3ivTTqHI0aavG641+71/uDj7XngGFGg=;
-        b=C+5c2I05jSUqxANNB3NqXT8WI2wpxGAsfPQxfTK55p8V+0WSQtmDVy8PFQyAkiMw3l
-         ZiF1tGQCYK4Pu3JjLis3/SJc9kotg2LihaWehrllXnJScN/BEM5khS2sRBNYF7CSba7l
-         PpE+DkRofX0SwHpNNCQWygEZTr6uORNidxi5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/MGODQWupRFp3ivTTqHI0aavG641+71/uDj7XngGFGg=;
-        b=tJkbG5yd1jUjVs84kG7yBI9o08CFj0kcUlNsrg+jYLMe4R2Pp6j+Bl+EsXD5TExWCf
-         ZfoK77GcubT6VySf9NnMoRbGOvi2mS/hxYWybDAUCRnhN/GqsgaoxECjoSoPJ8FFyopM
-         cj08gb59+N6ic1p7pFMRmKkOYzx5U8yH3hpW9pbpO/vIw6ca6irl/McvnXUfTBcgVoRp
-         t0oRNaNV9fHxDCdBiOzX2pVH95ziMm/MLL1Z19Ai51e97uttZiWBnaDBnUWAtSVClP/6
-         o8H53OxVdZLvowSlwHVCka0XWNLInhx9CMqKlCRNyKXyvWmkfXGZ6vD5A1AIdWwn9a7V
-         G29A==
-X-Gm-Message-State: ABuFfohFhzBHY0NvAv1bzweLOwXJhl1fgL4Dt3DVfVSIsNMlIxJZUaxF
-        PAAc51jgLpIIkphwCj0ZB0V3Xw==
-X-Google-Smtp-Source: ACcGV60hBJuj1AU1kIkP3QWJUoiHVEGJiZsOnMKnzDqjuIQHmryh5JujlrhAOtpDw9ORdzB2XGt/nQ==
-X-Received: by 2002:a1c:f010:: with SMTP id a16-v6mr1378710wmb.5.1539259418847;
-        Thu, 11 Oct 2018 05:03:38 -0700 (PDT)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id 193-v6sm21983286wmj.21.2018.10.11.05.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 11 Oct 2018 05:03:38 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, rjw@rjwysocki.net, robh+dt@kernel.org,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, ulf.hansson@linaro.org,
-        adrian.hunter@intel.com, linux-mmc@vger.kernel.org,
-        georgi.djakov@linaro.org
-Subject: [RFC] mmc: host: sdhci-msm: Use the interconnect API
-Date:   Thu, 11 Oct 2018 15:03:36 +0300
-Message-Id: <20181011120336.9129-1-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        Thu, 11 Oct 2018 15:31:56 -0400
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w9BC4ji3023274
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 11 Oct 2018 05:04:45 -0700 (PDT)
+Received: from pek-yxue-d1.wrs.com (128.224.155.90) by ALA-HCB.corp.ad.wrs.com
+ (147.11.189.41) with Microsoft SMTP Server id 14.3.408.0; Thu, 11 Oct 2018
+ 05:04:38 -0700
+From:   Ying Xue <ying.xue@windriver.com>
+To:     <jon.maloy@ericsson.com>, <dvyukov@google.com>
+CC:     <davem@davemloft.net>, <parthasarathy.bhuvaragan@ericsson.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tipc-discussion@lists.sourceforge.net>
+Subject: [PATCH net] tipc: eliminate possible recursive locking detected by LOCKDEP
+Date:   Thu, 11 Oct 2018 19:57:56 +0800
+Message-ID: <1539259076-8562-1-git-send-email-ying.xue@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The interconnect API provides an interface for consumer drivers to express
-their bandwidth needs in the SoC. This data is aggregated and the on-chip
-interconnect hardware is configured to the appropriate power/performance
-profile.
+When booting kernel with LOCKDEP option, below warning info was found:
 
-Use the interconnect API to get() the path between the endpoints used for
-data transfers by the SD host controller and report the needed bandwidth
-based on the clock rate, bus width and mode.
+WARNING: possible recursive locking detected
+4.19.0-rc7+ #14 Not tainted
+--------------------------------------------
+swapper/0/1 is trying to acquire lock:
+00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
+include/linux/spinlock.h:334 [inline]
+00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at:
+tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+but task is already holding lock:
+00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
+include/linux/spinlock.h:334 [inline]
+00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&(&list->lock)->rlock#4);
+  lock(&(&list->lock)->rlock#4);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by swapper/0/1:
+ #0: 00000000f7539d34 (pernet_ops_rwsem){+.+.}, at:
+register_pernet_subsys+0x19/0x40 net/core/net_namespace.c:1051
+ #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+spin_lock_bh include/linux/spinlock.h:334 [inline]
+ #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
+tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+
+stack backtrace:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7+ #14
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1af/0x295 lib/dump_stack.c:113
+ print_deadlock_bug kernel/locking/lockdep.c:1759 [inline]
+ check_deadlock kernel/locking/lockdep.c:1803 [inline]
+ validate_chain kernel/locking/lockdep.c:2399 [inline]
+ __lock_acquire+0xf1e/0x3c60 kernel/locking/lockdep.c:3411
+ lock_acquire+0x1db/0x520 kernel/locking/lockdep.c:3900
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+ _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+ spin_lock_bh include/linux/spinlock.h:334 [inline]
+ tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
+ tipc_link_bc_create+0xb5/0x1f0 net/tipc/link.c:526
+ tipc_bcast_init+0x59b/0xab0 net/tipc/bcast.c:521
+ tipc_init_net+0x472/0x610 net/tipc/core.c:82
+ ops_init+0xf7/0x520 net/core/net_namespace.c:129
+ __register_pernet_operations net/core/net_namespace.c:940 [inline]
+ register_pernet_operations+0x453/0xac0 net/core/net_namespace.c:1011
+ register_pernet_subsys+0x28/0x40 net/core/net_namespace.c:1052
+ tipc_init+0x83/0x104 net/tipc/core.c:140
+ do_one_initcall+0x109/0x70a init/main.c:885
+ do_initcall_level init/main.c:953 [inline]
+ do_initcalls init/main.c:961 [inline]
+ do_basic_setup init/main.c:979 [inline]
+ kernel_init_freeable+0x4bd/0x57f init/main.c:1144
+ kernel_init+0x13/0x180 init/main.c:1063
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+The reason why the noise above was complained by LOCKDEP is because we
+nested to hold l->wakeupq.lock and l->inputq->lock in tipc_link_reset
+function. In fact it's unnecessary to move skb buffer from l->wakeupq
+queue to l->inputq queue while holding the two locks at the same time.
+Instead, we can move skb buffers in l->wakeupq queue to a temporary
+list first and then move the buffers of the temporary list to l->inputq
+queue, which is also safe for us.
+
+Fixes: 3f32d0be6c16 ("tipc: lock wakeup & inputq at tipc_link_reset()")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
 ---
+ net/tipc/link.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-This depends on the interconnect API: https://lkml.org/lkml/2018/8/31/444
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index fb886b5..1d21ae4 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -843,14 +843,21 @@ static void link_prepare_wakeup(struct tipc_link *l)
+ 
+ void tipc_link_reset(struct tipc_link *l)
+ {
++	struct sk_buff_head list;
++
++	__skb_queue_head_init(&list);
++
+ 	l->in_session = false;
+ 	l->session++;
+ 	l->mtu = l->advertised_mtu;
++
+ 	spin_lock_bh(&l->wakeupq.lock);
++	skb_queue_splice_init(&l->wakeupq, &list);
++	spin_unlock_bh(&l->wakeupq.lock);
++
+ 	spin_lock_bh(&l->inputq->lock);
+-	skb_queue_splice_init(&l->wakeupq, l->inputq);
++	skb_queue_splice_init(&list, l->inputq);
+ 	spin_unlock_bh(&l->inputq->lock);
+-	spin_unlock_bh(&l->wakeupq.lock);
+ 
+ 	__skb_queue_purge(&l->transmq);
+ 	__skb_queue_purge(&l->deferdq);
+-- 
+2.7.4
 
-TODO: Use macros for converting and rounding to icc units instead of
-converting between kilobits and kilobytes in the consumer drivers.
-
- drivers/mmc/host/sdhci-msm.c | 46 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 3cc8bfee6c18..8ca99ccdb035 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -20,6 +20,7 @@
- #include <linux/mmc/mmc.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/interconnect.h>
- #include <linux/iopoll.h>
- #include <linux/regulator/consumer.h>
- 
-@@ -258,6 +259,7 @@ struct sdhci_msm_host {
- 	bool mci_removed;
- 	const struct sdhci_msm_variant_ops *var_ops;
- 	const struct sdhci_msm_offset *offset;
-+	struct icc_path *path;
- };
- 
- static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
-@@ -1627,6 +1629,30 @@ static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
- 	.offset = &sdhci_msm_v5_offset,
- };
- 
-+static int sdhci_msm_icc_update(struct sdhci_msm_host *msm_host)
-+{
-+	struct sdhci_host *host = dev_get_drvdata(&msm_host->pdev->dev);
-+	struct mmc_host *mmc = host->mmc;
-+	struct mmc_ios *ios = &mmc->ios;
-+	unsigned char bus_width = 1 << ios->bus_width;
-+	u32 bw;
-+
-+	/* calculate the needed bandwidth */
-+	bw = host->clock;
-+
-+	if (host->timing == MMC_TIMING_UHS_DDR50 ||
-+	    host->timing == MMC_TIMING_MMC_DDR52) {
-+		bw *= 2;
-+	}
-+
-+	if (bus_width == 4)
-+		bw /= 2;
-+	else if (bus_width == 1)
-+		bw /= 8;
-+
-+	return icc_set(msm_host->path, 0, bw / 1000);
-+}
-+
- static const struct of_device_id sdhci_msm_dt_match[] = {
- 	{.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
- 	{.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
-@@ -1698,16 +1724,27 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 
- 	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
- 
-+	msm_host->path = of_icc_get(&pdev->dev, "sdhc-mem");
-+	if (IS_ERR(msm_host->path)) {
-+		ret = PTR_ERR(msm_host->path);
-+		goto pltfm_free;
-+	}
-+	ret = sdhci_msm_icc_update(msm_host);
-+	if (ret) {
-+		dev_warn(&pdev->dev, "Interconnect setup failed (%d)\n", ret);
-+		goto icc_disable;
-+	}
-+
- 	/* Setup SDCC bus voter clock. */
- 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
- 	if (!IS_ERR(msm_host->bus_clk)) {
- 		/* Vote for max. clk rate for max. performance */
- 		ret = clk_set_rate(msm_host->bus_clk, INT_MAX);
- 		if (ret)
--			goto pltfm_free;
-+			goto icc_disable;
- 		ret = clk_prepare_enable(msm_host->bus_clk);
- 		if (ret)
--			goto pltfm_free;
-+			goto icc_disable;
- 	}
- 
- 	/* Setup main peripheral bus clock */
-@@ -1883,6 +1920,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- bus_clk_disable:
- 	if (!IS_ERR(msm_host->bus_clk))
- 		clk_disable_unprepare(msm_host->bus_clk);
-+icc_disable:
-+	icc_put(msm_host->path);
- pltfm_free:
- 	sdhci_pltfm_free(pdev);
- 	return ret;
-@@ -1902,6 +1941,7 @@ static int sdhci_msm_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_put_noidle(&pdev->dev);
- 
-+	icc_put(msm_host->path);
- 	clk_bulk_disable_unprepare(ARRAY_SIZE(msm_host->bulk_clks),
- 				   msm_host->bulk_clks);
- 	if (!IS_ERR(msm_host->bus_clk))
-@@ -1917,6 +1957,7 @@ static int sdhci_msm_runtime_suspend(struct device *dev)
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 
-+	icc_set(msm_host->path, 0, 0);
- 	clk_bulk_disable_unprepare(ARRAY_SIZE(msm_host->bulk_clks),
- 				   msm_host->bulk_clks);
- 
-@@ -1929,6 +1970,7 @@ static int sdhci_msm_runtime_resume(struct device *dev)
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 
-+	sdhci_msm_icc_update(msm_host);
- 	return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
- 				       msm_host->bulk_clks);
- }
