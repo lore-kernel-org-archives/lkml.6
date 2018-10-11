@@ -2,108 +2,70 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF82C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D052C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61FA20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="H/q7UeFh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O4qK8mkk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61FA20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C65020841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C65020841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeJKVlr (ORCPT
+        id S1728587AbeJKVmI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:41:47 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:50307 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726537AbeJKVlr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:41:47 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id D39FF21FFC;
-        Thu, 11 Oct 2018 10:14:24 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 11 Oct 2018 10:14:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=ikiaQ1h3K0K7hHI2Hw9ZJNJV6LY
-        PQEAyAz5+b3Hw7wE=; b=H/q7UeFhzlQO90UZFCEmZxES8Z8I27warWyYaN47cIX
-        S/dNjrhK0bDSL+SS9n8yrmdOBa4onM14RJDXb7QnRHLs8JmFW8GufZTxsj7NjNmv
-        VioQwi9jLjQ2ZzpgClMd1fWVRpPSLvoYW9dVhHJgJxt1HIsMPBHVWyvRkIKo0L+M
-        4L9coyYGTnuM6uP/qhpKPa4nN1reWJ/5Sf9lYpjz+aFfO+rktVTh32kucycg9xOd
-        YZ2a3JU45Io5oHzO94X4w/gcV5i0KwJZb4jnOq8V28UOlwxDB0LU5ByJAWZioOQE
-        PGY0EadZQrP10gxHWXrjOYFiPTmNnwH40nGBrYL3fgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ikiaQ1
-        h3K0K7hHI2Hw9ZJNJV6LYPQEAyAz5+b3Hw7wE=; b=O4qK8mkkDOf2lINk+qIifn
-        aDoBLQiSP8LhgGYU3o1BSU256x8TONM//7iUzgBYvImtjl4yWFPCH1L/zNvI6GLo
-        dkYhUpkXPXDfgmi4OXI1IE+TpGfgwzLlndtTxavtlxN68J50dKNt4lY56ZMmEC9o
-        dXnxXrhkrz1mlb6NGUx8gdgby43bWZnEu58+U99sk5xUdvnwG01gMYL8OcTVE4zf
-        7txG3+wC3+mruq29a60PD51X6ZO9AwvkB7snH+rqneLC3PVAxWRx23PBDidDNTpd
-        LaCY1OI8nEpcugTN3iCQOPcG+5fQtGyBsBZpU8SWyUdvpz8Ty+VqiYH5UzlLhD7Q
-        ==
-X-ME-Sender: <xms:wFq_W-aMMVNW1e9G7Eub36NVpKBWkI4ZQNUWuah4uVKOMDX6r1F6aw>
-X-ME-Proxy: <xmx:wFq_W1lgBdLOJZIhez6ClKONrhbuebB4aKfuUyub6T7wXAh2j5S0DA>
-    <xmx:wFq_W3nL7fCsyDW7sK_ymhO5snQj7x7FjnKMRF43XLV4BPOWrve-rQ>
-    <xmx:wFq_WzKya45aS-E6o46Pk2UxF0wOZkiux8fe0AqCvf7XfwgAhXp8Kw>
-    <xmx:wFq_Wzxv7nLdytFp-zymuhH3KfLG8kJf5Fdto8z63cU6ctVJArxStQ>
-    <xmx:wFq_W8tuFZygiAaE7CdAEsoxRbjtlftcoZyoHEMOjA0-m-yuM6PulA>
-    <xmx:wFq_W7LSlod5WFBW4JTTpfNGk15fVa_dCtiNzSxKPaw2newf78B-CQ>
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ADB73102EB;
-        Thu, 11 Oct 2018 10:14:23 -0400 (EDT)
-Date:   Thu, 11 Oct 2018 16:14:22 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>, ath10k@lists.infradead.org
-Subject: Re: [for -stable] commit "c82919888064 ath10k: fix scan crash due to
- incorrect length calculation"
-Message-ID: <20181011141422.GD9507@kroah.com>
-References: <20180906213620.GA72542@ban.mtv.corp.google.com>
+        Thu, 11 Oct 2018 17:42:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38971 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbeJKVmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:42:08 -0400
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9BEEbUr1924930
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 11 Oct 2018 07:14:38 -0700
+Date:   Thu, 11 Oct 2018 07:14:30 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181011133134.085624af@alans-desktop>
+References: <3fcef1c1-d746-ae82-c0e6-f079b1a53ffb@zytor.com> <20181010211717.30c1f052@alans-desktop> <16D6AB22-697E-498C-A5B2-3AD90B567E86@zytor.com> <20181011133134.085624af@alans-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906213620.GA72542@ban.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: Insanely high baud rates
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+CC:     linux-serial@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+From:   hpa@zytor.com
+Message-ID: <8A583BC1-A295-48D2-B4C3-3E70AA50D035@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 02:36:22PM -0700, Brian Norris wrote:
-> Hi Greg / stable maintainer(s),
-> 
-> IIUC, this commit is a good candidate for -stable. I just hit the bug on
-> 4.14, because of new vendor firmware that noticed the mismatched length
-> (an internal "assert"), but it seems like this is equally problematic
-> from the kernel side for as long as this code existed [1]:
-> 
-> commit c8291988806407e02a01b4b15b4504eafbcc04e0
-> Author: Zhi Chen <zhichen@codeaurora.org>
-> Date:   Mon Jun 18 17:00:39 2018 +0300
-> 
->     ath10k: fix scan crash due to incorrect length calculation
-> 
-> Thanks,
-> Brian
-> 
-> [1] I guess that would be:
-> 
-> Fixes: ca996ec56608 ("ath10k: implement wmi-tlv backend")
-> 
-> which was in v4.0.
+On October 11, 2018 5:31:34 AM PDT, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>> I'm mostly wondering if it is worth future-proofing for new
+>transports. It sounds like we can have a consensus on leaving the upper
+>4 bits of the speed fields reserved, but leave the details of
+>implementation for the future?
+>
+>It seems reasonable, although I think the reality is that any future
+>transport is not going to be a true serial link, but some kind of
+>serial
+>emulation layer. For those the speed really only matters to tell
+>editors
+>and the like not to bother being clever.
+>
+>I mean - what is the baud rate of a pty  ?
+>
+>Alan
 
-Thanks, now queued up.
-
-greg k-h
+Whatever the master wants it to be...
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
