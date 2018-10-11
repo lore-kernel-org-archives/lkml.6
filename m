@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9EBC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC178C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F8021470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7386C21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbzK9Lhd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F8021470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBgxqpTQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7386C21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbeJKXGd (ORCPT
+        id S1729751AbeJKXGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35638 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:32 -0400
+        id S1726721AbeJKXGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:34 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78DC820652;
-        Thu, 11 Oct 2018 15:38:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 307CF2087A;
+        Thu, 11 Oct 2018 15:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272329;
-        bh=3rp2QlXgwc5vLryRMopIfjesRtEA7fYhoQH6qUIen6A=;
+        s=default; t=1539272331;
+        bh=A6hBdAoyDGHQGkNx91KcM/ZyVqMsbk0S9AKeEWldjE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CbzK9LhdkfJEO5b3hr/gel9d49Vd4r8UHXqpnsFlcF8xYuT90cTpKmpxGhFykYqCw
-         jcufoe0OkNvU+HALCTazgm/hfXaUS+9q3b7RnVABdW+pBaSHo33sFycRXB+kuugc8k
-         5WN8uHFCPa4T7FXvOjHUyDY8WxCIiUAA3+oi+b9g=
+        b=qBgxqpTQJ8C7AnSOebYC7Zjy4oPGQN0T+nFR0KCDS4jOBi2n5CmJ33d09IrZbJK/c
+         p4QA9P7KXOyxNBY2uzERqxme4qRhpJFw29v0IlHZxiX5sKrVZIEw8Dd4Bv92X/986p
+         d6ve5Wu17A0KPId8naRexw/3kYFvKw940WicScwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 3.18 063/120] arm64: KVM: Tighten guest core register access from userspace
-Date:   Thu, 11 Oct 2018 17:34:04 +0200
-Message-Id: <20181011152552.394412670@linuxfoundation.org>
+        stable@vger.kernel.org, Danek Duvall <duvall@comfychair.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 072/120] mac80211: correct use of IEEE80211_VHT_CAP_RXSTBC_X
+Date:   Thu, 11 Oct 2018 17:34:13 +0200
+Message-Id: <20181011152552.793140431@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -66,99 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Danek Duvall <duvall@comfychair.org>
 
-commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
+[ Upstream commit 67d1ba8a6dc83d90cd58b89fa6cbf9ae35a0cf7f ]
 
-We currently allow userspace to access the core register file
-in about any possible way, including straddling multiple
-registers and doing unaligned accesses.
+The mod mask for VHT capabilities intends to say that you can override
+the number of STBC receive streams, and it does, but only by accident.
+The IEEE80211_VHT_CAP_RXSTBC_X aren't bits to be set, but values (albeit
+left-shifted).  ORing the bits together gets the right answer, but we
+should use the _MASK macro here instead.
 
-This is not the expected use of the ABI, and nobody is actually
-using it that way. Let's tighten it by explicitly checking
-the size and alignment for each field of the register file.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-[maz: rewrote Dave's initial patch to be more easily backported]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Danek Duvall <duvall@comfychair.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ net/mac80211/main.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -46,6 +46,45 @@ static u64 core_reg_offset_from_id(u64 i
- 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
- }
- 
-+static int validate_core_offset(const struct kvm_one_reg *reg)
-+{
-+	u64 off = core_reg_offset_from_id(reg->id);
-+	int size;
-+
-+	switch (off) {
-+	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
-+	case KVM_REG_ARM_CORE_REG(regs.sp):
-+	case KVM_REG_ARM_CORE_REG(regs.pc):
-+	case KVM_REG_ARM_CORE_REG(regs.pstate):
-+	case KVM_REG_ARM_CORE_REG(sp_el1):
-+	case KVM_REG_ARM_CORE_REG(elr_el1):
-+	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
-+	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
-+		size = sizeof(__u64);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
-+		size = sizeof(__uint128_t);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
-+		size = sizeof(__u32);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (KVM_REG_SIZE(reg->id) == size &&
-+	    IS_ALIGNED(off, size / sizeof(__u32)))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
- {
- 	/*
-@@ -65,6 +104,9 @@ static int get_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
- 
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
-+
- 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
- 		return -EFAULT;
- 
-@@ -87,6 +129,9 @@ static int set_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
- 
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
-+
- 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
- 		return -EINVAL;
- 
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -465,10 +465,7 @@ static const struct ieee80211_vht_cap ma
+ 		cpu_to_le32(IEEE80211_VHT_CAP_RXLDPC |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_80 |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_160 |
+-			    IEEE80211_VHT_CAP_RXSTBC_1 |
+-			    IEEE80211_VHT_CAP_RXSTBC_2 |
+-			    IEEE80211_VHT_CAP_RXSTBC_3 |
+-			    IEEE80211_VHT_CAP_RXSTBC_4 |
++			    IEEE80211_VHT_CAP_RXSTBC_MASK |
+ 			    IEEE80211_VHT_CAP_TXSTBC |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMER_CAPABLE |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMEE_CAPABLE |
 
 
