@@ -2,132 +2,71 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BBCC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFBDC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5552077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F4F62098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:32:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+y9CkC0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5552077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAsXgisx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4F62098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbeJKT7A (ORCPT
+        id S1728311AbeJKT7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:59:00 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54232 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKT7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:59:00 -0400
-Received: by mail-it1-f193.google.com with SMTP id q70-v6so13124126itb.3;
-        Thu, 11 Oct 2018 05:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e60FdofV9MbJnwMkfh2fikEoup8wf4R5ARPW9Bxb4bI=;
-        b=O+y9CkC0V4XwePtsBRmRKwf1CmnW7ao/T+Frkbu7VunGvEZ6B5iKUOcKqqFgnSq7No
-         QrmxRquhyLTePiCUYnLEgicvTE7GHHnuq3jZ3nxdTpIBf3zug0bsI1aAiM3KcsfOwz7H
-         Fddkvj68skAIwN8CMevaBdlCcYcTEMZJj7rfY/lqYV4g0RpC93dfZ0ESU73qtDNZ6Qs5
-         UEWZnbyUtejnDrRR4AzbMjnd5XWA1nrQ4fK+uI5dEetcsYPp9e3RHE8H8UFR0UDbQn5M
-         QkJcQKYgu166eq6LzfGkerVcTm6kWBk3UZBDDYC24+lMDVHNBY76hJpdhJMf4U9E2KzB
-         5y3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e60FdofV9MbJnwMkfh2fikEoup8wf4R5ARPW9Bxb4bI=;
-        b=csjg1vxJScFxtbnzJeY8736LT41YXCS8lrSgM2M3RvX6F0Rw5WcnE8cQLcMsyAYCeK
-         YMsn2zNIKZd1B8c2pW9R5WZDRmMXipsmz0f3XpeJcEL9hHBXkJ4gA1jCW4tKwEFIK7y8
-         OqaNgDlNDJotpM+/msez9bBxOjnJjLvWizaPSSHbqY2yeGrvsiZDaIHCOxMghbH+waXG
-         /qmW6AWBOZSJ0NEn0YYR6zDt0YRuFE2/lYeP8Jc67g4NywFjO+y7VX7/lO46wIlNNhpJ
-         JvVQ3/kpHCsl15iZGE0gKS6PnMFGdvtB6v5MPLJBKbmg7ntYcSuiN5pbCDS2ZUU/FcYC
-         yu2A==
-X-Gm-Message-State: ABuFfohlylCFeTYTqDEIrZD4h1r2Mku3z6u0yubgZa1jdV4NhtN9rsEi
-        rOX6xWBlU7bhWjaVVOcZBa8C3IolCcrizBcl3b4=
-X-Google-Smtp-Source: ACcGV60kuqDthSRoOjcmUzlTCzaoMBe+BhlAn9OVY4sINhDx7Vq28NVCO20tvES8vxHjllp+3TVMu7WtQ+h1GqQQygo=
-X-Received: by 2002:a24:9c86:: with SMTP id b128-v6mr1335182ite.104.1539261119251;
- Thu, 11 Oct 2018 05:31:59 -0700 (PDT)
+        Thu, 11 Oct 2018 15:59:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbeJKT7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:59:19 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 174152077C;
+        Thu, 11 Oct 2018 12:32:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539261138;
+        bh=qgogkEyicumi1sTWSDIS0pixl0frzP5FM2M7+dAoWUk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sAsXgisx75DFGz6iOBcr80zi6Ijmq6EKLd7VqjDoOsmPb6udHgH+09oNkxOa3afRm
+         nZam9dLXgK1ls8m+XiRL41w+RsmBb+a4Nh0zHESxhemf3Z+aTxvvyY9Btf+cErlrWg
+         kkzfnzCtHpnoaDC3Y1BQo1z0hq+3YIviVzQiSPJ0=
+Date:   Thu, 11 Oct 2018 14:32:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] perf fixes
+Message-ID: <20181011123216.GA32457@kroah.com>
+References: <20181011091202.GA78343@gmail.com>
 MIME-Version: 1.0
-References: <20181010151801.21489-1-robdclark@gmail.com> <CAK8P3a3LjB=y+3XXD_FuRpvYL5XAQP_zqCM3R0T4buRYw4tgRg@mail.gmail.com>
- <CAF6AEGs3dStuF6GfhfL7Y+zOZFGrLU_CaiDMzdHrD4OQ3ynm=g@mail.gmail.com> <CAK8P3a1zWzm4AS8C18NRQE7gaMy1jjo70+0b1h=yrxE395-2fg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1zWzm4AS8C18NRQE7gaMy1jjo70+0b1h=yrxE395-2fg@mail.gmail.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 11 Oct 2018 08:31:45 -0400
-Message-ID: <CAF6AEGvXVv6iurN-FBd1F4NNufsuSP9=PaLBnMgMZNaAVVSKsg@mail.gmail.com>
-Subject: Re: [PATCH] fbdev: make FB_BACKLIGHT a tristate
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Hans de Goede <j.w.r.degoede@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011091202.GA78343@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 3:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Oct 11, 2018 at 3:16 AM Rob Clark <robdclark@gmail.com> wrote:
-> >
-> > On Wed, Oct 10, 2018 at 11:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On 10/10/18, Rob Clark <robdclark@gmail.com> wrote:
-> > > > BACKLIGHT_CLASS_DEVICE is already tristate, but a dependency
-> > > > FB_BACKLIGHT prevents it from being built as a module.  There
-> > > > doesn't seem to be any particularly good reason for this, so
-> > > > switch FB_BACKLIGHT over to tristate.
-> > > >
-> > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > >
-> > > I don't see anything immediately wrong, but anything related to
-> > > BACKLIGHT_CLASS_DEVICE, BACKLIGHT_LCD_SUPPORT
-> > > and FB_BACKLIGHT is really fragile in Kconfig, because of the
-> > > way those interact with other options.
-> > >
-> > > I've applied your patch to my randconfig build tree for testing,
-> > > let's see what happens there before you apply it.
-> > >
-> >
-> > thanks.. tbh the fragility of backlight vs kconfig is why I've
-> > procrastinated on fixing this for a while.. in the end the solution
-> > seems not as bad as I feared (and after a iteration or two makes rhel
-> > kernel builds for various archs happy, at least).. but defn some
-> > randconfig build testing is in order.
->
-> Ok, my overnight testing shows no regression, so please add
->
-> Tested-by: Arnd Bergmann <arnd@arndb.de>
+On Thu, Oct 11, 2018 at 11:12:02AM +0200, Ingo Molnar wrote:
+> 
+> Greg,
+> 
+> Please pull the latest perf-urgent-for-linus git tree from:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-Thanks
+Now merged, thanks.
 
->
-> > PS. discovering that the thing you need to fix (a) never really worked
-> > as intended, and (b) involves backlight + fbdev.. is never a good way
-> > to start your day ;-)
->
-> I still have a bunch of related fixes in my tree that address
-> randconfig builds that never worked. I think at one point
-> I got a few 'Reviewed-by' replies from DRM folks, but then
-> nobody picked it up and subsequently it stopped applying.
-> I need to go back and dig out all the dependent patches from
-> my randconfig tree and resend that.
+greg k-h
 
-I assume those patches (and this one) would be picked up via fbdev tree?
-
-BR,
--R
