@@ -2,97 +2,96 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C355C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D289C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C317320870
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:19:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0XgLSyr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C317320870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C5AF02085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AF02085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fabrykadekoracji.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeJKKoM (ORCPT
+        id S1727281AbeJKKqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 06:44:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbeJKKoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 06:44:12 -0400
-Received: from localhost (246.sub-174-234-138.myvzw.com [174.234.138.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84B8F2085B;
-        Thu, 11 Oct 2018 03:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539227940;
-        bh=E49epR5WKdqwOJmODbNZu7O4dUouVK7BncRNbda9nKQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i0XgLSyrhTah6cc9nF2wHkdGQdjBp/XFob82auiz64YBeEj4dk3UnDJcIPHaK4iag
-         qGvj0tdjMJ//ApsetqN1eTu/uZ/S6E37OaBO7xmYp3t5fyuLBHmNek83J2Km5CKuWY
-         riNc3jvltiUCd+gKDwZAyX9PiA+C8B2gNaVA3XAI=
-Date:   Wed, 10 Oct 2018 22:18:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v9 00/13] Copy Offload in NVMe Fabrics with P2P PCI Memory
-Message-ID: <20181011031858.GL5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <20181004212747.6301-1-logang@deltatee.com>
- <20181010201918.GF5906@bhelgaas-glaptop.roam.corp.google.com>
- <5c674a1b-2471-33eb-44f4-fe1bb8807a22@deltatee.com>
+        Thu, 11 Oct 2018 06:46:08 -0400
+Received: from shared-ako86.rev.nazwa.pl ([85.128.145.86]:40161 "EHLO
+        shared-ako86.rev.nazwa.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbeJKKqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 06:46:07 -0400
+X-Greylist: delayed 738 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Oct 2018 06:46:06 EDT
+X-Virus-Scanned: by amavisd-new using ClamAV (1)
+Received: from xdfjdygiulhihjfj (unknown [185.106.120.49])
+        by scenografia.nazwa.pl (Postfix) with ESMTP id 1AD56842A0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 05:08:39 +0200 (CEST)
+From:   "Rafal Kowalski" <biuro@fabrykadekoracji.com>
+Subject: Faktura
+To:     "linux-kernel" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="XqsjGmq=_nVPjXuKJgIwvS7CTEHOm0ExcD"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c674a1b-2471-33eb-44f4-fe1bb8807a22@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Reply-To: "Rafal Kowalski" <biuro554@fabrykadekoracji.com>
+Organization: POLBUD
+Date:   Thu, 11 Oct 2018 06:08:38 +0300
+Message-Id: <20181011030839.1AD56842A0@scenografia.nazwa.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 05:03:33PM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 2018-10-10 2:19 p.m., Bjorn Helgaas wrote:
-> > I added the reviewed-by tags from Christoph, Jens' ack on the blkdev.h
-> > change, and applied these to pci/peer-to-peer with the intent of
-> > merging these for v4.20.
-> > 
-> > I gave up on waiting for an ack for the memremap.h and mm.h changes.
-> > 
-> > I dropped the "nvme-pci: Add a quirk for a pseudo CMB" quirk because
-> > of Christoph's objection.  After this is all merged, I won't need to
-> > be involved, and you and the NVMe folks can hash that out.
-> > 
-> > If there are updates to "nvmet: Optionally use PCI P2P memory" based
-> > on Sagi's comments, send an incremental patch and I'll fold them in.
-> 
-> Thanks for picking this up. However, I hate to throw a wrench in the
-> works, but I had a v10[1] queued up because kbuild found some problems
-> with the series over the weekend. I can send v10 off right away if you
-> want to just replace it in your branch or, if you'd like, I can generate
-> some incremental patches. Let me know which you'd prefer.
+This is a multi-part message in MIME format
 
-I applied the updates from your v10 to my pci/peer-to-peer branch.
+--XqsjGmq=_nVPjXuKJgIwvS7CTEHOm0ExcD
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> [1] https://github.com/sbates130272/linux-p2pmem pci-p2p-v10
+Szanowny Kliencie,
+
+W zalaczniku przesylam dane do faktur i rozliczenia.
+
+
+
+
+
+Pozdrawiam
+
+Rafal Kowalski
+
+Biuro POLBUD
+
+
+--XqsjGmq=_nVPjXuKJgIwvS7CTEHOm0ExcD
+Content-Type: application/octet-stream;
+	name="faktura_111018_00779731.rar"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="faktura_111018_00779731.rar"
+
+UmFyIRoHAQDz4YLrCwEFBwAGAQGAgIAAiRVtqjgCAwv6CASjF4ABvV3xUYADABtmYWt0dXJhXzEx
+MTAxOF8wMDc3OTczMS52YnMKAwIhvhUg5GDUAcvjdgRAVUMyNU81BV9mfFKn4SiYSiDGSpmZVTMo
+hAnMqBkJjdcmZzzYNAODBvjSDhw/8ZJu0EBpuOVnyCJG0rV9G76Fafz19Cvp2r6NavfilSpbq/kH
+4NBrkh34nMH5tySPfnoN/Z43oXH9UkKOg3gPWt59zDFFCMPDX/h3ZIr2hzbuBowwae0i79vP6hGB
+sAz0v38j5eSQd59ru4C/4NZaPscHET9RTNwQYwdOjI9wYYV5CYPF/JjCO8k5N0a0BRBvb9Dp9jxG
+tuHEeRLysg1Z3qncSnQAqBbtSj6g8TqI1uAfocByT+U9SapTdhtOobNSaOSJM2upqyMNtSrNScOi
+3mqih3xQVL2rTjAli0mArJZ6XYsiA5YBNmrz1GFADqAZ+npAA2gPGxN0Eol0Ij66GEbirVly+GxI
+ptqWiskWiDaHIYNRCINKasgzfo3zmrEKKZXX4tZ70MEicAAWPMpbeIK3ZArJBMRGrQcTn2J9hw6Z
+05SYooSIb+OL0OFZVZVK5AcRNf/cF/6Ou4WfVnItfxjDzGZ77rrPQPWZKY0fv09LRRka9/1drhn6
+eJDckd3noUE9F3YGDUJVsz1wA6HeZMN9edZCSgcJUX3BvNwCuCMCDkJzxmasWGKnaDXO4/lHl8oD
+rQzGmmm2R/BH4oamLAVC1Y3szeB+qvLbnrM9OIteevHmj/nJBs7Opv9eu1Z5uaICrsJ3VLOc2114
+Q2YmUPUs9F1G3uyhVZ/7QWpfW5d3VLjC0ANc5cbY40Hk1h3x64e2sNSEimPQzPY9qWrmeCNxXink
+wx3hXsT0NwFo8AAaHt50Md0kGs7kZzv8LDlWXlT1TRYQgq4eqslWRR/6Admh77C24HDLec74oqod
+xEYKh9Ba9TwA1IM1rvXJtirYMwWmR4sKyjieo6rNpv1W7XtC2ZjS2JGlsFCdmhYEpYv6MI88UJfh
+mf3wlpnCHAdV9IIgb2Vwf/3HM4eb4A4SB0kYXoT+Gzal4KjcY9g/I2Pj+KevIuVCMyVUKJjFjMUJ
+8jkuKs06rTehneEytYmNBHuNVreKWqkeYie9rZmsyq1zyaPe0vPPStF7yfHHwWa2NxxgIQUmpk2U
+gN16LuSJTyvUa21+NDcsa/azXbr2bHWLtrbM80syz8DFcXC8oGtfHFQ5C9UtLgeEl/IB6hPDi0Zg
+zmqM8gCSEChY6fkT7j/dtthNPD5W/oXwFKHv/RZvCIBpZZKxx6AFQutwiHBkuv8WxTMf4AcpZr9+
+LjiZKqxL1GueX/2wffyf8qAvL/C8AkHLXI1l/jlB9WNOaTPMp2x6yPRoZYYpm3RhHNkLwAA0ThJS
+waW7BlJP9ZDVaHavZsCMjuYcF96wwF+kPtt5MDyD+6PdHBni2mKM1yKqAYXdPchOWqrIdwVSuZMb
+lsEhYiW0kFbG9sTyl4DnQBr3CNojML6kX46Da8V8L7KrWoDrMf26+S+e+oRNGp289sw4/k6Z/PNB
+CdaaX8D5ieFDW/2X1AW6s2GF7EOsWL6jrzKynOBu9PrgkB13VlEDBQQA
+
+--XqsjGmq=_nVPjXuKJgIwvS7CTEHOm0ExcD--
+
