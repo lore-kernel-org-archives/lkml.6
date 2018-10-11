@@ -2,108 +2,194 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5465C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA39C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECB120841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33682085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:44:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wikghze3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BECB120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F4TqTiyk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33682085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeJKWLD (ORCPT
+        id S1728673AbeJKWMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:11:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53190 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbeJKWLC (ORCPT
+        Thu, 11 Oct 2018 18:12:17 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35454 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeJKWMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:11:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hEOMw4Gr5BkGstRKzySUbZCPiJkT3OspbuLHw0kWaaQ=; b=wikghze3l5wk1D6kS3oRdzUgI
-        i8SyPV5Egro/ZXCe5NZ+iTObsSQtKnq4age48ofnM49BeF5FLAQokXAUlJuV+EOt/fSj482xXtbGy
-        iEHDE1Qn2jusH5eKW52166fTFyatKFSSq1/sOEmLpqMGnFY1tTxZW4UnnL74WHZRjU0Z8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcBX-0001pS-AD; Thu, 11 Oct 2018 14:43:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id ECDAF11223ED; Thu, 11 Oct 2018 15:43:30 +0100 (BST)
-Date:   Thu, 11 Oct 2018 15:43:30 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] gpio/regulator: Allow nonexclusive GPIO access
-Message-ID: <20181011144330.GF25351@sirena.org.uk>
-References: <20181011143531.7195-1-linus.walleij@linaro.org>
+        Thu, 11 Oct 2018 18:12:17 -0400
+Received: by mail-it1-f195.google.com with SMTP id p64-v6so13534898itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 07:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=CosZchkCqQ6fPw8xkW86By8YrHQ+t7cRZE4gOyS7+Ko=;
+        b=F4TqTiykX2CKqvK8AVI43j1Mim69eIBqK5q7NTueK2WPns/eiNDx7S9V5H7SNRuDix
+         FqpEfZhm8nlUCc1AvswS+rr4j1lzNi7UUh+Y4V4ozPXEHppnmTxaMof9seik0PfYX4V3
+         JaL8mFgbHziu6FMzD+/ffP0XPfSeKLJCqr54k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=CosZchkCqQ6fPw8xkW86By8YrHQ+t7cRZE4gOyS7+Ko=;
+        b=VUU09ND6kYp47FuzfvBN0uYMgf2lV7vbhmz2Sw9WFKKyClmd0Yn7SpIsw32s2mtZZn
+         jCt8XEvu0IPZ0rcLWUDl8l5VinhcRcI9KXPopm9R9/8IN3sNrqgBzYZalvaXRO1iMpao
+         uebsBQ2XlCH0UP5+j5a1Ly8vwHHJJFfsSVhGGz4AQnauyWcGfjOeRuLwCc79BErI2FtU
+         CbZlcAgmcmS6qVW8mAr126FqgyDBenUM9PQGuoKbfL8DdbIDQqH+Ypys5WMg4otEv/7C
+         PNB79sQlFTj1V60GPb64nHyWDbxKYXX1ADO/3ihhL7VVBf0DHyvkOf7sNYH2MpCIPDWN
+         SlDw==
+X-Gm-Message-State: ABuFfoiLyQQIyr30L8HBpJWr1GY9ZUhRhfl7HqfGHx6Xw+RN8435xZn8
+        Ct3slRXQ06ibifFH8XrV5NuW5FiKbAbuNRta0RQu6Q==
+X-Google-Smtp-Source: ACcGV62cR88LUqn73Ll0UeW08ODjzf6NmYjJeNSxovIuV6Xl2z9wKs+mPRe4FVxZNcLzPl1FX2h+Wizjm7aqqukLm5Q=
+X-Received: by 2002:a02:c909:: with SMTP id t9-v6mr1535801jao.95.1539269087659;
+ Thu, 11 Oct 2018 07:44:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dWYAkE0V1FpFQHQ3"
-Content-Disposition: inline
-In-Reply-To: <20181011143531.7195-1-linus.walleij@linaro.org>
-X-Cookie: Use at own risk.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 07:44:07
+ -0700 (PDT)
+In-Reply-To: <20181010150312.GA4844@e107155-lin>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <20181003143824.13059-5-ulf.hansson@linaro.org> <20181010150312.GA4844@e107155-lin>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 11 Oct 2018 16:44:07 +0200
+Message-ID: <CAPDyKFqP3wbd+5rvLcscNf1LUSZDROLqafsLq0Kyh0KziRJrZQ@mail.gmail.com>
+Subject: Re: [PATCH v9 04/11] dt: psci: Update DT bindings to support
+ hierarchical PSCI states
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Raju
 
---dWYAkE0V1FpFQHQ3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10 October 2018 at 17:03, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On Wed, Oct 03, 2018 at 04:38:17PM +0200, Ulf Hansson wrote:
+>> From: Lina Iyer <lina.iyer@linaro.org>
+>>
+>> Update DT bindings to represent hierarchical CPU and CPU PM domain idle
+>> states for PSCI. Also update the PSCI examples to clearly show how
+>> flattened and hierarchical idle states can be represented in DT.
+>>
+>> Cc: Lina Iyer <ilina@codeaurora.org>
+>> Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+>> Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>> ---
+>>  .../devicetree/bindings/arm/psci.txt          | 156 ++++++++++++++++++
+>>  1 file changed, 156 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+>> index a2c4f1d52492..17aa3d3a1c8e 100644
+>> --- a/Documentation/devicetree/bindings/arm/psci.txt
+>> +++ b/Documentation/devicetree/bindings/arm/psci.txt
+>> @@ -105,7 +105,163 @@ Case 3: PSCI v0.2 and PSCI v0.1.
+>>               ...
+>>       };
+>>
+>> +ARM systems can have multiple cores sometimes in hierarchical arrangement.
+>> +This often, but not always, maps directly to the processor power topology of
+>> +the system. Individual nodes in a topology have their own specific power states
+>> +and can be better represented in DT hierarchically.
+>> +
+>> +For these cases, the definitions of the idle states for the CPUs and the CPU
+>> +topology, must conform to the domain idle state specification [3]. The domain
+>> +idle states themselves, must be compatible with the defined 'domain-idle-state'
+>> +binding [1], and also need to specify the arm,psci-suspend-param property for
+>> +each idle state.
+>> +
+>> +DT allows representing CPUs and CPU idle states in two different ways -
+>> +
+>> +The flattened model as given in Example 1, lists CPU's idle states followed by
+>> +the domain idle state that the CPUs may choose. Note that the idle states are
+>> +all compatible with "arm,idle-state".
+>> +
+>> +Example 2 represents the hierarchical model of CPUs and domain idle states.
+>> +CPUs define their domain provider in their psci DT node. The domain controls
+>> +the power to the CPU and possibly other h/w blocks that would enter an idle
+>> +state along with the CPU. The CPU's idle states may therefore be considered as
+>> +the domain's idle states and have the compatible "arm,idle-state". Such domains
+>> +may also be embedded within another domain that may represent common h/w blocks
+>> +between these CPUs. The idle states of the CPU topology shall be represented as
+>> +the domain's idle states.
+>> +
+>> +In PSCI firmware v1.0, the OS-Initiated mode is introduced. In order to use it,
+>> +the hierarchical representation must be used.
+>> +
+>> +Example 1: Flattened representation of CPU and domain idle states
+>
+> [...]
+>
+>> +Example 2: Hierarchical representation of CPU and domain idle states
+>
+> I understand that this may not be of interest for this series, but do
+> we need to add any suggestions on how to arrive Flattened representation
+> of CPU idle states from its hierarchical representation. If the DT has
+> latter and PSCI call returns as PC mode only for idle. We need to deal
+> with that case.
 
-On Thu, Oct 11, 2018 at 04:35:31PM +0200, Linus Walleij wrote:
+For sure, I think this is valid comment for this series (or at least
+v8 which contains the hole set).
 
-> +	/*
-> +	 * Some fixed regulators share the enable line between two
-> +	 * regulators which makes it necessary to get a handle on the
-> +	 * same descriptor for two different consumers. This will get
-> +	 * the GPIO descriptor, but only the first call will initialize
-> +	 * it so any flags such as inversion or open drain will only
-> +	 * be set up by the first caller and assumed identical on the
-> +	 * next caller.
-> +	 *
-> +	 * FIXME: find a better way to deal with this.
-> +	 */
-> +	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
-> +
+The approach I have taken, so far, is to closely tie the support for
+PSCI OSI mode to the hierarchical representation in DT of the idle
+states. Simply because of changing as little as possible, in a first
+step, then build on top.
 
-It's not just fixed regulators that do this, often regulators with
-register control can do this as well.  Since power up is often a
-performance critical path but regulators tend to be controlled via slow
-buses like I2C it's common to have register control combined with a GPIO
-enable line so you don't need to use the bus to do the enables.  That
-should just be a case of adding this flag to all the drivers that have
-already been converted to gpiod (including the core code that's in
-regulator_ena_gpio_request() which I thought was coping with this
-already) unless I'm missing something?
+However, in the offlist discussion I had with Lorenzo, he raised a
+concern, very similar to what you are bringing up here. There are
+indeed platform configurations, using PSCI PC mode, which would
+benefit from the using the hierarchical representation. BTW, that is
+kind of what Raju just tried to get working for QCOM SDM845 [1], but
+let's discuss that separately.
 
---dWYAkE0V1FpFQHQ3
-Content-Type: application/pgp-signature; name="signature.asc"
+The conclusion I made, is that no matter of we are using the PC mode
+or the OSI mode, the hierarchical representation shall just work.
 
------BEGIN PGP SIGNATURE-----
+To me, this means that I have to re-work the series, such that the
+PSCI driver (and cpuidle), dynamically in runtime, can agree on which
+of the idle states that are "shared among a group of CPUs" and which
+are CPU specific. Exactly how, I am still exploring a few different
+approaches on.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/YZIACgkQJNaLcl1U
-h9D47Af+LHEm3qHlbkqWm0H1Ku1iFePv0+bsa4Do4nZlGNRSOLXdvuxD2YyTptAu
-uB4vzaULjSusPMG+7t9WDuJ1ODl6b2igrAB8v58QWLH91vMh327Pk994BBhDiE5r
-ZYK4srJW6X2o3kbUmAFcgzaJtBsMvrhmIYcP7tid40cR5VOhmnTMBtVC6ODguM5Z
-kxyBUfJtCs/5/qmiWIJPEM2IqxE/LK34yikRe74gb63Wb3cfgoZ4KwHy+Ci/vKQI
-jxHb2bnejiTPYJoT43veSzE0i5GJwezwF14xHgATq3M3yIblpJ30lPhHA2/rJbyp
-GO9z3HLVy8zHR1yEhVdFrhrnjETS3w==
-=Mcdt
------END PGP SIGNATURE-----
+Does it make sense?
 
---dWYAkE0V1FpFQHQ3--
+So, when it comes to the updated DT bindings in regards to $subject
+patch, I think it's good as is. Or do you think there is something
+that needs to be clarified?
+
+Thanks for reviewing!
+
+Kind regards
+Uffe
+
+[1]
+https://lkml.org/lkml/2018/10/11/28
