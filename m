@@ -2,113 +2,244 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED105C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F43FC677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E47A21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D72021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:57:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="XCTeT+TW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E47A21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MjNWm/BI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D72021470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbeJLBW2 (ORCPT
+        id S1727709AbeJLBZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:22:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34752 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbeJLBW1 (ORCPT
+        Thu, 11 Oct 2018 21:25:57 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43341 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbeJLBZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/ocA6D1i1+XRcxPD1Dxu6BwC1ucs9CTJ+9L81tTz3tU=; b=XCTeT+TWIRH3kFXihEDNFSSiC
-        lk/3yj2MmH/qzhoeyfaM/5B3PrCM8x6AkWz/wVMp6hq6RAX97ViceYZuTG9oBqQ3ZwnO3BIy/Hhxl
-        lB7Jno9sevbeMkNQKAuG33z2HaSTFNg8xGXSmCRjgBHisptjSmHSY3XKqQO13B6tPebT4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAf9z-00029A-G8; Thu, 11 Oct 2018 17:54:07 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E9AFD11223ED; Thu, 11 Oct 2018 18:54:06 +0100 (BST)
-Date:   Thu, 11 Oct 2018 18:54:06 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] gpio/regulator: Allow nonexclusive GPIO access
-Message-ID: <20181011175406.GH25351@sirena.org.uk>
-References: <20181011143531.7195-1-linus.walleij@linaro.org>
- <20181011144330.GF25351@sirena.org.uk>
- <CACRpkdbTnBQhPQARX77KfjtfWXY+t0oH6-B=WUN4hid8eQT0DA@mail.gmail.com>
+        Thu, 11 Oct 2018 21:25:56 -0400
+Received: by mail-yw1-f66.google.com with SMTP id j75-v6so3928795ywj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 10:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7XpdVd9yaWqxN3q4iZjDNpEN2Jt6xA4e1XAH5S9vBsk=;
+        b=MjNWm/BIPZIewSM8hnbIw2eE0ORnTDRuXgPmUACDM+YhdYt4Rl+YFD2mcJhqSM/KCw
+         3COI3U2T2InyASRyjrLkxy84P82z96V6ipys/qdYZiYDY/QHWEsy0qGcjYH6j45tw5aX
+         5T1x3iwQTOZ8IhNkwg1SuhjBGwThjyq/aThiw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7XpdVd9yaWqxN3q4iZjDNpEN2Jt6xA4e1XAH5S9vBsk=;
+        b=tkooAGYazvH62TSzJEggrBDZl1/uUd7nahjXGlRxvYYdekFejvGhDNmY0lm8ZF4b+N
+         UYIguWUSsw5jlc5brFj4HsdP5hCXqeBev4B3IsKzfE2C3zJff50SPo2zA7MdXkjt4OvP
+         ZqO1TioXr4keh64jI2hpbL7AGnU6avwBdRxwc3oceJPHe00/9TVb6uMQRJikA9Ti/2o8
+         fxR0POf69GpW6TNEVg8tKpRIcZlSEaYXRuaD8h0EryXPEVItkSTiWhJO09SQ5z08t0yE
+         f3Ixwr6QpMlPyPScHvaQ5feNf/xnJRw75P5ekcqpohvvcUHkqHWHxMl9NfWf8SUmkiYu
+         pvKw==
+X-Gm-Message-State: ABuFfohkWUG4g/Czl4CFMuXKCr3yz7P/qv+UErfmycNyHYTWtRbB+3Vm
+        8FvvZQYMJ2UnyQUgbVE74vPecze0mMc=
+X-Google-Smtp-Source: ACcGV60sWJPUydOXzekCRdvsYnigcXvQjMk7b19KJAFgW3cEFlVS7UIJP9aL8Wj75wWJdP+KuFDTLw==
+X-Received: by 2002:a81:450b:: with SMTP id s11-v6mr1529629ywa.148.1539280657646;
+        Thu, 11 Oct 2018 10:57:37 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id u79-v6sm16889799ywe.110.2018.10.11.10.57.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 10:57:36 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id p74-v6so3940428ybc.9
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 10:57:35 -0700 (PDT)
+X-Received: by 2002:a25:3617:: with SMTP id d23-v6mr1530175yba.141.1539280655226;
+ Thu, 11 Oct 2018 10:57:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fd5uyaI9j6xoeUBo"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbTnBQhPQARX77KfjtfWXY+t0oH6-B=WUN4hid8eQT0DA@mail.gmail.com>
-X-Cookie: Use at own risk.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 10:57:33
+ -0700 (PDT)
+In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
+References: <20181011001846.30964-1-keescook@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 11 Oct 2018 10:57:33 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Message-ID: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 10, 2018 at 5:18 PM, Kees Cook <keescook@chromium.org> wrote:
+> v5:
+> - redesigned to use CONFIG_LSM= and lsm= for both ordering and enabling
+> - dropped various Reviewed-bys due to rather large refactoring
 
---fd5uyaI9j6xoeUBo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here's a tl;dr of the behavioral changes...
 
-On Thu, Oct 11, 2018 at 07:01:13PM +0200, Linus Walleij wrote:
-> On Thu, Oct 11, 2018 at 4:43 PM Mark Brown <broonie@kernel.org> wrote:
-> > On Thu, Oct 11, 2018 at 04:35:31PM +0200, Linus Walleij wrote:
+Right now, we have:
 
-> > enable line so you don't need to use the bus to do the enables.  That
-> > should just be a case of adding this flag to all the drivers that have
-> > already been converted to gpiod (including the core code that's in
-> > regulator_ena_gpio_request() which I thought was coping with this
-> > already) unless I'm missing something?
+- hard-coded special LSM: capability which cannot be disabled.
+- hard-coded "minor" LSMs: they are enabled in a static order based on
+whether they are built into the kernel or not: yama, loadpin.
+- a single LSM without a specified order because it only uses the
+early-init position: integrity.
+- "major" LSMs that are selected via CONFIG_DEFAULT_SECURITY= or
+"security=" boot param.
+- SELinux and AppArmor each can enable/disable themselves via
+CONFIG_..._BOOTPARAM_VALUE= and selinux=/apparmor=.
 
-> Sorry if I don't get it... we already have code in the core to
-> check if the same gpiod is used by two regulators.
-> regulator_ena_gpio_request() does this:
+So, right now, systems will have all the minor LSMs and integrity
+initialized if they are built into the kernel without any way to
+control their order or disable them at boot time. To select a major
+LSM, the pattern is:
 
->         if (config->ena_gpiod)
->                 gpiod = config->ena_gpiod;
->         else
->                 gpiod = gpio_to_desc(config->ena_gpio);
+selinux=1 security=selinux
 
-> So after the change I made to fixed.c this comes in through
-> config->ena_gpiod.
+Note that both are used here because if you built with
+CONFIG_SELINUX_BOOTPARAM_VALUE=0 and CONFIG_DEFAULT_SECURITY=apparmor,
+just booting with "security=selinux" just disables AppArmor but
+SELinux stays disabled. So the documented way to switch majors is with
+"selinux=1 security=selinux". *However* Tomoyo and Smack do not have
+separate enable/disable logic. They will work fine with just
+"security=smack".
 
-Other regulators that have GPIO control for their enables do their own
-requests (as does the core) so don't they all need to set the flag
-GPIOD_FLAGS_BIT_NONEXCLUSIVE when they request otherwise it'll only work
-in systems where the regulators after the first that request the GPIO
-are fixed regulators?
+Now, in order to gain arbitrary LSM ordering, this series introduces
+CONFIG_LSM= (to replace CONFIG_DEFAULT_SECURITY=) and "lsm=" (to
+replace "security="). Note that "security=" has not been removed -- it
+will still work. Mixing it with "lsm=" can lead to situations where
+"security=" becomes effectively ignored, though.
 
---fd5uyaI9j6xoeUBo
-Content-Type: application/pgp-signature; name="signature.asc"
+In the rest of this I'm going to ignore capability: it will always be
+first and it will always be enabled.
 
------BEGIN PGP SIGNATURE-----
+Assuming that all LSMs are built in (e.g. yama, loadpin, selinux,
+smack, tomoyo, apparmor, integrity), here are the changes:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/jj4ACgkQJNaLcl1U
-h9BhsQgAhqcaxL3AJRBNhk8J1gpoIf8ReGJaLmFdBgzg/TIWH1yMWH2S1f2JkKyP
-022ZSDRhwPujqi3c4BYYyLAoRb0rCh7aTnqcx5bkwpUxlBqF5kRFVMvZL3iymW0G
-r0dmnzCF79gli8w1ru6OUzkqdN8/iYX/+u9L8ji+xSQsMq8zB+Ele9nz8BNRJMH0
-toQ4GcnX3GsO4sUYuyJB3zS5bLwenmSzz1V6NIzdu5bpS1MOV5c1om0DMKxcrlUX
-8SLCdrRxrrjdgm/xBEOhKGyrAE2IXSsbX2Jq3MwOpt7/UryRJSiZgYwSqeRy6sOS
-9iWTH/qfAR8+a9wjIAKFOEL4pPT/nA==
-=moG1
------END PGP SIGNATURE-----
+To choose the "default major LSM" of AppArmor before:
+CONFIG_DEFAULT_SECURITY=apparmor
 
---fd5uyaI9j6xoeUBo--
+To choose the "default major LSM" of AppArmor _without_ extreme stacking now:
+CONFIG_LSM=yama,loadpin,integrity,apparmor
+
+To choose the "default major LSM" of AppArmor with future extreme stacking now:
+CONFIG_LSM=yama,loadpin,integrity,apparmor,tomoyo,selinux,smack
+
+Whichever exclusive LSM is listed _first_ will be the first to attempt
+initialization. Any non-conflicting LSMs following it will initialize
+too.
+
+This means a distro can disable the "blob-sharing" behavior by just
+providing a CONFIG_LSM= that includes a single major LSM.
+
+To switch to SELinux at boot time with
+"CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
+work:
+
+selinux=1 security=selinux
+
+This will work still, since it will enable selinux (selinux=1) and
+disable all other major LSMs (security=selinux).
+
+The new way to enable selinux would be using
+"lsm=yama,loadpin,integrity,selinux".
+
+To see the behaviors, you can boot with "lsm.debug". (Note that
+CONFIG_LSM= and "lsm=" are handled exactly the same, so a boot with
+"lsm=" would see the same results as a boot without "lsm=", but with
+CONFIG_LSM= set to that string.) An example:
+
+lsm.debug lsm=integrity,cows,loadpin,capability,apparmor,tomoyo
+selinux=1 security=selinux
+
+produces:
+
+[    0.292502] LSM: Security Framework initializing
+[    0.293109] LSM: security=selinux disabled: smack
+[    0.293464] LSM: security=selinux disabled: tomoyo
+[    0.294464] LSM: security=selinux disabled: apparmor
+[    0.295109] LSM: first ordering: capability (enabled)
+[    0.295464] LSM: cmdline ordering: integrity (enabled)
+[    0.296464] LSM: cmdline ignored: cows
+[    0.296953] LSM: cmdline ordering: loadpin (enabled)
+[    0.297464] LSM: cmdline ignored: capability
+[    0.298464] LSM: cmdline ordering: apparmor (disabled)
+[    0.299136] LSM: cmdline ordering: tomoyo (disabled)
+[    0.299464] LSM: security= ordering: selinux (enabled)
+[    0.300464] LSM: cmdline disabled: smack
+[    0.300979] LSM: cmdline disabled: yama
+[    0.301464] LSM: exclusive chosen: selinux
+[    0.302008] LSM: initializing capability
+[    0.302464] LSM: initializing integrity
+[    0.302968] LSM: initializing loadpin
+[    0.303464] LoadPin: ready to pin (currently not enforcing)
+[    0.304464] LSM: initializing selinux
+[    0.304946] SELinux:  Initializing.
+
+With yama left out of lsm=, it is disabled. Invalid,
+non-mutable-order, or unbuilt LSMs are ignored (i.e. "cows" and
+"capability" above). "security=selinux" disables all the other majors
+(their ordering is left alone) and things not mentioned in lsm= and[1]
+security= are explicitly disabled (and left out of the ordering).
+
+Another example, without "security="...
+
+lsm.debug lsm=integrity,yama,cows,loadpin,capability,apparmor,tomoyo,selinux,smack
+
+[    0.291697] LSM: Security Framework initializing
+[    0.292660] LSM: first ordering: capability (enabled)
+[    0.293337] LSM: cmdline ordering: integrity (enabled)
+[    0.293659] LSM: cmdline ordering: yama (enabled)
+[    0.294659] LSM: cmdline ignored: cows
+[    0.295169] LSM: cmdline ordering: loadpin (enabled)
+[    0.295659] LSM: cmdline ignored: capability
+[    0.296231] LSM: cmdline ordering: apparmor (enabled)
+[    0.296659] LSM: cmdline ordering: tomoyo (enabled)
+[    0.297659] LSM: cmdline ordering: selinux (enabled)
+[    0.298659] LSM: cmdline ordering: smack (enabled)
+[    0.299309] LSM: exclusive chosen: apparmor
+[    0.299659] LSM: exclusive disabled: tomoyo
+[    0.300216] LSM: exclusive disabled: selinux
+[    0.300659] LSM: exclusive disabled: smack
+[    0.301208] LSM: initializing capability
+[    0.301659] LSM: initializing integrity
+[    0.302662] LSM: initializing yama
+[    0.303124] Yama: becoming mindful.
+[    0.303666] LSM: initializing loadpin
+[    0.304164] LoadPin: ready to pin (currently not enforcing)
+[    0.304660] LSM: initializing apparmor
+[    0.305179] AppArmor: AppArmor initialized
+
+Given that apparmor is listed first, its exclusivity disables the
+other exclusive LSMs, and initialization proceeds.
+
+So, this should work for all the cases we've got coming, as far as I can see! :)
+
+-Kees
+
+[1] In testing v5, I did discover one glitch in my "security="
+handling, which I've fixed locally now for v6.
+
+-- 
+Kees Cook
+Pixel Security
