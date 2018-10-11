@@ -3,49 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC71CC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CB0C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A6021470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC4020652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="meifHFW+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A6021470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHrGYDqR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC4020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730697AbeJKXKI (ORCPT
+        id S1730708AbeJKXKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41296 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:10:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:10:08 -0400
+        id S1726700AbeJKXKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:10:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E03721470;
-        Thu, 11 Oct 2018 15:42:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7959020652;
+        Thu, 11 Oct 2018 15:42:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272544;
-        bh=vlEI7C2xmgST6LlMa6vcZeBTmNCpFXHinT0DpnKRn6Q=;
+        s=default; t=1539272547;
+        bh=591hZPbRn9IaiHuzcSTuVXLXSXLS9sScyikbKELH9aM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=meifHFW+b8ZHGBHfaObwNwP/Rd7HRSo0ZQTtEhzpbBEFaZDWuXagpdGU4Zlpwd1/4
-         2xGPj7IIq8jNU9mmDa6fRc1E/EiGbecCdXxxz7GOhFUtaohE0rOf+9pg6RtYLP6u+W
-         ZzRHg5pzHzuCFHaXwAD+L+80KT47jFAezLZ9qbf8=
+        b=dHrGYDqRzjy4ptl/xz6nC/Dzih20PBqBTNFvrBzMqNmY3svbh/wUZov5WVEEVt9OH
+         /laZHI4u7rITnOXNLkRFNK0KdThr7cD7NTwQR3eIRPQjJFiC6LY9Esdz0B9Mk9tFHT
+         42Y3KkaziZAQF+z3Ixeww7+/IiYcfxRqcS5gcd/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.4 26/27] ath10k: fix scan crash due to incorrect length calculation
-Date:   Thu, 11 Oct 2018 17:35:13 +0200
-Message-Id: <20181011152535.288570689@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Loic <hackurx@opensec.fr>
+Subject: [PATCH 4.4 27/27] ebtables: arpreply: Add the standard target sanity check
+Date:   Thu, 11 Oct 2018 17:35:14 +0200
+Message-Id: <20181011152535.342308260@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
@@ -63,61 +62,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhi Chen <zhichen@codeaurora.org>
+From: Gao Feng <gfree.wind@vip.163.com>
 
-commit c8291988806407e02a01b4b15b4504eafbcc04e0 upstream.
+commit c953d63548207a085abcb12a15fefc8a11ffdf0a upstream.
 
-Length of WMI scan message was not calculated correctly. The allocated
-buffer was smaller than what we expected. So WMI message corrupted
-skb_info, which is at the end of skb->data. This fix takes TLV header
-into account even if the element is zero-length.
+The info->target comes from userspace and it would be used directly.
+So we need to add the sanity check to make sure it is a valid standard
+target, although the ebtables tool has already checked it. Kernel needs
+to validate anything coming from userspace.
 
-Crash log:
-  [49.629986] Unhandled kernel unaligned access[#1]:
-  [49.634932] CPU: 0 PID: 1176 Comm: logd Not tainted 4.4.60 #180
-  [49.641040] task: 83051460 ti: 8329c000 task.ti: 8329c000
-  [49.646608] $ 0   : 00000000 00000001 80984a80 00000000
-  [49.652038] $ 4   : 45259e89 8046d484 8046df30 8024ba70
-  [49.657468] $ 8   : 00000000 804cc4c0 00000001 20306320
-  [49.662898] $12   : 33322037 000110f2 00000000 31203930
-  [49.668327] $16   : 82792b40 80984a80 00000001 804207fc
-  [49.673757] $20   : 00000000 0000012c 00000040 80470000
-  [49.679186] $24   : 00000000 8024af7c
-  [49.684617] $28   : 8329c000 8329db88 00000001 802c58d0
-  [49.690046] Hi    : 00000000
-  [49.693022] Lo    : 453c0000
-  [49.696013] epc   : 800efae4 put_page+0x0/0x58
-  [49.700615] ra    : 802c58d0 skb_release_data+0x148/0x1d4
-  [49.706184] Status: 1000fc03 KERNEL EXL IE
-  [49.710531] Cause : 00800010 (ExcCode 04)
-  [49.714669] BadVA : 45259e89
-  [49.717644] PrId  : 00019374 (MIPS 24Kc)
+If the target is set as an evil value, it would break the ebtables
+and cause a panic. Because the non-standard target is treated as one
+offset.
 
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Brian Norris <briannorris@chromium.org>
+Now add one helper function ebt_invalid_target, and we would replace
+the macro INVALID_TARGET later.
+
+Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Loic <hackurx@opensec.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/netfilter_bridge/ebtables.h |    5 +++++
+ net/bridge/netfilter/ebt_arpreply.c       |    3 +++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -1459,10 +1459,10 @@ ath10k_wmi_tlv_op_gen_start_scan(struct
- 	bssid_len = arg->n_bssids * sizeof(struct wmi_mac_addr);
- 	ie_len = roundup(arg->ie_len, 4);
- 	len = (sizeof(*tlv) + sizeof(*cmd)) +
--	      (arg->n_channels ? sizeof(*tlv) + chan_len : 0) +
--	      (arg->n_ssids ? sizeof(*tlv) + ssid_len : 0) +
--	      (arg->n_bssids ? sizeof(*tlv) + bssid_len : 0) +
--	      (arg->ie_len ? sizeof(*tlv) + ie_len : 0);
-+	      sizeof(*tlv) + chan_len +
-+	      sizeof(*tlv) + ssid_len +
-+	      sizeof(*tlv) + bssid_len +
-+	      sizeof(*tlv) + ie_len;
+--- a/include/linux/netfilter_bridge/ebtables.h
++++ b/include/linux/netfilter_bridge/ebtables.h
+@@ -125,4 +125,9 @@ extern unsigned int ebt_do_table(struct
+ /* True if the target is not a standard target */
+ #define INVALID_TARGET (info->target < -NUM_STANDARD_TARGETS || info->target >= 0)
  
- 	skb = ath10k_wmi_alloc_skb(ar, len);
- 	if (!skb)
++static inline bool ebt_invalid_target(int target)
++{
++	return (target < -NUM_STANDARD_TARGETS || target >= 0);
++}
++
+ #endif
+--- a/net/bridge/netfilter/ebt_arpreply.c
++++ b/net/bridge/netfilter/ebt_arpreply.c
+@@ -67,6 +67,9 @@ static int ebt_arpreply_tg_check(const s
+ 	if (e->ethproto != htons(ETH_P_ARP) ||
+ 	    e->invflags & EBT_IPROTO)
+ 		return -EINVAL;
++	if (ebt_invalid_target(info->target))
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
 
 
