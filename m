@@ -7,58 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5ABC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1B9C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5F821477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732EC2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsuaJilH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5F821477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkVOqlWV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 732EC2147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731207AbeJKXMF (ORCPT
+        id S1731220AbeJKXMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:12:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:12:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730276AbeJKXME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:12:04 -0400
+        id S1730276AbeJKXMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:12:06 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE12421476;
-        Thu, 11 Oct 2018 15:44:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7721213A2;
+        Thu, 11 Oct 2018 15:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272659;
-        bh=lpyWlmdcyCa9jMLv93xanYkrt81uBdPEkDBQqUCzDfk=;
+        s=default; t=1539272662;
+        bh=gKurg/mzp6IKS/8dwzyrepC96vSrSxSKx9ZObcLnkDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KsuaJilHig4WxkJPSBxQK/9WlDEhAhxAUdPIjSJO3Sp4Zw7lIZztd7ZGoH6XgPlm5
-         JKQP2g8AU+uqmqtKKcgoUQ2s+q4/FoRNswOeRtorFgypb/DfVQCLpvYDM/dSv8aYkm
-         o2bVoQ9mTIe2x0RfbFmX7Q0JVtsFA8OAOjghS6kk=
+        b=KkVOqlWVYEzXhNG9JuiknATVzbJouEnx0pDFXV1L3XTzRexhJeqcUA5ESMLbp44wt
+         d8DfKGUP94v+J+t4+Xa0KPtGTEvXu6skDPdicEBds3H+ijG/tamoNL+WtQg8ztPvz+
+         HsIxYWBlWOxWu5/Jf/yoMzxRgAFBCpeBShtlOHvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rik van Riel <riel@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
         Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Subject: [PATCH 4.9 33/35] x86/fpu: Remove struct fpu::counter
-Date:   Thu, 11 Oct 2018 17:35:35 +0200
-Message-Id: <20181011152521.501493549@linuxfoundation.org>
+Subject: [PATCH 4.9 34/35] Revert "perf: sync up x86/.../cpufeatures.h"
+Date:   Thu, 11 Oct 2018 17:35:36 +0200
+Message-Id: <20181011152521.545425721@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -76,133 +62,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rik van Riel <riel@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 3913cc3507575273beb165a5e027a081913ed507 upstream.
+This reverts commit f09a7b0eead737b33d940bf5c2509ca1441e9590
 
-With the lazy FPU code gone, we no longer use the counter field
-in struct fpu for anything. Get rid it.
+Daniel writes:
+	Because the modification in this patch actually belongs to
+	e63650840e8b ("x86/fpu: Finish excising 'eagerfpu'")
 
-Signed-off-by: Rik van Riel <riel@redhat.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-6-git-send-email-riel@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Reported-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/fpu/internal.h |    3 ---
- arch/x86/include/asm/fpu/types.h    |   11 -----------
- arch/x86/include/asm/trace/fpu.h    |    5 +----
- arch/x86/kernel/fpu/core.c          |    3 ---
- 4 files changed, 1 insertion(+), 21 deletions(-)
+ tools/arch/x86/include/asm/cpufeatures.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -581,16 +581,13 @@ switch_fpu_prepare(struct fpu *old_fpu,
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -104,7 +104,7 @@
+ #define X86_FEATURE_EXTD_APICID	( 3*32+26) /* has extended APICID (8 bits) */
+ #define X86_FEATURE_AMD_DCM     ( 3*32+27) /* multi-node processor */
+ #define X86_FEATURE_APERFMPERF	( 3*32+28) /* APERFMPERF */
+-/* free, was #define X86_FEATURE_EAGER_FPU	( 3*32+29) * "eagerfpu" Non lazy FPU restore */
++#define X86_FEATURE_EAGER_FPU	( 3*32+29) /* "eagerfpu" Non lazy FPU restore */
+ #define X86_FEATURE_NONSTOP_TSC_S3 ( 3*32+30) /* TSC doesn't stop in S3 state */
  
- 		/* Don't change CR0.TS if we just switch! */
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			__fpregs_activate(new_fpu);
- 			trace_x86_fpu_regs_activated(new_fpu);
- 			prefetch(&new_fpu->state);
- 		}
- 	} else {
--		old_fpu->counter = 0;
- 		old_fpu->last_cpu = -1;
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			if (fpu_want_lazy_restore(new_fpu, cpu))
- 				fpu.preload = 0;
- 			else
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -322,17 +322,6 @@ struct fpu {
- 	unsigned char			fpregs_active;
- 
- 	/*
--	 * @counter:
--	 *
--	 * This counter contains the number of consecutive context switches
--	 * during which the FPU stays used. If this is over a threshold, the
--	 * lazy FPU restore logic becomes eager, to save the trap overhead.
--	 * This is an unsigned char so that after 256 iterations the counter
--	 * wraps and the context switch behavior turns lazy again; this is to
--	 * deal with bursty apps that only use the FPU for a short time:
--	 */
--	unsigned char			counter;
--	/*
- 	 * @state:
- 	 *
- 	 * In-memory copy of all FPU registers that we save/restore
---- a/arch/x86/include/asm/trace/fpu.h
-+++ b/arch/x86/include/asm/trace/fpu.h
-@@ -14,7 +14,6 @@ DECLARE_EVENT_CLASS(x86_fpu,
- 		__field(struct fpu *, fpu)
- 		__field(bool, fpregs_active)
- 		__field(bool, fpstate_active)
--		__field(int, counter)
- 		__field(u64, xfeatures)
- 		__field(u64, xcomp_bv)
- 		),
-@@ -23,17 +22,15 @@ DECLARE_EVENT_CLASS(x86_fpu,
- 		__entry->fpu		= fpu;
- 		__entry->fpregs_active	= fpu->fpregs_active;
- 		__entry->fpstate_active	= fpu->fpstate_active;
--		__entry->counter	= fpu->counter;
- 		if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
- 			__entry->xfeatures = fpu->state.xsave.header.xfeatures;
- 			__entry->xcomp_bv  = fpu->state.xsave.header.xcomp_bv;
- 		}
- 	),
--	TP_printk("x86/fpu: %p fpregs_active: %d fpstate_active: %d counter: %d xfeatures: %llx xcomp_bv: %llx",
-+	TP_printk("x86/fpu: %p fpregs_active: %d fpstate_active: %d xfeatures: %llx xcomp_bv: %llx",
- 			__entry->fpu,
- 			__entry->fpregs_active,
- 			__entry->fpstate_active,
--			__entry->counter,
- 			__entry->xfeatures,
- 			__entry->xcomp_bv
- 	)
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -225,7 +225,6 @@ EXPORT_SYMBOL_GPL(fpstate_init);
- 
- int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
- {
--	dst_fpu->counter = 0;
- 	dst_fpu->fpregs_active = 0;
- 	dst_fpu->last_cpu = -1;
- 
-@@ -433,7 +432,6 @@ void fpu__restore(struct fpu *fpu)
- 	trace_x86_fpu_before_restore(fpu);
- 	fpregs_activate(fpu);
- 	copy_kernel_to_fpregs(&fpu->state);
--	fpu->counter++;
- 	trace_x86_fpu_after_restore(fpu);
- 	kernel_fpu_enable();
- }
-@@ -451,7 +449,6 @@ EXPORT_SYMBOL_GPL(fpu__restore);
- void fpu__drop(struct fpu *fpu)
- {
- 	preempt_disable();
--	fpu->counter = 0;
- 
- 	if (fpu->fpregs_active) {
- 		/* Ignore delayed exceptions from user space */
+ /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
 
 
