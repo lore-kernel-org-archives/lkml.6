@@ -2,219 +2,115 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525CBC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A691C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087572077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 297722077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QZd0RblI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087572077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNbFTmJL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297722077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeJKTpp (ORCPT
+        id S1727577AbeJKTuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:45:45 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59568 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbeJKTpo (ORCPT
+        Thu, 11 Oct 2018 15:50:37 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37736 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeJKTuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:45:44 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9BCHUuA076102;
-        Thu, 11 Oct 2018 07:17:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539260250;
-        bh=j//5e2/ivqAbvkQMcuvr4fOPPZQj4y66i9vSKKzYN0k=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=QZd0RblIM5nyT18oQb/NmlGOM8jr+VEVZZB7Fxye0QKBn1nAIn0OvlOD3aXzC/nM8
-         +fMG+ml8ZN+4aU+8lfDXLwbnthEl3WHko9icAezaBwI9ofIfIPy4CLofEH08rikn16
-         kkYXDo/o55sUmq8jp75Jah+P304/pAyKJxZkYMMA=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BCHUhr014300;
-        Thu, 11 Oct 2018 07:17:30 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 11
- Oct 2018 07:17:30 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 11 Oct 2018 07:17:30 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BCHQRo005746;
-        Thu, 11 Oct 2018 07:17:27 -0500
-Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
- <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-CC:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <9746eba6-63f5-feaf-e63f-7e0ea7638942@ti.com>
-Date:   Thu, 11 Oct 2018 17:48:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 15:50:37 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 185-v6so9242656wmt.2;
+        Thu, 11 Oct 2018 05:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=VTgrN83eV44trcz7AoCP3x7j0C0ZjcixD+eBwwdA9lE=;
+        b=ZNbFTmJL7kq10MnjdGGGAGYilLXpRfIRizmuSEgqVTMEIWWdPkDIhXfhuqxL/dO5LK
+         bLzmLpn4HUt8cMRkwSYLQCHhQBP6CMGLlR+EcgG8B2auZP2H7sTTp1P/ZX7RY3eDu6bW
+         wVIm/HouFxyObJSpp44k6dibnRiuE6R+d1Nb6U0fp6kAdU18JavYwK/UA2ZB9I10Fpye
+         Zn/7WTyBe0ruEEZg81dEuG+5gyhur1YeYsNaJyP2lohE+VFAAdSuU66feTRRkC7iLDp4
+         WXQF4nws0LOS5Ex/xZ2yFwwQ3Xx0F/J0BKH/pTeJdtC9K+EOQYUIStGjFzaWbUMR5PBk
+         u+pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=VTgrN83eV44trcz7AoCP3x7j0C0ZjcixD+eBwwdA9lE=;
+        b=DxnNo+vjO0caQt6EABgNenMDhC3r4cVMQ3JsTq1fOUxqrGPxoXMGoD8CFC55QAF2El
+         4WKH4Pn+QkJref75Uqil8JY/Qw8G/i0qvrzp7SnpK7/jSK9OuvwmZ9Ss+UhHx3LCpN84
+         Wo8I1TEFwV67GVF/aaUZ1q1R2fARtiWEPOZpin8gv8Gkr7Wzp0tgT2RDxRjEzc4LYO/f
+         Heh06WEmOSB7oln5Va6QhiOztd7CFNdCBCZ06STvdq1C6fEDHwb5WHLookUNHfr9hrUd
+         cL5XMtHtzlP/Hnsdwg2L9pMSnzKvHGFX4P7awKGU3FbUkgs2mw755iE4Gl2yA4sPrCE3
+         wKYQ==
+X-Gm-Message-State: ABuFfoigYue1xUeaDgyM4NHyb0lBfGo/VZTSknPKx63RpZopm9U1hCqf
+        ZG5JoJF/EezkhomJQUHyT6w=
+X-Google-Smtp-Source: ACcGV63Px9Ja8FSmFyAIWh/O6CT4GVfQJkFVWZTmIBQ6tEuQDcgfMS3dUR39xCAe8up2OZ6HWAYCRw==
+X-Received: by 2002:a1c:2dc7:: with SMTP id t190-v6mr1483232wmt.31.1539260616767;
+        Thu, 11 Oct 2018 05:23:36 -0700 (PDT)
+Received: from [172.16.1.10] (host-89-243-172-161.as13285.net. [89.243.172.161])
+        by smtp.gmail.com with ESMTPSA id y64-v6sm10540993wmg.28.2018.10.11.05.23.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 05:23:35 -0700 (PDT)
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE
+ [ver #12]
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+References: <16207.1539249451@warthog.procyon.org.uk>
+ <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+ <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
+ <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
+ <6533.1539260096@warthog.procyon.org.uk>
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Message-ID: <92bfc752-100b-619d-f1c9-b1ea93244ab4@gmail.com>
+Date:   Thu, 11 Oct 2018 13:23:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <6533.1539260096@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 11/10/2018 13:14, David Howells wrote:
+> David Howells <dhowells@redhat.com> wrote:
+>
+>> The reason that you can do this with open_tree()/move_mount() is that it
+>> allows you to create a mount tree (OPEN_TREE_CLONE) that has no namespace
+>> assignment, pass it through the namespace switch and then attach it inside the
+>> child namespace.  The cross-namespace checks in do_move_mount() are bypassed
+>> because the root of the newly-cloned mount tree doesn't have one.
+> It's worse than that.  The apparently disconnected tree given you by
+> open_tree(OPEN_TREE_CLONE) is still subject to modification by outside
+> forces.  All it takes is one shared object within that tree.
+>
+> So I do wonder if it's possible to form a ring, even in an upstream kernel, by
+> using the propagation mechanism to push through an nsfs mount into itself,
+> possibly with a layer of indirection (ie. having two mutually-referential
+> namespaces).
+>
+> David
 
-On Friday 05 October 2018 12:23 PM, Ricardo Ribalda Delgado wrote:
-> Current code assumes that the direction is input if direction_input
-> function is set.
-> This might not be the case on GPIOs with programmable direction.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Upstream does cover the mount propagation case, by simply never 
+propagating mounts of mount NS files.  See commit 4ce5d2b1a8fd "vfs: 
+Don't copy mount bind mounts of /proc/<pid>/ns/mnt between namespaces" / 
+https://unix.stackexchange.com/questions/473717/what-code-prevents-mount-namespace-loops-in-a-more-complex-case-involving-mount-propagation 
 
-This patch causes oops on TI's AM335x-ICEv2 board on next-20181011:
 
-[    0.563797] OMAP GPIO hardware version 0.1
-[    0.577589] Unable to handle kernel NULL pointer dereference at virtual address 000002b8
-[    0.586127] pgd = (ptrval)
-[    0.588934] [000002b8] *pgd=00000000
-[    0.592732] Internal error: Oops: 5 [#1] SMP ARM
-[    0.597499] Modules linked in:
-[    0.600668] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7-next-20181011 #70
-[    0.608466] Hardware name: Generic AM33XX (Flattened Device Tree)
-[    0.614770] PC is at gpiod_hog+0x30/0x154
-[    0.618913] LR is at of_gpiochip_add+0x2fc/0x4e4
-[    0.623671] pc : [<c055213c>]    lr : [<c0553ff0>]    psr: 60000013
-[    0.630130] sp : ce09bba0  ip : cdf08095  fp : 00000000
-[    0.635516] r10: c0bfcf24  r9 : 00000000  r8 : 00000007
-[    0.640902] r7 : cdf08088  r6 : 00000000  r5 : 00000000  r4 : ce191e40
-[    0.647630] r3 : 00000000  r2 : 00000000  r1 : cdf08088  r0 : ce191e40
-[    0.654361] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    0.661718] Control: 10c5387d  Table: 80004019  DAC: 00000051
-[    0.667642] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-[...]
-[    0.973593] [<c055213c>] (gpiod_hog) from [<c0553ff0>] (of_gpiochip_add+0x2fc/0x4e4)
-[    0.981588] [<c0553ff0>] (of_gpiochip_add) from [<c05528a0>] (gpiochip_add_data_with_key+
-0x5a0/0x990)
-[    0.991102] [<c05528a0>] (gpiochip_add_data_with_key) from [<c0556d8c>] (omap_gpio_probe+
-0x37c/0x75c)
-[    1.000613] [<c0556d8c>] (omap_gpio_probe) from [<c06049c0>] (platform_drv_probe+0x48/0x9
-8)
-[    1.009237] [<c06049c0>] (platform_drv_probe) from [<c0602a04>] (really_probe+0x220/0x2d4
-)
-[    1.017764] [<c0602a04>] (really_probe) from [<c0602c18>] (driver_probe_device+0x5c/0x164
-)
-[    1.026293] [<c0602c18>] (driver_probe_device) from [<c0600d44>] (bus_for_each_drv+0x54/0
-xb8)
-[    1.035090] [<c0600d44>] (bus_for_each_drv) from [<c060276c>] (__device_attach+0xcc/0x13c
-)
-[    1.043615] [<c060276c>] (__device_attach) from [<c0601b88>] (bus_probe_device+0x88/0x90)
-[    1.052051] [<c0601b88>] (bus_probe_device) from [<c05fea18>] (device_add+0x3d8/0x608)
-[    1.060223] [<c05fea18>] (device_add) from [<c07343b8>] (of_platform_device_create_pdata+
-0x8c/0xc0)
-[    1.069552] [<c07343b8>] (of_platform_device_create_pdata) from [<c07345c4>] (of_platform
-_bus_create+0x190/0x228)
-[    1.080134] [<c07345c4>] (of_platform_bus_create) from [<c0734610>] (of_platform_bus_crea
-te+0x1dc/0x228)
-[    1.089909] [<c0734610>] (of_platform_bus_create) from [<c073478c>] (of_platform_populate
-+0x5c/0xac)
-[    1.099333] [<c073478c>] (of_platform_populate) from [<c0d12614>] (pdata_quirks_init+0x6c
-/0x90)
-[    1.108306] [<c0d12614>] (pdata_quirks_init) from [<c0d12144>] (omap_generic_init+0xc/0x1
-8)
-[    1.116933] [<c0d12144>] (omap_generic_init) from [<c0d03eb0>] (customize_machine+0x1c/0x
-30)
-[    1.125645] [<c0d03eb0>] (customize_machine) from [<c01030e4>] (do_one_initcall+0x80/0x31
-0)
-[    1.134265] [<c01030e4>] (do_one_initcall) from [<c0d01244>] (kernel_init_freeable+0x3c4/
-0x4ac)
-[    1.143238] [<c0d01244>] (kernel_init_freeable) from [<c0900f28>] (kernel_init+0x8/0x114)
-[    1.151673] [<c0900f28>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-[    1.159475] Exception stack(0xce09bfb0 to 0xce09bff8)
-[    1.164686] bfa0:                                     00000000 00000000 00000000 00000000
-[    1.173119] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.181551] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    1.188378] Code: 0a000002 e3530000 01a09003 159392b4 (e59352b8) 
-[    1.194766] ---[ end trace d5c17cd400f50a22 ]---
-[    1.199606] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-[    1.199606] 
-[    1.209052] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000
-00b
-[    1.209052]  ]---
-[    3.172292] random: fast init done
-
-Full log: https://pastebin.ubuntu.com/p/jG8nN6CTBP/
-
-Reverting this patch from linux-next allows to boot to prompt.
-
-Regards
-Vignesh
-
-> ---
->  drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
->  1 file changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 907019b67a58..e016b22658ff 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1349,20 +1349,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->  
->  	spin_unlock_irqrestore(&gpio_lock, flags);
->  
-> -	for (i = 0; i < chip->ngpio; i++) {
-> -		struct gpio_desc *desc = &gdev->descs[i];
-> -
-> -		desc->gdev = gdev;
-> -
-> -		/* REVISIT: most hardware initializes GPIOs as inputs (often
-> -		 * with pullups enabled) so power usage is minimized. Linux
-> -		 * code should set the gpio direction first thing; but until
-> -		 * it does, and in case chip->get_direction is not set, we may
-> -		 * expose the wrong direction in sysfs.
-> -		 */
-> -		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-> -	}
-> -
->  #ifdef CONFIG_PINCTRL
->  	INIT_LIST_HEAD(&gdev->pin_ranges);
->  #endif
-> @@ -1391,6 +1377,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->  	if (status)
->  		goto err_remove_chip;
->  
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		struct gpio_desc *desc = &gdev->descs[i];
-> +
-> +		desc->gdev = gdev;
-> +
-> +		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-> +			desc->flags = !chip->get_direction(chip, i) ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +		else
-> +			desc->flags = !chip->direction_input ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +	}
-> +
->  	acpi_gpiochip_add(chip);
->  
->  	machine_gpiochip_add(chip);
-> 
 
