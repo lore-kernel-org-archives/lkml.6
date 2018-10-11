@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9E1C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55804C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 024D821477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D62021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rK0oamdX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 024D821477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v314nLDt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D62021470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730185AbeJKXII (ORCPT
+        id S1730196AbeJKXIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38274 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:07 -0400
+        id S1726647AbeJKXIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92672213A2;
-        Thu, 11 Oct 2018 15:40:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39E2020652;
+        Thu, 11 Oct 2018 15:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272423;
-        bh=MHpZXCPdT0DGLNVV34gttrAsqSInitRf7w4nORNsBZg=;
+        s=default; t=1539272425;
+        bh=GzDOQD49z4Jn1BMlTWl1l9Si2YwvOciw7ev0k4aUrzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rK0oamdXv9vtLH649YD5WLGzbclUP+gbeLDCPv8NY0enhIYHxeM9aZAJlv6pKEmDr
-         ol/+TfoPcMfkyofG+AvbvWQgpWkMz+HJeOzBVPKqlI/EOTkChLWmdXLkTSOjXzIeoq
-         /AMfAtD9JDmzzLRWE7QYbCtYMrz5ImH7gXehm8/s=
+        b=v314nLDtc0lp2kccleGtgbZcvluAjN6v6mnPAK7HMjCstdCDUo8C2YO1JrRZ2ifL6
+         /d/fe+uA1RE/oX99zJzTihYDVZ/wfsC6plekUSMpRuIL17N8Pne2kt0VWVqbFXXY87
+         qTXo3WOzPS/MQJkGov2mjK3gwi6beUGt38bBVjJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 3.18 102/120] x86/vdso: Fix asm constraints on vDSO syscall fallbacks
-Date:   Thu, 11 Oct 2018 17:34:43 +0200
-Message-Id: <20181011152554.001800946@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 103/120] x86/vdso: Fix vDSO syscall fallback asm constraint regression
+Date:   Thu, 11 Oct 2018 17:34:44 +0200
+Message-Id: <20181011152554.038874365@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,105 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit 715bd9d12f84d8f5cc8ad21d888f9bc304a8eb0b upstream.
+commit 02e425668f5c9deb42787d10001a3b605993ad15 upstream.
 
-The syscall fallbacks in the vDSO have incorrect asm constraints.
-They are not marked as writing to their outputs -- instead, they are
-marked as clobbering "memory", which is useless.  In particular, gcc
-is smart enough to know that the timespec parameter hasn't escaped,
-so a memory clobber doesn't clobber it.  And passing a pointer as an
-asm *input* does not tell gcc that the pointed-to value is changed.
+When I added the missing memory outputs, I failed to update the
+index of the first argument (ebx) on 32-bit builds, which broke the
+fallbacks.  Somehow I must have screwed up my testing or gotten
+lucky.
 
-Add in the fact that the asm instructions weren't volatile, and gcc
-was free to omit them entirely unless their sole output (the return
-value) is used.  Which it is (phew!), but that stops happening with
-some upcoming patches.
+Add another test to cover gettimeofday() as well.
 
-As a trivial example, the following code:
-
-void test_fallback(struct timespec *ts)
-{
-	vdso_fallback_gettime(CLOCK_MONOTONIC, ts);
-}
-
-compiles to:
-
-00000000000000c0 <test_fallback>:
-  c0:   c3                      retq
-
-To add insult to injury, the RCX and R11 clobbers on 64-bit
-builds were missing.
-
-The "memory" clobber is also unnecessary -- no ordering with respect to
-other memory operations is needed, but that's going to be fixed in a
-separate not-for-stable patch.
-
-Fixes: 2aae950b21e4 ("x86_64: Add vDSO for x86-64 with gettimeofday/clock_gettime/getcpu")
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/2c0231690551989d2fafa60ed0e7b5cc8b403908.1538422295.git.luto@kernel.org
+Fixes: 715bd9d12f84 ("x86/vdso: Fix asm constraints on vDSO syscall fallbacks")
+Link: http://lkml.kernel.org/r/21bd45ab04b6d838278fa5bebfa9163eceffa13c.1538608971.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/vdso/vclock_gettime.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ arch/x86/vdso/vclock_gettime.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 --- a/arch/x86/vdso/vclock_gettime.c
 +++ b/arch/x86/vdso/vclock_gettime.c
-@@ -46,8 +46,9 @@ static notrace cycle_t vread_hpet(void)
- notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
- {
- 	long ret;
--	asm("syscall" : "=a" (ret) :
--	    "0" (__NR_clock_gettime), "D" (clock), "S" (ts) : "memory");
-+	asm ("syscall" : "=a" (ret), "=m" (*ts) :
-+	     "0" (__NR_clock_gettime), "D" (clock), "S" (ts) :
-+	     "memory", "rcx", "r11");
- 	return ret;
- }
+@@ -140,11 +140,11 @@ notrace static long vdso_fallback_gettim
  
-@@ -55,8 +56,9 @@ notrace static long vdso_fallback_gtod(s
- {
- 	long ret;
- 
--	asm("syscall" : "=a" (ret) :
--	    "0" (__NR_gettimeofday), "D" (tv), "S" (tz) : "memory");
-+	asm ("syscall" : "=a" (ret), "=m" (*tv), "=m" (*tz) :
-+	     "0" (__NR_gettimeofday), "D" (tv), "S" (tz) :
-+	     "memory", "rcx", "r11");
- 	return ret;
- }
- 
-@@ -136,12 +138,12 @@ notrace static long vdso_fallback_gettim
- {
- 	long ret;
- 
--	asm(
-+	asm (
+ 	asm (
  		"mov %%ebx, %%edx \n"
- 		"mov %2, %%ebx \n"
+-		"mov %2, %%ebx \n"
++		"mov %[clock], %%ebx \n"
  		"call __kernel_vsyscall \n"
  		"mov %%edx, %%ebx \n"
--		: "=a" (ret)
-+		: "=a" (ret), "=m" (*ts)
- 		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
+ 		: "=a" (ret), "=m" (*ts)
+-		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
++		: "0" (__NR_clock_gettime), [clock] "g" (clock), "c" (ts)
  		: "memory", "edx");
  	return ret;
-@@ -151,12 +153,12 @@ notrace static long vdso_fallback_gtod(s
- {
- 	long ret;
+ }
+@@ -155,11 +155,11 @@ notrace static long vdso_fallback_gtod(s
  
--	asm(
-+	asm (
+ 	asm (
  		"mov %%ebx, %%edx \n"
- 		"mov %2, %%ebx \n"
+-		"mov %2, %%ebx \n"
++		"mov %[tv], %%ebx \n"
  		"call __kernel_vsyscall \n"
  		"mov %%edx, %%ebx \n"
--		: "=a" (ret)
-+		: "=a" (ret), "=m" (*tv), "=m" (*tz)
- 		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
+ 		: "=a" (ret), "=m" (*tv), "=m" (*tz)
+-		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
++		: "0" (__NR_gettimeofday), [tv] "g" (tv), "c" (tz)
  		: "memory", "edx");
  	return ret;
+ }
 
 
