@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CE4C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A848C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B15F2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3422098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsboCTFt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B15F2087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnH1ebu8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3422098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbeJKXHm (ORCPT
+        id S1730079AbeJKXHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:07:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:07:41 -0400
+        id S1730065AbeJKXHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:07:44 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A5132087A;
-        Thu, 11 Oct 2018 15:39:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28B0120652;
+        Thu, 11 Oct 2018 15:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272397;
-        bh=Izrj1TgB6gfMo0HiWBNb8oPygD2eX48HOO9lBLg3CSM=;
+        s=default; t=1539272400;
+        bh=aD79tIOLbZOdrG9sC9mNUp/+zkx92qS8LuvAc4yZLww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MsboCTFt7LCHMcPfYpAzyPXcYOApMextST07OgzjXf9lKtY/+8oIZ4OCW5eBSEph1
-         3788tUvQVEoysIKzQYq9kSZ6yDmiRoKBkbrNxFSx1cIFMO3Jkbgpebw1oA37sj9AS/
-         l2YymujI0Z6bphS9GFRvhW24zBDp9EAI4PkoQUCo=
+        b=DnH1ebu8MYqt3nJlt0AnJyRx+TvYIdZcHpcnGdvw+hiHIAg/PG+dGwrTwB5Lq6skI
+         Pz5TttFEvbsx/MhcuctG8Y8No6aA91DMF+ZGEd2ic4SCbHWsYLR/BBFA81QrLzAXYg
+         8IeUwDNKsZ+ihyBuFqLFk5E4q9SKDw0YzqjxqrqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joshua Abraham <j.abraham1776@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 094/120] xen: fix GCC warning and remove duplicate EVTCHN_ROW/EVTCHN_COL usage
-Date:   Thu, 11 Oct 2018 17:34:35 +0200
-Message-Id: <20181011152553.688464158@linuxfoundation.org>
+        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
+        Paulo Alcantara <palcantara@suse.deR>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 3.18 095/120] smb2: fix missing files in root share directory listing
+Date:   Thu, 11 Oct 2018 17:34:36 +0200
+Message-Id: <20181011152553.727880534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,34 +64,175 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Abraham <j.abraham1776@gmail.com>
+From: Aurelien Aptel <aaptel@suse.com>
 
-[ Upstream commit 4dca864b59dd150a221730775e2f21f49779c135 ]
+commit 0595751f267994c3c7027377058e4185b3a28e75 upstream.
 
-This patch removes duplicate macro useage in events_base.c.
+When mounting a Windows share that is the root of a drive (eg. C$)
+the server does not return . and .. directory entries. This results in
+the smb2 code path erroneously skipping the 2 first entries.
 
-It also fixes gcc warning:
-variable ‘col’ set but not used [-Wunused-but-set-variable]
+Pseudo-code of the readdir() code path:
 
-Signed-off-by: Joshua Abraham <j.abraham1776@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+cifs_readdir(struct file, struct dir_context)
+    initiate_cifs_search            <-- if no reponse cached yet
+        server->ops->query_dir_first
+
+    dir_emit_dots
+        dir_emit                    <-- adds "." and ".." if we're at pos=0
+
+    find_cifs_entry
+        initiate_cifs_search        <-- if pos < start of current response
+                                         (restart search)
+        server->ops->query_dir_next <-- if pos > end of current response
+                                         (fetch next search res)
+
+    for(...)                        <-- loops over cur response entries
+                                          starting at pos
+        cifs_filldir                <-- skip . and .., emit entry
+            cifs_fill_dirent
+            dir_emit
+	pos++
+
+A) dir_emit_dots() always adds . & ..
+   and sets the current dir pos to 2 (0 and 1 are done).
+
+Therefore we always want the index_to_find to be 2 regardless of if
+the response has . and ..
+
+B) smb1 code initializes index_of_last_entry with a +2 offset
+
+  in cifssmb.c CIFSFindFirst():
+		psrch_inf->index_of_last_entry = 2 /* skip . and .. */ +
+			psrch_inf->entries_in_buffer;
+
+Later in find_cifs_entry() we want to find the next dir entry at pos=2
+as a result of (A)
+
+	first_entry_in_buffer = cfile->srch_inf.index_of_last_entry -
+					cfile->srch_inf.entries_in_buffer;
+
+This var is the dir pos that the first entry in the buffer will
+have therefore it must be 2 in the first call.
+
+If we don't offset index_of_last_entry by 2 (like in (B)),
+first_entry_in_buffer=0 but we were instructed to get pos=2 so this
+code in find_cifs_entry() skips the 2 first which is ok for non-root
+shares, as it skips . and .. from the response but is not ok for root
+shares where the 2 first are actual files
+
+		pos_in_buf = index_to_find - first_entry_in_buffer;
+                // pos_in_buf=2
+		// we skip 2 first response entries :(
+		for (i = 0; (i < (pos_in_buf)) && (cur_ent != NULL); i++) {
+			/* go entry by entry figuring out which is first */
+			cur_ent = nxt_dir_entry(cur_ent, end_of_smb,
+						cfile->srch_inf.info_level);
+		}
+
+C) cifs_filldir() skips . and .. so we can safely ignore them for now.
+
+Sample program:
+
+int main(int argc, char **argv)
+{
+	const char *path = argc >= 2 ? argv[1] : ".";
+	DIR *dh;
+	struct dirent *de;
+
+	printf("listing path <%s>\n", path);
+	dh = opendir(path);
+	if (!dh) {
+		printf("opendir error %d\n", errno);
+		return 1;
+	}
+
+	while (1) {
+		de = readdir(dh);
+		if (!de) {
+			if (errno) {
+				printf("readdir error %d\n", errno);
+				return 1;
+			}
+			printf("end of listing\n");
+			break;
+		}
+		printf("off=%lu <%s>\n", de->d_off, de->d_name);
+	}
+
+	return 0;
+}
+
+Before the fix with SMB1 on root shares:
+
+<.>            off=1
+<..>           off=2
+<$Recycle.Bin> off=3
+<bootmgr>      off=4
+
+and on non-root shares:
+
+<.>    off=1
+<..>   off=4  <-- after adding .., the offsets jumps to +2 because
+<2536> off=5       we skipped . and .. from response buffer (C)
+<411>  off=6       but still incremented pos
+<file> off=7
+<fsx>  off=8
+
+Therefore the fix for smb2 is to mimic smb1 behaviour and offset the
+index_of_last_entry by 2.
+
+Test results comparing smb1 and smb2 before/after the fix on root
+share, non-root shares and on large directories (ie. multi-response
+dir listing):
+
+PRE FIX
+=======
+pre-1-root VS pre-2-root:
+        ERR pre-2-root is missing [bootmgr, $Recycle.Bin]
+pre-1-nonroot VS pre-2-nonroot:
+        OK~ same files, same order, different offsets
+pre-1-nonroot-large VS pre-2-nonroot-large:
+        OK~ same files, same order, different offsets
+
+POST FIX
+========
+post-1-root VS post-2-root:
+        OK same files, same order, same offsets
+post-1-nonroot VS post-2-nonroot:
+        OK same files, same order, same offsets
+post-1-nonroot-large VS post-2-nonroot-large:
+        OK same files, same order, same offsets
+
+REGRESSION?
+===========
+pre-1-root VS post-1-root:
+        OK same files, same order, same offsets
+pre-1-nonroot VS post-1-nonroot:
+        OK same files, same order, same offsets
+
+BugLink: https://bugzilla.samba.org/show_bug.cgi?id=13107
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Paulo Alcantara <palcantara@suse.deR>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/xen/events/events_base.c |    2 +-
+ fs/cifs/smb2ops.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -138,7 +138,7 @@ static int set_evtchn_to_irq(unsigned ev
- 		clear_evtchn_to_irq_row(row);
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -847,7 +847,7 @@ smb2_query_dir_first(const unsigned int
  	}
  
--	evtchn_to_irq[EVTCHN_ROW(evtchn)][EVTCHN_COL(evtchn)] = irq;
-+	evtchn_to_irq[row][col] = irq;
- 	return 0;
- }
+ 	srch_inf->entries_in_buffer = 0;
+-	srch_inf->index_of_last_entry = 0;
++	srch_inf->index_of_last_entry = 2;
  
+ 	rc = SMB2_query_directory(xid, tcon, fid->persistent_fid,
+ 				  fid->volatile_fid, 0, srch_inf);
 
 
