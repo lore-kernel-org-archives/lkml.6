@@ -2,154 +2,260 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13535C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA667C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB02C213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 797572087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:17:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C658Mv4p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB02C213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ek7tWl87"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797572087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbeJKWnt (ORCPT
+        id S1727638AbeJKWpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:43:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbeJKWnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:43:49 -0400
-Received: from localhost (unknown [204.56.7.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CA7E2087A;
-        Thu, 11 Oct 2018 15:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539270972;
-        bh=DptqWW1WxEbR39mwz5GXwHw+TiQ0F9ApQDa3GVdhhYo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C658Mv4pSllGaggmZww19aUbrdj8nngEEdwGId+nmMJWtd7P59XO4181r4yD54u4o
-         v8r2R+BDJP4Tt0eL2Tv1r17TzE+17RmiQVu7Jm+zAG+a/1gW86lbXKX5Nol0ktjiuX
-         eKnoAqMAf0sYWn1rt9bkfNkkq7h4UBxtDuyjcVQ8=
-Date:   Thu, 11 Oct 2018 10:16:10 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dongdong Liu <liudongdong3@huawei.com>
-Cc:     "Derrick, Jonathan" <jonathan.derrick@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "okaya@kernel.org" <okaya@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "hch@lst.de" <hch@lst.de>, "lukas@wunner.de" <lukas@wunner.de>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "poza@codeaurora.org" <poza@codeaurora.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>
-Subject: Re: [PATCH] PCI/portdrv: Enable error reporting on managed ports
-Message-ID: <20181011151610.GM5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
- <20181009175632.GB5906@bhelgaas-glaptop.roam.corp.google.com>
- <1539114641.8364.34.camel@intel.com>
- <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
- <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
+        Thu, 11 Oct 2018 18:45:13 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34372 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726235AbeJKWpN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 18:45:13 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w9BFEj8W007418
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:17:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=cZHL6nJcHJum6iBbEGgEVuvikLdK/OKVUPg///O9aiE=;
+ b=ek7tWl87OfAruQ23SYoXvGpLJUCSRsaaRymWyG5Cb/zCmjPmhxMZS1A0YdNhzpxAokhz
+ /VDUOigDhRs5ngFOGUuAlmDBtSMchgNS7MfVtO6fBWUQJZ+BKWQ8axP1IRIt24ZW9qzR
+ ZImzBTqE6VmtNPkyqTD3E4DNvgSuf75pVyw= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2n25twgpe1-7
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:17:35 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.20) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 11 Oct
+ 2018 08:17:17 -0700
+Received: by devvm1658.frc1.facebook.com (Postfix, from userid 119756)  id
+ 1DFF71A301CF; Thu, 11 Oct 2018 08:17:07 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Dan Schatzberg <dschatzberg@fb.com>
+Smtp-Origin-Hostname: devvm1658.frc1.facebook.com
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     <tj@kernel.org>, <kernel-team@fb.com>,
+        Dan Schatzberg <dschatzberg@fb.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: frc1c23
+Subject: [PATCH v2] fuse: enable caching of symlinks
+Date:   Thu, 11 Oct 2018 08:17:00 -0700
+Message-ID: <20181011151700.80485-1-dschatzberg@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 07:58:47PM +0800, Dongdong Liu wrote:
-> Hi Bjorn
-> 
-> > commit 15a6711649915ca3e9d1086dc88ff4b616b99aac
-> > Author: Bjorn Helgaas <bhelgaas@google.com>
-> > Date:   Tue Oct 9 17:25:25 2018 -0500
-> > 
-> >     PCI/AER: Enable reporting for ports enumerated after AER driver registration
-> > 
-> >     Previously we enabled AER error reporting only for Switch Ports that were
-> >     enumerated prior to registering the AER service driver.  Switch Ports
-> >     enumerated after AER driver registration were left with error reporting
-> >     disabled.
-> > 
-> >     A common order, which works correctly, is that we enumerate devices before
-> >     registering portdrv and the AER driver:
-> > 
-> >       - Enumerate all the devices at boot-time
-> > 
-> >       - Register portdrv and bind it to all Root Ports and Switch Ports, which
-> >         disables error reporting for these Ports
-> > 
-> >       - Register AER service driver and bind it to all Root Ports, which
-> >         enables error reporting for the Root Ports and any Switch Ports below
-> >         them
-> > 
-> >     But if we enumerate devices *after* registering portdrv and the AER driver,
-> >     e.g., if a host bridge driver is loaded as a module, error reporting is not
-> >     enabled correctly:
-> > 
-> >       - Register portdrv and AER driver (this happens at boot-time)
-> > 
-> >       - Enumerate a Root Port
-> > 
-> >       - Bind portdrv to Root Port, disabling its error reporting
-> > 
-> >       - Bind AER service driver to Root Port, enabling error reporting for it
-> >         and its children (none, since we haven't enumerated them yet)
-> > 
-> >       - Enumerate Switch Port below the Root Port
-> > 
-> >       - Bind portdrv to Switch Port, disabling its error reporting
-> > 
-> >       - AER service driver doesn't bind to Switch Ports, so error reporting
-> >         remains disabled
-> > 
-> >     Hot-adding a Switch fails similarly: error reporting is enabled correctly
-> >     for the Root Port, but when the Switch is enumerated, the AER service
-> >     driver doesn't claim it, so there's nothing to enable error reporting for
-> >     the Switch Ports.
-> > 
-> >     Change the AER service driver so it binds to *all* PCIe ports, including
-> >     Switch Upstream and Downstream Ports.  For Switch Ports, enable AER error
-> >     reporting.
-> > 
-> >     Link: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
-> >     Based-on-patch-by: Jon Derrick <jonathan.derrick@intel.com>
-> >     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> > index 90b53abf621d..fe6c16461367 100644
-> > --- a/drivers/pci/pcie/aer.c
-> > +++ b/drivers/pci/pcie/aer.c
-> > @@ -1316,12 +1316,6 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
-> >  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, &reg32);
-> >  	pci_write_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, reg32);
-> > 
-> > -	/*
-> > -	 * Enable error reporting for the root port device and downstream port
-> > -	 * devices.
-> > -	 */
-> > -	set_downstream_devices_error_reporting(pdev, true);
-> > -
-> 
-> Delete the code will also disable error reporting for the root port as
-> the portdrv to Root Port has disabled its error reporting,
-> so need to enable enable error reporting for the root port.
-> +pci_enable_pcie_error_reporting(pdev);
+FUSE file reads are cached in the page cache, but symlink reads are
+not. This patch enables FUSE READLINK operations to be cached which
+can improve performance of some FUSE workloads.
 
-Oh, you're right, thank you!
+In particular, I'm working on a FUSE filesystem for access to source
+code and discovered that about a 10% improvement to build times is
+achieved with this patch (there are a lot of symlinks in the source
+tree).
+---
+Changes in v2:
+  - Gated behind INIT flag for backwards compatibility
 
-I'll post a "v3" to fix this, i.e.,
+ fs/fuse/dir.c             | 67 +++++++++++++++++++++++++++++++++++++--
+ fs/fuse/fuse_i.h          |  3 ++
+ fs/fuse/inode.c           |  4 ++-
+ include/uapi/linux/fuse.h |  7 +++-
+ 4 files changed, 76 insertions(+), 5 deletions(-)
 
-  v1 - Jon's original post, https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
-  v2 - My rework, https://lore.kernel.org/linux-pci/20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com
-  v3 - My rework + enable error reporting for Root Ports
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 0979609d6eba..ce23fb6ac5f4 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1398,11 +1398,53 @@ static int fuse_readdir(struct file *file, struct dir_context *ctx)
+ 	return err;
+ }
+ 
+-static const char *fuse_get_link(struct dentry *dentry,
+-				 struct inode *inode,
+-				 struct delayed_call *done)
++static int fuse_symlink_readpage(struct file *file, struct page *page)
+ {
++	struct inode *inode = page->mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
++	struct fuse_req *req;
++	int err;
++	size_t num_read;
++
++	err = -EIO;
++	if (is_bad_inode(inode))
++		goto out;
++
++	req = fuse_get_req(fc, 1);
++	if (IS_ERR(req)) {
++		err = PTR_ERR(req);
++		goto out;
++	}
++
++	req->out.page_zeroing = 1;
++	req->out.argpages = 1;
++	req->num_pages = 1;
++	req->pages[0] = page;
++	req->page_descs[0].length = PAGE_SIZE - 1;
++	req->in.h.opcode = FUSE_READLINK;
++	req->in.h.nodeid = get_node_id(inode);
++	req->out.argvar = 1;
++	req->out.numargs = 1;
++	req->out.args[0].size = PAGE_SIZE - 1;
++	fuse_request_send(fc, req);
++	num_read = req->out.args[0].size;
++	err = req->out.h.error;
++
++	if (!err)
++		SetPageUptodate(page);
++
++	fuse_put_request(fc, req);
++	fuse_invalidate_atime(inode);
++out:
++	unlock_page(page);
++	return err;
++}
++
++static const char *fuse_get_link_nocache(struct dentry *dentry,
++					 struct inode *inode,
++					 struct delayed_call *done,
++					 struct fuse_conn *fc)
++{
+ 	FUSE_ARGS(args);
+ 	char *link;
+ 	ssize_t ret;
+@@ -1432,6 +1474,17 @@ static const char *fuse_get_link(struct dentry *dentry,
+ 	return link;
+ }
+ 
++static const char *fuse_get_link(struct dentry *dentry,
++				 struct inode *inode,
++				 struct delayed_call *done)
++{
++	struct fuse_conn *fc = get_fuse_conn(inode);
++	if (fc->cache_symlinks)
++		return page_get_link(dentry, inode, done);
++	else
++		return fuse_get_link_nocache(dentry, inode, done, fc);
++}
++
+ static int fuse_dir_open(struct inode *inode, struct file *file)
+ {
+ 	return fuse_open_common(inode, file, true);
+@@ -1871,7 +1924,15 @@ void fuse_init_dir(struct inode *inode)
+ 	inode->i_fop = &fuse_dir_operations;
+ }
+ 
++static const struct address_space_operations fuse_symlink_aops = {
++	.readpage       = fuse_symlink_readpage,
++};
++
+ void fuse_init_symlink(struct inode *inode)
+ {
+ 	inode->i_op = &fuse_symlink_inode_operations;
++	inode->i_data.a_ops = &fuse_symlink_aops;
++	mapping_set_gfp_mask(inode->i_mapping,
++			mapping_gfp_constraint(inode->i_mapping,
++					~(__GFP_FS | __GFP_HIGHMEM)));
+ }
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f78e9614bb5f..50f1d1e96011 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -551,6 +551,9 @@ struct fuse_conn {
+ 	/** handle fs handles killing suid/sgid/cap on write/chown/trunc */
+ 	unsigned handle_killpriv:1;
+ 
++	/** cache READLINK responses in page cache */
++	unsigned cache_symlinks:1;
++
+ 	/*
+ 	 * The following bitfields are only for optimization purposes
+ 	 * and hence races in setting them will not cause malfunction
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index db9e60b7eb69..0d8c2ee01308 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -926,6 +926,8 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
+ 			}
+ 			if (arg->flags & FUSE_ABORT_ERROR)
+ 				fc->abort_err = 1;
++			if (arg->flags & FUSE_CACHE_SYMLINKS)
++				fc->cache_symlinks = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -957,7 +959,7 @@ static void fuse_send_init(struct fuse_conn *fc, struct fuse_req *req)
+ 		FUSE_DO_READDIRPLUS | FUSE_READDIRPLUS_AUTO | FUSE_ASYNC_DIO |
+ 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+-		FUSE_ABORT_ERROR;
++		FUSE_ABORT_ERROR | FUSE_CACHE_SYMLINKS;
+ 	req->in.h.opcode = FUSE_INIT;
+ 	req->in.numargs = 1;
+ 	req->in.args[0].size = sizeof(*arg);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 92fa24c24c92..348a38019646 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -116,6 +116,9 @@
+  *
+  *  7.27
+  *  - add FUSE_ABORT_ERROR
++ *
++ *  7.28
++ *  - add FUSE_CACHE_SYMLINKS
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -151,7 +154,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 27
++#define FUSE_KERNEL_MINOR_VERSION 28
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -249,6 +252,7 @@ struct fuse_file_lock {
+  * FUSE_HANDLE_KILLPRIV: fs handles killing suid/sgid/cap on write/chown/trunc
+  * FUSE_POSIX_ACL: filesystem supports posix acls
+  * FUSE_ABORT_ERROR: reading the device after abort returns ECONNABORTED
++ * FUSE_CACHE_SYMLINKS: READLINK responses are cached in the page cache
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -272,6 +276,7 @@ struct fuse_file_lock {
+ #define FUSE_HANDLE_KILLPRIV	(1 << 19)
+ #define FUSE_POSIX_ACL		(1 << 20)
+ #define FUSE_ABORT_ERROR	(1 << 21)
++#define FUSE_CACHE_SYMLINKS     (1 << 22)
+ 
+ /**
+  * CUSE INIT request/reply flags
+-- 
+2.17.1
 
-Bjorn
