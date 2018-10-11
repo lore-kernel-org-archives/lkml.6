@@ -2,102 +2,108 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D38C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF82C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D704D2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61FA20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DltcYvgs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D704D2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="H/q7UeFh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O4qK8mkk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61FA20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbeJKVjF (ORCPT
+        id S1728558AbeJKVlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:39:05 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36460 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKVjF (ORCPT
+        Thu, 11 Oct 2018 17:41:47 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:50307 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726537AbeJKVlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:39:05 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u34-v6so9954530qth.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 07:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=bMrhvhQG5l6P5OBNLqmHXyVFNugrzPHDUyoEC5+s8QY=;
-        b=DltcYvgsr8uOEbLtDzR/T2rJMGIYZmpFJu06DDSwlFdpLuNaUFdkOOvL1+WVSqFA1E
-         PnwByHPDMw24A26zMKHfrd/FLA63meFPQDYVoCuSq9040y14ug0j/L8MAWfQgC1nOZno
-         aXQLnP+RchC85LYdR6LWGD/6yNRKgsxpV3SY6Ajqmq2+Nzdj6RKaYSH1e+HspH5U4NPe
-         qA8MKNQIRy/tC+96sX0iynif91P1wEjYD2WG+SaHqTFglfBVsx72TCaiLU+jWYpiiR3d
-         w3lQWg8/gRAB4nacn98/iHvX7p/8FZX/WyXC2eukij291EBqAf+XM/i7BKLOuz1TRqQF
-         5HuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=bMrhvhQG5l6P5OBNLqmHXyVFNugrzPHDUyoEC5+s8QY=;
-        b=n2gSJa8zhQuuN6dzgdmRKipzMs9NGgA2BikSnXl7Ap8wiMnY24zkLdiYKGqWwp9xeI
-         asa0Yt3G9BpXKMosJjwx0eHOLF8mXHmnmp3C5IXhDcpX058pwHUIo0z2/ACcVE3kbXnM
-         gdWNEyQjK4sX3jdgL8lqiUsm1KBtsUklxtv5Pg4qjdiIjIFen3smnOzNbKe3gaqyFUuv
-         whYc2jUBSuVEAVCsog2IG4RM7SI59I3qp2HOMC9s6UhVvGTVcLNW32XQZIjmi3AdmCpH
-         RPSLTu9LuBleUukT8YlKsJx2Z1G7EleUc80osWe3sIO9+OYnYM1aSA2HS3bxXaX1l1GI
-         6cZA==
-X-Gm-Message-State: ABuFfohhPM9a9Blt5rOoRv6hNzdr29F9I2HqAMnkdEpT3kQRqeOMSKZo
-        Spi1jNwzNKKbGqsEbVaiNiwRRqEc2Nme1OZrxLQ=
-X-Google-Smtp-Source: ACcGV60bWC2x3Y9HpmKNWl0rLYHA06vWR5KMgBRuHxmUB/xBFY12dQrJpfqSGMwMQAHgyfqGmxOYDbqk89x6AlJFn8k=
-X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr1647025qtl.343.1539267102764;
- Thu, 11 Oct 2018 07:11:42 -0700 (PDT)
+        Thu, 11 Oct 2018 17:41:47 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id D39FF21FFC;
+        Thu, 11 Oct 2018 10:14:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 11 Oct 2018 10:14:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=ikiaQ1h3K0K7hHI2Hw9ZJNJV6LY
+        PQEAyAz5+b3Hw7wE=; b=H/q7UeFhzlQO90UZFCEmZxES8Z8I27warWyYaN47cIX
+        S/dNjrhK0bDSL+SS9n8yrmdOBa4onM14RJDXb7QnRHLs8JmFW8GufZTxsj7NjNmv
+        VioQwi9jLjQ2ZzpgClMd1fWVRpPSLvoYW9dVhHJgJxt1HIsMPBHVWyvRkIKo0L+M
+        4L9coyYGTnuM6uP/qhpKPa4nN1reWJ/5Sf9lYpjz+aFfO+rktVTh32kucycg9xOd
+        YZ2a3JU45Io5oHzO94X4w/gcV5i0KwJZb4jnOq8V28UOlwxDB0LU5ByJAWZioOQE
+        PGY0EadZQrP10gxHWXrjOYFiPTmNnwH40nGBrYL3fgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ikiaQ1
+        h3K0K7hHI2Hw9ZJNJV6LYPQEAyAz5+b3Hw7wE=; b=O4qK8mkkDOf2lINk+qIifn
+        aDoBLQiSP8LhgGYU3o1BSU256x8TONM//7iUzgBYvImtjl4yWFPCH1L/zNvI6GLo
+        dkYhUpkXPXDfgmi4OXI1IE+TpGfgwzLlndtTxavtlxN68J50dKNt4lY56ZMmEC9o
+        dXnxXrhkrz1mlb6NGUx8gdgby43bWZnEu58+U99sk5xUdvnwG01gMYL8OcTVE4zf
+        7txG3+wC3+mruq29a60PD51X6ZO9AwvkB7snH+rqneLC3PVAxWRx23PBDidDNTpd
+        LaCY1OI8nEpcugTN3iCQOPcG+5fQtGyBsBZpU8SWyUdvpz8Ty+VqiYH5UzlLhD7Q
+        ==
+X-ME-Sender: <xms:wFq_W-aMMVNW1e9G7Eub36NVpKBWkI4ZQNUWuah4uVKOMDX6r1F6aw>
+X-ME-Proxy: <xmx:wFq_W1lgBdLOJZIhez6ClKONrhbuebB4aKfuUyub6T7wXAh2j5S0DA>
+    <xmx:wFq_W3nL7fCsyDW7sK_ymhO5snQj7x7FjnKMRF43XLV4BPOWrve-rQ>
+    <xmx:wFq_WzKya45aS-E6o46Pk2UxF0wOZkiux8fe0AqCvf7XfwgAhXp8Kw>
+    <xmx:wFq_Wzxv7nLdytFp-zymuhH3KfLG8kJf5Fdto8z63cU6ctVJArxStQ>
+    <xmx:wFq_W8tuFZygiAaE7CdAEsoxRbjtlftcoZyoHEMOjA0-m-yuM6PulA>
+    <xmx:wFq_W7LSlod5WFBW4JTTpfNGk15fVa_dCtiNzSxKPaw2newf78B-CQ>
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        by mail.messagingengine.com (Postfix) with ESMTPA id ADB73102EB;
+        Thu, 11 Oct 2018 10:14:23 -0400 (EDT)
+Date:   Thu, 11 Oct 2018 16:14:22 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>, ath10k@lists.infradead.org
+Subject: Re: [for -stable] commit "c82919888064 ath10k: fix scan crash due to
+ incorrect length calculation"
+Message-ID: <20181011141422.GD9507@kroah.com>
+References: <20180906213620.GA72542@ban.mtv.corp.google.com>
 MIME-Version: 1.0
-Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 07:11:42
- -0700 (PDT)
-In-Reply-To: <20181011123116.24885-1-vz@mleia.com>
-References: <20181011123116.24885-1-vz@mleia.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Oct 2018 16:11:42 +0200
-X-Google-Sender-Auth: 5Bcwqz8HlGzsSiFRYB4gKGoCch8
-Message-ID: <CAK8P3a3pbpEX1BjKvn179pTYtYEtiQnd=SmD5NYkAtpdZAonkA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Assign myself as a maintainer of ARM/LPC18XX architecture
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     arm@kernel.org, Joachim Eastwood <manabian@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906213620.GA72542@ban.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/18, Vladimir Zapolskiy <vz@mleia.com> wrote:
-> To all appearance Joachim Eastwood abandoned the maintenance of NXP
-> LPC18xx/LPC43xx archtecture about two years ago, and for me it would be
-> possible to continue the support, fortunately the quality of platform
-> drivers written by Joachim is exceptionally high.
->
-> The change is based on https://lkml.org/lkml/2018/9/24/1398 discussion.
->
-> At the same time two redundant explicit driver file paths are dropped
-> from the list, clk-lpc18xx* drivers are covered by "lpc18xx" search
-> pattern and timer-lpc32xx driver is covered by "lpc32xx" pattern and it
-> goes into ARM/LPC32XX entry, which is also under my wing, in other words
-> LPC18xx/LPC43xx clocksource and CCF drivers will remain maintained.
->
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Joachim Eastwood <manabian@gmail.com>
-> ---
+On Thu, Sep 06, 2018 at 02:36:22PM -0700, Brian Norris wrote:
+> Hi Greg / stable maintainer(s),
+> 
+> IIUC, this commit is a good candidate for -stable. I just hit the bug on
+> 4.14, because of new vendor firmware that noticed the mismatched length
+> (an internal "assert"), but it seems like this is equally problematic
+> from the kernel side for as long as this code existed [1]:
+> 
+> commit c8291988806407e02a01b4b15b4504eafbcc04e0
+> Author: Zhi Chen <zhichen@codeaurora.org>
+> Date:   Mon Jun 18 17:00:39 2018 +0300
+> 
+>     ath10k: fix scan crash due to incorrect length calculation
+> 
+> Thanks,
+> Brian
+> 
+> [1] I guess that would be:
+> 
+> Fixes: ca996ec56608 ("ath10k: implement wmi-tlv backend")
+> 
+> which was in v4.0.
 
-I could not automatically apply this with 'git am', not sure what the
-problem was, but I managed to apply it by patching the file manually.
+Thanks, now queued up.
 
-Thanks for taking over the platform!
-
-      Arnd
+greg k-h
