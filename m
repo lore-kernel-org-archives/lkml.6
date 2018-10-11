@@ -2,162 +2,103 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC19C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236CDC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DD120835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81F42087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VyrsWWus"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3DD120835
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NjLmh4wJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81F42087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbeJKSrW (ORCPT
+        id S1727473AbeJKSt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:47:22 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:48438 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728502AbeJKSrW (ORCPT
+        Thu, 11 Oct 2018 14:49:29 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:46401 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeJKSt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:47:22 -0400
+        Thu, 11 Oct 2018 14:49:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1539256834; x=1570792834;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=qrT26U14ienmd8ofx66O9VZShPNLz4vCh3UgFdjV4gA=;
-  b=VyrsWWusFeVbTBTEkrVzZThKf8zYDDpxdbBJbYtxzshmarJ4Jv+0Z0WB
-   kMoUiwNEg+U08DOTIHhn5M/ZhUN7ZCzg0MVGWtzFAGZI7zgedxcAOC+aj
-   KcLH6uIVHTYv80s/xy4BwSNtAWCqEfnC84EQy7dKBfzZmxKLSj33L9iaf
-   Y=;
+  t=1539256961; x=1570792961;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=M/8RQ58dt8BbSSw6quOSaGV5lK6u7jNT5N0bQmb20r4=;
+  b=NjLmh4wJ8bffxHva+KyGzU4GAQCxLCsoObrZXLJa2NKQ4Gyn8brPuKO2
+   +QM/0yJcYhs0IsbHvRgpDhaxIuigjTd6bu+a08vaJJ0iD7RC6sy+4o7cr
+   qTXTCyuSoKgF0HBUON6ftPROg0gjkcoZ4zPd+bSHqRWWz0fDtZ+rMB9YX
+   k=;
 X-IronPort-AV: E=Sophos;i="5.54,368,1534809600"; 
-   d="scan'208";a="367323644"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-a11fcaa7.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 11:20:32 +0000
+   d="scan'208";a="763378672"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 11:22:39 +0000
 Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2c-a11fcaa7.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9BBKRvs104304
+        by email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9BBMZx9039677
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 11:20:31 GMT
+        Thu, 11 Oct 2018 11:22:38 GMT
 Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
  EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Oct 2018 11:20:30 +0000
-Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.161.25) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Oct 2018 11:20:24 +0000
+ id 15.0.1367.3; Thu, 11 Oct 2018 11:22:38 +0000
+Received: from [10.55.103.19] (10.43.160.245) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Thu, 11 Oct
+ 2018 11:22:32 +0000
+Subject: Re: [PATCH 2/2] dw: spi: add support for Alpine spi controller
+To:     Trent Piepho <tpiepho@impinj.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "jonnyc@amazon.com" <jonnyc@amazon.com>,
+        "ronenk@amazon.com" <ronenk@amazon.com>,
+        "barakw@amazon.com" <barakw@amazon.com>
+References: <1539155293-21750-1-git-send-email-talel@amazon.com>
+ <1539184516-8200-1-git-send-email-talel@amazon.com>
+ <1539184516-8200-2-git-send-email-talel@amazon.com>
+ <1539209339.1944.23.camel@impinj.com>
 From:   Talel Shenhar <talel@amazon.com>
-To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <talel@amazon.com>, <jonnyc@amazon.com>, <ronenk@amazon.com>,
-        <barakw@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 2/2] dw: spi: add support for Amazon's Alpine spi controller
-Date:   Thu, 11 Oct 2018 14:20:07 +0300
-Message-ID: <1539256807-25676-2-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539256807-25676-1-git-send-email-talel@amazon.com>
-References: <1539209339.1944.23.camel@impinj.com>
- <1539256807-25676-1-git-send-email-talel@amazon.com>
+Message-ID: <a319e310-1296-3b9e-abfe-bd33c3d8bb9d@amazon.com>
+Date:   Thu, 11 Oct 2018 14:22:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.161.25]
-X-ClientProxiedBy: EX13D08UWC004.ant.amazon.com (10.43.162.90) To
+In-Reply-To: <1539209339.1944.23.camel@impinj.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.160.245]
+X-ClientProxiedBy: EX13D13UWA004.ant.amazon.com (10.43.160.251) To
  EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for a new devicetree compatible string called
-'amazon,alpine-apb-ssi', which is necessary for the Amazon Alpine spi
-controller. 'amazon,alpine-dw-apb-ssi' is used in the dw spi driver if
-specified in the devicetree.  Otherwise, fall back to driver default
-behavior, i.e. original dw IP hw driver behavior.
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- drivers/spi/spi-dw-mmio.c | 9 +++++++++
- drivers/spi/spi-dw.c      | 6 ++++++
- drivers/spi/spi-dw.h      | 2 ++
- 3 files changed, 17 insertions(+)
-
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index a768461..3ffb6a40 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -126,6 +126,14 @@ static int dw_spi_mscc_jaguar2_init(struct platform_device *pdev,
- 				JAGUAR2_IF_SI_OWNER_OFFSET);
- }
- 
-+static int dw_spi_alpine_init(struct platform_device *pdev,
-+			      struct dw_spi_mmio *dwsmmio)
-+{
-+	dwsmmio->dws.cs_override = 1;
-+
-+	return 0;
-+}
-+
- static int dw_spi_mmio_probe(struct platform_device *pdev)
- {
- 	int (*init_func)(struct platform_device *pdev,
-@@ -230,6 +238,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "snps,dw-apb-ssi", },
- 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
- 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
-+	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 3e205ab..b705f2b 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -144,6 +144,8 @@ void dw_spi_set_cs(struct spi_device *spi, bool enable)
- 
- 	if (!enable)
- 		dw_writel(dws, DW_SPI_SER, BIT(spi->chip_select));
-+	else if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_SER, 0);
- }
- EXPORT_SYMBOL_GPL(dw_spi_set_cs);
- 
-@@ -463,6 +465,10 @@ static void spi_hw_init(struct device *dev, struct dw_spi *dws)
- 		dws->fifo_len = (fifo == 1) ? 0 : fifo;
- 		dev_dbg(dev, "Detected FIFO size: %u bytes\n", dws->fifo_len);
- 	}
-+
-+	/* enable HW fixup for explicit CS deselect for Amazon's alpine chip */
-+	if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_CS_OVERRIDE, 0xF);
- }
- 
- int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
-diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-index 0168b08..c9c1588 100644
---- a/drivers/spi/spi-dw.h
-+++ b/drivers/spi/spi-dw.h
-@@ -32,6 +32,7 @@
- #define DW_SPI_IDR			0x58
- #define DW_SPI_VERSION			0x5c
- #define DW_SPI_DR			0x60
-+#define DW_SPI_CS_OVERRIDE		0xf4
- 
- /* Bit fields in CTRLR0 */
- #define SPI_DFS_OFFSET			0
-@@ -109,6 +110,7 @@ struct dw_spi {
- 	u32			fifo_len;	/* depth of the FIFO buffer */
- 	u32			max_freq;	/* max bus freq supported */
- 
-+	int			cs_override;
- 	u32			reg_io_width;	/* DR I/O width in bytes */
- 	u16			bus_num;
- 	u16			num_cs;		/* supported slave numbers */
--- 
-2.7.4
-
+On 10/11/2018 01:08 AM, Trent Piepho wrote:
+> On Wed, 2018-10-10 at 18:15 +0300, Talel Shenhar wrote:
+>> Add support for a new devicetree compatible string called
+>> 'al,alpine-apb-ssi', which is necessary for the Amazon Alpine spi
+>> controller. 'al,alpine-dw-apb-ssi' is used in the dw spi driver if
+>> specified in the devicetree.  Otherwise, fall back to driver default
+>> behavior, i.e. original dw IP hw driver behavior.
+>>
+>> Signed-off-by: Talel Shenhar <talel@amazon.com>
+>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> Shouldn't this be "amzn,alpine-apb-ssi"?  The convention, and this IS
+> documented, is to the use company's stock ticker symbol as the prefix,
+> so as to have something grounded in the real world.  I don't know of
+> anyone else using a product line name as the company name in their dt
+> bindings.  Example, "snps,dw-apb-ssi", is named for Synopsis, not the
+> Designware line.
+>
+updated the vendor prefix to "amazon" as described in bindings/vendor-prefixes.txt.
