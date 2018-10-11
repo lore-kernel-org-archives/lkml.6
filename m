@@ -2,170 +2,140 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E665DC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D9AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5B02077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ED132077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BztreXOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5B02077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AKOt2nzP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED132077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeJKOOZ (ORCPT
+        id S1727622AbeJKOQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:14:25 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37752 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKOOZ (ORCPT
+        Thu, 11 Oct 2018 10:16:11 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44438 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726907AbeJKOQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:14:25 -0400
-Received: by mail-yw1-f66.google.com with SMTP id y14-v6so3184222ywa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:48:33 -0700 (PDT)
+        Thu, 11 Oct 2018 10:16:10 -0400
+Received: by mail-io1-f65.google.com with SMTP id x26-v6so5786143iog.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:50:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7CTJJugyo1ro7MN6SU8cXgLshPlXyKVBZHyuWcw4JN0=;
-        b=BztreXOesfYWkaaHboa8dXF6y3B7ANAKZx7lEPPCIk5v+0794M2RsGNiJDXKJZa3Vk
-         meFPZ7VMT/c2OSlLjV0Hihcpb8ZQRRvJ3dzMm6x3+8IvMDLqzsjLczohICDkOCT1hv1b
-         f8itwDNhLIw3sjT5ao+wyDyu+kPX2g+kzrD58=
+        bh=b5slhGgdclu9R9MfgAJPuj3IJ5j1meMS8MnYMCKwAUc=;
+        b=AKOt2nzPNa0DghYgeQ5x+AKa1sLd4lUdQ5TnZPK29aulJe6u/3X0Y9z8R5qpolzR0X
+         57WJejxX5eqv+JixsRmRKlPiAm6PlM4+HlhcSVsvty6frGaK+zv4xzf04t+iMWXU703L
+         svWAceQbNYDI+qh//CCiH5+JRfHIRBjBGXlHQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7CTJJugyo1ro7MN6SU8cXgLshPlXyKVBZHyuWcw4JN0=;
-        b=CMpnX8rtyOmX9FVX7GDlCvb0bYDz9jSrh2HQnZPrDmQ0WRz8RkAvdzTaqg7XSAINmm
-         y3QKWG2q7nxXiUELgZzlZZu87eXH0wMMqO4Ngkt8P53SUf511Zd8Lc9ivN5JBEJZd0mt
-         JoK+V7khKuwNulOrb4PjiLYN9gWJWSDzgnYOjycOz7uqffq/UGbFbwo9Q8mGHD5ynv4s
-         1JVMY2kEeO68aLNe+ndQsEUKtPCpnHbADv4JzB5olbUJAnZhzjOPWzQG46XMDaBahFIw
-         O1QGDrlDd3mlSt5R4StAfk2n2ZmQ1fH7++K0o+Oyqm2FPtql6vvoPy84SNlaT+3Q2JkV
-         R31w==
-X-Gm-Message-State: ABuFfog4i/jiz1xB1WEMqb53wk7gbFmh5r7Bw3QmQAZ/MZUuB/SIeVy0
-        gg7SuasqLB895BUenwkhsyspGKpAfml5lKc+emgJrQ==
-X-Google-Smtp-Source: ACcGV60aPhsR1j2bWE4kWaT99cJSAACGbTHt4k0pWGmweZ0sijfRdrxMoSYnpFzDNArNZXJCX6ZcX/1vZS1LRvOdU+I=
-X-Received: by 2002:a81:1b85:: with SMTP id b127-v6mr142321ywb.381.1539240513180;
- Wed, 10 Oct 2018 23:48:33 -0700 (PDT)
+        bh=b5slhGgdclu9R9MfgAJPuj3IJ5j1meMS8MnYMCKwAUc=;
+        b=WLfxMZlxU5sLQ8fq0tVeAfhlZrgtYlJRyrgoS0yd9aDvb29uW0L2lLXeaQoT2oE500
+         athUNR8AmBDripx6kwjtVi9xpLdqAw1NA557MSGHDEH0hiy4K72jni08WdLkBzgyHK3T
+         yww3QIuo/efMM/6bK4W/w/oD/7ESeGXvFMeXNGs0ev5XH34PKCZPFadwKro8goLQqY12
+         nlpiA+2BfvhFYzNDFxGt3owY0GdSa4EZ+sQzf4AaBSmJCYvK28wcoD2Yxo0G022d+6nv
+         MkUK+NxUswikTqfoNqkZLnHSMKrql422NKiEAoxP3uOHtR13RGiivItVlw+aVNj+pqXj
+         cnsA==
+X-Gm-Message-State: ABuFfoizcqh7qzjcNyP9Oe3YpTQdcavRoQCuUnNI+zh1OMh+GPQ8PkkA
+        5MlCUeHDyBKNEmAQ1M5z57QY9YK42JMJqg==
+X-Google-Smtp-Source: ACcGV62gNXm+ckE2Agb/bVayX1K9SB8kGDdpO10lAhBSVHuuZHyKXIAY3g7ME0GTaTDcYTLNEUOc4g==
+X-Received: by 2002:a5e:c117:: with SMTP id v23-v6mr221880iol.155.1539240618158;
+        Wed, 10 Oct 2018 23:50:18 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id x193-v6sm4487808ite.43.2018.10.10.23.50.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 23:50:17 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id w11-v6so5804655iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:50:17 -0700 (PDT)
+X-Received: by 2002:a6b:7846:: with SMTP id h6-v6mr209353iop.204.1539240616925;
+ Wed, 10 Oct 2018 23:50:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
- <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
-In-Reply-To: <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Thu, 11 Oct 2018 12:18:21 +0530
-Message-ID: <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
-To:     Helge Deller <deller@gmx.de>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+References: <20181011064608.37435-1-acourbot@chromium.org>
+In-Reply-To: <20181011064608.37435-1-acourbot@chromium.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Thu, 11 Oct 2018 15:50:05 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXXwCOP6w7WdAFXdbmBLWKFp9gVDUW=uE=UFGiq_jPakg@mail.gmail.com>
+Message-ID: <CAPBb6MXXwCOP6w7WdAFXdbmBLWKFp9gVDUW=uE=UFGiq_jPakg@mail.gmail.com>
+Subject: Re: [PATCH] media: venus: support VB2_USERPTR IO mode
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helge,
-
-On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
+Please ignore this patch - I did not notice that a similar one has
+been sent before. >_<
+On Thu, Oct 11, 2018 at 3:46 PM Alexandre Courbot <acourbot@chromium.org> wrote:
 >
-> Hi Helge,
+> The venus codec can work just fine with USERPTR buffers. Enable this
+> possibility.
 >
-> On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
-> >
-> > * Firoz Khan <firoz.khan@linaro.org>:
-> > > System call table generation script must be run to generate
-> > > unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
-> > > will have changes which will invokes the script.
-> > >
-> > > This patch will generate unistd_32/64.h and syscall_table_
-> > > 32/64/c32.h files by the syscall table generation script
-> > > invoked by arch/parisc/Makefile and the generated files against
-> > > the removed files will be identical.
-> > >
-> > > The generated uapi header file will be included in uapi/asm/
-> > > unistd_32/64.h and generated system call table support file will
-> > > be included by arch/sparc/kernel/syscall_table_32/64.S file.
-> > >
-> > > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> > > ---
-> > >  arch/parisc/Makefile                  |   4 +
-> > >  arch/parisc/include/asm/Kbuild        |   3 +
-> > >  arch/parisc/include/uapi/asm/Kbuild   |   2 +
-> > >  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
-> > >  arch/parisc/kernel/syscall.S          |  12 +-
-> > >  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
-> >
-> >
-> > Can we please get rid of those two new files:
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 4 ++--
+>  drivers/media/platform/qcom/venus/venc.c | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 >
-> Yes, we don't need those files some of the architecture and other
-> architecture does have same/similar files. That's why I added below
-> files, so every architecture implementation looks same.
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 33320c5025313f..dfc2260e8d213a 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -984,7 +984,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>         int ret;
 >
-> I feel it is better to remove these files.
-> Arnd, Do u have any comment on this?
+>         src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+> -       src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +       src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>         src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>         src_vq->ops = &vdec_vb2_ops;
+>         src_vq->mem_ops = &vb2_dma_sg_memops;
+> @@ -999,7 +999,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>                 return ret;
 >
-> Thanks
-> Firoz
+>         dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> -       dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +       dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>         dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>         dst_vq->ops = &vdec_vb2_ops;
+>         dst_vq->mem_ops = &vb2_dma_sg_memops;
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index d2805b5e28a1b2..71ca59a24991be 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1073,7 +1073,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>         int ret;
 >
-> >
-> > >  arch/parisc/kernel/syscall_table_32.S |  13 +
-> > >  arch/parisc/kernel/syscall_table_64.S |  20 ++
-> >
-> > Both are not needed (at least on parisc) if you apply the following
-> > patch on top of your patch series.
-> > This patch finally fixes the 64-bit kernel on parisc (tested on real
-> > hardware).
-> >
-> > Helge
-> >
-> > diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
-> > index 2523b83b88d8..45cddeeb968f 100644
-> > --- a/arch/parisc/kernel/syscall.S
-> > +++ b/arch/parisc/kernel/syscall.S
-> > @@ -923,10 +923,20 @@ ENTRY(lws_table)
-> >  END(lws_table)
-> >         /* End of lws table */
-> >
-> > -#include "syscall_table_32.S"
-> > +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
-> > +
-> > +ENTRY(sys_call_table)
-> > +#if defined(CONFIG_64BIT)
-> > +#include <asm/syscall_table_c32.h>     /* compat syscalls */
-> > +#else
-> > +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
-> > +#endif
-> > +END(sys_call_table)
-> > +
-> >  #ifdef CONFIG_64BIT
-> > -#define SYSCALL_TABLE_64BIT
-> > -#include "syscall_table_64.S"
-> > +ENTRY(sys_call_table64)
-> > +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
-> > +END(sys_call_table64)
-> >  #endif
-> >
-> >         /*
-
-I could see a patch (commit 47514da3ac20150cdf764466fbc2010c0fca0163)
-which will perform a compile-check when adding a new syscall. My patches
-will remove this feature. Is that fine?
-
-Firoz
+>         src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+> -       src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +       src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>         src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>         src_vq->ops = &venc_vb2_ops;
+>         src_vq->mem_ops = &vb2_dma_sg_memops;
+> @@ -1090,7 +1090,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>                 return ret;
+>
+>         dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> -       dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +       dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>         dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>         dst_vq->ops = &venc_vb2_ops;
+>         dst_vq->mem_ops = &vb2_dma_sg_memops;
+> --
+> 2.19.0.605.g01d371f741-goog
+>
