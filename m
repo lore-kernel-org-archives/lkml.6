@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C06C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55551C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A8120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB582087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwKowRLQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A8120652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zyu48Cfb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB582087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbeJKXFB (ORCPT
+        id S1729299AbeJKXFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727724AbeJKXFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:01 -0400
+        id S1727724AbeJKXFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A52C02098A;
-        Thu, 11 Oct 2018 15:37:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54EAD2098A;
+        Thu, 11 Oct 2018 15:37:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272238;
-        bh=chRxzRNcm8nhw27hnHtvkZc4qAAQtszKTZjvtXFj04k=;
+        s=default; t=1539272240;
+        bh=WY3remqrqXX3rK9WoagBiw88YrMQ59yDvFKpbkCoA8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PwKowRLQVlB3Ch4Rcf+TttJgppX6rlU3XElzPemLRyHpKCMGHKPh2aAXu1a9nbOu4
-         vppnLjDHwL2NB0lOH5fmbhKJ1FRevwaO689ZvN51JG9GTMwTflyjecUHpg9F9er6zz
-         oSeIXHSlkjiW2MkO3ZsHimjDUZ+Py4o8xacsk4X8=
+        b=Zyu48CfbAzwr/iFFxw2h0SPYA9Tqf5Nh3O8t2ltJ5rj09cyo0DpoQVnKqLwTkC1sS
+         1zhPQ7pQD+cZDsoq9jQtz7fccvWDQlPdX4IcQTyPcM89JLPuixBNqmwGz92/7VKBsf
+         zmZ9v5y7tTCQ09pH3f3lk1TH4DJeIOR+XjXf/fiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 038/120] media: tm6000: add error handling for dvb_register_adapter
-Date:   Thu, 11 Oct 2018 17:33:39 +0200
-Message-Id: <20181011152551.324765864@linuxfoundation.org>
+Subject: [PATCH 3.18 039/120] ALSA: hda: Add AZX_DCAPS_PM_RUNTIME for AMD Raven Ridge
+Date:   Thu, 11 Oct 2018 17:33:40 +0200
+Message-Id: <20181011152551.366735456@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,38 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
+[ Upstream commit 1adca4b0cd65c14cb8b8c9c257720385869c3d5f ]
 
-When dvb_register_adapter fails, the lack of error-handling code may
-cause unexpected results.
+This patch can make audio controller in AMD Raven Ridge gets runtime
+suspended to D3, to save ~1W power when it's not in use.
 
-This patch adds error-handling code after calling dvb_register_adapter.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/hda_intel.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -275,6 +275,11 @@ static int register_dvb(struct tm6000_co
- 
- 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
- 					THIS_MODULE, &dev->udev->dev, adapter_nr);
-+	if (ret < 0) {
-+		pr_err("tm6000: couldn't register the adapter!\n");
-+		goto err;
-+	}
-+
- 	dvb->adapter.priv = dev;
- 
- 	if (dvb->frontend) {
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2094,7 +2094,8 @@ static const struct pci_device_id azx_id
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+-	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
++			 AZX_DCAPS_PM_RUNTIME },
+ 	/* ATI HDMI */
+ 	{ PCI_DEVICE(0x1002, 0x0002),
+ 	  .driver_data = AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS },
 
 
