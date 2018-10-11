@@ -2,156 +2,140 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90B3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C088C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D45D20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:11:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D45D20841
+	by mail.kernel.org (Postfix) with ESMTP id DF85220841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:14:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF85220841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeJKIgH (ORCPT
+        id S1726205AbeJKIjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 04:36:07 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:39850 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeJKIgG (ORCPT
+        Thu, 11 Oct 2018 04:39:14 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:33115 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJKIjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 04:36:06 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        Thu, 11 Oct 2018 04:39:14 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1gAPVW-0004sJ-2M; Wed, 10 Oct 2018 19:11:18 -0600
+        id 1gAPYX-0000aJ-6w; Wed, 10 Oct 2018 19:14:25 -0600
 Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1gAPVV-0005nb-Ei; Wed, 10 Oct 2018 19:11:17 -0600
+        id 1gAPYH-0002Qo-MN; Wed, 10 Oct 2018 19:14:25 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     kernel test robot <rong.a.chen@intel.com>,
         linux-kernel@vger.kernel.org, LKP <lkp@01.org>
 References: <20181010020641.GE13396@shao2-debian>
         <87sh1dvmc5.fsf@xmission.com> <87h8htv4lf.fsf@xmission.com>
-        <20181010234148.GA25537@linux.intel.com>
-Date:   Wed, 10 Oct 2018 20:11:08 -0500
-In-Reply-To: <20181010234148.GA25537@linux.intel.com> (Sean Christopherson's
-        message of "Wed, 10 Oct 2018 16:41:48 -0700")
-Message-ID: <87in29s2xf.fsf@xmission.com>
+        <20181010234148.GA25537@linux.intel.com> <87in29s2xf.fsf@xmission.com>
+Date:   Wed, 10 Oct 2018 20:14:00 -0500
+In-Reply-To: <87in29s2xf.fsf@xmission.com> (Eric W. Biederman's message of
+        "Wed, 10 Oct 2018 20:11:08 -0500")
+Message-ID: <878t35s2sn.fsf@xmission.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1gAPVV-0005nb-Ei;;;mid=<87in29s2xf.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19fF0xp00OuH0wvsB9YeqgldE7gI3ARPLk=
+X-XM-SPF: eid=1gAPYH-0002Qo-MN;;;mid=<878t35s2sn.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19dQWuBZ6+RXkuhX9IPpMXBlCAo04GQY0M=
 X-SA-Exim-Connect-IP: 67.3.154.154
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 Subject: Re: [LKP] 4ce5f9c9e7 [ 1.323881] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:1031 kmalloc_slab
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-> On Wed, Oct 10, 2018 at 05:06:52PM -0500, Eric W. Biederman wrote:
->> ebiederm@xmission.com (Eric W. Biederman) writes:
->> 
->> > So I am flummoxed.  I am reading through the code and I don't see
->> > anything that could trigger this, and when I ran the supplied reproducer
->> > it did not reproduce for me.
->> 
->> Even more so.  With my tool chain the line that reports the failing
->> address is impossible.
->> 
->> [   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
->> 
->> With the supplied configureation my tool chain only has 0x30 bytes for
->> all of copy_siginfo_from_user.  So I can't even begin to guess where
->> in that function things are failing.
->> 
->> Any additional information that you can provide would be a real help
->> in tracking down this strange failure.
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
 >
-> I don't have the exact toolchain, but I was able to get somewhat close
-> and may have found a smoking gun.  0x4d in my build is in the general
-> vicinity of "sig_sicodes[sig].limit" in known_siginfo_layout().  This
-> lines up with the register state from the log, e.g. RDI=0500104d8,
-> which is the mask generated by sig_specific_sicodes.  From what I can
-> tell, @sig is never bounds checked.  If the compiler generated an AND
-> instruction to compare against sig_specific_sicodes then that could
-> resolve true with any arbitrary value that happened to collide with
-> sig_specific_sicodes and result in an out-of-bounds access to
-> @sig_sicodes.  siginfo_layout() for example explicitly checks @sig
-> before indexing @sig_sicode, e.g. "sig < ARRAY_SIZE(sig_sicodes)".
+>> On Wed, Oct 10, 2018 at 05:06:52PM -0500, Eric W. Biederman wrote:
+>>> ebiederm@xmission.com (Eric W. Biederman) writes:
+>>> 
+>>> > So I am flummoxed.  I am reading through the code and I don't see
+>>> > anything that could trigger this, and when I ran the supplied reproducer
+>>> > it did not reproduce for me.
+>>> 
+>>> Even more so.  With my tool chain the line that reports the failing
+>>> address is impossible.
+>>> 
+>>> [   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
+>>> 
+>>> With the supplied configureation my tool chain only has 0x30 bytes for
+>>> all of copy_siginfo_from_user.  So I can't even begin to guess where
+>>> in that function things are failing.
+>>> 
+>>> Any additional information that you can provide would be a real help
+>>> in tracking down this strange failure.
+>>
+>> I don't have the exact toolchain, but I was able to get somewhat close
+>> and may have found a smoking gun.  0x4d in my build is in the general
+>> vicinity of "sig_sicodes[sig].limit" in known_siginfo_layout().  This
+>> lines up with the register state from the log, e.g. RDI=0500104d8,
+>> which is the mask generated by sig_specific_sicodes.  From what I can
+>> tell, @sig is never bounds checked.  If the compiler generated an AND
+>> instruction to compare against sig_specific_sicodes then that could
+>> resolve true with any arbitrary value that happened to collide with
+>> sig_specific_sicodes and result in an out-of-bounds access to
+>> @sig_sicodes.  siginfo_layout() for example explicitly checks @sig
+>> before indexing @sig_sicode, e.g. "sig < ARRAY_SIZE(sig_sicodes)".
+>>
+>> Maybe this?
 >
-> Maybe this?
+> But sig is bounds checked.  Even better sig is checked to see if it
+> is one of the values in the array.
+>
+>> From include/linux/signal.h
+>
+> #define SIG_SPECIFIC_SICODES_MASK (\
+> 	rt_sigmask(SIGILL)    |  rt_sigmask(SIGFPE)    | \
+> 	rt_sigmask(SIGSEGV)   |  rt_sigmask(SIGBUS)    | \
+> 	rt_sigmask(SIGTRAP)   |  rt_sigmask(SIGCHLD)   | \
+> 	rt_sigmask(SIGPOLL)   |  rt_sigmask(SIGSYS)    | \
+> 	SIGEMT_MASK                                    )
+>
+> #define siginmask(sig, mask) \
+> 	((sig) < SIGRTMIN && (rt_sigmask(sig) & (mask)))
+>
+> #define sig_specific_sicodes(sig)	siginmask(sig, SIG_SPECIFIC_SICODES_MASK)
+>
+>
+>
+> Hmm.  I wonder if something is passing in a negative signal number.
+> There is not a bounds check for that.  A sufficiently large signal
+> number might be the problem here.  Yes.  I can get an oops with
+> a sufficiently large negative signal number.
+>
+> The code will later call valid_signal in check_permissions and
+> that will cause the system call to fail, so the issue is just that
+> the signal number is not being validated early enough.
+>
+> On the output path (copy_siginfo_to_user and copy_siginfo_to_user32) the
+> signal number should be validated before it ever reaches userspace
+> which is why I expect trinity never triggered anything.
+>
+> There is copy_siginfo_from_user32 and that does call siginfo_layout with
+> a possibly negative signal number.  Which has the same potential issues.
+>
+> So I am going to go with the fix below.  That fixes things in my testing
+> and by being unsigned should fix keep negative numbers from being a
+> problem.
 
-But sig is bounds checked.  Even better sig is checked to see if it
-is one of the values in the array.
+Sean thank you very much for putting me on the right path to track this
+failing test down.
 
-From include/linux/signal.h
-
-#define SIG_SPECIFIC_SICODES_MASK (\
-	rt_sigmask(SIGILL)    |  rt_sigmask(SIGFPE)    | \
-	rt_sigmask(SIGSEGV)   |  rt_sigmask(SIGBUS)    | \
-	rt_sigmask(SIGTRAP)   |  rt_sigmask(SIGCHLD)   | \
-	rt_sigmask(SIGPOLL)   |  rt_sigmask(SIGSYS)    | \
-	SIGEMT_MASK                                    )
-
-#define siginmask(sig, mask) \
-	((sig) < SIGRTMIN && (rt_sigmask(sig) & (mask)))
-
-#define sig_specific_sicodes(sig)	siginmask(sig, SIG_SPECIFIC_SICODES_MASK)
-
-
-
-Hmm.  I wonder if something is passing in a negative signal number.
-There is not a bounds check for that.  A sufficiently large signal
-number might be the problem here.  Yes.  I can get an oops with
-a sufficiently large negative signal number.
-
-The code will later call valid_signal in check_permissions and
-that will cause the system call to fail, so the issue is just that
-the signal number is not being validated early enough.
-
-On the output path (copy_siginfo_to_user and copy_siginfo_to_user32) the
-signal number should be validated before it ever reaches userspace
-which is why I expect trinity never triggered anything.
-
-There is copy_siginfo_from_user32 and that does call siginfo_layout with
-a possibly negative signal number.  Which has the same potential issues.
-
-So I am going to go with the fix below.  That fixes things in my testing
-and by being unsigned should fix keep negative numbers from being a
-problem.
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 2bffc5a50183..4fd431ce4f91 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2860,7 +2860,7 @@ static const struct {
-        [SIGSYS]  = { NSIGSYS,  SIL_SYS },
- };
- 
--static bool known_siginfo_layout(int sig, int si_code)
-+static bool known_siginfo_layout(unsigned sig, int si_code)
- {
-        if (si_code == SI_KERNEL)
-                return true;
-@@ -2879,7 +2879,7 @@ static bool known_siginfo_layout(int sig, int si_code)
-        return false;
- }
- 
--enum siginfo_layout siginfo_layout(int sig, int si_code)
-+enum siginfo_layout siginfo_layout(unsigned sig, int si_code)
- {
-        enum siginfo_layout layout = SIL_KILL;
-        if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
+Eric
