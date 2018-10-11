@@ -6,97 +6,140 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45431C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ABAC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CB220835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:04:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14CB220835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1E37420835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E37420835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJKOaD (ORCPT
+        id S1726714AbeJKOa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:30:03 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35864 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeJKOaD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:30:03 -0400
-Received: by mail-qk1-f196.google.com with SMTP id a85-v6so4813863qkg.3;
-        Thu, 11 Oct 2018 00:04:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lWAeOueLWI6lFotF64qNbOYUAzO3t7+RU2k/feXJ6jM=;
-        b=ORyNOMKv4Przd6/YEW4Z5P5l+lfyiestvYr3TfUvaMXGoSSIf3SCyRWhm1zAuoV5MZ
-         fcxTsnblqA1gjBd9PJJjYrDHJn0H8wvoymJXwb1jNgJvV6XguFbvxwwSamMXOepuoege
-         aLPhMx4BoUYG4qpzdTvQRusJ/nm335eC862dDbDxCJPA1VR7nycFI2O/o1D/4i9irpkE
-         lBZd4HhQszXreNhx9HTcf2Ryf78FSbGP/fQ/hMRPITUANmiUn44CePGCN2JbcX0h0Cfu
-         /1scHtgRjHF5W7dcExKudSzWUgT4yWKRg+xW5y7pZXq5wkkZSCvZBwP0rGy6oNs0XVA2
-         GpXw==
-X-Gm-Message-State: ABuFfoh5jHs0AVX8sBQnmVeDpndhvoO25MPIBfQPk04keIdsUecti61J
-        580At7EZ/bt2FQkx13SJrs1NDmho2yJSc033tZE=
-X-Google-Smtp-Source: ACcGV63yMcUWrTz09LuRZqGTc/npGjDEVbrH+p+BxAqhbcT5RGn4VPoohfd8buisN/ZK+j1r40bKiPXCwp/wBaUnn68=
-X-Received: by 2002:ae9:d801:: with SMTP id u1-v6mr180441qkf.291.1539241447902;
- Thu, 11 Oct 2018 00:04:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
- <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com> <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
-In-Reply-To: <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Oct 2018 09:03:51 +0200
-Message-ID: <CAK8P3a1Kbxue2PXRL87-Saiotyq-+v=Uc3vL9KArRuLqCwC4bw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thu, 11 Oct 2018 10:30:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47644 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725995AbeJKOa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 10:30:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1190B10D;
+        Thu, 11 Oct 2018 07:05:01 +0000 (UTC)
+Date:   Thu, 11 Oct 2018 09:04:58 +0200 (CEST)
+From:   Richard Biener <rguenther@suse.de>
+To:     Nadav Amit <namit@vmware.com>
+cc:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
+        "gcc@gcc.gnu.org" <gcc@gcc.gnu.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kees Cook <keescook@chromium.org>,
+        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+In-Reply-To: <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
+Message-ID: <alpine.LSU.2.20.1810110901350.16707@zhemvz.fhfr.qr>
+References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
+ <20181009145330.GT29268@gate.crashing.org> <5ACDEDEA-0E42-45F2-BC80-B96EC2ABC01D@vmware.com>
+User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="-1609908220-1536231581-1539241501=:16707"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 8:48 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
-> > On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> > > +
-> > > +ENTRY(sys_call_table)
-> > > +#if defined(CONFIG_64BIT)
-> > > +#include <asm/syscall_table_c32.h>     /* compat syscalls */
-> > > +#else
-> > > +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
-> > > +#endif
-> > > +END(sys_call_table)
-> > > +
-> > >  #ifdef CONFIG_64BIT
-> > > -#define SYSCALL_TABLE_64BIT
-> > > -#include "syscall_table_64.S"
-> > > +ENTRY(sys_call_table64)
-> > > +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
-> > > +END(sys_call_table64)
-> > >  #endif
-> > >
-> > >         /*
->
-> I could see a patch (commit 47514da3ac20150cdf764466fbc2010c0fca0163)
-> which will perform a compile-check when adding a new syscall. My patches
-> will remove this feature. Is that fine?
+---1609908220-1536231581-1539241501=:16707
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-I think it's ok: You are automating it so the bug can no longer happen,
-which is better than adding checks to prevent human errors.
+On Wed, 10 Oct 2018, Nadav Amit wrote:
 
-        Arnd
+> at 7:53 AM, Segher Boessenkool <segher@kernel.crashing.org> wrote:
+> 
+> > On Mon, Oct 08, 2018 at 11:07:46AM +0200, Richard Biener wrote:
+> >> On Mon, 8 Oct 2018, Segher Boessenkool wrote:
+> >>> On Sun, Oct 07, 2018 at 03:53:26PM +0000, Michael Matz wrote:
+> >>>> On Sun, 7 Oct 2018, Segher Boessenkool wrote:
+> >>>>> On Sun, Oct 07, 2018 at 11:18:06AM +0200, Borislav Petkov wrote:
+> >>>>>> Now, Richard suggested doing something like:
+> >>>>>> 
+> >>>>>> 1) inline asm ("...")
+> >>>>> 
+> >>>>> What would the semantics of this be?
+> >>>> 
+> >>>> The size of the inline asm wouldn't be counted towards the inliner size 
+> >>>> limits (or be counted as "1").
+> >>> 
+> >>> That sounds like a good option.
+> >> 
+> >> Yes, I also like it for simplicity.  It also avoids the requirement
+> >> of translating the number (in bytes?) given by the user to
+> >> "number of GIMPLE instructions" as needed by the inliner.
+> > 
+> > This patch implements this, for C only so far.  And the syntax is
+> > "asm inline", which is more in line with other syntax.
+> > 
+> > How does this look?
+> 
+> It looks good to me in general. I have a couple of reservations, but I
+> suspect you will not want to address them:
+> 
+> 1. It is not backward compatible, requiring a C macro to wrap it, as the 
+> kernel might be built with different compilers.
+> 
+> 2. It is specific to asm. I do not have in mind another use case (excluding
+> the __builtin_constant_p), but it would be nicer IMHO to have a builtin
+> saying “ignore the cost of this statement” for the matter of optimizations.
+
+The only easy possibility that comes to my mid is sth like
+
+__attribute__((always_inline, zero_cost)) foo ()
+{
+  ... your stmts ...
+}
+
+and us, upon inlining, marking the inlined stmts properly.  That would
+also work for the asm() case and it would be backwards compatible
+(well, you'd get a diagnostic for the unknown zero_cost attribute).
+
+There's the slight complication that if you have, say
+
+ _1 = _2 * 3; // zero-cost
+ _4 = _1 * 2;
+
+and optimization ends up combining those to
+
+ _4 = _2 * 6;
+
+then is this stmt supposed to be zero-cost or not?  Compare that to
+
+ _1 = _2 * 3;
+ _4 = _1 * 2; // zero-cost
+
+So outside of asm() there are new issues that come up with respect
+to expected (cost) semantics.
+
+Richard.
+---1609908220-1536231581-1539241501=:16707--
