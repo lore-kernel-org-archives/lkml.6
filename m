@@ -2,140 +2,107 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A225C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1342C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD63520835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:03:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tfvcvXfU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD63520835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E98F2077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E98F2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeJKSaS (ORCPT
+        id S1727670AbeJKSe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:30:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54626 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKSaR (ORCPT
+        Thu, 11 Oct 2018 14:34:27 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:49351 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbeJKSe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:30:17 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9BArolh018108;
-        Thu, 11 Oct 2018 11:03:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=f/4tcR6Qk0aYJm+8PZLaNqONoyNmujzIWMOxtTtamgk=;
- b=tfvcvXfUZLUyFT0HvQmfOk/KEoZmjlNBT6fXv25RJpkcRJsy/oRSsRfO5V3uvi1m3E/m
- Nb3XCUUlQ1+kUbYUbQO6QTioEntq6IWWuAHg0+75gETMElICYtzLXHA9V0kZsbx4XAL2
- 9q7HfSi3lJsezyOqBcgXCV5613e8XZ6Tfmj0khqUf1xDrHVDVsdUpVE3PSB+nlwNZDFf
- JgnwK9GYB98mmBXu1+1M9PJRmH7pC+uZE5F/sV0UvcSjuZG8bqmY01H3X5A4vgGJ5yUV
- 0lbhb7Xw4pcOhP7xqhh6P9tfafoiG55KwT9ZoWy2fGzZ2tTkIwRX5cWWxmAq3UB3EDvt Ag== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mxn0qbepc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Oct 2018 11:03:27 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9BB3RkY018389
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Oct 2018 11:03:27 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9BB3Q4W007130;
-        Thu, 11 Oct 2018 11:03:26 GMT
-Received: from [10.175.217.19] (/10.175.217.19)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 11 Oct 2018 11:03:26 +0000
-Subject: Re: [Xen-devel] [PATCH] xen: drop writing error messages to xenstore
-To:     Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-References: <20181009160959.31076-1-jgross@suse.com>
- <5126873e-ade5-86b0-4ebf-58cb47c9cbe7@oracle.com>
- <90ae453c-f018-60d3-b7a9-e69cd39c0777@suse.com>
- <b1e130bc-983f-f8df-0f5f-66971cc60454@oracle.com>
- <ff88433c-e808-9491-c5a7-ebc5600c7920@suse.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <69f2a1ba-2a4b-bb03-7819-f1d0d6294539@oracle.com>
-Date:   Thu, 11 Oct 2018 12:03:24 +0100
-MIME-Version: 1.0
-In-Reply-To: <ff88433c-e808-9491-c5a7-ebc5600c7920@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9042 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810110108
+        Thu, 11 Oct 2018 14:34:27 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N5mWp-1fcus62Hut-017HlG; Thu, 11 Oct 2018 13:06:41 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N5mWp-1fcus62Hut-017HlG; Thu, 11 Oct 2018 13:06:41 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] mtd: docg3: don't set conflicting BCH_CONST_PARAMS option
+Date:   Thu, 11 Oct 2018 13:06:16 +0200
+Message-Id: <20181011110639.2649053-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:2mIYcrEHCmuG7RUYybIDVljsxrxThacEvRjGsy7C+iWmgYoDRN4
+ Fc4JO24me2dWv7uoQV36UloA1IEbTFkC9ECIkizJwsrlM+77GBxLyN3vwgsbnbohoXnrL7I
+ goFriQ+tVm/2GnPy0oUyJqz9mfbwTNsgfzbJjD3/dD/+p2DgBuoltBBG0IAMjHUdyBHbFSU
+ RlCk5e6M56SragKm5LZjg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PK0Z4HPl4ms=:owGKW24RaCPoD8cNnxpm9N
+ czitPy4aSY4by8sOQMMThVVpHT6MaBJefjnFHDaV6IeTAyvb6XWLL+rerGokrJNAx6wRNlg8A
+ DxH626uMHGsP1Ide88061WPOdTq2hf3R80OQkq7+U1z+mRh2llUWsxUX6Avd7/6G2KWZiW5UU
+ y64nt9jUwplrn7DXL1z7Q1KN0ZGSAjg0v+y5bgOXNSCKy92VUEUca0ULMMMneVPnLmA0NP3D6
+ S+/rYo4NZ8+XsGtzroVSs/5LSUKqhkBz6893c8TBDs/nV6yn9OiMZ4CnKJW3sz1ii4j5MoFFu
+ vfjOaM4iFPTZvIi2E8jIakneiLbU4e4HKB+2aPD8vwRr0el2ytB9dknZS6x9pwqtWrs4mBOcN
+ mw922oDf0MaHbixDG1i5tKnuXyVNo/4l+fXwT7m4v+/O1xIBfH0R1494l7dyTFdOEdJtofNiC
+ z3j7ofNqxLBxnRE3kafN3QnM/ocIXwhNNsCAreXV4SgZSRnfwR6cXdj9L/0U+my9b12YcVcOq
+ ss3W9pNO+byZpNqVtxJwp+eh5D33oPnLtFWIaO0MOkQPvgnbhVNO4QsVoDgpxADgBVp77XNC1
+ 4IHbwrSgkz7r1ph4VJcDLjjxLNpT+VRRg6McjJOIL4LowO7Q41o+JrOFtWZHoZ77OD95LdunN
+ JKQIkqf9qojSmTF0q7lrUhr5fw3IMhNmDGbo0SVgySgwmlF4Y0evGnFqYHHU+S4u834A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 06:05 AM, Juergen Gross wrote:
-> On 10/10/2018 18:57, Boris Ostrovsky wrote:
->> On 10/10/18 11:53 AM, Juergen Gross wrote:
->>> On 10/10/2018 17:09, Joao Martins wrote:
->>>> On 10/09/2018 05:09 PM, Juergen Gross wrote:
->>>>> xenbus_va_dev_error() will try to write error messages to Xenstore
->>>>> under the error/<dev-name>/error node (with <dev-name> something like
->>>>> "device/vbd/51872"). This will fail normally and another message
->>>>> about this failure is added to dmesg.
->>>>>
->>>>> I believe this is a remnant from very ancient times, as it was added
->>>>> in the first pvops rush of commits in 2007.
->>>>>
->>>>> So remove the additional message when writing to Xenstore failed as
->>>>> a minimum step.
->>>>>
->>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
->>>>> ---
->>>>> I am considering removing the Xenstore write altogether, but I'm
->>>>> not sure it isn't needed e.g. by xend based installations. So please
->>>>> speak up in case you know why this write is there.
->>>> So this:
->>>>
->>>> "This will fail normally and another message about this failure is added to dmesg."
->>>>
->>>> Brings me to the question: What about {stub,driver}domains? Ideally you
->>>> shouldn't be looking at domU's dmesg as a control domain no? I can't remember
->>>> any other error node, but if something fails e.g. netfront fails to allocate an
->>>> unbound event channel - how do you know the cause from the control domain
->>>> perspective?
->>>>
->>>> Irrespective of xend or not: isn't this 'error' node the only one that
->>>> propagates error causes per device from domU?
->>> What does it help you in dom0 if you have an error message in Xenstore
->>> if a frontend driver couldn't do its job? Is there anything you can do
->>> as a Xen admin?
->>
->> The admin may want to know, for example, that a hotplug in the guest failed.
-> 
-> Shouldn't he ask the guest for that? There are dozens of other possible
-> problems letting hotplug fail which won't write anything to Xenstore.
-> 
-But I think nothing stops people from using their own hotplug script that could
-use this error node (or even something else).
+I noticed during the creation of another bugfix that the BCH_CONST_PARAMS
+option that is set by DOCG3 breaks setting variable parameters for any
+other users of the BCH library code.
 
-> This might be interesting for development/test purposes, but I really
-> question it to stay in mature code.
-> 
-You're right in all of it: it doesn't convey the error in a agnostic manner, ATM
-doesn't report all errors involved in the device setup, and when a
-xenbus_dev_fatal happens you might end up looking at the guest anyways. But
-there might be users right now of this node e.g. cases where you have a bunch of
-known/trusted Linux guests working as backends (which also use this error node,
-it's not just frontends *I think*) which you would be able to recognize the
-error messages to inform the admin e.g. maybe QubesOS? It is merely an
-informative error message node, but it seems better than just a simple
-XenbusClosed state, with many reasons that it could lead to. Anyhow, just my 2c.
+The only other user we have today is the MTD_NAND software BCH
+implementation (most flash controllers use hardware BCH these days
+and are not affected). I considered removing BCH_CONST_PARAMS entirely
+because of the inherent conflict, but according to the description in
+lib/bch.c there is a significant performance benefit in keeping it.
 
-Cheers,
-	Joao
+To avoid the immediate problem of the conflict between MTD_NAND_BCH
+and DOCG3, this only sets the constant parameters if MTD_NAND_BCH
+is disabled, which should fix the problem for all cases that
+are affected. This should also work for all stable kernels.
+
+Note that there is only one machine that actually seems to use the
+DOCG3 driver (arch/arm/mach-pxa/mioa701.c), so most users should have
+the driver disabled, but it almost certainly shows up if we wanted
+to test random kernels on machines that use software BCH in MTD.
+
+Fixes: d13d19ece39f ("mtd: docg3: add ECC correction code")
+Cc: stable@vger.kernel.org
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mtd/devices/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/devices/Kconfig b/drivers/mtd/devices/Kconfig
+index e514d57a0419..aa983422aa97 100644
+--- a/drivers/mtd/devices/Kconfig
++++ b/drivers/mtd/devices/Kconfig
+@@ -207,7 +207,7 @@ comment "Disk-On-Chip Device Drivers"
+ config MTD_DOCG3
+ 	tristate "M-Systems Disk-On-Chip G3"
+ 	select BCH
+-	select BCH_CONST_PARAMS
++	select BCH_CONST_PARAMS if !MTD_NAND_BCH
+ 	select BITREVERSE
+ 	help
+ 	  This provides an MTD device driver for the M-Systems DiskOnChip
+-- 
+2.18.0
+
