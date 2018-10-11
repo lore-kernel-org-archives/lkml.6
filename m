@@ -2,119 +2,89 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A48F4C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D07C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524362085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 587F82087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:27:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ztu2q52G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524362085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIPclmrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587F82087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbeJKUyb (ORCPT
+        id S1728279AbeJKUyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 16:54:31 -0400
-Received: from mail-pl1-f176.google.com ([209.85.214.176]:39581 "EHLO
-        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKUyb (ORCPT
+        Thu, 11 Oct 2018 16:54:52 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39749 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeJKUyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 16:54:31 -0400
-Received: by mail-pl1-f176.google.com with SMTP id w14-v6so4240039plp.6;
-        Thu, 11 Oct 2018 06:27:19 -0700 (PDT)
+        Thu, 11 Oct 2018 16:54:52 -0400
+Received: by mail-qk1-f195.google.com with SMTP id q5-v6so5386779qki.6;
+        Thu, 11 Oct 2018 06:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JbfUEr4vaso61qHEkCWSYw6kSROaQscqL9hCinhoEe4=;
-        b=Ztu2q52GKRFXwMmBhtUrjoW1Q0pOtoF4yvO2fHXOycb9VI2wjb6gmvRXwlRDtV5fHR
-         A+d8D1mythFz4+w6z8W4pEsq8g9p/11YtVJTMq0ONgGpZeSg4B7EZjciZMvRi3meYpWu
-         wt0xhJDkYE8WJfJzZga+pKn9/TCYci8VpRNSK/rxCDyaA9knvl9dlRgZ9ue5sLw2VvRs
-         0c6J52wUFbiSWVfjJV0V93eYLARiC98JNaM9sQ1U7aGAHOPeWkL6NlGxgGM3ocOWOdPT
-         BLx3yW50Exm+zi66ZCk2D5HY9ROu24RlskxjqIvPMBTSL0KbAJnobIIGvzPHgWczxFTU
-         DkJA==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Dt83Pi/rVp6FIYbx+x9QPrk46RYuvrNeS182Lvihmfg=;
+        b=XIPclmrh77SgnXr7PDQj3Yqaa0JKPYmyom/nlVXr+TmeRrH1eCp1qAzfgGGJ3JOT+S
+         R/+M2I6pFQCn0b7+rjxf/wC379jGutCW4cd1O4iheeSc/c8yxNiKgwk67f0/OyceMoAU
+         TdcvanEziJX/Lh5uVj6mzWvgKRetBj719DrE+yrwTa8rRIuF5Y2aYCG/Jkkn+14U3g1X
+         46tb9gWq3PevERpQn81+xxpb/X51FDkvHcFXBU0U2cJbgvTT3O2t4QiwjWFy5BH3BEmF
+         kJx3VCJihHHCJG2vrhx1btrLX47g7Zrv82Er0yy+snbW28htOVuw2vIgDk7VQcrPsEjo
+         HN8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JbfUEr4vaso61qHEkCWSYw6kSROaQscqL9hCinhoEe4=;
-        b=GuFJYDgzIGxBtWst8eoFVXqOb1bhRpsgW4PEcD9yo7l5Hq3CycDyYLpPU45jLXzoqy
-         Wx8eu0/35/zpp9anVkfYm3Vzwg3+6TGRNiNeOnB2w+adMu7BnwE8J5FVICENgAJU92N5
-         kNu6XDF0wf6Rs1qskz0OF3c8dLuo2UPNNYaltJJaKi8BpGIgwzeNlQOhUNPyvlTWR5cZ
-         Bmzf+Jjg0lsdmp37hi5whZrNUOxJ1R564ZALvIZoqojKk92kMUDrX+v7qqwuX9BCOJPX
-         XSwpEvhKNgMRbaXQiwXFuOz9e+s4m9HXXJulDkuKIEcLn8eutxicLgr74FuquuMTas02
-         G3lQ==
-X-Gm-Message-State: ABuFfogNz7B4PFDKjRYUhmrMRirR2xENjivhJKm9l2tPbJi7UsYLJCvi
-        LB2N/psXb9ImyN/fDPzNNBO0DSUg
-X-Google-Smtp-Source: ACcGV63Y4QAPkD2krLVPFpgVxcx99UKs3ZBvx5Khbx/9hM3yPw/D15t/JevZPt0HtMwLgENeQ3kW4w==
-X-Received: by 2002:a17:902:e088:: with SMTP id cb8-v6mr1618524plb.31.1539264439135;
-        Thu, 11 Oct 2018 06:27:19 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm37651635pfh.20.2018.10.11.06.27.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 06:27:17 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 06:27:16 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Oct 11
-Message-ID: <20181011132716.GA18892@roeck-us.net>
-References: <20181011162343.17787168@canb.auug.org.au>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Dt83Pi/rVp6FIYbx+x9QPrk46RYuvrNeS182Lvihmfg=;
+        b=obIyERE0Oyhyl9q9WbiotDpLTRerdLk2Odn17jde8QtMfUJyUiP8ss1jvE1kJEhhha
+         zwZgmFRXkhJ06AAHL8lBSmW8RihwX0SlgVm+j2eOXuYeqofcjDjadBE/I/7OPItjBgFn
+         V7G/Rh5X/P845L/vXOwCIob1/QOba8Eu4tjtK0qo7Q0GUc8DqTnKEYLjawi5woaXqLw1
+         9NDr5yK9vMUtKu1SuT2EVDyYeU3KVOy93/rkIbUK5YYB4pG5E3r0cmpt4c5cpneeFarL
+         OGsjpESmMsbCWmU66Szj2ePBlj9XXRo2hVNQPWW+Le8/ZhzdALNOmewuakk/Iqbtf956
+         JX3w==
+X-Gm-Message-State: ABuFfogOjcwTudj3q35BnWM9WCoa1l4HHi+xdauO63idkpuh6H/t0qPW
+        PuFSmDeLGNZeD7uJ1c2sfu8r43LRv5A/sTmhHZY=
+X-Google-Smtp-Source: ACcGV60izudQJLd8foCdAqelf04o+1YyN7TXyO8KZLTzzovYhCn6jaxaf4HXlAZ5zSLO8MQxZhNe+JnehGw5lHzxO7s=
+X-Received: by 2002:a37:e21a:: with SMTP id g26-v6mr1436721qki.330.1539264459922;
+ Thu, 11 Oct 2018 06:27:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011162343.17787168@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 06:27:39
+ -0700 (PDT)
+In-Reply-To: <20181010182558.7034-5-krzk@kernel.org>
+References: <20181010182558.7034-1-krzk@kernel.org> <20181010182558.7034-5-krzk@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Oct 2018 15:27:39 +0200
+X-Google-Sender-Auth: j6mG98nvDoegZYO7WPe3hLO4EOI
+Message-ID: <CAK8P3a3Zm0TA2LUenrmDusPpCMa2c1B3-TY3VSjYzaM26_=t5g@mail.gmail.com>
+Subject: Re: [PATCH / PULL 4/4] arm64: exynos: Enable generic power domain support
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm@kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 04:23:43PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20181010:
-> 
-> The crypto tree gained conflicts against the mac80211-next tree.
-> 
-> Non-merge commits (relative to Linus' tree): 9625
->  9096 files changed, 465434 insertions(+), 197078 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
+On 10/10/18, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Generic power domains are needed to enable support for Exynos power
+> domains.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Build results:
-	total: 135 pass: 123 fail: 12
-Failed builds: 
-	alpha:allmodconfig 
-	arm64:allmodconfig 
-	m68k:defconfig 
-	m68k:allmodconfig 
-	mips:allmodconfig 
-	parisc:allmodconfig 
-	powerpc:allmodconfig 
-	powerpc:ppc6xx_defconfig 
-	riscv:defconfig 
-	s390:allmodconfig 
-	sparc64:allmodconfig 
-	xtensa:allmodconfig 
-Qemu test results:
-	total: 318 pass: 277 fail: 41
-Failed tests: 
-	arm:palmetto-bmc:aspeed_g4_defconfig:aspeed-bmc-opp-palmetto 
-	arm:romulus-bmc:aspeed_g5_defconfig:aspeed-bmc-opp-romulus 
-	...
-	[39 more]
+Applied to next/soc, thanks!
 
-In addition to yesterday's failures, the above two qemu tests crash
-silently, ie without console log. That means they crash before the
-console is activated and I have not figured out how to get earlycon
-to work.
-
-Guenter
+      Arnd
