@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856ECC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D116FC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442792148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9825621476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft9nbbxU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442792148C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ges/xvJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9825621476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbeJKXNl (ORCPT
+        id S1731464AbeJKXNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:40 -0400
+        id S1726700AbeJKXNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98DFC2085B;
-        Thu, 11 Oct 2018 15:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E37421470;
+        Thu, 11 Oct 2018 15:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272755;
-        bh=Z2heITmyN4wkJqqahJIoIUneT2qIxVBQZTcf3VjWTSU=;
+        s=default; t=1539272757;
+        bh=0xQ9OxmmXZ3G8YzudKU+xOX8QCHs/qwI2oe9k8kx180=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ft9nbbxUdZO6VL8C3AWHBguTQQOvt3L+C5xg6mDBB0sHhnBOVrh1ZOAexsVhE0PPv
-         +oBcrQ9q+Z7JXoVdDxZwC5KieXHDDlfMkQfltHAWdluy6n+mbvp6la7jZf7XPhtkIh
-         cUO5vNh+9ortp2XiU2cUaOh/93YYhWBVb1Vst2HM=
+        b=ges/xvJbdy1ZvtHoSgzwN+ZfKnM74jHg8w0q95cxnFeTXUm0r+j8vczS/Az60y3ab
+         cXviu4jkdpG+gG1QOa4L4Lyw85+v9v7g2v+fFQHeP4KSQ/DCSHMXqOq+dKLHGVRBJx
+         YeA8n8cIWV1GQIEzctzqm2vO8E4WXhnAWdcLD59o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Ignat Korchagin <ignat@cloudflare.com>
-Subject: [PATCH 4.14 27/45] perf annotate: Use asprintf when formatting objdump command line
-Date:   Thu, 11 Oct 2018 17:39:54 +0200
-Message-Id: <20181011152510.048997750@linuxfoundation.org>
+Subject: [PATCH 4.14 28/45] perf tools: Fix python extension build for gcc 8
+Date:   Thu, 11 Oct 2018 17:39:55 +0200
+Message-Id: <20181011152510.105212304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -68,115 +69,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 6810158d526e483868e519befff407b91e76b3db upstream.
+commit b7a313d84e853049062011d78cb04b6decd12f5c upstream.
 
-We were using a local buffer with an arbitrary size, that would have to
-get increased to avoid truncation as warned by gcc 8:
+The gcc 8 compiler won't compile the python extension code with the
+following errors (one example):
 
-  util/annotate.c: In function 'symbol__disassemble':
-  util/annotate.c:1488:4: error: '%s' directive output may be truncated writing up to 4095 bytes into a region of size between 3966 and 8086 [-Werror=format-truncation=]
-      "%s %s%s --start-address=0x%016" PRIx64
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  util/annotate.c:1498:20:
-      symfs_filename, symfs_filename);
-                      ~~~~~~~~~~~~~~
-  util/annotate.c:1490:50: note: format string is defined here
-      " -l -d %s %s -C \"%s\" 2>/dev/null|grep -v \"%s:\"|expand",
-                                                  ^~
-  In file included from /usr/include/stdio.h:861,
-                   from util/color.h:5,
-                   from util/sort.h:8,
-                   from util/annotate.c:14:
-  /usr/include/bits/stdio2.h:67:10: note: '__builtin___snprintf_chk' output 116 or more bytes (assuming 8331) into a destination of size 8192
-     return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          __bos (__s), __fmt, __va_arg_pack ());
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  python.c:830:15: error: cast between incompatible  function types from              \
+  ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’                       \
+  uct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to     \
+  ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _objeuct \
+  _object *)’} [-Werror=cast-function-type]
+     .ml_meth  = (PyCFunction)pyrf_evsel__open,
 
-So switch to asprintf, that will make sure enough space is available.
+The problem with the PyMethodDef::ml_meth callback is that its type is
+determined based on the PyMethodDef::ml_flags value, which we set as
+METH_VARARGS | METH_KEYWORDS.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+That indicates that the callback is expecting an extra PyObject* arg, and is
+actually PyCFunctionWithKeywords type, but the base PyMethodDef::ml_meth type
+stays PyCFunction.
+
+Previous gccs did not find this, gcc8 now does. Fixing this by silencing this
+warning for python.c build.
+
+Commiter notes:
+
+Do not do that for CC=clang, as it breaks the build in some clang
+versions, like the ones in fedora up to fedora27:
+
+  fedora:25:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
+  fedora:26:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
+  fedora:27:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
+  #
+
+those have:
+
+  clang version 3.9.1 (tags/RELEASE_391/final)
+
+The one in rawhide accepts that:
+
+  clang version 6.0.0 (tags/RELEASE_600/final)
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-qagoy2dmbjpc9gdnaj0r3mml@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Link: http://lkml.kernel.org/r/20180319082902.4518-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Ignat Korchagin <ignat@cloudflare.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/annotate.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ tools/perf/util/setup.py |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1432,7 +1432,7 @@ int symbol__disassemble(struct symbol *s
- 			struct arch **parch, char *cpuid)
- {
- 	struct dso *dso = map->dso;
--	char command[PATH_MAX * 2];
-+	char *command;
- 	struct arch *arch = NULL;
- 	FILE *file;
- 	char symfs_filename[PATH_MAX];
-@@ -1496,7 +1496,7 @@ int symbol__disassemble(struct symbol *s
- 		strcpy(symfs_filename, tmp);
- 	}
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -28,6 +28,8 @@ class install_lib(_install_lib):
+ cflags = getenv('CFLAGS', '').split()
+ # switch off several checks (need to be at the end of cflags list)
+ cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
++if cc != "clang":
++    cflags += ['-Wno-cast-function-type' ]
  
--	snprintf(command, sizeof(command),
-+	err = asprintf(&command,
- 		 "%s %s%s --start-address=0x%016" PRIx64
- 		 " --stop-address=0x%016" PRIx64
- 		 " -l -d %s %s -C \"%s\" 2>/dev/null|grep -v \"%s:\"|expand",
-@@ -1509,12 +1509,17 @@ int symbol__disassemble(struct symbol *s
- 		 symbol_conf.annotate_src ? "-S" : "",
- 		 symfs_filename, symfs_filename);
- 
-+	if (err < 0) {
-+		pr_err("Failure allocating memory for the command to run\n");
-+		goto out_remove_tmp;
-+	}
-+
- 	pr_debug("Executing: %s\n", command);
- 
- 	err = -1;
- 	if (pipe(stdout_fd) < 0) {
- 		pr_err("Failure creating the pipe to run %s\n", command);
--		goto out_remove_tmp;
-+		goto out_free_command;
- 	}
- 
- 	pid = fork();
-@@ -1541,7 +1546,7 @@ int symbol__disassemble(struct symbol *s
- 		 * If we were using debug info should retry with
- 		 * original binary.
- 		 */
--		goto out_remove_tmp;
-+		goto out_free_command;
- 	}
- 
- 	nline = 0;
-@@ -1570,6 +1575,8 @@ int symbol__disassemble(struct symbol *s
- 
- 	fclose(file);
- 	err = 0;
-+out_free_command:
-+	free(command);
- out_remove_tmp:
- 	close(stdout_fd[0]);
- 
-@@ -1583,7 +1590,7 @@ out:
- 
- out_close_stdout:
- 	close(stdout_fd[1]);
--	goto out_remove_tmp;
-+	goto out_free_command;
- }
- 
- static void insert_source_line(struct rb_root *root, struct source_line *src_line)
+ src_perf  = getenv('srctree') + '/tools/perf'
+ build_lib = getenv('PYTHON_EXTBUILD_LIB')
 
 
