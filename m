@@ -3,43 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19B8C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773BEC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726FB2087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:43:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726FB2087D
+	by mail.kernel.org (Postfix) with ESMTP id 2DEEF20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEEF20835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeJKPJZ (ORCPT
+        id S1727969AbeJKPJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:09:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49448 "EHLO mx1.redhat.com"
+        Thu, 11 Oct 2018 11:09:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59104 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726219AbeJKPJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:09:25 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726219AbeJKPJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 11:09:51 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27A973001FD2;
-        Thu, 11 Oct 2018 07:43:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE4A09D426;
+        Thu, 11 Oct 2018 07:43:47 +0000 (UTC)
 Received: from [10.36.117.105] (ovpn-117-105.ams2.redhat.com [10.36.117.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22543105706D;
-        Thu, 11 Oct 2018 07:43:19 +0000 (UTC)
-Subject: Re: [PATCH 1/2] docs/core-api: rename memory-hotplug-notifier to
- memory-hotplug
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72B7E608E7;
+        Thu, 11 Oct 2018 07:43:46 +0000 (UTC)
+Subject: Re: [PATCH 2/2] docs/core-api: memory-hotplug: add some details about
+ locking internals
 To:     Mike Rapoport <rppt@linux.ibm.com>,
         Jonathan Corbet <corbet@lwn.net>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1539233897-10207-1-git-send-email-rppt@linux.ibm.com>
- <1539233897-10207-2-git-send-email-rppt@linux.ibm.com>
+ <1539233897-10207-3-git-send-email-rppt@linux.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -86,236 +85,119 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <0db601d3-319f-09d9-e659-b9116c404a6a@redhat.com>
-Date:   Thu, 11 Oct 2018 09:43:19 +0200
+Message-ID: <ee64b1b3-f39f-e00c-f274-eabd73221738@redhat.com>
+Date:   Thu, 11 Oct 2018 09:43:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1539233897-10207-2-git-send-email-rppt@linux.ibm.com>
+In-Reply-To: <1539233897-10207-3-git-send-email-rppt@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 11 Oct 2018 07:43:22 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 11 Oct 2018 07:43:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 11/10/2018 06:58, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> From: David Hildenbrand <david@redhat.com>
 > 
-> to allow additions of new documentation about memory hotplug under the same
-> roof.
+> Let's document the magic a bit, especially why device_hotplug_lock is
+> required when adding/removing memory and how it all play together with
+> requests to online/offline memory from user space.
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> [ rppt: moved the text to Documentation/core-api/memory-hotplug.rst ]
+> 
+> Link: http://lkml.kernel.org/r/20180925091457.28651-7-david@redhat.com
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: John Allen <jallen@linux.vnet.ibm.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Michael Neuling <mikey@neuling.org>
+> Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 > ---
->  Documentation/core-api/index.rst                   |  2 +-
->  Documentation/core-api/memory-hotplug-notifier.rst | 84 ---------------------
->  Documentation/core-api/memory-hotplug.rst          | 87 ++++++++++++++++++++++
->  3 files changed, 88 insertions(+), 85 deletions(-)
->  delete mode 100644 Documentation/core-api/memory-hotplug-notifier.rst
->  create mode 100644 Documentation/core-api/memory-hotplug.rst
+>  Documentation/core-api/memory-hotplug.rst | 38 +++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> index 4f8a426..29c790f 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -32,7 +32,7 @@ Core utilities
->     gfp_mask-from-fs-io
->     timekeeping
->     boot-time-mm
-> -   memory-hotplug-notifier
-> +   memory-hotplug
->  
->  
->  Interfaces for kernel debugging
-> diff --git a/Documentation/core-api/memory-hotplug-notifier.rst b/Documentation/core-api/memory-hotplug-notifier.rst
-> deleted file mode 100644
-> index 35347cc..0000000
-> --- a/Documentation/core-api/memory-hotplug-notifier.rst
-> +++ /dev/null
-> @@ -1,84 +0,0 @@
-> -.. _memory_hotplug_notifier:
-> -
-> -=============================
-> -Memory hotplug event notifier
-> -=============================
-> -
-> -Hotplugging events are sent to a notification queue.
-> -
-> -There are six types of notification defined in ``include/linux/memory.h``:
-> -
-> -MEM_GOING_ONLINE
-> -  Generated before new memory becomes available in order to be able to
-> -  prepare subsystems to handle memory. The page allocator is still unable
-> -  to allocate from the new memory.
-> -
-> -MEM_CANCEL_ONLINE
-> -  Generated if MEM_GOING_ONLINE fails.
-> -
-> -MEM_ONLINE
-> -  Generated when memory has successfully brought online. The callback may
-> -  allocate pages from the new memory.
-> -
-> -MEM_GOING_OFFLINE
-> -  Generated to begin the process of offlining memory. Allocations are no
-> -  longer possible from the memory but some of the memory to be offlined
-> -  is still in use. The callback can be used to free memory known to a
-> -  subsystem from the indicated memory block.
-> -
-> -MEM_CANCEL_OFFLINE
-> -  Generated if MEM_GOING_OFFLINE fails. Memory is available again from
-> -  the memory block that we attempted to offline.
-> -
-> -MEM_OFFLINE
-> -  Generated after offlining memory is complete.
-> -
-> -A callback routine can be registered by calling::
-> -
-> -  hotplug_memory_notifier(callback_func, priority)
-> -
-> -Callback functions with higher values of priority are called before callback
-> -functions with lower values.
-> -
-> -A callback function must have the following prototype::
-> -
-> -  int callback_func(
-> -    struct notifier_block *self, unsigned long action, void *arg);
-> -
-> -The first argument of the callback function (self) is a pointer to the block
-> -of the notifier chain that points to the callback function itself.
-> -The second argument (action) is one of the event types described above.
-> -The third argument (arg) passes a pointer of struct memory_notify::
-> -
-> -	struct memory_notify {
-> -		unsigned long start_pfn;
-> -		unsigned long nr_pages;
-> -		int status_change_nid_normal;
-> -		int status_change_nid_high;
-> -		int status_change_nid;
-> -	}
-> -
-> -- start_pfn is start_pfn of online/offline memory.
-> -- nr_pages is # of pages of online/offline memory.
-> -- status_change_nid_normal is set node id when N_NORMAL_MEMORY of nodemask
-> -  is (will be) set/clear, if this is -1, then nodemask status is not changed.
-> -- status_change_nid_high is set node id when N_HIGH_MEMORY of nodemask
-> -  is (will be) set/clear, if this is -1, then nodemask status is not changed.
-> -- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
-> -  set/clear. It means a new(memoryless) node gets new memory by online and a
-> -  node loses all memory. If this is -1, then nodemask status is not changed.
-> -
-> -  If status_changed_nid* >= 0, callback should create/discard structures for the
-> -  node if necessary.
-> -
-> -The callback routine shall return one of the values
-> -NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
-> -defined in ``include/linux/notifier.h``
-> -
-> -NOTIFY_DONE and NOTIFY_OK have no effect on the further processing.
-> -
-> -NOTIFY_BAD is used as response to the MEM_GOING_ONLINE, MEM_GOING_OFFLINE,
-> -MEM_ONLINE, or MEM_OFFLINE action to cancel hotplugging. It stops
-> -further processing of the notification queue.
-> -
-> -NOTIFY_STOP stops further processing of the notification queue.
 > diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
-> new file mode 100644
-> index 0000000..a99f2f2
-> --- /dev/null
+> index a99f2f2..de7467e 100644
+> --- a/Documentation/core-api/memory-hotplug.rst
 > +++ b/Documentation/core-api/memory-hotplug.rst
-> @@ -0,0 +1,87 @@
-> +.. _memory_hotplug:
+> @@ -85,3 +85,41 @@ MEM_ONLINE, or MEM_OFFLINE action to cancel hotplugging. It stops
+>  further processing of the notification queue.
+>  
+>  NOTIFY_STOP stops further processing of the notification queue.
 > +
-> +==============
-> +Memory hotplug
-> +==============
+> +Locking Internals
+> +=================
 > +
-> +Memory hotplug event notifier
-> +=============================
+> +When adding/removing memory that uses memory block devices (i.e. ordinary RAM),
+> +the device_hotplug_lock should be held to:
 > +
-> +Hotplugging events are sent to a notification queue.
+> +- synchronize against online/offline requests (e.g. via sysfs). This way, memory
+> +  block devices can only be accessed (.online/.state attributes) by user
+> +  space once memory has been fully added. And when removing memory, we
+> +  know nobody is in critical sections.
+> +- synchronize against CPU hotplug and similar (e.g. relevant for ACPI and PPC)
 > +
-> +There are six types of notification defined in ``include/linux/memory.h``:
+> +Especially, there is a possible lock inversion that is avoided using
+> +device_hotplug_lock when adding memory and user space tries to online that
+> +memory faster than expected:
 > +
-> +MEM_GOING_ONLINE
-> +  Generated before new memory becomes available in order to be able to
-> +  prepare subsystems to handle memory. The page allocator is still unable
-> +  to allocate from the new memory.
+> +- device_online() will first take the device_lock(), followed by
+> +  mem_hotplug_lock
+> +- add_memory_resource() will first take the mem_hotplug_lock, followed by
+> +  the device_lock() (while creating the devices, during bus_add_device()).
 > +
-> +MEM_CANCEL_ONLINE
-> +  Generated if MEM_GOING_ONLINE fails.
+> +As the device is visible to user space before taking the device_lock(), this
+> +can result in a lock inversion.
 > +
-> +MEM_ONLINE
-> +  Generated when memory has successfully brought online. The callback may
-> +  allocate pages from the new memory.
+> +onlining/offlining of memory should be done via device_online()/
+> +device_offline() - to make sure it is properly synchronized to actions
+> +via sysfs. Holding device_hotplug_lock is advised (to e.g. protect online_type)
 > +
-> +MEM_GOING_OFFLINE
-> +  Generated to begin the process of offlining memory. Allocations are no
-> +  longer possible from the memory but some of the memory to be offlined
-> +  is still in use. The callback can be used to free memory known to a
-> +  subsystem from the indicated memory block.
+> +When adding/removing/onlining/offlining memory or adding/removing
+> +heterogeneous/device memory, we should always hold the mem_hotplug_lock in
+> +write mode to serialise memory hotplug (e.g. access to global/zone
+> +variables).
 > +
-> +MEM_CANCEL_OFFLINE
-> +  Generated if MEM_GOING_OFFLINE fails. Memory is available again from
-> +  the memory block that we attempted to offline.
-> +
-> +MEM_OFFLINE
-> +  Generated after offlining memory is complete.
-> +
-> +A callback routine can be registered by calling::
-> +
-> +  hotplug_memory_notifier(callback_func, priority)
-> +
-> +Callback functions with higher values of priority are called before callback
-> +functions with lower values.
-> +
-> +A callback function must have the following prototype::
-> +
-> +  int callback_func(
-> +    struct notifier_block *self, unsigned long action, void *arg);
-> +
-> +The first argument of the callback function (self) is a pointer to the block
-> +of the notifier chain that points to the callback function itself.
-> +The second argument (action) is one of the event types described above.
-> +The third argument (arg) passes a pointer of struct memory_notify::
-> +
-> +	struct memory_notify {
-> +		unsigned long start_pfn;
-> +		unsigned long nr_pages;
-> +		int status_change_nid_normal;
-> +		int status_change_nid_high;
-> +		int status_change_nid;
-> +	}
-> +
-> +- start_pfn is start_pfn of online/offline memory.
-> +- nr_pages is # of pages of online/offline memory.
-> +- status_change_nid_normal is set node id when N_NORMAL_MEMORY of nodemask
-> +  is (will be) set/clear, if this is -1, then nodemask status is not changed.
-> +- status_change_nid_high is set node id when N_HIGH_MEMORY of nodemask
-> +  is (will be) set/clear, if this is -1, then nodemask status is not changed.
-> +- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
-> +  set/clear. It means a new(memoryless) node gets new memory by online and a
-> +  node loses all memory. If this is -1, then nodemask status is not changed.
-> +
-> +  If status_changed_nid* >= 0, callback should create/discard structures for the
-> +  node if necessary.
-> +
-> +The callback routine shall return one of the values
-> +NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
-> +defined in ``include/linux/notifier.h``
-> +
-> +NOTIFY_DONE and NOTIFY_OK have no effect on the further processing.
-> +
-> +NOTIFY_BAD is used as response to the MEM_GOING_ONLINE, MEM_GOING_OFFLINE,
-> +MEM_ONLINE, or MEM_OFFLINE action to cancel hotplugging. It stops
-> +further processing of the notification queue.
-> +
-> +NOTIFY_STOP stops further processing of the notification queue.
+> +In addition, mem_hotplug_lock (in contrast to device_hotplug_lock) in read
+> +mode allows for a quite efficient get_online_mems/put_online_mems
+> +implementation, so code accessing memory can protect from that memory
+> +vanishing.
 > 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Looks good to me.
 
 -- 
 
