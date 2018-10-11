@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568E2C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C02C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DADE21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8163A2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ka0jpwCJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DADE21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq9O6Z86"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8163A2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731794AbeJKXPF (ORCPT
+        id S1731216AbeJKXPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48390 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJKXPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:04 -0400
+        id S1726727AbeJKXPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 210542098A;
-        Thu, 11 Oct 2018 15:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D055921470;
+        Thu, 11 Oct 2018 15:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272838;
-        bh=ZImnZ+sVfIIvJ2DP4FO9pMIEeRrfQ5xdqOG9zr8KrGw=;
+        s=default; t=1539272841;
+        bh=vRtNwNfaDSi4VU7+7aMP+dWvXhwOTRm4Zee6BoGjOow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ka0jpwCJHE9dq5me83ZtFSRdBarNagaiS19C9C0uA23VcELTk16cnflhHDV9D3nON
-         vPhooUIuRJ3hijyhIU/jPcxsmi8j4+ZRJhk2GxocSTLh2UwKtospPbwYCb2Dmdgnih
-         bMT48lZi44YMNCfQ3PoFEcEtU5P5TZEZMv0uInXc=
+        b=Aq9O6Z86P4OZxKZljED79ZYvOdzuHkYhbNo58vbBMYgBrydU1+8o2Q4tqB72BMED2
+         4cyW8jUPbltSKBSNaTIUlSauCdlL3BYqH5/5w01AqLMVq2J//CQa37bcKW5kYLZM1S
+         /OuhaVBJOJO2X4xerEYL2B/iq3H5qvNHQt8F9DGg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.18 12/44] mmc: core: Fix debounce time to use microseconds
-Date:   Thu, 11 Oct 2018 17:39:50 +0200
-Message-Id: <20181011152453.035571654@linuxfoundation.org>
+Subject: [PATCH 4.18 13/44] mmc: slot-gpio: Fix debounce time to use miliseconds again
+Date:   Thu, 11 Oct 2018 17:39:51 +0200
+Message-Id: <20181011152453.074825120@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -63,35 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit 1d71926bbd59facc4bdb6f13117d3a1aee8b83ba upstream.
+commit 1b09d9c232cdaea59fb50ac437d3921ed1f1eafb upstream.
 
-The debounce value in device tree is in milliseconds but needs to be in
-microseconds for mmc_gpiod_request_cd().
+The debounce value passed to mmc_gpiod_request_cd() function is in
+microseconds, but msecs_to_jiffies() requires the value to be in
+miliseconds to properly calculate the delay, so adjust the value stored
+in cd_debounce_delay_ms context entry.
 
+Fixes: 1d71926bbd59 ("mmc: core: Fix debounce time to use microseconds")
 Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card
 after card is inserted")
-Cc: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
 Cc: stable@vger.kernel.org # v4.18+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/host.c |    2 +-
+ drivers/mmc/core/slot-gpio.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -235,7 +235,7 @@ int mmc_of_parse(struct mmc_host *host)
- 			host->caps |= MMC_CAP_NEEDS_POLL;
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -271,7 +271,7 @@ int mmc_gpiod_request_cd(struct mmc_host
+ 	if (debounce) {
+ 		ret = gpiod_set_debounce(desc, debounce);
+ 		if (ret < 0)
+-			ctx->cd_debounce_delay_ms = debounce;
++			ctx->cd_debounce_delay_ms = debounce / 1000;
+ 	}
  
- 		ret = mmc_gpiod_request_cd(host, "cd", 0, true,
--					   cd_debounce_delay_ms,
-+					   cd_debounce_delay_ms * 1000,
- 					   &cd_gpio_invert);
- 		if (!ret)
- 			dev_info(host->parent, "Got CD GPIO\n");
+ 	if (gpio_invert)
 
 
