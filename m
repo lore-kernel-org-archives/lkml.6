@@ -2,78 +2,88 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73CAC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B47AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D602087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D602087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 21FC12098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FC12098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeJKR0B (ORCPT
+        id S1727749AbeJKR3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 13:26:01 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13644 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726035AbeJKR0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 13:26:01 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C97217DB53D02;
-        Thu, 11 Oct 2018 17:59:24 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 11 Oct 2018
- 17:59:17 +0800
-Subject: Re: [PATCH 0/7] hisi_sas: Misc bugfixes and an optimisation patch
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <1537801594-207139-1-git-send-email-john.garry@huawei.com>
- <yq18t354532.fsf@oracle.com> <20181011063603.GA3456@infradead.org>
-CC:     <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        chenxiang <chenxiang66@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <118d01db-05f4-a85b-850c-c4e5a5616a16@huawei.com>
-Date:   Thu, 11 Oct 2018 10:59:11 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181011063603.GA3456@infradead.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+        Thu, 11 Oct 2018 13:29:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35384 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbeJKR3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 13:29:52 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E9A6B2AC;
+        Thu, 11 Oct 2018 10:03:18 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-17.brq.redhat.com [10.40.204.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5DC107A46F;
+        Thu, 11 Oct 2018 10:03:15 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: vmx: hyper-v: don't pass EPT configuration info to vmx_hv_remote_flush_tlb()
+Date:   Thu, 11 Oct 2018 12:03:12 +0200
+Message-Id: <20181011100312.4083-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 11 Oct 2018 10:03:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 07:36, Christoph Hellwig wrote:
-> On Wed, Oct 10, 2018 at 09:58:25PM -0400, Martin K. Petersen wrote:
->>> This is because the IPTT index must be a unique value per HBA. However,
->>> if we switched to SCSI MQ, the block layer tag becomes unique per queue,
->>> and not per HBA.
->>
->> That doesn't sound right.
->
+I'm observing random crashes in multi-vCPU L2 guests running on KVM on
+Hyper-V. I bisected the issue to the commit 877ad952be3d ("KVM: vmx: Add
+tlb_remote_flush callback support"). Hyper-V TLFS states:
 
-Hmmm, well this is what I was told ...
+"AddressSpace specifies an address space ID (an EPT PML4 table pointer)"
 
-> blk-mq tags are always per-host (which has actually caused problems for
-> ATA, which is now using its own per-device tags).
->
+So apparently, Hyper-V doesn't expect us to pass naked EPTP, only PML4
+pointer should be used. Strip off EPT configuration information before
+calling into vmx_hv_remote_flush_tlb().
 
-So, for example, if Scsi_host.can_queue = 2048 and 
-Scsi_host.nr_hw_queues = 16, then rq tags are still in range [0, 2048) 
-for that HBA, i.e. invariant on queue count?
+Fixes: 877ad952be3d ("KVM: vmx: Add tlb_remote_flush callback support")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> .
->
-
-Thanks,
-John
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 612fd17be635..e665aa7167cf 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1572,8 +1572,12 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ 		goto out;
+ 	}
+ 
++	/*
++	 * FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE hypercall needs the address of the
++	 * base of EPT PML4 table, strip off EPT configuration information.
++	 */
+ 	ret = hyperv_flush_guest_mapping(
+-			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
++			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
+ 
+ out:
+ 	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+-- 
+2.17.1
 
