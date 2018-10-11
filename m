@@ -2,232 +2,175 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A28CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C102C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1D92087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:41:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TrMEW3/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1D92087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CE0AC2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0AC2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeJKQHR (ORCPT
+        id S1728353AbeJKQIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:07:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37592 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbeJKQHL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:07:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g6j3VeIq8Dup12gH7zEipE5cMK85F1IGDFIIuCiFysc=; b=TrMEW3/9i69nodwHaJ0FyPCnh
-        ny0/NosV917OR9169aHWI74YoJxLNu5XtPF2K5omlbsnpQdf1H+AKAfHcD5xzMOwnUUxq7sxpqgET
-        w6DFiH+pRxVCRuZI5BnWfTKUJ2Md0x5ESfa1geXk1PbwxGHfUbXk6X9suJooNn6wmWb+H6o01aoSj
-        0Mj8rHUN0NbhgYUdkZqUuQlB+CtW1WWK1dHsqjXLFV+58sLuhgowMElb9LlJvEhA3NqXlRQLopToC
-        jwN7Sv2sBB1PEKX4jr8RP8hUFpEbAlR+qEvkUzB1C4zJ/k0KwaB0M5nuoBQORMNMb/4kFr1fNTnzC
-        TOsKATweA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gAWWY-0006Do-Oj; Thu, 11 Oct 2018 08:40:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 050972027E187; Thu, 11 Oct 2018 10:40:48 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 10:40:47 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH] x86/tsc: use real seqcount_latch in cyc2ns_read_begin()
-Message-ID: <20181011084047.GA9885@hirez.programming.kicks-ass.net>
-References: <20181011003336.168941-1-edumazet@google.com>
- <20181011073133.GZ5663@hirez.programming.kicks-ass.net>
+        Thu, 11 Oct 2018 12:08:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33958 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726840AbeJKQIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:08:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F396B143;
+        Thu, 11 Oct 2018 08:42:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CF4921E3616; Thu, 11 Oct 2018 10:42:22 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 10:42:22 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
+ versions
+Message-ID: <20181011084222.GA8418@quack2.suse.cz>
+References: <20181008211623.30796-1-jhubbard@nvidia.com>
+ <20181008211623.30796-3-jhubbard@nvidia.com>
+ <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
+ <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
+ <20181010085936.GC11507@quack2.suse.cz>
+ <f5fb98a8-a1dc-6f1d-bc9e-210be14e91b4@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181011073133.GZ5663@hirez.programming.kicks-ass.net>
+In-Reply-To: <f5fb98a8-a1dc-6f1d-bc9e-210be14e91b4@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 09:31:33AM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 10, 2018 at 05:33:36PM -0700, Eric Dumazet wrote:
-> > While looking at native_sched_clock() disassembly I had
-> > the surprise to see the compiler (gcc 7.3 here) had
-> > optimized out the loop, meaning the code is broken.
+On Wed 10-10-18 16:23:35, John Hubbard wrote:
+> On 10/10/18 1:59 AM, Jan Kara wrote:
+> > On Tue 09-10-18 17:42:09, John Hubbard wrote:
+> >> On 10/8/18 5:14 PM, Andrew Morton wrote:
+> >>> Also, maintainability.  What happens if someone now uses put_page() by
+> >>> mistake?  Kernel fails in some mysterious fashion?  How can we prevent
+> >>> this from occurring as code evolves?  Is there a cheap way of detecting
+> >>> this bug at runtime?
+> >>>
+> >>
+> >> It might be possible to do a few run-time checks, such as "does page that came 
+> >> back to put_user_page() have the correct flags?", but it's harder (without 
+> >> having a dedicated page flag) to detect the other direction: "did someone page 
+> >> in a get_user_pages page, to put_page?"
+> >>
+> >> As Jan said in his reply, converting get_user_pages (and put_user_page) to 
+> >> work with a new data type that wraps struct pages, would solve it, but that's
+> >> an awfully large change. Still...given how much of a mess this can turn into 
+> >> if it's wrong, I wonder if it's worth it--maybe? 
 > > 
-> > Using the documented and approved API not only fixes the bug,
-> > it also makes the code more readable.
+> > I'm certainly not opposed to looking into it. But after looking into this
+> > for a while it is not clear to me how to convert e.g. fs/direct-io.c or
+> > fs/iomap.c. They pass the reference from gup() via
+> > bio->bi_io_vec[]->bv_page and then release it after IO completion.
+> > Propagating the new type to ->bv_page is not good as lower layer do not
+> > really care how the page is pinned in memory. But we do need to somehow
+> > pass the information to the IO completion functions in a robust manner.
 > > 
-> > Replacing five this_cpu_read() by one this_cpu_ptr() makes
-> > the generated code smaller.
 > 
-> Does not for me, that is, the resulting asm is actually larger
+> You know, that problem has to be solved in either case: even if we do not
+> use a new data type for get_user_pages, we still need to clearly, accurately
+> match up the get/put pairs. And for the complicated systems (block IO, and
+> GPU DRM layer, especially) one of the things that has caused me concern is 
+> the way the pages all end up in a large, complicated pool, and put_page is
+> used to free all of them, indiscriminately.
+
+Agreed.
+
+> > Hmm, what about the following:
+> > 
+> > 1) Make gup() return new type - struct user_page *? In practice that would
+> > be just a struct page pointer with 0 bit set so that people are forced to
+> > use proper helpers and not just force types (and the setting of bit 0 and
+> > masking back would be hidden behind CONFIG_DEBUG_USER_PAGE_REFERENCES for
+> > performance reasons). Also the transition would have to be gradual so we'd
+> > have to name the function differently and use it from converted code.
 > 
-> You're quite right the loop went missing; no idea wth that compiler is
-> smoking (gcc-8.2 for me). In order to eliminate that loop it needs to
-> think that two consecutive loads of this_cpu_read(cyc2ns.seq.sequence)
-> will return the same value. But this_cpu_read() is an asm() statement,
-> it _should_ not assume such.
+> Yes. That seems perfect: it just fades away if you're not debugging, but we
+> can catch lots of problems when CONFIG_DEBUG_USER_PAGE_REFERENCES is set. 
+
+Yeah, and when you suspect issues with page pinning, you can try to run
+with CONFIG_DEBUG_USER_PAGE_REFERENCES enabled. It's not like the overhead
+is going to be huge. But it could be measurable for some workloads...
+
+> > 2) Provide helper bio_add_user_page() that will take user_page, convert it
+> > to struct page, add it to the bio, and flag the bio as having pages with
+> > user references. That code would also make sure the bio is consistent in
+> > having only user-referenced pages in that case. IO completion (like
+> > bio_check_pages_dirty(), bio_release_pages() etc.) will check the flag and
+> > use approprite release function.
 > 
-> We assume that this_cpu_read() implies READ_ONCE() in a number of
-> locations, this really should not happen.
+> I'm very new to bio, so I have to ask: can we be sure that the same types of 
+> pages are always used, within each bio? Because otherwise, we'll have to plumb 
+> it all the way down to bio_vec's--or so it appears, based on my reading of 
+> bio_release_pages() and surrounding code.
+
+No, we cannot be sure (the zero page usage within DIO code is one example
+when it currently is not true) although usually it is the case that same
+type of pages is used for one bio. But bio_add_page() (and thus similarly
+bio_add_user_page()) is fine to refuse adding a page to the bio and the
+caller then has to submit the current bio and start a new one. So we can
+just reuse this mechanism when we detect that currently passed page is of a
+different type than other pages in the bio.
+
+> > 3) I have noticed fs/direct-io.c may submit zero page for IO when it needs
+> > to clear stuff so we'll probably need a helper function to acquire 'user pin'
+> > reference given a page pointer so that that code can be kept reasonably
+> > simple and pass user_page references all around.
+> >
 > 
-> The reason it was written using this_cpu_read() is so that it can use
-> %gs: prefixed instructions and avoid ever loading that percpu offset and
-> doing manual address computation.
+> This only works if we don't set page flags, because if we do set page flags 
+> on the single, global zero page, that will break the world. So I'm not sure
+> that the zero page usage in fs/directio.c is going to survive the conversion
+> to this new approach. :)
+
+Hum, we can always allocate single page filled with zeros for the use by
+DIO code itself. But at this point I'm actually not sure why "user pinning"
+of zero page would be an issue. After all if you have private anonymous
+read-only mapping, it is going to be backed by zero pages and
+get_user_pages() and put_user_pages() have to propely detect pin attempts
+for these pages and handle them consistently... So DIO code does not seem
+to be doing anything that special.
+
+> > So this way we could maintain reasonable confidence that refcounts didn't
+> > get mixed up. Thoughts?
+> > 
 > 
-> Let me prod at this with a sharp stick.
+> After thinking some more about the complicated situations in bio and DRM,
+> and looking into the future (bug reports...), I am leaning toward your 
+> struct user_page approach. 
+> 
+> I'm looking forward to hearing other opinions on whether it's worth it to go
+> and do this fairly intrusive change, in return for, probably, fewer bugs along
+> the way.
 
-OK, so apart from the inlining being crap, which is fixed by:
+Yeah, at this point I think it is worth it as it's probably going to save
+us quite some hair-tearing when debugging stuff.
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 6490f618e096..638491062fea 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -57,7 +57,7 @@ struct cyc2ns {
- 
- static DEFINE_PER_CPU_ALIGNED(struct cyc2ns, cyc2ns);
- 
--void cyc2ns_read_begin(struct cyc2ns_data *data)
-+void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
- {
- 	int seq, idx;
- 
-@@ -74,7 +74,7 @@ void cyc2ns_read_begin(struct cyc2ns_data *data)
- 	} while (unlikely(seq != this_cpu_read(cyc2ns.seq.sequence)));
- }
- 
--void cyc2ns_read_end(void)
-+void __always_inline cyc2ns_read_end(void)
- {
- 	preempt_enable_notrace();
- }
-@@ -103,7 +103,7 @@ void cyc2ns_read_end(void)
-  *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
-  */
- 
--static inline unsigned long long cycles_2_ns(unsigned long long cyc)
-+static __always_inline unsigned long long cycles_2_ns(unsigned long long cyc)
- {
- 	struct cyc2ns_data data;
- 	unsigned long long ns;
-
-
-That gets us:
-
-native_sched_clock:
-	pushq   %rbp    #
-	movq    %rsp, %rbp      #,
-
- ... jump label ...
-
-	rdtsc
-	salq    $32, %rdx       #, tmp110
-	orq     %rax, %rdx      # low, tmp110
-	movl %gs:cyc2ns+32(%rip),%ecx   # cyc2ns.seq.sequence, pfo_ret__
-	andl    $1, %ecx        #, idx
-	salq    $4, %rcx        #, tmp116
-	movl %gs:cyc2ns(%rcx),%esi      # cyc2ns.data[idx_14].cyc2ns_mul, pfo_ret__
-	movl    %esi, %esi      # pfo_ret__, pfo_ret__
-	movq    %rsi, %rax      # pfo_ret__, tmp133
-	mulq    %rdx    # _23
-	movq %gs:cyc2ns+8(%rcx),%rdi    # cyc2ns.data[idx_14].cyc2ns_offset, pfo_ret__
-	addq    $cyc2ns, %rcx   #, tmp117
-	movl %gs:4(%rcx),%ecx   # cyc2ns.data[idx_14].cyc2ns_shift, pfo_ret__
-	shrdq   %rdx, %rax      # pfo_ret__,, tmp134
-	shrq    %cl, %rdx       # pfo_ret__,
-	testb   $64, %cl        #, pfo_ret__
-	cmovne  %rdx, %rax      #,, tmp134
-	addq    %rdi, %rax      # pfo_ret__, <retval>
-	popq    %rbp    #
-	ret
-
-
-If we then fix the percpu mess, with:
-
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index e9202a0de8f0..1a19d11cfbbd 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -185,22 +185,22 @@ do {									\
- 	typeof(var) pfo_ret__;				\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b "__percpu_arg(1)",%0"		\
-+		asm volatile(op "b "__percpu_arg(1)",%0"\
- 		    : "=q" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 2:						\
--		asm(op "w "__percpu_arg(1)",%0"		\
-+		asm volatile(op "w "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 4:						\
--		asm(op "l "__percpu_arg(1)",%0"		\
-+		asm volatile(op "l "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 8:						\
--		asm(op "q "__percpu_arg(1)",%0"		\
-+		asm volatile(op "q "__percpu_arg(1)",%0"\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
-
-
-That turns into:
-
-native_sched_clock:
-	pushq   %rbp    #
-	movq    %rsp, %rbp      #,
-
- ... jump label ...
-
-	rdtsc
-	salq    $32, %rdx       #, tmp110
-	orq     %rax, %rdx      # low, tmp110
-	movq    %rdx, %r10      # tmp110, _23
-	movq    $cyc2ns, %r9    #, tmp136
-.L235:
-	movl %gs:cyc2ns+32(%rip),%eax   # cyc2ns.seq.sequence, pfo_ret__
-	movl    %eax, %ecx      # pfo_ret__, idx
-	andl    $1, %ecx        #, idx
-	salq    $4, %rcx        #, tmp116
-	addq    %r9, %rcx       # tmp136, tmp117
-	movq %gs:8(%rcx),%rdi   # cyc2ns.data[idx_14].cyc2ns_offset, pfo_ret__
-	movl %gs:(%rcx),%esi    # cyc2ns.data[idx_14].cyc2ns_mul, pfo_ret__
-	movl %gs:4(%rcx),%ecx   # cyc2ns.data[idx_14].cyc2ns_shift, pfo_ret__
-	movl %gs:cyc2ns+32(%rip),%r8d   # cyc2ns.seq.sequence, pfo_ret__
-	cmpl    %r8d, %eax      # pfo_ret__, pfo_ret__
-	jne     .L235   #,
-	movl    %esi, %esi      # pfo_ret__, pfo_ret__
-	movq    %rsi, %rax      # pfo_ret__, tmp133
-	mulq    %r10    # _23
-	shrdq   %rdx, %rax      # pfo_ret__,, tmp134
-	shrq    %cl, %rdx       # pfo_ret__,
-	testb   $64, %cl        #, pfo_ret__
-	cmovne  %rdx, %rax      #,, tmp134
-	addq    %rdi, %rax      # pfo_ret__, <retval>
-	popq    %rbp    #
-	ret
-
-which is exactly right. Except perhaps for the mess that
-mul_u64_u32_shr() turns into.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
