@@ -2,157 +2,96 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30639C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9AAC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C042085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:54:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MosP9A7J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C042085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 610892085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:55:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610892085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeJKQVB (ORCPT
+        id S1728116AbeJKQVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:21:01 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52299 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKQVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:21:00 -0400
-Received: by mail-it1-f193.google.com with SMTP id 134-v6so12332094itz.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WYTjmcBhVHuVOQTcuvvNJsnjCtNM5+sLBFRDY4fZcS8=;
-        b=MosP9A7JykCdEjQFdZ6/0dNcjOibRSoSSBHKmy3QOdwJTAq3RQp8P8sdZsjWQHzsIQ
-         hOHz71LTovrzsuJ9X2YRfGzQwDr5rusucU1B5oYI4DlxCAGgIePeAJP+Wqhsmk6oBYsj
-         6WveNUdz5t8eo8V0k2CmFZvKODp6HnLOaub+RR+Ilj96mvbN1kEYL0L74qX+a0snmIQj
-         87W/ZJYKI2lEkaqDuYA5OvdjXDO67GPzNPxBFluBf8S7DHZSeh3WDf2zde4LWqoG4CzF
-         jCk+hfN6A/y0ynlkQotKgQXsE0YRpGVTI2aIF7yRb92ztPlvbXib8Iw+VteeNBiYWw8X
-         5Xyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WYTjmcBhVHuVOQTcuvvNJsnjCtNM5+sLBFRDY4fZcS8=;
-        b=mHxrkhf9z/o+4Oi4ZFEFhScGl3Su6ADbBDtnRuopj0LhCLMaA30OZaoSRm5zUDVaK0
-         wYPYJ0gcZDLD5VgyVm7VyRMoXocaNmXi6Tqel3wTbje5Uaw+QPfx1tgy+bKFDUEfze+D
-         Mf4SRM7nVXTLt6Onj4rd0xNJHeMDXrAes7kaFUuS9YsMRmS3QSHywPJGjC5eI34i1uO5
-         bqhAbLUjSikirde8go7v/yp+TTXCF8o+S7A/vdnP8xZsaQBk/odW4sppxsUJrAK7jocd
-         gOBa92FbFt1wvEzfiMM5YFh+L2nyIhpmKcPtKsiVL3Kull8Klboh3orvOhcUcx7/JsA6
-         cIQQ==
-X-Gm-Message-State: ABuFfogrCq0kEiwHipQfWQk8u7WBvXO3iBVJAM7ZkdTAbhNYRrQE2fkX
-        nVSpFYfYb23ZWe7P9HtfyDcrorcgWnuDg5fHUeq4KQ==
-X-Google-Smtp-Source: ACcGV62zWxv2ystcn6yyb/PgRcJ+6OypxmDbOBJsdZvUIWD3LoisUGVC796YgSAhE55MFUMxprnod+IZdC3xNPVNmmY=
-X-Received: by 2002:a02:9716:: with SMTP id x22-v6mr509431jai.82.1539248081097;
- Thu, 11 Oct 2018 01:54:41 -0700 (PDT)
+        Thu, 11 Oct 2018 12:21:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36742 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726135AbeJKQVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:21:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A4D70AE6D;
+        Thu, 11 Oct 2018 08:55:10 +0000 (UTC)
+Date:   Thu, 11 Oct 2018 10:55:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        yi.z.zhang@linux.intel.com
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181011085509.GS5873@dhcp22.suse.cz>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20181009170051.GA40606@tiger-server>
+ <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
+ <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+ <20181010095838.GG5873@dhcp22.suse.cz>
+ <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
+ <20181010172451.GK5873@dhcp22.suse.cz>
+ <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
+ <20181010185242.GP5873@dhcp22.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 01:54:20
- -0700 (PDT)
-In-Reply-To: <CAPhKKr8QvK3bkT6gQB9jc31Cx+gLmZwRnKuRUD_1xaidwL14Dg@mail.gmail.com>
-References: <CAPhKKr_XFzGcBBuQ51w7HjZd_Kq3nTOB6uAFG2vP5JH+Vx_eng@mail.gmail.com>
- <CACT4Y+Y+6arxj4=72DZSj45u5kjKRksJZ7c6pBLeFDxUSBFwOg@mail.gmail.com>
- <20181008142300.3aacaabe@gandalf.local.home> <CAPhKKr8QvK3bkT6gQB9jc31Cx+gLmZwRnKuRUD_1xaidwL14Dg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 11 Oct 2018 10:54:20 +0200
-Message-ID: <CACT4Y+aiSXsyFqXueRGXeVeY6KAJ4M2Oy6RZWFnNS_d9Z9pAnw@mail.gmail.com>
-Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
-To:     Dhaval Giani <dhaval.giani@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alice Ferrazzi <alice.ferrazzi@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        gustavo.padovan@collabora.co.uk,
-        "Carpenter,Dan" <dan.carpenter@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, knut.omang@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010185242.GP5873@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 5:47 PM, Dhaval Giani <dhaval.giani@gmail.com> wrote:
-> On Mon, Oct 8, 2018 at 11:23 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->>
->> On Mon, 8 Oct 2018 19:02:51 +0200
->> Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> > On Wed, Sep 19, 2018 at 7:13 PM, Dhaval Giani <dhaval.giani@gmail.com> wrote:
->> > > Hi folks,
->> > >
->> > > Sasha and I are pleased to announce the Testing and Fuzzing track at
->> > > LPC [ 1 ]. We are planning to continue the discussions from last
->> > > year's microconference [2]. Many discussions from the Automated
->> > > Testing Summit [3] will also continue, and a final agenda will come up
->> > > only soon after that.
->> > >
->> > > Suggested Topics
->> > >
->> > > - Syzbot/syzkaller
->> > > - ATS
->> > > - Distro/stable testing
->> > > - kernelci
->> > > - kernelci auto bisection
->> > > - Unit testing framework
->> > >
->> > > We look forward to other interesting topics for this microconference
->> > > as a reply to this email.
->> >
->> > Hi Dhaval and Sasha,
->> >
->> > My syzbot talk wasn't accepted to main track, so I would like to do
->> > more or less full-fledged talk on the microconf. Is it possible?
->>
->> Hi Dmitry,
->>
->> Note, microconfs are not for full-fledged talks. They are to be
->> discussion focused. You can have a 5-10 minute presentation that leads
->> up to discussion of future work, but we like to refrain from any talks
->> about what was done if there's nothing to go forward with.
->
-> Dmitiry,
->
-> Can you clarify the scope of what you want to discuss during the
-> microconference? Further to what Steven said, we don't want
-> presentations (So 3, maybe 4 slides). We want discussions about future
-> work.
->
-> Thanks!
-> Dhaval
+On Wed 10-10-18 20:52:42, Michal Hocko wrote:
+[...]
+> My recollection was that we do clear the reserved bit in
+> move_pfn_range_to_zone and we indeed do in __init_single_page. But then
+> we set the bit back right afterwards. This seems to be the case since
+> d0dc12e86b319 which reorganized the code. I have to study this some more
+> obviously.
 
+so my recollection was wrong and d0dc12e86b319 hasn't really changed
+much because __init_single_page wouldn't zero out the struct page for
+the hotplug contex. A comment in move_pfn_range_to_zone explains that we
+want the reserved bit because pfn walkers already do see the pfn range
+and the page is not fully associated with the zone until it is onlined.
 
-Hi Steven, Dhaval,
+I am thinking that we might be overzealous here. With the full state
+initialized we shouldn't actually care. pfn_to_online_page should return
+NULL regardless of the reserved bit and normal pfn walkers shouldn't
+touch pages they do not recognize and a plain page with ref. count 1
+doesn't tell much to anybody. So I _suspect_ that we can simply drop the
+reserved bit setting here.
 
-Acknowledged.
+Regarding the post initialization required by devm_memremap_pages and
+potentially others. Can we update the altmap which is already a way how
+to get alternative struct pages by a constructor which we could call
+from memmap_init_zone and do the post initialization? This would reduce
+the additional loop in the caller while it would still fit the overall
+design of the altmap and the core hotplug doesn't have to know anything
+about DAX or whatever needs a special treatment.
 
-Then smaller topic that would benefit from discussion are:
-
-the main one being:
-
-1. syzbot: developer process; unfixed bugs; bug triage; what's
-working? what's not? why? how can we make more parts work? collecting
-feedback
-
-2. how to increase test coverage/find more bugs, in particular:
- - adding manual spot KASAN/KMSAN checks into kernel codebase
- - stubbing hardware/external inputs to kernel for testing
- - description of kernel interfaces (again)
-
-3. dealing with kernel console output mess
- - intermixed/split lines
- - understand when/how kernel crashed
- - and where is that message
- - crash identity
+Does that make any sense?
+-- 
+Michal Hocko
+SUSE Labs
