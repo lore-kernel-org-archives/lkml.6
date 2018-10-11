@@ -2,167 +2,162 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18218C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FA9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA3C62087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B49A213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:24:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O0thmDlM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3C62087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jL1NoV1j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B49A213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeJKPta (ORCPT
+        id S1727949AbeJKPug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:49:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38054 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeJKPta (ORCPT
+        Thu, 11 Oct 2018 11:50:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35466 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbeJKPug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:49:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a13-v6so8617862wrt.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:23:18 -0700 (PDT)
+        Thu, 11 Oct 2018 11:50:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id e187-v6so8432027wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:24:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=googlemail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8YNI/ynpxtc1MMPZLrTm2ztWQSUT8vdadXnmraZ8mGM=;
-        b=O0thmDlMz4Ivwo0J8HquUt+VaS2fcMkTTwg4PkU3zKNMdth/2ZxizRuY75LKLTRcAs
-         Oa/54ij9Ol0+fdixlK9/6xBo1Rj5f7OXc+TZ0tGJIaFKDplIvc3BYQKBlWbgg07b3G7d
-         z3nLKdVmVaUXUw9udNYYePpFnNqcIYQh/4bus=
+        bh=NKlhUW7lccWni3+Ehf5nmz/T1BQJupZvCVQZ/n7zgGM=;
+        b=jL1NoV1j+rTx/JhwEl7SSxiCbtXvVfV+tnao6WOVqtW8dfECwWBFuCBsa+H22WCo7j
+         KDbq/K2XUk8pKObHA8LPCnxXLVrPz15J/uiclEi/AqIaoEyfOecONxJWHUPZ7BaTYgDp
+         HYO9LVQCeWndNVXwZtn2s5yzNUWaSQgeA5GO81FUP9a79/glKv5nRG0t8Q3A97TT7n92
+         hRdVvSGWn089cWmgJLIw1ojmlIUrBwA8j0clMdIrAlrUSgwdHXdCHFpO8k5rf9YwRMJh
+         +I0fIje880sqHJIbG8pqPqrrk/2NZ0KxdM6WoQ1BbbwxjhVcVEDEbGIPGMTJbE8z2Yas
+         tqNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8YNI/ynpxtc1MMPZLrTm2ztWQSUT8vdadXnmraZ8mGM=;
-        b=OGFrYa0FUVf/HYAl1T1YvKAgLMh3kmpkNKtaiQ+EUqRASEucWQWquTxRqhquHBDiYi
-         1zzCOog983oDsxaMj2qslrP34GDCZ6EyilhdJcF3XQobo7aVIV2a8tZP9WkFeg2sfLwr
-         5MOS/MU8fVi8J+8zqMCL4jY0Cc0VP1r2wjlvtHi0MVl7d/R2COUkGUb9db+OLVXpXKMQ
-         cmK4jwNfvJGXVV21Gjng4U55j26r/7OY9abTtcIPzZ1hQHxE2FWr0bB0kgUmn/EGlyY1
-         KUL+RRkBj0rL29h2X6G7LRTWoMEdWaCMPR2zfQgmIruSUFUTiRRlKceUKV+oDnb0i3Yw
-         VPdQ==
-X-Gm-Message-State: ABuFfog7vVOoeKIZBNxjFjGvVmKDiFWCAt0PQXiZtb/1OofXZx95RBMn
-        2Y55cEoorW9meOSw5016eqMQkQ==
-X-Google-Smtp-Source: ACcGV61wLbphv412LD/hN7QjOydhjCuqugfiq21f4770xFQ4AOQXHKbNi7Ff/74c4Iq8XVoWVMBmbg==
-X-Received: by 2002:a5d:620b:: with SMTP id y11-v6mr596393wru.105.1539246197303;
-        Thu, 11 Oct 2018 01:23:17 -0700 (PDT)
-Received: from [192.168.0.40] (147.46.88.92.rev.sfr.net. [92.88.46.147])
-        by smtp.googlemail.com with ESMTPSA id 63-v6sm4679052wmd.5.2018.10.11.01.23.15
+        bh=NKlhUW7lccWni3+Ehf5nmz/T1BQJupZvCVQZ/n7zgGM=;
+        b=WWK/BqMeoKXHrS3Zp79V5tVoYbDCuglKSUbXObwamsIqpefvvCZPu2ShgStyvVNQA2
+         9AAYDcuMDWFz+6zOr/o6BTPlCocYUCZvAy+XDrblmV2tbfRcOI8i3aBdvxpsi6jLDOhb
+         fqBlqe9kbcGt8Gv8UsFcnCuGqGKs15GfZ8Z2tXG0qMOe0bAc7nBdLccm7eyVHjLQqmcH
+         O80r5s8Q5d8ppIV7BEPuffudrjFMSFTVtxJV9ZB2bFOnynEzdlTS5QXpkQPgVdMrrOde
+         9dGLhSvpgU4kcIT71p7/cRmVYego4MtiG5D9B4iJzd08F/PcDlt/9WNIfotbBE2G5qs/
+         O5Ug==
+X-Gm-Message-State: ABuFfoiTQqKM/vpow9eQM3kWUzc/zQ0Zr74mpvoBO7M5+LOSBX5XY6+m
+        pmyEgFclJK1uovYKSKRXfXxa886B
+X-Google-Smtp-Source: ACcGV61OadVHSBzZ14Usw72JvETiHyqyHaIXCjKhhH1W/HNEEjZB2lQ91mb34ZmBABIbxL9PhPSsnA==
+X-Received: by 2002:a1c:a505:: with SMTP id o5-v6mr749413wme.53.1539246262168;
+        Thu, 11 Oct 2018 01:24:22 -0700 (PDT)
+Received: from [192.168.0.20] ([94.1.125.110])
+        by smtp.googlemail.com with ESMTPSA id r16-v6sm32631448wrv.21.2018.10.11.01.24.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 01:23:16 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, rui.zhang@intel.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
-        javi.merino@kernel.org, edubezval@gmail.com,
-        linux-pm@vger.kernel.org, quentin.perret@arm.com,
-        ionela.voinescu@arm.com, vincent.guittot@linaro.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
- <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
- <e2091e7e-b6e6-950d-ebab-18ba2de9264f@linaro.org>
- <20181011073510eucas1p100bfadd6055a523cd1e92b07bfacfc10~cfaLHcbIo1401014010eucas1p1d@eucas1p1.samsung.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <f099ded8-e074-da18-2eac-e07a5a99af18@linaro.org>
-Date:   Thu, 11 Oct 2018 10:23:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 01:24:21 -0700 (PDT)
+Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Azat Khuzhin <a3at.mail@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
+ <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
+ <98680351-5123-761f-982a-726098da9716@gmail.com>
+ <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
+ <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
+ <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
+ <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
+ <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
+ <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
+ <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
+ <df88dcb6-951d-0568-6104-7346d0c49063@maciej.szmigiero.name>
+From:   Chris Clayton <chris2553@googlemail.com>
+Message-ID: <d14f04cd-329d-cea9-14e1-d90ad629df74@googlemail.com>
+Date:   Thu, 11 Oct 2018 09:24:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181011073510eucas1p100bfadd6055a523cd1e92b07bfacfc10~cfaLHcbIo1401014010eucas1p1d@eucas1p1.samsung.com>
+In-Reply-To: <df88dcb6-951d-0568-6104-7346d0c49063@maciej.szmigiero.name>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 09:35, Lukasz Luba wrote:
-> Hi Daniel,
+
+
+On 11/10/2018 01:12, Maciej S. Szmigiero wrote:
+> On 11.10.2018 00:49, Chris Clayton wrote:
+>>> Now, knowing the "right" value you can experiment with what rtl_init_rxcfg()
+>>> writes (under the "default:" label for your NIC model).
+>>>
+>>
+>> This might be more interesting. Through a combination of viewing the output from pr_notice() and the output from
+>> "ethtool -d", I can see RxConfig with the following values
+>>
+>> 	During boot:	0x00028700
+>> 	Before suspend:	0x0002870e
+>> 	During resume:	0x00024000
+>> 	Post resume:	0x0002870e
+>>
+>> As I did with 4.18.10 early on in the process, I removed the call to rtl_init_rxcfg() from rtl_hw_start() and rebuilt,
+>> installed and rebooted. Now I see the following values:
+>>
+>> 	During boot:	0x00028700
+>> 	Before suspend:	0x0002870e
+>> 	During resume:	0x00024000
+>> 	Post resume:	0x0002400e
+>>
 > 
-> On 10/10/2018 06:54 PM, Daniel Lezcano wrote:
->> On 10/10/2018 17:35, Lukasz Luba wrote:
->>> Hi Thara,
->>>
->>> I have run it on Exynos5433 mainline.
->>> When it is enabled with step_wise thermal governor,
->>> some of my tests are showing ~30-50% regression (i.e. hackbench),
->>> dhrystone ~10%.
->>>
->>> Could you tell me which thermal governor was used in your case?
->>> Please also share the name of that benchmark, i will give it a try.
->>> Is it single threaded compute-intensive?
->>
->> aobench AFAICT
->>
->> It would be interesting if you can share the thermal profile of your board.
->>
-> Thanks for the benchmark name.
-> It was tested on Samsung TM2 device with Exynos 5433 with debian.
-> Thermal stuff you can find in mainline:
-> arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> Now we can finally see some difference...
+> Besides missing RX128_INT_EN (bit 15 or 0x8000) and RX_DMA_BURST
+> (bits 8-10 or 0x700) - that rtl_init_rxcfg() would normally set so this
+> is kind of expected - one can see that the working configuration
+> post-resume has bit 14 (or 0x4000) set, too.
+> 
+> This bit is described in the driver as RX_MULTI_EN ("8111c only") and is
+> set by rtl_init_rxcfg() for example for RTL_GIGA_MAC_VER_35.
+> 
+> RTL_GIGA_MAC_VER_35 is described in the driver as being in the same
+> family as your RTL_GIGA_MAC_VER_38, so can you please try the following
+> change:
+> --- r8169.c
+> +++ r8169.c
+> @@ -4271,6 +4271,7 @@ static void rtl_init_rxcfg(struct rtl816
+>  	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_24:
+>  	case RTL_GIGA_MAC_VER_34:
+>  	case RTL_GIGA_MAC_VER_35:
+> +	case RTL_GIGA_MAC_VER_38:
+>  		RTL_W32(tp, RxConfig, RX128_INT_EN | RX_MULTI_EN | RX_DMA_BURST);
+>  		break;
+>  	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
+> 
+> This will add RX_MULTI_EN also for your chip model (you need to add back
+> the call to rtl_init_rxcfg() to rtl_hw_start(), naturally).
+>
 
-By thermal profile, I was meaning a figure with the temperature
-regulation (temperature idle, then workload, then temperature increase,
-mitigated temperature, end of workload, temperature decrease).
+That's done the trick. With the above change applied, my network runs running fine after a suspend/resume cycle and the
+ping times are back in the 14-15ms range.
 
-The thermal description looks wrong in the DT. I suggest to experiment
-the series with the DT fixed.
+Chris
 
-eg. from hi6220.dtsi
-
-
-                thermal-zones {
-
-                        cls0: cls0 {
-                                polling-delay = <1000>;
-                                polling-delay-passive = <100>;
-                                sustainable-power = <3326>;
-
-                                /* sensor ID */
-                                thermal-sensors = <&tsensor 2>;
-
-                                trips {
-                                        threshold: trip-point@0 {
-                                                temperature = <65000>;
-                                                hysteresis = <0>;
-                                                type = "passive";
-                                        };
-
-                                        target: trip-point@1 {
-                                                temperature = <75000>;
-                                                hysteresis = <0>;
-                                                type = "passive";
-                                        };
-                                };
-
-                                cooling-maps {
-                                        map0 {
-                                                trip = <&target>;
-                                                cooling-device = <&cpu0
-THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-                                        };
-                                };
-                        };
-                };
-
-Note the cooling devices are *passive*
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> If this does not help then I would try another values in the above write:
+> 1) RTL_W32(tp, RxConfig, 0x00024000);
+> 2) RTL_W32(tp, RxConfig, 0x00004000);
+> 3) RTL_W32(tp, RxConfig, RX_DMA_BURST);
+> 4) RTL_W32(tp, RxConfig, RX128_INT_EN);
+> 
+>> Chris
+> 
+> Maciej
+> 
