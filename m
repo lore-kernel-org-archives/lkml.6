@@ -2,168 +2,118 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF36C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C82C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C0920658
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:20:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C0920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 90C8F20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:20:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ePBPSpA+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C8F20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbeJKUr0 (ORCPT
+        id S1728311AbeJKUrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 16:47:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57808 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726126AbeJKUr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 16:47:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9D153AEF7;
-        Thu, 11 Oct 2018 13:20:13 +0000 (UTC)
-Subject: Re: [PATCH v3] arm64: new board - Emlid Neutis N5
-To:     aleksandr.aleksandrov@emlid.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        David Lechner <david@lechnology.com>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1538745949-13188-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-1-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <20181010144957.exrlupoph7ovsmdw@flea>
- <9398571539259289@myt4-929fb874f3f2.qloud-c.yandex.net>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <2d09d6c0-0404-589d-2c34-da846cff4fb8@suse.de>
-Date:   Thu, 11 Oct 2018 15:20:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 11 Oct 2018 16:47:31 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43339 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeJKUr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 16:47:27 -0400
+Received: by mail-qt1-f195.google.com with SMTP id q41-v6so9722396qtq.10
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 06:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xA1Xq3zSEkL+SYbeUZCss7KxMc6kPb35X0Ss6FJLa90=;
+        b=ePBPSpA+oMb4alDXBSN65oOkQ+06TxdF1p3pfLNZAayf0TN2r0lJmj9/9cp0A3nf0/
+         MN7/ZFxu6PpU0qcN8HYk9QQ3XDiF8TqaUHXS7auChq4hcl6Gu9689wXHe7EwYbZwykmO
+         UpshWfSUDmpH2LpHIxpMQCcfWpc6bbFMmsFuoYHSDszMO9T+oAZ8VlkCNbXDl3jeNecB
+         JuWbA5sOUKhU3rfxBXgi6ziTetKNGFf/Y5hpeL7KsNuLO/l+6bk6sq79pV5TbXa9umQl
+         DlMgAWgdEI8jhdK4ipmcfbfq0EubGhDZ2M7YPpnNgh47+B+IgBS0EQuBhar6UR4uagCu
+         pSAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xA1Xq3zSEkL+SYbeUZCss7KxMc6kPb35X0Ss6FJLa90=;
+        b=YgEs4Z8MYLYO1LIcjEbQ3i+RRbZ03yIW6TmEhQm4amLpkY5GVK3Gkdr46mQCmQ+0iF
+         ydfCroLlXyiEw97eMR6pEQLplK3OQGM/jm8jFhCM+wQmprJcFFhUt+2FtTrT6q06f38Q
+         9Zr282xlFEe4Hv5S4k267DMaSAlphQfnhJXMigDjr0L0yig4svrTYvT9qBpIvDGM/EsU
+         t1lbtZcfl9oyV5KjphMR8pNLXElrL2fFrOuD9aWlbgtbVEC6YDpW95VH30PAM2ohlY0O
+         zDiQdbc5ljHEetkN1MkMgj+dZ4I1Q2QJMZVQDeXQCIU1uSI3bo06fB97n+J9kDSD//gu
+         x5Iw==
+X-Gm-Message-State: ABuFfoiG9yp/Wbbq5mEsAqW6ZGgp8sGpmxwk/r+rQ/1NUAFlkpCX0nYQ
+        dM2HEWU+U3DA/dKXL6VnIKVIAg==
+X-Google-Smtp-Source: ACcGV60pKyltuVyrd1mrqlxvpI1zwVaKIIq8SSjKm32oq+YDjijT5QG46p0xaOGUTrxvk+9Nl4UdpQ==
+X-Received: by 2002:a0c:ec8e:: with SMTP id u14-v6mr1480994qvo.225.1539264016755;
+        Thu, 11 Oct 2018 06:20:16 -0700 (PDT)
+Received: from ziepe.ca ([66.187.232.66])
+        by smtp.gmail.com with ESMTPSA id s52-v6sm18295106qts.5.2018.10.11.06.20.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 06:20:14 -0700 (PDT)
+Received: from jgg by jggl.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gAasv-0001a3-Jr; Thu, 11 Oct 2018 07:20:13 -0600
+Date:   Thu, 11 Oct 2018 07:20:13 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
+ versions
+Message-ID: <20181011132013.GA5968@ziepe.ca>
+References: <20181008211623.30796-1-jhubbard@nvidia.com>
+ <20181008211623.30796-3-jhubbard@nvidia.com>
+ <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
+ <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
+ <20181010164541.ec4bf53f5a9e4ba6e5b52a21@linux-foundation.org>
+ <20181011084929.GB8418@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <9398571539259289@myt4-929fb874f3f2.qloud-c.yandex.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011084929.GB8418@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aleksandr,
+On Thu, Oct 11, 2018 at 10:49:29AM +0200, Jan Kara wrote:
 
-Please keep your replies in text-only format, not HTML.
+> > This is a real worry.  If someone uses a mistaken put_page() then how
+> > will that bug manifest at runtime?  Under what set of circumstances
+> > will the kernel trigger the bug?
+> 
+> At runtime such bug will manifest as a page that can never be evicted from
+> memory. We could warn in put_page() if page reference count drops below
+> bare minimum for given user pin count which would be able to catch some
+> issues but it won't be 100% reliable. So at this point I'm more leaning
+> towards making get_user_pages() return a different type than just
+> struct page * to make it much harder for refcount to go wrong...
 
-Am 11.10.18 um 14:01 schrieb aleksandr.aleksandrov@emlid.com:
->>      +/ {
->>      + model = "Emlid Neutis N5 Developer board";
->>      + compatible = "emlid,emlid-neutis-n5-devboard",
->>      + "emlid,emlid-neutis-n5",
->>
->> Do you need the two emlid there? What comes before the comma is the
->> vendor, while what is after is the model.
->  
-> I think emlid-neutis-n5 module could be useful in the future, no need
-> this now.
+At least for the infiniband code being used as an example here we take
+the struct page from get_user_pages, then stick it in a sgl, and at
+put_page time we get the page back out of the sgl via sg_page()
 
-You misunderstand: The point would be to use, e.g., "emlid,neutis-n5"
-instead of "emlid,emlid-neutis-n5" with duplicate "emlid,emlid-". It is
-orthogonal to having multiple compatible strings.
+So type safety will not help this case... I wonder how many other
+users are similar? I think this is a pretty reasonable flow for DMA
+with user pages.
 
->>  +&uart1 {
->>  + pinctrl-names = "default";
->>  + pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
->>  + status = "okay";
->>  +};
->>
->> I guess this is for bluetooth? Have you tested serdev drivers?
->>
-> Yes, bluetooth is connected over uart1.
-> You mean if I have tested bluetooth stack via serial device?
-
-Not quite, we're missing a child node within uart1 for a serdev driver.
-Is there no such driver yet for your Bluetooth chipset, or did you not
-yet check?
-
-> Bluez works stably with bcm43xx over uart 1500000 baud rate.
->  
->>
->> Also, I have a general comments, and it really depends on what your
->> intention about the board ecosystem is. Do you expect the SOM to be
->> swappable in multiple boards, or do you expect to send it as something
->> that is just fixed into a daughter board?
->>
->> In the former case, you probably want to use overlays instead. In the
->> latter, you're fine.
->>
-> Right, we expect the SoM to be swappable. I agree, to use overlays is
-> more convenient, but
-> the devboard DT file will be a reference for the overlays and the future
-> boards based on Neutis.
-
-What about just keeping the common nodes enabled in a SoM .dts, so that
-the average board doesn't need an Overlay for booting?
-
-@Maxime/Rob, is it possible to merge .dtso files these days? If not,
-could that be considered in the big dts Makefile refactoring? :)
-
-Cheers,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Jason
