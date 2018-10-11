@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB43C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5204C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05C7321476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 961A520652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEOAbWD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C7321476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/JRBxSb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961A520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730367AbeJKXIv (ORCPT
+        id S1730378AbeJKXIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39374 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbeJKXIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:50 -0400
+        id S1729758AbeJKXIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:53 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C9B42098A;
-        Thu, 11 Oct 2018 15:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C838121470;
+        Thu, 11 Oct 2018 15:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272466;
-        bh=Fj7MBae1C3u5XrVUogqFYitvBeQxV8MqZGYhzc+a0A8=;
+        s=default; t=1539272469;
+        bh=Lt3c2gv+1Z/W/cJhwyoLr46erWRH2//LTcttlsRTPQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vEOAbWD3BcU0FRJQjqj1P4m0D40rsPdWIg7waMiZwqN7+NdNtLKeSh87A6vYNHzij
-         P/O3gsN9UA9ssGS19J5rQWl9+KEGDqqogCltZoeJxPIO+roWEOIdwfEMNU4VBQikMv
-         NnUPdC5eP1nBPBrNso2eUTwWDVmZux9/q/XpYIQo=
+        b=A/JRBxSb9TVfp9Xcrd6jQyiRmLix7wGXZj0iKd2kwYi7fu1r9+Qbqp+FO3cqrsXF2
+         B+dp+A+4AwDnwc9vWEJmQHvTNLKThItEVT5TMamQGGRakLVpaDItLN4Hj6At8O1kKL
+         6jvBGGGv2aIBDfoxPA3H0di+12rLlaCMIJvtEXEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Loic <hackurx@opensec.fr>
-Subject: [PATCH 3.18 120/120] ebtables: arpreply: Add the standard target sanity check
-Date:   Thu, 11 Oct 2018 17:35:01 +0200
-Message-Id: <20181011152554.745716672@linuxfoundation.org>
+        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 3.18 106/120] PM / core: Clear the direct_complete flag on errors
+Date:   Thu, 11 Oct 2018 17:34:47 +0200
+Message-Id: <20181011152554.165725641@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,55 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gao Feng <gfree.wind@vip.163.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit c953d63548207a085abcb12a15fefc8a11ffdf0a upstream.
+commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
 
-The info->target comes from userspace and it would be used directly.
-So we need to add the sanity check to make sure it is a valid standard
-target, although the ebtables tool has already checked it. Kernel needs
-to validate anything coming from userspace.
+If __device_suspend() runs asynchronously (in which case the device
+passed to it is in dpm_suspended_list at that point) and it returns
+early on an error or pending wakeup, and the power.direct_complete
+flag has been set for the device already, the subsequent
+device_resume() will be confused by that and it will call
+pm_runtime_enable() incorrectly, as runtime PM has not been
+disabled for the device by __device_suspend().
 
-If the target is set as an evil value, it would break the ebtables
-and cause a panic. Because the non-standard target is treated as one
-offset.
+To avoid that, clear power.direct_complete if __device_suspend()
+is not going to disable runtime PM for the device before returning.
 
-Now add one helper function ebt_invalid_target, and we would replace
-the macro INVALID_TARGET later.
-
-Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Loic <hackurx@opensec.fr>
+Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
+Reported-by: Al Cooper <alcooperx@gmail.com>
+Tested-by: Al Cooper <alcooperx@gmail.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/netfilter_bridge/ebtables.h |    5 +++++
- net/bridge/netfilter/ebt_arpreply.c       |    3 +++
- 2 files changed, 8 insertions(+)
+ drivers/base/power/main.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/linux/netfilter_bridge/ebtables.h
-+++ b/include/linux/netfilter_bridge/ebtables.h
-@@ -124,4 +124,9 @@ extern unsigned int ebt_do_table(unsigne
- /* True if the target is not a standard target */
- #define INVALID_TARGET (info->target < -NUM_STANDARD_TARGETS || info->target >= 0)
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1341,8 +1341,10 @@ static int __device_suspend(struct devic
  
-+static inline bool ebt_invalid_target(int target)
-+{
-+	return (target < -NUM_STANDARD_TARGETS || target >= 0);
-+}
-+
- #endif
---- a/net/bridge/netfilter/ebt_arpreply.c
-+++ b/net/bridge/netfilter/ebt_arpreply.c
-@@ -67,6 +67,9 @@ static int ebt_arpreply_tg_check(const s
- 	if (e->ethproto != htons(ETH_P_ARP) ||
- 	    e->invflags & EBT_IPROTO)
- 		return -EINVAL;
-+	if (ebt_invalid_target(info->target))
-+		return -EINVAL;
-+
- 	return 0;
- }
+ 	dpm_wait_for_children(dev, async);
  
+-	if (async_error)
++	if (async_error) {
++		dev->power.direct_complete = false;
+ 		goto Complete;
++	}
+ 
+ 	/*
+ 	 * If a device configured to wake up the system from sleep states
+@@ -1354,6 +1356,7 @@ static int __device_suspend(struct devic
+ 		pm_wakeup_event(dev, 0);
+ 
+ 	if (pm_wakeup_pending()) {
++		dev->power.direct_complete = false;
+ 		async_error = -EBUSY;
+ 		goto Complete;
+ 	}
 
 
