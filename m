@@ -2,156 +2,191 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02CCC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900B4C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 498832098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:41:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="dLYVLi8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498832098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 533BC20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:41:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533BC20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730102AbeJLAJE (ORCPT
+        id S1730183AbeJLAJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 20:09:04 -0400
-Received: from mail-co1nam03on0118.outbound.protection.outlook.com ([104.47.40.118]:27680
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729948AbeJLAJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 20:09:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ELynzicc1WbbL4ZzhQC5NAcGBHgkaj5N4yd6c14JI04=;
- b=dLYVLi8dhnYIzDMPnfGihmu+isGw1WKDUzkQls6vnKArd+Ih9om/cSIYwI9mQMgxi38vu2OTnq+E9sWMvaxhODBONLh0hWDSfwmqAKv2IBLLT3FlflcsgqraX1ELFr+MolhUNuhPdqjzV7mgoY5mGxwvVNeqAD89Qn0Lev4mpPI=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1759.namprd22.prod.outlook.com (10.164.206.39) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.21; Thu, 11 Oct 2018 16:40:56 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::781f:63:481a:efdf]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::781f:63:481a:efdf%10]) with mapi id 15.20.1228.020; Thu, 11 Oct 2018
- 16:40:56 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     "Maciej W. Rozycki" <macro@linux-mips.org>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] MIPS: Ordering enforcement fixes for MMIO accessors
-Thread-Topic: [PATCH 0/4] MIPS: Ordering enforcement fixes for MMIO accessors
-Thread-Index: AQHUXp8F1GkQChn9TkCSJG6lsid2I6UaRRuA
-Date:   Thu, 11 Oct 2018 16:40:55 +0000
-Message-ID: <20181011164053.3irkm5dvl7sjzhao@pburton-laptop>
-References: <alpine.LFD.2.21.1810070229190.7757@eddie.linux-mips.org>
-In-Reply-To: <alpine.LFD.2.21.1810070229190.7757@eddie.linux-mips.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM5PR06CA0098.namprd06.prod.outlook.com
- (2603:10b6:4:3a::39) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2601:647:4100:4687:76db:7cfe:65a3:6aea]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1759;6:e7th/+Lt6XmiwBFanuc+N2yu8YQy+BdmmSEnp9Ov4BMnSnSpMVUwEi45+7ng1M+Z8rHGC4FE8YvLZR+4cDFwHq2AryOp6n5nEeIPahACgncSb9whoOxLbVy9gjqR4pNBalO5Pg95oaov8Uw7gc+/h/v6Jps7qAJB5Np2caw8mKVziu1gTfgNVVTxu0Oo5XpKLY4bi5rLi/ers2az3CLBnuSJLMUJASaYWl/hrDnkq2acwayLFmBkuvOqqudFhX132PZyMIHclwpj2F7z2sF1lbdgsaVZEFwZFiavQHWnKKPqDOdfC/JhBTFfjPry0itC5QtOE8KzjJ5/ByTAYfQ4sOe+PCpJPIPgA51fXq3UA0VJRT3hkfYaGTa4BnDU/UsYYqwe5KhB2MUj4JiKtxm1xyJCIEVBRIsirDwrOuT/SBTAbgJ2Sv1OBREaWeyLcDxcZmC2eka/b3eTa8w2xCOarg==;5:C0UEcHZTT08DdotGU6pjmIMijlcugUKE6CkVyiYEvss8qBKcQxy6P33G1GLVLpCFHBULvcffDzUrYiBr7FIx1lifLAvZnKTuxxVh2HzxRVLWBVbM3Dety3f3ca7atmYKY1cvsR2lUsGGdDjOk2OAQNR0NOSQANdOzznr30G7wsU=;7:c05kpYwlj9FOdlgfWrK2eHkNVzW26TjzsCI4P0+FNU1Hh830WH+kBWPfqDmXV0e0hkZFKcF0N+tOCpagCWg4PjDa6JCu5QX4nu127h5XhKMw+u/fhsx4Dc6I8AUiY4tFczwCHX6VNDu47zRkNPVDihRjYeQnG5eZEPIV14gQGnU8s9x1qV44MoJTE+WmuBv743X0zLgK4WtrfhNEQYsjcxGhYOUy0lEIxSY5z1xtEiWr+M9jI3ch6VUCFzR8Rz2o
-x-ms-office365-filtering-correlation-id: f3688df0-b98b-473f-728b-08d62f98509e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1759;
-x-ms-traffictypediagnostic: MWHPR2201MB1759:
-x-microsoft-antispam-prvs: <MWHPR2201MB175970B61439C9C4036270DDC1E10@MWHPR2201MB1759.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(10201501046)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(6043046)(201708071742011)(7699051);SRVR:MWHPR2201MB1759;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1759;
-x-forefront-prvs: 08220FA8D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(39840400004)(346002)(136003)(366004)(396003)(199004)(189003)(7736002)(256004)(14444005)(4326008)(76176011)(6116002)(33896004)(52116002)(316002)(1076002)(81156014)(229853002)(8936002)(8676002)(6246003)(81166006)(2900100001)(102836004)(186003)(2906002)(58126008)(446003)(11346002)(54906003)(105586002)(106356001)(476003)(386003)(6506007)(6436002)(5250100002)(6306002)(53936002)(97736004)(9686003)(6512007)(14454004)(5660300001)(508600001)(486006)(44832011)(33716001)(25786009)(99286004)(6486002)(71200400001)(71190400001)(42882007)(305945005)(68736007)(46003)(6916009)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1759;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tqO7gVcqdsYvMy4Fq0GjbOopxYyoNde+JHyZp9MzEzE7bi7Iq8EqubkSyJiXlbqzYjMXSOR3Jex0LNmkWQ1uwlze8YUcOlLWPZmFW9A1PyEy5Dr4if31eVN6AoNZjpuDVMXqZIskfLuyeqx2p0Ep4B5ja3b/YZvzzu3b6i5+DLNKW/hbhfF0wv4F8JMSCD8LjhW3k4M46epS5gUFs2xwYgr9bCWDyVFY9cgvKh34/k+6FMLnMA9sZ3mhvziow+Itb7qdSfGQoXIkZ2FHak7IWplysfaOYdX1BBzNT8W72Bzz5xTgWKLSnsZ87hpwpMrY05Pr7ZkDbn3juvtlcaeFwOrOCBgN+3ZGeYFc1a/mXZY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A8CD445476D4EC4184F2380902058EF5@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 11 Oct 2018 20:09:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:40982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729948AbeJLAJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 20:09:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15C38EBD;
+        Thu, 11 Oct 2018 09:41:32 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 250E23F5B3;
+        Thu, 11 Oct 2018 09:41:29 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 17:41:26 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>
+Subject: Re: [PATCH v9 04/11] dt: psci: Update DT bindings to support
+ hierarchical PSCI states
+Message-ID: <20181011164126.GD28583@e107155-lin>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <20181003143824.13059-5-ulf.hansson@linaro.org>
+ <20181010150312.GA4844@e107155-lin>
+ <CAPDyKFqP3wbd+5rvLcscNf1LUSZDROLqafsLq0Kyh0KziRJrZQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3688df0-b98b-473f-728b-08d62f98509e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 16:40:55.8912
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1759
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqP3wbd+5rvLcscNf1LUSZDROLqafsLq0Kyh0KziRJrZQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maciej,
+On Thu, Oct 11, 2018 at 04:44:07PM +0200, Ulf Hansson wrote:
+> +Raju
+>
+> On 10 October 2018 at 17:03, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > On Wed, Oct 03, 2018 at 04:38:17PM +0200, Ulf Hansson wrote:
+> >> From: Lina Iyer <lina.iyer@linaro.org>
+> >>
+> >> Update DT bindings to represent hierarchical CPU and CPU PM domain idle
+> >> states for PSCI. Also update the PSCI examples to clearly show how
+> >> flattened and hierarchical idle states can be represented in DT.
+> >>
+> >> Cc: Lina Iyer <ilina@codeaurora.org>
+> >> Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+> >> Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> >> ---
+> >>  .../devicetree/bindings/arm/psci.txt          | 156 ++++++++++++++++++
+> >>  1 file changed, 156 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+> >> index a2c4f1d52492..17aa3d3a1c8e 100644
+> >> --- a/Documentation/devicetree/bindings/arm/psci.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/psci.txt
+> >> @@ -105,7 +105,163 @@ Case 3: PSCI v0.2 and PSCI v0.1.
+> >>               ...
+> >>       };
+> >>
+> >> +ARM systems can have multiple cores sometimes in hierarchical arrangement.
+> >> +This often, but not always, maps directly to the processor power topology of
+> >> +the system. Individual nodes in a topology have their own specific power states
+> >> +and can be better represented in DT hierarchically.
+> >> +
+> >> +For these cases, the definitions of the idle states for the CPUs and the CPU
+> >> +topology, must conform to the domain idle state specification [3]. The domain
+> >> +idle states themselves, must be compatible with the defined 'domain-idle-state'
+> >> +binding [1], and also need to specify the arm,psci-suspend-param property for
+> >> +each idle state.
+> >> +
+> >> +DT allows representing CPUs and CPU idle states in two different ways -
+> >> +
+> >> +The flattened model as given in Example 1, lists CPU's idle states followed by
+> >> +the domain idle state that the CPUs may choose. Note that the idle states are
+> >> +all compatible with "arm,idle-state".
+> >> +
+> >> +Example 2 represents the hierarchical model of CPUs and domain idle states.
+> >> +CPUs define their domain provider in their psci DT node. The domain controls
+> >> +the power to the CPU and possibly other h/w blocks that would enter an idle
+> >> +state along with the CPU. The CPU's idle states may therefore be considered as
+> >> +the domain's idle states and have the compatible "arm,idle-state". Such domains
+> >> +may also be embedded within another domain that may represent common h/w blocks
+> >> +between these CPUs. The idle states of the CPU topology shall be represented as
+> >> +the domain's idle states.
+> >> +
+> >> +In PSCI firmware v1.0, the OS-Initiated mode is introduced. In order to use it,
+> >> +the hierarchical representation must be used.
+> >> +
+> >> +Example 1: Flattened representation of CPU and domain idle states
+> >
+> > [...]
+> >
+> >> +Example 2: Hierarchical representation of CPU and domain idle states
+> >
+> > I understand that this may not be of interest for this series, but do
+> > we need to add any suggestions on how to arrive Flattened representation
+> > of CPU idle states from its hierarchical representation. If the DT has
+> > latter and PSCI call returns as PC mode only for idle. We need to deal
+> > with that case.
+>
+> For sure, I think this is valid comment for this series (or at least
+> v8 which contains the hole set).
+>
 
-On Mon, Oct 08, 2018 at 01:36:55AM +0100, Maciej W. Rozycki wrote:
->  This patch series is a follow-up to my earlier consideration about MMIO=
-=20
-> access ordering recorded here: <https://lkml.org/lkml/2014/4/28/201>.
->=20
->  As I have learnt in a recent Alpha/Linux discussion starting here:=20
-> <https://marc.info/?i=3Dalpine.LRH.2.02.1808161556450.13597%20()%20file01=
-%20!%20intranet%20!%20prod%20!%20int%20!%20rdu2%20!%20redhat%20!%20com>=20
-> related to MMIO accessor ordering barriers ports are actually required to=
-=20
-> follow the x86 strongly ordered semantics.  As the ordering is not=20
-> specified in the MIPS architecture except for the SYNC instruction we do=
-=20
-> have to put explicit barriers in MMIO accessors as otherwise ordering may=
-=20
-> not be guaranteed.
->=20
->  Fortunately on strongly ordered systems SYNC is expected to be as cheap=
-=20
-> as a NOP, and on weakly ordered ones it is needed anyway.  As from=20
-> revision 2.60 of the MIPS architecture specification however we have a=20
-> number of SYNC operations defined, and SYNC 0 has been upgraded from an=20
-> ordering to a completion barrier.  We currently don't make use of these=20
-> extra operations and always use SYNC 0 instead, which this means that we=
-=20
-> may be doing too much synchronisation with the barriers we have already=20
-> defined.
->=20
->  This patch series does not make an attempt to optimise for SYNC operatio=
-n=20
-> use, which belongs to a separate improvement.  Instead it focuses on=20
-> fixing MMIO accesses so that drivers can rely on our own API definition.
+Thanks.
 
-Agreed, using the lightweight sync types is a whole other can of worms.
-I did speak with the architecture team about the description of SYNC
-recently (in the context of nanoMIPS documentation if I recall) and hope
-the tweaks that were made to the architectural description of it might
-help with using them one day soon.
+> The approach I have taken, so far, is to closely tie the support for
+> PSCI OSI mode to the hierarchical representation in DT of the idle
+> states. Simply because of changing as little as possible, in a first
+> step, then build on top.
+>
 
->  Following the original consideration specific MMIO barrier operations ar=
-e=20
-> added.  As they have turned out to be required to be implied by MMIO=20
-> accessors there is no immediate need to make them form a generic=20
-> cross-architecture internal Linux API.  Therefore I defined them for the=
-=20
-> MIPS architecture only, using the names originally coined by mostly takin=
-g=20
-> them from the PowerPC port.
->=20
->  Then I have used them to fix `mmiowb', and then `readX' and `writeX'=20
-> accessors.  Finally I have updated the `_relaxed' accessors to avoid=20
-> unnecessary synchronisation WRT DMA.
+That's fine. I just want a note in the bindings to state that we can use
+the hierarchical representation and generate flattened list for PC.
 
-Thanks - this definitely leaves us in a better place than we were :)
+> However, in the offlist discussion I had with Lorenzo, he raised a
+> concern, very similar to what you are bringing up here. There are
+> indeed platform configurations, using PSCI PC mode, which would
+> benefit from the using the hierarchical representation. BTW, that is
+> kind of what Raju just tried to get working for QCOM SDM845 [1], but
+> let's discuss that separately.
+>
 
-All 4 patches applied to mips-next for 4.20.
+OK, we can discuss details in that thread, but I don't even see the PSCI
+domains there.
 
-Paul
+> The conclusion I made, is that no matter of we are using the PC mode
+> or the OSI mode, the hierarchical representation shall just work.
+>
+
+Indeed.
+
+> To me, this means that I have to re-work the series, such that the
+> PSCI driver (and cpuidle), dynamically in runtime, can agree on which
+> of the idle states that are "shared among a group of CPUs" and which
+> are CPU specific. Exactly how, I am still exploring a few different
+> approaches on.
+>
+> Does it make sense?
+>
+
+Yes
+
+> So, when it comes to the updated DT bindings in regards to $subject
+> patch, I think it's good as is. Or do you think there is something
+> that needs to be clarified?
+>
+
+Yes, nearly there. Just thought good to add a note that the representation
+has no affinity towards any PSCI idle state mechanism(PC or OSI). So
+that it's never assumed or misunderstood.
+
+--
+Regards,
+Sudeep
