@@ -2,101 +2,83 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087FCC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66646C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956352075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 224E920841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:26:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F39IcTaY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956352075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9/fxo6I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224E920841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbeJKWwl (ORCPT
+        id S1728500AbeJKWxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:52:41 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41939 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbeJKWwk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:52:40 -0400
-Received: by mail-io1-f65.google.com with SMTP id q4-v6so6900822iob.8
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=miQiWFyV3lLkdNjXe1ZSDxVu+ciOnWcPaTkxIg3qx90=;
-        b=F39IcTaYz3GCuUEHKrT6jusudqbRVx+UOOoe3TDZIbJajshM83AiJwuee1lMYXzXjt
-         JQahRkJjosju2uZzEENzdpIkBRfh+pm/eyiMQV+qfO1DbQ4ppiT/xk4VXQWOrFAq3wqb
-         sc6pWxCc0uteBK1PJyPfkMQ+BSROCxWjhRv4Dwjtqnuo7tw2nG9U7xEtnFEbi9CiVCnO
-         ssw5ILnEa7rD6uY9JPpVAu7dJujT12rINdU+MKMKfDY7YCs4rpxl80qqBao4OE7obr9q
-         RoVbjT6MKfC2wfyt7ASafREhTL+dklj7ajUMwbBmHwc88gDeW78A8OZanc7Q9s7BvlMW
-         zNuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=miQiWFyV3lLkdNjXe1ZSDxVu+ciOnWcPaTkxIg3qx90=;
-        b=TyGkcCrj2W4vFViL/5ENTLCvv5Fe+7s+VqQ1Ja3kym4KLzS0L0ipGGzGtlzn6CdZk3
-         GVRkLgT9uZf/XiO5KJiAQXOtVXwDg9PoDslGuIdZOoNixHH+Fq0GLVv/HrgZcnR8Qp3l
-         pyTeTNzeDrwmb0PrhDIeD625NbM8TjX2yaxdhkyp2NNEzCRVm5tZW2hP+2fbfX/MaLM7
-         ZN3V4Mk9JLQVuBXlre0bG2h9CBuVCXc0sxVfQEeVRxwygPx4TdhKHF0tNMKZz5Hj8sU0
-         5OwZvhItFuENCLx9rAOnUBIeeAg3Nq2KKZg+kOakRum9Ycssx0UDQ5V2NGKVEI42MhjL
-         PxmA==
-X-Gm-Message-State: ABuFfohw+hhyJ/y2TaixW9H2AW3elVI7XOM+w4ueg+VXMz8N2ZhGa7Op
-        bdHrThUekc76ZATEjzgvS1UeoSzqGuAeIFyh0uTfoLlV+cknpA==
-X-Google-Smtp-Source: ACcGV62z8MJ6WkpBrPelrcmLchsZKjzt1prNMiJEOMEvYYBR2hYmqoylLHRqYg038H8fXHnmcR13uskAXSmqs/1Qnns=
-X-Received: by 2002:a6b:8f93:: with SMTP id r141-v6mr1463016iod.118.1539271500674;
- Thu, 11 Oct 2018 08:25:00 -0700 (PDT)
+        Thu, 11 Oct 2018 18:53:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbeJKWxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 18:53:52 -0400
+Received: from localhost (unknown [204.56.7.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE1392075C;
+        Thu, 11 Oct 2018 15:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539271572;
+        bh=lvJmWIe/0qA8rlxDpPZU/UsUIqEb1n3JICEn8DBIPH4=;
+        h=Subject:From:To:Cc:Date:From;
+        b=r9/fxo6IxFr2hBzPjM/x0tFD0XEZIjlP9cXVvN8xyAyNNXxTHsSVmQElcKbKQbi7H
+         manWQzFhSNeaENb15lfvOG2t+dcPTnR+ZqoMdlTu2kaSbWjfrq1UgTvdQoiJf8WzIu
+         X/iQ1l54pXny3etQ6hxDs07Fyfx9f+gk7lvaIJp8=
+Subject: [PATCH v3] PCI/AER: Enable reporting for all ports
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jon Derrick <jonathan.derrick@intel.com>
+Cc:     Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 11 Oct 2018 10:26:11 -0500
+Message-ID: <153927123657.40414.9802241131940995491.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-References: <20181011103825.023036082@infradead.org> <20181011104019.748208519@infradead.org>
- <CANn89iKxTMRr_XSC4xHD-etoU9kF6nN7yzQP4AEfYeNKjQLTPQ@mail.gmail.com>
-In-Reply-To: <CANn89iKxTMRr_XSC4xHD-etoU9kF6nN7yzQP4AEfYeNKjQLTPQ@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Thu, 11 Oct 2018 08:24:49 -0700
-Message-ID: <CANn89iJsD=rKTjiGF_EEoSh9WmiifOjxu2mcqSv8Sx-NT7zixQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86/percpu: Fix this_cpu_read()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 8:02 AM Eric Dumazet <edumazet@google.com> wrote:
->
-> On Thu, Oct 11, 2018 at 3:45 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Eric reported that a sequence count loop using this_cpu_read() got
-> > optimized out. This is wrong, this_cpu_read() must imply READ_ONCE()
-> > because the interface is IRQ-safe, therefore an interrupt can have
-> > changed the per-cpu value.
-> >
-> > Fixes: 59eaef78bfea ("x86/tsc: Remodel cyc2ns to use seqcount_latch()")
-> > Reported-by: Eric Dumazet <edumazet@google.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
->
-> Acked-by: Eric Dumazet <edumazet@google.com>
+This is another attempt to fix the AER error reporting issue reported
+by Jon.  I've compiled this on x86, but can't test it myself.
 
-Actually the Fixes: tag seems funky.
+If we can get this tested, I'd like to include this for v4.20.
 
-Bug was not added by 59eaef78bfea
 
-Your patch probably needs to be backported to older versions of linux,
-just to be safe, since
-we might have other places where authors relied on this_cpu_read()
-semantic (different than this_cpu_read_stable())
+v3: This post
+    Fix the problem that v2 didn't enable error reporting on Root
+    Ports, as pointed out by Dongdong
+
+v2: https://lore.kernel.org/linux-pci/20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com
+    My attempt to move the fix to the AER service driver
+
+v1: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
+    Jon's initial posting
+
+---
+
+Bjorn Helgaas (1):
+      PCI/AER: Enable reporting for ports enumerated after AER driver registration
+
+
+ drivers/pci/pcie/aer.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
