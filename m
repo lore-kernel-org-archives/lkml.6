@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752A8C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AA0C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B842085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFB92075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KqZu29VH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B842085B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Dy41Ttp2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFB92075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeJKWZ6 (ORCPT
+        id S1727547AbeJKW0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:25:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50188 "EHLO
+        Thu, 11 Oct 2018 18:26:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50308 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKWZ6 (ORCPT
+        with ESMTP id S1726071AbeJKW0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:25:58 -0400
+        Thu, 11 Oct 2018 18:26:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=HZoC+TjuukdcZdzVH0JudfJ2Hr+rjEstwT6ENcocrTM=; b=KqZu29VHF7E+
-        kvogZ/guy1xfcctbGY8GtTzv5aooADC7eI0GSBhCVh4oIHNpUi+1Spx80HMF5X29ZIwSnTBgcelib
-        th4PmDvrViGw3FREjhLQ1c+uh6XGVd9l7lW1Jg3MQS/BhR1zGYS/2pjdxroLTIXKLYQc9RnqO9xWw
-        3UjMo=;
+        List-Archive; bh=5eAST9ot5OoEgThXoaDbS4TmHolAHxmE7K4dc9ifqac=; b=Dy41Ttp2qgeC
+        pu4pbprSwiK0oIHMJR4CmuHvFN2v7hTrQLr00PzyaHyY71RlfbBafYsuzlCHeL1sjqJvK4XGUq40Y
+        U8RQ+CryAZdobza+JM6bQA+5TMlq2Y5/BR/V8ArhbRO9NJlKpip61tLevbeuXWvUFe4YxktDuUP9e
+        lHN1Q=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcPt-0001uO-0i; Thu, 11 Oct 2018 14:58:21 +0000
+        id 1gAcPx-0001uV-7F; Thu, 11 Oct 2018 14:58:25 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BB1B411223ED; Thu, 11 Oct 2018 15:58:20 +0100 (BST)
+        id 00CC011223ED; Thu, 11 Oct 2018 15:58:24 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Talel Shenhar <talel@amazon.com>
 Cc:     David Woodhouse <dwmw@amazon.co.uk>,
@@ -50,10 +50,10 @@ Cc:     David Woodhouse <dwmw@amazon.co.uk>,
         linux-kernel@vger.kernel.org, talel@amazon.com, jonnyc@amazon.com,
         ronenk@amazon.com, barakw@amazon.com,
         David Woodhouse <dwmw@amazon.co.uk>, linux-spi@vger.kernel.org
-Subject: Applied "dw: spi: add support for Amazon's Alpine spi controller" to the spi tree
-In-Reply-To:  <1539256807-25676-2-git-send-email-talel@amazon.com>
-Message-Id: <20181011145820.BB1B411223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:58:20 +0100 (BST)
+Subject: Applied "spi: dw: add compatible for Amazon's Alpine spi controller" to the spi tree
+In-Reply-To:  <1539256807-25676-1-git-send-email-talel@amazon.com>
+Message-Id: <20181011145825.00CC011223ED@debutante.sirena.org.uk>
+Date:   Thu, 11 Oct 2018 15:58:24 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dw: spi: add support for Amazon's Alpine spi controller
+   spi: dw: add compatible for Amazon's Alpine spi controller
 
 has been applied to the spi tree at
 
@@ -86,97 +86,51 @@ to this mail.
 Thanks,
 Mark
 
-From f2d704794864a4bb486f2a0eaed40f25dd87303f Mon Sep 17 00:00:00 2001
+From d49a30366793210cd64759edcdf7099a2e32efd6 Mon Sep 17 00:00:00 2001
 From: Talel Shenhar <talel@amazon.com>
-Date: Thu, 11 Oct 2018 14:20:07 +0300
-Subject: [PATCH] dw: spi: add support for Amazon's Alpine spi controller
+Date: Thu, 11 Oct 2018 14:20:06 +0300
+Subject: [PATCH] spi: dw: add compatible for Amazon's Alpine spi controller
 
-Add support for a new devicetree compatible string called
-'amazon,alpine-apb-ssi', which is necessary for the Amazon Alpine spi
-controller. 'amazon,alpine-dw-apb-ssi' is used in the dw spi driver if
-specified in the devicetree.  Otherwise, fall back to driver default
-behavior, i.e. original dw IP hw driver behavior.
+This compatible adds the ability for dw spi controller driver to work with
+the dw spi controller found on Alpine chips.
+
+The dw spi controller has an auto-deselect of Chip-Select, in case there is
+no data inside the Tx FIFO. While working on platforms with Alpine chips,
+auto-deselect mode causes an issue for some spi devices that can't handle
+the Chip-Select deselect in the middle of a transaction. It is a normal
+behavior for a Tx FIFO to be empty in the middle of a transaction, due to
+busy cpu. In the Alpine chip family an option to change the default
+behavior was added to the original dw spi controller to prevent this issue
+of de-asserting Chip-Select once TX FIFO is empty. The change was to allow
+SW manual control of the Chip-Select. With this change, as long as the
+Slave Enable Register is asserted, the Chip-Select will be asserted. As a
+result, it is necessary to deselect the Slave Select Register once the
+transaction is done. This feature is enabled via a new device compatible
+string called 'amazon,alpine-dw-apb-ssi'.  Once the driver identifies the
+new compatible string, it enables the hw fixup logic, by writing to a
+dedicated register found in the IP reserved area and will start manual
+deselecting the Slave Select Register when the transfer ends.
 
 Signed-off-by: Talel Shenhar <talel@amazon.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-dw-mmio.c | 9 +++++++++
- drivers/spi/spi-dw.c      | 6 ++++++
- drivers/spi/spi-dw.h      | 2 ++
- 3 files changed, 17 insertions(+)
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index a768461614a0..3ffb6a40fe0c 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -126,6 +126,14 @@ static int dw_spi_mscc_jaguar2_init(struct platform_device *pdev,
- 				JAGUAR2_IF_SI_OWNER_OFFSET);
- }
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+index 642d3fb1ef85..2864bc6b659c 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+@@ -2,7 +2,7 @@ Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
  
-+static int dw_spi_alpine_init(struct platform_device *pdev,
-+			      struct dw_spi_mmio *dwsmmio)
-+{
-+	dwsmmio->dws.cs_override = 1;
-+
-+	return 0;
-+}
-+
- static int dw_spi_mmio_probe(struct platform_device *pdev)
- {
- 	int (*init_func)(struct platform_device *pdev,
-@@ -230,6 +238,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "snps,dw-apb-ssi", },
- 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
- 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
-+	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 3e205ab60cd4..b705f2bdb8b9 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -144,6 +144,8 @@ void dw_spi_set_cs(struct spi_device *spi, bool enable)
- 
- 	if (!enable)
- 		dw_writel(dws, DW_SPI_SER, BIT(spi->chip_select));
-+	else if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_SER, 0);
- }
- EXPORT_SYMBOL_GPL(dw_spi_set_cs);
- 
-@@ -463,6 +465,10 @@ static void spi_hw_init(struct device *dev, struct dw_spi *dws)
- 		dws->fifo_len = (fifo == 1) ? 0 : fifo;
- 		dev_dbg(dev, "Detected FIFO size: %u bytes\n", dws->fifo_len);
- 	}
-+
-+	/* enable HW fixup for explicit CS deselect for Amazon's alpine chip */
-+	if (dws->cs_override)
-+		dw_writel(dws, DW_SPI_CS_OVERRIDE, 0xF);
- }
- 
- int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
-diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-index 0168b08364d5..c9c15881e982 100644
---- a/drivers/spi/spi-dw.h
-+++ b/drivers/spi/spi-dw.h
-@@ -32,6 +32,7 @@
- #define DW_SPI_IDR			0x58
- #define DW_SPI_VERSION			0x5c
- #define DW_SPI_DR			0x60
-+#define DW_SPI_CS_OVERRIDE		0xf4
- 
- /* Bit fields in CTRLR0 */
- #define SPI_DFS_OFFSET			0
-@@ -109,6 +110,7 @@ struct dw_spi {
- 	u32			fifo_len;	/* depth of the FIFO buffer */
- 	u32			max_freq;	/* max bus freq supported */
- 
-+	int			cs_override;
- 	u32			reg_io_width;	/* DR I/O width in bytes */
- 	u16			bus_num;
- 	u16			num_cs;		/* supported slave numbers */
+ Required properties:
+ - compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi", where soc is "ocelot" or
+-  "jaguar2"
++  "jaguar2", or "amazon,alpine-dw-apb-ssi"
+ - reg : The register base for the controller. For "mscc,<soc>-spi", a second
+   register set is required (named ICPU_CFG:SPI_MST)
+ - interrupts : One interrupt, used by the controller.
 -- 
 2.19.0.rc2
 
