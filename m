@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F10C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCC0C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618DE2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FEE21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjxwDEAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618DE2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYEpUD2g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FEE21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbeJKXIW (ORCPT
+        id S1730259AbeJKXIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38626 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:21 -0400
+        id S1726647AbeJKXIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B6822098A;
-        Thu, 11 Oct 2018 15:40:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FB8221470;
+        Thu, 11 Oct 2018 15:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272437;
-        bh=jkxZ3Z4FqAFPNSS9RSTLZsdBK2mpe9tEzXrC+Pm0yss=;
+        s=default; t=1539272439;
+        bh=ZXawtueGekSKVebXkP4IkZ6DDtuhqRMu85tpVNwO/1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RjxwDEAdasp+1zVgCAyH0XGZ9ryjPEFpSwor8B+j2IsNcBbHJX37xNLiDAHXnNHbU
-         fZgP0xXtgeMjmjuaq7daCy/SGohtQnWNPtosNu1mm2WP1XjQ41q/A42ZxvobzqWioo
-         c44M5QsSK+zBtAu+iyQ7aCX27roxkp0Pe6hkUUjQ=
+        b=QYEpUD2ggHRvuxAiTqr5MxjPGxrKL74S3lkwOlCrxoYTz+dh8dbEEMzHA+3m+tuyX
+         TLSfUdIYuWoUoum7jt2J5a11OvIkOCO//BM0e2MDynQzEtH8DqR6IpR8fuQr+5gG2y
+         kC0MKNc5tmQcXRkcjwWCMyL4WxDsOOak5YGOttfg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 3.18 070/120] media: v4l: event: Prevent freeing event subscriptions while accessed
-Date:   Thu, 11 Oct 2018 17:34:11 +0200
-Message-Id: <20181011152552.703424376@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 071/120] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
+Date:   Thu, 11 Oct 2018 17:34:12 +0200
+Message-Id: <20181011152552.751595602@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,154 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit ad608fbcf166fec809e402d548761768f602702c upstream.
+[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
 
-The event subscriptions are added to the subscribed event list while
-holding a spinlock, but that lock is subsequently released while still
-accessing the subscription object. This makes it possible to unsubscribe
-the event --- and freeing the subscription object's memory --- while
-the subscription object is simultaneously accessed.
+This fixes a bug which causes guest virtual addresses to get translated
+to guest real addresses incorrectly when the guest is using the HPT MMU
+and has more than 256GB of RAM, or more specifically has a HPT larger
+than 2GB.  This has showed up in testing as a failure of the host to
+emulate doorbell instructions correctly on POWER9 for HPT guests with
+more than 256GB of RAM.
 
-Prevent this by adding a mutex to serialise the event subscription and
-unsubscription. This also gives a guarantee to the callback ops that the
-add op has returned before the del op is called.
+The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
+is stored as an int, and in forming the HPTE address, the index gets
+shifted left 4 bits as an int before being signed-extended to 64 bits.
+The simple fix is to make the variable a long int, matching the
+return type of kvmppc_hv_find_lock_hpte(), which is what calculates
+the index.
 
-This change also results in making the elems field less special:
-subscriptions are only added to the event list once they are fully
-initialised.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: stable@vger.kernel.org # for 4.14 and up
-Fixes: c3b5b0241f62 ("V4L/DVB: V4L: Events: Add backend")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/v4l2-core/v4l2-event.c |   37 +++++++++++++++++------------------
- drivers/media/v4l2-core/v4l2-fh.c    |    2 +
- include/media/v4l2-fh.h              |    1 
- 3 files changed, 22 insertions(+), 18 deletions(-)
+ arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/v4l2-core/v4l2-event.c
-+++ b/drivers/media/v4l2-core/v4l2-event.c
-@@ -119,14 +119,6 @@ static void __v4l2_event_queue_fh(struct
- 	if (sev == NULL)
- 		return;
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -449,7 +449,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
+ 	unsigned long pp, key;
+ 	unsigned long v, gr;
+ 	__be64 *hptep;
+-	int index;
++	long int index;
+ 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
  
--	/*
--	 * If the event has been added to the fh->subscribed list, but its
--	 * add op has not completed yet elems will be 0, treat this as
--	 * not being subscribed.
--	 */
--	if (!sev->elems)
--		return;
--
- 	/* Increase event sequence number on fh. */
- 	fh->sequence++;
- 
-@@ -209,6 +201,7 @@ int v4l2_event_subscribe(struct v4l2_fh
- 	struct v4l2_subscribed_event *sev, *found_ev;
- 	unsigned long flags;
- 	unsigned i;
-+	int ret = 0;
- 
- 	if (sub->type == V4L2_EVENT_ALL)
- 		return -EINVAL;
-@@ -226,31 +219,36 @@ int v4l2_event_subscribe(struct v4l2_fh
- 	sev->flags = sub->flags;
- 	sev->fh = fh;
- 	sev->ops = ops;
-+	sev->elems = elems;
-+
-+	mutex_lock(&fh->subscribe_lock);
- 
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 	found_ev = v4l2_event_subscribed(fh, sub->type, sub->id);
--	if (!found_ev)
--		list_add(&sev->list, &fh->subscribed);
- 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 
- 	if (found_ev) {
-+		/* Already listening */
- 		kfree(sev);
--		return 0; /* Already listening */
-+		goto out_unlock;
- 	}
- 
- 	if (sev->ops && sev->ops->add) {
--		int ret = sev->ops->add(sev, elems);
-+		ret = sev->ops->add(sev, elems);
- 		if (ret) {
--			sev->ops = NULL;
--			v4l2_event_unsubscribe(fh, sub);
--			return ret;
-+			kfree(sev);
-+			goto out_unlock;
- 		}
- 	}
- 
--	/* Mark as ready for use */
--	sev->elems = elems;
-+	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
-+	list_add(&sev->list, &fh->subscribed);
-+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 
--	return 0;
-+out_unlock:
-+	mutex_unlock(&fh->subscribe_lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(v4l2_event_subscribe);
- 
-@@ -289,6 +287,8 @@ int v4l2_event_unsubscribe(struct v4l2_f
- 		return 0;
- 	}
- 
-+	mutex_lock(&fh->subscribe_lock);
-+
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 
- 	sev = v4l2_event_subscribed(fh, sub->type, sub->id);
-@@ -307,6 +307,7 @@ int v4l2_event_unsubscribe(struct v4l2_f
- 		sev->ops->del(sev);
- 
- 	kfree(sev);
-+	mutex_unlock(&fh->subscribe_lock);
- 
- 	return 0;
- }
---- a/drivers/media/v4l2-core/v4l2-fh.c
-+++ b/drivers/media/v4l2-core/v4l2-fh.c
-@@ -49,6 +49,7 @@ void v4l2_fh_init(struct v4l2_fh *fh, st
- 	INIT_LIST_HEAD(&fh->available);
- 	INIT_LIST_HEAD(&fh->subscribed);
- 	fh->sequence = -1;
-+	mutex_init(&fh->subscribe_lock);
- }
- EXPORT_SYMBOL_GPL(v4l2_fh_init);
- 
-@@ -93,6 +94,7 @@ void v4l2_fh_exit(struct v4l2_fh *fh)
- 	if (fh->vdev == NULL)
- 		return;
- 	v4l2_event_unsubscribe_all(fh);
-+	mutex_destroy(&fh->subscribe_lock);
- 	fh->vdev = NULL;
- }
- EXPORT_SYMBOL_GPL(v4l2_fh_exit);
---- a/include/media/v4l2-fh.h
-+++ b/include/media/v4l2-fh.h
-@@ -43,6 +43,7 @@ struct v4l2_fh {
- 	wait_queue_head_t	wait;
- 	struct list_head	subscribed; /* Subscribed events */
- 	struct list_head	available; /* Dequeueable event */
-+	struct mutex		subscribe_lock;
- 	unsigned int		navailable;
- 	u32			sequence;
- 
+ 	/* Get SLB entry */
 
 
