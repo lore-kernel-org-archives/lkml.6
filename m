@@ -2,134 +2,208 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5777DC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D68C6780C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEFD20659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEFD20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 955252087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:21:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hJKBuyaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955252087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbeJLDuZ (ORCPT
+        id S1726663AbeJLDug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:50:25 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60680 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbeJLDuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:50:25 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gAhSR-0004GP-Bp; Thu, 11 Oct 2018 14:21:20 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Rob Herring <robh@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Waterman <andrew@sifive.com>, linux-sh@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        linux-kernel@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Zong Li <zong@andestech.com>, linux-mm@kvack.org,
-        Olof Johansson <olof@lixom.net>,
-        linux-riscv@lists.infradead.org,
-        Michael Clark <michaeljclark@mac.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181005161642.2462-1-logang@deltatee.com>
- <20181005161642.2462-6-logang@deltatee.com> <20181011133730.GB7276@lst.de>
- <8cea5ffa-5fbf-8ea2-b673-20e2d09a910d@deltatee.com>
- <83cfd2d7-b840-b0c6-594e-8b39be8177c1@deltatee.com>
-Message-ID: <cfb2af87-7e47-539c-d149-2599f23b663a@deltatee.com>
-Date:   Thu, 11 Oct 2018 14:21:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 11 Oct 2018 23:50:36 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:43459 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeJLDuf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:50:35 -0400
+Received: by mail-vs1-f65.google.com with SMTP id w85so9821744vsa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 13:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XLb5dhnivT+1/4hU4EU2dDLTGyDtSL2UFXUJdu0lDAg=;
+        b=hJKBuyaWyh0E4D4M3tnP8avrPcUZU/XcFLeq18kDwqy0EFpE+QiQZ7OB076MVcqXlB
+         jBVrRR3hDnb2WfFoQ+vcbMjumf4+XcHxOn7NxDJaSXWdvLd29GHVrAvJnqhsgqlAclEt
+         xiVA0Aw2lIt77grRG0z/RylNQIFbsz6RRn8DA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XLb5dhnivT+1/4hU4EU2dDLTGyDtSL2UFXUJdu0lDAg=;
+        b=ANokSrnHtEkMS1XKeTEzxKJTAjBnbtdFwsMgSXhhJBkywN3/Jdg3Yth4pZxUojs8FC
+         0HK9fbotDJRojtXAjdDxBmpKki6F86tSVtXZ42njPBwcAJ7TEXRdSt6eYySfeujLM6L2
+         JgVSalU4pTgnvwe4Cvnk9sP90THSiFdi/FGymRmQ+n1L7Yo9j2jBd+Pljr3Q7NeG3C1y
+         YSnzM/r/CvKjrGTcZg1VQGxcY7ZlPuVDIazsg8uSA+dMNjINICFqr75sQ/sFN9Fj3wb8
+         FYTCKibwZTxpCKBLgSnmxBOsukrOtjMcFFrYkrxgFpsYh7YO5644R2K7D2dkBsPFrk8O
+         /Xbw==
+X-Gm-Message-State: ABuFfoivdGR6BEzzv/+qgPggVOHy5uj35jq75TUmVZ+Iz/WRUa+ECIlH
+        DuZ5Mqi2DESXvUkHIx52JzhndGllGvE=
+X-Google-Smtp-Source: ACcGV60GBAhFoWYsbJvGN42qSxEwiaWQvIELzHlYCIPSeGYeT1Vho6t5uDveQ1lWMS74FPa3CWeKpg==
+X-Received: by 2002:ab0:14e4:: with SMTP id f33-v6mr1460637uae.122.1539289302826;
+        Thu, 11 Oct 2018 13:21:42 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id u72-v6sm3658246vku.26.2018.10.11.13.21.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 13:21:41 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id r83so9843811vsc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 13:21:41 -0700 (PDT)
+X-Received: by 2002:a67:1141:: with SMTP id 62-v6mr1299123vsr.213.1539289301181;
+ Thu, 11 Oct 2018 13:21:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <83cfd2d7-b840-b0c6-594e-8b39be8177c1@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, michaeljclark@mac.com, linux-riscv@lists.infradead.org, olof@lixom.net, linux-mm@kvack.org, zong@andestech.com, sbates@raithlin.com, linux-kernel@vger.kernel.org, palmer@sifive.com, linux-sh@vger.kernel.org, andrew@sifive.com, aou@eecs.berkeley.edu, robh@kernel.org, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 5/5] RISC-V: Implement sparsemem
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <1539261196-14550-1-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1539261196-14550-1-git-send-email-cang@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 11 Oct 2018 13:21:28 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VSyJAna4JwLXJi1=Z_Y1mzr8cW4iD+vJLPU2GASP3wQA@mail.gmail.com>
+Message-ID: <CAD=FV=VSyJAna4JwLXJi1=Z_Y1mzr8cW4iD+vJLPU2GASP3wQA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] scsi: ufs: make UFS Tx lane1 clock optional for
+ QCOM platforms
+To:     cang@codeaurora.org
+Cc:     subhashj@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        venkatg@codeaurora.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On Thu, Oct 11, 2018 at 5:33 AM Can Guo <cang@codeaurora.org> wrote:
+>  static int ufs_qcom_host_clk_get(struct device *dev,
+> -               const char *name, struct clk **clk_out)
+> +               const char *name, struct clk **clk_out, bool optional)
+>  {
+>         struct clk *clk;
+>         int err = 0;
+>
+>         clk = devm_clk_get(dev, name);
+> -       if (IS_ERR(clk)) {
+> +       if (clk == ERR_PTR(-EPROBE_DEFER)) {
+> +               err = -EPROBE_DEFER;
+> +               dev_warn(dev, "required clock %s hasn't probed yet, err %d\n",
+> +                               name, err);
+> +       } else if (IS_ERR(clk)) {
+> +               if (optional)
+> +                       return 0;
+
+Change this function to:
+
+static int ufs_qcom_host_clk_get(struct device *dev,
+    const char *name, struct clk **clk_out, bool optional)
+{
+  struct clk *clk;
+  int err;
+
+  clk = devm_clk_get(dev, name);
+  if (!IS_ERR(clk)) {
+    *clk_out = clk;
+    return 0;
+  }
+
+  err = PTR_ERR(clk);
+
+  if (optional && err == -ENOENT) {
+    *clk_out = NULL;
+    return 0;
+  }
+
+  if (err != -EPROBE_DEFER)
+    dev_err(dev, "failed to get %s err %d",
+        name, err);
+
+  return err;
+}
+
+Specifically:
+
+* Typically it just spams the log to print something when you see an
+-EPROBE_DEFER.
+
+* If a clock is optional you should only consider things a success
+only if "-ENOENT" was returned.  All other errors should be considered
+fatal.
+
+* If a clock is optional it's slightly cleaner to set *clk_out to
+NULL.  I know you're initting global data that happened to already be
+NULL by default, but it still feels nice for the abstraction of the
+function to do this.
+
+* Please don't pass __func__ to your error messages.
 
 
-On 2018-10-11 12:45 p.m., Logan Gunthorpe wrote:
-> Ok, I spoke too soon...
-> 
-> Having this define next to the struct page definition works great for
-> riscv. However, making that happen in arm64 seems to be a nightmare. The
-> include chain in arm64 is tangled up so much that including mm_types
-> where this is needed seems to be extremely difficult.
+>                 err = PTR_ERR(clk);
+>                 dev_err(dev, "%s: failed to get %s err %d",
+>                                 __func__, name, err);
+> @@ -113,10 +119,10 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
+>         if (!host->is_lane_clks_enabled)
+>                 return;
+>
+> -       if (host->hba->lanes_per_direction > 1)
+> +       if (host->tx_l1_sync_clk)
 
-Sorry for all the unnecessary churn but I've figured it out. Just had to
-realize we only need mm_types.h to be included where
-STRUCT_PAGE_MAX_SHIFT is finally expanded. Thus we only need it in one
-more spot (fixmap.h). See below.
-
-Thanks,
-
-Logan
-
---
+Remove this "if".  Always call clk_disable_unprepare() which will be a
+no-op if "host->tx_l1_sync_clk" is NULL.  clk_disable_unprepare() is a
+no-op for NULL clocks by design specifically to make code like this
+cleaner.
 
 
-diff --git a/arch/arm64/include/asm/memory.h
-b/arch/arm64/include/asm/memory.h
-index b96442960aea..f0a5c9531e8b 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -34,15 +34,6 @@
-  */
- #define PCI_IO_SIZE            SZ_16M
+>                 clk_disable_unprepare(host->tx_l1_sync_clk);
+>         clk_disable_unprepare(host->tx_l0_sync_clk);
+> -       if (host->hba->lanes_per_direction > 1)
+> +       if (host->rx_l1_sync_clk)
 
--/*
-- * Log2 of the upper bound of the size of a struct page. Used for sizing
-- * the vmemmap region only, does not affect actual memory footprint.
-- * We don't use sizeof(struct page) directly since taking its size here
-- * requires its definition to be available at this point in the inclusion
-- * chain, and it may not be a power of 2 in the first place.
-- */
--#define STRUCT_PAGE_MAX_SHIFT  6
--
- /*
-  * VMEMMAP_SIZE - allows the whole linear region to be covered by
-  *                a struct page array
-diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
-index 827e4d3bbc7a..8cc7b09c1bc7 100644
---- a/include/asm-generic/fixmap.h
-+++ b/include/asm-generic/fixmap.h
-@@ -16,6 +16,7 @@
- #define __ASM_GENERIC_FIXMAP_H
+Remove this "if".  Always call clk_disable_unprepare() which will be a
+no-op if "host->rx_l1_sync_clk" is NULL.  clk_disable_unprepare() is a
+no-op for NULL clocks by design specifically to make code like this
+cleaner.
 
- #include <linux/bug.h>
-+#include <linux/mm_types.h>
 
- #define __fix_to_virt(x)       (FIXADDR_TOP - ((x) << PAGE_SHIFT))
- #define __virt_to_fix(x)       ((FIXADDR_TOP - ((x)&PAGE_MASK)) >>
-PAGE_SHIFT)
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..d1c3cde8c201 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -206,6 +206,11 @@ struct page {
- #endif
- } _struct_page_alignment;
+>                 clk_disable_unprepare(host->rx_l1_sync_clk);
+>         clk_disable_unprepare(host->rx_l0_sync_clk);
+>
+> @@ -141,12 +147,14 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
+>         if (err)
+>                 goto disable_rx_l0;
+>
+> -       if (host->hba->lanes_per_direction > 1) {
+> +       if (host->rx_l1_sync_clk) {
 
-+/*
-+ * Used for sizing the vmemmap region on some architectures.
-+ */
-+#define STRUCT_PAGE_MAX_SHIFT  ilog2(roundup_pow_of_two(sizeof(struct
-page)))
-+
- #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MASK)
- #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX_SIZE)
+Remove this "if".  Always call ufs_qcom_host_clk_enable().  The
+clk_prepare_enable() inside ufs_qcom_host_clk_enable() will be a no-op
+if "host->rx_l1_sync_clk" is NULL and will return 0 (no error).
+
+
+>                 err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
+>                         host->rx_l1_sync_clk);
+>                 if (err)
+>                         goto disable_tx_l0;
+> +       }
+>
+> +       if (host->tx_l1_sync_clk) {
+
+Remove this "if".  Always call ufs_qcom_host_clk_enable().  The
+clk_prepare_enable() inside ufs_qcom_host_clk_enable() will be a no-op
+if "host->tx_l1_sync_clk" is NULL and will return 0 (no error).
+
+
+-Doug
