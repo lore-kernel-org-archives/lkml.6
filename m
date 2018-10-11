@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB70C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE38C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B36213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E04A2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PA4P8dCV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B36213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtDF0jIC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E04A2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731519AbeJKXN6 (ORCPT
+        id S1731530AbeJKXOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46768 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:56 -0400
+        id S1726700AbeJKXOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:00 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09F182085B;
-        Thu, 11 Oct 2018 15:46:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A45C2085B;
+        Thu, 11 Oct 2018 15:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272771;
-        bh=qw5/CVHSH22aLLQV97YD1mza+c7suQr2s6TvJGVfhHQ=;
+        s=default; t=1539272774;
+        bh=9Ml3iNPT1TotYWP7bTmpSA9Wsp4Gn8KUUdkNbsE5xq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PA4P8dCV19E+BUcwMTgahcpha3MZoFks1tHRoLVlmJFLVTGXkPZKOG0s9Wux7bGu3
-         A/7nYh/de8B2ZdGS2TnWi5s0DZLhACBm2mE1MEXGB0wyt+42SgjuQV7xBdjgKfyK+0
-         cxHMasHWTobsOnhS53izsyeYGS378m3ygA/B4oEo=
+        b=rtDF0jIClnZ0Y+AgO0zp/6Pklz+ZHOaVv4w/HZVg+40ChmVOUttDK+Y0hk74B2A6T
+         SH0SHEvoIzAb8zGbGjVyljlEU9GBK1INv1ildgNoN3C3tg9o8aNFhRy5BRxtxbL9pe
+         3bkI9+NstedxLr4YfViS530U2ZDCz+F5sKSwAVew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 32/45] nvme_fc: fix ctrl create failures racing with workq items
-Date:   Thu, 11 Oct 2018 17:39:59 +0200
-Message-Id: <20181011152510.306498191@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 33/45] powerpc/lib/code-patching: refactor patch_instruction()
+Date:   Thu, 11 Oct 2018 17:40:00 +0200
+Message-Id: <20181011152510.361835278@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -64,45 +63,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit cf25809bec2c7df4b45df5b2196845d9a4a3c89b upstream.
+commit 8cf4c05712f04a405f0dacebcca8f042b391694a upstream.
 
-If there are errors during initial controller create, the transport
-will teardown the partially initialized controller struct and free
-the ctlr memory.  Trouble is - most of those errors can occur due
-to asynchronous events happening such io timeouts and subsystem
-connectivity failures. Those failures invoke async workq items to
-reset the controller and attempt reconnect.  Those may be in progress
-as the main thread frees the ctrl memory, resulting in NULL ptr oops.
+patch_instruction() uses almost the same sequence as
+__patch_instruction()
 
-Prevent this from happening by having the main ctrl failure thread
-changing state to DELETING followed by synchronously cancelling any
-pending queued work item. The change of state will prevent the
-scheduling of resets or reconnect events.
+This patch refactor it so that patch_instruction() uses
+__patch_instruction() instead of duplicating code.
 
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/fc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/lib/code-patching.c |   30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -2868,6 +2868,10 @@ nvme_fc_init_ctrl(struct device *dev, st
+--- a/arch/powerpc/lib/code-patching.c
++++ b/arch/powerpc/lib/code-patching.c
+@@ -23,19 +23,26 @@
+ #include <asm/code-patching.h>
+ #include <asm/setup.h>
+ 
+-static int __patch_instruction(unsigned int *addr, unsigned int instr)
++static int __patch_instruction(unsigned int *exec_addr, unsigned int instr,
++			       unsigned int *patch_addr)
+ {
+ 	int err;
+ 
+-	__put_user_size(instr, addr, 4, err);
++	__put_user_size(instr, patch_addr, 4, err);
+ 	if (err)
+ 		return err;
+ 
+-	asm ("dcbst 0, %0; sync; icbi 0,%0; sync; isync" :: "r" (addr));
++	asm ("dcbst 0, %0; sync; icbi 0,%1; sync; isync" :: "r" (patch_addr),
++							    "r" (exec_addr));
+ 
+ 	return 0;
+ }
+ 
++static int raw_patch_instruction(unsigned int *addr, unsigned int instr)
++{
++	return __patch_instruction(addr, instr, addr);
++}
++
+ #ifdef CONFIG_STRICT_KERNEL_RWX
+ static DEFINE_PER_CPU(struct vm_struct *, text_poke_area);
+ 
+@@ -138,7 +145,7 @@ static inline int unmap_patch_area(unsig
+ int patch_instruction(unsigned int *addr, unsigned int instr)
+ {
+ 	int err;
+-	unsigned int *dest = NULL;
++	unsigned int *patch_addr = NULL;
+ 	unsigned long flags;
+ 	unsigned long text_poke_addr;
+ 	unsigned long kaddr = (unsigned long)addr;
+@@ -149,7 +156,7 @@ int patch_instruction(unsigned int *addr
+ 	 * to allow patching. We just do the plain old patching
+ 	 */
+ 	if (!this_cpu_read(*PTRRELOC(&text_poke_area)))
+-		return __patch_instruction(addr, instr);
++		return raw_patch_instruction(addr, instr);
+ 
+ 	local_irq_save(flags);
+ 
+@@ -159,17 +166,10 @@ int patch_instruction(unsigned int *addr
+ 		goto out;
  	}
  
- 	if (ret) {
-+		nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_DELETING);
-+		cancel_work_sync(&ctrl->ctrl.reset_work);
-+		cancel_delayed_work_sync(&ctrl->connect_work);
-+
- 		/* couldn't schedule retry - fail out */
- 		dev_err(ctrl->ctrl.device,
- 			"NVME-FC{%d}: Connect retry failed\n", ctrl->cnum);
+-	dest = (unsigned int *)(text_poke_addr) +
++	patch_addr = (unsigned int *)(text_poke_addr) +
+ 			((kaddr & ~PAGE_MASK) / sizeof(unsigned int));
+ 
+-	/*
+-	 * We use __put_user_size so that we can handle faults while
+-	 * writing to dest and return err to handle faults gracefully
+-	 */
+-	__put_user_size(instr, dest, 4, err);
+-	if (!err)
+-		asm ("dcbst 0, %0; sync; icbi 0,%0; icbi 0,%1; sync; isync"
+-			::"r" (dest), "r"(addr));
++	__patch_instruction(addr, instr, patch_addr);
+ 
+ 	err = unmap_patch_area(text_poke_addr);
+ 	if (err)
+@@ -184,7 +184,7 @@ out:
+ 
+ int patch_instruction(unsigned int *addr, unsigned int instr)
+ {
+-	return __patch_instruction(addr, instr);
++	return raw_patch_instruction(addr, instr);
+ }
+ 
+ #endif /* CONFIG_STRICT_KERNEL_RWX */
 
 
