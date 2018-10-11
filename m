@@ -2,162 +2,192 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970A4C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD1AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F532087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E915214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:03:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hzPsHIJB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F532087D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZWcCubWi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E915214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbeJKP0P (ORCPT
+        id S1728104AbeJKP3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:26:15 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54997 "EHLO
+        Thu, 11 Oct 2018 11:29:35 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34000 "EHLO
         mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbeJKP0P (ORCPT
+        with ESMTP id S1727983AbeJKP3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:26:15 -0400
-Received: by mail-it1-f194.google.com with SMTP id l191-v6so12124532ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:00:08 -0700 (PDT)
+        Thu, 11 Oct 2018 11:29:35 -0400
+Received: by mail-it1-f194.google.com with SMTP id l127-v6so18146206ith.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=IS+Qe1yflYjxnUGUxVEesbSqF9cTj5GBtrEheCKgRQ0=;
-        b=hzPsHIJB+rCWbuYyTNW7i9SxSTnMtAL2bTfufvTHUVuAJoSf+G0Yvk666p0m9ucuaB
-         ImPNa4L2+1VdEINlrG5XLtOfpcSUCDhKDw8loHGNZynzUHRlDZjSXS3XoDT6uWXm4MY4
-         yyU0jl2LBMfrrILOjX+Z6DHyGJPNscCuTshjmo/Dr0GSN2dxBkKGVU79oOZP30tCcp9p
-         Xzbzsb42mNky7+fQGYj0vDBSU+a8RT0xzj9gOAIij7l5ZebqSoGurw+C3Mgp9DP2RsEf
-         rbAcMjVuM3teJBDrD4u0Hz7a+qMSUHl6DezL0eMkEDFQSAtKH524tAQ/o72ZG7EuUkv6
-         tAyg==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=d12y+ockzhXJH0TpWpp6L28F6LM4TlHubeWxTlxeIeI=;
+        b=ZWcCubWiQHimSR7/kAE6RojrQuAyq0c7geLi/zHhALNHDdOJzL71cR7oAxDlHg1c6b
+         hk+BfkF7cbrsswcJM4y5XenoBcwjKZ9aJgFo6JXUStwSZoCQNEesB8AXSeNwbu5/VOHD
+         nT+PX9zEPX41xQnIaM3BO/vL5lbXvPCI8GO3XF2uJXJ/SOGivTOeDhRRuLJfSkTeSoNs
+         AwFu+V7tRCuBNFXQLp2DrEJJ1SFG10+cJdOl8uNjywKep6Q4/qUSLoSwaFaQ1v8/jUqc
+         ijsyBPxA9N3xL3wqdCLpcRMxktvJ4sLUwg6jWBAjzFP5fHXysEAOsYROzjkfGKaEaocg
+         A85A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=IS+Qe1yflYjxnUGUxVEesbSqF9cTj5GBtrEheCKgRQ0=;
-        b=btdb32fXkofUhjuhxY6mc/yH4rK666c+GW1607ydDKohxgBNoQUn0MVaeNGaGiUFTp
-         +qryIEvgHlYZLaiE7Y0lR6KWFbDQVw4eSP9raaCBxOLh+rQAynudibEWT4OB6EsT/N/d
-         AXQr7Mk+7Oh/OJktjS6zSVPrQu9PvPeRevGqAXLXraxsPpA4NuR/8t7DWeDyqdTucqAy
-         DM3Cw5a825GeUM5bvggxbk/R0lqMGlNyZb0I9XZKPST28Ikv713YaHOyU9Y7u04oVEKo
-         x46yAQDVYNUo/499qfPAmR87qRPkeV27Rz9v3/5E8DZJH0ilJZsvM1OucfAjoT173YFz
-         ksZQ==
-X-Gm-Message-State: ABuFfohEfTyPUHRv9Dh6TtZM4H2LfPHRpCyVfosnSoX8dpf/NiG+goyt
-        df/YAdLCfrjqT4zvioGLtONoYNIMmk2eTleDxiXjRw==
-X-Google-Smtp-Source: ACcGV616NCVHUH7QeCYECpJ1choxV1yo8jQZ0FtbhzhYr6N+JIDQkMLH6YB9SFUQ1pY05GZilFTDo+mkrSp1zWS9tNA=
-X-Received: by 2002:a02:9716:: with SMTP id x22-v6mr401480jai.82.1539244807442;
- Thu, 11 Oct 2018 01:00:07 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=d12y+ockzhXJH0TpWpp6L28F6LM4TlHubeWxTlxeIeI=;
+        b=k7y/fBKsaoEx11GuLDrfBWtasDNDbSeVPGiOAUfvtP+dq4S0RaMlk6mz/6/tP6D5LV
+         djMWxC0Qe5+9hr7SA9iouVSlk5zqSMjvmgYTlBDdl+rSDTIfiqN8x9djhi3tes66I/ZL
+         xlUMzBq9wwy//zPjAtRaxbPCCLBwXqKd7EvchFHE1uWDmPNyHCeD4J0w2zwy32qayv82
+         PuH+YYv0Uy+3hJYITggapxOPmddk6nWibHyLOI/o40C+uPvX/Xom6NVkxVKyas32Zdlc
+         jSVKwQ9tQMytnjl30QZLEXhgJDVh7/+k0GenODAVtonFxF0xv1G/ZVkswkKk3d2ROgZu
+         fBag==
+X-Gm-Message-State: ABuFfoigBnUk/++8mCNDnPj/ZUumaJYcZfvlzGs/gnVI6B7PvsKML16u
+        TNjaMzFM4WPJE9OwlX+si+8p6tH4YlgKr4t5u4L/rQ==
+X-Google-Smtp-Source: ACcGV606H/xhxWLh3lgUUI3Jbnwo45aojTvez78hS8PtWd/i9dPrV31eTlQRAwqeGPe9GEN47fHGg11nz0BJXaWomtg=
+X-Received: by 2002:a02:97c5:: with SMTP id v5-v6mr388808jaj.72.1539245006985;
+ Thu, 11 Oct 2018 01:03:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 00:59:46
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 01:03:06
  -0700 (PDT)
-In-Reply-To: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
-References: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
+In-Reply-To: <20181010214945.5owshc3mlrh74z4b@linutronix.de>
+References: <20180918152931.17322-1-williams@redhat.com> <20181005163018.icbknlzymwjhdehi@linutronix.de>
+ <20181005163320.zkacovxvlih6blpp@linutronix.de> <CACT4Y+YoNCm=0C6PZtQR1V1j4QeQ0cFcJzpJF1hn34Oaht=jwg@mail.gmail.com>
+ <20181009142742.ikh7xv2dn5skjjbe@linutronix.de> <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
+ <20181010092929.a5gd3fkkw6swco4c@linutronix.de> <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
+ <20181010095343.6qxved3owi6yokoa@linutronix.de> <CACT4Y+ZpMjYBPS0GHP0AsEJZZmDjwV9DJBiVUzYKBnD+r9W4+A@mail.gmail.com>
+ <20181010214945.5owshc3mlrh74z4b@linutronix.de>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 11 Oct 2018 09:59:46 +0200
-Message-ID: <CACT4Y+Ym3_NuqWrgHXWfTahWTm17xi_2gjy8hvuDeyUCPuYXUQ@mail.gmail.com>
-Subject: Re: net/tipc: recursive locking in tipc_link_reset
-To:     Jon Maloy <jon.maloy@ericsson.com>,
-        David Miller <davem@davemloft.net>,
-        Ying Xue <ying.xue@windriver.com>,
-        netdev <netdev@vger.kernel.org>,
-        tipc-discussion@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 11 Oct 2018 10:03:06 +0200
+Message-ID: <CACT4Y+Zj0pBR_C-6fcMkFkrkKh-LwDupNHDz=ud7HJomtvFUVw@mail.gmail.com>
+Subject: Re: [PATCH] mm/kasan: make quarantine_lock a raw_spinlock_t
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Clark Williams <williams@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 9:55 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> Hi,
+On Wed, Oct 10, 2018 at 11:49 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> From: Clark Williams <williams@redhat.com>
+> Date: Tue, 18 Sep 2018 10:29:31 -0500
 >
-> I am getting the following error while booting the latest kernel on
-> bb2d8f2f61047cbde08b78ec03e4ebdb01ee5434 (Oct 10). Config is attached.
+> The static lock quarantine_lock is used in quarantine.c to protect the
+> quarantine queue datastructures. It is taken inside quarantine queue
+> manipulation routines (quarantine_put(), quarantine_reduce() and
+> quarantine_remove_cache()), with IRQs disabled.
+> This is not a problem on a stock kernel but is problematic on an RT
+> kernel where spin locks are sleeping spinlocks, which can sleep and can
+> not be acquired with disabled interrupts.
 >
-> Since this happens during boot, this makes LOCKDEP completely
-> unusable, does not allow to discover any other locking issues and
-> masks all new bugs being introduced into kernel.
-> Please fix asap.
-> Thanks
+> Convert the quarantine_lock to a raw spinlock_t. The usage of
+> quarantine_lock is confined to quarantine.c and the work performed while
+> the lock is held is used for debug purpose.
+>
+> Signed-off-by: Clark Williams <williams@redhat.com>
+> Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> [bigeasy: slightly altered the commit message]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
--parthasarathy.bhuvaragan address as it gives me bounces
-but this is highly likely due to:
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
 
-commit 3f32d0be6c16b902b687453c962d17eea5b8ea19
-Author: Parthasarathy Bhuvaragan
-Date:   Tue Sep 25 22:09:10 2018 +0200
-
-    tipc: lock wakeup & inputq at tipc_link_reset()
-
-
-> WARNING: possible recursive locking detected
-> 4.19.0-rc7+ #14 Not tainted
-> --------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> 00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
-> include/linux/spinlock.h:334 [inline]
-> 00000000dcfc0fc8 (&(&list->lock)->rlock#4){+...}, at:
-> tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
+> ---
+> On 2018-10-10 11:57:41 [+0200], Dmitry Vyukov wrote:
+>> Yes. Clark's patch looks good to me. Probably would be useful to add a
+>> comment as to why raw spinlock is used (otherwise somebody may
+>> refactor it back later).
 >
-> but task is already holding lock:
-> 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at: spin_lock_bh
-> include/linux/spinlock.h:334 [inline]
-> 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
-> tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+> If you really insist, I could add something but this didn't happen so
+> far. git's changelog should provide enough information why to why it was
+> changed.
 >
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
+>  mm/kasan/quarantine.c |   18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 >
->        CPU0
->        ----
->   lock(&(&list->lock)->rlock#4);
->   lock(&(&list->lock)->rlock#4);
+> --- a/mm/kasan/quarantine.c
+> +++ b/mm/kasan/quarantine.c
+> @@ -103,7 +103,7 @@ static int quarantine_head;
+>  static int quarantine_tail;
+>  /* Total size of all objects in global_quarantine across all batches. */
+>  static unsigned long quarantine_size;
+> -static DEFINE_SPINLOCK(quarantine_lock);
+> +static DEFINE_RAW_SPINLOCK(quarantine_lock);
+>  DEFINE_STATIC_SRCU(remove_cache_srcu);
 >
->  *** DEADLOCK ***
+>  /* Maximum size of the global queue. */
+> @@ -190,7 +190,7 @@ void quarantine_put(struct kasan_free_me
+>         if (unlikely(q->bytes > QUARANTINE_PERCPU_SIZE)) {
+>                 qlist_move_all(q, &temp);
 >
->  May be due to missing lock nesting notation
+> -               spin_lock(&quarantine_lock);
+> +               raw_spin_lock(&quarantine_lock);
+>                 WRITE_ONCE(quarantine_size, quarantine_size + temp.bytes);
+>                 qlist_move_all(&temp, &global_quarantine[quarantine_tail]);
+>                 if (global_quarantine[quarantine_tail].bytes >=
+> @@ -203,7 +203,7 @@ void quarantine_put(struct kasan_free_me
+>                         if (new_tail != quarantine_head)
+>                                 quarantine_tail = new_tail;
+>                 }
+> -               spin_unlock(&quarantine_lock);
+> +               raw_spin_unlock(&quarantine_lock);
+>         }
 >
-> 2 locks held by swapper/0/1:
->  #0: 00000000f7539d34 (pernet_ops_rwsem){+.+.}, at:
-> register_pernet_subsys+0x19/0x40 net/core/net_namespace.c:1051
->  #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
-> spin_lock_bh include/linux/spinlock.h:334 [inline]
->  #1: 00000000cbb9b036 (&(&list->lock)->rlock#4){+...}, at:
-> tipc_link_reset+0xfa/0xdf0 net/tipc/link.c:849
+>         local_irq_restore(flags);
+> @@ -230,7 +230,7 @@ void quarantine_reduce(void)
+>          * expected case).
+>          */
+>         srcu_idx = srcu_read_lock(&remove_cache_srcu);
+> -       spin_lock_irqsave(&quarantine_lock, flags);
+> +       raw_spin_lock_irqsave(&quarantine_lock, flags);
 >
-> stack backtrace:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7+ #14
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1af/0x295 lib/dump_stack.c:113
->  print_deadlock_bug kernel/locking/lockdep.c:1759 [inline]
->  check_deadlock kernel/locking/lockdep.c:1803 [inline]
->  validate_chain kernel/locking/lockdep.c:2399 [inline]
->  __lock_acquire+0xf1e/0x3c60 kernel/locking/lockdep.c:3411
->  lock_acquire+0x1db/0x520 kernel/locking/lockdep.c:3900
->  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
->  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
->  spin_lock_bh include/linux/spinlock.h:334 [inline]
->  tipc_link_reset+0x125/0xdf0 net/tipc/link.c:850
->  tipc_link_bc_create+0xb5/0x1f0 net/tipc/link.c:526
->  tipc_bcast_init+0x59b/0xab0 net/tipc/bcast.c:521
->  tipc_init_net+0x472/0x610 net/tipc/core.c:82
->  ops_init+0xf7/0x520 net/core/net_namespace.c:129
->  __register_pernet_operations net/core/net_namespace.c:940 [inline]
->  register_pernet_operations+0x453/0xac0 net/core/net_namespace.c:1011
->  register_pernet_subsys+0x28/0x40 net/core/net_namespace.c:1052
->  tipc_init+0x83/0x104 net/tipc/core.c:140
->  do_one_initcall+0x109/0x70a init/main.c:885
->  do_initcall_level init/main.c:953 [inline]
->  do_initcalls init/main.c:961 [inline]
->  do_basic_setup init/main.c:979 [inline]
->  kernel_init_freeable+0x4bd/0x57f init/main.c:1144
->  kernel_init+0x13/0x180 init/main.c:1063
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+>         /*
+>          * Update quarantine size in case of hotplug. Allocate a fraction of
+> @@ -254,7 +254,7 @@ void quarantine_reduce(void)
+>                         quarantine_head = 0;
+>         }
+>
+> -       spin_unlock_irqrestore(&quarantine_lock, flags);
+> +       raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+>
+>         qlist_free_all(&to_free, NULL);
+>         srcu_read_unlock(&remove_cache_srcu, srcu_idx);
+> @@ -310,17 +310,17 @@ void quarantine_remove_cache(struct kmem
+>          */
+>         on_each_cpu(per_cpu_remove_cache, cache, 1);
+>
+> -       spin_lock_irqsave(&quarantine_lock, flags);
+> +       raw_spin_lock_irqsave(&quarantine_lock, flags);
+>         for (i = 0; i < QUARANTINE_BATCHES; i++) {
+>                 if (qlist_empty(&global_quarantine[i]))
+>                         continue;
+>                 qlist_move_cache(&global_quarantine[i], &to_free, cache);
+>                 /* Scanning whole quarantine can take a while. */
+> -               spin_unlock_irqrestore(&quarantine_lock, flags);
+> +               raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+>                 cond_resched();
+> -               spin_lock_irqsave(&quarantine_lock, flags);
+> +               raw_spin_lock_irqsave(&quarantine_lock, flags);
+>         }
+> -       spin_unlock_irqrestore(&quarantine_lock, flags);
+> +       raw_spin_unlock_irqrestore(&quarantine_lock, flags);
+>
+>         qlist_free_all(&to_free, cache);
+>
