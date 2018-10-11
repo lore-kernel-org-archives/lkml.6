@@ -2,119 +2,123 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1811C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95E7C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3CFA20659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:54:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2qAiVQ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CFA20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AD2E320841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2E320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbeJKVVq (ORCPT
+        id S1728395AbeJKV2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:21:46 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45134 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbeJKVVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:21:46 -0400
-Received: by mail-qt1-f196.google.com with SMTP id e10-v6so9854426qtq.12;
-        Thu, 11 Oct 2018 06:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=AHAHlQi25M+c6q7IMVDEmbVnhALQVuAichmsKty7Sd4=;
-        b=K2qAiVQ2M7/0F76wlEFLJRrAdYq54Ps37drhzwIma66fRIiSZapKQn386Pl/4hl7tW
-         GL6GxJ1M11jDYz0jRB5kXgjgTV8uFqS5kPKWaJdks86ih0kv7WSdR7kK2PDmoEcCbkLI
-         Gp9QxTL9SjoTupgoyR6LmHhEBHxg6KDJmBwpBWt8vHTGOa/MvTYD99yXaLkm+j4ocggb
-         OFdM3+bqWOO7Be10+/Go3HV5dHEZmz1m5c/QVMoKruqN5ZV3wdgVWxKkEhYb/oMN3ban
-         Ql0ddkCW3WSmUUZfj7HrLtst+KitLQP0vB3J7QPGthMNnXrL7S6zM+4SDjpm6WuAWuhX
-         dArg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=AHAHlQi25M+c6q7IMVDEmbVnhALQVuAichmsKty7Sd4=;
-        b=tcjChSkAtWcRLOeEL4BiFP7CEo0cOk8kjiPiBNgRRuqxqvrGG2zz9W81ccr1eelnie
-         1P7Gj/dvky4xTTsSOZyzOt94gG2wsTtryKRG0DDJvlFNp3NE4DL9K4cDE1THR5OJKGNq
-         1QelNidHAIHoY6HpTOIUaopeUYIHxDBz8/QoIYunzcDlMO6RQgRpMok1sjZNPoPnLNGa
-         L5v/uB5ytZuN6C9e9JT3lIVc77xDWzLk+jglcrNZqyZqA+ftikJGCZ41/ktXr/w054MR
-         PB+bQQpi49ZGcHyeR5J1m8Bf1WvUvvB4gIRgEEm6gy88mDzw7KHh6I8m05geQAUK77dD
-         EpEQ==
-X-Gm-Message-State: ABuFfoi82WIDoSSoijOajyIeHTxy4qThWjKa2xuLFi4jyoEgOqly9czF
-        gCSnRmnbHo0/ikjgy6c3zNMjuug3gqST0N8+OQM=
-X-Google-Smtp-Source: ACcGV62cezxh16rbJ+Dnvx/z0db94KDAxvbhnR3avcuw8stNd2S+Ye08xlsWKdL5cyYqj9k4u7iUYTCj8IPOxmu5Uiw=
-X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr1568028qtl.343.1539266067908;
- Thu, 11 Oct 2018 06:54:27 -0700 (PDT)
+        Thu, 11 Oct 2018 17:28:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:37912 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727129AbeJKV2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:28:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4905CEBD;
+        Thu, 11 Oct 2018 07:01:02 -0700 (PDT)
+Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BAFF3F5D3;
+        Thu, 11 Oct 2018 07:00:59 -0700 (PDT)
+Subject: Re: [RFC 17/17] arm64: compile the kernel with ptrauth
+ -msign-return-address
+To:     Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Cc:     Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-18-kristina.martsenko@arm.com>
+ <cd1eface-aebb-b654-c57c-91690087957f@foss.arm.com>
+From:   Kristina Martsenko <kristina.martsenko@arm.com>
+Message-ID: <edbb3ad0-a38e-743f-f2e7-2241f2ed12ee@arm.com>
+Date:   Thu, 11 Oct 2018 15:00:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 06:54:27
- -0700 (PDT)
-In-Reply-To: <20181011103750.GA29735@kroah.com>
-References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
- <20180824204756.e787765461975cd1e27502dc@kernel.org> <20180824224211.2934d7c0@canb.auug.org.au>
- <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org> <20180828072333.36af4d5d@canb.auug.org.au>
- <20180828094341.d20d8fbcb9dca310d44df951@kernel.org> <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
- <20181011114809.5590ecb3@canb.auug.org.au> <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
- <20181011205849.6f6645fa@canb.auug.org.au> <20181011103750.GA29735@kroah.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Oct 2018 15:54:27 +0200
-X-Google-Sender-Auth: rWvyzATHuKqZxnvFJ9vcBv8KCqo
-Message-ID: <CAK8P3a3DTbcSgOEqt-zAsX9DpVSOmS6apYXXkRHK2FKc5mvW2Q@mail.gmail.com>
-Subject: Re: linux-next: build warnings from the build of Linus' tree
-To:     Greg KH <gregkh@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cd1eface-aebb-b654-c57c-91690087957f@foss.arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/18, Greg KH <gregkh@linux-foundation.org> wrote:
-> On Thu, Oct 11, 2018 at 08:58:49PM +1100, Stephen Rothwell wrote:
->> Hi all,
+On 05/10/2018 10:01, Ramana Radhakrishnan wrote:
+> On 05/10/2018 09:47, Kristina Martsenko wrote:
+>> Compile all functions with two ptrauth instructions: paciasp in the
+>> prologue to sign the return address, and autiasp in the epilogue to
+>> authenticate the return address. This should help protect the kernel
+>> against attacks using return-oriented programming.
 >>
->> On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter
->> <oberpar@linux.ibm.com> wrote:
->> >
->> > On 11.10.2018 02:48, Stephen Rothwell wrote:
->> > > OK, I have been carrying this "quick fix" patch in linux-next since
->> > > September 7.  Is anyone going to pick this up and send it to
->> > > Greg/Linus, please?
->> >
->> > Sorry about that - I posted a modified fix at
->> >
->> >   https://lkml.org/lkml/2018/9/13/367
->> >
->> > but didn't get a response. I guess I should have reposted sooner. But
->> > before I do that:
->> >
->> > Arnd: Is this something that you can pick up or should I include
->> > someone
->> > else?
+>> CONFIG_ARM64_PTR_AUTH enables pointer auth for both userspace and the
+>> kernel.
 >>
->> It would be nice if it could go in before the v4.19 release because the
->> commit that exposed the warnings went into v4.19-rc1.
->
-> I agree.  If someone could at least review/ack it, that would be great.
+>> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+>> ---
+>>   arch/arm64/Makefile | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+>> index 106039d25e2f..dbcd43ea99d8 100644
+>> --- a/arch/arm64/Makefile
+>> +++ b/arch/arm64/Makefile
+>> @@ -56,6 +56,10 @@ KBUILD_AFLAGS    += $(lseinstr) $(brokengasinst)
+>>   KBUILD_CFLAGS    += $(call cc-option,-mabi=lp64)
+>>   KBUILD_AFLAGS    += $(call cc-option,-mabi=lp64)
+>>   +ifeq ($(CONFIG_ARM64_PTR_AUTH),y)
+>> +KBUILD_CFLAGS    += -msign-return-address=all
+> 
+> Glad to see this being done and being proposed for mainline.
+> 
+> I can see why you would prefer this though have you guys experimented at
+> all with -msign-return-address=non-leaf as well ?
 
-I've added it to my randconfig test tree and spent the day building
-random configurations with this (after reverting the version that Stephen
-had in linux-next). The patches both look reasonable to me and the
-build warnings did not come back in any obscure configuration, so
+I've tried non-leaf and it works too. I'd be fine with switching to it,
+I'm not sure which would be better for the kernel.
 
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+What kind of experiments did you have in mind? If I understand
+correctly, then compared to non-leaf, "all" additionally protects leaf
+functions that write to the stack. I don't know how many of those there
+are in the kernel (or will be in the future). I also don't know the
+additional performance impact of "all", as I don't think we have any
+v8.3 hardware to test on yet. There is a minor code size impact (0.36%
+on the current kernel), but I'm not sure how much that matters.
+
+> Orthogonally and just fair warning - the command lines for this are also
+> being revised to provide ROP and JOP protection using BTI from v8.5-a
+> during the GCC-9 timeframe but I suspect that's a different option.
+
+Thanks. I expect it will be a separate Kconfig option to build the
+kernel with BTI and pointer auth, yes.
+
+> Reviewed-by: Ramana Radhakrishnan  <ramana.radhakrishnan@arm.com>
+
+Thanks!
+
+Kristina
