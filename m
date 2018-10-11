@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCC0C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E85C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FEE21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3E1021477
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYEpUD2g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FEE21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYj1Imm/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3E1021477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbeJKXIY (ORCPT
+        id S1730271AbeJKXI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:23 -0400
+        id S1726647AbeJKXI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FB8221470;
-        Thu, 11 Oct 2018 15:40:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BF542098A;
+        Thu, 11 Oct 2018 15:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272439;
-        bh=ZXawtueGekSKVebXkP4IkZ6DDtuhqRMu85tpVNwO/1Q=;
+        s=default; t=1539272442;
+        bh=Ejzu0teA2upWqMRyq3cRB6tcg6K4iVBHno+1uFgjzcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QYEpUD2ggHRvuxAiTqr5MxjPGxrKL74S3lkwOlCrxoYTz+dh8dbEEMzHA+3m+tuyX
-         TLSfUdIYuWoUoum7jt2J5a11OvIkOCO//BM0e2MDynQzEtH8DqR6IpR8fuQr+5gG2y
-         kC0MKNc5tmQcXRkcjwWCMyL4WxDsOOak5YGOttfg=
+        b=nYj1Imm/NEt2o9vakHFrH42rR9pdHZP+LkcoEj0nJj+7ubJGr37hFzVD1KCwzv/24
+         n/AZD8+6tiJk/69QMNygYbCkYodB7atrK3wtLbvb13JhrfPrGCNePAWuTNwboK5kJV
+         yxZYPalSEGDmi9Tc43G05lSMoqYZKxs8bThmtNck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 071/120] KVM: PPC: Book3S HV: Dont truncate HPTE index in xlate function
-Date:   Thu, 11 Oct 2018 17:34:12 +0200
-Message-Id: <20181011152552.751595602@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 3.18 062/120] staging: android: ion: fix ION_IOC_{MAP,SHARE} use-after-free
+Date:   Thu, 11 Oct 2018 17:34:03 +0200
+Message-Id: <20181011152552.338424664@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,42 +61,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Greg Hackmann <ghackmann@android.com>
 
-[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
+commit 2c155709e4ef2d86d0176aac82e44c048a7e0255 upstream.
 
-This fixes a bug which causes guest virtual addresses to get translated
-to guest real addresses incorrectly when the guest is using the HPT MMU
-and has more than 256GB of RAM, or more specifically has a HPT larger
-than 2GB.  This has showed up in testing as a failure of the host to
-emulate doorbell instructions correctly on POWER9 for HPT guests with
-more than 256GB of RAM.
+The ION_IOC_{MAP,SHARE} ioctls drop and reacquire client->lock several
+times while operating on one of the client's ion_handles.  This creates
+windows where userspace can call ION_IOC_FREE on the same client with
+the same handle, and effectively make the kernel drop its own reference.
+For example:
 
-The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
-is stored as an int, and in forming the HPTE address, the index gets
-shifted left 4 bits as an int before being signed-extended to 64 bits.
-The simple fix is to make the variable a long int, matching the
-return type of kvmppc_hv_find_lock_hpte(), which is what calculates
-the index.
+- thread A: ION_IOC_ALLOC creates an ion_handle with refcount 1
+- thread A: starts ION_IOC_MAP and increments the refcount to 2
+- thread B: ION_IOC_FREE decrements the refcount to 1
+- thread B: ION_IOC_FREE decrements the refcount to 0 and frees the
+            handle
+- thread A: continues ION_IOC_MAP with a dangling ion_handle * to
+            freed memory
 
-Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S HV guests")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fix this by holding client->lock for the duration of
+ION_IOC_{MAP,SHARE}, preventing the concurrent ION_IOC_FREE.  Also
+remove ion_handle_get_by_id(), since there's literally no way to use it
+safely.
+
+This patch is applied on top of 4.4.y, and applies to older kernels
+too.  4.9.y was fixed separately.  Kernels 4.12 and later are
+unaffected, since all the underlying ion_handle infrastructure has been
+ripped out.
+
+Cc: stable@vger.kernel.org # v4.4-
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Acked-by: Laura Abbott <labbott@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kvm/book3s_64_mmu_hv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -449,7 +449,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate
- 	unsigned long pp, key;
- 	unsigned long v, gr;
- 	__be64 *hptep;
--	int index;
-+	long int index;
- 	int virtmode = vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
+---
+ drivers/staging/android/ion/ion.c |   60 +++++++++++++++++++++++---------------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
+
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -451,18 +451,6 @@ static struct ion_handle *ion_handle_get
+ 	return ERR_PTR(-EINVAL);
+ }
  
- 	/* Get SLB entry */
+-struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
+-						int id)
+-{
+-	struct ion_handle *handle;
+-
+-	mutex_lock(&client->lock);
+-	handle = ion_handle_get_by_id_nolock(client, id);
+-	mutex_unlock(&client->lock);
+-
+-	return handle;
+-}
+-
+ static bool ion_handle_validate(struct ion_client *client,
+ 				struct ion_handle *handle)
+ {
+@@ -1138,23 +1126,27 @@ static struct dma_buf_ops dma_buf_ops =
+ 	.kunmap = ion_dma_buf_kunmap,
+ };
+ 
+-struct dma_buf *ion_share_dma_buf(struct ion_client *client,
+-						struct ion_handle *handle)
++static struct dma_buf *__ion_share_dma_buf(struct ion_client *client,
++					   struct ion_handle *handle,
++					   bool lock_client)
+ {
+ 	struct ion_buffer *buffer;
+ 	struct dma_buf *dmabuf;
+ 	bool valid_handle;
+ 
+-	mutex_lock(&client->lock);
++	if (lock_client)
++		mutex_lock(&client->lock);
+ 	valid_handle = ion_handle_validate(client, handle);
+ 	if (!valid_handle) {
+ 		WARN(1, "%s: invalid handle passed to share.\n", __func__);
+-		mutex_unlock(&client->lock);
++		if (lock_client)
++			mutex_unlock(&client->lock);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 	buffer = handle->buffer;
+ 	ion_buffer_get(buffer);
+-	mutex_unlock(&client->lock);
++	if (lock_client)
++		mutex_unlock(&client->lock);
+ 
+ 	dmabuf = dma_buf_export(buffer, &dma_buf_ops, buffer->size, O_RDWR,
+ 				NULL);
+@@ -1165,14 +1157,21 @@ struct dma_buf *ion_share_dma_buf(struct
+ 
+ 	return dmabuf;
+ }
++
++struct dma_buf *ion_share_dma_buf(struct ion_client *client,
++				  struct ion_handle *handle)
++{
++	return __ion_share_dma_buf(client, handle, true);
++}
+ EXPORT_SYMBOL(ion_share_dma_buf);
+ 
+-int ion_share_dma_buf_fd(struct ion_client *client, struct ion_handle *handle)
++static int __ion_share_dma_buf_fd(struct ion_client *client,
++				  struct ion_handle *handle, bool lock_client)
+ {
+ 	struct dma_buf *dmabuf;
+ 	int fd;
+ 
+-	dmabuf = ion_share_dma_buf(client, handle);
++	dmabuf = __ion_share_dma_buf(client, handle, lock_client);
+ 	if (IS_ERR(dmabuf))
+ 		return PTR_ERR(dmabuf);
+ 
+@@ -1182,8 +1181,19 @@ int ion_share_dma_buf_fd(struct ion_clie
+ 
+ 	return fd;
+ }
++
++int ion_share_dma_buf_fd(struct ion_client *client, struct ion_handle *handle)
++{
++	return __ion_share_dma_buf_fd(client, handle, true);
++}
+ EXPORT_SYMBOL(ion_share_dma_buf_fd);
+ 
++static int ion_share_dma_buf_fd_nolock(struct ion_client *client,
++				       struct ion_handle *handle)
++{
++	return __ion_share_dma_buf_fd(client, handle, false);
++}
++
+ struct ion_handle *ion_import_dma_buf(struct ion_client *client, int fd)
+ {
+ 	struct dma_buf *dmabuf;
+@@ -1330,11 +1340,15 @@ static long ion_ioctl(struct file *filp,
+ 	{
+ 		struct ion_handle *handle;
+ 
+-		handle = ion_handle_get_by_id(client, data.handle.handle);
+-		if (IS_ERR(handle))
++		mutex_lock(&client->lock);
++		handle = ion_handle_get_by_id_nolock(client, data.handle.handle);
++		if (IS_ERR(handle)) {
++			mutex_unlock(&client->lock);
+ 			return PTR_ERR(handle);
+-		data.fd.fd = ion_share_dma_buf_fd(client, handle);
+-		ion_handle_put(handle);
++		}
++		data.fd.fd = ion_share_dma_buf_fd_nolock(client, handle);
++		ion_handle_put_nolock(handle);
++		mutex_unlock(&client->lock);
+ 		if (data.fd.fd < 0)
+ 			ret = data.fd.fd;
+ 		break;
 
 
