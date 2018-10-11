@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A796C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DB3C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D50E2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49FAF20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMUF2YWy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D50E2087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2WjDCNf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FAF20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbeJKXGi (ORCPT
+        id S1729776AbeJKXGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35774 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:37 -0400
+        id S1726721AbeJKXGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE79F2087A;
-        Thu, 11 Oct 2018 15:38:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8DF220652;
+        Thu, 11 Oct 2018 15:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272334;
-        bh=oZ7HUEeAiFAjhPhtRR6EbdfUS7ZSKPzK5yolQTto2io=;
+        s=default; t=1539272337;
+        bh=eKep82QVmNobxQKvhqhT/IBpRvme9ZvLGu2vrzNZnlQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nMUF2YWyijDDIpBnPwZnfzOcbMmfHhbd24mf1+CYk31lovK4uFWgacjuIDvwvoLYR
-         1yO94GEjV9CmsTTboB3IXHyAPpoYDm9gzIpIJWN5MmwOwS/9faoZqCS4IfX0J8PVZF
-         sDNWMS57T8BTL58RopOP6UuV/+H6YxJpJw/lDmbY=
+        b=t2WjDCNfAFMhwdia/HKfDeaz+KinYzYAzYXGD6pGa1BJe/xOlRFF6uquwD59N42jz
+         1KDpLs4c+Wz2XUYSfCKls4YPac4OYcGOUQbMDzmvzPRolZ3Zr7W+VozUPsN45qyg1Q
+         TFpYqNff84xsQYYEqkmGbAe3s7U06xa/bHxnwy9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Arunk Khandavalli <akhandav@codeaurora.org>,
+        Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 073/120] gpio: adp5588: Fix sleep-in-atomic-context bug
-Date:   Thu, 11 Oct 2018 17:34:14 +0200
-Message-Id: <20181011152552.830111255@linuxfoundation.org>
+Subject: [PATCH 3.18 074/120] cfg80211: nl80211_update_ft_ies() to validate NL80211_ATTR_IE
+Date:   Thu, 11 Oct 2018 17:34:15 +0200
+Message-Id: <20181011152552.868822865@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,76 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+From: Arunk Khandavalli <akhandav@codeaurora.org>
 
-[ Upstream commit 6537886cdc9a637711fd6da980dbb87c2c87c9aa ]
+[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
 
-This fixes:
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_write()
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_direction_input()
+nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
+is_valid_ie_attr() before dereferencing it, but that helper function
+returns true in case of NULL pointer (i.e., attribute not included).
+This can result to dereferencing a NULL pointer. Fix that by explicitly
+checking that NL80211_ATTR_IE is included.
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Transition")
+Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-adp5588.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ net/wireless/nl80211.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -41,6 +41,8 @@ struct adp5588_gpio {
- 	uint8_t int_en[3];
- 	uint8_t irq_mask[3];
- 	uint8_t irq_stat[3];
-+	uint8_t int_input_en[3];
-+	uint8_t int_lvl_cached[3];
- };
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -9223,6 +9223,7 @@ static int nl80211_update_ft_ies(struct
+ 		return -EOPNOTSUPP;
  
- static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
-@@ -177,12 +179,28 @@ static void adp5588_irq_bus_sync_unlock(
- 	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
- 	int i;
- 
--	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++)
-+	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
-+		if (dev->int_input_en[i]) {
-+			mutex_lock(&dev->lock);
-+			dev->dir[i] &= ~dev->int_input_en[i];
-+			dev->int_input_en[i] = 0;
-+			adp5588_gpio_write(dev->client, GPIO_DIR1 + i,
-+					   dev->dir[i]);
-+			mutex_unlock(&dev->lock);
-+		}
-+
-+		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
-+			dev->int_lvl_cached[i] = dev->int_lvl[i];
-+			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
-+					   dev->int_lvl[i]);
-+		}
-+
- 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
- 			dev->int_en[i] = dev->irq_mask[i];
- 			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
- 					   dev->int_en[i]);
- 		}
-+	}
- 
- 	mutex_unlock(&dev->irq_lock);
- }
-@@ -225,9 +243,7 @@ static int adp5588_irq_set_type(struct i
- 	else
+ 	if (!info->attrs[NL80211_ATTR_MDID] ||
++	    !info->attrs[NL80211_ATTR_IE] ||
+ 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
  		return -EINVAL;
  
--	adp5588_gpio_direction_input(&dev->gpio_chip, gpio);
--	adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + bank,
--			   dev->int_lvl[bank]);
-+	dev->int_input_en[bank] |= bit;
- 
- 	return 0;
- }
 
 
