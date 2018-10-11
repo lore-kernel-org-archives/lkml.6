@@ -2,42 +2,42 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED30C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5579C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4292085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D12A2087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="yJzgaFO+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4292085B
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PCTuqgZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D12A2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeJKPlz (ORCPT
+        id S1727655AbeJKPl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:41:55 -0400
-Received: from mail-db5eur01on0044.outbound.protection.outlook.com ([104.47.2.44]:27765
+        Thu, 11 Oct 2018 11:41:59 -0400
+Received: from mail-db5eur01on0077.outbound.protection.outlook.com ([104.47.2.77]:22493
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726008AbeJKPlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:41:55 -0400
+        id S1726008AbeJKPl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 11:41:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sreQDWz7pMKn+fw5e70xFauAFue0JaWA0jL7S8T269s=;
- b=yJzgaFO+lEl6jCw4kHU8kmkUq4Jj8qcuSonGhyzAYQd2QCoJwtywzeNk0ynjTz/UWEalCkj9UB/iQCU7daRAw1JzXFid4xVA0EFCW8zFE1i2ci88g0onRs2aJIE2CDGiaz3vGNXUpkSP+weRzAulyGkuRPHqzRahRZ71D8ARIw8=
+ bh=ORW5dttqvxEtE7UbsULv0fhvwbYBR/4+gYj48A10zeA=;
+ b=PCTuqgZ92NrpYUbdfZUQYEqKMVAdCtG6RG56axKTUeNX8nwYd6edz9MGeAREorjF+tv1kb57ra0jlXYWXfqJG8Tyz4TIAWa8GTuPDPCoCg955zaWqmeg3BxMutt2fXwxtZ36JhJZAfSBi9clIcwG7W4///xy5NKk53T2nCgfnoc=
 Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
  VI1PR04MB1294.eurprd04.prod.outlook.com (10.162.121.24) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.26; Thu, 11 Oct 2018 08:15:40 +0000
+ 15.20.1207.26; Thu, 11 Oct 2018 08:15:45 +0000
 Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
  ([fe80::d887:3c96:479a:4123]) by VI1PR04MB1038.eurprd04.prod.outlook.com
  ([fe80::d887:3c96:479a:4123%3]) with mapi id 15.20.1207.024; Thu, 11 Oct 2018
- 08:15:40 +0000
+ 08:15:45 +0000
 From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
 To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
@@ -49,11 +49,11 @@ CC:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
         "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v2 1/2] mtd: spi-nor: add macros related to MICRON flash
-Thread-Topic: [PATCH v2 1/2] mtd: spi-nor: add macros related to MICRON flash
-Thread-Index: AQHUYTqZJSSqGPTqb0+Lq8HmDDDYbQ==
-Date:   Thu, 11 Oct 2018 08:15:40 +0000
-Message-ID: <1539245630-26611-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v2 2/2] mtd: spi-nor: add entry for mt35xu512aba flash
+Thread-Topic: [PATCH v2 2/2] mtd: spi-nor: add entry for mt35xu512aba flash
+Thread-Index: AQHUYTqbs6sSLLIYmE2VBnAqytu3EQ==
+Date:   Thu, 11 Oct 2018 08:15:45 +0000
+Message-ID: <1539245630-26611-3-git-send-email-yogeshnarayan.gaur@nxp.com>
 References: <1539245630-26611-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 In-Reply-To: <1539245630-26611-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 Accept-Language: en-US
@@ -66,13 +66,13 @@ x-clientproxiedby: SG2PR06CA0088.apcprd06.prod.outlook.com
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [14.143.30.134]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1294;6:SQUeJRr5vcWC3tp564RX2u77kaCkg2VGI0KBiiaXGo2pH3ySLtnTrOiFp+UX+sywYs2m1ECbYZvwDfl5ail4PXlpeeKoSnVW5qlFrJc5xYOg+gSlJimC5mcDvsFInfcg0cCv0RWVVLIRgYc/XLRtTKKlnf3AL90DnHRJpdm4YZYfmwkNuOQAZXXrpEv6DnT+eOGeyORwJmfUC8crGnUWwhZTLeyATy382hqJ1vjJUW69YZJ2EinAlDKb9+ZqGUPRId2XJKdE564fbxbvGHPB03Bv/f9ylaeMCZaKxwY05a1BUt7lfoV3vTwV4OH+po2nsstU7pVPw8URymGYqGhuqglBJuQViIvWl4qDKyPSU95+bjolZ3OyGOFmCrDKAwZvOZarhZWI6T362iuuN+UGh04VqHw+yXctezbFgg5yjRJ2WgA5jXGfvbn5RqpQ73wUwniK2/aJN5L83xtceDVRWQ==;5:3r4tSmzQX6B4oVk6IPNOPVZwj9Y05Nd2fCfLoguLwnduREF4xSbsUcK/nEQmNnm+TPkG0MChEzkADp7u3hWO8wn8w+R95zkPXg5AMw4px5eYIVX1xs1Seq1sQghv/QjthBUo9K9mcBIOHi9ZSmpG0wQUqcRtwOSSZ7AUy/++vBc=;7:e2dqeo/fOu3KS+USMCqnBuZ+40V4RcxPwNCeQ8Rw8q5Y5JgkchpOaaOFQgdqma/AplwtNIbGJlTtpxkjnEnKk+UXtOVZ9gnVbCTponC9AV3oIoGktdBOEcWwcE2rG+qO2YrpcNIfJC76ZZLfiMexuIxceEW9v39pcjOuDjTTtq5dWSQcyh3e3bdFAcYAqLuysDy1T/khPOgCUZMZUWqzvXEdVXRBRP0UkKDy7+c9zkAMxAAsKSMOHPs5PlpzJst3
-x-ms-office365-filtering-correlation-id: de07ccf0-3790-4801-31eb-08d62f51bb2b
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1294;6:bSeWnt3t7fKb+CJuFEqJc2ICz81DZI1VFYWnirFXKhorHMn0AzzJ4NTPGW7WP+5IH5qNkAEL0rCT0AfBLGqIVEMORo0h36TxG7NXOihXNC+zt4OjqVWONVmQJLzz+TnFfY4EwSfNF9wg6UXypCRXN7C6jZ2Vq+3c6dE+m4UfBPmekfw5q2j4ZSKJzKzPU2yvgVGn9gBMZc9waw2pNiFAYI8eSzKQFjOE+Ehj6zEvC00TvSwAYbfUot94TuQqNFjuGAC3ehlrDOzWlRE295z5zIGrzzhglm6UA/j5+EYU1ZMB5g21Kllj5J0HQ5vYXe4ycEMbiFoIF2bhU2s+YTSxwsvnrd35fO9gVvjt/eItG9Ij/HhvSYrEdtNt+MYFqXTLMPsDNv0konoCfmJv8ZG+ytJpLvdYPOxeGmC5tzo7pW6JCTWjhiyLxBMYbiMW4uaZ83UBRe4OsV7+zXmrg2bc7w==;5:/sWa8uU22S5AAJJwb4/0ILqJLSBV+L9M91arb4gqa0NeeNOOb9rf7nQYKypcYGWmECHZ07m2r1lKujwUxTolI3tttYvy+HxsHHM+IrWJGUkCCvDuSr6/+vjJX0aN9Uq/rRWJFW33yS3ieJfGaSj+1+ctd5nAohkWfjghkc4VQp0=;7:EiRGkMWIl5TgdPpdln/u38vx0LlyyvFaYd3A6l3xRJrvtVw8bc7UQvnz11fNgC8aDm3aC7+/JIy8WzqvcATxDXSbzw6P8VKF+bNkSdgwbal/BdkuMqsAC5BlvFs4JdLs0W9Sgg8+TAnZ7gibkNMu7zQe6rhaB3tLxeYQWftcVCt1sm6c3UpP5L+Uv7qpc0Lr3UYtsXKc/MtBjGgKfhB+aWLlN8vbYQX4eFygauhSvgEES9bYzGUJOi1xpQLT7fA2
+x-ms-office365-filtering-correlation-id: ffb787c9-9826-4ffa-884e-08d62f51be09
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1294;
 x-ms-traffictypediagnostic: VI1PR04MB1294:
-x-microsoft-antispam-prvs: <VI1PR04MB129440941EB72AA7F01BC6A599E10@VI1PR04MB1294.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(269456686620040)(185117386973197);
+x-microsoft-antispam-prvs: <VI1PR04MB129405D76BC6B18A3A4C234F99E10@VI1PR04MB1294.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991055);SRVR:VI1PR04MB1294;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1294;
 x-forefront-prvs: 08220FA8D6
@@ -81,15 +81,15 @@ received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-microsoft-antispam-message-info: 1y7vIOqAMInmFz+5QNJiZiYSZpmKd29PR/fFmCD2BHTboMwMmfZYdElWO9TOyz6CT0J69tas9r4MBPZ+uHOYLb/Px/koZe13r+NS3APDj4OjQYeM/SQN0HMTpmIa4z6TPJzLKVuecOpdEV5glV160HjQ+9UwVe6hEwvsPiSWqd2dVwSdd1+Uf/6Br0Xfa6dOiECLIZ/QCvEJsZoeYMn3ESewev6sd0dSwjSf59dUeoR4MOTW2NT13cqr5Dodjh7uNSn8BaeGiaJ4mIg0FiixxdbKCTscxy++y3gZNXbI8lh2tcKNPoMC0OMqJKPjLzkDNKtcb7Ipk8qBTH2fI+/a7nbaTceSPZuwlAW6bWaPWz8=
+x-microsoft-antispam-message-info: JSqM0hnrw08Wslz0xDs4LGzxNb2J7qcsRjUIyI11gM1eSdfy/hTjJK0dyYkKlx67/3jFxAHEhCv2IFytomK/fH1bZnnreKnQsl9maLgE0R2+8msVVyYZSq1eCzROH87Oz7IjBMIaEWvCgsxpYBo1Ho7aA583xW7EaElvjCcXztMNM6MLEqdDkc4/ulkValNtZKnEuNE/3ds4+eBTO/gCWFVheqelM7DEAj6+DEBTGBCx5Q8hZTJNbX8i/DCi63yyveHHRoGBkyHwnT8U0e+q4zo5JfizjoQpGoLkl9zW4iq0HCU0hNiE9wVA0j56+Zgd1+A1ASudAC7wAO2o5agjw9IRp1gG9ff3THPosxSlFQM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de07ccf0-3790-4801-31eb-08d62f51bb2b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 08:15:40.6499
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffb787c9-9826-4ffa-884e-08d62f51be09
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 08:15:45.6968
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -99,93 +99,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some MICRON related macros in spi-nor domain were ST.
-Rename entries related to STMicroelectronics under macro SNOR_MFR_ST.
-
-Added entry of MFR Id for Micron flashes, 0x002C.
+Add entry for mt35xu512aba Micron NOR flash.
+This flash is having uniform sector erase size of 128KB, have
+support of FSR(flag status register), flash size is 64MB and
+supports 4-byte commands.
 
 Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
 Changes for v2:
-- None
+- Removed checkpatch warning, 80 character limit.
 
- drivers/mtd/spi-nor/spi-nor.c | 9 ++++++---
- include/linux/mtd/cfi.h       | 1 +
- include/linux/mtd/spi-nor.h   | 3 ++-
- 3 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/mtd/spi-nor/spi-nor.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 9407ca5..b8b494f 100644
+index b8b494f..e0d95ac 100644
 --- a/drivers/mtd/spi-nor/spi-nor.c
 +++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -284,6 +284,7 @@ static inline int set_4byte(struct spi_nor *nor, const =
-struct flash_info *info,
- 	u8 cmd;
+@@ -1405,6 +1405,10 @@ static const struct flash_info spi_nor_ids[] =3D {
+ 	{ "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | S=
+PI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+ 	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K | USE_FSR | S=
+PI_NOR_QUAD_READ | NO_CHIP_ERASE) },
 =20
- 	switch (JEDEC_MFR(info)) {
-+	case SNOR_MFR_ST:
- 	case SNOR_MFR_MICRON:
- 		/* Some Micron need WREN command; all will accept it */
- 		need_wren =3D true;
-@@ -1388,7 +1389,7 @@ static const struct flash_info spi_nor_ids[] =3D {
- 	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048, SECT_4K | SPI_NOR_DUA=
-L_READ | SPI_NOR_QUAD_READ) },
- 	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048, SPI_NOR_QUAD_READ) },
-=20
--	/* Micron */
-+	/* Micron <--> ST Micro */
- 	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32, SECT_4K | SPI_NOR_QUAD_=
-READ) },
- 	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
- 	{ "n25q032a",	 INFO(0x20bb16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
-@@ -3223,6 +3224,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
- 			params->quad_enable =3D macronix_quad_enable;
- 			break;
-=20
-+		case SNOR_MFR_ST:
- 		case SNOR_MFR_MICRON:
- 			break;
-=20
-@@ -3671,8 +3673,9 @@ int spi_nor_scan(struct spi_nor *nor, const char *nam=
-e,
- 	mtd->_resume =3D spi_nor_resume;
-=20
- 	/* NOR protection support for STmicro/Micron chips and similar */
--	if (JEDEC_MFR(info) =3D=3D SNOR_MFR_MICRON ||
--			info->flags & SPI_NOR_HAS_LOCK) {
-+	if (JEDEC_MFR(info) =3D=3D SNOR_MFR_ST ||
-+	    JEDEC_MFR(info) =3D=3D SNOR_MFR_MICRON ||
-+	    info->flags & SPI_NOR_HAS_LOCK) {
- 		nor->flash_lock =3D stm_lock;
- 		nor->flash_unlock =3D stm_unlock;
- 		nor->flash_is_locked =3D stm_is_locked;
-diff --git a/include/linux/mtd/cfi.h b/include/linux/mtd/cfi.h
-index 9b57a9b..cbf7716 100644
---- a/include/linux/mtd/cfi.h
-+++ b/include/linux/mtd/cfi.h
-@@ -377,6 +377,7 @@ struct cfi_fixup {
- #define CFI_MFR_SHARP		0x00B0
- #define CFI_MFR_SST		0x00BF
- #define CFI_MFR_ST		0x0020 /* STMicroelectronics */
-+#define CFI_MFR_MICRON		0x002C /* Micron */
- #define CFI_MFR_TOSHIBA		0x0098
- #define CFI_MFR_WINBOND		0x00DA
-=20
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 7f0c730..8b1acf6 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -23,7 +23,8 @@
- #define SNOR_MFR_ATMEL		CFI_MFR_ATMEL
- #define SNOR_MFR_GIGADEVICE	0xc8
- #define SNOR_MFR_INTEL		CFI_MFR_INTEL
--#define SNOR_MFR_MICRON		CFI_MFR_ST /* ST Micro <--> Micron */
-+#define SNOR_MFR_ST		CFI_MFR_ST	/* ST Micro */
-+#define SNOR_MFR_MICRON		CFI_MFR_MICRON	/* Micron */
- #define SNOR_MFR_MACRONIX	CFI_MFR_MACRONIX
- #define SNOR_MFR_SPANSION	CFI_MFR_AMD
- #define SNOR_MFR_SST		CFI_MFR_SST
++	/* Micron */
++	{ "mt35xu512aba", INFO(0x2c5b1a, 0, 128 * 1024, 512,
++		SECT_4K | USE_FSR | SPI_NOR_4B_OPCODES) },
++
+ 	/* PMC */
+ 	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
+ 	{ "pm25lv010",   INFO(0,        0, 32 * 1024,    4, SECT_4K_PMC) },
 --=20
 2.7.4
 
