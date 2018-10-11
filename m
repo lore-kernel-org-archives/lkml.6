@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070ACC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5019FC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA0C213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3A921470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="txmoH1LO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA0C213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1hGC4H5K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C3A921470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbeJKXJt (ORCPT
+        id S1730625AbeJKXJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40790 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:09:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:09:48 -0400
+        id S1726700AbeJKXJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:09:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E2E721470;
-        Thu, 11 Oct 2018 15:42:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDE1720652;
+        Thu, 11 Oct 2018 15:42:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272524;
-        bh=1YIqZKG2m+MGCygTXlNoAKaV24soMmWvz/reA6GWnZQ=;
+        s=default; t=1539272527;
+        bh=i+1pd3Ox7uanChlZLc2EMiDmD/rQz8DrgrlT6SbwlZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=txmoH1LODtLDbDCZbb6F0M3lxayauhwzJFZzKRdvppsu2h9vZHBBs4WACqd19NYc8
-         LlD+pwext9IcjgRXyOGz7I4AhE4bUHJ7fki8eBw5WlSce7SVmeSPA3ygZo85Gp/O/S
-         LQG4U8z976nTNdv5coZN/Mj7NqBrNE/Me7qg7NcA=
+        b=1hGC4H5KiFO6gWbpW5ddl08ylSpwD5E5G1rt9yyPi2du/zM4xQ3i+m2Y8lyJr3Rph
+         h8sXXy0kex6ZnbkBYEpShzdPYAur3e/j5D6bXqrKEKeH/HtvjjFeaHzWiZ7GX/pBA6
+         K2r0pMI6zmiiFJbbQ2HqKsaVgO/EKwnXf0vgUo7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Jann Horn <jannh@google.com>, security@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.4 02/27] fbdev/omapfb: fix omapfb_memory_read infoleak
-Date:   Thu, 11 Oct 2018 17:34:49 +0200
-Message-Id: <20181011152534.130039788@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH 4.4 20/27] tcp: increment sk_drops for dropped rx packets
+Date:   Thu, 11 Oct 2018 17:35:07 +0200
+Message-Id: <20181011152534.998726678@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
@@ -65,55 +63,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 1bafcbf59fed92af58955024452f45430d3898c5 upstream.
+[ Upstream commit 532182cd610782db8c18230c2747626562032205 ]
 
-OMAPFB_MEMORY_READ ioctl reads pixels from the LCD's memory and copies
-them to a userspace buffer. The code has two issues:
+Now ss can report sk_drops, we can instruct TCP to increment
+this per socket counter when it drops an incoming frame, to refine
+monitoring and debugging.
 
-- The user provided width and height could be large enough to overflow
-  the calculations
-- The copy_to_user() can copy uninitialized memory to the userspace,
-  which might contain sensitive kernel information.
+Following patch takes care of listeners drops.
 
-Fix these by limiting the width & height parameters, and only copying
-the amount of data that we actually received from the LCD.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: stable@vger.kernel.org
-Cc: security@kernel.org
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ include/net/sock.h   |    7 +++++++
+ net/ipv4/tcp_input.c |   33 ++++++++++++++++++++-------------
+ net/ipv4/tcp_ipv4.c  |    1 +
+ net/ipv6/tcp_ipv6.c  |    1 +
+ 4 files changed, 29 insertions(+), 13 deletions(-)
 
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-@@ -496,6 +496,9 @@ static int omapfb_memory_read(struct fb_
- 	if (!access_ok(VERIFY_WRITE, mr->buffer, mr->buffer_size))
- 		return -EFAULT;
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2139,6 +2139,13 @@ sock_skb_set_dropcount(const struct sock
+ 	SOCK_SKB_CB(skb)->dropcount = atomic_read(&sk->sk_drops);
+ }
  
-+	if (mr->w > 4096 || mr->h > 4096)
-+		return -EINVAL;
++static inline void sk_drops_add(struct sock *sk, const struct sk_buff *skb)
++{
++	int segs = max_t(u16, 1, skb_shinfo(skb)->gso_segs);
 +
- 	if (mr->w * mr->h * 3 > mr->buffer_size)
- 		return -EINVAL;
++	atomic_add(segs, &sk->sk_drops);
++}
++
+ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+ 			   struct sk_buff *skb);
+ void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4296,6 +4296,12 @@ static bool tcp_try_coalesce(struct sock
+ 	return true;
+ }
  
-@@ -509,7 +512,7 @@ static int omapfb_memory_read(struct fb_
- 			mr->x, mr->y, mr->w, mr->h);
++static void tcp_drop(struct sock *sk, struct sk_buff *skb)
++{
++	sk_drops_add(sk, skb);
++	__kfree_skb(skb);
++}
++
+ /* This one checks to see if we can put data from the
+  * out_of_order queue into the receive_queue.
+  */
+@@ -4320,7 +4326,7 @@ static void tcp_ofo_queue(struct sock *s
+ 		__skb_unlink(skb, &tp->out_of_order_queue);
+ 		if (!after(TCP_SKB_CB(skb)->end_seq, tp->rcv_nxt)) {
+ 			SOCK_DEBUG(sk, "ofo packet was already received\n");
+-			__kfree_skb(skb);
++			tcp_drop(sk, skb);
+ 			continue;
+ 		}
+ 		SOCK_DEBUG(sk, "ofo requeuing : rcv_next %X seq %X - %X\n",
+@@ -4372,7 +4378,7 @@ static void tcp_data_queue_ofo(struct so
  
- 	if (r > 0) {
--		if (copy_to_user(mr->buffer, buf, mr->buffer_size))
-+		if (copy_to_user(mr->buffer, buf, r))
- 			r = -EFAULT;
+ 	if (unlikely(tcp_try_rmem_schedule(sk, skb, skb->truesize))) {
+ 		NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPOFODROP);
+-		__kfree_skb(skb);
++		tcp_drop(sk, skb);
+ 		return;
  	}
+ 
+@@ -4436,7 +4442,7 @@ static void tcp_data_queue_ofo(struct so
+ 		if (!after(end_seq, TCP_SKB_CB(skb1)->end_seq)) {
+ 			/* All the bits are present. Drop. */
+ 			NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPOFOMERGE);
+-			__kfree_skb(skb);
++			tcp_drop(sk, skb);
+ 			skb = NULL;
+ 			tcp_dsack_set(sk, seq, end_seq);
+ 			goto add_sack;
+@@ -4475,7 +4481,7 @@ static void tcp_data_queue_ofo(struct so
+ 		tcp_dsack_extend(sk, TCP_SKB_CB(skb1)->seq,
+ 				 TCP_SKB_CB(skb1)->end_seq);
+ 		NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPOFOMERGE);
+-		__kfree_skb(skb1);
++		tcp_drop(sk, skb1);
+ 	}
+ 
+ add_sack:
+@@ -4558,12 +4564,13 @@ err:
+ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+-	int eaten = -1;
+ 	bool fragstolen = false;
++	int eaten = -1;
+ 
+-	if (TCP_SKB_CB(skb)->seq == TCP_SKB_CB(skb)->end_seq)
+-		goto drop;
+-
++	if (TCP_SKB_CB(skb)->seq == TCP_SKB_CB(skb)->end_seq) {
++		__kfree_skb(skb);
++		return;
++	}
+ 	skb_dst_drop(skb);
+ 	__skb_pull(skb, tcp_hdr(skb)->doff * 4);
+ 
+@@ -4645,7 +4652,7 @@ out_of_window:
+ 		tcp_enter_quickack_mode(sk, TCP_MAX_QUICKACKS);
+ 		inet_csk_schedule_ack(sk);
+ drop:
+-		__kfree_skb(skb);
++		tcp_drop(sk, skb);
+ 		return;
+ 	}
+ 
+@@ -5236,7 +5243,7 @@ syn_challenge:
+ 	return true;
+ 
+ discard:
+-	__kfree_skb(skb);
++	tcp_drop(sk, skb);
+ 	return false;
+ }
+ 
+@@ -5454,7 +5461,7 @@ csum_error:
+ 	TCP_INC_STATS_BH(sock_net(sk), TCP_MIB_INERRS);
+ 
+ discard:
+-	__kfree_skb(skb);
++	tcp_drop(sk, skb);
+ }
+ EXPORT_SYMBOL(tcp_rcv_established);
+ 
+@@ -5684,7 +5691,7 @@ static int tcp_rcv_synsent_state_process
+ 						  TCP_DELACK_MAX, TCP_RTO_MAX);
+ 
+ discard:
+-			__kfree_skb(skb);
++			tcp_drop(sk, skb);
+ 			return 0;
+ 		} else {
+ 			tcp_send_ack(sk);
+@@ -6041,7 +6048,7 @@ int tcp_rcv_state_process(struct sock *s
+ 
+ 	if (!queued) {
+ discard:
+-		__kfree_skb(skb);
++		tcp_drop(sk, skb);
+ 	}
+ 	return 0;
+ }
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -1716,6 +1716,7 @@ discard_it:
+ 	return 0;
+ 
+ discard_and_relse:
++	sk_drops_add(sk, skb);
+ 	sock_put(sk);
+ 	goto discard_it;
+ 
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1505,6 +1505,7 @@ discard_it:
+ 	return 0;
+ 
+ discard_and_relse:
++	sk_drops_add(sk, skb);
+ 	sock_put(sk);
+ 	goto discard_it;
  
 
 
