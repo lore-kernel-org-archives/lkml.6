@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD5CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BECC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD0B2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5EA421480
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xqDduG46"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD0B2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="poXtyNo6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5EA421480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbeJKXNF (ORCPT
+        id S1731308AbeJKXNH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45454 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730939AbeJKXNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:04 -0400
+        id S1729994AbeJKXNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:06 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A8F1213A2;
-        Thu, 11 Oct 2018 15:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4665320652;
+        Thu, 11 Oct 2018 15:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272718;
-        bh=4vIs3catwiZRtJ8NKZc0Qfi/zli8i+qtlNarDol9r8w=;
+        s=default; t=1539272721;
+        bh=zJKiohkWK1sO/LFkoYvwL62QHo3prDNx3KUg1CbpOQI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xqDduG46/Vnk8uYX0KP83/IVZ8AcrKqaYydCZKQsc3456lHNjlZdxj4wlJaGcNxTg
-         F+aT94/F1sv/MPpEqQpoh5XeJNeGQabELLe1L47Z/vtXzxi3x//yFV3hq/2JGVIF45
-         B42gke8dDS65o5FQ1U90IZoMlkWI4rimtYmk6jL0=
+        b=poXtyNo6nmLapncgzajWk6riKzVUheymjA+m2tUVcFGLf7jr7lt/Vqa8ALAHNuW6e
+         X9sx7s16GWPzsRafr83GoIMtO4twpJH4x9rv+maviNJYcSbIhTZEAhaODAMQqRucf4
+         J4THmO848dKegeTAzX1+kpXhHYjczqVFKYQTvo1c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 15/45] x86/vdso: Fix vDSO syscall fallback asm constraint regression
-Date:   Thu, 11 Oct 2018 17:39:42 +0200
-Message-Id: <20181011152509.486074465@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Wu <peter@lekensteyn.nl>
+Subject: [PATCH 4.14 16/45] PCI: Reprogram bridge prefetch registers on resume
+Date:   Thu, 11 Oct 2018 17:39:43 +0200
+Message-Id: <20181011152509.532740771@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -65,176 +64,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Daniel Drake <drake@endlessm.com>
 
-commit 02e425668f5c9deb42787d10001a3b605993ad15 upstream.
+commit 083874549fdfefa629dfa752785e20427dde1511 upstream.
 
-When I added the missing memory outputs, I failed to update the
-index of the first argument (ebx) on 32-bit builds, which broke the
-fallbacks.  Somehow I must have screwed up my testing or gotten
-lucky.
+On 38+ Intel-based ASUS products, the NVIDIA GPU becomes unusable after S3
+suspend/resume.  The affected products include multiple generations of
+NVIDIA GPUs and Intel SoCs.  After resume, nouveau logs many errors such
+as:
 
-Add another test to cover gettimeofday() as well.
+  fifo: fault 00 [READ] at 0000005555555000 engine 00 [GR] client 04
+        [HUB/FE] reason 4a [] on channel -1 [007fa91000 unknown]
+  DRM: failed to idle channel 0 [DRM]
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: 715bd9d12f84 ("x86/vdso: Fix asm constraints on vDSO syscall fallbacks")
-Link: http://lkml.kernel.org/r/21bd45ab04b6d838278fa5bebfa9163eceffa13c.1538608971.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Similarly, the NVIDIA proprietary driver also fails after resume (black
+screen, 100% CPU usage in Xorg process).  We shipped a sample to NVIDIA for
+diagnosis, and their response indicated that it's a problem with the parent
+PCI bridge (on the Intel SoC), not the GPU.
+
+Runtime suspend/resume works fine, only S3 suspend is affected.
+
+We found a workaround: on resume, rewrite the Intel PCI bridge
+'Prefetchable Base Upper 32 Bits' register (PCI_PREF_BASE_UPPER32).  In the
+cases that I checked, this register has value 0 and we just have to rewrite
+that value.
+
+Linux already saves and restores PCI config space during suspend/resume,
+but this register was being skipped because upon resume, it already has
+value 0 (the correct, pre-suspend value).
+
+Intel appear to have previously acknowledged this behaviour and the
+requirement to rewrite this register:
+https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23
+
+Based on that, rewrite the prefetch register values even when that appears
+unnecessary.
+
+We have confirmed this solution on all the affected models we have in-hands
+(X542UQ, UX533FD, X530UN, V272UN).
+
+Additionally, this solves an issue where r8169 MSI-X interrupts were broken
+after S3 suspend/resume on ASUS X441UAR.  This issue was recently worked
+around in commit 7bb05b85bc2d ("r8169: don't use MSI-X on RTL8106e").  It
+also fixes the same issue on RTL6186evl/8111evl on an Aimfor-tech laptop
+that we had not yet patched.  I suspect it will also fix the issue that was
+worked around in commit 7c53a722459c ("r8169: don't use MSI-X on
+RTL8168g").
+
+Thomas Martitz reports that this change also solves an issue where the AMD
+Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive after S3
+suspend/resume.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-By: Peter Wu <peter@lekensteyn.nl>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/vdso/vclock_gettime.c    |    8 +--
- tools/testing/selftests/x86/test_vdso.c |   73 ++++++++++++++++++++++++++++++++
- 2 files changed, 77 insertions(+), 4 deletions(-)
+ drivers/pci/pci.c |   27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -68,11 +68,11 @@ notrace static long vdso_fallback_gettim
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1112,12 +1112,12 @@ int pci_save_state(struct pci_dev *dev)
+ EXPORT_SYMBOL(pci_save_state);
  
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[clock], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*ts)
--		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
-+		: "0" (__NR_clock_gettime), [clock] "g" (clock), "c" (ts)
- 		: "memory", "edx");
- 	return ret;
- }
-@@ -83,11 +83,11 @@ notrace static long vdso_fallback_gtod(s
- 
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[tv], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*tv), "=m" (*tz)
--		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
-+		: "0" (__NR_gettimeofday), [tv] "g" (tv), "c" (tz)
- 		: "memory", "edx");
- 	return ret;
- }
---- a/tools/testing/selftests/x86/test_vdso.c
-+++ b/tools/testing/selftests/x86/test_vdso.c
-@@ -36,6 +36,10 @@ typedef int (*vgettime_t)(clockid_t, str
- 
- vgettime_t vdso_clock_gettime;
- 
-+typedef long (*vgtod_t)(struct timeval *tv, struct timezone *tz);
-+
-+vgtod_t vdso_gettimeofday;
-+
- typedef long (*getcpu_t)(unsigned *, unsigned *, void *);
- 
- getcpu_t vgetcpu;
-@@ -104,6 +108,11 @@ static void fill_function_pointers()
- 	vdso_clock_gettime = (vgettime_t)dlsym(vdso, "__vdso_clock_gettime");
- 	if (!vdso_clock_gettime)
- 		printf("Warning: failed to find clock_gettime in vDSO\n");
-+
-+	vdso_gettimeofday = (vgtod_t)dlsym(vdso, "__vdso_gettimeofday");
-+	if (!vdso_gettimeofday)
-+		printf("Warning: failed to find gettimeofday in vDSO\n");
-+
- }
- 
- static long sys_getcpu(unsigned * cpu, unsigned * node,
-@@ -117,6 +126,11 @@ static inline int sys_clock_gettime(cloc
- 	return syscall(__NR_clock_gettime, id, ts);
- }
- 
-+static inline int sys_gettimeofday(struct timeval *tv, struct timezone *tz)
-+{
-+	return syscall(__NR_gettimeofday, tv, tz);
-+}
-+
- static void test_getcpu(void)
+ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
+-				     u32 saved_val, int retry)
++				     u32 saved_val, int retry, bool force)
  {
- 	printf("[RUN]\tTesting getcpu...\n");
-@@ -177,6 +191,14 @@ static bool ts_leq(const struct timespec
- 		return a->tv_nsec <= b->tv_nsec;
+ 	u32 val;
+ 
+ 	pci_read_config_dword(pdev, offset, &val);
+-	if (val == saved_val)
++	if (!force && val == saved_val)
+ 		return;
+ 
+ 	for (;;) {
+@@ -1136,25 +1136,36 @@ static void pci_restore_config_dword(str
  }
  
-+static bool tv_leq(const struct timeval *a, const struct timeval *b)
-+{
-+	if (a->tv_sec != b->tv_sec)
-+		return a->tv_sec < b->tv_sec;
-+	else
-+		return a->tv_usec <= b->tv_usec;
-+}
-+
- static char const * const clocknames[] = {
- 	[0] = "CLOCK_REALTIME",
- 	[1] = "CLOCK_MONOTONIC",
-@@ -248,11 +270,62 @@ static void test_clock_gettime(void)
- 	test_one_clock_gettime(INT_MAX, "invalid");
- }
- 
-+static void test_gettimeofday(void)
-+{
-+	struct timeval start, vdso, end;
-+	struct timezone sys_tz, vdso_tz;
-+	int vdso_ret, end_ret;
-+
-+	if (!vdso_gettimeofday)
-+		return;
-+
-+	printf("[RUN]\tTesting gettimeofday...\n");
-+
-+	if (sys_gettimeofday(&start, &sys_tz) < 0) {
-+		printf("[FAIL]\tsys_gettimeofday failed (%d)\n", errno);
-+		nerrs++;
-+		return;
-+	}
-+
-+	vdso_ret = vdso_gettimeofday(&vdso, &vdso_tz);
-+	end_ret = sys_gettimeofday(&end, NULL);
-+
-+	if (vdso_ret != 0 || end_ret != 0) {
-+		printf("[FAIL]\tvDSO returned %d, syscall errno=%d\n",
-+		       vdso_ret, errno);
-+		nerrs++;
-+		return;
-+	}
-+
-+	printf("\t%llu.%06ld %llu.%06ld %llu.%06ld\n",
-+	       (unsigned long long)start.tv_sec, start.tv_usec,
-+	       (unsigned long long)vdso.tv_sec, vdso.tv_usec,
-+	       (unsigned long long)end.tv_sec, end.tv_usec);
-+
-+	if (!tv_leq(&start, &vdso) || !tv_leq(&vdso, &end)) {
-+		printf("[FAIL]\tTimes are out of sequence\n");
-+		nerrs++;
-+	}
-+
-+	if (sys_tz.tz_minuteswest == vdso_tz.tz_minuteswest &&
-+	    sys_tz.tz_dsttime == vdso_tz.tz_dsttime) {
-+		printf("[OK]\ttimezones match: minuteswest=%d, dsttime=%d\n",
-+		       sys_tz.tz_minuteswest, sys_tz.tz_dsttime);
-+	} else {
-+		printf("[FAIL]\ttimezones do not match\n");
-+		nerrs++;
-+	}
-+
-+	/* And make sure that passing NULL for tz doesn't crash. */
-+	vdso_gettimeofday(&vdso, NULL);
-+}
-+
- int main(int argc, char **argv)
+ static void pci_restore_config_space_range(struct pci_dev *pdev,
+-					   int start, int end, int retry)
++					   int start, int end, int retry,
++					   bool force)
  {
- 	fill_function_pointers();
+ 	int index;
  
- 	test_clock_gettime();
-+	test_gettimeofday();
+ 	for (index = end; index >= start; index--)
+ 		pci_restore_config_dword(pdev, 4 * index,
+ 					 pdev->saved_config_space[index],
+-					 retry);
++					 retry, force);
+ }
  
- 	/*
- 	 * Test getcpu() last so that, if something goes wrong setting affinity,
+ static void pci_restore_config_space(struct pci_dev *pdev)
+ {
+ 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL) {
+-		pci_restore_config_space_range(pdev, 10, 15, 0);
++		pci_restore_config_space_range(pdev, 10, 15, 0, false);
+ 		/* Restore BARs before the command register. */
+-		pci_restore_config_space_range(pdev, 4, 9, 10);
+-		pci_restore_config_space_range(pdev, 0, 3, 0);
++		pci_restore_config_space_range(pdev, 4, 9, 10, false);
++		pci_restore_config_space_range(pdev, 0, 3, 0, false);
++	} else if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		pci_restore_config_space_range(pdev, 12, 15, 0, false);
++
++		/*
++		 * Force rewriting of prefetch registers to avoid S3 resume
++		 * issues on Intel PCI bridges that occur when these
++		 * registers are not explicitly written.
++		 */
++		pci_restore_config_space_range(pdev, 9, 11, 0, true);
++		pci_restore_config_space_range(pdev, 0, 8, 0, false);
+ 	} else {
+-		pci_restore_config_space_range(pdev, 0, 15, 0);
++		pci_restore_config_space_range(pdev, 0, 15, 0, false);
+ 	}
+ }
+ 
 
 
