@@ -2,97 +2,116 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB39C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E28C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAAA12087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:49:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAAA12087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id A2D062085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:52:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D062085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbeJKQPu (ORCPT
+        id S1728168AbeJKQTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:15:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726223AbeJKQPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:15:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0231EB14B;
-        Thu, 11 Oct 2018 08:49:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 68E741E3616; Thu, 11 Oct 2018 10:49:29 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 10:49:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-Message-ID: <20181011084929.GB8418@quack2.suse.cz>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
- <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
- <20181010164541.ec4bf53f5a9e4ba6e5b52a21@linux-foundation.org>
+        Thu, 11 Oct 2018 12:19:00 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:57948 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbeJKQTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:19:00 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id M0LG-zGi6bUA; Thu, 11 Oct 2018 10:52:40 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BD5D200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd5:d200:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B87671EC02D1;
+        Thu, 11 Oct 2018 10:52:39 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 10:52:34 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH] kbuild: Fail the build early when no lz4 present
+Message-ID: <20181011085234.GA25435@zn.tnic>
+References: <20181010222333.17794-1-bp@alien8.de>
+ <CAK7LNAT2KpYkn=hj=h1XmbMJRdtgCQ__xP0X+Rpwm3e_Xs1brQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181010164541.ec4bf53f5a9e4ba6e5b52a21@linux-foundation.org>
+In-Reply-To: <CAK7LNAT2KpYkn=hj=h1XmbMJRdtgCQ__xP0X+Rpwm3e_Xs1brQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-10-18 16:45:41, Andrew Morton wrote:
-> On Tue, 9 Oct 2018 17:42:09 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
-> 
-> > > Also, maintainability.  What happens if someone now uses put_page() by
-> > > mistake?  Kernel fails in some mysterious fashion?  How can we prevent
-> > > this from occurring as code evolves?  Is there a cheap way of detecting
-> > > this bug at runtime?
-> > > 
-> > 
-> > It might be possible to do a few run-time checks, such as "does page that came 
-> > back to put_user_page() have the correct flags?", but it's harder (without 
-> > having a dedicated page flag) to detect the other direction: "did someone page 
-> > in a get_user_pages page, to put_page?"
-> > 
-> > As Jan said in his reply, converting get_user_pages (and put_user_page) to 
-> > work with a new data type that wraps struct pages, would solve it, but that's
-> > an awfully large change. Still...given how much of a mess this can turn into 
-> > if it's wrong, I wonder if it's worth it--maybe? 
-> 
-> This is a real worry.  If someone uses a mistaken put_page() then how
-> will that bug manifest at runtime?  Under what set of circumstances
-> will the kernel trigger the bug?
+On Thu, Oct 11, 2018 at 01:26:23PM +0900, Masahiro Yamada wrote:
+> So, the cause of the failure is clear enough
+> from the build log.
 
-At runtime such bug will manifest as a page that can never be evicted from
-memory. We could warn in put_page() if page reference count drops below
-bare minimum for given user pin count which would be able to catch some
-issues but it won't be 100% reliable. So at this point I'm more leaning
-towards making get_user_pages() return a different type than just
-struct page * to make it much harder for refcount to go wrong...
+Sure but it wasts unnecessary build cycles and appears only after all
+the compilation units have been produced.
 
-								Honza
+> It is weird to check only lz4c.
+> If CONFIG_KERNEL_LZO is enabled, but lzop is not installed,
+> I see this log
+> 
+>   LZO     arch/x86/boot/compressed/vmlinux.bin.lzo
+> /bin/sh: 1: lzop: not found
+> 
+> It is still clear what to do, though.
+
+Right, we should test for that too. Unless distros start installing it
+by default. It is not installed by default on a debian guest here, at
+least.
+
+SLES15 either:
+
+$ lzop
+If 'lzop' is not a typo you can use command-not-found to lookup the package that contains it, like this:
+    cnf lzop
+
+> Is it necessary to check this earlier?
+
+Yes, see above.
+
+> If you get this error, you just need to install the tool.
+> Then, you can re-run the incremental build.
+
+Actually, I'd prefer the build to fail early so that machine can
+continue with the next build.
+
+> BTW, this patch has a drawback.
+> 
+> [1] Enable CONFIG_KERNEL_LZ4 on the system
+>     without lz4c installed
+> 
+> [2] Run 'make' and you will get the error
+>     "lz4 tool not found on this system but CONFIG_KERNEL_LZ4 enabled"
+> 
+> [3] Run 'make menuconfig' and
+>     switch from CONFIG_KERNEL_LZ4 to CONFIG_KERNEL_GZIP
+> 
+> [4] Run 'make' and you will still get the same error
+>     even after you have chosen to use GZIP instead of LZ4.
+
+Well, there's code in Makefile to refresh include/config/auto.conf but
+for whatever reason that make in step 4 doesn't run it.
+
+And *that* looks like a bug - if a user runs "make menuconfig" and
+.config gets updated, then include/config/auto.conf better get updated
+too. Right?
+
+Thx.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
