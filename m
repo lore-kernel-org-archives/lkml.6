@@ -2,200 +2,293 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1230EC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F9EC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF812077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:27:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF812077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 83F282077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:32:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="od66QZzY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZOruL2Em"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F282077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeJKRyQ (ORCPT
+        id S1727180AbeJKR66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 13:54:16 -0400
-Received: from mout.gmx.net ([212.227.15.19]:58011 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeJKRyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 13:54:16 -0400
-Received: from [10.95.173.99] ([155.56.40.73]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MAgvb-1fyhYi3Uz5-00Bxap; Thu, 11
- Oct 2018 12:27:27 +0200
-Received: from [10.95.173.99] ([155.56.40.73]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MAgvb-1fyhYi3Uz5-00Bxap; Thu, 11
- Oct 2018 12:27:27 +0200
-Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file
- generation
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
- <1538975801-13735-5-git-send-email-firoz.khan@linaro.org>
- <20181009201321.GA28911@ls3530.fritz.box>
- <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
- <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
-From:   Helge Deller <deller@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
- xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
- y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
- +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
- KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
- OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
- AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
- UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
- +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
- iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
- 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
- vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
- zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
- +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
- UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
- T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
- gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
- BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
- 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
- kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
- lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
- ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
- KrhlU0uMP9QTB5WAUvxvGy8=
-Message-ID: <4c659c11-85a3-68da-b7c9-60042d611a72@gmx.de>
-Date:   Thu, 11 Oct 2018 12:27:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 11 Oct 2018 13:58:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50514 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbeJKR66 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 13:58:58 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2AB7F60BFE; Thu, 11 Oct 2018 10:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539253939;
+        bh=mrwyhzqcKNbAb8fUHiQZQrCE3K1xkkGGkqW099AaxhI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=od66QZzYHbpFdGZcN1vL0OCltcdlOg77hdsI6Rf7GozbaTEK6vzIOnagnp5pMOuPb
+         UqAoYATP+KF0LnLU92sMGxaM8TwsgvLF8znm074Vi3bzYV3VRSAj6aspgqXW57k7j8
+         E+KRHbFxUI3PqGOCakzzl0obKUpVYiUct9CWDwng=
+Received: from [10.79.167.189] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 183A260A98;
+        Thu, 11 Oct 2018 10:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539253938;
+        bh=mrwyhzqcKNbAb8fUHiQZQrCE3K1xkkGGkqW099AaxhI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZOruL2Em70LKKyEpsouEhNZWV9hW6XiZv7DSS/kijVz+vPRlw5/1rj78lyCNcTTvo
+         imSy16FI6g0urNJN7qt5CgvPCerzb/gyc/O/VY7ZbTb8Gz21EE6w7dy58/M0DhiiMZ
+         WOVjXNNx0puzV2KwDNQgr8TFsDLvQlYy9gknwHcA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 183A260A98
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v8 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
+ Firmware bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+References: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
+ <1537698793-15285-2-git-send-email-tdas@codeaurora.org>
+ <20180927153126.GA17218@bogus>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <2578568d-e1b8-b7b5-beeb-ad485a971f2d@codeaurora.org>
+Date:   Thu, 11 Oct 2018 16:01:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180927153126.GA17218@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ElKUU9FOrWBYGYHngiVR2fX72HeJuc9qTod9cMD/OSvIQu70pmW
- iU83NZ56sU0ySulWsrT6t+hy8Sz00jKhruWKERX/azSX4+vqFtsrZ+E5o7bnfjoD8Wpcp9s
- kO09vR7S//RQrRzugeudfhfu/Anr5E2Om9vbT5WR3RgHmBzsAaHcdBL66Z4qFkjrtoPvg1y
- PTk7ZVu4p25Fb+zK19pKQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FTBpJB4Aexg=:qNcmcD0FfqqN+Sv8Zo8kLo
- olAK2RouV+zgpQ241rRzNQFe6A5nK0Me2q+DJL0kpMhwnrlO6ib6gLwOvt7K8D5+uLJ5Tt1D4
- FCRIlm3F6YnUkdVa2x5J8A99WfqYKGI7agb+BC1g236+VFoO+RQJ46AnHNjqGX6sxSudUgyR/
- nCWZEYn7R3as5DudVeD2Rljxe2hcItQfTKgrwu8yRQacFVI26tbXxPQ+aHuoG+Ce1U4x9UhzY
- Ku5i4Gq+DyAI1gJtGPllZ3/Vt/kKFnm101rtH0G1uFQ/midBF6Bm/cH7WvQpEgIE66aGhtr2v
- BI2ZdkHAZqv15UOe6fUAwwAanC9SAvpmP8UwX2KviEtFyoqkhwYJJiPXEn5/xLjsfTnnbW96u
- 1S6IBJH6bq4p2drbkNeQTp1H8OIjh26FYlBS+0D63rA6E1EUrOrvCZvTZoC6niJkqmQz5OTH7
- F+pHiz69tLbVUr3laszj+OgRK78J0OsEPc73MUVEVN8VLG+ePj6P2FryAobcBMyjLKSUg3cTd
- 1BORnPLVhvcj6HlB9fZ6nqU0hYyRE+p4PYl5t+CoZU8IE3UCEpn8k3Py2RqqpyMRCrx+oe1+D
- XeNMakmuLWGdxe+6xV0gTKfWa4QQnxseje0tq3nN/D38qA1tc2GpZDhuZXupYunHJxHiQDF3M
- 1SnQ1O7PF7aAp6kHQJxrkZ5CAGEXNBD6rYNOw2ggtw1WNJJ+uB2VDq0FbvBCmcsZ3UdXLhK7O
- rBELQd7YLBYSxTnp7yjq4lTv4SuZsBa8In8wUVyCmPnMrjxw4kyLMQdicfCFN/xdPUxgR8M5F
- 4aSlFo+wT+RiVj4HpTdtCxWHaUBy+sKZ0sdVl5Wb7p3hJb1+IQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 08:48, Firoz Khan wrote:
-> Hi Helge,
-> 
-> On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
->>
->> Hi Helge,
->>
->> On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
->>>
->>> * Firoz Khan <firoz.khan@linaro.org>:
->>>> System call table generation script must be run to generate
->>>> unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
->>>> will have changes which will invokes the script.
->>>>
->>>> This patch will generate unistd_32/64.h and syscall_table_
->>>> 32/64/c32.h files by the syscall table generation script
->>>> invoked by arch/parisc/Makefile and the generated files against
->>>> the removed files will be identical.
->>>>
->>>> The generated uapi header file will be included in uapi/asm/
->>>> unistd_32/64.h and generated system call table support file will
->>>> be included by arch/sparc/kernel/syscall_table_32/64.S file.
->>>>
->>>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
->>>> ---
->>>>  arch/parisc/Makefile                  |   4 +
->>>>  arch/parisc/include/asm/Kbuild        |   3 +
->>>>  arch/parisc/include/uapi/asm/Kbuild   |   2 +
->>>>  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
->>>>  arch/parisc/kernel/syscall.S          |  12 +-
->>>>  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
->>>
->>>
->>> Can we please get rid of those two new files:
->>
->> Yes, we don't need those files some of the architecture and other
->> architecture does have same/similar files. That's why I added below
->> files, so every architecture implementation looks same.
->>
->> I feel it is better to remove these files.
->> Arnd, Do u have any comment on this?
->>
->> Thanks
->> Firoz
->>
->>>
->>>>  arch/parisc/kernel/syscall_table_32.S |  13 +
->>>>  arch/parisc/kernel/syscall_table_64.S |  20 ++
->>>
->>> Both are not needed (at least on parisc) if you apply the following
->>> patch on top of your patch series.
->>> This patch finally fixes the 64-bit kernel on parisc (tested on real
->>> hardware).
->>>
->>> Helge
->>>
->>> diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
->>> index 2523b83b88d8..45cddeeb968f 100644
->>> --- a/arch/parisc/kernel/syscall.S
->>> +++ b/arch/parisc/kernel/syscall.S
->>> @@ -923,10 +923,20 @@ ENTRY(lws_table)
->>>  END(lws_table)
->>>         /* End of lws table */
->>>
->>> -#include "syscall_table_32.S"
->>> +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
->>> +
->>> +ENTRY(sys_call_table)
->>> +#if defined(CONFIG_64BIT)
->>> +#include <asm/syscall_table_c32.h>     /* compat syscalls */
->>> +#else
->>> +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
->>> +#endif
->>> +END(sys_call_table)
->>> +
->>>  #ifdef CONFIG_64BIT
->>> -#define SYSCALL_TABLE_64BIT
->>> -#include "syscall_table_64.S"
->>> +ENTRY(sys_call_table64)
->>> +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
->>> +END(sys_call_table64)
->>>  #endif
->>>
->>>         /*
-> 
-> I could see a patch (commit 47514da3ac20150cdf764466fbc2010c0fca0163)
-> which will perform a compile-check when adding a new syscall. My patches
-> will remove this feature. Is that fine?
+Hello Rob,
 
-Yes, removing that feature is OK.
-Since everything is then autogenerated I don't expect such bugs.
+Thanks for your review comments.
 
-Helge
+On 9/27/2018 9:01 PM, Rob Herring wrote:
+> On Sun, Sep 23, 2018 at 04:03:12PM +0530, Taniya Das wrote:
+>> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+>> SoCs. This is required for managing the cpu frequency transitions which are
+>> controlled by the hardware engine.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 169 +++++++++++++++++++++
+>>   1 file changed, 169 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>> new file mode 100644
+>> index 0000000..c06941c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>> @@ -0,0 +1,169 @@
+>> +Qualcomm Technologies, Inc. CPUFREQ Bindings
+>> +
+>> +CPUFREQ HW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
+>> +SoCs to manage frequency in hardware. It is capable of controlling frequency
+>> +for multiple clusters.
+>> +
+>> +Properties:
+>> +- compatible
+>> +	Usage:		required
+>> +	Value type:	<string>
+>> +	Definition:	must be "qcom,cpufreq-hw".
+>> +
+>> +- clocks
+>> +	Usage:		required
+>> +	Value type:	<phandle> From common clock binding.
+>> +	Definition:	clock handle for XO clock and GPLL0 clock.
+>> +
+>> +- clock-names
+>> +	Usage:		required
+>> +	Value type:	<string> From common clock binding.
+>> +	Definition:	must be "xo", "cpu_clk".
+>> +
+>> +- reg
+>> +	Usage:		required
+>> +	Value type:	<prop-encoded-array>
+>> +	Definition:	Addresses and sizes for the memory of the HW bases in
+>> +			each frequency domain.
+>> +- reg-names
+>> +	Usage:		Optional
+>> +	Value type:	<string>
+>> +	Definition:	Frequency domain name i.e.
+>> +			"freq-domain0", "freq-domain1".
+>> +
+>> +* Property qcom,freq-domain
+>> +Devices supporting freq-domain must set their "qcom,freq-domain" property with
+>> +phandle to a cpufreq_hw followed by the Domain ID(0/1) in the CPU DT node.
+>> +
+>> +
+>> +Example:
+>> +
+>> +Example 1: Dual-cluster, Quad-core per cluster. CPUs within a cluster switch
+>> +DCVS state together.
+>> +
+>> +/ {
+>> +	cpus {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <0>;
+>> +
+>> +		CPU0: cpu@0 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x0>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_0>;
+>> +			qcom,freq-domain = <&cpufreq_hw 0>;
+>> +			L2_0: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +				L3_0: l3-cache {
+>> +				      compatible = "cache";
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		CPU1: cpu@100 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x100>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_100>;
+>> +			qcom,freq-domain = <&cpufreq_hw 0>;
+>> +			L2_100: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU2: cpu@200 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x200>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_200>;
+>> +			qcom,freq-domain = <&cpufreq_hw 0>;
+>> +			L2_200: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU3: cpu@300 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x300>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_300>;
+>> +			qcom,freq-domain = <&cpufreq_hw 0>;
+>> +			L2_300: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU4: cpu@400 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x400>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_400>;
+>> +			qcom,freq-domain = <&cpufreq_hw 1>;
+>> +			L2_400: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU5: cpu@500 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x500>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_500>;
+>> +			qcom,freq-domain = <&cpufreq_hw 1>;
+>> +			L2_500: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU6: cpu@600 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x600>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_600>;
+>> +			qcom,freq-domain = <&cpufreq_hw 1>;
+>> +			L2_600: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +
+>> +		CPU7: cpu@700 {
+>> +			device_type = "cpu";
+>> +			compatible = "qcom,kryo385";
+>> +			reg = <0x0 0x700>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_700>;
+>> +			qcom,freq-domain = <&cpufreq_hw 1>;
+>> +			L2_700: l2-cache {
+>> +				compatible = "cache";
+>> +				next-level-cache = <&L3_0>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> + soc {
+>> +	cpufreq_hw: qcom,cpufreq-hw {
+> 
+> Should have a unit-address and node names should be generic. We don't
+> really have one for this, but let's go with 'cpufreq', so:
+> 
+> cpufreq@17d43000
+> 
+
+Thanks Rob, will update in the next patch.
+
+>> +		compatible = "qcom,cpufreq-hw";
+>> +		reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
+>> +		reg-names = "freq-domain0", "freq-domain1";
+>> +
+>> +		clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
+>> +		clock-names = "xo", "cpu_clk";
+>> +
+>> +		#freq-domains-cells = <1>
+> 
+> Not documented, but I don't think you need this if it is always 1 and
+> because this is not a common binding.
+> 
+
+I would add it in the next patch just to keep it documented.
+
+> Rob
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
