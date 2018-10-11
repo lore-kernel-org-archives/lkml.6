@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0610FC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E685C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB7F42098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0121D2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrnHPLhS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7F42098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbeE499C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0121D2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbeJKXLY (ORCPT
+        id S1731044AbeJKXL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:11:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43278 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:11:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731020AbeJKXLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:11:23 -0400
+        id S1730526AbeJKXL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:11:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ED3B21476;
-        Thu, 11 Oct 2018 15:43:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E01C420652;
+        Thu, 11 Oct 2018 15:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272618;
-        bh=WSH8Jh9y/Ckdb/8mPpyLujjlFgV1xdgCWk1nkQGZm28=;
+        s=default; t=1539272621;
+        bh=yEqPiIiKN6w9mecYQpxD5H2b9pa6Y/q1pc2dXqqQHNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CrnHPLhSE7vv6ixuU/fKsGN5Q4KEqSjIHRDW73jyVfC4PdXijBPHKXANSYqOzes8G
-         6hDPmDizQDpBC5Bh0glRd0vzW10ZWKfA1mLbys8Nnts7gz+hX/2u2YsqajJHYubnXW
-         Y1676s+KtpHWHEK0X1WreRljwvaJEWHSHyyXEfrE=
+        b=pbeE499CFQMfA4VHMle4U6Dnku3ULbO4CJkRLgqhgw9/4+XH32+Zn7bf1rOTQnvE8
+         3d8Ao7FJkrGuMPXWHJWlws6xcaC31V7+v4272l+oQpThLmQFe37VnUdcuY3PXBa/2I
+         n15NFg5GUjVu54icH8i0YC75OJsMRPThgVn0RPRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH 4.9 25/35] ucma: fix a use-after-free in ucma_resolve_ip()
-Date:   Thu, 11 Oct 2018 17:35:27 +0200
-Message-Id: <20181011152521.180580326@linuxfoundation.org>
+        syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 26/35] ubifs: Check for name being NULL while mounting
+Date:   Thu, 11 Oct 2018 17:35:28 +0200
+Message-Id: <20181011152521.222131603@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -66,65 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 5fe23f262e0548ca7f19fb79f89059a60d087d22 upstream.
+commit 37f31b6ca4311b94d985fb398a72e5399ad57925 upstream.
 
-There is a race condition between ucma_close() and ucma_resolve_ip():
+The requested device name can be NULL or an empty string.
+Check for that and refuse to continue. UBIFS has to do this manually
+since we cannot use mount_bdev(), which checks for this condition.
 
-CPU0				CPU1
-ucma_resolve_ip():		ucma_close():
-
-ctx = ucma_get_ctx(file, cmd.id);
-
-        list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
-                mutex_lock(&mut);
-                idr_remove(&ctx_idr, ctx->id);
-                mutex_unlock(&mut);
-		...
-                mutex_lock(&mut);
-                if (!ctx->closing) {
-                        mutex_unlock(&mut);
-                        rdma_destroy_id(ctx->cm_id);
-		...
-                ucma_free_ctx(ctx);
-
-ret = rdma_resolve_addr();
-ucma_put_ctx(ctx);
-
-Before idr_remove(), ucma_get_ctx() could still find the ctx
-and after rdma_destroy_id(), rdma_resolve_addr() may still
-access id_priv pointer. Also, ucma_put_ctx() may use ctx after
-ucma_free_ctx() too.
-
-ucma_close() should call ucma_put_ctx() too which tests the
-refcnt and waits for the last one releasing it. The similar
-pattern is already used by ucma_destroy_id().
-
-Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
-Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/ubifs/super.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1720,6 +1720,8 @@ static int ucma_close(struct inode *inod
- 		mutex_lock(&mut);
- 		if (!ctx->closing) {
- 			mutex_unlock(&mut);
-+			ucma_put_ctx(ctx);
-+			wait_for_completion(&ctx->comp);
- 			/* rdma_destroy_id ensures that no event handlers are
- 			 * inflight for that id before releasing it.
- 			 */
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1918,6 +1918,9 @@ static struct ubi_volume_desc *open_ubi(
+ 	int dev, vol;
+ 	char *endptr;
+ 
++	if (!name || !*name)
++		return ERR_PTR(-EINVAL);
++
+ 	/* First, try to open using the device node path method */
+ 	ubi = ubi_open_volume_path(name, mode);
+ 	if (!IS_ERR(ubi))
 
 
