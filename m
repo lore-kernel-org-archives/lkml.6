@@ -2,133 +2,140 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65905C28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B95ADC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 241F120841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64ADE20644
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="V1yDxPZi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241F120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vyOVeUh6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64ADE20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbeJLG2J (ORCPT
+        id S1726235AbeJLGaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 02:28:09 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40505 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbeJLG2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 02:28:09 -0400
-Received: by mail-oi1-f193.google.com with SMTP id j68-v6so8443096oib.7
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 15:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QJtgrdMIt5B2S4XIKnBe78Xf+qAbX4YZNj+zjUvyTzY=;
-        b=V1yDxPZifZoR4YpF8N76DPyB5pYl931k7yBEW2N5VJHaNakxNoarE5vz3ZTGO5Y9F7
-         mesy1HC2cwnk8a8toptvxnWX/nwrEpATMUV/8w4WeMIlg4tblnh2iGCty5ZENYbeMV0f
-         iZwIohj6rS6Cv7+Y/PYQVVjybvTQDfISJsV3zIDy10s6KEk2U81u4t5AO8VMRjHsqmqW
-         HlYsboLhQWqgvcwuAbf0OS88NlHbnX0pKp0oLp+ylt+i+loL4KVpqI9BhaSDPC0a4C8w
-         vw9Y+39jNml3QAXM+5ocASEDKpBFopjV9cqUcyA+dUMVbOXFcKRV6DE+4uFBizH/vglM
-         pUrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QJtgrdMIt5B2S4XIKnBe78Xf+qAbX4YZNj+zjUvyTzY=;
-        b=HHbcyU2rJpOJlGVyzBahC4RHpxRwg2qzWjaX4vxAjCBsw9hMEG0o26fwelvMtxHxWm
-         IbOe9g8nvQi0JCx5qqlTcYrqwVOfhYioe5x+p6eNIxTmxfhsZeMMEGnqoiT+ksphHIk8
-         RnZKG9riWSu1BMu8cCHSUFxv5bBukTwQtaLQyNL+SVC7/SciKL0Eu8gEY68vNvTmINXW
-         huGhJTc8FLJ6ay8zI3Qww7rSLZtc3QFapek5pyIULQ8mfg1qqix1+8XTW7wZ2xuJkRzP
-         qRaG5Se2seHM416OQlfsY0HeeByltrzw2oYS0C+wjge37yEaEJa1DHxO4BmRSsHJNSrg
-         wLUQ==
-X-Gm-Message-State: ABuFfohyhaHXR6Whjk7QI+GZDgylIViAWZWB9n1WmRE31u46daeWyNzj
-        2wCdoFDqXktf5nZeak8TyOAmMiykQto6+kepCu+xZQ==
-X-Google-Smtp-Source: ACcGV63HX51w3QoxJEG3W0rJHM+nxxlhM8CYVe3Zte57aG3Vet2yvH/CO/dMaEw7bqVfV7RhQubceIsXOwM5EY2crU8=
-X-Received: by 2002:aca:f512:: with SMTP id t18-v6mr2059647oih.244.1539298722948;
- Thu, 11 Oct 2018 15:58:42 -0700 (PDT)
+        Fri, 12 Oct 2018 02:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbeJLGaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 02:30:11 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 686D9214C4
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 23:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539298844;
+        bh=jeNCpfa8w1IQM3+VGFadd6JfiNb1m/3VN3xklLz3EPc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vyOVeUh6/8ls2ZXmmIOnF9CAyJYfEqSZqgughSIj1xg5Dsg0IdTiO5gUebhkbUHfs
+         Kdmwmw66zxNRJU//ZV1MXRzOAMEsh3ocY8+sHNpywNLCeuAp/DCUmZj8vGFGCVapfq
+         Mtq3rTsBiUwfDo8VoKPSo0EaXTflLkmAB7l5i4es=
+Received: by mail-wm1-f54.google.com with SMTP id y140-v6so16766627wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 16:00:44 -0700 (PDT)
+X-Gm-Message-State: ABuFfogFi3uYi3u0KZxjIbBiCgjoVgBMuf7SbKwaJNVIXlxcG/IeXVti
+        LYn3vP6g+y1bbxoM8jlPp1cvHJ20OY4MdX4gobk1TQ==
+X-Google-Smtp-Source: ACcGV60F1CujrTnuEe/nXnXQ2a2dIxvg6TOv4JtQtLIUwd9tgyxuekhnAUvbsZFcZJzL+HzBl6vADIBNIfCaEY0a4yc=
+X-Received: by 2002:a1c:4054:: with SMTP id n81-v6mr3330398wma.82.1539298842721;
+ Thu, 11 Oct 2018 16:00:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181011221237.1925.85591.stgit@localhost.localdomain> <20181011221351.1925.67694.stgit@localhost.localdomain>
-In-Reply-To: <20181011221351.1925.67694.stgit@localhost.localdomain>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 11 Oct 2018 15:58:31 -0700
-Message-ID: <CAPcyv4gw4YRJXZrXHunKwqbhXPekiNU6jsYkrpoBtznv0Py-sg@mail.gmail.com>
-Subject: Re: [mm PATCH v2 4/6] mm: Do not set reserved flag for hotplug memory
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>, khalid.aziz@oracle.com,
-        rppt@linux.vnet.ibm.com, Vlastimil Babka <vbabka@suse.cz>,
-        sparclinux@vger.kernel.org,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <B8C05946-43BB-40A4-A564-53904FAF8CC0@amacapital.net>
+ <20181004193150.GQ19272@hirez.programming.kicks-ass.net> <499807AB-E779-40C3-AA3F-E8C77A7770EC@amacapital.net>
+ <CALCETrXNKCNZzUXj=2sp1vBd_o7HHzfW6RwyY5v3-wMfbVaZnQ@mail.gmail.com>
+ <20181006202731.GC7129@amt.cnet> <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
+ <20181008152650.GB27822@amt.cnet> <CALCETrVY6VHPLs0GXZM4+VYraTa1+xs=iRJoRa++OHX9Wq+ieg@mail.gmail.com>
+ <20181008193632.GA31729@amt.cnet> <CALCETrW6b8=dU6vkXNS-rW1GPzJTbVxuVNsU4aoD_NwwobVQcg@mail.gmail.com>
+ <20181011222744.GA17955@amt.cnet>
+In-Reply-To: <20181011222744.GA17955@amt.cnet>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 11 Oct 2018 16:00:29 -0700
+X-Gmail-Original-Message-ID: <CALCETrXMEqHOa-8s51gGE_gxWVzTWY5eLiZrGLhMUkWKZkfmDw@mail.gmail.com>
+Message-ID: <CALCETrXMEqHOa-8s51gGE_gxWVzTWY5eLiZrGLhMUkWKZkfmDw@mail.gmail.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 3:18 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
+On Thu, Oct 11, 2018 at 3:28 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
 >
-> The general suspicion at this point is that the setting of the reserved bit
-> is not really needed for hotplug memory. In addition the setting of this
-> bit results in issues for DAX in that it is not possible to assign the
-> region to KVM if the reserved bit is set in each page.
+> On Tue, Oct 09, 2018 at 01:09:42PM -0700, Andy Lutomirski wrote:
+> > On Tue, Oct 9, 2018 at 8:28 AM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> > >
+> > > On Mon, Oct 08, 2018 at 10:38:22AM -0700, Andy Lutomirski wrote:
+> > > > On Mon, Oct 8, 2018 at 8:27 AM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> >
+> > > > I read the comment three more times and even dug through the git
+> > > > history.  It seems like what you're saying is that, under certain
+> > > > conditions (which arguably would be bugs in the core Linux timing
+> > > > code),
+> > >
+> > > I don't see that as a bug. Its just a side effect of reading two
+> > > different clocks (one is CLOCK_MONOTONIC and the other is TSC),
+> > > and using those two clocks to as a "base + offset".
+> > >
+> > > As the comment explains, if you do that, can't guarantee monotonicity.
+> > >
+> > > > actually calling ktime_get_boot_ns() could be non-monotonic
+> > > > with respect to the kvmclock timing.  But get_kvmclock_ns() isn't used
+> > > > for VM timing as such -- it's used for the IOCTL interfaces for
+> > > > updating the time offset.  So can you explain how my patch is
+> > > > incorrect?
+> > >
+> > > ktime_get_boot_ns() has frequency correction applied, while
+> > > reading masterclock + TSC offset does not.
+> > >
+> > > So the clock reads differ.
+> > >
+> >
+> > Ah, okay, I finally think I see what's going on.  In the kvmclock data
+> > exposed to the guest, tsc_shift and tsc_to_system_mul come from
+> > tgt_tsc_khz, whereas master_kernel_ns and master_cycle_now come from
+> > CLOCK_BOOTTIME.  So the kvmclock and kernel clock drift apart at a
+> > rate given by the frequency shift and then suddenly agree again every
+> > time the pvclock data is updated.
 >
-> For now we can try just not setting the bit since we suspect it isn't
-> adding value in setting it. If at a later time we find that it is needed we
-> can come back through and re-add it for the hotplug paths.
+> Yes.
 >
-> Suggested-by: Michael Hocko <mhocko@suse.com>
-> Reported-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  mm/page_alloc.c |   11 -----------
->  1 file changed, 11 deletions(-)
+> > Is there a reason to do it this way?
 >
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3603d5444865..e435223e2ddb 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5571,8 +5571,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+> Since pvclock updates which update system_timestamp are expensive (must stop all vcpus),
+> they should be avoided.
 >
->                 page = pfn_to_page(pfn);
->                 __init_single_page(page, pfn, zone, nid);
-> -               if (context == MEMMAP_HOTPLUG)
-> -                       __SetPageReserved(page);
 
-At a minimum I think we need to do this before removing PageReserved,
-to make sure zone_device pages are not tracked in the hibernation
-image.
+Fair enough.
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 3d37c279c090..c0613137d726 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1285,6 +1285,9 @@ static struct page *saveable_page(struct zone
-*zone, unsigned long pfn)
-        if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
-                return NULL;
+> So only HW TSC counts
 
-+       if (is_zone_device_page(page))
-+               return NULL;
-+
-        if (PageReserved(page)
-            && (!kernel_page_present(page) || pfn_is_nosave(pfn)))
-                return NULL;
+makes sense.
+
+>, and used as offset against vcpu's tsc_timestamp.
+>
+
+Why don't you just expose CLOCK_MONTONIC_RAW or CLOCK_MONOTONIC_RAW
+plus suspend time, though?  Then you would actually be tracking a real
+kernel timekeeping mode, and you wouldn't need all this complicated
+offsetting work to avoid accidentally going backwards.
