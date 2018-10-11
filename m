@@ -3,49 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF22C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06121C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29062147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C155E21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtmcGXBi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E29062147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg9oizDC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C155E21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732261AbeJKXQ5 (ORCPT
+        id S1732275AbeJKXRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50950 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731003AbeJKXQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:56 -0400
+        id S1731654AbeJKXQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:59 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A63C221470;
-        Thu, 11 Oct 2018 15:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D68D21470;
+        Thu, 11 Oct 2018 15:49:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272950;
-        bh=HV1hZ2r/mWIWU81FdrIAsHY3xnAWd5gbYV/h3vIDOiU=;
+        s=default; t=1539272953;
+        bh=w4USIVj4yFPuT9efkULQOV1Uj+cMAUKat8XGb/CKTlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VtmcGXBi4yInMMukXETKPa0CYUL/Z+ACBXwzDrTJTOfcIdEMa3MmIOFmaA7z2RjVF
-         xA1kEFuGfOnKG0PA7QE/WzvX9fCNGohfgOPAcfbTmNpHTRR87UCqGL6amcnrVe0mfd
-         COYRmFTybLSOAw4N9v9Fw/L8g3jzc38LqInfnw0c=
+        b=Mg9oizDCLsYdZnfZ9kZX0flSI1rISPg5Izc6T9ENdHOjp00E2jXDYOmNELyPryDp9
+         io4iwr/4Iw+uhl3XRfdq37FaKUexv28DtpTLtTl4oOcP+SBXgD8cxcoe8yu7rBn/wz
+         AK4VrW7b/5KCp2I3VdgP/kWW957hdXXbP94BpPP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.18 44/44] ath10k: fix scan crash due to incorrect length calculation
-Date:   Thu, 11 Oct 2018 17:40:22 +0200
-Message-Id: <20181011152454.402874339@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 36/44] powerpc: Avoid code patching freed init sections
+Date:   Thu, 11 Oct 2018 17:40:14 +0200
+Message-Id: <20181011152454.025915380@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -63,61 +64,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhi Chen <zhichen@codeaurora.org>
+From: Michael Neuling <mikey@neuling.org>
 
-commit c8291988806407e02a01b4b15b4504eafbcc04e0 upstream.
+commit 51c3c62b58b357e8d35e4cc32f7b4ec907426fe3 upstream.
 
-Length of WMI scan message was not calculated correctly. The allocated
-buffer was smaller than what we expected. So WMI message corrupted
-skb_info, which is at the end of skb->data. This fix takes TLV header
-into account even if the element is zero-length.
+This stops us from doing code patching in init sections after they've
+been freed.
 
-Crash log:
-  [49.629986] Unhandled kernel unaligned access[#1]:
-  [49.634932] CPU: 0 PID: 1176 Comm: logd Not tainted 4.4.60 #180
-  [49.641040] task: 83051460 ti: 8329c000 task.ti: 8329c000
-  [49.646608] $ 0   : 00000000 00000001 80984a80 00000000
-  [49.652038] $ 4   : 45259e89 8046d484 8046df30 8024ba70
-  [49.657468] $ 8   : 00000000 804cc4c0 00000001 20306320
-  [49.662898] $12   : 33322037 000110f2 00000000 31203930
-  [49.668327] $16   : 82792b40 80984a80 00000001 804207fc
-  [49.673757] $20   : 00000000 0000012c 00000040 80470000
-  [49.679186] $24   : 00000000 8024af7c
-  [49.684617] $28   : 8329c000 8329db88 00000001 802c58d0
-  [49.690046] Hi    : 00000000
-  [49.693022] Lo    : 453c0000
-  [49.696013] epc   : 800efae4 put_page+0x0/0x58
-  [49.700615] ra    : 802c58d0 skb_release_data+0x148/0x1d4
-  [49.706184] Status: 1000fc03 KERNEL EXL IE
-  [49.710531] Cause : 00800010 (ExcCode 04)
-  [49.714669] BadVA : 45259e89
-  [49.717644] PrId  : 00019374 (MIPS 24Kc)
+In this chain:
+  kvm_guest_init() ->
+    kvm_use_magic_page() ->
+      fault_in_pages_readable() ->
+	 __get_user() ->
+	   __get_user_nocheck() ->
+	     barrier_nospec();
 
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Brian Norris <briannorris@chromium.org>
+We have a code patching location at barrier_nospec() and
+kvm_guest_init() is an init function. This whole chain gets inlined,
+so when we free the init section (hence kvm_guest_init()), this code
+goes away and hence should no longer be patched.
+
+We seen this as userspace memory corruption when using a memory
+checker while doing partition migration testing on powervm (this
+starts the code patching post migration via
+/sys/kernel/mobility/migration). In theory, it could also happen when
+using /sys/kernel/debug/powerpc/barrier_nospec.
+
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/include/asm/setup.h |    1 +
+ arch/powerpc/lib/code-patching.c |    6 ++++++
+ arch/powerpc/mm/mem.c            |    2 ++
+ 3 files changed, 9 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -1619,10 +1619,10 @@ ath10k_wmi_tlv_op_gen_start_scan(struct
- 	bssid_len = arg->n_bssids * sizeof(struct wmi_mac_addr);
- 	ie_len = roundup(arg->ie_len, 4);
- 	len = (sizeof(*tlv) + sizeof(*cmd)) +
--	      (arg->n_channels ? sizeof(*tlv) + chan_len : 0) +
--	      (arg->n_ssids ? sizeof(*tlv) + ssid_len : 0) +
--	      (arg->n_bssids ? sizeof(*tlv) + bssid_len : 0) +
--	      (arg->ie_len ? sizeof(*tlv) + ie_len : 0);
-+	      sizeof(*tlv) + chan_len +
-+	      sizeof(*tlv) + ssid_len +
-+	      sizeof(*tlv) + bssid_len +
-+	      sizeof(*tlv) + ie_len;
+--- a/arch/powerpc/include/asm/setup.h
++++ b/arch/powerpc/include/asm/setup.h
+@@ -9,6 +9,7 @@ extern void ppc_printk_progress(char *s,
  
- 	skb = ath10k_wmi_alloc_skb(ar, len);
- 	if (!skb)
+ extern unsigned int rtas_data;
+ extern unsigned long long memory_limit;
++extern bool init_mem_is_free;
+ extern unsigned long klimit;
+ extern void *zalloc_maybe_bootmem(size_t size, gfp_t mask);
+ 
+--- a/arch/powerpc/lib/code-patching.c
++++ b/arch/powerpc/lib/code-patching.c
+@@ -28,6 +28,12 @@ static int __patch_instruction(unsigned
+ {
+ 	int err;
+ 
++	/* Make sure we aren't patching a freed init section */
++	if (init_mem_is_free && init_section_contains(exec_addr, 4)) {
++		pr_debug("Skipping init section patching addr: 0x%px\n", exec_addr);
++		return 0;
++	}
++
+ 	__put_user_size(instr, patch_addr, 4, err);
+ 	if (err)
+ 		return err;
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -63,6 +63,7 @@
+ #endif
+ 
+ unsigned long long memory_limit;
++bool init_mem_is_free;
+ 
+ #ifdef CONFIG_HIGHMEM
+ pte_t *kmap_pte;
+@@ -396,6 +397,7 @@ void free_initmem(void)
+ {
+ 	ppc_md.progress = ppc_printk_progress;
+ 	mark_initmem_nx();
++	init_mem_is_free = true;
+ 	free_initmem_default(POISON_FREE_INITMEM);
+ }
+ 
 
 
