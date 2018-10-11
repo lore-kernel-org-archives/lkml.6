@@ -2,98 +2,117 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E636BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104EEC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A77542087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:40:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jixjxk9W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A77542087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D2A852087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:40:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A852087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeJKQGi (ORCPT
+        id S1728305AbeJKQG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:06:38 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37751 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKQGh (ORCPT
+        Thu, 11 Oct 2018 12:06:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34371 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeJKQG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:06:37 -0400
-Received: by mail-io1-f67.google.com with SMTP id m16-v6so5990342ioj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FcykFZeYZ4ioCagMTiF+1qbXALsjWce15a48uHVgIj4=;
-        b=jixjxk9WbGaeV0jr0UCG10wvkNQfkk60g9HJhCpbY8k426cDE7BXRlt1yD2r6DbYPa
-         ghUZvTfCq08RwkQKvF3CApZ8CXiBJbCswJRHCkNTh8wkRajlmRSVQ9CmUkPHOEQCiy+b
-         LHCvXOlZqDCBgkZczTCu0fMzPZ3ja5jh+XjqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FcykFZeYZ4ioCagMTiF+1qbXALsjWce15a48uHVgIj4=;
-        b=GBN9pmrOUj5AS+gdgJM7l/kNa8Ki/MD7Dyxm74ZCwejmefRyLbZ410Poju99ITmf2c
-         z5MMdeBoZv0qtdCVPDElrj8BtowA2p50bdVUGx3d7YKgzPmXxAwluP5zoNTJN0SjK4QM
-         wK7PjvNyJ8u+cdoq5jey3g9qZpG7NoFGZZ3w1ICC5NFz3RCKd+lHRJ4AL1RdOOfYH6bC
-         wmTBVOujBdVpNT9YeI9/rgB09vRMOor9ngT/7YkcmHOTNbCccmG9fX5QvVlk/lfFiVng
-         RX/C+YLGJ6m/RVhwwBQRadBu0GQ9UtEVuamtvWAkNTwu8qtWzEbUT/C5y9PnNWZNJQEk
-         WFLA==
-X-Gm-Message-State: ABuFfohel3KU2ZKBrtAgpPbH+nUMaACeAHeqrGR9Bj9Xeomviugy+14M
-        i+ApctBg97p3cGRuSv2qEIFnuzzLuNswcF8BhNZBI8bk
-X-Google-Smtp-Source: ACcGV63nIeSePohS58Y7yneEWg3WiLy6brB4eUPvNZfKenk5pQuomFJ4pilrrZ5/+uWKjuiELTBmzxt5UImgUWlKdPc=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr418921iof.304.1539247221368;
- Thu, 11 Oct 2018 01:40:21 -0700 (PDT)
+        Thu, 11 Oct 2018 12:06:56 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9B8dpdk1824100
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 11 Oct 2018 01:39:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9B8doAV1824097;
+        Thu, 11 Oct 2018 01:39:50 -0700
+Date:   Thu, 11 Oct 2018 01:39:50 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for John Garry <tipbot@zytor.com>
+Message-ID: <tip-7b6abce7e1e69b6d8dc5d40a8cb9ddaeb400427c@git.kernel.org>
+Cc:     john.garry@huawei.com, mingo@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org, john.garry@huawei.com, mingo@kernel.org
+In-Reply-To: <1539183392-239389-1-git-send-email-john.garry@huawei.com>
+References: <1539183392-239389-1-git-send-email-john.garry@huawei.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/completions/Documentation: Fix a couple of
+ punctuation nits
+Git-Commit-ID: 7b6abce7e1e69b6d8dc5d40a8cb9ddaeb400427c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181010151313.GA16854@embeddedor.com>
-In-Reply-To: <20181010151313.GA16854@embeddedor.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 11 Oct 2018 10:40:08 +0200
-Message-ID: <CACRpkda8Fo6ubO9XuDXC9tcLWPNp_6TMf6-g9DUxdU6JXa0Veg@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: madera: Fix uninitialized variable bug in madera_mux_set_mux
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 5:13 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+Commit-ID:  7b6abce7e1e69b6d8dc5d40a8cb9ddaeb400427c
+Gitweb:     https://git.kernel.org/tip/7b6abce7e1e69b6d8dc5d40a8cb9ddaeb400427c
+Author:     John Garry <john.garry@huawei.com>
+AuthorDate: Wed, 10 Oct 2018 22:56:32 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 11 Oct 2018 10:36:22 +0200
 
-> There is a potential execution path in which variable *ret* is checked
-> in an IF statement, and then its value is used to report an error at
-> line 659 without being properly initialized previously:
->
-> 659 if (ret)
-> 660     dev_err(priv->dev, "Failed to write to 0x%x (%d)\n", reg, ret);
->
-> Fix this by initializing variable *ret* to 0 in order to
-> avoid unpredictable or unintended results.
->
-> Addresses-Coverity-ID: 1471969 ("Uninitialized scalar variable")
-> Fixes: 218d72a77b0b ("pinctrl: madera: Add driver for Cirrus Logic Madera codecs")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->  - Initialize variable ret to 0 instead of -1. Thanks to Charles Keepax
->    for pointing this out.
->  - Update subject and commit log.
+sched/completions/Documentation: Fix a couple of punctuation nits
 
-Patch applied with Charles' ACK.
+This patch fixes a couple of punctuation nits which can make the document
+more correct and readable.
 
-Yours,
-Linus Walleij
+Also missing "()" are added to some function references for consistency.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org
+Link: http://lkml.kernel.org/r/1539183392-239389-1-git-send-email-john.garry@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ Documentation/scheduler/completion.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/scheduler/completion.txt b/Documentation/scheduler/completion.txt
+index 656cf803c006..108bd0f264b3 100644
+--- a/Documentation/scheduler/completion.txt
++++ b/Documentation/scheduler/completion.txt
+@@ -116,7 +116,7 @@ A typical usage scenario is:
+ This is not implying any temporal order on wait_for_completion() and the
+ call to complete() - if the call to complete() happened before the call
+ to wait_for_completion() then the waiting side simply will continue
+-immediately as all dependencies are satisfied if not it will block until
++immediately as all dependencies are satisfied; if not, it will block until
+ completion is signaled by complete().
+ 
+ Note that wait_for_completion() is calling spin_lock_irq()/spin_unlock_irq(),
+@@ -131,7 +131,7 @@ wait_for_completion():
+ The default behavior is to wait without a timeout and to mark the task as
+ uninterruptible. wait_for_completion() and its variants are only safe
+ in process context (as they can sleep) but not in atomic context,
+-interrupt context, with disabled irqs. or preemption is disabled - see also
++interrupt context, with disabled irqs, or preemption is disabled - see also
+ try_wait_for_completion() below for handling completion in atomic/interrupt
+ context.
+ 
+@@ -224,7 +224,7 @@ queue spinlock. Any such concurrent calls to complete() or complete_all()
+ probably are a design bug.
+ 
+ Signaling completion from hard-irq context is fine as it will appropriately
+-lock with spin_lock_irqsave/spin_unlock_irqrestore and it will never sleep.
++lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never sleep.
+ 
+ 
+ try_wait_for_completion()/completion_done():
