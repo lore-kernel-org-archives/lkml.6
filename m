@@ -2,93 +2,172 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D814C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29AEC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28972213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B2121470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YGd6el7U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28972213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="abFnQ9wd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B2121470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeJKPwY (ORCPT
+        id S1728077AbeJKPwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:52:24 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45661 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbeJKPwY (ORCPT
+        Thu, 11 Oct 2018 11:52:46 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39051 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbeJKPwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:52:24 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q5-v6so8609890wrw.12
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:26:11 -0700 (PDT)
+        Thu, 11 Oct 2018 11:52:46 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y144-v6so8355985wmd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z3dsbi/Ugvl/xxSl6hRtCDRruBpNJG7wLYfh8aYSd2o=;
-        b=YGd6el7Uby8BBOH5u7PzwbR7Rz49VSLgryeiU1Ub/DfAmZ6e5YoDpiXR6+pLV86SV8
-         1l/RXk8eo7QkNY/Tb3LI0zb8HvFDlcGG7sgTKTMO9Td1BB//TsUUMk9gLsi5tuupYoQw
-         QcwoYC/Add9xAbmG4z2/47t43xubRvkR3uaEU=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5tMQcV7JhqAOKO4Vg2Zz+XBX0/jOvfaA0M2SA2F/5Nw=;
+        b=abFnQ9wdLbxho5Bej8Ds4foIv9s/xbSIQIZC8WrUTNZ7DFsFvTVtfVCJMFrC4Yechp
+         gH1wotX8BUfXNofJ8SfHKYSmOxEKhjbzVNngdeGjOU7fvGbjrMnj+5XY0xfxEeoK7Tsk
+         KQ6tIVzenJoqGC4EYBTZKVMar89/Wi+pR2nre6bQSCJvQZe6BR9Uqg9JjbuQX96XZKm9
+         CgzzK26LamURMdArMxuR1Um//Nq06nJmwKsECIJe1yzY22paFlqvw1/sPHXVzEZw8XIW
+         w0rGlG3BzvjxnKQD3zS6kv2rpzbf2L1dBEzrly4ZGquQv1vA2zy3+cbLYJWd3P4f4iez
+         Eldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z3dsbi/Ugvl/xxSl6hRtCDRruBpNJG7wLYfh8aYSd2o=;
-        b=BC2fLUkxWS0pokgCSjLR6UXkcDSUZ/JxO7qpehmrDDnifHb+4n6FH3KsfVBsyHBwaO
-         LDodw2c/GnG79JzqOP6aSwin1FMg68Q1uaL20wxBdA7SXziZisgW9tl8Qn3MVriOweEP
-         v0vYDnkxTw1+P56yIHF7h8thtMLMhxfyOqquZZ5J69niP75LHowwFU8dRuKWOPvFLFjb
-         Kx4mzaEajmsr/pNO8kyH9dtzzaPkrj6mOdwTt10mDOKsccq3yRq+MRidpWtOlB196AGk
-         F1V753awjfiuxucIU/GGvRuigl04RHu253BUnTCcnn8qwL4AMoVmUlM9PmXj8pcjapP9
-         7oSw==
-X-Gm-Message-State: ABuFfoiDBvs7DZHgDC6nju8afr2qVYssOu2LEFbtvEbYtP1suCOf+OUC
-        Q6usDFBRuFxpKmaWfSFg2a0tAi4TMw4=
-X-Google-Smtp-Source: ACcGV6138uOVyFe6hfIER4hbyFf4Ovyr7Tm6S1hezAL+0pLceCYgoV7QU3ryz2q7TJiV8qHmUp/vAg==
-X-Received: by 2002:adf:eec4:: with SMTP id a4-v6mr644518wrp.242.1539246370217;
-        Thu, 11 Oct 2018 01:26:10 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id z7-v6sm6840668wrg.52.2018.10.11.01.26.08
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5tMQcV7JhqAOKO4Vg2Zz+XBX0/jOvfaA0M2SA2F/5Nw=;
+        b=VZkmcqwuT7NXrP8+5RcWpQvcwJVjMSUPbviJltzjBvo2C4wya6Nx4u8izJwuU81GMd
+         io6FWPm2h6jBPkL5/Yvvyy5j4qae25BlhBUY9ZWDddxbRxlSobDxHh9kTyWmb9aLId1p
+         lX1o3ZFrDAE/FuakLzj8+erLdkUj4+U+Bl3WJKNGQ84LqWREleQFqUW2cQ5Gp4tBxOsv
+         ARTO49ueIVU9xVqqZEnzcuNYqrckgEjDrLl7yMbvBfuAjS0AwSrd/BQuj9ADPRHhviiu
+         4LnUinyMzK+rwuOGflp7kiaU03RL+8x5yFiCE8HBjESqXVX66bSuIphQCADruKm8osw4
+         x2QQ==
+X-Gm-Message-State: ABuFfoiIGGoUUxsyom1CQ6USKGd0MiKKk617a5HQfSmXchFYB4YrG3Uf
+        XKMFzF+PgfPSz6TJSlUWg7n8+A==
+X-Google-Smtp-Source: ACcGV60fThi1a480m+ZqgJ/eLtkJeXVtxoDEcamD7xuK+05LNYCkcMmtvV/fkwXYYZJ9QLftyP0eHg==
+X-Received: by 2002:a1c:1694:: with SMTP id 142-v6mr808488wmw.113.1539246392204;
+        Thu, 11 Oct 2018 01:26:32 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (mm-32-80-122-178.brest.dynamic.pppoe.byfly.by. [178.122.80.32])
+        by smtp.gmail.com with ESMTPSA id o126-v6sm18587608wmo.3.2018.10.11.01.26.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 01:26:09 -0700 (PDT)
-Subject: Re: [PATCH] media: venus: support VB2_USERPTR IO mode
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20181011064608.37435-1-acourbot@chromium.org>
- <CAPBb6MXXwCOP6w7WdAFXdbmBLWKFp9gVDUW=uE=UFGiq_jPakg@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <93410466-ae47-b3ef-98ed-7cfe24a91776@linaro.org>
-Date:   Thu, 11 Oct 2018 11:26:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 01:26:31 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id E56EB30002F; Thu, 11 Oct 2018 11:17:19 +0300 (+03)
+Date:   Thu, 11 Oct 2018 11:17:19 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@android.com, minchan@google.com, hughd@google.com,
+        lokeshgidra@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm: Speed up mremap on large regions
+Message-ID: <20181011081719.77f7ihcy6mu2vkkc@kshutemo-mobl1>
+References: <20181009201400.168705-1-joel@joelfernandes.org>
+ <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
+ <20181009230447.GA17911@joelaf.mtv.corp.google.com>
+ <20181010100011.6jqjvgeslrvvyhr3@kshutemo-mobl1>
+ <20181011004618.GA237677@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXXwCOP6w7WdAFXdbmBLWKFp9gVDUW=uE=UFGiq_jPakg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011004618.GA237677@joelaf.mtv.corp.google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Wed, Oct 10, 2018 at 05:46:18PM -0700, Joel Fernandes wrote:
+> On Wed, Oct 10, 2018 at 01:00:11PM +0300, Kirill A. Shutemov wrote:
+> > On Tue, Oct 09, 2018 at 04:04:47PM -0700, Joel Fernandes wrote:
+> > > On Wed, Oct 10, 2018 at 01:02:22AM +0300, Kirill A. Shutemov wrote:
+> > > > On Tue, Oct 09, 2018 at 01:14:00PM -0700, Joel Fernandes (Google) wrote:
+> > > > > Android needs to mremap large regions of memory during memory management
+> > > > > related operations. The mremap system call can be really slow if THP is
+> > > > > not enabled. The bottleneck is move_page_tables, which is copying each
+> > > > > pte at a time, and can be really slow across a large map. Turning on THP
+> > > > > may not be a viable option, and is not for us. This patch speeds up the
+> > > > > performance for non-THP system by copying at the PMD level when possible.
+> > > > > 
+> > > > > The speed up is three orders of magnitude. On a 1GB mremap, the mremap
+> > > > > completion times drops from 160-250 millesconds to 380-400 microseconds.
+> > > > > 
+> > > > > Before:
+> > > > > Total mremap time for 1GB data: 242321014 nanoseconds.
+> > > > > Total mremap time for 1GB data: 196842467 nanoseconds.
+> > > > > Total mremap time for 1GB data: 167051162 nanoseconds.
+> > > > > 
+> > > > > After:
+> > > > > Total mremap time for 1GB data: 385781 nanoseconds.
+> > > > > Total mremap time for 1GB data: 388959 nanoseconds.
+> > > > > Total mremap time for 1GB data: 402813 nanoseconds.
+> > > > > 
+> > > > > Incase THP is enabled, the optimization is skipped. I also flush the
+> > > > > tlb every time we do this optimization since I couldn't find a way to
+> > > > > determine if the low-level PTEs are dirty. It is seen that the cost of
+> > > > > doing so is not much compared the improvement, on both x86-64 and arm64.
+> > > > 
+> > > > Okay. That's interesting.
+> > > > 
+> > > > It makes me wounder why do we pass virtual address to pte_alloc() (and
+> > > > pte_alloc_one() inside).
+> > > > 
+> > > > If an arch has real requirement to tight a page table to a virtual address
+> > > > than the optimization cannot be used as it is. Per-arch should be fine
+> > > > for this case, I guess.
+> > > > 
+> > > > If nobody uses the address we should just drop the argument as a
+> > > > preparation to the patch.
+> > > 
+> > > I couldn't find any use of the address. But I am wondering why you feel
+> > > passing the address is something that can't be done with the optimization.
+> > > The pte_alloc only happens if the optimization is not triggered.
+> > 
+> > Yes, I now.
+> > 
+> > My worry is that some architecture has to allocate page table differently
+> > depending on virtual address (due to aliasing or something). Original page
+> > table was allocated for one virtual address and moving the page table to
+> > different spot in virtual address space may break the invariant.
+> > 
+> > > Also the clean up of the argument that you're proposing is a bit out of scope
+> > > of this patch but yeah we could clean it up in a separate patch if needed. I
+> > > don't feel too strongly about that. It seems cosmetic and in the future if
+> > > the address that's passed in is needed, then the architecture can use it.
+> > 
+> > Please, do. This should be pretty mechanical change, but it will help to
+> > make sure that none of obscure architecture will be broken by the change.
+> > 
+> 
+> The thing is its quite a lot of change, I wrote a coccinelle script to do it
+> tree wide, following is the diffstat:
+>  48 files changed, 91 insertions(+), 124 deletions(-)
+> 
+> Imagine then having to add the address argument back in the future in case
+> its ever needed. Is it really worth doing it?
 
-On 10/11/2018 09:50 AM, Alexandre Courbot wrote:
-> Please ignore this patch - I did not notice that a similar one has
-> been sent before. 
+This is the point. It will get us chance to consider if the optimization
+is still safe.
 
-The difference is that you made it for decoder as well. Do you need
-userptr for decoder?
+And it shouldn't be hard: [partially] revert the commit and get the address
+back into the interface.
 
+> First script : Remove the address argument from pte_alloc and friends:
+
+...
+
+Please add __pte_alloc(), __pte_alloc_kernel() and pte_alloc() to the
+list for patching.
 
 -- 
-regards,
-Stan
+ Kirill A. Shutemov
