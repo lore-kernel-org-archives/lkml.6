@@ -2,148 +2,179 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D30C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649D1C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 199272087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199272087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 311212085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311212085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbeJKQYu (ORCPT
+        id S1728279AbeJKQZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:24:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54649 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbeJKQYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:24:49 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1868C309174F;
-        Thu, 11 Oct 2018 08:58:29 +0000 (UTC)
-Received: from [10.36.118.43] (unknown [10.36.118.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EEFD27BCA;
-        Thu, 11 Oct 2018 08:58:26 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the kvm-ppc tree with the kvm-arm
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20181010132224.3bee4dfd@canb.auug.org.au>
- <20181011130623.59a160f5@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <044aa41c-d42d-0bab-b9e8-0a14f018e084@redhat.com>
-Date:   Thu, 11 Oct 2018 10:58:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181011130623.59a160f5@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 11 Oct 2018 08:58:29 +0000 (UTC)
+        Thu, 11 Oct 2018 12:25:10 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:45855 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbeJKQZK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:25:10 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MpD39-1fKB061WgR-00qiOw; Thu, 11 Oct 2018 10:58:37 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MpD39-1fKB061WgR-00qiOw; Thu, 11 Oct 2018 10:58:37 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Kumar Sanghvi <kumaras@chelsio.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        Casey Leedom <leedom@chelsio.com>,
+        Arjun Vynipadath <arjun@chelsio.com>,
+        Atul Gupta <atul.gupta@chelsio.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] cxgb4: fix thermal configuration dependencies
+Date:   Thu, 11 Oct 2018 10:57:57 +0200
+Message-Id: <20181011085835.2567446-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:iSkPomLYnvkhpqZJ3IXRNKLcq2sBTzcW8bNdNjoORvg+tymxATu
+ eGAo6UCvL+XRQNmDhhqdcWz53EZkTrYoeNQMbY5FN1WnAK6x45H8XJWPC9WU9kFiQNAV8Vl
+ V13IMUFr1M1/SUty2mUW3P3ifVtme7ZV9zGVh3cxWdhCAf0DeSgBBZQLXvLsYmaIT3Wy6/O
+ AvctUHraiwSLagz/rofrQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ge6PJOvOkL0=:FaI4jXAc2U/oSWxt0FI6Cx
+ rQOYK3fl8Np8G9HQoBUJGRLVOOlbAZ6TOQlRhhDzxrqf1jzWNxxSmTTl0HYixwX+sgiSNfK4t
+ Nb9kGKbl/9Fr782Y/WrbbG3rLkUQXpRP7gwhlhrFhk4oqdEN869Chxd+1ugK/NvwDCcjY5Gy5
+ G0cb6S1kWuBx1SWmVUJUSjNrCB5xkWjcApwlTUMDab6vCy88K9c/m6j/kpkwNVYlx+/9HopIL
+ OZg9bVsQsu/1C+jxyA/rwRtPrb9tBbikR62x3yzTQXmlWcDLWBEPNQQknqD9pxOxxNrVV0Z70
+ 6HhO2Yqg6n++3YggaX9aUxECxLCYKsEDJA/WFJGC7WlmlG27aUhY6LHy/g3UOlHYAWe9gkoQY
+ Qvm+H9QLzwoJzS+opAr6sB46mZSGMWb4aaL0Dgge7u47ltVh9nkRAFmXZK2wtA/Pzl5a6KH+/
+ 5eoufPopKL+ZqwtkOkZVUuhI8rNJ3ytnbTjsM20o88FoI/ouH1VbbQdbloNpkG9+p/d4ZuNgb
+ wJRIt9m/qo22/OsE56zNVWVfoWdRaSwKBmnD9/mSfTTuuvfel8GruXeYiB2UbjNgol0QIRJ+A
+ 2jMIEhlqvrNWBWrKUAo+gRmWp148M8oxECT8t9r8loqsQ/6sfWo5KJwYq4Wcvi3Ls3XQ54xG5
+ 6b5+ZHwc2KxIHjycDcHOrZ+eVqGmKNx4eQJB5AlP7epAJkcsZVVCk72m/cPYfOQ4E4Zk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 04:06, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 10 Oct 2018 13:22:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the kvm-ppc tree got a conflict in:
->>
->>   include/uapi/linux/kvm.h
->>
->> between commit:
->>
->>   233a7cb23531 ("kvm: arm64: Allow tuning the physical address size for VM")
->>
->> from the kvm-arm tree and commit:
->>
->>   aa069a996951 ("KVM: PPC: Book3S HV: Add a VM capability to enable nested virtualization")
->>
->> from the kvm-ppc tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>
->> -- 
->> Cheers,
->> Stephen Rothwell
->>
->> diff --cc include/uapi/linux/kvm.h
->> index 95aa73ca65dc,7f2ff3a76995..000000000000
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@@ -962,7 -954,7 +963,8 @@@ struct kvm_ppc_resize_hpt 
->>   #define KVM_CAP_NESTED_STATE 157
->>   #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
->>   #define KVM_CAP_MSR_PLATFORM_INFO 159
->>  -#define KVM_CAP_PPC_NESTED_HV 160
->>  +#define KVM_CAP_ARM_VM_IPA_SIZE 160 /* returns maximum IPA bits for a VM */
->> ++#define KVM_CAP_PPC_NESTED_HV 161
->>   
->>   #ifdef KVM_CAP_IRQ_ROUTING
->>   
-> 
-> This is now a conflict between the kvm tree and the kvm-arm tree.
+With CONFIG_THERMAL=m, we get a build error:
 
-Indeed, and ARM will be bumped to 161 (whoever comes first to the kvm
-tree wins).
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c: In function 'cxgb4_thermal_get_trip_type':
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c:48:11: error: 'struct adapter' has no member named 'ch_thermal'
 
-Paolo
+Once that is fixed by using IS_ENABLED() checks, we get a link error
+against the thermal subsystem when cxgb4 is built-in:
+
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_init':
+cxgb4_thermal.c:(.text+0x180): undefined reference to `thermal_zone_device_register'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_remove':
+cxgb4_thermal.c:(.text+0x1e0): undefined reference to `thermal_zone_device_unregister'
+
+Finally, since CONFIG_THERMAL can be =m, the Makefile fails to pick up the
+extra file into built-in.a, and we get another link failure against the
+cxgb4_thermal_init/cxgb4_thermal_remove files, so the Makefile has to
+be adapted as well to work for both CONFIG_THERMAL=y and =m.
+
+Fixes: b18719157762 ("cxgb4: Add thermal zone support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/chelsio/Kconfig            |  1 +
+ drivers/net/ethernet/chelsio/cxgb4/Makefile     |  4 +++-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h      |  6 ++----
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 10 ++++------
+ 4 files changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/Kconfig b/drivers/net/ethernet/chelsio/Kconfig
+index e2cdfa75673f..75c1c5ed2387 100644
+--- a/drivers/net/ethernet/chelsio/Kconfig
++++ b/drivers/net/ethernet/chelsio/Kconfig
+@@ -67,6 +67,7 @@ config CHELSIO_T3
+ config CHELSIO_T4
+ 	tristate "Chelsio Communications T4/T5/T6 Ethernet support"
+ 	depends on PCI && (IPV6 || IPV6=n)
++	depends on THERMAL || !THERMAL
+ 	select FW_LOADER
+ 	select MDIO
+ 	select ZLIB_DEFLATE
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/Makefile b/drivers/net/ethernet/chelsio/cxgb4/Makefile
+index 91d8a885deba..78e5d17a1d5f 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/Makefile
++++ b/drivers/net/ethernet/chelsio/cxgb4/Makefile
+@@ -12,4 +12,6 @@ cxgb4-objs := cxgb4_main.o l2t.o smt.o t4_hw.o sge.o clip_tbl.o cxgb4_ethtool.o
+ cxgb4-$(CONFIG_CHELSIO_T4_DCB) +=  cxgb4_dcb.o
+ cxgb4-$(CONFIG_CHELSIO_T4_FCOE) +=  cxgb4_fcoe.o
+ cxgb4-$(CONFIG_DEBUG_FS) += cxgb4_debugfs.o
+-cxgb4-$(CONFIG_THERMAL) += cxgb4_thermal.o
++ifdef CONFIG_THERMAL
++cxgb4-objs += cxgb4_thermal.o
++endif
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+index 95909f0686b1..b16f4b3ef4c5 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+@@ -891,7 +891,7 @@ struct mps_encap_entry {
+ 	atomic_t refcnt;
+ };
+ 
+-#ifdef CONFIG_THERMAL
++#if IS_ENABLED(CONFIG_THERMAL)
+ struct ch_thermal {
+ 	struct thermal_zone_device *tzdev;
+ 	int trip_temp;
+@@ -1017,7 +1017,7 @@ struct adapter {
+ 
+ 	/* Dump buffer for collecting logs in kdump kernel */
+ 	struct vmcoredd_data vmcoredd;
+-#ifdef CONFIG_THERMAL
++#if IS_ENABLED(CONFIG_THERMAL)
+ 	struct ch_thermal ch_thermal;
+ #endif
+ };
+@@ -1875,9 +1875,7 @@ int t4_set_vlan_acl(struct adapter *adap, unsigned int mbox, unsigned int vf,
+ 		    u16 vlan);
+ int cxgb4_dcb_enabled(const struct net_device *dev);
+ 
+-#ifdef CONFIG_THERMAL
+ int cxgb4_thermal_init(struct adapter *adap);
+ int cxgb4_thermal_remove(struct adapter *adap);
+-#endif /* CONFIG_THERMAL */
+ 
+ #endif /* __CXGB4_H__ */
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 309f8c2226a5..05a46926016a 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -5863,10 +5863,9 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (!is_t4(adapter->params.chip))
+ 		cxgb4_ptp_init(adapter);
+ 
+-#ifdef CONFIG_THERMAL
+-	if (!is_t4(adapter->params.chip) && (adapter->flags & FW_OK))
++	if (IS_ENABLED(CONFIG_THERMAL) &&
++	    !is_t4(adapter->params.chip) && (adapter->flags & FW_OK))
+ 		cxgb4_thermal_init(adapter);
+-#endif /* CONFIG_THERMAL */
+ 
+ 	print_adapter_info(adapter);
+ 	return 0;
+@@ -5933,9 +5932,8 @@ static void remove_one(struct pci_dev *pdev)
+ 
+ 		if (!is_t4(adapter->params.chip))
+ 			cxgb4_ptp_stop(adapter);
+-#ifdef CONFIG_THERMAL
+-		cxgb4_thermal_remove(adapter);
+-#endif
++		if (IS_ENABLED(CONFIG_THERMAL))
++			cxgb4_thermal_remove(adapter);
+ 
+ 		/* If we allocated filters, free up state associated with any
+ 		 * valid filters ...
+-- 
+2.18.0
+
