@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55804C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE517C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D62021470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E4E21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v314nLDt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D62021470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2o+eWmy2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E4E21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeJKXIK (ORCPT
+        id S1730210AbeJKXIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38342 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:09 -0400
+        id S1726647AbeJKXIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39E2020652;
-        Thu, 11 Oct 2018 15:40:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 238C821477;
+        Thu, 11 Oct 2018 15:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272425;
-        bh=GzDOQD49z4Jn1BMlTWl1l9Si2YwvOciw7ev0k4aUrzY=;
+        s=default; t=1539272428;
+        bh=AgYX2MRRk1VBpjCb5DLIEm+2l+BTBSjbdjB5jTf9FWM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v314nLDtc0lp2kccleGtgbZcvluAjN6v6mnPAK7HMjCstdCDUo8C2YO1JrRZ2ifL6
-         /d/fe+uA1RE/oX99zJzTihYDVZ/wfsC6plekUSMpRuIL17N8Pne2kt0VWVqbFXXY87
-         qTXo3WOzPS/MQJkGov2mjK3gwi6beUGt38bBVjJI=
+        b=2o+eWmy2lFJy99f+CbWYKOr5FGeqTMPU20/WsCBvSMeoaYm469GpsfTrupKI7NIeN
+         7wmAdVC0ldWQntPEYq2e+hYbR8vCPkMyITDdWkPdlKoB+fLl6xGL6jX5zHacQktwZN
+         kZwYqy81PAuwzlrvkaNua7Lo+H/Uo2AkONygiZRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 3.18 103/120] x86/vdso: Fix vDSO syscall fallback asm constraint regression
-Date:   Thu, 11 Oct 2018 17:34:44 +0200
-Message-Id: <20181011152554.038874365@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 067/120] e1000: ensure to free old tx/rx rings in set_ringparam()
+Date:   Thu, 11 Oct 2018 17:34:08 +0200
+Message-Id: <20181011152552.570061648@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,60 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit 02e425668f5c9deb42787d10001a3b605993ad15 upstream.
+[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
 
-When I added the missing memory outputs, I failed to update the
-index of the first argument (ebx) on 32-bit builds, which broke the
-fallbacks.  Somehow I must have screwed up my testing or gotten
-lucky.
+In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new value
+and the old tx/rx rings are freed only when the device is up. There are resource
+leaks on old tx/rx rings when the device is not up. This bug is reported by COD,
+a tool for testing kernel module binaries I am building.
 
-Add another test to cover gettimeofday() as well.
+This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
+'e1000_set_ringparam()'.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: 715bd9d12f84 ("x86/vdso: Fix asm constraints on vDSO syscall fallbacks")
-Link: http://lkml.kernel.org/r/21bd45ab04b6d838278fa5bebfa9163eceffa13c.1538608971.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/vdso/vclock_gettime.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/vdso/vclock_gettime.c
-+++ b/arch/x86/vdso/vclock_gettime.c
-@@ -140,11 +140,11 @@ notrace static long vdso_fallback_gettim
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -646,14 +646,14 @@ static int e1000_set_ringparam(struct ne
+ 		adapter->tx_ring = tx_old;
+ 		e1000_free_all_rx_resources(adapter);
+ 		e1000_free_all_tx_resources(adapter);
+-		kfree(tx_old);
+-		kfree(rx_old);
+ 		adapter->rx_ring = rxdr;
+ 		adapter->tx_ring = txdr;
+ 		err = e1000_up(adapter);
+ 		if (err)
+ 			goto err_setup;
+ 	}
++	kfree(tx_old);
++	kfree(rx_old);
  
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[clock], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*ts)
--		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
-+		: "0" (__NR_clock_gettime), [clock] "g" (clock), "c" (ts)
- 		: "memory", "edx");
- 	return ret;
- }
-@@ -155,11 +155,11 @@ notrace static long vdso_fallback_gtod(s
- 
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[tv], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*tv), "=m" (*tz)
--		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
-+		: "0" (__NR_gettimeofday), [tv] "g" (tv), "c" (tz)
- 		: "memory", "edx");
- 	return ret;
- }
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return 0;
 
 
