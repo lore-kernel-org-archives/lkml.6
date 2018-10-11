@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B2C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097D9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22DF2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABAC1213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZerEjKho"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22DF2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5oesu9g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAC1213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbeJKXKR (ORCPT
+        id S1730742AbeJKXKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:10:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:10:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:10:16 -0400
+        id S1726700AbeJKXKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:10:19 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F96C21470;
-        Thu, 11 Oct 2018 15:42:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BA620652;
+        Thu, 11 Oct 2018 15:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272552;
-        bh=PSV9yQiptYN0SIAxtm17WU533KGUpCCvwpRWVtH8w/g=;
+        s=default; t=1539272555;
+        bh=Xs1jnEjH2UJRwqM0UWL+SP1bGdcBy4qxPuzUsyytnPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZerEjKhoGhMo588pWStmKezP7jdRG6k4VUon9JFtA04IQBrZ50McjbY4VCE1+GeHO
-         Ht7BD+Q6VJD1uuPyL/Dn0n7QQIrTrYTLvwyWXL3ZW8fkR1ZmztBeVqLb7tQhHFnI+2
-         uFyi+YM1jjYujFQDYkX6WjeNFSxKngEtp6yj4M/o=
+        b=k5oesu9gT5Svm+woj0NrlGKIHKfTLhZyuWa6HbE2WJpnztFaT8LnAQkHnqKElZ7NG
+         fvpX0+SIuCqzbZuf7uX9B/O5LQHVMoVZGdLBkkLoVy0J+trqD70Qr/v+8V3OrF/Fv4
+         4I5pLAN+VlEsyIa/7rZOy6y5gwXAcmMIpJLIizbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 04/27] x86/vdso: Fix vDSO syscall fallback asm constraint regression
-Date:   Thu, 11 Oct 2018 17:34:51 +0200
-Message-Id: <20181011152534.225856328@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Wu <peter@lekensteyn.nl>
+Subject: [PATCH 4.4 05/27] PCI: Reprogram bridge prefetch registers on resume
+Date:   Thu, 11 Oct 2018 17:34:52 +0200
+Message-Id: <20181011152534.273102382@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
@@ -65,60 +64,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Daniel Drake <drake@endlessm.com>
 
-commit 02e425668f5c9deb42787d10001a3b605993ad15 upstream.
+commit 083874549fdfefa629dfa752785e20427dde1511 upstream.
 
-When I added the missing memory outputs, I failed to update the
-index of the first argument (ebx) on 32-bit builds, which broke the
-fallbacks.  Somehow I must have screwed up my testing or gotten
-lucky.
+On 38+ Intel-based ASUS products, the NVIDIA GPU becomes unusable after S3
+suspend/resume.  The affected products include multiple generations of
+NVIDIA GPUs and Intel SoCs.  After resume, nouveau logs many errors such
+as:
 
-Add another test to cover gettimeofday() as well.
+  fifo: fault 00 [READ] at 0000005555555000 engine 00 [GR] client 04
+        [HUB/FE] reason 4a [] on channel -1 [007fa91000 unknown]
+  DRM: failed to idle channel 0 [DRM]
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: 715bd9d12f84 ("x86/vdso: Fix asm constraints on vDSO syscall fallbacks")
-Link: http://lkml.kernel.org/r/21bd45ab04b6d838278fa5bebfa9163eceffa13c.1538608971.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Similarly, the NVIDIA proprietary driver also fails after resume (black
+screen, 100% CPU usage in Xorg process).  We shipped a sample to NVIDIA for
+diagnosis, and their response indicated that it's a problem with the parent
+PCI bridge (on the Intel SoC), not the GPU.
+
+Runtime suspend/resume works fine, only S3 suspend is affected.
+
+We found a workaround: on resume, rewrite the Intel PCI bridge
+'Prefetchable Base Upper 32 Bits' register (PCI_PREF_BASE_UPPER32).  In the
+cases that I checked, this register has value 0 and we just have to rewrite
+that value.
+
+Linux already saves and restores PCI config space during suspend/resume,
+but this register was being skipped because upon resume, it already has
+value 0 (the correct, pre-suspend value).
+
+Intel appear to have previously acknowledged this behaviour and the
+requirement to rewrite this register:
+https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23
+
+Based on that, rewrite the prefetch register values even when that appears
+unnecessary.
+
+We have confirmed this solution on all the affected models we have in-hands
+(X542UQ, UX533FD, X530UN, V272UN).
+
+Additionally, this solves an issue where r8169 MSI-X interrupts were broken
+after S3 suspend/resume on ASUS X441UAR.  This issue was recently worked
+around in commit 7bb05b85bc2d ("r8169: don't use MSI-X on RTL8106e").  It
+also fixes the same issue on RTL6186evl/8111evl on an Aimfor-tech laptop
+that we had not yet patched.  I suspect it will also fix the issue that was
+worked around in commit 7c53a722459c ("r8169: don't use MSI-X on
+RTL8168g").
+
+Thomas Martitz reports that this change also solves an issue where the AMD
+Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive after S3
+suspend/resume.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-By: Peter Wu <peter@lekensteyn.nl>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/vdso/vclock_gettime.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/pci.c |   27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -147,11 +147,11 @@ notrace static long vdso_fallback_gettim
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1064,12 +1064,12 @@ int pci_save_state(struct pci_dev *dev)
+ EXPORT_SYMBOL(pci_save_state);
  
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[clock], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*ts)
--		: "0" (__NR_clock_gettime), "g" (clock), "c" (ts)
-+		: "0" (__NR_clock_gettime), [clock] "g" (clock), "c" (ts)
- 		: "memory", "edx");
- 	return ret;
- }
-@@ -162,11 +162,11 @@ notrace static long vdso_fallback_gtod(s
+ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
+-				     u32 saved_val, int retry)
++				     u32 saved_val, int retry, bool force)
+ {
+ 	u32 val;
  
- 	asm (
- 		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
-+		"mov %[tv], %%ebx \n"
- 		"call __kernel_vsyscall \n"
- 		"mov %%edx, %%ebx \n"
- 		: "=a" (ret), "=m" (*tv), "=m" (*tz)
--		: "0" (__NR_gettimeofday), "g" (tv), "c" (tz)
-+		: "0" (__NR_gettimeofday), [tv] "g" (tv), "c" (tz)
- 		: "memory", "edx");
- 	return ret;
+ 	pci_read_config_dword(pdev, offset, &val);
+-	if (val == saved_val)
++	if (!force && val == saved_val)
+ 		return;
+ 
+ 	for (;;) {
+@@ -1088,25 +1088,36 @@ static void pci_restore_config_dword(str
  }
+ 
+ static void pci_restore_config_space_range(struct pci_dev *pdev,
+-					   int start, int end, int retry)
++					   int start, int end, int retry,
++					   bool force)
+ {
+ 	int index;
+ 
+ 	for (index = end; index >= start; index--)
+ 		pci_restore_config_dword(pdev, 4 * index,
+ 					 pdev->saved_config_space[index],
+-					 retry);
++					 retry, force);
+ }
+ 
+ static void pci_restore_config_space(struct pci_dev *pdev)
+ {
+ 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL) {
+-		pci_restore_config_space_range(pdev, 10, 15, 0);
++		pci_restore_config_space_range(pdev, 10, 15, 0, false);
+ 		/* Restore BARs before the command register. */
+-		pci_restore_config_space_range(pdev, 4, 9, 10);
+-		pci_restore_config_space_range(pdev, 0, 3, 0);
++		pci_restore_config_space_range(pdev, 4, 9, 10, false);
++		pci_restore_config_space_range(pdev, 0, 3, 0, false);
++	} else if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		pci_restore_config_space_range(pdev, 12, 15, 0, false);
++
++		/*
++		 * Force rewriting of prefetch registers to avoid S3 resume
++		 * issues on Intel PCI bridges that occur when these
++		 * registers are not explicitly written.
++		 */
++		pci_restore_config_space_range(pdev, 9, 11, 0, true);
++		pci_restore_config_space_range(pdev, 0, 8, 0, false);
+ 	} else {
+-		pci_restore_config_space_range(pdev, 0, 15, 0);
++		pci_restore_config_space_range(pdev, 0, 15, 0, false);
+ 	}
+ }
+ 
 
 
