@@ -2,130 +2,170 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DF7C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E665DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40AA02077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E5B02077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:48:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jpVsnuvv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40AA02077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BztreXOe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5B02077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJKOMP (ORCPT
+        id S1727464AbeJKOOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:12:15 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37241 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKOMP (ORCPT
+        Thu, 11 Oct 2018 10:14:25 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37752 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJKOOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:12:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u6-v6so981881plz.4
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:46:24 -0700 (PDT)
+        Thu, 11 Oct 2018 10:14:25 -0400
+Received: by mail-yw1-f66.google.com with SMTP id y14-v6so3184222ywa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:48:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qehop1mbGHd5EyLAVWNETV3o1NhcD/oA3XpnKQJXnos=;
-        b=jpVsnuvvo2rrILrbEpz2t9mkbZaOuVCu6V0WjTIEsXoAL0fcSbYCNSCOIDnuwcGvf3
-         AA/YvQK1jPE5a65bcZv0Qti72XIwH2s+iujIFXv5EWIdA59IX+026KXCk8z7m1QN4H2h
-         XcxHn+aHmLBws1j54WapgT6tIUhip9pgFSmMo=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7CTJJugyo1ro7MN6SU8cXgLshPlXyKVBZHyuWcw4JN0=;
+        b=BztreXOesfYWkaaHboa8dXF6y3B7ANAKZx7lEPPCIk5v+0794M2RsGNiJDXKJZa3Vk
+         meFPZ7VMT/c2OSlLjV0Hihcpb8ZQRRvJ3dzMm6x3+8IvMDLqzsjLczohICDkOCT1hv1b
+         f8itwDNhLIw3sjT5ao+wyDyu+kPX2g+kzrD58=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qehop1mbGHd5EyLAVWNETV3o1NhcD/oA3XpnKQJXnos=;
-        b=UnPQLwR/qzkYxh/84gvVHNL7fWueCqQ2GCe5ldAxpjE8y+2Zv/YImCnKyCJ7TLjCdT
-         nRw3m/KkwgbxqWasqlZ+nM1HJfkuY1f+EghsMO4fwdpzs1Elsuu/FcZmLUDJ4oAjIM0H
-         9ZSnJ4wsA8KSdc0Bi1B/Pr5N+WGb650ZwkWD28pgPEO9Mm/zAoEKhsxzwZ3VO16X8h7K
-         PJp9+iv2pGdXMpsIoEYvsI5nn55ADvrujjYiWiPEGw2EyQ3qsFtApJiHRck5EbbRWyZg
-         pOn5vuqPn2pvfRUR4KuB4T9FTvAJQSOVzhmiwimK/Eeg3x1LWln8hsEwF4O7RDgq2MdY
-         TgiQ==
-X-Gm-Message-State: ABuFfoj1orXv/NeOOrrI162Z6HkuFoJaG2LBmArQ5TMDXG25NVfzN2Ey
-        SxMrMGby5bvrCBmqbb7sCirJV+fMuTcY7g==
-X-Google-Smtp-Source: ACcGV60TQN/j1joR5O+y14AmgrA0QBz2R+w9zmPVVwPy5LrM6Fdu6kw2pgHEFhdYLANEfCulDqdLSA==
-X-Received: by 2002:a17:902:6ac7:: with SMTP id i7-v6mr336949plt.268.1539240384184;
-        Wed, 10 Oct 2018 23:46:24 -0700 (PDT)
-Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm41336699pfe.121.2018.10.10.23.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 23:46:23 -0700 (PDT)
-From:   Alexandre Courbot <acourbot@chromium.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [PATCH] media: venus: support VB2_USERPTR IO mode
-Date:   Thu, 11 Oct 2018 15:46:08 +0900
-Message-Id: <20181011064608.37435-1-acourbot@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7CTJJugyo1ro7MN6SU8cXgLshPlXyKVBZHyuWcw4JN0=;
+        b=CMpnX8rtyOmX9FVX7GDlCvb0bYDz9jSrh2HQnZPrDmQ0WRz8RkAvdzTaqg7XSAINmm
+         y3QKWG2q7nxXiUELgZzlZZu87eXH0wMMqO4Ngkt8P53SUf511Zd8Lc9ivN5JBEJZd0mt
+         JoK+V7khKuwNulOrb4PjiLYN9gWJWSDzgnYOjycOz7uqffq/UGbFbwo9Q8mGHD5ynv4s
+         1JVMY2kEeO68aLNe+ndQsEUKtPCpnHbADv4JzB5olbUJAnZhzjOPWzQG46XMDaBahFIw
+         O1QGDrlDd3mlSt5R4StAfk2n2ZmQ1fH7++K0o+Oyqm2FPtql6vvoPy84SNlaT+3Q2JkV
+         R31w==
+X-Gm-Message-State: ABuFfog4i/jiz1xB1WEMqb53wk7gbFmh5r7Bw3QmQAZ/MZUuB/SIeVy0
+        gg7SuasqLB895BUenwkhsyspGKpAfml5lKc+emgJrQ==
+X-Google-Smtp-Source: ACcGV60aPhsR1j2bWE4kWaT99cJSAACGbTHt4k0pWGmweZ0sijfRdrxMoSYnpFzDNArNZXJCX6ZcX/1vZS1LRvOdU+I=
+X-Received: by 2002:a81:1b85:: with SMTP id b127-v6mr142321ywb.381.1539240513180;
+ Wed, 10 Oct 2018 23:48:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
+ <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
+ <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+In-Reply-To: <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Thu, 11 Oct 2018 12:18:21 +0530
+Message-ID: <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The venus codec can work just fine with USERPTR buffers. Enable this
-possibility.
+Hi Helge,
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
----
- drivers/media/platform/qcom/venus/vdec.c | 4 ++--
- drivers/media/platform/qcom/venus/venc.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Hi Helge,
+>
+> On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
+> >
+> > * Firoz Khan <firoz.khan@linaro.org>:
+> > > System call table generation script must be run to generate
+> > > unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
+> > > will have changes which will invokes the script.
+> > >
+> > > This patch will generate unistd_32/64.h and syscall_table_
+> > > 32/64/c32.h files by the syscall table generation script
+> > > invoked by arch/parisc/Makefile and the generated files against
+> > > the removed files will be identical.
+> > >
+> > > The generated uapi header file will be included in uapi/asm/
+> > > unistd_32/64.h and generated system call table support file will
+> > > be included by arch/sparc/kernel/syscall_table_32/64.S file.
+> > >
+> > > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> > > ---
+> > >  arch/parisc/Makefile                  |   4 +
+> > >  arch/parisc/include/asm/Kbuild        |   3 +
+> > >  arch/parisc/include/uapi/asm/Kbuild   |   2 +
+> > >  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
+> > >  arch/parisc/kernel/syscall.S          |  12 +-
+> > >  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
+> >
+> >
+> > Can we please get rid of those two new files:
+>
+> Yes, we don't need those files some of the architecture and other
+> architecture does have same/similar files. That's why I added below
+> files, so every architecture implementation looks same.
+>
+> I feel it is better to remove these files.
+> Arnd, Do u have any comment on this?
+>
+> Thanks
+> Firoz
+>
+> >
+> > >  arch/parisc/kernel/syscall_table_32.S |  13 +
+> > >  arch/parisc/kernel/syscall_table_64.S |  20 ++
+> >
+> > Both are not needed (at least on parisc) if you apply the following
+> > patch on top of your patch series.
+> > This patch finally fixes the 64-bit kernel on parisc (tested on real
+> > hardware).
+> >
+> > Helge
+> >
+> > diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
+> > index 2523b83b88d8..45cddeeb968f 100644
+> > --- a/arch/parisc/kernel/syscall.S
+> > +++ b/arch/parisc/kernel/syscall.S
+> > @@ -923,10 +923,20 @@ ENTRY(lws_table)
+> >  END(lws_table)
+> >         /* End of lws table */
+> >
+> > -#include "syscall_table_32.S"
+> > +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
+> > +
+> > +ENTRY(sys_call_table)
+> > +#if defined(CONFIG_64BIT)
+> > +#include <asm/syscall_table_c32.h>     /* compat syscalls */
+> > +#else
+> > +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
+> > +#endif
+> > +END(sys_call_table)
+> > +
+> >  #ifdef CONFIG_64BIT
+> > -#define SYSCALL_TABLE_64BIT
+> > -#include "syscall_table_64.S"
+> > +ENTRY(sys_call_table64)
+> > +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
+> > +END(sys_call_table64)
+> >  #endif
+> >
+> >         /*
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 33320c5025313f..dfc2260e8d213a 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -984,7 +984,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
- 	int ret;
- 
- 	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
--	src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
-+	src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
- 	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	src_vq->ops = &vdec_vb2_ops;
- 	src_vq->mem_ops = &vb2_dma_sg_memops;
-@@ -999,7 +999,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
- 		return ret;
- 
- 	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
--	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
-+	dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
- 	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	dst_vq->ops = &vdec_vb2_ops;
- 	dst_vq->mem_ops = &vb2_dma_sg_memops;
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index d2805b5e28a1b2..71ca59a24991be 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -1073,7 +1073,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
- 	int ret;
- 
- 	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
--	src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
-+	src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
- 	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	src_vq->ops = &venc_vb2_ops;
- 	src_vq->mem_ops = &vb2_dma_sg_memops;
-@@ -1090,7 +1090,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
- 		return ret;
- 
- 	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
--	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
-+	dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
- 	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	dst_vq->ops = &venc_vb2_ops;
- 	dst_vq->mem_ops = &vb2_dma_sg_memops;
--- 
-2.19.0.605.g01d371f741-goog
+I could see a patch (commit 47514da3ac20150cdf764466fbc2010c0fca0163)
+which will perform a compile-check when adding a new syscall. My patches
+will remove this feature. Is that fine?
 
+Firoz
