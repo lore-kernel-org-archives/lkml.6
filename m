@@ -2,182 +2,246 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3EEC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9639C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC741205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC741205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 818812087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818812087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJKTTh (ORCPT
+        id S1727846AbeJKTZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:19:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42750 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726788AbeJKTTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:19:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88138ACAD;
-        Thu, 11 Oct 2018 11:52:40 +0000 (UTC)
-Date:   Thu, 11 Oct 2018 13:52:38 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-Message-ID: <20181011115238.GU5873@dhcp22.suse.cz>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074457.GD22173@dhcp22.suse.cz>
- <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
- <20181009112216.GM8528@dhcp22.suse.cz>
- <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
- <20181010084731.GB5873@dhcp22.suse.cz>
- <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
+        Thu, 11 Oct 2018 15:25:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38540 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbeJKTZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:25:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a13-v6so9375279wrt.5
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 04:58:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7Deer8wddkzPpEFZ1Ggysg2mwjebzRPxe/eBL0pp0js=;
+        b=mRI1BEGbVrHfB7CqmRiOg8V6ozVvzhUZcqZixOiErsW5z1JrySoakMikx3JnkDXQCd
+         Ws2H8NIA+dCH9ybVfmd6O1xLrLedayjROs+pGyskA4hJiRIhRUzjXLTWQFXZdCYh81hb
+         oEfYYXm+nCX3nfG3ARBNmx1XJ6oOf2Juoh7x5yunZUVj6rZuVKh4gu08UUSKxzCGPf6s
+         UEGRtfipMsFQn43KB65518ToL9mr/X+19hKXBkc1c6KqH8SNCHqfm1m6dqsH4vkJpN08
+         DnYJyjYoPndNnly6s+7PcwQbRR8tStS3BAzcsWLxVEEdGNyNL+O5ZvivZKIhZnmkFCUy
+         Jqng==
+X-Gm-Message-State: ABuFfogZ/JRtej+HnGVa8oo+I7BbRbOacrWOxaMKGJSvcA72CB5wXloh
+        7NdBDkywEJMdPBUTDAeUEQImMMFUt/E=
+X-Google-Smtp-Source: ACcGV61yc2o3RBevuDv69o6iszUp1CoWmY+lnUpc8XFi7faCqVx3yTYdcFu3BkOahAgLR55T2g4hvg==
+X-Received: by 2002:adf:a706:: with SMTP id c6-v6mr1405859wrd.56.1539259104990;
+        Thu, 11 Oct 2018 04:58:24 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 67-v6sm18406125wmd.1.2018.10.11.04.58.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 04:58:24 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
+ PMIC bus semaphore code
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181011102627.7418-1-hdegoede@redhat.com>
+ <20181011102627.7418-2-hdegoede@redhat.com>
+ <20181011104151.GA31491@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <6c7d650d-b65f-da70-ecef-474137369ae3@redhat.com>
+Date:   Thu, 11 Oct 2018 13:58:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181011104151.GA31491@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-10-18 17:13:14, Dan Williams wrote:
-[...]
-> On Wed, Oct 10, 2018 at 1:48 AM Michal Hocko <mhocko@kernel.org> wrote:
-> ...and now that I've made that argument I think I've come around to
-> your point about the shuffle_page_order parameter. The only entity
-> that might have a better clue about "safer" shuffle orders than
-> MAX_ORDER is the distribution provider.
+Hi,
 
-And how is somebody providing a kernel for large variety of workloads
-supposed to know?
-
-[...]
-
-> Note, you can also think about this just on pure architecture terms.
-> I.e. that for a direct mapped cache anywhere in a system you can have
-> a near zero cache conflict rate on a first run of a workload and high
-> conflict rate on a second run based on how lucky you are with memory
-> allocation placement relative to the first run. Randomization keeps
-> you out of such performance troughs and provides more reliable average
-> performance.
-
-I am not disagreeing here. That reliable average might be worse than
-what you get with the non-randomized case. And that might be a fair
-deal for some workloads. You are, however, providing a functionality
-which is enabled by default without any actual numbers (well except for
-_a_java_ workload that seems to benefit) so you should really do your
-homework stop handwaving and give us some numbers and/or convincing
-arguments please.
-
-> With the numa emulation patch I referenced an
-> administrator could constrain a workload to run in a cache-sized
-> subset of the available memory if they really know what they are doing
-> and need firmer guarantees.
-
-Then mention how and what you can achieve by that in the changelog.
-
-> The risk if Linux does not have this capability is unstable hacks like
-> zonesort and rebooting, as referenced in that KNL article, which are
-> not suitable for a general purpose kernel / platform.
-
-We could have lived without those for quite some time so this doesn't
-seem to be anything super urgent to push through without a proper
-justification.
-
-> > > > Many years back while at a university I was playing
-> > > > with page coloring as a method to reach a more stable performance
-> > > > results due to reduced cache conflicts. It was not always a performance
-> > > > gain but it definitely allowed for more stable run-to-run comparable
-> > > > results. I can imagine that a randomization might lead to a similar effect
-> > > > although I am not sure how much and it would be more interesting to hear
-> > > > about that effect.
-> > >
-> > > Cache coloring is effective up until your workload no longer fits in
-> > > that color.
-> >
-> > Yes, that was my observation back then more or less. But even when you
-> > do not fit into the cache a color aware strategy (I was playing with bin
-> > hoping as well) produced a more deterministic/stable results. But that
-> > is just a side note as it doesn't directly relate to your change.
-> >
-> > > Randomization helps to attenuate the cache conflict rate
-> > > when that happens.
-> >
-> > I can imagine that. Do we have any numbers to actually back that claim
-> > though?
-> >
+On 11-10-18 12:41, Ingo Molnar wrote:
 > 
-> Yes, 2.5X cache conflict rate reduction, in the change log.
-
-Which is a single benchmark result which is not even described in detail
-to be able to reproduce that measurement. I am sorry for nagging
-here but I would expect something less obscure. How does this behave for
-usual workloads that we test cache sensitive workloads. I myself am not
-a benchmark person but I am pretty sure there are people who can help
-you to find proper ones to run and evaluate.
-
-> > > For workloads that may fit in the cache, and/or
-> > > environments that need more explicit cache control we have the recent
-> > > changes to numa_emulation [1] to arrange for cache sized numa nodes.
-> >
-> > Could you point me to some more documentation. My google-fu is failing
-> > me and "5.2.27.5 Memory Side Cache Information Structure" doesn't point
-> > to anything official (except for your patch referencing it).
+> * Hans de Goede <hdegoede@redhat.com> wrote:
 > 
-> http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf
-
-Thanks!
-
-[...]
-
-> > With all that being said, I think the overal idea makes sense but you
-> > should try much harder to explain _why_ we need it and back your
-> > justification by actual _data_ before I would consider my ack.
+>> +int iosf_mbi_block_punit_i2c_access(void)
+>> +{
+>> +	unsigned long start, end;
+>> +	int ret = 0;
+>> +	u32 sem;
+>> +
+>> +	if (WARN_ON(!mbi_pdev || !iosf_mbi_sem_address))
+>> +		return -ENXIO;
+>> +
+>> +	mutex_lock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+>> +
+>> +	if (iosf_mbi_block_punit_i2c_access_count > 0)
+>> +		goto out;
+>> +
+>> +	mutex_lock(&iosf_mbi_punit_mutex);
+>> +	blocking_notifier_call_chain(&iosf_mbi_pmic_bus_access_notifier,
+>> +				     MBI_PMIC_BUS_ACCESS_BEGIN, NULL);
+>> +
+>> +	/*
+>> +	 * Disallow the CPU to enter C6 or C7 state, entering these states
+>> +	 * requires the punit to talk to the pmic and if this happens while
+>> +	 * we're holding the semaphore, the SoC hangs.
+>> +	 */
+>> +	pm_qos_update_request(&iosf_mbi_pm_qos, 0);
+>> +
+>> +	/* host driver writes to side band semaphore register */
+>> +	ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE,
+>> +			     iosf_mbi_sem_address, PUNIT_SEMAPHORE_ACQUIRE);
+>> +	if (ret) {
+>> +		dev_err(&mbi_pdev->dev, "Error punit semaphore request failed\n");
+>> +		goto out;
+>> +	}
 > 
-> I don't have a known CVE, I only have the ack of people more
-> knowledgeable about security than myself like Kees to say in effect,
-> "yes, this complicates attacks". If you won't take Kees' word for it,
-> I'm not sure what other justification I can present on the security
-> aspect.
+> Isn't this error path leaking the iosf_mbi_punit_mutex held mutex? The 'out' label only unlocks
+> iosf_mbi_block_punit_i2c_access_count_mutex:
 
-In general (nothing against Kees here of course), I prefer a stronger
-justification than "somebody said it will make attacks harder". At least
-my concern about fragmented memory which is not really hard to achieve
-at all should be reasonably clarified. I am fully aware there is no
-absolute measure here but making something harder under ideal conditions
-doesn't really help for common attack strategies which can prepare the
-system into an actual state to exploit allocation predictability. I am
-no expert here but if an attacker can deduce the allocation pattern then
-fragmenting the memory is one easy step to overcome what people would
-consider a security measure.
+Yes you're right, I messed this up when adding the handling for the new
+iosf_mbi_block_punit_i2c_access_count[_mutex] which is new compared to the
+code from i2c-designware-baytrail.c (the rest of the code is just moved
+from there).
 
-So color me unconvinced for now.
+This is fixed in the upcoming v3 of the patch.
 
-> 2.5X cache conflict reduction on a Java benchmark workload that the
-> exceeds the cache size by multiple factors is the data I can provide
-> today. Post launch it becomes easier to share more precise data, but
-> that's post 4.20. The hope of course is to have this capability
-> available in an upstream released kernel in advance of wider hardware
-> availability.
+>> +	/* host driver waits for bit 0 to be set in semaphore register */
+>> +	start = jiffies;
+>> +	end = start + msecs_to_jiffies(SEMAPHORE_TIMEOUT);
+>> +	do {
+>> +		ret = iosf_mbi_get_sem(&sem);
+>> +		if (!ret && sem) {
+>> +			iosf_mbi_sem_acquired = jiffies;
+>> +			dev_dbg(&mbi_pdev->dev, "punit semaphore acquired after %ums\n",
+>> +				jiffies_to_msecs(jiffies - start));
+>> +			/*
+>> +			 * Success, keep iosf_mbi_punit_mutex locked till
+>> +			 * iosf_mbi_unblock_punit_i2c_access() gets called.
+>> +			 */
+>> +			goto out;
+> 
+> Ditto - although this does claim that this is done intentionally.
 
-I will not comment on timing but in general, any performance related
-changes should come with numbers for a wider variety of workloads.
+Right, we have 2 sets of functions:
 
-In any case, I believe the change itself is not controversial as long it
-is opt-in (potentially autotuned based on specific HW) with a reasonable
-API. And no I do not consider $RANDOM_ORDER a good interface.
--- 
-Michal Hocko
-SUSE Labs
+iosf_mbi_punit_acquire()
+iosf_mbi_punit_release()
+
+iosf_mbi_block_punit_i2c_access()
+iosf_mbi_unblock_punit_i2c_access()
+
+The first 2 are for code which sends request to the P-Unit
+which may make it access the shared I2C bus to the PMIC, calling
+these will stop any kernel I2C code from accessing the bus.
+
+The latter 2 are for I2C code which wants to access the
+shared I2C bus to the PMIC, such as e.g. the fuel-gauge driver,
+these block any callers of iosf_mbi_punit_acquire() from
+continuing until iosf_mbi_unblock_punit_i2c_access() gets
+called.
+
+Basically we have 2 groups of code trying to access the same
+shared resource (the PMIC I2C bus), code talking to the P-Unit
+(which has its own access to the I2C bus at some level) and
+I2C client drivers (or ACPI OpRegions).
+
+If both happen at the same time bad things happen, so we
+need to arbitrate and exclusively allow accesses of one kind
+at a time. This is implemetned by both type of accesses acquiring
+the iosf_mbi_punit_mutex and keeping it locked over the access,
+hence the exit from the function keeps the mutex locked on success.
+
+>> +		}
+>> +
+>> +		usleep_range(1000, 2000);
+>> +	} while (time_before(jiffies, end));
+>> +
+>> +	ret = -ETIMEDOUT;
+>> +	dev_err(&mbi_pdev->dev, "Error punit semaphore timed out, resetting\n");
+>> +	iosf_mbi_reset_semaphore();
+>> +	mutex_unlock(&iosf_mbi_punit_mutex);
+>> +
+>> +	if (!iosf_mbi_get_sem(&sem))
+>> +		dev_err(&mbi_pdev->dev, "PUNIT SEM: %d\n", sem);
+>> +out:
+>> +	if (!WARN_ON(ret))
+>> +		iosf_mbi_block_punit_i2c_access_count++;
+>> +
+>> +	mutex_unlock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL(iosf_mbi_block_punit_i2c_access);
+> 
+> So this is a rather unusual looking locking pattern.
+> 
+> So if this is all intended and works fine then at minimum the semantics of the function should
+> be explained - right now it has no description whatsoever.
+
+Ok, for v3 I've added the following comment above the new
+iosf_mbi_block_punit_i2c_access() to explain things:
+
+/*
+  * This function blocks P-Unit accesses to the PMIC I2C bus, so that kernel
+  * I2C code, such as e.g. a fuel-gauge driver, can access it safely.
+  *
+  * This function may be called by I2C controller code while an I2C driver has
+  * already blocked P-Unit accesses because it wants them blocked over multiple
+  * i2c-transfers, for e.g. read-modify-write of an I2C client register.
+  *
+  * The P-Unit accesses already being blocked is tracked through the
+  * iosf_mbi_block_punit_i2c_access_count variable which is protected by the
+  * iosf_mbi_block_punit_i2c_access_count_mutex this mutex is hold for the
+  * entire duration of the function.
+  *
+  * If access is not blocked yet, this function takes the following steps:
+  *
+  * 1) Some code sends request to the P-Unit which make it access the PMIC
+  *    I2C bus. Testing has shown that the P-Unit does not check its internal
+  *    PMIC bus semaphore for these requests. Callers of these requests call
+  *    iosf_mbi_punit_acquire()/_release() around their P-Unit accesses, these
+  *    functions lock/unlock the iosf_mbi_punit_mutex.
+  *    As the first step we lock the iosf_mbi_punit_mutex, to wait for any in
+  *    flight requests to finish and to block any new requests.
+  *
+  * 2) Some code makes such P-Unit requests from atomic contexts where it
+  *    cannot call iosf_mbi_punit_acquire() as that may sleep.
+  *    As the second step we call a notifier chain which allows any code
+  *    needing P-Unit resources from atomic context to acquire them before
+  *    we take control over the PMIC I2C bus.
+  *
+  * 3) When CPU cores enter C6 or C7 the P-Unit needs to talk to the PMIC
+  *    if this happens while the kernel itself is accessing the PMIC I2C bus
+  *    the SoC hangs.
+  *    As the third step we call pm_qos_update_request() to disallow the CPU
+  *    to enter C6 or C7.
+  *
+  * 4) The P-Unit has a PMIC bus semaphore which we can request to stop
+  *    autonomous P-Unit tasks from accessing the PMIC I2C bus while we hold it.
+  *    As the fourth and final step we request this semaphore and wait for our
+  *    request to be acknowledged.
+  */
+
+Regards,
+
+Hans
+
