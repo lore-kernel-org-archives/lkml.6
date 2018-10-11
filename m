@@ -2,190 +2,107 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19177C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA28C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7A8C2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B46D2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/yt6zWd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7A8C2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaLFmTtS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B46D2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeJKXZG (ORCPT
+        id S1729056AbeJKX1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730552AbeJKXJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:09:38 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37D8F2098A;
-        Thu, 11 Oct 2018 15:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272513;
-        bh=Q+8dJ932aOjgKeFSGZ5x2O2tZItNWysnM/BwjvVa0vA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u/yt6zWdEWxp+JeYXDx+jVA2juaRdf72v/8Y2khbYrEn1pDSkSxXkYVAh4tpEvsSE
-         zw1Cv2lDx0urYDUg+P3z/EBSRahH2aEdXBaja27/cEszNSi16MriMr91Yw63LJMHZf
-         ZJRuaeKGnK6dlUSdTS4fPuuf1Xr+kMJ40MxnIlUM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.de>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Kleber Sacilotto de Souza <kleber.souza@canonical.com>
-Subject: [PATCH 4.4 16/27] powerpc/fadump: Return error when fadump registration fails
-Date:   Thu, 11 Oct 2018 17:35:03 +0200
-Message-Id: <20181011152534.805906419@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
-References: <20181011152534.014964888@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 11 Oct 2018 19:27:09 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:34682 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727375AbeJKX1I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:27:08 -0400
+Received: by mail-yb1-f195.google.com with SMTP id 184-v6so3804963ybg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=OrRnQFDgKCLFTHA5GU9C2kNKNmBUtlsNLkeq060mOvc=;
+        b=gaLFmTtSQbTQ1LOlLGFGJz40ezIeqgLofPfZfoubcsBM6tNwmkml32zpbSAye+koAq
+         L66AXeYQ2bbVVYO7GwyebdgXLDh4w45ad1JqQyqmKtSdcBqwDS9fYgHlpASwjedixpqw
+         QEqa1qsMdGT0WQc2l4iH3aHD+Q1BDT+VUGXQCtIZYrNc8cDhf7Y9C6pPgRHT8aZJ9mm4
+         KOXqZjwi1i9FxkNhF/7EGr31tGu6WMvOTbJr0ffHSrWVpAorVkbOPik0KAbq9d8pEXoc
+         TsGEUfwyoHZcoyUP8o1Nsk/ESvPTYUreMTcjMeupatdOUuVCrhLNes8uod+1RVFsXyR+
+         LLSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=OrRnQFDgKCLFTHA5GU9C2kNKNmBUtlsNLkeq060mOvc=;
+        b=rliW7wY//WaHzG8S8qPLJTQbCByetvv1+Q6Ena6Q6LtaC6+tDdaceF2V7WSyOvEzyF
+         xLlPiHzg5T1vDYgUyNE1u2wr0GQnajkGzdlmu/oEOMVBy7HOc/vwI7lrsc4ZT3Tp4PP9
+         doHF5e6BjH3I61tn0lbf6di8DS84GIQZCaYC+7yqXaeMmhgETGLD6KN/V3IO3nWfHQ1B
+         LBcUN3TYscFre45JJFZwvvyddGl0SbHN8ZOIXo58mD5swC4J0qXrannhUJHv4NNMts7Z
+         xhFG3uG9bbpq9jGNOxDjnVFhWRupnMy6D9yLfC9oq8du0J35cmvk4DtGRulNfxoaRgc+
+         PPmg==
+X-Gm-Message-State: ABuFfojrQpJ7Cp/AYDiPc5udFmKCQRTN7hOaJV8JmxtZsinWhg+DJok2
+        jS70TDHTDKSH+8mAeCh+Ux0=
+X-Google-Smtp-Source: ACcGV63vIyXAicOgvBCxilVd+5lABFF2u6dl1a+86E4gUqtsvGJkeev+Tn35R22YehHz7NYLXb63zg==
+X-Received: by 2002:a25:aca0:: with SMTP id x32-v6mr1166837ybi.261.1539273558639;
+        Thu, 11 Oct 2018 08:59:18 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::5:bc01])
+        by smtp.gmail.com with ESMTPSA id f194-v6sm21305535ywb.53.2018.10.11.08.59.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 08:59:17 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 08:59:15 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] cgroup fixes for v4.19-rc7
+Message-ID: <20181011155915.GP270328@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hello, Greg.
 
-------------------
+One cgroup2 threaded mode fix for v4.19-rc7.  While threaded mode
+isn't used widely (yet) and the bug requires somewhat convoluted
+sequence of operations, it causes a userland visible malfunction -
+EINVAL on a valid attempt to enable threaded mode.  This pull request
+contains the fix.
 
-From: Michal Suchanek <msuchanek@suse.de>
+Thanks.
 
-commit 98b8cd7f75643e0a442d7a4c1cef2c9d53b7e92b upstream.
+The following changes since commit ac0657edb13ac7971569aa88cc6f27ea26deb883:
 
- - log an error message when registration fails and no error code listed
-   in the switch is returned
- - translate the hv error code to posix error code and return it from
-   fw_register
- - return the posix error code from fw_register to the process writing
-   to sysfs
- - return EEXIST on re-registration
- - return success on deregistration when fadump is not registered
- - return ENODEV when no memory is reserved for fadump
+  Merge branch 'fixes' of git://git.armlinux.org.uk/~rmk/linux-arm (2018-10-04 09:48:10 -0700)
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Tested-by: Hari Bathini <hbathini@linux.vnet.ibm.com>
-[mpe: Use pr_err() to shrink the error print]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Kleber Sacilotto de Souza <kleber.souza@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+are available in the Git repository at:
 
----
- arch/powerpc/kernel/fadump.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.19-fixes
 
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -360,9 +360,9 @@ static int __init early_fadump_reserve_m
- }
- early_param("fadump_reserve_mem", early_fadump_reserve_mem);
- 
--static void register_fw_dump(struct fadump_mem_struct *fdm)
-+static int register_fw_dump(struct fadump_mem_struct *fdm)
- {
--	int rc;
-+	int rc, err;
- 	unsigned int wait_time;
- 
- 	pr_debug("Registering for firmware-assisted kernel dump...\n");
-@@ -379,7 +379,11 @@ static void register_fw_dump(struct fadu
- 
- 	} while (wait_time);
- 
-+	err = -EIO;
- 	switch (rc) {
-+	default:
-+		pr_err("Failed to register. Unknown Error(%d).\n", rc);
-+		break;
- 	case -1:
- 		printk(KERN_ERR "Failed to register firmware-assisted kernel"
- 			" dump. Hardware Error(%d).\n", rc);
-@@ -387,18 +391,22 @@ static void register_fw_dump(struct fadu
- 	case -3:
- 		printk(KERN_ERR "Failed to register firmware-assisted kernel"
- 			" dump. Parameter Error(%d).\n", rc);
-+		err = -EINVAL;
- 		break;
- 	case -9:
- 		printk(KERN_ERR "firmware-assisted kernel dump is already "
- 			" registered.");
- 		fw_dump.dump_registered = 1;
-+		err = -EEXIST;
- 		break;
- 	case 0:
- 		printk(KERN_INFO "firmware-assisted kernel dump registration"
- 			" is successful\n");
- 		fw_dump.dump_registered = 1;
-+		err = 0;
- 		break;
- 	}
-+	return err;
- }
- 
- void crash_fadump(struct pt_regs *regs, const char *str)
-@@ -997,7 +1005,7 @@ static unsigned long init_fadump_header(
- 	return addr;
- }
- 
--static void register_fadump(void)
-+static int register_fadump(void)
- {
- 	unsigned long addr;
- 	void *vaddr;
-@@ -1008,7 +1016,7 @@ static void register_fadump(void)
- 	 * assisted dump.
- 	 */
- 	if (!fw_dump.reserve_dump_area_size)
--		return;
-+		return -ENODEV;
- 
- 	ret = fadump_setup_crash_memory_ranges();
- 	if (ret)
-@@ -1023,7 +1031,7 @@ static void register_fadump(void)
- 	fadump_create_elfcore_headers(vaddr);
- 
- 	/* register the future kernel dump with firmware. */
--	register_fw_dump(&fdm);
-+	return register_fw_dump(&fdm);
- }
- 
- static int fadump_unregister_dump(struct fadump_mem_struct *fdm)
-@@ -1208,7 +1216,6 @@ static ssize_t fadump_register_store(str
- 	switch (buf[0]) {
- 	case '0':
- 		if (fw_dump.dump_registered == 0) {
--			ret = -EINVAL;
- 			goto unlock_out;
- 		}
- 		/* Un-register Firmware-assisted dump */
-@@ -1216,11 +1223,11 @@ static ssize_t fadump_register_store(str
- 		break;
- 	case '1':
- 		if (fw_dump.dump_registered == 1) {
--			ret = -EINVAL;
-+			ret = -EEXIST;
- 			goto unlock_out;
- 		}
- 		/* Register Firmware-assisted dump */
--		register_fadump();
-+		ret = register_fadump();
- 		break;
- 	default:
- 		ret = -EINVAL;
+for you to fetch changes up to 479adb89a97b0a33e5a9d702119872cc82ca21aa:
 
+  cgroup: Fix dom_cgrp propagation when enabling threaded mode (2018-10-04 13:28:08 -0700)
 
+----------------------------------------------------------------
+Tejun Heo (1):
+      cgroup: Fix dom_cgrp propagation when enabling threaded mode
+
+ include/linux/cgroup-defs.h |  1 +
+ kernel/cgroup/cgroup.c      | 25 ++++++++++++++++---------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
+
+-- 
+tejun
