@@ -7,45 +7,58 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3152AC677FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E110C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB6321476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DBE420652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow4epnB3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB6321476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiEqBrn8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBE420652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731183AbeJKXL7 (ORCPT
+        id S1731195AbeJKXMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:11:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44252 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:12:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730276AbeJKXL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:11:58 -0400
+        id S1730276AbeJKXMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:12:01 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EB7B20652;
-        Thu, 11 Oct 2018 15:44:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0052521470;
+        Thu, 11 Oct 2018 15:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272654;
-        bh=rbL259K9WOgS9IrjUaKbDhTThv2sLBBfwPe6WlQ5Oc8=;
+        s=default; t=1539272656;
+        bh=YLPTad4MmHEaZqBNwtmMzmBKN/fQWVIaogG/uAhn6ZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ow4epnB3pjrFUx5hVWKrPqL7cIcMhAL2m2lwehRpkMSza8tID7RbaO8WwYaYPACy8
-         hA0HFxUs78Qa5lXw0cmK19ru4KKi861eFp0q0ldQZUFK1aRbejsVoV3xRfKwzMItRc
-         Mviqv3Hdve+yTuQs/6lTKSMwKtDFS4x5JJ+TkUsI=
+        b=HiEqBrn8L4Ie7w2TeKLEKR+jHternKTf2EcA7KMFX9BxS7Nj88dXrFufMDwK7D1w6
+         kmmhEETGuZpnlEbQ/hqcMRpfAH5Jha5SHm1EfgR8Q7JTW4KVNpfHXECTBCqYuKXs6K
+         C6WNhLg1CYBr64Ji8pGcxov8M644m6FIOi0vsUQE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Loic <hackurx@opensec.fr>
-Subject: [PATCH 4.9 31/35] ebtables: arpreply: Add the standard target sanity check
-Date:   Thu, 11 Oct 2018 17:35:33 +0200
-Message-Id: <20181011152521.425951160@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Subject: [PATCH 4.9 32/35] x86/fpu: Remove use_eager_fpu()
+Date:   Thu, 11 Oct 2018 17:35:34 +0200
+Message-Id: <20181011152521.462158381@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -63,54 +76,337 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gao Feng <gfree.wind@vip.163.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit c953d63548207a085abcb12a15fefc8a11ffdf0a upstream.
+commit c592b57347069abfc0dcad3b3a302cf882602597 upstream.
 
-The info->target comes from userspace and it would be used directly.
-So we need to add the sanity check to make sure it is a valid standard
-target, although the ebtables tool has already checked it. Kernel needs
-to validate anything coming from userspace.
+This removes all the obvious code paths that depend on lazy FPU mode.
+It shouldn't change the generated code at all.
 
-If the target is set as an evil value, it would break the ebtables
-and cause a panic. Because the non-standard target is treated as one
-offset.
-
-Now add one helper function ebt_invalid_target, and we would replace
-the macro INVALID_TARGET later.
-
-Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Loic <hackurx@opensec.fr>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Rik van Riel <riel@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: pbonzini@redhat.com
+Link: http://lkml.kernel.org/r/1475627678-20788-5-git-send-email-riel@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/netfilter_bridge/ebtables.h |    5 +++++
- net/bridge/netfilter/ebt_arpreply.c       |    3 +++
- 2 files changed, 8 insertions(+)
+ arch/x86/crypto/crc32c-intel_glue.c |   17 ++++-------------
+ arch/x86/include/asm/fpu/internal.h |   34 +---------------------------------
+ arch/x86/kernel/fpu/core.c          |   36 ++++--------------------------------
+ arch/x86/kernel/fpu/signal.c        |    8 +++-----
+ arch/x86/kernel/fpu/xstate.c        |    9 ---------
+ arch/x86/kvm/cpuid.c                |    4 +---
+ arch/x86/kvm/x86.c                  |   10 ----------
+ 7 files changed, 13 insertions(+), 105 deletions(-)
 
---- a/include/linux/netfilter_bridge/ebtables.h
-+++ b/include/linux/netfilter_bridge/ebtables.h
-@@ -123,4 +123,9 @@ extern unsigned int ebt_do_table(struct
- /* True if the target is not a standard target */
- #define INVALID_TARGET (info->target < -NUM_STANDARD_TARGETS || info->target >= 0)
+--- a/arch/x86/crypto/crc32c-intel_glue.c
++++ b/arch/x86/crypto/crc32c-intel_glue.c
+@@ -48,21 +48,13 @@
+ #ifdef CONFIG_X86_64
+ /*
+  * use carryless multiply version of crc32c when buffer
+- * size is >= 512 (when eager fpu is enabled) or
+- * >= 1024 (when eager fpu is disabled) to account
++ * size is >= 512 to account
+  * for fpu state save/restore overhead.
+  */
+-#define CRC32C_PCL_BREAKEVEN_EAGERFPU	512
+-#define CRC32C_PCL_BREAKEVEN_NOEAGERFPU	1024
++#define CRC32C_PCL_BREAKEVEN	512
  
-+static inline bool ebt_invalid_target(int target)
-+{
-+	return (target < -NUM_STANDARD_TARGETS || target >= 0);
-+}
-+
+ asmlinkage unsigned int crc_pcl(const u8 *buffer, int len,
+ 				unsigned int crc_init);
+-static int crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_EAGERFPU;
+-#define set_pcl_breakeven_point()					\
+-do {									\
+-	if (!use_eager_fpu())						\
+-		crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_NOEAGERFPU;	\
+-} while (0)
+ #endif /* CONFIG_X86_64 */
+ 
+ static u32 crc32c_intel_le_hw_byte(u32 crc, unsigned char const *data, size_t length)
+@@ -185,7 +177,7 @@ static int crc32c_pcl_intel_update(struc
+ 	 * use faster PCL version if datasize is large enough to
+ 	 * overcome kernel fpu state save/restore overhead
+ 	 */
+-	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
++	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
+ 		kernel_fpu_begin();
+ 		*crcp = crc_pcl(data, len, *crcp);
+ 		kernel_fpu_end();
+@@ -197,7 +189,7 @@ static int crc32c_pcl_intel_update(struc
+ static int __crc32c_pcl_intel_finup(u32 *crcp, const u8 *data, unsigned int len,
+ 				u8 *out)
+ {
+-	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
++	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
+ 		kernel_fpu_begin();
+ 		*(__le32 *)out = ~cpu_to_le32(crc_pcl(data, len, *crcp));
+ 		kernel_fpu_end();
+@@ -257,7 +249,6 @@ static int __init crc32c_intel_mod_init(
+ 		alg.update = crc32c_pcl_intel_update;
+ 		alg.finup = crc32c_pcl_intel_finup;
+ 		alg.digest = crc32c_pcl_intel_digest;
+-		set_pcl_breakeven_point();
+ 	}
  #endif
---- a/net/bridge/netfilter/ebt_arpreply.c
-+++ b/net/bridge/netfilter/ebt_arpreply.c
-@@ -67,6 +67,9 @@ static int ebt_arpreply_tg_check(const s
- 	if (e->ethproto != htons(ETH_P_ARP) ||
- 	    e->invflags & EBT_IPROTO)
+ 	return crypto_register_shash(&alg);
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -60,11 +60,6 @@ extern u64 fpu__get_supported_xfeatures_
+ /*
+  * FPU related CPU feature flag helper routines:
+  */
+-static __always_inline __pure bool use_eager_fpu(void)
+-{
+-	return true;
+-}
+-
+ static __always_inline __pure bool use_xsaveopt(void)
+ {
+ 	return static_cpu_has(X86_FEATURE_XSAVEOPT);
+@@ -501,24 +496,6 @@ static inline int fpu_want_lazy_restore(
+ }
+ 
+ 
+-/*
+- * Wrap lazy FPU TS handling in a 'hw fpregs activation/deactivation'
+- * idiom, which is then paired with the sw-flag (fpregs_active) later on:
+- */
+-
+-static inline void __fpregs_activate_hw(void)
+-{
+-	if (!use_eager_fpu())
+-		clts();
+-}
+-
+-static inline void __fpregs_deactivate_hw(void)
+-{
+-	if (!use_eager_fpu())
+-		stts();
+-}
+-
+-/* Must be paired with an 'stts' (fpregs_deactivate_hw()) after! */
+ static inline void __fpregs_deactivate(struct fpu *fpu)
+ {
+ 	WARN_ON_FPU(!fpu->fpregs_active);
+@@ -528,7 +505,6 @@ static inline void __fpregs_deactivate(s
+ 	trace_x86_fpu_regs_deactivated(fpu);
+ }
+ 
+-/* Must be paired with a 'clts' (fpregs_activate_hw()) before! */
+ static inline void __fpregs_activate(struct fpu *fpu)
+ {
+ 	WARN_ON_FPU(fpu->fpregs_active);
+@@ -554,22 +530,17 @@ static inline int fpregs_active(void)
+ }
+ 
+ /*
+- * Encapsulate the CR0.TS handling together with the
+- * software flag.
+- *
+  * These generally need preemption protection to work,
+  * do try to avoid using these on their own.
+  */
+ static inline void fpregs_activate(struct fpu *fpu)
+ {
+-	__fpregs_activate_hw();
+ 	__fpregs_activate(fpu);
+ }
+ 
+ static inline void fpregs_deactivate(struct fpu *fpu)
+ {
+ 	__fpregs_deactivate(fpu);
+-	__fpregs_deactivate_hw();
+ }
+ 
+ /*
+@@ -596,8 +567,7 @@ switch_fpu_prepare(struct fpu *old_fpu,
+ 	 * or if the past 5 consecutive context-switches used math.
+ 	 */
+ 	fpu.preload = static_cpu_has(X86_FEATURE_FPU) &&
+-		      new_fpu->fpstate_active &&
+-		      (use_eager_fpu() || new_fpu->counter > 5);
++		      new_fpu->fpstate_active;
+ 
+ 	if (old_fpu->fpregs_active) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+@@ -615,8 +585,6 @@ switch_fpu_prepare(struct fpu *old_fpu,
+ 			__fpregs_activate(new_fpu);
+ 			trace_x86_fpu_regs_activated(new_fpu);
+ 			prefetch(&new_fpu->state);
+-		} else {
+-			__fpregs_deactivate_hw();
+ 		}
+ 	} else {
+ 		old_fpu->counter = 0;
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -59,27 +59,9 @@ static bool kernel_fpu_disabled(void)
+ 	return this_cpu_read(in_kernel_fpu);
+ }
+ 
+-/*
+- * Were we in an interrupt that interrupted kernel mode?
+- *
+- * On others, we can do a kernel_fpu_begin/end() pair *ONLY* if that
+- * pair does nothing at all: the thread must not have fpu (so
+- * that we don't try to save the FPU state), and TS must
+- * be set (so that the clts/stts pair does nothing that is
+- * visible in the interrupted kernel thread).
+- *
+- * Except for the eagerfpu case when we return true; in the likely case
+- * the thread has FPU but we are not going to set/clear TS.
+- */
+ static bool interrupted_kernel_fpu_idle(void)
+ {
+-	if (kernel_fpu_disabled())
+-		return false;
+-
+-	if (use_eager_fpu())
+-		return true;
+-
+-	return !current->thread.fpu.fpregs_active && (read_cr0() & X86_CR0_TS);
++	return !kernel_fpu_disabled();
+ }
+ 
+ /*
+@@ -127,7 +109,6 @@ void __kernel_fpu_begin(void)
+ 		copy_fpregs_to_fpstate(fpu);
+ 	} else {
+ 		this_cpu_write(fpu_fpregs_owner_ctx, NULL);
+-		__fpregs_activate_hw();
+ 	}
+ }
+ EXPORT_SYMBOL(__kernel_fpu_begin);
+@@ -138,8 +119,6 @@ void __kernel_fpu_end(void)
+ 
+ 	if (fpu->fpregs_active)
+ 		copy_kernel_to_fpregs(&fpu->state);
+-	else
+-		__fpregs_deactivate_hw();
+ 
+ 	kernel_fpu_enable();
+ }
+@@ -201,10 +180,7 @@ void fpu__save(struct fpu *fpu)
+ 	trace_x86_fpu_before_save(fpu);
+ 	if (fpu->fpregs_active) {
+ 		if (!copy_fpregs_to_fpstate(fpu)) {
+-			if (use_eager_fpu())
+-				copy_kernel_to_fpregs(&fpu->state);
+-			else
+-				fpregs_deactivate(fpu);
++			copy_kernel_to_fpregs(&fpu->state);
+ 		}
+ 	}
+ 	trace_x86_fpu_after_save(fpu);
+@@ -262,8 +238,7 @@ int fpu__copy(struct fpu *dst_fpu, struc
+ 	 * Don't let 'init optimized' areas of the XSAVE area
+ 	 * leak into the child task:
+ 	 */
+-	if (use_eager_fpu())
+-		memset(&dst_fpu->state.xsave, 0, fpu_kernel_xstate_size);
++	memset(&dst_fpu->state.xsave, 0, fpu_kernel_xstate_size);
+ 
+ 	/*
+ 	 * Save current FPU registers directly into the child
+@@ -285,10 +260,7 @@ int fpu__copy(struct fpu *dst_fpu, struc
+ 		memcpy(&src_fpu->state, &dst_fpu->state,
+ 		       fpu_kernel_xstate_size);
+ 
+-		if (use_eager_fpu())
+-			copy_kernel_to_fpregs(&src_fpu->state);
+-		else
+-			fpregs_deactivate(src_fpu);
++		copy_kernel_to_fpregs(&src_fpu->state);
+ 	}
+ 	preempt_enable();
+ 
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,11 +344,9 @@ static int __fpu__restore_sig(void __use
+ 		}
+ 
+ 		fpu->fpstate_active = 1;
+-		if (use_eager_fpu()) {
+-			preempt_disable();
+-			fpu__restore(fpu);
+-			preempt_enable();
+-		}
++		preempt_disable();
++		fpu__restore(fpu);
++		preempt_enable();
+ 
+ 		return err;
+ 	} else {
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -890,15 +890,6 @@ int arch_set_user_pkey_access(struct tas
+ 	 */
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
  		return -EINVAL;
-+	if (ebt_invalid_target(info->target))
-+		return -EINVAL;
-+
- 	return 0;
+-	/*
+-	 * For most XSAVE components, this would be an arduous task:
+-	 * brining fpstate up to date with fpregs, updating fpstate,
+-	 * then re-populating fpregs.  But, for components that are
+-	 * never lazily managed, we can just access the fpregs
+-	 * directly.  PKRU is never managed lazily, so we can just
+-	 * manipulate it directly.  Make sure it stays that way.
+-	 */
+-	WARN_ON_ONCE(!use_eager_fpu());
+ 
+ 	/* Set the bits we need in PKRU:  */
+ 	if (init_val & PKEY_DISABLE_ACCESS)
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -16,7 +16,6 @@
+ #include <linux/export.h>
+ #include <linux/vmalloc.h>
+ #include <linux/uaccess.h>
+-#include <asm/fpu/internal.h> /* For use_eager_fpu.  Ugh! */
+ #include <asm/user.h>
+ #include <asm/fpu/xstate.h>
+ #include "cpuid.h"
+@@ -114,8 +113,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vc
+ 	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
+ 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+ 
+-	if (use_eager_fpu())
+-		kvm_x86_ops->fpu_activate(vcpu);
++	kvm_x86_ops->fpu_activate(vcpu);
+ 
+ 	/*
+ 	 * The existing code assumes virtual address is 48-bit in the canonical
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7631,16 +7631,6 @@ void kvm_put_guest_fpu(struct kvm_vcpu *
+ 	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
+ 	__kernel_fpu_end();
+ 	++vcpu->stat.fpu_reload;
+-	/*
+-	 * If using eager FPU mode, or if the guest is a frequent user
+-	 * of the FPU, just leave the FPU active for next time.
+-	 * Every 255 times fpu_counter rolls over to 0; a guest that uses
+-	 * the FPU in bursts will revert to loading it on demand.
+-	 */
+-	if (!use_eager_fpu()) {
+-		if (++vcpu->fpu_counter < 5)
+-			kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
+-	}
+ 	trace_kvm_fpu(0);
  }
  
 
