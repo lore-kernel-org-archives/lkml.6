@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DB6C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4479EC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FC12098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09A93213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:42:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrO2SoTH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FC12098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVLF+3B4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A93213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbeJKXKZ (ORCPT
+        id S1730778AbeJKXK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:10:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41704 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:10:24 -0400
+        id S1726700AbeJKXK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:10:27 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06A5120652;
-        Thu, 11 Oct 2018 15:42:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1B9E20652;
+        Thu, 11 Oct 2018 15:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272560;
-        bh=zhSCPTYZWeIWsEGQmVJnrd7RACpXMKdLicsXTn75ZiE=;
+        s=default; t=1539272563;
+        bh=gJte66y/vjBxoA+KLVFYg9aFAiqyv8gFD1h3fvHwe+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YrO2SoTHfjoQAZo7o66uSOyrbg0Qrf/N9xa4uAF2A03buNsQmfDEUfhmusOkeGBkV
-         NBWVgkD71EGAkwG8sn8OU+1E60fOKCC5Hcfjqw4cxYXRS5oiJTNnSi3n+cznIjUGy3
-         OU1WQsDUFtBgtMdYGJS/SS8xWaUW+K09lN68P9pk=
+        b=TVLF+3B4fiE+ENBIQ3iYig71rm4DlL9cIjMGuTPWj2pYhzxUGXlQLF2wlT4hE37bX
+         sBDFOaqvQadsSZGh0ldhrA62p0syMYs0YEVbAPvtt/Clzg1I30X5gb9uD2DkYcgj8C
+         iKAXmeqobhSyqKzj0LEm9J3g7HDdr0LAb9RtFZW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 07/27] PM / core: Clear the direct_complete flag on errors
-Date:   Thu, 11 Oct 2018 17:34:54 +0200
-Message-Id: <20181011152534.375860321@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.4 08/27] dm cache: fix resize crash if user doesnt reload cache table
+Date:   Thu, 11 Oct 2018 17:34:55 +0200
+Message-Id: <20181011152534.423295329@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
@@ -63,54 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
+commit 5d07384a666d4b2f781dc056bfeec2c27fbdf383 upstream.
 
-If __device_suspend() runs asynchronously (in which case the device
-passed to it is in dpm_suspended_list at that point) and it returns
-early on an error or pending wakeup, and the power.direct_complete
-flag has been set for the device already, the subsequent
-device_resume() will be confused by that and it will call
-pm_runtime_enable() incorrectly, as runtime PM has not been
-disabled for the device by __device_suspend().
+A reload of the cache's DM table is needed during resize because
+otherwise a crash will occur when attempting to access smq policy
+entries associated with the portion of the cache that was recently
+extended.
 
-To avoid that, clear power.direct_complete if __device_suspend()
-is not going to disable runtime PM for the device before returning.
+The reason is cache-size based data structures in the policy will not be
+resized, the only way to safely extend the cache is to allow for a
+proper cache policy initialization that occurs when the cache table is
+loaded.  For example the smq policy's space_init(), init_allocator(),
+calc_hotspot_params() must be sized based on the extended cache size.
 
-Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
-Reported-by: Al Cooper <alcooperx@gmail.com>
-Tested-by: Al Cooper <alcooperx@gmail.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The fix for this is to disallow cache resizes of this pattern:
+1) suspend "cache" target's device
+2) resize the fast device used for the cache
+3) resume "cache" target's device
+
+Instead, the last step must be a full reload of the cache's DM table.
+
+Fixes: 66a636356 ("dm cache: add stochastic-multi-queue (smq) policy")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/md/dm-cache-target.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1355,8 +1355,10 @@ static int __device_suspend(struct devic
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -3391,8 +3391,13 @@ static dm_cblock_t get_cache_dev_size(st
  
- 	dpm_wait_for_children(dev, async);
- 
--	if (async_error)
-+	if (async_error) {
-+		dev->power.direct_complete = false;
- 		goto Complete;
+ static bool can_resize(struct cache *cache, dm_cblock_t new_size)
+ {
+-	if (from_cblock(new_size) > from_cblock(cache->cache_size))
+-		return true;
++	if (from_cblock(new_size) > from_cblock(cache->cache_size)) {
++		if (cache->sized) {
++			DMERR("%s: unable to extend cache due to missing cache table reload",
++			      cache_device_name(cache));
++			return false;
++		}
 +	}
  
  	/*
- 	 * If a device configured to wake up the system from sleep states
-@@ -1368,6 +1370,7 @@ static int __device_suspend(struct devic
- 		pm_wakeup_event(dev, 0);
- 
- 	if (pm_wakeup_pending()) {
-+		dev->power.direct_complete = false;
- 		async_error = -EBUSY;
- 		goto Complete;
- 	}
+ 	 * We can't drop a dirty block when shrinking the cache.
 
 
