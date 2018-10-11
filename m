@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054FDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4A8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A47720841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008F320841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="BhrTZc2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A47720841
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="TRC+1zJq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008F320841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeJKIDm (ORCPT
+        id S1726135AbeJKIIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 04:03:42 -0400
-Received: from cock.li ([185.100.85.212]:35764 "EHLO cock.li"
+        Thu, 11 Oct 2018 04:08:00 -0400
+Received: from cock.li ([185.100.85.212]:39724 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbeJKIDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 04:03:41 -0400
+        id S1725971AbeJKIH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 04:07:59 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1539218338; bh=+gxLaUHCdql05tMc9SHU044gDCWQfdTo3n4IMCnct9c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BhrTZc2vIYOaSGst+0udYV8UaGXqklYM0LulmPkG4r5WhCwM5yTkneaOYcvBJwet/
-         BrmzVYAIbFM8xYwuZbPx1DMivi/mGOE2qKDe9O1GDs8HhzVDzY7EmzZlBgfS6nlo9t
-         nD9LBazUWAca69VtdaljYefMAFhWelzf7EnaYz4JCvk4A5GxfLPAchXn2mw+pz8jKe
-         +AAj7IhFJXeXVbrMw1QeZlwnFfd0TKhTokM1SqlbumgTPGnqGEbEjCUOXayyjBHWGy
-         dkTo3YlDiusXdaSw0kwMJLBRKtnay7O7B4aWVSGdWxwpFM18UVqGliZ+7zvG+WWGlI
-         XjqQRyeIUAcHA==
+        t=1539218597; bh=Fw2v6hrzuIuI9bc1oZskcmEhOFl+Hwh/mjLrMWBDnTU=;
+        h=Date:From:To:Subject:From;
+        b=TRC+1zJqrKo5umLQ+jxANNzi+NscSeJNuomXr6uRrAQz/B/gc4lwpPg7tS50ysmrP
+         W2zb9CwCAK6Kdl/qIB7HbeVFM0BIZGTapxRH4UpTi0f1YHatQIPoVz3OUfNi+yEEfx
+         muoShk1QCeFXnV4vgUeQX3jc/g+erj9ufg4u7JLQXC+vMUCMI/aP3JtqPf/QEjNq12
+         FSlC4cHejFSQVFKlfZrwygsDHsBXvKJVxoCxaCRbkviBiGcfNkvpeTrjaVXiV8UzRh
+         k72QXKLnLOqBp4C4Dc/5vE3nvmkWWtUk7B2CJGXrhA6NriHkQW5QmW3Oi65R+5AgaZ
+         YN6vuwqjgTzHQ==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 11 Oct 2018 00:38:58 +0000
+Date:   Thu, 11 Oct 2018 00:43:17 +0000
 From:   missingterms@redchan.it
 To:     linux-kernel@vger.kernel.org
-Cc:     rms@gnu.org, bruce@perens.com, esr@thyrsus.com,
-        moglen@columbia.edu, bkuhn@sfconservancy.org, editor@lwn.net,
-        torvalds@osdl.org
-Subject: Three avenues to rescind GPLv2 property. RAP strategy added.
-Message-ID: <8bae6240e13b8cf7f75de9e8ffd18e19@redchan.it>
+Subject: Re: Code of Conduct, more attacks on Ted Ts'o
+Message-ID: <ff0e82168a803ea8238e636efcad295c@redchan.it>
 X-Sender: missingterms@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Three avenues to rescind GPLv2 property. RAP strategy added.
+
 
 Here's a case in NY where a Software distributor agreement violated New 
 York's Rule Against Perpetuities
