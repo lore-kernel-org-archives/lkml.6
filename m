@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB582C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489B3C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EE612098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E80021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7FB2WDi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE612098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpBkJHE6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E80021470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbeJKXFX (ORCPT
+        id S1729433AbeJKXF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:22 -0400
+        id S1728622AbeJKXFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82C8220652;
-        Thu, 11 Oct 2018 15:37:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F2F20652;
+        Thu, 11 Oct 2018 15:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272260;
-        bh=SM3Ms7yZRByvC/9H4oIeVjeWVn4w3dyl9KoiJFM65z4=;
+        s=default; t=1539272263;
+        bh=VYcPh7Eie36Hv43zx6eNep7iT53dIHLRahLoB8AgdgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y7FB2WDi9jUFlTILPQWqdVV4Ii0kz+3RET+dYJlzyz9qxe3cNxXAPa3T0EkGJvgLQ
-         VVRce+AwFEF9nUpK2LBurzQ2MkugzivQJ5/hYvXY0Y4+Flk7wd1KJMPiFFSI1uVE54
-         w13tpg34CWJlz+l1lSbl5lotR5FmI2u8rMGm2BzQ=
+        b=dpBkJHE6hO/tAfeQZ3GlV28PzjAesMakF7KQNkbvnjpxPl2V7lj2VTWDLcal5rmz+
+         YFnxn8bOuFbl5fwB5VugEoIgy3UvwyNKFpXPLa/m128lgYKzJMALvNP1t2jH+LuUsz
+         xRnPeUzNX9p4UQ6SyLsg+dd97GQauQtBb759OerQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 045/120] ASoC: dapm: Fix potential DAI widget pointer deref when linking DAIs
-Date:   Thu, 11 Oct 2018 17:33:46 +0200
-Message-Id: <20181011152551.602671593@linuxfoundation.org>
+Subject: [PATCH 3.18 046/120] module: exclude SHN_UNDEF symbols from kallsyms api
+Date:   Thu, 11 Oct 2018 17:33:47 +0200
+Message-Id: <20181011152551.640465418@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,39 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+From: Jessica Yu <jeyu@kernel.org>
 
-[ Upstream commit e01b4f624278d5efe5fb5da585ca371947b16680 ]
+[ Upstream commit 9f2d1e68cf4d641def734adaccfc3823d3575e6c ]
 
-Sometime a component or topology may configure a DAI widget with no
-private data leading to a dev_dbg() dereferencne of this data.
+Livepatch modules are special in that we preserve their entire symbol
+tables in order to be able to apply relocations after module load. The
+unwanted side effect of this is that undefined (SHN_UNDEF) symbols of
+livepatch modules are accessible via the kallsyms api and this can
+confuse symbol resolution in livepatch (klp_find_object_symbol()) and
+cause subtle bugs in livepatch.
 
-Fix this to check for non NULL private data and let users know if widget
-is missing DAI.
+Have the module kallsyms api skip over SHN_UNDEF symbols. These symbols
+are usually not available for normal modules anyway as we cut down their
+symbol tables to just the core (non-undefined) symbols, so this should
+really just affect livepatch modules. Note that this patch doesn't
+affect the display of undefined symbols in /proc/kallsyms.
 
-Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-dapm.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/module.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3400,6 +3400,13 @@ int snd_soc_dapm_link_dai_widgets(struct
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3592,7 +3592,7 @@ static unsigned long mod_find_symname(st
+ 
+ 	for (i = 0; i < kallsyms->num_symtab; i++)
+ 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+-		    kallsyms->symtab[i].st_info != 'U')
++		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+ 			return kallsyms->symtab[i].st_value;
+ 	return 0;
+ }
+@@ -3636,6 +3636,10 @@ int module_kallsyms_on_each_symbol(int (
+ 		if (mod->state == MODULE_STATE_UNFORMED)
  			continue;
- 		}
- 
-+		/* let users know there is no DAI to link */
-+		if (!dai_w->priv) {
-+			dev_dbg(card->dev, "dai widget %s has no DAI\n",
-+				dai_w->name);
-+			continue;
-+		}
+ 		for (i = 0; i < kallsyms->num_symtab; i++) {
 +
- 		dai = dai_w->priv;
- 
- 		/* ...find all widgets with the same stream and link them */
++			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
++				continue;
++
+ 			ret = fn(data, symname(kallsyms, i),
+ 				 mod, kallsyms->symtab[i].st_value);
+ 			if (ret != 0)
 
 
