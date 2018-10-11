@@ -2,62 +2,64 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDE8C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76416C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884AD20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D67220841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:14:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KSPuOP0z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884AD20841
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RP3Wf0Te"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D67220841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeJKNgn (ORCPT
+        id S1728077AbeJKNkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 09:36:43 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:34157 "EHLO
+        Thu, 11 Oct 2018 09:40:10 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:41684 "EHLO
         mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbeJKNgm (ORCPT
+        with ESMTP id S1727353AbeJKNkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 09:36:42 -0400
-Received: by mail-yw1-f67.google.com with SMTP id m129-v6so3160571ywc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:10:58 -0700 (PDT)
+        Thu, 11 Oct 2018 09:40:10 -0400
+Received: by mail-yw1-f67.google.com with SMTP id 135-v6so3149773ywo.8
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:14:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5fIUb92OYF2wLqmfn4EGg5jS4BRcuqT2H3Q+tibUquc=;
-        b=KSPuOP0zZhdPBYPdUy57fJQdhT+yM4mtA8WKzPm3X9y0Vxu73nyl7gXHz4So9FyIyc
-         9MdaZVORLtAVNhF+JE4BrkEpi7lUziLLaaYa6qIVvldkYlHjO2VCovomCR5tOoJ1MfQp
-         qZ4XvwMyhzFIvsuJhMPWafq047LFW+Kpt9i1U=
+        bh=7IAGnemiCYDs+EjrC0YpT7FA/BVh+qvrJekxWsHwIaQ=;
+        b=RP3Wf0TeIWRjOSZJfT0cvxky3R9FS4WTtPSPmyQBTrM0/XpFl2wEk1ka5RXs6fuv4y
+         KrQbEk3545xxw7xu0ngBtUfIZNq9A/PF1U90PQxS+4i8sYWKB424OP4QtwaqrrrcmAJt
+         14B78AOw95miiiZksGezdM03DixhRTNOPniEs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5fIUb92OYF2wLqmfn4EGg5jS4BRcuqT2H3Q+tibUquc=;
-        b=ha+N+OrUep2/WCecs7rGO9UlRJ6/hXT5ydwXL0iJpKO5uQk6vhO/mZQUjuBhRs9aVy
-         oq9S46efJHR8nnvtRalwASDRCSz4ST7oS3tfYbqc6t+FTXnTlqjmm9e1aIKzgRLTaaGr
-         CKMlrrFWx78iHcQt/dj/MnS5Ivb6YQx/qXuQIlLGdYntRELgSG7uKU52Vdpw7GvGyIJS
-         97+ZDOah1IbVDG6eSeYiZZhDJzBq5mTmHZKIYtlNhWeqaRJNu6WGO08u7gEgbE4HUQyy
-         YsEBYeQp9o3BEM8/oPqdpAL42U3EaDrEnT00iZWytkStffvwzThe3gHBM96LKUSABHWs
-         /EXg==
-X-Gm-Message-State: ABuFfogoV4ovdJ/MiwWIdkf/EZuu3sqqlYXLoqXkCETpv4VZtISNfLFp
-        T9UYMvddxbdn4GWbsgYV6qbkIQGki6LaMIpCFQPRdw==
-X-Google-Smtp-Source: ACcGV60ElJef4pGxL41XuFbPIa8NmWiWtK5Ppa0V3QIIO2j51kqiU419ibRzrpCcidlqSxbjY3yeFOojOOZcAnGTshY=
-X-Received: by 2002:a0d:d801:: with SMTP id a1-v6mr94914ywe.399.1539238258071;
- Wed, 10 Oct 2018 23:10:58 -0700 (PDT)
+        bh=7IAGnemiCYDs+EjrC0YpT7FA/BVh+qvrJekxWsHwIaQ=;
+        b=MDcsHiVCNQaXhOx5IRwsJgZZblieVoomXpWE+k2ZZg+Z1CxcexHWYgTLEJFWQjUyME
+         ky7IyCAhC4X/0SwFCgH/KuD5FdxWy4EcDPhCXBfe8CDXhE87SrldSdEW44OwibPhu3Av
+         LPS3RlqXbb11YRbOKkpz4VUJUWkOfEHh9vQR0OCUrK8uCP5KscYmEwSqzYiYuhPvxink
+         VJ+SHaAS6/a8NyonR3LfOC5V7jr2p3dV1kr8HhKswFaJq0h/daMj25RwO8yN+6p+6ZBk
+         PSoqa+i/PunHj4K0diyNk0EXVsZrsOZdNc6enDhi5llbI6vSVFY4VYlxvVloR0PAuw/6
+         HTlQ==
+X-Gm-Message-State: ABuFfoiXDC9KGQJpAsXwVuJCZfKJJGg5W35jaYFPz2F5ustQXDduTedS
+        dQT7yMzJH9OdwvUAaIJMvCSWMOs+mXClpuyo3R6sHw==
+X-Google-Smtp-Source: ACcGV620OataGhheFj+qU6sEBXkHGNVoTRKjIxkhGAJZawWGGqyXLAX1TSuL0Q+k4M3yIMz8cwanuj5Hi5VR2FclWLA=
+X-Received: by 2002:a81:9849:: with SMTP id p70-v6mr103220ywg.175.1539238464979;
+ Wed, 10 Oct 2018 23:14:24 -0700 (PDT)
 MIME-Version: 1.0
 References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
  <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
-In-Reply-To: <20181009201321.GA28911@ls3530.fritz.box>
+ <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+In-Reply-To: <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
 From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Thu, 11 Oct 2018 11:40:46 +0530
-Message-ID: <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+Date:   Thu, 11 Oct 2018 11:44:13 +0530
+Message-ID: <CALxhOnhcP==cGqMQvtrZ9GiNWGB69hz4G0n0kocBtd9NpDthCg@mail.gmail.com>
 Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
 To:     Helge Deller <deller@gmx.de>
 Cc:     linux-parisc@vger.kernel.org,
@@ -78,82 +80,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helge,
+Typo fixed!
 
-On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
+On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
 >
-> * Firoz Khan <firoz.khan@linaro.org>:
-> > System call table generation script must be run to generate
-> > unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
-> > will have changes which will invokes the script.
+> Hi Helge,
+>
+> On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
 > >
-> > This patch will generate unistd_32/64.h and syscall_table_
-> > 32/64/c32.h files by the syscall table generation script
-> > invoked by arch/parisc/Makefile and the generated files against
-> > the removed files will be identical.
+> > * Firoz Khan <firoz.khan@linaro.org>:
+> > > System call table generation script must be run to generate
+> > > unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
+> > > will have changes which will invokes the script.
+> > >
+> > > This patch will generate unistd_32/64.h and syscall_table_
+> > > 32/64/c32.h files by the syscall table generation script
+> > > invoked by arch/parisc/Makefile and the generated files against
+> > > the removed files will be identical.
+> > >
+> > > The generated uapi header file will be included in uapi/asm/
+> > > unistd_32/64.h and generated system call table support file will
+> > > be included by arch/sparc/kernel/syscall_table_32/64.S file.
+> > >
+> > > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> > > ---
+> > >  arch/parisc/Makefile                  |   4 +
+> > >  arch/parisc/include/asm/Kbuild        |   3 +
+> > >  arch/parisc/include/uapi/asm/Kbuild   |   2 +
+> > >  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
+> > >  arch/parisc/kernel/syscall.S          |  12 +-
+> > >  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
 > >
-> > The generated uapi header file will be included in uapi/asm/
-> > unistd_32/64.h and generated system call table support file will
-> > be included by arch/sparc/kernel/syscall_table_32/64.S file.
 > >
-> > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> > ---
-> >  arch/parisc/Makefile                  |   4 +
-> >  arch/parisc/include/asm/Kbuild        |   3 +
-> >  arch/parisc/include/uapi/asm/Kbuild   |   2 +
-> >  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
-> >  arch/parisc/kernel/syscall.S          |  12 +-
-> >  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
+> > Can we please get rid of those two new files:
 >
->
-> Can we please get rid of those two new files:
+> Yes, we don't need those files some of the architecture and other
+> architecture does have same/similar files. That's why I added below
+Yes, we don't need those files some of the architecture does have ...
 
-Yes, we don't need those files some of the architecture and other
-architecture does have same/similar files. That's why I added below
-files, so every architecture implementation looks same.
-
-I feel it is better to remove these files.
-Arnd, Do u have any comment on this?
-
-Thanks
-Firoz
-
+> files, so every architecture implementation looks same.
 >
-> >  arch/parisc/kernel/syscall_table_32.S |  13 +
-> >  arch/parisc/kernel/syscall_table_64.S |  20 ++
+> I feel it is better to remove these files.
+> Arnd, Do u have any comment on this?
 >
-> Both are not needed (at least on parisc) if you apply the following
-> patch on top of your patch series.
-> This patch finally fixes the 64-bit kernel on parisc (tested on real
-> hardware).
+> Thanks
+> Firoz
 >
-> Helge
->
-> diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
-> index 2523b83b88d8..45cddeeb968f 100644
-> --- a/arch/parisc/kernel/syscall.S
-> +++ b/arch/parisc/kernel/syscall.S
-> @@ -923,10 +923,20 @@ ENTRY(lws_table)
->  END(lws_table)
->         /* End of lws table */
->
-> -#include "syscall_table_32.S"
-> +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
-> +
-> +ENTRY(sys_call_table)
-> +#if defined(CONFIG_64BIT)
-> +#include <asm/syscall_table_c32.h>     /* compat syscalls */
-> +#else
-> +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
-> +#endif
-> +END(sys_call_table)
-> +
->  #ifdef CONFIG_64BIT
-> -#define SYSCALL_TABLE_64BIT
-> -#include "syscall_table_64.S"
-> +ENTRY(sys_call_table64)
-> +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
-> +END(sys_call_table64)
->  #endif
->
->         /*
+> >
+> > >  arch/parisc/kernel/syscall_table_32.S |  13 +
+> > >  arch/parisc/kernel/syscall_table_64.S |  20 ++
+> >
+> > Both are not needed (at least on parisc) if you apply the following
+> > patch on top of your patch series.
+> > This patch finally fixes the 64-bit kernel on parisc (tested on real
+> > hardware).
+> >
+> > Helge
+> >
+> > diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
+> > index 2523b83b88d8..45cddeeb968f 100644
+> > --- a/arch/parisc/kernel/syscall.S
+> > +++ b/arch/parisc/kernel/syscall.S
+> > @@ -923,10 +923,20 @@ ENTRY(lws_table)
+> >  END(lws_table)
+> >         /* End of lws table */
+> >
+> > -#include "syscall_table_32.S"
+> > +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
+> > +
+> > +ENTRY(sys_call_table)
+> > +#if defined(CONFIG_64BIT)
+> > +#include <asm/syscall_table_c32.h>     /* compat syscalls */
+> > +#else
+> > +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
+> > +#endif
+> > +END(sys_call_table)
+> > +
+> >  #ifdef CONFIG_64BIT
+> > -#define SYSCALL_TABLE_64BIT
+> > -#include "syscall_table_64.S"
+> > +ENTRY(sys_call_table64)
+> > +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
+> > +END(sys_call_table64)
+> >  #endif
+> >
+> >         /*
