@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F86C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EC2C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1152087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05715213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xS6xSI86"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1152087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iED4HJQb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05715213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeJKXEo (ORCPT
+        id S1729206AbeJKXEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:04:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:04:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbeJKXEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:04:43 -0400
+        id S1728128AbeJKXEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:04:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB2DC2147C;
-        Thu, 11 Oct 2018 15:37:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A04A21470;
+        Thu, 11 Oct 2018 15:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272221;
-        bh=NnIhdksCZqb+Dr0vRIBAIQxeKv0A+Ofxed59dCAsiy4=;
+        s=default; t=1539272224;
+        bh=iUhqJKnS940N9B4q0Vx/cVrK2UPLj+9fXVr7gaXsZ48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xS6xSI86seIoF+OfHt76EBJ1SS2vdPnq/rQZnVxG0caavTLJB855dPyF+0jdjNWq5
-         2ZGtd9uFJFxA3dglQyFuP7HmLT1V++mJmmDXyVCOeTBwP68T47as2ZSyNbBJvhmGxO
-         6lKk95DCDfiAADe8p9/AewlQ6mvMU6EzWKZUOAa4=
+        b=iED4HJQbrHGlq1Sw8goDH9LIgjwWqtLb5EAZ7oqnlVXv5NRhoWBqfzHXiAwLPfTjo
+         X2YHIweNCmflP3OcqQGEpKBlux1EzIlIW6Jjg8XsAlR0rAND/fvfCVSSjU2Q2TW3oH
+         J8B1z2+FJ6Y8hB5UCFJduWkn5kbUFb8GB2jvoEg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 032/120] s390/extmem: fix gcc 8 stringop-overflow warning
-Date:   Thu, 11 Oct 2018 17:33:33 +0200
-Message-Id: <20181011152550.998527629@linuxfoundation.org>
+Subject: [PATCH 3.18 033/120] ALSA: snd-aoa: add of_node_put() in error path
+Date:   Thu, 11 Oct 2018 17:33:34 +0200
+Message-Id: <20181011152551.044003961@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,52 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 6b2ddf33baec23dace85bd647e3fc4ac070963e8 ]
+[ Upstream commit 222bce5eb88d1af656419db04bcd84b2419fb900 ]
 
-arch/s390/mm/extmem.c: In function '__segment_load':
-arch/s390/mm/extmem.c:436:2: warning: 'strncat' specified bound 7 equals
-source length [-Wstringop-overflow=]
-  strncat(seg->res_name, " (DCSS)", 7);
+ Both calls to of_find_node_by_name() and of_get_next_child() return a
+node pointer with refcount incremented thus it must be explicidly
+decremented here after the last usage. As we are assured to have a
+refcounted  np  either from the initial
+of_find_node_by_name(NULL, name); or from the of_get_next_child(gpio, np)
+in the while loop if we reached the error code path below, an
+x of_node_put(np) is needed.
 
-What gcc complains about here is the misuse of strncat function, which
-in this case does not limit a number of bytes taken from "src", so it is
-in the end the same as strcat(seg->res_name, " (DCSS)");
-
-Keeping in mind that a res_name is 15 bytes, strncat in this case
-would overflow the buffer and write 0 into alignment byte between the
-fields in the struct. To avoid that increasing res_name size to 16,
-and reusing strlcat.
-
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/mm/extmem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/aoa/core/gpio-feature.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/s390/mm/extmem.c
-+++ b/arch/s390/mm/extmem.c
-@@ -80,7 +80,7 @@ struct qin64 {
- struct dcss_segment {
- 	struct list_head list;
- 	char dcss_name[8];
--	char res_name[15];
-+	char res_name[16];
- 	unsigned long start_addr;
- 	unsigned long end;
- 	atomic_t ref_count;
-@@ -445,7 +445,7 @@ __segment_load (char *name, int do_nonsh
- 	memcpy(&seg->res_name, seg->dcss_name, 8);
- 	EBCASC(seg->res_name, 8);
- 	seg->res_name[8] = '\0';
--	strncat(seg->res_name, " (DCSS)", 7);
-+	strlcat(seg->res_name, " (DCSS)", sizeof(seg->res_name));
- 	seg->res->name = seg->res_name;
- 	rc = seg->vm_segtype;
- 	if (rc == SEG_TYPE_SC ||
+--- a/sound/aoa/core/gpio-feature.c
++++ b/sound/aoa/core/gpio-feature.c
+@@ -88,8 +88,10 @@ static struct device_node *get_gpio(char
+ 	}
+ 
+ 	reg = of_get_property(np, "reg", NULL);
+-	if (!reg)
++	if (!reg) {
++		of_node_put(np);
+ 		return NULL;
++	}
+ 
+ 	*gpioptr = *reg;
+ 
 
 
