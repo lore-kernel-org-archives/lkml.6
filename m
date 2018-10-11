@@ -2,175 +2,158 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C0CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDE8C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC1820841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC1820841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 884AD20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:11:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KSPuOP0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884AD20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeJKNe6 (ORCPT
+        id S1728168AbeJKNgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 09:34:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37468 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728122AbeJKNe6 (ORCPT
+        Thu, 11 Oct 2018 09:36:43 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:34157 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726846AbeJKNgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 09:34:58 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9B69ABw146415
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 02:09:13 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n1yqr2nj7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 02:09:12 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 11 Oct 2018 07:09:03 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Oct 2018 07:08:56 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9B68sIf1376738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 06:08:55 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EA939AE053;
-        Thu, 11 Oct 2018 09:07:37 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5101AE057;
-        Thu, 11 Oct 2018 09:07:35 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.69])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 11 Oct 2018 09:07:35 +0100 (BST)
-Date:   Thu, 11 Oct 2018 09:08:50 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Ingo Molnar <mingo@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        linux-um@lists.infradead.org
-Subject: Re: [PATCH] memblock: stop using implicit alignement to
- SMP_CACHE_BYTES
-References: <1538687224-17535-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20181005151934.87226fa92825c3002a475413@linux-foundation.org>
+        Thu, 11 Oct 2018 09:36:42 -0400
+Received: by mail-yw1-f67.google.com with SMTP id m129-v6so3160571ywc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5fIUb92OYF2wLqmfn4EGg5jS4BRcuqT2H3Q+tibUquc=;
+        b=KSPuOP0zZhdPBYPdUy57fJQdhT+yM4mtA8WKzPm3X9y0Vxu73nyl7gXHz4So9FyIyc
+         9MdaZVORLtAVNhF+JE4BrkEpi7lUziLLaaYa6qIVvldkYlHjO2VCovomCR5tOoJ1MfQp
+         qZ4XvwMyhzFIvsuJhMPWafq047LFW+Kpt9i1U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5fIUb92OYF2wLqmfn4EGg5jS4BRcuqT2H3Q+tibUquc=;
+        b=ha+N+OrUep2/WCecs7rGO9UlRJ6/hXT5ydwXL0iJpKO5uQk6vhO/mZQUjuBhRs9aVy
+         oq9S46efJHR8nnvtRalwASDRCSz4ST7oS3tfYbqc6t+FTXnTlqjmm9e1aIKzgRLTaaGr
+         CKMlrrFWx78iHcQt/dj/MnS5Ivb6YQx/qXuQIlLGdYntRELgSG7uKU52Vdpw7GvGyIJS
+         97+ZDOah1IbVDG6eSeYiZZhDJzBq5mTmHZKIYtlNhWeqaRJNu6WGO08u7gEgbE4HUQyy
+         YsEBYeQp9o3BEM8/oPqdpAL42U3EaDrEnT00iZWytkStffvwzThe3gHBM96LKUSABHWs
+         /EXg==
+X-Gm-Message-State: ABuFfogoV4ovdJ/MiwWIdkf/EZuu3sqqlYXLoqXkCETpv4VZtISNfLFp
+        T9UYMvddxbdn4GWbsgYV6qbkIQGki6LaMIpCFQPRdw==
+X-Google-Smtp-Source: ACcGV60ElJef4pGxL41XuFbPIa8NmWiWtK5Ppa0V3QIIO2j51kqiU419ibRzrpCcidlqSxbjY3yeFOojOOZcAnGTshY=
+X-Received: by 2002:a0d:d801:: with SMTP id a1-v6mr94914ywe.399.1539238258071;
+ Wed, 10 Oct 2018 23:10:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005151934.87226fa92825c3002a475413@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18101106-0020-0000-0000-000002D27E1F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101106-0021-0000-0000-00002120F47F
-Message-Id: <20181011060850.GA19822@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110060
+References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
+ <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
+In-Reply-To: <20181009201321.GA28911@ls3530.fritz.box>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Thu, 11 Oct 2018 11:40:46 +0530
+Message-ID: <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 03:19:34PM -0700, Andrew Morton wrote:
-> On Fri,  5 Oct 2018 00:07:04 +0300 Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> 
-> > When a memblock allocation APIs are called with align = 0, the alignment is
-> > implicitly set to SMP_CACHE_BYTES.
-> > 
-> > Replace all such uses of memblock APIs with the 'align' parameter explicitly
-> > set to SMP_CACHE_BYTES and stop implicit alignment assignment in the
-> > memblock internal allocation functions.
-> > 
-> > For the case when memblock APIs are used via helper functions, e.g. like
-> > iommu_arena_new_node() in Alpha, the helper functions were detected with
-> > Coccinelle's help and then manually examined and updated where appropriate.
-> > 
-> > ...
+Hi Helge,
+
+On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
+>
+> * Firoz Khan <firoz.khan@linaro.org>:
+> > System call table generation script must be run to generate
+> > unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
+> > will have changes which will invokes the script.
 > >
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -1298,9 +1298,6 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
-> >  {
-> >  	phys_addr_t found;
-> >  
-> > -	if (!align)
-> > -		align = SMP_CACHE_BYTES;
-> > -
-> 
-> Can we add a WARN_ON_ONCE(!align) here?  To catch unconverted code
-> which sneaks in later on.
+> > This patch will generate unistd_32/64.h and syscall_table_
+> > 32/64/c32.h files by the syscall table generation script
+> > invoked by arch/parisc/Makefile and the generated files against
+> > the removed files will be identical.
+> >
+> > The generated uapi header file will be included in uapi/asm/
+> > unistd_32/64.h and generated system call table support file will
+> > be included by arch/sparc/kernel/syscall_table_32/64.S file.
+> >
+> > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> > ---
+> >  arch/parisc/Makefile                  |   4 +
+> >  arch/parisc/include/asm/Kbuild        |   3 +
+> >  arch/parisc/include/uapi/asm/Kbuild   |   2 +
+> >  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
+> >  arch/parisc/kernel/syscall.S          |  12 +-
+> >  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
+>
+>
+> Can we please get rid of those two new files:
 
-Here it goes:
+Yes, we don't need those files some of the architecture and other
+architecture does have same/similar files. That's why I added below
+files, so every architecture implementation looks same.
 
-From baec825c58e8bc11371433d3a4b20b2216877a50 Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Date: Mon, 8 Oct 2018 11:22:10 +0300
-Subject: [PATCH] memblock: warn if zero alignment was requested
+I feel it is better to remove these files.
+Arnd, Do u have any comment on this?
 
-After update of all memblock users to explicitly specify SMP_CACHE_BYTES
-alignment rather than use 0, it is still possible that uncovered users
-may sneak in. Add a WARN_ON_ONCE for such cases.
+Thanks
+Firoz
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- mm/memblock.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 0bbae56..5fefc70 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1298,6 +1298,9 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- {
- 	phys_addr_t found;
- 
-+	if (WARN_ON_ONCE(!align))
-+		align = SMP_CACHE_BYTES;
-+
- 	found = memblock_find_in_range_node(size, align, start, end, nid,
- 					    flags);
- 	if (found && !memblock_reserve(found, size)) {
-@@ -1420,6 +1423,9 @@ static void * __init memblock_alloc_internal(
- 	if (WARN_ON_ONCE(slab_is_available()))
- 		return kzalloc_node(size, GFP_NOWAIT, nid);
- 
-+	if (WARN_ON_ONCE(!align))
-+		align = SMP_CACHE_BYTES;
-+
- 	if (max_addr > memblock.current_limit)
- 		max_addr = memblock.current_limit;
- again:
--- 
-2.7.4
-
-
--- 
-Sincerely yours,
-Mike.
-
+>
+> >  arch/parisc/kernel/syscall_table_32.S |  13 +
+> >  arch/parisc/kernel/syscall_table_64.S |  20 ++
+>
+> Both are not needed (at least on parisc) if you apply the following
+> patch on top of your patch series.
+> This patch finally fixes the 64-bit kernel on parisc (tested on real
+> hardware).
+>
+> Helge
+>
+> diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
+> index 2523b83b88d8..45cddeeb968f 100644
+> --- a/arch/parisc/kernel/syscall.S
+> +++ b/arch/parisc/kernel/syscall.S
+> @@ -923,10 +923,20 @@ ENTRY(lws_table)
+>  END(lws_table)
+>         /* End of lws table */
+>
+> -#include "syscall_table_32.S"
+> +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
+> +
+> +ENTRY(sys_call_table)
+> +#if defined(CONFIG_64BIT)
+> +#include <asm/syscall_table_c32.h>     /* compat syscalls */
+> +#else
+> +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
+> +#endif
+> +END(sys_call_table)
+> +
+>  #ifdef CONFIG_64BIT
+> -#define SYSCALL_TABLE_64BIT
+> -#include "syscall_table_64.S"
+> +ENTRY(sys_call_table64)
+> +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
+> +END(sys_call_table64)
+>  #endif
+>
+>         /*
