@@ -2,116 +2,91 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14556C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A535C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CA72085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CA72085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 530392085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:31:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tFIRynzC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530392085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbeJKO4s (ORCPT
+        id S1727840AbeJKO5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:56:48 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43494 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKO4r (ORCPT
+        Thu, 11 Oct 2018 10:57:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49708 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbeJKO5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:56:47 -0400
-Received: by mail-qt1-f196.google.com with SMTP id q41-v6so8742783qtq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 00:30:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NKbiLLke6MP/0FcmMV9ZeoaTU7oBYAbuD+pPwrcu6n8=;
-        b=X+aq2rumIL7L052kCUFb0mOsZynRiIMLnVQ8LoepRWlnuCoHKkL5GxaJBAYzzDv5dM
-         Gpwu+bwgz0vztFImKhK4OdjFJsZdEgE7GXCUqBy1edZc6l4rUIhUqvNwqgQdysDk+SBq
-         efFHVzfUM11aq1coRGwFRiz3UiG1xIrobVqgDj5SRzo3Mn6E673Ij+xqCLfQw7YmacaB
-         Q8rLM77UdXzc31OdfuviKvr2xbmyF223zYhagKEAqO389Bu/WQdRzgFKPKTl80O0sWkX
-         0jUElOcCwY9sZp67ORVB1vNcqaCxYI2z3sjfgnPVQ2MY8zzVC+ummrMQBfgISO1heLyE
-         rklQ==
-X-Gm-Message-State: ABuFfoh8E5pNMbYtHBwzKR6fAmxNHIv5UqExrJL3Vzoi6fMxbMN0HFLa
-        +2LpUH53f4pgaqQEyLb5PyG9CHbqo+mDxMmUKsY=
-X-Google-Smtp-Source: ACcGV60fZJs8u4WsS2uR6PqGvcsF/DTsYKbCiWwTEy7w/NWESXPkMy/8INEqP+hmhcL/hC6XI3mOq20FlQ9nuWpJJXE=
-X-Received: by 2002:a0c:881c:: with SMTP id 28mr434808qvl.40.1539243046934;
- Thu, 11 Oct 2018 00:30:46 -0700 (PDT)
+        Thu, 11 Oct 2018 10:57:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ahBK5zqI2DJ5p1osG+ETUl8gjyom6+IwguNdYgg3iCE=; b=tFIRynzCbKkBSDvIcOj2gtSRT
+        W0C2Ngej2q/jlLXpTNQmvlbGXp4kvq9YADo2oSCnKy0741QtCV3dhQxDfPRV53KDU5YuBbQ8+ydov
+        /1I8c423SHkXslWnenfdBOsslfiFdEIZSw8CfrrWAKhGeFLf60u332ACBHNHKLan9PGzLH7LDCsRc
+        ih7clJ09E9u990I7KusYS8GDExZ7D6ZFW9LyllPUknuxgxuFiLLwdGJcLVtriPg+boBc/Do0Q5OdQ
+        IZHLgp5lXSSBXpFz2OveTx/CbKAQg6kJd4yl8g4c3bISoN00NjcHzhf4kNzhDlOeHnYM9D9Kzljkw
+        5Rf9sPoMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAVRY-0006ez-7w; Thu, 11 Oct 2018 07:31:36 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 74E6520291FCC; Thu, 11 Oct 2018 09:31:33 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 09:31:33 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/tsc: use real seqcount_latch in cyc2ns_read_begin()
+Message-ID: <20181011073133.GZ5663@hirez.programming.kicks-ass.net>
+References: <20181011003336.168941-1-edumazet@google.com>
 MIME-Version: 1.0
-References: <1539224450-19928-1-git-send-email-vincentc@andestech.com> <1539224450-19928-2-git-send-email-vincentc@andestech.com>
-In-Reply-To: <1539224450-19928-2-git-send-email-vincentc@andestech.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Oct 2018 09:30:30 +0200
-Message-ID: <CAK8P3a2U_-EmBf5r4wELddwTYF-S_GKPBcwPiqhV0cp-Cb44gA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] nds32: nds32 FPU port
-To:     Vincent Chen <vincentc@andestech.com>
-Cc:     Greentime Hu <green.hu@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Chen <deanbo422@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011003336.168941-1-edumazet@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 4:56 AM Vincent Chen <vincentc@andestech.com> wrote:
->
-> This commit contains basic components for nds32 FPU support such as
-> FPU exception handler and context switch for FPU register.
->
-> diff --git a/arch/nds32/Kconfig.cpu b/arch/nds32/Kconfig.cpu
-> index b8c8984..7ee4e19 100644
-> --- a/arch/nds32/Kconfig.cpu
-> +++ b/arch/nds32/Kconfig.cpu
-> @@ -7,6 +7,28 @@ config CPU_LITTLE_ENDIAN
->         bool "Little endian"
->         default y
->
-> +config FPU
-> +       bool "FPU support"
-> +       default n
-> +       help
-> +         If FPU ISA is used in user space, this configure shall be Y to make
-> +         the fpu context switch and fpu exception handler is enabled in kernel.
-> +         Lazy FPU is the default scheme for fpu context switch. If user wants
-> +         to disable Lazy FPU scheme, please enable CONFIG_UNLAZY_FPU.
-> +
-> +         If no FPU ISA is used in user space, say N.
+On Wed, Oct 10, 2018 at 05:33:36PM -0700, Eric Dumazet wrote:
+> While looking at native_sched_clock() disassembly I had
+> the surprise to see the compiler (gcc 7.3 here) had
+> optimized out the loop, meaning the code is broken.
+> 
+> Using the documented and approved API not only fixes the bug,
+> it also makes the code more readable.
+> 
+> Replacing five this_cpu_read() by one this_cpu_ptr() makes
+> the generated code smaller.
 
-There was a long discussion on RISC-V about what happens when
-FPU support is enabled or disabled, you may have seen that as well.
+Does not for me, that is, the resulting asm is actually larger
 
-Can you confirm that:
+You're quite right the loop went missing; no idea wth that compiler is
+smoking (gcc-8.2 for me). In order to eliminate that loop it needs to
+think that two consecutive loads of this_cpu_read(cyc2ns.seq.sequence)
+will return the same value. But this_cpu_read() is an asm() statement,
+it _should_ not assume such.
 
-a) A kernel with FPU support enabled running on a CPU without an FPU
-    will behave the same as a kernel without FPU support, and in particular
-    not crash while trying to access the FPU
-b) A kernel with FPU support disabled running on a CPU with an FPU
-    prevents user space from accessing the FPU, to avoid corrupting
-    FPU registers during a task switch when a process accidentally contains
-    FPU access
+We assume that this_cpu_read() implies READ_ONCE() in a number of
+locations, this really should not happen.
 
-> +config UNLAZY_FPU
-> +       bool "Unlazy FPU support"
-> +       depends on FPU
-> +       default n
-> +       help
-> +         Say Y here to disable lazy FPU scheme. Disable lazy FPU scheme causes
-> +         some performance loss because the fpu register are loaded and stored
-> +         in each context switch.
-> +
-> +         For nomal case, say N.
+The reason it was written using this_cpu_read() is so that it can use
+%gs: prefixed instructions and avoid ever loading that percpu offset and
+doing manual address computation.
 
-I prefer Kconfig symbols to avoid using negatives, as this easily gets
-confusing. Why not do it like
-
-config LAZY_FPU_SWITCHING
-           bool "Lazy FPU switching"
-           depends on FPU
-           default y
-
-      Arnd
+Let me prod at this with a sharp stick.
