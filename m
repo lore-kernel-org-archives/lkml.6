@@ -2,597 +2,176 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40863C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 284D4C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D859E2086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6BB22086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USDoGPy2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D859E2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M91yGIZt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BB22086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbeJKOFX (ORCPT
+        id S1727653AbeJKOFl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:05:23 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43767 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeJKOFX (ORCPT
+        Thu, 11 Oct 2018 10:05:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40447 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbeJKOFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:05:23 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k9so7830515otl.10;
-        Wed, 10 Oct 2018 23:39:32 -0700 (PDT)
+        Thu, 11 Oct 2018 10:05:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r83-v6so7142460ljr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oQa+rA6dMWSpNJRaZdwLCMR/V+PHl95AXkzv+Uxi2BQ=;
-        b=USDoGPy2KH8HK/MbEfif4Fi63BTO2ieu4Yd3M+49UMB2UVVWJ8il8nueG+RDoc5eJ6
-         +9tQX5izUyPLZhaY3JOMHRvLyYS6NmGK6b0LTv7KLY5tmtWwpxydPwn2s8WZ4I3uVbXF
-         YZyBHmJoBE6otXKDdIF7fQJEKp56f02k4mC5nyDpWutUe2Wi9LDS/i7SIh2xPYYcWy1c
-         TefXF4OZF0pj4kbV8mZCj0Sc6seWa/BN/O+AqVG+qzhYPZ9/MCdR/yKvZACxA0N197Ig
-         XXdLy/u6bm9kQyIypKDYb6jYf9Jwh+Ob6pRCNBBwuQVjUHT5BsZx4H6NSiyVgrXS6+FC
-         CoHQ==
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xAq3G/WOP98XSdOvHrnhfLRJqC5LZ6aJD5T0CJKf6Nw=;
+        b=M91yGIZtXQou1PO657igXWrv82p/L79UBuEpVi1pbDwUUONY/bjH0SJpRui5QAxfpf
+         66ipKgDWP32NTSPhn/B1m/y7IO6FB1P4jfRA/blzII++TqVMxR+Dt+VL2KrEYund1Cnv
+         YvOAvxSfQrgLjeQYm3ZmwtUk7K31yeQj+Es/uQSJlK0Xa4vCjefQssbFIDCkqNlrgGhC
+         3X7j7UyfhTz9qDTmgR2r3eED5WkxbYGymxJ0mZoBmEym8cK+hJLKLD7Ee1N0XDjyzW5N
+         mXEgmVA53hf5ulnrCkMTV7H+40W+0Jnr8cX1YX5Nf/7UsQUwEkR8gSmjU8wEfvGy1dAc
+         ajmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oQa+rA6dMWSpNJRaZdwLCMR/V+PHl95AXkzv+Uxi2BQ=;
-        b=a97eKRB1XnXU6wV0MkVf32pMt1PiWuXQNVXHnXp3KDmhfY7vHtJW82pnphzCcZXwpQ
-         pZOZWDgOvoMwTzn3pXQ3F4ymrqw/Nx9Tfp7bn/kJFRGZpDAHtu2BfR62yXpIIjGvJnx9
-         QO95fYRzE7GNDiGJR6t4GcTjsFasrFG550ISiEq71UFwV6QKIwIvTsgL6qc5NHcHy/2D
-         ZOrBjxWu+VlkxSsbqHU4TmeTaNOxPlqknyTyxguer+YeQ5LhtSb5U9o9mAQ8YN5fnTuX
-         fsFizh/JIchVpZQK1lwm0k1GOftDSXV5/ZnQMcOpkBBaUfgpPCL1/1lRvM0H8SgQ6Nac
-         IStQ==
-X-Gm-Message-State: ABuFfojARHqcYWAEIQeW4PA37xeReS7hArcRVyfF0bgp+CediGpIm3U8
-        C0/x/4+Mjwxywa00nhANZnEnKQFCvWp6SFOgTeI=
-X-Google-Smtp-Source: ACcGV63QlockVhW4iaWFyhtDsZKOwTmLPsiKRG8y5OxEopDdtt1ByyBFfT2Dsr3nl2V/W62d4rn7kSIdpmxAgv74dVU=
-X-Received: by 2002:a9d:614a:: with SMTP id c10mr218622otk.278.1539239971433;
- Wed, 10 Oct 2018 23:39:31 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xAq3G/WOP98XSdOvHrnhfLRJqC5LZ6aJD5T0CJKf6Nw=;
+        b=QNUnn/SolFYjyyLO+ZErtd/TWNwV1phB5NDKopFZ0FrOyfl3dvnOjwjSknYfQkSwjk
+         OCDe5fW6nGTKh5TQC1vEGXj4U4B3sexE/baDHJk/C1MpkaJM5p1SXILaszio7PdmOWvP
+         BRItnIVrrlEUZ1Nyi6/a7hHMQyCttXD1FoErk5eU4LNi0ISHAe8oizEs3hrI3MrGkcPk
+         CHc+gaIqb8+hy9R6RYqF8rgDmvkxXz7S5HFuqPxVSaY1Wb5qIM/nyG+bOG97p3/7YxPt
+         JfyOf/+C5ciqyB6XWLrNPpBEMt2YeNiCIm07eLvYlOHdMdDLXWPR7tlRGIUF4fhW5zli
+         qkFQ==
+X-Gm-Message-State: ABuFfoi8oaMH9ga3y37y0B1FlIpQWAIbONjyQNODI2Mdcg9hnreXbl2y
+        7AIrF4nL3Zd87qWpGL1PU3WZL/sM
+X-Google-Smtp-Source: ACcGV628Za4ZXJBvFDh9IFGMb5WzghBFthrjjjO0L+PwINAiw8TX7fJYLN40ig3mkwL/5Qwh8fQfkA==
+X-Received: by 2002:a2e:638d:: with SMTP id s13-v6mr219097lje.117.1539239988747;
+        Wed, 10 Oct 2018 23:39:48 -0700 (PDT)
+Received: from [192.168.1.111] (91-157-235-206.elisa-laajakaista.fi. [91.157.235.206])
+        by smtp.googlemail.com with ESMTPSA id 71-v6sm6052094lja.90.2018.10.10.23.39.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 23:39:46 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] code of conduct fixes
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        ksummit-discuss@lists.linuxfoundation.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539202053.12644.8.camel@HansenPartnership.com>
+From:   Tomi Valkeinen <tomi.valkeinen@iki.fi>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomi.valkeinen@iki.fi; prefer-encrypt=mutual; keydata=
+ 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
+ QChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
+Message-ID: <6b0d5ad6-c76b-8dbf-bd74-de352280e780@iki.fi>
+Date:   Thu, 11 Oct 2018 09:39:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com>
- <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com> <c77e9601-71ca-ff09-f21d-b2493ca7c40b@arm.com>
-In-Reply-To: <c77e9601-71ca-ff09-f21d-b2493ca7c40b@arm.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Thu, 11 Oct 2018 12:09:19 +0530
-Message-ID: <CAKTKpr41udk9dGyLVZjO5pj_J7sf_sU_Td3t2R60UMxJatDDXA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
-To:     suzuki.poulose@arm.com
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539202053.12644.8.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On 10/10/18 23:07, James Bottomley wrote:
+> Resend to show accumulated tags and also to add a third patch listing
+> the TAB as the reporting point as a few people seem to want.  If it
+> gets the same level of support, I'll send it in with the other two.
+> 
+> ---
+> 
+> Previous cover letter:
+> 
+> 
+> We've had several threads discussing potential changes to the code of
+> conduct but Mauro is the only person to have proposed an actual patch. 
+> In order to move the debate on, I'm presenting two patches, one to fix
+> the email problem Mauro identified and the other to strip the
+> enforcement section pending community discussion as Shuah suggested.
+> 
+> I'll take responsibility for collecting any tags people want to add
+> (review/ack/sign off, etc) and sending the patch in as a signed pull
+> request before 4.19 final if they get enough community support.
+> 
+> Note, I've sent both patches in as a series to facilitate review and
+> discussion, but they are separable if one is looked on with less favour
+> than the other.
+> 
+> It was also a bit unclear which list to send this to, but I finally
+> settled on linux-kernel as the catch all and ksummit-discuss since
+> that's where most of the current discussion is.  I can add other lists
+> as people suggest them.
+> 
+> James
+> 
+> ---
+> 
+> James Bottomley (3):
+>   code-of-conduct: Fix the ambiguity about collecting email addresses
+>   code-of-conduct: Strip the enforcement paragraph pending community
+>     discussion
+>   code-of-conduct: Add back the TAB as the central reporting point
+> 
+>  Documentation/process/code-of-conduct.rst | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
 
-On Wed, Oct 10, 2018 at 3:22 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> Hi Ganapatrao,
->
-> On 21/06/18 07:33, Ganapatrao Kulkarni wrote:
-> > This patch adds a perf driver for the PMU UNCORE devices DDR4 Memory
-> > Controller(DMC) and Level 3 Cache(L3C).
-> >
-> > ThunderX2 has 8 independent DMC PMUs to capture performance events
-> > corresponding to 8 channels of DDR4 Memory Controller and 16 independent
-> > L3C PMUs to capture events corresponding to 16 tiles of L3 cache.
-> > Each PMU supports up to 4 counters. All counters lack overflow interrupt
-> > and are sampled periodically.
-> >
-> > Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> > ---
-> >   drivers/perf/Kconfig         |   8 +
-> >   drivers/perf/Makefile        |   1 +
-> >   drivers/perf/thunderx2_pmu.c | 949 +++++++++++++++++++++++++++++++++++++++++++
-> >   include/linux/cpuhotplug.h   |   1 +
-> >   4 files changed, 959 insertions(+)
-> >   create mode 100644 drivers/perf/thunderx2_pmu.c
-> >
->
->
-> > +
-> > +/*
-> > + * DMC and L3 counter interface is muxed across all channels.
-> > + * hence we need to select the channel before accessing counter
-> > + * data/control registers.
-> > + *
-> > + *  L3 Tile and DMC channel selection is through SMC call
-> > + *  SMC call arguments,
-> > + *   x0 = THUNDERX2_SMC_CALL_ID      (Vendor SMC call Id)
-> > + *   x1 = THUNDERX2_SMC_SET_CHANNEL  (Id to set DMC/L3C channel)
-> > + *   x2 = Node id
-> > + *   x3 = DMC(1)/L3C(0)
-> > + *   x4 = channel Id
-> > + */
-> > +static void uncore_select_channel(struct perf_event *event)
-> > +{
-> > +     struct arm_smccc_res res;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore =
-> > +             pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     struct thunderx2_pmu_uncore_dev *uncore_dev =
-> > +             pmu_uncore->uncore_dev;
-> > +
-> > +     arm_smccc_smc(THUNDERX2_SMC_CALL_ID, THUNDERX2_SMC_SET_CHANNEL,
-> > +                     uncore_dev->node, uncore_dev->type,
-> > +                     pmu_uncore->channel, 0, 0, 0, &res);
-> > +     if (res.a0) {
-> > +             dev_err(uncore_dev->dev,
-> > +                     "SMC to Select channel failed for PMU UNCORE[%s]\n",
-> > +                             pmu_uncore->uncore_dev->name);
-> > +     }
-> > +}
-> > +
->
-> > +static void uncore_start_event_l3c(struct perf_event *event, int flags)
-> > +{
-> > +     u32 val;
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +
-> > +     /* event id encoded in bits [07:03] */
-> > +     val = GET_EVENTID(event) << 3;
-> > +     reg_writel(val, hwc->config_base);
-> > +     local64_set(&hwc->prev_count, 0);
-> > +     reg_writel(0, hwc->event_base);
-> > +}
-> > +
-> > +static void uncore_stop_event_l3c(struct perf_event *event)
-> > +{
-> > +     reg_writel(0, event->hw.config_base);
-> > +}
-> > +
-> > +static void uncore_start_event_dmc(struct perf_event *event, int flags)
-> > +{
-> > +     u32 val;
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     int idx = GET_COUNTERID(event);
-> > +     int event_type = GET_EVENTID(event);
-> > +
-> > +     /* enable and start counters.
-> > +      * 8 bits for each counter, bits[05:01] of a counter to set event type.
-> > +      */
-> > +     val = reg_readl(hwc->config_base);
-> > +     val &= ~DMC_EVENT_CFG(idx, 0x1f);
-> > +     val |= DMC_EVENT_CFG(idx, event_type);
-> > +     reg_writel(val, hwc->config_base);
-> > +     local64_set(&hwc->prev_count, 0);
-> > +     reg_writel(0, hwc->event_base);
-> > +}
-> > +
-> > +static void uncore_stop_event_dmc(struct perf_event *event)
-> > +{
-> > +     u32 val;
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     int idx = GET_COUNTERID(event);
-> > +
-> > +     /* clear event type(bits[05:01]) to stop counter */
-> > +     val = reg_readl(hwc->config_base);
-> > +     val &= ~DMC_EVENT_CFG(idx, 0x1f);
-> > +     reg_writel(val, hwc->config_base);
-> > +}
-> > +
-> > +static void init_cntr_base_l3c(struct perf_event *event,
-> > +             struct thunderx2_pmu_uncore_dev *uncore_dev)
-> > +{
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +
-> > +     /* counter ctrl/data reg offset at 8 */
-> > +     hwc->config_base = (unsigned long)uncore_dev->base
-> > +             + L3C_COUNTER_CTL + (8 * GET_COUNTERID(event));
-> > +     hwc->event_base =  (unsigned long)uncore_dev->base
-> > +             + L3C_COUNTER_DATA + (8 * GET_COUNTERID(event));
-> > +}
-> > +
-> > +static void init_cntr_base_dmc(struct perf_event *event,
-> > +             struct thunderx2_pmu_uncore_dev *uncore_dev)
-> > +{
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +
-> > +     hwc->config_base = (unsigned long)uncore_dev->base
-> > +             + DMC_COUNTER_CTL;
-> > +     /* counter data reg offset at 0xc */
-> > +     hwc->event_base = (unsigned long)uncore_dev->base
-> > +             + DMC_COUNTER_DATA + (0xc * GET_COUNTERID(event));
-> > +}
-> > +
-> > +static void thunderx2_uncore_update(struct perf_event *event)
-> > +{
-> > +     s64 prev, new = 0;
-> > +     u64 delta;
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     enum thunderx2_uncore_type type;
-> > +
-> > +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     type = pmu_uncore->uncore_dev->type;
-> > +
-> > +     pmu_uncore->uncore_dev->select_channel(event);
-> > +
-> > +     new = reg_readl(hwc->event_base);
-> > +     prev = local64_xchg(&hwc->prev_count, new);
-> > +
-> > +     /* handles rollover of 32 bit counter */
-> > +     delta = (u32)(((1UL << 32) - prev) + new);
-> > +     local64_add(delta, &event->count);
-> > +}
-> > +
->
->
-> > +
-> > +/*
-> > + * We must NOT create groups containing events from multiple hardware PMUs,
-> > + * although mixing different software and hardware PMUs is allowed.
-> > + */
-> > +static bool thunderx2_uncore_validate_event_group(struct perf_event *event)
-> > +{
-> > +     struct pmu *pmu = event->pmu;
-> > +     struct perf_event *leader = event->group_leader;
-> > +     struct perf_event *sibling;
-> > +     int counters = 0;
-> > +
-> > +     if (leader->pmu != event->pmu && !is_software_event(leader))
-> > +             return false;
-> > +
-> > +     for_each_sibling_event(sibling, event->group_leader) {
-> > +             if (is_software_event(sibling))
-> > +                     continue;
-> > +             if (sibling->pmu != pmu)
-> > +                     return false;
-> > +             counters++;
-> > +     }
->
-> The above loop will not account for :
-> 1) The leader event
-> 2) The event that we are about to add.
->
-> So you need to allocate counters for both the above to make sure we can
-> accommodate the events.
+For the three patches (preferably with Alan's "except where required by
+law"):
 
-Is leader also part of sibling list?
->
-> > +
-> > +     /*
-> > +      * If the group requires more counters than the HW has,
-> > +      * it cannot ever be scheduled.
-> > +      */
-> > +     return counters < UNCORE_MAX_COUNTERS;
-> > +}
-> > +
->
->
-> > +
-> > +static void thunderx2_uncore_start(struct perf_event *event, int flags)
-> > +{
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     struct thunderx2_pmu_uncore_dev *uncore_dev;
-> > +     unsigned long irqflags;
-> > +
-> > +     hwc->state = 0;
-> > +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     uncore_dev = pmu_uncore->uncore_dev;
-> > +
-> > +     raw_spin_lock_irqsave(&uncore_dev->lock, irqflags);
-> > +     uncore_dev->select_channel(event);
-> > +     uncore_dev->start_event(event, flags);
-> > +     raw_spin_unlock_irqrestore(&uncore_dev->lock, irqflags);
-> > +
-> > +     perf_event_update_userpage(event);
-> > +
-> > +     if (!find_last_bit(pmu_uncore->active_counters,
-> > +                             pmu_uncore->uncore_dev->max_counters)) {
->
-> Are we guaranteed that the counter0 is always allocated ? What if the
-> event is deleted and there are other events active ? A better check
-> would be :
->         if (find_last_bit(...) != pmu_uncore->uncore_dev->max_counters)
->
-IIUC, find_last_bit will return  zero if none of the counters are
-active and we want to start timer for first active counter.
+Acked-by: Tomi Valkeinen <tomi.valkeinen@iki.fi>
 
-> > +             hrtimer_start(&pmu_uncore->hrtimer,
-> > +                     ns_to_ktime(uncore_dev->hrtimer_interval),
-> > +                     HRTIMER_MODE_REL_PINNED);
-> > +     }
-> > +}
->
->
-> > +
-> > +static void thunderx2_uncore_stop(struct perf_event *event, int flags)
-> > +{
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     struct thunderx2_pmu_uncore_dev *uncore_dev;
-> > +     unsigned long irqflags;
-> > +
-> > +     if (hwc->state & PERF_HES_UPTODATE)
-> > +             return;
-> > +
-> > +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     uncore_dev = pmu_uncore->uncore_dev;
-> > +
-> > +     raw_spin_lock_irqsave(&uncore_dev->lock, irqflags);
-> > +
-> > +     uncore_dev->select_channel(event);
-> > +     uncore_dev->stop_event(event);
-> > +
-> > +     WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
-> > +     hwc->state |= PERF_HES_STOPPED;
-> > +     if ((flags & PERF_EF_UPDATE) && !(hwc->state & PERF_HES_UPTODATE)) {
->
-> We already check the UPTODATE flag above, we could skip that
-> flag check here ?
+Although I think reverting 8a104f8b5867c682 is the best option.
 
-ok, thanks.
->
-> > +             thunderx2_uncore_update(event);
-> > +             hwc->state |= PERF_HES_UPTODATE;
-> > +     }
-> > +     raw_spin_unlock_irqrestore(&uncore_dev->lock, irqflags);
-> > +}
-> > +
-> > +static int thunderx2_uncore_add(struct perf_event *event, int flags)
-> > +{
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     struct thunderx2_pmu_uncore_dev *uncore_dev;
-> > +
-> > +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     uncore_dev = pmu_uncore->uncore_dev;
-> > +
-> > +     /* Allocate a free counter */
-> > +     hwc->idx  = alloc_counter(pmu_uncore);
-> > +     if (hwc->idx < 0)
-> > +             return -EAGAIN;
-> > +
-> > +     pmu_uncore->events[hwc->idx] = event;
-> > +     /* set counter control and data registers base address */
-> > +     uncore_dev->init_cntr_base(event, uncore_dev);
-> > +
-> > +     hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
-> > +     if (flags & PERF_EF_START)
-> > +             thunderx2_uncore_start(event, flags);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void thunderx2_uncore_del(struct perf_event *event, int flags)
-> > +{
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore =
-> > +                     pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +     struct hw_perf_event *hwc = &event->hw;
-> > +
-> > +     thunderx2_uncore_stop(event, PERF_EF_UPDATE);
-> > +
-> > +     /* clear the assigned counter */
-> > +     free_counter(pmu_uncore, GET_COUNTERID(event));
-> > +
-> > +     perf_event_update_userpage(event);
-> > +     pmu_uncore->events[hwc->idx] = NULL;
-> > +     hwc->idx = -1;
-> > +}
-> > +
-> > +static void thunderx2_uncore_read(struct perf_event *event)
-> > +{
-> > +     unsigned long irqflags;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore =
-> > +                     pmu_to_thunderx2_pmu_uncore(event->pmu);
-> > +
-> > +     raw_spin_lock_irqsave(&pmu_uncore->uncore_dev->lock, irqflags);
-> > +     thunderx2_uncore_update(event);
-> > +     raw_spin_unlock_irqrestore(&pmu_uncore->uncore_dev->lock, irqflags);
-> > +}
-> > +
-> > +static enum hrtimer_restart thunderx2_uncore_hrtimer_callback(
-> > +             struct hrtimer *hrt)
-> > +{
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     unsigned long irqflags;
-> > +     int idx;
-> > +     bool restart_timer = false;
-> > +
-> > +     pmu_uncore = container_of(hrt, struct thunderx2_pmu_uncore_channel,
-> > +                     hrtimer);
-> > +
-> > +     raw_spin_lock_irqsave(&pmu_uncore->uncore_dev->lock, irqflags);
-> > +     for_each_set_bit(idx, pmu_uncore->active_counters,
-> > +                     pmu_uncore->uncore_dev->max_counters) {
-> > +             struct perf_event *event = pmu_uncore->events[idx];
->
-> Do we need to check if the "event" is not NULL ? Couldn't this race with
-> an event_del() operation ?
-
-i dont think so, i have not come across any such race condition during
-my testing.
-
->
-> > +
-> > +             thunderx2_uncore_update(event);
-> > +             restart_timer = true;
-> > +     }
-> > +     raw_spin_unlock_irqrestore(&pmu_uncore->uncore_dev->lock, irqflags);
-> > +
-> > +     if (restart_timer)
-> > +             hrtimer_forward_now(hrt,
-> > +                     ns_to_ktime(
-> > +                             pmu_uncore->uncore_dev->hrtimer_interval));
-> > +
-> > +     return restart_timer ? HRTIMER_RESTART : HRTIMER_NORESTART;
-> > +}
-> > +
-> > +static int thunderx2_pmu_uncore_register(
-> > +             struct thunderx2_pmu_uncore_channel *pmu_uncore)
-> > +{
-> > +     struct device *dev = pmu_uncore->uncore_dev->dev;
-> > +     char *name = pmu_uncore->uncore_dev->name;
-> > +     int channel = pmu_uncore->channel;
-> > +
-> > +     /* Perf event registration */
-> > +     pmu_uncore->pmu = (struct pmu) {
-> > +             .attr_groups    = pmu_uncore->uncore_dev->attr_groups,
-> > +             .task_ctx_nr    = perf_invalid_context,
-> > +             .event_init     = thunderx2_uncore_event_init,
-> > +             .add            = thunderx2_uncore_add,
-> > +             .del            = thunderx2_uncore_del,
-> > +             .start          = thunderx2_uncore_start,
-> > +             .stop           = thunderx2_uncore_stop,
-> > +             .read           = thunderx2_uncore_read,
->
-> You must fill in the module field of the PMU to prevent this module from
-> being unloaded while it is in use.
-
-thanks, i will add it.
->
-> > +     };
-> > +
-> > +     pmu_uncore->pmu.name = devm_kasprintf(dev, GFP_KERNEL,
-> > +                     "%s_%d", name, channel);
-> > +
-> > +     return perf_pmu_register(&pmu_uncore->pmu, pmu_uncore->pmu.name, -1);
-> > +}
-> > +
-> > +static int thunderx2_pmu_uncore_add(struct thunderx2_pmu_uncore_dev *uncore_dev,
-> > +             int channel)
-> > +{
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +     int ret, cpu;
-> > +
-> > +     pmu_uncore = devm_kzalloc(uncore_dev->dev, sizeof(*pmu_uncore),
-> > +                     GFP_KERNEL);
-> > +     if (!pmu_uncore)
-> > +             return -ENOMEM;
-> > +
-> > +     cpu = cpumask_any_and(cpumask_of_node(uncore_dev->node),
-> > +                     cpu_online_mask);
-> > +     if (cpu >= nr_cpu_ids)
-> > +             return -EINVAL;
->
-> Do we need to fail this here ? We could always add this back when a CPU
-> comes online (e.g, maxcpus=n). We do have cpu-hotplug call backs anyway.
-
-we want to fail, since we dont have any cpu to serve.
-
->
-> > +static acpi_status thunderx2_pmu_uncore_dev_add(acpi_handle handle, u32 level,
-> > +                                 void *data, void **return_value)
-> > +{
-> > +     struct thunderx2_pmu_uncore_dev *uncore_dev;
-> > +     struct acpi_device *adev;
-> > +     enum thunderx2_uncore_type type;
-> > +     int channel;
-> > +
-> > +     if (acpi_bus_get_device(handle, &adev))
-> > +             return AE_OK;
-> > +     if (acpi_bus_get_status(adev) || !adev->status.present)
-> > +             return AE_OK;
-> > +
-> > +     type = get_uncore_device_type(adev);
-> > +     if (type == PMU_TYPE_INVALID)
-> > +             return AE_OK;
-> > +
-> > +     uncore_dev = init_pmu_uncore_dev((struct device *)data, handle,
-> > +                     adev, type);
-> > +
-> > +     if (!uncore_dev)
-> > +             return AE_ERROR;
-> > +
-> > +     for (channel = 0; channel < uncore_dev->max_channels; channel++) {
-> > +             if (thunderx2_pmu_uncore_add(uncore_dev, channel)) {
-> > +                     /* Can't add the PMU device, abort */
-> > +                     return AE_ERROR;
-> > +             }
-> > +     }
-> > +     return AE_OK;
-> > +}
-> > +
-> > +static int thunderx2_uncore_pmu_offline_cpu(unsigned int cpu,
-> > +             struct hlist_node *node)
-> > +{
-> > +     int new_cpu;
-> > +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
-> > +
-> > +     pmu_uncore = hlist_entry_safe(node,
-> > +                     struct thunderx2_pmu_uncore_channel, node);
-> > +     if (cpu != pmu_uncore->cpu)
-> > +             return 0;
-> > +
-> > +     new_cpu = cpumask_any_and(
-> > +                     cpumask_of_node(pmu_uncore->uncore_dev->node),
-> > +                     cpu_online_mask);
-> > +     if (new_cpu >= nr_cpu_ids)
-> > +             return 0;
-> > +
-> > +     pmu_uncore->cpu = new_cpu;
-> > +     perf_pmu_migrate_context(&pmu_uncore->pmu, cpu, new_cpu);
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct acpi_device_id thunderx2_uncore_acpi_match[] = {
-> > +     {"CAV901C", 0},
-> > +     {},
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, thunderx2_uncore_acpi_match);
-> > +
-> > +static int thunderx2_uncore_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev = &pdev->dev;
-> > +     acpi_handle handle;
-> > +     acpi_status status;
-> > +
-> > +     set_dev_node(dev, acpi_get_node(ACPI_HANDLE(dev)));
-> > +
-> > +     /* Make sure firmware supports DMC/L3C set channel smc call */
-> > +     if (test_uncore_select_channel_early(dev))
-> > +             return -ENODEV;
-> > +
-> > +     if (!has_acpi_companion(dev))
-> > +             return -ENODEV;
-> > +
-> > +     handle = ACPI_HANDLE(dev);
-> > +     if (!handle)
-> > +             return -EINVAL;
-> > +
-> > +     /* Walk through the tree for all PMU UNCORE devices */
-> > +     status = acpi_walk_namespace(ACPI_TYPE_DEVICE, handle, 1,
-> > +                                  thunderx2_pmu_uncore_dev_add,
-> > +                                  NULL, dev, NULL);
-> > +     if (ACPI_FAILURE(status)) {
-> > +             dev_err(dev, "failed to probe PMU devices\n");
-> > +             return_ACPI_STATUS(status);
-> > +     }
-> > +
-> > +     dev_info(dev, "node%d: pmu uncore registered\n", dev_to_node(dev));
-> > +     return 0;
-> > +}
-> > +
-> > +static struct platform_driver thunderx2_uncore_driver = {
-> > +     .probe = thunderx2_uncore_probe,
-> > +     .driver = {
-> > +             .name           = "thunderx2-uncore-pmu",
-> > +             .acpi_match_table = ACPI_PTR(thunderx2_uncore_acpi_match),
-> > +     },
-> > +};
->
-> Don't we need to unregister the pmu's when we remove the module ?
-
-it is built in module at present, no unload is supported.
-Anyway i am adding in next version , since i am going for loadable module.
-
->
-> Suzuki
-
-thanks
-Ganapat
+ Tomi
