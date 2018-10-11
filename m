@@ -2,316 +2,122 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E1DC28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF10C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F90820835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B70620835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="o3IUKIgB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F90820835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="X3+NLef7";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="VQ6Mhq7O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B70620835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbeJLGxp (ORCPT
+        id S1727074AbeJLGyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 02:53:45 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38346 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeJLGxp (ORCPT
+        Fri, 12 Oct 2018 02:54:21 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:51120 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725850AbeJLGyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 02:53:45 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u197-v6so8481598oif.5
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 16:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GfWMLeTPrwZhqn4Jj+gUe61EvNxwuCNb9W1/NvTM3nE=;
-        b=o3IUKIgBABfBLUQOAxYzsKVmin/pnO/edwezAZ/WW4z+6wjx9lmlO3JD12QWzTQvy1
-         VPBiTtFaEzHBMFKCX7cv9xVojq4aaofsdRqdRpv7n2lBKL6a5TpQGIuYAVK64vOGZYYy
-         7CMRtE2VzDhcGCWGl1biH0nUcxl0Uibplf6o8+AOu69GgiS2q8PMrL8cjTXN2PpXcZw+
-         ++n8E4Y22JcR0GGV/VCkqiwY/6NuRusxRnybjO7GlWtn66ywikBcDKntv4t+Jmvw11MA
-         Q5hJIuu5LXgbHxUpBgUDp76d41Iex+qcVbj1Os21nJ98cqXPU3OnLPcUiRPQUrBWP6yM
-         /LqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GfWMLeTPrwZhqn4Jj+gUe61EvNxwuCNb9W1/NvTM3nE=;
-        b=k/qxU8IfBJCs0BZIaFmROlT5YLA0KnX5zs/YxSj5IYQkYgDoE5tA7r6Wp0I21putgF
-         EY0xqeLiKNEY/d5dyNzyQaNftTUhoM+IxUQo1ylKGsup67aFhiaKBN+SxVyO7tHV6lqU
-         daz+nT0DyejQH+svOcnJC1hVlZvbmHjj7Mj7dNpYm6o9/2gbLAEgcMJZUkF9PxBhnODy
-         DhGQaF26hryILS13RK4Ngz9QIzJ2Pdl+I/gHR9/g75023LL7kPZ0/5RoYBYwf3p7j7MP
-         gUamQuMrJxFRPLuY9igWR587tHSSkkbsqbS6elvnM8q1f2VccND/bplKAMsLTO0exiw3
-         emeA==
-X-Gm-Message-State: ABuFfogi0qbOWcInxKF8vxNVeBH4Fcb+1H9nRxlOe5bQoJUNmkCZuzU+
-        IwjxE4RqMgTB6p8DNdvRgGRvqzL0YgKXeGxGiIvTmA==
-X-Google-Smtp-Source: ACcGV62bEg5JeoHXM4NJQyi/XpIl0VSLY7qu7YRqrh+rfXYOGKnMDgx3ro6/kV/d6GiS+12cXBWGJdJz01xIu4aLiP8=
-X-Received: by 2002:aca:590b:: with SMTP id n11-v6mr1924716oib.232.1539300253254;
- Thu, 11 Oct 2018 16:24:13 -0700 (PDT)
+        Fri, 12 Oct 2018 02:54:20 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BNICcV013231;
+        Thu, 11 Oct 2018 16:24:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=CK4lZimKLKe5xOMTyBztinIkORn6qnW9YilfFLJW6Ak=;
+ b=X3+NLef7vsD+gLNejl6O6wQvwvlcBhYYxL7xcphGygeUxbrRbGep5ZN9jhy2SPFabZQO
+ QP1VitshmXRLKTYLN1U/2L/DRAsLA2/D/pVWNeMQoUPGy23mtjL7TuESfAvdwTeN1/TB
+ aDQAPuWpgxBWI35zLBCzhb6iL4JiFMNtCnQ= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2n2emn0989-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 11 Oct 2018 16:24:39 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.29) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Thu, 11 Oct 2018 19:24:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CK4lZimKLKe5xOMTyBztinIkORn6qnW9YilfFLJW6Ak=;
+ b=VQ6Mhq7O2ZfFmD4TCaOlhM3kbpqVD5RcNbcElLF0LtR2I61NQBkSfDuz+oL8zOrJMAI1buxMANP20Tmj7QejdVS9Qe4h82u44S7XhRcVQFvoFLKTzvnfuijzq7E0a/NBtW1tyfFvMM/mp7Z+Q5w4EE0zsH7cKKL6DnnyMZP7JsA=
+Received: from BN6PR15MB1265.namprd15.prod.outlook.com (10.172.206.15) by
+ BN6PR15MB1827.namprd15.prod.outlook.com (10.174.239.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.28; Thu, 11 Oct 2018 23:24:32 +0000
+Received: from BN6PR15MB1265.namprd15.prod.outlook.com
+ ([fe80::a56d:f082:a976:9bfc]) by BN6PR15MB1265.namprd15.prod.outlook.com
+ ([fe80::a56d:f082:a976:9bfc%8]) with mapi id 15.20.1228.020; Thu, 11 Oct 2018
+ 23:24:31 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     "Justin.Lee1@Dell.com" <Justin.Lee1@Dell.com>,
+        "sam@mendozajonas.com" <sam@mendozajonas.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+Subject: Re: [PATCH net-next v3 1/2] net/ncsi: Add NCSI Broadcom OEM command
+Thread-Topic: [PATCH net-next v3 1/2] net/ncsi: Add NCSI Broadcom OEM command
+Thread-Index: AQHUYbb2PU7LFGQsmEiM0XNSz2chY6Uarr0A//+LmAA=
+Date:   Thu, 11 Oct 2018 23:24:31 +0000
+Message-ID: <78B80A16-90F1-452F-9612-9E6005BBBE9E@fb.com>
+References: <20181011230518.3204700-1-vijaykhemka@fb.com>
+ <fcd53ec5b915431087b7100432bece2f@AUSX13MPS302.AMER.DELL.COM>
+In-Reply-To: <fcd53ec5b915431087b7100432bece2f@AUSX13MPS302.AMER.DELL.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:180::1:7baf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR15MB1827;20:HXdgJHy4QQl/XLNGDpFWlD2L+lGJZzKQum+4uMuyIAe73vFiIhOERXu1nYT/o3GXprE8Dz85KC6Np7z3B0cjOSGxvTI6HPsjBgT1sPOSvA9/yn4VVlCjc1DUn86YLLFt1z8Fa39A80HIj6e0wIBbPcdkccXoUdLjv82NF0aEKV0=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 25fb7474-94ad-4dd4-18b5-08d62fd0b2c7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR15MB1827;
+x-ms-traffictypediagnostic: BN6PR15MB1827:
+x-microsoft-antispam-prvs: <BN6PR15MB1827E6DE6710FEB11DDB90CEDDE10@BN6PR15MB1827.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(56004941905204);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(11241501184)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BN6PR15MB1827;BCL:0;PCL:0;RULEID:;SRVR:BN6PR15MB1827;
+x-forefront-prvs: 08220FA8D6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(396003)(376002)(366004)(346002)(136003)(189003)(199004)(43544003)(33656002)(558084003)(82746002)(256004)(6116002)(14444005)(5660300001)(6512007)(25786009)(8936002)(102836004)(86362001)(6246003)(71190400001)(186003)(71200400001)(6486002)(486006)(2201001)(81166006)(81156014)(2501003)(83716004)(76176011)(6506007)(5250100002)(68736007)(36756003)(7736002)(2906002)(14454004)(2900100001)(316002)(476003)(4326008)(97736004)(6436002)(478600001)(54906003)(446003)(105586002)(11346002)(99286004)(229853002)(8676002)(305945005)(53936002)(110136005)(46003)(106356001)(2616005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1827;H:BN6PR15MB1265.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 3HPNsN6zHYVxnZW+yDEsoL8k5nEUW4Wq0c4/ZWa4p+ESsQ0qlITHHr7Kpe7agyo6ETJHilAB9OyqIL59boWyJP1BPz6GvrSDrkQk7nltAnsrzWbvlb3P5B4XLeaSDD19zU8KGQt9lyeippYYaKtFFZ3aXB+elUGA8G3jK7YNKc+W3o7e5MhYKkf2nPW78U7z8pXZIfti0b2LbtbNrG0SbGSGGwoFvgy6c6jolav9m9qLpkPtOlKoPYnxo6PpJgLADcfcmALl453x80Tr+CYAmlscndJCDG3O5kZcN+WPGhHKFimZJcpTb3KXpB7ULZ9NGY+8Pu3gpmWJmEo4JmR+LxD3N4yonjCZm8aCi4TdmLs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <15FACCAC8DC17E4CA2659385CDE95775@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181011175542.13045-1-keith.busch@intel.com>
-In-Reply-To: <20181011175542.13045-1-keith.busch@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 11 Oct 2018 16:24:02 -0700
-Message-ID: <CAPcyv4gGqhGpR8g-HmNzoEnMAysO5uAO+8njeAokHq2CT9x71A@mail.gmail.com>
-Subject: Re: [PATCHv2] mm/gup: Cache dev_pagemap while pinning pages
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25fb7474-94ad-4dd4-18b5-08d62fd0b2c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 23:24:31.7058
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1827
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 11:00 AM Keith Busch <keith.busch@intel.com> wrote:
->
-> Getting pages from ZONE_DEVICE memory needs to check the backing device's
-> live-ness, which is tracked in the device's dev_pagemap metadata. This
-> metadata is stored in a radix tree and looking it up adds measurable
-> software overhead.
->
-> This patch avoids repeating this relatively costly operation when
-> dev_pagemap is used by caching the last dev_pagemap while getting user
-> pages. The gup_benchmark kernel self test reports this reduces time to
-> get user pages to as low as 1/3 of the previous time.
->
-> Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-
-Other than the 2 comments below, this looks good to me:
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
-[..]
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 1abc8b4afff6..d2700dff6f66 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-[..]
-> @@ -431,7 +430,22 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
->                 return no_page_table(vma, flags);
->         }
->
-> -       return follow_p4d_mask(vma, address, pgd, flags, page_mask);
-> +       return follow_p4d_mask(vma, address, pgd, flags, ctx);
-> +}
-> +
-> +struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-> +                        unsigned int foll_flags)
-> +{
-> +       struct page *page;
-> +       struct follow_page_context ctx = {
-> +               .pgmap = NULL,
-> +               .page_mask = 0,
-> +       };
-
-You don't need to init all members. It is defined that if you init at
-least one member then all non initialized members are set to zero, so
-you should be able to do " = { 0 }".
-
-> +
-> +       page = follow_page_mask(vma, address, foll_flags, &ctx);
-> +       if (ctx.pgmap)
-> +               put_dev_pagemap(ctx.pgmap);
-> +       return page;
->  }
->
->  static int get_gate_page(struct mm_struct *mm, unsigned long address,
-> @@ -659,9 +673,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->                 unsigned int gup_flags, struct page **pages,
->                 struct vm_area_struct **vmas, int *nonblocking)
->  {
-> -       long i = 0;
-> -       unsigned int page_mask;
-> +       long ret = 0, i = 0;
->         struct vm_area_struct *vma = NULL;
-> +       struct follow_page_context ctx = {};
-
-Does this have defined behavior? I would feel better with " = { 0 }"
-to be explicit.
-
->
->         if (!nr_pages)
->                 return 0;
-> @@ -691,12 +705,14 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->                                                 pages ? &pages[i] : NULL);
->                                 if (ret)
->                                         return i ? : ret;
-> -                               page_mask = 0;
-> +                               ctx.page_mask = 0;
->                                 goto next_page;
->                         }
->
-> -                       if (!vma || check_vma_flags(vma, gup_flags))
-> -                               return i ? : -EFAULT;
-> +                       if (!vma || check_vma_flags(vma, gup_flags)) {
-> +                               ret = -EFAULT;
-> +                               goto out;
-> +                       }
->                         if (is_vm_hugetlb_page(vma)) {
->                                 i = follow_hugetlb_page(mm, vma, pages, vmas,
->                                                 &start, &nr_pages, i,
-> @@ -709,23 +725,26 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->                  * If we have a pending SIGKILL, don't keep faulting pages and
->                  * potentially allocating memory.
->                  */
-> -               if (unlikely(fatal_signal_pending(current)))
-> -                       return i ? i : -ERESTARTSYS;
-> +               if (unlikely(fatal_signal_pending(current))) {
-> +                       ret = -ERESTARTSYS;
-> +                       goto out;
-> +               }
->                 cond_resched();
-> -               page = follow_page_mask(vma, start, foll_flags, &page_mask);
-> +
-> +               page = follow_page_mask(vma, start, foll_flags, &ctx);
->                 if (!page) {
-> -                       int ret;
->                         ret = faultin_page(tsk, vma, start, &foll_flags,
->                                         nonblocking);
->                         switch (ret) {
->                         case 0:
->                                 goto retry;
-> +                       case -EBUSY:
-> +                               ret = 0;
-> +                               /* FALLTHRU */
->                         case -EFAULT:
->                         case -ENOMEM:
->                         case -EHWPOISON:
-> -                               return i ? i : ret;
-> -                       case -EBUSY:
-> -                               return i;
-> +                               goto out;
->                         case -ENOENT:
->                                 goto next_page;
->                         }
-> @@ -737,27 +756,31 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->                          */
->                         goto next_page;
->                 } else if (IS_ERR(page)) {
-> -                       return i ? i : PTR_ERR(page);
-> +                       ret = PTR_ERR(page);
-> +                       goto out;
->                 }
->                 if (pages) {
->                         pages[i] = page;
->                         flush_anon_page(vma, page, start);
->                         flush_dcache_page(page);
-> -                       page_mask = 0;
-> +                       ctx.page_mask = 0;
->                 }
->  next_page:
->                 if (vmas) {
->                         vmas[i] = vma;
-> -                       page_mask = 0;
-> +                       ctx.page_mask = 0;
->                 }
-> -               page_increm = 1 + (~(start >> PAGE_SHIFT) & page_mask);
-> +               page_increm = 1 + (~(start >> PAGE_SHIFT) & ctx.page_mask);
->                 if (page_increm > nr_pages)
->                         page_increm = nr_pages;
->                 i += page_increm;
->                 start += page_increm * PAGE_SIZE;
->                 nr_pages -= page_increm;
->         } while (nr_pages);
-> -       return i;
-> +out:
-> +       if (ctx.pgmap)
-> +               put_dev_pagemap(ctx.pgmap);
-> +       return i ? i : ret;
->  }
->
->  static bool vma_permits_fault(struct vm_area_struct *vma,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 533f9b00147d..d2b510fe5156 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -852,11 +852,10 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->  }
->
->  struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
-> -               pmd_t *pmd, int flags)
-> +               pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
->  {
->         unsigned long pfn = pmd_pfn(*pmd);
->         struct mm_struct *mm = vma->vm_mm;
-> -       struct dev_pagemap *pgmap;
->         struct page *page;
->
->         assert_spin_locked(pmd_lockptr(mm, pmd));
-> @@ -886,12 +885,11 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->                 return ERR_PTR(-EEXIST);
->
->         pfn += (addr & ~PMD_MASK) >> PAGE_SHIFT;
-> -       pgmap = get_dev_pagemap(pfn, NULL);
-> -       if (!pgmap)
-> +       *pgmap = get_dev_pagemap(pfn, *pgmap);
-> +       if (!*pgmap)
->                 return ERR_PTR(-EFAULT);
->         page = pfn_to_page(pfn);
->         get_page(page);
-> -       put_dev_pagemap(pgmap);
->
->         return page;
->  }
-> @@ -1000,11 +998,10 @@ static void touch_pud(struct vm_area_struct *vma, unsigned long addr,
->  }
->
->  struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
-> -               pud_t *pud, int flags)
-> +               pud_t *pud, int flags, struct dev_pagemap **pgmap)
->  {
->         unsigned long pfn = pud_pfn(*pud);
->         struct mm_struct *mm = vma->vm_mm;
-> -       struct dev_pagemap *pgmap;
->         struct page *page;
->
->         assert_spin_locked(pud_lockptr(mm, pud));
-> @@ -1028,12 +1025,11 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
->                 return ERR_PTR(-EEXIST);
->
->         pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
-> -       pgmap = get_dev_pagemap(pfn, NULL);
-> -       if (!pgmap)
-> +       *pgmap = get_dev_pagemap(pfn, *pgmap);
-> +       if (!*pgmap)
->                 return ERR_PTR(-EFAULT);
->         page = pfn_to_page(pfn);
->         get_page(page);
-> -       put_dev_pagemap(pgmap);
->
->         return page;
->  }
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index e4aac33216ae..749276beb109 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -1709,11 +1709,9 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
->         return ret;
->  }
->
-> -struct page *follow_page_mask(struct vm_area_struct *vma,
-> -                             unsigned long address, unsigned int flags,
-> -                             unsigned int *page_mask)
-> +struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-> +                        unsigned int foll_flags)
->  {
-> -       *page_mask = 0;
->         return NULL;
->  }
->
-> --
-> 2.14.4
->
+DQoNCu+7v09uIDEwLzExLzE4LCA0OjIxIFBNLCAiSnVzdGluLkxlZTFARGVsbC5jb20iIDxKdXN0
+aW4uTGVlMUBEZWxsLmNvbT4gd3JvdGU6DQoNCiAgICBIaSBWaWpheSwNCiAgICANCiAgICBQbGVh
+c2Ugb3JkZXIgYWxsIGxvY2FsIHZhcmlhYmxlIGRlY2xhcmF0aW9ucyBmcm9tIGxvbmdlc3QgdG8g
+c2hvcnRlc3QNCiAgICBsaW5lIGFzIGluc3RydWN0ZWQgYnkgRGF2ZS4NCiAgICANCiAgICBUaGFu
+a3MsDQogICAgSnVzdGluDQogICAgDQogIFRoYW5rcyBKdXN0aW4sDQogIEkgd2lsbCB0YWtlIGNh
+cmUgb2YgdGhpcy4NCg0KICBSZWdhcmRzDQogIC1WaWpheSANCg0K
