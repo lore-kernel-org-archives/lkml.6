@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E99C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB43C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215DF21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05C7321476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRGQdNS/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 215DF21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEOAbWD3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C7321476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbeJKXIs (ORCPT
+        id S1730367AbeJKXIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39290 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbeJKXIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:47 -0400
+        id S1730332AbeJKXIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:50 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C17B20652;
-        Thu, 11 Oct 2018 15:41:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C9B42098A;
+        Thu, 11 Oct 2018 15:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272463;
-        bh=3QHKifr72Kh2IBi1pb5ZJSy7isdt+uImMtFaBpyu+Po=;
+        s=default; t=1539272466;
+        bh=Fj7MBae1C3u5XrVUogqFYitvBeQxV8MqZGYhzc+a0A8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRGQdNS/WgVpwQKe5OKdiKHouWjsIqubQfdaQyuTgzB55oc0kpAip/NQPTwoFJM08
-         gOUiz8trMfXTKAepCvur+wBPuQdpnNPj8K3vf4r3EJxsLpwZYDn603U1UIb5adlcZs
-         wHk7RDbb2t257zhVXNlz9r602E0kNM6A2NrTL3lo=
+        b=vEOAbWD3BcU0FRJQjqj1P4m0D40rsPdWIg7waMiZwqN7+NdNtLKeSh87A6vYNHzij
+         P/O3gsN9UA9ssGS19J5rQWl9+KEGDqqogCltZoeJxPIO+roWEOIdwfEMNU4VBQikMv
+         NnUPdC5eP1nBPBrNso2eUTwWDVmZux9/q/XpYIQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 3.18 119/120] ubifs: Check for name being NULL while mounting
-Date:   Thu, 11 Oct 2018 17:35:00 +0200
-Message-Id: <20181011152554.711847096@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Loic <hackurx@opensec.fr>
+Subject: [PATCH 3.18 120/120] ebtables: arpreply: Add the standard target sanity check
+Date:   Thu, 11 Oct 2018 17:35:01 +0200
+Message-Id: <20181011152554.745716672@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -63,34 +62,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Gao Feng <gfree.wind@vip.163.com>
 
-commit 37f31b6ca4311b94d985fb398a72e5399ad57925 upstream.
+commit c953d63548207a085abcb12a15fefc8a11ffdf0a upstream.
 
-The requested device name can be NULL or an empty string.
-Check for that and refuse to continue. UBIFS has to do this manually
-since we cannot use mount_bdev(), which checks for this condition.
+The info->target comes from userspace and it would be used directly.
+So we need to add the sanity check to make sure it is a valid standard
+target, although the ebtables tool has already checked it. Kernel needs
+to validate anything coming from userspace.
 
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
-Signed-off-by: Richard Weinberger <richard@nod.at>
+If the target is set as an evil value, it would break the ebtables
+and cause a panic. Because the non-standard target is treated as one
+offset.
+
+Now add one helper function ebt_invalid_target, and we would replace
+the macro INVALID_TARGET later.
+
+Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Loic <hackurx@opensec.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/super.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/netfilter_bridge/ebtables.h |    5 +++++
+ net/bridge/netfilter/ebt_arpreply.c       |    3 +++
+ 2 files changed, 8 insertions(+)
 
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1917,6 +1917,9 @@ static struct ubi_volume_desc *open_ubi(
- 	int dev, vol;
- 	char *endptr;
+--- a/include/linux/netfilter_bridge/ebtables.h
++++ b/include/linux/netfilter_bridge/ebtables.h
+@@ -124,4 +124,9 @@ extern unsigned int ebt_do_table(unsigne
+ /* True if the target is not a standard target */
+ #define INVALID_TARGET (info->target < -NUM_STANDARD_TARGETS || info->target >= 0)
  
-+	if (!name || !*name)
-+		return ERR_PTR(-EINVAL);
++static inline bool ebt_invalid_target(int target)
++{
++	return (target < -NUM_STANDARD_TARGETS || target >= 0);
++}
 +
- 	/* First, try to open using the device node path method */
- 	ubi = ubi_open_volume_path(name, mode);
- 	if (!IS_ERR(ubi))
+ #endif
+--- a/net/bridge/netfilter/ebt_arpreply.c
++++ b/net/bridge/netfilter/ebt_arpreply.c
+@@ -67,6 +67,9 @@ static int ebt_arpreply_tg_check(const s
+ 	if (e->ethproto != htons(ETH_P_ARP) ||
+ 	    e->invflags & EBT_IPROTO)
+ 		return -EINVAL;
++	if (ebt_invalid_target(info->target))
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
 
 
