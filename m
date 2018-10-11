@@ -2,238 +2,581 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F177BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D2BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B20382077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B20382077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 120782087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:15:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g4ZCRtnW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/jk44p6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120782087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeJKSkB (ORCPT
+        id S1728434AbeJKSmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:40:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33467 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeJKSkA (ORCPT
+        Thu, 11 Oct 2018 14:42:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36298 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbeJKSmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:40:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9BBCo8k1870909
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 11 Oct 2018 04:12:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9BBCnZk1870906;
-        Thu, 11 Oct 2018 04:12:49 -0700
-Date:   Thu, 11 Oct 2018 04:12:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Phil Auld <tipbot@zytor.com>
-Message-ID: <tip-baa9be4ffb55876923dc9716abc0a448e510ba30@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, bsegall@google.com, mingo@kernel.org,
-        tglx@linutronix.de, peterz@infradead.org,
-        torvalds@linux-foundation.org, pauld@redhat.com, hpa@zytor.com
-Reply-To: peterz@infradead.org, torvalds@linux-foundation.org,
-          tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-          pauld@redhat.com, linux-kernel@vger.kernel.org,
-          bsegall@google.com
-In-Reply-To: <20181008143639.GA4019@pauld.bos.csb>
-References: <20181008143639.GA4019@pauld.bos.csb>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/fair: Fix throttle_list starvation with
- low CFS quota
-Git-Commit-ID: baa9be4ffb55876923dc9716abc0a448e510ba30
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 11 Oct 2018 14:42:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 78B0A600C1; Thu, 11 Oct 2018 11:15:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539256536;
+        bh=Nv6ZLQiHW8dUvXyukp66oeuMTFwW17GihekFWEa8rSE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=g4ZCRtnWs0AHA7iw/PKiY6Ei9Ua4sBOsZeAX1GcoHP25b6543Mak3d2D0fTfp6b0n
+         SnHVFACuKeXmQ0ilffwpSCn03u9Prg5XW9PR9EQVrAIIclROl/HI6jvsOg8fZQOsBF
+         bKhUrVqiPG8wd6+4Hs0ve4CgEMf/cbt81moLiOuE=
+Received: from [10.79.167.189] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0FA6760285;
+        Thu, 11 Oct 2018 11:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539256534;
+        bh=Nv6ZLQiHW8dUvXyukp66oeuMTFwW17GihekFWEa8rSE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Q/jk44p6nxwxI4vMLJXN4SMiMHmX3/xd/zt3WtP0vf6zqaba9Jhxd+JVGTOO2IV3/
+         /SUuLLW1X2ILLj3v4tmV2kyMBWgJR6umeM4aLVl8tpWKLQ4nD0jnM6m6ShYltrdLo4
+         iRuUU4zvcdKNeXDyWQvxvCoRtWI7p9VyOffT+SR8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FA6760285
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v8 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+References: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
+ <1537698793-15285-3-git-send-email-tdas@codeaurora.org>
+ <20181004210407.GB7926@centauri.lan>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <40719973-21a0-120d-7193-8e6287cbbd18@codeaurora.org>
+Date:   Thu, 11 Oct 2018 16:45:25 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181004210407.GB7926@centauri.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  baa9be4ffb55876923dc9716abc0a448e510ba30
-Gitweb:     https://git.kernel.org/tip/baa9be4ffb55876923dc9716abc0a448e510ba30
-Author:     Phil Auld <pauld@redhat.com>
-AuthorDate: Mon, 8 Oct 2018 10:36:40 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 11 Oct 2018 13:10:18 +0200
+Hello Niklas,
 
-sched/fair: Fix throttle_list starvation with low CFS quota
+Thanks for your review comments.
 
-With a very low cpu.cfs_quota_us setting, such as the minimum of 1000,
-distribute_cfs_runtime may not empty the throttled_list before it runs
-out of runtime to distribute. In that case, due to the change from
-c06f04c7048 to put throttled entries at the head of the list, later entries
-on the list will starve.  Essentially, the same X processes will get pulled
-off the list, given CPU time and then, when expired, get put back on the
-head of the list where distribute_cfs_runtime will give runtime to the same
-set of processes leaving the rest.
+On 10/5/2018 2:34 AM, Niklas Cassel wrote:
+> On Sun, Sep 23, 2018 at 04:03:13PM +0530, Taniya Das wrote:
+>> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
+>> for changing the frequency of CPUs. The driver implements the cpufreq
+>> driver interface for this hardware engine.
+>>
+>> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   drivers/cpufreq/Kconfig.arm       |  11 ++
+>>   drivers/cpufreq/Makefile          |   1 +
+>>   drivers/cpufreq/qcom-cpufreq-hw.c | 354 ++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 366 insertions(+)
+>>   create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+>>
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index 0cd8eb7..93a9d72 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
+>>   	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
+>>
+>>   	  If in doubt, say N.
+>> +
+>> +config ARM_QCOM_CPUFREQ_HW
+>> +	bool "QCOM CPUFreq HW driver"
+>> +	depends on ARCH_QCOM
+> 
+> Hello Taniya,
+> 
+> It might be a good idea to do depends on ARCH_QCOM || COMPILE_TEST
+> to get more build testing.
+> 
 
-Fix the issue by setting a bit in struct cfs_bandwidth when
-distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can
-decide to put the throttled entry on the tail or the head of the list.  The
-bit is set/cleared by the callers of distribute_cfs_runtime while they hold
-cfs_bandwidth->lock.
+Would add it in the next patch.
 
-This is easy to reproduce with a handful of CPU consumers. I use 'crash' on
-the live system. In some cases you can simply look at the throttled list and
-see the later entries are not changing:
+>> +	help
+>> +	 Support for the CPUFreq HW driver.
+>> +	 Some QCOM chipsets have a HW engine to offload the steps
+>> +	 necessary for changing the frequency of the CPUs. Firmware loaded
+>> +	 in this engine exposes a programming interface to the OS.
+>> +	 The driver implements the cpufreq interface for this HW engine.
+>> +	 Say Y if you want to support CPUFreq HW.
+> 
+> All other help text has a tab and two spaces, you only have one.
+> 
+> Also, why not add this Kconfig right after the existing ARCH_QCOM_CPUFREQ
+> driver?
+> 
 
-  crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-    1     ffff90b56cb2d200  -976050
-    2     ffff90b56cb2cc00  -484925
-    3     ffff90b56cb2bc00  -658814
-    4     ffff90b56cb2ba00  -275365
-    5     ffff90b166a45600  -135138
-    6     ffff90b56cb2da00  -282505
-    7     ffff90b56cb2e000  -148065
-    8     ffff90b56cb2fa00  -872591
-    9     ffff90b56cb2c000  -84687
-   10     ffff90b56cb2f000  -87237
-   11     ffff90b166a40a00  -164582
+Would update the same in the next patch.
 
-  crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-    1     ffff90b56cb2d200  -994147
-    2     ffff90b56cb2cc00  -306051
-    3     ffff90b56cb2bc00  -961321
-    4     ffff90b56cb2ba00  -24490
-    5     ffff90b166a45600  -135138
-    6     ffff90b56cb2da00  -282505
-    7     ffff90b56cb2e000  -148065
-    8     ffff90b56cb2fa00  -872591
-    9     ffff90b56cb2c000  -84687
-   10     ffff90b56cb2f000  -87237
-   11     ffff90b166a40a00  -164582
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index c1ffeab..ca48a1d 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>>   obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+>>   obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+>>   obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+>> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
+> 
+> Why not add this right after the existing ARCH_QCOM_CPUFREQ driver?
+> 
 
-Sometimes it is easier to see by finding a process getting starved and looking
-at the sched_info:
+Would update in the next patch.
 
-  crash> task ffff8eb765994500 sched_info
-  PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-    sched_info = {
-      pcount = 8,
-      run_delay = 697094208,
-      last_arrival = 240260125039,
-      last_queued = 240260327513
-    },
-  crash> task ffff8eb765994500 sched_info
-  PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-    sched_info = {
-      pcount = 8,
-      run_delay = 697094208,
-      last_arrival = 240260125039,
-      last_queued = 240260327513
-    },
+>>
+>>
+>>   ##################################################################################
+>> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+>> new file mode 100644
+>> index 0000000..43107ab
+>> --- /dev/null
+>> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+>> @@ -0,0 +1,354 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/cpufreq.h>
+>> +#include <linux/init.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+> 
+> Since this can't be built as a module, drop module.h, init.h should suffice.
+> 
 
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
-Link: http://lkml.kernel.org/r/20181008143639.GA4019@pauld.bos.csb
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c  | 22 +++++++++++++++++++---
- kernel/sched/sched.h |  2 ++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+Would clean it up.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7fc4a371bdd2..f88e00705b55 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4476,9 +4476,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 
- 	/*
- 	 * Add to the _head_ of the list, so that an already-started
--	 * distribute_cfs_runtime will not see us
-+	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
-+	 * not running add to the tail so that later runqueues don't get starved.
- 	 */
--	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	if (cfs_b->distribute_running)
-+		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	else
-+		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
- 
- 	/*
- 	 * If we're the first throttled task, make sure the bandwidth
-@@ -4622,14 +4626,16 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 	 * in us over-using our runtime if it is all used during this loop, but
- 	 * only by limited amounts in that extreme case.
- 	 */
--	while (throttled && cfs_b->runtime > 0) {
-+	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
- 		runtime = cfs_b->runtime;
-+		cfs_b->distribute_running = 1;
- 		raw_spin_unlock(&cfs_b->lock);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
- 						 runtime_expires);
- 		raw_spin_lock(&cfs_b->lock);
- 
-+		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
- 
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-@@ -4740,6 +4746,11 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 
- 	/* confirm we're still not at a refresh boundary */
- 	raw_spin_lock(&cfs_b->lock);
-+	if (cfs_b->distribute_running) {
-+		raw_spin_unlock(&cfs_b->lock);
-+		return;
-+	}
-+
- 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
- 		raw_spin_unlock(&cfs_b->lock);
- 		return;
-@@ -4749,6 +4760,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 		runtime = cfs_b->runtime;
- 
- 	expires = cfs_b->runtime_expires;
-+	if (runtime)
-+		cfs_b->distribute_running = 1;
-+
- 	raw_spin_unlock(&cfs_b->lock);
- 
- 	if (!runtime)
-@@ -4759,6 +4773,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 	raw_spin_lock(&cfs_b->lock);
- 	if (expires == cfs_b->runtime_expires)
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-+	cfs_b->distribute_running = 0;
- 	raw_spin_unlock(&cfs_b->lock);
- }
- 
-@@ -4867,6 +4882,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- 	cfs_b->period_timer.function = sched_cfs_period_timer;
- 	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	cfs_b->slack_timer.function = sched_cfs_slack_timer;
-+	cfs_b->distribute_running = 0;
- }
- 
- static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 455fa330de04..9683f458aec7 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -346,6 +346,8 @@ struct cfs_bandwidth {
- 	int			nr_periods;
- 	int			nr_throttled;
- 	u64			throttled_time;
-+
-+	bool                    distribute_running;
- #endif
- };
- 
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>> +
+>> +#define LUT_MAX_ENTRIES			40U
+>> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
+>> +#define LUT_ROW_SIZE			32
+>> +#define CLK_HW_DIV			2
+>> +
+>> +enum {
+>> +	REG_ENABLE,
+>> +	REG_LUT_TABLE,
+>> +	REG_PERF_STATE,
+>> +
+>> +	REG_ARRAY_SIZE,
+>> +};
+>> +
+>> +struct cpufreq_qcom {
+>> +	struct cpufreq_frequency_table *table;
+>> +	void __iomem *reg_bases[REG_ARRAY_SIZE];
+>> +	cpumask_t related_cpus;
+>> +	unsigned int max_cores;
+>> +	unsigned long xo_rate;
+>> +	unsigned long cpu_hw_rate;
+>> +};
+>> +
+>> +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
+>> +	[REG_ENABLE]		= 0x0,
+>> +	[REG_LUT_TABLE]		= 0x110,
+>> +	[REG_PERF_STATE]	= 0x920,
+>> +};
+>> +
+>> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+>> +
+>> +static int
+>> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+>> +			     unsigned int index)
+>> +{
+>> +	struct cpufreq_qcom *c = policy->driver_data;
+>> +
+>> +	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
+>> +{
+>> +	struct cpufreq_qcom *c;
+>> +	struct cpufreq_policy *policy;
+>> +	unsigned int index;
+>> +
+>> +	policy = cpufreq_cpu_get_raw(cpu);
+>> +	if (!policy)
+>> +		return 0;
+>> +
+>> +	c = policy->driver_data;
+>> +
+>> +	index = readl_relaxed(c->reg_bases[REG_PERF_STATE]);
+>> +	index = min(index, LUT_MAX_ENTRIES - 1);
+>> +
+>> +	return policy->freq_table[index].frequency;
+>> +}
+>> +
+>> +static unsigned int
+>> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+>> +			    unsigned int target_freq)
+>> +{
+>> +	struct cpufreq_qcom *c = policy->driver_data;
+>> +	int index;
+>> +
+>> +	index = policy->cached_resolved_idx;
+>> +	if (index < 0)
+>> +		return 0;
+>> +
+>> +	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
+>> +
+>> +	return policy->freq_table[index].frequency;
+>> +}
+>> +
+>> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+>> +{
+>> +	struct cpufreq_qcom *c;
+>> +
+>> +	c = qcom_freq_domain_map[policy->cpu];
+>> +	if (!c) {
+>> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	cpumask_copy(policy->cpus, &c->related_cpus);
+>> +
+>> +	policy->fast_switch_possible = true;
+>> +	policy->freq_table = c->table;
+>> +	policy->driver_data = c;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
+>> +	&cpufreq_freq_attr_scaling_available_freqs,
+>> +	&cpufreq_freq_attr_scaling_boost_freqs,
+>> +	NULL
+>> +};
+>> +
+>> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
+>> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
+>> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
+>> +	.verify		= cpufreq_generic_frequency_table_verify,
+>> +	.target_index	= qcom_cpufreq_hw_target_index,
+>> +	.get		= qcom_cpufreq_hw_get,
+>> +	.init		= qcom_cpufreq_hw_cpu_init,
+>> +	.fast_switch    = qcom_cpufreq_hw_fast_switch,
+>> +	.name		= "qcom-cpufreq-hw",
+>> +	.attr		= qcom_cpufreq_hw_attr,
+>> +	.boost_enabled	= true,
+>> +};
+>> +
+>> +static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
+>> +				    struct cpufreq_qcom *c)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	void __iomem *base;
+>> +	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
+>> +
+>> +	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
+>> +				sizeof(*c->table), GFP_KERNEL);
+>> +	if (!c->table)
+>> +		return -ENOMEM;
+>> +
+>> +	base = c->reg_bases[REG_LUT_TABLE];
+>> +
+>> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+>> +		data = readl_relaxed(base + i * LUT_ROW_SIZE);
+>> +		src = (data & GENMASK(31, 30)) >> 30;
+>> +		lval = data & GENMASK(7, 0);
+>> +		core_count = CORE_COUNT_VAL(data);
+>> +
+>> +		if (src)
+>> +			c->table[i].frequency = c->xo_rate * lval / 1000;
+>> +		else
+>> +			c->table[i].frequency = c->cpu_hw_rate / 1000;
+>> +
+>> +		cur_freq = c->table[i].frequency;
+>> +
+>> +		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
+>> +			i, c->table[i].frequency, core_count);
+>> +
+>> +		if (core_count != c->max_cores)
+>> +			cur_freq = CPUFREQ_ENTRY_INVALID;
+>> +
+>> +		/*
+>> +		 * Two of the same frequencies with the same core counts means
+>> +		 * end of table.
+>> +		 */
+>> +		if (i > 0 && c->table[i - 1].frequency ==
+>> +		   c->table[i].frequency && prev_cc == core_count) {
+>> +			struct cpufreq_frequency_table *prev = &c->table[i - 1];
+>> +
+>> +			if (prev_freq == CPUFREQ_ENTRY_INVALID)
+>> +				prev->flags = CPUFREQ_BOOST_FREQ;
+>> +			break;
+>> +		}
+>> +		prev_cc = core_count;
+>> +		prev_freq = cur_freq;
+>> +	}
+>> +
+>> +	c->table[i].frequency = CPUFREQ_TABLE_END;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcom_get_related_cpus(int index, struct cpumask *m)
+>> +{
+>> +	struct device_node *cpu_np;
+>> +	struct of_phandle_args args;
+>> +	int cpu, ret;
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		cpu_np = of_cpu_device_node_get(cpu);
+>> +		if (!cpu_np)
+>> +			continue;
+>> +		of_node_put(cpu_np);
+> 
+> Shouldn't of_node_put() be called after you have used the pointer?
+> 
+
+Yes, it would be moved.
+
+>> +
+>> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+>> +				"#freq-domain-cells", 0, &args);
+>> +		if (ret < 0)
+>> +			continue;
+>> +
+>> +		if (index == args.args[0])
+>> +			cpumask_set_cpu(cpu, m);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+>> +				   unsigned int cpu, int index,
+>> +				   unsigned long xo_rate,
+>> +				   unsigned long cpu_hw_rate)
+>> +{
+>> +	struct cpufreq_qcom *c;
+>> +	struct resource *res;
+>> +	struct device *dev = &pdev->dev;
+>> +	const u16 *offsets;
+>> +	int ret, i, cpu_r;
+>> +	void __iomem *base;
+>> +
+>> +	if (qcom_freq_domain_map[cpu])
+>> +		return 0;
+>> +
+>> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+>> +	if (!c)
+>> +		return -ENOMEM;
+>> +
+>> +	offsets = of_device_get_match_data(&pdev->dev);
+>> +	if (!offsets)
+>> +		return -EINVAL;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+>> +	base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(base))
+>> +		return PTR_ERR(base);
+>> +
+>> +	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
+>> +		c->reg_bases[i] = base + offsets[i];
+>> +
+>> +	/* HW should be in enabled state to proceed */
+>> +	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
+>> +		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	ret = qcom_get_related_cpus(index, &c->related_cpus);
+>> +	if (ret) {
+>> +		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
+>> +		return ret;
+>> +	}
+>> +
+>> +	c->max_cores = cpumask_weight(&c->related_cpus);
+>> +	if (!c->max_cores)
+>> +		return -ENOENT;
+>> +
+>> +	c->xo_rate = xo_rate;
+>> +	c->cpu_hw_rate = cpu_hw_rate;
+>> +
+>> +	ret = qcom_cpufreq_hw_read_lut(pdev, c);
+>> +	if (ret) {
+>> +		dev_err(dev, "Domain-%d failed to read LUT\n", index);
+>> +		return ret;
+>> +	}
+>> +
+>> +	for_each_cpu(cpu_r, &c->related_cpus)
+>> +		qcom_freq_domain_map[cpu_r] = c;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcom_resources_init(struct platform_device *pdev)
+>> +{
+>> +	struct device_node *cpu_np;
+>> +	struct of_phandle_args args;
+>> +	struct clk *clk;
+>> +	unsigned int cpu;
+>> +	unsigned long xo_rate, cpu_hw_rate;
+>> +	int ret;
+>> +
+>> +	clk = devm_clk_get(&pdev->dev, "xo");
+>> +	if (IS_ERR(clk))
+>> +		return PTR_ERR(clk);
+>> +
+>> +	xo_rate = clk_get_rate(clk);
+>> +
+>> +	devm_clk_put(&pdev->dev, clk);
+>> +
+>> +	clk = devm_clk_get(&pdev->dev, "cpu_clk");
+>> +	if (IS_ERR(clk))
+>> +		return PTR_ERR(clk);
+>> +
+>> +	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
+>> +
+>> +	devm_clk_put(&pdev->dev, clk);
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		cpu_np = of_cpu_device_node_get(cpu);
+> 
+> Where is the matching of_node_put?
+> 
+
+Yes, missed adding it.
+
+>> +		if (!cpu_np) {
+>> +			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
+>> +				cpu);
+>> +			continue;
+>> +		}
+>> +
+>> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+>> +				"#freq-domain-cells", 0, &args);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +
+>> +		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
+>> +					      xo_rate, cpu_hw_rate);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
+>> +{
+>> +	int rc;
+>> +
+>> +	/* Get the bases of cpufreq for domains */
+>> +	rc = qcom_resources_init(pdev);
+>> +	if (rc) {
+>> +		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
+>> +		return rc;
+>> +	}
+>> +
+>> +	rc = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
+>> +	if (rc) {
+>> +		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
+>> +		return rc;
+>> +	}
+>> +
+>> +	dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id qcom_cpufreq_hw_match[] = {
+>> +	{ .compatible = "qcom,cpufreq-hw", .data = &cpufreq_qcom_std_offsets },
+>> +	{}
+>> +};
+>> +
+>> +static struct platform_driver qcom_cpufreq_hw_driver = {
+>> +	.probe = qcom_cpufreq_hw_driver_probe,
+>> +	.driver = {
+>> +		.name = "qcom-cpufreq-hw",
+>> +		.of_match_table = qcom_cpufreq_hw_match,
+>> +	},
+>> +};
+>> +
+>> +static int __init qcom_cpufreq_hw_init(void)
+>> +{
+>> +	return platform_driver_register(&qcom_cpufreq_hw_driver);
+>> +}
+>> +subsys_initcall(qcom_cpufreq_hw_init);
+>> +
+>> +MODULE_DESCRIPTION("QCOM firmware-based CPU Frequency driver");
+> 
+> Since this can't be built as a module, you should drop MODULE_DESCRIPTION.
+> 
+> 
+> Also, checkpatch --strict gives the following warnings:
+> 
+> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+> #103:
+> new file mode 100644
+> 
+> cpufreq drivers usually have an entry in MAINTAINERS file.
+> 
+> 
+> WARNING: Duplicate signature
+> #370:
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> 
+> If you are more than one author, you can use the Co-Developed-by tag.
+> 
+
+Hmm, I do see multiple SOBs being used and merged.
+
+> 
+> CHECK: Alignment should match open parenthesis
+> #611: FILE: drivers/cpufreq/qcom-cpufreq-hw.c:193:
+> +               ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> +                               "#freq-domain-cells", 0, &args);
+> 
+> CHECK: Alignment should match open parenthesis
+> #718: FILE: drivers/cpufreq/qcom-cpufreq-hw.c:300:
+> +               ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> +                               "#freq-domain-cells", 0, &args);
+> 
+> 
+
+Would fix the same.
+
+> 
+> 
+> Kind regards,
+> Niklas
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
