@@ -2,294 +2,167 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C48C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18218C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66BE62085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA3C62087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:23:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jAajullw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66BE62085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O0thmDlM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3C62087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeJKPpJ (ORCPT
+        id S1727850AbeJKPta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:45:09 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45243 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeJKPpJ (ORCPT
+        Thu, 11 Oct 2018 11:49:30 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38054 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeJKPta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:45:09 -0400
-Received: by mail-ed1-f67.google.com with SMTP id v18-v6so7386421edq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:18:57 -0700 (PDT)
+        Thu, 11 Oct 2018 11:49:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a13-v6so8617862wrt.5
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=XXbQdRWIM7oIZdbHEPWEzUgTaKPforkwJGHSqMObcBI=;
-        b=jAajullwXqBUS2gBoL24EEyoyFVLqpyut3TB7MRKPrsBRtlMZU245sBtNX+uyuk0F9
-         Yzs0ymFksrkLsKcIrDv5Y71ipGWyfRJQduVlap/p6wWHXz6x2TKXCQMspq9ubB19KUMm
-         cWb+Xd0+M0ZHBIFWRZd+xHn7sK2HBemXnvDFw=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8YNI/ynpxtc1MMPZLrTm2ztWQSUT8vdadXnmraZ8mGM=;
+        b=O0thmDlMz4Ivwo0J8HquUt+VaS2fcMkTTwg4PkU3zKNMdth/2ZxizRuY75LKLTRcAs
+         Oa/54ij9Ol0+fdixlK9/6xBo1Rj5f7OXc+TZ0tGJIaFKDplIvc3BYQKBlWbgg07b3G7d
+         z3nLKdVmVaUXUw9udNYYePpFnNqcIYQh/4bus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=XXbQdRWIM7oIZdbHEPWEzUgTaKPforkwJGHSqMObcBI=;
-        b=n7Rq9fFSmMQtbpIqU8DIeEN3AguVV8rscYRCkck36w9fz3qFOSJnECMVspEsDji9nU
-         t8lpFHV7uIQdsMeAOwO8lDEb503sfxu7JRsuvxFHMfkZkK/vrBmbaEUVNal4MU0SsdWa
-         DyTTF/v1Yj9BV4+LsLNpj6KrN4x1hIKoylGCMDijjkhpf64Qs9zC99fX9fiYxdU3c58m
-         GHpLq0dUZ/dLRnUq+Do/O/xnKi+1ynSO+zrMIU6rYPE00igS3geox3xkEJZfU1FHICb+
-         PRKtjHK3jipXt40xOBZDgR1OdSmgvvOvFUsvD+W5vSFXGvDrEvhmEeCyBQOqgOMl2mpF
-         /HgA==
-X-Gm-Message-State: ABuFfogmYYcmcOgIbwV4AEmGLKSnBhx4hFQ0LV/gqlovrJFHVZ7BhGEC
-        cdU+CZqCWjmqzUZ1DEszBAgpgQI7vU4=
-X-Google-Smtp-Source: ACcGV61BADPDvbie1CClg3MQuUtk4kRLz7j4QPSHeLrGT9Alt6qeASivdf4kverem13LkyGWnmzMEQ==
-X-Received: by 2002:a17:906:e1ce:: with SMTP id gp14-v6mr1074675ejb.221.1539245936450;
-        Thu, 11 Oct 2018 01:18:56 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id v21-v6sm2249996eja.62.2018.10.11.01.18.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 01:18:52 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 10:18:49 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     noralf@tronnes.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20181011081849.GR31561@phenom.ffwll.local>
-Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
-        noralf@tronnes.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
- <20809880.gF2CxujBy3@avalon>
- <20181001065220.GE11082@phenom.ffwll.local>
- <26527911.hs5tlrnKDc@avalon>
- <042a6076-62e2-c029-2a09-f1123d9ac403@tronnes.org>
- <CAFqt6zZ9vZ8qDpockDyUgqxJxA-d6ajyufzBUCPzKkxv0Vnu_Q@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8YNI/ynpxtc1MMPZLrTm2ztWQSUT8vdadXnmraZ8mGM=;
+        b=OGFrYa0FUVf/HYAl1T1YvKAgLMh3kmpkNKtaiQ+EUqRASEucWQWquTxRqhquHBDiYi
+         1zzCOog983oDsxaMj2qslrP34GDCZ6EyilhdJcF3XQobo7aVIV2a8tZP9WkFeg2sfLwr
+         5MOS/MU8fVi8J+8zqMCL4jY0Cc0VP1r2wjlvtHi0MVl7d/R2COUkGUb9db+OLVXpXKMQ
+         cmK4jwNfvJGXVV21Gjng4U55j26r/7OY9abTtcIPzZ1hQHxE2FWr0bB0kgUmn/EGlyY1
+         KUL+RRkBj0rL29h2X6G7LRTWoMEdWaCMPR2zfQgmIruSUFUTiRRlKceUKV+oDnb0i3Yw
+         VPdQ==
+X-Gm-Message-State: ABuFfog7vVOoeKIZBNxjFjGvVmKDiFWCAt0PQXiZtb/1OofXZx95RBMn
+        2Y55cEoorW9meOSw5016eqMQkQ==
+X-Google-Smtp-Source: ACcGV61wLbphv412LD/hN7QjOydhjCuqugfiq21f4770xFQ4AOQXHKbNi7Ff/74c4Iq8XVoWVMBmbg==
+X-Received: by 2002:a5d:620b:: with SMTP id y11-v6mr596393wru.105.1539246197303;
+        Thu, 11 Oct 2018 01:23:17 -0700 (PDT)
+Received: from [192.168.0.40] (147.46.88.92.rev.sfr.net. [92.88.46.147])
+        by smtp.googlemail.com with ESMTPSA id 63-v6sm4679052wmd.5.2018.10.11.01.23.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 01:23:16 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, peterz@infradead.org, rui.zhang@intel.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
+        javi.merino@kernel.org, edubezval@gmail.com,
+        linux-pm@vger.kernel.org, quentin.perret@arm.com,
+        ionela.voinescu@arm.com, vincent.guittot@linaro.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
+ <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
+ <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
+ <e2091e7e-b6e6-950d-ebab-18ba2de9264f@linaro.org>
+ <20181011073510eucas1p100bfadd6055a523cd1e92b07bfacfc10~cfaLHcbIo1401014010eucas1p1d@eucas1p1.samsung.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <f099ded8-e074-da18-2eac-e07a5a99af18@linaro.org>
+Date:   Thu, 11 Oct 2018 10:23:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20181011073510eucas1p100bfadd6055a523cd1e92b07bfacfc10~cfaLHcbIo1401014010eucas1p1d@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqt6zZ9vZ8qDpockDyUgqxJxA-d6ajyufzBUCPzKkxv0Vnu_Q@mail.gmail.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
-> Hi Laurent,
-> On Mon, Oct 1, 2018 at 6:12 PM Noralf Trønnes <noralf@tronnes.org> wrote:
-> >
-> >
-> > Den 01.10.2018 13.56, skrev Laurent Pinchart:
-> > > Hi Daniel,
-> > >
-> > > On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
-> > >> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
-> > >>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
-> > >>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder wrote:
-> > >>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
-> > >>>>>> convert drm_atomic_helper_suspend/resume() to use
-> > >>>>>> drm_mode_config_helper_suspend/resume().
-> > >>>>>>
-> > >>>>>> remove suspend_state field from the rcar_du_device
-> > >>>>>> structure as it is no more required.
-> > >>>>>>
-> > >>>>>> With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
-> > >>>>>> will left with no consumer. So this function can be removed.
-> > >>>>>>
-> > >>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > >>>>> Laurent, any comment on this patch ??
-> > >>>> Sorry for the delay, and thanks for pinging me.
-> > >>>>
-> > >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > >>>>
-> > >>>> Should I apply this to my tree or do you plan to merge it through
-> > >>>> drm-misc
-> > >>>> as it touches drm_fb_cma_helper.c ?
-> > >>> I just realized that the same patch got supplied by Noralf Trønnes nearly
-> > >>> a
-> > >>> year ago, and was later superseded by
-> > >>> https://patchwork.freedesktop.org/patch/247861/. I think we should thus
-> > >>> apply Noralf's patches instead (once he sends v4 out).
-> > >> I don't think Noralf is still actively working on this, he's busy with the
-> > >> fbdev emulation stuff. Probably better if you pick up one of the existing
-> > >> ones, than waiting another year or so :-)
-> > > Isn't https://patchwork.freedesktop.org/patch/247861/ part of the fbdev
-> > > emulation stuff ? That patch series is from less than a month ago, so I
-> > > thought it was actively developed.
-> > >
-> > > Let's ask him. Noralf, any comment ? :-)
-> >
-> > I see now that I've caused some confusion here.
-> >
-> > I did some refactoring of the fbdev stuff in the CMA helper last year.
-> > In the last series of that work there is this patch:
-> >
-> > [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
-> > https://patchwork.freedesktop.org/patch/192414/
-> >
-> > During Christmas I got the idea that maybe it was possible to use a dumb
-> > buffer to do generic fbdev emulation. That work took me 6 months before a
-> > solution using a general internal DRM client was hammered out. By the
-> > time I started to convert drivers I had forgotten about that patch.
-> >
-> > When I wrote the patch (#247861) to convert rcar to the generic fbdev, I
-> > just bundled up the suspend/resume change with the fbdev conversion.
-> > Laurent and Sam commented on that bundling, so I said that I would split
-> > it up in the next version.
-> >
-> > All that being said, I think that this patch should be applied and I'll
-> > just rebase the rcar fbdev conversion patch on top of that.
-> > It's the easiest for me at least :-)
-> >
-> Any conclusion on this patch ? :-)
-
-Laurent should pick it up and apply to his rcar-du tree I think. We can
-also stuff it into drm-misc as a fallback.
--Daniel
-
+On 11/10/2018 09:35, Lukasz Luba wrote:
+> Hi Daniel,
 > 
-> ers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
-> > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
-> > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
-> > >>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
-> > >>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
-> > >>>>>>
-> > >>>>>> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >>>>>> b/drivers/gpu/drm/drm_fb_cma_helper.c index 47e0e2f..96efc88 100644
-> > >>>>>> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >>>>>> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >>>>>> @@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct
-> > >>>>>> drm_fbdev_cma *fbdev_cma)
-> > >>>>>>
-> > >>>>>>                  drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
-> > >>>>>>
-> > >>>>>>   }
-> > >>>>>>   EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
-> > >>>>>>
-> > >>>>>> -
-> > >>>>>> -/**
-> > >>>>>> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
-> > >>>>>> - *
-> > >>>>>> drm_fb_helper_set_suspend_unlocked
-> > >>>>>> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
-> > >>>>>> - * @state: desired state, zero to resume, non-zero to suspend
-> > >>>>>> - *
-> > >>>>>> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
-> > >>>>>> - * fb_set_suspend implemented by fbdev core.
-> > >>>>>> - */
-> > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > >>>>>> *fbdev_cma,
-> > >>>>>> -                                       bool state)
-> > >>>>>> -{
-> > >>>>>> -       if (fbdev_cma)
-> > >>>>>> -
-> > >>>>>> drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
-> > >>>>>> -                                                  state);
-> > >>>>>> -}
-> > >>>>>> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
-> > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
-> > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >>>>>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
-> > >>>>>> *dev)
-> > >>>>>>
-> > >>>>>>   static int rcar_du_pm_suspend(struct device *dev)
-> > >>>>>>   {
-> > >>>>>>
-> > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > >>>>>>
-> > >>>>>> -       struct drm_atomic_state *state;
-> > >>>>>>
-> > >>>>>> -       drm_kms_helper_poll_disable(rcdu->ddev);
-> > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
-> > >>>>>> -
-> > >>>>>> -       state = drm_atomic_helper_suspend(rcdu->ddev);
-> > >>>>>> -       if (IS_ERR(state)) {
-> > >>>>>> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev,
-> > >>>>>> false);
-> > >>>>>> -               drm_kms_helper_poll_enable(rcdu->ddev);
-> > >>>>>> -               return PTR_ERR(state);
-> > >>>>>> -       }
-> > >>>>>> -
-> > >>>>>> -       rcdu->suspend_state = state;
-> > >>>>>> -
-> > >>>>>> -       return 0;
-> > >>>>>> +       return drm_mode_config_helper_suspend(rcdu->ddev);
-> > >>>>>>
-> > >>>>>>   }
-> > >>>>>>
-> > >>>>>>   static int rcar_du_pm_resume(struct device *dev)
-> > >>>>>>   {
-> > >>>>>>
-> > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > >>>>>>
-> > >>>>>> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
-> > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
-> > >>>>>> -       drm_kms_helper_poll_enable(rcdu->ddev);
-> > >>>>>> -
-> > >>>>>> -       return 0;
-> > >>>>>> +       return drm_mode_config_helper_resume(rcdu->ddev);
-> > >>>>>>
-> > >>>>>>   }
-> > >>>>>>   #endif
-> > >>>>>>
-> > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..ff25c8d 100644
-> > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >>>>>> @@ -78,7 +78,6 @@ struct rcar_du_device {
-> > >>>>>>
-> > >>>>>>          struct drm_device *ddev;
-> > >>>>>>          struct drm_fbdev_cma *fbdev;
-> > >>>>>>
-> > >>>>>> -       struct drm_atomic_state *suspend_state;
-> > >>>>>>
-> > >>>>>>          struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
-> > >>>>>>          unsigned int num_crtcs;
-> > >>>>>>
-> > >>>>>> diff --git a/include/drm/drm_fb_cma_helper.h
-> > >>>>>> b/include/drm/drm_fb_cma_helper.h index 4a65f0d..8dbbe1e 100644
-> > >>>>>> --- a/include/drm/drm_fb_cma_helper.h
-> > >>>>>> +++ b/include/drm/drm_fb_cma_helper.h
-> > >>>>>> @@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
-> > >>>>>> drm_device *dev,
-> > >>>>>>
-> > >>>>>>   void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
-> > >>>>>>   void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
-> > >>>>>>
-> > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > >>>>>> *fbdev_cma,
-> > >>>>>> -                                       bool state);
-> > >>>>>>
-> > >>>>>>   struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct
-> > >>>>>>   drm_framebuffer *fb,
-> > >>>>>>
-> > >>>>>>          unsigned int plane);
-> >
+> On 10/10/2018 06:54 PM, Daniel Lezcano wrote:
+>> On 10/10/2018 17:35, Lukasz Luba wrote:
+>>> Hi Thara,
+>>>
+>>> I have run it on Exynos5433 mainline.
+>>> When it is enabled with step_wise thermal governor,
+>>> some of my tests are showing ~30-50% regression (i.e. hackbench),
+>>> dhrystone ~10%.
+>>>
+>>> Could you tell me which thermal governor was used in your case?
+>>> Please also share the name of that benchmark, i will give it a try.
+>>> Is it single threaded compute-intensive?
+>>
+>> aobench AFAICT
+>>
+>> It would be interesting if you can share the thermal profile of your board.
+>>
+> Thanks for the benchmark name.
+> It was tested on Samsung TM2 device with Exynos 5433 with debian.
+> Thermal stuff you can find in mainline:
+> arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+
+By thermal profile, I was meaning a figure with the temperature
+regulation (temperature idle, then workload, then temperature increase,
+mitigated temperature, end of workload, temperature decrease).
+
+The thermal description looks wrong in the DT. I suggest to experiment
+the series with the DT fixed.
+
+eg. from hi6220.dtsi
+
+
+                thermal-zones {
+
+                        cls0: cls0 {
+                                polling-delay = <1000>;
+                                polling-delay-passive = <100>;
+                                sustainable-power = <3326>;
+
+                                /* sensor ID */
+                                thermal-sensors = <&tsensor 2>;
+
+                                trips {
+                                        threshold: trip-point@0 {
+                                                temperature = <65000>;
+                                                hysteresis = <0>;
+                                                type = "passive";
+                                        };
+
+                                        target: trip-point@1 {
+                                                temperature = <75000>;
+                                                hysteresis = <0>;
+                                                type = "passive";
+                                        };
+                                };
+
+                                cooling-maps {
+                                        map0 {
+                                                trip = <&target>;
+                                                cooling-device = <&cpu0
+THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+                                        };
+                                };
+                        };
+                };
+
+Note the cooling devices are *passive*
+
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+ <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
