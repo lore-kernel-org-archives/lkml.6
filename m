@@ -2,80 +2,82 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6771BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012B7C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3399A205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3399A205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B613F205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B613F205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeJKT2w (ORCPT
+        id S1728110AbeJKT3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:28:52 -0400
-Received: from mga07.intel.com ([134.134.136.100]:38243 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727790AbeJKT2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:28:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 05:01:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="94293216"
-Received: from mrahma3x-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.53.109])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Oct 2018 05:01:41 -0700
-Date:   Thu, 11 Oct 2018 15:01:40 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Thu, 11 Oct 2018 15:29:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44118 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727182AbeJKT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:29:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 20EFAACE1;
+        Thu, 11 Oct 2018 12:02:11 +0000 (UTC)
+Date:   Thu, 11 Oct 2018 14:02:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@android.com, minchan@google.com, hughd@google.com,
+        lokeshgidra@google.com, Andrew Morton <akpm@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: fix unused-value issues in tpm_try_transmit
-Message-ID: <20181011120140.GA15767@linux.intel.com>
-References: <20181010133817.GA11485@embeddedor.com>
- <20181010140638.GA3894@ziepe.ca>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm: Speed up mremap on large regions
+Message-ID: <20181011120209.GV5873@dhcp22.suse.cz>
+References: <20181009201400.168705-1-joel@joelfernandes.org>
+ <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1>
+ <20181009230447.GA17911@joelaf.mtv.corp.google.com>
+ <20181010100011.6jqjvgeslrvvyhr3@kshutemo-mobl1>
+ <20181011004618.GA237677@joelaf.mtv.corp.google.com>
+ <20181011081719.77f7ihcy6mu2vkkc@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181010140638.GA3894@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181011081719.77f7ihcy6mu2vkkc@kshutemo-mobl1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 08:06:38AM -0600, Jason Gunthorpe wrote:
-> On Wed, Oct 10, 2018 at 03:38:17PM +0200, Gustavo A. R. Silva wrote:
-> > Currently, there are some values assigned to variable *rc*, which
-> > are never actually used in any computation, because such variable
-> > is updated at line 550, before they can be used:
+On Thu 11-10-18 11:17:19, Kirill A. Shutemov wrote:
+[...]
+> > The thing is its quite a lot of change, I wrote a coccinelle script to do it
+> > tree wide, following is the diffstat:
+> >  48 files changed, 91 insertions(+), 124 deletions(-)
 > > 
-> > 549out:
-> > 550        rc = tpm_go_idle(chip, flags);
-> > 551        if (rc)
-> > 552                goto out;
-> > 
-> > Fix this by removing such assignments. 
+> > Imagine then having to add the address argument back in the future in case
+> > its ever needed. Is it really worth doing it?
 > 
-> Should this be done by not quashing rc during the error unwind rather
-> than dropping the errors?
+> This is the point. It will get us chance to consider if the optimization
+> is still safe.
+> 
+> And it shouldn't be hard: [partially] revert the commit and get the address
+> back into the interface.
 
-Yeah.`
+I agree with Kirill. This will also remove quite a lot of pointless
+code and make it more clear. It is impossible to see what is the address
+good for and I couldn't really trace back to commit introducing it to
+guess that either. So making sure nobody does anything with it is a good
+pre-requisite to make further changes on top.
 
-Wondering if tpm_go_idle() should simply be a void-function i.e. issue
-just a warning inside (disclaimer: did not revisit its code when writing
-this).
-
-> Jason
-
-/Jarkko
+The chage itself is really interesting, I still have to digest it
+completely to see there are no cornercases but from a quick glance it
+looks reasonable.
+-- 
+Michal Hocko
+SUSE Labs
