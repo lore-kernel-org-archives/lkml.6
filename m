@@ -2,119 +2,156 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB046C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90B3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7337C20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:50:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="omZtpQyq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7337C20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D45D20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 01:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D45D20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbeJKIPZ (ORCPT
+        id S1726079AbeJKIgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 04:15:25 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38222 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeJKIPZ (ORCPT
+        Thu, 11 Oct 2018 04:36:07 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:39850 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJKIgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 04:15:25 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l9-v6so7999556qtf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 17:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ccC3rdJLkZEle1esSbUWbjSjHW5QnOE8u707bMwi9Ws=;
-        b=omZtpQyqsKI5aA6jpGu1TNj0SsQxLoXyG5eUb7ghsLIyRN+f3ARMyAj3jqTN2tC6up
-         XYN4uiJ1dD59rEgHgEq7HaJcwMVYyvTn9yTdl96QxzgRQV/qzJ8ftNxuKis9o5r+s4FV
-         kILC1ylBl+h2ERG/gkj9vXCwKOSvLWHe21FZMVgr1y+TQNU5Y8wVDsXqOei+o1mYHcs3
-         8DBdETPZ3RRMSkB3btYZQTk+MDmlyCZXJPYsU4igvDIllH5+eV6hr70iHMjvGkeN0tHl
-         0c/yioey/Cj35ffEYyqUecXCPnB76IHfzTbNFbHIbFDv39NR3oJdubID+rEUJMyi9xL0
-         9nJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ccC3rdJLkZEle1esSbUWbjSjHW5QnOE8u707bMwi9Ws=;
-        b=hmWYiNg/rYq60Ec1w4Yf1DaKqPIQv8tw/4fazR2kxbKAs6Npc2HlX14d5tQFIwQ8vl
-         Z8vQW0H2Iissw78vBn/bKEqM97NnFTty04oflcrNsmZTeNR3NWR8w2JDmId/vBejdi0/
-         il2TolUtJcxUSVodcWR9eC94zg75jTr9Qgmzbqhv6AZ7WpYKLzqTIpa28aPpy/Rg/A1J
-         JwONm/t+J+PxpTkWNCbOUeu+RBj4ECQc9G3pbdOe/D5QcpU8vxWM8yHRG8wmA2eOK8lI
-         ANwThP60rFRv7l5cGup5enaUgzUIYiNiW9YHVT+IRPsdLFYkIsKzGXPuIym4pMiuI5xH
-         TQuQ==
-X-Gm-Message-State: ABuFfog/72irI4zw4bYhIbh7Vr1YJbhlVKY1PZTFYGihpOKJ/PbprJ9i
-        NzyBegxqislBLUVg4TP7Vbno2oVvNcgNjoP1hGRakg==
-X-Google-Smtp-Source: ACcGV62V+NEHbv98vACcepPL0Yf2+cQoOVSRqgdiWYSUy7vQLeE4vD24SqV6fa+QAbAbYNMm0R41/LzswfKkQTxJh1A=
-X-Received: by 2002:ac8:2b76:: with SMTP id 51-v6mr18261650qtv.255.1539219040629;
- Wed, 10 Oct 2018 17:50:40 -0700 (PDT)
+        Thu, 11 Oct 2018 04:36:06 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gAPVW-0004sJ-2M; Wed, 10 Oct 2018 19:11:18 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gAPVV-0005nb-Ei; Wed, 10 Oct 2018 19:11:17 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+References: <20181010020641.GE13396@shao2-debian>
+        <87sh1dvmc5.fsf@xmission.com> <87h8htv4lf.fsf@xmission.com>
+        <20181010234148.GA25537@linux.intel.com>
+Date:   Wed, 10 Oct 2018 20:11:08 -0500
+In-Reply-To: <20181010234148.GA25537@linux.intel.com> (Sean Christopherson's
+        message of "Wed, 10 Oct 2018 16:41:48 -0700")
+Message-ID: <87in29s2xf.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:ac8:2a95:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 17:50:39
- -0700 (PDT)
-In-Reply-To: <20181011004618.GA237677@joelaf.mtv.corp.google.com>
-References: <20181009201400.168705-1-joel@joelfernandes.org>
- <20181009220222.26nzajhpsbt7syvv@kshutemo-mobl1> <20181009230447.GA17911@joelaf.mtv.corp.google.com>
- <20181010100011.6jqjvgeslrvvyhr3@kshutemo-mobl1> <20181011004618.GA237677@joelaf.mtv.corp.google.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Wed, 10 Oct 2018 17:50:39 -0700
-Message-ID: <CAJWu+oqEmAQ0vWB7fKitQPQjdMX0uhQs_Vb1jH5MFfDO8xBnHQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: Speed up mremap on large regions
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Minchan Kim <minchan@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1gAPVV-0005nb-Ei;;;mid=<87in29s2xf.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19fF0xp00OuH0wvsB9YeqgldE7gI3ARPLk=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [LKP] 4ce5f9c9e7 [ 1.323881] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:1031 kmalloc_slab
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 5:46 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Wed, Oct 10, 2018 at 01:00:11PM +0300, Kirill A. Shutemov wrote:
-[...]
->>
->> My worry is that some architecture has to allocate page table differently
->> depending on virtual address (due to aliasing or something). Original page
->> table was allocated for one virtual address and moving the page table to
->> different spot in virtual address space may break the invariant.
->>
->> > Also the clean up of the argument that you're proposing is a bit out of scope
->> > of this patch but yeah we could clean it up in a separate patch if needed. I
->> > don't feel too strongly about that. It seems cosmetic and in the future if
->> > the address that's passed in is needed, then the architecture can use it.
->>
->> Please, do. This should be pretty mechanical change, but it will help to
->> make sure that none of obscure architecture will be broken by the change.
->>
->
-> The thing is its quite a lot of change, I wrote a coccinelle script to do it
-> tree wide, following is the diffstat:
->  48 files changed, 91 insertions(+), 124 deletions(-)
->
-> Imagine then having to add the address argument back in the future in case
-> its ever needed. Is it really worth doing it? Anyway I confirmed that the
-> address is NOT used for anything at the moment so your fears of the
-> optimization doing anything wonky really don't exist at the moment. I really
-> feel this is unnecessary but I am Ok with others agree the second arg to
-> pte_alloc should be removed in light of this change. Andrew, what do you
-> think?
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-I meant to say here, "I am Ok if others agree the second arg to
-pte_alloc should be removed", but I would really like some input from
-the others as well on what they think.
+> On Wed, Oct 10, 2018 at 05:06:52PM -0500, Eric W. Biederman wrote:
+>> ebiederm@xmission.com (Eric W. Biederman) writes:
+>> 
+>> > So I am flummoxed.  I am reading through the code and I don't see
+>> > anything that could trigger this, and when I ran the supplied reproducer
+>> > it did not reproduce for me.
+>> 
+>> Even more so.  With my tool chain the line that reports the failing
+>> address is impossible.
+>> 
+>> [   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
+>> 
+>> With the supplied configureation my tool chain only has 0x30 bytes for
+>> all of copy_siginfo_from_user.  So I can't even begin to guess where
+>> in that function things are failing.
+>> 
+>> Any additional information that you can provide would be a real help
+>> in tracking down this strange failure.
+>
+> I don't have the exact toolchain, but I was able to get somewhat close
+> and may have found a smoking gun.  0x4d in my build is in the general
+> vicinity of "sig_sicodes[sig].limit" in known_siginfo_layout().  This
+> lines up with the register state from the log, e.g. RDI=0500104d8,
+> which is the mask generated by sig_specific_sicodes.  From what I can
+> tell, @sig is never bounds checked.  If the compiler generated an AND
+> instruction to compare against sig_specific_sicodes then that could
+> resolve true with any arbitrary value that happened to collide with
+> sig_specific_sicodes and result in an out-of-bounds access to
+> @sig_sicodes.  siginfo_layout() for example explicitly checks @sig
+> before indexing @sig_sicode, e.g. "sig < ARRAY_SIZE(sig_sicodes)".
+>
+> Maybe this?
+
+But sig is bounds checked.  Even better sig is checked to see if it
+is one of the values in the array.
+
+From include/linux/signal.h
+
+#define SIG_SPECIFIC_SICODES_MASK (\
+	rt_sigmask(SIGILL)    |  rt_sigmask(SIGFPE)    | \
+	rt_sigmask(SIGSEGV)   |  rt_sigmask(SIGBUS)    | \
+	rt_sigmask(SIGTRAP)   |  rt_sigmask(SIGCHLD)   | \
+	rt_sigmask(SIGPOLL)   |  rt_sigmask(SIGSYS)    | \
+	SIGEMT_MASK                                    )
+
+#define siginmask(sig, mask) \
+	((sig) < SIGRTMIN && (rt_sigmask(sig) & (mask)))
+
+#define sig_specific_sicodes(sig)	siginmask(sig, SIG_SPECIFIC_SICODES_MASK)
+
+
+
+Hmm.  I wonder if something is passing in a negative signal number.
+There is not a bounds check for that.  A sufficiently large signal
+number might be the problem here.  Yes.  I can get an oops with
+a sufficiently large negative signal number.
+
+The code will later call valid_signal in check_permissions and
+that will cause the system call to fail, so the issue is just that
+the signal number is not being validated early enough.
+
+On the output path (copy_siginfo_to_user and copy_siginfo_to_user32) the
+signal number should be validated before it ever reaches userspace
+which is why I expect trinity never triggered anything.
+
+There is copy_siginfo_from_user32 and that does call siginfo_layout with
+a possibly negative signal number.  Which has the same potential issues.
+
+So I am going to go with the fix below.  That fixes things in my testing
+and by being unsigned should fix keep negative numbers from being a
+problem.
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 2bffc5a50183..4fd431ce4f91 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2860,7 +2860,7 @@ static const struct {
+        [SIGSYS]  = { NSIGSYS,  SIL_SYS },
+ };
+ 
+-static bool known_siginfo_layout(int sig, int si_code)
++static bool known_siginfo_layout(unsigned sig, int si_code)
+ {
+        if (si_code == SI_KERNEL)
+                return true;
+@@ -2879,7 +2879,7 @@ static bool known_siginfo_layout(int sig, int si_code)
+        return false;
+ }
+ 
+-enum siginfo_layout siginfo_layout(int sig, int si_code)
++enum siginfo_layout siginfo_layout(unsigned sig, int si_code)
+ {
+        enum siginfo_layout layout = SIL_KILL;
+        if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
