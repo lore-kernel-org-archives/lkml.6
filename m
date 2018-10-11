@@ -3,83 +3,251 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD58C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A6AC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03A32075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:50:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A03A32075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id F162820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F162820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbeJLCS5 (ORCPT
+        id S1729896AbeJLCUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 22:18:57 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:47992 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbeJLCS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 22:18:57 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id BCF0312B6A4;
-        Fri, 12 Oct 2018 03:50:28 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id w9BIoR4J008860
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 Oct 2018 03:50:28 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id w9BIoQJY015523
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 Oct 2018 03:50:26 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w9BIoQXT015522;
-        Fri, 12 Oct 2018 03:50:26 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Khazhismel Kumykov <khazhy@google.com>
-Subject: Re: [PATCH] fs/fat: add cond_resched to fat_count_free_clusters
-References: <20181010172623.57033-1-khazhy@google.com>
-Date:   Fri, 12 Oct 2018 03:50:26 +0900
-In-Reply-To: <20181010172623.57033-1-khazhy@google.com> (Khazhismel Kumykov's
-        message of "Wed, 10 Oct 2018 10:26:23 -0700")
-Message-ID: <875zy85nd9.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Thu, 11 Oct 2018 22:20:19 -0400
+Received: from mga09.intel.com ([134.134.136.24]:51984 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729054AbeJLCUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 22:20:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 11:51:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
+   d="scan'208";a="264918398"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 11 Oct 2018 11:51:50 -0700
+Received: from [10.252.28.165] (abudanko-mobl.ccr.corp.intel.com [10.252.28.165])
+        by linux.intel.com (Postfix) with ESMTP id 2FC49580409;
+        Thu, 11 Oct 2018 11:51:47 -0700 (PDT)
+Subject: [PATCH v13 1/3]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <36159e5e-57cc-9734-501f-1856f59b4913@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <2bc49cc4-d406-23ef-f21e-e250835eecff@linux.intel.com>
+Date:   Thu, 11 Oct 2018 21:51:46 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <36159e5e-57cc-9734-501f-1856f59b4913@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Khazhismel Kumykov <khazhy@google.com> writes:
 
-> On non-preempt kernels this loop can take a long time (more than 50
-> ticks) processing through entries.
->
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-> ---
->  fs/fat/fatent.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-> index defc2168de91..f58c0cacc531 100644
-> --- a/fs/fat/fatent.c
-> +++ b/fs/fat/fatent.c
-> @@ -682,6 +682,7 @@ int fat_count_free_clusters(struct super_block *sb)
->  			if (ops->ent_get(&fatent) == FAT_ENT_FREE)
->  				free++;
->  		} while (fat_ent_next(sbi, &fatent));
-> +		cond_resched();
->  	}
->  	sbi->free_clusters = free;
->  	sbi->free_clus_valid = 1;
+The map->data buffer is used to preserve map->base profiling data 
+for writing to disk. AIO map->cblock is used to queue corresponding 
+map->data buffer for asynchronous writing.
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v13:
+ - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
+Changes in v12:
+ - applied stub functions design for the whole patch kit
+ - grouped AIO related data into a struct under struct perf_mmap
+Changes in v10:
+ - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
+ - adjusted error reporting by using %m
+Changes in v9:
+  - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of 
+    libc implementations without Posix AIO API support
+Changes in v7:
+  - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+  - adjusted setting of priorities for cblocks;
+ Changes in v5:
+  - reshaped layout of data structures;
+  - implemented --aio option;
+ Changes in v4:
+  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
+ Changes in v2:
+  - converted zalloc() to calloc() for allocation of mmap_aio array,
+  - cleared typo and adjusted fallback branch code;
+---
+ tools/perf/Makefile.config |  5 +++++
+ tools/perf/Makefile.perf   |  7 ++++++-
+ tools/perf/util/evlist.c   |  2 +-
+ tools/perf/util/mmap.c     | 49 +++++++++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.h     | 11 ++++++++++-
+ 5 files changed, 70 insertions(+), 4 deletions(-)
 
-Thanks, looks good. 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f6d1a03c7523..2e90f4ce9214 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -355,6 +355,11 @@ endif # NO_LIBELF
+ 
+ ifeq ($(feature-glibc), 1)
+   CFLAGS += -DHAVE_GLIBC_SUPPORT
++  ifndef NO_AIO
++    ifndef BIONIC
++        CFLAGS += -DHAVE_AIO_SUPPORT
++    endif
++  endif
+ endif
+ 
+ ifdef NO_DWARF
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 92514fb3689f..7becc6a72cf2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -97,8 +97,13 @@ include ../scripts/utilities.mak
+ # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
+ # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
+ # llvm-config is not in $PATH.
+-
++#
+ # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
++#
++# Define NO_AIO if you do not want support of Posix AIO based trace
++# streaming for record mode. Currently Posix AIO trace streaming is
++# supported only when linking with glibc.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index be440df29615..1a83bf2c069c 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp;
++	struct mmap_params mp = { .nr_cblocks = 0 };
+ 
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index cdb95b3a1213..47cdc3ad6546 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -153,8 +153,55 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ {
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++{
++	int delta_max;
++
++	if (mp->nr_cblocks) {
++		map->aio.data = malloc(perf_mmap__mmap_len(map));
++		if (!map->aio.data) {
++			pr_debug2("failed to allocate data buffer, error %m\n");
++			return -1;
++		}
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->aio.cblock.aio_fildes = -1;
++		/*
++		 * Allocate cblock with max priority delta to
++		 * have faster aio write system calls.
++		 */
++		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++		map->aio.cblock.aio_reqprio = delta_max;
++	}
++
++	return 0;
++}
++
++static void perf_mmap__aio_munmap(struct perf_mmap *map)
++{
++	if (map->aio.data)
++		zfree(&map->aio.data);
++}
++#else
++static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
++			       struct mmap_params *mp __maybe_unused)
++{
++	return 0;
++}
++
++static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
++{
++}
++#endif
++
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	perf_mmap__aio_munmap(map);
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -197,7 +244,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+ 
+-	return 0;
++	return perf_mmap__aio_mmap(map, mp);
+ }
+ 
+ static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index e603314dc792..a46dbdcdcc8a 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,9 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#ifdef HAVE_AIO_SUPPORT
++#include <aio.h>
++#endif
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -26,6 +29,12 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++#ifdef HAVE_AIO_SUPPORT
++	struct {
++		void 		 *data;
++		struct aiocb	 cblock;
++	} aio;
++#endif
+ };
+ 
+ /*
+@@ -57,7 +66,7 @@ enum bkw_mmap_state {
+ };
+ 
+ struct mmap_params {
+-	int			    prot, mask;
++	int			    prot, mask, nr_cblocks;
+ 	struct auxtrace_mmap_params auxtrace_mp;
+ };
