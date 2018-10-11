@@ -2,104 +2,133 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096F9C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8EBC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98DB2213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:11:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="POrPVY7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DB2213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 623A721470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 623A721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730855AbeJLAj2 (ORCPT
+        id S1730893AbeJLAkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 20:39:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55886 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 20:40:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:16320 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726964AbeJLAj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 20:39:28 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C0720658;
-        Thu, 11 Oct 2018 17:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539277880;
-        bh=MKK8ApJEkkgS8pd4+rpOveZhl3ZwxDflwnrkkHVR/8g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=POrPVY7yAhaLJYTI58U5auH0DuFDYpZ2nhBsisQreQEWiVfygQOXGDzremRuAtJe+
-         pwKMX4p9n6vV9kW8Y/Y4rPXHyIXZfqUhhmwT/PkuDNXBH7nzPOxbdeTqQs0elwbl3R
-         g12dx4SsaR6IG0iUjKPYLY5vwuzhZNdynIGBwdUw=
-Date:   Thu, 11 Oct 2018 19:02:04 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Tejun Heo <tj@kernel.org>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, len.brown@intel.com,
-        rafael@kernel.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org
-Subject: Re: [workqueue/driver-core PATCH v2 1/5] workqueue: Provide
- queue_work_node to queue work near a given NUMA node
-Message-ID: <20181011170204.GA7257@kroah.com>
-References: <20181010230435.10609.77825.stgit@localhost.localdomain>
- <20181010230715.10609.83647.stgit@localhost.localdomain>
- <20181011150417.GO270328@devbig004.ftw2.facebook.com>
- <6f91e26d-00e5-10ba-b0ee-2b9f8d50934b@linux.intel.com>
+        id S1726822AbeJLAkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 20:40:24 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 10:12:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
+   d="scan'208";a="91187730"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga003.jf.intel.com with ESMTP; 11 Oct 2018 10:07:47 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gAeR7-0004lM-Jl; Thu, 11 Oct 2018 20:07:45 +0300
+Date:   Thu, 11 Oct 2018 20:07:45 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, rppt@linux.vnet.ibm.com,
+        imbrenda@linux.vnet.ibm.com, corbet@lwn.net,
+        ndesaulniers@google.com, dave.jiang@intel.com, jglisse@redhat.com,
+        jia.he@hxt-semitech.com, paulmck@linux.vnet.ibm.com,
+        colin.king@canonical.com, jiang.biao2@zte.com.cn,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] ksm: Assist buddy allocator to assemble 1-order pages
+Message-ID: <20181011170745.GN15943@smile.fi.intel.com>
+References: <153925511661.21256.9692370932417728663.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f91e26d-00e5-10ba-b0ee-2b9f8d50934b@linux.intel.com>
+In-Reply-To: <153925511661.21256.9692370932417728663.stgit@localhost.localdomain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 09:49:59AM -0700, Alexander Duyck wrote:
+On Thu, Oct 11, 2018 at 01:52:22PM +0300, Kirill Tkhai wrote:
+> try_to_merge_two_pages() merges two pages, one of them
+> is a page of currently scanned mm, the second is a page
+> with identical hash from unstable tree. Currently, we
+> merge the page from unstable tree into the first one,
+> and then free it.
 > 
+> The idea of this patch is to prefer freeing that page
+> of them, which has a free neighbour (i.e., neighbour
+> with zero page_count()). This allows buddy allocator
+> to assemble at least 1-order set from the freed page
+> and its neighbour; this is a kind of cheep passive
+> compaction.
 > 
-> On 10/11/2018 8:04 AM, Tejun Heo wrote:
-> > On Wed, Oct 10, 2018 at 04:07:42PM -0700, Alexander Duyck wrote:
-> > > This patch provides a new function queue_work_node which is meant to
-> > > schedule work on a "random" CPU of the requested NUMA node. The main
-> > > motivation for this is to help assist asynchronous init to better improve
-> > > boot times for devices that are local to a specific node.
-> > > 
-> > > For now we just default to the first CPU that is in the intersection of the
-> > > cpumask of the node and the online cpumask. The only exception is if the
-> > > CPU is local to the node we will just use the current CPU. This should work
-> > > for our purposes as we are currently only using this for unbound work so
-> > > the CPU will be translated to a node anyway instead of being directly used.
-> > > 
-> > > As we are only using the first CPU to represent the NUMA node for now I am
-> > > limiting the scope of the function so that it can only be used with unbound
-> > > workqueues.
-> > > 
-> > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > Acked-by: Tejun Heo <tj@kernel.org>
-> > 
-> > Please let me know how you wanna route the patch.
-> > 
-> > Thanks.
+> AFAIK, 1-order pages set consists of pages with PFNs
+> [2n, 2n+1] (odd, even), so the neighbour's pfn is
+> calculated via XOR with 1. We check the result pfn
+> is valid and its page_count(), and prefer merging
+> into @tree_page if neighbour's usage count is zero.
 > 
-> I would be good with routing the patches through you if that works. I had
-> included you, Greg, and Andrew as I wasn't sure how you guys had wanted this
-> routed since this affected both the workqueue and device trees.
+> There a is small difference with current behavior
+> in case of error path. In case of the second
+> try_to_merge_with_ksm_page() is failed, we return
+> from try_to_merge_two_pages() with @tree_page
+> removed from unstable tree. It does not seem to matter,
+> but if we do not want a change at all, it's not
+> a problem to move remove_rmap_item_from_tree() from
+> try_to_merge_with_ksm_page() to its callers.
 > 
-> I'll update the patches to resolve the lack of kerneldoc for the new
-> "async_" functions and add some comments to the patch descriptions on the
-> gains seen related to some of the specific patches for v3.
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  mm/ksm.c |   15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 5b0894b45ee5..b83ca37e28f0 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -1321,6 +1321,21 @@ static struct page *try_to_merge_two_pages(struct rmap_item *rmap_item,
+>  {
+>  	int err;
+>  
+> +	if (IS_ENABLED(CONFIG_COMPACTION)) {
+> +		unsigned long pfn;
 
-As Tejun has acked this, and it affects the driver core, I'll be glad to
-take it.
++ blank line?
 
-thanks,
+> +		/*
+> +		 * Find neighbour of @page containing 1-order pair
+> +		 * in buddy-allocator and check whether it is free.
+> +		 * If it is so, try to use @tree_page as ksm page
+> +		 * and to free @page.
+> +		 */
+> +		pfn = (page_to_pfn(page) ^ 1);
 
-greg k-h
+Parens are not needed.
+
+
+> +		if (pfn_valid(pfn) && page_count(pfn_to_page(pfn)) == 0) {
+> +			swap(rmap_item, tree_rmap_item);
+> +			swap(page, tree_page);
+> +		}
+> +	}
+> +
+>  	err = try_to_merge_with_ksm_page(rmap_item, page, NULL);
+>  	if (!err) {
+>  		err = try_to_merge_with_ksm_page(tree_rmap_item,
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
