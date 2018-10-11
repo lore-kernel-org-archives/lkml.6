@@ -2,124 +2,138 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC04C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CCDC677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A195D204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:09:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="buhkTyxp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A195D204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D5C3204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5C3204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbeJKXha (ORCPT
+        id S1730029AbeJKXiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:37:30 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41062 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeJKXh3 (ORCPT
+        Thu, 11 Oct 2018 19:38:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726882AbeJKXiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:37:29 -0400
-Received: by mail-pl1-f193.google.com with SMTP id q17-v6so4462956plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 09:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=S44JGOd16GctSGLVbs8mDQrUDdgxbbFAoK+5tP7b284=;
-        b=buhkTyxpskAg/c7tbKI1BmQr7F1vtiJbFqX6LvXGj8L1+ZxOr/eUGoYhrngoK+XOsc
-         qr44fbFQCTAAxNecGvJOen3Zwmm9I5y6ZUZdkxLgq9hq+proWY5uyL7B4HP4iMSf7tDD
-         jc/ar7kWtakddFA2gV8EkDh4WNi3eMWYwOT/Uwqn44U2gW7DZt6mVU4BgIX0vlP2fMS6
-         FzjY0Z8uIOcoYHG3fKYg6ObGPkUH0Ii1z3S1tHX26qMnBkPLvHqoA0DwB+xCuevAN72V
-         2ZXwi3uGb/MJSkemlHo1Qtvb/srVM2UlFKindVHlHfhVj1O1YypizMMD4OQQYNAwlqFY
-         q5yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=S44JGOd16GctSGLVbs8mDQrUDdgxbbFAoK+5tP7b284=;
-        b=n+l2gllZDqNqLZqvPb0jx1fu9kRPTXo7ZOy8byovW5IyxnjSpo1hHPtlzCKuRnUfBh
-         ulW7qCQzrcra2/f8AESTW0Qg6REuh0A5XdiOSRtrXIeUKq4Fsba0ZXxuKJfV1FbCFMIw
-         MjE1OG/uLTjlOsBUPXvsqSPEIaz4x6F/5jiWoFJRSIoTYBhWC869yu01abtsI4qEHX6Y
-         7hYVWku8CTHPDyk76U74nURn1inrf/tCByAjG8o4RQRFu3/LDDaiH0FyLPDYSuklXkhb
-         mB4ha3w0QUWxhrcrCI+B3fHjfBao2agbc0OxaGihYe9Xden7RyDQwsVp/jmrA6EzT0W7
-         SyOw==
-X-Gm-Message-State: ABuFfoinVDR/w/S+EDWqTPYid3x5/5VeMkMwBpStQORCRhUB2HoOKBYE
-        W5zqWHZ/rSgDqr7/fdUM4iI=
-X-Google-Smtp-Source: ACcGV60TNxdnIlq4xHH1/S0LT0GCkk7rXIvQBkzBL0CP+rdnbmlt1KwDLKKdQnPXxZkaJo4K6Dhu9Q==
-X-Received: by 2002:a17:902:e111:: with SMTP id cc17-v6mr2137548plb.175.1539274176814;
-        Thu, 11 Oct 2018 09:09:36 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id i29-v6sm49502620pfj.82.2018.10.11.09.09.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 09:09:36 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 21:39:29 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] staging: mt7621-mmc: Use BIT macro instead of explicit
- shifting in dbg.h
-Message-ID: <20181011160925.GA4856@nishad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 11 Oct 2018 19:38:07 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BG9doo058821
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 12:10:14 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n27wgec2w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 12:10:14 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
+        Thu, 11 Oct 2018 10:10:12 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 11 Oct 2018 10:10:08 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BGA7rD59834534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 11 Oct 2018 09:10:07 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9474C78063;
+        Thu, 11 Oct 2018 10:10:07 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BAB3E7805E;
+        Thu, 11 Oct 2018 10:10:04 -0600 (MDT)
+Received: from [153.66.254.194] (unknown [9.85.185.70])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 11 Oct 2018 10:10:04 -0600 (MDT)
+Subject: Re: undefined behavior (-Wvarargs) in
+ security/keys/trusted.c#TSS_authhmac()
+From:   James Bottomley <jejb@linux.vnet.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>
+Date:   Thu, 11 Oct 2018 09:10:03 -0700
+In-Reply-To: <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
+References: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
+         <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101116-0016-0000-0000-0000093FBDE3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009860; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01101164; UDB=6.00569788; IPR=6.00881210;
+ MB=3.00023714; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-11 16:10:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101116-0017-0000-0000-000040AAD9DC
+Message-Id: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810110155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace explicit shifting with BIT macro in dbg.h.
-Issue found by checkpatch.
+On Thu, 2018-10-11 at 18:02 +0200, Arnd Bergmann wrote:
+> On 10/10/18, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > Hello,
+> > I noticed that compiling with
+> > CONFIG_TCG_TPM=y
+> > CONFIG_HW_RANDOM_TPM=y
+> > and Clang produced the warning:
+> > 
+> >   CC      security/keys/trusted.o
+> > security/keys/trusted.c:146:17: warning: passing an object that
+> > undergoes default
+> >       argument promotion to 'va_start' has undefined behavior [-
+> > Wvarargs]
+> >         va_start(argp, h3);
+> >                        ^
+> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> > char' is declared here
+> > unsigned char *h2, unsigned char h3, ...)
+> >                                ^
+> > 
+> > Specifically, it seems that both the C90 (4.8.1.1) and C11
+> > (7.16.1.4) standards explicitly call this out as undefined
+> > behavior:
+> > 
+> > The parameter parmN is the identifier of the rightmost parameter in
+> > the variable parameter list in the function definition (the one
+> > just before the ...). If the parameter parmN is declared with ...
+> > or with a type that is not compatible with the type that results
+> > after application of the default argument promotions, the behavior
+> > is undefined.
+> > 
+> > So if I understand my C promotion/conversion rules correctly,
+> > unsigned char would be promoted to int?
+> > 
+> > We had a few ideas for possible fixes in:
+> > https://github.com/ClangBuiltLinux/linux/issues/41
+> 
+> I arrived at a similar patch as the one cited there, but it broke
+> again after an 'extern' declaration was added in
+> include/keys/trusted.h, so that has to be patched as well now
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/mt7621-mmc/dbg.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+They look either over complicated or potentially problematic.  since
+this is an internal API and a char * is always legal, what's wrong with
+simply swapping h2 and h3?
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 89acf590ed11..b0502d15b0c9 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -74,17 +74,17 @@ enum msdc_dbg {
- };
- 
- /* Debug message event */
--#define DBG_EVT_NONE        (0)       /* No event */
--#define DBG_EVT_DMA         (1 << 0)  /* DMA related event */
--#define DBG_EVT_CMD         (1 << 1)  /* MSDC CMD related event */
--#define DBG_EVT_RSP         (1 << 2)  /* MSDC CMD RSP related event */
--#define DBG_EVT_INT         (1 << 3)  /* MSDC INT event */
--#define DBG_EVT_CFG         (1 << 4)  /* MSDC CFG event */
--#define DBG_EVT_FUC         (1 << 5)  /* Function event */
--#define DBG_EVT_OPS         (1 << 6)  /* Read/Write operation event */
--#define DBG_EVT_FIO         (1 << 7)  /* FIFO operation event */
--#define DBG_EVT_WRN         (1 << 8)  /* Warning event */
--#define DBG_EVT_PWR         (1 << 9)  /* Power event */
-+#define DBG_EVT_NONE        (0)     /* No event */
-+#define DBG_EVT_DMA         BIT(0)  /* DMA related event */
-+#define DBG_EVT_CMD         BIT(1)  /* MSDC CMD related event */
-+#define DBG_EVT_RSP         BIT(2)  /* MSDC CMD RSP related event */
-+#define DBG_EVT_INT         BIT(3)  /* MSDC INT event */
-+#define DBG_EVT_CFG         BIT(4)  /* MSDC CFG event */
-+#define DBG_EVT_FUC         BIT(5)  /* Function event */
-+#define DBG_EVT_OPS         BIT(6)  /* Read/Write operation event */
-+#define DBG_EVT_FIO         BIT(7)  /* FIFO operation event */
-+#define DBG_EVT_WRN         BIT(8)  /* Warning event */
-+#define DBG_EVT_PWR         BIT(9)  /* Power event */
- #define DBG_EVT_ALL         (0xffffffff)
- 
- #define DBG_EVT_MASK        (DBG_EVT_ALL)
--- 
-2.17.1
+James
 
