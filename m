@@ -2,166 +2,121 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA6FC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF122C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB262077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:23:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB262077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 70B6D2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:27:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O2pmyUhB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B6D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeJKTuq (ORCPT
+        id S1727803AbeJKTyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:50:46 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:52300 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbeJKTup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:50:45 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1gAa0D-0003rz-PY; Thu, 11 Oct 2018 14:23:41 +0200
-Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
-To:     Chris Clayton <chris2553@googlemail.com>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Azat Khuzhin <a3at.mail@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
- <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
- <98680351-5123-761f-982a-726098da9716@gmail.com>
- <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
- <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
- <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
- <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
- <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
- <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
- <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
- <df88dcb6-951d-0568-6104-7346d0c49063@maciej.szmigiero.name>
- <d14f04cd-329d-cea9-14e1-d90ad629df74@googlemail.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <6f3f206c-7226-7182-ec81-05547cf39239@maciej.szmigiero.name>
-Date:   Thu, 11 Oct 2018 14:23:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 11 Oct 2018 15:54:01 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33468 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeJKTyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:54:01 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e4-v6so9488895wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 05:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NoTHzn9OrrkVLMHg4qKhiCcO7C8Qkc2Mo1FWCZwuSVU=;
+        b=O2pmyUhBI5a+Tdco6RO+i1xCgQbsoiDewILJ2try+zsW3NzH2CAoqnfxYXiOmaH0hj
+         cogAdnNcZJiysgbw17pDpM9G8nP7WIaJhziz+JmmyXM7VGTdYokDEddx5GBiMIZjpdwF
+         r3ITqzMs5i3gTGkLXFAh35osxB7NS3KExMOzU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NoTHzn9OrrkVLMHg4qKhiCcO7C8Qkc2Mo1FWCZwuSVU=;
+        b=bkjCOE6v4Ci17dttVS3M5C3+BFrz9QH6XWJukiu5Y8iEvPX7sqh6kBS6nYcvpiO0Xi
+         crj6p3AEqxsz+5aFB/If2nX2I87f3AElVppYdxj/ILDQGnthyEVP0aIcKQufeL707rzq
+         iHnn/myQwgLFbHQ3V4zCdUqbQHyRHU2paKV1sgg0tG/6dEhMqrEg9v3lC51OveByxWoD
+         VjmEminuXtCa0Kwrgfvy2pjM8KxYvZEIB+iylIqtCWChhhDDG8VpdAGbqBe8S1RWlSkd
+         mQq+BURNkT7wkRRtkM25xW0TqMf8sRmJ8sXo9PfQpcWTG/HkWepohyMeLPGOajCq1aSa
+         UneA==
+X-Gm-Message-State: ABuFfoji3qxaAnZF+DjRGw8jI4OKezmQjsq71TiJezjj+IZmpblswAgC
+        PRtGBWFCGj+YJ0kbpMHpUlk2rcP4MSo=
+X-Google-Smtp-Source: ACcGV63mrNU41pCvSyJkd7IT9V4lOloYlwyJYuAttCffdfym4NUswvnbmR5Krjb6mGLq8i4ahH1pTg==
+X-Received: by 2002:adf:8b5e:: with SMTP id v30-v6mr1282402wra.282.1539260820392;
+        Thu, 11 Oct 2018 05:27:00 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id u191-v6sm21921659wmd.31.2018.10.11.05.26.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 05:26:59 -0700 (PDT)
+Subject: Re: [PATCH] iommu: arm-smmu: handle client iommu translation fault
+ handlers
+To:     Will Deacon <will.deacon@arm.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181010144407.23336-1-stanimir.varbanov@linaro.org>
+ <20181010170837.GC16512@arm.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <6edd8f71-4363-01b6-6b45-aebc92604559@linaro.org>
+Date:   Thu, 11 Oct 2018 15:26:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <d14f04cd-329d-cea9-14e1-d90ad629df74@googlemail.com>
+In-Reply-To: <20181010170837.GC16512@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 10:24, Chris Clayton wrote:
-> On 11/10/2018 01:12, Maciej S. Szmigiero wrote:
->> On 11.10.2018 00:49, Chris Clayton wrote:
->>>> Now, knowing the "right" value you can experiment with what rtl_init_rxcfg()
->>>> writes (under the "default:" label for your NIC model).
->>>>
->>>
->>> This might be more interesting. Through a combination of viewing the output from pr_notice() and the output from
->>> "ethtool -d", I can see RxConfig with the following values
->>>
->>> 	During boot:	0x00028700
->>> 	Before suspend:	0x0002870e
->>> 	During resume:	0x00024000
->>> 	Post resume:	0x0002870e
->>>
->>> As I did with 4.18.10 early on in the process, I removed the call to rtl_init_rxcfg() from rtl_hw_start() and rebuilt,
->>> installed and rebooted. Now I see the following values:
->>>
->>> 	During boot:	0x00028700
->>> 	Before suspend:	0x0002870e
->>> 	During resume:	0x00024000
->>> 	Post resume:	0x0002400e
->>>
+Hi Will,
+
+On 10/10/2018 08:08 PM, Will Deacon wrote:
+> On Wed, Oct 10, 2018 at 05:44:07PM +0300, Stanimir Varbanov wrote:
+>> Call iommu client translation fault handler(s).
 >>
->> Now we can finally see some difference...
->> Besides missing RX128_INT_EN (bit 15 or 0x8000) and RX_DMA_BURST
->> (bits 8-10 or 0x700) - that rtl_init_rxcfg() would normally set so this
->> is kind of expected - one can see that the working configuration
->> post-resume has bit 14 (or 0x4000) set, too.
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>  drivers/iommu/arm-smmu.c | 3 +++
+>>  1 file changed, 3 insertions(+)
 >>
->> This bit is described in the driver as RX_MULTI_EN ("8111c only") and is
->> set by rtl_init_rxcfg() for example for RTL_GIGA_MAC_VER_35.
->>
->> RTL_GIGA_MAC_VER_35 is described in the driver as being in the same
->> family as your RTL_GIGA_MAC_VER_38, so can you please try the following
->> change:
->> --- r8169.c
->> +++ r8169.c
->> @@ -4271,6 +4271,7 @@ static void rtl_init_rxcfg(struct rtl816
->>  	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_24:
->>  	case RTL_GIGA_MAC_VER_34:
->>  	case RTL_GIGA_MAC_VER_35:
->> +	case RTL_GIGA_MAC_VER_38:
->>  		RTL_W32(tp, RxConfig, RX128_INT_EN | RX_MULTI_EN | RX_DMA_BURST);
->>  		break;
->>  	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
->>
->> This will add RX_MULTI_EN also for your chip model (you need to add back
->> the call to rtl_init_rxcfg() to rtl_hw_start(), naturally).
->>
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index 066f4c8daf4e..02a8aab0cc59 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -568,6 +568,9 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+>>  			    fsr, iova, fsynr, cfg->cbndx);
+>>  
+>>  	writel(fsr, cb_base + ARM_SMMU_CB_FSR);
+>> +
+>> +	report_iommu_fault(domain, smmu->dev, iova, 0);
 > 
-> That's done the trick. With the above change applied, my network runs running fine after a suspend/resume cycle and the
-> ping times are back in the 14-15ms range.
+> Who's using this? Generally, the callback here isn't so useful because it's
 
-Nice!
+The idea was to use it from video driver to dump few multimedia
+interconnect registers which will give us some more info about the fault.
 
-I will submit a patch, it would be great if you could test it and then
-add a "Tested-by:" tag.
- 
-> Chris
+> called in irq context. We also don't enable stalling since 3714ce1d6655.
+> 
+> We previously had fairly detailed discussions on the list with Rob Clark
+> about alternative ways to design this, but I don't remember where it ended
+> up.
 
-Maciej
+It will be useful if you point me to the discussion. Thanks!
+
+-- 
+regards,
+Stan
