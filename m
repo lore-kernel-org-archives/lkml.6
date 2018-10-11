@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A943CC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660ABC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D1C21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A7F421477
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xDtj3aWk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D1C21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I01NWDTH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7F421477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730907AbeJKXK4 (ORCPT
+        id S1730919AbeJKXK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42534 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:10:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:10:55 -0400
+        id S1726700AbeJKXK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:10:58 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B47C220652;
-        Thu, 11 Oct 2018 15:43:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8423E213A2;
+        Thu, 11 Oct 2018 15:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272591;
-        bh=zv+gH/xCik5ekrhISNUr0MbxNZ4DTUe0WDvTNRyRLFU=;
+        s=default; t=1539272594;
+        bh=+5kWmkfoPhfeY9HYE9MPnQGuEespVpA6pNF4EGFNVjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xDtj3aWk/F9yqVcYzesJCA00gd0BfSVGESl+PZTsLJZemogXNaAgH+34VDuONDBFp
-         9l0U+AQsoaM/8YxD0fKSZkk3u0zQ1Jg/YkqP02gdrjg4Pi3KBQVUKqRQH5uLuG6Qj+
-         oJuKVtHdlnKyqYcluyW/r8r60gQiLm1JATROATLg=
+        b=I01NWDTH5PyxPn8lqwui6Ct/BmrLYRMFmyuLinMmfNO7lEIJFjAHzYWc7EEM/N5cZ
+         ky7iyXUanNgmEvWYyN03fyrtNkVdp1Lx2Xf17U0gnifPnALaj53I6Uh13O2XZdTpQH
+         sqTPey/ocSquPBB/g2k2d+imG3RrwgYOor5WbKgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         Andreas Dilger <adilger@dilger.ca>,
-        Ben Hutchings <ben@decadent.org.uk>,
         Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH 4.9 16/35] ext4: add corruption check in ext4_xattr_set_entry()
-Date:   Thu, 11 Oct 2018 17:35:18 +0200
-Message-Id: <20181011152520.826578325@linuxfoundation.org>
+Subject: [PATCH 4.9 17/35] ext4: always verify the magic number in xattr blocks
+Date:   Thu, 11 Oct 2018 17:35:19 +0200
+Message-Id: <20181011152520.864889080@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
 References: <20181011152520.174949126@linuxfoundation.org>
@@ -66,11 +65,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 5369a762c882c0b6e9599e4ebbb3a9ba9eee7e2d upstream.
+commit 513f86d73855ce556ea9522b6bfd79f87356dc3a upstream.
 
-In theory this should have been caught earlier when the xattr list was
-verified, but in case it got missed, it's simple enough to add check
-to make sure we don't overrun the xattr buffer.
+If there an inode points to a block which is also some other type of
+metadata block (such as a block allocation bitmap), the
+buffer_verified flag can be set when it was validated as that other
+metadata block type; however, it would make a really terrible external
+attribute block.  The reason why we use the verified flag is to avoid
+constantly reverifying the block.  However, it doesn't take much
+overhead to make sure the magic number of the xattr block is correct,
+and this will avoid potential crashes.
 
 This addresses CVE-2018-10879.
 
@@ -78,88 +82,30 @@ https://bugzilla.kernel.org/show_bug.cgi?id=200001
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-[bwh: Backported to 3.16:
- - Add inode parameter to ext4_xattr_set_entry() and update callers
- - Return -EIO instead of -EFSCORRUPTED on error
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-[adjusted context for 4.9]
+[Backported to 4.9: adjust context]
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/xattr.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ fs/ext4/xattr.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/fs/ext4/xattr.c
 +++ b/fs/ext4/xattr.c
-@@ -645,14 +645,20 @@ static size_t ext4_xattr_free_space(stru
- }
- 
- static int
--ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s)
-+ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s,
-+		     struct inode *inode)
+@@ -209,12 +209,12 @@ ext4_xattr_check_block(struct inode *ino
  {
--	struct ext4_xattr_entry *last;
-+	struct ext4_xattr_entry *last, *next;
- 	size_t free, min_offs = s->end - s->base, name_len = strlen(i->name);
+ 	int error;
  
- 	/* Compute min_offs and last. */
- 	last = s->first;
--	for (; !IS_LAST_ENTRY(last); last = EXT4_XATTR_NEXT(last)) {
-+	for (; !IS_LAST_ENTRY(last); last = next) {
-+		next = EXT4_XATTR_NEXT(last);
-+		if ((void *)next >= s->end) {
-+			EXT4_ERROR_INODE(inode, "corrupted xattr entries");
-+			return -EIO;
-+		}
- 		if (last->e_value_size) {
- 			size_t offs = le16_to_cpu(last->e_value_offs);
- 			if (offs < min_offs)
-@@ -834,7 +840,7 @@ ext4_xattr_block_set(handle_t *handle, s
- 			mb_cache_entry_delete_block(ext4_mb_cache, hash,
- 						    bs->bh->b_blocknr);
- 			ea_bdebug(bs->bh, "modifying in-place");
--			error = ext4_xattr_set_entry(i, s);
-+			error = ext4_xattr_set_entry(i, s, inode);
- 			if (!error) {
- 				if (!IS_LAST_ENTRY(s->first))
- 					ext4_xattr_rehash(header(s->base),
-@@ -881,7 +887,7 @@ ext4_xattr_block_set(handle_t *handle, s
- 		s->end = s->base + sb->s_blocksize;
- 	}
- 
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error == -EFSCORRUPTED)
- 		goto bad_block;
- 	if (error)
-@@ -1079,7 +1085,7 @@ int ext4_xattr_ibody_inline_set(handle_t
- 
- 	if (EXT4_I(inode)->i_extra_isize == 0)
- 		return -ENOSPC;
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error) {
- 		if (error == -ENOSPC &&
- 		    ext4_has_inline_data(inode)) {
-@@ -1091,7 +1097,7 @@ int ext4_xattr_ibody_inline_set(handle_t
- 			error = ext4_xattr_ibody_find(inode, i, is);
- 			if (error)
- 				return error;
--			error = ext4_xattr_set_entry(i, s);
-+			error = ext4_xattr_set_entry(i, s, inode);
- 		}
- 		if (error)
- 			return error;
-@@ -1117,7 +1123,7 @@ static int ext4_xattr_ibody_set(handle_t
- 
- 	if (EXT4_I(inode)->i_extra_isize == 0)
- 		return -ENOSPC;
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error)
- 		return error;
- 	header = IHDR(inode, ext4_raw_inode(&is->iloc));
+-	if (buffer_verified(bh))
+-		return 0;
+-
+ 	if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+ 	    BHDR(bh)->h_blocks != cpu_to_le32(1))
+ 		return -EFSCORRUPTED;
++	if (buffer_verified(bh))
++		return 0;
++
+ 	if (!ext4_xattr_block_csum_verify(inode, bh))
+ 		return -EFSBADCRC;
+ 	error = ext4_xattr_check_names(BFIRST(bh), bh->b_data + bh->b_size,
 
 
