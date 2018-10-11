@@ -2,108 +2,158 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EDAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB55C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309CD20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC66C20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:29:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oLCkCSPL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 309CD20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Li+CBxcG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T+ZpZ34f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC66C20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJKJkQ (ORCPT
+        id S1726707AbeJKJyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 05:40:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42518 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeJKJkP (ORCPT
+        Thu, 11 Oct 2018 05:54:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJKJyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 05:40:15 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9B28v3N042149;
-        Thu, 11 Oct 2018 02:15:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=UJCYkX07PUuyFD34IWSUZ/8vfduJNZtznkb8NwUWPDA=;
- b=oLCkCSPLU7OTQw3KTTtQ2zwte73keR1mbOlTpD6aLwhtdv+NNmPIfkC8FSDEsiaBdCuL
- D5q1svYgTvVBFsYOB1JKS80/rnj5MyIXI6bc9T0FauNLGEWyQItgyaBcmMtPGPt+r5ei
- EYT6Vvs+RvGkJfBGj6CKt6Nn3NUiUKE0PnSHbZpC3mmaO0KsXCsxNfKS7NnmeM46h1sJ
- EbmD8oHSmmK6GTlSyIfY5w/BHzM+QL4T93H+/rG9AQeVayYM8Dno1b+L7SJfAl5C9UcP
- lLvzXPPCiioZj3GakNcXdpUrkkZOniaseTBOvUwyCrkz8DI+QWDBr1enBYkupq5bJ1JI 8w== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mxn0q7jyc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Oct 2018 02:15:08 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9B2F8Dh003177
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Oct 2018 02:15:08 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9B2F67t012658;
-        Thu, 11 Oct 2018 02:15:07 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 11 Oct 2018 02:15:06 +0000
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] scsi: mptfusion: Remove unnecessary parentheses and simplify null checks
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180915063645.31295-1-natechancellor@gmail.com>
-        <CAK8P3a3PaWgieA0_HBJJ-FVeBO+iAdN8_kv5YUbpKURJ3gsoaQ@mail.gmail.com>
-        <20181002150704.GA444@flashbox>
-Date:   Wed, 10 Oct 2018 22:14:58 -0400
-In-Reply-To: <20181002150704.GA444@flashbox> (Nathan Chancellor's message of
-        "Tue, 2 Oct 2018 08:07:04 -0700")
-Message-ID: <yq1o9c12pr1.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 11 Oct 2018 05:54:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6C31860C86; Thu, 11 Oct 2018 02:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539224974;
+        bh=24QEhOa6b6pADby9FH9M7zyM17kAfwnL7p3AeNWQ2Do=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Li+CBxcGjseQzmCMj88IZKYZhL53E5OiVnrJJkCIej9Ai1j6hvGDV+neOXPXhDFcP
+         kIiT0YLRBOyTNOB7hz9L+biTEmrTArSjcwvJYtsoQozvuls8lMJa7oeBhZf6ZquUat
+         fGkLhHsOreqgZvngy8N43hYJPuDv4UxjdCTE7LBQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 49E3960C64;
+        Thu, 11 Oct 2018 02:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539224972;
+        bh=24QEhOa6b6pADby9FH9M7zyM17kAfwnL7p3AeNWQ2Do=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T+ZpZ34f3qOEaokTvoxoMTF88l6DJfHiEQsQztiKuQKQau+4qyzDTIRZx2XnXhhO0
+         oOHj6mPHsWfWqy+lVk+GYxIDxo5PrOWrQR79YyvzOAt87wy/E8OwF1ylbIXm4buIci
+         i5rR1EvzGPs1fiB7CuRVyRbkD06PMtv5tR3cz/6g=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9042 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810110020
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 11 Oct 2018 07:59:32 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
+        osalvador@suse.de, malat@debian.org,
+        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
+        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
+In-Reply-To: <20181010173334.GL5873@dhcp22.suse.cz>
+References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
+ <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
+ <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
+ <20181010173334.GL5873@dhcp22.suse.cz>
+Message-ID: <a2d576a5fc82cdf54fc89409686e58f5@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Nathan,
-
->> The exact same code also exists in drivers/scsi/mpt3sas/. I had a similar
->> patch for both drivers, but saw that yours now got merged for fusion.
+On 2018-10-10 23:03, Michal Hocko wrote:
+> On Wed 10-10-18 22:26:41, Arun KS wrote:
+>> On 2018-10-10 21:00, Vlastimil Babka wrote:
+>> > On 10/5/18 10:10 AM, Arun KS wrote:
+>> > > When free pages are done with higher order, time spend on
+>> > > coalescing pages by buddy allocator can be reduced. With
+>> > > section size of 256MB, hot add latency of a single section
+>> > > shows improvement from 50-60 ms to less than 1 ms, hence
+>> > > improving the hot add latency by 60%. Modify external
+>> > > providers of online callback to align with the change.
+>> > >
+>> > > Signed-off-by: Arun KS <arunks@codeaurora.org>
+>> >
+>> > [...]
+>> >
+>> > > @@ -655,26 +655,44 @@ void __online_page_free(struct page *page)
+>> > >  }
+>> > >  EXPORT_SYMBOL_GPL(__online_page_free);
+>> > >
+>> > > -static void generic_online_page(struct page *page)
+>> > > +static int generic_online_page(struct page *page, unsigned int order)
+>> > >  {
+>> > > -	__online_page_set_limits(page);
+>> >
+>> > This is now not called anymore, although the xen/hv variants still do
+>> > it. The function seems empty these days, maybe remove it as a followup
+>> > cleanup?
+>> >
+>> > > -	__online_page_increment_counters(page);
+>> > > -	__online_page_free(page);
+>> > > +	__free_pages_core(page, order);
+>> > > +	totalram_pages += (1UL << order);
+>> > > +#ifdef CONFIG_HIGHMEM
+>> > > +	if (PageHighMem(page))
+>> > > +		totalhigh_pages += (1UL << order);
+>> > > +#endif
+>> >
+>> > __online_page_increment_counters() would have used
+>> > adjust_managed_page_count() which would do the changes under
+>> > managed_page_count_lock. Are we safe without the lock? If yes, there
+>> > should perhaps be a comment explaining why.
 >> 
->> If you don't mind, could you fix mpt3sas_base.c the same way?
->> 
->>      Arnd
->
-> Hi Arnd,
->
-> I did sent a patch for this a little bit later:
-> https://lore.kernel.org/lkml/20180920201002.23979-1-natechancellor@gmail.com/
->
-> I am still waiting for it to be merged.
+>> Looks unsafe without managed_page_count_lock.
+> 
+> Why does it matter actually? We cannot online/offline memory in
+> parallel. This is not the case for the boot where we initialize memory
+> in parallel on multiple nodes. So this seems to be safe currently 
+> unless
+> I am missing something. A comment explaining that would be helpful
+> though.
 
-I generally don't merge patches for drivers that are actively maintained
-unless the driver maintainer explicitly acks the change. However, this
-was trivial enough. Applied to 4.20/scsi-queue.
+Other main callers of adjust_manage_page_count(),
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+static inline void free_reserved_page(struct page *page)
+{
+         __free_reserved_page(page);
+         adjust_managed_page_count(page, 1);
+}
+
+static inline void mark_page_reserved(struct page *page)
+{
+         SetPageReserved(page);
+         adjust_managed_page_count(page, -1);
+}
+
+Won't they race with memory hotplug?
+
+Few more,
+./drivers/xen/balloon.c:519:            adjust_managed_page_count(page, 
+-1);
+./drivers/virtio/virtio_balloon.c:175:  adjust_managed_page_count(page, 
+-1);
+./drivers/virtio/virtio_balloon.c:196:  adjust_managed_page_count(page, 
+1);
+./mm/hugetlb.c:2158:                    adjust_managed_page_count(page, 
+1 << h->order);
+
+Regards,
+Arun
