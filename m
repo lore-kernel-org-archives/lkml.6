@@ -2,165 +2,163 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782BAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 992C3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C4C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:12:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZlkXAqrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C4C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 45CD12085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:17:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CD12085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbeJKKhK (ORCPT
+        id S1726921AbeJKKmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 06:37:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49106 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeJKKhJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 06:37:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D9CwMkOGmUw6ahuuNFqK0KoMkMwEnepaqYOT7W4LPDY=; b=ZlkXAqrKzZuDbJmhYUFu50Tf9
-        ALBKMrY+ftclczPfjIzic132kzlPMNnM7HFYrP+cLEFRAEMzTRJ9jHXQZh6vgNat21UmIpJ+2a4ie
-        VQCDTsWv7WPt/La7sOSasJXTOyzeixekpK+t+vf9QJAmEQK4iZd6khp5yEyfhR5BjlIL1zhx+abwp
-        d1xeC9+aZyhBVNfNjrwBl8Ing8Ea3nqaR1b0GCCSTi47/pykbME+BBKvqnVVgX8aVrpYq6s8Cngra
-        ADn3rTUVpI14Z+OdAh5Uln8tN7MG5XnEt9qzygfXNP0jBo8tHjqDBDhu7n266NsfsjxfukRLdSXLm
-        gm+z9k0lw==;
-Received: from 177.43.144.224.dynamic.adsl.gvt.net.br ([177.43.144.224] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gAROI-0001p3-UK; Thu, 11 Oct 2018 03:11:59 +0000
-Date:   Thu, 11 Oct 2018 00:11:55 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [Ksummit-discuss] [PATCH v2 0/3] code of conduct fixes
-Message-ID: <20181011001155.4ed20a52@coco.lan>
-In-Reply-To: <1539216001.3462.1.camel@HansenPartnership.com>
-References: <1539202053.12644.8.camel@HansenPartnership.com>
-        <87efcxtmhf.fsf@xmission.com>
-        <1539216001.3462.1.camel@HansenPartnership.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 11 Oct 2018 06:42:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60400 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726384AbeJKKmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 06:42:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0EA07A9;
+        Wed, 10 Oct 2018 20:17:00 -0700 (PDT)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6BF73F5B7;
+        Wed, 10 Oct 2018 20:16:57 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+ <20181003105926.GA4714@dhcp22.suse.cz>
+ <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
+ <20181003114842.GD4714@dhcp22.suse.cz>
+ <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
+ <20181003133609.GG4714@dhcp22.suse.cz>
+ <5dc1dc4d-de60-43b9-aab6-3b3bb6a22a4b@arm.com>
+ <20181009141442.GT8528@dhcp22.suse.cz>
+ <b722d14e-d14f-f45d-5722-685d4f21f6e4@arm.com>
+ <20181010093907.GF5873@dhcp22.suse.cz>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <4127aad2-e8f4-3fcf-ffe3-7a23147885ce@arm.com>
+Date:   Thu, 11 Oct 2018 08:46:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181010093907.GF5873@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 10 Oct 2018 17:00:01 -0700
-James Bottomley <James.Bottomley@HansenPartnership.com> escreveu:
 
-> On Wed, 2018-10-10 at 18:23 -0500, Eric W. Biederman wrote:
-> > James Bottomley <James.Bottomley@HansenPartnership.com> writes:
-> >   
-> > > Resend to show accumulated tags and also to add a third patch
-> > > listing the TAB as the reporting point as a few people seem to
-> > > want.  If it gets the same level of support, I'll send it in with
-> > > the other two.  
-> > 
-> > 
-> > There is also:
-> >   
-> > > Our Responsibilities
-> > > ====================
-> > > 
-> > > Maintainers are responsible for clarifying the standards of
-> > > acceptable behavior and are expected to take appropriate and fair
-> > > corrective action in response to any instances of unacceptable
-> > > behavior.
-> > > 
-> > > Maintainers have the right and responsibility to remove, edit, or
-> > > reject comments, commits, code, wiki edits, issues, and other
-> > > contributions that are not aligned to this Code of Conduct, or to
-> > > ban temporarily or permanently any contributor for other behaviors
-> > > that they deem inappropriate, threatening, offensive, or harmful.  
-> > 
-> > Which is very problematic.
-> > a) In append only logs like git we can not edit history.
-> >    Making it a mainters responsibility to edit the history, to do the
-> >    impossible is a problem.  
+
+On 10/10/2018 03:09 PM, Michal Hocko wrote:
+> On Wed 10-10-18 08:39:22, Anshuman Khandual wrote:
+> [...]
+>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>> index 9df1d59..4bcbf1e 100644
+>> --- a/include/linux/hugetlb.h
+>> +++ b/include/linux/hugetlb.h
+>> @@ -504,6 +504,16 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>>         return arch_hugetlb_migration_supported(h);
+>>  }
+>>  
+>> +static inline bool hugepage_movable_supported(struct hstate *h)
+>> +{
+>> +       if (!hugepage_migration_supported(h)) --> calls arch override restricting the set
+>> +               return false;
+>> +
+>> +       if (hstate_is_gigantic(h)	--------> restricts the set further
+>> +               return false;
+>> +       return true;
+>> +}
+>> +
+>>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>>                                            struct mm_struct *mm, pte_t *pte)
+>>  {
+>> @@ -600,6 +610,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>>         return false;
+>>  }
+>>  
+>> +static inline bool hugepage_movable_supported(struct hstate *h)
+>> +{
+>> +       return false;
+>> +}
+>> +
+>>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>>                                            struct mm_struct *mm, pte_t *pte)
+>>  {
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 3c21775..a5a111d 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+>>  /* Movability of hugepages depends on migration support. */
+>>  static inline gfp_t htlb_alloc_mask(struct hstate *h)
+>>  {
+>> -       if (hugepage_migration_supported(h))
+>> +       if (hugepage_movable_supported(h))
+>>                 return GFP_HIGHUSER_MOVABLE;
+>>         else
+>>                 return GFP_HIGHUSER;
 > 
-> Git isn't entirely append only.  We can do limited history changes by
-> rebasing.  Some trees do that quite a lot.  Github has this same
-> history problem, so certainly we could amend commits before they hit
-> Linus' tree but after that it isn't "fair corrective action" because it
-> can't be done technically.
-
-We should discuss more about this during MS/KS. Even before pushing upstream, 
-it is a problem on some subsytems, as sub-maintainers and driver developers
-may have issues with rebases.
-
-I'm sure maintainers will do rebases if they think it is worth enough,
-provided that it won't break things, but rebases should be the exception,
-not the rule.
-
-So, I would add on a FAQ (or at the CoC itself) that maintainers won't
-do git rebases due to CoC. So, people complaining about CoC violations
-inside patches should reply ASAP, in order for the maintainer to be
-able to see it *before* merging the patch on his tree.
-
-> > Overall in the discussions I have heard people talking about
-> > persuading, educating, and not feeding trolls.   Nowhere have I heard
-> > people talking about policing the community which I understand that
-> > responsiblity section to be talking about.  
-> 
-> Policing is the wrong word: no-one has policing power.  However, we
-> still have persuasive power.  The point is there's a reasonable line
-> you can tread as a persuader.  Some very few people simply won't
-> listen, but we have, actually, excluded them before without a code of
-> conduct.
-
-Yes, but this particular CoC assumes that maintainer has policing power.
-
-This needs to be reviewed. For now, I would get rid of
-
-	"have the right and responsibility"
-
-in favor of something lighter:
-
-	"should"
-
-Later we may need something else. 
+> Exactly what I've had in mind. It would be great to have a comment in
+> hugepage_movable_supported to explain why we are not supporting giga
+> pages even though they are migrateable and why we need that distinction.
+sure, will do.
 
 > 
-> > Increasingly I am getting the feeling that this document does not the
-> > linux development community.  Perhaps a revert and trying to come up
-> > with better language from scratch would be better.  
+>> The above patch is in addition to the following later patch in the series.
+> [...]
+>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>> index 9c1b77f..9df1d59 100644
+>> --- a/include/linux/hugetlb.h
+>> +++ b/include/linux/hugetlb.h
+>> @@ -479,18 +479,29 @@ static inline pgoff_t basepage_index(struct page *page)
+>>  extern int dissolve_free_huge_page(struct page *page);
+>>  extern int dissolve_free_huge_pages(unsigned long start_pfn,
+>>                                     unsigned long end_pfn);
+>> -static inline bool hugepage_migration_supported(struct hstate *h)
+>> -{
+>> +
+>>  #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
+>> +#ifndef arch_hugetlb_migration_supported
+>> +static inline bool arch_hugetlb_migration_supported(struct hstate *h)
+>> +{
+>>         if ((huge_page_shift(h) == PMD_SHIFT) ||
+>>                 (huge_page_shift(h) == PUD_SHIFT) ||
+>>                         (huge_page_shift(h) == PGDIR_SHIFT))
+>>                 return true;
+>>         else
+>>                 return false;
+>> +}
+>> +#endif
+>>  #else
+>> +static inline bool arch_hugetlb_migration_supported(struct hstate *h)
+>> +{
+>>         return false;
+>> +}
+>>  #endif
+>> +
+>> +static inline bool hugepage_migration_supported(struct hstate *h)
+>> +{
+>> +       return arch_hugetlb_migration_supported(h);
+>>  }
 > 
-> I'm open to pushing a revert instead. However, I think this one is
-> workable too if interpreted reasonably.
-
-Agreed.
-
-> > I don't know how to rephrase that reponsibility section but if we
-> > don't go with the revert something looks like it need sot be done
-> > there.  
-> 
-> That is an argument for keeping what we have ... these things are
-> difficult to write.
-
-A simple change like the above (plus this /3 patch series) should work for
-now, but, IMHO, this CoC model is too bound to a centralized web-based
-site-hosted development model, lacking ways for it to work with
-de-centralized e-mail based workflows.
-
-For next Kernels, we may need to either replace it by something else
-or do more changes on it, in order for it to make sense with our
-workflow.
-
-Thanks,
-Mauro
+> Yes making hugepage_migration_supported to have an arch override is
+> definitely the right thing to do. Whether the above approach rather than
+> a weak symbol is better is a matter of taste and I do not feel strongly
+> about that.
+Okay then, will carry this forward and re-spin the patch series. Thank you
+for your detailed review till now.
