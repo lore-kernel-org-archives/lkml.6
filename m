@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B11EC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CCDC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA02221476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9267213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxgHJfri"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA02221476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5t66BKE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9267213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732076AbeJKXQI (ORCPT
+        id S1732088AbeJKXQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49860 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbeJKXQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:07 -0400
+        id S1726794AbeJKXQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AE2621477;
-        Thu, 11 Oct 2018 15:48:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9685213A2;
+        Thu, 11 Oct 2018 15:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272902;
-        bh=jfhT6js98ors7Q7DPb3BwYqmqspnMpp2aGCn4A/6tmc=;
+        s=default; t=1539272906;
+        bh=BmzFZUJ9nSh9OGYRdf+5p2GHlxrVlzB4hue/YjKoR7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxgHJfri3RodVa1AvSrOHXxrEY279UK64StyjnBJJ4II35nZf8asVnZJM7okWL9Eb
-         Za7oi48SQGcS5+p9DIerqE8WQL9zuu1pxmfjkBO5ywOaOqglEh/V3czbRvpwUXx/9t
-         IOAUPBHdu36+Gf/pD6mmA94gsW2FEMUk+s73TXAs=
+        b=G5t66BKE/vWGVlQal1cd8TGFOItJ+6pKHynX1/BJMfH75QK+G6PG4F+MY4jyWLWFs
+         nW8b70SjmslUrzUjdctchEcgLMHxkmrvGYf+XEKwHsGFQXGuKtv7GoWbwwcdL76bnK
+         VpoKiRzsSX+FKTMUw96bSqiKr0uQ/upSVAFaZ0Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.18 33/44] usb: cdc_acm: Do not leak URB buffers
-Date:   Thu, 11 Oct 2018 17:40:11 +0200
-Message-Id: <20181011152453.899816514@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.18 34/44] tty: Drop tty->count on tty_reopen() failure
+Date:   Thu, 11 Oct 2018 17:40:12 +0200
+Message-Id: <20181011152453.935481410@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -61,51 +64,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: Dmitry Safonov <dima@arista.com>
 
-commit f2924d4b16ae138c2de6a0e73f526fb638330858 upstream.
+commit fe32416790093b31364c08395727de17ec96ace1 upstream.
 
-When the ACM TTY port is disconnected, the URBs it uses must be killed, and
-then the buffers must be freed. Unfortunately a previous refactor removed
-the code freeing the buffers because it looked extremely similar to the
-code killing the URBs.
+In case of tty_ldisc_reinit() failure, tty->count should be decremented
+back, otherwise we will never release_tty().
+Tetsuo reported that it fixes noisy warnings on tty release like:
+  pts pts4033: tty_release: tty->count(10529) != (#fd's(7) + #kopen's(0))
 
-As a result, there were many new leaks for each plug/unplug cycle of a
-CDC-ACM device, that were detected by kmemleak.
+Fixes: commit 892d1fa7eaae ("tty: Destroy ldisc instance on hangup")
 
-Restore the missing code, and the memory leak is removed.
-
-Fixes: ba8c931ded8d ("cdc-acm: refactor killing urbs")
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: stable@vger.kernel.org # v4.6+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Reviewed-by: Jiri Slaby <jslaby@suse.cz>
+Tested-by: Jiri Slaby <jslaby@suse.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/tty/tty_io.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1514,6 +1514,7 @@ static void acm_disconnect(struct usb_in
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1264,6 +1264,7 @@ static void tty_driver_remove_tty(struct
+ static int tty_reopen(struct tty_struct *tty)
  {
- 	struct acm *acm = usb_get_intfdata(intf);
- 	struct tty_struct *tty;
-+	int i;
+ 	struct tty_driver *driver = tty->driver;
++	int retval;
  
- 	/* sibling interface is already cleaning up */
- 	if (!acm)
-@@ -1544,6 +1545,11 @@ static void acm_disconnect(struct usb_in
+ 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
+ 	    driver->subtype == PTY_TYPE_MASTER)
+@@ -1277,10 +1278,14 @@ static int tty_reopen(struct tty_struct
  
- 	tty_unregister_device(acm_tty_driver, acm->minor);
+ 	tty->count++;
  
-+	usb_free_urb(acm->ctrlurb);
-+	for (i = 0; i < ACM_NW; i++)
-+		usb_free_urb(acm->wb[i].urb);
-+	for (i = 0; i < acm->rx_buflimit; i++)
-+		usb_free_urb(acm->read_urbs[i]);
- 	acm_write_buffers_free(acm);
- 	usb_free_coherent(acm->dev, acm->ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
- 	acm_read_buffers_free(acm);
+-	if (!tty->ldisc)
+-		return tty_ldisc_reinit(tty, tty->termios.c_line);
++	if (tty->ldisc)
++		return 0;
+ 
+-	return 0;
++	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
++	if (retval)
++		tty->count--;
++
++	return retval;
+ }
+ 
+ /**
 
 
