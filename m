@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5204C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3DFC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 961A520652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F44821470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/JRBxSb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961A520652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3GE3QzB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F44821470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbeJKXIx (ORCPT
+        id S1730387AbeJKXI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39464 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729758AbeJKXIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:53 -0400
+        id S1729758AbeJKXI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:56 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C838121470;
-        Thu, 11 Oct 2018 15:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85E422098A;
+        Thu, 11 Oct 2018 15:41:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272469;
-        bh=Lt3c2gv+1Z/W/cJhwyoLr46erWRH2//LTcttlsRTPQA=;
+        s=default; t=1539272472;
+        bh=GE9u/s6FWDZYUGsOJl8Dgckd5ItMmnG3Yu04dPglKQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A/JRBxSb9TVfp9Xcrd6jQyiRmLix7wGXZj0iKd2kwYi7fu1r9+Qbqp+FO3cqrsXF2
-         B+dp+A+4AwDnwc9vWEJmQHvTNLKThItEVT5TMamQGGRakLVpaDItLN4Hj6At8O1kKL
-         6jvBGGGv2aIBDfoxPA3H0di+12rLlaCMIJvtEXEo=
+        b=t3GE3QzBzNUbvEg6K5bFVsEYao/IOu7VkCnVZOdojSNJZJi/umvbAVerXsOMrd67V
+         lOZLiMDsCF91ws1nCpJw3XCRa49EJvJOPMLL8xs6IAw3S0/tabOpnhAL53OL4srr6H
+         wADFKOR7/de96Yj1GBFGoE7LjyLOpZY0nH4jBWmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 3.18 106/120] PM / core: Clear the direct_complete flag on errors
-Date:   Thu, 11 Oct 2018 17:34:47 +0200
-Message-Id: <20181011152554.165725641@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Hult <hanshult35@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 3.18 107/120] USB: serial: simple: add Motorola Tetra MTP6550 id
+Date:   Thu, 11 Oct 2018 17:34:48 +0200
+Message-Id: <20181011152554.214820539@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,54 +62,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
+commit f5fad711c06e652f90f581fc7c2caee327c33d31 upstream.
 
-If __device_suspend() runs asynchronously (in which case the device
-passed to it is in dpm_suspended_list at that point) and it returns
-early on an error or pending wakeup, and the power.direct_complete
-flag has been set for the device already, the subsequent
-device_resume() will be confused by that and it will call
-pm_runtime_enable() incorrectly, as runtime PM has not been
-disabled for the device by __device_suspend().
+Add device-id for the Motorola Tetra radio MTP6550.
 
-To avoid that, clear power.direct_complete if __device_suspend()
-is not going to disable runtime PM for the device before returning.
+Bus 001 Device 004: ID 0cad:9012 Motorola CGISS
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  idVendor           0x0cad Motorola CGISS
+  idProduct          0x9012
+  bcdDevice           24.16
+  iManufacturer           1 Motorola Solutions, Inc.
+  iProduct                2 TETRA PEI interface
+  iSerial                 0
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           55
+    bNumInterfaces          2
+    bConfigurationValue     1
+    iConfiguration          3 Generic Serial config
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              500mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+Device Qualifier (for other device speed):
+  bLength                10
+  bDescriptorType         6
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  bNumConfigurations      1
+Device Status:     0x0000
+  (Bus Powered)
 
-Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
-Reported-by: Al Cooper <alcooperx@gmail.com>
-Tested-by: Al Cooper <alcooperx@gmail.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Hans Hult <hanshult35@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/serial/usb-serial-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1341,8 +1341,10 @@ static int __device_suspend(struct devic
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -74,7 +74,8 @@ DEVICE(moto_modem, MOTO_IDS);
  
- 	dpm_wait_for_children(dev, async);
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+-	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
++	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
  
--	if (async_error)
-+	if (async_error) {
-+		dev->power.direct_complete = false;
- 		goto Complete;
-+	}
- 
- 	/*
- 	 * If a device configured to wake up the system from sleep states
-@@ -1354,6 +1356,7 @@ static int __device_suspend(struct devic
- 		pm_wakeup_event(dev, 0);
- 
- 	if (pm_wakeup_pending()) {
-+		dev->power.direct_complete = false;
- 		async_error = -EBUSY;
- 		goto Complete;
- 	}
+ /* Novatel Wireless GPS driver */
 
 
