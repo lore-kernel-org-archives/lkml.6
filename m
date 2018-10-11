@@ -2,191 +2,81 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A916FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E798C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75FCD20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:33:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FCD20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DDC6A20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:35:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC6A20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeJKM7I (ORCPT
+        id S1727869AbeJKNAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 08:59:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727245AbeJKM6x (ORCPT
+        Thu, 11 Oct 2018 09:00:36 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49004 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJKNAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 08:58:53 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9B5Swe2065050
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:33:17 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n1wcmxex4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:33:17 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Wed, 10 Oct 2018 23:33:16 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 10 Oct 2018 23:33:12 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9B5XBbj27263052
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Oct 2018 22:33:11 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 293C4BE04F;
-        Wed, 10 Oct 2018 23:33:11 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D200ABE054;
-        Wed, 10 Oct 2018 23:33:10 -0600 (MDT)
-Received: from sofia.ibm.com (unknown [9.124.35.51])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 10 Oct 2018 23:33:10 -0600 (MDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 4D3B62E3D80; Thu, 11 Oct 2018 11:03:09 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH v10 3/3] powerpc/cacheinfo: Report the correct shared_cpu_map on big-cores
-Date:   Thu, 11 Oct 2018 11:03:03 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1539235983-25259-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1539235983-25259-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18101105-0012-0000-0000-000016C613D4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009858; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01100952; UDB=6.00569661; IPR=6.00880998;
- MB=3.00023704; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-11 05:33:15
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101105-0013-0000-0000-000054B666B1
-Message-Id: <1539235983-25259-4-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=817 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110052
+        Thu, 11 Oct 2018 09:00:36 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7808212131DE4;
+        Wed, 10 Oct 2018 22:34:59 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 22:34:58 -0700 (PDT)
+Message-Id: <20181010.223458.915344551656019248.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willemb@google.com
+Subject: Re: [PATCH net-next V3] virtio_net: ethtool tx napi configuration
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181009020626.31723-1-jasowang@redhat.com>
+References: <20181009020626.31723-1-jasowang@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 10 Oct 2018 22:34:59 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue,  9 Oct 2018 10:06:26 +0800
 
-Currently on POWER9 SMT8 cores systems, in sysfs, we report the
-shared_cache_map for L1 caches (both data and instruction) to be the
-cpu-ids of the threads in SMT8 cores. This is incorrect since on
-POWER9 SMT8 cores there are two groups of threads, each of which
-shares its own L1 cache.
+> Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+> Interrupt moderation is currently not supported, so these accept and
+> display the default settings of 0 usec and 1 frame.
+> 
+> Toggle tx napi through setting tx-frames. So as to not interfere
+> with possible future interrupt moderation, value 1 means tx napi while
+> value 0 means not.
+> 
+> Only allow the switching when device is down for simplicity.
+> 
+> Link: https://patchwork.ozlabs.org/patch/948149/
+> Suggested-by: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+> Changes from V2:
+> - only allow the switching when device is done
+> - remove unnecessary global variable and initialization
+> Changes from V1:
+> - try to synchronize with datapath to allow changing mode when
+>   interface is up.
+> - use tx-frames 0 as to disable tx napi while tx-frames 1 to enable tx napi
 
-This patch addresses this by reporting the shared_cpu_map correctly in
-sysfs for L1 caches.
+Applied, with...
 
-Before the patch
-   /sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_map : 000000ff
-   /sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_map : 000000ff
-   /sys/devices/system/cpu/cpu1/cache/index0/shared_cpu_map : 000000ff
-   /sys/devices/system/cpu/cpu1/cache/index1/shared_cpu_map : 000000ff
+> +	bool running = netif_running(dev);
 
-After the patch
-   /sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_map : 00000055
-   /sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_map : 00000055
-   /sys/devices/system/cpu/cpu1/cache/index0/shared_cpu_map : 000000aa
-   /sys/devices/system/cpu/cpu1/cache/index1/shared_cpu_map : 000000aa
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/cacheinfo.c | 37 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
-index a8f20e5..be57bd0 100644
---- a/arch/powerpc/kernel/cacheinfo.c
-+++ b/arch/powerpc/kernel/cacheinfo.c
-@@ -20,6 +20,8 @@
- #include <linux/percpu.h>
- #include <linux/slab.h>
- #include <asm/prom.h>
-+#include <asm/cputhreads.h>
-+#include <asm/smp.h>
- 
- #include "cacheinfo.h"
- 
-@@ -627,17 +629,48 @@ static ssize_t level_show(struct kobject *k, struct kobj_attribute *attr, char *
- static struct kobj_attribute cache_level_attr =
- 	__ATTR(level, 0444, level_show, NULL);
- 
-+static unsigned int index_dir_to_cpu(struct cache_index_dir *index)
-+{
-+	struct kobject *index_dir_kobj = &index->kobj;
-+	struct kobject *cache_dir_kobj = index_dir_kobj->parent;
-+	struct kobject *cpu_dev_kobj = cache_dir_kobj->parent;
-+	struct device *dev = kobj_to_dev(cpu_dev_kobj);
-+
-+	return dev->id;
-+}
-+
-+/*
-+ * On big-core systems, each core has two groups of CPUs each of which
-+ * has its own L1-cache. The thread-siblings which share l1-cache with
-+ * @cpu can be obtained via cpu_smallcore_mask().
-+ */
-+static const struct cpumask *get_big_core_shared_cpu_map(int cpu, struct cache *cache)
-+{
-+	if (cache->level == 1)
-+		return cpu_smallcore_mask(cpu);
-+
-+	return &cache->shared_cpu_map;
-+}
-+
- static ssize_t shared_cpu_map_show(struct kobject *k, struct kobj_attribute *attr, char *buf)
- {
- 	struct cache_index_dir *index;
- 	struct cache *cache;
--	int ret;
-+	const struct cpumask *mask;
-+	int ret, cpu;
- 
- 	index = kobj_to_cache_index_dir(k);
- 	cache = index->cache;
- 
-+	if (has_big_cores) {
-+		cpu = index_dir_to_cpu(index);
-+		mask = get_big_core_shared_cpu_map(cpu, cache);
-+	} else {
-+		mask  = &cache->shared_cpu_map;
-+	}
-+
- 	ret = scnprintf(buf, PAGE_SIZE - 1, "%*pb\n",
--			cpumask_pr_args(&cache->shared_cpu_map));
-+			cpumask_pr_args(mask));
- 	buf[ret++] = '\n';
- 	buf[ret] = '\0';
- 	return ret;
--- 
-1.9.4
-
+this unused variable removed.
