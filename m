@@ -2,314 +2,161 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD94C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0A8C677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8166320658
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:19:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8166320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7033E2075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:21:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="MycTpT0t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GCERwpSv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7033E2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anarazel.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbeJLBsA (ORCPT
+        id S1728850AbeJLBti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:48:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42072 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeJLBsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:48:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C071DED1;
-        Thu, 11 Oct 2018 11:19:37 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 892FE3F5B3;
-        Thu, 11 Oct 2018 11:19:36 -0700 (PDT)
-Subject: Re: [PATCH 04/10] swiotlb: remove the overflow buffer
-To:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-5-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d0c80b04-4558-a7a0-915d-9971919551ac@arm.com>
-Date:   Thu, 11 Oct 2018 19:19:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 21:49:38 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:58799 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727443AbeJLBti (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 21:49:38 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id DF8C9C75;
+        Thu, 11 Oct 2018 14:21:14 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 11 Oct 2018 14:21:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=p31DR/2IEs6IrwxH2KzqkwxgHS2
+        jpl2p3gFlTpAJyVc=; b=MycTpT0tYz8b+a/D91j75nOSmQLAJwGK4uUCIUqq33G
+        y3qgGrowITyEwM+X9hmjrdiymoZMGBP3RwaVgD38HpCN7tsh168G+EKzAX+IWgjZ
+        j2mGWI0zQxhfDD5kErbxGWrGEOogH3HdGEEszq0XJrTlmknKwEFI+Dc1Mlz6Msr7
+        m++Jih/pPTIBfHImPGlmTA2i5r+PqgtkEa2s9Q1Ipsnuzsr3xNdp1SFdHLLB8XZh
+        ChyQHJvKNivOO9EF0jQS0Xh/SzCV3vSj6QHPObga4ROUntNoU49utvJqLrPfauwc
+        gLbxJTvCmzoZwta1RkmTtzNvo2NT/D7k8+F57uILedA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=p31DR/
+        2IEs6IrwxH2KzqkwxgHS2jpl2p3gFlTpAJyVc=; b=GCERwpSvLNw5V0+ACa8udv
+        KcWs3BXEcouVhuV2RnRUU/8AxnPMJpPwjcmGMv+nlARUbS/lvvDiflHBENZq2lfm
+        wZczU6ntyLpBRbcmX9lbR5lThvGNhvuWW5XMHiEOQUl3pT5Ucj2GVovYPG+U6LUE
+        T78Dxo//nslQa8vvBZ+73d4qyvx7jdxAeZD14DK6sea24Fyfa9SLiBwOsomurt+R
+        unrY/wAzMotwJrlFdMCtJFo5JHJH/qo77ht/1YRLz/lDw5LLt2SZ5F6BqT32L/GL
+        uCF75OG5prwcPIJY7W581zrHEcJftsKuoD5SIsr8knPDbzJpJylXLHXBuY64IDnA
+        ==
+X-ME-Sender: <xms:mJS_W2uCl_3ugTpqdEevTbymItDgrY5pbye0e8mcvEGgNzGRswhQ-g>
+X-ME-Proxy: <xmx:mJS_W2B6ZZFPfwJUmHWBwvZilmc90F-ng5QopV8xL-BVkthbBwTnUA>
+    <xmx:mJS_WyB3buaaIqTy5rupzp-a40p2Woxk79Ug6SwY_penkqdf3EpCkg>
+    <xmx:mJS_WyMHqKI0fN5N5_--yxEzcfCKR2306ncX21q3JgElJkn_1eYeJg>
+    <xmx:mJS_W2yOkWuOusLunV1U_dNQTSZ3bi-hU-oKgWTa28XqJNgUM0Nu3A>
+    <xmx:mJS_W-nl_s2YrYneqXEMiILTWyYQe2qF8HQeY6E0xvaEvHmN45eR9Q>
+    <xmx:mpS_W9miB8pzAfNsVojX7PmRezay0A9HbvWYJWsG42z4Z94WmrXgiQ>
+Received: from intern.anarazel.de (c-98-210-140-171.hsd1.ca.comcast.net [98.210.140.171])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C2688102DE;
+        Thu, 11 Oct 2018 14:21:11 -0400 (EDT)
+Date:   Thu, 11 Oct 2018 11:21:10 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        virtualization <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2 0/3] x86: faster mb()+other barrier.h tweaks
+Message-ID: <20181011182110.y4rkfdfj75w3fwoy@alap3.anarazel.de>
+References: <1452635935-5439-1-git-send-email-mst@redhat.com>
+ <56957D54.5000602@zytor.com>
+ <20160126101921-mutt-send-email-mst@redhat.com>
+ <20181011173707.26pekp65tlipvhdx@alap3.anarazel.de>
+ <20181011140837-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181008080246.20543-5-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011140837-mutt-send-email-mst@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/18 09:02, Christoph Hellwig wrote:
-> Like all other dma mapping drivers just return an error code instead
-> of an actual memory buffer.  The reason for the overflow buffer was
-> that at the time swiotlb was invented there was no way to check for
-> dma mapping errors, but this has long been fixed.
+Hi,
+
+On 2018-10-11 14:11:42 -0400, Michael S. Tsirkin wrote:
+> On Thu, Oct 11, 2018 at 10:37:07AM -0700, Andres Freund wrote:
+> > Hi,
+> > 
+> > On 2016-01-26 10:20:14 +0200, Michael S. Tsirkin wrote:
+> > > On Tue, Jan 12, 2016 at 02:25:24PM -0800, H. Peter Anvin wrote:
+> > > > On 01/12/16 14:10, Michael S. Tsirkin wrote:
+> > > > > mb() typically uses mfence on modern x86, but a micro-benchmark shows that it's
+> > > > > 2 to 3 times slower than lock; addl $0,(%%e/rsp) that we use on older CPUs.
+> > > > > 
+> > > > > So let's use the locked variant everywhere - helps keep the code simple as
+> > > > > well.
+> > > > > 
+> > > > > While I was at it, I found some inconsistencies in comments in
+> > > > > arch/x86/include/asm/barrier.h
+> > > > > 
+> > > > > I hope I'm not splitting this up too much - the reason is I wanted to isolate
+> > > > > the code changes (that people might want to test for performance) from comment
+> > > > > changes approved by Linus, from (so far unreviewed) comment change I came up
+> > > > > with myself.
+> > > > > 
+> > > > > Lightly tested on my system.
+> > > > > 
+> > > > > Michael S. Tsirkin (3):
+> > > > >   x86: drop mfence in favor of lock+addl
+> > > > >   x86: drop a comment left over from X86_OOSTORE
+> > > > >   x86: tweak the comment about use of wmb for IO
+> > > > > 
+> > > > 
+> > > > I would like to get feedback from the hardware team about the
+> > > > implications of this change, first.
+> > 
+> > > Any luck getting some feedback on this one?
+> > 
+> > Ping?  I just saw a bunch of kernel fences in a benchmark, making me
+> > wonder why linux uses mfence rather than lock addl. Leading me to this
+> > thread.
+> > 
+> > Greetings,
+> > 
+> > Andres Freund
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/arm64/mm/dma-mapping.c       |  2 +-
->   arch/powerpc/kernel/dma-swiotlb.c |  4 +--
->   include/linux/dma-direct.h        |  2 ++
->   include/linux/swiotlb.h           |  3 --
->   kernel/dma/direct.c               |  2 --
->   kernel/dma/swiotlb.c              | 59 ++-----------------------------
->   6 files changed, 8 insertions(+), 64 deletions(-)
+> It doesn't do it for smp_mb any longer:
 > 
-> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-> index 072c51fb07d7..8d91b927e09e 100644
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -324,7 +324,7 @@ static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
->   static int __swiotlb_dma_mapping_error(struct device *hwdev, dma_addr_t addr)
->   {
->   	if (swiotlb)
-
- From a bit of archaeology, I think io_tlb_overflow_buffer being 
-uninitialised was the reason this needed fixing in adbe7e26f425. Given 
-that, you could as well just nuke this whole helper and install 
-dma_direct_mapping_error in the ops like the other users, although I 
-appreciate it's only really a bisection thing so may not matter much.
-
-With the caveat that it's late and I may technically have missed 
-something, but have at least found the branch to boot-test OK:
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> -		return swiotlb_dma_mapping_error(hwdev, addr);
-> +		return dma_direct_mapping_error(hwdev, addr);
->   	return 0;
->   }
->   
-> diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
-> index 88f3963ca30f..5fc335f4d9cd 100644
-> --- a/arch/powerpc/kernel/dma-swiotlb.c
-> +++ b/arch/powerpc/kernel/dma-swiotlb.c
-> @@ -11,7 +11,7 @@
->    *
->    */
->   
-> -#include <linux/dma-mapping.h>
-> +#include <linux/dma-direct.h>
->   #include <linux/memblock.h>
->   #include <linux/pfn.h>
->   #include <linux/of_platform.h>
-> @@ -59,7 +59,7 @@ const struct dma_map_ops powerpc_swiotlb_dma_ops = {
->   	.sync_single_for_device = swiotlb_sync_single_for_device,
->   	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
->   	.sync_sg_for_device = swiotlb_sync_sg_for_device,
-> -	.mapping_error = swiotlb_dma_mapping_error,
-> +	.mapping_error = dma_direct_mapping_error,
->   	.get_required_mask = swiotlb_powerpc_get_required,
->   };
->   
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index fbca184ff5a0..bd73e7a91410 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -5,6 +5,8 @@
->   #include <linux/dma-mapping.h>
->   #include <linux/mem_encrypt.h>
->   
-> +#define DIRECT_MAPPING_ERROR		0
-> +
->   #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
->   #include <asm/dma-direct.h>
->   #else
-> diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-> index 7ef541ce8f34..f847c1b265c4 100644
-> --- a/include/linux/swiotlb.h
-> +++ b/include/linux/swiotlb.h
-> @@ -106,9 +106,6 @@ extern void
->   swiotlb_sync_sg_for_device(struct device *hwdev, struct scatterlist *sg,
->   			   int nelems, enum dma_data_direction dir);
->   
-> -extern int
-> -swiotlb_dma_mapping_error(struct device *hwdev, dma_addr_t dma_addr);
-> -
->   extern int
->   swiotlb_dma_supported(struct device *hwdev, u64 mask);
->   
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 674a8da22844..12798abba55e 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -14,8 +14,6 @@
->   #include <linux/pfn.h>
->   #include <linux/set_memory.h>
->   
-> -#define DIRECT_MAPPING_ERROR		0
-> -
->   /*
->    * Most architectures use ZONE_DMA for the first 16 Megabytes, but
->    * some use it for entirely different regions:
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 69bf305ee5f8..11dbcd80b4a6 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -72,13 +72,6 @@ static phys_addr_t io_tlb_start, io_tlb_end;
->    */
->   static unsigned long io_tlb_nslabs;
->   
-> -/*
-> - * When the IOMMU overflows we return a fallback buffer. This sets the size.
-> - */
-> -static unsigned long io_tlb_overflow = 32*1024;
-> -
-> -static phys_addr_t io_tlb_overflow_buffer;
-> -
->   /*
->    * This is a free list describing the number of free entries available from
->    * each index
-> @@ -126,7 +119,6 @@ setup_io_tlb_npages(char *str)
->   	return 0;
->   }
->   early_param("swiotlb", setup_io_tlb_npages);
-> -/* make io_tlb_overflow tunable too? */
->   
->   unsigned long swiotlb_nr_tbl(void)
->   {
-> @@ -194,16 +186,10 @@ void __init swiotlb_update_mem_attributes(void)
->   	bytes = PAGE_ALIGN(io_tlb_nslabs << IO_TLB_SHIFT);
->   	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
->   	memset(vaddr, 0, bytes);
-> -
-> -	vaddr = phys_to_virt(io_tlb_overflow_buffer);
-> -	bytes = PAGE_ALIGN(io_tlb_overflow);
-> -	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
-> -	memset(vaddr, 0, bytes);
->   }
->   
->   int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
->   {
-> -	void *v_overflow_buffer;
->   	unsigned long i, bytes;
->   
->   	bytes = nslabs << IO_TLB_SHIFT;
-> @@ -212,17 +198,6 @@ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
->   	io_tlb_start = __pa(tlb);
->   	io_tlb_end = io_tlb_start + bytes;
->   
-> -	/*
-> -	 * Get the overflow emergency buffer
-> -	 */
-> -	v_overflow_buffer = memblock_virt_alloc_low_nopanic(
-> -						PAGE_ALIGN(io_tlb_overflow),
-> -						PAGE_SIZE);
-> -	if (!v_overflow_buffer)
-> -		return -ENOMEM;
-> -
-> -	io_tlb_overflow_buffer = __pa(v_overflow_buffer);
-> -
->   	/*
->   	 * Allocate and initialize the free list array.  This array is used
->   	 * to find contiguous free memory regions of size up to IO_TLB_SEGSIZE
-> @@ -330,7 +305,6 @@ int
->   swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
->   {
->   	unsigned long i, bytes;
-> -	unsigned char *v_overflow_buffer;
->   
->   	bytes = nslabs << IO_TLB_SHIFT;
->   
-> @@ -341,19 +315,6 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
->   	set_memory_decrypted((unsigned long)tlb, bytes >> PAGE_SHIFT);
->   	memset(tlb, 0, bytes);
->   
-> -	/*
-> -	 * Get the overflow emergency buffer
-> -	 */
-> -	v_overflow_buffer = (void *)__get_free_pages(GFP_DMA,
-> -						     get_order(io_tlb_overflow));
-> -	if (!v_overflow_buffer)
-> -		goto cleanup2;
-> -
-> -	set_memory_decrypted((unsigned long)v_overflow_buffer,
-> -			io_tlb_overflow >> PAGE_SHIFT);
-> -	memset(v_overflow_buffer, 0, io_tlb_overflow);
-> -	io_tlb_overflow_buffer = virt_to_phys(v_overflow_buffer);
-> -
->   	/*
->   	 * Allocate and initialize the free list array.  This array is used
->   	 * to find contiguous free memory regions of size up to IO_TLB_SEGSIZE
-> @@ -390,10 +351,6 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
->   	                                                 sizeof(int)));
->   	io_tlb_list = NULL;
->   cleanup3:
-> -	free_pages((unsigned long)v_overflow_buffer,
-> -		   get_order(io_tlb_overflow));
-> -	io_tlb_overflow_buffer = 0;
-> -cleanup2:
->   	io_tlb_end = 0;
->   	io_tlb_start = 0;
->   	io_tlb_nslabs = 0;
-> @@ -407,8 +364,6 @@ void __init swiotlb_exit(void)
->   		return;
->   
->   	if (late_alloc) {
-> -		free_pages((unsigned long)phys_to_virt(io_tlb_overflow_buffer),
-> -			   get_order(io_tlb_overflow));
->   		free_pages((unsigned long)io_tlb_orig_addr,
->   			   get_order(io_tlb_nslabs * sizeof(phys_addr_t)));
->   		free_pages((unsigned long)io_tlb_list, get_order(io_tlb_nslabs *
-> @@ -416,8 +371,6 @@ void __init swiotlb_exit(void)
->   		free_pages((unsigned long)phys_to_virt(io_tlb_start),
->   			   get_order(io_tlb_nslabs << IO_TLB_SHIFT));
->   	} else {
-> -		memblock_free_late(io_tlb_overflow_buffer,
-> -				   PAGE_ALIGN(io_tlb_overflow));
->   		memblock_free_late(__pa(io_tlb_orig_addr),
->   				   PAGE_ALIGN(io_tlb_nslabs * sizeof(phys_addr_t)));
->   		memblock_free_late(__pa(io_tlb_list),
-> @@ -790,7 +743,7 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
->   	/* Oh well, have to allocate and map a bounce buffer. */
->   	map = map_single(dev, phys, size, dir, attrs);
->   	if (map == SWIOTLB_MAP_ERROR)
-> -		return __phys_to_dma(dev, io_tlb_overflow_buffer);
-> +		return DIRECT_MAPPING_ERROR;
->   
->   	dev_addr = __phys_to_dma(dev, map);
->   
-> @@ -801,7 +754,7 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
->   	attrs |= DMA_ATTR_SKIP_CPU_SYNC;
->   	swiotlb_tbl_unmap_single(dev, map, size, dir, attrs);
->   
-> -	return __phys_to_dma(dev, io_tlb_overflow_buffer);
-> +	return DIRECT_MAPPING_ERROR;
->   }
->   
->   /*
-> @@ -985,12 +938,6 @@ swiotlb_sync_sg_for_device(struct device *hwdev, struct scatterlist *sg,
->   	swiotlb_sync_sg(hwdev, sg, nelems, dir, SYNC_FOR_DEVICE);
->   }
->   
-> -int
-> -swiotlb_dma_mapping_error(struct device *hwdev, dma_addr_t dma_addr)
-> -{
-> -	return (dma_addr == __phys_to_dma(hwdev, io_tlb_overflow_buffer));
-> -}
-> -
->   /*
->    * Return whether the given device DMA address mask can be supported
->    * properly.  For example, if your device can only drive the low 24-bits
-> @@ -1033,7 +980,7 @@ void swiotlb_free(struct device *dev, size_t size, void *vaddr,
->   }
->   
->   const struct dma_map_ops swiotlb_dma_ops = {
-> -	.mapping_error		= swiotlb_dma_mapping_error,
-> +	.mapping_error		= dma_direct_mapping_error,
->   	.alloc			= swiotlb_alloc,
->   	.free			= swiotlb_free,
->   	.sync_single_for_cpu	= swiotlb_sync_single_for_cpu,
+> commit 450cbdd0125cfa5d7bbf9e2a6b6961cc48d29730
+> Author: Michael S. Tsirkin <mst@redhat.com>
+> Date:   Fri Oct 27 19:14:31 2017 +0300
 > 
+>     locking/x86: Use LOCK ADD for smp_mb() instead of MFENCE
+
+Ooh, missed that one.
+
+
+> I didn't bother with mb() since I didn't think it's performance
+> critical, and one needs to worry about drivers possibly doing
+> non-temporals etc which do need mfence.
+> 
+> Do you see mb() in a benchmark then?
+
+No it was a smp_mp(). It was on an older kernel (was profiling postgres
+on hardware I have limited control over,not the kernel. Just noticed the
+barrier while looking at perf output). I quickly looked into a current
+arch/x86/include/asm/barrier.h and still saw mfences, and then found
+this thread. Should have looked more carefully.
+
+Sorry for the noise, and thanks for the quick answer.
+
+- Andres
