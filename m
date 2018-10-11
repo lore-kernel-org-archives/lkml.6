@@ -2,126 +2,116 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5727FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD53C677FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A91D20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A91D20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id D136520841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:33:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="IIL1NgBH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D136520841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbeJKXAi (ORCPT
+        id S1728152AbeJKXB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:00:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45910 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJKXAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:00:38 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id H4eKcIb2vybe; Thu, 11 Oct 2018 17:32:55 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BD5D200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd5:d200:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BB3B51EC00E5;
-        Thu, 11 Oct 2018 17:32:55 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 17:32:45 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH] kbuild: Fail the build early when no lz4 present
-Message-ID: <20181011153245.GD25435@zn.tnic>
-References: <20181010222333.17794-1-bp@alien8.de>
- <CAK7LNAT2KpYkn=hj=h1XmbMJRdtgCQ__xP0X+Rpwm3e_Xs1brQ@mail.gmail.com>
- <20181011085234.GA25435@zn.tnic>
- <CAK7LNAS=Kr1W6SfwojEVdwpKy7Au9NRh-wd2Qfo5+aVQVDe9ZQ@mail.gmail.com>
+        Thu, 11 Oct 2018 19:01:29 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:54832 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJKXB3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:01:29 -0400
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w9BFXWKU022455;
+        Fri, 12 Oct 2018 00:33:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9BFXWKU022455
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539272013;
+        bh=Cp/gB/J2n37Z+7imvuePQbkNegwSmHeGuREzCbR+aC4=;
+        h=From:Date:Subject:To:Cc:From;
+        b=IIL1NgBHWwgaoafFJv7nI4e1K6KxoJLzA1dZxCVUwjNRsMWwbKKWCyYf+SM3tr25i
+         phQx3cH4+119X567/zRuIjKLeaXOzZIHw0ALUZaWOZOlFH96zJRRdmMSbtY1kDSZe+
+         /JAnBM1n6S+FqGdDOsdq9iiFilIFnoo/WKYMMaw7Nex97Yh+kotKD5Oevn+UHyMxh9
+         17fZ5rMttlaYGHutqzNfiZKw9eepYUv+nlIV67s459bNKqtloEUVIBf6IsG2iyHGBb
+         m1RVZT1wnFsZyr/L86osAD2DVzYR+P9kfhwKWiQDOWojPQ3qdfLkuwHfnNVil/b9iA
+         WFmEjWo+rpaNQ==
+X-Nifty-SrcIP: [209.85.221.176]
+Received: by mail-vk1-f176.google.com with SMTP id b2-v6so2246398vkd.11;
+        Thu, 11 Oct 2018 08:33:33 -0700 (PDT)
+X-Gm-Message-State: ABuFfog5aEcrTSHTmzeiX+VwDKS/jf9XBz0CLd3yHPwDwFhcwYPw4noc
+        M88dHAzyxNcW06RnYGORo3W67AiBxtHhpNcWsPc=
+X-Google-Smtp-Source: ACcGV60BzHF5d3IRz1CQGRigPHPrkzN9qdT8J5C0XjcBzTSl38fbEsDdlHrpKwTIxqsau0POoSyOz7UujmuP3RcJ4Xo=
+X-Received: by 2002:a1f:b215:: with SMTP id b21-v6mr922120vkf.0.1539272011904;
+ Thu, 11 Oct 2018 08:33:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAS=Kr1W6SfwojEVdwpKy7Au9NRh-wd2Qfo5+aVQVDe9ZQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 12 Oct 2018 00:32:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQHYH-SM+fZ0PkLYYCpeHZ-yYDKQpFeJKb7BCR7LtCr0A@mail.gmail.com>
+Message-ID: <CAK7LNAQHYH-SM+fZ0PkLYYCpeHZ-yYDKQpFeJKb7BCR7LtCr0A@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v4.19-rc8
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 12:08:07AM +0900, Masahiro Yamada wrote:
-> Install lz4c, and run 'make' again.
-> Almost all objects have been built there,
-> so you will finish it soon.
+Hi Greg,
 
-So when this LZ4 thing got added at the time, the lz4 package had to be
-downloaded and built and installed and it wasn't as easy as zypper in
-lz4 or apt-get install lz4.
+Please pull a couple of Kbuild fixes.
 
-And I *might* install it if there were a human readable error message
-which would tell me so.
+Thanks.
 
-And we should strive to be as user-friendly as possible. And no, this:
 
-/bin/sh: 1: lz4c: not found
-make[2]: *** [arch/x86/boot/compressed/Makefile:145: arch/x86/boot/compressed/vmlinux.bin.lz4] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [arch/x86/boot/Makefile:112: arch/x86/boot/compressed/vmlinux] Error 2
-make: *** [arch/x86/Makefile:290: bzImage] Error 2
-make: *** Waiting for unfinished jobs....
 
-is not user-friendly.
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
-> If you are building up a compile-test machine,
-> you will probably need to install various tools anyway.
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
 
-Yes, and look how perf tool solves this. Much much better.
+are available in the git repository at:
 
-> I do not want to add ugly checks in random places.
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v4.19-2
 
-That's fair.
+for you to fetch changes up to 5318321d367c21ca1fe9eb00caefc239c938750a:
 
-What would be a fitting place to add such checks and be able to issue a
-human-readable error message to people?
+  samples: disable CONFIG_SAMPLES for UML (2018-10-11 02:15:46 +0900)
 
-Btw, we fail the same cryptic way when there's no openSSL headers
-installed on the system:
+----------------------------------------------------------------
+Kbuild fixes for v4.19 (2nd)
 
----
-scripts/sign-file.c:25:10: fatal error: openssl/opensslv.h: No such file or directory
- #include <openssl/opensslv.h>
-          ^~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[1]: *** [scripts/Makefile.host:90: scripts/sign-file] Error 1
-make[1]: *** Waiting for unfinished jobs....
-scripts/extract-cert.c:21:10: fatal error: openssl/bio.h: No such file or directory
- #include <openssl/bio.h>
-          ^~~~~~~~~~~~~~~
-compilation terminated.
-make[1]: *** [scripts/Makefile.host:90: scripts/extract-cert] Error 1
-make: *** [Makefile:1065: scripts] Error 2
-make: *** Waiting for unfinished jobs....
----
+ - Fix warnings from recordmcount.pl when building with Clang
 
-and all those beginners who are trying to build the kernel for the first
-time would have hard time figuring out what's expected of them.
+ - Allow Clang to use GNU toolchains correctly
 
-Now look at perf tool:
+ - Disable CONFIG_SAMPLES for UML to avoid build error
 
-Makefile.config:445: No sys/sdt.h found, no SDT events are defined, please install systemtap-sdt-devel or systemtap-sdt-dev
-Makefile.config:491: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR
-Makefile.config:721: No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling
+----------------------------------------------------------------
+Joel Stanley (1):
+      ftrace: Build with CPPFLAGS to get -Qunused-arguments
 
-Much better IMO.
+Masahiro Yamada (1):
+      samples: disable CONFIG_SAMPLES for UML
 
-Thx.
+Stefan Agner (1):
+      kbuild: allow to use GCC toolchain not in Clang search path
+
+ Makefile               | 8 +++++---
+ samples/Kconfig        | 1 +
+ scripts/Makefile.build | 2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Best Regards
+Masahiro Yamada
