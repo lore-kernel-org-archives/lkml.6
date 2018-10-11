@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B842C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A3DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C9A21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45812098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWBfpC4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C9A21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zarzqwNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45812098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbeJKXJC (ORCPT
+        id S1730426AbeJKXJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:09:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:09:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729758AbeJKXJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:09:01 -0400
+        id S1729758AbeJKXJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:09:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0030821476;
-        Thu, 11 Oct 2018 15:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB52B21477;
+        Thu, 11 Oct 2018 15:41:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272477;
-        bh=KhQxX/2pYkrfvCy3PXLE8g95czjXz1YbhdmWHlWDwds=;
+        s=default; t=1539272480;
+        bh=rHTzn3bqPP6lsaBb1GmhpFNEBMvuyLlYki36YnihEyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWBfpC4JdSh10XWVWtGydpAgQBBXOigBtnUcQKNlHM2uUMzJRiI71ybiuvZMgURcx
-         VaUHQhl9CN3+Gi/1ZbL3/ec0jmBKTQTbroDGEACU+hlxVPewPU8wuxuyLWvCRwvUyp
-         KwdO3zl61tG0ACAsXXzRLg3yfI3Mj6w6NA1QtKhM=
+        b=zarzqwNqL04xVxhgj9YJIpBURA2upvt4Xkqj+Mj1m4BaI7VLE5h79DVJdbjq+aiRu
+         gjnzP+GAeABo+9FbOeRMlVGwuVvZ3MF7dvmIFvtMG8SW/xLmu9OLxDFxu1PdPMnttF
+         Gl66AyaxtL6mbnRTEngNp36q3czsEvBudDkrNfBE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         Ben Hutchings <ben@decadent.org.uk>,
         Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 3.18 109/120] ext4: fix check to prevent initializing reserved inodes
-Date:   Thu, 11 Oct 2018 17:34:50 +0200
-Message-Id: <20181011152554.309780225@linuxfoundation.org>
+Subject: [PATCH 3.18 110/120] ext4: always check block group bounds in ext4_init_block_bitmap()
+Date:   Thu, 11 Oct 2018 17:34:51 +0200
+Message-Id: <20181011152554.347528234@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -66,71 +65,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
+commit 819b23f1c501b17b9694325471789e6b5cc2d0d2 upstream.
 
-Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
-valid" will complain if block group zero does not have the
-EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
-since a freshly created file system has this flag cleared.  It gets
-almost immediately after the file system is mounted read-write --- but
-the following somewhat unlikely sequence will end up triggering a
-false positive report of a corrupted file system:
+Regardless of whether the flex_bg feature is set, we should always
+check to make sure the bits we are setting in the block bitmap are
+within the block group bounds.
 
-   mkfs.ext4 /dev/vdc
-   mount -o ro /dev/vdc /vdc
-   mount -o remount,rw /dev/vdc
+https://bugzilla.kernel.org/show_bug.cgi?id=199865
 
-Instead, when initializing the inode table for block group zero, test
-to make sure that itable_unused count is not too large, since that is
-the case that will result in some or all of the reserved inodes
-getting cleared.
-
-This fixes the failures reported by Eric Whiteney when running
-generic/230 and generic/231 in the the nojournal test case.
-
-Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
-Reported-by: Eric Whitney <enwlinux@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/ialloc.c |    5 ++++-
- fs/ext4/super.c  |    8 +-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ fs/ext4/balloc.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1253,7 +1253,10 @@ int ext4_init_inode_table(struct super_b
- 			    ext4_itable_unused_count(sb, gdp)),
- 			    sbi->s_inodes_per_block);
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -184,7 +184,6 @@ static int ext4_init_block_bitmap(struct
+ 	unsigned int bit, bit_max;
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_fsblk_t start, tmp;
+-	int flex_bg = 0;
+ 	struct ext4_group_info *grp;
  
--	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
-+	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
-+	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
-+			       ext4_itable_unused_count(sb, gdp)) <
-+			      EXT4_FIRST_INO(sb)))) {
- 		ext4_error(sb, "Something is wrong with group %u: "
- 			   "used itable blocks: %d; "
- 			   "itable unused count: %u",
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3140,14 +3140,8 @@ static ext4_group_t ext4_has_uninit_itab
- 		if (!gdp)
- 			continue;
+ 	J_ASSERT_BH(bh, buffer_locked(bh));
+@@ -217,22 +216,19 @@ static int ext4_init_block_bitmap(struct
  
--		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
--			continue;
--		if (group != 0)
-+		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
- 			break;
--		ext4_error(sb, "Inode table for bg 0 marked as "
--			   "needing zeroing");
--		if (sb->s_flags & MS_RDONLY)
--			return ngroups;
+ 	start = ext4_group_first_block_no(sb, block_group);
+ 
+-	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_FLEX_BG))
+-		flex_bg = 1;
+-
+ 	/* Set bits for block and inode bitmaps, and inode table */
+ 	tmp = ext4_block_bitmap(sb, gdp);
+-	if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++	if (ext4_block_in_group(sb, tmp, block_group))
+ 		ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
+ 
+ 	tmp = ext4_inode_bitmap(sb, gdp);
+-	if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++	if (ext4_block_in_group(sb, tmp, block_group))
+ 		ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
+ 
+ 	tmp = ext4_inode_table(sb, gdp);
+ 	for (; tmp < ext4_inode_table(sb, gdp) +
+ 		     sbi->s_itb_per_group; tmp++) {
+-		if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++		if (ext4_block_in_group(sb, tmp, block_group))
+ 			ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
  	}
  
- 	return group;
 
 
