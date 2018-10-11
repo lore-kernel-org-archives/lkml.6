@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8308C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CAAC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B87821476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 482CA214C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIhcShzU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B87821476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi2IrYTM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482CA214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbeJKXIj (ORCPT
+        id S1730328AbeJKXIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39090 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:39 -0400
+        id S1726647AbeJKXIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:41 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CADCA21470;
-        Thu, 11 Oct 2018 15:40:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7970A2098A;
+        Thu, 11 Oct 2018 15:40:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272455;
-        bh=Nns+9oJdXE3Bx7X9zxrgLzipWYLyWteegI2VKOBQMPU=;
+        s=default; t=1539272458;
+        bh=rMjTbxfrjWK7wleyAiBkdznwFb/1TWLLuayte8hVswc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iIhcShzUggtE1jCckcRew0vroX0xMcoSbjcpsv49HKEzC0z3lcGfmi2w3PAYiwZUC
-         FdMJ3knJs09Wca+8te/9lhQd7nWyaccsL/3uqxPdnyF7Qz45YT/lkJveFn21ezIg9j
-         c1eUvbzuUNOHCQPCa91XdFd0Cnvzz1Cumlqj4he8=
+        b=bi2IrYTM+DzY+Ub8x2ufz/OWMMLd+xxtr19ssqVH8G0RA90udxUIAQaBALPu0z1vM
+         7QRAdBvsNdmtD+fywH063BSYTvg6sHmUSrca+tMsuYgjiZg+hO1E+FBOEQDGZSPk0v
+         8a/4ccyXiyoldkStmSXbvPyCs3ba+HPZH5T3IYyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         Ben Hutchings <ben@decadent.org.uk>,
         Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 3.18 116/120] jbd2: dont mark block as modified if the handle is out of credits
-Date:   Thu, 11 Oct 2018 17:34:57 +0200
-Message-Id: <20181011152554.592179884@linuxfoundation.org>
+Subject: [PATCH 3.18 117/120] ext4: avoid running out of journal credits when appending to an inline file
+Date:   Thu, 11 Oct 2018 17:34:58 +0200
+Message-Id: <20181011152554.630158762@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,44 +64,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit e09463f220ca9a1a1ecfda84fcda658f99a1f12a upstream.
+commit 8bc1379b82b8e809eef77a9fedbb75c6c297be19 upstream.
 
-Do not set the b_modified flag in block's journal head should not
-until after we're sure that jbd2_journal_dirty_metadat() will not
-abort with an error due to there not being enough space reserved in
-the jbd2 handle.
-
-Otherwise, future attempts to modify the buffer may lead a large
-number of spurious errors and warnings.
+Use a separate journal transaction if it turns out that we need to
+convert an inline file to use an data block.  Otherwise we could end
+up failing due to not having journal credits.
 
 This addresses CVE-2018-10883.
 
 https://bugzilla.kernel.org/show_bug.cgi?id=200071
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16: Drop the added logging statement, as it's on
- a code path that doesn't exist here]
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/jbd2/transaction.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/ext4.h   |    3 ---
+ fs/ext4/inline.c |   38 +-------------------------------------
+ fs/ext4/xattr.c  |   18 ++----------------
+ 3 files changed, 3 insertions(+), 56 deletions(-)
 
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -1283,11 +1283,11 @@ int jbd2_journal_dirty_metadata(handle_t
- 		 * of the transaction. This needs to be done
- 		 * once a transaction -bzzz
- 		 */
--		jh->b_modified = 1;
- 		if (handle->h_buffer_credits <= 0) {
- 			ret = -ENOSPC;
- 			goto out_unlock_bh;
- 		}
-+		jh->b_modified = 1;
- 		handle->h_buffer_credits--;
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2663,9 +2663,6 @@ extern struct buffer_head *ext4_get_firs
+ extern int ext4_inline_data_fiemap(struct inode *inode,
+ 				   struct fiemap_extent_info *fieinfo,
+ 				   int *has_inline);
+-extern int ext4_try_to_evict_inline_data(handle_t *handle,
+-					 struct inode *inode,
+-					 int needed);
+ extern void ext4_inline_data_truncate(struct inode *inode, int *has_inline);
+ 
+ extern int ext4_convert_inline_data(struct inode *inode);
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -873,11 +873,11 @@ retry_journal:
  	}
  
+ 	if (ret == -ENOSPC) {
++		ext4_journal_stop(handle);
+ 		ret = ext4_da_convert_inline_data_to_extent(mapping,
+ 							    inode,
+ 							    flags,
+ 							    fsdata);
+-		ext4_journal_stop(handle);
+ 		if (ret == -ENOSPC &&
+ 		    ext4_should_retry_alloc(inode->i_sb, &retries))
+ 			goto retry_journal;
+@@ -1842,42 +1842,6 @@ out:
+ 	return (error < 0 ? error : 0);
+ }
+ 
+-/*
+- * Called during xattr set, and if we can sparse space 'needed',
+- * just create the extent tree evict the data to the outer block.
+- *
+- * We use jbd2 instead of page cache to move data to the 1st block
+- * so that the whole transaction can be committed as a whole and
+- * the data isn't lost because of the delayed page cache write.
+- */
+-int ext4_try_to_evict_inline_data(handle_t *handle,
+-				  struct inode *inode,
+-				  int needed)
+-{
+-	int error;
+-	struct ext4_xattr_entry *entry;
+-	struct ext4_inode *raw_inode;
+-	struct ext4_iloc iloc;
+-
+-	error = ext4_get_inode_loc(inode, &iloc);
+-	if (error)
+-		return error;
+-
+-	raw_inode = ext4_raw_inode(&iloc);
+-	entry = (struct ext4_xattr_entry *)((void *)raw_inode +
+-					    EXT4_I(inode)->i_inline_off);
+-	if (EXT4_XATTR_LEN(entry->e_name_len) +
+-	    EXT4_XATTR_SIZE(le32_to_cpu(entry->e_value_size)) < needed) {
+-		error = -ENOSPC;
+-		goto out;
+-	}
+-
+-	error = ext4_convert_inline_data_nolock(handle, inode, &iloc);
+-out:
+-	brelse(iloc.bh);
+-	return error;
+-}
+-
+ void ext4_inline_data_truncate(struct inode *inode, int *has_inline)
+ {
+ 	handle_t *handle;
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1045,22 +1045,8 @@ int ext4_xattr_ibody_inline_set(handle_t
+ 	if (EXT4_I(inode)->i_extra_isize == 0)
+ 		return -ENOSPC;
+ 	error = ext4_xattr_set_entry(i, s, inode);
+-	if (error) {
+-		if (error == -ENOSPC &&
+-		    ext4_has_inline_data(inode)) {
+-			error = ext4_try_to_evict_inline_data(handle, inode,
+-					EXT4_XATTR_LEN(strlen(i->name) +
+-					EXT4_XATTR_SIZE(i->value_len)));
+-			if (error)
+-				return error;
+-			error = ext4_xattr_ibody_find(inode, i, is);
+-			if (error)
+-				return error;
+-			error = ext4_xattr_set_entry(i, s, inode);
+-		}
+-		if (error)
+-			return error;
+-	}
++	if (error)
++		return error;
+ 	header = IHDR(inode, ext4_raw_inode(&is->iloc));
+ 	if (!IS_LAST_ENTRY(s->first)) {
+ 		header->h_magic = cpu_to_le32(EXT4_XATTR_MAGIC);
 
 
