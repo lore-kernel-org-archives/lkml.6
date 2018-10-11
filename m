@@ -2,177 +2,80 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE27C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6771BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B202087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:58:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B202087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3399A205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:01:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3399A205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeJKTZv (ORCPT
+        id S1728036AbeJKT2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:25:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13619 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726908AbeJKTZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:25:50 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 38FC4B639D36D;
-        Thu, 11 Oct 2018 19:58:50 +0800 (CST)
-Received: from [127.0.0.1] (10.63.141.25) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Thu, 11 Oct 2018
- 19:58:48 +0800
-Subject: Re: [PATCH] PCI/portdrv: Enable error reporting on managed ports
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        "Derrick, Jonathan" <jonathan.derrick@intel.com>
-References: <1536085989-2956-1-git-send-email-jonathan.derrick@intel.com>
- <20181009175632.GB5906@bhelgaas-glaptop.roam.corp.google.com>
- <1539114641.8364.34.camel@intel.com>
- <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "okaya@kernel.org" <okaya@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "hch@lst.de" <hch@lst.de>, "lukas@wunner.de" <lukas@wunner.de>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "poza@codeaurora.org" <poza@codeaurora.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>
-From:   Dongdong Liu <liudongdong3@huawei.com>
-Message-ID: <f16ca9d1-0c78-da00-77e0-c9915782239f@huawei.com>
-Date:   Thu, 11 Oct 2018 19:58:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Thu, 11 Oct 2018 15:28:52 -0400
+Received: from mga07.intel.com ([134.134.136.100]:38243 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727790AbeJKT2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:28:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 05:01:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
+   d="scan'208";a="94293216"
+Received: from mrahma3x-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.53.109])
+  by fmsmga002.fm.intel.com with ESMTP; 11 Oct 2018 05:01:41 -0700
+Date:   Thu, 11 Oct 2018 15:01:40 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: fix unused-value issues in tpm_try_transmit
+Message-ID: <20181011120140.GA15767@linux.intel.com>
+References: <20181010133817.GA11485@embeddedor.com>
+ <20181010140638.GA3894@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <20181009231915.GC5906@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.141.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010140638.GA3894@ziepe.ca>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn
+On Wed, Oct 10, 2018 at 08:06:38AM -0600, Jason Gunthorpe wrote:
+> On Wed, Oct 10, 2018 at 03:38:17PM +0200, Gustavo A. R. Silva wrote:
+> > Currently, there are some values assigned to variable *rc*, which
+> > are never actually used in any computation, because such variable
+> > is updated at line 550, before they can be used:
+> > 
+> > 549out:
+> > 550        rc = tpm_go_idle(chip, flags);
+> > 551        if (rc)
+> > 552                goto out;
+> > 
+> > Fix this by removing such assignments. 
+> 
+> Should this be done by not quashing rc during the error unwind rather
+> than dropping the errors?
 
-> commit 15a6711649915ca3e9d1086dc88ff4b616b99aac
-> Author: Bjorn Helgaas <bhelgaas@google.com>
-> Date:   Tue Oct 9 17:25:25 2018 -0500
->
->     PCI/AER: Enable reporting for ports enumerated after AER driver registration
->
->     Previously we enabled AER error reporting only for Switch Ports that were
->     enumerated prior to registering the AER service driver.  Switch Ports
->     enumerated after AER driver registration were left with error reporting
->     disabled.
->
->     A common order, which works correctly, is that we enumerate devices before
->     registering portdrv and the AER driver:
->
->       - Enumerate all the devices at boot-time
->
->       - Register portdrv and bind it to all Root Ports and Switch Ports, which
->         disables error reporting for these Ports
->
->       - Register AER service driver and bind it to all Root Ports, which
->         enables error reporting for the Root Ports and any Switch Ports below
->         them
->
->     But if we enumerate devices *after* registering portdrv and the AER driver,
->     e.g., if a host bridge driver is loaded as a module, error reporting is not
->     enabled correctly:
->
->       - Register portdrv and AER driver (this happens at boot-time)
->
->       - Enumerate a Root Port
->
->       - Bind portdrv to Root Port, disabling its error reporting
->
->       - Bind AER service driver to Root Port, enabling error reporting for it
->         and its children (none, since we haven't enumerated them yet)
->
->       - Enumerate Switch Port below the Root Port
->
->       - Bind portdrv to Switch Port, disabling its error reporting
->
->       - AER service driver doesn't bind to Switch Ports, so error reporting
->         remains disabled
->
->     Hot-adding a Switch fails similarly: error reporting is enabled correctly
->     for the Root Port, but when the Switch is enumerated, the AER service
->     driver doesn't claim it, so there's nothing to enable error reporting for
->     the Switch Ports.
->
->     Change the AER service driver so it binds to *all* PCIe ports, including
->     Switch Upstream and Downstream Ports.  For Switch Ports, enable AER error
->     reporting.
->
->     Link: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
->     Based-on-patch-by: Jon Derrick <jonathan.derrick@intel.com>
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 90b53abf621d..fe6c16461367 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1316,12 +1316,6 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
->  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, &reg32);
->  	pci_write_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, reg32);
->
-> -	/*
-> -	 * Enable error reporting for the root port device and downstream port
-> -	 * devices.
-> -	 */
-> -	set_downstream_devices_error_reporting(pdev, true);
-> -
+Yeah.`
 
-Delete the code will also disable error reporting for the root port as
-the portdrv to Root Port has disabled its error reporting,
-so need to enable enable error reporting for the root port.
-+pci_enable_pcie_error_reporting(pdev);
+Wondering if tpm_go_idle() should simply be a void-function i.e. issue
+just a warning inside (disclaimer: did not revisit its code when writing
+this).
 
-The patch looks good to me except this.
+> Jason
 
-Thanks
-Dongdong.
-
->  	/* Enable Root Port's interrupt in response to error messages */
->  	pci_read_config_dword(pdev, aer_pos + PCI_ERR_ROOT_COMMAND, &reg32);
->  	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
-> @@ -1378,10 +1372,17 @@ static void aer_remove(struct pcie_device *dev)
->   */
->  static int aer_probe(struct pcie_device *dev)
->  {
-> +	struct pci_dev *pdev = dev->port;
-> +	int type = pci_pcie_type(pdev);
->  	int status;
->  	struct aer_rpc *rpc;
->  	struct device *device = &dev->device;
->
-> +	if (type == PCI_EXP_TYPE_UPSTREAM || type == PCI_EXP_TYPE_DOWNSTREAM) {
-> +		pci_enable_pcie_error_reporting(pdev);
-> +		return 0;
-> +	}
-> +
->  	rpc = devm_kzalloc(device, sizeof(struct aer_rpc), GFP_KERNEL);
->  	if (!rpc) {
->  		dev_printk(KERN_DEBUG, device, "alloc AER rpc failed\n");
-> @@ -1439,7 +1440,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
->
->  static struct pcie_port_service_driver aerdriver = {
->  	.name		= "aer",
-> -	.port_type	= PCI_EXP_TYPE_ROOT_PORT,
-> +	.port_type	= PCIE_ANY_PORT,
->  	.service	= PCIE_PORT_SERVICE_AER,
->
->  	.probe		= aer_probe,
->
-> .
->
-
+/Jarkko
