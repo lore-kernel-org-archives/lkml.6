@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F35C46463
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B54C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D611D20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D611D20841
+	by mail.kernel.org (Postfix) with ESMTP id BC9E52087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9E52087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeJKRR0 (ORCPT
+        id S1728475AbeJKRR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 13:17:26 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:34454 "EHLO inva021.nxp.com"
+        Thu, 11 Oct 2018 13:17:28 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:35676 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeJKRRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 13:17:23 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D477720029D;
-        Thu, 11 Oct 2018 11:50:50 +0200 (CEST)
+        id S1726215AbeJKRR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 13:17:27 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6BB941A019A;
+        Thu, 11 Oct 2018 11:50:53 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 121912000BF;
-        Thu, 11 Oct 2018 11:50:45 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D8B41A0014;
+        Thu, 11 Oct 2018 11:50:47 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A6E944031B;
-        Thu, 11 Oct 2018 17:50:37 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 483C4402D8;
+        Thu, 11 Oct 2018 17:50:40 +0800 (SGT)
 From:   Peng Ma <peng.ma@nxp.com>
 To:     vkoul@kernel.org, leoyang.li@nxp.com
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
@@ -38,9 +38,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Peng Ma <peng.ma@nxp.com>
-Subject: [PATCH 5/7] arm64: dts: ls1043a: add qdma device tree nodes
-Date:   Thu, 11 Oct 2018 17:46:53 +0800
-Message-Id: <20181011094655.45707-5-peng.ma@nxp.com>
+Subject: [PATCH 7/7] dt-bindings: fsl-qdma: Add NXP Layerscpae qDMA controller bindings
+Date:   Thu, 11 Oct 2018 17:46:55 +0800
+Message-Id: <20181011094655.45707-7-peng.ma@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20181011094655.45707-1-peng.ma@nxp.com>
 References: <20181011094655.45707-1-peng.ma@nxp.com>
@@ -50,46 +50,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add the qDMA device tree nodes for LS1043A devices.
+Document the devicetree bindings for NXP Layerscape qDMA controller
+which could be found on NXP QorIQ Layerscape SoCs.
 
 Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |   22 ++++++++++++++++++++++
- 1 files changed, 22 insertions(+), 0 deletions(-)
+ Documentation/devicetree/bindings/dma/fsl-qdma.txt |   53 ++++++++++++++++++++
+ 1 files changed, 53 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/fsl-qdma.txt
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 7881e3d..49c6655 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -734,6 +734,28 @@
- 					<0000 0 0 3 &gic 0 156 0x4>,
- 					<0000 0 0 4 &gic 0 157 0x4>;
- 		};
+diff --git a/Documentation/devicetree/bindings/dma/fsl-qdma.txt b/Documentation/devicetree/bindings/dma/fsl-qdma.txt
+new file mode 100644
+index 0000000..7e2160b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/fsl-qdma.txt
+@@ -0,0 +1,53 @@
++NXP Layerscape SoC qDMA Controller
++==================================
 +
-+		qdma: qdma@8380000 {
-+			compatible = "fsl,ls1021a-qdma", "fsl,ls1043a-qdma";
-+			reg = <0x0 0x8380000 0x0 0x1000>, /* Controller regs */
-+			      <0x0 0x8390000 0x0 0x10000>, /* Status regs */
-+			      <0x0 0x83a0000 0x0 0x40000>; /* Block regs */
-+			interrupts = <0 153 0x4>,
-+				     <0 39 0x4>,
-+				     <0 40 0x4>,
-+				     <0 41 0x4>,
-+				     <0 42 0x4>;
-+			interrupt-names = "qdma-error", "qdma-queue0",
-+				"qdma-queue1", "qdma-queue2", "qdma-queue3";
-+			channels = <8>;
-+			block-number = <1>;
-+			block-offset = <0x10000>;
-+			queues = <2>;
-+			status-sizes = <64>;
-+			queue-sizes = <64 64>;
-+			big-endian;
-+		};
++The qDMA supports channel virtualization by allowing DMA jobs to be enqueued into
++different command queues. Core can initiate a DMA transaction by preparing a command
++descriptor for each DMA job and enqueuing this job to a command queue.
 +
- 	};
- 
- 	firmware {
++Required properties:
++- compatible:	Must be one of
++	"fsl,ls1021a-qdma": for LS1021A Board
++	"fsl,ls1043a-qdma": for ls1043A Board
++	"fsl,ls1046a-qdma": for ls1046A Board
++- reg : Specifies base physical address(s) and size of the qDMA registers.
++	The 1st region is qDMA control register's address and size.
++	The 2nd region is status queue control register's address and size.
++	The 3rd region is virtual block control register's address and size.
++- interrupts : A list of interrupt-specifiers, one for each entry in
++	interrupt-names.
++- interrupt-names : Should contain:
++	"qdma-queue0" - the block0 interrupt
++	"qdma-queue1" - the block1 interrupt
++	"qdma-queue2" - the block2 interrupt
++	"qdma-queue3" - the block3 interrupt
++	"qdma-error"  - the error interrupt
++- channels : Number of DMA channels supported
++- block-number : the virtual block number
++- block-offset : the offset of different virtual block
++- queues : the number of command queue per virtual block
++- status-sizes : status queue size of per virtual block
++- queue-sizes : command queue size of per virtual block, the size number based on queues
++- big-endian: If present registers and hardware scatter/gather descriptors
++	of the qDMA are implemented in big endian mode, otherwise in little
++	mode.
++
++Examples:
++	qdma: qdma@8390000 {
++				compatible = "fsl,ls1021a-qdma";
++				reg = <0x0 0x8388000 0x0 0x1000>, /* Controller regs */
++				      <0x0 0x8389000 0x0 0x1000>, /* Status regs */
++				      <0x0 0x838a000 0x0 0x2000>; /* Block regs */
++				interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "qdma-error",
++					"qdma-queue0", "qdma-queue1";
++				channels = <8>;
++				block-number = <2>;
++				block-offset = <0x1000>;
++				queues = <2>;
++				status-sizes = <64>;
++				queue-sizes = <64 64>;
++				big-endian;
++			};
 -- 
 1.7.1
 
