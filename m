@@ -2,103 +2,88 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92604C6780B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD7BC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 578E920652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:44:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JJjrpn3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578E920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FD7F2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:46:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD7F2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbeJLCMc (ORCPT
+        id S1729621AbeJLCOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 22:12:32 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:37831 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbeJLCMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 22:12:31 -0400
-Received: by mail-qk1-f194.google.com with SMTP id x8-v6so6127172qka.4
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 11:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=y3bQQWocC3HuwOzt4zpfsSQh51EQpWfENSgZkqebcms=;
-        b=JJjrpn3dYWGiwscpAnbnWMRxHGkH3W1d+cbHnr+1utxQXyqUCqB8vp9gQbHRyOSF2P
-         I9gKAE4+L/AeibS+8kK90a0EPKcJoKdtIOsa1gGR8hjB9fXISPur5eQi8C7pUBd/OVyG
-         dmYQb+24p3saB7iZ1iNMOEorqETweiIXnhL90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=y3bQQWocC3HuwOzt4zpfsSQh51EQpWfENSgZkqebcms=;
-        b=TG9nc4hHYol0VzaCaVXVpN6KaoDWOR+rECJURbSV/lagB4RXVx4Znr4nu36+aGbiJj
-         qX9xEMPgs0oCL4Tw6lvR8t3n8Fnh0EE6z2c8ht2zL0jwzQiyaMYtvGJN993E2Hz1hhF3
-         QcUu+oSTRCfsZtk8nqr/guWfLktFxWFPE3DuMQLpe53OqncsRXwSjkq0epoxDUsIQgPo
-         wvbKjpQgkFVn+ruobQXB/zd01OAvIdMuJ9W0rWTvSmdF5JMB93HoWQ7Xszph7q/gr7s1
-         yQeDgJlv9DDbPgjvUZ3KQOemTeobrUD67rWAbY/N2QWV4Bt0xVjT3ajBaLYcyCq9vGwQ
-         0u3g==
-X-Gm-Message-State: ABuFfohfm3zAo/ui3lNrWJ+/aOJuW4kwaUrKim/o6IlpOaSEqcrbCq6f
-        k9WZQcQsSxi59t2ZMz10puy0+w==
-X-Google-Smtp-Source: ACcGV61VagJLOMsUTxVNqCZOTfTQkWoTvyccBjuxtLw181lnNvTI3TfOP1Jid+DZlkYtApwDgYg+nA==
-X-Received: by 2002:a37:6cc3:: with SMTP id h186-v6mr2731001qkc.49.1539283444694;
-        Thu, 11 Oct 2018 11:44:04 -0700 (PDT)
-Received: from workstation.celeiro.br ([138.204.25.12])
-        by smtp.gmail.com with ESMTPSA id 18-v6sm18527434qtm.13.2018.10.11.11.44.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 11:44:03 -0700 (PDT)
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-To:     linux-kselftest@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gorcunov@gmail.com, rafael.tinoco@linaro.org,
-        akpm@linux-foundation.org, shuah@kernel.org, adobriyan@gmail.com
-Subject: [PATCH] proc: fix proc-self-map-files selftest for arm
-Date:   Thu, 11 Oct 2018 15:43:59 -0300
-Message-Id: <20181011184359.15627-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        Thu, 11 Oct 2018 22:14:36 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:60140 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbeJLCOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 22:14:36 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gAfyA-00031N-9u; Thu, 11 Oct 2018 12:45:59 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Rob Herring <robh@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Waterman <andrew@sifive.com>, linux-sh@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-kernel@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Zong Li <zong@andestech.com>, linux-mm@kvack.org,
+        Olof Johansson <olof@lixom.net>,
+        linux-riscv@lists.infradead.org,
+        Michael Clark <michaeljclark@mac.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181005161642.2462-1-logang@deltatee.com>
+ <20181005161642.2462-6-logang@deltatee.com> <20181011133730.GB7276@lst.de>
+ <8cea5ffa-5fbf-8ea2-b673-20e2d09a910d@deltatee.com>
+Message-ID: <83cfd2d7-b840-b0c6-594e-8b39be8177c1@deltatee.com>
+Date:   Thu, 11 Oct 2018 12:45:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8cea5ffa-5fbf-8ea2-b673-20e2d09a910d@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, michaeljclark@mac.com, linux-riscv@lists.infradead.org, olof@lixom.net, linux-mm@kvack.org, zong@andestech.com, sbates@raithlin.com, linux-kernel@vger.kernel.org, palmer@sifive.com, linux-sh@vger.kernel.org, andrew@sifive.com, aou@eecs.berkeley.edu, robh@kernel.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 5/5] RISC-V: Implement sparsemem
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MAP_FIXED is important for this test but, unfortunately, lowest virtual
-address for user space mapping on arm is (PAGE_SIZE * 2) and NULL hint
-does not seem to guarantee that when MAP_FIXED is given. This patch sets
-the virtual address that will hold the mapping for the test, fixing the
-issue.
 
-Link: https://bugs.linaro.org/show_bug.cgi?id=3782
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
----
- tools/testing/selftests/proc/proc-self-map-files-002.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/proc/proc-self-map-files-002.c b/tools/testing/selftests/proc/proc-self-map-files-002.c
-index 6f1f4a6e1ecb..0a47eaca732a 100644
---- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-@@ -55,7 +55,9 @@ int main(void)
- 	if (fd == -1)
- 		return 1;
- 
--	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-+	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
-+			MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-+
- 	if (p == MAP_FAILED) {
- 		if (errno == EPERM)
- 			return 2;
--- 
-2.19.1
+On 2018-10-11 10:24 a.m., Logan Gunthorpe wrote:
+> 
+> 
+> On 2018-10-11 7:37 a.m., Christoph Hellwig wrote:
+>>> +/*
+>>> + * Log2 of the upper bound of the size of a struct page. Used for sizing
+>>> + * the vmemmap region only, does not affect actual memory footprint.
+>>> + * We don't use sizeof(struct page) directly since taking its size here
+>>> + * requires its definition to be available at this point in the inclusion
+>>> + * chain, and it may not be a power of 2 in the first place.
+>>> + */
+>>> +#define STRUCT_PAGE_MAX_SHIFT	6
+>>
+>> I know this is copied from arm64, but wouldn't this be a good time
+>> to move this next to the struct page defintion?
 
+Ok, I spoke too soon...
+
+Having this define next to the struct page definition works great for
+riscv. However, making that happen in arm64 seems to be a nightmare. The
+include chain in arm64 is tangled up so much that including mm_types
+where this is needed seems to be extremely difficult.
+
+Unless you have any ideas, this might not be possible.
+
+Logan
