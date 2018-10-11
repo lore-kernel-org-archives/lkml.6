@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADABC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E72C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D3F21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B12E02148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEkibAys"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D3F21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tH+RFqeF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12E02148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731475AbeJKXNq (ORCPT
+        id S1731486AbeJKXNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46524 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:46 -0400
+        id S1726700AbeJKXNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23E162098A;
-        Thu, 11 Oct 2018 15:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA4C32098A;
+        Thu, 11 Oct 2018 15:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272760;
-        bh=4EuDm2RNtvY4oXJUizH9r7zcvxmSRnAMVLAZHIFwVr4=;
+        s=default; t=1539272763;
+        bh=E3dnPpSYnieZB8xRI+f5z4gXC1anCv4Vi2dr9kkvLhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CEkibAyszbkojPrzRSvCTyK4oYJIIIAUQZ8YGTBR1551xj6IbdOY4RikY+hS4FROT
-         ws9YMJns0/sQolT68/jNw+auPdOIIPuRYnyqYhtd0nlTJMizlYQeA7QkbhBb/Dw64W
-         n1q82uwW5jsjdYlp6iHslLGFW0X+KknGWLvHEgUg=
+        b=tH+RFqeF7n/AsgD24lHW34llNvPnfkuTECD1Z87rt+uVGDoMfmt2eMWK+Pw7XtTQG
+         ErpcqwJDQWH6Cl2Uofj0Z8cWWJG8h/cSNXHhrrQpdlYsjZ20jDRI+T8IV4FoPTluJ+
+         575Jm/9Z+BRxoxHvlgXStTWiMP64nDn+tVS2UgSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>,
-        Tejun Heo <tj@kernel.org>, Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 29/45] cgroup/cpuset: remove circular dependency deadlock
-Date:   Thu, 11 Oct 2018 17:39:56 +0200
-Message-Id: <20181011152510.156825448@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.14 03/45] mm, thp: fix mlocking THP page with migration enabled
+Date:   Thu, 11 Oct 2018 17:39:30 +0200
+Message-Id: <20181011152509.012053940@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -62,264 +68,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prateek Sood <prsood@codeaurora.org>
+From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-commit aa24163b2ee5c92120e32e99b5a93143a0f4258e upstream.
+commit e125fe405abedc1dc8a5b2229b80ee91c1434015 upstream.
 
-Remove circular dependency deadlock in a scenario where hotplug of CPU is
-being done while there is updation in cgroup and cpuset triggered from
-userspace.
+A transparent huge page is represented by a single entry on an LRU list.
+Therefore, we can only make unevictable an entire compound page, not
+individual subpages.
 
-Process A => kthreadd => Process B => Process C => Process A
+If a user tries to mlock() part of a huge page, we want the rest of the
+page to be reclaimable.
 
-Process A
-cpu_subsys_offline();
-  cpu_down();
-    _cpu_down();
-      percpu_down_write(&cpu_hotplug_lock); //held
-      cpuhp_invoke_callback();
-	     workqueue_offline_cpu();
-            queue_work_on(); // unbind_work on system_highpri_wq
-               __queue_work();
-                 insert_work();
-                    wake_up_worker();
-            flush_work();
-               wait_for_completion();
+We handle this by keeping PTE-mapped huge pages on normal LRU lists: the
+PMD on border of VM_LOCKED VMA will be split into PTE table.
 
-worker_thread();
-   manage_workers();
-      create_worker();
-	     kthread_create_on_node();
-		    wake_up_process(kthreadd_task);
+Introduction of THP migration breaks[1] the rules around mlocking THP
+pages.  If we had a single PMD mapping of the page in mlocked VMA, the
+page will get mlocked, regardless of PTE mappings of the page.
 
-kthreadd
-kthreadd();
-  kernel_thread();
-    do_fork();
-      copy_process();
-        percpu_down_read(&cgroup_threadgroup_rwsem);
-          __rwsem_down_read_failed_common(); //waiting
+For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
+remove_migration_pmd().
 
-Process B
-kernfs_fop_write();
-  cgroup_file_write();
-    cgroup_procs_write();
-      percpu_down_write(&cgroup_threadgroup_rwsem); //held
-      cgroup_attach_task();
-        cgroup_migrate();
-          cgroup_migrate_execute();
-            cpuset_can_attach();
-              mutex_lock(&cpuset_mutex); //waiting
+Anon THP pages can only be shared between processes via fork().  Mlocked
+page can only be shared if parent mlocked it before forking, otherwise CoW
+will be triggered on mlock().
 
-Process C
-kernfs_fop_write();
-  cgroup_file_write();
-    cpuset_write_resmask();
-      mutex_lock(&cpuset_mutex); //held
-      update_cpumask();
-        update_cpumasks_hier();
-          rebuild_sched_domains_locked();
-            get_online_cpus();
-              percpu_down_read(&cpu_hotplug_lock); //waiting
+For Anon-THP, we can fix the issue by munlocking the page on removing PTE
+migration entry for the page.  PTEs for the page will always come after
+mlocked PMD: rmap walks VMAs from oldest to newest.
 
-Eliminating deadlock by reversing the locking order for cpuset_mutex and
-cpu_hotplug_lock.
+Test-case:
 
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+	#include <unistd.h>
+	#include <sys/mman.h>
+	#include <sys/wait.h>
+	#include <linux/mempolicy.h>
+	#include <numaif.h>
+
+	int main(void)
+	{
+	        unsigned long nodemask = 4;
+	        void *addr;
+
+		addr = mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE,
+			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
+
+	        if (fork()) {
+			wait(NULL);
+			return 0;
+	        }
+
+	        mlock(addr, 4UL << 10);
+	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,
+	                &nodemask, 4, MPOL_MF_MOVE);
+
+	        return 0;
+	}
+
+[1] https://lkml.kernel.org/r/CAOMGZ=G52R-30rZvhGxEbkTw7rLLwBGadVYeo--iizcD3upL3A@mail.gmail.com
+
+Link: http://lkml.kernel.org/r/20180917133816.43995-1-kirill.shutemov@linux.intel.com
+Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Reviewed-by: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: <stable@vger.kernel.org>	[4.14+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cgroup/cpuset.c |   53 +++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
+ mm/huge_memory.c |    2 +-
+ mm/migrate.c     |    3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -817,6 +817,18 @@ done:
- 	return ndoms;
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2886,7 +2886,7 @@ void remove_migration_pmd(struct page_vm
+ 	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
+ 	page_add_anon_rmap(new, vma, mmun_start, true);
+ 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+-	if (vma->vm_flags & VM_LOCKED)
++	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
+ 		mlock_vma_page(new);
+ 	update_mmu_cache_pmd(vma, address, pvmw->pmd);
  }
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -274,6 +274,9 @@ static bool remove_migration_pte(struct
+ 		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
+ 			mlock_vma_page(new);
  
-+static void cpuset_sched_change_begin(void)
-+{
-+	cpus_read_lock();
-+	mutex_lock(&cpuset_mutex);
-+}
++		if (PageTransHuge(page) && PageMlocked(page))
++			clear_page_mlock(page);
 +
-+static void cpuset_sched_change_end(void)
-+{
-+	mutex_unlock(&cpuset_mutex);
-+	cpus_read_unlock();
-+}
-+
- /*
-  * Rebuild scheduler domains.
-  *
-@@ -826,16 +838,14 @@ done:
-  * 'cpus' is removed, then call this routine to rebuild the
-  * scheduler's dynamic sched domains.
-  *
-- * Call with cpuset_mutex held.  Takes get_online_cpus().
-  */
--static void rebuild_sched_domains_locked(void)
-+static void rebuild_sched_domains_cpuslocked(void)
- {
- 	struct sched_domain_attr *attr;
- 	cpumask_var_t *doms;
- 	int ndoms;
- 
- 	lockdep_assert_held(&cpuset_mutex);
--	get_online_cpus();
- 
- 	/*
- 	 * We have raced with CPU hotplug. Don't do anything to avoid
-@@ -843,27 +853,25 @@ static void rebuild_sched_domains_locked
- 	 * Anyways, hotplug work item will rebuild sched domains.
- 	 */
- 	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
--		goto out;
-+		return;
- 
- 	/* Generate domain masks and attrs */
- 	ndoms = generate_sched_domains(&doms, &attr);
- 
- 	/* Have scheduler rebuild the domains */
- 	partition_sched_domains(ndoms, doms, attr);
--out:
--	put_online_cpus();
- }
- #else /* !CONFIG_SMP */
--static void rebuild_sched_domains_locked(void)
-+static void rebuild_sched_domains_cpuslocked(void)
- {
- }
- #endif /* CONFIG_SMP */
- 
- void rebuild_sched_domains(void)
- {
--	mutex_lock(&cpuset_mutex);
--	rebuild_sched_domains_locked();
--	mutex_unlock(&cpuset_mutex);
-+	cpuset_sched_change_begin();
-+	rebuild_sched_domains_cpuslocked();
-+	cpuset_sched_change_end();
- }
- 
- /**
-@@ -949,7 +957,7 @@ static void update_cpumasks_hier(struct
- 	rcu_read_unlock();
- 
- 	if (need_rebuild_sched_domains)
--		rebuild_sched_domains_locked();
-+		rebuild_sched_domains_cpuslocked();
- }
- 
- /**
-@@ -1281,7 +1289,7 @@ static int update_relax_domain_level(str
- 		cs->relax_domain_level = val;
- 		if (!cpumask_empty(cs->cpus_allowed) &&
- 		    is_sched_load_balance(cs))
--			rebuild_sched_domains_locked();
-+			rebuild_sched_domains_cpuslocked();
+ 		/* No need to invalidate - it was non-present before */
+ 		update_mmu_cache(vma, pvmw.address, pvmw.pte);
  	}
- 
- 	return 0;
-@@ -1314,7 +1322,6 @@ static void update_tasks_flags(struct cp
-  *
-  * Call with cpuset_mutex held.
-  */
--
- static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
- 		       int turning_on)
- {
-@@ -1347,7 +1354,7 @@ static int update_flag(cpuset_flagbits_t
- 	spin_unlock_irq(&callback_lock);
- 
- 	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed)
--		rebuild_sched_domains_locked();
-+		rebuild_sched_domains_cpuslocked();
- 
- 	if (spread_flag_changed)
- 		update_tasks_flags(cs);
-@@ -1615,7 +1622,7 @@ static int cpuset_write_u64(struct cgrou
- 	cpuset_filetype_t type = cft->private;
- 	int retval = 0;
- 
--	mutex_lock(&cpuset_mutex);
-+	cpuset_sched_change_begin();
- 	if (!is_cpuset_online(cs)) {
- 		retval = -ENODEV;
- 		goto out_unlock;
-@@ -1651,7 +1658,7 @@ static int cpuset_write_u64(struct cgrou
- 		break;
- 	}
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
-+	cpuset_sched_change_end();
- 	return retval;
- }
- 
-@@ -1662,7 +1669,7 @@ static int cpuset_write_s64(struct cgrou
- 	cpuset_filetype_t type = cft->private;
- 	int retval = -ENODEV;
- 
--	mutex_lock(&cpuset_mutex);
-+	cpuset_sched_change_begin();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -1675,7 +1682,7 @@ static int cpuset_write_s64(struct cgrou
- 		break;
- 	}
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
-+	cpuset_sched_change_end();
- 	return retval;
- }
- 
-@@ -1714,7 +1721,7 @@ static ssize_t cpuset_write_resmask(stru
- 	kernfs_break_active_protection(of->kn);
- 	flush_work(&cpuset_hotplug_work);
- 
--	mutex_lock(&cpuset_mutex);
-+	cpuset_sched_change_begin();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -1738,7 +1745,7 @@ static ssize_t cpuset_write_resmask(stru
- 
- 	free_trial_cpuset(trialcs);
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
-+	cpuset_sched_change_end();
- 	kernfs_unbreak_active_protection(of->kn);
- 	css_put(&cs->css);
- 	flush_workqueue(cpuset_migrate_mm_wq);
-@@ -2039,14 +2046,14 @@ out_unlock:
- /*
-  * If the cpuset being removed has its flag 'sched_load_balance'
-  * enabled, then simulate turning sched_load_balance off, which
-- * will call rebuild_sched_domains_locked().
-+ * will call rebuild_sched_domains_cpuslocked().
-  */
- 
- static void cpuset_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
--	mutex_lock(&cpuset_mutex);
-+	cpuset_sched_change_begin();
- 
- 	if (is_sched_load_balance(cs))
- 		update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
-@@ -2054,7 +2061,7 @@ static void cpuset_css_offline(struct cg
- 	cpuset_dec();
- 	clear_bit(CS_ONLINE, &cs->flags);
- 
--	mutex_unlock(&cpuset_mutex);
-+	cpuset_sched_change_end();
- }
- 
- static void cpuset_css_free(struct cgroup_subsys_state *css)
 
 
