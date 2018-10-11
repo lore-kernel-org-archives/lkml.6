@@ -2,96 +2,127 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305ECC28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD713C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF1420841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF1420841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 732F12077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 732F12077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbeJLFqu (ORCPT
+        id S1726770AbeJLF5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 01:46:50 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:32806 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbeJLFqt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 01:46:49 -0400
-Received: by mail-ot1-f66.google.com with SMTP id q50so10558170otd.0;
-        Thu, 11 Oct 2018 15:17:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7LRoTccW3Qd/lI+RNLsIYPnvFamwVX9Crg52AF9Ffao=;
-        b=Lu2766c/SMrkYEvyYMFqw0BHi4akUS7of/PWOPhPkUIp0Zuo3QIkJ7hK+5JZ32cMCR
-         VStAjoYicog5sFetLIluGzRBRSX0rwdIJ2SlIVyXS32BJc3s/VtnUhEV11qtsWebeo+B
-         Rm4da/MVc8kPPEERBWPInIK9zONBPpGD8FaYrUmkIor5eK2PKxuce2Kugh0K5xhTED5h
-         hZAugAb00f1sJZY+aoqraGHBSbNftW4orE5R2KBLYLXUvPERG8FquCGryE8tQpEM2GVH
-         9rFppzy1/W3Mc2Ks2UxIsug7dmlK4+nwi/YP1a7dZMdjwmfUz+2QrOJMHNSc1aTXQeML
-         K4VA==
-X-Gm-Message-State: ABuFfoh3omwGVFM/hUYQlPQ2KNxXv6M0vfCUD9k4L2QE/zw5hB4oEnPz
-        P09zOomtXRCi9muhJbDGCw==
-X-Google-Smtp-Source: ACcGV61DlaXEv78cOo3s9EjBamZs7vKoYCgW3QhBFhfERd2PhY9xxhba1UA4eWal8b0tTdMdmiW4Bg==
-X-Received: by 2002:a9d:52a4:: with SMTP id f36mr2340486oth.186.1539296252521;
-        Thu, 11 Oct 2018 15:17:32 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d6sm7071160otj.75.2018.10.11.15.17.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 15:17:31 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 17:17:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: Re: [PATCH v4 2/5] dt-bindings: spi: add binding file for NXP
- FlexSPI  controller
-Message-ID: <20181011221730.GA7293@bogus>
-References: <1539255519-1408-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1539255519-1408-3-git-send-email-yogeshnarayan.gaur@nxp.com>
+        Fri, 12 Oct 2018 01:57:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbeJLF5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 01:57:31 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98A9830001D5;
+        Thu, 11 Oct 2018 22:28:11 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11CA06048C;
+        Thu, 11 Oct 2018 22:28:10 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id A21AC105144;
+        Thu, 11 Oct 2018 19:27:55 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id w9BMRj1O018303;
+        Thu, 11 Oct 2018 19:27:45 -0300
+Date:   Thu, 11 Oct 2018 19:27:44 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
+ support
+Message-ID: <20181011222744.GA17955@amt.cnet>
+References: <B8C05946-43BB-40A4-A564-53904FAF8CC0@amacapital.net>
+ <20181004193150.GQ19272@hirez.programming.kicks-ass.net>
+ <499807AB-E779-40C3-AA3F-E8C77A7770EC@amacapital.net>
+ <CALCETrXNKCNZzUXj=2sp1vBd_o7HHzfW6RwyY5v3-wMfbVaZnQ@mail.gmail.com>
+ <20181006202731.GC7129@amt.cnet>
+ <CALCETrWqze2mifOdFc0GJYHtHGKiKX2Zdi5Kz87OyUogbqD15w@mail.gmail.com>
+ <20181008152650.GB27822@amt.cnet>
+ <CALCETrVY6VHPLs0GXZM4+VYraTa1+xs=iRJoRa++OHX9Wq+ieg@mail.gmail.com>
+ <20181008193632.GA31729@amt.cnet>
+ <CALCETrW6b8=dU6vkXNS-rW1GPzJTbVxuVNsU4aoD_NwwobVQcg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539255519-1408-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CALCETrW6b8=dU6vkXNS-rW1GPzJTbVxuVNsU4aoD_NwwobVQcg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 11 Oct 2018 22:28:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 11:00:38 +0000, Yogesh Narayan Gaur wrote:
-> Add binding file for NXP FlexSPI controller
+On Tue, Oct 09, 2018 at 01:09:42PM -0700, Andy Lutomirski wrote:
+> On Tue, Oct 9, 2018 at 8:28 AM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> >
+> > On Mon, Oct 08, 2018 at 10:38:22AM -0700, Andy Lutomirski wrote:
+> > > On Mon, Oct 8, 2018 at 8:27 AM Marcelo Tosatti <mtosatti@redhat.com> wrote:
 > 
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> ---
-> Changes for v4:
-> - Incorporated Rob review comments.
-> Changes for v3:
-> - Removed node property 'big-endian'.
-> Changes for v2:
-> - Incorporated Rob review comments.
+> > > I read the comment three more times and even dug through the git
+> > > history.  It seems like what you're saying is that, under certain
+> > > conditions (which arguably would be bugs in the core Linux timing
+> > > code),
+> >
+> > I don't see that as a bug. Its just a side effect of reading two
+> > different clocks (one is CLOCK_MONOTONIC and the other is TSC),
+> > and using those two clocks to as a "base + offset".
+> >
+> > As the comment explains, if you do that, can't guarantee monotonicity.
+> >
+> > > actually calling ktime_get_boot_ns() could be non-monotonic
+> > > with respect to the kvmclock timing.  But get_kvmclock_ns() isn't used
+> > > for VM timing as such -- it's used for the IOCTL interfaces for
+> > > updating the time offset.  So can you explain how my patch is
+> > > incorrect?
+> >
+> > ktime_get_boot_ns() has frequency correction applied, while
+> > reading masterclock + TSC offset does not.
+> >
+> > So the clock reads differ.
+> >
 > 
->  .../devicetree/bindings/spi/spi-nxp-fspi.txt       | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
-> 
+> Ah, okay, I finally think I see what's going on.  In the kvmclock data
+> exposed to the guest, tsc_shift and tsc_to_system_mul come from
+> tgt_tsc_khz, whereas master_kernel_ns and master_cycle_now come from
+> CLOCK_BOOTTIME.  So the kvmclock and kernel clock drift apart at a
+> rate given by the frequency shift and then suddenly agree again every
+> time the pvclock data is updated.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yes.
+
+> Is there a reason to do it this way?
+
+Since pvclock updates which update system_timestamp are expensive (must stop all vcpus), 
+they should be avoided. 
+
+So only HW TSC counts, and used as offset against vcpu's tsc_timestamp.
+
+
+
