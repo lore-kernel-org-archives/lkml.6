@@ -2,133 +2,159 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCD3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E26CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE87E2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:11:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sAVMyKEg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE87E2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CCDAA2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCDAA2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbeJKHfw (ORCPT
+        id S1726695AbeJKHhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:35:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43812 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbeJKHfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:35:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 80-v6so3256458pgh.10;
-        Wed, 10 Oct 2018 17:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PmvqpHe2ph1DP2H+beOKbjfMguTjkiAc9IpPo/oKCUo=;
-        b=sAVMyKEgrYD4XUPdZm18wU6Jmex2CT+QZblZ98CCjr5F85UMRhqrvYAc8+bSH4dIad
-         og7DzyurNHdiGHzZ+Ztabx71s9BTjShoP+rIegrbU5vH/W7UeAqj0iiS9HfeOevJeJOg
-         Y0nSSgLBzoxV9omyAlrlmRvNvaUx7WxLOKiSsfyvxVbRIiF15/zrpXQvFq2ik9UtSRpR
-         FI8METRBZ5yAm506YQk+mpLDHNUvoNHaZncg08dgyVgnRt8Qbzq53HGG7+wFFb003ZXT
-         IbsrnreiOXQxqtSqVerd5dnf6VkQYDjpeJ2J99gb2huqXREAms84zQae0ji/PbCITOKg
-         Rgqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PmvqpHe2ph1DP2H+beOKbjfMguTjkiAc9IpPo/oKCUo=;
-        b=XGMaxaJkkUOuoyOjExxDNq/5m5hxAm5JYKKRp+A4BMIrX9YZJwlnlexBfBUeg2EOU3
-         gSm2ATDINmrL6zacX6DiSrlB6yKgzvAfaVELrQKE0XMprDPck387amuHL1ZxUkxKbpO+
-         tljiDT53PAwVKoASefVqhrYGYryPbUkdGgIWjAqB9D7gjjrDDOZuA3xpbKAk1BXuADoQ
-         HZCUGEHqBqNaNrsIg4+KSpZ788rKk1o7x7xdMDor7TG626V9lr+sx8h5KfOZs8WIGFpD
-         T5E9YWKgKzb0oUrko94ZyYSZ1nlJx7jo6gAU1O7v+4aG3TNANUoJccYox33Ln1oNT51Q
-         M97A==
-X-Gm-Message-State: ABuFfoievjk5v1KBcOlyTcbnqfpF9hRVbd0h2GAgLNwsvJ4RFwVloFk/
-        ytcdEC8sxGK0rNcSjGgITUQ=
-X-Google-Smtp-Source: ACcGV60ODuCmFUIHx0s/Mk4hTW7tyRXSsBfXwEb2Kzfnxdq1j1Oy9S/2PJj+KRypecFwbosvQrWgqg==
-X-Received: by 2002:a63:ef0b:: with SMTP id u11-v6mr31621844pgh.283.1539216678558;
-        Wed, 10 Oct 2018 17:11:18 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id k72-v6sm26706352pfj.63.2018.10.10.17.11.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 17:11:17 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 17:11:14 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2] Input: elants_i2c - Use DMA safe i2c when possible
-Message-ID: <20181011001114.GA173303@dtor-ws>
-References: <20181010200017.255874-1-swboyd@chromium.org>
+        Thu, 11 Oct 2018 03:37:19 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:57918 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725968AbeJKHhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:37:19 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1gAOan-0001Ph-O4; Thu, 11 Oct 2018 02:12:41 +0200
+Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
+To:     Chris Clayton <chris2553@googlemail.com>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Azat Khuzhin <a3at.mail@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
+ <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
+ <98680351-5123-761f-982a-726098da9716@gmail.com>
+ <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
+ <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
+ <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
+ <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
+ <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
+ <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
+ <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <df88dcb6-951d-0568-6104-7346d0c49063@maciej.szmigiero.name>
+Date:   Thu, 11 Oct 2018 02:12:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010200017.255874-1-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 01:00:17PM -0700, Stephen Boyd wrote:
-> This irq handler is always reading bytes from the device into a
-> kmalloced buffer, so it's safe to mark this transaction as DMA safe.
-> This avoids bouncing the buffer when an i2c controller decides to use
-> DMA for a transaction.
+On 11.10.2018 00:49, Chris Clayton wrote:
+>> Now, knowing the "right" value you can experiment with what rtl_init_rxcfg()
+>> writes (under the "default:" label for your NIC model).
+>>
 > 
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-
-Changed patch description a bit (now that we are actually making the
-buffer DMA-safe) and applied, thank you.
-
-> ---
+> This might be more interesting. Through a combination of viewing the output from pr_notice() and the output from
+> "ethtool -d", I can see RxConfig with the following values
 > 
-> Changes from v1:
->  * Moved buf to end of structure to keep it cacheline aligned and DMA
->    safe
+> 	During boot:	0x00028700
+> 	Before suspend:	0x0002870e
+> 	During resume:	0x00024000
+> 	Post resume:	0x0002870e
 > 
->  drivers/input/touchscreen/elants_i2c.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> As I did with 4.18.10 early on in the process, I removed the call to rtl_init_rxcfg() from rtl_hw_start() and rebuilt,
+> installed and rebooted. Now I see the following values:
 > 
-> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-> index d21ca39b0fdb..f2cb23121833 100644
-> --- a/drivers/input/touchscreen/elants_i2c.c
-> +++ b/drivers/input/touchscreen/elants_i2c.c
-> @@ -147,10 +147,11 @@ struct elants_data {
->  	u8 cmd_resp[HEADER_SIZE];
->  	struct completion cmd_done;
->  
-> -	u8 buf[MAX_PACKET_SIZE];
-> -
->  	bool wake_irq_enabled;
->  	bool keep_power_in_suspend;
-> +
-> +	/* Must be last to be used for DMA operations */
-> +	u8 buf[MAX_PACKET_SIZE] ____cacheline_aligned;
->  };
->  
->  static int elants_i2c_send(struct i2c_client *client,
-> @@ -863,7 +864,7 @@ static irqreturn_t elants_i2c_irq(int irq, void *_dev)
->  	int i;
->  	int len;
->  
-> -	len = i2c_master_recv(client, ts->buf, sizeof(ts->buf));
-> +	len = i2c_master_recv_dmasafe(client, ts->buf, sizeof(ts->buf));
->  	if (len < 0) {
->  		dev_err(&client->dev, "%s: failed to read data: %d\n",
->  			__func__, len);
-> -- 
-> Sent by a computer through tubes
+> 	During boot:	0x00028700
+> 	Before suspend:	0x0002870e
+> 	During resume:	0x00024000
+> 	Post resume:	0x0002400e
 > 
 
--- 
-Dmitry
+Now we can finally see some difference...
+Besides missing RX128_INT_EN (bit 15 or 0x8000) and RX_DMA_BURST
+(bits 8-10 or 0x700) - that rtl_init_rxcfg() would normally set so this
+is kind of expected - one can see that the working configuration
+post-resume has bit 14 (or 0x4000) set, too.
+
+This bit is described in the driver as RX_MULTI_EN ("8111c only") and is
+set by rtl_init_rxcfg() for example for RTL_GIGA_MAC_VER_35.
+
+RTL_GIGA_MAC_VER_35 is described in the driver as being in the same
+family as your RTL_GIGA_MAC_VER_38, so can you please try the following
+change:
+--- r8169.c
++++ r8169.c
+@@ -4271,6 +4271,7 @@ static void rtl_init_rxcfg(struct rtl816
+ 	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_24:
+ 	case RTL_GIGA_MAC_VER_34:
+ 	case RTL_GIGA_MAC_VER_35:
++	case RTL_GIGA_MAC_VER_38:
+ 		RTL_W32(tp, RxConfig, RX128_INT_EN | RX_MULTI_EN | RX_DMA_BURST);
+ 		break;
+ 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
+
+This will add RX_MULTI_EN also for your chip model (you need to add back
+the call to rtl_init_rxcfg() to rtl_hw_start(), naturally).
+
+If this does not help then I would try another values in the above write:
+1) RTL_W32(tp, RxConfig, 0x00024000);
+2) RTL_W32(tp, RxConfig, 0x00004000);
+3) RTL_W32(tp, RxConfig, RX_DMA_BURST);
+4) RTL_W32(tp, RxConfig, RX128_INT_EN);
+
+> Chris
+
+Maciej
