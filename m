@@ -2,287 +2,109 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF3AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B10C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E04AF2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97471214C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="rZcLjrzh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04AF2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QSHTpyEy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97471214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJKHiB (ORCPT
+        id S1726798AbeJKHiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:38:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34051 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeJKHiA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:38:00 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v69-v6so5623413oif.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 17:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wEZxUChQ7My5ldYgn8lVR7BXwMptPVejPczl3HqPJPw=;
-        b=rZcLjrzh3JDN0/PP27oqzlOEVnJbY1gilzMzhwo+dbE+4WHR8SYSGsFr3qLJxoE0oO
-         BWQDApfG1rQZ5oQPNO/SRjAXzNZysADhXrq9e+dxSZDUCybO/YFerNklRR3AKtXXFE4l
-         Td/vPiKCeparSXmwJJNqfqRfWKYJiRRFsRroVp2XsgQjwElfxh7TEQj9PDKPz1+kKq5h
-         ZdZWSYTWVUAJVnWeKKGzGlSaEijgrJhFYGg5RKOXxOOIuboqAMHqW/kkZhzCi5aDMGzS
-         FTGOs80P2R4QALT5ENeRMZPmm0O08U5n4pcXcFTojHqSAFzTn9OMbTAH8oe70VHAHkLb
-         TL8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wEZxUChQ7My5ldYgn8lVR7BXwMptPVejPczl3HqPJPw=;
-        b=IZL4uHzZr9utUSFKZLF/VUr66wPOZQpAcMI6E1z6YaASBnUtO5gczplTZp0D/ziVK0
-         vpapCz7eo+AacJx3950F/RIn3zwOvEFgyKkzqDzDTOm3qsHP1gNNLNqlFHsCNdzbbKcf
-         BLrQSF1RUGuVgYKvPFXPUdcaQEnutke0WHq1kmiDfiJdFOttvrvqOV0W5l7IiB2q3q9C
-         ClKIYiR64y0kgn+ZEmKTLFC1X7NXt1eBnJALuvzFkMqGR87dx+k9KVflhr2HXpn/Q1Er
-         akWDLRXfM5PWNwTVbUnVR0fhTVaffR9uIzITzri4ZZtdN+sBmwu12XJGe/TlOfh0BCC9
-         OUHw==
-X-Gm-Message-State: ABuFfoihdwepIGvavYsUOrS47hQ6lUxzo2kwasDvBP99E6Is0PqjTTfz
-        E36jqYr/W3JdvmPaX3iGlV7tLDtU15FNybPJ833LUw==
-X-Google-Smtp-Source: ACcGV61wnsTcqmkXvsP2TwsMzPYHLAB8/+s4HQa18bB4jH3SGLuXQxJiEofZtdry+AIH6sMaPjw4dej7m41OElMmxyM=
-X-Received: by 2002:aca:ead4:: with SMTP id i203-v6mr2997897oih.149.1539216806611;
- Wed, 10 Oct 2018 17:13:26 -0700 (PDT)
+        Thu, 11 Oct 2018 03:38:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:33477 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726214AbeJKHiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:38:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42VrzX6hNnz9s89;
+        Thu, 11 Oct 2018 11:13:44 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539216825;
+        bh=+Kj3PyVpda87BUz5UeV51sF7qi5ZTt/2ellN9+1eCMg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QSHTpyEykuGY9TN/7xzkWyOVJoXPKh3/iIgTq8mL1D4hzh56RssloGFJQdMHCg4kR
+         yfMvnQcGTrG9wiw5DMYqP6xxpBqWhqyjz5QGjBjMuJd5aHciWCsWZ8SanmUB1DZs0E
+         K4hTI3VHJXxbjkLY8I/slQBHGp5GHKFMoX0UjiS4Wtant0yr/pmeeb7znXc3QjOelR
+         uyYBv8kDCxp1FgR8E8NjLL+uuBIAL7bUUEyAnuABL2YKc8n41Xre7iDHKPzkdiIXzK
+         cZPm1K6ucvPFF6OO7JyGAj5DdwEWoU9qZtUrpsxRKADlDqzxVLjCziEHhPn9pWWQiR
+         ALYnL3mtVJb9Q==
+Date:   Thu, 11 Oct 2018 11:13:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Wireless <linux-wireless@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: linux-next: manual merge of the crypto tree with the mac80211-next
+ tree
+Message-ID: <20181011111329.253f0689@canb.auug.org.au>
 MIME-Version: 1.0
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181004074457.GD22173@dhcp22.suse.cz> <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
- <20181009112216.GM8528@dhcp22.suse.cz> <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
- <20181010084731.GB5873@dhcp22.suse.cz>
-In-Reply-To: <20181010084731.GB5873@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 10 Oct 2018 17:13:14 -0700
-Message-ID: <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Randomize free memory
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1fU=n.jS28rW_6ieTXIoUMm"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 1:48 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Tue 09-10-18 10:34:55, Dan Williams wrote:
-> > On Tue, Oct 9, 2018 at 4:28 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > >
-> > > On Thu 04-10-18 09:44:35, Dan Williams wrote:
-> > > > Hi Michal,
-> > > >
-> > > > On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > > >
-> > > > > On Wed 03-10-18 19:15:18, Dan Williams wrote:
-> > > > > > Changes since v1:
-> > > > > > * Add support for shuffling hot-added memory (Andrew)
-> > > > > > * Update cover letter and commit message to clarify the performance impact
-> > > > > >   and relevance to future platforms
-> > > > >
-> > > > > I believe this hasn't addressed my questions in
-> > > > > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
-> > > > > "
-> > > > > It is the more general idea that I am not really sure about. First of
-> > > > > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
-> > > > > cannot we simply have it disabled?
-> > > >
-> > > > I'm not aware of any CVE that this would directly preclude, but that
-> > > > said the entropy injected at 4MB boundaries raises the bar on heap
-> > > > attacks. Environments that want more can adjust that with the boot
-> > > > parameter. Given the potential benefits I think it would only make
-> > > > sense to default disable it if there was a significant runtime impact,
-> > > > from what I have seen there isn't.
-> > > >
-> > > > > Then and more concerning question is,
-> > > > > does it even make sense to have this randomization applied to higher
-> > > > > orders than 0? Attacker might fragment the memory and keep recycling the
-> > > > > lowest order and get the predictable behavior that we have right now.
-> > > >
-> > > > Certainly I expect there are attacks that can operate within a 4MB
-> > > > window, as I expect there are attacks that could operate within a 4K
-> > > > window that would need sub-page randomization to deter. In fact I
-> > > > believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
-> > > > Combining that with page allocator randomization makes the kernel less
-> > > > predictable.
-> > >
-> > > I am sorry but this hasn't explained anything (at least to me). I can
-> > > still see a way to bypass this randomization by fragmenting the memory.
-> > > With that possibility in place this doesn't really provide the promissed
-> > > additional security. So either I am missing something or the per-order
-> > > threshold is simply a wrong interface to a broken security misfeature.
-> >
-> > I think a similar argument can be made against
-> > CONFIG_SLAB_FREELIST_RANDOM the randomization benefits can be defeated
-> > with more effort, and more effort is the entire point.
->
-> If there is relatively simple way to achieve that (which I dunno about
-> the slab free list randomization because I am not familiar with the
-> implementation) then the feature is indeed questionable. I would
-> understand an argument about feasibility if bypassing was extremely hard
-> but fragmenting the memory is relatively a simple task.
->
-> > > > Is that enough justification for this patch on its own?
-> > >
-> > > I do not think so from what I have heard so far.
-> >
-> > I'm missing what bar you are judging the criteria for these patches,
-> > my bar is increased protection against allocation ordering attacks as
-> > seconded by Kees, and the memory side caching effects.
->
-> As said above, if it is quite easy to bypass the randomization then
-> calling and advertizing this as a security feature is a dubious. Not
-> enough to ouright nak it of course but also not something I would put my
-> stamp on. And arguments would be much more solid if they were backed by
-> some numbers (not only for the security aspect but also the side caching
-> effects).
+--Sig_/1fU=n.jS28rW_6ieTXIoUMm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In fact you don't even need to fragment since you'll have 4MB
-contiguous targets by default, but that's not the point. We'll now
-have more entropy in the allocation order to compliment the entropy
-introduced at the per-SLAB level with CONFIG_SLAB_FREELIST_RANDOM.
+Hi all,
 
-...and now that I've made that argument I think I've come around to
-your point about the shuffle_page_order parameter. The only entity
-that might have a better clue about "safer" shuffle orders than
-MAX_ORDER is the distribution provider. I'll cut a v4 to move all of
-this under a configuration symbol and make the shuffle order a compile
-time setting.
+Today's linux-next merge of the crypto tree got conflicts in:
 
-> > That said I
-> > don't have a known CVE in my mind that would be mitigated by 4MB page
-> > shuffling.
-> >
-> > > > It's
-> > > > debatable. Combine that though with the wider availability of
-> > > > platforms with memory-side-cache and I think it's a reasonable default
-> > > > behavior for the kernel to deploy.
-> > >
-> > > OK, this sounds a bit more interesting. I am going to speculate because
-> > > memory-side-cache is way too generic of a term for me to imagine
-> > > anything specific.
-> >
-> > No need to imagine, a memory side cache shipped on a previous product
-> > as Robert linked in his comments.
->
-> Could you make this a part of the changelog? I would really appreciate
-> to see justification based on actual numbers rather than quite hand wavy
-> "it helps".
+  net/wireless/lib80211_crypt_tkip.c
+  net/wireless/lib80211_crypt_wep.c
 
-I put in the changelog that these patches reduced the cache conflict
-rate by 2.5X on a Java benchmark. I specifically did not put KNL data
-directly into the changelog because that is not a general purpose
-server platform.
+between commit:
 
-Note, you can also think about this just on pure architecture terms.
-I.e. that for a direct mapped cache anywhere in a system you can have
-a near zero cache conflict rate on a first run of a workload and high
-conflict rate on a second run based on how lucky you are with memory
-allocation placement relative to the first run. Randomization keeps
-you out of such performance troughs and provides more reliable average
-performance.  With the numa emulation patch I referenced an
-administrator could constrain a workload to run in a cache-sized
-subset of the available memory if they really know what they are doing
-and need firmer guarantees.
+  b802a5d6f345 ("lib80211: don't use skcipher")
 
-The risk if Linux does not have this capability is unstable hacks like
-zonesort and rebooting, as referenced in that KNL article, which are
-not suitable for a general purpose kernel / platform.
+from the mac80211-next tree and commit:
 
-> > > Many years back while at a university I was playing
-> > > with page coloring as a method to reach a more stable performance
-> > > results due to reduced cache conflicts. It was not always a performance
-> > > gain but it definitely allowed for more stable run-to-run comparable
-> > > results. I can imagine that a randomization might lead to a similar effect
-> > > although I am not sure how much and it would be more interesting to hear
-> > > about that effect.
-> >
-> > Cache coloring is effective up until your workload no longer fits in
-> > that color.
->
-> Yes, that was my observation back then more or less. But even when you
-> do not fit into the cache a color aware strategy (I was playing with bin
-> hoping as well) produced a more deterministic/stable results. But that
-> is just a side note as it doesn't directly relate to your change.
->
-> > Randomization helps to attenuate the cache conflict rate
-> > when that happens.
->
-> I can imagine that. Do we have any numbers to actually back that claim
-> though?
->
+  db20f570e17a ("lib80211: Remove VLA usage of skcipher")
 
-Yes, 2.5X cache conflict rate reduction, in the change log.
+from the crypto tree.
 
-> > For workloads that may fit in the cache, and/or
-> > environments that need more explicit cache control we have the recent
-> > changes to numa_emulation [1] to arrange for cache sized numa nodes.
->
-> Could you point me to some more documentation. My google-fu is failing
-> me and "5.2.27.5 Memory Side Cache Information Structure" doesn't point
-> to anything official (except for your patch referencing it).
+I fixed it up (I just used the mac80211-next versions of these 2 files
+for now) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
-http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf
+--=20
+Cheers,
+Stephen Rothwell
 
->
-> > > If this is really the case then I would assume on/off
-> > > knob to control the randomization without something as specific as
-> > > order.
-> >
-> > Are we only debating the enabling knob at this point? I'm not opposed
-> > to changing that, but I do think we want to keep the rest of the
-> > infrastructure to allow for shuffling on a variable page size boundary
-> > in case there is enhanced security benefits at smaller buddy-page
-> > sizes.
->
-> I am still trying to understand the benefit of this change. If the
-> caching effects are actually the most important part and there is a
-> reasonable cut in allocation order to keep the randomization effective
-> during the runtime then I would like to understand the thinking behind
-> that. In other words does the randomization at smaller orders than
-> biggest order still visible in actual benchmarks? If not then on/off
-> knob should be sufficient with potential auto tuning based on actual HW
-> rather than to expect poor admin to google for $RANDOM_ORDER to use on a
-> specific HW and all the potential cargo cult that will grow around it.
+--Sig_/1fU=n.jS28rW_6ieTXIoUMm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-So, I've come around to your viewpoint on this. Especially when we
-have CONFIG_SLAB_FREELIST_RANDOM the security benefit of smaller than
-MAX_ORDER shuffling is hard to justify and likely does not need kernel
-parameter based control.
+-----BEGIN PGP SIGNATURE-----
 
-> As I've said before, I am not convinced about the security argument but
-> even if I am wrong here then I am still quite sure that you do not want
-> to expose the security aspect as "chose an order to randomize from"
-> because admins will have no real way to know what is the $RANDOM_ORDER
-> to set. So even then it should be on/off thing. You are going to pay
-> some of the performance because you would lose some page allocator
-> optimizations (e.g. pcp lists) but that is unavoidable AFAICS.
->
-> With all that being said, I think the overal idea makes sense but you
-> should try much harder to explain _why_ we need it and back your
-> justification by actual _data_ before I would consider my ack.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu+lakACgkQAVBC80lX
+0GxdJQgAlKiwi2EZ37gu6hi9VDDMikpTOz/6GmWDkhFBa9RfHzAwfjBCFu26VKDS
+pXF+/6rS9Hfmqi9HOMC58yuFbyZLzdhptUkjsutWIjK6mv8P9WPCvqAv8ykDaX8n
+sORcqsB9NMJ/dmkjm47T8KDt/MuEbc6qEZeyyb2rGYGmDZcDajfrNJfpvxJpIUP1
+NVFcMpSaa9lFftLzbBp/ljMRnMKXiV2vQLUoIo+mqCgnWWvkOgXQRKNRjLZV/wVN
+1d9bIds3uNrOYUbm6hYr//38dPuY1iGCSz/U3cbWSV6pWvEDpJnMLIulA8MTwkFt
+JzAUxhC5lLhVwRjytf9gIDLE/UpxMQ==
+=cOtu
+-----END PGP SIGNATURE-----
 
-I don't have a known CVE, I only have the ack of people more
-knowledgeable about security than myself like Kees to say in effect,
-"yes, this complicates attacks". If you won't take Kees' word for it,
-I'm not sure what other justification I can present on the security
-aspect.
-
-2.5X cache conflict reduction on a Java benchmark workload that the
-exceeds the cache size by multiple factors is the data I can provide
-today. Post launch it becomes easier to share more precise data, but
-that's post 4.20. The hope of course is to have this capability
-available in an upstream released kernel in advance of wider hardware
-availability.
+--Sig_/1fU=n.jS28rW_6ieTXIoUMm--
