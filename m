@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D481DC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1E2C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B0F2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A222920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTtp/ZJo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B0F2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjDVeeNZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A222920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731331AbeJKXNN (ORCPT
+        id S1731341AbeJKXNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45686 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeJKXNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:12 -0400
+        id S1726762AbeJKXNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:15 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3507020652;
-        Thu, 11 Oct 2018 15:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA0420652;
+        Thu, 11 Oct 2018 15:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272727;
-        bh=9zMGcOlFgOXMz/9Yd749wfYZm4ziHNzieHNQ+D88j4c=;
+        s=default; t=1539272730;
+        bh=6yi8L2b1cBeWj/9VL74GYPEzVFRw0MxavDakRWztKmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hTtp/ZJoUh+CPu4xFrsFyxuCSJXh7e8L+xOoyXJ0HZwVB9ZL2pg1mQu2SxVNB+4k1
-         56xdC0bPbEf1oa/4z3wycJcv3Xe0Ra7apLFK5d1Qy6coy3QL/ghOJwYCHtpFaGBss1
-         7Y+rIPmvpxvWhSgIbL6HJ3HalqI4dlmeMVAkZcS8=
+        b=NjDVeeNZR0a7zWZsjeXNEBk46gJ1GshyxTBHjQSU4bGxi5zDUua/0mVOalT2A8Scr
+         /S7YsJ7EwgbmSLhcX1vjUVwS5wVMVmgdqylrwHJVIw5p+BhqPIGM2rMPQ+YnZUHskz
+         CBzKGi/nntKJmp5DzH1o2w6871pCxdYBkUAtLxCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 18/45] PM / core: Clear the direct_complete flag on errors
-Date:   Thu, 11 Oct 2018 17:39:45 +0200
-Message-Id: <20181011152509.645279281@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 19/45] dm cache metadata: ignore hints array being too small during resize
+Date:   Thu, 11 Oct 2018 17:39:46 +0200
+Message-Id: <20181011152509.687556424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -63,54 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
+commit 4561ffca88c546f96367f94b8f1e4715a9c62314 upstream.
 
-If __device_suspend() runs asynchronously (in which case the device
-passed to it is in dpm_suspended_list at that point) and it returns
-early on an error or pending wakeup, and the power.direct_complete
-flag has been set for the device already, the subsequent
-device_resume() will be confused by that and it will call
-pm_runtime_enable() incorrectly, as runtime PM has not been
-disabled for the device by __device_suspend().
+Commit fd2fa9541 ("dm cache metadata: save in-core policy_hint_size to
+on-disk superblock") enabled previously written policy hints to be
+used after a cache is reactivated.  But in doing so the cache
+metadata's hint array was left exposed to out of bounds access because
+on resize the metadata's on-disk hint array wasn't ever extended.
 
-To avoid that, clear power.direct_complete if __device_suspend()
-is not going to disable runtime PM for the device before returning.
+Fix this by ignoring that there are no on-disk hints associated with the
+newly added cache blocks.  An expanded on-disk hint array is later
+rewritten upon the next clean shutdown of the cache.
 
-Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
-Reported-by: Al Cooper <alcooperx@gmail.com>
-Tested-by: Al Cooper <alcooperx@gmail.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: fd2fa9541 ("dm cache metadata: save in-core policy_hint_size to on-disk superblock")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/md/dm-cache-metadata.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1462,8 +1462,10 @@ static int __device_suspend(struct devic
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -1454,8 +1454,8 @@ static int __load_mappings(struct dm_cac
+ 		if (hints_valid) {
+ 			r = dm_array_cursor_next(&cmd->hint_cursor);
+ 			if (r) {
+-				DMERR("dm_array_cursor_next for hint failed");
+-				goto out;
++				dm_array_cursor_end(&cmd->hint_cursor);
++				hints_valid = false;
+ 			}
+ 		}
  
- 	dpm_wait_for_subordinate(dev, async);
- 
--	if (async_error)
-+	if (async_error) {
-+		dev->power.direct_complete = false;
- 		goto Complete;
-+	}
- 
- 	/*
- 	 * If a device configured to wake up the system from sleep states
-@@ -1475,6 +1477,7 @@ static int __device_suspend(struct devic
- 		pm_wakeup_event(dev, 0);
- 
- 	if (pm_wakeup_pending()) {
-+		dev->power.direct_complete = false;
- 		async_error = -EBUSY;
- 		goto Complete;
- 	}
 
 
