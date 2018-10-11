@@ -2,105 +2,112 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F0C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F26C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518A320835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC5820659
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eI+A+WwD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518A320835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pRuWPbYi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC5820659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbeJKQ7y (ORCPT
+        id S1728287AbeJKRBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:59:54 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44922 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbeJKQ7y (ORCPT
+        Thu, 11 Oct 2018 13:01:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56322 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbeJKRBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:59:54 -0400
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6CBA26F;
-        Thu, 11 Oct 2018 11:33:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539250404;
-        bh=o/Aw8VlWCshtwprbAKc/lUBh+6RvbmCd00PIeHTGnKY=;
-        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
-        b=eI+A+WwDTw4cg1hLGCE2Zbr4Co7HiRsLBOpcqI9u4FQPiPq0cmDjQ7LghW63Ti6Ip
-         J6msKryUER9esMh7keAQpATfhNCiK6XoF+JvsIqE6EJmkSubPY1LSnyo8+p/g+9J71
-         Qw8DjYSP8pMOXPHy1ujU5ewh5jtiLgz5BsBy8+1M=
-Subject: Re: [PATCH] media: intel-ipu3: cio2: Remove redundant definitions
-To:     Rajmohan Mani <rajmohan.mani@intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Jian Xu Zheng <jian.xu.zheng@intel.com>
-Cc:     tfiga@chromium.org
-References: <20181009234245.25830-1-rajmohan.mani@intel.com>
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <33c53caf-633a-f359-4312-9c2dc317efc5@ideasonboard.com>
-Date:   Thu, 11 Oct 2018 10:33:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 13:01:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PwY27Af+KZn6Jy0gBb8Mgj5o12B0lA1sKcrUPy+1KZY=; b=pRuWPbYikc98of7op5qeIC5Zt
+        xahCLX2GRJST6KD4SBI/pRsBpXd5zYeL7v3h1X5q3DSikQBvw7GJ0e0LZRJZSV0gIvRXhUjf2iuDs
+        dLV7P5nQ1rAbV6DmiC6gbIqWzd05H8CA7gVE4H+In4E7OV2uuMIMnWrY1uZ+6gPAvaW7FvNGfza8e
+        WVkXBsaAYOjwAU3IP0LzfTRzQ2PzNaHstXzGwHg6S47lG+bBoV/QEIrzQLhSKGi0ca922TpVZiFMl
+        Jmh7nJfTVqfHfqF/IeRYnW3CSjgz8rnrZjLYnKwBB1Y/LMuie7f82irpH/KXwXe8gFVLq3EZJgGGw
+        22zTAtdqw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAXN5-00017U-18; Thu, 11 Oct 2018 09:35:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 342D42029856A; Thu, 11 Oct 2018 11:35:00 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 11:35:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] panic: Avoid extra noisy messages due to stopped cpus
+Message-ID: <20181011093500.GB9848@hirez.programming.kicks-ass.net>
+References: <1539242268-63036-1-git-send-email-feng.tang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181009234245.25830-1-rajmohan.mani@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539242268-63036-1-git-send-email-feng.tang@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rajmohan
-
-Thank you for the patch,
-
-On 10/10/18 00:42, Rajmohan Mani wrote:
-> Removed redundant CIO2_IMAGE_MAX_* definitions
+On Thu, Oct 11, 2018 at 03:17:48PM +0800, Feng Tang wrote:
+> Sometimes when debugging kernel panic, we saw many extra noisy error
+> messages after the expected end:
 > 
-> Fixes: c2a6a07afe4a ("media: intel-ipu3: cio2: add new MIPI-CSI2 driver")
+> [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
+> [   35.749975] ------------[ cut here ]------------
 > 
-> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> These messages may overflow the sceen (framebuffer) and make debugging
+> much difficulter.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+*blink* you actually using the framebuffer for debugging ?! Why the heck
+are you doing that?
 
-Looks like this {sh,c}ould be bundled in with
- "[PATCH 0/2] Trivial CIO2 patches" from Sakari at integration.
-
---
-Regards
-
-Kieran Bingham
-
-> ---
->  drivers/media/pci/intel/ipu3/ipu3-cio2.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.h b/drivers/media/pci/intel/ipu3/ipu3-cio2.h
-> index 240635be7a31..7caab9b8c2b9 100644
-> --- a/drivers/media/pci/intel/ipu3/ipu3-cio2.h
-> +++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.h
-> @@ -10,8 +10,6 @@
->  #define CIO2_PCI_ID					0x9d32
->  #define CIO2_PCI_BAR					0
->  #define CIO2_DMA_MASK					DMA_BIT_MASK(39)
-> -#define CIO2_IMAGE_MAX_WIDTH				4224
-> -#define CIO2_IMAGE_MAX_LENGTH				3136
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index c93fcfd..b703862 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -520,6 +520,7 @@ void stop_this_cpu(void *dummy)
+>  	 * Remove this CPU:
+>  	 */
+>  	set_cpu_online(smp_processor_id(), false);
+> +	set_cpu_active(smp_processor_id(), false);
+>  	disable_local_APIC();
+>  	mcheck_cpu_clear(this_cpu_ptr(&cpu_info));
 >  
->  #define CIO2_IMAGE_MAX_WIDTH				4224
->  #define CIO2_IMAGE_MAX_LENGTH				3136
-> 
+
+WTH is stop_this_cpu() and how do we even get here with active still
+set?
+
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7fc4a37..cf41b7b 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9034,7 +9034,7 @@ static inline int find_new_ilb(void)
+>  {
+>  	int ilb = cpumask_first(nohz.idle_cpus_mask);
+>  
+> -	if (ilb < nr_cpu_ids && idle_cpu(ilb))
+> +	if (ilb < nr_cpu_ids && idle_cpu(ilb) && cpu_online(ilb))
+>  		return ilb;
+>  
+>  	return nr_cpu_ids;
+
+
+Similar, this is the result of taking the CPU away without going through
+the normal path. You're doing something dodgy.
 
