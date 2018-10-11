@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F09C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F86C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB963213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F1152087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ev86eFR2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB963213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xS6xSI86"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1152087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbeJKXEl (ORCPT
+        id S1729191AbeJKXEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:04:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:04:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbeJKXEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:04:41 -0400
+        id S1728128AbeJKXEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:04:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0248520652;
-        Thu, 11 Oct 2018 15:36:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB2DC2147C;
+        Thu, 11 Oct 2018 15:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272218;
-        bh=A/uGnSSTltIiSb8xdSpHpvDAMgCU4eBui7g2/0GzePw=;
+        s=default; t=1539272221;
+        bh=NnIhdksCZqb+Dr0vRIBAIQxeKv0A+Ofxed59dCAsiy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ev86eFR2XQ/UhSebOOlm0x0hTOXGKIgSFLH7Y6run8mu2ptg/tajUwzD3GMcDE+7w
-         956e+FGmfAKTBkrjS52O6SvNJ3T2PwJSlKR7Rrts8VF5AkJV7mgdQf7NAuIGPR30nX
-         QJyQiks9nhLpovP8C2w9yHM3dRcybVRjlhAcfnos=
+        b=xS6xSI86seIoF+OfHt76EBJ1SS2vdPnq/rQZnVxG0caavTLJB855dPyF+0jdjNWq5
+         2ZGtd9uFJFxA3dglQyFuP7HmLT1V++mJmmDXyVCOeTBwP68T47as2ZSyNbBJvhmGxO
+         6lKk95DCDfiAADe8p9/AewlQ6mvMU6EzWKZUOAa4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 031/120] alarmtimer: Prevent overflow for relative nanosleep
-Date:   Thu, 11 Oct 2018 17:33:32 +0200
-Message-Id: <20181011152550.942096231@linuxfoundation.org>
+Subject: [PATCH 3.18 032/120] s390/extmem: fix gcc 8 stringop-overflow warning
+Date:   Thu, 11 Oct 2018 17:33:33 +0200
+Message-Id: <20181011152550.998527629@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -63,51 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 5f936e19cc0ef97dbe3a56e9498922ad5ba1edef ]
+[ Upstream commit 6b2ddf33baec23dace85bd647e3fc4ac070963e8 ]
 
-Air Icy reported:
+arch/s390/mm/extmem.c: In function '__segment_load':
+arch/s390/mm/extmem.c:436:2: warning: 'strncat' specified bound 7 equals
+source length [-Wstringop-overflow=]
+  strncat(seg->res_name, " (DCSS)", 7);
 
-  UBSAN: Undefined behaviour in kernel/time/alarmtimer.c:811:7
-  signed integer overflow:
-  1529859276030040771 + 9223372036854775807 cannot be represented in type 'long long int'
-  Call Trace:
-   alarm_timer_nsleep+0x44c/0x510 kernel/time/alarmtimer.c:811
-   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1235 [inline]
-   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1213 [inline]
-   __x64_sys_clock_nanosleep+0x326/0x4e0 kernel/time/posix-timers.c:1213
-   do_syscall_64+0xb8/0x3a0 arch/x86/entry/common.c:290
+What gcc complains about here is the misuse of strncat function, which
+in this case does not limit a number of bytes taken from "src", so it is
+in the end the same as strcat(seg->res_name, " (DCSS)");
 
-alarm_timer_nsleep() uses ktime_add() to add the current time and the
-relative expiry value. ktime_add() has no sanity checks so the addition
-can overflow when the relative timeout is large enough.
+Keeping in mind that a res_name is 15 bytes, strncat in this case
+would overflow the buffer and write 0 into alignment byte between the
+fields in the struct. To avoid that increasing res_name size to 16,
+and reusing strlcat.
 
-Use ktime_add_safe() which has the necessary sanity checks in place and
-limits the result to the valid range.
-
-Fixes: 9a7adcf5c6de ("timers: Posix interface for alarm-timers")
-Reported-by: Team OWL337 <icytxw@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1807020926360.1595@nanos.tec.linutronix.de
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/time/alarmtimer.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/mm/extmem.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -776,7 +776,8 @@ static int alarm_timer_nsleep(const cloc
- 	/* Convert (if necessary) to absolute time */
- 	if (flags != TIMER_ABSTIME) {
- 		ktime_t now = alarm_bases[type].gettime();
--		exp = ktime_add(now, exp);
-+
-+		exp = ktime_add_safe(now, exp);
- 	}
- 
- 	if (alarmtimer_do_nsleep(&alarm, exp))
+--- a/arch/s390/mm/extmem.c
++++ b/arch/s390/mm/extmem.c
+@@ -80,7 +80,7 @@ struct qin64 {
+ struct dcss_segment {
+ 	struct list_head list;
+ 	char dcss_name[8];
+-	char res_name[15];
++	char res_name[16];
+ 	unsigned long start_addr;
+ 	unsigned long end;
+ 	atomic_t ref_count;
+@@ -445,7 +445,7 @@ __segment_load (char *name, int do_nonsh
+ 	memcpy(&seg->res_name, seg->dcss_name, 8);
+ 	EBCASC(seg->res_name, 8);
+ 	seg->res_name[8] = '\0';
+-	strncat(seg->res_name, " (DCSS)", 7);
++	strlcat(seg->res_name, " (DCSS)", sizeof(seg->res_name));
+ 	seg->res->name = seg->res_name;
+ 	rc = seg->vm_segtype;
+ 	if (rc == SEG_TYPE_SC ||
 
 
