@@ -2,132 +2,146 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D93C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB87C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09BAF2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EA6520841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:16:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvtyBYCE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09BAF2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="jaqywtzB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA6520841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbeJKUji (ORCPT
+        id S1727752AbeJKUnd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 16:39:38 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33079 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbeJKUjh (ORCPT
+        Thu, 11 Oct 2018 16:43:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47828 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbeJKUnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 16:39:37 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 78-v6so2024435pfq.0;
-        Thu, 11 Oct 2018 06:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ARQ1kyEkV52b+OHA2QE2Y8kVu4z8LaZILeKKfpaxozE=;
-        b=XvtyBYCEvEZA1V6NmOG2/cZZwPU6eZopSs9xzyHEZuOt+mrz4nVLCTpg4RStj6I+aw
-         tAvzJekE52AZyo9eszihTjea9QVaP1pVRVsPJtYj2EYb5u3l1uevl88FlNh/ocAa5uyG
-         KHU8rJR5J1txiRsoLjyd8ibEF9czCCzUFTOyu7MvU64BEPKgEk2n0z1/Q7Zz/1xVXqAH
-         SohCAUA2HI+Cz5qXra3sY6BiZCBh4IDsNEuNFT/86BcA+Z/ifXhSpGvqz0242Ix78Xxs
-         AgzFow9ZZSEjavlFu9oFBZ0+hzmjpJIqnF7ICNMj3v+I/5w53jqd3sZWOJgzdsC1Mu2m
-         2Y9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ARQ1kyEkV52b+OHA2QE2Y8kVu4z8LaZILeKKfpaxozE=;
-        b=su10Ui1gq69utQndf2T75xP58rW64Nx9fdR5wxS7YgOcdzroZOAPoxsIySXGxdrSXV
-         OQ433/lh8UVX/yyd5qXxl/Iu7nb3SzyByQ8YPkl3jLzijAWtaLLjNBbVk921/KNVky1s
-         7D6deyh7zuPy2r4f0z1U1wS+66jBikKOkCkOqjYk4j0o1b7HQBDU5zvf/sx+oxOr9pRi
-         ZzJqm2gdLdJ/QYpn/BgjJI+tldfaMGJ6Zr5Unc41lWsQAn5anogroYPJZNQOzOi8o6/l
-         DqPM2oybk8Zbd/KsYHOkR4WewA/ZnG2Bsk7b9lrHyYh7T1uVOboGr/QNz57aJXCHGT8A
-         22Qg==
-X-Gm-Message-State: ABuFfog9uYVbmTYdH6sTZ0Yey5MsFt99dw0DzZ+3Z1tiMy6F49GEqm5V
-        UEhaqABuAoUy0b5pUQzDoxLnYlB2+3BGMlni9lI=
-X-Google-Smtp-Source: ACcGV62s/xeAoK5RACknP0khyWi8xHim8MhbkVInwnRI6hOgHDt1dkr/TpxDscR0RzxEBsKdOgB+RYidgyx1qeqZeBo=
-X-Received: by 2002:a63:6bc2:: with SMTP id g185-v6mr1423824pgc.25.1539263548660;
- Thu, 11 Oct 2018 06:12:28 -0700 (PDT)
+        Thu, 11 Oct 2018 16:43:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wiisUMoB78VnRUVb0aR+wG/PIyXiqTPy3WOvms8qn8Y=; b=jaqywtzB7jLndd2k6Gz3BSpMu
+        MtW/1HiEKpwkxaAuQsm+KY890mIziOc4kDPgGYtJZKJbrFyHhBi1aa5Bbml/o/dUT/et+HXldJzAU
+        /dAuwYfaQjPuxZb2frc4VM29WalzlU63IAyKJankBIJxLsoKBVNUIFuLWk/yPdsHEOs9Q=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gAaoT-0001et-57; Thu, 11 Oct 2018 13:15:37 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 7767B11223ED; Thu, 11 Oct 2018 14:15:36 +0100 (BST)
+Date:   Thu, 11 Oct 2018 14:15:36 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        jacopo <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Message-ID: <20181011131536.GA25351@sirena.org.uk>
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+ <20180906122436.25610-1-linus.walleij@linaro.org>
+ <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+ <20181011094701eucas1p2177080d98481b4d4ebcfad9960d7dd97~chNSImIbW1044610446eucas1p2Q@eucas1p2.samsung.com>
 MIME-Version: 1.0
-References: <20181011100312.4083-1-vkuznets@redhat.com> <CAOLK0pzTzubAcgv3nd_G6pSbB48Xw-ANbCn7+wX0NE1ssDW2Vg@mail.gmail.com>
- <87zhvkpth0.fsf@vitty.brq.redhat.com> <CAOLK0pzL5qvUksKwieoVgsqM9e6Bibu1kKR1kvr96jMMz_RxdQ@mail.gmail.com>
- <87woqopri8.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87woqopri8.fsf@vitty.brq.redhat.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Thu, 11 Oct 2018 21:12:17 +0800
-Message-ID: <CAOLK0pw+BCZWqR2TC2-6ZY_O4Y2e+=6RjP9D8yRiACfcVL0K7A@mail.gmail.com>
-Subject: Re: [PATCH] KVM: vmx: hyper-v: don't pass EPT configuration info to vmx_hv_remote_flush_tlb()
-To:     vkuznets@redhat.com
-Cc:     kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <20181011094701eucas1p2177080d98481b4d4ebcfad9960d7dd97~chNSImIbW1044610446eucas1p2Q@eucas1p2.samsung.com>
+X-Cookie: Use at own risk.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 9:00 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Tianyu Lan <lantianyu1986@gmail.com> writes:
->
-> > On Thu, Oct 11, 2018 at 8:18 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >>
-> >> Tianyu Lan <lantianyu1986@gmail.com> writes:
-> >>
-> >> > On Thu, Oct 11, 2018 at 6:32 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >> >>
-> >> >> I'm observing random crashes in multi-vCPU L2 guests running on KVM on
-> >> >> Hyper-V. I bisected the issue to the commit 877ad952be3d ("KVM: vmx: Add
-> >> >> tlb_remote_flush callback support"). Hyper-V TLFS states:
-> >> >>
-> >> >> "AddressSpace specifies an address space ID (an EPT PML4 table pointer)"
-> >> >>
-> >> >> So apparently, Hyper-V doesn't expect us to pass naked EPTP, only PML4
-> >> >> pointer should be used. Strip off EPT configuration information before
-> >> >> calling into vmx_hv_remote_flush_tlb().
-> >> >
-> >> > Hi Vitaly:
-> >> > :               Thanks to fix this. Sorry, I didn't meet the issue..
-> >> > I think we may just store EPT PML4 table pointer without EPT
-> >> > configuration information
-> >> > in the ept_pointer field for this case.
-> >> >
-> >> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> >> > index 619307b3e6bb..e316058b41a6 100644
-> >> > --- a/arch/x86/kvm/vmx.c
-> >> > +++ b/arch/x86/kvm/vmx.c
-> >> > @@ -5379,7 +5379,7 @@ static void vmx_set_cr3(struct kvm_vcpu *vcpu,
-> >> > unsigned long cr3)
-> >> >
-> >> >                 if (kvm_x86_ops->tlb_remote_flush) {
-> >> >                         spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
-> >> > -                       to_vmx(vcpu)->ept_pointer = eptp;
-> >> > +                       to_vmx(vcpu)->ept_pointer = cr3;
-> >>
-> >> True, we can do that (and I even had a version of my patch doing so)
-> >> but 'ept_pointer' will likely need to be renamed as it's not obvious
-> >> why vcpu->ept_pointer != eptp.
-> >>
-> >
-> > Yes. that need to rename ept_pointer.
-> >
->
-> Honestly, I would prefer to keep more information cached, e.g. if
-> someone needs EPT configuration data later he can easily get it from
-> ept_pointer and by putting raw cr3 there we'll just keep less.
->
-Yes, that makes sense.
--- 
-Best regards
-Tianyu Lan
+
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Oct 11, 2018 at 11:46:59AM +0200, Marek Szyprowski wrote:
+> On 2018-10-11 11:29, Linus Walleij wrote:
+> > On Thu, Oct 11, 2018 at 11:01 AM Marek Szyprowski
+
+> >> I've just noticed that this patch causes regression on Samsung
+> >> Exynos4412-based Trats2 board. Conversion to GPIO descriptor breaks
+> >> operation when regulators used shared GPIO:  sii9234 i2c driver
+> >> is not able to get vcc33mhl regulator (it uses shared GPIO enable
+> >> line with vsil12 regulator).
+
+> > So I guess this means that this physical GPIO line will enable the
+> > vcc33mhl and the vsil12 regulators at the same time?
+
+> Right. It is so common case, that regulator core has special code for
+> handling shared enable GPIO.
+
+Yes, and we've discussed it several times already.
+
+> > I was aware of the usecase "several consumers takes the same
+> > GPIO line" (Mark told me several times...) so it was in the back of
+> > my mind, but it's just hard to see when we were gonna run into it.
+> > So it is the fixed regulators, on Samsung boards, I see.
+
+> I don't think this is Samsung specific. I saw similar solution on various
+> other boards too. Sharing enable gpio is rather common thing. The issue
+> happens if there are separate drivers for each hw block and they need to
+> enable it from their code.
+
+It's really common, yeah - things like controlling the power for an
+entire chip with one GPIO for all the regulators supplying that chip for
+example.  I think what you're seeing here is that Samsung are among the
+most active testers of -next (thanks!) rather than that their hardware
+is particularly weird.
+
+> > So I was thinking to introduce
+> > gpiod_get_nonexclusive() to explicitly handle this case for the few
+> > systems that use shared GPIO lines, let me see what I can do.
+
+> The old interface also didn't allow sharing GPIO easily, so regulator
+> core has special code for shared enable gpio. However I still have no
+> idea how to do this cleanly using descriptor.
+
+Yes, it's been discussed several times and I thought Linus had some idea
+for it - IIRC it was a gpiod_is_equal() or something.  You can also do
+this by converting descriptors back to numbers and comparing the numbers
+but obviously the numbers are supposed to be being removed.
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/TPIACgkQJNaLcl1U
+h9D05Qf9FpuZ2XrDAw5QBvxw1FOhVUT9lextbm3jYOcZReoxMZDw8hjz8Xbj7NnP
+QCprq5UrfQoqIJ+WUYDfsLj2fZSugrLLTTckjPF9T2TlAOa+6XKI01tfJvU0yp1p
+GieLF0vCeU6Xi9lAlCNqa1ll20433ubr9wr6uhqEb9qgP3aTaOq5likBnTcoghfD
+1iwWyr+5ZhdI7hAm5EdUhqXBk89Wzn5nQr1/nlqWpRIigxv01D1XVwyNLcZLuWdJ
+vha1ocBj291/IktTWhfHNJhEfOcJuBcEdLG+bIsNRvr5F0MCvw5K/KOr/cwVLIsC
+afRHotQXV+Z49dvryJPNGAhgeIr/Sw==
+=Vvp8
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
