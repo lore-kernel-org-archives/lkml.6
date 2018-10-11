@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F155C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5CCC4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E2102085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D722075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Toxw/12v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E2102085B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="isk/OrD1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D722075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeJKWX7 (ORCPT
+        id S1728699AbeJKWYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:23:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46860 "EHLO
+        Thu, 11 Oct 2018 18:24:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46890 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbeJKWX6 (ORCPT
+        with ESMTP id S1727363AbeJKWYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:23:58 -0400
+        Thu, 11 Oct 2018 18:24:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6mzytH+J8Cw6AUzUWgDuNGQurFFAHpCh17Gtts8/qdE=; b=Toxw/12vG/2c
-        BC8Z4BsoCl6eMsty/PjtpF0BCqMtcare1HZi2yHtx+/7GSXz+9mwsAM1jQXuCcfHQsLNG/psOc1cV
-        mzxvRXDJOMngVtQeCNJ6GjZveXhs3LjWE4H+pCv/GppvMebh+OBNHalZQpN1w3pyqFNGqNSMzjWWP
-        c+7eA=;
+        List-Archive; bh=tUNhb6urJ8LbtfFt9qhzSLr4glnksGdzBwS54MNsasM=; b=isk/OrD1RFec
+        f21Mxg8hNkFLV4D8uhY7ihPamE5y2a0ZZi6tuet5T22PLb7gjSyE6WF2fWulSGCEUfJJDajKV631e
+        +qIN3czoUVWMt5VdEPFWis9aGPS+SJuDBvYIEcf0DIatBHtVZdUz4sLqFiwM4mZFm3jTBTmv2oWJx
+        urf1c=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcNc-0001sm-SA; Thu, 11 Oct 2018 14:56:00 +0000
+        id 1gAcNV-0001sU-7r; Thu, 11 Oct 2018 14:55:53 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9F3DC11223ED; Thu, 11 Oct 2018 15:56:00 +0100 (BST)
+        id 07C8111223ED; Thu, 11 Oct 2018 15:55:53 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Emil Renner Berthing <kernel@esmil.dk>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -59,10 +59,10 @@ Cc:     Mark Brown <broonie@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: mark use_dma as bool" to the spi tree
-In-Reply-To:  <20181010090038.20834-6-kernel@esmil.dk>
-Message-Id: <20181011145600.9F3DC11223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:56:00 +0100 (BST)
+Subject: Applied "spi: rockchip: simplify spi enable logic" to the spi tree
+In-Reply-To:  <20181010090038.20834-8-kernel@esmil.dk>
+Message-Id: <20181011145553.07C8111223ED@debutante.sirena.org.uk>
+Date:   Thu, 11 Oct 2018 15:55:53 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: mark use_dma as bool
+   spi: rockchip: simplify spi enable logic
 
 has been applied to the spi tree at
 
@@ -95,46 +95,91 @@ to this mail.
 Thanks,
 Mark
 
-From f340b920511a666b02d371e88801d3817ea7a880 Mon Sep 17 00:00:00 2001
+From a3c174021ce780f5d2e9b2105e2cb4903a37226d Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
-Date: Wed, 10 Oct 2018 11:00:36 +0200
-Subject: [PATCH] spi: rockchip: mark use_dma as bool
+Date: Wed, 10 Oct 2018 11:00:38 +0200
+Subject: [PATCH] spi: rockchip: simplify spi enable logic
 
-The driver data has a u32 field use_dma which is
-only ever used as a boolean, so change its type
-to reflect that.
+Let the dma/non-dma code paths handle the spi enable
+flag themselves. This removes some logic to determine
+if the flag should be turned on before or after dma
+and also don't leave the spi enabled if the dma path
+fails.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-rockchip.c | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 6a53b940f2f5..99943aa71bc1 100644
+index 6fa809da61dd..ffa564fbf970 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -202,7 +202,7 @@ struct rockchip_spi {
+@@ -379,6 +379,8 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
+ {
+ 	int remain = 0;
  
- 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
++	spi_enable_chip(rs, 1);
++
+ 	do {
+ 		if (rs->tx) {
+ 			remain = rs->tx_end - rs->tx;
+@@ -498,6 +500,8 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		dma_async_issue_pending(rs->dma_rx.ch);
+ 	}
  
--	u32 use_dma;
-+	bool use_dma;
- 	struct sg_table tx_sg;
- 	struct sg_table rx_sg;
- 	struct rockchip_spi_dma_data dma_rx;
-@@ -628,9 +628,9 @@ static int rockchip_spi_transfer_one(
++	spi_enable_chip(rs, 1);
++
+ 	if (txdesc) {
+ 		spin_lock_irqsave(&rs->lock, flags);
+ 		rs->state |= TXBUSY;
+@@ -506,7 +510,8 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		dma_async_issue_pending(rs->dma_tx.ch);
+ 	}
  
- 	/* we need prepare dma before spi was enabled */
- 	if (master->can_dma && master->can_dma(master, spi, xfer))
--		rs->use_dma = 1;
-+		rs->use_dma = true;
- 	else
--		rs->use_dma = 0;
-+		rs->use_dma = false;
+-	return 0;
++	/* 1 means the transfer is in progress */
++	return 1;
+ }
+ 
+ static void rockchip_spi_config(struct rockchip_spi *rs)
+@@ -589,7 +594,6 @@ static int rockchip_spi_transfer_one(
+ 		struct spi_device *spi,
+ 		struct spi_transfer *xfer)
+ {
+-	int ret = 0;
+ 	struct rockchip_spi *rs = spi_master_get_devdata(master);
+ 
+ 	WARN_ON(readl_relaxed(rs->regs + ROCKCHIP_SPI_SSIENR) &&
+@@ -633,24 +637,10 @@ static int rockchip_spi_transfer_one(
  
  	rockchip_spi_config(rs);
  
+-	if (rs->use_dma) {
+-		if (rs->tmode == CR0_XFM_RO) {
+-			/* rx: dma must be prepared first */
+-			ret = rockchip_spi_prepare_dma(rs);
+-			spi_enable_chip(rs, 1);
+-		} else {
+-			/* tx or tr: spi must be enabled first */
+-			spi_enable_chip(rs, 1);
+-			ret = rockchip_spi_prepare_dma(rs);
+-		}
+-		/* successful DMA prepare means the transfer is in progress */
+-		ret = ret ? ret : 1;
+-	} else {
+-		spi_enable_chip(rs, 1);
+-		ret = rockchip_spi_pio_transfer(rs);
+-	}
++	if (rs->use_dma)
++		return rockchip_spi_prepare_dma(rs);
+ 
+-	return ret;
++	return rockchip_spi_pio_transfer(rs);
+ }
+ 
+ static bool rockchip_spi_can_dma(struct spi_master *master,
 -- 
 2.19.0.rc2
 
