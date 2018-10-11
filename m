@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3118BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9EBC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB4F821476
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2F8021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2wLIT5S9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4F821476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbzK9Lhd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F8021470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbeJKXGa (ORCPT
+        id S1729735AbeJKXGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35564 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:29 -0400
+        id S1726721AbeJKXGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE1FB2087A;
-        Thu, 11 Oct 2018 15:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78DC820652;
+        Thu, 11 Oct 2018 15:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272326;
-        bh=6ezUZqydmzw0gOHEyo4U1SJMV52Sf/xcrY9sV4JYB/A=;
+        s=default; t=1539272329;
+        bh=3rp2QlXgwc5vLryRMopIfjesRtEA7fYhoQH6qUIen6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2wLIT5S9Cf3M8OOAEkE5qcxbUgsxgRsnzeZ47YKqX6ndDrvqVFaVGZgbOZWsn0Z10
-         brmGpxkRs3lWm/ZAiDPW81oL6gy9XXUG3W3gSZjFh/ii0x+MSmn8hP2anylxyMwusW
-         Fs9ZHUBsTxDwtCJc1wrihLrQY3lzZHSzr5h7yR2g=
+        b=CbzK9LhdkfJEO5b3hr/gel9d49Vd4r8UHXqpnsFlcF8xYuT90cTpKmpxGhFykYqCw
+         jcufoe0OkNvU+HALCTazgm/hfXaUS+9q3b7RnVABdW+pBaSHo33sFycRXB+kuugc8k
+         5WN8uHFCPa4T7FXvOjHUyDY8WxCIiUAA3+oi+b9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Stafford Horne <shorne@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 020/120] crypto: skcipher - Fix -Wstringop-truncation warnings
-Date:   Thu, 11 Oct 2018 17:33:21 +0200
-Message-Id: <20181011152550.491340556@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 3.18 063/120] arm64: KVM: Tighten guest core register access from userspace
+Date:   Thu, 11 Oct 2018 17:34:04 +0200
+Message-Id: <20181011152552.394412670@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -67,63 +66,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stafford Horne <shorne@gmail.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
+commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
 
-As of GCC 9.0.0 the build is reporting warnings like:
+We currently allow userspace to access the core register file
+in about any possible way, including straddling multiple
+registers and doing unaligned accesses.
 
-    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
-    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
-      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       sizeof(rblkcipher.geniv));
-       ~~~~~~~~~~~~~~~~~~~~~~~~~
+This is not the expected use of the ABI, and nobody is actually
+using it that way. Let's tighten it by explicitly checking
+the size and alignment for each field of the register file.
 
-This means the strnycpy might create a non null terminated string.  Fix this by
-explicitly performing '\0' termination.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-Signed-off-by: Stafford Horne <shorne@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+[maz: rewrote Dave's initial patch to be more easily backported]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- crypto/ablkcipher.c |    2 ++
- crypto/blkcipher.c  |    1 +
- 2 files changed, 3 insertions(+)
 
---- a/crypto/ablkcipher.c
-+++ b/crypto/ablkcipher.c
-@@ -382,6 +382,7 @@ static int crypto_ablkcipher_report(stru
- 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+---
+ arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -46,6 +46,45 @@ static u64 core_reg_offset_from_id(u64 i
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+ }
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
-@@ -463,6 +464,7 @@ static int crypto_givcipher_report(struc
- 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
++static int validate_core_offset(const struct kvm_one_reg *reg)
++{
++	u64 off = core_reg_offset_from_id(reg->id);
++	int size;
++
++	switch (off) {
++	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
++	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
++	case KVM_REG_ARM_CORE_REG(regs.sp):
++	case KVM_REG_ARM_CORE_REG(regs.pc):
++	case KVM_REG_ARM_CORE_REG(regs.pstate):
++	case KVM_REG_ARM_CORE_REG(sp_el1):
++	case KVM_REG_ARM_CORE_REG(elr_el1):
++	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
++	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
++		size = sizeof(__u64);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
++	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
++		size = sizeof(__uint128_t);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
++		size = sizeof(__u32);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	if (KVM_REG_SIZE(reg->id) == size &&
++	    IS_ALIGNED(off, size / sizeof(__u32)))
++		return 0;
++
++	return -EINVAL;
++}
++
+ static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ {
+ 	/*
+@@ -65,6 +104,9 @@ static int get_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -514,6 +514,7 @@ static int crypto_blkcipher_report(struc
- 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
+ 		return -EFAULT;
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
+@@ -87,6 +129,9 @@ static int set_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
+ 		return -EINVAL;
+ 
 
 
