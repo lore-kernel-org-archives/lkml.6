@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C661EC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68146C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B606213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FCE42085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8El3pT+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B606213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2u8pQW99"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FCE42085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbeJKXPi (ORCPT
+        id S1731953AbeJKXPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49192 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJKXPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:37 -0400
+        id S1726727AbeJKXPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:39 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0B522098A;
-        Thu, 11 Oct 2018 15:47:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C69A2098A;
+        Thu, 11 Oct 2018 15:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272871;
-        bh=j6nN4f52+1NJDLztGuNB2719nEeLnLh5r3kyiEFZVbM=;
+        s=default; t=1539272874;
+        bh=zQccNuwkOhlYa9aUO9Xt/S+mHMxSFB0ilpEbw7NpMx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U8El3pT+Pet6Uujkv01bdMWpMRcJ7sfFqnCfwBf+a3ULvywx4oAxHYzR0pUv3myPo
-         5Ba0pwCgan+j6HBg3NNdFKCoVERRt1rxKINmq8tEPV5DoyBpWtqqH2pEUFdI5I9upH
-         JZ4I5O/l6OGci6o+GRYCHwRQyKCbezaJQBI4Fry0=
+        b=2u8pQW99lifYyglCK5UmJa1xP7e1Sb8LFdxGZyPRABfXAHu8kyBTXAbySArfBIpoM
+         Fx9CCL/bf28VMhdpFK+ryJxRu9TWeliJ3HlCaIREm1SEaWPQxp+IwARi7TTyt8juBg
+         KbpwClDbaSEVWV/Atmf4RbAc5SbLh00j2uGd2HoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.18 23/44] mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
-Date:   Thu, 11 Oct 2018 17:40:01 +0200
-Message-Id: <20181011152453.462148976@linuxfoundation.org>
+        stable@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 24/44] PM / core: Clear the direct_complete flag on errors
+Date:   Thu, 11 Oct 2018 17:40:02 +0200
+Message-Id: <20181011152453.500486180@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -62,34 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 211710ca74adf790b46ab3867fcce8047b573cd1 upstream.
+commit 69e445ab8b66a9f30519842ef18be555d3ee9b51 upstream.
 
-key->sta is only valid after ieee80211_key_link, which is called later
-in this function. Because of that, the IEEE80211_KEY_FLAG_RX_MGMT is
-never set when management frame protection is enabled.
+If __device_suspend() runs asynchronously (in which case the device
+passed to it is in dpm_suspended_list at that point) and it returns
+early on an error or pending wakeup, and the power.direct_complete
+flag has been set for the device already, the subsequent
+device_resume() will be confused by that and it will call
+pm_runtime_enable() incorrectly, as runtime PM has not been
+disabled for the device by __device_suspend().
 
-Fixes: e548c49e6dc6b ("mac80211: add key flag for management keys")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+To avoid that, clear power.direct_complete if __device_suspend()
+is not going to disable runtime PM for the device before returning.
+
+Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
+Reported-by: Al Cooper <alcooperx@gmail.com>
+Tested-by: Al Cooper <alcooperx@gmail.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/power/main.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -427,7 +427,7 @@ static int ieee80211_add_key(struct wiph
- 	case NL80211_IFTYPE_AP:
- 	case NL80211_IFTYPE_AP_VLAN:
- 		/* Keys without a station are used for TX only */
--		if (key->sta && test_sta_flag(key->sta, WLAN_STA_MFP))
-+		if (sta && test_sta_flag(sta, WLAN_STA_MFP))
- 			key->conf.flags |= IEEE80211_KEY_FLAG_RX_MGMT;
- 		break;
- 	case NL80211_IFTYPE_ADHOC:
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1713,8 +1713,10 @@ static int __device_suspend(struct devic
+ 
+ 	dpm_wait_for_subordinate(dev, async);
+ 
+-	if (async_error)
++	if (async_error) {
++		dev->power.direct_complete = false;
+ 		goto Complete;
++	}
+ 
+ 	/*
+ 	 * If a device configured to wake up the system from sleep states
+@@ -1726,6 +1728,7 @@ static int __device_suspend(struct devic
+ 		pm_wakeup_event(dev, 0);
+ 
+ 	if (pm_wakeup_pending()) {
++		dev->power.direct_complete = false;
+ 		async_error = -EBUSY;
+ 		goto Complete;
+ 	}
 
 
