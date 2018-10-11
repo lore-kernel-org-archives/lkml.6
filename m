@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2028C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB8DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D7B2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 328CE213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2fW4laK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D7B2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVfxFD9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328CE213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731499AbeJKXNw (ORCPT
+        id S1731508AbeJKXNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46674 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:51 -0400
+        id S1726700AbeJKXNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9582B21476;
-        Thu, 11 Oct 2018 15:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A564213A2;
+        Thu, 11 Oct 2018 15:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272766;
-        bh=pFh0cmYqQtvHgO6cy/AB0/Y0F6Ks8uWZYGbTZN20ieA=;
+        s=default; t=1539272768;
+        bh=CR9Qdvu+8w7qU5OyI+86oAIwTPyKI0HKEFAg3FXJSW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W2fW4laKYBO9aLOMtTRCTLbu1T5DSxMlsxo5iBeRQMpGAzmgOgN3k5rndG9HtWq8K
-         hsq5yLS20PmE0chjFiPxWt0ttI8WjNdD2/5JK/jh3kMbh67YKtkuKuRFhHCpKcvGBe
-         UTZZ9MYoxmY4169M8ogjlapp+9MBm5cOVB2b5r/k=
+        b=eVfxFD9ScvMxUnkCRfHb1Sz5GyxcBYphoGCk1nU9HNheZ/9aLOJt05qszWrrq/++l
+         BGJKSeAqjrS2mnwSzJ4WthszcEwJS6fagx/2V1L1Ptfp3KsJcjIcTnSj2Sby1cQnAF
+         Wie+Mab6YmoKbpyaePP4U51dsQ6YYKfawzd8nNxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>,
+        stable@vger.kernel.org, Yu Wang <yyuwang@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 30/45] ath10k: fix use-after-free in ath10k_wmi_cmd_send_nowait
-Date:   Thu, 11 Oct 2018 17:39:57 +0200
-Message-Id: <20181011152510.203844200@linuxfoundation.org>
+Subject: [PATCH 4.14 31/45] ath10k: fix kernel panic issue during pci probe
+Date:   Thu, 11 Oct 2018 17:39:58 +0200
+Message-Id: <20181011152510.250785534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -64,82 +63,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Carl Huang <cjhuang@codeaurora.org>
+From: Yu Wang <yyuwang@codeaurora.org>
 
-commit 9ef0f58ed7b4a55da4a64641d538e0d9e46579ac upstream.
+commit 50e79e25250bf928369996277e85b00536b380c7 upstream.
 
-The skb may be freed in tx completion context before
-trace_ath10k_wmi_cmd is called. This can be easily captured when
-KASAN(Kernel Address Sanitizer) is enabled. The fix is to move
-trace_ath10k_wmi_cmd before the send operation. As the ret has no
-meaning in trace_ath10k_wmi_cmd then, so remove this parameter too.
+If device gone during chip reset, ar->normal_mode_fw.board is not
+initialized, but ath10k_debug_print_hwfw_info() will try to access its
+member, which will cause 'kernel NULL pointer' issue. This was found
+using a faulty device (pci link went down sometimes) in a random
+insmod/rmmod/other-op test.
+To fix it, check ar->normal_mode_fw.board before accessing the member.
 
-Signed-off-by: Carl Huang <cjhuang@codeaurora.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+pci 0000:02:00.0: BAR 0: assigned [mem 0xf7400000-0xf75fffff 64bit]
+ath10k_pci 0000:02:00.0: enabling device (0000 -> 0002)
+ath10k_pci 0000:02:00.0: pci irq msi oper_irq_mode 2 irq_mode 0 reset_mode 0
+ath10k_pci 0000:02:00.0: failed to read device register, device is gone
+ath10k_pci 0000:02:00.0: failed to wait for target init: -5
+ath10k_pci 0000:02:00.0: failed to warm reset: -5
+ath10k_pci 0000:02:00.0: firmware crashed during chip reset
+ath10k_pci 0000:02:00.0: firmware crashed! (uuid 5d018951-b8e1-404a-8fde-923078b4423a)
+ath10k_pci 0000:02:00.0: (null) target 0x00000000 chip_id 0x00340aff sub 0000:0000
+ath10k_pci 0000:02:00.0: kconfig debug 1 debugfs 1 tracing 1 dfs 1 testmode 1
+ath10k_pci 0000:02:00.0: firmware ver  api 0 features  crc32 00000000
+...
+BUG: unable to handle kernel NULL pointer dereference at 00000004
+...
+Call Trace:
+ [<fb4e7882>] ath10k_print_driver_info+0x12/0x20 [ath10k_core]
+ [<fb62b7dd>] ath10k_pci_fw_crashed_dump+0x6d/0x4d0 [ath10k_pci]
+ [<fb629f07>] ? ath10k_pci_sleep.part.19+0x57/0xc0 [ath10k_pci]
+ [<fb62c8ee>] ath10k_pci_hif_power_up+0x14e/0x1b0 [ath10k_pci]
+ [<c10477fb>] ? do_page_fault+0xb/0x10
+ [<fb4eb934>] ath10k_core_register_work+0x24/0x840 [ath10k_core]
+ [<c18a00d8>] ? netlbl_unlhsh_remove+0x178/0x410
+ [<c10477f0>] ? __do_page_fault+0x480/0x480
+ [<c1068e44>] process_one_work+0x114/0x3e0
+ [<c1069d07>] worker_thread+0x37/0x4a0
+ [<c106e294>] kthread+0xa4/0xc0
+ [<c1069cd0>] ? create_worker+0x180/0x180
+ [<c106e1f0>] ? kthread_park+0x50/0x50
+ [<c18ab4f7>] ret_from_fork+0x1b/0x28
+ Code: 78 80 b8 50 09 00 00 00 75 5d 8d 75 94 c7 44 24 08 aa d7 52 fb c7 44 24 04 64 00 00 00
+ 89 34 24 e8 82 52 e2 c5 8b 83 dc 08 00 00 <8b> 50 04 8b 08 31 c0 e8 20 57 e3 c5 89 44 24 10 8b 83 58 09 00
+ EIP: [<fb4e7754>]-
+ ath10k_debug_print_board_info+0x34/0xb0 [ath10k_core]
+ SS:ESP 0068:f4921d90
+ CR2: 0000000000000004
+
+Signed-off-by: Yu Wang <yyuwang@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[AmitP: Minor rebasing for 4.14.y and 4.9.y]
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/trace.h |   12 ++++--------
- drivers/net/wireless/ath/ath10k/wmi.c   |    2 +-
- 2 files changed, 5 insertions(+), 9 deletions(-)
+ drivers/net/wireless/ath/ath10k/debug.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/trace.h
-+++ b/drivers/net/wireless/ath/ath10k/trace.h
-@@ -152,10 +152,9 @@ TRACE_EVENT(ath10k_log_dbg_dump,
- );
+--- a/drivers/net/wireless/ath/ath10k/debug.c
++++ b/drivers/net/wireless/ath/ath10k/debug.c
+@@ -1,6 +1,7 @@
+ /*
+  * Copyright (c) 2005-2011 Atheros Communications Inc.
+  * Copyright (c) 2011-2013 Qualcomm Atheros, Inc.
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+  *
+  * Permission to use, copy, modify, and/or distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+@@ -163,6 +164,8 @@ void ath10k_debug_print_hwfw_info(struct
+ void ath10k_debug_print_board_info(struct ath10k *ar)
+ {
+ 	char boardinfo[100];
++	const struct firmware *board;
++	u32 crc;
  
- TRACE_EVENT(ath10k_wmi_cmd,
--	TP_PROTO(struct ath10k *ar, int id, const void *buf, size_t buf_len,
--		 int ret),
-+	TP_PROTO(struct ath10k *ar, int id, const void *buf, size_t buf_len),
+ 	if (ar->id.bmi_ids_valid)
+ 		scnprintf(boardinfo, sizeof(boardinfo), "%d:%d",
+@@ -170,11 +173,16 @@ void ath10k_debug_print_board_info(struc
+ 	else
+ 		scnprintf(boardinfo, sizeof(boardinfo), "N/A");
  
--	TP_ARGS(ar, id, buf, buf_len, ret),
-+	TP_ARGS(ar, id, buf, buf_len),
++	board = ar->normal_mode_fw.board;
++	if (!IS_ERR_OR_NULL(board))
++		crc = crc32_le(0, board->data, board->size);
++	else
++		crc = 0;
++
+ 	ath10k_info(ar, "board_file api %d bmi_id %s crc32 %08x",
+ 		    ar->bd_api,
+ 		    boardinfo,
+-		    crc32_le(0, ar->normal_mode_fw.board->data,
+-			     ar->normal_mode_fw.board->size));
++		    crc);
+ }
  
- 	TP_STRUCT__entry(
- 		__string(device, dev_name(ar->dev))
-@@ -163,7 +162,6 @@ TRACE_EVENT(ath10k_wmi_cmd,
- 		__field(unsigned int, id)
- 		__field(size_t, buf_len)
- 		__dynamic_array(u8, buf, buf_len)
--		__field(int, ret)
- 	),
- 
- 	TP_fast_assign(
-@@ -171,17 +169,15 @@ TRACE_EVENT(ath10k_wmi_cmd,
- 		__assign_str(driver, dev_driver_string(ar->dev));
- 		__entry->id = id;
- 		__entry->buf_len = buf_len;
--		__entry->ret = ret;
- 		memcpy(__get_dynamic_array(buf), buf, buf_len);
- 	),
- 
- 	TP_printk(
--		"%s %s id %d len %zu ret %d",
-+		"%s %s id %d len %zu",
- 		__get_str(driver),
- 		__get_str(device),
- 		__entry->id,
--		__entry->buf_len,
--		__entry->ret
-+		__entry->buf_len
- 	)
- );
- 
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -1741,8 +1741,8 @@ int ath10k_wmi_cmd_send_nowait(struct at
- 	cmd_hdr->cmd_id = __cpu_to_le32(cmd);
- 
- 	memset(skb_cb, 0, sizeof(*skb_cb));
-+	trace_ath10k_wmi_cmd(ar, cmd_id, skb->data, skb->len);
- 	ret = ath10k_htc_send(&ar->htc, ar->wmi.eid, skb);
--	trace_ath10k_wmi_cmd(ar, cmd_id, skb->data, skb->len, ret);
- 
- 	if (ret)
- 		goto err_pull;
+ void ath10k_debug_print_boot_info(struct ath10k *ar)
 
 
