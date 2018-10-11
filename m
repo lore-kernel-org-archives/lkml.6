@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F10C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47867C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376C22098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2712098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="msEvs8jV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376C22098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4ZZY9F8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2712098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbeJKXGz (ORCPT
+        id S1729858AbeJKXG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36244 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:54 -0400
+        id S1726721AbeJKXG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60F9F20652;
-        Thu, 11 Oct 2018 15:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2964A20652;
+        Thu, 11 Oct 2018 15:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272350;
-        bh=T0knLj2EM7Q6zUYGgGeBUbotFAGdLjauRnNqEfD20pc=;
+        s=default; t=1539272353;
+        bh=buov8hINVsRcmQC7JWTzzoEhIDWt0pu6tG3BQFgeKlg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=msEvs8jVJlcFjqStTBLz6uxWGZvJ4ymRr5dkRE/6cGY0NR+mBkGoNTr+qlTffzbGW
-         Kbm7Di+dYhzgUps7c85mLziKZpBy/7g5BoSwkKWz3YqrbsdKT1jRFvr3ZBYHLdeS2V
-         SKlnpx+k5WvmzNGVYYbmMzSVoMPCXBWuDlms++nU=
+        b=j4ZZY9F8TeLqAbDEUdYVACe1izJmwgo7N1/V77MfkxK6Cz8aZyrahkyjCMvPgSJ9D
+         UkQz0ga5qorrZaw3WbZrOzKBm5R1kfymgBSTqVA2eTQ4hPJTQ9O790tvjLu7hvNj2F
+         NC5nztpKoehwjmTHFcBlkjISsA4ql+AiQHBvphjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 079/120] mac80211: Fix station bandwidth setting after channel switch
-Date:   Thu, 11 Oct 2018 17:34:20 +0200
-Message-Id: <20181011152553.072177627@linuxfoundation.org>
+Subject: [PATCH 3.18 080/120] mac80211: shorten the IBSS debug messages
+Date:   Thu, 11 Oct 2018 17:34:21 +0200
+Message-Id: <20181011152553.107013064@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -64,104 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
+[ Upstream commit c6e57b3896fc76299913b8cfd82d853bee8a2c84 ]
 
-When performing a channel switch flow for a managed interface, the
-flow did not update the bandwidth of the AP station and the rate
-scale algorithm. In case of a channel width downgrade, this would
-result with the rate scale algorithm using a bandwidth that does not
-match the interface channel configuration.
+When tracing is enabled, all the debug messages are recorded and must
+not exceed MAX_MSG_LEN (100) columns. Longer debug messages grant the
+user with:
 
-Fix this by updating the AP station bandwidth and rate scaling algorithm
-before the actual channel change in case of a bandwidth downgrade, or
-after the actual channel change in case of a bandwidth upgrade.
+WARNING: CPU: 3 PID: 32642 at /tmp/wifi-core-20180806094828/src/iwlwifi-stack-dev/net/mac80211/./trace_msg.h:32 trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+Workqueue: phy1 ieee80211_iface_work [mac80211]
+ RIP: 0010:trace_event_raw_event_mac80211_msg_event+0xab/0xc0 [mac80211]
+ Call Trace:
+  __sdata_dbg+0xbd/0x120 [mac80211]
+  ieee80211_ibss_rx_queued_mgmt+0x15f/0x510 [mac80211]
+  ieee80211_iface_work+0x21d/0x320 [mac80211]
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mlme.c |   53 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ net/mac80211/ibss.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -970,6 +970,10 @@ static void ieee80211_chswitch_work(stru
- 	 */
+--- a/net/mac80211/ibss.c
++++ b/net/mac80211/ibss.c
+@@ -944,8 +944,8 @@ static void ieee80211_rx_mgmt_deauth_ibs
+ 	if (len < IEEE80211_DEAUTH_FRAME_LEN)
+ 		return;
  
- 	if (sdata->reserved_chanctx) {
-+		struct ieee80211_supported_band *sband = NULL;
-+		struct sta_info *mgd_sta = NULL;
-+		enum ieee80211_sta_rx_bandwidth bw = IEEE80211_STA_RX_BW_20;
-+
- 		/*
- 		 * with multi-vif csa driver may call ieee80211_csa_finish()
- 		 * many times while waiting for other interfaces to use their
-@@ -978,6 +982,48 @@ static void ieee80211_chswitch_work(stru
- 		if (sdata->reserved_ready)
- 			goto out;
+-	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM BSSID=%pM (reason: %d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, reason);
++	ibss_dbg(sdata, "RX DeAuth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (reason: %d)\n", mgmt->bssid, reason);
+ 	sta_info_destroy_addr(sdata, mgmt->sa);
+ }
  
-+		if (sdata->vif.bss_conf.chandef.width !=
-+		    sdata->csa_chandef.width) {
-+			/*
-+			 * For managed interface, we need to also update the AP
-+			 * station bandwidth and align the rate scale algorithm
-+			 * on the bandwidth change. Here we only consider the
-+			 * bandwidth of the new channel definition (as channel
-+			 * switch flow does not have the full HT/VHT/HE
-+			 * information), assuming that if additional changes are
-+			 * required they would be done as part of the processing
-+			 * of the next beacon from the AP.
-+			 */
-+			switch (sdata->csa_chandef.width) {
-+			case NL80211_CHAN_WIDTH_20_NOHT:
-+			case NL80211_CHAN_WIDTH_20:
-+			default:
-+				bw = IEEE80211_STA_RX_BW_20;
-+				break;
-+			case NL80211_CHAN_WIDTH_40:
-+				bw = IEEE80211_STA_RX_BW_40;
-+				break;
-+			case NL80211_CHAN_WIDTH_80:
-+				bw = IEEE80211_STA_RX_BW_80;
-+				break;
-+			case NL80211_CHAN_WIDTH_80P80:
-+			case NL80211_CHAN_WIDTH_160:
-+				bw = IEEE80211_STA_RX_BW_160;
-+				break;
-+			}
-+
-+			mgd_sta = sta_info_get(sdata, ifmgd->bssid);
-+			sband =
-+				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
-+		}
-+
-+		if (sdata->vif.bss_conf.chandef.width >
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth = bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		ret = ieee80211_vif_use_reserved_context(sdata);
- 		if (ret) {
- 			sdata_info(sdata,
-@@ -988,6 +1034,13 @@ static void ieee80211_chswitch_work(stru
- 			goto out;
- 		}
+@@ -963,9 +963,9 @@ static void ieee80211_rx_mgmt_auth_ibss(
+ 	auth_alg = le16_to_cpu(mgmt->u.auth.auth_alg);
+ 	auth_transaction = le16_to_cpu(mgmt->u.auth.auth_transaction);
  
-+		if (sdata->vif.bss_conf.chandef.width <
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth = bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		goto out;
+-	ibss_dbg(sdata,
+-		 "RX Auth SA=%pM DA=%pM BSSID=%pM (auth_transaction=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, auth_transaction);
++	ibss_dbg(sdata, "RX Auth SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (auth_transaction=%d)\n",
++		 mgmt->bssid, auth_transaction);
+ 
+ 	if (auth_alg != WLAN_AUTH_OPEN || auth_transaction != 1)
+ 		return;
+@@ -1130,10 +1130,10 @@ static void ieee80211_rx_bss_info(struct
+ 		rx_timestamp = drv_get_tsf(local, sdata);
  	}
  
+-	ibss_dbg(sdata,
+-		 "RX beacon SA=%pM BSSID=%pM TSF=0x%llx BCN=0x%llx diff=%lld @%lu\n",
++	ibss_dbg(sdata, "RX beacon SA=%pM BSSID=%pM TSF=0x%llx\n",
+ 		 mgmt->sa, mgmt->bssid,
+-		 (unsigned long long)rx_timestamp,
++		 (unsigned long long)rx_timestamp);
++	ibss_dbg(sdata, "\tBCN=0x%llx diff=%lld @%lu\n",
+ 		 (unsigned long long)beacon_timestamp,
+ 		 (unsigned long long)(rx_timestamp - beacon_timestamp),
+ 		 jiffies);
+@@ -1414,9 +1414,9 @@ static void ieee80211_rx_mgmt_probe_req(
+ 
+ 	tx_last_beacon = drv_tx_last_beacon(local);
+ 
+-	ibss_dbg(sdata,
+-		 "RX ProbeReq SA=%pM DA=%pM BSSID=%pM (tx_last_beacon=%d)\n",
+-		 mgmt->sa, mgmt->da, mgmt->bssid, tx_last_beacon);
++	ibss_dbg(sdata, "RX ProbeReq SA=%pM DA=%pM\n", mgmt->sa, mgmt->da);
++	ibss_dbg(sdata, "\tBSSID=%pM (tx_last_beacon=%d)\n",
++		 mgmt->bssid, tx_last_beacon);
+ 
+ 	if (!tx_last_beacon && is_multicast_ether_addr(mgmt->da))
+ 		return;
 
 
