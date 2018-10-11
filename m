@@ -3,74 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D38C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5408C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3F72077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3F72077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 88C912077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 12:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C912077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbeJKTmH convert rfc822-to-8bit (ORCPT
+        id S1728423AbeJKTo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:42:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56656 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbeJKTmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:42:07 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C061D30DF71F;
-        Thu, 11 Oct 2018 12:15:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B0A88453C;
-        Thu, 11 Oct 2018 12:15:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <16207.1539249451@warthog.procyon.org.uk>
-References: <16207.1539249451@warthog.procyon.org.uk> <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
+        Thu, 11 Oct 2018 15:44:58 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39391 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726212AbeJKTo6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:44:58 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9BCFrEq031455;
+        Thu, 11 Oct 2018 14:17:34 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2n0muy6s56-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 11 Oct 2018 14:17:34 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B7CB538;
+        Thu, 11 Oct 2018 12:17:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 880C850CC;
+        Thu, 11 Oct 2018 12:17:32 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.50) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 11 Oct
+ 2018 14:17:31 +0200
+Subject: Re: [PATCH V6 00/23] mmc: mmci: add sdmmc variant for stm32
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1539000535-13261-1-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFp0oHHS=bkXj_AbiLmbNxW07pFnk-4m9kwQtYkh_ogKgw@mail.gmail.com>
+ <cb919bf8-caa2-b2fe-fee4-ae2f0f4c04b5@st.com>
+ <CAPDyKFp4DEtavAqDg-ymaCcus+Hddv0OrgfS54HsTX+aWdzN+w@mail.gmail.com>
+ <CAPDyKFqTNUihEk-i+t4OU1Eq5iBS57XZ4d8P2QbecgW_uT6NnA@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <00baaa9b-f630-1e59-0074-7d6fd35eff06@st.com>
+Date:   Thu, 11 Oct 2018 14:17:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6532.1539260096.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 11 Oct 2018 13:14:56 +0100
-Message-ID: <6533.1539260096@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 11 Oct 2018 12:15:09 +0000 (UTC)
+In-Reply-To: <CAPDyKFqTNUihEk-i+t4OU1Eq5iBS57XZ4d8P2QbecgW_uT6NnA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+hi Ulf
 
-> The reason that you can do this with open_tree()/move_mount() is that it
-> allows you to create a mount tree (OPEN_TREE_CLONE) that has no namespace
-> assignment, pass it through the namespace switch and then attach it inside the
-> child namespace.  The cross-namespace checks in do_move_mount() are bypassed
-> because the root of the newly-cloned mount tree doesn't have one.
+On 10/11/2018 12:33 PM, Ulf Hansson wrote:
+> On 9 October 2018 at 13:18, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 9 October 2018 at 09:54, Ludovic BARRE <ludovic.barre@st.com> wrote:
+>>> hi Ulf
+>>>
+>>> On 10/09/2018 09:30 AM, Ulf Hansson wrote:
+>>>>
+>>>> Applied for next, thanks!
+>>>>
+>>>> FYI, I made little fixup of the help text in the Kconfig for the last
+>>>> patch.
+>>>
+>>>
+>>> Thanks for your review.
+>>> Did you had a feedback on Qcom platform tests?
+>>
+>> Nope. I am leaving the tests for Qcom platforms to be done by
+>> kernelci, let's see what the reports are.
+> 
+> FYI:
+> 
+> https://kernelci.org/boot/id/5bbdcd2b59b5147001b435a4/
+> 
+> Looks good!
 
-It's worse than that.  The apparently disconnected tree given you by
-open_tree(OPEN_TREE_CLONE) is still subject to modification by outside
-forces.  All it takes is one shared object within that tree.
+Thanks for the boot tests on qcom
 
-So I do wonder if it's possible to form a ring, even in an upstream kernel, by
-using the propagation mechanism to push through an nsfs mount into itself,
-possibly with a layer of indirection (ie. having two mutually-referential
-namespaces).
+BR
+Ludo
 
-David
+> 
+> Kind regards
+> Uffe
+> 
