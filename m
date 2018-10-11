@@ -2,177 +2,191 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C31DC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4606BC677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A92521470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:30:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyLDvQIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A92521470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EA2A82085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA2A82085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeJLA6q (ORCPT
+        id S1727953AbeJLBF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 20:58:46 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39053 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbeJLA6p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 20:58:45 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y144-v6so10247124wmd.4;
-        Thu, 11 Oct 2018 10:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:references:user-agent:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=jw5SJVgl/NVu04ZCTIosEqV9bKq4TEHenpiEG+fQ0d0=;
-        b=JyLDvQIRGvH9nkjhWon0CQuRZJuu6GtXEuKftGsl4hQIXW/q/Px5vYJCsw2VCbsppH
-         XgTUt5wG6toXL6WGy/H2gUjNLW8b3yAlRnOOkrbk64Jh4RpL5dfQ3bUu2yJruJKzYuNC
-         Mpcmy7Xobq6cpVMO1okfzwayVGkAJdyUyKkiFlKRlame3T0mRx0OTdK3YOOMlbjaKH9T
-         8ulYnaVb1J1l27bV9meVMvldAOpf5NMPmKrBtKNEjCvbH/S2Hkm7MuZBuh05wfVVBFWK
-         +L/nK8/XGCVkDE+jQcTlYFG671Ik9BZ56xK06pY8mLTsEdmmotEuD37ReyZKjUrACPLT
-         Fndw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:user-agent:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=jw5SJVgl/NVu04ZCTIosEqV9bKq4TEHenpiEG+fQ0d0=;
-        b=blIL/I/8GU/yJKLJkcn1pVOXpuhn9FSWeoKb7mdbrq2wPxj/U+ZaetDburEjOTtJdr
-         amnp+ZzsRfAz+TCABHH9HwZ1LDZt4t2WObh3IQqWtGFcsQ7A+UM/+t5CkX72LxWSwk6v
-         x8UeRnOe9RVpyqFRBbCEClj3stqVDV3x2ZMAbORVfUHcFoS5DHCLyK2WXx9d/9HpGPIf
-         QZKNzy51pWo/MtqUyOXhhAOPynDGHI19ArNFnU7+Dwas1Yg39LUR1YEtiuTQIdghhzFa
-         qfhOWO0QGamHJxSzJ0E81q/t+3jPTncZh+HUXJSX6N4p7+HcQTTd826MD/6wfdnCYwqC
-         4hbA==
-X-Gm-Message-State: ABuFfojLp+cpwoBu4/Ng5yx78IHam89fbsP1cMjL5Q2mttdVdfUe9jvC
-        FdRDUvJE5tFToJq2FSw1mTQ=
-X-Google-Smtp-Source: ACcGV62/woU1t42YEzzQ0gX/OL015wWDpSCV9GZCouwtHWQBHmO263fP5yf0UYOe2+w9v24slMw4QA==
-X-Received: by 2002:a1c:4d0b:: with SMTP id o11-v6mr2573843wmh.94.1539279031744;
-        Thu, 11 Oct 2018 10:30:31 -0700 (PDT)
-Received: from ptitpuce.local (val06-1-88-182-161-34.fbx.proxad.net. [88.182.161.34])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm14216876wrv.46.2018.10.11.10.30.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 10:30:30 -0700 (PDT)
-From:   Christophe de Dinechin <christophe.de.dinechin@gmail.com>
-X-Google-Original-From: Christophe de Dinechin <christophe@dinechin.org>
-References: <20181004140547.13014-1-bigeasy@linutronix.de> <20181004140547.13014-4-bigeasy@linutronix.de>
-User-agent: mu4e 1.0; emacs 25.2.1
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 03/11] x86/fpu: make __raw_xsave_addr() use feature number instead of mask
-In-reply-to: <20181004140547.13014-4-bigeasy@linutronix.de>
-Date:   Thu, 11 Oct 2018 19:30:07 +0200
-Message-ID: <m1murk75nk.fsf@dinechin.org>
+        Thu, 11 Oct 2018 21:05:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41582 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727081AbeJLBF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 21:05:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44D3AED1;
+        Thu, 11 Oct 2018 10:37:42 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 314F63F5D3;
+        Thu, 11 Oct 2018 10:37:39 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 18:37:33 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
+        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181011173733.GA26447@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181011112013.GC32752@e107155-lin>
+ <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin>
+ <20181011165822.GB2371@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011165822.GB2371@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 11, 2018 at 10:58:22AM -0600, Lina Iyer wrote:
+> On Thu, Oct 11 2018 at 10:19 -0600, Sudeep Holla wrote:
+> > On Thu, Oct 11, 2018 at 10:00:53AM -0600, Lina Iyer wrote:
+> > > Sudeep,
+> > >
+> > > The CPU PD does not power off the domain from Linux. That is done from
+> > > PSCI firmware (ATF). These patches are doing the part that Linux has do,
+> > > when powering off the CPUs, to achieve a low standby power consumption.
+> > >
+> >
+> > I don't understand why Linux *has do* this part as PSCI manages CPU PM.
+> >
+> If we don't do this, then we leave a lot of power saving on the table,
+> when the CPU powered off. Why should the DDR and the shared busses and
+> clocks be idling at high power, when not needed ? PSCI has no clue to
+> what resource requests was made my Linux and its Linux's responsibility
+> to relinquish them when not needed. Therefore has to done from Linux.
+>
 
-Sebastian Andrzej Siewior writes:
+Is DDR managed by Linux ? I assumed it was handled by higher exception
+levels. Can you give examples of resources used by CPU in this context.
+When CPU can be powered on or woken up without Linux intervention, the
+same holds true for CPU power down or sleep states. I still see no reason
+other than the firmware has no support to talk to RPMH.
 
-> Most users of __raw_xsave_addr() use a feature number, shift it to a
-> mask and then __raw_xsave_addr() shifts it back to the feature number.
+> > > On Thu, Oct 11 2018 at 05:20 -0600, Sudeep Holla wrote:
+> > > > On Thu, Oct 11, 2018 at 02:50:54AM +0530, Raju P.L.S.S.S.N wrote:
+> > > > > Use cpu hotplug callback mechanism to attach/dettach the cpu in
+> > > > > the cpu power domain. During cpu hotplug callback registration,
+> > > > > the starting callback is invoked on all online cpus. So there is
+> > > > > no need to attach from device probe.
+> > > > >
+> > > >
+> > > > To be more explicit, NACK to this series(patches 4-8 to be more specific)
+> > > > unless you provide details on:
+> > > >
+> > > > 1. Why this is not in PSCI implementation ?
+> > > This is a linux activity and there is no provision in ATF or QC firmware
+> > > to do this activity. The task of physically powering down the domain,
+> > > still is a firmware decision and is done through PSCI platform
+> > > coordinated in the firmware.
+> > >
+> >
+> > Yes that was my understanding. So the addon question here is: if PSCI
+> > decides to abort entering the idle state, the Linux doing the RPMH
+> > request is of no use which can be prevented if done once PSCI f/w is
+> > about to enter the state. I know it may be corner case, but we have
+> > whole OSI mode based on such corner cases.
+> >
+> Yes, it is a possibility and worth the chance taken. On an SoC, there
+> are other processors that may vote against powering down the shared
+> resources even when Linux has shutdown and it is a very likely
+> possibility. Ex., when you are on a phone call, the CPU subsystem could
+> be powered off and the flush of RPMH requests is a 'waste', but it is a
+> chance we need to take. The alternate is a synchronization nightmare.
 >
-> Make __raw_xsave_addr() use the feature number as argument.
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/kernel/fpu/xstate.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 87a57b7642d36..38d0b5ea40425 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -811,10 +811,8 @@ void fpu__resume_cpu(void)
->   *
->   * Note: does not work for compacted buffers.
->   */
-> -void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-> +void *__raw_xsave_addr(struct xregs_state *xsave, int feature_nr)
 
-It might be clearer to offer both interfaces, since both are used?
+I am not against voting here. I am saying need not be done in Linux. The
+last piece of software running before powering down is EL3 and it should
+so the voting. I can understand for devices controlled in/by Linux. EL3
+firmware controls the CPU PM, so that needs to vote and by that it's
+assumed nothing is running in lower EL in that path.
 
->  {
-> -	int feature_nr = fls64(xstate_feature_mask) - 1;
-> -
->  	if (!xfeature_enabled(feature_nr)) {
->  		WARN_ON_FPU(1);
->  		return NULL;
-> @@ -842,6 +840,7 @@ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
->   */
->  void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
->  {
-> +	int feature_nr;
->  	/*
->  	 * Do we even *have* xsave state?
->  	 */
-> @@ -869,7 +868,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
->  	if (!(xsave->header.xfeatures & xstate_feature))
->  		return NULL;
+> Even with all the unnecessary flushing it is totally worth it. OSI helps
+> alleviates this a bit because it embodies the same CPU PD concepts at
+> its core. Imagine if you didn't have CPU PM domain, the every CPU would
+> be flushing RPMH request, whenever they power down, because you never know
+> when all CPUs are going to be powered down at the same time. That is the
+> biggest benefit of OSI over PC mode in PSCI.
 >
-> -	return __raw_xsave_addr(xsave, xstate_feature);
-> +	feature_nr = fls64(xstate_feature) - 1;
-> +	return __raw_xsave_addr(xsave, feature_nr);
 
-and then move that to a wrapper function that takes a mask?
+I am not saying every CPU needs to do that, last CPU can do that in PSCI.
 
->  }
->  EXPORT_SYMBOL_GPL(get_xsave_addr);
+> > > > 2. If PSCI is used on this platform, how does it work/co-exist ?
+> > > Yes PSCI is used in this platform. ATF is the firmware and that supports
+> > > only Platform Coordinated. This SoC uses cpuidle and the regular PSCI
+> > > methods to power off the domain from the firmware. However, Linux has
+> > > responsibilities that it needs to complete before the power down can be
+> > > beneficial.
+> > >
+> >
+> > I understand the need to inform RPMH. So I take only reason to do that
+> > in Linux is TF-A doesn't have any support to talk to RPMH ?
+> >
+> It may or may not, depending on which firmware you talk to. But consider
+> this, if the firmware votes for lowering resource state, it is doing it
+> for its exception level and not for Linux. So Linux has to take care of
+> its own.
 >
-> @@ -1018,7 +1018,7 @@ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int of
->  		 * Copy only in-use xstates:
->  		 */
->  		if ((header.xfeatures >> i) & 1) {
-> -			void *src = __raw_xsave_addr(xsave, 1 << i);
-> +			void *src = __raw_xsave_addr(xsave, i);
->
->  			offset = xstate_offsets[i];
->  			size = xstate_sizes[i];
-> @@ -1104,7 +1104,7 @@ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned i
->  		 * Copy only in-use xstates:
->  		 */
->  		if ((header.xfeatures >> i) & 1) {
-> -			void *src = __raw_xsave_addr(xsave, 1 << i);
-> +			void *src = __raw_xsave_addr(xsave, i);
->
->  			offset = xstate_offsets[i];
->  			size = xstate_sizes[i];
-> @@ -1161,7 +1161,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
->  		u64 mask = ((u64)1 << i);
->
->  		if (hdr.xfeatures & mask) {
-> -			void *dst = __raw_xsave_addr(xsave, 1 << i);
-> +			void *dst = __raw_xsave_addr(xsave, i);
->
->  			offset = xstate_offsets[i];
->  			size = xstate_sizes[i];
-> @@ -1215,7 +1215,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
->  		u64 mask = ((u64)1 << i);
->
->  		if (hdr.xfeatures & mask) {
-> -			void *dst = __raw_xsave_addr(xsave, 1 << i);
-> +			void *dst = __raw_xsave_addr(xsave, i);
->
->  			offset = xstate_offsets[i];
->  			size = xstate_sizes[i];
 
+Oh interesting, wasn't aware RPMH really needs to care about exception
+level. For me, we know CPU is powering down, so it needs to release all
+the resource. RPMH needs to know that and any exception level can let
+RPMH know that. Sorry may be I don't have enough knowledge on SDM SoC.
+
+But IMO Linux shouldn't contribute to any votes around CPU PM as EL3/PSCI
+is the one managing it and not Linux. If CPU can be powered up without
+Linux voting for anything, why is it required for going down. I simply
+fail to understand there and get completely lost :(
+
+> > Now that we have some platform with PC, it's good to compare PC vs OSI
+> > which we always lacked. Thanks for letting us know this platform is PC
+> > based.
+> >
+> Can I take that you are okay with the OSI idea and this one, then :)
+> Yes, we are close to having a platform have both, possibly.
+>
+
+Comparison numbers please :)
+
+> > > Isn't sharing ideas a key aspect of working with the community? This
+> > > series just goes to say that the idea of CPU PM domains are useful,
+> > > whether PSCI uses it or not. If you still need clarifications, Raju and
+> > > I will be happy to set up a meeting and go over the idea.
+> > >
+> > Ah OK, so this platform will have flattened cpu-idle-states list ? That's
+> > absolutely fine. But what if we want to represent hierarchical PSCI based
+> > PM domains and this power domain for some platform. That's the main
+> > concern I raised. For me, the power-domains in DT introduced in this
+> > is just to deal with RPMH though the actual work is done by PSCI.
+> > That just doesn't look that good for me.
+> >
+> What problem do you see with that? It would help if you could clarify
+> your concern.
+>
+Having to adapt DT to the firmware though the feature is fully discoverable
+is not at all good IMO. So the DT in this series *should work* with OSI
+mode if the firmware has the support for it, it's as simple as that.
 
 --
-Cheers,
-Christophe de Dinechin (IRC c3d)
+Regards,
+Sudeep
