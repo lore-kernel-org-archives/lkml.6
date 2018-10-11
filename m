@@ -2,166 +2,97 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4FBC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EC9C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7347520658
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7347520658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 228C020841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:30:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMCTaqFp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228C020841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeJLEw3 (ORCPT
+        id S1726376AbeJLE7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:52:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19164 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeJLEw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:52:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 14:23:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,370,1534834800"; 
-   d="scan'208";a="99509075"
-Received: from kcaccard-mobl3.jf.intel.com ([10.24.8.209])
-  by orsmga002.jf.intel.com with ESMTP; 11 Oct 2018 14:23:23 -0700
-Message-ID: <1539293003.3566.15.camel@linux.intel.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-From:   Kristen C Accardi <kristen@linux.intel.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 11 Oct 2018 14:23:23 -0700
-In-Reply-To: <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
-References: <20181011185458.10186-1-kristen@linux.intel.com>
-         <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com>
-         <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 12 Oct 2018 00:59:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35174 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbeJLE7R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 00:59:17 -0400
+Received: by mail-wm1-f66.google.com with SMTP id e187-v6so10964699wmf.0;
+        Thu, 11 Oct 2018 14:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TZ/XjSZEURH8lk59EVbHXcBZEWeH44yu85s6JWLw80Y=;
+        b=CMCTaqFpJB9wmyrr0pyCsDUgGu8xhtOaqnM4umPioVa/7Q6aos8V4YK/QHuGmG1fPZ
+         14Yjz70OWf+RrPG4I58jMweU+EpUsUP/kqEQNKE0GJXhBlaCBdmd9Lhhn3xbk33wNFOj
+         hsZU43I7c3nZ+vv2FLjMYIjHzs+LIanpoilAOKB6VJ9jtFd+/hwFhjDOTAOxZ6hP+6T+
+         BM9OBiVj/+mmV8hWTlu95660QlGroDJUygVlqccHWjvTQFB/GSyjl56RqrqQ4PdCp8sZ
+         PzGsczJ2m9xtaOrgmJGOYQqPPuQcs623W84iawH8cBqC+YQAHJaxQP84zN6IFUTJhEgv
+         P1Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TZ/XjSZEURH8lk59EVbHXcBZEWeH44yu85s6JWLw80Y=;
+        b=QoauXvp55VO91DGklYxlH1Nb771dkViQOEEMXH1eda448kF6OjZpjDCK3pcKUEchUN
+         hmb7fhiXSvRGw5S14gts5WclBjR1Bt4UUBHXTvstKhQicQShgFj1RkODFkj/J4Wzk5Yr
+         CVz14mxkyf191nanWZMioL7WeJxK7ulS8j+t4pwXrfRIArkAHrPMuq6D8QQnnUliPMhy
+         FH0y/r1+NtgV6Zr1+o3xalEzTERIlAPabHSgdNzoR7/sKMkqS6n7xnbvIPavfuWxb/ZF
+         TLBCQEQP9cJj914ptRHKzwFSNji4cGf1+f6CdcRkKTC7cYU1wkb0EkKMno8f3LNnj9qz
+         8FlQ==
+X-Gm-Message-State: ABuFfohb2o9EyYxhadY+4PiQPvsdAHKmTksnQ1onAo/vgfhsgbxHn/1V
+        PEWe4Jy0ewKStQfmI9qysg==
+X-Google-Smtp-Source: ACcGV61BoxDKS4bZQSVbYpcOQDhF/SzSQNKgSi4qtSjTCjjgckjnclFsKd5JmVPi1AM3wpHfuyONxQ==
+X-Received: by 2002:a1c:3795:: with SMTP id e143-v6mr3175212wma.9.1539293409303;
+        Thu, 11 Oct 2018 14:30:09 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm6957076wrp.3.2018.10.11.14.30.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 14:30:08 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 00:30:06 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        shuah@kernel.org
+Subject: Re: [PATCH] proc: fix proc-self-map-files selftest for arm
+Message-ID: <20181011213006.GA13485@avx2>
+References: <20181011184359.15627-1-rafael.tinoco@linaro.org>
+ <20181011205601.GA32757@avx2>
+ <20181011210256.GE2401@uranus.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181011210256.GE2401@uranus.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 13:55 -0700, Kees Cook wrote:
-> On Thu, Oct 11, 2018 at 1:48 PM, Andy Lutomirski <luto@kernel.org>
-> wrote:
-> > On Thu, Oct 11, 2018 at 11:55 AM Kristen Carlson Accardi
-> > <kristen@linux.intel.com> wrote:
-> > > 
-> > > This patch aims to make it harder to perform cache timing attacks
-> > > on data
-> > > left behind by system calls. If we have an error returned from a
-> > > syscall,
-> > > flush the L1 cache.
-> > > 
-> > > It's important to note that this patch is not addressing any
-> > > specific
-> > > exploit, nor is it intended to be a complete defense against
-> > > anything.
-> > > It is intended to be a low cost way of eliminating some of side
-> > > effects
-> > > of a failed system call.
-> > > 
-> > > A performance test using sysbench on one hyperthread and a script
-> > > which
-> > > attempts to repeatedly access files it does not have permission
-> > > to access
-> > > on the other hyperthread found no significant performance impact.
-> > > 
-> > > Suggested-by: Alan Cox <alan@linux.intel.com>
-> > > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> > > ---
-> > >  arch/x86/Kconfig        |  9 +++++++++
-> > >  arch/x86/entry/common.c | 18 ++++++++++++++++++
-> > >  2 files changed, 27 insertions(+)
-> > > 
-> > > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > > index 1a0be022f91d..bde978eb3b4e 100644
-> > > --- a/arch/x86/Kconfig
-> > > +++ b/arch/x86/Kconfig
-> > > @@ -445,6 +445,15 @@ config RETPOLINE
-> > >           code are eliminated. Since this includes the syscall
-> > > entry path,
-> > >           it is not entirely pointless.
-> > > 
-> > > +config SYSCALL_FLUSH
-> > > +       bool "Clear L1 Cache on syscall errors"
-> > > +       default n
-> > > +       help
-> > > +         Selecting 'y' allows the L1 cache to be cleared upon
-> > > return of
-> > > +         an error code from a syscall if the CPU supports
-> > > "flush_l1d".
-> > > +         This may reduce the likelyhood of speculative execution
-> > > style
-> > > +         attacks on syscalls.
-> > > +
-> > >  config INTEL_RDT
-> > >         bool "Intel Resource Director Technology support"
-> > >         default n
-> > > diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-> > > index 3b2490b81918..26de8ea71293 100644
-> > > --- a/arch/x86/entry/common.c
-> > > +++ b/arch/x86/entry/common.c
-> > > @@ -268,6 +268,20 @@ __visible inline void
-> > > syscall_return_slowpath(struct pt_regs *regs)
-> > >         prepare_exit_to_usermode(regs);
-> > >  }
-> > > 
-> > > +__visible inline void l1_cache_flush(struct pt_regs *regs)
-> > > +{
-> > > +       if (IS_ENABLED(CONFIG_SYSCALL_FLUSH) &&
-> > > +           static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
-> > > +               if (regs->ax == 0 || regs->ax == -EAGAIN ||
-> > > +                   regs->ax == -EEXIST || regs->ax == -ENOENT ||
-> > > +                   regs->ax == -EXDEV || regs->ax == -ETIMEDOUT
-> > > ||
-> > > +                   regs->ax == -ENOTCONN || regs->ax ==
-> > > -EINPROGRESS)
+On Fri, Oct 12, 2018 at 12:02:56AM +0300, Cyrill Gorcunov wrote:
+> On Thu, Oct 11, 2018 at 11:56:01PM +0300, Alexey Dobriyan wrote:
 > > 
-> > What about ax > 0?  (Or more generally, any ax outside the range of
-> > -1
-> > .. -4095 or whatever the error range is.)  As it stands, it looks
-> > like
-> > you'll flush on successful read(), write(), recv(), etc, and that
-> > could seriously hurt performance on real workloads.
+> > As the comment in the beginning says this test is specifically for addresss 0.
+> > Maybe it should be ifdeffed with __arm__ then.
 > 
-> Seems like just changing this with "ax == 0" into "ax >= 0" would
-> solve that?
+> Is there some other reason than allocating non-mergable VMA?
 
-thanks, will do.
+IIRC the reason is to test address 0 as it is effectively banned
+for userspace so if it will be broken, it will be broken silently
+for a long time.
 
-> 
-> I think this looks like a good idea. It might be worth adding a
-> comment about the checks to explain why those errors are whitelisted.
-> It's a cheap and effective mitigation for "unknown future problems"
-> that doesn't degrade normal workloads.
-> 
-> > > +                       return;
-> > > +
-> > > +               wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
-> 
-> What about CPUs without FLUSH_L1D? Could it be done manually with a
-> memcpy or something?
-
-It could - my original implementation (pre l1d_flush msr) did, but it
-did come with some additional cost in that I allocated per-cpu memory
-to keep a 32K buffer around that I could memcpy. It also sacrificed
-completeness for simplicity by not taking into account cases where L1
-was not 32K. As far as I know this msr is pretty widely deployed, even
-on older hardware.
-
-
+As for "unmergeable" libc here doesn't map /dev/zero. I know how to
+avoid even theoretical breakage by creating binaries by hand but it
+will be probably too much.
