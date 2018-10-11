@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B2EC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C513BC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE504213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B53521470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:36:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkUU7f0m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE504213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIJRmOA4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B53521470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeJKXEQ (ORCPT
+        id S1729039AbeJKXES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:04:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58928 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:04:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeJKXEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:04:15 -0400
+        id S1726562AbeJKXES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:04:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F632098A;
-        Thu, 11 Oct 2018 15:36:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39FC62087A;
+        Thu, 11 Oct 2018 15:36:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272193;
-        bh=MGpnLfR1pUUVZ9wPHarK+aO8CLw2ApA9XeOwM1M0+j4=;
+        s=default; t=1539272195;
+        bh=B+Fh2OkbMnR1KXe17BeT1JaI3Uj7rKJgEZ9sG7vtnFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gkUU7f0mPIFDiq4Bx/k3BzNaLj0g5bdtR3Z7RvxvOzKRVFcfGLCSkCUUY+z9vf/vM
-         iNrey0toflPIkUGYOZdB8lqfhmkPLZi4dWZ92BR1ECxMQi6dcENNMFc9WkeyMvQvRQ
-         uxG9TfLqyp7VLTo00rxB0zM+WnLuMpyKoHoMzBCs=
+        b=IIJRmOA4Kx0eqgzZuDIJQvnZq/MKKJLKJGQciH2TwbtmKx+QKNr4/Bs0OBW4GZGtB
+         gjHY5C+r4VqhKoL8UgeZTjYqeTO73tKr9USfbZcVa/cCzb9CH7vzyHYLkqfvIbmpZi
+         pWfsZW+YR3f6WvcflCi3kyPvbLy8ihUV7hu4fNN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Behmer <jbehmer@google.com>,
-        Vaibhav Nagarnaik <vnagarnaik@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 3.18 004/120] ring-buffer: Allow for rescheduling when removing pages
-Date:   Thu, 11 Oct 2018 17:33:05 +0200
-Message-Id: <20181011152549.682409910@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        syzbot <syzkaller@googlegroups.com>, NeilBrown <neilb@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 3.18 005/120] mm: shmem.c: Correctly annotate new inodes for lockdep
+Date:   Thu, 11 Oct 2018 17:33:06 +0200
+Message-Id: <20181011152549.716844363@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -63,44 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Nagarnaik <vnagarnaik@google.com>
+From: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-commit 83f365554e47997ec68dc4eca3f5dce525cd15c3 upstream.
+commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
 
-When reducing ring buffer size, pages are removed by scheduling a work
-item on each CPU for the corresponding CPU ring buffer. After the pages
-are removed from ring buffer linked list, the pages are free()d in a
-tight loop. The loop does not give up CPU until all pages are removed.
-In a worst case behavior, when lot of pages are to be freed, it can
-cause system stall.
+Directories and inodes don't necessarily need to be in the same lockdep
+class.  For ex, hugetlbfs splits them out too to prevent false positives
+in lockdep.  Annotate correctly after new inode creation.  If its a
+directory inode, it will be put into a different class.
 
-After the pages are removed from the list, the free() can happen while
-the work is rescheduled. Call cond_resched() in the loop to prevent the
-system hangup.
+This should fix a lockdep splat reported by syzbot:
 
-Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.18.0-rc8-next-20180810+ #36 Not tainted
+> ------------------------------------------------------
+> syz-executor900/4483 is trying to acquire lock:
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> include/linux/fs.h:765 [inline]
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>
+> but task is already holding lock:
+> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> drivers/staging/android/ashmem.c:448
+>
+> which lock already depends on the new lock.
+>
+> -> #2 (ashmem_mutex){+.+.}:
+>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+>        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+>        call_mmap include/linux/fs.h:1844 [inline]
+>        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+>        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+>        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+>        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+>        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+>        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (&mm->mmap_sem){++++}:
+>        __might_fault+0x155/0x1e0 mm/memory.c:4568
+>        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+>        copy_to_user include/linux/uaccess.h:155 [inline]
+>        filldir+0x1ea/0x3a0 fs/readdir.c:196
+>        dir_emit_dot include/linux/fs.h:3464 [inline]
+>        dir_emit_dots include/linux/fs.h:3475 [inline]
+>        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+>        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+>        __do_sys_getdents fs/readdir.c:231 [inline]
+>        __se_sys_getdents fs/readdir.c:212 [inline]
+>        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+>        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+>        inode_lock include/linux/fs.h:765 [inline]
+>        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+>        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+>        vfs_ioctl fs/ioctl.c:46 [inline]
+>        file_ioctl fs/ioctl.c:501 [inline]
+>        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>        __do_sys_ioctl fs/ioctl.c:709 [inline]
+>        __se_sys_ioctl fs/ioctl.c:707 [inline]
+>        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(ashmem_mutex);
+>                                lock(&mm->mmap_sem);
+>                                lock(ashmem_mutex);
+>   lock(&sb->s_type->i_mutex_key#9);
+>
+>  *** DEADLOCK ***
+>
+> 1 lock held by syz-executor900/4483:
+>  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
 
-Cc: stable@vger.kernel.org
-Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
-Reported-by: Jason Behmer <jbehmer@google.com>
-Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Suggested-by: NeilBrown <neilb@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ring_buffer.c |    2 ++
+ mm/shmem.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1542,6 +1542,8 @@ rb_remove_pages(struct ring_buffer_per_c
- 	tmp_iter_page = first_page;
- 
- 	do {
-+		cond_resched();
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1454,6 +1454,8 @@ static struct inode *shmem_get_inode(str
+ 			mpol_shared_policy_init(&info->policy, NULL);
+ 			break;
+ 		}
 +
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
- 
++		lockdep_annotate_inode_mutex_key(inode);
+ 	} else
+ 		shmem_free_inode(sb);
+ 	return inode;
 
 
