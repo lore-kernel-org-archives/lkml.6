@@ -2,97 +2,99 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C57AC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD04C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33EE82098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:46:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA63D213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 17:47:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="YsuBOeXV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33EE82098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bwa6brfi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA63D213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbeJLBO4 (ORCPT
+        id S1728605AbeJLBPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:14:56 -0400
-Received: from mail-it1-f180.google.com ([209.85.166.180]:50689 "EHLO
-        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbeJLBO4 (ORCPT
+        Thu, 11 Oct 2018 21:15:42 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51730 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbeJLBPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:14:56 -0400
-Received: by mail-it1-f180.google.com with SMTP id k206-v6so8695202ite.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 10:46:41 -0700 (PDT)
+        Thu, 11 Oct 2018 21:15:42 -0400
+Received: by mail-it1-f193.google.com with SMTP id 74-v6so14799656itw.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 10:47:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oTlgpaRAxwdinROadk6CmluxB4aHAyZnJ1nqE+Wlkss=;
-        b=YsuBOeXV5yGM5wwjCHQHYm0i3GUWAu29wn1Eru8pox5hhy4UxYGKlueo7ZYgoBVVUo
-         QDGNw3InqRtAJILSgMItYbc07CzbTaugDm+njJZXQFYBr6FQsWHx7M2ShoLbldhJh4YG
-         R4SKzoEkFwtqp9gtAzRE8j3/tDGHZkVCnGnf5sa4wr4szG8Id1Zwr9vJGuG0OyRsp2zQ
-         QpzlISp6YkbSxKtCqJFchIaTmNeTCf+SUI2Fd+ifTMODUl74UADysqQ8SiMhsFoIPwre
-         6XEQDO/twXQv035tTjHuG9KZx98WQ/tseNe+1ZLlDsmpY+55kZ19YgQ6ukemT81h1Orv
-         Sa/A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TiJ196eFkj504vfcnFsSqK9pXoBP0TBEjKHnm0WAbXw=;
+        b=bwa6brfiVnoyTNOhUxIcPlQyszU/XlliG93FxmQ5VB+Hx7FC9sGk8CHfcCTMu6DukB
+         EBr7+Co3+KapA+EJ+xwmQw+KzWnEwx3zaUAwxSEJzQdOVdxNDAIspCmh2YPTTutUeBWt
+         uZCTdvJqpqvIXNW4Z6i3QAd4dvGwLSMHSrx2c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oTlgpaRAxwdinROadk6CmluxB4aHAyZnJ1nqE+Wlkss=;
-        b=WWELupTNYpAW90uUZwN40GvIupgdhHSA0QPKgR+3ZJUWg4/91GWPe7/EEFeunSUZh3
-         7yoNbgPPzgOFsPPQ6Y0ghSEgprWZAdPXBCgUSC5VhL3ljhgzYWrOAaZvplifvn8FlOFd
-         usr+sQBU5fuVzWe0PDzoftlZtB4EHze9ny634MvW0kx69qIbrSbJERYtnp2aFUaR6U/D
-         MqNFhYJSFUqQQzQMzcUtPrMK4nBTJCQxJgeHPcQJ8fuqBRt7aQjuQQ8RKkb7REs6EaQh
-         6NfWRGcB5KCriZn6tkv1kY4PlaHgPCHVs3j6hHPR4ATxnl+7/4MGTXmU8GK7Qq4p/cJG
-         e/ow==
-X-Gm-Message-State: ABuFfojCJYxBv6auPMBUrrKYtiS9ED8BCMkeNQdx8lpLu35ToJC8xxLy
-        XWY8LAT91eWyTiTyatMlwohkpcLxP0Y=
-X-Google-Smtp-Source: ACcGV60jdSS5cWQlRSBLv2axbVP+nDkq5PBj9m35eKMjr0uWIPcLU4Kd9mdYmZBbFtPJUBZvnyLJOQ==
-X-Received: by 2002:a24:455c:: with SMTP id y89-v6mr2160758ita.67.1539280000361;
-        Thu, 11 Oct 2018 10:46:40 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h2-v6sm8509922iok.85.2018.10.11.10.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 10:46:39 -0700 (PDT)
-Subject: Re: [RESEND][PATCH v2] cfq: clear queue pointers from cfqg after
- unpinning them in cfq_pd_offline
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     Caspar Zhang <caspar@linux.alibaba.com>,
-        jiufei.xue@linux.alibaba.com, Tejun Heo <tj@kernel.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-References: <befb45da-2a7b-8dff-30e7-59b441f604fe@maciej.szmigiero.name>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3abb177f-d6ba-7f7b-e8a6-d27e8cf388a0@kernel.dk>
-Date:   Thu, 11 Oct 2018 11:46:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TiJ196eFkj504vfcnFsSqK9pXoBP0TBEjKHnm0WAbXw=;
+        b=P9Iogc+S4MJCaO3f2PxU7CbQ2ZfPvrlgVM5toyMZQWKo68HLcOdn9IbX+0GkwVXn75
+         M5/l67XzonD8SlgRNoCqc9KgagTVbJH1bNFBipikoe2pzY3vc6s+n2+nNtHEroqY4JN2
+         NhLiBWZC7KAWyc5g+cF+vUUNS3rtR5YXEkAInwGTV78T4wBq1KZC9rlCCtXRz7YvLKTz
+         GokNGrM8TsRz2XlPKZ7g2eGFDFqJvg5HdrZd1xM3wXxEmZRSPYYtpM7757HDwVoLB59N
+         mfwEygE9waBvD6/K0rVNXkbbUxnQnTBiVyT53xMRNwPwdzcR/rpBJQLW/VjYjroJJTFx
+         WoyQ==
+X-Gm-Message-State: ABuFfogM4d5ZFA6/DOwlMFLoIOWS4ZSj/UmKkjY+wmm6+9NfaU9eob6t
+        xtA7uuvLEAYMtHchy4P2b/p89k4t21jpeWG5awVDbA==
+X-Google-Smtp-Source: ACcGV62ps/EQ1u394LAl0QIt4XQeKOnVpu6qvYtLizFrFW47tAfLgwqUoB1/1TxMcAR5BYRVRC4AMuwQowXjLV2dzo4=
+X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr1470699ith.156.1539280046494;
+ Thu, 11 Oct 2018 10:47:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <befb45da-2a7b-8dff-30e7-59b441f604fe@maciej.szmigiero.name>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+ <20180906122436.25610-1-linus.walleij@linaro.org> <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+ <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com> <1539272073.18645.12.camel@toradex.com>
+In-Reply-To: <1539272073.18645.12.camel@toradex.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 11 Oct 2018 19:47:13 +0200
+Message-ID: <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        jacopo <jacopo@jmondi.org>, Mark Brown <broonie@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 3:16 PM, Maciej S. Szmigiero wrote:
-> BFQ is already doing a similar thing in its .pd_offline_fn() method
-> implementation.
-> 
-> While it seems that after commit 4c6994806f70
-> ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
-> was reverted leaving these pointers intact no longer causes crashes
-> clearing them is still a sensible thing to do to make the code more robust.
+On Thu, Oct 11, 2018 at 5:34 PM Marcel Ziswiler
+<marcel.ziswiler@toradex.com> wrote:
 
-Applied, thanks.
+> I guess that is also what broke HDMI on Apalis/Colibri T30 causing me
+> to submit a fix [1]. I may also help testing.
 
--- 
-Jens Axboe
+I see there are many ways to skin this cat.
 
+Does this patch fix things for you as well?
+https://marc.info/?l=linux-kernel&m=153926854327176&w=2
+
+Yours,
+Linus Walleij
