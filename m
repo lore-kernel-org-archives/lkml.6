@@ -2,200 +2,96 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A83B4C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA09C6780C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 648212098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 805422098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyRfyEU8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648212098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLYmmmy/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805422098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbeJLDCr (ORCPT
+        id S1728454AbeJLDCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:02:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbeJLDCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:02:46 -0400
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A97B72148C;
-        Thu, 11 Oct 2018 19:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539286447;
-        bh=zqgx2pIivn7Ux9M/b303jA60rKWMgt6xDAk/V5tHA8Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hyRfyEU8qu/A1eYLSiddNscati2DkJSDGgMi2BLDhhFy7sjPSDydFPiaiEZZMG+Xn
-         BNMyF0UrEfeiXejq+mqOj+hVEaJiZWuuoio5Qhfdfth1paDbMYastjal82JWbHeG+X
-         MWMJrFuMZ8GPDDCGWu4KD71snPDUBTuUPznMh0os=
-Received: by mail-ed1-f49.google.com with SMTP id v18-v6so9329973edq.12;
-        Thu, 11 Oct 2018 12:34:06 -0700 (PDT)
-X-Gm-Message-State: ABuFfohp0iapBRUvQiQBa9+7CdtH/fXaPiG1aL9pFTQhqlQTNJJ20fxc
-        DsxaaC+ShmfGPFB9ZNXpaIDgQ67q/WJyPtNJkRU=
-X-Google-Smtp-Source: ACcGV61yHB6rCPVPmLKUxRzusYlst9bpNZUHCTj4c8yq/NKrVYhPfDBOuz9ohAnd+BMpSEJ1xm7OZx/c2kVQaeNS7Lg=
-X-Received: by 2002:a50:8bd5:: with SMTP id n21-v6mr4852793edn.41.1539286444998;
- Thu, 11 Oct 2018 12:34:04 -0700 (PDT)
+        Thu, 11 Oct 2018 23:02:50 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45610 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJLDCu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:02:50 -0400
+Received: by mail-ot1-f68.google.com with SMTP id u22so10063138ota.12;
+        Thu, 11 Oct 2018 12:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0QXdy+05wAUhFfxAqeji1hrXwDrX5JLqRj5sDiSeCRo=;
+        b=DLYmmmy/Te0ZbKuKy14SyPc4BZ6063601FbpJMAmpHIBVPZ1UZO4aWvCUFMobKmbWs
+         K1+S2fX3BZykv6q5x4ndfuqTPYFDmrGtBicLIBaKDrg45pSTfjDYX4j9kZrUbz89kEUK
+         zitv0X0LJkqtX7SsGnGQIr/OCx27TCZmHvgF74QnhDJqjQ6hHDCnPyzhdAWqMZOEA4fO
+         RDCJQjQ06qdVOFHm4OqiPs2EJEFXAy1oekmUrVeZ66BnKNi0FMYiML5hJtRJjBLfc6JX
+         6L0T7yRzH013Xoj4XdDASccYW3/bDmaCFiN+M3O5J1asZJoTxu3FDuP1gaM2cjQ5XkSo
+         bjyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0QXdy+05wAUhFfxAqeji1hrXwDrX5JLqRj5sDiSeCRo=;
+        b=N8LEOq6kTUsyVkejvbuK0vhSqjg48w+PN/e4t5jPneyLnIOd27nlvAGMA45gLRTGJa
+         TdHnBhDPpNvsYqyxlNXt1ww9MatHvNGcf5BJZjk+HSV2VjIJ7+RWOs6FRcOFmMFiSQEo
+         GofnfZw/UYLeOkLU/PdoMhrzQZpM/GW4lDsQutjZn9PT3nVMiJid53DGQE37tZOfV2+4
+         0ZSgWrPq8C3uKtaSygQKXfOrwsB+cD4dR5dWMkaOIX0E8p0FcJioPmiSZ7VcUMqRWwg2
+         jw+eD4MlXeRpQH0nUUYrEckBBQnDOqjDtVHy2oS1HMIYY5PaJMlx85oiqiIaPIeyga//
+         ajwg==
+X-Gm-Message-State: ABuFfogECbKFuYzrEsxpDbn9wejLWijACM/Ab6R3nOa4I5vJqZzAqXaz
+        HIIrYFLz+wCnwySgR1vmM8gTgUlCgIuUPvKrH78=
+X-Google-Smtp-Source: ACcGV60v/XDskRs37ZF7FbImLyROAXwnfqXbcix27kR716xnZn6O1uYs8xRV9vkiF3n5EK7ww/yp54cNjx1Gl10huSA=
+X-Received: by 2002:a9d:1ea5:: with SMTP id n34mr1857225otn.160.1539286450260;
+ Thu, 11 Oct 2018 12:34:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
- <1539151495-8110-1-git-send-email-frowand.list@gmail.com> <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
- <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
- <e32a99a2-1db5-80e6-5022-83cd8fd07180@gmail.com> <bcbba4ca-0656-aa27-c058-064fb7175d38@gmail.com>
-In-Reply-To: <bcbba4ca-0656-aa27-c058-064fb7175d38@gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 11 Oct 2018 14:33:28 -0500
-X-Gmail-Original-Message-ID: <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
-Message-ID: <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
-Subject: Re: [PATCH 05.1/16] of:overlay: missing name, phandle, linux,phandle
- in new nodes
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+References: <20181011152508.885515042@linuxfoundation.org> <20181011152510.156825448@linuxfoundation.org>
+In-Reply-To: <20181011152510.156825448@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Thu, 11 Oct 2018 20:33:34 +0100
+Message-ID: <CADVatmO4qd2D7j9AuVWX29ODMd9xV7-ndMSv+dfFatT60h+mzQ@mail.gmail.com>
+Subject: Re: [PATCH 4.14 29/45] cgroup/cpuset: remove circular dependency deadlock
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>, prsood@codeaurora.org,
+        Tejun Heo <tj@kernel.org>, amit.pundir@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 12:39 AM Frank Rowand <frowand.list@gmail.com> wrote:
+Hi Greg,
 
-[resend of my messed up rejected email of a minute ago, sorry]
-
+On Thu, Oct 11, 2018 at 4:54 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On 10/10/18 14:03, Frank Rowand wrote:
-> > On 10/10/18 13:40, Alan Tull wrote:
-> >> On Wed, Oct 10, 2018 at 1:49 AM Frank Rowand <frowand.list@gmail.com> wrote:
-> >>>
-> >>> On 10/09/18 23:04, frowand.list@gmail.com wrote:
-> >>>> From: Frank Rowand <frank.rowand@sony.com>
-> >>>>
-> >>>>
-> >>>> "of: overlay: use prop add changeset entry for property in new nodes"
-> >>>> fixed a problem where an 'update property' changeset entry was
-> >>>> created for properties contained in nodes added by a changeset.
-> >>>> The fix was to use an 'add property' changeset entry.
-> >>>>
-> >>>> This exposed more bugs in the apply overlay code.  The properties
-> >>>> 'name', 'phandle', and 'linux,phandle' were filtered out by
-> >>>> add_changeset_property() as special properties.  Change the filter
-> >>>> to be only for existing nodes, not newly added nodes.
-> >>>>
-> >>>> The second bug is that the 'name' property does not exist in the
-> >>>> newest FDT version, and has to be constructed from the node's
-> >>>> full_name.  Construct an 'add property' changeset entry for
-> >>>> newly added nodes.
-> >>>>
-> >>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> >>>> ---
-> >>>>
-> >>>>
-> >>>> Hi Alan,
-> >>>>
-> >>>> Thanks for reporting the problem with missing node names.
-> >>>>
-> >>>> I was able to replicate the problem, and have created this preliminary
-> >>>> version of a patch to fix the problem.
-> >>>>
-> >>>> I have not extensively reviewed the patch yet, but would appreciate
-> >>>> if you can confirm this fixes your problem.
-> >>>>
-> >>>> I created this patch as patch 17 of the series, but have also
-> >>>> applied it as patch 05.1, immediately after patch 05/16, and
-> >>>> built the kernel, booted, and verified name and phandle for
-> >>>> one of the nodes in a unittest overlay for both cases.  So
-> >>>> minimal testing so far on my part.
-> >>>>
-> >>>> I have not verified whether the series builds and boots after
-> >>>> each of patches 06..16 if this patch is applied as patch 05.1.
-> >>>>
-> >>>> There is definitely more work needed for me to complete this
-> >>>> patch because it allocates some more memory, but does not yet
-> >>>> free it when the overlay is released.
-> >>>>
-> >>>> -Frank
-> >>>>
-> >>>>
-> >>>>  drivers/of/overlay.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++----
-> >>>>  1 file changed, 67 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-> >>>> index 0b0904f44bc7..9746cea2aa91 100644
-> >>>> --- a/drivers/of/overlay.c
-> >>>> +++ b/drivers/of/overlay.c
-> >>>> @@ -301,10 +301,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
-> >>>>       struct property *new_prop = NULL, *prop;
-> >>>>       int ret = 0;
-> >>>>
-> >>>> -     if (!of_prop_cmp(overlay_prop->name, "name") ||
-> >>>> -         !of_prop_cmp(overlay_prop->name, "phandle") ||
-> >>>> -         !of_prop_cmp(overlay_prop->name, "linux,phandle"))
-> >>>> -             return 0;
-> >>>> +     if (target->in_livetree)
-> >>>> +             if (!of_prop_cmp(overlay_prop->name, "name") ||
-> >>>> +                 !of_prop_cmp(overlay_prop->name, "phandle") ||
-> >>>> +                 !of_prop_cmp(overlay_prop->name, "linux,phandle"))
-> >>>> +                     return 0;
-> >>>
-> >>> This is a big hammer patch.
-> >>>
-> >>> Nobody should waste time reviewing this patch.
-> >>
-> >> I wasn't clear if you still could use the testing so I did re-run my
-> >> test.  This patch adds back some of the missing properties, but the
-> >> the kobject names aren't set as dev_name() returns NULL:
-> >>
-> >> * without this patch some of_node properties don't show up in sysfs:
-> >> root@arria10:~# ls
-> >> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
-> >> clocks            compatible        interrupt-parent  interrupts        reg
-> >>
-> >> * with this patch, the of_node properties phandle and name are back:
-> >> root@arria10:~#  ls
-> >> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
-> >> clocks            compatible        interrupt-parent  interrupts
-> >>  name              phandle           reg
-> >
-> > Thanks for the testing.  I'll keep chasing after this problem today.
-
-Glad to help!  Thanks for all your work in this area!
-> >
-> > This is useful data for me as I was not looking under the /sys/bus/...
-> > tree that you reported, but was instead looking at /proc/device-tree/...
-> > which showed the same type of problem since the overlay I was using
-> > does not show up under /sys/bus/...
-> >
-> > I'll have to create a useful overlay test case that will show up under
-> > /sys/bus/...
-> >
-> > In the meantime, can you send me the base FDT and the overlay FDT for
-> > your test case?
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
 >
-> I now have a test case that shows the problem under /sys/bus/... so I
-> no longer need the base FDT and overlay FDT for your test case.
+> ------------------
 >
-> I have determined the location that sets the name to "<NULL>" but do
-> not have the fix yet.  Still working on that.
+> From: Prateek Sood <prsood@codeaurora.org>
+>
+> commit aa24163b2ee5c92120e32e99b5a93143a0f4258e upstream.
 
-I understand you're quite busy with all this, but I'm wondering
-whether it might be worth it go ahead and make the properties be
-kernel objects also at this point.  That would be an improvement for
-the case of overlay properties added to non-overlay nodes, so the
-lifespan of the overlay property memory can be coupled with the
-properties kobj's instead of the node kobj's.
+This has been already reverted in upstream.
+bdfbbda90aeb ("Revert "cgroup/cpuset: remove circular dependency deadlock"")
 
-Alan
+Might be better to add e8b3f8db7aad ("workqueue/hotplug: simplify
+workqueue_offline_cpu()") instead which is mentioned in the revert
+commit.
+
+-- 
+Regards
+Sudip
