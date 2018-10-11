@@ -2,138 +2,131 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CCDC677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B070C677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5C3204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5C3204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AA6B204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:10:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VmfEHCy+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA6B204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730029AbeJKXiH (ORCPT
+        id S1730062AbeJKXiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:38:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20950 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726882AbeJKXiH (ORCPT
+        Thu, 11 Oct 2018 19:38:22 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:46038 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeJKXiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:38:07 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BG9doo058821
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 12:10:14 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n27wgec2w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 12:10:14 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
-        Thu, 11 Oct 2018 10:10:12 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Oct 2018 10:10:08 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BGA7rD59834534
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 09:10:07 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9474C78063;
-        Thu, 11 Oct 2018 10:10:07 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAB3E7805E;
-        Thu, 11 Oct 2018 10:10:04 -0600 (MDT)
-Received: from [153.66.254.194] (unknown [9.85.185.70])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Oct 2018 10:10:04 -0600 (MDT)
-Subject: Re: undefined behavior (-Wvarargs) in
- security/keys/trusted.c#TSS_authhmac()
-From:   James Bottomley <jejb@linux.vnet.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Eric Biggers <ebiggers@google.com>
-Date:   Thu, 11 Oct 2018 09:10:03 -0700
-In-Reply-To: <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
-References: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
-         <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101116-0016-0000-0000-0000093FBDE3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009860; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01101164; UDB=6.00569788; IPR=6.00881210;
- MB=3.00023714; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-11 16:10:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101116-0017-0000-0000-000040AAD9DC
-Message-Id: <1539274203.2623.56.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110155
+        Thu, 11 Oct 2018 19:38:21 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9BGALMV064528;
+        Thu, 11 Oct 2018 11:10:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539274222;
+        bh=COIBjSRXuncqLk4tKUhIGNqCFcTvMBFDYo9E7G2MXaA=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=VmfEHCy+WLkQLOI3LlbBpRwIL9mVvOj6sw85p+ydFAtmo8j/YerxsxR5vIz0Z4IRj
+         +BmxNdDm8kwAq8lGottv8mvLgEOVJHFP4xe7HozAaUNgXwPzhmNtGDvCVeooNhXOvR
+         qv8af2k/6zf6eLe205C6cwa43GCwouB05yhGVBrg=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BGAL6D019590;
+        Thu, 11 Oct 2018 11:10:21 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 11
+ Oct 2018 11:10:21 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 11 Oct 2018 11:10:21 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9BGALwx012576;
+        Thu, 11 Oct 2018 11:10:21 -0500
+Date:   Thu, 11 Oct 2018 11:10:21 -0500
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Elder <paul.elder@ideasonboard.com>
+CC:     <laurent.pinchart@ideasonboard.com>,
+        <kieran.bingham@ideasonboard.com>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <balbi@kernel.org>, <stern@rowland.harvard.edu>, <rogerq@ti.com>
+Subject: Re: [PATCH 4/6] usb: gadget: add functions to signal udc driver to
+ delay status stage
+Message-ID: <20181011161021.GB8763@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, balbi@kernel.org,
+        stern@rowland.harvard.edu, rogerq@ti.com
+References: <20181010024903.1633-1-paul.elder@ideasonboard.com>
+ <20181010024903.1633-5-paul.elder@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181010024903.1633-5-paul.elder@ideasonboard.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 18:02 +0200, Arnd Bergmann wrote:
-> On 10/10/18, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> > Hello,
-> > I noticed that compiling with
-> > CONFIG_TCG_TPM=y
-> > CONFIG_HW_RANDOM_TPM=y
-> > and Clang produced the warning:
-> > 
-> >   CC      security/keys/trusted.o
-> > security/keys/trusted.c:146:17: warning: passing an object that
-> > undergoes default
-> >       argument promotion to 'va_start' has undefined behavior [-
-> > Wvarargs]
-> >         va_start(argp, h3);
-> >                        ^
-> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > char' is declared here
-> > unsigned char *h2, unsigned char h3, ...)
-> >                                ^
-> > 
-> > Specifically, it seems that both the C90 (4.8.1.1) and C11
-> > (7.16.1.4) standards explicitly call this out as undefined
-> > behavior:
-> > 
-> > The parameter parmN is the identifier of the rightmost parameter in
-> > the variable parameter list in the function definition (the one
-> > just before the ...). If the parameter parmN is declared with ...
-> > or with a type that is not compatible with the type that results
-> > after application of the default argument promotions, the behavior
-> > is undefined.
-> > 
-> > So if I understand my C promotion/conversion rules correctly,
-> > unsigned char would be promoted to int?
-> > 
-> > We had a few ideas for possible fixes in:
-> > https://github.com/ClangBuiltLinux/linux/issues/41
+Hi,
+
+On Tue, Oct 09, 2018 at 10:49:01PM -0400, Paul Elder wrote:
+> A usb gadget function driver may or may not want to delay the status
+> stage of a control OUT request. An instance it might want to is to
+> asynchronously validate the data of a class-specific request.
 > 
-> I arrived at a similar patch as the one cited there, but it broke
-> again after an 'extern' declaration was added in
-> include/keys/trusted.h, so that has to be patched as well now
+> Add a function usb_ep_delay_status to allow function drivers to choose
+> to delay the status stage in the request completion handler. The UDC
+> should then check the usb_ep->delayed_status flag and act accordingly to
+> delay the status stage.
+> 
+> Also add a function usb_ep_send_response as a wrapper for
+> usb_ep->ops->send_response, whose prototype is added as well. This
+> function should be called by function drivers to tell the UDC what to
+> reply in the status stage that it has requested to be delayed.
+> 
+> Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/usb/gadget/udc/core.c | 35 +++++++++++++++++++++++++++++++++++
+>  include/linux/usb/gadget.h    | 11 +++++++++++
+>  2 files changed, 46 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index af88b48c1cea..1ec5ce6b43cd 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -443,6 +443,41 @@ void usb_ep_fifo_flush(struct usb_ep *ep)
+>  }
+>  EXPORT_SYMBOL_GPL(usb_ep_fifo_flush);
+>  
+> +/**
+> + * usb_ep_ep_delay_status - set delay_status flag
+> + * @ep: the endpoint whose delay_status flag is being set
+> + *
+> + * This function instructs the UDC to delay the status stage of a control
+> + * request. It can only be called from the request completion handler of a
+> + * control request.
+> + */
+> +void usb_ep_delay_status(struct usb_ep *ep)
+> +{
+> +	ep->delayed_status = true;
+> +}
+> +EXPORT_SYMBOL_GPL(usb_ep_delay_status);
 
-They look either over complicated or potentially problematic.  since
-this is an internal API and a char * is always legal, what's wrong with
-simply swapping h2 and h3?
+Is usb_ep_set_delay_status() better? I thought it implies get/return
+action if a verb is missing in the function name.
 
-James
-
+Regards,
+-Bin.
