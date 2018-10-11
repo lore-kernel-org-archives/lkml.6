@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CF7C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0CDC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE892147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0467521476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QisMPvzH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EE892147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0YT/oegh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0467521476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbeJKXOS (ORCPT
+        id S1731609AbeJKXOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:14:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47236 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:14:17 -0400
+        id S1731599AbeJKXOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:19 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7251821470;
-        Thu, 11 Oct 2018 15:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20A2521476;
+        Thu, 11 Oct 2018 15:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272792;
-        bh=d3EzT3nCnqNPiJKw4hkn45hNiEB3YIC1I+AThpaWbS4=;
+        s=default; t=1539272794;
+        bh=VFMEFPn9HkI9xNgmURVvpsoemOWU5ZUPEOuPFwOWfa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QisMPvzHDuJNGB+x9h1QCZdhmhrufdMpXe3zfg6J4aePEd5Ldxs5S0pjfTitb2QGY
-         AU+1yuHKfWT/JV1VUJwsQoTDLZvUOJua2WalSxVH154OGdgCoVbbASZOrr5DqsZ+sT
-         Xgw0PyyZZkO41IZLMCHYKcigfeFRqG5RH80J3HUE=
+        b=0YT/oeghXBmUYf8Q4aiw156Dl7i/UvKd8U7PbIgoUymuHJ6IcZ3QtvvkLJgL6pAOp
+         qi8o2vKVjT/tcPExc09KCAssW3jx0H+EPT1T1vfJftWH3RM2pzChazx3ABcWfDJD5M
+         En+AJFBKk+SV9SEJrF7YFd+6R3v8WBiA3q0UdRFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 4.14 07/45] clocksource/drivers/timer-atmel-pit: Properly handle error cases
-Date:   Thu, 11 Oct 2018 17:39:34 +0200
-Message-Id: <20181011152509.171282681@linuxfoundation.org>
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Jann Horn <jannh@google.com>, security@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.14 08/45] fbdev/omapfb: fix omapfb_memory_read infoleak
+Date:   Thu, 11 Oct 2018 17:39:35 +0200
+Message-Id: <20181011152509.215560811@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -62,92 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-commit 52bf4a900d9cede3eb14982d0f2c5e6db6d97cc3 upstream.
+commit 1bafcbf59fed92af58955024452f45430d3898c5 upstream.
 
-The smatch utility reports a possible leak:
+OMAPFB_MEMORY_READ ioctl reads pixels from the LCD's memory and copies
+them to a userspace buffer. The code has two issues:
 
-smatch warnings:
-drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
+- The user provided width and height could be large enough to overflow
+  the calculations
+- The copy_to_user() can copy uninitialized memory to the userspace,
+  which might contain sensitive kernel information.
 
-Ensure data is freed before exiting with an error.
+Fix these by limiting the width & height parameters, and only copying
+the amount of data that we actually received from the LCD.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reported-by: Jann Horn <jannh@google.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: security@kernel.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clocksource/timer-atmel-pit.c |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/clocksource/timer-atmel-pit.c
-+++ b/drivers/clocksource/timer-atmel-pit.c
-@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_ini
- 	data->base = of_iomap(node, 0);
- 	if (!data->base) {
- 		pr_err("Could not map PIT address\n");
--		return -ENXIO;
-+		ret = -ENXIO;
-+		goto exit;
- 	}
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+@@ -496,6 +496,9 @@ static int omapfb_memory_read(struct fb_
+ 	if (!access_ok(VERIFY_WRITE, mr->buffer, mr->buffer_size))
+ 		return -EFAULT;
  
- 	data->mck = of_clk_get(node, 0);
- 	if (IS_ERR(data->mck)) {
- 		pr_err("Unable to get mck clk\n");
--		return PTR_ERR(data->mck);
-+		ret = PTR_ERR(data->mck);
-+		goto exit;
- 	}
- 
- 	ret = clk_prepare_enable(data->mck);
- 	if (ret) {
- 		pr_err("Unable to enable mck\n");
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* Get the interrupts property */
- 	data->irq = irq_of_parse_and_map(node, 0);
- 	if (!data->irq) {
- 		pr_err("Unable to get IRQ from DT\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto exit;
- 	}
- 
- 	/*
-@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_ini
- 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
- 	if (ret) {
- 		pr_err("Failed to register clocksource\n");
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* Set up irq handler */
-@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_ini
- 			  "at91_tick", data);
- 	if (ret) {
- 		pr_err("Unable to setup IRQ\n");
--		return ret;
-+		clocksource_unregister(&data->clksrc);
-+		goto exit;
- 	}
- 
- 	/* Set up and register clockevents */
-@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_ini
- 	clockevents_register_device(&data->clkevt);
- 
- 	return 0;
++	if (mr->w > 4096 || mr->h > 4096)
++		return -EINVAL;
 +
-+exit:
-+	kfree(data);
-+	return ret;
- }
- TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
- 		       at91sam926x_pit_dt_init);
+ 	if (mr->w * mr->h * 3 > mr->buffer_size)
+ 		return -EINVAL;
+ 
+@@ -509,7 +512,7 @@ static int omapfb_memory_read(struct fb_
+ 			mr->x, mr->y, mr->w, mr->h);
+ 
+ 	if (r > 0) {
+-		if (copy_to_user(mr->buffer, buf, mr->buffer_size))
++		if (copy_to_user(mr->buffer, buf, r))
+ 			r = -EFAULT;
+ 	}
+ 
 
 
