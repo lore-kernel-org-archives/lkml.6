@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F201C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B6FC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FA52075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FA52075C
+	by mail.kernel.org (Postfix) with ESMTP id 3CA9A2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA9A2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbeJKWtW (ORCPT
+        id S1728889AbeJKWtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:49:22 -0400
+        Thu, 11 Oct 2018 18:49:23 -0400
 Received: from mga18.intel.com ([134.134.136.126]:64714 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728607AbeJKWtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728528AbeJKWtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Oct 2018 18:49:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:21:43 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:21:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="77271617"
+   d="scan'208";a="77271624"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:42 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:44 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v5 01/11] x86/cet/ibt: Add Kconfig option for user-mode Indirect Branch Tracking
-Date:   Thu, 11 Oct 2018 08:16:44 -0700
-Message-Id: <20181011151654.27221-2-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 03/11] x86/cet/ibt: Add IBT legacy code bitmap allocation function
+Date:   Thu, 11 Oct 2018 08:16:46 -0700
+Message-Id: <20181011151654.27221-4-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151654.27221-1-yu-cheng.yu@intel.com>
 References: <20181011151654.27221-1-yu-cheng.yu@intel.com>
@@ -66,69 +66,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The user-mode indirect branch tracking support is done mostly by
-GCC to insert ENDBR64/ENDBR32 instructions at branch targets.
-The kernel provides CPUID enumeration, feature MSR setup and
-the allocation of legacy bitmap.
+Indirect branch tracking provides an optional legacy code bitmap
+that indicates locations of non-IBT compatible code.  When set,
+each bit in the bitmap represents a page in the linear address is
+legacy code.
+
+We allocate the bitmap only when the application requests it.
+Most applications do not need the bitmap.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/Kconfig  | 16 ++++++++++++++++
- arch/x86/Makefile |  7 +++++++
- 2 files changed, 23 insertions(+)
+ arch/x86/kernel/cet.c | 47 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ac2244896a18..dd65dae3c5cb 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1919,6 +1919,9 @@ config X86_INTEL_CET
- config ARCH_HAS_SHSTK
- 	def_bool n
+diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+index 40c4c08e5e31..77ae4eaa9dea 100644
+--- a/arch/x86/kernel/cet.c
++++ b/arch/x86/kernel/cet.c
+@@ -21,6 +21,7 @@
+ #include <asm/compat.h>
+ #include <asm/cet.h>
+ #include <asm/special_insns.h>
++#include <asm/elf.h>
  
-+config ARCH_HAS_AS_LIMIT
-+	def_bool n
+ static int set_shstk_ptr(unsigned long addr)
+ {
+@@ -327,3 +328,49 @@ void cet_disable_ibt(void)
+ 	wrmsrl(MSR_IA32_U_CET, r);
+ 	current->thread.cet.ibt_enabled = 0;
+ }
 +
- config ARCH_HAS_PROGRAM_PROPERTIES
- 	def_bool n
- 
-@@ -1943,6 +1946,19 @@ config X86_INTEL_SHADOW_STACK_USER
- 
- 	  If unsure, say y.
- 
-+config X86_INTEL_BRANCH_TRACKING_USER
-+	prompt "Intel Indirect Branch Tracking for user-mode"
-+	def_bool n
-+	depends on CPU_SUP_INTEL && X86_64
-+	select X86_INTEL_CET
-+	select ARCH_HAS_AS_LIMIT
-+	select ARCH_HAS_PROGRAM_PROPERTIES
-+	---help---
-+	  Indirect Branch Tracking provides hardware protection against return-/jmp-
-+	  oriented programming attacks.
++int cet_setup_ibt_bitmap(void)
++{
++	u64 r;
++	unsigned long bitmap;
++	unsigned long size;
 +
-+	  If unsure, say y
++	if (!cpu_feature_enabled(X86_FEATURE_IBT))
++		return -EOPNOTSUPP;
 +
- config EFI
- 	bool "EFI runtime service support"
- 	depends on ACPI
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index b28842b80295..ff652bba849f 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -159,6 +159,13 @@ ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-   endif
- endif
- 
-+# Check compiler ibt support
-+ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+  ifeq ($(call cc-option-yn, -fcf-protection=branch), n)
-+      $(error CONFIG_X86_INTEL_BRANCH_TRACKING_USER not supported by compiler)
-+  endif
-+endif
++	if (!current->thread.cet.ibt_bitmap_addr) {
++		/*
++		 * Calculate size and put in thread header.
++		 * may_expand_vm() needs this information.
++		 */
++		size = in_compat_syscall() ? task_size_32bit() : task_size_64bit(1);
++		size = size / PAGE_SIZE / BITS_PER_BYTE;
++		current->thread.cet.ibt_bitmap_size = size;
++		bitmap = do_mmap_locked(0, size, PROT_READ | PROT_WRITE,
++					MAP_ANONYMOUS | MAP_PRIVATE,
++					VM_DONTDUMP);
 +
- #
- # If the function graph tracer is used with mcount instead of fentry,
- # '-maccumulate-outgoing-args' is needed to prevent a GCC bug
++		if ((bitmap >= TASK_SIZE) || (bitmap < size)) {
++			current->thread.cet.ibt_bitmap_size = 0;
++			return -ENOMEM;
++		}
++
++		current->thread.cet.ibt_bitmap_addr = bitmap;
++
++		/*
++		 * Lower bits of MSR_IA32_CET_LEG_IW_EN are for IBT
++		 * settings.  Clear lower bits even bitmap is already
++		 * page-aligned.
++		 */
++		bitmap &= PAGE_MASK;
++
++		/*
++		 * Turn on IBT legacy bitmap.
++		 */
++		rdmsrl(MSR_IA32_U_CET, r);
++		r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
++		wrmsrl(MSR_IA32_U_CET, r);
++	}
++
++	return 0;
++}
 -- 
 2.17.1
 
