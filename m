@@ -2,59 +2,175 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F52AC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C0CC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD45420835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 05:59:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD45420835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 0CC1820841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC1820841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeJKNZD (ORCPT
+        id S1728151AbeJKNe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 09:25:03 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49328 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeJKNZD (ORCPT
+        Thu, 11 Oct 2018 09:34:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37468 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728122AbeJKNe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 09:25:03 -0400
-Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 22E9712139FF0;
-        Wed, 10 Oct 2018 22:59:21 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 22:59:20 -0700 (PDT)
-Message-Id: <20181010.225920.1970816507651871098.davem@davemloft.net>
-To:     salil.mehta@huawei.com
-Cc:     yisen.zhuang@huawei.com, lipeng321@huawei.com,
-        mehta.salil@opnsrc.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com
-Subject: Re: [PATCH net-next 0/4] Adds support of RSS to HNS3 Driver for
- Rev 2(=0x21) H/W
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181010190537.20972-1-salil.mehta@huawei.com>
-References: <20181010190537.20972-1-salil.mehta@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 10 Oct 2018 22:59:21 -0700 (PDT)
+        Thu, 11 Oct 2018 09:34:58 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9B69ABw146415
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 02:09:13 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n1yqr2nj7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 02:09:12 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 11 Oct 2018 07:09:03 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 11 Oct 2018 07:08:56 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9B68sIf1376738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 11 Oct 2018 06:08:55 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA939AE053;
+        Thu, 11 Oct 2018 09:07:37 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5101AE057;
+        Thu, 11 Oct 2018 09:07:35 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.69])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 11 Oct 2018 09:07:35 +0100 (BST)
+Date:   Thu, 11 Oct 2018 09:08:50 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Ingo Molnar <mingo@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        linux-um@lists.infradead.org
+Subject: Re: [PATCH] memblock: stop using implicit alignement to
+ SMP_CACHE_BYTES
+References: <1538687224-17535-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20181005151934.87226fa92825c3002a475413@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181005151934.87226fa92825c3002a475413@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18101106-0020-0000-0000-000002D27E1F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101106-0021-0000-0000-00002120F47F
+Message-Id: <20181011060850.GA19822@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810110060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Salil Mehta <salil.mehta@huawei.com>
-Date: Wed, 10 Oct 2018 20:05:33 +0100
+On Fri, Oct 05, 2018 at 03:19:34PM -0700, Andrew Morton wrote:
+> On Fri,  5 Oct 2018 00:07:04 +0300 Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> 
+> > When a memblock allocation APIs are called with align = 0, the alignment is
+> > implicitly set to SMP_CACHE_BYTES.
+> > 
+> > Replace all such uses of memblock APIs with the 'align' parameter explicitly
+> > set to SMP_CACHE_BYTES and stop implicit alignment assignment in the
+> > memblock internal allocation functions.
+> > 
+> > For the case when memblock APIs are used via helper functions, e.g. like
+> > iommu_arena_new_node() in Alpha, the helper functions were detected with
+> > Coccinelle's help and then manually examined and updated where appropriate.
+> > 
+> > ...
+> >
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -1298,9 +1298,6 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+> >  {
+> >  	phys_addr_t found;
+> >  
+> > -	if (!align)
+> > -		align = SMP_CACHE_BYTES;
+> > -
+> 
+> Can we add a WARN_ON_ONCE(!align) here?  To catch unconverted code
+> which sneaks in later on.
 
-> This patch-set mainly adds new additions related to RSS for the new
-> hardware Revision 0x21. It also adds support to use RSS hash value
-> provided by the hardware along with descriptor.
+Here it goes:
 
-Series applied.
+From baec825c58e8bc11371433d3a4b20b2216877a50 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date: Mon, 8 Oct 2018 11:22:10 +0300
+Subject: [PATCH] memblock: warn if zero alignment was requested
+
+After update of all memblock users to explicitly specify SMP_CACHE_BYTES
+alignment rather than use 0, it is still possible that uncovered users
+may sneak in. Add a WARN_ON_ONCE for such cases.
+
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ mm/memblock.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 0bbae56..5fefc70 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1298,6 +1298,9 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ {
+ 	phys_addr_t found;
+ 
++	if (WARN_ON_ONCE(!align))
++		align = SMP_CACHE_BYTES;
++
+ 	found = memblock_find_in_range_node(size, align, start, end, nid,
+ 					    flags);
+ 	if (found && !memblock_reserve(found, size)) {
+@@ -1420,6 +1423,9 @@ static void * __init memblock_alloc_internal(
+ 	if (WARN_ON_ONCE(slab_is_available()))
+ 		return kzalloc_node(size, GFP_NOWAIT, nid);
+ 
++	if (WARN_ON_ONCE(!align))
++		align = SMP_CACHE_BYTES;
++
+ 	if (max_addr > memblock.current_limit)
+ 		max_addr = memblock.current_limit;
+ again:
+-- 
+2.7.4
+
+
+-- 
+Sincerely yours,
+Mike.
+
