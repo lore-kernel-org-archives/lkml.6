@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DD7C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F35C46463
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A14420841
+	by mail.kernel.org (Postfix) with ESMTP id D611D20841
 	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:50:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A14420841
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D611D20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbeJKRRZ (ORCPT
+        id S1728456AbeJKRR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 13:17:25 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:34502 "EHLO inva021.nxp.com"
+        Thu, 11 Oct 2018 13:17:26 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:34454 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728405AbeJKRRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 13:17:25 -0400
+        id S1726399AbeJKRRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 13:17:23 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BE26420029A;
-        Thu, 11 Oct 2018 11:50:51 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D477720029D;
+        Thu, 11 Oct 2018 11:50:50 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F0CA5200186;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 121912000BF;
         Thu, 11 Oct 2018 11:50:45 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F13084032B;
-        Thu, 11 Oct 2018 17:50:38 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A6E944031B;
+        Thu, 11 Oct 2018 17:50:37 +0800 (SGT)
 From:   Peng Ma <peng.ma@nxp.com>
 To:     vkoul@kernel.org, leoyang.li@nxp.com
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
@@ -38,9 +38,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Peng Ma <peng.ma@nxp.com>
-Subject: [PATCH 6/7] arm64: dts: ls1046a: add qdma device tree nodes
-Date:   Thu, 11 Oct 2018 17:46:54 +0800
-Message-Id: <20181011094655.45707-6-peng.ma@nxp.com>
+Subject: [PATCH 5/7] arm64: dts: ls1043a: add qdma device tree nodes
+Date:   Thu, 11 Oct 2018 17:46:53 +0800
+Message-Id: <20181011094655.45707-5-peng.ma@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20181011094655.45707-1-peng.ma@nxp.com>
 References: <20181011094655.45707-1-peng.ma@nxp.com>
@@ -50,23 +50,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add the qDMA device tree nodes for LS1046A devices.
+add the qDMA device tree nodes for LS1043A devices.
 
 Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |   21 +++++++++++++++++++++
- 1 files changed, 21 insertions(+), 0 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |   22 ++++++++++++++++++++++
+ 1 files changed, 22 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index ef83786..9f36293 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -704,6 +704,27 @@
- 					<0000 0 0 4 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 7881e3d..49c6655 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -734,6 +734,28 @@
+ 					<0000 0 0 3 &gic 0 156 0x4>,
+ 					<0000 0 0 4 &gic 0 157 0x4>;
  		};
- 
++
 +		qdma: qdma@8380000 {
-+			compatible = "fsl,ls1046a-qdma", "fsl,ls1021a-qdma";
++			compatible = "fsl,ls1021a-qdma", "fsl,ls1043a-qdma";
 +			reg = <0x0 0x8380000 0x0 0x1000>, /* Controller regs */
 +			      <0x0 0x8390000 0x0 0x10000>, /* Status regs */
 +			      <0x0 0x83a0000 0x0 0x40000>; /* Block regs */
@@ -88,7 +89,7 @@ index ef83786..9f36293 100644
 +
  	};
  
- 	reserved-memory {
+ 	firmware {
 -- 
 1.7.1
 
