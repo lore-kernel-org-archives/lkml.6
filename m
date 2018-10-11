@@ -2,135 +2,139 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AA0C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30794C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFB92075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4CB32087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:00:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Dy41Ttp2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFB92075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XPe1rB0g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CB32087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJKW0B (ORCPT
+        id S1727601AbeJKW17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:26:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50308 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKW0B (ORCPT
+        Thu, 11 Oct 2018 18:27:59 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5220 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeJKW17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:26:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=5eAST9ot5OoEgThXoaDbS4TmHolAHxmE7K4dc9ifqac=; b=Dy41Ttp2qgeC
-        pu4pbprSwiK0oIHMJR4CmuHvFN2v7hTrQLr00PzyaHyY71RlfbBafYsuzlCHeL1sjqJvK4XGUq40Y
-        U8RQ+CryAZdobza+JM6bQA+5TMlq2Y5/BR/V8ArhbRO9NJlKpip61tLevbeuXWvUFe4YxktDuUP9e
-        lHN1Q=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcPx-0001uV-7F; Thu, 11 Oct 2018 14:58:25 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 00CC011223ED; Thu, 11 Oct 2018 15:58:24 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Talel Shenhar <talel@amazon.com>
-Cc:     David Woodhouse <dwmw@amazon.co.uk>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-spi@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, talel@amazon.com, jonnyc@amazon.com,
-        ronenk@amazon.com, barakw@amazon.com,
-        David Woodhouse <dwmw@amazon.co.uk>, linux-spi@vger.kernel.org
-Subject: Applied "spi: dw: add compatible for Amazon's Alpine spi controller" to the spi tree
-In-Reply-To:  <1539256807-25676-1-git-send-email-talel@amazon.com>
-Message-Id: <20181011145825.00CC011223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:58:24 +0100 (BST)
+        Thu, 11 Oct 2018 18:27:59 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bbf65850000>; Thu, 11 Oct 2018 08:00:21 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 11 Oct 2018 08:00:26 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 11 Oct 2018 08:00:26 -0700
+Received: from [10.21.132.143] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 11 Oct
+ 2018 15:00:22 +0000
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        jacopo <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+ <20180906122436.25610-1-linus.walleij@linaro.org>
+ <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+Date:   Thu, 11 Oct 2018 16:00:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539270021; bh=yulZ6WpRxcx9tdz/Joqw9RtVXaMU62yVBp3RP3uhvVQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=XPe1rB0gEWOJ68DovNua67OZcfE0OLYVPFUnAowHrYMAFDYL6JJKbLliXwy5nXk5q
+         vkSWjtvwQgqh60ROOY2ioZw9rjFFneoQtUoPiUTauOtHa4QDCPJxECkTTVv33TUsL8
+         YX7Jx9ZObD1B6O9bInPtB1QPE28GkocuAGJjD/wtdf4HbMWqBLvpCi2bdbTzFW5S34
+         DB4qqc2AclSy25/7f5DFBSes93RPtsM2W2aguzZsgkWMOvwkj2ovZv75lSHiPjG0Ua
+         wXTqvunhMfJxKThWXVsPRBuZG8jx+23QRyUu5YMplOBYnzkwULnQcwogtbw7/PW4vY
+         VdTxt1jJY/ORA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Linus,
 
-   spi: dw: add compatible for Amazon's Alpine spi controller
+On 11/10/18 10:29, Linus Walleij wrote:
+> On Thu, Oct 11, 2018 at 11:01 AM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+> 
+>> I've just noticed that this patch causes regression on Samsung
+>> Exynos4412-based Trats2 board. Conversion to GPIO descriptor breaks
+>> operation when regulators used shared GPIO:  sii9234 i2c driver
+>> is not able to get vcc33mhl regulator (it uses shared GPIO enable
+>> line with vsil12 regulator).
+> 
+> So I guess this means that this physical GPIO line will enable the
+> vcc33mhl and the vsil12 regulators at the same time?
+> 
+>> This issue has been already pointed in case of commits:
+>> 37fa23dbccbd97663acc085bd79246f427e603a1
+>> d1dae72fab2c377ff463742eefd8ac0f9e99b7b9
+>> ab4d11e2c2329cf7cb7be31ff22489aae4dee5dc
+> 
+> A big sorry for my ignorance, I guess the information overload
+> on the mailing list just makes me miss the important points.
+> I'll try to be better, sadly I constantly fail to keep everything
+> in mind and constantly break things like this.
+> 
+>> Maybe it would be better to first solve the handling of shared enable
+>> GPIO in the descriptor-based interface before converting more regulators
+>> and stepping into this issue again?
+> 
+> I am trying to solve it, but I just don't have systems to reproduce all
+> kinds of things. It's a bit stressful since this is one of those runtime
+> things that is hard to test when devising a patch for systems I don't
+> have.
 
-has been applied to the spi tree at
+This also appears to be causing a regression on the Tegra124 Jetson TK1
+that also uses a shared GPIO for two regulators. The 2nd regulator that
+uses the GPIO now fails to probe [0] ...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+[    0.680021] +5V_SATA: supplied by +5V_SYS
+[    0.683964] reg-fixed-voltage: probe of regulators:regulator@14 failed with error -16
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Not sure if you have one of these, but otherwise I can help test.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Cheers
+Jon
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+[0] https://storage.kernelci.org/next/master/next-20181011/arm/tegra_defconfig/lab-baylibre-seattle/boot-tegra124-jetson-tk1.html 
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From d49a30366793210cd64759edcdf7099a2e32efd6 Mon Sep 17 00:00:00 2001
-From: Talel Shenhar <talel@amazon.com>
-Date: Thu, 11 Oct 2018 14:20:06 +0300
-Subject: [PATCH] spi: dw: add compatible for Amazon's Alpine spi controller
-
-This compatible adds the ability for dw spi controller driver to work with
-the dw spi controller found on Alpine chips.
-
-The dw spi controller has an auto-deselect of Chip-Select, in case there is
-no data inside the Tx FIFO. While working on platforms with Alpine chips,
-auto-deselect mode causes an issue for some spi devices that can't handle
-the Chip-Select deselect in the middle of a transaction. It is a normal
-behavior for a Tx FIFO to be empty in the middle of a transaction, due to
-busy cpu. In the Alpine chip family an option to change the default
-behavior was added to the original dw spi controller to prevent this issue
-of de-asserting Chip-Select once TX FIFO is empty. The change was to allow
-SW manual control of the Chip-Select. With this change, as long as the
-Slave Enable Register is asserted, the Chip-Select will be asserted. As a
-result, it is necessary to deselect the Slave Select Register once the
-transaction is done. This feature is enabled via a new device compatible
-string called 'amazon,alpine-dw-apb-ssi'.  Once the driver identifies the
-new compatible string, it enables the hw fixup logic, by writing to a
-dedicated register found in the IP reserved area and will start manual
-deselecting the Slave Select Register when the transfer ends.
-
-Signed-off-by: Talel Shenhar <talel@amazon.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-index 642d3fb1ef85..2864bc6b659c 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-@@ -2,7 +2,7 @@ Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
- 
- Required properties:
- - compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi", where soc is "ocelot" or
--  "jaguar2"
-+  "jaguar2", or "amazon,alpine-dw-apb-ssi"
- - reg : The register base for the controller. For "mscc,<soc>-spi", a second
-   register set is required (named ICPU_CFG:SPI_MST)
- - interrupts : One interrupt, used by the controller.
 -- 
-2.19.0.rc2
-
+nvpublic
