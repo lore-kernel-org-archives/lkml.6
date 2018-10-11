@@ -2,176 +2,331 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284D4C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37195C46462
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6BB22086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D808021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:40:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M91yGIZt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BB22086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uriUVABQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D808021470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeJKOFl (ORCPT
+        id S1727689AbeJKOFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:05:41 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40447 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeJKOFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:05:41 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r83-v6so7142460ljr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 23:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xAq3G/WOP98XSdOvHrnhfLRJqC5LZ6aJD5T0CJKf6Nw=;
-        b=M91yGIZtXQou1PO657igXWrv82p/L79UBuEpVi1pbDwUUONY/bjH0SJpRui5QAxfpf
-         66ipKgDWP32NTSPhn/B1m/y7IO6FB1P4jfRA/blzII++TqVMxR+Dt+VL2KrEYund1Cnv
-         YvOAvxSfQrgLjeQYm3ZmwtUk7K31yeQj+Es/uQSJlK0Xa4vCjefQssbFIDCkqNlrgGhC
-         3X7j7UyfhTz9qDTmgR2r3eED5WkxbYGymxJ0mZoBmEym8cK+hJLKLD7Ee1N0XDjyzW5N
-         mXEgmVA53hf5ulnrCkMTV7H+40W+0Jnr8cX1YX5Nf/7UsQUwEkR8gSmjU8wEfvGy1dAc
-         ajmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=xAq3G/WOP98XSdOvHrnhfLRJqC5LZ6aJD5T0CJKf6Nw=;
-        b=QNUnn/SolFYjyyLO+ZErtd/TWNwV1phB5NDKopFZ0FrOyfl3dvnOjwjSknYfQkSwjk
-         OCDe5fW6nGTKh5TQC1vEGXj4U4B3sexE/baDHJk/C1MpkaJM5p1SXILaszio7PdmOWvP
-         BRItnIVrrlEUZ1Nyi6/a7hHMQyCttXD1FoErk5eU4LNi0ISHAe8oizEs3hrI3MrGkcPk
-         CHc+gaIqb8+hy9R6RYqF8rgDmvkxXz7S5HFuqPxVSaY1Wb5qIM/nyG+bOG97p3/7YxPt
-         JfyOf/+C5ciqyB6XWLrNPpBEMt2YeNiCIm07eLvYlOHdMdDLXWPR7tlRGIUF4fhW5zli
-         qkFQ==
-X-Gm-Message-State: ABuFfoi8oaMH9ga3y37y0B1FlIpQWAIbONjyQNODI2Mdcg9hnreXbl2y
-        7AIrF4nL3Zd87qWpGL1PU3WZL/sM
-X-Google-Smtp-Source: ACcGV628Za4ZXJBvFDh9IFGMb5WzghBFthrjjjO0L+PwINAiw8TX7fJYLN40ig3mkwL/5Qwh8fQfkA==
-X-Received: by 2002:a2e:638d:: with SMTP id s13-v6mr219097lje.117.1539239988747;
-        Wed, 10 Oct 2018 23:39:48 -0700 (PDT)
-Received: from [192.168.1.111] (91-157-235-206.elisa-laajakaista.fi. [91.157.235.206])
-        by smtp.googlemail.com with ESMTPSA id 71-v6sm6052094lja.90.2018.10.10.23.39.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Oct 2018 23:39:46 -0700 (PDT)
-Subject: Re: [PATCH v2 0/3] code of conduct fixes
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        ksummit-discuss@lists.linuxfoundation.org
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-References: <1539202053.12644.8.camel@HansenPartnership.com>
-From:   Tomi Valkeinen <tomi.valkeinen@iki.fi>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tomi.valkeinen@iki.fi; prefer-encrypt=mutual; keydata=
- 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
- QChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-Message-ID: <6b0d5ad6-c76b-8dbf-bd74-de352280e780@iki.fi>
-Date:   Thu, 11 Oct 2018 09:39:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 10:05:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbeJKOFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 10:05:50 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE1AF2077C;
+        Thu, 11 Oct 2018 06:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539239999;
+        bh=8kprc6bBHXf0VMIa1XIYlTJfnPaVM1UrLCcAA5l1Tzk=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=uriUVABQbYg/a+5e2M/FdH9ABQnRb8pZs5AnwNFnvs7w+1AOMW3VK6syqnVFkYFro
+         iHn8kImprEFFAfCEcqJFL7SMIkaCuVVs/BevroHoSkArzCH0CfG3sUMOA+S7AkI6B6
+         yP4eszYduOr+toO7e66sv08VpVjDvWkde51cCA2U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1539202053.12644.8.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87bm821rkf.wl-kuninori.morimoto.gx@renesas.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
+ <87bm821rkf.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <153923999820.207691.114282732524143268@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: add 74aup1g157gw 2-input multiplexer as clock driver
+Date:   Wed, 10 Oct 2018 23:39:58 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/18 23:07, James Bottomley wrote:
-> Resend to show accumulated tags and also to add a third patch listing
-> the TAB as the reporting point as a few people seem to want.  If it
-> gets the same level of support, I'll send it in with the other two.
-> 
-> ---
-> 
-> Previous cover letter:
-> 
-> 
-> We've had several threads discussing potential changes to the code of
-> conduct but Mauro is the only person to have proposed an actual patch. 
-> In order to move the debate on, I'm presenting two patches, one to fix
-> the email problem Mauro identified and the other to strip the
-> enforcement section pending community discussion as Shuah suggested.
-> 
-> I'll take responsibility for collecting any tags people want to add
-> (review/ack/sign off, etc) and sending the patch in as a signed pull
-> request before 4.19 final if they get enough community support.
-> 
-> Note, I've sent both patches in as a series to facilitate review and
-> discussion, but they are separable if one is looked on with less favour
-> than the other.
-> 
-> It was also a bit unclear which list to send this to, but I finally
-> settled on linux-kernel as the catch all and ksummit-discuss since
-> that's where most of the current discussion is.  I can add other lists
-> as people suggest them.
-> 
-> James
-> 
-> ---
-> 
-> James Bottomley (3):
->   code-of-conduct: Fix the ambiguity about collecting email addresses
->   code-of-conduct: Strip the enforcement paragraph pending community
->     discussion
->   code-of-conduct: Add back the TAB as the central reporting point
-> 
->  Documentation/process/code-of-conduct.rst | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
+Quoting Kuninori Morimoto (2018-10-09 19:16:48)
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 292056b..9cfeb0e 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -299,5 +299,6 @@ source "drivers/clk/sunxi-ng/Kconfig"
+>  source "drivers/clk/tegra/Kconfig"
+>  source "drivers/clk/ti/Kconfig"
+>  source "drivers/clk/uniphier/Kconfig"
+> +source "drivers/clk/nxp/Kconfig"
 
-For the three patches (preferably with Alan's "except where required by
-law"):
+Please sort this alphabetically.
 
-Acked-by: Tomi Valkeinen <tomi.valkeinen@iki.fi>
+>  =
 
-Although I think reverting 8a104f8b5867c682 is the best option.
+>  endmenu
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index ed344eb..fcfd42a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -84,7 +84,7 @@ obj-$(CONFIG_ARCH_MMP)                        +=3D mmp/
+>  endif
+>  obj-y                                  +=3D mvebu/
+>  obj-$(CONFIG_ARCH_MXS)                 +=3D mxs/
+> -obj-$(CONFIG_COMMON_CLK_NXP)           +=3D nxp/
+> +obj-y                                  +=3D nxp/
 
- Tomi
+There's the CONFIG_COMMON_CLK_NXP config symbol that could go into the
+drivers/clk/nxp/Kconfig file then and also wrap the Makefile contents in
+the nxp subdirectory too? We don't want to lose that config option and
+start enabling this driver all the time.
+
+>  obj-$(CONFIG_MACH_PISTACHIO)           +=3D pistachio/
+>  obj-$(CONFIG_COMMON_CLK_PXA)           +=3D pxa/
+>  obj-$(CONFIG_COMMON_CLK_QCOM)          +=3D qcom/
+> diff --git a/drivers/clk/nxp/clk-74aup1g157gw.c b/drivers/clk/nxp/clk-74a=
+up1g157gw.c
+> new file mode 100644
+> index 0000000..78199bb
+> --- /dev/null
+> +++ b/drivers/clk/nxp/clk-74aup1g157gw.c
+> @@ -0,0 +1,213 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 Renesas Solutions Corp.
+> +// Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> +//
+> +#include <linux/module.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define CLK_I_NUM 2
+> +struct clk_priv {
+> +       struct clk_hw hw;
+> +       struct device *dev;
+> +       struct clk *i[CLK_I_NUM];
+> +       struct gpio_desc *sel;
+> +       long (*round_rate)(struct clk_hw *hw, unsigned long rate,
+> +                          unsigned long *parent_rate);
+> +};
+> +#define hw_to_priv(_hw) container_of(_hw, struct clk_priv, hw)
+> +#define priv_to_dev(priv) priv->dev
+
+Nitpick: This macro is just obfuscating, there isn't any container_of()
+usage going on so please remove it.
+
+> +#define for_each_iclk(i)                       \
+> +       for ((i) =3D 0; (i) < CLK_I_NUM; (i)++)
+
+Nitpick: This macros isn't making things any shorter, so please remove
+it.
+
+> +
+> +static int clk74_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                         unsigned long parent_rate)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +       struct device *dev =3D priv_to_dev(priv);
+> +       int i;
+> +
+> +       for_each_iclk(i) {
+> +               if (rate =3D=3D clk_get_rate(priv->i[i])) {
+> +                       dev_dbg(dev, "set rate %lu as i%d\n", rate, i);
+> +                       gpiod_set_value_cansleep(priv->sel, i);
+> +                       return 0;
+> +               }
+> +       }
+> +
+> +       dev_err(dev, "unsupported rate %lu\n", rate);
+> +       return -EIO;
+> +}
+> +
+> +static long clk74_round_rate_close(struct clk_hw *hw, unsigned long rate,
+> +                            unsigned long *parent_rate)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +       struct device *dev =3D priv_to_dev(priv);
+> +       unsigned long min =3D ~0;
+> +       unsigned long ret =3D 0;
+> +       int i;
+> +
+> +       /*
+> +        * select closest rate
+> +        */
+> +       for_each_iclk(i) {
+> +               unsigned long irate =3D clk_get_rate(priv->i[i]);
+> +               unsigned long diff =3D abs(rate - irate);
+> +
+> +               if (min > diff) {
+> +                       min =3D diff;
+> +                       ret =3D irate;
+> +               }
+> +       }
+> +
+> +       dev_dbg(dev, "(close)round rate %lu\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static long clk74_round_rate_audio(struct clk_hw *hw, unsigned long rate,
+> +                            unsigned long *parent_rate)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +       struct device *dev =3D priv_to_dev(priv);
+> +       unsigned long ret =3D 0;
+> +       int is_8k =3D 0;
+> +       int i;
+> +
+> +       /*
+> +        * select 48kHz or 44.1kHz category rate
+> +        */
+> +       if (!(rate % 8000))
+> +               is_8k =3D 1;
+> +
+> +       for_each_iclk(i) {
+> +               unsigned long irate =3D clk_get_rate(priv->i[i]);
+> +
+> +               if (( is_8k && !(irate % 8000)) ||
+> +                   (!is_8k &&  (irate % 8000))) {
+> +                       ret =3D irate;
+> +               }
+> +       }
+> +
+> +       dev_dbg(dev, "(audio)round rate %lu\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static long clk74_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                            unsigned long *parent_rate)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +
+> +       return priv->round_rate(hw, rate, parent_rate);
+> +}
+> +
+> +static unsigned long clk74_recalc_rate(struct clk_hw *hw,
+> +                                    unsigned long parent_rate)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +       struct device *dev =3D priv_to_dev(priv);
+> +       unsigned long rate;
+> +       int i =3D gpiod_get_raw_value_cansleep(priv->sel);
+> +
+> +       rate =3D clk_get_rate(priv->i[i]);
+> +
+> +       dev_dbg(dev, "recalc rate %lu as i%d\n", rate, i);
+> +
+> +       return rate;
+> +}
+> +
+> +static u8 clk74_get_parent(struct clk_hw *hw)
+> +{
+> +       struct clk_priv *priv =3D hw_to_priv(hw);
+> +
+> +       return gpiod_get_raw_value_cansleep(priv->sel);
+> +}
+> +
+> +static const struct clk_ops clk74_ops =3D {
+> +       .set_rate       =3D clk74_set_rate,
+> +       .round_rate     =3D clk74_round_rate,
+> +       .recalc_rate    =3D clk74_recalc_rate,
+> +       .get_parent     =3D clk74_get_parent,
+> +};
+
+Can this all be handled by the 'gpio-mux-clock' compatible/driver? I
+suppose it may need an update to add the rounding policy that you want
+via some sort of DT property, but otherwise it would be fine?
+
+> +
+> +static const char * const clk74_in_name[CLK_I_NUM] =3D {
+> +       "i0",
+> +       "i1",
+> +};
+> +
+> +static int clk74_probe(struct platform_device *pdev)
+> +{
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +       struct clk_priv *priv;
+> +       struct device *dev =3D &pdev->dev;
+> +       const char *parent_names[CLK_I_NUM];
+> +       int i, ret;
+> +
+> +       priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENODEV;
+
+You mean -ENOMEM?
+
+> +
+> +       for_each_iclk(i) {
+> +               clk =3D devm_clk_get(dev, clk74_in_name[i]);
+> +               if (IS_ERR(clk))
+> +                       return -EPROBE_DEFER;
+
+Please return actual error code instead of overriding and returning
+probe defer.
+
+> +               priv->i[i] =3D clk;
+> +               parent_names[i] =3D __clk_get_name(clk);
+> +       }
+> +
+> +       memset(&init, 0, sizeof(init));
+> +       init.name               =3D "74aup1g157gw";
+> +       init.ops                =3D &clk74_ops;
+> +       init.parent_names       =3D parent_names;
+> +       init.num_parents        =3D CLK_I_NUM;
+> +
+> +       priv->hw.init           =3D &init;
+> +       priv->dev               =3D dev;
+> +       priv->round_rate        =3D of_device_get_match_data(dev);
+> +       priv->sel               =3D devm_gpiod_get(dev, "sel", 0);
+> +       if (IS_ERR(priv->sel))
+> +               return -EPROBE_DEFER;
+
+Please return the actual error.
+
+> +
+> +       gpiod_direction_output(priv->sel, 0);
+> +
+> +       ret =3D devm_clk_hw_register(dev, &priv->hw);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &p=
+riv->hw);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       platform_set_drvdata(pdev, priv);
+> +
+> +       dev_info(dev, "probed\n");
+
+Please remove noise like this.
+
+> +
+> +       return 0;
+> +}
+> +
+> +#define OF_ID(name, func) { .compatible =3D name, .data =3D func }
+> +static const struct of_device_id clk74_of_match[] =3D {
+> +       OF_ID("nxp,74aup1g157gw-clk",           clk74_round_rate_close),
+> +       OF_ID("nxp,74aup1g157gw-audio-clk",     clk74_round_rate_audio),
+
+Nitpick: I'd prefer to not have the macro.
