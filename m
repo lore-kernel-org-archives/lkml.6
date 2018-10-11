@@ -7,50 +7,43 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109CFC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FB5C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F482098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D3B2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1h5cZO72"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F482098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ha7U/HSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D3B2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbeJKXNT (ORCPT
+        id S1731367AbeJKXNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45806 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeJKXNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:18 -0400
+        id S1726762AbeJKXNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 806E12085B;
-        Thu, 11 Oct 2018 15:45:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 634E220652;
+        Thu, 11 Oct 2018 15:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272733;
-        bh=s8jB6ydVRUap2fzhjuTEUMvwnzgVFjNTbxy2VY+V9to=;
+        s=default; t=1539272735;
+        bh=1QVX1sAFTQSh1x391XkcBDo1l/w7tmsCuCsZ4ojsQQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1h5cZO72gbvqYiCcis9q7+OtHRRYKTNzg81buYBpGI4RZ89zSBj0V+3nwW9Vi9v40
-         aP11W73pD8KjhHB0cCfze/wVo1QV0gfktaE0DRkpx+pltyXXsM5UbCX8irhO5ZSsDT
-         yRvZ0b1kcf/4XZEX/0eHWrVqtvsdWHTEKGYganf4=
+        b=ha7U/HSOPfwSbEYrm1w5iKiIGMk+3dY0bFxwWBrFtdhTljLQDZsylnZAzqTFGOFti
+         NNoa7PLem86zBI0oWrxIHiJ4523bQjXkGkpaPwcBwhDGHoihTdnpMB2UTypdeID7Gi
+         T1XmUEyNpfAjIDfdMwcCdiabuMrIYpVQWKIaB+Bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.14 02/45] mm: migration: fix migration of huge PMD shared pages
-Date:   Thu, 11 Oct 2018 17:39:29 +0200
-Message-Id: <20181011152508.978032962@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 20/45] dm cache: fix resize crash if user doesnt reload cache table
+Date:   Thu, 11 Oct 2018 17:39:47 +0200
+Message-Id: <20181011152509.739306793@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -68,226 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 017b1660df89f5fb4bfe66c34e35f7d2031100c7 upstream.
+commit 5d07384a666d4b2f781dc056bfeec2c27fbdf383 upstream.
 
-The page migration code employs try_to_unmap() to try and unmap the source
-page.  This is accomplished by using rmap_walk to find all vmas where the
-page is mapped.  This search stops when page mapcount is zero.  For shared
-PMD huge pages, the page map count is always 1 no matter the number of
-mappings.  Shared mappings are tracked via the reference count of the PMD
-page.  Therefore, try_to_unmap stops prematurely and does not completely
-unmap all mappings of the source page.
+A reload of the cache's DM table is needed during resize because
+otherwise a crash will occur when attempting to access smq policy
+entries associated with the portion of the cache that was recently
+extended.
 
-This problem can result is data corruption as writes to the original
-source page can happen after contents of the page are copied to the target
-page.  Hence, data is lost.
+The reason is cache-size based data structures in the policy will not be
+resized, the only way to safely extend the cache is to allow for a
+proper cache policy initialization that occurs when the cache table is
+loaded.  For example the smq policy's space_init(), init_allocator(),
+calc_hotspot_params() must be sized based on the extended cache size.
 
-This problem was originally seen as DB corruption of shared global areas
-after a huge page was soft offlined due to ECC memory errors.  DB
-developers noticed they could reproduce the issue by (hotplug) offlining
-memory used to back huge pages.  A simple testcase can reproduce the
-problem by creating a shared PMD mapping (note that this must be at least
-PUD_SIZE in size and PUD_SIZE aligned (1GB on x86)), and using
-migrate_pages() to migrate process pages between nodes while continually
-writing to the huge pages being migrated.
+The fix for this is to disallow cache resizes of this pattern:
+1) suspend "cache" target's device
+2) resize the fast device used for the cache
+3) resume "cache" target's device
 
-To fix, have the try_to_unmap_one routine check for huge PMD sharing by
-calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a shared
-mapping it will be 'unshared' which removes the page table entry and drops
-the reference on the PMD page.  After this, flush caches and TLB.
+Instead, the last step must be a full reload of the cache's DM table.
 
-mmu notifiers are called before locking page tables, but we can not be
-sure of PMD sharing until page tables are locked.  Therefore, check for
-the possibility of PMD sharing before locking so that notifiers can
-prepare for the worst possible case.
-
-Link: http://lkml.kernel.org/r/20180823205917.16297-2-mike.kravetz@oracle.com
-[mike.kravetz@oracle.com: make _range_in_vma() a static inline]
-  Link: http://lkml.kernel.org/r/6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com
-Fixes: 39dde65c9940 ("shared page table for hugetlb page")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Fixes: 66a636356 ("dm cache: add stochastic-multi-queue (smq) policy")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/hugetlb.h |   14 ++++++++++++++
- include/linux/mm.h      |    6 ++++++
- mm/hugetlb.c            |   37 +++++++++++++++++++++++++++++++++++--
- mm/rmap.c               |   42 +++++++++++++++++++++++++++++++++++++++---
- 4 files changed, 94 insertions(+), 5 deletions(-)
+ drivers/md/dm-cache-target.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -140,6 +140,8 @@ pte_t *huge_pte_alloc(struct mm_struct *
- pte_t *huge_pte_offset(struct mm_struct *mm,
- 		       unsigned long addr, unsigned long sz);
- int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end);
- struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
- 			      int write);
- struct page *follow_huge_pd(struct vm_area_struct *vma,
-@@ -169,6 +171,18 @@ static inline unsigned long hugetlb_tota
- 	return 0;
- }
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -3097,8 +3097,13 @@ static dm_cblock_t get_cache_dev_size(st
  
-+static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
-+					pte_t *ptep)
-+{
-+	return 0;
-+}
-+
-+static inline void adjust_range_if_pmd_sharing_possible(
-+				struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+}
-+
- #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
- #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
- #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2322,6 +2322,12 @@ static inline struct vm_area_struct *fin
- 	return vma;
- }
- 
-+static inline bool range_in_vma(struct vm_area_struct *vma,
-+				unsigned long start, unsigned long end)
-+{
-+	return (vma && vma->vm_start <= start && end <= vma->vm_end);
-+}
-+
- #ifdef CONFIG_MMU
- pgprot_t vm_get_page_prot(unsigned long vm_flags);
- void vma_set_page_prot(struct vm_area_struct *vma);
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4517,13 +4517,41 @@ static bool vma_shareable(struct vm_area
- 	/*
- 	 * check on proper vm_flags and page table alignment
- 	 */
--	if (vma->vm_flags & VM_MAYSHARE &&
--	    vma->vm_start <= base && end <= vma->vm_end)
-+	if (vma->vm_flags & VM_MAYSHARE && range_in_vma(vma, base, end))
- 		return true;
- 	return false;
- }
- 
- /*
-+ * Determine if start,end range within vma could be mapped by shared pmd.
-+ * If yes, adjust start and end to cover range associated with possible
-+ * shared pmd mappings.
-+ */
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+	unsigned long check_addr = *start;
-+
-+	if (!(vma->vm_flags & VM_MAYSHARE))
-+		return;
-+
-+	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
-+		unsigned long a_start = check_addr & PUD_MASK;
-+		unsigned long a_end = a_start + PUD_SIZE;
-+
-+		/*
-+		 * If sharing is possible, adjust start/end if necessary.
-+		 */
-+		if (range_in_vma(vma, a_start, a_end)) {
-+			if (a_start < *start)
-+				*start = a_start;
-+			if (a_end > *end)
-+				*end = a_end;
-+		}
-+	}
-+}
-+
-+/*
-  * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
-  * and returns the corresponding pte. While this is not necessary for the
-  * !shared pmd case because we can allocate the pmd later as well, it makes the
-@@ -4620,6 +4648,11 @@ int huge_pmd_unshare(struct mm_struct *m
+ static bool can_resize(struct cache *cache, dm_cblock_t new_size)
  {
- 	return 0;
- }
-+
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+}
- #define want_pmd_share()	(0)
- #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
- 
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1358,11 +1358,21 @@ static bool try_to_unmap_one(struct page
- 	}
+-	if (from_cblock(new_size) > from_cblock(cache->cache_size))
+-		return true;
++	if (from_cblock(new_size) > from_cblock(cache->cache_size)) {
++		if (cache->sized) {
++			DMERR("%s: unable to extend cache due to missing cache table reload",
++			      cache_device_name(cache));
++			return false;
++		}
++	}
  
  	/*
--	 * We have to assume the worse case ie pmd for invalidation. Note that
--	 * the page can not be free in this function as call of try_to_unmap()
--	 * must hold a reference on the page.
-+	 * For THP, we have to assume the worse case ie pmd for invalidation.
-+	 * For hugetlb, it could be much worse if we need to do pud
-+	 * invalidation in the case of pmd sharing.
-+	 *
-+	 * Note that the page can not be free in this function as call of
-+	 * try_to_unmap() must hold a reference on the page.
- 	 */
- 	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
-+	if (PageHuge(page)) {
-+		/*
-+		 * If sharing is possible, start and end will be adjusted
-+		 * accordingly.
-+		 */
-+		adjust_range_if_pmd_sharing_possible(vma, &start, &end);
-+	}
- 	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
-@@ -1408,6 +1418,32 @@ static bool try_to_unmap_one(struct page
- 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
- 		address = pvmw.address;
- 
-+		if (PageHuge(page)) {
-+			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
-+				/*
-+				 * huge_pmd_unshare unmapped an entire PMD
-+				 * page.  There is no way of knowing exactly
-+				 * which PMDs may be cached for this mm, so
-+				 * we must flush them all.  start/end were
-+				 * already adjusted above to cover this range.
-+				 */
-+				flush_cache_range(vma, start, end);
-+				flush_tlb_range(vma, start, end);
-+				mmu_notifier_invalidate_range(mm, start, end);
-+
-+				/*
-+				 * The ref count of the PMD page was dropped
-+				 * which is part of the way map counting
-+				 * is done for shared PMDs.  Return 'true'
-+				 * here.  When there is no other sharing,
-+				 * huge_pmd_unshare returns false and we will
-+				 * unmap the actual page and drop map count
-+				 * to zero.
-+				 */
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
-+		}
- 
- 		if (IS_ENABLED(CONFIG_MIGRATION) &&
- 		    (flags & TTU_MIGRATION) &&
+ 	 * We can't drop a dirty block when shrinking the cache.
 
 
