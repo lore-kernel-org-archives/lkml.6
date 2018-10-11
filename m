@@ -6,56 +6,55 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D2BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5600AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120782087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75A42087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g4ZCRtnW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/jk44p6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120782087A
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DBX3aWvb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kafBnz2v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75A42087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbeJKSmX (ORCPT
+        id S1728381AbeJKSqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:42:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36298 "EHLO
+        Thu, 11 Oct 2018 14:46:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38514 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeJKSmX (ORCPT
+        with ESMTP id S1726135AbeJKSqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:42:23 -0400
+        Thu, 11 Oct 2018 14:46:22 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 78B0A600C1; Thu, 11 Oct 2018 11:15:36 +0000 (UTC)
+        id DEB8960C7D; Thu, 11 Oct 2018 11:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539256536;
-        bh=Nv6ZLQiHW8dUvXyukp66oeuMTFwW17GihekFWEa8rSE=;
+        s=default; t=1539256774;
+        bh=VblFLL0PU8ONHPrlwgpjsaOc/BeWq9SjqSCOpHgAn20=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=g4ZCRtnWs0AHA7iw/PKiY6Ei9Ua4sBOsZeAX1GcoHP25b6543Mak3d2D0fTfp6b0n
-         SnHVFACuKeXmQ0ilffwpSCn03u9Prg5XW9PR9EQVrAIIclROl/HI6jvsOg8fZQOsBF
-         bKhUrVqiPG8wd6+4Hs0ve4CgEMf/cbt81moLiOuE=
+        b=DBX3aWvbapVwRNeia/s9H8FIAihJNmuPTHIU4HiSIZjQHVcQHD+hiHLpJXvgI7yZE
+         JvECSLO730Qe83dnLlDAhOvcC/axFSVmM3xCBgCJbaC1tupjqbTSkVAy1+HlE0PfnX
+         Zljo73UpAJFzycL3PNfZTQnprDlKIAFfpUxNA8yY=
 Received: from [10.79.167.189] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0FA6760285;
-        Thu, 11 Oct 2018 11:15:28 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 169E0600C1;
+        Thu, 11 Oct 2018 11:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539256534;
-        bh=Nv6ZLQiHW8dUvXyukp66oeuMTFwW17GihekFWEa8rSE=;
+        s=default; t=1539256773;
+        bh=VblFLL0PU8ONHPrlwgpjsaOc/BeWq9SjqSCOpHgAn20=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Q/jk44p6nxwxI4vMLJXN4SMiMHmX3/xd/zt3WtP0vf6zqaba9Jhxd+JVGTOO2IV3/
-         /SUuLLW1X2ILLj3v4tmV2kyMBWgJR6umeM4aLVl8tpWKLQ4nD0jnM6m6ShYltrdLo4
-         iRuUU4zvcdKNeXDyWQvxvCoRtWI7p9VyOffT+SR8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FA6760285
+        b=kafBnz2vRFhO5MpCu1prLwrCtWvai25mhi0Ftvv5RfIvIKm9l9GEKCYlcxPtoQQ2A
+         tLZIa8U0Mlanb4U3FB8lVz0jccTljaJDMmcqyPu8LW9LdKK+xbbPgsUOHGEw0B712k
+         Pz6NI2Sgr0DdvW7S7cXXQDIKVI/IXhNoPqvvGj88=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 169E0600C1
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 Subject: Re: [PATCH v8 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
  driver
-To:     Niklas Cassel <niklas.cassel@linaro.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -64,14 +63,14 @@ Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         amit.kucheria@linaro.org, evgreen@google.com
 References: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
  <1537698793-15285-3-git-send-email-tdas@codeaurora.org>
- <20181004210407.GB7926@centauri.lan>
+ <20181005105506.neri7niyelz2ahc5@vireshk-i7>
 From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <40719973-21a0-120d-7193-8e6287cbbd18@codeaurora.org>
-Date:   Thu, 11 Oct 2018 16:45:25 +0530
+Message-ID: <14e5ca05-0388-2414-0a56-d73fc23ab4cc@codeaurora.org>
+Date:   Thu, 11 Oct 2018 16:49:24 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181004210407.GB7926@centauri.lan>
+In-Reply-To: <20181005105506.neri7niyelz2ahc5@vireshk-i7>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,12 +79,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Niklas,
+Hello Viresh,
 
 Thanks for your review comments.
 
-On 10/5/2018 2:34 AM, Niklas Cassel wrote:
-> On Sun, Sep 23, 2018 at 04:03:13PM +0530, Taniya Das wrote:
+On 10/5/2018 4:25 PM, Viresh Kumar wrote:
+> On 23-09-18, 16:03, Taniya Das wrote:
 >> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
 >> for changing the frequency of CPUs. The driver implements the cpufreq
 >> driver interface for this hardware engine.
@@ -111,15 +110,6 @@ On 10/5/2018 2:34 AM, Niklas Cassel wrote:
 >> +config ARM_QCOM_CPUFREQ_HW
 >> +	bool "QCOM CPUFreq HW driver"
 >> +	depends on ARCH_QCOM
-> 
-> Hello Taniya,
-> 
-> It might be a good idea to do depends on ARCH_QCOM || COMPILE_TEST
-> to get more build testing.
-> 
-
-Would add it in the next patch.
-
 >> +	help
 >> +	 Support for the CPUFreq HW driver.
 >> +	 Some QCOM chipsets have a HW engine to offload the steps
@@ -127,15 +117,6 @@ Would add it in the next patch.
 >> +	 in this engine exposes a programming interface to the OS.
 >> +	 The driver implements the cpufreq interface for this HW engine.
 >> +	 Say Y if you want to support CPUFreq HW.
-> 
-> All other help text has a tab and two spaces, you only have one.
-> 
-> Also, why not add this Kconfig right after the existing ARCH_QCOM_CPUFREQ
-> driver?
-> 
-
-Would update the same in the next patch.
-
 >> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
 >> index c1ffeab..ca48a1d 100644
 >> --- a/drivers/cpufreq/Makefile
@@ -145,12 +126,6 @@ Would update the same in the next patch.
 >>   obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
 >>   obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
 >> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
-> 
-> Why not add this right after the existing ARCH_QCOM_CPUFREQ driver?
-> 
-
-Would update in the next patch.
-
 >>
 >>
 >>   ##################################################################################
@@ -169,12 +144,6 @@ Would update in the next patch.
 >> +#include <linux/init.h>
 >> +#include <linux/kernel.h>
 >> +#include <linux/module.h>
-> 
-> Since this can't be built as a module, drop module.h, init.h should suffice.
-> 
-
-Would clean it up.
-
 >> +#include <linux/of_address.h>
 >> +#include <linux/of_platform.h>
 >> +
@@ -339,6 +308,13 @@ Would clean it up.
 >> +		prev_cc = core_count;
 >> +		prev_freq = cur_freq;
 >> +	}
+> 
+> The logic here always surprises me, why does the firmware keeps the
+> table this way instead of simplifying it  ?
+> 
+
+Unfortunately that is the only way to identify.
+
 >> +
 >> +	c->table[i].frequency = CPUFREQ_TABLE_END;
 >> +
@@ -357,13 +333,19 @@ Would clean it up.
 >> +			continue;
 >> +		of_node_put(cpu_np);
 > 
-> Shouldn't of_node_put() be called after you have used the pointer?
+> Heh, you can't do that here :)
 > 
 
-Yes, it would be moved.
+Yes, I would take care to put it in the right place.
 
 >> +
 >> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> 
+> As this code still needs to use the same pointer. It is possible that
+> the memory associated with cpu_np gets freed as soon as you call
+> of_node_put() on that. You should call of_node_put() anytime after
+> this routine is called.
+> 
 >> +				"#freq-domain-cells", 0, &args);
 >> +		if (ret < 0)
 >> +			continue;
@@ -453,7 +435,12 @@ Yes, it would be moved.
 >> +	xo_rate = clk_get_rate(clk);
 >> +
 >> +	devm_clk_put(&pdev->dev, clk);
->> +
+> 
+> Why use devm_ variants if you want to put the clock anyway ?
+> 
+
+Would move to non devm_ variants.
+
 >> +	clk = devm_clk_get(&pdev->dev, "cpu_clk");
 >> +	if (IS_ERR(clk))
 >> +		return PTR_ERR(clk);
@@ -461,15 +448,15 @@ Yes, it would be moved.
 >> +	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
 >> +
 >> +	devm_clk_put(&pdev->dev, clk);
+> 
+> same here.
+> 
 >> +
 >> +	for_each_possible_cpu(cpu) {
 >> +		cpu_np = of_cpu_device_node_get(cpu);
 > 
-> Where is the matching of_node_put?
+> Where is the of_node_put() corresponding to this ?
 > 
-
-Yes, missed adding it.
-
 >> +		if (!cpu_np) {
 >> +			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
 >> +				cpu);
@@ -532,47 +519,9 @@ Yes, missed adding it.
 >> +subsys_initcall(qcom_cpufreq_hw_init);
 >> +
 >> +MODULE_DESCRIPTION("QCOM firmware-based CPU Frequency driver");
-> 
-> Since this can't be built as a module, you should drop MODULE_DESCRIPTION.
-> 
-> 
-> Also, checkpatch --strict gives the following warnings:
-> 
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #103:
-> new file mode 100644
-> 
-> cpufreq drivers usually have an entry in MAINTAINERS file.
-> 
-> 
-> WARNING: Duplicate signature
-> #370:
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> 
-> If you are more than one author, you can use the Co-Developed-by tag.
-> 
-
-Hmm, I do see multiple SOBs being used and merged.
-
-> 
-> CHECK: Alignment should match open parenthesis
-> #611: FILE: drivers/cpufreq/qcom-cpufreq-hw.c:193:
-> +               ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> +                               "#freq-domain-cells", 0, &args);
-> 
-> CHECK: Alignment should match open parenthesis
-> #718: FILE: drivers/cpufreq/qcom-cpufreq-hw.c:300:
-> +               ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> +                               "#freq-domain-cells", 0, &args);
-> 
-> 
-
-Would fix the same.
-
-> 
-> 
-> Kind regards,
-> Niklas
+>> --
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
 > 
 
 -- 
