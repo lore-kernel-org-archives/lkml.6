@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0E7C67837
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6449EC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6572087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7AC2087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="em02HGh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6572087D
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ZRcNve6r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7AC2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeJLEDC (ORCPT
+        id S1726933AbeJLEDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:03:02 -0400
-Received: from mail-bn3nam01on0087.outbound.protection.outlook.com ([104.47.33.87]:21632
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Fri, 12 Oct 2018 00:03:05 -0400
+Received: from mail-co1nam03on0052.outbound.protection.outlook.com ([104.47.40.52]:2515
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725850AbeJLEDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:03:02 -0400
+        id S1725850AbeJLEDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 00:03:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rSkVNqzTsChJS3//fCVF8HJxPA7aGblrkMrU0BiCYc0=;
- b=em02HGh490tXCkfOAwOn+/dWMVTcdeEGPXL4/vMzIm8DCMyLlC8l8Cfr3aGb8hZ5wqbSbALXOfjYreiJ3nk2BWlN/V8uYrZYGHbeDey4hFVHVLMli8JowN6s4vU52rFsl2HVTXOxBlh0Xo8NC4HSRejI44+AgW5/hRQ22uRy4lQ=
+ bh=d7WDLgaSVAWFYByJ8A5XXf+UQRJVzQW69ARzj6ocHjE=;
+ b=ZRcNve6r3UqO7VX5CM3idxwOCULLN2wjzU/f28XuJILJTCiRMcVVpBRAzi7M4DJ4IDOcyfZFssP5VHorWBksLlrp5fatRgYnc05IxMdd5xljj642s+qDrn76eGWGcz3+hb9yQ81TleNaxH2M8Oj+aoAe5jYLfjV/878ZZlUZudI=
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1211.namprd12.prod.outlook.com (10.168.237.14) with Microsoft SMTP
+ DM5PR12MB2408.namprd12.prod.outlook.com (52.132.141.25) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Thu, 11 Oct 2018 20:33:24 +0000
+ 15.20.1228.23; Thu, 11 Oct 2018 20:33:39 +0000
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1228.020; Thu, 11 Oct 2018
- 20:33:24 +0000
+ 20:33:39 +0000
 From:   "Moger, Babu" <Babu.Moger@amd.com>
 To:     "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
@@ -71,13 +71,13 @@ CC:     "x86@kernel.org" <x86@kernel.org>,
         "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 06/11] arch/x86: Use new config parameter RESCTRL for
- compilation
-Thread-Topic: [PATCH v3 06/11] arch/x86: Use new config parameter RESCTRL for
- compilation
-Thread-Index: AQHUYaGoD0orSaS1ekK+X4gdcgflfg==
-Date:   Thu, 11 Oct 2018 20:33:23 +0000
-Message-ID: <20181011203223.18157-7-babu.moger@amd.com>
+Subject: [PATCH v3 10/11] arch/x86: Add AMD feature bit X86_FEATURE_MBA in
+ cpuid bits array
+Thread-Topic: [PATCH v3 10/11] arch/x86: Add AMD feature bit X86_FEATURE_MBA
+ in cpuid bits array
+Thread-Index: AQHUYaGxG6/V4V3Mb0aTh+XEKkTfDQ==
+Date:   Thu, 11 Oct 2018 20:33:39 +0000
+Message-ID: <20181011203223.18157-11-babu.moger@amd.com>
 References: <20181011203223.18157-1-babu.moger@amd.com>
 In-Reply-To: <20181011203223.18157-1-babu.moger@amd.com>
 Accept-Language: en-US
@@ -92,98 +92,78 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [165.204.78.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1211;20:ocltHmP6pZWJ2GL17FSqNO+P3UKQxo4OJPYXIFncs94smSs6O9EBXQiR6b3Yy4PnHVRDmTEuDGWu9JFOPziWsfFtV6a8fdFrx0mDFuic1pHkbEvb0POmkxgS69zHuEuS4JLEkZnaodPENs5sd1i1LUkFJ/GZh5u7R1evx9MJELPhYebUwg6EqqCPzVtLQ/cVbokUFNQZg5S5hg5Qa4SWib40i6ZB2miv8NR1mSvw1CWRVNbvcq0B4URMP9US+A2H
-x-ms-office365-filtering-correlation-id: cf2d56e1-4bf3-4664-025e-08d62fb8ca76
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB2408;20:ihukASn73XDZNrGOvtJm8KtPZyaBizvsOeSwFTLthIHQy050QeKfBKXs4KVIXf5tHeh6TMKv2e4vKbo8IPa7r+NhNWdjGVcbk8pXAi6enD5lRBTremURJGAqKlH+W4dsTh9jsum/7tbgbHpHCnoSR/i2ZDBLPI/69cAFTzlCm29XaxrkcAsFF9LqkPaXbjCYXm+qlmejmTlOFQDEX0N+Dco2EETmKrkAfNJzCMFxyDv4neC9xVgVxeQLyJNMB0/U
+x-ms-office365-filtering-correlation-id: 88741832-51c6-4ff5-7b14-08d62fb8d3a0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1211;
-x-ms-traffictypediagnostic: DM5PR12MB1211:
-x-microsoft-antispam-prvs: <DM5PR12MB12114B6C621D0C3F10F3A9DA95E10@DM5PR12MB1211.namprd12.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2408;
+x-ms-traffictypediagnostic: DM5PR12MB2408:
+x-microsoft-antispam-prvs: <DM5PR12MB24084CD0D5C109F18039C2E395E10@DM5PR12MB2408.namprd12.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(767451399110);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991062);SRVR:DM5PR12MB1211;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1211;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:DM5PR12MB2408;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2408;
 x-forefront-prvs: 08220FA8D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(199004)(189003)(316002)(2900100001)(71200400001)(71190400001)(14454004)(97736004)(86362001)(2501003)(5250100002)(105586002)(6512007)(6486002)(106356001)(36756003)(6436002)(478600001)(72206003)(5660300001)(102836004)(476003)(486006)(186003)(2616005)(446003)(11346002)(7736002)(305945005)(7416002)(81166006)(14444005)(53936002)(68736007)(8676002)(81156014)(66066001)(386003)(52116002)(256004)(4326008)(8936002)(99286004)(6506007)(2201001)(110136005)(3846002)(6116002)(26005)(76176011)(1076002)(54906003)(25786009)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1211;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(396003)(136003)(346002)(189003)(199004)(25786009)(99286004)(52116002)(256004)(4326008)(54906003)(316002)(110136005)(68736007)(71200400001)(71190400001)(102836004)(36756003)(2900100001)(305945005)(66066001)(81166006)(106356001)(8676002)(7416002)(478600001)(14454004)(105586002)(8936002)(81156014)(6512007)(2501003)(5250100002)(11346002)(446003)(476003)(2616005)(97736004)(486006)(72206003)(6486002)(7736002)(53936002)(26005)(186003)(6436002)(2201001)(5660300001)(14444005)(86362001)(1076002)(386003)(6506007)(3846002)(76176011)(2906002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2408;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: M2iueBdgS37GoTfTMWHm81D+9o3hRzhrGhVxHTYN2QOI2T7oSnO48wTDEY8s331Q+l4+1kMKW4Y+pw5VvIH2zR9Or5l4zvTH1dZRS8qgVytLPXsv/wqlzZSo/Pa9VR3xaD3qXBQK3FjJ9fdCsm3rB5x/PE52sPeUHQ6bxHd9ouBA3tYBsYXqI6Z/BfT7AsS0xO5FOpicWfLtqOUaPE3sMWBibtHXuWt12Ws2ai1A6M1MtrVWlApt38jL0ZuYq300dtBQ+6s4IqshCLJkSQE8syn333Ra0AfFZYeUOsLZ/rdC++ewv2XqZerREko9UA5EkckQyH+CrXH5nAf5GyJbk2e+UOy77y5fwuSS94P2yW0=
+x-microsoft-antispam-message-info: G2ntopbLyHU8MJWHlDEi8UePHkckhN3fc7Qa38g8Gs11Wgkr8ch4DUVzvI7Fp+jYL9Hxyj433aNt2PS+WbwEuBLxJvy8P9Ne1w1vWNVTYCUfMH1VJs1vuSwN7+cryaTLVtt4U3DsTfzmiUBswNsRtWmm8v7oSsQ7z4iG9zvJUk2UJaMZDq7byRZM5GIyFbdhK8i6NnyWocmpa65gnn+ynYzaxvYqQDndE29GjeRYdB0JmClQRpmRD93Gp+cGdkWYZX/0qGAJxYhrAZsBUrTO+EsfMAFDouLPYkLVQyyNKq0h5Z+M4075rE8PO7mbsGge/UyHcgYKm1sEpwyjUd285X8ChzyU02UoLVedzsX12/Q=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf2d56e1-4bf3-4664-025e-08d62fb8ca76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 20:33:24.0095
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88741832-51c6-4ff5-7b14-08d62fb8d3a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 20:33:39.3954
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1211
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2408
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use newly added config parameter RESCTRL to compile sources.
-This is common parameter across both Intel and AMD.
+From: Sherry Hurwitz <sherry.hurwitz@amd.com>
 
+The feature bit X86_FEATURE_MBA is detected via CPUID leaf 0x80000008
+EBX Bit 06. This bit indicates the support of AMD's MBA feature.
+
+This feature is supported by both Intel and AMD. But they are detected
+different CPUID leaves.
+
+Signed-off-by: Sherry Hurwitz <sherry.hurwitz@amd.com>
 Signed-off-by: Babu Moger <babu.moger@amd.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/include/asm/resctrl_sched.h | 4 ++--
- arch/x86/kernel/cpu/Makefile         | 4 ++--
- include/linux/sched.h                | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/scattered.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/re=
-sctrl_sched.h
-index 6e082697a613..54990fe2a3ae 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -2,7 +2,7 @@
- #ifndef _ASM_X86_RESCTRL_SCHED_H
- #define _ASM_X86_RESCTRL_SCHED_H
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattere=
+d.c
+index 772c219b6889..bd7853334b27 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -17,7 +17,11 @@ struct cpuid_bit {
+ 	u32 sub_leaf;
+ };
 =20
--#ifdef CONFIG_INTEL_RDT
-+#ifdef CONFIG_RESCTRL
-=20
- #include <linux/sched.h>
- #include <linux/jump_label.h>
-@@ -88,6 +88,6 @@ static inline void resctrl_sched_in(void)
-=20
- static inline void resctrl_sched_in(void) {}
-=20
--#endif /* CONFIG_INTEL_RDT */
-+#endif /* CONFIG_RESCTRL */
-=20
- #endif /* _ASM_X86_RESCTRL_SCHED_H */
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 222cf8cc078d..79279953c5f9 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -35,8 +35,8 @@ obj-$(CONFIG_CPU_SUP_CENTAUR)		+=3D centaur.o
- obj-$(CONFIG_CPU_SUP_TRANSMETA_32)	+=3D transmeta.o
- obj-$(CONFIG_CPU_SUP_UMC_32)		+=3D umc.o
-=20
--obj-$(CONFIG_INTEL_RDT)	+=3D resctrl.o resctrl_rdtgroup.o resctrl_monitor.=
-o
--obj-$(CONFIG_INTEL_RDT)	+=3D resctrl_ctrlmondata.o resctrl_pseudo_lock.o
-+obj-$(CONFIG_RESCTRL)	+=3D resctrl.o resctrl_rdtgroup.o resctrl_monitor.o
-+obj-$(CONFIG_RESCTRL)	+=3D resctrl_ctrlmondata.o resctrl_pseudo_lock.o
- CFLAGS_resctrl_pseudo_lock.o =3D -I$(src)
-=20
- obj-$(CONFIG_X86_MCE)			+=3D mcheck/
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 977cb57d7bc9..c4cf94c447b2 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -985,7 +985,7 @@ struct task_struct {
- 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
- 	struct list_head		cg_list;
- #endif
--#ifdef CONFIG_INTEL_RDT
-+#ifdef CONFIG_RESCTRL
- 	u32				closid;
- 	u32				rmid;
- #endif
+-/* Please keep the leaf sorted by cpuid_bit.level for faster search. */
++/*
++ * Please keep the leaf sorted by cpuid_bit.level for faster search.
++ * X86_FEATURE_MBA supported by both Intel and AMD. But the cpuid
++ * levels are different. Add a separate enty for each.
++ */
+ static const struct cpuid_bit cpuid_bits[] =3D {
+ 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+ 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
+@@ -29,6 +33,7 @@ static const struct cpuid_bit cpuid_bits[] =3D {
+ 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
+ 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
+ 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
++	{ X86_FEATURE_MBA,		CPUID_EBX,  6, 0x80000008, 0 },
+ 	{ X86_FEATURE_SME,		CPUID_EAX,  0, 0x8000001f, 0 },
+ 	{ X86_FEATURE_SEV,		CPUID_EAX,  1, 0x8000001f, 0 },
+ 	{ 0, 0, 0, 0, 0 }
 --=20
 2.17.1
 
