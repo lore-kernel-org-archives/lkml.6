@@ -2,127 +2,107 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12DAC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE28C67837
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA6A2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:56:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA6A2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 3E8A42075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:56:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQJWVtDp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8A42075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeJLEZB (ORCPT
+        id S1727002AbeJLEZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:25:01 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57742 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbeJLEZB (ORCPT
+        Fri, 12 Oct 2018 00:25:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34931 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeJLEZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:25:01 -0400
-Received: from 79.184.255.62.ipv4.supernova.orange.pl (79.184.255.62) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id d047225c2c476713; Thu, 11 Oct 2018 22:56:00 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        ulf.hansson@linaro.org, khilman@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org
-Subject: Re: [PATCH RFC v1 2/8] kernel/cpu_pm: Manage runtime PM in the idle path for CPUs
-Date:   Thu, 11 Oct 2018 22:52:51 +0200
-Message-ID: <8161939.SRDo8Qx48D@aspire.rjw.lan>
-In-Reply-To: <1539206455-29342-3-git-send-email-rplsssn@codeaurora.org>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org> <1539206455-29342-3-git-send-email-rplsssn@codeaurora.org>
+        Fri, 12 Oct 2018 00:25:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w5-v6so11176733wrt.2;
+        Thu, 11 Oct 2018 13:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Fg+CN/dzACMuXytyg7G7bLZ//PjBQZAAjHDxsioR8WQ=;
+        b=WQJWVtDpABXBB3k3hADTdvEXfLgoCYl+HOiu3x9SLovnRJfs3WT8cKjlc3gnQb+Yqy
+         xxe47oYhhwpVxPfsVWrXHG4nEFWC97NYKmRo6qX//Xn+0vR5gMj0KgHVSacxbG0kGtIO
+         RpjVntJ71D/Qu88cQTdoxpu9EEDk5N+gz3+2zwK+xE2KM9dcqoapbolWnKFWfe21YfXD
+         UY9aQ8XUCtcociusAj+Wbcq2jx+2O/6EA4MiwABuq68E5uRYxktFa4oO7X6Z7WMJfig2
+         LJGCSDwzGqnavZ9vs9wVX/L9JXbsA+JVQfd6+1vjLY+m/7fooFpBtt0Lqty9hR+SNcsi
+         01IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Fg+CN/dzACMuXytyg7G7bLZ//PjBQZAAjHDxsioR8WQ=;
+        b=qr/OmScWAXpD3lqoyiQC2F+RzedAFPQNgfTyP7HOoAeMhpHnFxtU6BF3b9SWDLzPJx
+         z/WkcQ2oBDOniPJ5libTofxhNGSufa7CEeDgXMBNxEKdLYJ4ELZJPiR7VATpPfpxmz38
+         lKk6cM7S7dFZDMLLoZkw8slIotvy7v9hyFCX3LppqTJVRej+34wTVeaJtl5rzqHlyW6l
+         I6jTOAQrCPWr2EfupWniOwPxZOMpS29UR3JfB7oIun2bKq4RbwyFa6Q9oRfiBFVYEGnh
+         0ZvxXfBa0vcRc13+n7NthB2x013v1dhUYZ9GEVMV+vd02+Ssk5KWPr3hAp98WlRYypSM
+         c1nA==
+X-Gm-Message-State: ABuFfogu1IV6pCF08weO07GfRHNNFiZqlZS5v6iCYUCVZgY99lJ9hzzz
+        AJDaG3aC9QvbROJhXoSw4Q==
+X-Google-Smtp-Source: ACcGV60GUuDyKjhb/nnywdVCxfPktSQykhEaMXr02svm8v50J49rfcghmvRTZhlZicDdaZJ0BapAnQ==
+X-Received: by 2002:a05:6000:12c5:: with SMTP id l5mr2844206wrx.215.1539291365150;
+        Thu, 11 Oct 2018 13:56:05 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id 201-v6sm21946138wmf.30.2018.10.11.13.56.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 13:56:04 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 23:56:01 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gorcunov@gmail.com,
+        akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH] proc: fix proc-self-map-files selftest for arm
+Message-ID: <20181011205601.GA32757@avx2>
+References: <20181011184359.15627-1-rafael.tinoco@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181011184359.15627-1-rafael.tinoco@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, October 10, 2018 11:20:49 PM CEST Raju P.L.S.S.S.N wrote:
-> From: Ulf Hansson <ulf.hansson@linaro.org>
+On Thu, Oct 11, 2018 at 03:43:59PM -0300, Rafael David Tinoco wrote:
+> MAP_FIXED is important for this test but, unfortunately, lowest virtual
+> address for user space mapping on arm is (PAGE_SIZE * 2) and NULL hint
+> does not seem to guarantee that when MAP_FIXED is given. This patch sets
+> the virtual address that will hold the mapping for the test, fixing the
+> issue.
 > 
-> To allow CPUs being power managed by PM domains, let's deploy support for
-> runtime PM for the CPU's corresponding struct device.
-> 
-> More precisely, at the point when the CPU is about to enter an idle state,
-> decrease the runtime PM usage count for its corresponding struct device,
-> via calling pm_runtime_put_sync_suspend(). Then, at the point when the CPU
-> resumes from idle, let's increase the runtime PM usage count, via calling
-> pm_runtime_get_sync().
-> 
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> (am from https://patchwork.kernel.org/patch/10478153/)
+> Link: https://bugs.linaro.org/show_bug.cgi?id=3782
+> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 > ---
->  kernel/cpu_pm.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  tools/testing/selftests/proc/proc-self-map-files-002.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
-> index 67b02e1..492d4a8 100644
-> --- a/kernel/cpu_pm.c
-> +++ b/kernel/cpu_pm.c
-> @@ -16,9 +16,11 @@
->   */
+> diff --git a/tools/testing/selftests/proc/proc-self-map-files-002.c b/tools/testing/selftests/proc/proc-self-map-files-002.c
+> index 6f1f4a6e1ecb..0a47eaca732a 100644
+> --- a/tools/testing/selftests/proc/proc-self-map-files-002.c
+> +++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
+> @@ -55,7 +55,9 @@ int main(void)
+>  	if (fd == -1)
+>  		return 1;
 >  
->  #include <linux/kernel.h>
-> +#include <linux/cpu.h>
->  #include <linux/cpu_pm.h>
->  #include <linux/module.h>
->  #include <linux/notifier.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/spinlock.h>
->  #include <linux/syscore_ops.h>
->  
-> @@ -91,6 +93,7 @@ int cpu_pm_enter(void)
->  {
->  	int nr_calls;
->  	int ret = 0;
-> +	struct device *dev = get_cpu_device(smp_processor_id());
->  
->  	ret = cpu_pm_notify(CPU_PM_ENTER, -1, &nr_calls);
->  	if (ret)
-> @@ -100,6 +103,9 @@ int cpu_pm_enter(void)
->  		 */
->  		cpu_pm_notify(CPU_PM_ENTER_FAILED, nr_calls - 1, NULL);
->  
-> +	if (!ret && dev && dev->pm_domain)
-> +		pm_runtime_put_sync_suspend(dev);
+> -	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
+> +	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
+> +			MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
 
-This may cause a power domain to go off, but if it goes off, then the idle
-governor has already selected idle states for all of the CPUs in that domain.
-
-Is there any way to ensure that turning the domain off (and later on) will
-no cause the target residency and exit latency expectations for those idle
-states to be exceeded?
-
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(cpu_pm_enter);
-> @@ -118,6 +124,11 @@ int cpu_pm_enter(void)
->   */
->  int cpu_pm_exit(void)
->  {
-> +	struct device *dev = get_cpu_device(smp_processor_id());
-> +
-> +	if (dev && dev->pm_domain)
-> +		pm_runtime_get_sync(dev);
-> +
->  	return cpu_pm_notify(CPU_PM_EXIT, -1, NULL);
->  }
->  EXPORT_SYMBOL_GPL(cpu_pm_exit);
-> 
-
-
+As the comment in the beginning says this test is specifically for addresss 0.
+Maybe it should be ifdeffed with __arm__ then.
