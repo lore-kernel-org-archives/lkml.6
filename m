@@ -2,212 +2,249 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD14C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EFDC46464
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D689C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:07:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LBz8ZBYI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D689C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 97DEB2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DEB2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbeJKPd1 (ORCPT
+        id S1728167AbeJKPet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:33:27 -0400
-Received: from mail-eopbgr10076.outbound.protection.outlook.com ([40.107.1.76]:2444
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727940AbeJKPd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:33:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R47c7jZP35dR01W/eRvkjqOUCF3h+R++DXtKFrKvj7U=;
- b=LBz8ZBYIAHQFYl3rNL4wTDLZDLuXepeXiCWvVuF8xU5kCDQ9G5SAc/KbtJzoweSShLe+6olwIbvmIC422elfVymWDBIdNjvTMK198jbOj1a+LKJXFyZsOsvjW6BNHPJGvKObVKjMOqwLIiavCSFT7J8i23L5sD6uJSA3qTEzoD4=
-Received: from VI1PR0401MB2224.eurprd04.prod.outlook.com (10.166.44.13) by
- VI1PR0401MB2431.eurprd04.prod.outlook.com (10.169.134.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.27; Thu, 11 Oct 2018 08:07:15 +0000
-Received: from VI1PR0401MB2224.eurprd04.prod.outlook.com
- ([fe80::5df2:a1fc:aef9:5676]) by VI1PR0401MB2224.eurprd04.prod.outlook.com
- ([fe80::5df2:a1fc:aef9:5676%7]) with mapi id 15.20.1207.029; Thu, 11 Oct 2018
- 08:07:15 +0000
-From:   Andy Tang <andy.tang@nxp.com>
-To:     "rui.zhang@intel.com" <rui.zhang@intel.com>
-CC:     "edubezval@gmail.com" <edubezval@gmail.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] thermal: qoriq: add multiple sensors support
-Thread-Topic: [PATCH] thermal: qoriq: add multiple sensors support
-Thread-Index: AQHUVgwqs1dc/YvhnUCR91KdT64vpqUZxgAg
-Date:   Thu, 11 Oct 2018 08:07:15 +0000
-Message-ID: <VI1PR0401MB222469D81006CCD5CA3369C3F3E10@VI1PR0401MB2224.eurprd04.prod.outlook.com>
-References: <20180927024204.17314-1-andy.tang@nxp.com>
-In-Reply-To: <20180927024204.17314-1-andy.tang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=andy.tang@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0401MB2431;6:YDXGGN+YvbDVGrBy2PCkzk5UtLwKx2UVKrdQL8Wkg/BOy54lKv20sJEUH3cSpggBjio9KzmKN4p7+rPgD4zQIRCEMuOVWd6H3HwnOUEyJ5s53SZ+5lrcAvRE8rIRWXDnJAzjYrUBYrqTXGdUl2jEsT38Sqf5ruajglf6a0PM6POX9yU6G8NaFGmQwk6im2RHcaqDjluTIKEOvmAW8/3YpOcJ1mqJ1BTRjb9oIqwcg0yA82iJQY5+TkW1lTctg6EWfzBABVcb5nHtDndyCMD8duXWRRBCd6pLjx2dgA6voK1t4/FSujq9OruDXsfH8MkIxZaxmnakzCl731J95porT3vkS+Ggb49LDS5fUcSIR5wMu1IwAD6J55rQDcYrAvzoyjvXe2mVNpLc1CwIDxySdpr2442workWXb5W0lLc1lWrQPmsJ8ku5KLD7krWuCANBzstSFcyRnaG3e83uhhPPA==;5:oYbq3B94rfTrPvz8F6emwKVx/Ccvo+g7rxZDP+0UhZBn/XXQBdt1VX+O1EZPtn1Ak/1oGL0Ko9o87PVWr6M0U+RXWyB40rplT81YFv9JtHs+PnM0U+9Pki/hBJ4RHAeUvS62FY0Vlj0/kHeRAADaiLuES629EfJn5Mraz+0kYmo=;7:ureiL9ZemO/TT45K4ANlubc2TwXwHtxyMB8EeJ/mGVMDAMDxNpnIEitwjU2mFsW7w/a16QquYvqxH2IXPsuuyRlipx4oqXl7Gh2fM7z7cOyCVizNcEBsDss/bEOP6Cl/jVqzEjw1+RKpaRjftvrYs0+kSMDPNwKQO2Nxo1Z40WoTvd98aOv6TT/q5iGi/1nUfVFRMHB2YiH7p3ZvRvECi3FXctnm9fO3wja8FVH0qWlz6JXvZEUZCK+8iAau/i4h
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: fdbd7eda-03ea-4d8c-28f5-08d62f508e8f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2431;
-x-ms-traffictypediagnostic: VI1PR0401MB2431:
-x-microsoft-antispam-prvs: <VI1PR0401MB2431EF4E60DA6D084ACAA6F3F3E10@VI1PR0401MB2431.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197)(228905959029699)(85827821059158)(9452136761055)(72170088055959);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:VI1PR0401MB2431;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB2431;
-x-forefront-prvs: 08220FA8D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(136003)(346002)(13464003)(189003)(199004)(501624003)(7736002)(53936002)(5640700003)(55016002)(9686003)(305945005)(256004)(8936002)(6916009)(8676002)(316002)(81166006)(81156014)(68736007)(74316002)(71190400001)(6436002)(229853002)(71200400001)(478600001)(54906003)(39060400002)(86362001)(5660300001)(6246003)(14454004)(53546011)(6506007)(106356001)(11346002)(4326008)(476003)(486006)(186003)(97736004)(66066001)(446003)(44832011)(7696005)(99286004)(2906002)(76176011)(33656002)(26005)(5250100002)(105586002)(25786009)(2900100001)(2351001)(2501003)(102836004)(3846002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2431;H:VI1PR0401MB2224.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VOhB0jTYt/GNTaNwpnMVKBkEL+b0DYVvv0G5K6aOpfa8khf2nyc+R27sctXSCLq61VtcXlRcOZr/KnPjyE2m43CQ6em6UWbnban0jONWbVeRzAOnuwun9twTVI4tjt+1vRgU5+psHaBdwmNn+GSPIC9LI19Bn8QkUSh5Rc+gZ4i7ZjN2mIHej/MGNtIdASIY8y3nXK0hvCaGnNOKsGOdpKXa6RDToYsdFzCelBApTIKyztfLzcbuBeJuJGhBBJu4FDaAsX7zLfrMw1I7iIW/o1VJWHrDRzo7xsEQT8IZrQY/OBV+hkIjFyJXaoqiuf40RS2H7noPrsjo1Qj1HJ2UvU8FJ7lLBqq/pKUBFo4nig8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Thu, 11 Oct 2018 11:34:49 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:21233 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbeJKPet (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 11:34:49 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 11 Oct
+ 2018 16:09:19 +0800
+Subject: Re: [PATCH v4 1/3] clk: meson: add emmc sub clock phase delay driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180809070724.11935-1-yixun.lan@amlogic.com>
+ <20180809070724.11935-2-yixun.lan@amlogic.com>
+ <8ba84364847ae800fcfcab34573a25996d8724fd.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <0a4aa8d5-8b23-b8cb-fda3-1d2e73845ba7@amlogic.com>
+Date:   Thu, 11 Oct 2018 16:09:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdbd7eda-03ea-4d8c-28f5-08d62f508e8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 08:07:15.3178
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2431
+In-Reply-To: <8ba84364847ae800fcfcab34573a25996d8724fd.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUnVpLA0KDQpBcHByZWNpYXRlIGlmIHlvdSBjYW4gZ2l2ZSBpdCBhIHJldmlldy4NCg0KQlIs
-DQpBbmR5DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogYW5keS50YW5n
-QG54cC5jb20gPGFuZHkudGFuZ0BueHAuY29tPg0KPiBTZW50OiAyMDE4xOo51MIyN8jVIDEwOjQy
-DQo+IFRvOiBydWkuemhhbmdAaW50ZWwuY29tDQo+IENjOiBlZHViZXp2YWxAZ21haWwuY29tOyBk
-YW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnOw0KPiBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEFuZHkgVGFuZw0KPiA8YW5keS50YW5nQG54cC5j
-b20+DQo+IFN1YmplY3Q6IFtQQVRDSF0gdGhlcm1hbDogcW9yaXE6IGFkZCBtdWx0aXBsZSBzZW5z
-b3JzIHN1cHBvcnQNCj4gDQo+IEZyb206IFl1YW50aWFuIFRhbmcgPGFuZHkudGFuZ0BueHAuY29t
-Pg0KPiANCj4gVGhlcmUgaXMgb25seSBvbmUgc2Vuc29yIHN1cHBvcnRlZCBpbiBjdXJyZW50IGRy
-aXZlci4NCj4gTXVsdGlwbGUgc2Vuc29ycyBhcmUgZXhpc3Rpbmcgb24gTGF5c2NhcGUgc29jcy4g
-VG8gc3VwcG9ydCB0aGVtLCBjb3ZlcnQNCj4gdGhpcyBkcml2ZXIgdG8gc3VwcG9ydCBtdWx0aXBs
-ZSBzZW5zb3JzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGFuZyBZdWFudGlhbiA8YW5keS50YW5n
-QG54cC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy90aGVybWFsL3FvcmlxX3RoZXJtYWwuYyB8ICAx
-MTcNCj4gKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGVz
-IGNoYW5nZWQsIDcwIGluc2VydGlvbnMoKyksIDQ3IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gYi9kcml2ZXJzL3RoZXJt
-YWwvcW9yaXFfdGhlcm1hbC5jIGluZGV4IGM4NjZjYzEuLjdjMWU4OGEgMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvdGhlcm1hbC9xb3JpcV90aGVybWFsLmMNCj4gKysrIGIvZHJpdmVycy90aGVybWFs
-L3FvcmlxX3RoZXJtYWwuYw0KPiBAQCAtNjksMTQgKzY5LDIxIEBAIHN0cnVjdCBxb3JpcV90bXVf
-cmVncyB7DQo+ICAJdTMyIHR0cjNjcjsJCS8qIFRlbXBlcmF0dXJlIFJhbmdlIDMgQ29udHJvbCBS
-ZWdpc3RlciAqLw0KPiAgfTsNCj4gDQo+ICtzdHJ1Y3QgcW9yaXFfdG11X2RhdGE7DQo+ICsNCj4g
-IC8qDQo+ICAgKiBUaGVybWFsIHpvbmUgZGF0YQ0KPiAgICovDQo+ICtzdHJ1Y3QgcW9yaXFfc2Vu
-c29yIHsNCj4gKwlzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZQkqdHpkOw0KPiArCXN0cnVjdCBx
-b3JpcV90bXVfZGF0YQkJKnFkYXRhOw0KPiArCWludAkJCQlpZDsNCj4gK307DQo+ICsNCj4gIHN0
-cnVjdCBxb3JpcV90bXVfZGF0YSB7DQo+IC0Jc3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6
-Ow0KPiAgCXN0cnVjdCBxb3JpcV90bXVfcmVncyBfX2lvbWVtICpyZWdzOw0KPiAtCWludCBzZW5z
-b3JfaWQ7DQo+ICAJYm9vbCBsaXR0bGVfZW5kaWFuOw0KPiArCXN0cnVjdCBxb3JpcV9zZW5zb3IJ
-KnNlbnNvcltTSVRFU19NQVhdOw0KPiAgfTsNCj4gDQo+ICBzdGF0aWMgdm9pZCB0bXVfd3JpdGUo
-c3RydWN0IHFvcmlxX3RtdV9kYXRhICpwLCB1MzIgdmFsLCB2b2lkIF9faW9tZW0NCj4gKmFkZHIp
-IEBAIC05Nyw0OCArMTA0LDgzIEBAIHN0YXRpYyB1MzIgdG11X3JlYWQoc3RydWN0DQo+IHFvcmlx
-X3RtdV9kYXRhICpwLCB2b2lkIF9faW9tZW0gKmFkZHIpDQo+IA0KPiAgc3RhdGljIGludCB0bXVf
-Z2V0X3RlbXAodm9pZCAqcCwgaW50ICp0ZW1wKSAgew0KPiArCXN0cnVjdCBxb3JpcV9zZW5zb3Ig
-KnFzZW5zb3IgPSBwOw0KPiArCXN0cnVjdCBxb3JpcV90bXVfZGF0YSAqcWRhdGEgPSBxc2Vuc29y
-LT5xZGF0YTsNCj4gIAl1MzIgdmFsOw0KPiAtCXN0cnVjdCBxb3JpcV90bXVfZGF0YSAqZGF0YSA9
-IHA7DQo+IA0KPiAtCXZhbCA9IHRtdV9yZWFkKGRhdGEsICZkYXRhLT5yZWdzLT5zaXRlW2RhdGEt
-PnNlbnNvcl9pZF0udHJpdHNyKTsNCj4gKwl2YWwgPSB0bXVfcmVhZChxZGF0YSwgJnFkYXRhLT5y
-ZWdzLT5zaXRlW3FzZW5zb3ItPmlkXS50cml0c3IpOw0KPiAgCSp0ZW1wID0gKHZhbCAmIDB4ZmYp
-ICogMTAwMDsNCj4gDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+IA0KPiAtc3RhdGljIGludCBxb3Jp
-cV90bXVfZ2V0X3NlbnNvcl9pZCh2b2lkKQ0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCB0aGVybWFs
-X3pvbmVfb2ZfZGV2aWNlX29wcyB0bXVfdHpfb3BzID0gew0KPiArCS5nZXRfdGVtcCA9IHRtdV9n
-ZXRfdGVtcCwNCj4gK307DQo+ICsNCj4gK3N0YXRpYyBpbnQgcW9yaXFfdG11X3JlZ2lzdGVyX3Rt
-dV96b25lKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICB7DQo+IC0JaW50IHJldCwg
-aWQ7DQo+ICsJc3RydWN0IHFvcmlxX3RtdV9kYXRhICpxZGF0YSA9IHBsYXRmb3JtX2dldF9kcnZk
-YXRhKHBkZXYpOw0KPiAgCXN0cnVjdCBvZl9waGFuZGxlX2FyZ3Mgc2Vuc29yX3NwZWNzOw0KPiAg
-CXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsICpzZW5zb3JfbnA7DQo+ICsJaW50IHJldCwgaWQsIHNp
-dGVzID0gMDsNCj4gDQo+ICAJbnAgPSBvZl9maW5kX25vZGVfYnlfbmFtZShOVUxMLCAidGhlcm1h
-bC16b25lcyIpOw0KPiAgCWlmICghbnApDQo+ICAJCXJldHVybiAtRU5PREVWOw0KPiANCj4gLQlz
-ZW5zb3JfbnAgPSBvZl9nZXRfbmV4dF9jaGlsZChucCwgTlVMTCk7DQo+IC0JcmV0ID0gb2ZfcGFy
-c2VfcGhhbmRsZV93aXRoX2FyZ3Moc2Vuc29yX25wLCAidGhlcm1hbC1zZW5zb3JzIiwNCj4gLQkJ
-CSIjdGhlcm1hbC1zZW5zb3ItY2VsbHMiLA0KPiAtCQkJMCwgJnNlbnNvcl9zcGVjcyk7DQo+IC0J
-aWYgKHJldCkgew0KPiArCWZvcl9lYWNoX2F2YWlsYWJsZV9jaGlsZF9vZl9ub2RlKG5wLCBzZW5z
-b3JfbnApIHsNCj4gKwkJcmV0ID0gb2ZfcGFyc2VfcGhhbmRsZV93aXRoX2FyZ3Moc2Vuc29yX25w
-LA0KPiAidGhlcm1hbC1zZW5zb3JzIiwNCj4gKwkJCQkiI3RoZXJtYWwtc2Vuc29yLWNlbGxzIiwN
-Cj4gKwkJCQkwLCAmc2Vuc29yX3NwZWNzKTsNCj4gKwkJaWYgKHJldCkgew0KPiArCQkJb2Zfbm9k
-ZV9wdXQobnApOw0KPiArCQkJb2Zfbm9kZV9wdXQoc2Vuc29yX25wKTsNCj4gKwkJCXJldHVybiBy
-ZXQ7DQo+ICsJCX0NCj4gKw0KPiArCQlpZiAoc2Vuc29yX3NwZWNzLmFyZ3NfY291bnQgPj0gMSkg
-ew0KPiArCQkJaWQgPSBzZW5zb3Jfc3BlY3MuYXJnc1swXTsNCj4gKwkJCVdBUk4oc2Vuc29yX3Nw
-ZWNzLmFyZ3NfY291bnQgPiAxLA0KPiArCQkJCQkiJXM6IHRvbyBtYW55IGNlbGxzIGluIHNlbnNv
-ciBzcGVjaWZpZXIgJWRcbiIsDQo+ICsJCQkJCXNlbnNvcl9zcGVjcy5ucC0+bmFtZSwNCj4gKwkJ
-CQkJc2Vuc29yX3NwZWNzLmFyZ3NfY291bnQpOw0KPiArCQl9IGVsc2Ugew0KPiArCQkJaWQgPSAw
-Ow0KPiArCQl9DQo+ICsNCj4gIAkJb2Zfbm9kZV9wdXQobnApOw0KPiAgCQlvZl9ub2RlX3B1dChz
-ZW5zb3JfbnApOw0KPiAtCQlyZXR1cm4gcmV0Ow0KPiAtCX0NCj4gDQo+IC0JaWYgKHNlbnNvcl9z
-cGVjcy5hcmdzX2NvdW50ID49IDEpIHsNCj4gLQkJaWQgPSBzZW5zb3Jfc3BlY3MuYXJnc1swXTsN
-Cj4gLQkJV0FSTihzZW5zb3Jfc3BlY3MuYXJnc19jb3VudCA+IDEsDQo+IC0JCQkJIiVzOiB0b28g
-bWFueSBjZWxscyBpbiBzZW5zb3Igc3BlY2lmaWVyICVkXG4iLA0KPiAtCQkJCXNlbnNvcl9zcGVj
-cy5ucC0+bmFtZSwgc2Vuc29yX3NwZWNzLmFyZ3NfY291bnQpOw0KPiAtCX0gZWxzZSB7DQo+IC0J
-CWlkID0gMDsNCj4gKwkJaWYgKGlkID4gU0lURVNfTUFYKQ0KPiArCQkJcmV0dXJuIC1FSU5WQUw7
-DQo+ICsNCj4gKwkJcWRhdGEtPnNlbnNvcltpZF0gPSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRldiwN
-Cj4gKwkJCQlzaXplb2Yoc3RydWN0IHFvcmlxX3NlbnNvciksIEdGUF9LRVJORUwpOw0KPiArCQlp
-ZiAoIXFkYXRhLT5zZW5zb3JbaWRdKQ0KPiArCQkJcmV0dXJuIC1FTk9NRU07DQo+ICsNCj4gKwkJ
-cWRhdGEtPnNlbnNvcltpZF0tPmlkID0gaWQ7DQo+ICsJCXFkYXRhLT5zZW5zb3JbaWRdLT5xZGF0
-YSA9IHFkYXRhOw0KPiArDQo+ICsJCXFkYXRhLT5zZW5zb3JbaWRdLT50emQgPQ0KPiBkZXZtX3Ro
-ZXJtYWxfem9uZV9vZl9zZW5zb3JfcmVnaXN0ZXIoDQo+ICsJCQkJJnBkZXYtPmRldiwgaWQsIHFk
-YXRhLT5zZW5zb3JbaWRdLCAmdG11X3R6X29wcyk7DQo+ICsNCj4gKwkJaWYgKElTX0VSUihxZGF0
-YS0+c2Vuc29yW2lkXS0+dHpkKSkgew0KPiArCQkJcmV0ID0gUFRSX0VSUihxZGF0YS0+c2Vuc29y
-W2lkXS0+dHpkKTsNCj4gKwkJCWRldl9lcnIoJnBkZXYtPmRldiwNCj4gKwkJCQkiRmFpbGVkIHRv
-IHJlZ2lzdGVyIHRoZXJtYWwgem9uZSBkZXZpY2UuXG4iKTsNCj4gKwkJCXJldHVybiAtRU5PREVW
-Ow0KPiArCQl9DQo+ICsNCj4gKwkJc2l0ZXMgfD0gMHgxIDw8ICgxNSAtIGlkKTsNCj4gIAl9DQo+
-IA0KPiAtCW9mX25vZGVfcHV0KG5wKTsNCj4gLQlvZl9ub2RlX3B1dChzZW5zb3JfbnApOw0KPiAr
-CS8qIEVuYWJsZSBtb25pdG9yaW5nICovDQo+ICsJaWYgKHNpdGVzICE9IDApDQo+ICsJCXRtdV93
-cml0ZShxZGF0YSwgc2l0ZXMgfCBUTVJfTUUgfCBUTVJfQUxQRiwNCj4gJnFkYXRhLT5yZWdzLT50
-bXIpOw0KPiANCj4gLQlyZXR1cm4gaWQ7DQo+ICsJcmV0dXJuIDA7DQo+ICB9DQo+IA0KPiAgc3Rh
-dGljIGludCBxb3JpcV90bXVfY2FsaWJyYXRpb24oc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-dikgQEANCj4gLTE4OCwxNiArMjMwLDExIEBAIHN0YXRpYyB2b2lkIHFvcmlxX3RtdV9pbml0X2Rl
-dmljZShzdHJ1Y3QNCj4gcW9yaXFfdG11X2RhdGEgKmRhdGEpDQo+ICAJdG11X3dyaXRlKGRhdGEs
-IFRNUl9ESVNBQkxFLCAmZGF0YS0+cmVncy0+dG1yKTsgIH0NCj4gDQo+IC1zdGF0aWMgY29uc3Qg
-c3RydWN0IHRoZXJtYWxfem9uZV9vZl9kZXZpY2Vfb3BzIHRtdV90el9vcHMgPSB7DQo+IC0JLmdl
-dF90ZW1wID0gdG11X2dldF90ZW1wLA0KPiAtfTsNCj4gLQ0KPiAgc3RhdGljIGludCBxb3JpcV90
-bXVfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgIHsNCj4gIAlpbnQgcmV0Ow0K
-PiAgCXN0cnVjdCBxb3JpcV90bXVfZGF0YSAqZGF0YTsNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5wID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+IC0JdTMyIHNpdGUgPSAwOw0KPiANCj4gIAlpZiAo
-IW5wKSB7DQo+ICAJCWRldl9lcnIoJnBkZXYtPmRldiwgIkRldmljZSBPRi1Ob2RlIGlzIE5VTEwi
-KTsgQEAgLTIxMywxMw0KPiArMjUwLDYgQEAgc3RhdGljIGludCBxb3JpcV90bXVfcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gDQo+ICAJZGF0YS0+bGl0dGxlX2VuZGlhbiA9
-IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwgImxpdHRsZS1lbmRpYW4iKTsNCj4gDQo+IC0JZGF0
-YS0+c2Vuc29yX2lkID0gcW9yaXFfdG11X2dldF9zZW5zb3JfaWQoKTsNCj4gLQlpZiAoZGF0YS0+
-c2Vuc29yX2lkIDwgMCkgew0KPiAtCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJGYWlsZWQgdG8gZ2V0
-IHNlbnNvciBpZFxuIik7DQo+IC0JCXJldCA9IC1FTk9ERVY7DQo+IC0JCWdvdG8gZXJyX2lvbWFw
-Ow0KPiAtCX0NCj4gLQ0KPiAgCWRhdGEtPnJlZ3MgPSBvZl9pb21hcChucCwgMCk7DQo+ICAJaWYg
-KCFkYXRhLT5yZWdzKSB7DQo+ICAJCWRldl9lcnIoJnBkZXYtPmRldiwgIkZhaWxlZCB0byBnZXQg
-bWVtb3J5IHJlZ2lvblxuIik7IEBADQo+IC0yMzMsMTggKzI2MywxMyBAQCBzdGF0aWMgaW50IHFv
-cmlxX3RtdV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpwZGV2KQ0KPiAgCWlmIChy
-ZXQgPCAwKQ0KPiAgCQlnb3RvIGVycl90bXU7DQo+IA0KPiAtCWRhdGEtPnR6ID0gdGhlcm1hbF96
-b25lX29mX3NlbnNvcl9yZWdpc3RlcigmcGRldi0+ZGV2LA0KPiBkYXRhLT5zZW5zb3JfaWQsDQo+
-IC0JCQkJZGF0YSwgJnRtdV90el9vcHMpOw0KPiAtCWlmIChJU19FUlIoZGF0YS0+dHopKSB7DQo+
-IC0JCXJldCA9IFBUUl9FUlIoZGF0YS0+dHopOw0KPiAtCQlkZXZfZXJyKCZwZGV2LT5kZXYsDQo+
-IC0JCQkiRmFpbGVkIHRvIHJlZ2lzdGVyIHRoZXJtYWwgem9uZSBkZXZpY2UgJWRcbiIsIHJldCk7
-DQo+IC0JCWdvdG8gZXJyX3RtdTsNCj4gKwlyZXQgPSBxb3JpcV90bXVfcmVnaXN0ZXJfdG11X3pv
-bmUocGRldik7DQo+ICsJaWYgKHJldCA8IDApIHsNCj4gKwkJZGV2X2VycigmcGRldi0+ZGV2LCAi
-RmFpbGVkIHRvIHJlZ2lzdGVyIHNlbnNvcnNcbiIpOw0KPiArCQlyZXQgPSAtRU5PREVWOw0KPiAr
-CQlnb3RvIGVycl9pb21hcDsNCj4gIAl9DQo+IA0KPiAtCS8qIEVuYWJsZSBtb25pdG9yaW5nICov
-DQo+IC0Jc2l0ZSB8PSAweDEgPDwgKDE1IC0gZGF0YS0+c2Vuc29yX2lkKTsNCj4gLQl0bXVfd3Jp
-dGUoZGF0YSwgc2l0ZSB8IFRNUl9NRSB8IFRNUl9BTFBGLCAmZGF0YS0+cmVncy0+dG1yKTsNCj4g
-DQo+ICAJcmV0dXJuIDA7DQo+IA0KPiBAQCAtMjYxLDggKzI4Niw2IEBAIHN0YXRpYyBpbnQgcW9y
-aXFfdG11X3JlbW92ZShzdHJ1Y3QNCj4gcGxhdGZvcm1fZGV2aWNlICpwZGV2KSAgew0KPiAgCXN0
-cnVjdCBxb3JpcV90bXVfZGF0YSAqZGF0YSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOw0K
-PiANCj4gLQl0aGVybWFsX3pvbmVfb2Zfc2Vuc29yX3VucmVnaXN0ZXIoJnBkZXYtPmRldiwgZGF0
-YS0+dHopOw0KPiAtDQo+ICAJLyogRGlzYWJsZSBtb25pdG9yaW5nICovDQo+ICAJdG11X3dyaXRl
-KGRhdGEsIFRNUl9ESVNBQkxFLCAmZGF0YS0+cmVncy0+dG1yKTsNCj4gDQo+IC0tDQo+IDEuNy4x
-DQoNCg==
+
+Hi Jerome,
+
+Sorry to miss this mail. I thought Yixun has finished this patchset. 
+I will continue his work.
+
+On 2018/8/10 20:27, Jerome Brunet wrote:
+> On Thu, 2018-08-09 at 15:07 +0800, Yixun Lan wrote:
+>> Export the emmc sub clock phase delay ops which will be used
+>> by the emmc sub clock driver itself.
+>>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  drivers/clk/meson/Makefile          |  2 +-
+>>  drivers/clk/meson/clk-phase-delay.c | 96 +++++++++++++++++++++++++++++
+>>  drivers/clk/meson/clkc.h            | 13 ++++
+>>  3 files changed, 110 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+>>
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index 72ec8c40d848..39ce5661b654 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -2,7 +2,7 @@
+>>  # Makefile for Meson specific clk
+>>  #
+>>  
+>> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
+>> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
+>>  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
+>>  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+>>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
+>> new file mode 100644
+>> index 000000000000..6f226814cfec
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/clk-phase-delay.c
+>> @@ -0,0 +1,96 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2017 Baylibre SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include "clkc.h"
+>> +
+>> +#define SD_EMMC_CLOCK			0
+> 
+> Drop this and use struct parm please.
+> 
+OK. I will use struct parm instead. Thanks for your time.
+>> +
+>> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_phase_delay_data *ph =
+>> +		meson_clk_get_phase_delay_data(clk);
+>> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
+>> +	unsigned long period_ps, p, d;
+>> +	int degrees;
+>> +	u32 val;
+>> +
+>> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
+>> +	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
+>> +	degrees = p * 360 / phase_num;
+>> +
+>> +	if (ph->delay_mask) {
+>> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+>> +					 clk_hw_get_rate(hw));
+>> +		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
+>> +		degrees += d * ph->delay_step_ps * 360 / period_ps;
+>> +		degrees %= 360;
+>> +	}
+>> +
+>> +	return degrees;
+>> +}
+>> +
+>> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
+>> +					unsigned int phase,
+>> +					unsigned int delay)
+>> +{
+>> +	struct meson_clk_phase_delay_data *ph = clk->data;
+>> +	u32 val;
+>> +
+>> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
+>> +
+>> +	val &= ~ph->phase_mask;
+>> +	val |= phase << __ffs(ph->phase_mask);
+>> +
+>> +	if (ph->delay_mask) {
+> 
+> This imply that delay is delay is optional. In such case, it would be a regular
+> "phase" and we already have a  driver for this. Please remove all the related
+> code and make this parameter required for this clock type.
+> 
+OK. I will use APIs from clk-phase.c for ‘core' phase. 
+> In the future, maybe we'll merge the 2 drivers.
+> 
+>> +		val &= ~ph->delay_mask;
+>> +		val |= delay << __ffs(ph->delay_mask);
+>> +	}
+>> +
+>> +	regmap_write(clk->map, SD_EMMC_CLOCK, val);
+>> +}
+>> +
+>> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_phase_delay_data *ph =
+>> +		meson_clk_get_phase_delay_data(clk);
+>> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
+>> +	unsigned long period_ps, d = 0, r;
+>> +	u64 p;
+>> +
+>> +	p = degrees % 360;
+>> +
+>> +	if (!ph->delay_mask) {
+>> +		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
+>> +	} else {
+>> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+>> +					 clk_hw_get_rate(hw));
+>> +
+>> +		/* First compute the phase index (p), the remainder (r) is the
+>> +		 * part we'll try to acheive using the delays (d).
+>> +		 */
+>> +		r = do_div(p, 360 / phase_num);
+>> +		d = DIV_ROUND_CLOSEST(r * period_ps,
+>> +				      360 * ph->delay_step_ps);
+>> +		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
+>> +	}
+>> +
+>> +	meson_clk_apply_phase_delay(clk, p, d);
+>> +	return 0;
+>> +}
+>> +
+>> +const struct clk_ops meson_clk_phase_delay_ops = {
+>> +	.get_phase = meson_clk_phase_delay_get_phase,
+>> +	.set_phase = meson_clk_phase_delay_set_phase,
+>> +};
+>> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
+>> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+>> index 24cec16b6038..499834dd34f2 100644
+>> --- a/drivers/clk/meson/clkc.h
+>> +++ b/drivers/clk/meson/clkc.h
+>> @@ -113,6 +113,18 @@ struct clk_regmap _name = {						\
+>>  	},								\
+>>  };
+>>  
+>> +struct meson_clk_phase_delay_data {
+>> +	unsigned long			phase_mask;
+>> +	unsigned long			delay_mask;
+> 
+> Like every other clock drivers in the amlogic directory, please use struct parm
+> to decribe the fields.
+> 
+OK. I will use struct parm to describe phase and delay register fields.
+>> +	unsigned int			delay_step_ps;
+>> +};
+>> +
+>> +static inline struct meson_clk_phase_delay_data *
+>> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
+>> +{
+>> +	return (struct meson_clk_phase_delay_data *)clk->data;
+>> +}
+>> +
+>>  /* clk_ops */
+>>  extern const struct clk_ops meson_clk_pll_ro_ops;
+>>  extern const struct clk_ops meson_clk_pll_ops;
+>> @@ -120,5 +132,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
+>>  extern const struct clk_ops meson_clk_mpll_ro_ops;
+>>  extern const struct clk_ops meson_clk_mpll_ops;
+>>  extern const struct clk_ops meson_clk_phase_ops;
+>> +extern const struct clk_ops meson_clk_phase_delay_ops;
+>>  
+>>  #endif /* __CLKC_H */
+> 
+> 
+> .
+> 
+
