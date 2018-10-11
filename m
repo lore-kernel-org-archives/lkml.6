@@ -2,99 +2,166 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D3BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B73C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49E2120835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E2120835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C9F6B213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:36:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I45t2Dyi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Otfj75+E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F6B213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeJKSwj (ORCPT
+        id S1727715AbeJKTDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:52:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36088 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbeJKSwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:52:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 206117A9;
-        Thu, 11 Oct 2018 04:25:51 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCEF83F5BC;
-        Thu, 11 Oct 2018 04:25:48 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        lorenzo.pieralisi@arm.com
-Cc:     will.deacon@arm.com, mark.rutland@arm.com, guohanjun@huawei.com,
-        john.garry@huawei.com, pabba@codeaurora.org,
-        vkilari@codeaurora.org, rruigrok@codeaurora.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        neil.m.leeder@gmail.com
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d649de4e-e0cc-4188-5e56-fea1488b9d6b@arm.com>
-Date:   Thu, 11 Oct 2018 12:25:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 11 Oct 2018 15:03:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58596 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeJKTDG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:03:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E093960B0D; Thu, 11 Oct 2018 11:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539257774;
+        bh=eKpjW0BSR1KgXp7PA1fcv6XmekyToPwqlOaVhyxmbac=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I45t2DyiSL9n/7PnB5ONgmBDpcGDaMXFK2SiuW6nSVhF3ofzHrVV0F50gNIvB2aRc
+         YmKwB0mXdl6MIyIR5yX3YCAAFnkvY2El2FrfGN2yInXbQwHgWb/aUitRX+qcC+hCjU
+         FUD4aB/AcDhzIwzIAfCRJtbS2lseZlMB1h/pI5fE=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C325760316;
+        Thu, 11 Oct 2018 11:36:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539257773;
+        bh=eKpjW0BSR1KgXp7PA1fcv6XmekyToPwqlOaVhyxmbac=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Otfj75+EBujzFK3uSwN4p5Z8bwlGGa2MUJe8oOzSnvO6JuuiqC7A4PXXBlWzsMlCq
+         v5Ssbzx2hyMwQc7WP+6Il3KoTzuX/lrA3Y/Emze0XYKgk4Z0ZkyQNGPl3B+06PDvgz
+         2wWA7SLX60bfxumzdwGitBTHNu0ALfRaVs2ICa30=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C325760316
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v9 0/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+Date:   Thu, 11 Oct 2018 17:05:59 +0530
+Message-Id: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shameer,
+ [v9]
+  * Update the Documentation binding for freq-domain-cells & cpufreq node.
+  * Address comments in Kconfig.arm & Makefile.
+  * Remove include file & MODULE_DESCRIPTION not required.
+  * Fix the code for 'of_node_put(cpu_np)'.
 
-One more thing...
+ [v8]
+   * Address comments to update code to take cpufreq_hw phandle and index from
+     the CPU nodes.
+   * Updated the Documentation for the above change in DT.
+   * Updated logic for assigning 'qcom_freq_domain_map' for related CPUs.
+   * Clock input to the HW block is taken from DT which has been updated in
+     code and Device tree documentation.
 
-On 21/09/18 16:08, Shameer Kolothum wrote:
-[...]
-> +static int smmu_pmu_probe(struct platform_device *pdev)
-> +{
-> +	struct smmu_pmu *smmu_pmu;
-> +	struct resource *res_0, *res_1;
-> +	u32 cfgr, reg_size;
-> +	u64 ceid_64[2];
-> +	int irq, err;
-> +	char *name;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	smmu_pmu = devm_kzalloc(dev, sizeof(*smmu_pmu), GFP_KERNEL);
-> +	if (!smmu_pmu)
-> +		return -ENOMEM;
-> +
-> +	smmu_pmu->dev = dev;
-> +
-> +	platform_set_drvdata(pdev, smmu_pmu);
-> +	smmu_pmu->pmu = (struct pmu) {
-> +		.task_ctx_nr    = perf_invalid_context,
-> +		.pmu_enable	= smmu_pmu_enable,
-> +		.pmu_disable	= smmu_pmu_disable,
-> +		.event_init	= smmu_pmu_event_init,
-> +		.add		= smmu_pmu_event_add,
-> +		.del		= smmu_pmu_event_del,
-> +		.start		= smmu_pmu_event_start,
-> +		.stop		= smmu_pmu_event_stop,
-> +		.read		= smmu_pmu_event_read,
-> +		.attr_groups	= smmu_pmu_attr_grps,
-> +	};
-> +
-> +	res_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	smmu_pmu->reg_base = devm_ioremap_resource(dev, res_0);
+ [v7]
+   * Updated the logic to check for related CPUs.
 
-We still need to solve the resource-claiming issue when one (or both) of 
-the PMCG pages belongs to the parent device's register space. I recall 
-we chucked a few nascent ideas about before; did anyone manage to come 
-up with anything concrete?
+ [v6]
+   * Renamed match table 'qcom_cpufreq_hw_match'.
+   * Renamed 'qcom_read_lut' to 'qcom_cpufreq_hw_read_lut'.
+   * Updated the logic to check for related CPUs at the beginning of the
+     'qcom_cpu_resources_init'.
+   * Use devm_ioremap_resource instead of devm_ioremap.
+   * Update the use of of_node_put to handle error conditions.
+   * Use policy->cached_resolved_idx in fast switch callback.
+   * Keep precalculated offsets 'reg_bases'.
+   * XO clock is taken from Device tree.
+   * Update documentation binding for clocks/clock-names.
+   * Minor comments in Kconfig.arm.
+   * Comments to move dev_info to dev_dbg.
 
-Robin.
+ [v5]
+   * Remove mapping different register regions of perf/lut/enable,
+     instead map the entire HW region.
+   * Add reg_offset/cpufreq_qcom_std_offsets to be supplied as device data.
+   * Check of src == 0 during lut read.
+   * Add of_node_put(cpu_np) in qcom_get_related_cpus
+   * Update the qcom_cpu_resources_init for register offset data,
+     and cleanup the related cpus to keep a single copy of CPUfreq.
+   * Replace FW with HW, update Kconfig, rename filename qcom-cpufreq-hw.c
+   * Update the documentation binding to reflect the changes of mapping the
+   * entire HW region.
+
+ [v4]
+   * Fixed console messages as per comments.
+   * Return error from qcom_resources_init()
+     in the cases where failed to get frequency domain.
+   * Rename cpu_dev to cpu_np in qcom_resources_init,
+     qcom_get_related_cpus(). Also use temp variable freq_np in
+     qcom_get_related_cpus().
+   * Update qcom_cpufreq_fw_get() to use the policy data to incoporate
+     the hotplug use case.
+   * Update code to use of fast_switching.
+   * Check for !c->max_cores instead of cpumask_empty in
+     qcom_get_related_cpus().
+   * Update the logic of assigning 'c' to qcom_freq_domain_map[cpu].
+
+ [v3]
+   * Remove index check from 'qcom_cpufreq_fw_target_index'.
+   * Update the Documentation binding to add the platform specific properties in
+     the CPU nodes, node name "qcom,freq-domain".
+   * Update return value to '0' from -ENODEV from 'qcom_cpufreq_fw_get'.
+   * Update the logic for boost frequency to use local variables instead of
+     cpufreq driver data in 'qcom_read_lut'.
+   * Update the logic in 'qcom_get_related_cpus' to find the related cpus.
+   * Update the reg-names to remove "_base" and also update the binding with the
+     description of these registers.
+   * Update the logic in 'qcom_resources_init' to address the new device tree
+     notation of handling the frequency domain phandles.
+
+ [v2]
+   * Fixed the alignment issues in "qcom_cpufreq_fw_target_index" for dev_err and
+     also for "qcom_cpu_resources_init".
+   * Removed ret = 0 from qcom_get_related_cpus and added to check for
+     cpu_mask_empty to return -ENOENT.
+   * Fixes qcom_cpu_resources_init function
+   * Remove initialization of 'index'
+   * Check for valid 'c'
+   * Removed initialization of 'prev_cc' from 'qcom_read_lut'.
+
+Taniya Das (2):
+  dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware bindings
+  cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+
+ .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 173 ++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  11 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/qcom-cpufreq-hw.c                  | 354 +++++++++++++++++++++
+ 4 files changed, 539 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
