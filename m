@@ -2,200 +2,112 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D991C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0A9C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A8820652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A8820652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D05E120652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FvuNYnr/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05E120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbeJKVNb (ORCPT
+        id S1728612AbeJKVN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:13:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40078 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbeJKVNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:13:31 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5E5193001A5A;
-        Thu, 11 Oct 2018 13:46:15 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B1B066012E;
-        Thu, 11 Oct 2018 13:46:13 +0000 (UTC)
-Date:   Thu, 11 Oct 2018 15:46:12 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 2/3]: perf record: enable asynchronous trace writing
-Message-ID: <20181011134612.GE29634@krava>
-References: <e045b4aa-bff1-4e40-4cdf-4504003ecff5@linux.intel.com>
- <50fed9ff-adc4-d9d6-36bc-b6b27bf58c17@linux.intel.com>
+        Thu, 11 Oct 2018 17:13:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42298 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeJKVN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:13:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9G+Eyo7zQvZlsHZ1xpO/mwWllSioeAheCPATCBduf8c=; b=FvuNYnr/75Sm5/VOp4M2kvw14
+        DK1oSu/ZiMjAzkSiToTbStDShwzPUhNB2RJfCRsgLwHkx30bM0BVumlqA0/uV6YTNtE1amqXh6wrK
+        7DQzLKHmUl94N4YIX+ltp/vxiWqQWE+aTeRSUq76QwHJUIlBws6komvuacCUNWJPTBB1Y=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gAbIS-0001gi-Hv; Thu, 11 Oct 2018 13:46:36 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 4E8E211223ED; Thu, 11 Oct 2018 14:46:36 +0100 (BST)
+Date:   Thu, 11 Oct 2018 14:46:36 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "talel@amazon.com" <talel@amazon.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "barakw@amazon.com" <barakw@amazon.com>,
+        "ronenk@amazon.com" <ronenk@amazon.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
+Message-ID: <20181011134636.GC25351@sirena.org.uk>
+References: <1539155293-21750-1-git-send-email-talel@amazon.com>
+ <1539210111.1944.31.camel@impinj.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
 Content-Disposition: inline
-In-Reply-To: <50fed9ff-adc4-d9d6-36bc-b6b27bf58c17@linux.intel.com>
+In-Reply-To: <1539210111.1944.31.camel@impinj.com>
+X-Cookie: Use at own risk.
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 11 Oct 2018 13:46:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 11:58:53AM +0300, Alexey Budankov wrote:
 
-SNIP
+--LwW0XdcUbUexiWVK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +#ifdef HAVE_AIO_SUPPORT
-> +int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-> +			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
-> +			off_t *off)
-> +{
-> +	u64 head = perf_mmap__read_head(md);
-> +	unsigned char *data = md->base + page_size;
-> +	unsigned long size, size0 = 0;
-> +	void *buf;
-> +	int rc = 0;
-> +
-> +	rc = perf_mmap__read_init(md);
-> +	if (rc < 0)
-> +		return (rc == -EAGAIN) ? 0 : -1;
-> +
-> +	/*
-> +	 * md->base data is copied into md->data buffer to
-> +	 * release space in the kernel buffer as fast as possible,
-> +	 * thru perf_mmap__consume() below.
-> +	 *
-> +	 * That lets the kernel to proceed with storing more
-> +	 * profiling data into the kernel buffer earlier than other
-> +	 * per-cpu kernel buffers are handled.
-> +	 *
-> +	 * Coping can be done in two steps in case the chunk of
-> +	 * profiling data crosses the upper bound of the kernel buffer.
-> +	 * In this case we first move part of data from md->start
-> +	 * till the upper bound and then the reminder from the
-> +	 * beginning of the kernel buffer till the end of
-> +	 * the data chunk.
-> +	 */
-> +
-> +	size = md->end - md->start;
-> +
-> +	if ((md->start & md->mask) + size != (md->end & md->mask)) {
-> +		buf = &data[md->start & md->mask];
-> +		size = md->mask + 1 - (md->start & md->mask);
-> +		md->start += size;
-> +		memcpy(md->aio.data, buf, size);
-> +		size0 = size;
-> +	}
-> +
-> +	buf = &data[md->start & md->mask];
-> +	size = md->end - md->start;
-> +	md->start += size;
-> +	memcpy(md->aio.data + size0, buf, size);
-> +
-> +	/*
-> +	 * Increment md->refcount to guard md->data buffer
-> +	 * from premature deallocation because md object can be
-> +	 * released earlier than aio write request started
-> +	 * on mmap->data is complete.
-> +	 *
-> +	 * perf_mmap__put() is done at record__aio_complete()
-> +	 * after started request completion.
-> +	 */
-> +	perf_mmap__get(md);
-> +
-> +	md->prev = head;
-> +	perf_mmap__consume(md);
-> +
-> +	rc = push(to, &(md->aio.cblock), md->aio.data, size0 + size, *off);
-> +	if (!rc) {
-> +		*off += size0 + size;
-> +	} else {
-> +		/*
-> +		 * Decrement md->refcount back if aio write
-> +		 * operation failed to start.
-> +		 */
-> +		perf_mmap__put(md);
-> +	}
-> +
-> +	return rc;
-> +}
-> +#else
-> +int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
-> +	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
-> +	off_t *off __maybe_unused)
-> +{
-> +	return 0;
-> +}
+On Wed, Oct 10, 2018 at 10:21:51PM +0000, Trent Piepho wrote:
 
-I think you need to put this one in the header as static inline
-otherwise it'd still appear in the NO_AIO=1 build, like:
-  [jolsa@krava perf]$ make NO_AIO=1
-  ...
-  [jolsa@krava perf]$ nm -D perf | grep perf_mmap__aio_push
-  00000000004c2be0 T perf_mmap__aio_push
+> So that's the problem!  I, like everyone else I suspect, switched to
+> using GPIO chip selects with this driver because of this.  I narrowed
 
-change below makes it disappear completely
+That's generally a good idea.
 
-jirka
+> it down to a CS de-assert when the bus switched from TX to RX, which of
+> course makes a SPI register read fail on most devices.  The TX FIFO
+> would empty at this point, so that would explain it.
 
+> Did the designers of this IP ever read a SPI device datasheet???
 
----
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index b176d88b3fcb..8c7516696891 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -445,13 +445,6 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 
- 	return rc;
- }
--#else
--int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
--	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
--	off_t *off __maybe_unused)
--{
--	return 0;
--}
- #endif
- 
- /*
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 04ff4d2ffdbe..3ccf8c925002 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -105,10 +105,21 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- 
- int perf_mmap__push(struct perf_mmap *md, void *to,
- 		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
-+
-+#ifdef HAVE_AIO_SUPPORT
- int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off);
- 
-+#else
-+static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
-+	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
-+	off_t *off __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif
-+
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
- int perf_mmap__read_init(struct perf_mmap *md);
+> Got to agree with Mark Brown, why would anyone ever want to NOT have it
+> work properly?  The previous behavior is not "alternate correct", it's
+> Broken.
+
+This isn't even that unusual an innovation for hardware to have, for
+some reason automatic chip select management is *really* popular and
+rarely helpful.  It's far from the most entertaining thing I've seen
+hardware do.
+
+--LwW0XdcUbUexiWVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/VDsACgkQJNaLcl1U
+h9ABMAf+LpTg0hfmKHD8PJyE/3o5CLdISGYbgbh/3uyhir7nDoi1nZz4BEferKLN
+VGI3KRpgRAHm784pLf+YC7aBMb/xmPEfsI3F22xz4+3leFd6Oj/gix9fJXak9Fxv
+jmzHPPqMu2VlN3jW0jJXX+SnmIQXtjEQx5IrFVJAkO9BjtUYEhLu2Pj1ra998XAF
+k2GHIq4lNwLvYA79HaXSk3fQnc9asagNhdjOVFcqDZ/FkAPdajynB6jrmZp/nEOV
+ip4TmDodXwHGJbOgiLd7aSlUDwyQzJbtwnwyLbAGMVH/dbXUrPPDXFQriW9BHDFV
+OdLIoq8jBQ74bJD0ypcjPZ1LSzZ4/w==
+=Nr+X
+-----END PGP SIGNATURE-----
+
+--LwW0XdcUbUexiWVK--
