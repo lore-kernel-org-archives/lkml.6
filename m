@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC934C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0EFC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709AE2148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 518AE213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zVUnZTQO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709AE2148C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyLDtxJw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518AE213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbeJKXP1 (ORCPT
+        id S1731912AbeJKXPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48890 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJKXP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:26 -0400
+        id S1726727AbeJKXP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 963132147C;
-        Thu, 11 Oct 2018 15:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42E8921480;
+        Thu, 11 Oct 2018 15:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272860;
-        bh=dsWTE228wIOJ8/rpw0a35gj/NVb5mbcntvp3cQc5UlY=;
+        s=default; t=1539272863;
+        bh=IptiRGNZMjwFQpUCafl0ziIk3SzyeeMT+jMoQdC3qZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zVUnZTQOVnFrcNpqHvsjjnmxksoPqRFN56WwSvObn+aGtVpLawB6wzNFdBWiw0o3s
-         bzK/lk2u6ILjYewHSl9bdrMdVf8eXLIV+pm04XpZp1J+NNniZsgPriry7GWK5WWKhG
-         N1dW9UjBpo//WKc/NQN6weVp7jVWl3AdW8qLRHks=
+        b=gyLDtxJwEqMztDL6gQv4hEU6JFJ1kMSVosVPMluq8iS5OS5XAyEBXOysnjgUIZwyO
+         /LGK7IV6unJevoyvGgEEFzf79/W8tRq4Fb+yQ/czcUQ0vAPDscpHrpEx3bPEaHmAyf
+         C9BcIy7eRR5fl2Gh2dJmp2bjeG0w83R5zpcxIxuw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 02/44] mm: migration: fix migration of huge PMD shared pages
-Date:   Thu, 11 Oct 2018 17:39:40 +0200
-Message-Id: <20181011152452.656031777@linuxfoundation.org>
+        stable@vger.kernel.org, nikola.ciprich@linuxbox.cz,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, jason.vas.dias@gmail.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 20/44] x86/vdso: Only enable vDSO retpolines when enabled and supported
+Date:   Thu, 11 Oct 2018 17:39:58 +0200
+Message-Id: <20181011152453.354457669@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -68,226 +69,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 017b1660df89f5fb4bfe66c34e35f7d2031100c7 upstream.
+commit 4f166564014aba65ad6f15b612f6711fd0f117ee upstream.
 
-The page migration code employs try_to_unmap() to try and unmap the source
-page.  This is accomplished by using rmap_walk to find all vmas where the
-page is mapped.  This search stops when page mapcount is zero.  For shared
-PMD huge pages, the page map count is always 1 no matter the number of
-mappings.  Shared mappings are tracked via the reference count of the PMD
-page.  Therefore, try_to_unmap stops prematurely and does not completely
-unmap all mappings of the source page.
+When I fixed the vDSO build to use inline retpolines, I messed up
+the Makefile logic and made it unconditional.  It should have
+depended on CONFIG_RETPOLINE and on the availability of compiler
+support.  This broke the build on some older compilers.
 
-This problem can result is data corruption as writes to the original
-source page can happen after contents of the page are copied to the target
-page.  Hence, data is lost.
-
-This problem was originally seen as DB corruption of shared global areas
-after a huge page was soft offlined due to ECC memory errors.  DB
-developers noticed they could reproduce the issue by (hotplug) offlining
-memory used to back huge pages.  A simple testcase can reproduce the
-problem by creating a shared PMD mapping (note that this must be at least
-PUD_SIZE in size and PUD_SIZE aligned (1GB on x86)), and using
-migrate_pages() to migrate process pages between nodes while continually
-writing to the huge pages being migrated.
-
-To fix, have the try_to_unmap_one routine check for huge PMD sharing by
-calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a shared
-mapping it will be 'unshared' which removes the page table entry and drops
-the reference on the PMD page.  After this, flush caches and TLB.
-
-mmu notifiers are called before locking page tables, but we can not be
-sure of PMD sharing until page tables are locked.  Therefore, check for
-the possibility of PMD sharing before locking so that notifiers can
-prepare for the worst possible case.
-
-Link: http://lkml.kernel.org/r/20180823205917.16297-2-mike.kravetz@oracle.com
-[mike.kravetz@oracle.com: make _range_in_vma() a static inline]
-  Link: http://lkml.kernel.org/r/6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com
-Fixes: 39dde65c9940 ("shared page table for hugetlb page")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Reported-by: nikola.ciprich@linuxbox.cz
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Rickard <matt@softrans.com.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jason.vas.dias@gmail.com
+Cc: stable@vger.kernel.org
+Fixes: 2e549b2ee0e3 ("x86/vdso: Fix vDSO build if a retpoline is emitted")
+Link: http://lkml.kernel.org/r/08a1f29f2c238dd1f493945e702a521f8a5aa3ae.1538540801.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/hugetlb.h |   14 ++++++++++++++
- include/linux/mm.h      |    6 ++++++
- mm/hugetlb.c            |   37 +++++++++++++++++++++++++++++++++++--
- mm/rmap.c               |   42 +++++++++++++++++++++++++++++++++++++++---
- 4 files changed, 94 insertions(+), 5 deletions(-)
+ arch/x86/entry/vdso/Makefile |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -140,6 +140,8 @@ pte_t *huge_pte_alloc(struct mm_struct *
- pte_t *huge_pte_offset(struct mm_struct *mm,
- 		       unsigned long addr, unsigned long sz);
- int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end);
- struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
- 			      int write);
- struct page *follow_huge_pd(struct vm_area_struct *vma,
-@@ -170,6 +172,18 @@ static inline unsigned long hugetlb_tota
- 	return 0;
- }
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -72,7 +72,13 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.d
+ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+-       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
++       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
++
++ifdef CONFIG_RETPOLINE
++ifneq ($(RETPOLINE_VDSO_CFLAGS),)
++  CFL += $(RETPOLINE_VDSO_CFLAGS)
++endif
++endif
  
-+static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
-+					pte_t *ptep)
-+{
-+	return 0;
-+}
-+
-+static inline void adjust_range_if_pmd_sharing_possible(
-+				struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+}
-+
- #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
- #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
- #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2463,6 +2463,12 @@ static inline struct vm_area_struct *fin
- 	return vma;
- }
+ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
  
-+static inline bool range_in_vma(struct vm_area_struct *vma,
-+				unsigned long start, unsigned long end)
-+{
-+	return (vma && vma->vm_start <= start && end <= vma->vm_end);
-+}
+@@ -144,7 +150,13 @@ KBUILD_CFLAGS_32 += $(call cc-option, -f
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
+-KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
 +
- #ifdef CONFIG_MMU
- pgprot_t vm_get_page_prot(unsigned long vm_flags);
- void vma_set_page_prot(struct vm_area_struct *vma);
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4556,13 +4556,41 @@ static bool vma_shareable(struct vm_area
- 	/*
- 	 * check on proper vm_flags and page table alignment
- 	 */
--	if (vma->vm_flags & VM_MAYSHARE &&
--	    vma->vm_start <= base && end <= vma->vm_end)
-+	if (vma->vm_flags & VM_MAYSHARE && range_in_vma(vma, base, end))
- 		return true;
- 	return false;
- }
++ifdef CONFIG_RETPOLINE
++ifneq ($(RETPOLINE_VDSO_CFLAGS),)
++  KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
++endif
++endif
++
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
  
- /*
-+ * Determine if start,end range within vma could be mapped by shared pmd.
-+ * If yes, adjust start and end to cover range associated with possible
-+ * shared pmd mappings.
-+ */
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+	unsigned long check_addr = *start;
-+
-+	if (!(vma->vm_flags & VM_MAYSHARE))
-+		return;
-+
-+	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
-+		unsigned long a_start = check_addr & PUD_MASK;
-+		unsigned long a_end = a_start + PUD_SIZE;
-+
-+		/*
-+		 * If sharing is possible, adjust start/end if necessary.
-+		 */
-+		if (range_in_vma(vma, a_start, a_end)) {
-+			if (a_start < *start)
-+				*start = a_start;
-+			if (a_end > *end)
-+				*end = a_end;
-+		}
-+	}
-+}
-+
-+/*
-  * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
-  * and returns the corresponding pte. While this is not necessary for the
-  * !shared pmd case because we can allocate the pmd later as well, it makes the
-@@ -4659,6 +4687,11 @@ int huge_pmd_unshare(struct mm_struct *m
- {
- 	return 0;
- }
-+
-+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+}
- #define want_pmd_share()	(0)
- #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
- 
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1362,11 +1362,21 @@ static bool try_to_unmap_one(struct page
- 	}
- 
- 	/*
--	 * We have to assume the worse case ie pmd for invalidation. Note that
--	 * the page can not be free in this function as call of try_to_unmap()
--	 * must hold a reference on the page.
-+	 * For THP, we have to assume the worse case ie pmd for invalidation.
-+	 * For hugetlb, it could be much worse if we need to do pud
-+	 * invalidation in the case of pmd sharing.
-+	 *
-+	 * Note that the page can not be free in this function as call of
-+	 * try_to_unmap() must hold a reference on the page.
- 	 */
- 	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
-+	if (PageHuge(page)) {
-+		/*
-+		 * If sharing is possible, start and end will be adjusted
-+		 * accordingly.
-+		 */
-+		adjust_range_if_pmd_sharing_possible(vma, &start, &end);
-+	}
- 	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
-@@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page
- 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
- 		address = pvmw.address;
- 
-+		if (PageHuge(page)) {
-+			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
-+				/*
-+				 * huge_pmd_unshare unmapped an entire PMD
-+				 * page.  There is no way of knowing exactly
-+				 * which PMDs may be cached for this mm, so
-+				 * we must flush them all.  start/end were
-+				 * already adjusted above to cover this range.
-+				 */
-+				flush_cache_range(vma, start, end);
-+				flush_tlb_range(vma, start, end);
-+				mmu_notifier_invalidate_range(mm, start, end);
-+
-+				/*
-+				 * The ref count of the PMD page was dropped
-+				 * which is part of the way map counting
-+				 * is done for shared PMDs.  Return 'true'
-+				 * here.  When there is no other sharing,
-+				 * huge_pmd_unshare returns false and we will
-+				 * unmap the actual page and drop map count
-+				 * to zero.
-+				 */
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
-+		}
- 
- 		if (IS_ENABLED(CONFIG_MIGRATION) &&
- 		    (flags & TTU_MIGRATION) &&
+ $(obj)/vdso32.so.dbg: FORCE \
 
 
