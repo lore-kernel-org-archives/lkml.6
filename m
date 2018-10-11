@@ -2,110 +2,101 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC6BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7117C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECB621477
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:39:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70D4F20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:42:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="OniMaIpQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECB621477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G979/ecc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D4F20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeJKPFm (ORCPT
+        id S1727856AbeJKPIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:05:42 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:38322 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbeJKPFm (ORCPT
+        Thu, 11 Oct 2018 11:08:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41528 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbeJKPIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:05:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1539243579; x=1570779579;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=+pVD6oOHFmz2iQxakNe65nKKC9Tj6IQQ5kYUkQd/q/M=;
-  b=OniMaIpQPM9ZQnXSouw8u7qmpJdgLBRtxNEhCZmCCRuhH3xghu3fIVIG
-   FNlphQx5ii7dT2Ojmd9IaG48XDn7nYlPwXqANJc1WoSVXJeV3RjyjLpJ9
-   RdSl6iHi/hdu47VE55scErQ/bDwwafBvcHbIQFbjLLF/28M7ezsKyn3In
-   4=;
-X-IronPort-AV: E=Sophos;i="5.54,367,1534809600"; 
-   d="scan'208";a="758269250"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 07:39:36 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9B7dXlM072493
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 07:39:34 GMT
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Oct 2018 07:39:33 +0000
-Received: from [10.55.103.19] (10.43.160.245) by EX13D01EUB001.ant.amazon.com
- (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Thu, 11 Oct
- 2018 07:39:27 +0000
-Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
-To:     Trent Piepho <tpiepho@impinj.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "barakw@amazon.com" <barakw@amazon.com>,
-        "ronenk@amazon.com" <ronenk@amazon.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, <jonnyc@amazon.com>
-References: <1539155293-21750-1-git-send-email-talel@amazon.com>
- <1539210111.1944.31.camel@impinj.com>
-From:   Talel Shenhar <talel@amazon.com>
-Message-ID: <3ad7fac8-2f13-690b-9e4b-c6b2373756b0@amazon.com>
-Date:   Thu, 11 Oct 2018 10:39:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 11:08:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9B7dbDm178861;
+        Thu, 11 Oct 2018 07:42:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=jba4rtlbNwZ2X0ckvA9XSHvdwV2ld4/spV4E/7tA5ts=;
+ b=G979/eccyV58BBQbGOW5JgcBMXiDjDmyJ0laCk1MYa04KwPJu5Ik8U+v+R9trbr1Y6Ld
+ ZU9rpt+505q57eyxotoLhNhLOcJ+hwZXwaXNqR6cUxLchbiQ97SZofcaZtWl7mUO8xPs
+ R7JDwtRFUKLw2WZ+wV0TJydyxXgkPtQ/t6p68Nt7aBK/+z0n2sXLFz5lBpLW7XBYL7zl
+ Pmp2pyOX3z2uYMnz2Ttyk/JdeF8HgoizjyrTdfagZNGPzIMwdCzqwaFACVZLxcCt51Zc
+ aWkLIX/tN3ohWASYK7Kdd9pXK2YTLLXsns0aft6PpOyPW3xsfeYGgKljEmFUTdsme1sI Ag== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2mxnpra7tm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Oct 2018 07:42:33 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9B7gWXT017715
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Oct 2018 07:42:32 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9B7gUTU029122;
+        Thu, 11 Oct 2018 07:42:31 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 11 Oct 2018 07:42:30 +0000
+Date:   Thu, 11 Oct 2018 10:42:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tim.Bird@sony.com, linux-kernel@vger.kernel.org,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [Ksummit-discuss] [PATCH 2/2] code-of-conduct: Strip the
+ enforcement paragraph pending community discussion
+Message-ID: <20181011074224.zzhh3btcj3kxw4k7@mwanda>
+References: <1538861738.4088.5.camel@HansenPartnership.com>
+ <1538861851.4088.7.camel@HansenPartnership.com>
+ <ECADFF3FD767C149AD96A924E7EA6EAF80516F31@USCULXMSG01.am.sony.com>
+ <1538883209.4088.14.camel@HansenPartnership.com>
+ <20181008163748.0e68cba5@alans-desktop>
 MIME-Version: 1.0
-In-Reply-To: <1539210111.1944.31.camel@impinj.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.43.160.245]
-X-ClientProxiedBy: EX13D05UWC002.ant.amazon.com (10.43.162.92) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181008163748.0e68cba5@alans-desktop>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9042 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=647
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810110076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 08, 2018 at 04:37:48PM +0100, Alan Cox wrote:
+>  
+> > I happen to think that the fact that the TAB cannot compel where it
+> > cannot persuade is a huge strength of the system because it means
+> > there's no power structure to subvert if someone were interested in
+> > using it to try to impose their own viewpoint on the community.  But
+> > that's just my opinion and I did write the TAB charter, so I'm probably
+> > biased in this viewpoint.
+> 
+> The TAB can't handle it anyway because the privacy promise about
+> reporting is incompatible with reality for three reasons (and I bet there
+> are more)
 
+Really you want to keep any reporting private from people on the TAB
+because they're going to be interviewing you for a job in a couple
+years.
 
-On 10/11/2018 01:21 AM, Trent Piepho wrote:
-> On Wed, 2018-10-10 at 10:08 +0300, Talel Shenhar wrote:
->> The dw spi controller has an auto-deselect of Chip-Select, in case there is
->> no data inside the Tx FIFO. While working on platforms with Alpine chips,
->> auto-deselect mode causes an issue for some spi devices that can't handle
->> the Chip-Select deselect in the middle of a transaction. It is a normal
->> behavior for a Tx FIFO to be empty in the middle of a transaction, due to
->>
-> So that's the problem!  I, like everyone else I suspect, switched to
-> using GPIO chip selects with this driver because of this.  I narrowed
-> it down to a CS de-assert when the bus switched from TX to RX, which of
-> course makes a SPI register read fail on most devices.  The TX FIFO
-> would empty at this point, so that would explain it.
->
-> Did the designers of this IP ever read a SPI device datasheet???
->
-> Got to agree with Mark Brown, why would anyone ever want to NOT have it
-> work properly?  The previous behavior is not "alternate correct", it's
-> Broken.
-This patch allow the Amazon changed hw to work in a correct way.
-Unfortunately, the original hw doesn't support auto-deselect disable.
-auto-deselect disable is a hw fixup Amazon hw engineers added on top
-of the original dw IP.
-The fix was to disable the auto-deselect and to allow sw
-to manually control the chip-select.
-This patch enables the above described Amazon hw fixup and
-adds manual control over chip-select.
+regards,
+dan carpenter
