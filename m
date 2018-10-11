@@ -2,125 +2,135 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C58C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C863C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE862054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:05:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yo2gBsAE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE862054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C1CA820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:06:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CA820658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbeJLBeG (ORCPT
+        id S1728605AbeJLBey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:34:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44466 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 21:34:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:41948 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727870AbeJLBeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:34:05 -0400
-Received: from localhost (unknown [213.57.200.29])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7BFB204FD;
-        Thu, 11 Oct 2018 18:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539281145;
-        bh=DatiusO4ntQl1KdbLELexIP+IQb2+IEzb2lRHVioznI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yo2gBsAEOraovv2MZQeyi+ta/G0RhZ6eY6zOm2ewS7E0bQZZmRLl7RBcbrTn0BCNW
-         EHgdUM+4CU5T6xIB6kwxD4314TClzAAjU6+7SQouHVEKV6mKEByYfsUMTo6lRDqB3l
-         XUlEA/lDwEqyuZ5hbE9b3goBDYKo8ZGZ+kz21fOs=
-Date:   Thu, 11 Oct 2018 21:05:41 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+71aff6ea121ffefc280f@syzkaller.appspotmail.com>,
-        dledford@redhat.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        swise@opengridcomputing.com, markb@mellanox.com,
-        linux-rdma@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, guro@fb.com,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Marcos Souza <marcos.souza.org@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Will Drewry <wad@chromium.org>
-Subject: Re: WARNING: ODEBUG bug in free_task
-Message-ID: <20181011180541.GF3742@mtr-leonro.mtl.com>
-References: <00000000000053a2ca0577ceddac@google.com>
- <CACT4Y+adu4sL96Dp7_m4=Q7bP0eL1w8zVce-2-+FZMAut+E9SA@mail.gmail.com>
+        id S1726699AbeJLBex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 21:34:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A9E5ED1;
+        Thu, 11 Oct 2018 11:06:34 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E99033F5D3;
+        Thu, 11 Oct 2018 11:06:32 -0700 (PDT)
+Subject: Re: [PATCH 03/10] swiotlb: do not panic on mapping failures
+To:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20181008080246.20543-1-hch@lst.de>
+ <20181008080246.20543-4-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ff847d0d-a2a1-65ba-ed18-aa71f632194d@arm.com>
+Date:   Thu, 11 Oct 2018 19:06:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+adu4sL96Dp7_m4=Q7bP0eL1w8zVce-2-+FZMAut+E9SA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181008080246.20543-4-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/10/18 09:02, Christoph Hellwig wrote:
+> All properly written drivers now have error handling in the
+> dma_map_single / dma_map_page callers.  As swiotlb_tbl_map_single already
+> prints a useful warning when running out of swiotlb pool swace we can
+> also remove swiotlb_full entirely as it serves no purpose now.
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+$ git grep -l 'dma_map_\(page\|single\)' drivers/ | wc -l
+385
+$ git grep -l dma_mapping_error drivers/ | wc -l
+396
 
-On Wed, Oct 10, 2018 at 02:59:38PM +0200, Dmitry Vyukov wrote:
-> On Tue, Oct 9, 2018 at 7:14 PM, syzbot
-> <syzbot+71aff6ea121ffefc280f@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    ae16eea39a86 Add linux-next specific files for 20181008
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=16a493b9400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=42525ce985d1a955
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=71aff6ea121ffefc280f
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14567ae6400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14baa25e400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+71aff6ea121ffefc280f@syzkaller.appspotmail.com
->
-> This looks the same as:
->
-> #syz dup: WARNING in __put_task_struct (2)
->
-> The reproducer is all RDMA and also some task refcounting bug.
->
-> +RDMA maintainers
+Close enough, to first approximation :D
 
-Thanks, amazing reproducer, I'm looking on it now.
+I agree the other (non-fatal) warning seems sufficient, and frankly the 
+panic can be a bit of a pain for development sometimes.
 
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbv5D1AAoJEORje4g2clinXSwP/3Zd/LWbjl2qpGicCpInFJJm
-/qOpJDdBS7br18078JB52ODnHfE8DoHew6tUKIabIYbUsjlU3QSzCMDTLm1GMTyw
-CTp9dZURJv/DGlmsRbRrIKtwpgX/KPbBPXtz+D1Y/dIAIXkxjrTIgoRFz0VjbEpO
-FRC4RVGVqYfEDXEYkH3JKtyLXud3DLFzJNpyen4Y9zEPvY/vC5+TteMW397VYb+u
-NkARS5L9AJ4UB09mJySvZqsS/DFEM6rwvLfi9xxRnpgA7/IGxq1ztzyqTrTp+J0K
-3PmGspA9cI4hQESFc/iASyiD6ccqcgY0nEeyNICZuOAa3XqdSEhHo+DR86E6Cmm2
-iKf++F11y2aWLKBsOUxTAGrZ21g9V/FxD36wRXfDatlIsJtbNsRsFf3L67zsJO1C
-wNxKeKTIg/tCqcBXPGIAVzl9/kg0Pm5Je+mPBKQiqhUEU1cqASyiSf+spGP0IRry
-H0R3hhVlBYiC0cdjuVAmOVpUjbnifxVfkjxDkHT17/Dvl0HqzPEsjLBcMAocMPL1
-O9GfRo8ivzHQEQ0qx07F13dCyqc0ZsvTdWvOqmNgEaSx2pWjVLmjS2U8X6Dmg+Qi
-ADzh0YPH6BcBG1qqzOyNSGYvNweaS0HaJrBdliCkXtPrv/PSFbCz+mnujTPU6cuw
-f4REEYRO1gqTQGAf00Ai
-=ml4y
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   kernel/dma/swiotlb.c | 33 +--------------------------------
+>   1 file changed, 1 insertion(+), 32 deletions(-)
+> 
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 26d3af52956f..69bf305ee5f8 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -761,34 +761,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+>   	return true;
+>   }
+>   
+> -static void
+> -swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+> -	     int do_panic)
+> -{
+> -	if (swiotlb_force == SWIOTLB_NO_FORCE)
+> -		return;
+> -
+> -	/*
+> -	 * Ran out of IOMMU space for this operation. This is very bad.
+> -	 * Unfortunately the drivers cannot handle this operation properly.
+> -	 * unless they check for dma_mapping_error (most don't)
+> -	 * When the mapping is small enough return a static buffer to limit
+> -	 * the damage, or panic when the transfer is too big.
+> -	 */
+> -	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
+> -			    size);
+> -
+> -	if (size <= io_tlb_overflow || !do_panic)
+> -		return;
+> -
+> -	if (dir == DMA_BIDIRECTIONAL)
+> -		panic("DMA: Random memory could be DMA accessed\n");
+> -	if (dir == DMA_FROM_DEVICE)
+> -		panic("DMA: Random memory could be DMA written\n");
+> -	if (dir == DMA_TO_DEVICE)
+> -		panic("DMA: Random memory could be DMA read\n");
+> -}
+> -
+>   /*
+>    * Map a single buffer of the indicated size for DMA in streaming mode.  The
+>    * physical address to use is returned.
+> @@ -817,10 +789,8 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+>   
+>   	/* Oh well, have to allocate and map a bounce buffer. */
+>   	map = map_single(dev, phys, size, dir, attrs);
+> -	if (map == SWIOTLB_MAP_ERROR) {
+> -		swiotlb_full(dev, size, dir, 1);
+> +	if (map == SWIOTLB_MAP_ERROR)
+>   		return __phys_to_dma(dev, io_tlb_overflow_buffer);
+> -	}
+>   
+>   	dev_addr = __phys_to_dma(dev, map);
+>   
+> @@ -948,7 +918,6 @@ swiotlb_map_sg_attrs(struct device *hwdev, struct scatterlist *sgl, int nelems,
+>   			if (map == SWIOTLB_MAP_ERROR) {
+>   				/* Don't panic here, we expect map_sg users
+>   				   to do proper error handling. */
+> -				swiotlb_full(hwdev, sg->length, dir, 0);
+>   				attrs |= DMA_ATTR_SKIP_CPU_SYNC;
+>   				swiotlb_unmap_sg_attrs(hwdev, sgl, i, dir,
+>   						       attrs);
+> 
