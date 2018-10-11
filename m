@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE96C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D29CC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181F42098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44FFB213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOVD5jD9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181F42098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9tTtF2Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44FFB213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbeJKXHB (ORCPT
+        id S1729885AbeJKXHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:07:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36388 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:07:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:59 -0400
+        id S1726721AbeJKXHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:07:02 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F03D620652;
-        Thu, 11 Oct 2018 15:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B663B2087A;
+        Thu, 11 Oct 2018 15:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272356;
-        bh=v1e35yKT69BxdYCA+9WZo+rImog86hcAjTnQwJMdZz4=;
+        s=default; t=1539272359;
+        bh=jocewMz2E3mjRsIqV9ezGZvUIUVxTGSTwJXP+zYUzV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WOVD5jD9A3JC1v2Y9aoPGx8pjQ73F3pJVCK32MQDpsivdS56L0Le08CfRNiizQwNd
-         gHfWejY/jIVs/LyaKY6TleBAmEyT3k7JkLOGQIDvPyg7w0kNtBLJWfZ6/GKN4jHVMy
-         ls2JY2M9kfsreNDVttG0Het9FefCbOhPlBPz/WeU=
+        b=J9tTtF2YE/w96id9ehuRonaqtJkMj4YM7nMmpwAD7KqcC8aVO7mz+mb5S6v+eomnv
+         cfLx8up6M716cXr5itPuajw7scGrvYLGxNUEdwDEkZ9gM8wQs0lh1ee2+Pyd0zfhMU
+         AYhRe+ql28Jbc3Go8aPAo9A2SvuVSdAohu4Q0DoY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 081/120] tools/vm/slabinfo.c: fix sign-compare warning
-Date:   Thu, 11 Oct 2018 17:34:22 +0200
-Message-Id: <20181011152553.145875014@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Greg Hackmann <ghackmann@google.com>
+Subject: [PATCH 3.18 064/120] ext4: verify the depth of extent tree in ext4_find_extent()
+Date:   Thu, 11 Oct 2018 17:34:05 +0200
+Message-Id: <20181011152552.436933782@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -66,46 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 904506562e0856f2535d876407d087c9459d345b ]
+commit bc890a60247171294acc0bd67d211fa4b88d40ba upstream.
 
-Currently we get the following compiler warning:
+If there is a corupted file system where the claimed depth of the
+extent tree is -1, this can cause a massive buffer overrun leading to
+sadness.
 
-    slabinfo.c:854:22: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-       if (s->object_size < min_objsize)
-                          ^
+This addresses CVE-2018-10877.
 
-due to the mismatch of signed/unsigned comparison.  ->object_size and
-->slab_size are never expected to be negative, so let's define them as
-unsigned int.
+https://bugzilla.kernel.org/show_bug.cgi?id=199417
 
-[n-horiguchi@ah.jp.nec.com: convert everything - none of these can be negative]
-  Link: http://lkml.kernel.org/r/20180826234947.GA9787@hori1.linux.bs1.fc.nec.co.jp
-Link: http://lkml.kernel.org/r/1535103134-20239-1-git-send-email-n-horiguchi@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[bwh: Backported to 3.16: return -EIO instead of -EFSCORRUPTED]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/vm/slabinfo.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/vm/slabinfo.c
-+++ b/tools/vm/slabinfo.c
-@@ -29,8 +29,8 @@ struct slabinfo {
- 	int alias;
- 	int refs;
- 	int aliases, align, cache_dma, cpu_slabs, destroy_by_rcu;
--	int hwcache_align, object_size, objs_per_slab;
--	int sanity_checks, slab_size, store_user, trace;
-+	unsigned int hwcache_align, object_size, objs_per_slab;
-+	unsigned int sanity_checks, slab_size, store_user, trace;
- 	int order, poison, reclaim_account, red_zone;
- 	unsigned long partial, objects, slabs, objects_partial, objects_total;
- 	unsigned long alloc_fastpath, alloc_slowpath;
+---
+ fs/ext4/ext4_extents.h |    1 +
+ fs/ext4/extents.c      |    6 ++++++
+ 2 files changed, 7 insertions(+)
+
+--- a/fs/ext4/ext4_extents.h
++++ b/fs/ext4/ext4_extents.h
+@@ -103,6 +103,7 @@ struct ext4_extent_header {
+ };
+ 
+ #define EXT4_EXT_MAGIC		cpu_to_le16(0xf30a)
++#define EXT4_MAX_EXTENT_DEPTH 5
+ 
+ #define EXT4_EXTENT_TAIL_OFFSET(hdr) \
+ 	(sizeof(struct ext4_extent_header) + \
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -870,6 +870,12 @@ ext4_find_extent(struct inode *inode, ex
+ 
+ 	eh = ext_inode_hdr(inode);
+ 	depth = ext_depth(inode);
++	if (depth < 0 || depth > EXT4_MAX_EXTENT_DEPTH) {
++		EXT4_ERROR_INODE(inode, "inode has invalid extent depth: %d",
++				 depth);
++		ret = -EIO;
++		goto err;
++	}
+ 
+ 	if (path) {
+ 		ext4_ext_drop_refs(path);
 
 
