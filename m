@@ -2,192 +2,229 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B76C28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F6AC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F6720865
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4155A2087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HS5S/O5x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F6720865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="JePUwiNa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4155A2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeJLGXt (ORCPT
+        id S1726771AbeJLG1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 02:23:49 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33109 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbeJLGXs (ORCPT
+        Fri, 12 Oct 2018 02:27:53 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:55408 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbeJLG1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 02:23:48 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 78-v6so2761053pfq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 15:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=UYXAYqGfk3BgRwHcASkqOPryY2jQvc48F6CyQunh6FE=;
-        b=HS5S/O5xzFkgGIXrpdtrZ+Z6lBy6wY/ZnuMIfNQTu30OVdQphSeaLzMmIyvu4Qzj1b
-         nka7bpL/xc6dI4aMkbeSczVZvXqxLCKoREIUUdZH44him4sng7zSqAcmpJgvFZrouRVz
-         q4JWlaNqNIUcJJWa5UQHxppBNGko+QVJgpoGA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=UYXAYqGfk3BgRwHcASkqOPryY2jQvc48F6CyQunh6FE=;
-        b=Yo5UPDPMleWce/wrTR8yfgX2mXAspxY8zB1tT92kOUPJgwZidku70jkQABXFGWwPyE
-         TqhG+ccz4YXj+BD4awMKySO8rvgi0EKTlS2FjJZT/zhTGrapJQqEBrgE9YFIyfMRCKpC
-         Jm5cZOJdrK6R0ECrplfTqUzEOeTgrW7ObOWjdZwAkl7xyUqKPnLZMZDG+VPjFPROVuD/
-         maKJcxiDhXvSNKowglLb+8imiAh7t2vapSNl0/xXUF7+o415Cbcom6Vi8uymqZEf8njG
-         RODA2BAvm7SCEpvl5L07kpvfDKwF2Sb8X7UzgcF2KzIQSyIL4f9ZK94+7fiNNvR3oTAD
-         vBew==
-X-Gm-Message-State: ABuFfohOLXGF+2N2Ol7j1Sn2DHaA9YnvkI20s3jungkKSg/09T/BiTb3
-        zhAFOq/Qs0b5Ht/3hiFexeKBiw==
-X-Google-Smtp-Source: ACcGV617Mo19Q4ey+bBEGsYpQ6ytttHyz7r8lJUfYGzL3/56PanVfzmzglNFOTKwaynTCRK9w7KPig==
-X-Received: by 2002:a62:c80d:: with SMTP id z13-v6mr3405934pff.176.1539298463713;
-        Thu, 11 Oct 2018 15:54:23 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm55988837pfd.64.2018.10.11.15.54.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 15:54:22 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 15:54:21 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Tobin C. Harding" <me@tobin.cc>, Arnd Bergmann <arnd@arndb.de>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] random: Move rand_initialize() earlier
-Message-ID: <20181011225421.GA21093@beast>
+        Fri, 12 Oct 2018 02:27:53 -0400
+Date:   Thu, 11 Oct 2018 22:58:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539298704;
+        bh=U7vuDGTuuk6QB8i/MHG2kvDaaLJRTJOLm+wp1OfFL+M=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=JePUwiNaUoigfu0R+NY1YSP39lkZOyqlIY3fuYbf+z1htt+48ZqV9cEeX1rdFUpp0
+         KWls9jg7vTRLEThkkKn+zkc5dKkSRyjOSc/YXsFUJ3QK+tCfqI7xH//xmuNWHaJ9W9
+         OrkGhX2e0iw2pf04igOGGtGca+OfzrBphk2a1xJo=
+To:     Kees Cook <keescook@chromium.org>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+In-Reply-To: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now rand_initialize() is run as an early_initcall(), but it only
-depends on timekeeping_init() (for mixing ktime_get_real() into the
-pools). However, the call to boot_init_stack_canary() for stack canary
-initialization runs earlier, which triggers a warning at boot:
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Thursday, October 11, 2018 7:57 PM, Kees Cook <keescook@chromium.org> wr=
+ote:
 
-random: get_random_bytes called from start_kernel+0x357/0x548 with crng_init=0
+> On Wed, Oct 10, 2018 at 5:18 PM, Kees Cook keescook@chromium.org wrote:
+>
+> > v5:
+> >
+> > -   redesigned to use CONFIG_LSM=3D and lsm=3D for both ordering and en=
+abling
+> > -   dropped various Reviewed-bys due to rather large refactoring
+>
+> Here's a tl;dr of the behavioral changes...
+>
+> Right now, we have:
+>
+> -   hard-coded special LSM: capability which cannot be disabled.
+> -   hard-coded "minor" LSMs: they are enabled in a static order based on
+>     whether they are built into the kernel or not: yama, loadpin.
+>
+> -   a single LSM without a specified order because it only uses the
+>     early-init position: integrity.
+>
+> -   "major" LSMs that are selected via CONFIG_DEFAULT_SECURITY=3D or
+>     "security=3D" boot param.
+>
+> -   SELinux and AppArmor each can enable/disable themselves via
+>     CONFIG_..._BOOTPARAM_VALUE=3D and selinux=3D/apparmor=3D.
+>
+>     So, right now, systems will have all the minor LSMs and integrity
+>     initialized if they are built into the kernel without any way to
+>     control their order or disable them at boot time. To select a major
+>     LSM, the pattern is:
+>
+>     selinux=3D1 security=3Dselinux
+>
+>     Note that both are used here because if you built with
+>     CONFIG_SELINUX_BOOTPARAM_VALUE=3D0 and CONFIG_DEFAULT_SECURITY=3Dappa=
+rmor,
+>     just booting with "security=3Dselinux" just disables AppArmor but
+>     SELinux stays disabled. So the documented way to switch majors is wit=
+h
+>     "selinux=3D1 security=3Dselinux". However Tomoyo and Smack do not hav=
+e
+>     separate enable/disable logic. They will work fine with just
+>     "security=3Dsmack".
+>
+>     Now, in order to gain arbitrary LSM ordering, this series introduces
+>     CONFIG_LSM=3D (to replace CONFIG_DEFAULT_SECURITY=3D) and "lsm=3D" (t=
+o
+>     replace "security=3D"). Note that "security=3D" has not been removed =
+-- it
+>     will still work. Mixing it with "lsm=3D" can lead to situations where
+>     "security=3D" becomes effectively ignored, though.
+>
+>     In the rest of this I'm going to ignore capability: it will always be
+>     first and it will always be enabled.
+>
+>     Assuming that all LSMs are built in (e.g. yama, loadpin, selinux,
+>     smack, tomoyo, apparmor, integrity), here are the changes:
+>
+>     To choose the "default major LSM" of AppArmor before:
+>     CONFIG_DEFAULT_SECURITY=3Dapparmor
+>
+>     To choose the "default major LSM" of AppArmor without extreme stackin=
+g now:
+>     CONFIG_LSM=3Dyama,loadpin,integrity,apparmor
+>
+>     To choose the "default major LSM" of AppArmor with future extreme sta=
+cking now:
+>     CONFIG_LSM=3Dyama,loadpin,integrity,apparmor,tomoyo,selinux,smack
+>
+>     Whichever exclusive LSM is listed first will be the first to attempt
+>     initialization. Any non-conflicting LSMs following it will initialize
+>     too.
+>
+>     This means a distro can disable the "blob-sharing" behavior by just
+>     providing a CONFIG_LSM=3D that includes a single major LSM.
+>
+>     To switch to SELinux at boot time with
+>     "CONFIG_LSM=3Dyama,loadpin,integrity,apparmor", the old way continues=
+ to
+>     work:
+>
+>     selinux=3D1 security=3Dselinux
+>
+>     This will work still, since it will enable selinux (selinux=3D1) and
+>     disable all other major LSMs (security=3Dselinux).
+>
+>     The new way to enable selinux would be using
+>     "lsm=3Dyama,loadpin,integrity,selinux".
+>
 
-Instead, this moves rand_initialize() to after timekeeping_init(), and moves
-canary initialization here as well.
+It seems to me that legacy way is more user friendly than the new one.
+AppArmor and SElinux are households names but the rest may be enigmatic
+for most users and the need for explicit passing them all may be
+troublesome. Especially when the new ones like sara,landlock or cows :)
+will be incoming. Moreover to knew what you have to pass there, you need
+to look at CONFIG_LSM in kernel config (which will vary across distros
+and also mean copy-paste from the web source may won't work as expected)
+which again most users don't do.
 
-Note that this warning may still remain for machines that do not have
-UEFI RNG support (which initializes the RNG pools during setup_arch()),
-or for x86 machines without RDRAND (or booting without "random.trust=on"
-or CONFIG_RANDOM_TRUST_CPU=y).
+I think there is risk that users will end up with "lsm=3Dselinux" without
+realizing that they may disable something along the way.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-Alternatively, ktime_get_real() could get mixed into the pools after
-timekeeping_init(), and rand_initialize() could be run MUCH early,
-like after setup_arch()...
----
- drivers/char/random.c  |  5 ++---
- include/linux/random.h |  1 +
- init/main.c            | 21 ++++++++++++++-------
- 3 files changed, 17 insertions(+), 10 deletions(-)
+I would prefer for "lsm=3D" to work as override to "CONFIG_LSM=3D" with
+below assumptions:
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index c75b6cdf0053..deff1aa4d000 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1784,7 +1784,7 @@ EXPORT_SYMBOL(get_random_bytes_arch);
-  * data into the pool to prepare it for use. The pool is not cleared
-  * as that can only decrease the entropy in the pool.
-  */
--static void init_std_data(struct entropy_store *r)
-+static void __init init_std_data(struct entropy_store *r)
- {
- 	int i;
- 	ktime_t now = ktime_get_real();
-@@ -1811,7 +1811,7 @@ static void init_std_data(struct entropy_store *r)
-  * take care not to overwrite the precious per platform data
-  * we were given.
-  */
--static int rand_initialize(void)
-+int __init rand_initialize(void)
- {
- 	init_std_data(&input_pool);
- 	init_std_data(&blocking_pool);
-@@ -1823,7 +1823,6 @@ static int rand_initialize(void)
- 	}
- 	return 0;
- }
--early_initcall(rand_initialize);
- 
- #ifdef CONFIG_BLOCK
- void rand_initialize_disk(struct gendisk *disk)
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 445a0ea4ff49..13aeaf5a4bd4 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -36,6 +36,7 @@ extern void add_interrupt_randomness(int irq, int irq_flags) __latent_entropy;
- 
- extern void get_random_bytes(void *buf, int nbytes);
- extern int wait_for_random_bytes(void);
-+extern int __init rand_initialize(void);
- extern bool rng_is_initialized(void);
- extern int add_random_ready_callback(struct random_ready_callback *rdy);
- extern void del_random_ready_callback(struct random_ready_callback *rdy);
-diff --git a/init/main.c b/init/main.c
-index 18f8f0140fa0..e2b073bf846f 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -550,13 +550,6 @@ asmlinkage __visible void __init start_kernel(void)
- 	page_address_init();
- 	pr_notice("%s", linux_banner);
- 	setup_arch(&command_line);
--	/*
--	 * Set up the the initial canary and entropy after arch
--	 * and after adding latent and command line entropy.
--	 */
--	add_latent_entropy();
--	add_device_randomness(command_line, strlen(command_line));
--	boot_init_stack_canary();
- 	mm_init_cpumask(&init_mm);
- 	setup_command_line(command_line);
- 	setup_nr_cpu_ids();
-@@ -641,6 +634,20 @@ asmlinkage __visible void __init start_kernel(void)
- 	hrtimers_init();
- 	softirq_init();
- 	timekeeping_init();
-+
-+	/*
-+	 * For best initial stack canary entropy, prepare it after:
-+	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
-+	 * - timekeeping_init() for ktime entropy used in rand_initialize()
-+	 * - rand_initialize() to get any arch-specific entropy like RDRAND
-+	 * - add_latent_entropy() to get any latent entropy
-+	 * - adding command line entropy
-+	 */
-+	rand_initialize();
-+	add_latent_entropy();
-+	add_device_randomness(command_line, strlen(command_line));
-+	boot_init_stack_canary();
-+
- 	time_init();
- 	printk_safe_init();
- 	perf_event_init();
--- 
-2.17.1
+I. lsm=3D"$lsm" will append "$lsm" at the end of string. Before extreme
+stacking it will also remove the other major (explicit) lsm from it.
+
+II. lsm=3D"!$lsm" will remove "$lsm" from the string.
+
+III. If "$lsm" already exist in the string, it's moved at the end of it
+(this will cover ordering).
+
+Examples:
+
+1. Without extreme stacking.
+
+a) Enable selinux, disable apparmor and leave the rest untouched.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux =3D yama,load=
+pin,integrity,selinux
+
+b) Enable selinux, disable apparmor and disable loadpin.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!loadpin =3D =
+yama,integrity,selinux
 
 
--- 
-Kees Cook
-Pixel Security
+2. With extreme stacking.
+
+a) Enable selinux, disable apparmor and leave the rest untouched.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!apparmor =3D=
+ yama,loadpin,integrity,selinux
+
+b) Enable selinux, disable apparmor and disable loadpin.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!apparmor,!lo=
+adpin =3D yama,integrity,selinux
+
+c) Enable selinux and order it after apparmor.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux =3D yama,load=
+pin,integrity,apparmor,selinux
+
+d) Enable selinux and order it before apparmor.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,apparmor =3D =
+yama,loadpin,integrity,selinux,apparmor
+
+
+IMO above will be easier to handle for users. At worst case with
+full ordering all existing lsm's it will look the same as what
+Kees proposes but I assume that ordering is rather for more
+advanced people.
+
+It's possible that something lime this was discussed already
+but without full examples it was hard to me for tracking things.
+
+Jordan
