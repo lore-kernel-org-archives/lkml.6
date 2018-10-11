@@ -2,186 +2,118 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8283C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 183C6C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B122077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:48:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5cDs5Xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B122077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DAAC72077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:49:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAC72077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeJKTPk (ORCPT
+        id S1727362AbeJKTQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:15:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:32995 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKTPk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:15:40 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e4-v6so9357497wrs.0;
-        Thu, 11 Oct 2018 04:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=jVPa2OBQuQWHIEBTRHX0t8oOVwePJRfv51Ptm++bqRA=;
-        b=g5cDs5XjdQLCD/IpNurawDbISTQxIAa+Y0ualCzS5ivo/wpGw9VtPptyg08vzZjalq
-         te4tMTepfPqoPjMMN2pUmUjHr3P+81KdpTzRUKwe4R9UbjGcLqmBWHmCGAEudWWs6LNK
-         WhGN6QFYc/oQqohA0suWrWVaD8s3hBPK4DtYK2SZYOlx1Pum2BGstaN07pNM1ji4Cwwd
-         ZMQwOuVxpgy3E+Am3AxoBTJCyPp1qHkA6JTIMhVjUaucdcnbV70C3d5GPYagKKleIOcD
-         oLka3c5Un76B2lM/racBkmop/VM2FbovXXIBdcLwBrL45GWVttBtLGc59jexsdBkhBEW
-         p5xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=jVPa2OBQuQWHIEBTRHX0t8oOVwePJRfv51Ptm++bqRA=;
-        b=IcT7nJC1AQiJQFq/axvlM/dgg/CFO+qvpoJhxS0ngAztopXptzFKa1uGWqB9g8d6P6
-         8tzXCR7pcmyXcsS3rd5oN4zl0U+0XR+4ehu9Jn3KQxjvltFwMzveVXOEUEGbfG7Bsu/L
-         AfGBWNKt8PJJid6y5Gsg6gy2KkW5jEvaHvZ5rz+BrItZwEO0DU0wENwTtg/t9yOry034
-         WGD9s8uKX47rCe2nRgt54FOcvyvyTo0XjuI+BxRkVVYPVOpnljlLzqz+AMe9zojNHpsz
-         8Za7lJ628/6k8fyepcn1VlurBILVG/qS/Fo5wa3RS++ZZ9De6G2KGEweiiwbuy/5KJtv
-         9W+w==
-X-Gm-Message-State: ABuFfoj9faWrkFE5XKMuRsDOl0IwrLMi1rdYTEKLAdKLkgoaa1Yfb2qM
-        KpXimGtuur2hgo4StLWv5s8=
-X-Google-Smtp-Source: ACcGV629fk2q6cRBrZcOY54AN4q9jOJCz3ntVCl33zRkavrYQ6QAzjJ1anJ/DTv/zoxWK5c1ymVZzA==
-X-Received: by 2002:a05:6000:114e:: with SMTP id d14mr1242224wrx.301.1539258524970;
-        Thu, 11 Oct 2018 04:48:44 -0700 (PDT)
-Received: from [172.16.1.10] (host-89-243-172-161.as13285.net. [89.243.172.161])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm28467038wrr.64.2018.10.11.04.48.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 04:48:44 -0700 (PDT)
-Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE
- [ver #12]
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-References: <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com>
- <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
- <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
- <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
- <16207.1539249451@warthog.procyon.org.uk>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <c7af263d-f265-7feb-8d40-0b0d773f24bf@gmail.com>
-Date:   Thu, 11 Oct 2018 12:48:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <16207.1539249451@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 11 Oct 2018 15:16:22 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2098 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbeJKTQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:16:22 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 5318E543E2806;
+        Thu, 11 Oct 2018 12:49:26 +0100 (IST)
+Received: from FRAEML703-CAH.china.huawei.com (10.206.14.34) by
+ LHREML714-CAH.china.huawei.com (10.201.108.37) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Thu, 11 Oct 2018 12:49:27 +0100
+Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.206]) by
+ fraeml703-cah.china.huawei.com ([10.206.14.34]) with mapi id 14.03.0399.000;
+ Thu, 11 Oct 2018 13:49:18 +0200
+From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
+CC:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>
+Subject: RE: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
+Thread-Topic: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
+Thread-Index: AQHUUb0pQn5upG3YtUCPh5BgR8Q9BqUZ5U6AgAAiGGA=
+Date:   Thu, 11 Oct 2018 11:49:18 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA83879AD29@FRAEML521-MBX.china.huawei.com>
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+ <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
+ <d649de4e-e0cc-4188-5e56-fea1488b9d6b@arm.com>
+In-Reply-To: <d649de4e-e0cc-4188-5e56-fea1488b9d6b@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 10:17, David Howells wrote:
-> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
->
->> # unshare --mount=private_mnt/child_ns --propagation=shared ls -l /proc/self/ns/mnt
-> I think the problem is that the mount of the nsfs object done by unshare here
-> pins the new mount namespace - but doesn't add the namespace's contents into
-> the mount tree, so the mount struct cycle-detection code is bypassed.
->
-> I think it's fine for all other namespaces, just not the mount namespace.
->
-> It looks like this bug might theoretically exist upstream also, though I don't
-> think there's any way to actually effect it given that mount() doesn't take a
-> dirfd argument.
->
-> The reason that you can do this with open_tree()/move_mount() is that it
-> allows you to create a mount tree (OPEN_TREE_CLONE) that has no namespace
-> assignment, pass it through the namespace switch and then attach it inside the
-> child namespace.  The cross-namespace checks in do_move_mount() are bypassed
-> because the root of the newly-cloned mount tree doesn't have one.
->
-> Unfortunately, just searching the newly-cloned mount tree for a conflicting
-> nsfs mount doesn't help because the potential loop could be hidden several
-> levels deep.
->
-> I think the simplest solution is to either reject a request for
-> open_tree(OPEN_TREE_CLONE) if there are any nsfs objects in the source tree,
-> or to just not copy said objects.
->
-> David
-
-Very clearly written, thank you.  Hum, your solution would mean 
-open_tree(OPEN_TREE_CLONE) + move_mount() is not equivalent to the 
-current `mount --rbind` :-(.  That does not fit the current patch 
-description.
-
-It sounds like you're under-estimating how we can use mnt_ns->seq (as is 
-currently used in mnt_ns_loop()).  Or maybe I am over-estimating it :).
-
-In principle, it should suffice for attach_recursive_mount() to check 
-the NS sequence numbers of the NS files which are mounted. You can't 
-hide the loop at a deeper level inside the NS, because of the existing 
-mnt_ns_loop() check.
-
-I think mnt_ns_loop() works 100% correctly upstream, and there is no 
-memory leak bug there.  You can pass a mount NS fd between processes in 
-arbitrary namespaces, and you can mount it with "mount --no-canonicalize 
---bind /proc/self/fd/3 /other_ns".  But mnt_ns_loop() will only allow 
-the mount when the other NS is newer than your own mount namespace.
-
-Upstream also covers mount propagation (and CLONE_NEWNS), by simply not 
-propagating mounts of mount NS files.  ( See commit 4ce5d2b1a8fd "vfs: 
-Don't copy mount bind mounts of /proc/<pid>/ns/mnt between namespaces" / 
-https://unix.stackexchange.com/questions/473717/what-code-prevents-mount-namespace-loops-in-a-more-complex-case-involving-mount-propagation 
-)
-
-I think it is more a question of taste :-).  Would it be acceptable to 
-prune the tree (or fail?) in move_mount() (and also `mount --move`, if 
-you [ab]use it like I did) ?
-
-I suspect we should prefer your solution.  It is clearly simpler, and I 
-don't know that anyone really uses `mount --rbind` to clone trees of 
-mount NS files.
-
-Either way, I suggest we take care to say whether `mount --rbind` and 
-`mount --bind` can be implemented using open_tree() + move_mount(), or 
-whether we think it might be undesirable.  (E.g. because someone might 
-read the current commit message, and desire to implement `mount 
---bind,ro` atomically, if/when we also have mount_setattr() ).
-
-Regards
-
-Alan
-
-
-> ---
->
-> Test script:
->
-> 	mount -t tmpfs none /a
-> 	mount --make-shared /a
-> 	cd /a
-> 	mkdir private_mnt
-> 	mount -t tmpfs xxx private_mnt
-> 	mount --make-private private_mnt
-> 	touch private_mnt/child_ns
-> 	unshare --mount=private_mnt/child_ns --propagation=shared \
-> 	    ls -l /proc/self/ns/mnt
-> 	findmnt
->
-> 	~/open_tree 3</a/private_mnt 3 \
-> 	    nsenter --mount=/a/private_mnt/child_ns \
-> 	    sh -c '~/move_mount 4</mnt'
->
-> 	grep Shmem: /proc/meminfo
-> 	dd if=/dev/zero of=/a/private_mnt/bigfile bs=1M count=10
->
-> 	umount -l /a/private_mnt/
-> 	grep Shmem: /proc/meminfo
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iaW4gTXVycGh5IFtt
+YWlsdG86cm9iaW4ubXVycGh5QGFybS5jb21dDQo+IFNlbnQ6IDExIE9jdG9iZXIgMjAxOCAxMjoy
+Ng0KPiBUbzogU2hhbWVlcmFsaSBLb2xvdGh1bSBUaG9kaSA8c2hhbWVlcmFsaS5rb2xvdGh1bS50
+aG9kaUBodWF3ZWkuY29tPjsNCj4gbG9yZW56by5waWVyYWxpc2lAYXJtLmNvbQ0KPiBDYzogd2ls
+bC5kZWFjb25AYXJtLmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207IEd1b2hhbmp1biAoSGFuanVu
+IEd1bykNCj4gPGd1b2hhbmp1bkBodWF3ZWkuY29tPjsgSm9obiBHYXJyeSA8am9obi5nYXJyeUBo
+dWF3ZWkuY29tPjsNCj4gcGFiYmFAY29kZWF1cm9yYS5vcmc7IHZraWxhcmlAY29kZWF1cm9yYS5v
+cmc7IHJydWlncm9rQGNvZGVhdXJvcmEub3JnOw0KPiBsaW51eC1hY3BpQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZzsgTGludXhhcm0gPGxpbnV4YXJtQGh1YXdlaS5jb20+Ow0KPiBuZWls
+Lm0ubGVlZGVyQGdtYWlsLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDIvM10gcGVyZjog
+YWRkIGFybTY0IHNtbXV2MyBwbXUgZHJpdmVyDQo+IA0KPiBIaSBTaGFtZWVyLA0KPiANCj4gT25l
+IG1vcmUgdGhpbmcuLi4NCj4gDQo+IE9uIDIxLzA5LzE4IDE2OjA4LCBTaGFtZWVyIEtvbG90aHVt
+IHdyb3RlOg0KPiBbLi4uXQ0KPiA+ICtzdGF0aWMgaW50IHNtbXVfcG11X3Byb2JlKHN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBzbW11X3BtdSAqc21t
+dV9wbXU7DQo+ID4gKwlzdHJ1Y3QgcmVzb3VyY2UgKnJlc18wLCAqcmVzXzE7DQo+ID4gKwl1MzIg
+Y2ZnciwgcmVnX3NpemU7DQo+ID4gKwl1NjQgY2VpZF82NFsyXTsNCj4gPiArCWludCBpcnEsIGVy
+cjsNCj4gPiArCWNoYXIgKm5hbWU7DQo+ID4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+
+ZGV2Ow0KPiA+ICsNCj4gPiArCXNtbXVfcG11ID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpz
+bW11X3BtdSksIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYgKCFzbW11X3BtdSkNCj4gPiArCQlyZXR1
+cm4gLUVOT01FTTsNCj4gPiArDQo+ID4gKwlzbW11X3BtdS0+ZGV2ID0gZGV2Ow0KPiA+ICsNCj4g
+PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHNtbXVfcG11KTsNCj4gPiArCXNtbXVfcG11
+LT5wbXUgPSAoc3RydWN0IHBtdSkgew0KPiA+ICsJCS50YXNrX2N0eF9uciAgICA9IHBlcmZfaW52
+YWxpZF9jb250ZXh0LA0KPiA+ICsJCS5wbXVfZW5hYmxlCT0gc21tdV9wbXVfZW5hYmxlLA0KPiA+
+ICsJCS5wbXVfZGlzYWJsZQk9IHNtbXVfcG11X2Rpc2FibGUsDQo+ID4gKwkJLmV2ZW50X2luaXQJ
+PSBzbW11X3BtdV9ldmVudF9pbml0LA0KPiA+ICsJCS5hZGQJCT0gc21tdV9wbXVfZXZlbnRfYWRk
+LA0KPiA+ICsJCS5kZWwJCT0gc21tdV9wbXVfZXZlbnRfZGVsLA0KPiA+ICsJCS5zdGFydAkJPSBz
+bW11X3BtdV9ldmVudF9zdGFydCwNCj4gPiArCQkuc3RvcAkJPSBzbW11X3BtdV9ldmVudF9zdG9w
+LA0KPiA+ICsJCS5yZWFkCQk9IHNtbXVfcG11X2V2ZW50X3JlYWQsDQo+ID4gKwkJLmF0dHJfZ3Jv
+dXBzCT0gc21tdV9wbXVfYXR0cl9ncnBzLA0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwlyZXNfMCA9
+IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+ID4gKwlz
+bW11X3BtdS0+cmVnX2Jhc2UgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXNfMCk7DQo+
+IA0KPiBXZSBzdGlsbCBuZWVkIHRvIHNvbHZlIHRoZSByZXNvdXJjZS1jbGFpbWluZyBpc3N1ZSB3
+aGVuIG9uZSAob3IgYm90aCkgb2YNCj4gdGhlIFBNQ0cgcGFnZXMgYmVsb25ncyB0byB0aGUgcGFy
+ZW50IGRldmljZSdzIHJlZ2lzdGVyIHNwYWNlLiBJIHJlY2FsbA0KPiB3ZSBjaHVja2VkIGEgZmV3
+IG5hc2NlbnQgaWRlYXMgYWJvdXQgYmVmb3JlOyBkaWQgYW55b25lIG1hbmFnZSB0byBjb21lDQo+
+IHVwIHdpdGggYW55dGhpbmcgY29uY3JldGU/DQoNClJpZ2h0LiBXZSBoYWQgYW4gZWFybHkgdmVy
+c2lvbiBvZiBhbiBldmFsdWF0aW9uIGJvYXJkIHdoZXJlIHdlIGhhZCB0aGlzIGlzc3VlLCANCmJ1
+dCB0aGlzIGhhcyBiZWVuIGZpeGVkIGluIGFuIHVwZGF0ZWQgcmV2aXNpb24gYW5kIGlzIG5vdCBh
+IHByaW9yaXR5IGZvciBub3cuIA0KDQpBZ3JlZSB0aGF0IHRoaXMgaXMgYW4gaXNzdWUgYXMgdGhl
+IHNwZWMgZG9lc27igJl0IGZvcmJpZCB1c2luZyBwYXJlbnQgU01NVSByZWdpc3Rlcg0Kc3BhY2Ug
+YW5kIGl0IGxvb2tzIGxpa2Ugbm90IGFuIGVhc3kgb25lIHRvIHNvbHZlIGVpdGhlci4gVGhlIGlu
+aXRpYWwgaWRlYSB3YXMgc2V0dGluZw0KdGhlIFBNQ0cgYXMgYSBjaGlsZCBkZXYsIGJ1dCB0aGF0
+IGRpZG7igJl0IGhlbHAuDQoNCkkgaGFkIGFuIG9mZiBsaXN0IGRpc2N1c3Npb24gd2l0aCBMb3Jl
+bnpvIG9uIHRoaXMsIGJ1dCBub3RoaW5nIGNvbmNyZXRlLg0KDQpMb3JlbnpvLCANCg0KUGxlYXNl
+IHVwZGF0ZSBpZiB5b3UgaGF2ZSBhbnkgbmV3IGlkZWFzL3Rob3VnaHRzIG9uIHRoaXMuDQoNClRo
+YW5rcywNClNoYW1lZXINCg0KPiBSb2Jpbi4NCg==
