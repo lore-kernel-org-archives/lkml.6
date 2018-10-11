@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2207FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2EFC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6C9F213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F129821476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMA6cN7m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C9F213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqGvSfB5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F129821476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732000AbeJKXPw (ORCPT
+        id S1732014AbeJKXPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49498 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731168AbeJKXPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:50 -0400
+        id S1731168AbeJKXPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:53 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 951A52098A;
-        Thu, 11 Oct 2018 15:48:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58F542085B;
+        Thu, 11 Oct 2018 15:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272885;
-        bh=zx+KU5tgZa6aoM5/tTVyDlu75L++P47u4s8D0voHLpY=;
+        s=default; t=1539272887;
+        bh=i+UxERiooFQDF4YhXaYCnJpKnrrtns16nEr9BSbl4cI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMA6cN7mancNj+nKt5GMW79cVLPBf62+UwmWYq0x8pIpFWkKrZk6jVNikBXYvpPPC
-         H1LDrWHKctFqTSk88gBTrevzEOxO7EuLhpJCBVwKOez3bCOdQ2f4WPLGDvAV7ruAhQ
-         0DmMx1o8D9jFqg1H1lSW71aI4wncidPxEYTq6XrY=
+        b=BqGvSfB57TYasTBeOT5YvsBqxCjmwqT53cIGihcGMd86Dz6p0+vKlMjcg6dpBNSZI
+         NlIvRA/cFyaUEogvNgAnC4ZvLKjpNAHSy1VglY3DlVSfJ4eduxsqEk0nVfwj+73C2P
+         52e0IEyw8+5cr/mmAdpl9F8n7Xt5hrjxMq0OA3xw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.18 28/44] xhci: Add missing CAS workaround for Intel Sunrise Point xHCI
-Date:   Thu, 11 Oct 2018 17:40:06 +0200
-Message-Id: <20181011152453.662422281@linuxfoundation.org>
+Subject: [PATCH 4.18 29/44] usb: xhci-mtk: resume USB3 roothub first
+Date:   Thu, 11 Oct 2018 17:40:07 +0200
+Message-Id: <20181011152453.702156553@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -62,33 +62,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-commit ffe84e01bb1b38c7eb9c6b6da127a6c136d251df upstream.
+commit 555df5820e733cded7eb8d0bf78b2a791be51d75 upstream.
 
-The workaround for missing CAS bit is also needed for xHC on Intel
-sunrisepoint PCH. For more details see:
-
-Intel 100/c230 series PCH specification update Doc #332692-006 Errata #8
+Give USB3 devices a better chance to enumerate at USB3 speeds if
+they are connected to a suspended host.
+Porting from "671ffdff5b13 xhci: resume USB 3 roothub first"
 
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-pci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/host/xhci-mtk.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -185,6 +185,8 @@ static void xhci_pci_quirks(struct devic
- 	}
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
-+	     pdev->device == PCI_DEVICE_ID_INTEL_SUNRISEPOINT_LP_XHCI ||
-+	     pdev->device == PCI_DEVICE_ID_INTEL_SUNRISEPOINT_H_XHCI ||
- 	     pdev->device == PCI_DEVICE_ID_INTEL_APL_XHCI ||
- 	     pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI))
- 		xhci->quirks |= XHCI_MISSING_CAS;
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -642,10 +642,10 @@ static int __maybe_unused xhci_mtk_resum
+ 	xhci_mtk_host_enable(mtk);
+ 
+ 	xhci_dbg(xhci, "%s: restart port polling\n", __func__);
+-	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+-	usb_hcd_poll_rh_status(hcd);
+ 	set_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
+ 	usb_hcd_poll_rh_status(xhci->shared_hcd);
++	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
++	usb_hcd_poll_rh_status(hcd);
+ 	return 0;
+ }
+ 
 
 
