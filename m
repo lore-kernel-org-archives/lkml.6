@@ -2,453 +2,676 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE722C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4130C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7231F2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:06:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XG3lVICI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7231F2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 98DB12085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 03:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DB12085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeJKKcF (ORCPT
+        id S1727103AbeJKKcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 06:32:05 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39573 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeJKKcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 06:32:04 -0400
-Received: by mail-lf1-f68.google.com with SMTP id w21-v6so5522504lff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 20:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1BCxlw/NbDIomGpx67yNB9r/OC5EELgClY6p1tsneO4=;
-        b=XG3lVICIi0GuQsJGidWJy1SxmDweHsW1vGVQ9lDOQQ44s3AbbCW89tEP4590cjHB0n
-         O3X5GcqSM2qVjchobzrTsHNPPeWde8WoAqXXoTC0ZWx5SjYt0vl+Zr9SUoTw1RDJVnzB
-         JKumEp2S4nhi65ZOsDiGH32uWSQ273WQgfHTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1BCxlw/NbDIomGpx67yNB9r/OC5EELgClY6p1tsneO4=;
-        b=bLxiSwg8yStIjERklI3tGc7HPsh8ArWUAJS9/Z2iVypbvw++2pS9x1UcxkN96QL0iA
-         4+P9AijZKxHNt+gasFFAsNxPebhNs9LhYpqRnPAe1yOBMTSt1xB6lYN7t7BdZ2cEcdhK
-         4PA/FCOg3TUp7RaMXEiFWVtJuzQizBVRp0JUm71GKxrc/faOxO9w2I54NlEZpmBNytB5
-         k4JCO7zzhBowdwrOIHWTw4EEX8CN56bfgNnePqVkU0oEFfcjqRAJdoS2WdOtuPdCsfXE
-         7GLUT4LBTzyaHp5ljd/p3Xro4fkkiFfAiq6ccHpzVIp7RTjvLsB2MgVYtz643rvYfLvm
-         bO7A==
-X-Gm-Message-State: ABuFfoiyqW+XrR4A68As7r2tFUewvRwmYWW/y8gl8RRNVhPwGDgBfTnj
-        tWuFoA0zlHG9Uy3W+hZltjq88Cua8G1sinCuOu+uAhJpheK76g==
-X-Google-Smtp-Source: ACcGV60QOx1u4elzTL2fzy3/FOdoNANMFAl22SQG6lOJ+lPRAb7ahWRIoS/jDN6RtZIYbhxzqIXk4kEkK7bxxGAgAFU=
-X-Received: by 2002:a19:3bcf:: with SMTP id d76-v6mr19043297lfl.126.1539227213605;
- Wed, 10 Oct 2018 20:06:53 -0700 (PDT)
+        Thu, 11 Oct 2018 06:32:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726220AbeJKKcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 06:32:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3EDFC30012D7;
+        Thu, 11 Oct 2018 03:07:43 +0000 (UTC)
+Received: from treble (ovpn-124-83.rdu2.redhat.com [10.10.124.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 52D5B89D29;
+        Thu, 11 Oct 2018 03:07:40 +0000 (UTC)
+Date:   Wed, 10 Oct 2018 22:07:38 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Matthew Helsley <mhelsley@vmware.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>
+Subject: Re: [POC][RFC][PATCH 1/2] jump_function: Addition of new feature
+ "jump_function"
+Message-ID: <20181011030738.wwy6grnss67txd2l@treble>
+References: <A9379DDB-3210-407C-8157-8DA980944F8C@amacapital.net>
+ <20181008155757.GC5663@hirez.programming.kicks-ass.net>
+ <F36C6419-7D92-4357-BDB1-D8B90DE09889@amacapital.net>
+ <20181009021710.qwt5hpntyeps44h3@treble>
+ <20181008235750.59da83ae@gandalf.local.home>
+ <20181010175237.e7m3sldcu2maoqcq@treble>
+ <CALCETrUOaJ1dAsuX9bQO_+B4G6y5-FAb0=ZYA8QbtAEBZ6MxKg@mail.gmail.com>
+ <20181010181605.arsyjxwdztztrjih@treble>
+ <20181010181741.lc4l7kjvcmoxrw5b@treble>
+ <CALCETrUZMmTDOh5-Mzyj1rk7Q82DgdQLinOfbzF4Sb7OC2aYMQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Wed, 10 Oct 2018 20:06:53
- -0700 (PDT)
-In-Reply-To: <61e45737-a739-8cba-3582-93f5901c1066@gmail.com>
-References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
- <61e45737-a739-8cba-3582-93f5901c1066@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 11 Oct 2018 11:06:53 +0800
-Message-ID: <CAMz4kuLYzEpbrA7Mbg=CgWLnrVP5K-2pR-V=kEk=XWXf-iwN+A@mail.gmail.com>
-Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrUZMmTDOh5-Mzyj1rk7Q82DgdQLinOfbzF4Sb7OC2aYMQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 11 Oct 2018 03:07:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+On Wed, Oct 10, 2018 at 02:13:22PM -0700, Andy Lutomirski wrote:
+> On Wed, Oct 10, 2018 at 11:17 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Wed, Oct 10, 2018 at 01:16:05PM -0500, Josh Poimboeuf wrote:
+> > > On Wed, Oct 10, 2018 at 11:03:43AM -0700, Andy Lutomirski wrote:
+> > > > > +#define DECLARE_STATIC_CALL(tramp, func)                               \
+> > > > > +       extern typeof(func) tramp;                                      \
+> > > > > +       static void __used __section(.discard.static_call_tramps)       \
+> > > > > +               *__static_call_tramp_##tramp = tramp
+> > > > > +
+> > > >
+> > > > Confused.  What's the __static_call_tramp_##tramp variable for?  And
+> > > > why is a DECLARE_ macro defining a variable?
+> > >
+> > > This is the magic needed for objtool to find all the call sites.
+> > >
+> > > The variable itself isn't needed, but the .discard.static_call_tramps
+> > > entry is.  Objtool reads that section to find out which function call
+> > > sites are targeted to a static call trampoline.
+> >
+> > To clarify: objtool reads that section to find out which functions are
+> > really static call trampolines.  Then it annotates all the instructions
+> > which call/jmp to those trampolines.  Those annotations are then read by
+> > the kernel.
+> >
+> 
+> Ah, right, and objtool runs on a per-object basis so it has no other
+> way to know what symbols are actually static calls.
+> 
+> There's another way to skin this cat, though:
+> 
+> extern typeof(func) __static_call_trampoline_##tramp;
+> #define tramp __static_call_trampoline_##tramp
+> 
+> And objtool could recognize it by name.  But, of course, you can't put
+> a #define in a macro.  But maybe there's a way to hack it up with a
+> static inline?
 
-On 11 October 2018 at 04:43, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
->
-> I've finally managed to test this patch and it turned out
-> that this implementation doesn't prevent what I had concerns
-> about, i.e. setting intervals less then 50ms.
->
-> What user needs to do to achieve that is just e.g.:
->
-> echo "10 1 10 0 20 1 20 0 30 1 30 0" > pattern
->
-> Please refer below to my remaining remarks.
+Not sure how to do that...
 
-But this is not used for gradual dimming, this pattern is used for
-constant brightness. According to the ABI, we do not need limit the
-duration larger than 50 ms for constant brightness. Only for gradual
-dimming, we need limit the duration larger than 50 ms, since the
-interval step is 50ms.
+> Anyway, your way is probably fine with a few caveats:
+> 
+>  - It won't really work if the call comes from a .S file.
 
-But according to your suggestion as below:
-> "The tuple with duration less than dimming_interval is treated as
-> a step change of brightness, i.e. the subsequent brightness will be
-> applied without adding intervening dimming intervals"
+Maybe we can have similar macros for asm code.
 
-For gradual dimming, we also do not need to limit the duration larger
-than 50 ms. So below patterns are all valid now:
+>  - There should probably be a comment to help de-confuse future people
+> like me :)
 
-echo "10 1 10 0 20 1 20 0 30 1 30 0" > pattern
-echo "10 1  20 1  30 1 " > pattern
+Done.  I also converted the trampoline to use an indirect jump.  The
+latest code is below.  I'm going off the grid this weekend but I can
+probably post proper patches next week.
 
-
-> On 10/02/2018 05:43 PM, Baolin Wang wrote:
->> This patch adds one new led trigger that LED device can configure
->
-> s/one new led trigger/a new LED trigger/
-
-Sure.
-
->
->> the software or hardware pattern and trigger it.
->
-> Please change the above line to the following:
->
-> to employ software or hardware pattern engine.
-
-Sure.
-
->
->>
->> Consumers can write 'pattern' file to enable the software pattern
->> which alters the brightness for the specified duration with one
->> software timer.
->>
->> Moreover consumers can write 'hw_pattern' file to enable the hardware
->> pattern for some LED controllers which can autonomously control
->> brightness over time, according to some preprogrammed hardware
->> patterns.
->>
->> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes from v13:
->>  - Add duration validation for gradual dimming.
->>  - Coding style optimization.
->>
->> Changes from v12:
->>  - Add gradual dimming support for software pattern.
->>
->> Changes from v11:
->>  - Change -1 means repeat indefinitely.
->>
->> Changes from v10:
->>  - Change 'int' to 'u32' for delta_t field.
->>
->> Changes from v9:
->>  - None.
->>
->> Changes from v8:
->>  - None.
->>
->> Changes from v7:
->>  - Move the SC27XX hardware patterns description into its own ABI file.
->>
->> Changes from v6:
->>  - Improve commit message.
->>  - Optimize the description of the hw_pattern file.
->>  - Simplify some logics.
->>
->> Changes from v5:
->>  - Add one 'hw_pattern' file for hardware patterns.
->>
->> Changes from v4:
->>  - Change the repeat file to return the originally written number.
->>  - Improve comments.
->>  - Fix some build warnings.
->>
->> Changes from v3:
->>  - Reset pattern number to 0 if user provides incorrect pattern string.
->>  - Support one pattern.
->>
->> Changes from v2:
->>  - Remove hardware_pattern boolen.
->>  - Chnage the pattern string format.
->>
->> Changes from v1:
->>  - Use ATTRIBUTE_GROUPS() to define attributes.
->>  - Introduce hardware_pattern flag to determine if software pattern
->>  or hardware pattern.
->>  - Re-implement pattern_trig_store_pattern() function.
->>  - Remove pattern_get() interface.
->>  - Improve comments.
->>  - Other small optimization.
->> ---
->>  .../ABI/testing/sysfs-class-led-trigger-pattern    |  76 ++++
->>  drivers/leds/trigger/Kconfig                       |   7 +
->>  drivers/leds/trigger/Makefile                      |   1 +
->>  drivers/leds/trigger/ledtrig-pattern.c             | 431 +++++++++++++++++++++
->>  include/linux/leds.h                               |  15 +
->>  5 files changed, 530 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->> new file mode 100644
->> index 0000000..22d7af7
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->> @@ -0,0 +1,76 @@
->> +What:                /sys/class/leds/<led>/pattern
->> +Date:                September 2018
->> +KernelVersion:       4.20
->> +Description:
->> +             Specify a software pattern for the LED, that supports altering
->> +             the brightness for the specified duration with one software
->> +             timer. It can do gradual dimming and constant brightness.
->
-> s/constant brightness/step change of brightness/
-
-OK.
-
->
->> +
->> +             The pattern is given by a series of tuples, of brightness and
->> +             duration (ms). The LED is expected to traverse the series and
->> +             each brightness value for the specified duration. Duration of
->> +             0 means brightness should immediately change to new value.
->> +
->> +             1. When doing gradual dimming, the led brightness will be updated
->> +             every 50 milliseconds, so the duration of each step should not
->> +             less than 50 milliseconds. The gradual dimming format of the
->> +             software pattern values should be:
->
-> Despite I pronounced the dimming_interval as only a "nice to have"
-> feature, now it looks to me to be really useful to have it included in
-> this patch. For the reasons below:
->
-> 1) You could refer directly to the dimming_interval here.
-> 2) I've been wondering how to treat the case when user requests the
->    interval less than dimming_interval. In v13 you were skipping such
->    tuple, and in v14 you're not allowing for it at all. How about,
->    instead of the two above approaches, describe such a case as:
->
-> "The tuple with duration less than dimming_interval is treated as
-> a step change of brightness, i.e. the subsequent brightness will be
-> applied without adding intervening dimming intervals"
-
-Good point. I will implement it in next version. So we will not limit
-the duration larger than dimming_interval (50ms).
-
-But according to Pavel's suggestion (I also agree with his points), we
-can keep it simple now and leave the feature introducing the
-'dimming_interval' file until someone complains 50ms interval should
-be adjusted.
-
->
->> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
->> +             duration_3 ...". For example:
->> +
->> +             echo 0 1000 255 2000 > pattern
->> +
->> +             It will make the LED go gradually from zero-intensity to max (255)
->> +             intensity in 1000 milliseconds, then back to zero intensity in 2000
->> +             milliseconds:
->> +
->> +             LED brightness
->> +                 ^
->> +             255-|       / \            / \            /
->> +                 |      /    \         /    \         /
->> +                 |     /       \      /       \      /
->> +                 |    /          \   /          \   /
->> +               0-|   /             \/             \/
->> +                 +---0----1----2----3----4----5----6------------> time (s)
->> +
->> +             2. To make the LED go instantly from one brigntess value to another,
->> +             we should use use zero-time lengths. So the format should be:
->> +             "brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
->> +             brightness_2 0 ...". For example:
->> +
->> +             echo 0 1000 0 0 255 2000 255 0 > pattern
->> +
->> +             It will make the LED stay off for one second, then stay at max brightness
->> +             for two seconds:
->> +
->> +             LED brightness
->> +                 ^
->> +             255-|        +---------+    +---------+
->> +                 |        |         |    |         |
->> +                 |        |         |    |         |
->> +                 |        |         |    |         |
->> +               0-|   -----+         +----+         +----
->> +                 +---0----1----2----3----4----5----6------------> time (s)
->
-> I'd also add that writing malformed pattern deactivates any
-> active one.
-
-Sure.
-
->
->> +
->> +What:                /sys/class/leds/<led>/hw_pattern
->> +Date:                September 2018
->> +KernelVersion:       4.20
->> +Description:
->> +             Specify a hardware pattern for the LED, for LED hardware that
->> +             supports autonomously controlling brightness over time, according
->> +             to some preprogrammed hardware patterns.
->> +
->> +             Since different LED hardware can have different semantics of
->> +             hardware patterns, each driver is expected to provide its own
->> +             description for the hardware patterns in their ABI documentation
->> +             file.
->
-> Add also:
->
-> It deactivates any active software pattern.
-
-Sure.
-
->> +struct pattern_trig_data {
->> +     struct led_classdev *led_cdev;
->> +     struct led_pattern patterns[MAX_PATTERNS];
->> +     struct led_pattern *curr;
->> +     struct led_pattern *next;
->> +     struct mutex lock;
->> +     u32 npatterns;
->> +     int repeat;
->> +     int last_repeat;
->> +     int delta_t;
->> +     bool is_indefinite;
->> +     bool is_hw_pattern;
->> +     struct timer_list timer;
->> +};
->> +
->> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
->> +{
->> +     data->curr = data->next;
->> +     if (!data->is_indefinite && data->curr == data->patterns)
->> +             data->repeat--;
->> +
->> +     if (data->next == data->patterns + data->npatterns - 1)
->> +             data->next = data->patterns;
->> +     else
->> +             data->next++;
->> +
->> +     data->delta_t = 0;
->> +}
->> +
->> +static int pattern_trig_compute_brightness(struct pattern_trig_data *data)
->> +{
->> +     int step_brightness;
->> +
->> +     if (data->delta_t == 0)
->> +             return data->curr->brightness;
->> +
->> +     step_brightness = abs(data->next->brightness - data->curr->brightness);
->> +     step_brightness = data->delta_t * step_brightness / data->curr->delta_t;
->> +
->> +     if (data->next->brightness > data->curr->brightness)
->> +             return data->curr->brightness + step_brightness;
->> +     else
->> +             return data->curr->brightness - step_brightness;
->> +}
->> +
->> +static void pattern_trig_timer_function(struct timer_list *t)
->> +{
->> +     struct pattern_trig_data *data = from_timer(data, t, timer);
->> +
->> +     mutex_lock(&data->lock);
->> +
->> +     for (; ;) {
->> +             if (!data->is_indefinite && !data->repeat)
->> +                     break;
->> +
->> +             if (data->curr->brightness == data->next->brightness) {
->> +                     /* Constant brightness */
->> +                     led_set_brightness(data->led_cdev,
->> +                                        data->curr->brightness);
->> +                     mod_timer(&data->timer,
->> +                               jiffies + msecs_to_jiffies(data->curr->delta_t));
->> +
->> +                     /* Skip the step with zero duration */
->> +                     pattern_trig_update_patterns(data);
->> +                     /* Select next step */
->> +                     pattern_trig_update_patterns(data);
->> +                     break;
->> +             } else {
->> +                     /* Gradual dimming */
->> +
->> +                     /*
->> +                      * If the accumulation time is larger than current
->> +                      * step duration, we should go next one and re-check
->> +                      * if we repeated done.
->> +                      */
->> +                     if (data->delta_t > data->curr->delta_t) {
->> +                             pattern_trig_update_patterns(data);
->> +                             continue;
->> +                     }
->> +
->> +                     led_set_brightness(data->led_cdev,
->> +                                        pattern_trig_compute_brightness(data));
->> +                     mod_timer(&data->timer,
->> +                               jiffies + msecs_to_jiffies(UPDATE_INTERVAL));
->> +                     /* Accumulate the gradual dimming time */
->> +                     data->delta_t += UPDATE_INTERVAL;
->> +                     break;
->> +             }
->> +     }
->> +
->> +     mutex_unlock(&data->lock);
->> +}
->> +
->> +static bool pattern_trig_is_sane(struct pattern_trig_data *data)
->> +{
->> +     int i;
->> +
->> +     /* At least 2 steps for software pattern. */
->> +     if (data->npatterns < 2)
->> +             return false;
->> +
->> +     /*
->> +      * No need valid the duration for constant brightness, just
->
-> s/No need valid/No need to validate/
-
-OK.
-
->
->> +      * return true.
->> +      */
->> +     if (data->patterns[0].brightness == data->patterns[1].brightness)
->> +             return true;
->
-> Hmm, this should be covered in the ABI documentation.
-
-OK.
-
->
->> +     /*
->> +      * Should valid the duration if is less than 50 ms for gradual
->> +      * dimming mode.
->> +      */
->> +     for (i = 0; i < data->npatterns; i++) {
->> +             if (data->patterns[i].delta_t < UPDATE_INTERVAL)
->> +                     return false;
->> +     }
->
-> And this could be skipped, provided we will agree on treating delta_t
-> less than dimming_interval as step brightness change.
-
-Yes. Will remove this logic here and I think the
-pattern_trig_is_sane() is redundant now which can be removed too.
-Thanks for your comments.
-
--- 
-Baolin Wang
-Best Regards
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 9d329608913e..20ff5624dad7 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -865,6 +865,9 @@ config HAVE_ARCH_PREL32_RELOCATIONS
+ 	  architectures, and don't require runtime relocation on relocatable
+ 	  kernels.
+ 
++config HAVE_ARCH_STATIC_CALL
++	bool
++
+ source "kernel/gcov/Kconfig"
+ 
+ source "scripts/gcc-plugins/Kconfig"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 5136a1281870..1a14c8f87876 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -128,6 +128,7 @@ config X86
+ 	select HAVE_ARCH_COMPAT_MMAP_BASES	if MMU && COMPAT
+ 	select HAVE_ARCH_PREL32_RELOCATIONS
+ 	select HAVE_ARCH_SECCOMP_FILTER
++	select HAVE_ARCH_STATIC_CALL		if X86_64
+ 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+diff --git a/arch/x86/include/asm/static_call.h b/arch/x86/include/asm/static_call.h
+new file mode 100644
+index 000000000000..50006bcc3352
+--- /dev/null
++++ b/arch/x86/include/asm/static_call.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_STATIC_CALL_H
++#define _ASM_STATIC_CALL_H
++
++#ifdef CONFIG_X86_64
++
++#include <linux/frame.h>
++
++void static_call_init(void);
++extern void __static_call_update(void **func_ptr, void *func);
++
++#define STATIC_CALL_PTR(tramp) (__static_call_ptr_##tramp)
++
++/*
++ * In addition to declaring external variables, this macro also spits out some
++ * magic for objtool to read.  The .discard.static_call_tramps section tells
++ * objtool which functions are static call trampolines, so it can then annotate
++ * calls to those functions in the __static_call_table section.
++ */
++#define DECLARE_STATIC_CALL(tramp, func)				\
++	extern typeof(func) tramp;					\
++	extern typeof(func) *STATIC_CALL_PTR(tramp);			\
++	static void __used __section(.discard.static_call_tramps)	\
++		*__static_call_tramp_##tramp = tramp
++
++#define DEFINE_STATIC_CALL(tramp, func)					\
++	DECLARE_STATIC_CALL(tramp, func);				\
++	typeof(func) *STATIC_CALL_PTR(tramp) = func;			\
++	asm(".pushsection .text, \"ax\"				\n"	\
++	    ".align 4						\n"	\
++	    ".globl " #tramp "					\n"	\
++	    ".type " #tramp ", @function			\n"	\
++	    #tramp ":						\n"	\
++	    "jmpq *" __stringify(STATIC_CALL_PTR(tramp)) "(%rip)\n"	\
++	    ".popsection					\n")
++
++#define static_call_update(tramp, func)					\
++({									\
++	/* TODO: validate func type */					\
++	__static_call_update((void **)&STATIC_CALL_PTR(tramp), func);	\
++})
++
++#else /* !CONFIG_X86_64 */
++static inline void static_call_init(void) {}
++#endif
++
++#endif /* _ASM_STATIC_CALL_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 8824d01c0c35..e5d9f3a1e73f 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -62,6 +62,7 @@ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
+ obj-y			+= irqflags.o
++obj-$(CONFIG_X86_64)	+= static_call.o
+ 
+ obj-y				+= process.o
+ obj-y				+= fpu/
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index b4866badb235..447401fc8d65 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -117,6 +117,7 @@
+ #include <asm/microcode.h>
+ #include <asm/kaslr.h>
+ #include <asm/unwind.h>
++#include <asm/static_call.h>
+ 
+ /*
+  * max_low_pfn_mapped: highest direct mapped pfn under 4GB
+@@ -874,6 +875,7 @@ void __init setup_arch(char **cmdline_p)
+ 	early_cpu_init();
+ 	arch_init_ideal_nops();
+ 	jump_label_init();
++	static_call_init();
+ 	early_ioremap_init();
+ 
+ 	setup_olpc_ofw_pgd();
+diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+new file mode 100644
+index 000000000000..80c0c0de06e7
+--- /dev/null
++++ b/arch/x86/kernel/static_call.c
+@@ -0,0 +1,118 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/init.h>
++#include <linux/static_call.h>
++#include <linux/bug.h>
++#include <linux/smp.h>
++#include <linux/memory.h>
++#include <asm/text-patching.h>
++#include <asm/processor.h>
++
++extern int cmdline_proc_show(void);
++
++/* The static call table is created by objtool */
++struct static_call_entry {
++	s32 insn, func_ptr;
++};
++extern struct static_call_entry __start_static_call_table[],
++			        __stop_static_call_table[];
++
++static int static_call_initialized;
++
++void __init static_call_init(void)
++{
++	struct static_call_entry *entry;
++	unsigned long insn, func_ptr, func;
++	unsigned char insn_opcode;
++	s32 call_dest;
++
++	for (entry = __start_static_call_table;
++	     entry < __stop_static_call_table; entry++) {
++
++		insn = (long)entry->insn + (unsigned long)&entry->insn;
++		func_ptr = (long)entry->func_ptr + (unsigned long)&entry->func_ptr;
++		func = *(unsigned long *)func_ptr;
++
++		/*
++		 * Make sure the original call to be patched is either a call
++		 * or a tail call jump:
++		 */
++		insn_opcode = *(unsigned char *)insn;
++		if (insn_opcode != 0xe8 && insn_opcode != 0xe9) {
++			WARN_ONCE(1, "unexpected static call insn opcode %x at %pS",
++				  insn_opcode, (void *)insn);
++			continue;
++		}
++
++		call_dest = (long)(func) - (long)(insn + 5);
++
++		text_poke_early((void *)(insn + 1), &call_dest, 4);
++	}
++
++	static_call_initialized = 1;
++}
++
++void static_call_bp_handler(void);
++void *bp_handler_func;
++void *bp_handler_continue;
++
++asm(".pushsection .text, \"ax\"						\n"
++    ".globl static_call_bp_handler					\n"
++    ".type static_call_bp_handler, @function				\n"
++    "static_call_bp_handler:						\n"
++    "call *bp_handler_func(%rip)					\n"
++    "jmp *bp_handler_continue(%rip)					\n"
++    ".popsection .text							\n");
++
++void __static_call_update(void **func_ptr, void *func)
++{
++	struct static_call_entry *entry;
++	unsigned long insn, ptr;
++	s32 call_dest;
++	unsigned char opcodes[5];
++
++	/* If called before init, use the trampoline's indirect jump. */
++	if (!static_call_initialized)
++		return;
++
++	*func_ptr = func;
++
++	mutex_lock(&text_mutex);
++
++	for (entry = __start_static_call_table;
++	     entry < __stop_static_call_table; entry++) {
++
++		ptr = (long)entry->func_ptr + (long)&entry->func_ptr;
++		if ((void **)ptr != func_ptr)
++			continue;
++
++		/* Calculate the new call destination: */
++		insn = (long)entry->insn + (unsigned long)&entry->insn;
++		call_dest = (long)(func) - (long)(insn + 5);
++		opcodes[0] = 0xe8;
++		memcpy(&opcodes[1], &call_dest, 4);
++
++		/* Set up the variables for the breakpoint handler: */
++		bp_handler_func = func;
++		bp_handler_continue = (void *)(insn + 5);
++
++		/* Patch the call site: */
++		text_poke_bp((void *)insn, opcodes, 5, static_call_bp_handler);
++	}
++
++	mutex_unlock(&text_mutex);
++}
++
++/*** TEST CODE BELOW -- called from cmdline_proc_show ***/
++
++int my_func_add(int arg1, int arg2)
++{
++	return arg1 + arg2;
++}
++
++int my_func_sub(int arg1, int arg2)
++{
++	return arg1 - arg2;
++}
++
++DEFINE_STATIC_CALL(my_static_call, my_func_add);
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 0d618ee634ac..cf0566f8a13c 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -185,6 +185,9 @@ SECTIONS
+ 
+ 	BUG_TABLE
+ 
++	/* FIXME: move to read-only section */
++	STATIC_CALL_TABLE
++
+ 	ORC_UNWIND_TABLE
+ 
+ 	. = ALIGN(PAGE_SIZE);
+diff --git a/fs/proc/cmdline.c b/fs/proc/cmdline.c
+index fa762c5fbcb2..c704b9e1fe5f 100644
+--- a/fs/proc/cmdline.c
++++ b/fs/proc/cmdline.c
+@@ -3,9 +3,27 @@
+ #include <linux/init.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include <linux/static_call.h>
++
++extern int my_func_add(int arg1, int arg2);
++extern int my_func_sub(int arg1, int arg2);
++DECLARE_STATIC_CALL(my_static_call, my_func_add);
+ 
+ static int cmdline_proc_show(struct seq_file *m, void *v)
+ {
++	int ret;
++
++	ret = my_static_call(1, 2);
++	printk("static call (orig): ret=%d\n", ret);
++
++	static_call_update(my_static_call, my_func_sub);
++	ret = my_static_call(1, 2);
++	printk("static call (sub): ret=%d\n", ret);
++
++	static_call_update(my_static_call, my_func_add);
++	ret = my_static_call(1, 2);
++	printk("static call (add): ret=%d\n", ret);
++
+ 	seq_puts(m, saved_command_line);
+ 	seq_putc(m, '\n');
+ 	return 0;
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index f09ee3c544bc..a1c7bda1b22a 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -722,6 +722,14 @@
+ #define BUG_TABLE
+ #endif
+ 
++#define STATIC_CALL_TABLE						\
++	. = ALIGN(8);							\
++	__static_call_table : AT(ADDR(__static_call_table) - LOAD_OFFSET) { \
++		__start_static_call_table = .;			\
++		KEEP(*(__static_call_table))				\
++		__stop_static_call_table = .;				\
++	}
++
+ #ifdef CONFIG_UNWINDER_ORC
+ #define ORC_UNWIND_TABLE						\
+ 	. = ALIGN(4);							\
+diff --git a/include/linux/static_call.h b/include/linux/static_call.h
+new file mode 100644
+index 000000000000..729e7ee4c66b
+--- /dev/null
++++ b/include/linux/static_call.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_STATIC_CALL_H
++#define _LINUX_STATIC_CALL_H
++
++#ifdef CONFIG_HAVE_ARCH_STATIC_CALL
++#include <asm/static_call.h>
++#else
++
++#define DECLARE_STATIC_CALL(ptr, func)					\
++	extern typeof(func) *ptr
++
++#define DEFINE_STATIC_CALL(ptr, func)					\
++	typeof(func) *ptr = func
++
++#define static_call_update(ptr, func)					\
++	WRITE_ONCE(ptr, func)
++
++#endif /* !CONFIG_HAVE_ARCH_STATIC_CALL */
++
++#endif /* _LINUX_STATIC_CALL_H */
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 0414a0d52262..b59770f8ed4b 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -525,6 +525,10 @@ static int add_jump_destinations(struct objtool_file *file)
+ 		} else {
+ 			/* sibling call */
+ 			insn->jump_dest = 0;
++			if (rela->sym->static_call_tramp) {
++				list_add_tail(&insn->static_call_node,
++					      &file->static_call_list);
++			}
+ 			continue;
+ 		}
+ 
+@@ -1202,6 +1206,21 @@ static int read_retpoline_hints(struct objtool_file *file)
+ 	return 0;
+ }
+ 
++static int read_static_call_tramps(struct objtool_file *file)
++{
++	struct section *sec;
++	struct rela *rela;
++
++	sec = find_section_by_name(file->elf, ".rela.discard.static_call_tramps");
++	if (!sec)
++		return 0;
++
++	list_for_each_entry(rela, &sec->rela_list, list)
++		rela->sym->static_call_tramp = true;
++
++	return 0;
++}
++
+ static void mark_rodata(struct objtool_file *file)
+ {
+ 	struct section *sec;
+@@ -1267,6 +1286,10 @@ static int decode_sections(struct objtool_file *file)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = read_static_call_tramps(file);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+@@ -1920,6 +1943,11 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 			if (is_fentry_call(insn))
+ 				break;
+ 
++			if (insn->call_dest->static_call_tramp) {
++				list_add_tail(&insn->static_call_node,
++					      &file->static_call_list);
++			}
++
+ 			ret = dead_end_function(file, insn->call_dest);
+ 			if (ret == 1)
+ 				return 0;
+@@ -2167,6 +2195,99 @@ static int validate_reachable_instructions(struct objtool_file *file)
+ 	return 0;
+ }
+ 
++struct static_call_entry {
++	s32 insn, func_ptr;
++};
++
++static int create_static_call_sections(struct objtool_file *file)
++{
++	struct section *sec, *rela_sec;
++	struct rela *rela;
++	struct static_call_entry *entry;
++	struct instruction *insn;
++	char func_ptr_name[128];
++	struct symbol *func_ptr;
++	int idx, ret;
++
++	sec = find_section_by_name(file->elf, "__static_call_table");
++	if (sec) {
++		WARN("file already has __static_call_table section, skipping");
++		return -1;
++	}
++
++	if (list_empty(&file->static_call_list))
++		return 0;
++
++	idx = 0;
++	list_for_each_entry(insn, &file->static_call_list, static_call_node)
++		idx++;
++
++	sec = elf_create_section(file->elf, "__static_call_table",
++				 sizeof(struct static_call_entry), idx);
++	if (!sec)
++		return -1;
++
++	rela_sec = elf_create_rela_section(file->elf, sec);
++	if (!rela_sec)
++		return -1;
++
++	idx = 0;
++	list_for_each_entry(insn, &file->static_call_list, static_call_node) {
++
++		entry = (struct static_call_entry *)sec->data->d_buf + idx;
++		memset(entry, 0, sizeof(struct static_call_entry));
++
++		/* populate rela for 'insn' */
++		rela = malloc(sizeof(*rela));
++		if (!rela) {
++			perror("malloc");
++			return -1;
++		}
++		memset(rela, 0, sizeof(*rela));
++		rela->sym = insn->sec->sym;
++		rela->addend = insn->offset;
++		rela->type = R_X86_64_PC32;
++		rela->offset = idx * sizeof(struct static_call_entry);
++		list_add_tail(&rela->list, &rela_sec->rela_list);
++		hash_add(rela_sec->rela_hash, &rela->hash, rela->offset);
++
++		/* find function pointer symbol */
++		ret = snprintf(func_ptr_name, 128, "__static_call_ptr_%s",
++			       insn->call_dest->name);
++		if (ret < 0 || ret >= 128) {
++			WARN("snprintf failed");
++			return -1;
++		}
++
++		func_ptr = find_symbol_by_name(file->elf, func_ptr_name);
++		if (!func_ptr) {
++			WARN("can't find static call ptr symbol: %s", func_ptr_name);
++			return -1;
++		}
++
++		/* populate rela for 'func_ptr' */
++		rela = malloc(sizeof(*rela));
++		if (!rela) {
++			perror("malloc");
++			return -1;
++		}
++		memset(rela, 0, sizeof(*rela));
++		rela->sym = func_ptr;
++		rela->addend = 0;
++		rela->type = R_X86_64_PC32;
++		rela->offset = idx * sizeof(struct static_call_entry) + 4;
++		list_add_tail(&rela->list, &rela_sec->rela_list);
++		hash_add(rela_sec->rela_hash, &rela->hash, rela->offset);
++
++		idx++;
++	}
++
++	if (elf_rebuild_rela_section(rela_sec))
++		return -1;
++
++	return 0;
++}
++
+ static void cleanup(struct objtool_file *file)
+ {
+ 	struct instruction *insn, *tmpinsn;
+@@ -2197,6 +2318,7 @@ int check(const char *_objname, bool orc)
+ 
+ 	INIT_LIST_HEAD(&file.insn_list);
+ 	hash_init(file.insn_hash);
++	INIT_LIST_HEAD(&file.static_call_list);
+ 	file.whitelist = find_section_by_name(file.elf, ".discard.func_stack_frame_non_standard");
+ 	file.c_file = find_section_by_name(file.elf, ".comment");
+ 	file.ignore_unreachables = no_unreachable;
+@@ -2236,6 +2358,11 @@ int check(const char *_objname, bool orc)
+ 		warnings += ret;
+ 	}
+ 
++	ret = create_static_call_sections(&file);
++	if (ret < 0)
++		goto out;
++	warnings += ret;
++
+ 	if (orc) {
+ 		ret = create_orc(&file);
+ 		if (ret < 0)
+@@ -2244,7 +2371,9 @@ int check(const char *_objname, bool orc)
+ 		ret = create_orc_sections(&file);
+ 		if (ret < 0)
+ 			goto out;
++	}
+ 
++	if (orc || !list_empty(&file.static_call_list)) {
+ 		ret = elf_write(file.elf);
+ 		if (ret < 0)
+ 			goto out;
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index e6e8a655b556..56b8b7fb1bd1 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -39,6 +39,7 @@ struct insn_state {
+ struct instruction {
+ 	struct list_head list;
+ 	struct hlist_node hash;
++	struct list_head static_call_node;
+ 	struct section *sec;
+ 	unsigned long offset;
+ 	unsigned int len;
+@@ -60,6 +61,7 @@ struct objtool_file {
+ 	struct elf *elf;
+ 	struct list_head insn_list;
+ 	DECLARE_HASHTABLE(insn_hash, 16);
++	struct list_head static_call_list;
+ 	struct section *whitelist;
+ 	bool ignore_unreachables, c_file, hints, rodata;
+ };
+diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
+index bc97ed86b9cd..3cf44d7cc3ac 100644
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -62,6 +62,7 @@ struct symbol {
+ 	unsigned long offset;
+ 	unsigned int len;
+ 	struct symbol *pfunc, *cfunc;
++	bool static_call_tramp;
+ };
+ 
+ struct rela {
