@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A6EC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D361C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2D121470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6A22098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:45:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+uWc2xF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA2D121470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJscor7d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6A22098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbeJKXN0 (ORCPT
+        id S1731405AbeJKXNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46010 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:26 -0400
+        id S1726700AbeJKXN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCD7A20652;
-        Thu, 11 Oct 2018 15:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A89152098A;
+        Thu, 11 Oct 2018 15:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272741;
-        bh=QR0QwD2mUBEercQ5CJntW+8wRGxRQY9sVrusY7JApJI=;
+        s=default; t=1539272744;
+        bh=vkSOm6663bzhsPSSfHAkAe/qkTiOAqSGOUiAt99XMhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E+uWc2xFg6GiRZKouoRiBb5ml0Z8W1q/pDktdBAt/NCsh1wCsDs/otFVSXmN4wbYF
-         j/hW03Dct6nTAzYgbQ34cAFn3v48coG/2hULINQnvTrgPizYhyEIbXAr2P7lg87sIu
-         LOAl+WX8bDHLdDRJvR3cPU0KHkK0LVccyZLWLr1o=
+        b=rJscor7dbfELJJkXs5nqwsZCwBbLvTD7aUrgDXn9o9/hWi8h3AOqYyIL9E5kpupmQ
+         CP7LcrtM0tC3lS979MM77tqQgXTohab7W3lVaZ4uPrOrHoGGbaj0ITj6Yirtqyfwgi
+         AiqQr6TCRQsuq/LiCcbvJItuDj1LjXnkBNvWszRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 22/45] usb: xhci-mtk: resume USB3 roothub first
-Date:   Thu, 11 Oct 2018 17:39:49 +0200
-Message-Id: <20181011152509.828989609@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Hult <hanshult35@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 23/45] USB: serial: simple: add Motorola Tetra MTP6550 id
+Date:   Thu, 11 Oct 2018 17:39:50 +0200
+Message-Id: <20181011152509.870890588@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -62,37 +62,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 555df5820e733cded7eb8d0bf78b2a791be51d75 upstream.
+commit f5fad711c06e652f90f581fc7c2caee327c33d31 upstream.
 
-Give USB3 devices a better chance to enumerate at USB3 speeds if
-they are connected to a suspended host.
-Porting from "671ffdff5b13 xhci: resume USB 3 roothub first"
+Add device-id for the Motorola Tetra radio MTP6550.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Bus 001 Device 004: ID 0cad:9012 Motorola CGISS
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  idVendor           0x0cad Motorola CGISS
+  idProduct          0x9012
+  bcdDevice           24.16
+  iManufacturer           1 Motorola Solutions, Inc.
+  iProduct                2 TETRA PEI interface
+  iSerial                 0
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           55
+    bNumInterfaces          2
+    bConfigurationValue     1
+    iConfiguration          3 Generic Serial config
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              500mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+Device Qualifier (for other device speed):
+  bLength                10
+  bDescriptorType         6
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  bNumConfigurations      1
+Device Status:     0x0000
+  (Bus Powered)
+
+Reported-by: Hans Hult <hanshult35@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-mtk.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/usb-serial-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -780,10 +780,10 @@ static int __maybe_unused xhci_mtk_resum
- 	xhci_mtk_host_enable(mtk);
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -87,7 +87,8 @@ DEVICE(moto_modem, MOTO_IDS);
  
- 	xhci_dbg(xhci, "%s: restart port polling\n", __func__);
--	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
--	usb_hcd_poll_rh_status(hcd);
- 	set_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
- 	usb_hcd_poll_rh_status(xhci->shared_hcd);
-+	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
-+	usb_hcd_poll_rh_status(hcd);
- 	return 0;
- }
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+-	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
++	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
  
+ /* Novatel Wireless GPS driver */
 
 
