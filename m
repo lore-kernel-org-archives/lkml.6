@@ -2,232 +2,70 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44981C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAC7C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A902087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A902087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 51D4B20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 06:36:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ECvIjBqc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D4B20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJKNrU (ORCPT
+        id S1727451AbeJKOCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 09:47:20 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20034 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbeJKNrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 09:47:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 23:21:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,367,1534834800"; 
-   d="scan'208";a="98209128"
-Received: from vbgoda-mobl.ger.corp.intel.com (HELO localhost) ([10.252.39.69])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Oct 2018 23:16:55 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        michal.wajdeczko@intel.com
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        intel-gfx@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, rodrigo.vivi@intel.com,
-        lukas.bulwahn@gmail.com
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Convert _print_param to a macro
-In-Reply-To: <CAKwvOdmkp_xOyAikmQRVJN6E4_OUDZHm20u9=Ai6Mw9G5yxGxg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181009171401.14980-1-natechancellor@gmail.com> <CAKwvOdm-oiVvuX_QDjQ1QcO3+=XowHEnHgj3PyQ4hY=thrJGNA@mail.gmail.com> <87woqqm2mz.fsf@intel.com> <op.zqoq8ui3xaggs7@mwajdecz-mobl1.ger.corp.intel.com> <CAKwvOdmkp_xOyAikmQRVJN6E4_OUDZHm20u9=Ai6Mw9G5yxGxg@mail.gmail.com>
-Date:   Thu, 11 Oct 2018 09:17:23 +0300
-Message-ID: <87o9c1vwgc.fsf@intel.com>
+        Thu, 11 Oct 2018 10:02:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37420 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbeJKOCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 10:02:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4EUZ5NvUr3RuRYyGyxhgK2eondH8Yj++rWF97uemOro=; b=ECvIjBqcOokzAcuWzJLZ5QAPk
+        5vymqjWvS+QQ6QuJ9yR9rREFAMR5djSE40rBaBw+S98gPhBGEWQDHlcb4n7rDo7Q2tv5Q8yjrc+Ay
+        gxMbuAGNNpVq12SvEoV8bM0IoXG/hNlupaiGQEuIfrb6jVRY1Ur5tMfVO4MTfW0QfeLYOqAezYnNn
+        h3DXPmzfLBSXc5ECEd3rQVHLcKZyIez/I0YFVHm6pZAq78IGuc9x3r/r9+micnQQXA0GolrKlbBqc
+        Tcy5BO0/LE19/6sHif/uBnGw4KB+tIWYxwjxKcP+rXefcsH7Ci9rXAUa1j0UtEgtX3TBf9mIGAmmg
+        huO1L5qSw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAUZo-0002Ab-04; Thu, 11 Oct 2018 06:36:04 +0000
+Date:   Wed, 10 Oct 2018 23:36:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
+        linuxarm@huawei.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] hisi_sas: Misc bugfixes and an optimisation patch
+Message-ID: <20181011063603.GA3456@infradead.org>
+References: <1537801594-207139-1-git-send-email-john.garry@huawei.com>
+ <yq18t354532.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq18t354532.fsf@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> On Wed, Oct 10, 2018 at 1:30 PM Michal Wajdeczko
-> <michal.wajdeczko@intel.com> wrote:
->>
->> On Wed, 10 Oct 2018 14:01:40 +0200, Jani Nikula
->> <jani.nikula@linux.intel.com> wrote:
->>
->> > On Tue, 09 Oct 2018, Nick Desaulniers <ndesaulniers@google.com> wrote:
->> >> On Tue, Oct 9, 2018 at 10:14 AM Nathan Chancellor
->> >> <natechancellor@gmail.com> wrote:
->> >>>
->> >>> When building the kernel with Clang with defconfig and CONFIG_64BIT
->> >>> disabled, vmlinux fails to link because of the BUILD_BUG in
->> >>> _print_param.
->> >>>
->> >>> ld: drivers/gpu/drm/i915/i915_params.o: in function `i915_params_dump':
->> >>> i915_params.c:(.text+0x56): undefined reference to
->> >>> `__compiletime_assert_191'
->> >>>
->> >>> This function is semantically invalid unless the code is first inlined
->> >>> then constant folded, which doesn't work for Clang because semantic
->> >>> analysis happens before optimization/inlining. Converting this function
->> >>> to a macro avoids this problem and allows Clang to properly remove the
->> >>> BUILD_BUG during optimization.
->> >>
->> >> Thanks Nathan for the patch.  To provide more context, Clang does
->> >> semantic analysis before optimization, where as GCC does these
->> >> together (IIUC).  So the above link error is from the naked
->> >> BUILD_BUG().  Clang can't evaluate the __builtin_strcmp's statically
->> >> until inlining has occurred, but that optimization happens after
->> >> semantic analysis.  To do the inlining before semantic analysis, we
->> >> MUST leverage the preprocessor, which runs before the compiler starts
->> >> doing semantic analysis.  I suspect this code is not valid for GCC
->> >> unless optimizations are enabled (the kernel only does compile with
->> >> optimizations turned on).  This change allows us to build this
->> >> translation unit with Clang.
->> >>
->> >> Acked-by: Nick Desaulniers <ndesaulniers@google.com>
->> >> (Note: this is the change I suggested, so not sure whether Acked-by or
->> >> Reviewed-by is more appropriate).
->> >
->> > *Sad trombone*
->> >
->> > I'd rather see us converting more macros to static inlines than the
->> > other way round.
->> >
->> > I'll let others chime in if they have any better ideas, otherwise I'll
->> > apply this one.
->>
->> Option 1: Just drop BUILD_BUG() from _print_param() function.
->
-> I was also thinking of this.
+On Wed, Oct 10, 2018 at 09:58:25PM -0400, Martin K. Petersen wrote:
+> > This is because the IPTT index must be a unique value per HBA. However,
+> > if we switched to SCSI MQ, the block layer tag becomes unique per queue,
+> > and not per HBA.
+> 
+> That doesn't sound right.
 
-So does this fix the issue?
-
-diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i915_params.c
-index bd6bd8879cab..8d71886b5f03 100644
---- a/drivers/gpu/drm/i915/i915_params.c
-+++ b/drivers/gpu/drm/i915/i915_params.c
-@@ -184,7 +184,8 @@ static __always_inline void _print_param(struct drm_printer *p,
- 	else if (!__builtin_strcmp(type, "char *"))
- 		drm_printf(p, "i915.%s=%s\n", name, *(const char **)x);
- 	else
--		BUILD_BUG();
-+		WARN_ONCE(1, "no printer defined for param type %s (i915.%s)\n",
-+			  type, name);
- }
- 
- /**
-
----
-
->
->>
->> Option 2: Use aliases instead of real types in param() macros.
->
-> Will that affect other users of I915_PARAMS_FOR_EACH than _print_param?
->
-> Either way, thanks for the help towards resolving this! We appreciate it!
->
->>
->> Aliases can be same as in linux/moduleparam.h (charp|int|uint|bool)
->> We can convert aliases back to real types but it will also allow
->> to construct proper names for dedicated functions - see [1]
->>
->> Michal
->>
->> [1] https://patchwork.freedesktop.org/patch/255928/
-
-I can't find this on the list; was this sent just to patchwork or what?
-
-BR,
-Jani.
-
-
->>
->>
->> >
->> > BR,
->> > Jani.
->> >
->> >>
->> >>>
->> >>> The output of 'objdump -D' is identically before and after this change
->> >>> for GCC regardless of if CONFIG_64BIT is set and allows Clang to link
->> >>> the kernel successfully with or without CONFIG_64BIT set.
->> >>>
->> >>> Link: https://github.com/ClangBuiltLinux/linux/issues/191
->> >>> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
->> >>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> >>> ---
->> >>>  drivers/gpu/drm/i915/i915_params.c | 29 +++++++++++++----------------
->> >>>  1 file changed, 13 insertions(+), 16 deletions(-)
->> >>>
->> >>> diff --git a/drivers/gpu/drm/i915/i915_params.c
->> >>> b/drivers/gpu/drm/i915/i915_params.c
->> >>> index 295e981e4a39..a0f20b9b6f2d 100644
->> >>> --- a/drivers/gpu/drm/i915/i915_params.c
->> >>> +++ b/drivers/gpu/drm/i915/i915_params.c
->> >>> @@ -174,22 +174,19 @@ i915_param_named(enable_dpcd_backlight, bool,
->> >>> 0600,
->> >>>  i915_param_named(enable_gvt, bool, 0400,
->> >>>         "Enable support for Intel GVT-g graphics virtualization host
->> >>> support(default:false)");
->> >>>
->> >>> -static __always_inline void _print_param(struct drm_printer *p,
->> >>> -                                        const char *name,
->> >>> -                                        const char *type,
->> >>> -                                        const void *x)
->> >>> -{
->> >>> -       if (!__builtin_strcmp(type, "bool"))
->> >>> -               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool
->> >>> *)x));
->> >>> -       else if (!__builtin_strcmp(type, "int"))
->> >>> -               drm_printf(p, "i915.%s=%d\n", name, *(const int *)x);
->> >>> -       else if (!__builtin_strcmp(type, "unsigned int"))
->> >>> -               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned
->> >>> int *)x);
->> >>> -       else if (!__builtin_strcmp(type, "char *"))
->> >>> -               drm_printf(p, "i915.%s=%s\n", name, *(const char **)x);
->> >>> -       else
->> >>> -               BUILD_BUG();
->> >>> -}
->> >>> +#define _print_param(p, name, type,
->> >>> x)                                        \
->> >>> +do
->> >>> {
->> >>> \
->> >>> +       if (!__builtin_strcmp(type,
->> >>> "bool"))                                   \
->> >>> +               drm_printf(p, "i915.%s=%s\n", name, yesno(*(const bool
->> >>> *)x));  \
->> >>> +       else if (!__builtin_strcmp(type,
->> >>> "int"))                               \
->> >>> +               drm_printf(p, "i915.%s=%d\n", name, *(const int
->> >>> *)x);          \
->> >>> +       else if (!__builtin_strcmp(type, "unsigned
->> >>> int"))                      \
->> >>> +               drm_printf(p, "i915.%s=%u\n", name, *(const unsigned
->> >>> int *)x); \
->> >>> +       else if (!__builtin_strcmp(type, "char
->> >>> *"))                            \
->> >>> +               drm_printf(p, "i915.%s=%s\n", name, *(const char
->> >>> **)x);        \
->> >>> +
->> >>> else
->> >>> \
->> >>> +
->> >>> BUILD_BUG();                                                   \
->> >>> +} while (0)
->> >>>
->> >>>  /**
->> >>>   * i915_params_dump - dump i915 modparams
->> >>> --
->> >>> 2.19.0
->> >>>
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+blk-mq tags are always per-host (which has actually caused problems for
+ATA, which is now using its own per-device tags).
