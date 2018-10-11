@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE5FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353A9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235372087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE94D2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpo71BZ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235372087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRBgHmzb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE94D2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbeJKXFp (ORCPT
+        id S1729534AbeJKXFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34272 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:45 -0400
+        id S1727569AbeJKXFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7DDF2098A;
-        Thu, 11 Oct 2018 15:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1562098A;
+        Thu, 11 Oct 2018 15:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272282;
-        bh=GnGbk5gYwwVPEpdzD6s4Ju8ZpYO9YOm0SohgT66gi1Y=;
+        s=default; t=1539272285;
+        bh=qjTPnjIi07liFdEldoWDxTGXhoUaGlkmM82gnFVhw1w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cpo71BZ9LFX3kN78qi71oUyVwK9z55vaGhxg8u4dJZJJW6VbKYt0oz3/JiLqoCyXc
-         brbxLgIHSND987RnqaOenvUc/MVQEpxF2E37piDizgrVylzvWxzKq4AdwKTajkWSbk
-         ui5kDQIWuJnWipwZQgEN9yX4ThYB0AdHcPGVkXhQ=
+        b=pRBgHmzbf/CdcNL95HtCMgQcZWncqulZ0bimUesBlvaqlaIly2phEXL1+bQfnwzqR
+         v2ptDXepTuOohTh36BdENzk04AgycczrSMpVVXHTh72Eh+tTFDsPdfZVVe+uUEHxgr
+         UDFF0ANbfLlVkPZIgrlEgYL8NA3DwOulIIEhDEsw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3.18 052/120] spi: rspi: Fix interrupted DMA transfers
-Date:   Thu, 11 Oct 2018 17:33:53 +0200
-Message-Id: <20181011152551.913722205@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
+Subject: [PATCH 3.18 053/120] USB: fix error handling in usb_driver_claim_interface()
+Date:   Thu, 11 Oct 2018 17:33:54 +0200
+Message-Id: <20181011152551.953285081@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -62,58 +61,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf upstream.
+commit bd729f9d67aa9a303d8925bb8c4f06af25f407d1 upstream.
 
-When interrupted, wait_event_interruptible_timeout() returns
--ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
+The syzbot fuzzing project found a use-after-free bug in the USB
+core.  The bug was caused by usbfs not unbinding from an interface
+when the USB device file was closed, which led another process to
+attempt the unbind later on, after the private data structure had been
+deallocated.
 
-    m25p80 spi0.0: SPI transfer failed: -512
-    spi_master spi0: failed to transfer one message from queue
+The reason usbfs did not unbind the interface at the appropriate time
+was because it thought the interface had never been claimed in the
+first place.  This was caused by the fact that
+usb_driver_claim_interface() does not clean up properly when
+device_bind_driver() returns an error.  Although the error code gets
+passed back to the caller, the iface->dev.driver pointer remains set
+and iface->condition remains equal to USB_INTERFACE_BOUND.
 
-However, as the underlying DMA transfers may not have completed, all
-subsequent SPI transfers may start to fail:
+This patch adds proper error handling to usb_driver_claim_interface().
 
-    spi_master spi0: receive timeout
-    qspi_transfer_out_in() returned -110
-    m25p80 spi0.0: SPI transfer failed: -110
-    spi_master spi0: failed to transfer one message from queue
-
-Fix this by calling dmaengine_terminate_all() not only for timeouts, but
-also for errors.
-
-This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
-by CTRL-C.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-rspi.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/core/driver.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -538,11 +538,13 @@ static int rspi_dma_transfer(struct rspi
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -555,6 +555,21 @@ int usb_driver_claim_interface(struct us
+ 	if (!lpm_disable_error)
+ 		usb_unlocked_enable_lpm(udev);
  
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
--	if (ret > 0 && rspi->dma_callbacked)
-+	if (ret > 0 && rspi->dma_callbacked) {
- 		ret = 0;
--	else if (!ret) {
--		dev_err(&rspi->master->dev, "DMA timeout\n");
--		ret = -ETIMEDOUT;
-+	} else {
-+		if (!ret) {
-+			dev_err(&rspi->master->dev, "DMA timeout\n");
-+			ret = -ETIMEDOUT;
-+		}
- 		if (tx)
- 			dmaengine_terminate_all(rspi->master->dma_tx);
- 		if (rx)
++	if (retval) {
++		dev->driver = NULL;
++		usb_set_intfdata(iface, NULL);
++		iface->needs_remote_wakeup = 0;
++		iface->condition = USB_INTERFACE_UNBOUND;
++
++		/*
++		 * Unbound interfaces are always runtime-PM-disabled
++		 * and runtime-PM-suspended
++		 */
++		if (driver->supports_autosuspend)
++			pm_runtime_disable(dev);
++		pm_runtime_set_suspended(dev);
++	}
++
+ 	return retval;
+ }
+ EXPORT_SYMBOL_GPL(usb_driver_claim_interface);
 
 
