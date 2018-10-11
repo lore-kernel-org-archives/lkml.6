@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B293C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFD9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4CF213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A51CE21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5vj+9j2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4CF213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kleY54ZV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51CE21470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbeJKXIC (ORCPT
+        id S1730171AbeJKXIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38078 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:08:01 -0400
+        id S1726647AbeJKXIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E15421470;
-        Thu, 11 Oct 2018 15:40:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB39C20652;
+        Thu, 11 Oct 2018 15:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272417;
-        bh=Bg31v4JlqpXD6boyDSCbHBT1LwadEiCxjZp2MmJOntw=;
+        s=default; t=1539272420;
+        bh=ALUdNC7Lg/1BGduDUQ/yZRges564JctWFqHMmkUjJ0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B5vj+9j25l2Plj16d30+D/wqZKj1+ibxuuK8qSfQuSPgTb4OPSEoPtRbfYz4jc7UW
-         pxgnmbVE2MjxyyApOagOtxgarSFbcvJzzx7Jpx1rHT5pWxecobkoT/tBZ2VyPVhGyD
-         eRONFLzDAcTbCU6oAoId9udVoIyekbsVivuOXMrw=
+        b=kleY54ZVxPiJMaeDhXnh8OG8tdNIIEmRPJVtJhQBnIus/PKBetNFM2BRVuMwlzg/O
+         zyAFqzW5HICEZ7FtNnL/D0FE71aivPu8pnyCb2+scCASxXKjdlkjgHTA0I3ZBXX/Dv
+         l2TwermhgNPJ31yVdUnKXw3hNCzyql2pQ6BebU44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Jann Horn <jannh@google.com>, security@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3.18 101/120] fbdev/omapfb: fix omapfb_memory_read infoleak
-Date:   Thu, 11 Oct 2018 17:34:42 +0200
-Message-Id: <20181011152553.964596419@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 066/120] e1000: check on netif_running() before calling e1000_up()
+Date:   Thu, 11 Oct 2018 17:34:07 +0200
+Message-Id: <20181011152552.528250553@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,55 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit 1bafcbf59fed92af58955024452f45430d3898c5 upstream.
+[ Upstream commit cf1acec008f8d7761aa3fd7c4bca7e17b2d2512d ]
 
-OMAPFB_MEMORY_READ ioctl reads pixels from the LCD's memory and copies
-them to a userspace buffer. The code has two issues:
+When the device is not up, the call to 'e1000_up()' from the error handling path
+of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
+dereference. The null-pointer dereference is triggered in function
+'e1000_alloc_rx_buffers()' at line 'buffer_info = &rx_ring->buffer_info[i]'.
 
-- The user provided width and height could be large enough to overflow
-  the calculations
-- The copy_to_user() can copy uninitialized memory to the userspace,
-  which might contain sensitive kernel information.
+This bug was reported by COD, a tool for testing kernel module binaries I am
+building. This bug was also detected by KFI from Dr. Kai Cong.
 
-Fix these by limiting the width & height parameters, and only copying
-the amount of data that we actually received from the LCD.
+This patch fixes the bug by checking on 'netif_running()' before calling
+'e1000_up()' in 'e1000_set_ringparam()'.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: stable@vger.kernel.org
-Cc: security@kernel.org
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-@@ -493,6 +493,9 @@ static int omapfb_memory_read(struct fb_
- 	if (!access_ok(VERIFY_WRITE, mr->buffer, mr->buffer_size))
- 		return -EFAULT;
- 
-+	if (mr->w > 4096 || mr->h > 4096)
-+		return -EINVAL;
-+
- 	if (mr->w * mr->h * 3 > mr->buffer_size)
- 		return -EINVAL;
- 
-@@ -506,7 +509,7 @@ static int omapfb_memory_read(struct fb_
- 			mr->x, mr->y, mr->w, mr->h);
- 
- 	if (r > 0) {
--		if (copy_to_user(mr->buffer, buf, mr->buffer_size))
-+		if (copy_to_user(mr->buffer, buf, r))
- 			r = -EFAULT;
- 	}
- 
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -666,7 +666,8 @@ err_setup_rx:
+ err_alloc_rx:
+ 	kfree(txdr);
+ err_alloc_tx:
+-	e1000_up(adapter);
++	if (netif_running(adapter->netdev))
++		e1000_up(adapter);
+ err_setup:
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return err;
 
 
