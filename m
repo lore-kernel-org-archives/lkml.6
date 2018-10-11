@@ -2,126 +2,200 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAA8C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0819FC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C202320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B14012075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 20:55:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="qf9Z9hyN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C202320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IRnY2REQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B14012075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeJLEYj (ORCPT
+        id S1726907AbeJLEY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:24:39 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43412 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeJLEYi (ORCPT
+        Fri, 12 Oct 2018 00:24:56 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:40593 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeJLEY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:24:38 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n1-v6so11152080wrt.10
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 13:55:39 -0700 (PDT)
+        Fri, 12 Oct 2018 00:24:56 -0400
+Received: by mail-yb1-f195.google.com with SMTP id w7-v6so4159106ybm.7
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 13:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=2KOjYX4ILxhVDuX6J6Xn9Mm3TnCRr6/YJJVFH//h0z0=;
-        b=qf9Z9hyN2c2yKMz3WdOpddxPJjgvuo0I3a46tr2NvcS7QB39fqUd9gTIS2y4W7PJXq
-         Z7uBYutIYxNO7oi674TDwQwAMRQ3KrRyT2FmiV9yI9fn1qCcYAlJNteiz43pVAICcHP3
-         yZORwyGV2PWTS1t869CuGydLZqeBHfRMS2818tCCykHx7wVCuZIEF28DwbjpLl9YyA77
-         ZH24VcEccP8QsYrGWVk3g/YV+kZQ+uQhV5ih8Kda39hgenvbh/lww6lOh651YZfwTNSU
-         DW8J6NAIyUc8NRnu98kIsMc+FbosreYcoJMcd8ql4u582720ioG4sjzP0R46A9mOhqSb
-         4ynA==
+        bh=xhdlW9MnzJZrJ1pC8eL3uOGXJT7PaJJkKhL6cjwk868=;
+        b=IRnY2REQEVvHG0GF+NWwi2s7Qi+NGGoNLq6dLtl23zuk5KMUBHbbtBzVSqdPkGI50y
+         px3fz7ZtTPHWn9E8QmJO+zDQ95/u+8IvenOJTwBApdlxrTwERRCAMtabYD9eWMKDjhrx
+         xc93H72UF3KaU/Aec9NWOHAvZdMZu65t67xGk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=2KOjYX4ILxhVDuX6J6Xn9Mm3TnCRr6/YJJVFH//h0z0=;
-        b=s9mKa5Ge4igRBYOJLy8Ig8iao/bV+Ei8bC8DktZl2iDS+Sel4pBBe7M1TvDVxvvFnn
-         Gm2k2MTV7b90dtpvKcjTgZ0OkY4DlQMztrvYMxoDOV1W/tXvJDHfHoGvZg6315xlNTio
-         J+ZzlE74Ao+UNmTsRzZeZYaxvJKs4j/VYVEPr1TqnfHou/qkWatveG/lBpSOhNTxhskg
-         v8oDEYa+ui2Nol1ivXMLkvKuhDXljVUh++k9CAqOOdZu5bQTfrAjXLVqaeSXWFOhq4pO
-         /8rMFi5wx3aknOICmLR0QfvSQlaSlPro3LlCjTLO5Eovcs4cukSBoHi+L+TI6mf+cZBM
-         Kpsw==
-X-Gm-Message-State: ABuFfoixNqD6dlH4p15cEK3Oo5Zxvyf1IxgseZOtDuaZ/Mll1PD4xnDI
-        7gDJHrkb6MarxkqIiVhPlrzEPklsLAc0zTeIF3m/Ow==
-X-Google-Smtp-Source: ACcGV60HIxYyBNiUnMvakya55CP3CUl/NaIFpl6QVhqly2z1o3gWSMhqUq8ac+FZHQjvpCBwvEBHwEPI/JKW6gBnJO8=
-X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr2950881wra.95.1539291338385;
- Thu, 11 Oct 2018 13:55:38 -0700 (PDT)
+        bh=xhdlW9MnzJZrJ1pC8eL3uOGXJT7PaJJkKhL6cjwk868=;
+        b=jzkoxiklZmfhmLsaGqcDK13PCgYvpmZlGcmJpD2cg37vshG5lfzbhYvDPxA5068PZ6
+         oz6aks6b5xR3YnWmp8jL4sAsiIT5ws2hKnIyjLymCumNkEkdCOATtnsQ47Yw7ck8Z1Ev
+         vXzl+p8AR6h25nqi3lcRGiMOIRXuTTcO7ldjvf+l0Dl8pwmuBmtjegIc1yYllXXtJfuy
+         AHW3+gVGQe+KOQ9H106SSlSNOuWnucd8ucIPtLZMec7VHgPxDZcHaGcGBVpKRGy7DtLP
+         OXIKemte4PW5kZLwI9GvdEYHwnMWH/djk/0N8/G3meUwKHaPHQdaVhuL/9gxPcQvGm/E
+         2TRA==
+X-Gm-Message-State: ABuFfojqD82aqZ4iyurBNwytl4RGuzne99jz35uvV9kXSaZFgSN3nnCL
+        xbxa4M4/ElE+HuQ8RdWdSSTkx9ce/fY=
+X-Google-Smtp-Source: ACcGV60qlt5iMkLNATJ7lR6JXgF0gP1pFbgCRcLhrtTZ+iiO0HufF16WhA92grPBnkkhudgfuSlpQA==
+X-Received: by 2002:a25:b306:: with SMTP id l6-v6mr1805157ybj.8.1539291355858;
+        Thu, 11 Oct 2018 13:55:55 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id q6-v6sm5249860ywh.41.2018.10.11.13.55.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 13:55:54 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 5-v6so4168391ybf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 13:55:54 -0700 (PDT)
+X-Received: by 2002:a25:2395:: with SMTP id j143-v6mr1823975ybj.137.1539291353539;
+ Thu, 11 Oct 2018 13:55:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com> <20181011151523.27101-8-yu-cheng.yu@intel.com>
- <CAG48ez3R7XL8MX_sjff1FFYuARX_58wA_=ACbv2im-XJKR8tvA@mail.gmail.com>
-In-Reply-To: <CAG48ez3R7XL8MX_sjff1FFYuARX_58wA_=ACbv2im-XJKR8tvA@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Thu, 11 Oct 2018 13:55:26 -0700
-Message-ID: <CALCETrUJ1t_K=FQExa_K0yg+aXkPot6wn6RHBPDc3BsAxtmMBw@mail.gmail.com>
-Subject: Re: [PATCH v5 07/27] mm/mmap: Create a guard area between VMAs
-To:     Jann Horn <jannh@google.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 13:55:51
+ -0700 (PDT)
+In-Reply-To: <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com>
+References: <20181011185458.10186-1-kristen@linux.intel.com> <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 11 Oct 2018 13:55:51 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
+Message-ID: <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 1:39 PM Jann Horn <jannh@google.com> wrote:
+On Thu, Oct 11, 2018 at 1:48 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Thu, Oct 11, 2018 at 11:55 AM Kristen Carlson Accardi
+> <kristen@linux.intel.com> wrote:
+>>
+>> This patch aims to make it harder to perform cache timing attacks on data
+>> left behind by system calls. If we have an error returned from a syscall,
+>> flush the L1 cache.
+>>
+>> It's important to note that this patch is not addressing any specific
+>> exploit, nor is it intended to be a complete defense against anything.
+>> It is intended to be a low cost way of eliminating some of side effects
+>> of a failed system call.
+>>
+>> A performance test using sysbench on one hyperthread and a script which
+>> attempts to repeatedly access files it does not have permission to access
+>> on the other hyperthread found no significant performance impact.
+>>
+>> Suggested-by: Alan Cox <alan@linux.intel.com>
+>> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+>> ---
+>>  arch/x86/Kconfig        |  9 +++++++++
+>>  arch/x86/entry/common.c | 18 ++++++++++++++++++
+>>  2 files changed, 27 insertions(+)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index 1a0be022f91d..bde978eb3b4e 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -445,6 +445,15 @@ config RETPOLINE
+>>           code are eliminated. Since this includes the syscall entry path,
+>>           it is not entirely pointless.
+>>
+>> +config SYSCALL_FLUSH
+>> +       bool "Clear L1 Cache on syscall errors"
+>> +       default n
+>> +       help
+>> +         Selecting 'y' allows the L1 cache to be cleared upon return of
+>> +         an error code from a syscall if the CPU supports "flush_l1d".
+>> +         This may reduce the likelyhood of speculative execution style
+>> +         attacks on syscalls.
+>> +
+>>  config INTEL_RDT
+>>         bool "Intel Resource Director Technology support"
+>>         default n
+>> diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+>> index 3b2490b81918..26de8ea71293 100644
+>> --- a/arch/x86/entry/common.c
+>> +++ b/arch/x86/entry/common.c
+>> @@ -268,6 +268,20 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
+>>         prepare_exit_to_usermode(regs);
+>>  }
+>>
+>> +__visible inline void l1_cache_flush(struct pt_regs *regs)
+>> +{
+>> +       if (IS_ENABLED(CONFIG_SYSCALL_FLUSH) &&
+>> +           static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
+>> +               if (regs->ax == 0 || regs->ax == -EAGAIN ||
+>> +                   regs->ax == -EEXIST || regs->ax == -ENOENT ||
+>> +                   regs->ax == -EXDEV || regs->ax == -ETIMEDOUT ||
+>> +                   regs->ax == -ENOTCONN || regs->ax == -EINPROGRESS)
 >
-> On Thu, Oct 11, 2018 at 5:20 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > Create a guard area between VMAs to detect memory corruption.
-> [...]
-> > +config VM_AREA_GUARD
-> > +       bool "VM area guard"
-> > +       default n
-> > +       help
-> > +         Create a guard area between VM areas so that access beyond
-> > +         limit can be detected.
-> > +
-> >  endmenu
->
-> Sorry to bring this up so late, but Daniel Micay pointed out to me
-> that, given that VMA guards will raise the number of VMAs by
-> inhibiting vma_merge(), people are more likely to run into
-> /proc/sys/vm/max_map_count (which limits the number of VMAs to ~65k by
-> default, and can't easily be raised without risking an overflow of
-> page->_mapcount on systems with over ~800GiB of RAM, see
-> https://lore.kernel.org/lkml/20180208021112.GB14918@bombadil.infradead.org/
-> and replies) with this change.
->
-> Playing with glibc's memory allocator, it looks like glibc will use
-> mmap() for 128KB allocations; so at 65530*128KB=8GB of memory usage in
-> 128KB chunks, an application could run out of VMAs.
+> What about ax > 0?  (Or more generally, any ax outside the range of -1
+> .. -4095 or whatever the error range is.)  As it stands, it looks like
+> you'll flush on successful read(), write(), recv(), etc, and that
+> could seriously hurt performance on real workloads.
 
-Ugh.
+Seems like just changing this with "ax == 0" into "ax >= 0" would solve that?
 
-Do we have a free VM flag so we could do VM_GUARD to force a guard
-page?  (And to make sure that, when a new VMA is allocated, it won't
-be directly adjacent to a VM_GUARD VMA.)
+I think this looks like a good idea. It might be worth adding a
+comment about the checks to explain why those errors are whitelisted.
+It's a cheap and effective mitigation for "unknown future problems"
+that doesn't degrade normal workloads.
+
+>> +                       return;
+>> +
+>> +               wrmsrl(MSR_IA32_FLUSH_CMD, L1D_FLUSH);
+
+What about CPUs without FLUSH_L1D? Could it be done manually with a
+memcpy or something?
+
+-Kees
+
+>> +       }
+>> +}
+>> +
+>>  #ifdef CONFIG_X86_64
+>>  __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+>>  {
+>> @@ -290,6 +304,8 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+>>                 regs->ax = sys_call_table[nr](regs);
+>>         }
+>>
+>> +       l1_cache_flush(regs);
+>> +
+>>         syscall_return_slowpath(regs);
+>>  }
+>>  #endif
+>> @@ -338,6 +354,8 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
+>>  #endif /* CONFIG_IA32_EMULATION */
+>>         }
+>>
+>> +       l1_cache_flush(regs);
+>> +
+>>         syscall_return_slowpath(regs);
+>>  }
+>>
+>> --
+>> 2.14.4
+>>
+
+
+
+-- 
+Kees Cook
+Pixel Security
