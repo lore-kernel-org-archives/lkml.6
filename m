@@ -2,200 +2,163 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293DDC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE02CC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D21632077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D21632077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 65B2B2077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:47:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg4Jmc8E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B2B2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJLFPB (ORCPT
+        id S1726831AbeJLFQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 01:15:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35502 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbeJLFPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 01:15:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A890307D90F;
-        Thu, 11 Oct 2018 21:45:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 15B428737D;
-        Thu, 11 Oct 2018 21:45:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix cell proc list
-From:   David Howells <dhowells@redhat.com>
-To:     gregkh@linuxfoundation.org, torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 11 Oct 2018 22:45:49 +0100
-Message-ID: <153929434917.24725.5423867421481211888.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Fri, 12 Oct 2018 01:16:34 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41659 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbeJLFQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 01:16:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m77-v6so5064218pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 14:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JhV7x8TISMO0HSJz1GMb0ApIKzKwFBG4TU1DR2PpBzM=;
+        b=Kg4Jmc8E0vN38RWPYff2u36Et2iUKn1c5mjHkvBrMHJc1D/6im4YQsNwPEAcFKZtDF
+         DdPcKP+0DuSOiM59RDQOCiVJllj4wKRS5O4bDR71B9NVBSFswsa2Q0ahcF79Dekcz708
+         H95DV/5RD2z2yydDvLBnMDYwuc3mQDDC99nsVaVRdRYOK/znDWK++fKXiaRoWkRZd6pn
+         ampNb8DWBHyeb2FxSONT+lKigueB67I+7tDtSv5/ls8Ya/W6GRhjNx6/L1leArETWAnA
+         TUKb3tcl7hSYp8es2GsxLVBBA0VfA3W2YVS0PG2QhgpZfMRQJoNC7qPbp9YoHyahUI3r
+         UMqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JhV7x8TISMO0HSJz1GMb0ApIKzKwFBG4TU1DR2PpBzM=;
+        b=nXU1p7+62Qra72T1rlM0UjcDtGvY3Vo4mmx7sg2KfVNZgV+YrsIlY4L52C22qq25Xl
+         5C+iKGTN6fwKlXY/dSTabyX3lOVGVuchlDhSZTmvzk3tqRocnnkZvzz533IFUixxx+9J
+         3Ifx6DBSP1bllhOD2V4HWHQuzrQiwpyvNMplaKLpWu5lHkC2vHHtgco1+Gy00q+TfdpO
+         OxdePVOxm0OVhEXCp5R9YleOy6+qYC0sin46/gP9DIvqBDnRo0oW22v+abL/s2FzqdU8
+         lCki7CUiNz4C1dL9A8NkjNe81jrZF4s6W4pPvmqH2p+WJf+QdccN3WJGtE9Pj0vo/Gzi
+         KUkQ==
+X-Gm-Message-State: ABuFfojVPswlqcAUfwsu0t/ctUZfocA7TaxsmolISyvxVkVnrklzlSwH
+        55H/x5VQGytorBqLcdINBxkaX85r
+X-Google-Smtp-Source: ACcGV60cd8SVDT5or06skr6Swo4kYMtr6aN6wE/wi6OO+5I3lE/nVlmtpEruaQK3NmXj2sYJgzuVxQ==
+X-Received: by 2002:a63:f64f:: with SMTP id u15-v6mr3002412pgj.258.1539294443591;
+        Thu, 11 Oct 2018 14:47:23 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id z14-v6sm44838372pfi.4.2018.10.11.14.47.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 14:47:22 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 14:47:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc:     "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Subject: Re: [PATCH] ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
+Message-ID: <20181011214720.GA11172@roeck-us.net>
+References: <20180912165817.GA5118@roeck-us.net>
+ <4881796E12491D4BB15146FE0209CE646816FBF1@DE02WEMBXB.internal.synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 11 Oct 2018 21:45:51 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4881796E12491D4BB15146FE0209CE646816FBF1@DE02WEMBXB.internal.synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Access to the list of cells by /proc/net/afs/cells has a couple of
-problems:
+Hi Alexey,
 
- (1) It should be checking against SEQ_START_TOKEN for the keying the
-     header line.
+On Thu, Oct 11, 2018 at 09:22:50PM +0000, Alexey Brodkin wrote:
+> Hu Guenter,
+> 
+> > -----Original Message-----
+> > From: linux-snps-arc [mailto:linux-snps-arc-bounces@lists.infradead.org] On Behalf Of Guenter Roeck
+> > Sent: Wednesday, September 12, 2018 7:58 PM
+> > To: Vineet Gupta <vineet.gupta1@synopsys.com>
+> > Cc: linux-snps-arc@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] ARCv2: build: use mcpu=hs38 iso generic mcpu=archs
+> > 
+> > Hi,
+> > 
+> > On Fri, Sep 07, 2018 at 03:13:10PM -0700, Vineet Gupta wrote:
+> > > helps gcc with better instruction selections such as 64-bit multiply MPYD
+> > >
+> > > before
+> > > ------
+> > > 82c34b58 <sched_clock>:
+> > > 82c34b58:	ld	r2,[0x83068d00]
+> > > 82c34b60:	add_s	r2,r2,0x7530
+> > > 82c34b66:	mov_s	r0,0x989680
+> > > 82c34b6c:	mpymu	r5,r2,r0
+> > > 82c34b70:	mpy	r4,r2,r0
+> > > 82c34b74:	mov_s	r0,r4
+> > > 82c34b76:	j_s.d	[blink]
+> > > 82c34b78:	mov_s	r1,r5
+> > > 82c34b7a:	nop_s
+> > >
+> > > after
+> > > ------
+> > > 82c34b7c <sched_clock>:
+> > > 82c34b7c:	ld	r0,[0x83064d00]
+> > > 82c34b84:	add_s	r0,r0,0x7530
+> > > 82c34b8a:	mpydu	r0,r0,0x989680
+> > > 82c34b92:	j_s	[blink]
+> > >
+> > > Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+> > 
+> > This patch causes my arc2 test builds to fail
+> > 
+> > Building arc:axs103_defconfig ... failed
+> > --------------
+> > Error log:
+> > 
+> > standard input}: Assembler messages:
+> > {standard input}:154: Error: inappropriate arguments for opcode 'st'
+> > {standard input}:157: Error: Insn j_s has a jump/branch instruction j_s in its delay slot.
+> > {standard input}:186: Error: inappropriate arguments for opcode 'st'
+> > make[3]: *** [net/core/dev.o] Error 1
+> > make[2]: *** [net/core] Error 2
+> > 
+> > Building arc:nsim_hs_smp_defconfig ... failed
+> > --------------
+> > Error log:
+> > {standard input}: Assembler messages:
+> > {standard input}:218: Error: inappropriate arguments for opcode 'st'
+> > {standard input}:9329: Error: inappropriate arguments for opcode 'st'
+> > 
+> > Building arc:vdk_hs38_smp_defconfig ... failed
+> > --------------
+> > Error log:
+> > 
+> > {standard input}: Assembler messages:
+> > {standard input}:9629: Error: inappropriate arguments for opcode 'st'
+> > {standard input}:9883: Error: inappropriate arguments for opcode 'st'
+> > 
+> > I use a toolchain based on gcc 7.3.0 and binutils 2.30. What version
+> > of gcc and binutils do I need for the builds to complete ?
+> 
+> I would strongly recommend to use GCC 8.2+ for ARC as there were
+> quite some improvements and fixes done for ARC.
+> 
+> You may use master branch of Crosstool-NG for building uClibc multilib toolchain
+> for ARC based on Binutils 2.31.1 and GCC 8.2.0.
+> 
 
- (2) It's only holding the RCU read lock, so it can't just walk over the
-     list without following the proper RCU methods.
+Yes, I had figured that out a couple of weeks ago and already switched
+to those revisions.
 
-Fix these by using an hlist instead of an ordinary list and using the
-appropriate accessor functions to follow it with RCU.
-
-Since the code that adds a cell to the list must also necessarily change,
-sort the list on insertion whilst we're at it.
-
-Fixes: 989782dcdc91 ("afs: Overhaul cell database management")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/cell.c     |   17 +++++++++++++++--
- fs/afs/dynroot.c  |    2 +-
- fs/afs/internal.h |    4 ++--
- fs/afs/main.c     |    2 +-
- fs/afs/proc.c     |    7 +++----
- 5 files changed, 22 insertions(+), 10 deletions(-)
-
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index f3d0bef16d78..6127f0fcd62c 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -514,6 +514,8 @@ static int afs_alloc_anon_key(struct afs_cell *cell)
-  */
- static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
- {
-+	struct hlist_node **p;
-+	struct afs_cell *pcell;
- 	int ret;
- 
- 	if (!cell->anonymous_key) {
-@@ -534,7 +536,18 @@ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
- 		return ret;
- 
- 	mutex_lock(&net->proc_cells_lock);
--	list_add_tail(&cell->proc_link, &net->proc_cells);
-+	for (p = &net->proc_cells.first; *p; p = &(*p)->next) {
-+		pcell = hlist_entry(*p, struct afs_cell, proc_link);
-+		if (strcmp(cell->name, pcell->name) < 0)
-+			break;
-+	}
-+
-+	cell->proc_link.pprev = p;
-+	cell->proc_link.next = *p;
-+	rcu_assign_pointer(*p, &cell->proc_link.next);
-+	if (cell->proc_link.next)
-+		cell->proc_link.next->pprev = &cell->proc_link.next;
-+
- 	afs_dynroot_mkdir(net, cell);
- 	mutex_unlock(&net->proc_cells_lock);
- 	return 0;
-@@ -550,7 +563,7 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
- 	afs_proc_cell_remove(cell);
- 
- 	mutex_lock(&net->proc_cells_lock);
--	list_del_init(&cell->proc_link);
-+	hlist_del_rcu(&cell->proc_link);
- 	afs_dynroot_rmdir(net, cell);
- 	mutex_unlock(&net->proc_cells_lock);
- 
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index 1cde710a8013..f29c6dade7f6 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -265,7 +265,7 @@ int afs_dynroot_populate(struct super_block *sb)
- 		return -ERESTARTSYS;
- 
- 	net->dynroot_sb = sb;
--	list_for_each_entry(cell, &net->proc_cells, proc_link) {
-+	hlist_for_each_entry(cell, &net->proc_cells, proc_link) {
- 		ret = afs_dynroot_mkdir(net, cell);
- 		if (ret < 0)
- 			goto error;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 871a228d7f37..34c02fdcc25f 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -242,7 +242,7 @@ struct afs_net {
- 	seqlock_t		cells_lock;
- 
- 	struct mutex		proc_cells_lock;
--	struct list_head	proc_cells;
-+	struct hlist_head	proc_cells;
- 
- 	/* Known servers.  Theoretically each fileserver can only be in one
- 	 * cell, but in practice, people create aliases and subsets and there's
-@@ -320,7 +320,7 @@ struct afs_cell {
- 	struct afs_net		*net;
- 	struct key		*anonymous_key;	/* anonymous user key for this cell */
- 	struct work_struct	manager;	/* Manager for init/deinit/dns */
--	struct list_head	proc_link;	/* /proc cell list link */
-+	struct hlist_node	proc_link;	/* /proc cell list link */
- #ifdef CONFIG_AFS_FSCACHE
- 	struct fscache_cookie	*cache;		/* caching cookie */
- #endif
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index e84fe822a960..107427688edd 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -87,7 +87,7 @@ static int __net_init afs_net_init(struct net *net_ns)
- 	timer_setup(&net->cells_timer, afs_cells_timer, 0);
- 
- 	mutex_init(&net->proc_cells_lock);
--	INIT_LIST_HEAD(&net->proc_cells);
-+	INIT_HLIST_HEAD(&net->proc_cells);
- 
- 	seqlock_init(&net->fs_lock);
- 	net->fs_servers = RB_ROOT;
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 476dcbb79713..9101f62707af 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -33,9 +33,8 @@ static inline struct afs_net *afs_seq2net_single(struct seq_file *m)
- static int afs_proc_cells_show(struct seq_file *m, void *v)
- {
- 	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
--	struct afs_net *net = afs_seq2net(m);
- 
--	if (v == &net->proc_cells) {
-+	if (v == SEQ_START_TOKEN) {
- 		/* display header on line 1 */
- 		seq_puts(m, "USE NAME\n");
- 		return 0;
-@@ -50,12 +49,12 @@ static void *afs_proc_cells_start(struct seq_file *m, loff_t *_pos)
- 	__acquires(rcu)
- {
- 	rcu_read_lock();
--	return seq_list_start_head(&afs_seq2net(m)->proc_cells, *_pos);
-+	return seq_hlist_start_head_rcu(&afs_seq2net(m)->proc_cells, *_pos);
- }
- 
- static void *afs_proc_cells_next(struct seq_file *m, void *v, loff_t *pos)
- {
--	return seq_list_next(v, &afs_seq2net(m)->proc_cells, pos);
-+	return seq_hlist_next_rcu(v, &afs_seq2net(m)->proc_cells, pos);
- }
- 
- static void afs_proc_cells_stop(struct seq_file *m, void *v)
-
+Thanks,
+Guenter
