@@ -2,204 +2,618 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64188C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3217DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC368204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:55:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="AmPfhaHk";
-	dkim=pass (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="EAsNgBFv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC368204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ericsson.com
+	by mail.kernel.org (Postfix) with ESMTP id AE1BD2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1BD2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeJKSWG (ORCPT
+        id S1727529AbeJKSYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:22:06 -0400
-Received: from sessmg23.ericsson.net ([193.180.251.45]:50723 "EHLO
-        sessmg23.ericsson.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKSWG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:22:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=ericsson.com; s=mailgw201801; c=relaxed/simple;
-        q=dns/txt; i=@ericsson.com; t=1539255319; x=1541847319;
-        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=E0m+VXwLR3ZwKUYWzjfuLq0dD4Kh8KPAxhu6AWI1YdY=;
-        b=AmPfhaHksWkXJ+5kqszjz7vL7EsPjiJsrgaavdtHRVrLqNdoWmUfooZ4aCSB0Vco
-        ImwyRb5SIbBJnbx4CUbLeZfDotTMXQwXOPgQcCku1fzwMoR9krCijmZ2eViZnOzb
-        bsA0tcpO/rRjOTnAJTyzClgRvpf/wpW5Mw/SU4va5I0=;
-X-AuditID: c1b4fb2d-fb3d09e000003a27-45-5bbf2c17ade4
-Received: from ESESSMB504.ericsson.se (Unknown_Domain [153.88.183.122])
-        by sessmg23.ericsson.net (Symantec Mail Security) with SMTP id A3.FC.14887.71C2FBB5; Thu, 11 Oct 2018 12:55:19 +0200 (CEST)
-Received: from ESESSMR506.ericsson.se (153.88.183.128) by
- ESESSMB504.ericsson.se (153.88.183.192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1466.3; Thu, 11 Oct 2018 12:55:16 +0200
-Received: from ESESBMB502.ericsson.se (153.88.183.169) by
- ESESSMR506.ericsson.se (153.88.183.128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1466.3; Thu, 11 Oct 2018 12:55:16 +0200
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (153.88.183.157)
- by ESESBMB502.ericsson.se (153.88.183.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1466.3 via Frontend Transport; Thu, 11 Oct 2018 12:55:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E0m+VXwLR3ZwKUYWzjfuLq0dD4Kh8KPAxhu6AWI1YdY=;
- b=EAsNgBFvLW8/Eiob/1ryAqwvrnG0o7RkK0CrxvTIBAKl4aVtcH6YDBws8vt1LPd70m6T4WhPJHPeM//rdOflZAfG70NSeiVcS3QMV3b+oFhqfEHJgnzO3c212A5t+WRDaKealNtn75h7qNaE0lJQbZW82Ho9wIi1yfUVPrKwmhU=
-Received: from DM5PR15MB1513.namprd15.prod.outlook.com (10.173.225.146) by
- DM5PR15MB1419.namprd15.prod.outlook.com (10.173.225.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Thu, 11 Oct 2018 10:55:13 +0000
-Received: from DM5PR15MB1513.namprd15.prod.outlook.com
- ([fe80::d98e:89f4:67f0:9caa]) by DM5PR15MB1513.namprd15.prod.outlook.com
- ([fe80::d98e:89f4:67f0:9caa%4]) with mapi id 15.20.1228.020; Thu, 11 Oct 2018
- 10:55:13 +0000
-From:   Jon Maloy <jon.maloy@ericsson.com>
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        "parthasarathy.bhuvaragan@ericsson.com" 
-        <parthasarathy.bhuvaragan@ericsson.com>,
-        David Miller <davem@davemloft.net>,
-        Ying Xue <ying.xue@windriver.com>,
-        netdev <netdev@vger.kernel.org>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@gmail.com>
-Subject: RE: net/tipc: recursive locking in tipc_link_reset
-Thread-Topic: net/tipc: recursive locking in tipc_link_reset
-Thread-Index: AQHUYTfZQc9PfXVAEEyWjugxlcoluqUZ3nyQ
-Date:   Thu, 11 Oct 2018 10:55:13 +0000
-Message-ID: <DM5PR15MB15134EF6AA09E8268FA58D519AE10@DM5PR15MB1513.namprd15.prod.outlook.com>
-References: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
-In-Reply-To: <CACT4Y+bcxEz=P2E5TRj6A1qeCOQ+WtWR44WGLzqdDttLzD393A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jon.maloy@ericsson.com; 
-x-originating-ip: [198.24.6.220]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR15MB1419;6:p8pvWhqXg42GbGqfKQgwsGgcaAXKRJA7WYBxgsMDrQEO2cOrd9iyqewGbOMWC5o8WYXqF37Lru1zVLt+UtrPCVb5B2MOD2Nc8JbPiwekExAhtfYJPnWNC53wdXJ2JTk4nA3TqpOJb0iZMaWE2xI/wM2cGjo2VrSUB75HTIvGp0d7rmaHxTBIG44tRUvip0cJxht0m4Y0tiljx00EiXEEf+KnSSOdrpzCddjkljV2K+uNV8rg45/pol7RYpbnzLXIqfhaQx3qFT3PhlgiX9ctR9oQpDV0V+tb1rF6eBBdsd2sxTwQPSQWGwcX2TGYmsOxNhRERyRpcwbRZ08xCFONKie5H3NHFf2/WK9thIoRL9FZXvQvgkyxazL7uuXa36YkUjexST0V3V/PazRJZNVhyibBZz7usLkWk/0vLuuOoGhOPXBIDfKc4GYR0fSVpmnbd6ZoDtj1fQeQtl87AD03nQ==;5:2Nz1JyGl/DeeD3PkRNKgmygtNxtMd91sOncuB1VYD5QTIuWS++W6gQrj4yd8EqjK4xs1F5Z8mY4obKISisEzsSJAfYHZ2/4nKLRQ0SpUje+wb2gYk1cj8dWzk92ARhr/o8N61rrA8tZ9zeeIYcKQYdGsDOphzbQZ/3bKMrCKT0Y=;7:2U8G6XeiY4BigXbOdWj5Ch+4IZvldYowro61igB6FZdIsHti3ypax/JETvbBF/2XLMr1bZX0bjduZS+i/OUZp7qJsRg+Bi2EAeDS9AiXwXrz5NZgOLD9rF2YXXsSeNCfK8FdOQYenK/TIh/WzkayOI60+GoRFb8pcomJsZiP7w4NVXkfZhCGOJXH4t53WFhJQDSiuo6TCBbZCnKzI0KNzh9wASOpo2msj3K2NuEKF1MD/MV/DFVtfjYVld0ou9uD
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: baed0c94-9179-4fc3-c22f-08d62f6805b4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1419;
-x-ms-traffictypediagnostic: DM5PR15MB1419:
-x-microsoft-antispam-prvs: <DM5PR15MB141958A7484000D284A7780A9AE10@DM5PR15MB1419.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(37575265505322)(248295561703944)(143289334528602)(42262312472803)(211936372134217)(153496737603132)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DM5PR15MB1419;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1419;
-x-forefront-prvs: 08220FA8D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(376002)(366004)(39860400002)(13464003)(189003)(199004)(5250100002)(2900100001)(2501003)(478600001)(256004)(14444005)(5024004)(33656002)(102836004)(68736007)(186003)(26005)(25786009)(8676002)(106356001)(81166006)(81156014)(4326008)(39060400002)(105586002)(74316002)(99286004)(53546011)(6506007)(7736002)(76176011)(71190400001)(97736004)(71200400001)(7696005)(305945005)(3846002)(6116002)(9686003)(14454004)(446003)(86362001)(55016002)(53936002)(575784001)(5660300001)(66066001)(316002)(229853002)(486006)(44832011)(2906002)(110136005)(6246003)(8936002)(11346002)(6436002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR15MB1419;H:DM5PR15MB1513.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ericsson.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: A2rZOrN53Z88zL9V1KD19034td90Zr6sGtqbi8d839Tv5sN9YNEMvOfyrjzuV7m24eZ9YWP8boezloTwoctUkJK6swPrioFtdMz1cMCcTABgW2VBHQyOZ4/Vmc1zeIl3GZ9MXrmRjIoau4F6jMZ8RvwSnc36Hhyh1v252cl4YGjK4xv2uktRnLJiPWzP1VbfIk0vW+rq5EHLlcP3Ek5j4uylph55T54ty1Ax34dODHvuT7i6hl2LzznxHBMlZCh16ZKjFEQOxowhTNV/rHVm4vU0T+/TILemIm8rX1XML6oN2/gXUvbzrtSjd8QnfI+sgvmzt7rc2PyuOHQJPuhCmvjuvI1nAb1lteKSxr4R+Gc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 11 Oct 2018 14:24:03 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34590 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbeJKSYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 14:24:02 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id hv7-fBBtGz_N; Thu, 11 Oct 2018 12:57:18 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BD5D200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd5:d200:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A5A751EC04DF;
+        Thu, 11 Oct 2018 12:57:17 +0200 (CEST)
+Date:   Thu, 11 Oct 2018 12:57:08 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, rjw@rjwysocki.net,
+        lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
+Message-ID: <20181011105708.GB25435@zn.tnic>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: baed0c94-9179-4fc3-c22f-08d62f6805b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2018 10:55:13.7249
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1419
-X-OriginatorOrg: ericsson.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHee69btfV4nG+nYysloFKaqnExSz02yqE8kM1F+nKm/Ntyq5a
-        KoFoiSmU4Es6FWf5wbfYGEvLRPMly2lKaprmayqhKRiiSUrldi369jvP/3/+5xx4aFLyzMaF
-        jlYnsRq1Mk4qEFGlV5vSvJyPtylODBf6MeUD9ygmfzZbyAw1lwuYbp0To58oRoxpIIaZGx0l
-        g4QyU+0YIXupnRTKdMZk2SvdGiFbM7rK9KbnxEVBmCgwko2LTmE1PmcjRKqKpsTEGo87631d
-        wgykc89FtjRgf1ipGidykYiW4DcIcj7NkHyxgaAsu0Hwr6jpfrKrVBPwu2BIYOmncD4JI+uh
-        vFBIwP2M+t2wLwi+LhlIi0uA3WGxOAdZBAc8TUDVYIHQIpA4GMqm+wkL2+PTMG4yWxsccCBU
-        tq/Y8OwL28MLFD/uGOinVq0sxtfAsGWwsgRfhM7MHqvfFl+Cqeklaw7CTvDD3EDws5xhfL6S
-        4M/GUN0yQPLsCItzv3Z66R2/HHoX5PzzYTB/zEA8H4TByjzr/oBbhdBVPCLgBS9YLSrazQmB
-        yt5Gije9RdDfOYwsoYA9oTk7hsdYMJp3LRUIWh5OkvnIV/vfetodG4k9QN/swz8fgcK8WaHW
-        erEd9JTOUzpE1SFHjuW4+ChfP29WE32T4xLU3mo2yYh2PlG7acvrBar/FtyBMI2ke8W3j7Yp
-        JDbKFC41vgMBTUodxD4lrQqJOFKZmsZqEsI1yXEs14EO0JTUWexd1xImwVHKJDaWZRNZzV+V
-        oG1dMpBCgUVMlntrutvkmGqSIWWmR/uU8qf2H0q2J7LfM7n+hpnP3SN2efLaUBSRrg0xuIbH
-        nd90Gsy3a09ZXj+lvhLwM6ixLGuzxnMDBxgvJ3ptj5U1Xxcv13eg6jNB8W7nHoQ+vvt6v/7d
-        nuCC707OIaU3LsS4HBpY0C+l3FrqU2VKKU6lPOlJajjlH94GPwtAAwAA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRG1pdHJ5LA0KWWVzLCB3ZSBhcmUgYXdhcmUgb2YgdGhpcywgdGhlIGtlcm5lbCB0ZXN0IHJv
-Ym90IHdhcm5lZCB1cyBhYm91dCB0aGlzIGEgZmV3IGRheXMgYWdvLg0KSSBhbSBsb29raW5nIGlu
-dG8gaXQuDQoNCi8vL2pvbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206
-IERtaXRyeSBWeXVrb3YgPGR2eXVrb3ZAZ29vZ2xlLmNvbT4NCj4gU2VudDogT2N0b2JlciAxMSwg
-MjAxOCAzOjU1IEFNDQo+IFRvOiBwYXJ0aGFzYXJhdGh5LmJodXZhcmFnYW5AZXJpY3Nzb24uY29t
-OyBKb24gTWFsb3kNCj4gPGpvbi5tYWxveUBlcmljc3Nvbi5jb20+OyBEYXZpZCBNaWxsZXIgPGRh
-dmVtQGRhdmVtbG9mdC5uZXQ+OyBZaW5nIFh1ZQ0KPiA8eWluZy54dWVAd2luZHJpdmVyLmNvbT47
-IG5ldGRldiA8bmV0ZGV2QHZnZXIua2VybmVsLm9yZz47IHRpcGMtDQo+IGRpc2N1c3Npb25AbGlz
-dHMuc291cmNlZm9yZ2UubmV0OyBMS01MIDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-IFN1YmplY3Q6IG5ldC90aXBjOiByZWN1cnNpdmUgbG9ja2luZyBpbiB0aXBjX2xpbmtfcmVzZXQN
-Cj4gDQo+IEhpLA0KPiANCj4gSSBhbSBnZXR0aW5nIHRoZSBmb2xsb3dpbmcgZXJyb3Igd2hpbGUg
-Ym9vdGluZyB0aGUgbGF0ZXN0IGtlcm5lbCBvbg0KPiBiYjJkOGYyZjYxMDQ3Y2JkZTA4Yjc4ZWMw
-M2U0ZWJkYjAxZWU1NDM0IChPY3QgMTApLiBDb25maWcgaXMgYXR0YWNoZWQuDQo+IA0KPiBTaW5j
-ZSB0aGlzIGhhcHBlbnMgZHVyaW5nIGJvb3QsIHRoaXMgbWFrZXMgTE9DS0RFUCBjb21wbGV0ZWx5
-IHVudXNhYmxlLA0KPiBkb2VzIG5vdCBhbGxvdyB0byBkaXNjb3ZlciBhbnkgb3RoZXIgbG9ja2lu
-ZyBpc3N1ZXMgYW5kIG1hc2tzIGFsbCBuZXcgYnVncw0KPiBiZWluZyBpbnRyb2R1Y2VkIGludG8g
-a2VybmVsLg0KPiBQbGVhc2UgZml4IGFzYXAuDQo+IFRoYW5rcw0KPiANCj4gDQo+IFdBUk5JTkc6
-IHBvc3NpYmxlIHJlY3Vyc2l2ZSBsb2NraW5nIGRldGVjdGVkIDQuMTkuMC1yYzcrICMxNCBOb3Qg
-dGFpbnRlZA0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-PiBzd2FwcGVyLzAvMSBpcyB0cnlpbmcgdG8gYWNxdWlyZSBsb2NrOg0KPiAwMDAwMDAwMGRjZmMw
-ZmM4ICgmKCZsaXN0LT5sb2NrKS0+cmxvY2sjNCl7Ky4uLn0sIGF0OiBzcGluX2xvY2tfYmgNCj4g
-aW5jbHVkZS9saW51eC9zcGlubG9jay5oOjMzNCBbaW5saW5lXQ0KPiAwMDAwMDAwMGRjZmMwZmM4
-ICgmKCZsaXN0LT5sb2NrKS0+cmxvY2sjNCl7Ky4uLn0sIGF0Og0KPiB0aXBjX2xpbmtfcmVzZXQr
-MHgxMjUvMHhkZjAgbmV0L3RpcGMvbGluay5jOjg1MA0KPiANCj4gYnV0IHRhc2sgaXMgYWxyZWFk
-eSBob2xkaW5nIGxvY2s6DQo+IDAwMDAwMDAwY2JiOWIwMzYgKCYoJmxpc3QtPmxvY2spLT5ybG9j
-ayM0KXsrLi4ufSwgYXQ6IHNwaW5fbG9ja19iaA0KPiBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6
-MzM0IFtpbmxpbmVdDQo+IDAwMDAwMDAwY2JiOWIwMzYgKCYoJmxpc3QtPmxvY2spLT5ybG9jayM0
-KXsrLi4ufSwgYXQ6DQo+IHRpcGNfbGlua19yZXNldCsweGZhLzB4ZGYwIG5ldC90aXBjL2xpbmsu
-Yzo4NDkNCj4gDQo+IG90aGVyIGluZm8gdGhhdCBtaWdodCBoZWxwIHVzIGRlYnVnIHRoaXM6DQo+
-ICBQb3NzaWJsZSB1bnNhZmUgbG9ja2luZyBzY2VuYXJpbzoNCj4gDQo+ICAgICAgICBDUFUwDQo+
-ICAgICAgICAtLS0tDQo+ICAgbG9jaygmKCZsaXN0LT5sb2NrKS0+cmxvY2sjNCk7DQo+ICAgbG9j
-aygmKCZsaXN0LT5sb2NrKS0+cmxvY2sjNCk7DQo+IA0KPiAgKioqIERFQURMT0NLICoqKg0KPiAN
-Cj4gIE1heSBiZSBkdWUgdG8gbWlzc2luZyBsb2NrIG5lc3Rpbmcgbm90YXRpb24NCj4gDQo+IDIg
-bG9ja3MgaGVsZCBieSBzd2FwcGVyLzAvMToNCj4gICMwOiAwMDAwMDAwMGY3NTM5ZDM0IChwZXJu
-ZXRfb3BzX3J3c2VtKXsrLisufSwgYXQ6DQo+IHJlZ2lzdGVyX3Blcm5ldF9zdWJzeXMrMHgxOS8w
-eDQwIG5ldC9jb3JlL25ldF9uYW1lc3BhY2UuYzoxMDUxDQo+ICAjMTogMDAwMDAwMDBjYmI5YjAz
-NiAoJigmbGlzdC0+bG9jayktPnJsb2NrIzQpeysuLi59LCBhdDoNCj4gc3Bpbl9sb2NrX2JoIGlu
-Y2x1ZGUvbGludXgvc3BpbmxvY2suaDozMzQgW2lubGluZV0NCj4gICMxOiAwMDAwMDAwMGNiYjli
-MDM2ICgmKCZsaXN0LT5sb2NrKS0+cmxvY2sjNCl7Ky4uLn0sIGF0Og0KPiB0aXBjX2xpbmtfcmVz
-ZXQrMHhmYS8weGRmMCBuZXQvdGlwYy9saW5rLmM6ODQ5DQo+IA0KPiBzdGFjayBiYWNrdHJhY2U6
-DQo+IENQVTogMCBQSUQ6IDEgQ29tbTogc3dhcHBlci8wIE5vdCB0YWludGVkIDQuMTkuMC1yYzcr
-ICMxNCBIYXJkd2FyZSBuYW1lOg0KPiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAx
-OTk2KSwgQklPUyAxLjEwLjItMSAwNC8wMS8yMDE0IENhbGwgVHJhY2U6DQo+ICBfX2R1bXBfc3Rh
-Y2sgbGliL2R1bXBfc3RhY2suYzo3NyBbaW5saW5lXQ0KPiAgZHVtcF9zdGFjaysweDFhZi8weDI5
-NSBsaWIvZHVtcF9zdGFjay5jOjExMyAgcHJpbnRfZGVhZGxvY2tfYnVnDQo+IGtlcm5lbC9sb2Nr
-aW5nL2xvY2tkZXAuYzoxNzU5IFtpbmxpbmVdICBjaGVja19kZWFkbG9jaw0KPiBrZXJuZWwvbG9j
-a2luZy9sb2NrZGVwLmM6MTgwMyBbaW5saW5lXSAgdmFsaWRhdGVfY2hhaW4NCj4ga2VybmVsL2xv
-Y2tpbmcvbG9ja2RlcC5jOjIzOTkgW2lubGluZV0NCj4gIF9fbG9ja19hY3F1aXJlKzB4ZjFlLzB4
-M2M2MCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6MzQxMQ0KPiAgbG9ja19hY3F1aXJlKzB4MWRi
-LzB4NTIwIGtlcm5lbC9sb2NraW5nL2xvY2tkZXAuYzozOTAwDQo+IF9fcmF3X3NwaW5fbG9ja19i
-aCBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrX2FwaV9zbXAuaDoxMzUgW2lubGluZV0NCj4gIF9yYXdf
-c3Bpbl9sb2NrX2JoKzB4MzEvMHg0MCBrZXJuZWwvbG9ja2luZy9zcGlubG9jay5jOjE2OCAgc3Bp
-bl9sb2NrX2JoDQo+IGluY2x1ZGUvbGludXgvc3BpbmxvY2suaDozMzQgW2lubGluZV0NCj4gIHRp
-cGNfbGlua19yZXNldCsweDEyNS8weGRmMCBuZXQvdGlwYy9saW5rLmM6ODUwDQo+ICB0aXBjX2xp
-bmtfYmNfY3JlYXRlKzB4YjUvMHgxZjAgbmV0L3RpcGMvbGluay5jOjUyNg0KPiAgdGlwY19iY2Fz
-dF9pbml0KzB4NTliLzB4YWIwIG5ldC90aXBjL2JjYXN0LmM6NTIxDQo+ICB0aXBjX2luaXRfbmV0
-KzB4NDcyLzB4NjEwIG5ldC90aXBjL2NvcmUuYzo4Mg0KPiAgb3BzX2luaXQrMHhmNy8weDUyMCBu
-ZXQvY29yZS9uZXRfbmFtZXNwYWNlLmM6MTI5DQo+IF9fcmVnaXN0ZXJfcGVybmV0X29wZXJhdGlv
-bnMgbmV0L2NvcmUvbmV0X25hbWVzcGFjZS5jOjk0MCBbaW5saW5lXQ0KPiAgcmVnaXN0ZXJfcGVy
-bmV0X29wZXJhdGlvbnMrMHg0NTMvMHhhYzAgbmV0L2NvcmUvbmV0X25hbWVzcGFjZS5jOjEwMTEN
-Cj4gIHJlZ2lzdGVyX3Blcm5ldF9zdWJzeXMrMHgyOC8weDQwIG5ldC9jb3JlL25ldF9uYW1lc3Bh
-Y2UuYzoxMDUyDQo+ICB0aXBjX2luaXQrMHg4My8weDEwNCBuZXQvdGlwYy9jb3JlLmM6MTQwICBk
-b19vbmVfaW5pdGNhbGwrMHgxMDkvMHg3MGENCj4gaW5pdC9tYWluLmM6ODg1ICBkb19pbml0Y2Fs
-bF9sZXZlbCBpbml0L21haW4uYzo5NTMgW2lubGluZV0gIGRvX2luaXRjYWxscw0KPiBpbml0L21h
-aW4uYzo5NjEgW2lubGluZV0gIGRvX2Jhc2ljX3NldHVwIGluaXQvbWFpbi5jOjk3OSBbaW5saW5l
-XQ0KPiBrZXJuZWxfaW5pdF9mcmVlYWJsZSsweDRiZC8weDU3ZiBpbml0L21haW4uYzoxMTQ0DQo+
-ICBrZXJuZWxfaW5pdCsweDEzLzB4MTgwIGluaXQvbWFpbi5jOjEwNjMNCj4gIHJldF9mcm9tX2Zv
-cmsrMHgzYS8weDUwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6NDEzDQo=
+On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
+> There is a bug that kaslr may randomly chooses some positions
+> which are located in movable memory regions. This will break memory
+> hotplug feature and make the movable memory chosen by KASLR can't be
+> removed. So dig SRAT table from ACPI tables to get memory information.
+> 
+> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
+> tables. Since some operations are not needed here, functions are
+> simplified. Functions will be used to dig only SRAT tables to get
+> information of memory, so that KASLR can the memory in immovable node.
+> 
+> And also, these functions won't influence the initialization of
+> ACPI after start_kernel().
+> 
+> Since use physical address directely, so acpi_os_map_memory()
+> and acpi_os_unmap_memory() are not needed.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/Makefile |   2 +
+>  arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
+>  arch/x86/boot/compressed/misc.h   |   8 +
+>  3 files changed, 415 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+> 
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 28764dacf018..1609e4efcaed 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -83,6 +83,8 @@ ifdef CONFIG_X86_64
+>  	vmlinux-objs-y += $(obj)/pgtable_64.o
+>  endif
+>  
+> +vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
+
+This should be CONFIG_MEMORY_HOTREMOVE *and* CONFIG_RANDOMIZE_BASE.
+Otherwise we don't need all that code.
+
+>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
+>  
+>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+> new file mode 100644
+> index 000000000000..6b869e3f9780
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/acpitb.c
+> @@ -0,0 +1,405 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define BOOT_CTYPE_H
+> +#include "misc.h"
+> +#include "error.h"
+> +
+> +#include <linux/efi.h>
+> +#include <asm/efi.h>
+> +#include <linux/numa.h>
+> +#include <linux/acpi.h>
+> +
+> +extern unsigned long get_cmd_line_ptr(void);
+> +
+> +#define STATIC
+> +#include <linux/decompress/mm.h>
+> +
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +struct mem_vector {
+> +	unsigned long long start;
+> +	unsigned long long size;
+> +};
+> +/* Store the immovable memory regions */
+> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
+> +#endif
+> +
+> +#ifdef CONFIG_EFI
+> +/* Search EFI table for rsdp table. */
+> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> +{
+> +	efi_system_table_t *systab;
+> +	bool find_rsdp = false;
+> +	bool efi_64 = false;
+> +	void *config_tables;
+> +	struct efi_info *e;
+> +	char *sig;
+> +	int size;
+> +	int i;
+> +
+> +	e = &boot_params->efi_info;
+> +	sig = (char *)&e->efi_loader_signature;
+> +
+> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
+> +		efi_64 = true;
+> +	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
+> +		efi_64 = false;
+> +	else {
+> +		debug_putstr("Wrong EFI loader signature.\n");
+> +		return false;
+> +	}
+> +
+> +	/* Get systab from boot params. Based on efi_init(). */
+> +#ifdef CONFIG_X86_32
+
+Why the efi_64 detection above but the ifdeffery here? Why not test
+efi_64 instead?
+
+> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
+> +		debug_putstr("Table located above 4GB, disabling EFI.\n");
+
+Are you disabling EFI? Where?
+
+Ah, I see, this code is copied from arch/x86/platform/efi/efi.c.
+
+So when copying, fix the user-visible strings too.
+
+> +		return false;
+> +	}
+> +	systab = (efi_system_table_t *)e->efi_systab;
+> +#else
+> +	systab = (efi_system_table_t *)(
+> +			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
+> +#endif
+> +
+> +	if (systab == NULL)
+
+	if (!systab)
+
+Fix all other occurrences.
+
+> +		return false;
+> +
+> +	/*
+> +	 * Get EFI tables from systab. Based on efi_config_init() and
+> +	 * efi_config_parse_tables(). Only dig the config_table.
+
+					dig out
+
+> +	 */
+> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
+> +			sizeof(efi_config_table_32_t);
+> +
+> +	for (i = 0; i < systab->nr_tables; i++) {
+> +		efi_guid_t guid;
+> +		unsigned long table;
+> +
+> +		config_tables = (void *)(systab->tables + size * i);
+> +		if (efi_64) {
+> +			efi_config_table_64_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_64_t *)config_tables;
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +#ifndef CONFIG_64BIT
+> +			if (table >> 32) {
+> +				debug_putstr("Table located above 4G, disabling EFI.\n");
+
+Fix that.
+
+> +				return false;
+> +			}
+> +#endif
+> +		} else {
+> +			efi_config_table_32_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_32_t *)config_tables;
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +		}
+> +
+> +		/*
+> +		 * Get rsdp from EFI tables.
+> +		 * If ACPI20 table found, use it and return true.
+
+You don't have to say "return true" in the comment - that is in the code
+already.
+
+Also, this function - just like get_acpi_rsdp() doesn't need to return
+bool but the pa directly.
+
+> +		 * If ACPI20 table not found, but ACPI table found,
+> +		 * use the ACPI table and return true.
+> +		 * If neither ACPI table nor ACPI20 table found,
+> +		 * return false.
+> +		 */
+> +		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID))) {
+> +			*rsdp_addr = (acpi_physical_address)table;
+> +			find_rsdp = true;
+> +		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
+> +			*rsdp_addr = (acpi_physical_address)table;
+> +			return true;
+> +		}
+> +	}
+> +	return find_rsdp;
+> +}
+> +#else
+> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> +{
+> +	return false;
+> +}
+> +#endif
+
+Instead of doing this, move the ifdef inside the function:
+
+static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+{
+#ifdef CONFIG_EFI
+
+	/* function body */
+#endif
+}
+
+
+> +
+> +static u8 checksum(u8 *buffer, u32 length)
+
+compute_checksum(...)
+
+> +{
+> +	u8 sum = 0;
+> +	u8 *end = buffer + length;
+> +
+> +	while (buffer < end)
+> +		sum = (u8)(sum + *(buffer++));
+> +
+> +	return sum;
+> +}
+> +
+> +/*
+> + * Used to search a block of memory for the RSDP signature.
+> + * Return Pointer to the RSDP if found, otherwise NULL.
+> + * Based on acpi_tb_scan_memory_for_rsdp().
+> + */
+> +static u8 *scan_mem_for_rsdp(u8 *start_address, u32 length)
+> +{
+> +	struct acpi_table_rsdp *rsdp;
+> +	u8 *end_address;
+> +	u8 *mem_rover;
+> +
+> +	end_address = start_address + length;
+> +
+> +	/* Search from given start address for the requested length */
+> +	for (mem_rover = start_address; mem_rover < end_address;
+> +	     mem_rover += ACPI_RSDP_SCAN_STEP) {
+
+Shorten those variable names so that the loop fits on one line.
+
+> +		/*
+> +		 * The RSDP signature and checksum must both be correct
+> +		 * Note: Sometimes there exists more than one RSDP in memory;
+> +		 * the valid RSDP has a valid checksum, all others have an
+> +		 * invalid checksum.
+> +		 */
+> +		rsdp = (struct acpi_table_rsdp *)mem_rover;
+> +
+> +		/* Nope, BAD Signature */
+> +		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
+> +			continue;
+> +
+> +		/* Check the standard checksum */
+> +		if (checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH) != 0)
+
+No need for "!= 0" at the end. Fix all other tests too.
+
+> +			continue;
+> +
+> +		/* Check extended checksum if table version >= 2 */
+> +		if ((rsdp->revision >= 2) &&
+> +		    (checksum((u8 *) rsdp, ACPI_RSDP_XCHECKSUM_LENGTH) != 0))
+> +			continue;
+> +
+> +		/* Sig and checksum valid, we have found a real RSDP */
+> +		return mem_rover;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * Used to search RSDP physical address.
+> + * Based on acpi_find_root_pointer(). Since only use physical address
+> + * in this period, so there is no need to do the memory map jobs.
+> + */
+> +static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> +{
+> +	struct acpi_table_rsdp *rsdp;
+> +	u8 *table_ptr;
+> +	u8 *mem_rover;
+> +	u32 address;
+> +
+> +	/*
+> +	 * Get the location of the Extended BIOS Data Area (EBDA)
+> +	 * Since we use physical address directely, so
+> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
+> +	 * not needed here.
+> +	 */
+> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
+> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
+> +	address <<= 4;
+> +	table_ptr = (u8 *)address;
+> +
+> +	/*
+> +	 * Search EBDA paragraphs (EBDA is required to be a minimum of
+> +	 * 1K length)
+> +	 */
+> +	if (address > 0x400) {
+> +		mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
+> +
+> +		if (mem_rover) {
+> +			address += (u32)ACPI_PTR_DIFF(mem_rover, table_ptr);
+> +			*rsdp_addr = (acpi_physical_address)address;
+> +			return;
+> +		}
+> +	}
+> +
+> +	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
+> +	mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
+> +
+> +	/*
+> +	 * Search upper memory: 16-byte boundaries in E0000h-FFFFFh
+> +	 * Since we use physical address directely, so
+> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
+> +	 * not needed here.
+> +	 */
+> +	if (mem_rover) {
+> +		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
+> +				ACPI_PTR_DIFF(mem_rover, table_ptr));
+> +		*rsdp_addr = (acpi_physical_address)address;
+> +		return;
+
+We will return anyway, without that statement. :)
+
+> +	}
+> +}
+> +
+> +#ifdef CONFIG_KEXEC
+> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	size_t len = strlen((char *)args);
+> +	char *tmp_cmdline, *param, *val;
+> +	unsigned long long addr = 0;
+> +	char *endptr;
+> +
+> +	if (!strstr(args, "acpi_rsdp="))
+> +		return false;
+> +
+> +	tmp_cmdline = malloc(len+1);
+> +	if (!tmp_cmdline)
+> +		error("Failed to allocate space for tmp_cmdline");
+
+Why do you even need to allocate a tmp cmdline?
+
+Ah, I see what you've done - you've copied handle_mem_options() in
+kaslr.c. Well no, not really.
+
+That functionality needs to get extracted into a separate facility. Oh
+look, there's arch/x86/boot/compressed/cmdline.c which is begging to get
+extended.
+
+:-)
+
+> +
+> +	memcpy(tmp_cmdline, args, len);
+> +	tmp_cmdline[len] = 0;
+> +	args = tmp_cmdline;
+> +
+> +	args = skip_spaces(args);
+> +
+> +	while (*args) {
+> +		args = next_arg(args, &param, &val);
+> +
+> +		if (!val && strcmp(param, "--") == 0) {
+> +			warn("Only '--' specified in cmdline");
+> +			free(tmp_cmdline);
+> +			return false;
+> +		}
+> +
+> +		if (!strcmp(param, "acpi_rsdp")) {
+> +			addr = simple_strtoull(val, &endptr, 0);
+
+WARNING: simple_strtoull is obsolete, use kstrtoull instead
+#321: FILE: arch/x86/boot/compressed/acpitb.c:262:
++                       addr = simple_strtoull(val, &endptr, 0);
+
+
+Please integrate scripts/checkpatch.pl into your patch creation
+workflow. Some of the warnings/errors *actually* make sense.
+
+> +
+> +			if (addr == 0)
+> +				return false;
+> +
+> +			*rsdp_addr = (acpi_physical_address)addr;
+> +			return true;
+> +		}
+> +	}
+> +	return false;
+> +}
+> +#else
+> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+> +/*
+> + * Used to dig rsdp table from EFI table or BIOS.
+
+Write "rsdp" in all caps in all comments.
+
+> + * If rsdp table found in EFI table, use it. Or search BIOS.
+> + * Based on acpi_os_get_root_pointer().
+> + */
+> +static acpi_physical_address get_rsdp_addr(void)
+> +{
+> +	acpi_physical_address pa = 0;
+> +	bool status = false;
+> +
+> +	status = get_acpi_rsdp(&pa);
+
+Why does this function return bool if pa == 0 is already an invalid
+address. You don't need the initialization to 0 above either.
+
+> +
+> +	if (!status || pa == 0)
+
+	if (!status || !pa)
+
+Fix all other tests.
+
+> +		status = efi_get_rsdp_addr(&pa);
+> +
+> +	if (!status || pa == 0)
+> +		bios_get_rsdp_addr(&pa);
+> +
+> +	return pa;
+> +}
+> +
+> +static struct acpi_table_header *get_acpi_srat_table(void)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	acpi_physical_address acpi_table;
+> +	acpi_physical_address root_table;
+> +	struct acpi_table_header *header;
+> +	struct acpi_table_rsdp *rsdp;
+> +	char *signature;
+> +	u8 *entry;
+> +	u32 count;
+> +	u32 size;
+> +	int i, j;
+> +	u32 len;
+> +
+> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+> +	if (!rsdp)
+> +		return NULL;
+> +
+> +	/* Get rsdt or xsdt from rsdp. */
+> +	if (!strstr(args, "acpi=rsdt") &&
+> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+> +		root_table = rsdp->xsdt_physical_address;
+> +		size = ACPI_XSDT_ENTRY_SIZE;
+> +	} else {
+> +		root_table = rsdp->rsdt_physical_address;
+> +		size = ACPI_RSDT_ENTRY_SIZE;
+> +	}
+
+Please rework the cmdline parsing so that the functions can call helpers
+only.
+
+> +
+> +	/* Get ACPI root table from rsdt or xsdt.*/
+> +	header = (struct acpi_table_header *)root_table;
+> +	len = header->length;
+> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+> +
+> +	for (i = 0; i < count; i++) {
+> +		u64 address64;
+> +
+> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+> +			acpi_table = ((acpi_physical_address)
+> +				      (*ACPI_CAST_PTR(u32, entry)));
+> +		else {
+> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+> +			acpi_table = (acpi_physical_address) address64;
+> +		}
+> +
+> +		if (acpi_table) {
+> +			header = (struct acpi_table_header *)acpi_table;
+> +			signature = header->signature;
+> +
+> +			if (!strncmp(signature, "SRAT", 4))
+> +				return header;
+> +		}
+> +		entry += size;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +void get_immovable_mem(void)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_end;
+> +	int i = 0;
+> +
+> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
+> +		return;
+
+Ditto.
+
+> +
+> +	table_header = get_acpi_srat_table();
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
+> +	while (((unsigned long)table) + table->length < table_end) {
+> +		if (table->type == 1) {
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+> +			}
+> +
+> +			if (i >= MAX_NUMNODES*2)
+> +				break;
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
+> +#else
+> +void get_immovable_mem(void)
+> +{
+> +}
+> +#endif
+
+This patch is a pain to review - pls split it into patches adding:
+
+* get_acpi_rsdp
+* efi_get_rsdp_addr
+* bios_get_rsdp_addr
+
+and the needed functionality.
+
+As a prepatch refactor the cmdline parsing pls.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
