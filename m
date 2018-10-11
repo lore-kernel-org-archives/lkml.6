@@ -2,175 +2,87 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C102C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E316EC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE0AC2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0AC2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9A7952087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:42:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7952087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeJKQIm (ORCPT
+        id S1728395AbeJKQJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:08:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33958 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726840AbeJKQIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:08:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F396B143;
-        Thu, 11 Oct 2018 08:42:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CF4921E3616; Thu, 11 Oct 2018 10:42:22 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 10:42:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-Message-ID: <20181011084222.GA8418@quack2.suse.cz>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
- <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
- <20181010085936.GC11507@quack2.suse.cz>
- <f5fb98a8-a1dc-6f1d-bc9e-210be14e91b4@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5fb98a8-a1dc-6f1d-bc9e-210be14e91b4@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 11 Oct 2018 12:09:10 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:44070 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeJKQJJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:09:09 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id m8ir1y0013XaVaC068irhG; Thu, 11 Oct 2018 10:42:51 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gAWYU-0000Ny-Tp; Thu, 11 Oct 2018 10:42:50 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gAWYU-0001Bg-Rp; Thu, 11 Oct 2018 10:42:50 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] lib/vsprintf: Hash remaining raw addresses
+Date:   Thu, 11 Oct 2018 10:42:46 +0200
+Message-Id: <20181011084249.4520-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 10-10-18 16:23:35, John Hubbard wrote:
-> On 10/10/18 1:59 AM, Jan Kara wrote:
-> > On Tue 09-10-18 17:42:09, John Hubbard wrote:
-> >> On 10/8/18 5:14 PM, Andrew Morton wrote:
-> >>> Also, maintainability.  What happens if someone now uses put_page() by
-> >>> mistake?  Kernel fails in some mysterious fashion?  How can we prevent
-> >>> this from occurring as code evolves?  Is there a cheap way of detecting
-> >>> this bug at runtime?
-> >>>
-> >>
-> >> It might be possible to do a few run-time checks, such as "does page that came 
-> >> back to put_user_page() have the correct flags?", but it's harder (without 
-> >> having a dedicated page flag) to detect the other direction: "did someone page 
-> >> in a get_user_pages page, to put_page?"
-> >>
-> >> As Jan said in his reply, converting get_user_pages (and put_user_page) to 
-> >> work with a new data type that wraps struct pages, would solve it, but that's
-> >> an awfully large change. Still...given how much of a mess this can turn into 
-> >> if it's wrong, I wonder if it's worth it--maybe? 
-> > 
-> > I'm certainly not opposed to looking into it. But after looking into this
-> > for a while it is not clear to me how to convert e.g. fs/direct-io.c or
-> > fs/iomap.c. They pass the reference from gup() via
-> > bio->bi_io_vec[]->bv_page and then release it after IO completion.
-> > Propagating the new type to ->bv_page is not good as lower layer do not
-> > really care how the page is pinned in memory. But we do need to somehow
-> > pass the information to the IO completion functions in a robust manner.
-> > 
-> 
-> You know, that problem has to be solved in either case: even if we do not
-> use a new data type for get_user_pages, we still need to clearly, accurately
-> match up the get/put pairs. And for the complicated systems (block IO, and
-> GPU DRM layer, especially) one of the things that has caused me concern is 
-> the way the pages all end up in a large, complicated pool, and put_page is
-> used to free all of them, indiscriminately.
+	Hi all,
 
-Agreed.
+There are still two format specifiers that print unhanced kernel
+addresses, potentially leaking sensitive information regarding the
+kernel layout in memory.
 
-> > Hmm, what about the following:
-> > 
-> > 1) Make gup() return new type - struct user_page *? In practice that would
-> > be just a struct page pointer with 0 bit set so that people are forced to
-> > use proper helpers and not just force types (and the setting of bit 0 and
-> > masking back would be hidden behind CONFIG_DEBUG_USER_PAGE_REFERENCES for
-> > performance reasons). Also the transition would have to be gradual so we'd
-> > have to name the function differently and use it from converted code.
-> 
-> Yes. That seems perfect: it just fades away if you're not debugging, but we
-> can catch lots of problems when CONFIG_DEBUG_USER_PAGE_REFERENCES is set. 
+This patch series fixes this by printing hashed addresses instead.
+    
+Changes compared to v1:
+  - Get rid of the forward declaration for ptr_to_id(),
+  - Add Reviewed-by.
 
-Yeah, and when you suspect issues with page pinning, you can try to run
-with CONFIG_DEBUG_USER_PAGE_REFERENCES enabled. It's not like the overhead
-is going to be huge. But it could be measurable for some workloads...
+Thanks!
 
-> > 2) Provide helper bio_add_user_page() that will take user_page, convert it
-> > to struct page, add it to the bio, and flag the bio as having pages with
-> > user references. That code would also make sure the bio is consistent in
-> > having only user-referenced pages in that case. IO completion (like
-> > bio_check_pages_dirty(), bio_release_pages() etc.) will check the flag and
-> > use approprite release function.
-> 
-> I'm very new to bio, so I have to ask: can we be sure that the same types of 
-> pages are always used, within each bio? Because otherwise, we'll have to plumb 
-> it all the way down to bio_vec's--or so it appears, based on my reading of 
-> bio_release_pages() and surrounding code.
+Geert Uytterhoeven (3):
+  lib/vsprintf: Prepare for more general use of ptr_to_id()
+  lib/vsprintf: Hash legacy clock addresses
+  lib/vsprintf: Hash printed address for netdev bits fallback
 
-No, we cannot be sure (the zero page usage within DIO code is one example
-when it currently is not true) although usually it is the case that same
-type of pages is used for one bio. But bio_add_page() (and thus similarly
-bio_add_user_page()) is fine to refuse adding a page to the bio and the
-caller then has to submit the current bio and start a new one. So we can
-just reuse this mechanism when we detect that currently passed page is of a
-different type than other pages in the bio.
+ Documentation/core-api/printk-formats.rst |   5 +-
+ lib/vsprintf.c                            | 216 +++++++++++-----------
+ 2 files changed, 110 insertions(+), 111 deletions(-)
 
-> > 3) I have noticed fs/direct-io.c may submit zero page for IO when it needs
-> > to clear stuff so we'll probably need a helper function to acquire 'user pin'
-> > reference given a page pointer so that that code can be kept reasonably
-> > simple and pass user_page references all around.
-> >
-> 
-> This only works if we don't set page flags, because if we do set page flags 
-> on the single, global zero page, that will break the world. So I'm not sure
-> that the zero page usage in fs/directio.c is going to survive the conversion
-> to this new approach. :)
-
-Hum, we can always allocate single page filled with zeros for the use by
-DIO code itself. But at this point I'm actually not sure why "user pinning"
-of zero page would be an issue. After all if you have private anonymous
-read-only mapping, it is going to be backed by zero pages and
-get_user_pages() and put_user_pages() have to propely detect pin attempts
-for these pages and handle them consistently... So DIO code does not seem
-to be doing anything that special.
-
-> > So this way we could maintain reasonable confidence that refcounts didn't
-> > get mixed up. Thoughts?
-> > 
-> 
-> After thinking some more about the complicated situations in bio and DRM,
-> and looking into the future (bug reports...), I am leaning toward your 
-> struct user_page approach. 
-> 
-> I'm looking forward to hearing other opinions on whether it's worth it to go
-> and do this fairly intrusive change, in return for, probably, fewer bugs along
-> the way.
-
-Yeah, at this point I think it is worth it as it's probably going to save
-us quite some hair-tearing when debugging stuff.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
