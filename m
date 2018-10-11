@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E900C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D0AC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FD121470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BD7B21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSrbaPOs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FD121470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTgn/uM5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD7B21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbeJKXGT (ORCPT
+        id S1729683AbeJKXGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35270 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:18 -0400
+        id S1727569AbeJKXGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E077213A2;
-        Thu, 11 Oct 2018 15:38:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABD842098A;
+        Thu, 11 Oct 2018 15:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272315;
-        bh=AHtaBdBa2vy0JQsd5lWKFZ6GwzqthADE/55kyfol1lc=;
+        s=default; t=1539272318;
+        bh=2N/YZf/8rQ/IfiiF/yls7DQoMMmjN3HCcKdKJ+mOqo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cSrbaPOsVlnDogf1rkSO6KLhOgE2ZJ0tn/MouH4BYhzqgpAWpTuis3yc0H2W1+dfT
-         DmK7/EH7eX+hqnpOkfZTZUNtOrKApDC46nh8fmJdS3SMKnoVpd5CVrY2o644i6Hsbt
-         mBm9OReKrl5kwmpOC3XkbxgqQzTCsWcNLbxtZjG8=
+        b=aTgn/uM5QqdeMyRkwx7zfQ54FcqogDNEyaGSKQnEdfmA/yYS1DbPTG684deqMjEGY
+         c7sg8LaUnh+2lbV5BkzOwzTMNkFLJZyLGNSCAxpl+j8+op+jJgL4yBBtHNfIzerg+P
+         e8WzbGrhTPssYKT5yPkMvy6D7eAkpAupObOCCRfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        David Gibson <dgibson@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 026/120] powerpc/kdump: Handle crashkernel memory reservation failure
-Date:   Thu, 11 Oct 2018 17:33:27 +0200
-Message-Id: <20181011152550.721617557@linuxfoundation.org>
+Subject: [PATCH 3.18 027/120] x86/tsc: Add missing header to tsc_msr.c
+Date:   Thu, 11 Oct 2018 17:33:28 +0200
+Message-Id: <20181011152550.761885302@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,39 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 8950329c4a64c6d3ca0bc34711a1afbd9ce05657 ]
+[ Upstream commit dbd0fbc76c77daac08ddd245afdcbade0d506e19 ]
 
-Memory reservation for crashkernel could fail if there are holes around
-kdump kernel offset (128M). Fail gracefully in such cases and print an
-error message.
+Add a missing header otherwise compiler warns about missed prototype:
 
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Tested-by: David Gibson <dgibson@redhat.com>
-Reviewed-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+CC      arch/x86/kernel/tsc_msr.o
+arch/x86/kernel/tsc_msr.c:73:15: warning: no previous prototype for ‘cpu_khz_from_msr’ [-Wmissing-prototypes]
+   unsigned long cpu_khz_from_msr(void)
+                 ^~~~~~~~~~~~~~~~
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Link: https://lkml.kernel.org/r/20180629193113.84425-4-andriy.shevchenko@linux.intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/machine_kexec.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/tsc_msr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kernel/machine_kexec.c
-+++ b/arch/powerpc/kernel/machine_kexec.c
-@@ -186,7 +186,12 @@ void __init reserve_crashkernel(void)
- 			(unsigned long)(crashk_res.start >> 20),
- 			(unsigned long)(memblock_phys_mem_size() >> 20));
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -21,6 +21,7 @@
+ #include <asm/setup.h>
+ #include <asm/apic.h>
+ #include <asm/param.h>
++#include <asm/tsc.h>
  
--	memblock_reserve(crashk_res.start, crash_size);
-+	if (!memblock_is_region_memory(crashk_res.start, crash_size) ||
-+	    memblock_reserve(crashk_res.start, crash_size)) {
-+		pr_err("Failed to reserve memory for crashkernel!\n");
-+		crashk_res.start = crashk_res.end = 0;
-+		return;
-+	}
- }
- 
- int overlaps_crashkernel(unsigned long start, unsigned long size)
+ /* CPU reference clock frequency: in KHz */
+ #define FREQ_83		83200
 
 
