@@ -2,236 +2,119 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259E8C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1811C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D938720841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3CFA20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:54:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWBbNkyN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D938720841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2qAiVQ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CFA20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbeJKVUL (ORCPT
+        id S1728541AbeJKVVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:20:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbeJKVUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:20:11 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B34A620659;
-        Thu, 11 Oct 2018 13:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539265973;
-        bh=tWVO+bSXIviYHKCVY9xQSW6yCsYULe63EQXygG3TGBY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BWBbNkyNT1oSOs7RvouJGPJGYuJIhBXS/mBMgrqHzHQ3/3gBs36Rq8rWiMJWOEcdY
-         i2bSwlW4IrCS1H+7pMww1uW09JJupL+1yQq9FV3jJXYI/u82J8QdDm5dmUVaVyfoEG
-         bAOtaibAmulurHtqqdJtLVdkjzUsviPSCjJnUISQ=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     p.zabel@pengutronix.de
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org, marex@denx.de
-Subject: [PATCHv2] reset: socfpga: add an early reset driver for SoCFPGA
-Date:   Thu, 11 Oct 2018 08:52:41 -0500
-Message-Id: <20181011135241.13614-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 11 Oct 2018 17:21:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45134 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbeJKVVq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:21:46 -0400
+Received: by mail-qt1-f196.google.com with SMTP id e10-v6so9854426qtq.12;
+        Thu, 11 Oct 2018 06:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=AHAHlQi25M+c6q7IMVDEmbVnhALQVuAichmsKty7Sd4=;
+        b=K2qAiVQ2M7/0F76wlEFLJRrAdYq54Ps37drhzwIma66fRIiSZapKQn386Pl/4hl7tW
+         GL6GxJ1M11jDYz0jRB5kXgjgTV8uFqS5kPKWaJdks86ih0kv7WSdR7kK2PDmoEcCbkLI
+         Gp9QxTL9SjoTupgoyR6LmHhEBHxg6KDJmBwpBWt8vHTGOa/MvTYD99yXaLkm+j4ocggb
+         OFdM3+bqWOO7Be10+/Go3HV5dHEZmz1m5c/QVMoKruqN5ZV3wdgVWxKkEhYb/oMN3ban
+         Ql0ddkCW3WSmUUZfj7HrLtst+KitLQP0vB3J7QPGthMNnXrL7S6zM+4SDjpm6WuAWuhX
+         dArg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=AHAHlQi25M+c6q7IMVDEmbVnhALQVuAichmsKty7Sd4=;
+        b=tcjChSkAtWcRLOeEL4BiFP7CEo0cOk8kjiPiBNgRRuqxqvrGG2zz9W81ccr1eelnie
+         1P7Gj/dvky4xTTsSOZyzOt94gG2wsTtryKRG0DDJvlFNp3NE4DL9K4cDE1THR5OJKGNq
+         1QelNidHAIHoY6HpTOIUaopeUYIHxDBz8/QoIYunzcDlMO6RQgRpMok1sjZNPoPnLNGa
+         L5v/uB5ytZuN6C9e9JT3lIVc77xDWzLk+jglcrNZqyZqA+ftikJGCZ41/ktXr/w054MR
+         PB+bQQpi49ZGcHyeR5J1m8Bf1WvUvvB4gIRgEEm6gy88mDzw7KHh6I8m05geQAUK77dD
+         EpEQ==
+X-Gm-Message-State: ABuFfoi82WIDoSSoijOajyIeHTxy4qThWjKa2xuLFi4jyoEgOqly9czF
+        gCSnRmnbHo0/ikjgy6c3zNMjuug3gqST0N8+OQM=
+X-Google-Smtp-Source: ACcGV62cezxh16rbJ+Dnvx/z0db94KDAxvbhnR3avcuw8stNd2S+Ye08xlsWKdL5cyYqj9k4u7iUYTCj8IPOxmu5Uiw=
+X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr1568028qtl.343.1539266067908;
+ Thu, 11 Oct 2018 06:54:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:fd8b:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 06:54:27
+ -0700 (PDT)
+In-Reply-To: <20181011103750.GA29735@kroah.com>
+References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
+ <20180824204756.e787765461975cd1e27502dc@kernel.org> <20180824224211.2934d7c0@canb.auug.org.au>
+ <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org> <20180828072333.36af4d5d@canb.auug.org.au>
+ <20180828094341.d20d8fbcb9dca310d44df951@kernel.org> <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
+ <20181011114809.5590ecb3@canb.auug.org.au> <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
+ <20181011205849.6f6645fa@canb.auug.org.au> <20181011103750.GA29735@kroah.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Oct 2018 15:54:27 +0200
+X-Google-Sender-Auth: rWvyzATHuKqZxnvFJ9vcBv8KCqo
+Message-ID: <CAK8P3a3DTbcSgOEqt-zAsX9DpVSOmS6apYXXkRHK2FKc5mvW2Q@mail.gmail.com>
+Subject: Re: linux-next: build warnings from the build of Linus' tree
+To:     Greg KH <gregkh@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a separate reset driver that uses the reset operations in
-reset-simple. The reset driver for the SoCFPGA platform needs to
-register early in order to be able bring online timers that needed
-early in the kernel bootup.
+On 10/11/18, Greg KH <gregkh@linux-foundation.org> wrote:
+> On Thu, Oct 11, 2018 at 08:58:49PM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter
+>> <oberpar@linux.ibm.com> wrote:
+>> >
+>> > On 11.10.2018 02:48, Stephen Rothwell wrote:
+>> > > OK, I have been carrying this "quick fix" patch in linux-next since
+>> > > September 7.  Is anyone going to pick this up and send it to
+>> > > Greg/Linus, please?
+>> >
+>> > Sorry about that - I posted a modified fix at
+>> >
+>> >   https://lkml.org/lkml/2018/9/13/367
+>> >
+>> > but didn't get a response. I guess I should have reposted sooner. But
+>> > before I do that:
+>> >
+>> > Arnd: Is this something that you can pick up or should I include
+>> > someone
+>> > else?
+>>
+>> It would be nice if it could go in before the v4.19 release because the
+>> commit that exposed the warnings went into v4.19-rc1.
+>
+> I agree.  If someone could at least review/ack it, that would be great.
 
-We do not need this early reset driver for Stratix10, because on
-arm64, Linux does not need the timers are that in reset. Linux is
-able to run just fine with the internal armv8 timer.
+I've added it to my randconfig test tree and spent the day building
+random configurations with this (after reverting the version that Stephen
+had in linux-next). The patches both look reasonable to me and the
+build warnings did not come back in any obscure configuration, so
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v2: Do not build separate reset driver for STRATIX10
-    fix warning: symbol 'socfpga_reset_init' was not declared. Should
-    it be static?
----
- arch/arm/mach-socfpga/socfpga.c |  4 ++
- drivers/reset/Kconfig           |  9 +++-
- drivers/reset/Makefile          |  1 +
- drivers/reset/reset-socfpga.c   | 88 +++++++++++++++++++++++++++++++++
- 4 files changed, 101 insertions(+), 1 deletion(-)
- create mode 100644 drivers/reset/reset-socfpga.c
-
-diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
-index dde14f7bf2c3..cc64576c102b 100644
---- a/arch/arm/mach-socfpga/socfpga.c
-+++ b/arch/arm/mach-socfpga/socfpga.c
-@@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
- void __iomem *sdr_ctl_base_addr;
- unsigned long socfpga_cpu1start_addr;
- 
-+extern void __init socfpga_reset_init(void);
-+
- void __init socfpga_sysmgr_init(void)
- {
- 	struct device_node *np;
-@@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
- 
- 	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
- 		socfpga_init_ocram_ecc();
-+	socfpga_reset_init();
- }
- 
- static void __init socfpga_arria10_init_irq(void)
-@@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
- 		socfpga_init_arria10_l2_ecc();
- 	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
- 		socfpga_init_arria10_ocram_ecc();
-+	socfpga_reset_init();
- }
- 
- static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 13d28fdbdbb5..f10de5ce4753 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -100,7 +100,7 @@ config RESET_QCOM_AOSS
- 
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
--	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-+	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
- 	help
- 	  This enables a simple reset controller driver for reset lines that
- 	  that can be asserted and deasserted by toggling bits in a contiguous,
-@@ -119,6 +119,13 @@ config RESET_STM32MP157
- 	help
- 	  This enables the RCC reset controller driver for STM32 MPUs.
- 
-+config RESET_SOCFPGA
-+	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
-+	default ARCH_SOCFPGA && !ARCH_STRATIX10
-+	select RESET_SIMPLE
-+	help
-+	  This enables the reset driver for SoCFPGA.
-+
- config RESET_SUNXI
- 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
- 	default ARCH_SUNXI
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 4243c38228e2..d09bb41273f6 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
-+obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
-new file mode 100644
-index 000000000000..b92769861d2b
---- /dev/null
-+++ b/drivers/reset/reset-socfpga.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier:	GPL-2.0
-+/*
-+ * Copyright (C) 2018, Intel Corporation
-+ * Copied from reset-sunxi.c
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+
-+#include "reset-simple.h"
-+
-+#define SOCFPGA_NR_BANKS	8
-+void __init socfpga_reset_init(void);
-+
-+static int a10_reset_init(struct device_node *np)
-+{
-+	struct reset_simple_data *data;
-+	struct resource res;
-+	resource_size_t size;
-+	int ret;
-+	u32 reg_offset = 0x10;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	ret = of_address_to_resource(np, 0, &res);
-+	if (ret)
-+		goto err_alloc;
-+
-+	size = resource_size(&res);
-+	if (!request_mem_region(res.start, size, np->name)) {
-+		ret = -EBUSY;
-+		goto err_alloc;
-+	}
-+
-+	data->membase = ioremap(res.start, size);
-+	if (!data->membase) {
-+		ret = -ENOMEM;
-+		goto err_alloc;
-+	}
-+
-+	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
-+		pr_warn("missing altr,modrst-offset property, assuming 0x10\n");
-+	data->membase += reg_offset;
-+
-+	spin_lock_init(&data->lock);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.nr_resets = SOCFPGA_NR_BANKS * 32;
-+	data->rcdev.ops = &reset_simple_ops;
-+	data->rcdev.of_node = np;
-+	data->status_active_low = true;
-+
-+	return reset_controller_register(&data->rcdev);
-+
-+err_alloc:
-+	kfree(data);
-+	return ret;
-+};
-+
-+/*
-+ * These are the reset controller we need to initialize early on in
-+ * our system, before we can even think of using a regular device
-+ * driver for it.
-+ * The controllers that we can register through the regular device
-+ * model are handled by the simple reset driver directly.
-+ */
-+static const struct of_device_id socfpga_early_reset_dt_ids[] __initconst = {
-+	{ .compatible = "altr,rst-mgr", },
-+	{ /* sentinel */ },
-+};
-+
-+void __init socfpga_reset_init(void)
-+{
-+	struct device_node *np;
-+
-+	for_each_matching_node(np, socfpga_early_reset_dt_ids)
-+		a10_reset_init(np);
-+}
--- 
-2.17.1
-
+Tested-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
