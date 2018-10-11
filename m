@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A909C46463
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A6EC46463
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A8720870
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CFA20644
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TFVYQeBD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A8720870
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aswPjPNs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CFA20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeJKHug (ORCPT
+        id S1727284AbeJKHuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:50:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35919 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeJKHuf (ORCPT
+        Thu, 11 Oct 2018 03:50:51 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44733 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbeJKHuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:50:35 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l81-v6so3457589pfg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 17:25:58 -0700 (PDT)
+        Thu, 11 Oct 2018 03:50:32 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p25-v6so3289255pli.11
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 17:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MDq8QXTvGfDQo8enk7I/8dLpEbR7SYI/PHjZNIdtOls=;
-        b=TFVYQeBD3isOYarr6fwcaguoEF1VqoyVIGS/Jy4VnBSn2ch8BFXlv3ocNYM/+XaNvU
-         4drzTWDWTFNWge+b+2BbGWlF2i90wvl1/SNzzKJXnrlqQpUF1WVonESt1NOKpO8aKjU2
-         UMTwYPv58C17E6wKQXqWMp1wLhBLl6zFy1YMk=
+        bh=piFJbUUnA3DqTyvccR0Ze8PG9upbNm6UGtvVT6YJ0+U=;
+        b=aswPjPNs9bK0tyjPisDP2i0c3HxiZJd9dkzq0IXlaPWuNK/z/NLKaysyb/tEQZqYWj
+         yuGe5dqHCdG/xOcXFanWAqPLhny9RIpqjtlmHncMmOeuzfPAtcL0wcwGNsgThWiWIPSO
+         3SeL8e8kMJ2pbTd18YM/XwjcsAG1VY1VIQRhA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MDq8QXTvGfDQo8enk7I/8dLpEbR7SYI/PHjZNIdtOls=;
-        b=BBiKG3Mc4lCaj6N1EqrVqM7mR/BOB7ZZcaNbo9X/GK/buNpeSeHYfy84LGkCauwmv8
-         /d/cLSWT1HLMDtjOcjxAiWDiBOSQYdBkSlHNW1DjEB9mG4pll2o9s/KFF8+Hldy0tFEC
-         EBy6RJ46zWJcfZdywoo2fogK2G0tXAZbj3nV8uqv8O9tbKiTGS/zWbTm9c2RLCErsv8u
-         /jVaOE5GsZSYBUJZtdPAa+67kp5MnVcMOA/SpSU+9LqDSE0ZGM3Tvgh87Dz3KCRvmMhW
-         T2ZshgV8gfKIHA6t7f5M2UqaXsL5ZAwByr7/XYfbzJ9R24CgxxRKvSqBClrO1hzIrj0o
-         KQTg==
-X-Gm-Message-State: ABuFfoigDBMwyiNl3TkFkgTPtDTYvmqo023XXTLTOrEgNEkOJjAQtHwE
-        b+achsD/4haR6Mj00SKm2sk1eg==
-X-Google-Smtp-Source: ACcGV63wJGPcUqiX1haS0R+LeYhgztWmc+PLTeJMbugNUBpVwZbLBngSTPX4KjH9F5Jbs3eX5FrsHg==
-X-Received: by 2002:a62:5e02:: with SMTP id s2-v6mr25795217pfb.146.1539217558491;
-        Wed, 10 Oct 2018 17:25:58 -0700 (PDT)
+        bh=piFJbUUnA3DqTyvccR0Ze8PG9upbNm6UGtvVT6YJ0+U=;
+        b=Bby2Sj/ibqVLddRzMSR5AhYZvt7Pt1Sn4qS5OH1vJJXA6cdCBo+nk6m2FMu+MlbPjt
+         AuUmArgaosu1eKqaADKmO1NrWOB27gn1q8wN7GYXnZ3PkHgkJgvc2rV4jLofVd4wJt7V
+         kE3vg21IUknlMu94Q6rVTUOkniYvfrii0gMeeyM9ZLjnaVTELgZJy5ua6l2k8U1XQuro
+         nYfZDKMpdbg3pF82aFWabXKAyo9U3LH9P5ovHH8HdHTMJhkOGjIA5nVdmLglarCCnfkY
+         miUmKX+vWnOAQR+rCA0j/ELGyM8Iqm63rdw8wLpwiRXG70EACn9Aal1mHFV00a41qOTf
+         ns6A==
+X-Gm-Message-State: ABuFfojPOeKk2/VpBRyKLZvFvw++ZrTUsmvKidznqMgANTD8uZKyFYbL
+        nzeqTvPTAQDL1EXlGEHGraHcWw==
+X-Google-Smtp-Source: ACcGV61GWZ/jEH6+pjl/Cg7EY2qZq9fOqxOtf2HYn5v8u6IR+5Y73sAiWB+W5hGJ2mYIohWFcE/jNQ==
+X-Received: by 2002:a17:902:6e17:: with SMTP id u23-v6mr36037411plk.28.1539217556469;
+        Wed, 10 Oct 2018 17:25:56 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id 187-v6sm43659859pfu.129.2018.10.10.17.25.50
+        by smtp.gmail.com with ESMTPSA id c28-v6sm82620821pfk.48.2018.10.10.17.25.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 17:25:57 -0700 (PDT)
+        Wed, 10 Oct 2018 17:25:50 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     James Morris <jmorris@namei.org>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v5 20/30] LSM: Prepare for reorganizing "security=" logic
-Date:   Wed, 10 Oct 2018 17:18:36 -0700
-Message-Id: <20181011001846.30964-21-keescook@chromium.org>
+Subject: [PATCH security-next v5 28/30] Yama: Initialize as ordered LSM
+Date:   Wed, 10 Oct 2018 17:18:44 -0700
+Message-Id: <20181011001846.30964-29-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
 References: <20181011001846.30964-1-keescook@chromium.org>
@@ -80,78 +80,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This moves the string handling for "security=" boot parameter into
-a stored pointer instead of a string duplicate. This will allow
-easier handling of the string when switching logic to use the coming
-enable/disable infrastructure.
+This converts Yama from being a direct "minor" LSM into an ordered LSM.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- security/security.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ include/linux/lsm_hooks.h | 5 -----
+ security/Kconfig          | 2 +-
+ security/security.c       | 1 -
+ security/yama/yama_lsm.c  | 8 +++++++-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index e6893ff9ca2b..833ec0f03795 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2087,10 +2087,5 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+ 
+ extern void __init capability_add_hooks(void);
+-#ifdef CONFIG_SECURITY_YAMA
+-extern void __init yama_add_hooks(void);
+-#else
+-static inline void __init yama_add_hooks(void) { }
+-#endif
+ 
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/Kconfig b/security/Kconfig
+index 550bd7032ab2..f2a04f922ede 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -241,7 +241,7 @@ source security/integrity/Kconfig
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "loadpin,integrity,selinux,smack,tomoyo,apparmor"
++	default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
 diff --git a/security/security.c b/security/security.c
-index f3777ed4ca80..1b1ee823457c 100644
+index 6ad1262aa6ab..2eb8afdd945d 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -34,9 +34,6 @@
+@@ -264,7 +264,6 @@ int __init security_init(void)
+ 	 * Load minor LSMs, with the capability module always first.
+ 	 */
+ 	capability_add_hooks();
+-	yama_add_hooks();
  
- #define MAX_LSM_EVM_XATTR	2
+ 	/* Load LSMs in specified order. */
+ 	ordered_lsm_init();
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..eb1da1303d2e 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -477,9 +477,15 @@ static void __init yama_init_sysctl(void)
+ static inline void yama_init_sysctl(void) { }
+ #endif /* CONFIG_SYSCTL */
  
--/* Maximum number of letters for an LSM name string */
--#define SECURITY_NAME_MAX	10
--
- /* How many LSMs were built into the kernel? */
- #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
- 
-@@ -45,9 +42,8 @@ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
- 
- char *lsm_names;
- /* Boot-time LSM user choice */
--static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
--	CONFIG_DEFAULT_SECURITY;
- static __initdata const char *chosen_lsm_order;
-+static __initdata const char *chosen_major_lsm;
- 
- static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
- 
-@@ -138,7 +134,7 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
- 		return true;
- 
- 	/* Disabled if this LSM isn't the chosen one. */
--	if (strcmp(lsm->name, chosen_lsm) != 0)
-+	if (strcmp(lsm->name, chosen_major_lsm) != 0)
- 		return false;
- 
- 	return true;
-@@ -195,6 +191,9 @@ static void __init ordered_lsm_init(void)
- 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
- 				GFP_KERNEL);
- 
-+	if (!chosen_major_lsm)
-+		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
-+
- 	if (chosen_lsm_order)
- 		ordered_lsm_parse(chosen_lsm_order, "cmdline");
- 	else
-@@ -257,12 +256,12 @@ int __init security_init(void)
- }
- 
- /* Save user chosen LSM */
--static int __init choose_lsm(char *str)
-+static int __init choose_major_lsm(char *str)
+-void __init yama_add_hooks(void)
++static int __init yama_init(void)
  {
--	strncpy(chosen_lsm, str, SECURITY_NAME_MAX);
-+	chosen_major_lsm = str;
- 	return 1;
+ 	pr_info("Yama: becoming mindful.\n");
+ 	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
+ 	yama_init_sysctl();
++	return 0;
  }
--__setup("security=", choose_lsm);
-+__setup("security=", choose_major_lsm);
- 
- /* Explicitly choose LSM initialization order. */
- static int __init choose_lsm_order(char *str)
++
++DEFINE_LSM(yama) = {
++	.name = "yama",
++	.init = yama_init,
++};
 -- 
 2.17.1
 
