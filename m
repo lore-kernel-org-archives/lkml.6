@@ -3,24 +3,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F29EC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7063C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D1B2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D1B2075C
+	by mail.kernel.org (Postfix) with ESMTP id 8412F2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8412F2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbeJKWts (ORCPT
+        id S1729013AbeJKWts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 11 Oct 2018 18:49:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21581 "EHLO mga17.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:21585 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728945AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Oct 2018 18:49:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +28,9 @@ Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:22:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="77271633"
+   d="scan'208";a="77271646"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:44 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:45 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -54,10 +54,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v5 06/11] x86/cet/ibt: Add arch_prctl functions for IBT
-Date:   Thu, 11 Oct 2018 08:16:49 -0700
-Message-Id: <20181011151654.27221-7-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 10/11] x86/vsyscall/64: Add ENDBR64 to vsyscall entry points
+Date:   Thu, 11 Oct 2018 08:16:53 -0700
+Message-Id: <20181011151654.27221-11-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151654.27221-1-yu-cheng.yu@intel.com>
 References: <20181011151654.27221-1-yu-cheng.yu@intel.com>
@@ -66,106 +65,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update ARCH_X86_CET_STATUS and ARCH_X86_CET_DISABLE to include
-Indirect Branch Tracking features.
+From: "H.J. Lu" <hjl.tools@gmail.com>
 
-Introduce:
-
-arch_prctl(ARCH_X86_CET_GET_LEGACY_BITMAP, unsigned long *addr)
-    Enable the Indirect Branch Tracking legacy code bitmap.
-    Allocate the bitmap if the task does not have one.
-
-    The parameter 'addr' is a pointer to a user buffer.
-    On returning to the caller, the kernel fills the following:
-
-    *addr = IBT bitmap base address
-    *(addr + 1) = IBT bitmap size
+Add ENDBR64 to vsyscall entry points.
 
 Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/uapi/asm/prctl.h |  1 +
- arch/x86/kernel/cet_prctl.c       | 35 +++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ arch/x86/entry/vsyscall/vsyscall_emu_64.S | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-index d962f0ec9ccf..fd4eae92c733 100644
---- a/arch/x86/include/uapi/asm/prctl.h
-+++ b/arch/x86/include/uapi/asm/prctl.h
-@@ -18,5 +18,6 @@
- #define ARCH_X86_CET_DISABLE		0x3002
- #define ARCH_X86_CET_LOCK		0x3003
- #define ARCH_X86_CET_ALLOC_SHSTK	0x3004
-+#define ARCH_X86_CET_GET_LEGACY_BITMAP	0x3005
+diff --git a/arch/x86/entry/vsyscall/vsyscall_emu_64.S b/arch/x86/entry/vsyscall/vsyscall_emu_64.S
+index c9596a9af159..08554445bef1 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_emu_64.S
++++ b/arch/x86/entry/vsyscall/vsyscall_emu_64.S
+@@ -18,16 +18,25 @@ __PAGE_ALIGNED_DATA
+ 	.type __vsyscall_page, @object
+ __vsyscall_page:
  
- #endif /* _ASM_X86_PRCTL_H */
-diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-index 320dbb620d61..dc7e9785f5e7 100644
---- a/arch/x86/kernel/cet_prctl.c
-+++ b/arch/x86/kernel/cet_prctl.c
-@@ -21,6 +21,8 @@ static int handle_get_status(unsigned long arg2)
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++	endbr64
++#endif
+ 	mov $__NR_gettimeofday, %rax
+ 	syscall
+ 	ret
  
- 	if (current->thread.cet.shstk_enabled)
- 		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-+	if (current->thread.cet.ibt_enabled)
-+		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
+ 	.balign 1024, 0xcc
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++	endbr64
++#endif
+ 	mov $__NR_time, %rax
+ 	syscall
+ 	ret
  
- 	shstk_base = current->thread.cet.shstk_base;
- 	shstk_size = current->thread.cet.shstk_size;
-@@ -56,6 +58,31 @@ static int handle_alloc_shstk(unsigned long arg2)
- 	return 0;
- }
- 
-+static int handle_bitmap(unsigned long arg2)
-+{
-+	unsigned long addr, size;
-+
-+	if (current->thread.cet.ibt_enabled) {
-+		int err;
-+
-+		err  = cet_setup_ibt_bitmap();
-+		if (err)
-+			return err;
-+
-+		addr = current->thread.cet.ibt_bitmap_addr;
-+		size = current->thread.cet.ibt_bitmap_size;
-+	} else {
-+		addr = 0;
-+		size = 0;
-+	}
-+
-+	if (put_user(addr, (unsigned long __user *)arg2) ||
-+	    put_user(size, (unsigned long __user *)arg2 + 1))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- int prctl_cet(int option, unsigned long arg2)
- {
- 	if (!cpu_x86_cet_enabled())
-@@ -70,6 +97,8 @@ int prctl_cet(int option, unsigned long arg2)
- 			return -EPERM;
- 		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
- 			cet_disable_free_shstk(current);
-+		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_IBT)
-+			cet_disable_ibt();
- 
- 		return 0;
- 
-@@ -80,6 +109,12 @@ int prctl_cet(int option, unsigned long arg2)
- 	case ARCH_X86_CET_ALLOC_SHSTK:
- 		return handle_alloc_shstk(arg2);
- 
-+	/*
-+	 * Allocate legacy bitmap and return address & size to user.
-+	 */
-+	case ARCH_X86_CET_GET_LEGACY_BITMAP:
-+		return handle_bitmap(arg2);
-+
- 	default:
- 		return -EINVAL;
- 	}
+ 	.balign 1024, 0xcc
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++	endbr64
++#endif
+ 	mov $__NR_getcpu, %rax
+ 	syscall
+ 	ret
 -- 
 2.17.1
 
