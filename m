@@ -2,232 +2,153 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBADC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF51FC4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA0C20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA0C20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8E14520841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:08:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E14520841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeJKVfS (ORCPT
+        id S1728640AbeJKVf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:35:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:25453 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbeJKVfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:35:16 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42WCV02j8gz9ttwC;
-        Thu, 11 Oct 2018 16:07:52 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id gPCVKpeayoJm; Thu, 11 Oct 2018 16:07:52 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42WCV01rtKz9ttvy;
-        Thu, 11 Oct 2018 16:07:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4D7D88B87A;
-        Thu, 11 Oct 2018 16:07:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id P2Ec4KOxg47O; Thu, 11 Oct 2018 16:07:54 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A200F8B86C;
-        Thu, 11 Oct 2018 16:07:53 +0200 (CEST)
-Subject: Re: [PATCH v3 02/24] drivers/video/fbdev: use ioremap_wc/wt() instead
- of __ioremap()
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Li Yang <leoyang.li@nxp.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Scott Wood <oss@buserror.net>, aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-block@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1539092111.git.christophe.leroy@c-s.fr>
- <25348d7faf67d5e2829aad03aef8096cd5f6908d.1539092111.git.christophe.leroy@c-s.fr>
-Message-ID: <8bd4cbe3-3c7e-1ecb-b627-1970ed7c48af@c-s.fr>
-Date:   Thu, 11 Oct 2018 16:07:52 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 17:35:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13621 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727510AbeJKVfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:35:25 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C36F53970C6AE;
+        Thu, 11 Oct 2018 22:07:46 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Thu, 11 Oct 2018
+ 22:07:38 +0800
+Subject: Re: [PATCH 0/7] hisi_sas: Misc bugfixes and an optimisation patch
+To:     Ming Lei <ming.lei@redhat.com>
+References: <1537801594-207139-1-git-send-email-john.garry@huawei.com>
+ <yq18t354532.fsf@oracle.com> <20181011063603.GA3456@infradead.org>
+ <118d01db-05f4-a85b-850c-c4e5a5616a16@huawei.com>
+ <20181011101534.GA31802@infradead.org>
+ <e2f35903-e28f-0fb5-7c61-47aa7f1a6926@huawei.com>
+ <20181011133159.GA31355@ming.t460p>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        chenxiang <chenxiang66@hisilicon.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <519812c7-970a-976c-7db5-a035bf4f4e24@huawei.com>
+Date:   Thu, 11 Oct 2018 15:07:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <25348d7faf67d5e2829aad03aef8096cd5f6908d.1539092111.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181011133159.GA31355@ming.t460p>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/10/2018 14:32, Ming Lei wrote:
+> On Thu, Oct 11, 2018 at 02:12:11PM +0100, John Garry wrote:
+>> On 11/10/2018 11:15, Christoph Hellwig wrote:
+>>> On Thu, Oct 11, 2018 at 10:59:11AM +0100, John Garry wrote:
+>>>>
+>>>>> blk-mq tags are always per-host (which has actually caused problems for
+>>>>> ATA, which is now using its own per-device tags).
+>>>>>
+>>>>
+>>>> So, for example, if Scsi_host.can_queue = 2048 and Scsi_host.nr_hw_queues =
+>>>> 16, then rq tags are still in range [0, 2048) for that HBA, i.e. invariant
+>>>> on queue count?
+>>>
+>>> Yes, if can_queue is 2048 you will gets tags from 0..2047.
+>>>
+>>
+>> I should be clear about some things before discussing this further. Our
+>> device has 16 hw queues. And each command we send to any queue in the device
+>> must have a unique tag across all hw queues for that device, and should be
+>> in the range [0, 2048) - it's called an IPTT. So Scsi_host.can_queue = 2048.
+>
+> Could you describe a bit about IPTT?
+>
+
+IPTT is an "Initiator Tag". It is a tag to map to the context of a hw 
+queue command. It is related to SAS protocol Initiator Port tag. I think 
+that most SAS HBAs have a similar concept.
+
+IPTTs are limited, and must be recycled when an IO completes. Our hw 
+supports upto 2048. So we have a limit of 2048 commands issued at any 
+point in time.
+
+Previously we had been managing IPTT in LLDD, but found rq tag can be 
+used as IPTT (as in 6/7), to gave a good performance boost.
+
+> Looks like the 16 hw queues are like reply queues in other drivers,
+> such as megara_sas, but given all the 16 reply queues share one tagset,
+> so the hw queue number has to be 1 from blk-mq's view.
+>
+>>
+>> However today we only expose a single queue to upper layer (for unrelated
+>> LLDD error handling restriction). We hope to expose all 16 queues in future,
+>> which is what I meant by "enabling SCSI MQ in the driver". However, with
+>> 6/7, this creates a problem, below.
+>
+> If the tag of each request from all hw queues has to be unique, you
+> can't expose all 16 queues.
+
+Well we can if we generate and manage the IPTT in the LLDD, as we had 
+been doing. If we want to use the rq tag - which 6/7 is for - then we can't.
+
+>
+>>
+>>> IFF you device needs different tags for different queues it can use
+>>> the blk_mq_unique_tag heper to generate unique global tag.
+>>
+>> So this helper can't help, as fundamentially the issue is "the tag field in
+>> struct request is unique per hardware queue but not all all hw queues".
+>> Indeed blk_mq_unique_tag() does give a unique global tag, but cannot be used
+>> for the IPTT.
+>>
+>> OTOH, We could expose 16 queues to upper layer, and drop 6/7, but we found
+>> it performs worse.
+>
+> We discussed this issue before, but not found a good solution yet for
+> exposing multiple hw queues to blk-mq.
+
+I just think that it's unfortunate that enabling blk-mq means that the 
+LLDD loses this unique tag across all queues in range [0, 
+Scsi_host.can_queue), so much so that we found performance better by not 
+exposing multiple queues and continuing to use single rq tag...
+
+>
+> However, we still get good performance in case of none scheduler by the
+> following patches:
+>
+> 8824f62246be blk-mq: fail the request in case issue failure
+> 6ce3dd6eec11 blk-mq: issue directly if hw queue isn't busy in case of 'none'
+>
+
+I think that these patches would have been included in our testing. I 
+need to check.
+
+>
+> Thanks,
+> Ming
 
 
-Le 09/10/2018 à 15:51, Christophe Leroy a écrit :
-> _PAGE_NO_CACHE is a platform specific flag. In addition, this flag
-> is misleading because one would think it requests a noncached page
-> whereas a noncached page is _PAGE_NO_CACHE | _PAGE_GUARDED
-> 
-> _PAGE_NO_CACHE alone means write combined noncached page, so lets
-> use ioremap_wc() instead.
-> 
-> _PAGE_WRITETHRU is also platform specific flag. Use ioremap_wt()
-> instead.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Thanks,
+John
 
-Forgot to add back the acked-by: tags.
+>
+> .
+>
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Thanks
-Christophe
-
-> ---
->   drivers/video/fbdev/chipsfb.c    |  3 +--
->   drivers/video/fbdev/controlfb.c  |  5 +----
->   drivers/video/fbdev/platinumfb.c |  5 +----
->   drivers/video/fbdev/valkyriefb.c | 12 ++++++------
->   4 files changed, 9 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
-> index f103665cad43..40182ed85648 100644
-> --- a/drivers/video/fbdev/chipsfb.c
-> +++ b/drivers/video/fbdev/chipsfb.c
-> @@ -27,7 +27,6 @@
->   #include <linux/init.h>
->   #include <linux/pci.h>
->   #include <linux/console.h>
-> -#include <asm/io.h>
->   
->   #ifdef CONFIG_PMAC_BACKLIGHT
->   #include <asm/backlight.h>
-> @@ -401,7 +400,7 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
->   #endif /* CONFIG_PMAC_BACKLIGHT */
->   
->   #ifdef CONFIG_PPC
-> -	p->screen_base = __ioremap(addr, 0x200000, _PAGE_NO_CACHE);
-> +	p->screen_base = ioremap_wc(addr, 0x200000);
->   #else
->   	p->screen_base = ioremap(addr, 0x200000);
->   #endif
-> diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
-> index 8d14b29aafea..9cb0ef7ac29e 100644
-> --- a/drivers/video/fbdev/controlfb.c
-> +++ b/drivers/video/fbdev/controlfb.c
-> @@ -48,9 +48,7 @@
->   #include <linux/nvram.h>
->   #include <linux/adb.h>
->   #include <linux/cuda.h>
-> -#include <asm/io.h>
->   #include <asm/prom.h>
-> -#include <asm/pgtable.h>
->   #include <asm/btext.h>
->   
->   #include "macmodes.h"
-> @@ -715,8 +713,7 @@ static int __init control_of_init(struct device_node *dp)
->   		goto error_out;
->   	}
->   	/* map at most 8MB for the frame buffer */
-> -	p->frame_buffer = __ioremap(p->frame_buffer_phys, 0x800000,
-> -				    _PAGE_WRITETHRU);
-> +	p->frame_buffer = ioremap_wt(p->frame_buffer_phys, 0x800000);
->   
->   	if (!p->control_regs_phys ||
->   	    !request_mem_region(p->control_regs_phys, p->control_regs_size,
-> diff --git a/drivers/video/fbdev/platinumfb.c b/drivers/video/fbdev/platinumfb.c
-> index 377d3399a3ad..bf6b7fb83cf4 100644
-> --- a/drivers/video/fbdev/platinumfb.c
-> +++ b/drivers/video/fbdev/platinumfb.c
-> @@ -32,9 +32,7 @@
->   #include <linux/nvram.h>
->   #include <linux/of_device.h>
->   #include <linux/of_platform.h>
-> -#include <asm/io.h>
->   #include <asm/prom.h>
-> -#include <asm/pgtable.h>
->   
->   #include "macmodes.h"
->   #include "platinumfb.h"
-> @@ -577,8 +575,7 @@ static int platinumfb_probe(struct platform_device* odev)
->   
->   	/* frame buffer - map only 4MB */
->   	pinfo->frame_buffer_phys = pinfo->rsrc_fb.start;
-> -	pinfo->frame_buffer = __ioremap(pinfo->rsrc_fb.start, 0x400000,
-> -					_PAGE_WRITETHRU);
-> +	pinfo->frame_buffer = ioremap_wt(pinfo->rsrc_fb.start, 0x400000);
->   	pinfo->base_frame_buffer = pinfo->frame_buffer;
->   
->   	/* registers */
-> diff --git a/drivers/video/fbdev/valkyriefb.c b/drivers/video/fbdev/valkyriefb.c
-> index 275fb98236d3..d51c3a8009cb 100644
-> --- a/drivers/video/fbdev/valkyriefb.c
-> +++ b/drivers/video/fbdev/valkyriefb.c
-> @@ -54,13 +54,11 @@
->   #include <linux/nvram.h>
->   #include <linux/adb.h>
->   #include <linux/cuda.h>
-> -#include <asm/io.h>
->   #ifdef CONFIG_MAC
->   #include <asm/macintosh.h>
->   #else
->   #include <asm/prom.h>
->   #endif
-> -#include <asm/pgtable.h>
->   
->   #include "macmodes.h"
->   #include "valkyriefb.h"
-> @@ -318,7 +316,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
->   int __init valkyriefb_init(void)
->   {
->   	struct fb_info_valkyrie	*p;
-> -	unsigned long frame_buffer_phys, cmap_regs_phys, flags;
-> +	unsigned long frame_buffer_phys, cmap_regs_phys;
->   	int err;
->   	char *option = NULL;
->   
-> @@ -337,7 +335,6 @@ int __init valkyriefb_init(void)
->   	/* Hardcoded addresses... welcome to 68k Macintosh country :-) */
->   	frame_buffer_phys = 0xf9000000;
->   	cmap_regs_phys = 0x50f24000;
-> -	flags = IOMAP_NOCACHE_SER; /* IOMAP_WRITETHROUGH?? */
->   #else /* ppc (!CONFIG_MAC) */
->   	{
->   		struct device_node *dp;
-> @@ -354,7 +351,6 @@ int __init valkyriefb_init(void)
->   
->   		frame_buffer_phys = r.start;
->   		cmap_regs_phys = r.start + 0x304000;
-> -		flags = _PAGE_WRITETHRU;
->   	}
->   #endif /* ppc (!CONFIG_MAC) */
->   
-> @@ -369,7 +365,11 @@ int __init valkyriefb_init(void)
->   	}
->   	p->total_vram = 0x100000;
->   	p->frame_buffer_phys = frame_buffer_phys;
-> -	p->frame_buffer = __ioremap(frame_buffer_phys, p->total_vram, flags);
-> +#ifdef CONFIG_MAC
-> +	p->frame_buffer = ioremap_nocache(frame_buffer_phys, p->total_vram);
-> +#else
-> +	p->frame_buffer = ioremap_wt(frame_buffer_phys, p->total_vram);
-> +#endif
->   	p->cmap_regs_phys = cmap_regs_phys;
->   	p->cmap_regs = ioremap(p->cmap_regs_phys, 0x1000);
->   	p->valkyrie_regs_phys = cmap_regs_phys+0x6000;
-> 
