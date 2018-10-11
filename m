@@ -2,112 +2,92 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0A9C4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EC3C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05E120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:46:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FvuNYnr/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05E120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 90B5020659
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 13:47:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B5020659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbeJKVN6 (ORCPT
+        id S1728617AbeJKVOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:13:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42298 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKVN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:13:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9G+Eyo7zQvZlsHZ1xpO/mwWllSioeAheCPATCBduf8c=; b=FvuNYnr/75Sm5/VOp4M2kvw14
-        DK1oSu/ZiMjAzkSiToTbStDShwzPUhNB2RJfCRsgLwHkx30bM0BVumlqA0/uV6YTNtE1amqXh6wrK
-        7DQzLKHmUl94N4YIX+ltp/vxiWqQWE+aTeRSUq76QwHJUIlBws6komvuacCUNWJPTBB1Y=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gAbIS-0001gi-Hv; Thu, 11 Oct 2018 13:46:36 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4E8E211223ED; Thu, 11 Oct 2018 14:46:36 +0100 (BST)
-Date:   Thu, 11 Oct 2018 14:46:36 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "talel@amazon.com" <talel@amazon.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "barakw@amazon.com" <barakw@amazon.com>,
-        "ronenk@amazon.com" <ronenk@amazon.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 1/2] dt-bindings: spi: dw: add cs-override property
-Message-ID: <20181011134636.GC25351@sirena.org.uk>
-References: <1539155293-21750-1-git-send-email-talel@amazon.com>
- <1539210111.1944.31.camel@impinj.com>
+        Thu, 11 Oct 2018 17:14:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728072AbeJKVOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 17:14:32 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63E4F20652;
+        Thu, 11 Oct 2018 13:47:15 +0000 (UTC)
+Date:   Thu, 11 Oct 2018 09:47:13 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20181011094713.1d853af2@gandalf.local.home>
+In-Reply-To: <3a7a180a-b644-bb0c-54e0-21dc3eb1d83b@i-love.sakura.ne.jp>
+References: <20180928090939.GE1160@jagdpanzerIV>
+        <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+        <20180929105151.GA1392@tigerII.localdomain>
+        <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+        <20181001023721.GA6409@jagdpanzerIV>
+        <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
+        <20181002063851.GF598@jagdpanzerIV>
+        <5a958a1b-a986-014a-5908-816e0a3ef4ff@i-love.sakura.ne.jp>
+        <20181008160310.ldwryudzkvp5de3b@pathway.suse.cz>
+        <3ce1695b-9c47-40cc-602b-7c5ffb593024@i-love.sakura.ne.jp>
+        <20181009145229.3lv5vl2ypz5i45cq@pathway.suse.cz>
+        <a4a2ecae-3c47-db1f-8124-4d2d0ab8b91c@i-love.sakura.ne.jp>
+        <d3e76073-c896-5807-1a2d-fe320643617d@i-love.sakura.ne.jp>
+        <3a7a180a-b644-bb0c-54e0-21dc3eb1d83b@i-love.sakura.ne.jp>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
-Content-Disposition: inline
-In-Reply-To: <1539210111.1944.31.camel@impinj.com>
-X-Cookie: Use at own risk.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 11 Oct 2018 19:20:34 +0900
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
 
---LwW0XdcUbUexiWVK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Thus, here is v4.
+> 
+> >From a65f018d563928c7b7e4a9bec1d1a564dd8b4635 Mon Sep 17 00:00:00 2001  
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Thu, 11 Oct 2018 14:21:22 +0900
+> Subject: [PATCH v4] printk: Add line-buffered printk() API.
 
-On Wed, Oct 10, 2018 at 10:21:51PM +0000, Trent Piepho wrote:
+Hi Tetsuo,
 
-> So that's the problem!  I, like everyone else I suspect, switched to
-> using GPIO chip selects with this driver because of this.  I narrowed
+Can you resend this as a separate patch starting a new thread? Having
+v4 hidden deep in another thread makes it hard to find patches like
+these searching mail archives.
 
-That's generally a good idea.
+If you want to reference back to this discussion, just add in the v4
+change log:
 
-> it down to a CS de-assert when the bus switched from TX to RX, which of
-> course makes a SPI register read fail on most devices.  The TX FIFO
-> would empty at this point, so that would explain it.
+Link: https://lore.kernel.org/lkml/201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp/
 
-> Did the designers of this IP ever read a SPI device datasheet???
+Thanks!
 
-> Got to agree with Mark Brown, why would anyone ever want to NOT have it
-> work properly?  The previous behavior is not "alternate correct", it's
-> Broken.
-
-This isn't even that unusual an innovation for hardware to have, for
-some reason automatic chip select management is *really* popular and
-rarely helpful.  It's far from the most entertaining thing I've seen
-hardware do.
-
---LwW0XdcUbUexiWVK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu/VDsACgkQJNaLcl1U
-h9ABMAf+LpTg0hfmKHD8PJyE/3o5CLdISGYbgbh/3uyhir7nDoi1nZz4BEferKLN
-VGI3KRpgRAHm784pLf+YC7aBMb/xmPEfsI3F22xz4+3leFd6Oj/gix9fJXak9Fxv
-jmzHPPqMu2VlN3jW0jJXX+SnmIQXtjEQx5IrFVJAkO9BjtUYEhLu2Pj1ra998XAF
-k2GHIq4lNwLvYA79HaXSk3fQnc9asagNhdjOVFcqDZ/FkAPdajynB6jrmZp/nEOV
-ip4TmDodXwHGJbOgiLd7aSlUDwyQzJbtwnwyLbAGMVH/dbXUrPPDXFQriW9BHDFV
-OdLIoq8jBQ74bJD0ypcjPZ1LSzZ4/w==
-=Nr+X
------END PGP SIGNATURE-----
-
---LwW0XdcUbUexiWVK--
+-- Steve
