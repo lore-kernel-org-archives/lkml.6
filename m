@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA29AC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C86C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C352085B
+	by mail.kernel.org (Postfix) with ESMTP id F2B852075C
 	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:56:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tOfOck3q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C352085B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wEiKX2VK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B852075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeJKWYE (ORCPT
+        id S1728737AbeJKWYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:24:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47004 "EHLO
+        Thu, 11 Oct 2018 18:24:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47034 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJKWYD (ORCPT
+        with ESMTP id S1728701AbeJKWYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:24:03 -0400
+        Thu, 11 Oct 2018 18:24:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=wmPjRwxT+sX42nx0hJ3+zGxMJnlYCx4eqAWVzH8Sk/o=; b=tOfOck3qaAhi
-        Ih584BfwVd/R5fu1M9E/i+OILyflNDcjWsVVNCR1+/hQ30X9cBldTOZp906D8ttwBOaSDyQgDqS1s
-        3ccgEwVsAh0qNVQP/t5FUnIAiybhj57aaFWe+lppGhDO59WxpWg3hCiHVzr8VHQKi1Q/H5wu2bgAr
-        fiG4I=;
+        List-Archive; bh=rAoLtLpCSV1CFbnKAev5V+rc1LH5AVGM3vVRNFBNbb4=; b=wEiKX2VKZ9LM
+        GrBnKtiY3CT7KGlm2iY06e3vfBG5gas8vOTD4C79y+vSy2mGN0YOqFNvWgCROPBGMwbG/G7mzzvRY
+        bgOX2SYBlQs7vdY69CFiO2tBuC4kYVocpA97DNglhe8jPpVufMCGInJk3Wv7BmHKnLd6xXJzJgrT+
+        hXnjw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcNo-0001tO-57; Thu, 11 Oct 2018 14:56:12 +0000
+        id 1gAcNk-0001tA-BL; Thu, 11 Oct 2018 14:56:08 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E2B9B11223ED; Thu, 11 Oct 2018 15:56:11 +0100 (BST)
+        id 1C92911223ED; Thu, 11 Oct 2018 15:56:08 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Huibin Hong <huibin.hong@rock-chips.com>
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -61,10 +61,10 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: initialize dma_slave_config properly" to the spi tree
-In-Reply-To:  <20181010090038.20834-2-kernel@esmil.dk>
-Message-Id: <20181011145611.E2B9B11223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:56:11 +0100 (BST)
+Subject: Applied "spi: rockchip: adjust dma watermark and burstlen" to the spi tree
+In-Reply-To:  <20181010090038.20834-3-kernel@esmil.dk>
+Message-Id: <20181011145608.1C92911223ED@debutante.sirena.org.uk>
+Date:   Thu, 11 Oct 2018 15:56:08 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,7 +72,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: initialize dma_slave_config properly
+   spi: rockchip: adjust dma watermark and burstlen
 
 has been applied to the spi tree at
 
@@ -97,36 +97,60 @@ to this mail.
 Thanks,
 Mark
 
-From dd8fd2cbc73f8650f651da71fc61a6e4f30c1566 Mon Sep 17 00:00:00 2001
+From dcfc861d24ec19f0d0d3d55bb016646794571fbb Mon Sep 17 00:00:00 2001
 From: Huibin Hong <huibin.hong@rock-chips.com>
-Date: Wed, 10 Oct 2018 11:00:32 +0200
-Subject: [PATCH] spi: rockchip: initialize dma_slave_config properly
+Date: Wed, 10 Oct 2018 11:00:33 +0200
+Subject: [PATCH] spi: rockchip: adjust dma watermark and burstlen
 
-The rxconf and txconf structs are allocated on the
-stack, so make sure we zero them before filling out
-the relevant fields.
+Signal tx dma when spi fifo is less than half full,
+and limit tx bursts to half the fifo length.
+
+Clamp rx burst length to 1 to avoid alignment issues.
 
 Signed-off-by: Huibin Hong <huibin.hong@rock-chips.com>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-rockchip.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index fdcf3076681b..185bbdce62b1 100644
+index fdcf3076681b..2f825702cd90 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -445,6 +445,9 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 	struct dma_slave_config rxconf, txconf;
- 	struct dma_async_tx_descriptor *rxdesc, *txdesc;
+@@ -455,10 +455,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		rxconf.direction = rs->dma_rx.direction;
+ 		rxconf.src_addr = rs->dma_rx.addr;
+ 		rxconf.src_addr_width = rs->n_bytes;
+-		if (rs->dma_caps.max_burst > 4)
+-			rxconf.src_maxburst = 4;
+-		else
+-			rxconf.src_maxburst = 1;
++		rxconf.src_maxburst = 1;
+ 		dmaengine_slave_config(rs->dma_rx.ch, &rxconf);
  
-+	memset(&rxconf, 0, sizeof(rxconf));
-+	memset(&txconf, 0, sizeof(txconf));
-+
- 	spin_lock_irqsave(&rs->lock, flags);
- 	rs->state &= ~RXBUSY;
- 	rs->state &= ~TXBUSY;
+ 		rxdesc = dmaengine_prep_slave_sg(
+@@ -477,10 +474,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ 		txconf.direction = rs->dma_tx.direction;
+ 		txconf.dst_addr = rs->dma_tx.addr;
+ 		txconf.dst_addr_width = rs->n_bytes;
+-		if (rs->dma_caps.max_burst > 4)
+-			txconf.dst_maxburst = 4;
+-		else
+-			txconf.dst_maxburst = 1;
++		txconf.dst_maxburst = rs->fifo_len / 2;
+ 		dmaengine_slave_config(rs->dma_tx.ch, &txconf);
+ 
+ 		txdesc = dmaengine_prep_slave_sg(
+@@ -578,7 +572,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs)
+ 	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_TXFTLR);
+ 	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
+ 
+-	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_DMATDLR);
++	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_DMATDLR);
+ 	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_DMARDLR);
+ 	writel_relaxed(dmacr, rs->regs + ROCKCHIP_SPI_DMACR);
+ 
 -- 
 2.19.0.rc2
 
