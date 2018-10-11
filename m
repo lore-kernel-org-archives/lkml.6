@@ -2,139 +2,184 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30794C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967B9C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4CB32087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8DB2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:01:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XPe1rB0g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CB32087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNS46bm1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8DB2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbeJKW17 (ORCPT
+        id S1727735AbeJKW2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:27:59 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5220 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJKW17 (ORCPT
+        Thu, 11 Oct 2018 18:28:44 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:46721 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbeJKW2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:27:59 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bbf65850000>; Thu, 11 Oct 2018 08:00:21 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 11 Oct 2018 08:00:26 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 11 Oct 2018 08:00:26 -0700
-Received: from [10.21.132.143] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 11 Oct
- 2018 15:00:22 +0000
-Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        jacopo <jacopo@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
- <20180906122436.25610-1-linus.walleij@linaro.org>
- <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
- <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
-Date:   Thu, 11 Oct 2018 16:00:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 18:28:44 -0400
+Received: by mail-yb1-f193.google.com with SMTP id o8-v6so3707733ybk.13
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IiqNcpJ2+G664thjjDl4FWs3wHrgj8avYs27Rm3w5hw=;
+        b=GNS46bm13FldqNUFpNPRDalMCh1dhaJ26yCQdo5+pBWmyEiGIcGIrEjX3tNLnO8yxq
+         8ZZx4kKlw4jiv/y7S6kDGfPIizXqrgm6sLn5Q1YuMr+H3Kg2dsk0mlP0PWqg8c+zp9Cg
+         rQHqUPNwhukSH5ATQ8SGYLySwsf+MDy6nD6P8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IiqNcpJ2+G664thjjDl4FWs3wHrgj8avYs27Rm3w5hw=;
+        b=ICfTANq4oMeFovvMQaMW8Nn5pf66cu/21bLy5hl5LRR+ChTH7t+VHFYY+uzx1q7CYL
+         WiOnqhzkh7s5XGPkrmDpXsuo3qer6uS0cQvj8I3i/w0y1TevOUKBDNEjx8hjo4Q/azZa
+         bMu+wx1wgrVjqE5cbKrJv7/XqjM0KeeOrh0AUdpzunPkrc31ZstTQOhG4YtbTiQ4APvE
+         gq24f5wTkvLgGWuQpdELOJtC7ezxv7LUbLlebiM6ZoxytzwotLDZkXYLxY89UJdnd6yH
+         vp2x2kpNWxKIldmpOM10YA7GITfGQrxrggoLKYRkHqLXrG0MzWIOxReTJaQAvLebtF0E
+         hHZw==
+X-Gm-Message-State: ABuFfogZRKVQIGHOaBXOhgWCdXiXQRFrzoxgfkgJkbWVSPRPisKxjQ18
+        p1X0pJlTubzMybzOvvuszn2AUIivmfpMruqdeAFtYw==
+X-Google-Smtp-Source: ACcGV61W+MmpVdyfmJFgQIyZf9qnJ7gllCMB/VXjlnPZWEstpY9ZuUlFmg19ZG0VfS/r2UAaY0swr0v3MOuFs9m7HfY=
+X-Received: by 2002:a25:9709:: with SMTP id d9-v6mr1017315ybo.77.1539270071335;
+ Thu, 11 Oct 2018 08:01:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539270021; bh=yulZ6WpRxcx9tdz/Joqw9RtVXaMU62yVBp3RP3uhvVQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=XPe1rB0gEWOJ68DovNua67OZcfE0OLYVPFUnAowHrYMAFDYL6JJKbLliXwy5nXk5q
-         vkSWjtvwQgqh60ROOY2ioZw9rjFFneoQtUoPiUTauOtHa4QDCPJxECkTTVv33TUsL8
-         YX7Jx9ZObD1B6O9bInPtB1QPE28GkocuAGJjD/wtdf4HbMWqBLvpCi2bdbTzFW5S34
-         DB4qqc2AclSy25/7f5DFBSes93RPtsM2W2aguzZsgkWMOvwkj2ovZv75lSHiPjG0Ua
-         wXTqvunhMfJxKThWXVsPRBuZG8jx+23QRyUu5YMplOBYnzkwULnQcwogtbw7/PW4vY
-         VdTxt1jJY/ORA==
+References: <1538975801-13735-1-git-send-email-firoz.khan@linaro.org>
+ <1538975801-13735-5-git-send-email-firoz.khan@linaro.org> <20181009201321.GA28911@ls3530.fritz.box>
+ <CALxhOnjxkq1-N59i81+ra58tZhx7Gik6iPyUsNFJY9wEJA+D1w@mail.gmail.com>
+ <CALxhOnj1SnTO9Sm-1cAL9B8gEmYrOHr03K6OqF4qqt5Oh0x+4g@mail.gmail.com> <4c659c11-85a3-68da-b7c9-60042d611a72@gmx.de>
+In-Reply-To: <4c659c11-85a3-68da-b7c9-60042d611a72@gmx.de>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Thu, 11 Oct 2018 20:31:00 +0530
+Message-ID: <CALxhOngOXHyWhO6K1Mxxc7ShEJBkVjGj0+5vYBFQeax7cijBmg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] parisc: uapi header and system call table file generation
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Helge,
 
-On 11/10/18 10:29, Linus Walleij wrote:
-> On Thu, Oct 11, 2018 at 11:01 AM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> 
->> I've just noticed that this patch causes regression on Samsung
->> Exynos4412-based Trats2 board. Conversion to GPIO descriptor breaks
->> operation when regulators used shared GPIO:  sii9234 i2c driver
->> is not able to get vcc33mhl regulator (it uses shared GPIO enable
->> line with vsil12 regulator).
-> 
-> So I guess this means that this physical GPIO line will enable the
-> vcc33mhl and the vsil12 regulators at the same time?
-> 
->> This issue has been already pointed in case of commits:
->> 37fa23dbccbd97663acc085bd79246f427e603a1
->> d1dae72fab2c377ff463742eefd8ac0f9e99b7b9
->> ab4d11e2c2329cf7cb7be31ff22489aae4dee5dc
-> 
-> A big sorry for my ignorance, I guess the information overload
-> on the mailing list just makes me miss the important points.
-> I'll try to be better, sadly I constantly fail to keep everything
-> in mind and constantly break things like this.
-> 
->> Maybe it would be better to first solve the handling of shared enable
->> GPIO in the descriptor-based interface before converting more regulators
->> and stepping into this issue again?
-> 
-> I am trying to solve it, but I just don't have systems to reproduce all
-> kinds of things. It's a bit stressful since this is one of those runtime
-> things that is hard to test when devising a patch for systems I don't
-> have.
+On Thu, 11 Oct 2018 at 15:57, Helge Deller <deller@gmx.de> wrote:
+>
+> On 11.10.2018 08:48, Firoz Khan wrote:
+> > Hi Helge,
+> >
+> > On Thu, 11 Oct 2018 at 11:40, Firoz Khan <firoz.khan@linaro.org> wrote:
+> >>
+> >> Hi Helge,
+> >>
+> >> On Wed, 10 Oct 2018 at 01:48, Helge Deller <deller@gmx.de> wrote:
+> >>>
+> >>> * Firoz Khan <firoz.khan@linaro.org>:
+> >>>> System call table generation script must be run to generate
+> >>>> unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
+> >>>> will have changes which will invokes the script.
+> >>>>
+> >>>> This patch will generate unistd_32/64.h and syscall_table_
+> >>>> 32/64/c32.h files by the syscall table generation script
+> >>>> invoked by arch/parisc/Makefile and the generated files against
+> >>>> the removed files will be identical.
+> >>>>
+> >>>> The generated uapi header file will be included in uapi/asm/
+> >>>> unistd_32/64.h and generated system call table support file will
+> >>>> be included by arch/sparc/kernel/syscall_table_32/64.S file.
+> >>>>
+> >>>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> >>>> ---
+> >>>>  arch/parisc/Makefile                  |   4 +
+> >>>>  arch/parisc/include/asm/Kbuild        |   3 +
+> >>>>  arch/parisc/include/uapi/asm/Kbuild   |   2 +
+> >>>>  arch/parisc/include/uapi/asm/unistd.h | 373 +--------------------------
+> >>>>  arch/parisc/kernel/syscall.S          |  12 +-
+> >>>>  arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
+> >>>
+> >>>
+> >>> Can we please get rid of those two new files:
+> >>
+> >> Yes, we don't need those files some of the architecture and other
+> >> architecture does have same/similar files. That's why I added below
+> >> files, so every architecture implementation looks same.
+> >>
+> >> I feel it is better to remove these files.
+> >> Arnd, Do u have any comment on this?
+> >>
+> >> Thanks
+> >> Firoz
+> >>
+> >>>
+> >>>>  arch/parisc/kernel/syscall_table_32.S |  13 +
+> >>>>  arch/parisc/kernel/syscall_table_64.S |  20 ++
+> >>>
+> >>> Both are not needed (at least on parisc) if you apply the following
+> >>> patch on top of your patch series.
+> >>> This patch finally fixes the 64-bit kernel on parisc (tested on real
+> >>> hardware).
+> >>>
+> >>> Helge
+> >>>
+> >>> diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
+> >>> index 2523b83b88d8..45cddeeb968f 100644
+> >>> --- a/arch/parisc/kernel/syscall.S
+> >>> +++ b/arch/parisc/kernel/syscall.S
+> >>> @@ -923,10 +923,20 @@ ENTRY(lws_table)
+> >>>  END(lws_table)
+> >>>         /* End of lws table */
+> >>>
+> >>> -#include "syscall_table_32.S"
+> >>> +#define __SYSCALL(nr, entry, nargs) ASM_ULONG_INSN entry
+> >>> +
+> >>> +ENTRY(sys_call_table)
+> >>> +#if defined(CONFIG_64BIT)
+> >>> +#include <asm/syscall_table_c32.h>     /* compat syscalls */
+> >>> +#else
+> >>> +#include <asm/syscall_table_32.h>      /* 32-bit native syscalls */
+> >>> +#endif
+> >>> +END(sys_call_table)
+> >>> +
+> >>>  #ifdef CONFIG_64BIT
+> >>> -#define SYSCALL_TABLE_64BIT
+> >>> -#include "syscall_table_64.S"
+> >>> +ENTRY(sys_call_table64)
+> >>> +#include <asm/syscall_table_64.h>      /* 64-bit native syscalls */
+> >>> +END(sys_call_table64)
+> >>>  #endif
+> >>>
+> >>>         /*
+> >
+> > I could see a patch (commit 47514da3ac20150cdf764466fbc2010c0fca0163)
+> > which will perform a compile-check when adding a new syscall. My patches
+> > will remove this feature. Is that fine?
+>
+> Yes, removing that feature is OK.
+> Since everything is then autogenerated I don't expect such bugs.
 
-This also appears to be causing a regression on the Tegra124 Jetson TK1
-that also uses a shared GPIO for two regulators. The 2nd regulator that
-uses the GPIO now fails to probe [0] ...
+Sure, thanks for your reply.
 
-[    0.680021] +5V_SATA: supplied by +5V_SYS
-[    0.683964] reg-fixed-voltage: probe of regulators:regulator@14 failed with error -16
+Firoz
 
-Not sure if you have one of these, but otherwise I can help test.
-
-Cheers
-Jon
-
-[0] https://storage.kernelci.org/next/master/next-20181011/arm/tegra_defconfig/lab-baylibre-seattle/boot-tegra124-jetson-tk1.html 
-
--- 
-nvpublic
+>
+> Helge
