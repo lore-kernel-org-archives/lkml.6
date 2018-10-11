@@ -2,144 +2,143 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D07BC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF98C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F1952054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105D02075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="RJ7fcdb6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F1952054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HAeHAFRp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105D02075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeJLBug (ORCPT
+        id S1729015AbeJLBvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:50:36 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39294 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbeJLBug (ORCPT
+        Thu, 11 Oct 2018 21:51:44 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35543 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbeJLBvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:50:36 -0400
-Received: by mail-ot1-f66.google.com with SMTP id l58so9882076otd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 11:22:13 -0700 (PDT)
+        Thu, 11 Oct 2018 21:51:44 -0400
+Received: by mail-io1-f67.google.com with SMTP id w11-v6so7354106iob.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 11:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=4e4jLXe+LV66T9Mf2f7NGFsZVkeztaj86piUEVwbQ9s=;
-        b=RJ7fcdb6PB4rZ/tkhaU3tx4RjODQ2bUmy8ar2xwof3/iw+poe+qldL4CSCWHnbXesj
-         h/Bh0LQt9qJZXqVq1JF86uGXLaEvPoL9wfOiPJRv2Cac6wOUH+kX6gIiOM2fwvvT/3k0
-         15zAyZUmeeMC2plNpgrm4Uk5xYxCHe2iMpfq75odVRJyVLqCt/6C3Ytprr8Ik8yGUbEz
-         EdLDhm1FBxqZkK9P6BgaA+80jgzudUgrgePZbjnTIe0qD33MEAkFI0lvBfdh2T0tkpzU
-         KKckFvRRGtMmnvOcJduCZxDFPeWoxTDbITC3tnai9QWtN78QsnYeZ0nXz+0y6BjE1yev
-         sX2A==
+        bh=tmYbFGHDCHszkvAM9hSz6UvIzYeEOtvWja0Lxvo0zUY=;
+        b=HAeHAFRpW2pabBamG8MyIlUwpiWNbT4CYYD7++IMUWZpiJnni8sXDO0S4N6GcNuVU/
+         0dVUU4lBJAXwsIgufrAxfP8HTKLPhZWZNTwOGG1T9CWGs3FBRb3CdeNoDgPuydumYJiD
+         p/Ulk2sleWwq6vyEb8uTzBIxjIxlL7c+qb0BS2t765faK/OkPVlliHYEUt7ZBGC2OrDX
+         FNnlcT2qBW19yw4DLZsPySHyxEbu0ro0Z7WDrz4wRESuQXStjVrbXrqDbLUHxwP8r5j9
+         NnZzQyUjF34Y+FhmlxxSnEFbADOVEQTJxouBe9MqF0csovbJmRhgFbsqrrnGP3mstPmz
+         fgVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=4e4jLXe+LV66T9Mf2f7NGFsZVkeztaj86piUEVwbQ9s=;
-        b=BYReKbGUsH0L52u6Q1gTegI4d/4xXEwoYdeVJn6aOgzke2gBAwrhL4ezcTyDNflR10
-         P/bBhZgrRgVZVj7Y4lNawn6I38p6VUNpuahoknr75Md778tpThmrsExD5wenfP6WR2FI
-         ytmDQJtURmx7mbJgsM6xMxQfcIMVdj7aMvhVkLT/8QY9lW7Wsf+jSLlXh+/ifDYGBBQj
-         4ZrVxiSFPBlWST93ZjZHPpznyNG+n8aI87VcNPxWlUGw0dDZjXGej8lvw2u6boqA+wfH
-         eGBFWqHaNuMmiLKlHpykSaOioK+oYOwSqFXSLJ/OKErgnSPV84BzjAWivREhPaTvv6CW
-         ypSQ==
-X-Gm-Message-State: ABuFfojOHI1MCK68H+fYqkc03OtooxoJ8iPGlqAx12OGNZndjlBvmQq0
-        WkI6vXIdHmVvcF63mAg72HBNVLzuQruyhdMFXjNIZA==
-X-Google-Smtp-Source: ACcGV63w6/tMbcJzCvJCEZiSSsclD3k7zS6FJcVYnJWwr2tYglIz10jIrfkmiaoPJSXBPb2aOVFBJrO6VNf2dW2YMJA=
-X-Received: by 2002:a9d:56ef:: with SMTP id b44mr1840945otj.214.1539282133430;
- Thu, 11 Oct 2018 11:22:13 -0700 (PDT)
+        bh=tmYbFGHDCHszkvAM9hSz6UvIzYeEOtvWja0Lxvo0zUY=;
+        b=CSFLd32C98T+bb6ec3bfY/+6aeY38uNRE9xkZS3ckTBasJ/2LdgR3Mb1MMyudSxyUL
+         ZZKODBrFkPn8KJzahwj7AZC1Jqfj9Yk+i8qYoWAbozJpVeHKdagiR1W95NxUdFGmHcye
+         1Q22YOaWSPFTemz+D7hNi4G0x2yCz9D5tsQKj8HLHbHff3e1/U0v8pY4FPSNkNa5G1vP
+         PVaPK6qLDPQ3Iv3DsyNIMQ1U01mvyblrl7UiYesA6G8h9gaKYZvpQJhNFghujV7xImBu
+         JrnN7f1bKlPP9FttVAdTWNC846z6xtRCZkwZxhh5wGC96lV3AhUfPIooQ+mtISv/gMlM
+         BHig==
+X-Gm-Message-State: ABuFfojORglff5wx4dvq27TFbZqNhw80OUJEozOdtq1Yk5g7YKQTIVzX
+        wmtj6CqB1et+HO9g+FNAJwvrEJvJHKTFmBK5TP5D8g==
+X-Google-Smtp-Source: ACcGV60DO3L10bTHhY9dkfVHJg1fp7KwAbBQWMzHCXIUdQBgZqArwlCl6s+v06R6Yrrj3y02EPtBX9d9bmMMJp9SpzU=
+X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr1788745iog.271.1539282200870;
+ Thu, 11 Oct 2018 11:23:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain> <20181009170051.GA40606@tiger-server>
- <CAPcyv4g99_rJJSn0kWv5YO0Mzj90q1LH1wC3XrjCh1=x6mo7BQ@mail.gmail.com>
- <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com> <20181010095838.GG5873@dhcp22.suse.cz>
- <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com> <20181010172451.GK5873@dhcp22.suse.cz>
- <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com> <20181010185242.GP5873@dhcp22.suse.cz>
- <20181011085509.GS5873@dhcp22.suse.cz> <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
-In-Reply-To: <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 11 Oct 2018 11:22:02 -0700
-Message-ID: <CAPcyv4jYTtEDN2TrrKkhK-Ki1cNsR5yOw4QzTBDwimvO2h6dDw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Michal Hocko <mhocko@kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 11:23:00
+ -0700 (PDT)
+In-Reply-To: <073dedee-62df-9c67-1742-8de1e6c9502a@redhat.com>
+References: <000000000000c13ce50577db36cc@google.com> <073dedee-62df-9c67-1742-8de1e6c9502a@redhat.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 11 Oct 2018 20:23:00 +0200
+Message-ID: <CACT4Y+Yz=JPLGeGT+=8CpD-O2+9nL_UbZ9ptTSEcVoeg+YPTJQ@mail.gmail.com>
+Subject: Re: WARNING: refcount bug in kvm_vm_ioctl
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     syzbot <syzbot+6df4d24a0a50fd5d1a08@syzkaller.appspotmail.com>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Janosch Frank <frankja@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 10:39 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
+On Thu, Oct 11, 2018 at 4:17 PM, Paolo Bonzini <pbonzini@redhat.com> wrote:
+> On 10/10/2018 09:58, syzbot wrote:
+>>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+>> RIP: 0010:refcount_inc_checked+0x5d/0x70 lib/refcount.c:153
+>>  kvm_get_kvm arch/x86/kvm/../../../virt/kvm/kvm_main.c:766 [inline]
+>>  kvm_ioctl_create_device arch/x86/kvm/../../../virt/kvm/kvm_main.c:2924
+>>  kvm_vm_ioctl+0xed7/0x1d40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3114
+>>  vfs_ioctl fs/ioctl.c:46 [inline]
+>>  file_ioctl fs/ioctl.c:501 [inline]
+>>  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>>  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>>  __do_sys_ioctl fs/ioctl.c:709 [inline]
+>>  __se_sys_ioctl fs/ioctl.c:707 [inline]
+>>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 >
-> On 10/11/2018 1:55 AM, Michal Hocko wrote:
-> > On Wed 10-10-18 20:52:42, Michal Hocko wrote:
-> > [...]
-> >> My recollection was that we do clear the reserved bit in
-> >> move_pfn_range_to_zone and we indeed do in __init_single_page. But then
-> >> we set the bit back right afterwards. This seems to be the case since
-> >> d0dc12e86b319 which reorganized the code. I have to study this some more
-> >> obviously.
-> >
-> > so my recollection was wrong and d0dc12e86b319 hasn't really changed
-> > much because __init_single_page wouldn't zero out the struct page for
-> > the hotplug contex. A comment in move_pfn_range_to_zone explains that we
-> > want the reserved bit because pfn walkers already do see the pfn range
-> > and the page is not fully associated with the zone until it is onlined.
-> >
-> > I am thinking that we might be overzealous here. With the full state
-> > initialized we shouldn't actually care. pfn_to_online_page should return
-> > NULL regardless of the reserved bit and normal pfn walkers shouldn't
-> > touch pages they do not recognize and a plain page with ref. count 1
-> > doesn't tell much to anybody. So I _suspect_ that we can simply drop the
-> > reserved bit setting here.
+> The trace here is fairly simple, but I don't understand how this could
+> happen.
 >
-> So this has me a bit hesitant to want to just drop the bit entirely. If
-> nothing else I think I may wan to make that a patch onto itself so that
-> if we aren't going to set it we just drop it there. That way if it does
-> cause issues we can bisect it to that patch and pinpoint the cause.
+> The kvm_get_kvm is done within kvm_ioctl_create_device, which is called
+> from ioctl; the last reference cannot disappear inside a ioctl, because:
 >
-> > Regarding the post initialization required by devm_memremap_pages and
-> > potentially others. Can we update the altmap which is already a way how
-> > to get alternative struct pages by a constructor which we could call
-> > from memmap_init_zone and do the post initialization? This would reduce
-> > the additional loop in the caller while it would still fit the overall
-> > design of the altmap and the core hotplug doesn't have to know anything
-> > about DAX or whatever needs a special treatment.
-> >
-> > Does that make any sense?
+> 1) kvm_ioctl is called from vfs_ioctl, which does fdget and holds the fd
+> reference until after kvm_vm_ioctl returns
 >
-> I think the only thing that is currently using the altmap is the
-> ZONE_DEVICE memory init. Specifically I think it is only really used by
-> the devm_memremap_pages version of things, and then only under certain
-> circumstances. Also the HMM driver doesn't pass an altmap. What we would
-> really need is a non-ZONE_DEVICE users of the altmap to really justify
-> sticking with that as the preferred argument to pass.
+> 2) the file descriptor holds one reference to the struct kvm*, and this
+> reference is not released until kvm_vm_release is called by the last
+> fput (which could be fdput's call to fput if the process has exited in
+> the meanwhile)
+>
+> 3) for completeness, in case anon_inode_getfd fails, put_unused_fd will
+> not invoke the file descriptor's ->release callback (in this case
+> kvm_device_release).
+>
+> CCing some random people to get their opinion...
+>
+> Paolo
+>
+>> # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+>> #{"threaded":true,"collide":true,"repeat":true,"procs":6,"sandbox":"none","fault_call":-1,"tun":true,"tmpdir":true,"cgroups":true,"netdev":true,"resetnet":true,"segv":true}
+>> r0 = openat$kvm(0xffffffffffffff9c, &(0x7f0000000380)='/dev/kvm\x00', 0x0, 0x0)
+>> r1 = syz_open_dev$dspn(&(0x7f0000000100)='/dev/dsp#\x00', 0x3fe, 0x400)
+>> r2 = ioctl$KVM_CREATE_VM(r0, 0xae01, 0x0)
+>> perf_event_open(&(0x7f0000000040)={0x1, 0x70, 0x0, 0x0, 0x0, 0x0, 0x0, 0x50d}, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0)
+>> mincore(&(0x7f0000ffc000/0x1000)=nil, 0x1000, &(0x7f00000003c0)=""/4096)
+>> setrlimit(0x0, &(0x7f0000000000))
+>> readahead(r1, 0x3, 0x9a6)
+>> ioctl$KVM_CREATE_DEVICE(r2, 0xc00caee0, &(0x7f00000002c0)={0x4})
+>> setsockopt$inet_sctp6_SCTP_FRAGMENT_INTERLEAVE(r1, 0x84, 0x12, &(0x7f00000001c0)=0x9, 0x4)
 
-Right, the altmap is optional. It's only there to direct the memmap
-array to be allocated from the memory-range being hot-added vs a
-dynamic page-allocator allocation from System-RAM.
 
-> For those two functions it currently makes much more sense to pass the
-> dev_pagemap pointer and then reference the altmap from there. Otherwise
-> we are likely starting to look at something that would be more of a
-> dirty hack where we are passing a unused altmap in order to get to the
-> dev_pagemap so that we could populate the page.
+Looking at crash rate and dates here:
+https://syzkaller.appspot.com/bug?id=2b9fab00a235b50a34adbc35adc236f7dbe490fd
+https://syzkaller.appspot.com/bug?id=d6e4dd59a9b708895738b9cc59e6bdcb3a43ff14
 
-Yeah, we can't rely on the altmap, it's marked invalid in many cases.
+It looks like something that reached upstream tree yesterday.
+However, there is one outliner: 2018/09/30 08:58. So either that one
+crash was something else, or syzkaller learned how to reproduce it
+more often...
+But maybe if you know some recent suspect patch that touched that
+area, that may be the easiest way to localize the bug.
