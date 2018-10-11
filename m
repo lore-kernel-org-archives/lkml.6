@@ -2,103 +2,108 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE106C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E92EC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E194120659
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:50:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E194120659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B4AB72085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 10:52:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4AB72085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbeJKSQx (ORCPT
+        id S1727103AbeJKSTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:16:53 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13645 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726135AbeJKSQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:16:53 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5E3A732E0EB15;
-        Thu, 11 Oct 2018 18:50:09 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 11 Oct
- 2018 18:50:02 +0800
-Subject: Re: [PATCH] staging: erofs: harden inode lookup for 32-bit platforms
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>
-References: <20181009140713.29629-1-gaoxiang25@huawei.com>
- <20181011084413.3sovzgsj6pzyrml7@mwanda>
- <b6baf932-64e5-c902-7e7f-02094b96a8d6@huawei.com>
- <20181011101807.hydncp6nhzjlzznr@mwanda>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <6318156d-4a3d-e5d0-93c1-90be2345565b@huawei.com>
-Date:   Thu, 11 Oct 2018 18:49:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 11 Oct 2018 14:19:33 -0400
+Received: from relay.sw.ru ([185.231.240.75]:38824 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeJKSTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 14:19:33 -0400
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.90_1)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gAYZr-0000Nx-Hy; Thu, 11 Oct 2018 13:52:23 +0300
+Subject: [PATCH RFC] ksm: Assist buddy allocator to assemble 1-order pages
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, mhocko@suse.com,
+        rppt@linux.vnet.ibm.com, imbrenda@linux.vnet.ibm.com,
+        corbet@lwn.net, ndesaulniers@google.com, ktkhai@virtuozzo.com,
+        dave.jiang@intel.com, jglisse@redhat.com, jia.he@hxt-semitech.com,
+        paulmck@linux.vnet.ibm.com, colin.king@canonical.com,
+        jiang.biao2@zte.com.cn, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 11 Oct 2018 13:52:22 +0300
+Message-ID: <153925511661.21256.9692370932417728663.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <20181011101807.hydncp6nhzjlzznr@mwanda>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+try_to_merge_two_pages() merges two pages, one of them
+is a page of currently scanned mm, the second is a page
+with identical hash from unstable tree. Currently, we
+merge the page from unstable tree into the first one,
+and then free it.
 
-On 2018/10/11 18:18, Dan Carpenter wrote:
-> On Thu, Oct 11, 2018 at 05:46:26PM +0800, Gao Xiang wrote:
->>
->>
->> On 2018/10/11 16:44, Dan Carpenter wrote:
->>> On Tue, Oct 09, 2018 at 10:07:13PM +0800, Gao Xiang wrote:
->>>> This patch introduces inode hash function, test and set callbacks,
->>>> and iget5_locked to find the right inode for 32-bit platforms.
->>>>
->>>
->>> The way I read this changelog, we're trying to deal with corrupt file
->>> systems?  Is that correct?  Presumably in the current code it could lead
->>> to a Oops or something?
->>
->> No, this commit isn't trying to deal with corrupt file systems.
->> In EROFS, the nid is not continuous and it represents the inode offset
->> inode offset = nid * 32.
->> Therefore the nid is 64-bit both for 32-bit and 64-bit platforms. However,
->> i_ino is 'unsigned long', which means for 32-bit platforms, i_ino is not enough
->> to contain the nid.
->>
->> Therefore, we should use iget5_locked for this case.
-> 
-> I guess what I'm saying is, what are the user visible effects of this
-> patch?  It's hard for me to tell from the patch description.  Could you
-> please re-write the description and send a v2?
+The idea of this patch is to prefer freeing that page
+of them, which has a free neighbour (i.e., neighbour
+with zero page_count()). This allows buddy allocator
+to assemble at least 1-order set from the freed page
+and its neighbour; this is a kind of cheep passive
+compaction.
 
-Sorry for my just hurry reply. It seems I really misunderstood your point :-(
+AFAIK, 1-order pages set consists of pages with PFNs
+[2n, 2n+1] (odd, even), so the neighbour's pfn is
+calculated via XOR with 1. We check the result pfn
+is valid and its page_count(), and prefer merging
+into @tree_page if neighbour's usage count is zero.
 
-If all nids are less than 32-bit, the user will see the correct inode/nid number
-for all 32-bit platforms, but if some nids are greater than 32-bit, it could be
-collisions without this patch for 32-bit platforms.
+There a is small difference with current behavior
+in case of error path. In case of the second
+try_to_merge_with_ksm_page() is failed, we return
+from try_to_merge_two_pages() with @tree_page
+removed from unstable tree. It does not seem to matter,
+but if we do not want a change at all, it's not
+a problem to move remove_rmap_item_from_tree() from
+try_to_merge_with_ksm_page() to its callers.
 
-This patch switch the inode number by XOR the high 32-bit and the low 32-bit,
-use customized tester to avoid collisions for 32-bit platforms.
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ mm/ksm.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-I will send v2 to fix the commit message...but it seems Greg is already merged in
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-testing&id=2abd7814138774eb56319e9dcc0abd08ece45424
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 5b0894b45ee5..b83ca37e28f0 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1321,6 +1321,21 @@ static struct page *try_to_merge_two_pages(struct rmap_item *rmap_item,
+ {
+ 	int err;
+ 
++	if (IS_ENABLED(CONFIG_COMPACTION)) {
++		unsigned long pfn;
++		/*
++		 * Find neighbour of @page containing 1-order pair
++		 * in buddy-allocator and check whether it is free.
++		 * If it is so, try to use @tree_page as ksm page
++		 * and to free @page.
++		 */
++		pfn = (page_to_pfn(page) ^ 1);
++		if (pfn_valid(pfn) && page_count(pfn_to_page(pfn)) == 0) {
++			swap(rmap_item, tree_rmap_item);
++			swap(page, tree_page);
++		}
++	}
++
+ 	err = try_to_merge_with_ksm_page(rmap_item, page, NULL);
+ 	if (!err) {
+ 		err = try_to_merge_with_ksm_page(tree_rmap_item,
 
-Thanks,
-Gao Xiang
-
-> 
-> regards,
-> dan carpenter
-> 
