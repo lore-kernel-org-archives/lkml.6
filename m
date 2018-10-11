@@ -2,827 +2,945 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE644C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA52C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E24020835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C95A20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:35:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="EQOmwqtn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GCa6MtUv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E24020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYYUkkXs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C95A20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeJKL6T (ORCPT
+        id S1727392AbeJKMAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 07:58:19 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:35773 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726671AbeJKL6T (ORCPT
+        Thu, 11 Oct 2018 08:00:53 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43160 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeJKMAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 07:58:19 -0400
-X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Oct 2018 07:58:17 EDT
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 51A2A8A2;
-        Thu, 11 Oct 2018 00:25:29 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 11 Oct 2018 00:25:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=message-id:subject:from:to:cc:date
-        :in-reply-to:references:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=h9SUux+cT+tZkMI0MVd5CIpOK2
-        clWEkLehVIZsh3thE=; b=EQOmwqtn3HRS/mFR6Zb4gGSOI57q0gHZ6cht+3CgcW
-        WSDK68Ed3ZsAH6+iLU2jXBNvRo+XeNDh2IUkyXLNUfOcnpGn0Tp9upFPfyLF3An6
-        mk2703AuhpUSVR4XkX9oDRG5A0oEwIcCP+xSmd1c3OV2F2EdylRLMKP9e+zHdL0d
-        9agfKZroiArV3b8S73mXFPF4QenV/l/EtczyJZLJ6n5mEdNsTprFtXHskTW1foEV
-        9dKcUEXrIZWYfGfvOhIDh6mvBsjS4SXdr7eY3tWttJUns2jdGpo3u4k0MjvdG7eX
-        3bohhhSj7YonXiJJaxjMgZhNFeUrE6BWvX+l0IVsh3KA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=h9SUux+cT+tZkMI0MVd5CIpOK2clWEkLehVIZsh3t
-        hE=; b=GCa6MtUvSsi5FH+y1N4HMxcjH7PbkKW/b7SEqnQ8m/sn4W8vbeTgm6fo7
-        VPOY8AtIqtkerOMVDGxLAvFnucWIYyU56WITCpDup9qNqzSOk1C97ctgSghZifdF
-        qeKTieU9sEYxfv2fXBwT0b0+apOoSKKbBoB6wp5Bjs+2XZIUz46QC47SOaq11oPl
-        0yws/y0WTWVaFQ3lmJLdHkQpa92FLhFYvZf78jWOE88kyRUgV2uUXezReNR/hboj
-        NrsbnYLxK1P70XzkSz1f40ASXvziPCfSvt9+k28Mdw2I7UtrjLk4pnqiKN+Sm4c5
-        QNTjTgWI9vLGsFHNEPBaSVFCo1tsA==
-X-ME-Sender: <xms:uNC-W_KNqWNCH5mgwXFlUX-IqzjtC1ExN3Bknll66MCrsNVbqVmRsQ>
-X-ME-Proxy: <xmx:uNC-W8JefETX6lhWKVYfAHU677V2SCe9E0t3wz3s_UcG_zsEe7zfow>
-    <xmx:uNC-W8SE9uoQ7H1K038jyoCAcmTXC8pm2l3gF7LrU0Rfs4PEFJRpDA>
-    <xmx:uNC-W6j9xN3kkjwKvU6aQIHh4mBO3uYKMI_eBYJ4SANZAliNvGhElA>
-    <xmx:uNC-W9ovmoM-m1QhYFhTWIazaqGoSjwhkBqODCFuBfMcgg6Ow3sbww>
-    <xmx:uNC-WxnqtRLfMI9gpjqPAdjayVobfohuUq0-YNyPh11_imhV4KFUWA>
-    <xmx:uNC-WzGb-OQrmJshkDGbhghrAZYfmjQY3R_5GzSxuXbNHxLmC0LmJg>
-Received: from v4 (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 27DA4102ED;
-        Thu, 11 Oct 2018 00:25:25 -0400 (EDT)
-Message-ID: <8548f1872badb35588d5506da21f0d89bea71127.camel@mendozajonas.com>
-Subject: Re: [RFC PATCH 2/2] net/ncsi: Configure multi-package,
- multi-channel modes with failover
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     Justin.Lee1@Dell.com, netdev@vger.kernel.org
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Date:   Thu, 11 Oct 2018 15:25:21 +1100
-In-Reply-To: <d97bb52a060a40cf8e03a49eb82a285f@AUSX13MPS302.AMER.DELL.COM>
-References: <20181009035815.5246-1-sam@mendozajonas.com>
-         <20181009035815.5246-2-sam@mendozajonas.com>
-         <d97bb52a060a40cf8e03a49eb82a285f@AUSX13MPS302.AMER.DELL.COM>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 11 Oct 2018 08:00:53 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 30-v6so3551013plb.10;
+        Wed, 10 Oct 2018 21:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=mfi1nB1xZtuW0/cUlStnS2JW5M9KA/7KZahtMnUqYhM=;
+        b=FYYUkkXsdlUeS1di6f1quRB23Sdpm1B1WXnxyiTjpjCbKS0MVovEBFGZblxq5J9nvp
+         bRkXepapitt/xbAhpPwn2SNPYqKbwspS1qwd73OFHkXiHTOrj4oqoo7yWhiPWY1Na/mi
+         8pX5CkMM0yhTC0ZjzOD1YxK4FueDYcEm6FOtat6O/1+QQaCZ9Y+0lHkzv62wppv2Cu8y
+         Y8bDDumnbGyWovKinrIpZicC/Fk8wm1RmsLpDbprz/rGVlYE4bXzdAImVTvEX1lRNGeQ
+         NKNsRe5WtKr0GD7iVF7jSFxJEsgzHXUhIcrz9iqPmkitsHQqsCb7kc87QaS8+XCrlQ+v
+         8SkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=mfi1nB1xZtuW0/cUlStnS2JW5M9KA/7KZahtMnUqYhM=;
+        b=DkGrlQ0T/Y3JqSF+3DTfYpPpaeVyDTCcTyH5/E6n00dtzdyCmc1I/aYREf1C3Uprne
+         T21QVGYD8YTs9O1HynrDcTMNQLY9jeR6004I2prSc3Y6ppWWFJTf9y1rlwc6r6AEMbNQ
+         ODxcw5JqMYWJ8SZfMEPHpmE70LY3EIciFuN52YL+jjcYF8doMX3jZigSE2EsRMP+IFb/
+         J9qHo5H8CfNhpGKgd6wJ49RUO51e1R96iJmNlljn3TL3aPXaOlU/zJl1ajkVVmppyEHl
+         rD7nDgd1diOwfHWa9nnXIYEo7IBo0d0AaFyWalSOpNPewJCrvzAAMBKF6QoPOyC2hVgg
+         WGmw==
+X-Gm-Message-State: ABuFfoipsHrYITHC30eI4+euR3tmpDuHznduIMXAm98FoI4morpgAfR1
+        nZGNllosl1anZShexwZNZlaeAoNXNa8=
+X-Google-Smtp-Source: ACcGV62BziHWash8TV7xPGFfpyA49O5jhv0w4VARPmt54r2FWRrM137kI/rGMVXGtTNndN4NfrfyaQ==
+X-Received: by 2002:a17:902:8342:: with SMTP id z2-v6mr2315544pln.147.1539232526791;
+        Wed, 10 Oct 2018 21:35:26 -0700 (PDT)
+Received: from [127.0.0.1] (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id r76-v6sm21813474pgr.11.2018.10.10.21.35.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 21:35:26 -0700 (PDT)
+Subject: Re: [PATCH v3 3/3] iio: magnetometer: Add driver support for PNI
+ RM3100
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180925031724.21399-1-songqiang1304521@gmail.com>
+ <20181002143812.3661-1-songqiang1304521@gmail.com>
+ <20181002143812.3661-4-songqiang1304521@gmail.com>
+ <20181007164429.26335752@archlinux>
+From:   Song Qiang <songqiang1304521@gmail.com>
+Message-ID: <4ce188a9-c999-6234-2c48-fd80d6518da6@gmail.com>
+Date:   Thu, 11 Oct 2018 12:35:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181007164429.26335752@archlinux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-10 at 22:36 +0000, Justin.Lee1@Dell.com wrote:
-> Hi Samuel,
-> 
-> I am still testing your change and have some comments below.
-> 
-> Thanks,
-> Justin
-> 
-> 
-> > This patch extends the ncsi-netlink interface with two new commands and
-> > three new attributes to configure multiple packages and/or channels at
-> > once, and configure specific failover modes.
-> > 
-> > NCSI_CMD_SET_PACKAGE mask and NCSI_CMD_SET_CHANNEL_MASK set a whitelist
-> > of packages or channels allowed to be configured with the
-> > NCSI_ATTR_PACKAGE_MASK and NCSI_ATTR_CHANNEL_MASK attributes
-> > respectively. If one of these whitelists is set only packages or
-> > channels matching the whitelist are considered for the channel queue in
-> > ncsi_choose_active_channel().
-> > 
-> > These commands may also use the NCSI_ATTR_MULTI_FLAG to signal that
-> > multiple packages or channels may be configured simultaneously. NCSI
-> > hardware arbitration (HWA) must be available in order to enable
-> > multi-package mode. Multi-channel mode is always available.
-> > 
-> > If the NCSI_ATTR_CHANNEL_ID attribute is present in the
-> > NCSI_CMD_SET_CHANNEL_MASK command the it sets the preferred channel as
-> > with the NCSI_CMD_SET_INTERFACE command. The combination of preferred
-> > channel and channel whitelist defines a primary channel and the allowed
-> > failover channels.
-> > If the NCSI_ATTR_MULTI_FLAG attribute is also present then the preferred
-> > channel is configured for Tx/Rx and the other channels are enabled only
-> > for Rx.
-> > 
-> > Signed-off-by: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-> > ---
-> >  include/uapi/linux/ncsi.h |  16 +++
-> >  net/ncsi/internal.h       |  11 +-
-> >  net/ncsi/ncsi-aen.c       |   2 +-
-> >  net/ncsi/ncsi-manage.c    | 138 ++++++++++++++++--------
-> >  net/ncsi/ncsi-netlink.c   | 217 +++++++++++++++++++++++++++++++++-----
-> >  net/ncsi/ncsi-rsp.c       |   2 +-
-> >  6 files changed, 312 insertions(+), 74 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/ncsi.h b/include/uapi/linux/ncsi.h
-> > index 4c292ecbb748..035fba1693f9 100644
-> > --- a/include/uapi/linux/ncsi.h
-> > +++ b/include/uapi/linux/ncsi.h
-> > @@ -23,6 +23,13 @@
-> >   *	optionally the preferred NCSI_ATTR_CHANNEL_ID.
-> >   * @NCSI_CMD_CLEAR_INTERFACE: clear any preferred package/channel combination.
-> >   *	Requires NCSI_ATTR_IFINDEX.
-> > + * @NCSI_CMD_SET_PACKAGE_MASK: set a whitelist of allowed packages.
-> > + * @NCSI_CMD_SET_PACKAGE_MASK: set a whitelist of allowed channels.
-> > + *	Requires NCSI_ATTR_IFINDEX and NCSI_ATTR_PACKAGE_MASK.
-> > + * @NCSI_CMD_SET_PACKAGE_MASK: set a whitelist of allowed channels.
-> > + *	Requires NCSI_ATTR_IFINDEX, NCSI_ATTR_PACKAGE_ID, and
-> > + *	NCSI_ATTR_CHANNEL_MASK. If NCSI_ATTR_CHANNEL_ID is present it sets
-> > + *	the primary channel.
-> >   * @NCSI_CMD_MAX: highest command number
-> >   */
-> 
-> There are some typo in the description.
-> * @NCSI_CMD_SET_PACKAGE_MASK: set a whitelist of allowed packages.
->  *	Requires NCSI_ATTR_IFINDEX and NCSI_ATTR_PACKAGE_MASK.
->  * @NCSI_CMD_SET_CHANNEL_MASK: set a whitelist of allowed channels.
->  *	Requires NCSI_ATTR_IFINDEX, NCSI_ATTR_PACKAGE_ID, and
->  *	NCSI_ATTR_CHANNEL_MASK. If NCSI_ATTR_CHANNEL_ID is present it sets
->  *	the primary channel.
 
-Haha, yes I threw that in at the end, thanks for catching it.
 
-> 
-> >  enum ncsi_nl_commands {
-> > @@ -30,6 +37,8 @@ enum ncsi_nl_commands {
-> >  	NCSI_CMD_PKG_INFO,
-> >  	NCSI_CMD_SET_INTERFACE,
-> >  	NCSI_CMD_CLEAR_INTERFACE,
-> > +	NCSI_CMD_SET_PACKAGE_MASK,
-> > +	NCSI_CMD_SET_CHANNEL_MASK,
-> >  
-> >  	__NCSI_CMD_AFTER_LAST,
-> >  	NCSI_CMD_MAX = __NCSI_CMD_AFTER_LAST - 1
-> > @@ -43,6 +52,10 @@ enum ncsi_nl_commands {
-> >   * @NCSI_ATTR_PACKAGE_LIST: nested array of NCSI_PKG_ATTR attributes
-> >   * @NCSI_ATTR_PACKAGE_ID: package ID
-> >   * @NCSI_ATTR_CHANNEL_ID: channel ID
-> > + * @NCSI_ATTR_MULTI_FLAG: flag to signal that multi-mode should be enabled with
-> > + *	NCSI_CMD_SET_PACKAGE_MASK or NCSI_CMD_SET_CHANNEL_MASK.
-> > + * @NCSI_ATTR_PACKAGE_MASK: 32-bit mask of allowed packages.
-> > + * @NCSI_ATTR_CHANNEL_MASK: 32-bit mask of allowed channels.
-> >   * @NCSI_ATTR_MAX: highest attribute number
-> >   */
-> >  enum ncsi_nl_attrs {
-> > @@ -51,6 +64,9 @@ enum ncsi_nl_attrs {
-> >  	NCSI_ATTR_PACKAGE_LIST,
-> >  	NCSI_ATTR_PACKAGE_ID,
-> >  	NCSI_ATTR_CHANNEL_ID,
-> > +	NCSI_ATTR_MULTI_FLAG,
-> > +	NCSI_ATTR_PACKAGE_MASK,
-> > +	NCSI_ATTR_CHANNEL_MASK,
-> 
-> Is there a case that we might set these two masks at the same time?
-> If not, maybe we can just have one generic MASK attribute.
-> 
+On 2018年10月07日 23:44, Jonathan Cameron wrote:
+> On Tue,  2 Oct 2018 22:38:12 +0800
+> Song Qiang <songqiang1304521@gmail.com> wrote:
+>
+>> PNI RM3100 is a high resolution, large signal immunity magnetometer,
+>> composed of 3 single sensors and a processing chip with a MagI2C
+>> interface.
+>>
+>> Following functions are available:
+>>   - Single-shot measurement from
+>>     /sys/bus/iio/devices/iio:deviceX/in_magn_{axis}_raw
+>>   - Triggerd buffer measurement.
+>>   - Both i2c and spi interface are supported.
+>>   - Both interrupt and polling measurement is supported, depends on if
+>>     the 'interrupts' in DT is declared.
+>>
+>> Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
+> I realise now that I should have read the datasheet properly.
+> Sorry about that.
+>
+> What we have here is a hybrid of polled and continuous measurement.
+>
+> If you are using the dataready as a trigger it is fine to support
+> continuous measurement, but you aren't doing that here.
+>
+> The single shot measurement should be done with the method
+> described in the datasheet where you write a POLL command and then wait
+> for the single interrupt.  There is no problem with racing and that
+> interrupt is a high level one and can be handled as such.  We should
+> not do it by waiting for the next continuous measurement to happen
+> after clearing the status register, which is what I think is happening
+> here.
+>
+> If you want to use it in continuous mode, you should provide a trigger.
+> That trigger will be fired by the dataready signal and the
+> discussion I put in the earlier reply becomes relevant.
+>
+> Doing both of these options requires the interrupt handler to know
+> which mode you are in, but that is straight forward to implement and
+> is done in a number of other drivers.
+>
+> Sorry again that I failed to identify this issue earlier.
+>
+> Thanks to Phil as his question in the interrupt type got me thinking
+> about how you were handing the interrupts.
+>
+> Jonathan
+>
 
-I thought of this too: not yet, but I wonder if we might in the future.
-I'll have a think about it.
+Hi Jonathan,
 
-> >  
-> >  	__NCSI_ATTR_AFTER_LAST,
-> >  	NCSI_ATTR_MAX = __NCSI_ATTR_AFTER_LAST - 1
-> > diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-> > index 3d0a33b874f5..8437474d0a78 100644
-> > --- a/net/ncsi/internal.h
-> > +++ b/net/ncsi/internal.h
-> > @@ -213,6 +213,10 @@ struct ncsi_package {
-> >  	unsigned int         channel_num; /* Number of channels     */
-> >  	struct list_head     channels;    /* List of chanels        */
-> >  	struct list_head     node;        /* Form list of packages  */
-> > +
-> > +	bool                 multi_channel; /* Enable multiple channels  */
-> > +	u32                  channel_whitelist; /* Channels to configure */
-> > +	struct ncsi_channel  *preferred_channel; /* Primary channel      */
-> >  };
-> >  
-> >  struct ncsi_request {
-> > @@ -280,8 +284,6 @@ struct ncsi_dev_priv {
-> >  	unsigned int        package_num;     /* Number of packages         */
-> >  	struct list_head    packages;        /* List of packages           */
-> >  	struct ncsi_channel *hot_channel;    /* Channel was ever active    */
-> > -	struct ncsi_package *force_package;  /* Force a specific package   */
-> > -	struct ncsi_channel *force_channel;  /* Force a specific channel   */
-> >  	struct ncsi_request requests[256];   /* Request table              */
-> >  	unsigned int        request_id;      /* Last used request ID       */
-> >  #define NCSI_REQ_START_IDX	1
-> > @@ -294,6 +296,9 @@ struct ncsi_dev_priv {
-> >  	struct list_head    node;            /* Form NCSI device list      */
-> >  #define NCSI_MAX_VLAN_VIDS	15
-> >  	struct list_head    vlan_vids;       /* List of active VLAN IDs */
-> > +
-> > +	bool                multi_package;   /* Enable multiple packages   */
-> > +	u32                 package_whitelist; /* Packages to configure    */
-> >  };
-> >  
-> >  struct ncsi_cmd_arg {
-> > @@ -345,6 +350,8 @@ struct ncsi_request *ncsi_alloc_request(struct ncsi_dev_priv *ndp,
-> >  void ncsi_free_request(struct ncsi_request *nr);
-> >  struct ncsi_dev *ncsi_find_dev(struct net_device *dev);
-> >  int ncsi_process_next_channel(struct ncsi_dev_priv *ndp);
-> > +bool ncsi_channel_is_last(struct ncsi_dev_priv *ndp,
-> > +			  struct ncsi_channel *channel);
-> >  
-> >  /* Packet handlers */
-> >  u32 ncsi_calculate_checksum(unsigned char *data, int len);
-> > diff --git a/net/ncsi/ncsi-aen.c b/net/ncsi/ncsi-aen.c
-> > index 65f47a648be3..eac56aee30c4 100644
-> > --- a/net/ncsi/ncsi-aen.c
-> > +++ b/net/ncsi/ncsi-aen.c
-> > @@ -86,7 +86,7 @@ static int ncsi_aen_handler_lsc(struct ncsi_dev_priv *ndp,
-> >  	    !(state == NCSI_CHANNEL_ACTIVE && !(data & 0x1)))
-> >  		return 0;
-> >  
-> > -	if (state == NCSI_CHANNEL_ACTIVE)
-> > +	if (state == NCSI_CHANNEL_ACTIVE && ncsi_channel_is_last(ndp, nc))
-> >  		ndp->flags |= NCSI_DEV_RESHUFFLE;
-> >  
-> >  	ncsi_stop_channel_monitor(nc);
-> > diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-> > index 665bee25ec44..6a55df700bcb 100644
-> > --- a/net/ncsi/ncsi-manage.c
-> > +++ b/net/ncsi/ncsi-manage.c
-> > @@ -27,6 +27,24 @@
-> >  LIST_HEAD(ncsi_dev_list);
-> >  DEFINE_SPINLOCK(ncsi_dev_lock);
-> >  
-> > +/* Returns true if the given channel is the last channel available */
-> > +bool ncsi_channel_is_last(struct ncsi_dev_priv *ndp,
-> > +			  struct ncsi_channel *channel)
-> > +{
-> > +	struct ncsi_package *np;
-> > +	struct ncsi_channel *nc;
-> > +
-> > +	NCSI_FOR_EACH_PACKAGE(ndp, np)
-> > +		NCSI_FOR_EACH_CHANNEL(np, nc) {
-> > +			if (nc == channel)
-> > +				continue;
-> > +			if (nc->state == NCSI_CHANNEL_ACTIVE)
-> > +				return false;
-> > +		}
-> > +
-> > +	return true;
-> > +}
-> > +
-> >  static void ncsi_report_link(struct ncsi_dev_priv *ndp, bool force_down)
-> >  {
-> >  	struct ncsi_dev *nd = &ndp->ndev;
-> > @@ -266,6 +284,7 @@ struct ncsi_package *ncsi_add_package(struct ncsi_dev_priv *ndp,
-> >  	np->ndp = ndp;
-> >  	spin_lock_init(&np->lock);
-> >  	INIT_LIST_HEAD(&np->channels);
-> > +	np->channel_whitelist = UINT_MAX;
-> >  
-> >  	spin_lock_irqsave(&ndp->lock, flags);
-> >  	tmp = ncsi_find_package(ndp, id);
-> > @@ -633,6 +652,34 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
-> >  	return 0;
-> >  }
-> >  
-> > +/* Determine if a given channel should be the Tx channel */
-> > +bool ncsi_channel_is_tx(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc)
-> > +{
-> > +	struct ncsi_package *np = nc->package;
-> > +	struct ncsi_channel *channel;
-> > +	struct ncsi_channel_mode *ncm;
-> > +
-> > +	NCSI_FOR_EACH_CHANNEL(np, channel) {
-> > +		ncm = &channel->modes[NCSI_MODE_TX_ENABLE];
-> > +		/* Another channel is already Tx */
-> > +		if (ncm->enable)
-> > +			return false;
-> > +	}
-> > +
-> > +	if (!np->preferred_channel)
-> > +		return true;
-> > +
-> > +	if (np->preferred_channel == nc)
-> > +		return true;
-> > +
-> > +	/* The preferred channel is not in the queue and not active */
-> > +	if (list_empty(&np->preferred_channel->link) &&
-> > +	    np->preferred_channel->state != NCSI_CHANNEL_ACTIVE)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
-> >  {
-> >  	struct ncsi_dev *nd = &ndp->ndev;
-> > @@ -745,18 +792,22 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
-> >  		} else if (nd->state == ncsi_dev_state_config_ebf) {
-> >  			nca.type = NCSI_PKT_CMD_EBF;
-> >  			nca.dwords[0] = nc->caps[NCSI_CAP_BC].cap;
-> > -			nd->state = ncsi_dev_state_config_ecnt;
-> > +			if (ncsi_channel_is_tx(ndp, nc))
-> > +				nd->state = ncsi_dev_state_config_ecnt;
-> > +			else
-> > +				nd->state = ncsi_dev_state_config_ec;
-> >  #if IS_ENABLED(CONFIG_IPV6)
-> >  			if (ndp->inet6_addr_num > 0 &&
-> >  			    (nc->caps[NCSI_CAP_GENERIC].cap &
-> >  			     NCSI_CAP_GENERIC_MC))
-> >  				nd->state = ncsi_dev_state_config_egmf;
-> > -			else
-> > -				nd->state = ncsi_dev_state_config_ecnt;
-> >  		} else if (nd->state == ncsi_dev_state_config_egmf) {
-> >  			nca.type = NCSI_PKT_CMD_EGMF;
-> >  			nca.dwords[0] = nc->caps[NCSI_CAP_MC].cap;
-> > -			nd->state = ncsi_dev_state_config_ecnt;
-> > +			if (ncsi_channel_is_tx(ndp, nc))
-> > +				nd->state = ncsi_dev_state_config_ecnt;
-> > +			else
-> > +				nd->state = ncsi_dev_state_config_ec;
-> >  #endif /* CONFIG_IPV6 */
-> >  		} else if (nd->state == ncsi_dev_state_config_ecnt) {
-> >  			nca.type = NCSI_PKT_CMD_ECNT;
-> > @@ -840,43 +891,35 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
-> >  
-> >  static int ncsi_choose_active_channel(struct ncsi_dev_priv *ndp)
-> >  {
-> > -	struct ncsi_package *np, *force_package;
-> > -	struct ncsi_channel *nc, *found, *hot_nc, *force_channel;
-> > +	struct ncsi_package *np;
-> > +	struct ncsi_channel *nc, *found, *hot_nc;
-> >  	struct ncsi_channel_mode *ncm;
-> > -	unsigned long flags;
-> > +	unsigned long flags, cflags;
-> > +	bool with_link;
-> >  
-> >  	spin_lock_irqsave(&ndp->lock, flags);
-> >  	hot_nc = ndp->hot_channel;
-> > -	force_channel = ndp->force_channel;
-> > -	force_package = ndp->force_package;
-> >  	spin_unlock_irqrestore(&ndp->lock, flags);
-> >  
-> > -	/* Force a specific channel whether or not it has link if we have been
-> > -	 * configured to do so
-> > -	 */
-> > -	if (force_package && force_channel) {
-> > -		found = force_channel;
-> > -		ncm = &found->modes[NCSI_MODE_LINK];
-> > -		if (!(ncm->data[2] & 0x1))
-> > -			netdev_info(ndp->ndev.dev,
-> > -				    "NCSI: Channel %u forced, but it is link down\n",
-> > -				    found->id);
-> > -		goto out;
-> > -	}
-> > -
-> > -	/* The search is done once an inactive channel with up
-> > -	 * link is found.
-> > +	/* By default the search is done once an inactive channel with up
-> > +	 * link is found, unless a preferred channel is set.
-> > +	 * If multi_package or multi_channel are configured all channels in the
-> > +	 * whitelist with link are added to the channel queue.
-> >  	 */
-> >  	found = NULL;
-> > +	with_link = false;
-> >  	NCSI_FOR_EACH_PACKAGE(ndp, np) {
-> > -		if (ndp->force_package && np != ndp->force_package)
-> > +		if (!(ndp->package_whitelist & (0x1 << np->id)))
-> >  			continue;
-> >  		NCSI_FOR_EACH_CHANNEL(np, nc) {
-> > -			spin_lock_irqsave(&nc->lock, flags);
-> > +			if (!(np->channel_whitelist & (0x1 << nc->id)))
-> > +				continue;
-> > +
-> > +			spin_lock_irqsave(&nc->lock, cflags);
-> >  
-> >  			if (!list_empty(&nc->link) ||
-> >  			    nc->state != NCSI_CHANNEL_INACTIVE) {
-> > -				spin_unlock_irqrestore(&nc->lock, flags);
-> > +				spin_unlock_irqrestore(&nc->lock, cflags);
-> >  				continue;
-> >  			}
-> >  
-> > @@ -888,32 +931,42 @@ static int ncsi_choose_active_channel(struct ncsi_dev_priv *ndp)
-> >  
-> >  			ncm = &nc->modes[NCSI_MODE_LINK];
-> >  			if (ncm->data[2] & 0x1) {
-> 
-> This data will not be updated if the channel monitor for it is not running.
-> If I move the cable from the current configured channel to the other channel,
-> NC-SI module will not detect the link status as the other channel is not configured
-> and AEN will not happen.
-> Is it per design that NC-SI module will always use the first interface with the link?
+I learned the way of handling single shot from the driver of hmc5843, 
+seems like it needs changing, too.
+There was some problems with my computer. Lenovo updates told me to 
+update BIOS and it went dead. I didn't write any code the past few days, 
+just got it fixed today.
 
-We'll check the link state of every channel at init, and per-package on
-suspend events, but you're right that we only get AENs right now from
-configured channels. There's probably no reason why we could at least
-enable AENs on all channels even if we don't use them for network, maybe
-during the package probe step.
+yours,
+Song Qiang
 
-> 
-> > -				spin_unlock_irqrestore(&nc->lock, flags);
-> >  				found = nc;
-> > -				goto out;
-> > +				with_link = true;
-> > +
-> > +				spin_lock_irqsave(&ndp->lock, flags);
-> > +				list_add_tail_rcu(&found->link,
-> > +						  &ndp->channel_queue);
-> > +				spin_unlock_irqrestore(&ndp->lock, flags);
-> > +
-> > +				netdev_dbg(ndp->ndev.dev,
-> > +					   "NCSI: Channel %u added to queue (link %s)\n",
-> > +					   found->id,
-> > +					   ncm->data[2] & 0x1 ? "up" : "down");
-> >  			}
-> > +			spin_unlock_irqrestore(&nc->lock, cflags);
-> >  
-> > -			spin_unlock_irqrestore(&nc->lock, flags);
-> > +			if (with_link && !np->multi_channel)
-> > +				break;
-> >  		}
-> > +		if (with_link && !ndp->multi_package)
-> > +			break;
-> >  	}
-> >  
-> > -	if (!found) {
-> > +	if (!with_link && found) {
-> > +		netdev_info(ndp->ndev.dev,
-> > +			    "NCSI: No channel with link found, configuring channel %u\n",
-> > +			    found->id);
-> > +		spin_lock_irqsave(&ndp->lock, flags);
-> > +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
-> > +		spin_unlock_irqrestore(&ndp->lock, flags);
-> > +	} else if (!found) {
-> >  		netdev_warn(ndp->ndev.dev,
-> > -			    "NCSI: No channel found with link\n");
-> > +			    "NCSI: No channel found to configure!\n");
-> >  		ncsi_report_link(ndp, true);
-> >  		return -ENODEV;
-> >  	}
-> >  
-> > -	ncm = &found->modes[NCSI_MODE_LINK];
-> > -	netdev_dbg(ndp->ndev.dev,
-> > -		   "NCSI: Channel %u added to queue (link %s)\n",
-> > -		   found->id, ncm->data[2] & 0x1 ? "up" : "down");
-> > -
-> > -out:
-> > -	spin_lock_irqsave(&ndp->lock, flags);
-> > -	list_add_tail_rcu(&found->link, &ndp->channel_queue);
-> > -	spin_unlock_irqrestore(&ndp->lock, flags);
-> > -
-> >  	return ncsi_process_next_channel(ndp);
-> >  }
-> >  
-> > @@ -1428,6 +1481,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
-> >  	INIT_LIST_HEAD(&ndp->channel_queue);
-> >  	INIT_LIST_HEAD(&ndp->vlan_vids);
-> >  	INIT_WORK(&ndp->work, ncsi_dev_work);
-> > +	ndp->package_whitelist = UINT_MAX;
-> >  
-> >  	/* Initialize private NCSI device */
-> >  	spin_lock_init(&ndp->lock);
-> > diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c
-> > index 32cb7751d216..33a091e6f466 100644
-> > --- a/net/ncsi/ncsi-netlink.c
-> > +++ b/net/ncsi/ncsi-netlink.c
-> 
-> Is the following missed in the patch?
-> static const struct nla_policy ncsi_genl_policy[NCSI_ATTR_MAX + 1] = {
-> ...
-> 	[NCSI_ATTR_MULTI_FLAG] =	{ .type = NLA_FLAG },
-> 	[NCSI_ATTR_PACKAGE_MASK] =	{ .type = NLA_U32 },
-> 	[NCSI_ATTR_CHANNEL_MASK] =	{ .type = NLA_U32 },
-
-Oops, added.
-
-> 
-> > @@ -67,7 +67,7 @@ static int ncsi_write_channel_info(struct sk_buff *skb,
-> >  	nla_put_u32(skb, NCSI_CHANNEL_ATTR_LINK_STATE, m->data[2]);
-> >  	if (nc->state == NCSI_CHANNEL_ACTIVE)
-> >  		nla_put_flag(skb, NCSI_CHANNEL_ATTR_ACTIVE);
-> > -	if (ndp->force_channel == nc)
-> > +	if (nc == nc->package->preferred_channel)
-> >  		nla_put_flag(skb, NCSI_CHANNEL_ATTR_FORCED);
-> >  
-> >  	nla_put_u32(skb, NCSI_CHANNEL_ATTR_VERSION_MAJOR, nc->version.version);
-> > @@ -112,7 +112,7 @@ static int ncsi_write_package_info(struct sk_buff *skb,
-> >  		if (!pnest)
-> >  			return -ENOMEM;
-> >  		nla_put_u32(skb, NCSI_PKG_ATTR_ID, np->id);
-> > -		if (ndp->force_package == np)
-> > +		if ((0x1 << np->id) == ndp->package_whitelist)
-> >  			nla_put_flag(skb, NCSI_PKG_ATTR_FORCED);
-> >  		cnest = nla_nest_start(skb, NCSI_PKG_ATTR_CHANNEL_LIST);
-> >  		if (!cnest) {
-> > @@ -288,45 +288,54 @@ static int ncsi_set_interface_nl(struct sk_buff *msg, struct genl_info *info)
-> >  	package_id = nla_get_u32(info->attrs[NCSI_ATTR_PACKAGE_ID]);
-> >  	package = NULL;
-> >  
-> > -	spin_lock_irqsave(&ndp->lock, flags);
-> > -
-> >  	NCSI_FOR_EACH_PACKAGE(ndp, np)
-> >  		if (np->id == package_id)
-> >  			package = np;
-> >  	if (!package) {
-> >  		/* The user has set a package that does not exist */
-> > -		spin_unlock_irqrestore(&ndp->lock, flags);
-> >  		return -ERANGE;
-> >  	}
-> >  
-> >  	channel = NULL;
-> > -	if (!info->attrs[NCSI_ATTR_CHANNEL_ID]) {
-> > -		/* Allow any channel */
-> > -		channel_id = NCSI_RESERVED_CHANNEL;
-> > -	} else {
-> > +	if (info->attrs[NCSI_ATTR_CHANNEL_ID]) {
-> >  		channel_id = nla_get_u32(info->attrs[NCSI_ATTR_CHANNEL_ID]);
-> >  		NCSI_FOR_EACH_CHANNEL(package, nc)
-> > -			if (nc->id == channel_id)
-> > +			if (nc->id == channel_id) {
-> >  				channel = nc;
-> > +				break;
-> > +			}
-> > +		if (!channel) {
-> > +			netdev_info(ndp->ndev.dev,
-> > +				    "NCSI: Channel %u does not exist!\n",
-> > +				    channel_id);
-> > +			return -ERANGE;
-> > +		}
-> >  	}
-> >  
-> > -	if (channel_id != NCSI_RESERVED_CHANNEL && !channel) {
-> > -		/* The user has set a channel that does not exist on this
-> > -		 * package
-> > -		 */
-> > -		spin_unlock_irqrestore(&ndp->lock, flags);
-> > -		netdev_info(ndp->ndev.dev, "NCSI: Channel %u does not exist!\n",
-> > -			    channel_id);
-> > -		return -ERANGE;
-> > -	}
-> > -
-> > -	ndp->force_package = package;
-> > -	ndp->force_channel = channel;
-> > +	spin_lock_irqsave(&ndp->lock, flags);
-> > +	ndp->package_whitelist = 0x1 << package->id;
-> > +	ndp->multi_package = false;
-> >  	spin_unlock_irqrestore(&ndp->lock, flags);
-> >  
-> > -	netdev_info(ndp->ndev.dev, "Set package 0x%x, channel 0x%x%s as preferred\n",
-> > -		    package_id, channel_id,
-> > -		    channel_id == NCSI_RESERVED_CHANNEL ? " (any)" : "");
-> > +	spin_lock_irqsave(&package->lock, flags);
-> > +	package->multi_channel = false;
-> > +	if (channel) {
-> > +		package->channel_whitelist = 0x1 << channel->id;
-> > +		package->preferred_channel = channel;
-> > +	} else {
-> > +		/* Allow any channel */
-> > +		package->channel_whitelist = UINT_MAX;
-> > +		package->preferred_channel = NULL;
-> > +	}
-> > +	spin_unlock_irqrestore(&package->lock, flags);
-> > +
-> > +	if (channel)
-> > +		netdev_info(ndp->ndev.dev,
-> > +			    "Set package 0x%x, channel 0x%x as preferred\n",
-> > +			    package_id, channel_id);
-> > +	else
-> > +		netdev_info(ndp->ndev.dev, "Set package 0x%x as preferred\n",
-> > +			    package_id);
-> >  
-> >  	/* Bounce the NCSI channel to set changes */
-> >  	ncsi_stop_dev(&ndp->ndev);
-> > @@ -338,6 +347,7 @@ static int ncsi_set_interface_nl(struct sk_buff *msg, struct genl_info *info)
-> >  static int ncsi_clear_interface_nl(struct sk_buff *msg, struct genl_info *info)
-> >  {
-> >  	struct ncsi_dev_priv *ndp;
-> > +	struct ncsi_package *np;
-> >  	unsigned long flags;
-> >  
-> >  	if (!info || !info->attrs)
-> > @@ -351,11 +361,19 @@ static int ncsi_clear_interface_nl(struct sk_buff *msg, struct genl_info *info)
-> >  	if (!ndp)
-> >  		return -ENODEV;
-> >  
-> > -	/* Clear any override */
-> > +	/* Reset any whitelists and disable multi mode */
-> >  	spin_lock_irqsave(&ndp->lock, flags);
-> > -	ndp->force_package = NULL;
-> > -	ndp->force_channel = NULL;
-> > +	ndp->package_whitelist = UINT_MAX;
-> > +	ndp->multi_package = false;
-> >  	spin_unlock_irqrestore(&ndp->lock, flags);
-> > +
-> > +	NCSI_FOR_EACH_PACKAGE(ndp, np) {
-> > +		spin_lock_irqsave(&np->lock, flags);
-> > +		np->multi_channel = false;
-> > +		np->channel_whitelist = UINT_MAX;
-> > +		np->preferred_channel = NULL;
-> > +		spin_unlock_irqrestore(&np->lock, flags);
-> > +	}
-> >  	netdev_info(ndp->ndev.dev, "NCSI: Cleared preferred package/channel\n");
-> >  
-> >  	/* Bounce the NCSI channel to set changes */
-> > @@ -365,6 +383,137 @@ static int ncsi_clear_interface_nl(struct sk_buff *msg, struct genl_info *info)
-> >  	return 0;
-> >  }
-> >  
-> > +static int ncsi_set_package_mask_nl(struct sk_buff *msg,
-> > +				    struct genl_info *info)
-> > +{
-> > +	struct ncsi_dev_priv *ndp;
-> > +	unsigned long flags;
-> > +	int rc;
-> > +
-> > +	if (!info || !info->attrs)
-> > +		return -EINVAL;
-> > +
-> > +	if (!info->attrs[NCSI_ATTR_IFINDEX])
-> > +		return -EINVAL;
-> > +
-> > +	if (!info->attrs[NCSI_ATTR_PACKAGE_MASK])
-> > +		return -EINVAL;
-> > +
-> > +	ndp = ndp_from_ifindex(get_net(sock_net(msg->sk)),
-> > +			       nla_get_u32(info->attrs[NCSI_ATTR_IFINDEX]));
-> > +	if (!ndp)
-> > +		return -ENODEV;
-> > +
-> > +	spin_lock_irqsave(&ndp->lock, flags);
-> > +	ndp->package_whitelist =
-> > +		nla_get_u32(info->attrs[NCSI_ATTR_PACKAGE_MASK]);
-> > +
-> > +	if (nla_get_flag(info->attrs[NCSI_ATTR_MULTI_FLAG])) {
-> > +		if (ndp->flags & NCSI_DEV_HWA) {
-> > +			ndp->multi_package = true;
-> > +			rc = 0;
-> > +		} else {
-> > +			netdev_err(ndp->ndev.dev,
-> > +				   "NCSI: Can't use multiple packages without HWA\n");
-> > +			rc = -EPERM;
-> > +		}
-> > +	} else {
-> > +		rc = 0;
-> > +	}
-> > +
-> > +	spin_unlock_irqrestore(&ndp->lock, flags);
-> > +
-> > +	if (!rc) {
-> > +		/* Bounce the NCSI channel to set changes */
-> > +		ncsi_stop_dev(&ndp->ndev);
-> > +		ncsi_start_dev(&ndp->ndev);
-> 
-> Is it possible to delay the restart? If we have two packages, we might send
-> set_package_mask command once and set_channel_mask command twice.
-> We will see the unnecessary reconfigurations in a very short period time.
-
-We could probably do with a better way of bouncing the link here too. I
-suppose we could schedule the actual link 'bounce' to occur a second or
-two later, and delay if we receive new configuration in that time.
-Perhaps something outside of the scope of this patch though.
-
-> 
-> > +	}
-> > +
-> > +	return rc;
-> > +}
-> > +
-> > +static int ncsi_set_channel_mask_nl(struct sk_buff *msg,
-> > +				    struct genl_info *info)
-> > +{
-> > +	struct ncsi_package *np, *package;
-> > +	struct ncsi_channel *nc, *channel;
-> > +	struct ncsi_dev_priv *ndp;
-> > +	unsigned long flags;
-> > +	u32 package_id, channel_id;
-> > +
-> > +	if (!info || !info->attrs)
-> > +		return -EINVAL;
-> > +
-> > +	if (!info->attrs[NCSI_ATTR_IFINDEX])
-> > +		return -EINVAL;
-> > +
-> > +	if (!info->attrs[NCSI_ATTR_PACKAGE_ID])
-> > +		return -EINVAL;
-> > +
-> > +	if (!info->attrs[NCSI_ATTR_CHANNEL_MASK])
-> > +		return -EINVAL;
-> > +
-> > +	ndp = ndp_from_ifindex(get_net(sock_net(msg->sk)),
-> > +			       nla_get_u32(info->attrs[NCSI_ATTR_IFINDEX]));
-> > +	if (!ndp)
-> > +		return -ENODEV;
-> > +
-> > +	package_id = nla_get_u32(info->attrs[NCSI_ATTR_PACKAGE_ID]);
-> > +	package = NULL;
-> > +	NCSI_FOR_EACH_PACKAGE(ndp, np)
-> > +		if (np->id == package_id) {
-> > +			package = np;
-> > +			break;
-> > +		}
-> > +	if (!package)
-> > +		return -ERANGE;
-> > +
-> > +	spin_lock_irqsave(&package->lock, flags);
-> > +
-> > +	channel = NULL;
-> > +	if (info->attrs[NCSI_ATTR_CHANNEL_ID]) {
-> > +		channel_id = nla_get_u32(info->attrs[NCSI_ATTR_CHANNEL_ID]);
-> > +		NCSI_FOR_EACH_CHANNEL(np, nc)
-> > +			if (nc->id == channel_id) {
-> > +				channel = nc;
-> > +				break;
-> > +			}
-> > +		if (!channel) {
-> > +			spin_unlock_irqrestore(&package->lock, flags);
-> > +			return -ERANGE;
-> > +		}
-> > +		netdev_dbg(ndp->ndev.dev,
-> > +			   "NCSI: Channel %u set as preferred channel\n",
-> > +			   channel->id);
-> > +	}
-> > +
-> > +	package->channel_whitelist =
-> > +		nla_get_u32(info->attrs[NCSI_ATTR_CHANNEL_MASK]);
-> > +	if (package->channel_whitelist == 0)
-> > +		netdev_dbg(ndp->ndev.dev,
-> > +			   "NCSI: Package %u set to all channels disabled\n",
-> > +			   package->id);
-> > +
-> > +	package->preferred_channel = channel;
-> > +
-> > +	if (nla_get_flag(info->attrs[NCSI_ATTR_MULTI_FLAG])) {
-> > +		package->multi_channel = true;
-> > +		netdev_info(ndp->ndev.dev,
-> > +			    "NCSI: Multi-channel enabled on package %u\n",
-> > +			    package_id);
-> > +	} else {
-> > +		package->multi_channel = false;
-> > +	}
-> > +
-> > +	spin_unlock_irqrestore(&package->lock, flags);
-> > +
-> > +	/* Bounce the NCSI channel to set changes */
-> > +	ncsi_stop_dev(&ndp->ndev);
-> > +	ncsi_start_dev(&ndp->ndev);
-> 
-> Same question as set_package_mask function.
-> Is it possible to delay the restart? If we have two packages, we might send
-> set_package_mask command once and set_channel_mask command twice.
-> We will see the unnecessary reconfigurations in a very short period time.
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static const struct genl_ops ncsi_ops[] = {
-> >  	{
-> >  		.cmd = NCSI_CMD_PKG_INFO,
-> > @@ -385,6 +534,18 @@ static const struct genl_ops ncsi_ops[] = {
-> >  		.doit = ncsi_clear_interface_nl,
-> >  		.flags = GENL_ADMIN_PERM,
-> >  	},
-> > +	{
-> > +		.cmd = NCSI_CMD_SET_PACKAGE_MASK,
-> > +		.policy = ncsi_genl_policy,
-> > +		.doit = ncsi_set_package_mask_nl,
-> > +		.flags = GENL_ADMIN_PERM,
-> > +	},
-> > +	{
-> > +		.cmd = NCSI_CMD_SET_CHANNEL_MASK,
-> > +		.policy = ncsi_genl_policy,
-> > +		.doit = ncsi_set_channel_mask_nl,
-> > +		.flags = GENL_ADMIN_PERM,
-> > +	},
-> >  };
-> >  
-> >  static struct genl_family ncsi_genl_family __ro_after_init = {
-> > diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-> > index d66b34749027..02ce7626b579 100644
-> > --- a/net/ncsi/ncsi-rsp.c
-> > +++ b/net/ncsi/ncsi-rsp.c
-> > @@ -241,7 +241,7 @@ static int ncsi_rsp_handler_dcnt(struct ncsi_request *nr)
-> >  	if (!ncm->enable)
-> >  		return 0;
-> >  
-> > -	ncm->enable = 1;
-> > +	ncm->enable = 0;
-> >  	return 0;
-> >  }
-> >  
-> > -- 
-> > 2.19.0
-> 
-> 
-
+>> ---
+>>   MAINTAINERS                            |   7 +
+>>   drivers/iio/magnetometer/Kconfig       |  29 ++
+>>   drivers/iio/magnetometer/Makefile      |   4 +
+>>   drivers/iio/magnetometer/rm3100-core.c | 539 +++++++++++++++++++++++++
+>>   drivers/iio/magnetometer/rm3100-i2c.c  |  58 +++
+>>   drivers/iio/magnetometer/rm3100-spi.c  |  64 +++
+>>   drivers/iio/magnetometer/rm3100.h      |  17 +
+>>   7 files changed, 718 insertions(+)
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-core.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-i2c.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-spi.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 967ce8cdd1cc..14eeeb072403 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11393,6 +11393,13 @@ M:	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+>>   S:	Maintained
+>>   F:	drivers/pnp/
+>>   
+>> +PNI RM3100 IIO DRIVER
+>> +M:	Song Qiang <songqiang1304521@gmail.com>
+>> +L:	linux-iio@vger.kernel.org
+>> +S:	Maintained
+>> +F:	drivers/iio/magnetometer/rm3100*
+>> +F:	Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+>> +
+>>   POSIX CLOCKS and TIMERS
+>>   M:	Thomas Gleixner <tglx@linutronix.de>
+>>   L:	linux-kernel@vger.kernel.org
+>> diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+>> index ed9d776d01af..8a63cbbca4b7 100644
+>> --- a/drivers/iio/magnetometer/Kconfig
+>> +++ b/drivers/iio/magnetometer/Kconfig
+>> @@ -175,4 +175,33 @@ config SENSORS_HMC5843_SPI
+>>   	  - hmc5843_core (core functions)
+>>   	  - hmc5843_spi (support for HMC5983)
+>>   
+>> +config SENSORS_RM3100
+>> +	tristate
+>> +	select IIO_BUFFER
+>> +	select IIO_TRIGGERED_BUFFER
+>> +
+>> +config SENSORS_RM3100_I2C
+>> +	tristate "PNI RM3100 3-Axis Magnetometer (I2C)"
+>> +	depends on I2C
+>> +	select SENSORS_RM3100
+>> +	select REGMAP_I2C
+>> +	help
+>> +	  Say Y here to add support for the PNI RM3100 3-Axis Magnetometer.
+>> +
+>> +	  This driver can also be compiled as a module.
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called rm3100-i2c.
+>> +
+>> +config SENSORS_RM3100_SPI
+>> +	tristate "PNI RM3100 3-Axis Magnetometer (SPI)"
+>> +	depends on SPI_MASTER
+>> +	select SENSORS_RM3100
+>> +	select REGMAP_SPI
+>> +	help
+>> +	  Say Y here to add support for the PNI RM3100 3-Axis Magnetometer.
+>> +
+>> +	  This driver can also be compiled as a module.
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called rm3100-spi.
+>> +
+>>   endmenu
+>> diff --git a/drivers/iio/magnetometer/Makefile b/drivers/iio/magnetometer/Makefile
+>> index 664b2f866472..ba1bc34b82fa 100644
+>> --- a/drivers/iio/magnetometer/Makefile
+>> +++ b/drivers/iio/magnetometer/Makefile
+>> @@ -24,3 +24,7 @@ obj-$(CONFIG_IIO_ST_MAGN_SPI_3AXIS) += st_magn_spi.o
+>>   obj-$(CONFIG_SENSORS_HMC5843)		+= hmc5843_core.o
+>>   obj-$(CONFIG_SENSORS_HMC5843_I2C)	+= hmc5843_i2c.o
+>>   obj-$(CONFIG_SENSORS_HMC5843_SPI)	+= hmc5843_spi.o
+>> +
+>> +obj-$(CONFIG_SENSORS_RM3100)		+= rm3100-core.o
+>> +obj-$(CONFIG_SENSORS_RM3100_I2C)	+= rm3100-i2c.o
+>> +obj-$(CONFIG_SENSORS_RM3100_SPI)	+= rm3100-spi.o
+>> diff --git a/drivers/iio/magnetometer/rm3100-core.c b/drivers/iio/magnetometer/rm3100-core.c
+>> new file mode 100644
+>> index 000000000000..cacdaee28ae3
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-core.c
+>> @@ -0,0 +1,539 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PNI RM3100 3-axis geomagnetic sensor driver core.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + *
+>> + * User Manual available at
+>> + * <https://www.pnicorp.com/download/rm3100-user-manual/>
+>> + *
+>> + * TODO: event generation, pm.
+>> + */
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/module.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <linux/iio/buffer.h>
+>> +#include <linux/iio/iio.h>
+>> +#include <linux/iio/kfifo_buf.h>
+>> +#include <linux/iio/sysfs.h>
+>> +#include <linux/iio/triggered_buffer.h>
+>> +#include <linux/iio/trigger_consumer.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +/* Cycle Count Registers. */
+>> +#define RM3100_REG_CC_X			0x05
+>> +#define RM3100_REG_CC_Y			0x07
+>> +#define RM3100_REG_CC_Z			0x09
+>> +
+>> +/* Continuous Measurement Mode register. */
+>> +#define RM3100_REG_CMM			0x01
+>> +#define		RM3100_CMM_START	BIT(0)
+>> +#define		RM3100_CMM_X		BIT(4)
+>> +#define		RM3100_CMM_Y		BIT(5)
+>> +#define		RM3100_CMM_Z		BIT(6)
+>> +
+>> +/* TiMe Rate Configuration register. */
+>> +#define RM3100_REG_TMRC			0x0B
+>> +#define RM3100_TMRC_OFFSET		0x92
+>> +
+>> +/* Result Status register. */
+>> +#define RM3100_REG_STATUS		0x34
+>> +#define		RM3100_STATUS_DRDY	BIT(7)
+>> +
+>> +/* Measurement result registers. */
+>> +#define RM3100_REG_MX2			0x24
+>> +#define RM3100_REG_MY2			0x27
+>> +#define RM3100_REG_MZ2			0x2a
+>> +
+>> +#define RM3100_W_REG_START		RM3100_REG_CMM
+>> +#define RM3100_W_REG_END		RM3100_REG_STATUS
+>> +#define RM3100_R_REG_START		RM3100_REG_CMM
+>> +#define RM3100_R_REG_END		RM3100_REG_STATUS
+>> +#define RM3100_V_REG_START		RM3100_REG_MX2
+>> +#define RM3100_V_REG_END		RM3100_REG_STATUS
+>> +
+>> +/*
+>> + * This is computed by hand, is the sum of channel storage bits and padding
+>> + * bits, which is 4+4+4+12=24 in here.
+>> + */
+>> +#define RM3100_SCAN_BYTES		24
+>> +
+>> +struct rm3100_data {
+>> +	struct regmap *regmap;
+>> +	struct completion measuring_done;
+>> +	bool use_interrupt;
+>> +
+>> +	int conversion_time;
+>> +	int cycle_count_index;
+>> +
+>> +	u8 buffer[RM3100_SCAN_BYTES];
+>> +
+>> +	/*
+>> +	 * This lock is for protecting the consistency of series of i2c
+>> +	 * operations, that is, to make sure a measurement process will
+>> +	 * not be interrupted by a set frequency operation, which should
+>> +	 * be taken where a series of i2c operation starts, released where
+>> +	 * the operation ends.
+>> +	 */
+>> +	struct mutex lock;
+>> +};
+>> +
+>> +static const struct regmap_range rm3100_readable_ranges[] = {
+>> +	regmap_reg_range(RM3100_W_REG_START, RM3100_W_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_readable_table = {
+>> +	.yes_ranges = rm3100_readable_ranges,
+>> +	.n_yes_ranges = ARRAY_SIZE(rm3100_readable_ranges),
+>> +};
+>> +EXPORT_SYMBOL_GPL(rm3100_readable_table);
+>> +
+>> +static const struct regmap_range rm3100_writable_ranges[] = {
+>> +	regmap_reg_range(RM3100_R_REG_START, RM3100_R_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_writable_table = {
+>> +	.yes_ranges = rm3100_writable_ranges,
+>> +	.n_yes_ranges = ARRAY_SIZE(rm3100_writable_ranges),
+>> +};
+>> +EXPORT_SYMBOL_GPL(rm3100_writable_table);
+>> +
+>> +static const struct regmap_range rm3100_volatile_ranges[] = {
+>> +	regmap_reg_range(RM3100_V_REG_START, RM3100_V_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_volatile_table = {
+>> +	.yes_ranges = rm3100_volatile_ranges,
+>> +	.n_yes_ranges = ARRAY_SIZE(rm3100_volatile_ranges),
+>> +};
+>> +EXPORT_SYMBOL_GPL(rm3100_volatile_table);
+>> +
+>> +static irqreturn_t rm3100_irq_handler(int irq, void *d)
+>> +{
+>> +	struct rm3100_data *data = d;
+>> +
+>> +	complete(&data->measuring_done);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int rm3100_wait_measurement(struct rm3100_data *data)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	unsigned int val;
+>> +	int tries = 20;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * A read cycle of 400kbits i2c bus is about 20us, plus the time
+>> +	 * used for scheduling, a read cycle of fast mode of this device
+>> +	 * can reach 1.7ms, it may be possible for data to arrive just
+>> +	 * after we check the RM3100_REG_STATUS. In this case, irq_handler is
+>> +	 * called before measuring_done is reinitialized, it will wait
+>> +	 * forever for data that has already been ready.
+>> +	 * Reinitialize measuring_done before looking up makes sure we
+>> +	 * will always capture interrupt no matter when it happens.
+>> +	 */
+>> +	if (data->use_interrupt)
+>> +		reinit_completion(&data->measuring_done);
+>> +
+>> +	ret = regmap_read(regmap, RM3100_REG_STATUS, &val);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if ((val & RM3100_STATUS_DRDY) != RM3100_STATUS_DRDY) {
+>> +		if (data->use_interrupt) {
+>> +			ret = wait_for_completion_timeout(&data->measuring_done,
+>> +				msecs_to_jiffies(data->conversion_time));
+>> +			if (ret < 0)
+>> +				return -ETIMEDOUT;
+>> +		} else {
+>> +			do {
+>> +				usleep_range(1000, 5000);
+>> +
+>> +				ret = regmap_read(regmap, RM3100_REG_STATUS,
+>> +						  &val);
+>> +				if (ret < 0)
+>> +					return ret;
+>> +
+>> +				if (val & RM3100_STATUS_DRDY)
+>> +					break;
+>> +			} while (--tries);
+>> +			if (!tries)
+>> +				return -ETIMEDOUT;
+>> +		}
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int rm3100_read_mag(struct rm3100_data *data, int idx, int *val)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	u8 buffer[3];
+>> +	int ret;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = rm3100_wait_measurement(data);
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&data->lock);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regmap_bulk_read(regmap, RM3100_REG_MX2 + 3 * idx, buffer, 3);
+>> +	mutex_unlock(&data->lock);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	*val = sign_extend32((buffer[0] << 16) | (buffer[1] << 8) | buffer[2],
+>> +			     23);
+>> +
+>> +	return IIO_VAL_INT;
+>> +}
+>> +
+>> +#define RM3100_CHANNEL(axis, idx)					\
+>> +	{								\
+>> +		.type = IIO_MAGN,					\
+>> +		.modified = 1,						\
+>> +		.channel2 = IIO_MOD_##axis,				\
+>> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+>> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
+>> +			BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
+>> +		.scan_index = idx,					\
+>> +		.scan_type = {						\
+>> +			.sign = 's',					\
+>> +			.realbits = 24,					\
+>> +			.storagebits = 32,				\
+>> +			.shift = 8,					\
+>> +			.endianness = IIO_BE,				\
+>> +		},							\
+>> +	}
+>> +
+>> +static const struct iio_chan_spec rm3100_channels[] = {
+>> +	RM3100_CHANNEL(X, 0),
+>> +	RM3100_CHANNEL(Y, 1),
+>> +	RM3100_CHANNEL(Z, 2),
+>> +	IIO_CHAN_SOFT_TIMESTAMP(3),
+>> +};
+>> +
+>> +static const unsigned long rm3100_scan_masks[] = {BIT(0) | BIT(1) | BIT(2), 0};
+>> +
+>> +static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
+>> +	"600 300 150 75 37 18 9 4.5 2.3 1.2 0.6 0.3 0.015 0.075"
+>> +);
+>> +
+>> +static struct attribute *rm3100_attributes[] = {
+>> +	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
+>> +	NULL,
+>> +};
+>> +
+>> +static const struct attribute_group rm3100_attribute_group = {
+>> +	.attrs = rm3100_attributes,
+>> +};
+>> +
+>> +#define RM3100_SAMP_NUM			14
+>> +
+>> +/*
+>> + * Frequency : rm3100_samp_rates[][0].rm3100_samp_rates[][1]Hz.
+>> + * Time between reading: rm3100_sam_rates[][2]ms.
+>> + * The first one is actually 1.7ms.
+>> + */
+>> +static const int rm3100_samp_rates[RM3100_SAMP_NUM][3] = {
+>> +	{600, 0, 2}, {300, 0, 3}, {150, 0, 7}, {75, 0, 13}, {37, 0, 27},
+>> +	{18, 0, 55}, {9, 0, 110}, {4, 500000, 220}, {2, 300000, 440},
+>> +	{1, 200000, 800}, {0, 600000, 1600}, {0, 300000, 3300},
+>> +	{0, 15000, 6700},  {0, 75000, 13000}
+>> +};
+>> +
+>> +static int rm3100_get_samp_freq(struct rm3100_data *data, int *val, int *val2)
+>> +{
+>> +	int ret;
+>> +	unsigned int tmp;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = regmap_read(data->regmap, RM3100_REG_TMRC, &tmp);
+>> +	mutex_unlock(&data->lock);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +	*val = rm3100_samp_rates[tmp - RM3100_TMRC_OFFSET][0];
+>> +	*val2 = rm3100_samp_rates[tmp - RM3100_TMRC_OFFSET][1];
+>> +
+>> +	return IIO_VAL_INT_PLUS_MICRO;
+>> +}
+>> +
+>> +static int rm3100_set_cycle_count(struct rm3100_data *data, int val)
+>> +{
+>> +	int ret;
+>> +	u8 i;
+>> +
+>> +	for (i = 0; i < 3; i++) {
+>> +		ret = regmap_write(data->regmap, RM3100_REG_CC_X + 2 * i, val);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +	}
+>> +
+>> +	switch (val) {
+>> +	case 50:
+>> +		data->cycle_count_index = 0;
+>> +		break;
+>> +	case 100:
+>> +		data->cycle_count_index = 1;
+>> +		break;
+>> +	/*
+>> +	 * This function will never be called by users' code, so here we
+>> +	 * assume that it will never get a wrong parameter.
+>> +	 */
+>> +	default:
+>> +		data->cycle_count_index = 2;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int rm3100_set_samp_freq(struct rm3100_data *data, int val, int val2)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	unsigned int cycle_count;
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	/* All cycle count registers use the same value. */
+>> +	ret = regmap_read(regmap, RM3100_REG_CC_X, &cycle_count);
+>> +	if (ret < 0)
+>> +		goto unlock_return;
+>> +
+>> +	for (i = 0; i < RM3100_SAMP_NUM; i++) {
+>> +		if (val == rm3100_samp_rates[i][0] &&
+>> +		    val2 == rm3100_samp_rates[i][1])
+>> +			break;
+>> +	}
+>> +	if (i == RM3100_SAMP_NUM) {
+>> +		ret = -EINVAL;
+>> +		goto unlock_return;
+>> +	}
+>> +
+>> +	ret = regmap_write(regmap, RM3100_REG_TMRC, i + RM3100_TMRC_OFFSET);
+>> +	if (ret < 0)
+>> +		goto unlock_return;
+>> +
+>> +	/* Checking if cycle count registers need changing. */
+>> +	if (val == 600 && cycle_count == 200) {
+>> +		ret = rm3100_set_cycle_count(data, 100);
+>> +		if (ret < 0)
+>> +			goto unlock_return;
+>> +	} else if (val != 600 && cycle_count == 100) {
+>> +		ret = rm3100_set_cycle_count(data, 200);
+>> +		if (ret < 0)
+>> +			goto unlock_return;
+>> +	}
+>> +
+>> +	/* Writing TMRC registers requires CMM reset. */
+>> +	ret = regmap_write(regmap, RM3100_REG_CMM, 0);
+>> +	if (ret < 0)
+>> +		goto unlock_return;
+>> +	ret = regmap_write(regmap, RM3100_REG_CMM,
+>> +		RM3100_CMM_X | RM3100_CMM_Y | RM3100_CMM_Z | RM3100_CMM_START);
+>> +	if (ret < 0)
+>> +		goto unlock_return;
+>> +	mutex_unlock(&data->lock);
+>> +
+>> +	data->conversion_time = rm3100_samp_rates[i][2] + 3000;
+>> +	return 0;
+>> +
+>> +unlock_return:
+>> +	mutex_unlock(&data->lock);
+>> +	return ret;
+>> +}
+>> +
+>> +/*
+>> + * The scale of this sensor depends on the cycle count value, these three
+>> + * values are corresponding to the cycle count value 50, 100, 200.
+>> + * scale = output / gain * 10^4.
+>> + */
+>> +const static int rm3100_scale[] = {500, 263, 133};
+>> +
+>> +static int rm3100_read_raw(struct iio_dev *indio_dev,
+>> +			   const struct iio_chan_spec *chan,
+>> +			   int *val, int *val2, long mask)
+>> +{
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	int ret;
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_RAW:
+>> +		ret = iio_device_claim_direct_mode(indio_dev);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +
+>> +		ret = rm3100_read_mag(data, chan->scan_index, val);
+>> +		iio_device_release_direct_mode(indio_dev);
+>> +
+>> +		return ret;
+>> +	case IIO_CHAN_INFO_SCALE:
+>> +		*val = 0;
+>> +		*val2 = rm3100_scale[data->cycle_count_index];
+>> +
+>> +		return IIO_VAL_INT_PLUS_MICRO;
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		return rm3100_get_samp_freq(data, val, val2);
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static int rm3100_write_raw(struct iio_dev *indio_dev,
+>> +			    struct iio_chan_spec const *chan,
+>> +			    int val, int val2, long mask)
+>> +{
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		return rm3100_set_samp_freq(data, val, val2);
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +}
+>> +
+>> +static const struct iio_info rm3100_info = {
+>> +	.attrs = &rm3100_attribute_group,
+>> +	.read_raw = rm3100_read_raw,
+>> +	.write_raw = rm3100_write_raw,
+>> +};
+>> +
+>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+>> +{
+>> +	struct iio_poll_func *pf = p;
+>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	struct regmap *regmap = data->regmap;
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = rm3100_wait_measurement(data);
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&data->lock);
+>> +		goto done;
+>> +	}
+>> +
+>> +	ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 9);
+>> +	mutex_unlock(&data->lock);
+>> +	if (ret < 0)
+>> +		goto done;
+>> +
+>> +	/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. x for paddings. */
+>> +	for (i = 0; i < 2; i++)
+>> +		memcpy(data->buffer + (2 - i) * 4, data->buffer + (2 - i) * 3,
+>> +		       3);
+>> +
+>> +	/*
+>> +	 * Always using the same buffer so that we wouldn't need to set the
+>> +	 * paddings to 0 in case of leaking any data.
+>> +	 */
+>> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
+>> +					   iio_get_time_ns(indio_dev));
+>> +
+>> +done:
+>> +	iio_trigger_notify_done(indio_dev->trig);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static void rm3100_remove(void *pdata)
+>> +{
+> Given this is no longer the opposite of probe, but rather just an
+> action to undo one particular element of probe (be it the only
+> one that needs undoing - yeah a subtle distinction ;)...
+>
+> Can we give it a more meaningful name?
+>
+> rm3100_stop perhaps? Perhaps even create a little function
+> to be rm3100_start as well so that it's easy to see how these
+> are paired?
+>
+>
+>> +	struct rm3100_data *data = pdata;
+>> +	struct device *dev = regmap_get_device(data->regmap);
+>> +	int ret;
+>> +
+>> +	ret = regmap_write(data->regmap, RM3100_REG_CMM, 0x00);
+>> +	if (ret < 0)
+>> +		dev_err(dev, "failed to stop the device.\n");
+>> +}
+>> +
+>> +int rm3100_common_probe(struct device *dev, struct regmap *regmap, int irq)
+>> +{
+>> +	struct iio_dev *indio_dev;
+>> +	struct rm3100_data *data;
+>> +	unsigned int tmp;
+>> +	int ret;
+>> +
+>> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+>> +	if (!indio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	data = iio_priv(indio_dev);
+>> +	data->regmap = regmap;
+>> +
+>> +	mutex_init(&data->lock);
+>> +
+>> +	indio_dev->dev.parent = dev;
+>> +	indio_dev->name = "rm3100";
+>> +	indio_dev->info = &rm3100_info;
+>> +	indio_dev->channels = rm3100_channels;
+>> +	indio_dev->num_channels = ARRAY_SIZE(rm3100_channels);
+>> +	indio_dev->modes = INDIO_DIRECT_MODE;
+>> +	indio_dev->available_scan_masks = rm3100_scan_masks;
+>> +
+>> +	if (!irq)
+>> +		data->use_interrupt = false;
+>> +	else {
+>> +		data->use_interrupt = true;
+>> +		ret = devm_request_irq(dev,
+>> +				       irq,
+>> +				       rm3100_irq_handler,
+>> +				       IRQF_TRIGGER_RISING,
+>> +				       indio_dev->name,
+>> +				       data);
+>> +		if (ret < 0) {
+>> +			dev_err(dev, "request irq line failed.\n");
+>> +			return ret;
+>> +		}
+>> +		init_completion(&data->measuring_done);
+>> +	}
+>> +
+>> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
+>> +					      rm3100_trigger_handler, NULL);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = regmap_read(regmap, RM3100_REG_TMRC, &tmp);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +	/* Initializing max wait time, 3sec more wait time for conversion. */
+>> +	data->conversion_time =
+>> +		rm3100_samp_rates[tmp - RM3100_TMRC_OFFSET][2] + 3000;
+>> +
+>> +	/* Cycle count values may not be what we want. */
+>> +	ret = regmap_read(data->regmap, RM3100_REG_TMRC, &tmp);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +	if ((tmp - RM3100_TMRC_OFFSET) == 0)
+>> +		rm3100_set_cycle_count(data, 100);
+>> +	else
+>> +		rm3100_set_cycle_count(data, 200);
+>> +
+>> +	/* Starting all channels' conversion. */
+>> +	ret = regmap_write(regmap, RM3100_REG_CMM,
+>> +		RM3100_CMM_X | RM3100_CMM_Y | RM3100_CMM_Z | RM3100_CMM_START);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = devm_add_action(dev, rm3100_remove, data);
+>> +	if (ret < 0) {
+>> +		rm3100_remove(data);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return devm_iio_device_register(dev, indio_dev);
+>> +}
+>> +EXPORT_SYMBOL_GPL(rm3100_common_probe);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 3-axis magnetometer i2c driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100-i2c.c b/drivers/iio/magnetometer/rm3100-i2c.c
+>> new file mode 100644
+>> index 000000000000..8f02e0366886
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-i2c.c
+>> @@ -0,0 +1,58 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Support for PNI RM3100 3-axis geomagnetic sensor on a i2c bus.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + *
+>> + * i2c slave address: 0x20 + SA1 << 1 + SA0.
+>> + */
+>> +
+>> +#include <linux/i2c.h>
+>> +#include <linux/module.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +static const struct regmap_config rm3100_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +
+>> +	.rd_table = &rm3100_readable_table,
+>> +	.wr_table = &rm3100_writable_table,
+>> +	.volatile_table = &rm3100_volatile_table,
+>> +
+>> +	.cache_type = REGCACHE_RBTREE,
+>> +};
+>> +
+>> +static int rm3100_probe(struct i2c_client *client)
+>> +{
+>> +	struct regmap *regmap;
+>> +
+>> +	if (!i2c_check_functionality(client->adapter,
+>> +		I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_BYTE_DATA))
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	regmap =  devm_regmap_init_i2c(client, &rm3100_regmap_config);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	return rm3100_common_probe(&client->dev, regmap, client->irq);
+>> +}
+>> +
+>> +static const struct of_device_id rm3100_dt_match[] = {
+>> +	{ .compatible = "pni,rm3100", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rm3100_dt_match);
+>> +
+>> +static struct i2c_driver rm3100_driver = {
+>> +	.driver = {
+>> +		.name = "rm3100-i2c",
+>> +		.of_match_table = rm3100_dt_match,
+>> +	},
+>> +	.probe_new = rm3100_probe,
+>> +};
+>> +module_i2c_driver(rm3100_driver);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 3-axis magnetometer i2c driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100-spi.c b/drivers/iio/magnetometer/rm3100-spi.c
+>> new file mode 100644
+>> index 000000000000..65d5eb9e4f5e
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-spi.c
+>> @@ -0,0 +1,64 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Support for PNI RM3100 3-axis geomagnetic sensor on a spi bus.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/spi/spi.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +static const struct regmap_config rm3100_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +
+>> +	.rd_table = &rm3100_readable_table,
+>> +	.wr_table = &rm3100_writable_table,
+>> +	.volatile_table = &rm3100_volatile_table,
+>> +
+>> +	.read_flag_mask = 0x80,
+>> +
+>> +	.cache_type = REGCACHE_RBTREE,
+>> +};
+>> +
+>> +static int rm3100_probe(struct spi_device *spi)
+>> +{
+>> +	struct regmap *regmap;
+>> +	int ret;
+>> +
+>> +	/* Actually this device supports both mode 0 and mode 3. */
+>> +	spi->mode = SPI_MODE_0;
+>> +	/* Data rates cannot exceed 1Mbits. */
+>> +	spi->max_speed_hz = 1000000;
+>> +	spi->bits_per_word = 8;
+>> +	ret = spi_setup(spi);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	regmap = devm_regmap_init_spi(spi, &rm3100_regmap_config);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	return rm3100_common_probe(&spi->dev, regmap, spi->irq);
+>> +}
+>> +
+>> +static const struct of_device_id rm3100_dt_match[] = {
+>> +	{ .compatible = "pni,rm3100", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rm3100_dt_match);
+>> +
+>> +static struct spi_driver rm3100_driver = {
+>> +	.driver = {
+>> +		.name = "rm3100-spi",
+>> +		.of_match_table = rm3100_dt_match,
+>> +	},
+>> +	.probe = rm3100_probe,
+>> +};
+>> +module_spi_driver(rm3100_driver);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 3-axis magnetometer spi driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100.h b/drivers/iio/magnetometer/rm3100.h
+>> new file mode 100644
+>> index 000000000000..c3508218bc77
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100.h
+>> @@ -0,0 +1,17 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + */
+>> +
+>> +#ifndef RM3100_CORE_H
+>> +#define RM3100_CORE_H
+>> +
+>> +#include <linux/regmap.h>
+>> +
+>> +extern const struct regmap_access_table rm3100_readable_table;
+>> +extern const struct regmap_access_table rm3100_writable_table;
+>> +extern const struct regmap_access_table rm3100_volatile_table;
+>> +
+>> +int rm3100_common_probe(struct device *dev, struct regmap *regmap, int irq);
+>> +
+>> +#endif /* RM3100_CORE_H */
 
