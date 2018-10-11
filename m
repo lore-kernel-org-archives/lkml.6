@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7063C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C649BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8412F2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8412F2075C
+	by mail.kernel.org (Postfix) with ESMTP id 92A482075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A482075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeJKWts (ORCPT
+        id S1728978AbeJKWtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:49:48 -0400
+        Thu, 11 Oct 2018 18:49:46 -0400
 Received: from mga17.intel.com ([192.55.52.151]:21585 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728945AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728921AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Oct 2018 18:49:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:22:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="77271646"
+   d="scan'208";a="77271642"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
   by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:45 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
@@ -54,9 +54,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: [PATCH v5 10/11] x86/vsyscall/64: Add ENDBR64 to vsyscall entry points
-Date:   Thu, 11 Oct 2018 08:16:53 -0700
-Message-Id: <20181011151654.27221-11-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 09/11] x86/vsyscall/32: Add ENDBR32 to vsyscall entry point
+Date:   Thu, 11 Oct 2018 08:16:52 -0700
+Message-Id: <20181011151654.27221-10-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151654.27221-1-yu-cheng.yu@intel.com>
 References: <20181011151654.27221-1-yu-cheng.yu@intel.com>
@@ -67,43 +67,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "H.J. Lu" <hjl.tools@gmail.com>
 
-Add ENDBR64 to vsyscall entry points.
+Add ENDBR32 to vsyscall entry point.
 
 Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 ---
- arch/x86/entry/vsyscall/vsyscall_emu_64.S | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/entry/vdso/vdso32/system_call.S | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/entry/vsyscall/vsyscall_emu_64.S b/arch/x86/entry/vsyscall/vsyscall_emu_64.S
-index c9596a9af159..08554445bef1 100644
---- a/arch/x86/entry/vsyscall/vsyscall_emu_64.S
-+++ b/arch/x86/entry/vsyscall/vsyscall_emu_64.S
-@@ -18,16 +18,25 @@ __PAGE_ALIGNED_DATA
- 	.type __vsyscall_page, @object
- __vsyscall_page:
- 
+diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
+index 263d7433dea8..2fc8141fff4e 100644
+--- a/arch/x86/entry/vdso/vdso32/system_call.S
++++ b/arch/x86/entry/vdso/vdso32/system_call.S
+@@ -14,6 +14,9 @@
+ 	ALIGN
+ __kernel_vsyscall:
+ 	CFI_STARTPROC
 +#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+	endbr64
++	endbr32
 +#endif
- 	mov $__NR_gettimeofday, %rax
- 	syscall
- 	ret
- 
- 	.balign 1024, 0xcc
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+	endbr64
-+#endif
- 	mov $__NR_time, %rax
- 	syscall
- 	ret
- 
- 	.balign 1024, 0xcc
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+	endbr64
-+#endif
- 	mov $__NR_getcpu, %rax
- 	syscall
- 	ret
+ 	/*
+ 	 * Reshuffle regs so that all of any of the entry instructions
+ 	 * will preserve enough state.
 -- 
 2.17.1
 
