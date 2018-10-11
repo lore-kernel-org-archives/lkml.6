@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E72C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2028C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12E02148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D7B2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tH+RFqeF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12E02148C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2fW4laK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D7B2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731486AbeJKXNs (ORCPT
+        id S1731499AbeJKXNw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46578 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:13:48 -0400
+        id S1726700AbeJKXNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:13:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4C32098A;
-        Thu, 11 Oct 2018 15:46:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9582B21476;
+        Thu, 11 Oct 2018 15:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272763;
-        bh=E3dnPpSYnieZB8xRI+f5z4gXC1anCv4Vi2dr9kkvLhA=;
+        s=default; t=1539272766;
+        bh=pFh0cmYqQtvHgO6cy/AB0/Y0F6Ks8uWZYGbTZN20ieA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tH+RFqeF7n/AsgD24lHW34llNvPnfkuTECD1Z87rt+uVGDoMfmt2eMWK+Pw7XtTQG
-         ErpcqwJDQWH6Cl2Uofj0Z8cWWJG8h/cSNXHhrrQpdlYsjZ20jDRI+T8IV4FoPTluJ+
-         575Jm/9Z+BRxoxHvlgXStTWiMP64nDn+tVS2UgSU=
+        b=W2fW4laKYBO9aLOMtTRCTLbu1T5DSxMlsxo5iBeRQMpGAzmgOgN3k5rndG9HtWq8K
+         hsq5yLS20PmE0chjFiPxWt0ttI8WjNdD2/5JK/jh3kMbh67YKtkuKuRFhHCpKcvGBe
+         UTZZ9MYoxmY4169M8ogjlapp+9MBm5cOVB2b5r/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.14 03/45] mm, thp: fix mlocking THP page with migration enabled
-Date:   Thu, 11 Oct 2018 17:39:30 +0200
-Message-Id: <20181011152509.012053940@linuxfoundation.org>
+        stable@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.14 30/45] ath10k: fix use-after-free in ath10k_wmi_cmd_send_nowait
+Date:   Thu, 11 Oct 2018 17:39:57 +0200
+Message-Id: <20181011152510.203844200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -68,104 +64,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+From: Carl Huang <cjhuang@codeaurora.org>
 
-commit e125fe405abedc1dc8a5b2229b80ee91c1434015 upstream.
+commit 9ef0f58ed7b4a55da4a64641d538e0d9e46579ac upstream.
 
-A transparent huge page is represented by a single entry on an LRU list.
-Therefore, we can only make unevictable an entire compound page, not
-individual subpages.
+The skb may be freed in tx completion context before
+trace_ath10k_wmi_cmd is called. This can be easily captured when
+KASAN(Kernel Address Sanitizer) is enabled. The fix is to move
+trace_ath10k_wmi_cmd before the send operation. As the ret has no
+meaning in trace_ath10k_wmi_cmd then, so remove this parameter too.
 
-If a user tries to mlock() part of a huge page, we want the rest of the
-page to be reclaimable.
-
-We handle this by keeping PTE-mapped huge pages on normal LRU lists: the
-PMD on border of VM_LOCKED VMA will be split into PTE table.
-
-Introduction of THP migration breaks[1] the rules around mlocking THP
-pages.  If we had a single PMD mapping of the page in mlocked VMA, the
-page will get mlocked, regardless of PTE mappings of the page.
-
-For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
-remove_migration_pmd().
-
-Anon THP pages can only be shared between processes via fork().  Mlocked
-page can only be shared if parent mlocked it before forking, otherwise CoW
-will be triggered on mlock().
-
-For Anon-THP, we can fix the issue by munlocking the page on removing PTE
-migration entry for the page.  PTEs for the page will always come after
-mlocked PMD: rmap walks VMAs from oldest to newest.
-
-Test-case:
-
-	#include <unistd.h>
-	#include <sys/mman.h>
-	#include <sys/wait.h>
-	#include <linux/mempolicy.h>
-	#include <numaif.h>
-
-	int main(void)
-	{
-	        unsigned long nodemask = 4;
-	        void *addr;
-
-		addr = mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE,
-			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
-
-	        if (fork()) {
-			wait(NULL);
-			return 0;
-	        }
-
-	        mlock(addr, 4UL << 10);
-	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,
-	                &nodemask, 4, MPOL_MF_MOVE);
-
-	        return 0;
-	}
-
-[1] https://lkml.kernel.org/r/CAOMGZ=G52R-30rZvhGxEbkTw7rLLwBGadVYeo--iizcD3upL3A@mail.gmail.com
-
-Link: http://lkml.kernel.org/r/20180917133816.43995-1-kirill.shutemov@linux.intel.com
-Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
-Reviewed-by: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>	[4.14+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Carl Huang <cjhuang@codeaurora.org>
+Tested-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/huge_memory.c |    2 +-
- mm/migrate.c     |    3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/trace.h |   12 ++++--------
+ drivers/net/wireless/ath/ath10k/wmi.c   |    2 +-
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2886,7 +2886,7 @@ void remove_migration_pmd(struct page_vm
- 	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
- 	page_add_anon_rmap(new, vma, mmun_start, true);
- 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
--	if (vma->vm_flags & VM_LOCKED)
-+	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
- 		mlock_vma_page(new);
- 	update_mmu_cache_pmd(vma, address, pvmw->pmd);
- }
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -274,6 +274,9 @@ static bool remove_migration_pte(struct
- 		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
- 			mlock_vma_page(new);
+--- a/drivers/net/wireless/ath/ath10k/trace.h
++++ b/drivers/net/wireless/ath/ath10k/trace.h
+@@ -152,10 +152,9 @@ TRACE_EVENT(ath10k_log_dbg_dump,
+ );
  
-+		if (PageTransHuge(page) && PageMlocked(page))
-+			clear_page_mlock(page);
-+
- 		/* No need to invalidate - it was non-present before */
- 		update_mmu_cache(vma, pvmw.address, pvmw.pte);
- 	}
+ TRACE_EVENT(ath10k_wmi_cmd,
+-	TP_PROTO(struct ath10k *ar, int id, const void *buf, size_t buf_len,
+-		 int ret),
++	TP_PROTO(struct ath10k *ar, int id, const void *buf, size_t buf_len),
+ 
+-	TP_ARGS(ar, id, buf, buf_len, ret),
++	TP_ARGS(ar, id, buf, buf_len),
+ 
+ 	TP_STRUCT__entry(
+ 		__string(device, dev_name(ar->dev))
+@@ -163,7 +162,6 @@ TRACE_EVENT(ath10k_wmi_cmd,
+ 		__field(unsigned int, id)
+ 		__field(size_t, buf_len)
+ 		__dynamic_array(u8, buf, buf_len)
+-		__field(int, ret)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -171,17 +169,15 @@ TRACE_EVENT(ath10k_wmi_cmd,
+ 		__assign_str(driver, dev_driver_string(ar->dev));
+ 		__entry->id = id;
+ 		__entry->buf_len = buf_len;
+-		__entry->ret = ret;
+ 		memcpy(__get_dynamic_array(buf), buf, buf_len);
+ 	),
+ 
+ 	TP_printk(
+-		"%s %s id %d len %zu ret %d",
++		"%s %s id %d len %zu",
+ 		__get_str(driver),
+ 		__get_str(device),
+ 		__entry->id,
+-		__entry->buf_len,
+-		__entry->ret
++		__entry->buf_len
+ 	)
+ );
+ 
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1741,8 +1741,8 @@ int ath10k_wmi_cmd_send_nowait(struct at
+ 	cmd_hdr->cmd_id = __cpu_to_le32(cmd);
+ 
+ 	memset(skb_cb, 0, sizeof(*skb_cb));
++	trace_ath10k_wmi_cmd(ar, cmd_id, skb->data, skb->len);
+ 	ret = ath10k_htc_send(&ar->htc, ar->wmi.eid, skb);
+-	trace_ath10k_wmi_cmd(ar, cmd_id, skb->data, skb->len, ret);
+ 
+ 	if (ret)
+ 		goto err_pull;
 
 
