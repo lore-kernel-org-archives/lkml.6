@@ -7,56 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB90C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2112C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944EE21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B1E121470
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:41:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeFUGbh7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944EE21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL8LkTki"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1E121470
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbeJKXJS (ORCPT
+        id S1730496AbeJKXJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:09:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40044 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:09:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeJKXJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:09:18 -0400
+        id S1726700AbeJKXJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:09:21 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8799D2098A;
-        Thu, 11 Oct 2018 15:41:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6559320652;
+        Thu, 11 Oct 2018 15:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272494;
-        bh=Rha6mIbrlRiRa1qqoKWlWaCJ1j8c9NSoOaNnpBjNgDE=;
+        s=default; t=1539272496;
+        bh=XPUG8LkTxyzyTqO1HAvs3twdyMee53C87OzLrWYKwlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DeFUGbh7vE9WebqWW6CuKsvIhj5OeWgLZw5PqEeZLN3A934vVfoKoLqUx3XG4Rbo0
-         bwrYWWM+ilX/1H9BJLr+9+b016P/BrvzjVqSeV0aExXeA2sp5fNv/HRmFAy/NujfN5
-         zUQc71Jptq1cKnwMWij4YK+UMQAHhvglYkjesGZA=
+        b=oL8LkTki7MY/d+ZW/5AGtAGyeTNyJgPsaEEUkQqXQBTvQ7p3YeQxLkzsXC2Z/grF7
+         VfjHlv6rv8PCaiZqRrlLY1QGtjgpPFGULy1GBD9jSn/2EpJ/Ao/uYqVABQpOH41h4N
+         hLWGDha/03QJJ7qizm5V4CP0Azisi1mfGkY1GAAY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 01/27] mm/vmstat.c: skip NR_TLB_REMOTE_FLUSH* properly
-Date:   Thu, 11 Oct 2018 17:34:48 +0200
-Message-Id: <20181011152534.087380643@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Hult <hanshult35@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 10/27] USB: serial: simple: add Motorola Tetra MTP6550 id
+Date:   Thu, 11 Oct 2018 17:34:57 +0200
+Message-Id: <20181011152534.518373188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
 References: <20181011152534.014964888@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -69,52 +62,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 58bc4c34d249bf1bc50730a9a209139347cfacfe upstream.
+commit f5fad711c06e652f90f581fc7c2caee327c33d31 upstream.
 
-5dd0b16cdaff ("mm/vmstat: Make NR_TLB_REMOTE_FLUSH_RECEIVED available even
-on UP") made the availability of the NR_TLB_REMOTE_FLUSH* counters inside
-the kernel unconditional to reduce #ifdef soup, but (either to avoid
-showing dummy zero counters to userspace, or because that code was missed)
-didn't update the vmstat_array, meaning that all following counters would
-be shown with incorrect values.
+Add device-id for the Motorola Tetra radio MTP6550.
 
-This only affects kernel builds with
-CONFIG_VM_EVENT_COUNTERS=y && CONFIG_DEBUG_TLBFLUSH=y && CONFIG_SMP=n.
+Bus 001 Device 004: ID 0cad:9012 Motorola CGISS
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  idVendor           0x0cad Motorola CGISS
+  idProduct          0x9012
+  bcdDevice           24.16
+  iManufacturer           1 Motorola Solutions, Inc.
+  iProduct                2 TETRA PEI interface
+  iSerial                 0
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           55
+    bNumInterfaces          2
+    bConfigurationValue     1
+    iConfiguration          3 Generic Serial config
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              500mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0
+      bInterfaceProtocol      0
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0200  1x 512 bytes
+        bInterval               0
+Device Qualifier (for other device speed):
+  bLength                10
+  bDescriptorType         6
+  bcdUSB               2.00
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        64
+  bNumConfigurations      1
+Device Status:     0x0000
+  (Bus Powered)
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-2-jannh@google.com
-Fixes: 5dd0b16cdaff ("mm/vmstat: Make NR_TLB_REMOTE_FLUSH_RECEIVED available even on UP")
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Reported-by: Hans Hult <hanshult35@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmstat.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/usb-serial-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -858,6 +858,9 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_SMP
- 	"nr_tlb_remote_flush",
- 	"nr_tlb_remote_flush_received",
-+#else
-+	"", /* nr_tlb_remote_flush */
-+	"", /* nr_tlb_remote_flush_received */
- #endif /* CONFIG_SMP */
- 	"nr_tlb_local_flush_all",
- 	"nr_tlb_local_flush_one",
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -87,7 +87,8 @@ DEVICE(moto_modem, MOTO_IDS);
+ 
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+-	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
++	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
++	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 
+ /* Novatel Wireless GPS driver */
 
 
