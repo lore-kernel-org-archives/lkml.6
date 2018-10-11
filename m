@@ -2,78 +2,94 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5995FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4808DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1759C204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1759C204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DEAF20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:35:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXl7PHYC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEAF20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeJKXDG (ORCPT
+        id S1728526AbeJKXDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:03:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51095 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeJKXDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:03:06 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gAczi-0001A7-V6; Thu, 11 Oct 2018 15:35:23 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     David Kershner <david.kershner@unisys.com>,
-        sparmaintainer@unisys.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: visorbus: fix memory leak on parser_ctx
-Date:   Thu, 11 Oct 2018 16:35:22 +0100
-Message-Id: <20181011153522.26237-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 11 Oct 2018 19:03:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbeJKXDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:03:38 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C03620652;
+        Thu, 11 Oct 2018 15:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539272156;
+        bh=kxpU+BWKDSsnZV5N/81akexv1DjmAAB+k2CAH1jtHpA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BXl7PHYCTQaca9UCg7QmGiSS4RiMo3LndfCmMcVuEwD22imyV7OAhN7MfWueExVT8
+         kwG3eV72AOLZ0ucqFA2JwllpNYy9RasaaOUVc+ItWAtiV2dTjdByZNLslXAAMMyGv5
+         +TiHQRKNkQzSrxZJw48gfmbxhauDNY1QPBeOpXHg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
+        <sebastien.szymanski@armadeus.com>, Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3.18 001/120] ASoC: cs4265: fix MMTLR Data switch control
+Date:   Thu, 11 Oct 2018 17:33:02 +0200
+Message-Id: <20181011152549.557750650@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
+References: <20181011152549.500488630@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Currently when the call to visorchannel_signalinsert fails the error
-return path does not free parser_ctx.  Fix this by kfree'ing it on
-the error return path.
+------------------
 
-Detected by CoverityScan, CID#1451916 ("Resource leak")
+From: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 
-Fixes: a35e3268da51 ("staging: unisys: visorchipset: remove local_addr in handle_command")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+commit 90a3b7f8aba3011badacd6d8121e03aa24ac79d1 upstream.
+
+The MMTLR bit is in the CS4265_SPDIF_CTL2 register at address 0x12 bit 0
+and not at address 0x0 bit 1. Fix this.
+
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/visorbus/visorchipset.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/codecs/cs4265.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
-index ca752b8f495f..09d1536edfb1 100644
---- a/drivers/visorbus/visorchipset.c
-+++ b/drivers/visorbus/visorchipset.c
-@@ -1383,8 +1383,10 @@ static int handle_command(struct controlvm_message inmsg, u64 channel_addr)
- 	controlvm_init_response(&ackmsg, &inmsg.hdr, CONTROLVM_RESP_SUCCESS);
- 	err = visorchannel_signalinsert(chipset_dev->controlvm_channel,
- 					CONTROLVM_QUEUE_ACK, &ackmsg);
--	if (err)
-+	if (err) {
-+		kfree(parser_ctx);
- 		return err;
-+	}
- 	switch (inmsg.hdr.id) {
- 	case CONTROLVM_CHIPSET_INIT:
- 		err = chipset_init(&inmsg);
--- 
-2.17.1
+--- a/sound/soc/codecs/cs4265.c
++++ b/sound/soc/codecs/cs4265.c
+@@ -174,8 +174,8 @@ static const struct snd_kcontrol_new cs4
+ 	SOC_SINGLE("Validity Bit Control Switch", CS4265_SPDIF_CTL2,
+ 				3, 1, 0),
+ 	SOC_ENUM("SPDIF Mono/Stereo", spdif_mono_stereo_enum),
+-	SOC_SINGLE("MMTLR Data Switch", 0,
+-				1, 1, 0),
++	SOC_SINGLE("MMTLR Data Switch", CS4265_SPDIF_CTL2,
++				0, 1, 0),
+ 	SOC_ENUM("Mono Channel Select", spdif_mono_select_enum),
+ 	SND_SOC_BYTES("C Data Buffer", CS4265_C_DATA_BUFF, 24),
+ };
+
 
