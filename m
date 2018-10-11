@@ -2,138 +2,90 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDE2C677FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E26DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BC02098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3805204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 16:08:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jb5/ZVbM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BC02098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dqc4xXqw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3805204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729645AbeJKXf5 (ORCPT
+        id S1730007AbeJKXgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:35:57 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33604 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeJKXf5 (ORCPT
+        Thu, 11 Oct 2018 19:36:37 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45037 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeJKXgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:35:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y18-v6so4412629pge.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 09:08:05 -0700 (PDT)
+        Thu, 11 Oct 2018 19:36:37 -0400
+Received: by mail-io1-f68.google.com with SMTP id x26-v6so7010046iog.11
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 09:08:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=1jOcQXN5+GWW/5PK8zMt3dyDaWoVBQJ/HOmHKzGvS54=;
-        b=jb5/ZVbMAYUhbN8jjzpg9yQxl37ZU4R5LohxYJyDDDr/Veek49AvwzB9YbCseWJdVi
-         B7ywzkn7nYm39l9Ky2+cva4rWbasFDXswco9Lp9q4KJWVpJZOf+hVOszdoVxnAZf0PWj
-         uD7BAXQQwvsfbDTkWSxWpHHm2MCeRmEgKlQlUiLMndW0WrI5VQ8R37q2wGyBc+huAyD4
-         YI/7Iyw33j3bqEZ0CYoO5JueovRCA4areb5PoN7QCJvPpR+E0ab1j+H6bX3Nkavio346
-         ypQInkIloS8A0T/pif3nqNOTLg1IHMeN9OOmkEA/24yCaIpRuiHbGEkRFmHKs97iedsF
-         ErWw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7Ev4VPBFyvZ3Tz6tF3DC+XmKcsvKCZdDG8ySpCDtHpg=;
+        b=dqc4xXqwYgiqmCwihQqFYRWefh9mVkYpR8cHc8fC915voFZyHFTvAFrcZ9sRPuXRyT
+         sS3Jn2MblaWasR+FHKoh2x5WfK2aaJjESblhXCLwIC5ao3fGis31g5KH+vvB7dHMjalj
+         SJRcl65zEDy+oWZcbBB3ArIhy5KxA8bQpVh7e4KfTOrI3EMtAoeYlL7V6WInfg0JLU+M
+         GikHrFV6PGu1CgkiF44/KP7wcUErgoZHgqsD+wrabahCjAF9ULqqIyQ7ixWARZIvYSlg
+         /nb3YAevTBDkj+UBLoviEy1oSR7bJn0Bazk57F0JTnTSixSzwW6p1Gsp6iS7HjsHtv6k
+         nJ+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=1jOcQXN5+GWW/5PK8zMt3dyDaWoVBQJ/HOmHKzGvS54=;
-        b=ZcO7CfDL/MxzBN1txAmtiCoWkGG3YQoifggpB8r3tT3n0XlGaa1sXhTQxgn4vA4h2D
-         tac4L8kfqrsjPAelvzLtVRaGb8z8aQSjvHp9SsDesG387mTlfk/ahALJfCALsZCiX1wW
-         woDFHclXVMNH9Pdf+5sUaOgAixHbo7NBHsRT6xFIHOu7RityuL/4L2cC+f2Q/u36TdlL
-         DPMZGupuAb8A9tsvZQIxs85Rl+QgfO0czNgWB13ly5oxKX0BXDVXDE3R45sqlDnJCk+N
-         IvEz/PWkZY3pUpRit5dtV3py39/c16KFCMjOlgptpHYqBLQMh4VSsBpwjqi4f6rLcf9j
-         R3jw==
-X-Gm-Message-State: ABuFfoiFjpkThkiLpnoEgjaM5xdzdzQ7Vv6hGTh9twSm2X7NR2t1cdG8
-        4eigbrmCiJkRW+oedgAnJa0=
-X-Google-Smtp-Source: ACcGV62A6v+VINM04VHKoeyoeVpOuJ7eqMP6Rl+gm1jG0Q5Us0QhwDMs2/8g4OcWFzGRTw0HOS1/hQ==
-X-Received: by 2002:a63:ed09:: with SMTP id d9-v6mr1944153pgi.305.1539274084649;
-        Thu, 11 Oct 2018 09:08:04 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id t85-v6sm37205605pfi.73.2018.10.11.09.08.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 09:08:04 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 21:37:57 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] staging: mt7621-mmc: Fix lines over 80 characters in dbg.h
-Message-ID: <20181011160753.GA4815@nishad>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7Ev4VPBFyvZ3Tz6tF3DC+XmKcsvKCZdDG8ySpCDtHpg=;
+        b=Sijv8sZvETkRA8kci4NBHSeavKbqmXJxtDma66zYMkzaiSmHUFgc/eIoBEjTvDoz/L
+         xATBT+Y6clrHWyTGs2aowvne/ZJ7jHC3lohI4kb+heeLIGx2sPHm26XNbVSd3NYd6JcF
+         RlZzo0aD8cM5XlRnf3xzACFcgBIT9igiez2NBgME9DbSPFWsyvul8VV9pjh6YzocBS20
+         of2ULYrJWG84OSSXKHre0kikcR2xeuEFLiqmlNg2ev2kHPaQ6i9VSOL4t540kWtCts6E
+         I2txxb2TbnzPemFLxEdQJ7n96q3SJxVCtc150H6mMFxcWh7byG7NBU4xtj76RMo/wj+y
+         nRKw==
+X-Gm-Message-State: ABuFfoiZOumKlwGdSb8InfV5aypV2wDlQyWfGxCzP3l2YcE+lnsHaa6S
+        dV25Eu8D8Zt9euXVGGAHxzcCswImWA0SpJMPiQEdTA==
+X-Google-Smtp-Source: ACcGV63dPtUCdupLmip0C4pOKUVavGli3vKavsprL20wRQMKItdRPHBGFxKUN4mJtq2OAfdFLXtSJeLd96QkOrXtzds=
+X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr1446187iog.271.1539274123913;
+ Thu, 11 Oct 2018 09:08:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181011103825.023036082@infradead.org> <20181011104019.748208519@infradead.org>
+ <CANn89iKxTMRr_XSC4xHD-etoU9kF6nN7yzQP4AEfYeNKjQLTPQ@mail.gmail.com>
+ <CANn89iJsD=rKTjiGF_EEoSh9WmiifOjxu2mcqSv8Sx-NT7zixQ@mail.gmail.com> <20181011155034.GC9867@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181011155034.GC9867@hirez.programming.kicks-ass.net>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Thu, 11 Oct 2018 09:08:19 -0700
+Message-ID: <CANn89i+xbyatCY3Qs=rH9Aaoa2-kbF0nE9u-Tg=NNgbg28OGjg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86/percpu: Fix this_cpu_read()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes lines over 80 characters in dbg.h.
-Issue found by checkpatch.
+On Thu, Oct 11, 2018 at 8:50 AM Peter Zijlstra <peterz@infradead.org> wrote:
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/mt7621-mmc/dbg.h | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+> Right; it goes back a long long way... is:
+>
+>   7c3576d261ce ("[PATCH] i386: Convert PDA into the percpu section")
+>
+> early enough? That introduces percpu_from_op(), but arguably the
+> pda_from_op() it replaces was buggy already.
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 89acf590ed11..0822de5b8f42 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -5,7 +5,8 @@
-  * is confidential and proprietary to MediaTek Inc. and/or its licensors.
-  * Without the prior written permission of MediaTek inc. and/or its licensors,
-  * any reproduction, modification, use or disclosure of MediaTek Software,
-- * and information contained herein, in whole or in part, shall be strictly prohibited.
-+ * and information contained herein, in whole or in part, shall be strictly
-+ * prohibited.
-  *
-  * MediaTek Inc. (C) 2010. All rights reserved.
-  *
-@@ -18,19 +19,20 @@
-  * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
-  * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
-  * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
-- * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
-- * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
-- * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
-- * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
-- * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
-- * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
-- * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
-- * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
-- * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
-+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY
-+ * ACKNOWLEDGES THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY
-+ * THIRD PARTY ALL PROPER LICENSES CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK
-+ * SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE RELEASES MADE TO
-+ * RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR STANDARD OR OPEN
-+ * FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
-+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED
-+ * HEREUNDER WILL BE, AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK
-+ * SOFTWARE AT ISSUE, OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE
-+ * PAID BY RECEIVER TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
-  *
-- * The following software/firmware and/or related documentation ("MediaTek Software")
-- * have been modified by MediaTek Inc. All revisions are subject to any receiver's
-- * applicable license agreements with MediaTek Inc.
-+ * The following software/firmware and/or related documentation
-+ * ("MediaTek Software") have been modified by MediaTek Inc. All revisions are
-+ * subject to any receiver's applicable license agreements with MediaTek Inc.
-  */
- #ifndef __MT_MSDC_DEUBG__
- #define __MT_MSDC_DEUBG__
--- 
-2.17.1
-
+Yeah I guess all stable versions would need a fix anyway, so this tag
+would suffice,
+even if bug was older.
