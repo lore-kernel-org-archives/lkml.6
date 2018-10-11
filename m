@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE10C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8172C4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B30F2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 780ED20841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 14:46:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Ocz2zU9p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B30F2085B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="I1MzZPgn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 780ED20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeJKWNz (ORCPT
+        id S1728730AbeJKWOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:13:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58066 "EHLO
+        Thu, 11 Oct 2018 18:14:04 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58326 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeJKWNz (ORCPT
+        with ESMTP id S1726537AbeJKWOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:13:55 -0400
+        Thu, 11 Oct 2018 18:14:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=KbSX8piZTTgT6zHT5YlRclcDJOuL59QoaijNh6OI6zA=; b=Ocz2zU9prO1M
-        WtpWDVzrPmgxxVtfJPv8JChVztrLhJ39c64tEMc1MtZD6MTHVPrmGdR2qdE60/+eKW5f45Qn/hWVV
-        bwLSSHRyCLo0uUaW8ztSHYOkdAImp1Z/KyjFaXyjoyB2ZT5vtANhEbrWTC/Z0WYqwGITfsKl/zN+w
-        Dd6Hg=;
+        List-Archive; bh=BuI7NfF/Ks9KD1RiiiVDQrUDcETpkm/0WfmQSw4wO0c=; b=I1MzZPgnE9AQ
+        1fnfxPKJ67fhZcsY0MKV7zlCK529ulJji/Cr5qsqOkJ2ErG1126PXp0xsDjIvwPT7nEYZ2nlWyjqw
+        2bQC8AWgc2VffXdUsjGfWA7n5O7XcnDkSrOdS6kYRgg8M8WfwEPQRGirevBcayyzjnh/zBidokuRG
+        fGJ/M=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gAcE8-0001qG-Ti; Thu, 11 Oct 2018 14:46:12 +0000
+        id 1gAcEH-0001qT-Nz; Thu, 11 Oct 2018 14:46:21 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id ADE7911223ED; Thu, 11 Oct 2018 15:46:12 +0100 (BST)
+        id 6F77C11223ED; Thu, 11 Oct 2018 15:46:21 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Ryan Lee <RyanS.Lee@maximintegrated.com>
 Cc:     Ryan Lee <ryans.lee@maximintegrated.com>,
@@ -54,10 +54,10 @@ Cc:     Ryan Lee <ryans.lee@maximintegrated.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "ryan.lee.maxim@gmail.com" <ryan.lee.maxim@gmail.com>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: max98373: Sort BDE Limiter Thresh Volume in reverse order" to the asoc tree
-In-Reply-To:  <20181010232222.52340-2-ryans.lee@maximintegrated.com>
-Message-Id: <20181011144612.ADE7911223ED@debutante.sirena.org.uk>
-Date:   Thu, 11 Oct 2018 15:46:12 +0100 (BST)
+Subject: Applied "ASoC: max98373: Sort Digital Volume in reverse order" to the asoc tree
+In-Reply-To:  <20181010232222.52340-1-ryans.lee@maximintegrated.com>
+Message-Id: <20181011144621.6F77C11223ED@debutante.sirena.org.uk>
+Date:   Thu, 11 Oct 2018 15:46:21 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max98373: Sort BDE Limiter Thresh Volume in reverse order
+   ASoC: max98373: Sort Digital Volume in reverse order
 
 has been applied to the asoc tree at
 
@@ -90,49 +90,39 @@ to this mail.
 Thanks,
 Mark
 
-From 6c3beeca424a0c8d6c79184a880a8954bd498d57 Mon Sep 17 00:00:00 2001
+From 4cbbc91609846c09a8350080cd7e6f7764fb2ec1 Mon Sep 17 00:00:00 2001
 From: Ryan Lee <RyanS.Lee@maximintegrated.com>
-Date: Wed, 10 Oct 2018 23:26:10 +0000
-Subject: [PATCH] ASoC: max98373: Sort BDE Limiter Thresh Volume in reverse
- order
+Date: Wed, 10 Oct 2018 23:26:06 +0000
+Subject: [PATCH] ASoC: max98373: Sort Digital Volume in reverse order
 
 Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98373.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/soc/codecs/max98373.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-index 9b7ccd351cae..38871677cbae 100644
+index d6868c9a9ce6..9b7ccd351cae 100644
 --- a/sound/soc/codecs/max98373.c
 +++ b/sound/soc/codecs/max98373.c
-@@ -479,7 +479,7 @@ static const DECLARE_TLV_DB_RANGE(max98373_dht_rotation_point_tlv,
- 	14, 15, TLV_DB_SCALE_ITEM(-2500, -500, 0),
- );
- static const DECLARE_TLV_DB_RANGE(max98373_limiter_thresh_tlv,
--	0, 15, TLV_DB_SCALE_ITEM(0, -100, 0),
-+	0, 15, TLV_DB_SCALE_ITEM(-1500, 100, 0),
- );
+@@ -455,7 +455,7 @@ SND_SOC_DAPM_SIGGEN("IMON"),
+ SND_SOC_DAPM_SIGGEN("FBMON"),
+ };
  
- static const DECLARE_TLV_DB_RANGE(max98373_bde_gain_tlv,
-@@ -670,13 +670,13 @@ SOC_SINGLE_TLV("BDE LVL3 Clip Reduction Volume", MAX98373_R20B0_BDE_L3_CFG_3,
- SOC_SINGLE_TLV("BDE LVL4 Clip Reduction Volume", MAX98373_R20B3_BDE_L4_CFG_3,
- 	0, 0x3C, 0, max98373_bde_gain_tlv),
- SOC_SINGLE_TLV("BDE LVL1 Limiter Thresh Volume", MAX98373_R20A8_BDE_L1_CFG_1,
--	0, 0xF, 0, max98373_limiter_thresh_tlv),
-+	0, 0xF, 1, max98373_limiter_thresh_tlv),
- SOC_SINGLE_TLV("BDE LVL2 Limiter Thresh Volume", MAX98373_R20AB_BDE_L2_CFG_1,
--	0, 0xF, 0, max98373_limiter_thresh_tlv),
-+	0, 0xF, 1, max98373_limiter_thresh_tlv),
- SOC_SINGLE_TLV("BDE LVL3 Limiter Thresh Volume", MAX98373_R20AE_BDE_L3_CFG_1,
--	0, 0xF, 0, max98373_limiter_thresh_tlv),
-+	0, 0xF, 1, max98373_limiter_thresh_tlv),
- SOC_SINGLE_TLV("BDE LVL4 Limiter Thresh Volume", MAX98373_R20B1_BDE_L4_CFG_1,
--	0, 0xF, 0, max98373_limiter_thresh_tlv),
-+	0, 0xF, 1, max98373_limiter_thresh_tlv),
- /* Limiter */
- SOC_SINGLE("Limiter Switch", MAX98373_R20E2_LIMITER_EN,
- 	MAX98373_LIMITER_EN_SHIFT, 1, 0),
+-static DECLARE_TLV_DB_SCALE(max98373_digital_tlv, 0, -50, 0);
++static DECLARE_TLV_DB_SCALE(max98373_digital_tlv, -6350, 50, 1);
+ static const DECLARE_TLV_DB_RANGE(max98373_spk_tlv,
+ 	0, 8, TLV_DB_SCALE_ITEM(0, 50, 0),
+ 	9, 10, TLV_DB_SCALE_ITEM(500, 100, 0),
+@@ -605,7 +605,7 @@ SOC_SINGLE("Dither Switch", MAX98373_R203F_AMP_DSP_CFG,
+ SOC_SINGLE("DC Blocker Switch", MAX98373_R203F_AMP_DSP_CFG,
+ 	MAX98373_AMP_DSP_CFG_DCBLK_SHIFT, 1, 0),
+ SOC_SINGLE_TLV("Digital Volume", MAX98373_R203D_AMP_DIG_VOL_CTRL,
+-	0, 0x7F, 0, max98373_digital_tlv),
++	0, 0x7F, 1, max98373_digital_tlv),
+ SOC_SINGLE_TLV("Speaker Volume", MAX98373_R203E_AMP_PATH_GAIN,
+ 	MAX98373_SPK_DIGI_GAIN_SHIFT, 10, 0, max98373_spk_tlv),
+ SOC_SINGLE_TLV("FS Max Volume", MAX98373_R203E_AMP_PATH_GAIN,
 -- 
 2.19.0.rc2
 
