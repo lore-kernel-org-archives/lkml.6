@@ -2,554 +2,162 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B0C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC78C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 629342077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629342077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 8AF1D2077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:06:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E0wrYN3T";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lV9aG/29"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF1D2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeJLEds (ORCPT
+        id S1727123AbeJLEfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:33:48 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52413 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbeJLEds (ORCPT
+        Fri, 12 Oct 2018 00:35:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52714 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeJLEfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:33:48 -0400
-Received: from 79.184.255.62.ipv4.supernova.orange.pl (79.184.255.62) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id a70f3a5de8b714f4; Thu, 11 Oct 2018 23:04:44 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for tickless systems
-Date:   Thu, 11 Oct 2018 23:01:36 +0200
-Message-ID: <6595711.BNhtJ5yyLe@aspire.rjw.lan>
+        Fri, 12 Oct 2018 00:35:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CB63E60BF7; Thu, 11 Oct 2018 21:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539291971;
+        bh=ctmXa9N+aPJF65+eniniCAUtIddEj2hv+SV2WsQTIf4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E0wrYN3TIS65R+QvRbCr2UBSmyX6dJINaVwIgytJ5ChY3urNNXWQlO0XKN4gvmGxh
+         qVn+/k1U7lOQN2MlWq4XB0KFTKepRnIl8lcGlB6U7IweI55ozx2qfgvVAmifkVOkHQ
+         A5uVlRWE/5N2uedFUYgBnQQ65CeDEYBMMjABkcr0=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A51726063F;
+        Thu, 11 Oct 2018 21:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539291970;
+        bh=ctmXa9N+aPJF65+eniniCAUtIddEj2hv+SV2WsQTIf4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lV9aG/29gobbStF9T3S10IgBv27DrmVE2yK+E96wKbeu+epUpozJiBWwmPBuWIQWg
+         UlUr894Ujr9uT6GrQ/6/eOYh78+vD0t0DJ52Ed5JSsSWOl/yS9FKN/u8A24H3dkach
+         eXffIqnCRq1PAtKnv/6uENV26F56e8MHHR18OZew=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A51726063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Thu, 11 Oct 2018 15:06:09 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
+        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181011210609.GD2371@codeaurora.org>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181011112013.GC32752@e107155-lin>
+ <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin>
+ <20181011165822.GB2371@codeaurora.org>
+ <20181011173733.GA26447@e107155-lin>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181011173733.GA26447@e107155-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Oct 11 2018 at 11:37 -0600, Sudeep Holla wrote:
+>On Thu, Oct 11, 2018 at 10:58:22AM -0600, Lina Iyer wrote:
+>> On Thu, Oct 11 2018 at 10:19 -0600, Sudeep Holla wrote:
+>> > On Thu, Oct 11, 2018 at 10:00:53AM -0600, Lina Iyer wrote:
+>> > > Sudeep,
+>> > >
+>> > > The CPU PD does not power off the domain from Linux. That is done from
+>> > > PSCI firmware (ATF). These patches are doing the part that Linux has do,
+>> > > when powering off the CPUs, to achieve a low standby power consumption.
+>> > >
+>> >
+>> > I don't understand why Linux *has do* this part as PSCI manages CPU PM.
+>> >
+>> If we don't do this, then we leave a lot of power saving on the table,
+>> when the CPU powered off. Why should the DDR and the shared busses and
+>> clocks be idling at high power, when not needed ? PSCI has no clue to
+>> what resource requests was made my Linux and its Linux's responsibility
+>> to relinquish them when not needed. Therefore has to done from Linux.
+>>
+>
+>Is DDR managed by Linux ? I assumed it was handled by higher exception
+>levels. Can you give examples of resources used by CPU in this context.
+>When CPU can be powered on or woken up without Linux intervention, the
+>same holds true for CPU power down or sleep states. I still see no reason
+>other than the firmware has no support to talk to RPMH.
+>
+DDR, shared clocks, regulators etc. Imagine you are running something on
+the screen and CPUs enter low power mode, while the CPUs were active,
+there was a need for bunch of display resources, and things the app may
+have requested resources, while the CPU powered down the requests may
+not be needed the full extent as when the CPU was running, so they can
+voted down to a lower state of in some cases turn off the resources
+completely. What the driver voted for is dependent on the runtime state
+and the usecase currently active. The 'sleep' state value is also
+determined by the driver/framework.
 
-The venerable menu governor does some thigns that are quite
-questionable in my view.  First, it includes timer wakeups in
-the pattern detection data and mixes them up with wakeups from
-other sources which in some cases causes it to expect what
-essentially would be a timer wakeup in a time frame in which
-no timer wakeups are possible (becuase it knows the time until
-the next timer event and that is later than the expected wakeup
-time).  Second, it uses the estra exit latency limit based on
-the predicted idle duration and depending on the number of tasks
-waiting on I/O, even though those tasks may run on a different
-CPU when they are woken up.  Moreover, the time ranges used by it
-for the sleep length correction factors are not correlated to the
-list of available idle states in any way whatever and different
-correction factors are used depending on whether or not there are
-tasks waiting on I/O, which again doesn't imply anything in
-particular.
+>> Even with all the unnecessary flushing it is totally worth it. OSI helps
+>> alleviates this a bit because it embodies the same CPU PD concepts at
+>> its core. Imagine if you didn't have CPU PM domain, the every CPU would
+>> be flushing RPMH request, whenever they power down, because you never know
+>> when all CPUs are going to be powered down at the same time. That is the
+>> biggest benefit of OSI over PC mode in PSCI.
+>>
+>
+>I am not saying every CPU needs to do that, last CPU can do that in PSCI.
+>
+Yes, the last CPU is what we are getting to with this series.. Now this
+can't be done from PSCI. I will explain below.
 
-A major rework of the menu governor would be required to address
-these issues and it is likely that the performance of some
-workloads would suffer from that.  It is thus better to introduce
-an entirely new governor without them and let everybody use the
-governor that works better with their actual workloads.
+>Oh interesting, wasn't aware RPMH really needs to care about exception
+>level. For me, we know CPU is powering down, so it needs to release all
+>the resource. RPMH needs to know that and any exception level can let
+>RPMH know that. Sorry may be I don't have enough knowledge on SDM SoC.
+>
+Some resources are secure resources used in secure environments. They
+cannot be requested from non-secure. Hence secure levels are voters of
+their own accord.
 
-The new governor introduced here, the timer events oriented (TEO)
-governor, uses the same basic strategy as menu: it always tries to
-find the deepest idle state that can be used in the given conditions.
-However, it uses a different approach to that problem.  Namely,
-instead of attempting to predict the idle duration itself which is
-likely to be inaccurate no matter what, it selects the idle state
-that was the best "match" for the time range given by the sleep
-length value in the past (see the code comments for details).
+Now, since we are considering linux and secure (infact linux,hyp,secure)
+as separate voters they have to each request their votes and release
+their votes separately. PSCI cannot release a request made from Linux.
+This is how the SoC is designed. All exception levels will abide by
+that.
 
-It has been tested on a few different systems with a number of
-different workloads and compared with the menu governor.  In the
-majority of cases the workloads performed similarly regardless of
-the cpuidle governor in use, but in one case the TEO governor
-allowed the workload to perform 75% better, which is a clear
-indication that some workloads may benefit from using it quite
-a bit depending on the hardware they run on.
+>> Yes, we are close to having a platform have both, possibly.
+>>
+>
+>Comparison numbers please :)
+>
+We are far from it, for that, atleast now. But we will get there.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+>Having to adapt DT to the firmware though the feature is fully discoverable
+>is not at all good IMO. So the DT in this series *should work* with OSI
+>mode if the firmware has the support for it, it's as simple as that.
+>
+The firmware is ATF and does not support OSI.
 
-I'm running this governor on all of my systems now without any
-visible adverse effects.
-
-It is likely to select the "polling" state less often than menu
-due to the lack of the extra latency limit derived from the
-predicted idle duration, so the workloads depending on that
-behavior may be worse off (but less energy should be used
-while running them at the same time).
-
-Overall, it selects deeper idle states than menu more often, but
-that doesn't seem to make a significant difference in the majority
-of cases.
-
-In this preliminary revision it overtakes menu as the default governor
-for tickless systems (due to the higher rating), but that is likely
-to change going forward.  At this point I'm mostly asking for feedback
-and possibly testing with whatever workloads you can throw at it.
-
-The patch should apply on top of 4.19-rc7, although I'm running it on
-top of my linux-next branch.
-
----
- drivers/cpuidle/Kconfig            |   11 +
- drivers/cpuidle/governors/Makefile |    1 
- drivers/cpuidle/governors/teo.c    |  397 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 409 insertions(+)
-
-Index: linux-pm/drivers/cpuidle/governors/teo.c
-===================================================================
---- /dev/null
-+++ linux-pm/drivers/cpuidle/governors/teo.c
-@@ -0,0 +1,397 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Timer events oriented CPU idle governor
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-+ *
-+ * The idea of this governor is based on the observation that on many systems
-+ * timer events are two or more orders of magnitude more frequent than any
-+ * other interrupts, so they are likely to be the most significant source of CPU
-+ * wakeups from idle states.  Moreover, it only is necessary to estimate which
-+ * idle state is the most likely one to match the idle duration measured after
-+ * wakeup and it may not be necessary to predict the idle duration itself
-+ * accurately.  [For example, if only two idle states are available, it is
-+ * sufficient to estimate whether or not the first state is more likely to match
-+ * the measured idle duration than the second one and the precise length of the
-+ * idle interval itself need not be predicted for this purpose.]
-+ *
-+ * Also, if the time till the closest timer event (sleep length) is used to
-+ * select and idle state for a CPU and that state turns out to match the idle
-+ * duration measured after wakeup, it doesn't matter if the CPU really has been
-+ * woken up by the timer.  What matters is that it has been woken up in the time
-+ * frame matching the selected state and not what mechanism in particular has
-+ * been the real cause of the wakeup.
-+ *
-+ * The sleep length is the maximum duration of the upcoming idle time of the
-+ * CPU and it is always known to the kernel.  Using it alone for selecting an
-+ * idle state for the CPU every time is a viable option in principle, but that
-+ * might lead to suboptimal results if the other wakeup sources are more active
-+ * for some reason.  Thus this governor estimates whether or not the CPU idle
-+ * time is likely to be significantly shorter than the sleep length and selects
-+ * an idle state for it in accordance with that, as follows:
-+ *
-+ * - If there is a series of 3 or more consecutive wakeups each significantly
-+ *   earlier than the closest timer event, expect one more of them to occur and
-+ *   use the average time between them to select an idle state for the CPU.
-+ *
-+ * - Otherwise, find the state on the basis of the sleep length and state
-+ *   statistics collected over time:
-+ *
-+ *   o Find the deepest idle state whose target residency is less than or euqal
-+ *     to the sleep length.
-+ *
-+ *   o Select it if the number of times it matched both the sleep length and the
-+ *     idle duration measured after wakeup in the past is not less than the total
-+ *     number of "early" CPU wakeups matched by all of the shallower states.
-+ *
-+ *   o Otherwise, select the shallower state with the greatest number of matched
-+ *     "early" wakeups.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/cpuidle.h>
-+#include <linux/jiffies.h>
-+#include <linux/tick.h>
-+
-+/*
-+ * Assuming an idle interval every second tick, take the maximum number of CPU
-+ * wakeups regarded as recent to rougly correspond to 10 minutes.
-+ *
-+ * When the total number of CPU wakeups goes above this value, all of the
-+ * counters corresponding to the given CPU undergo a "decay" and the counting
-+ * of recent events stars over.
-+ */
-+#define TEO_MAX_RECENT_WAKEUPS	(300 * HZ)
-+
-+/**
-+ * struct teo_idle_state - Idle state data used by the TEO cpuidle governor.
-+ * @early_wakeups: Number of "early" CPU wakeups matched by this state.
-+ * @early_wakeups_old: Past "early" CPU wakeups matched by this state (decayed).
-+ * @hits: Number of "on time" CPU wakeups matched by this state.
-+ * @hits_old: Past "on time" CPU wakeups matched by this state (decayed).
-+ *
-+ * A CPU wakeup is "matched" by a given idle state if the idle duration measured
-+ * after the wakeup is between the target residency of that state and the target
-+ * residnecy of the next one (or if this is the deepest state provided, it
-+ * "matches" a CPU wakeup when the measured idle duration is at least equal to
-+ * its target residency).
-+ *
-+ * Also, from the TEO governor prespective, a CPU wakeup from idle is "early" if
-+ * it occurs significantly earlier than the closest expected timer event (that
-+ * is, early enough to match an idle state shallower than the one matching the
-+ * time till the closest timer event).  Otherwise, the wakeup is "on time", or
-+ * it is a "hit".
-+ */
-+struct teo_idle_state {
-+	u64 early_wakeups;
-+	u64 early_wakeups_old;
-+	u64 hits;
-+	u64 hits_old;
-+};
-+
-+/**
-+ * struct teo_cpu - CPU data used by the TEO cpuidle governor.
-+ * @states: Idle states data corresponding to this CPU.
-+ * @early_series_count: Number of recent "early" wakeups in a row (series).
-+ * @early_series_time_us: Total idle time corresponding to the "early" series.
-+ * @recent_wakeups: Number of wakeups since the counters were decayed last time.
-+ * @sleep_length_us: Time till the closest timer event.
-+ * @last_state: Idle state entered by the CPU last time.
-+ */
-+struct teo_cpu {
-+	struct teo_idle_state states[CPUIDLE_STATE_MAX];
-+	u64 early_series_count;
-+	u64 early_series_time_us;
-+	unsigned int recent_wakeups;
-+	unsigned int sleep_length_us;
-+	int last_state;
-+};
-+
-+static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
-+
-+/**
-+ * teo_update - Update CPU data after wakeup.
-+ * @drv: cpuidle driver containing state data.
-+ * @dev: Target CPU.
-+ */
-+static void teo_update(struct cpuidle_driver *drv,
-+			   struct cpuidle_device *dev)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+	unsigned int measured_us = dev->last_residency;
-+	int i = cpu_data->last_state;
-+
-+	if (measured_us >= 2 * drv->states[i].exit_latency)
-+		measured_us -= drv->states[i].exit_latency;
-+	else
-+		measured_us /= 2;
-+
-+	/* Find the state matching the measured idle duration. */
-+	for (i = drv->state_count - 1; i > 0; i--) {
-+		if (drv->states[i].target_residency <= measured_us)
-+			break;
-+	}
-+
-+	cpu_data->recent_wakeups++;
-+
-+	/*
-+	 * If the state matches the time till the closest timer event used
-+	 * during the most recent state selection too, it would be sufficient
-+	 * to use that time alone for the idle state selection, so increment
-+	 * the "hits" number for the matching state and clear the "early series"
-+	 * data.
-+	 *
-+	 * Note that sleep_length_us cannot be less than measured_us (or it
-+	 * would mean a late timer event), so it is sufficient to check the
-+	 * lower boundary here.
-+	 */
-+	if (i == drv->state_count - 1 ||
-+	    drv->states[i+1].target_residency > cpu_data->sleep_length_us) {
-+		cpu_data->states[i].hits++;
-+
-+		cpu_data->early_series_count = 0;
-+		cpu_data->early_series_time_us = 0;
-+	} else {
-+		/*
-+		 * The wakeup was significantly earlier than the closest timer
-+		 * event used for idle state selection, so update the CPU data
-+		 * to reflect that.
-+		 */
-+		cpu_data->states[i].early_wakeups++;
-+
-+		cpu_data->early_series_count++;
-+		cpu_data->early_series_time_us += measured_us;
-+	}
-+
-+	if (cpu_data->recent_wakeups <= TEO_MAX_RECENT_WAKEUPS)
-+		return;
-+
-+	cpu_data->recent_wakeups = 0;
-+
-+	/* Decay past events information. */
-+	for (i = 0; i < drv->state_count; i++) {
-+		cpu_data->states[i].early_wakeups_old += cpu_data->states[i].early_wakeups;
-+		cpu_data->states[i].early_wakeups_old /= 2;
-+		cpu_data->states[i].early_wakeups = 0;
-+
-+		cpu_data->states[i].hits_old += cpu_data->states[i].hits;
-+		cpu_data->states[i].hits_old /= 2;
-+		cpu_data->states[i].hits = 0;
-+	}
-+}
-+
-+/**
-+ * teo_select - Selects the next idle state to enter.
-+ * @drv: cpuidle driver containing state data.
-+ * @dev: Target CPU.
-+ * @stop_tick: Indication on whether or not to stop the scheduler tick.
-+ */
-+static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-+		      bool *stop_tick)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+	int latency_req = cpuidle_governor_latency_req(dev->cpu);
-+	unsigned int duration_us;
-+	ktime_t delta_next;
-+	int idx, i;
-+	u64 early_count, max_count, prev_count;
-+	int max_count_idx, prev_idx;
-+
-+	if (cpu_data->last_state >= 0) {
-+		teo_update(drv, dev);
-+		cpu_data->last_state = -1;
-+	}
-+
-+	cpu_data->sleep_length_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
-+
-+	duration_us = cpu_data->sleep_length_us;
-+
-+	if (cpu_data->early_series_count > 2) {
-+		unsigned int avg_us;
-+
-+		/*
-+		 * There is a series of consecutive wakeups each significantly
-+		 * earlier than the closest timer event, so expect one more of
-+		 * them to occur and use the average time between them for idle
-+		 * state selection, as long as it is within the tick boundary
-+		 * and the tick has not been stopped.
-+		 */
-+		avg_us = div64_u64(cpu_data->early_series_time_us,
-+				   cpu_data->early_series_count);
-+
-+		if (avg_us < TICK_USEC && avg_us < duration_us &&
-+		    !tick_nohz_tick_stopped())
-+			duration_us = avg_us;
-+	}
-+
-+	early_count = 0;
-+	max_count = 0;
-+	max_count_idx = -1;
-+	prev_count = 0;
-+	prev_idx = -1;
-+	idx = -1;
-+
-+	for (i = 0; i < drv->state_count; i++) {
-+		struct cpuidle_state *s = &drv->states[i];
-+		struct cpuidle_state_usage *su = &dev->states_usage[i];
-+		u64 count = cpu_data->states[i].early_wakeups +
-+				cpu_data->states[i].early_wakeups_old;
-+
-+		if (s->disabled || su->disable) {
-+			/*
-+			 * This state is disabled, so add its count of matched
-+			 * "early" wakeups to the last enabled state's count.
-+			 */
-+			if (prev_idx >= 0) {
-+				prev_count += count;
-+				if (prev_count > max_count) {
-+					max_count = prev_count;
-+					max_count_idx = prev_idx;
-+				}
-+			}
-+			continue;
-+		}
-+
-+		if (idx < 0)
-+			idx = i; /* first enabled state */
-+
-+		if (s->target_residency > duration_us) {
-+			/*
-+			 * If the next wakeup is expected to be "early", the
-+			 * time frame of it is known already.
-+			 */
-+			if (duration_us < cpu_data->sleep_length_us) {
-+				/*
-+				 * Use a physical idle state, not busy polling,
-+				 * unless a timer will trigger really soon.
-+				 */
-+				if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-+				    s->exit_latency <= latency_req &&
-+				    s->target_residency <= cpu_data->sleep_length_us) {
-+					duration_us = s->target_residency;
-+					idx = i;
-+				}
-+				break;
-+			}
-+
-+			/*
-+			 * If the number of "hits" for the state matching the
-+			 * sleep length is greater than the total number of
-+			 * "early" wakeups for all of the shallower states, the
-+			 * state selected so far is the one to use.
-+			 */
-+			if (early_count <= cpu_data->states[idx].hits +
-+					   cpu_data->states[idx].hits_old)
-+				break;
-+
-+			/*
-+			 * It is more likely that one of the shallower states
-+			 * will match the idle duration measured after wakeup,
-+			 * so take the one with the maximum count of matched
-+			 * "early" wakeups.
-+			 */
-+			idx = max_count_idx;
-+			duration_us = drv->states[idx].target_residency;
-+			break;
-+		}
-+		if (s->exit_latency > latency_req) {
-+			/*
-+			 * If we break out of the loop for latency reasons, use
-+			 * the target residency of the selected state as the
-+			 * expected idle duration to avoid stopping the tick
-+			 * as long as that target residency is low enough.
-+			 */
-+			duration_us = drv->states[idx].target_residency;
-+			break;
-+		}
-+
-+		early_count += prev_count;
-+
-+		idx = i;
-+
-+		if (count > max_count) {
-+			max_count = count;
-+			max_count_idx = idx;
-+		}
-+
-+		prev_count = count;
-+		prev_idx = idx;
-+	}
-+
-+	if (idx < 0)
-+		idx = 0; /* No states enabled. Must use 0. */
-+
-+	/*
-+	 * Don't stop the tick if the selected state is a polling one or if the
-+	 * expected idle duration is shorter than the tick period length.
-+	 */
-+	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	    duration_us < TICK_USEC) && !tick_nohz_tick_stopped()) {
-+		unsigned int delta_next_us = ktime_to_us(delta_next);
-+
-+		cpu_data->sleep_length_us = delta_next_us;
-+		*stop_tick = false;
-+
-+		if (idx > 0 && drv->states[idx].target_residency > delta_next_us) {
-+			/*
-+			 * The tick is not going to be stopped and the target
-+			 * residency of the state to be returned is not within
-+			 * the time until the closest timer event including the
-+			 * tick, so try to correct that.
-+			 */
-+			for (i = idx - 1; i > 0; i--) {
-+				if (drv->states[i].disabled ||
-+				    dev->states_usage[i].disable)
-+					continue;
-+
-+				if (drv->states[i].target_residency <= delta_next_us)
-+					break;
-+			}
-+			idx = i;
-+		}
-+	}
-+
-+	return idx;
-+}
-+
-+/**
-+ * teo_reflect - Note that governor data for the CPU need to be updated.
-+ * @dev: Target CPU.
-+ * @state: Entered state.
-+ */
-+static void teo_reflect(struct cpuidle_device *dev, int state)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+
-+	cpu_data->last_state = state;
-+}
-+
-+/**
-+ * teo_enable_device - Initialize the governor's data for the target CPU.
-+ * @drv: cpuidle driver (not used).
-+ * @dev: Target CPU.
-+ */
-+static int teo_enable_device(struct cpuidle_driver *drv,
-+			     struct cpuidle_device *dev)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+
-+	memset(cpu_data, 0, sizeof(*cpu_data));
-+	return 0;
-+}
-+
-+static struct cpuidle_governor teo_governor = {
-+	.name =		"teo",
-+	.rating =	22,
-+	.enable =	teo_enable_device,
-+	.select =	teo_select,
-+	.reflect =	teo_reflect,
-+};
-+
-+static int __init teo_governor_init(void)
-+{
-+	return cpuidle_register_governor(&teo_governor);
-+}
-+
-+postcore_initcall(teo_governor_init);
-Index: linux-pm/drivers/cpuidle/Kconfig
-===================================================================
---- linux-pm.orig/drivers/cpuidle/Kconfig
-+++ linux-pm/drivers/cpuidle/Kconfig
-@@ -23,6 +23,17 @@ config CPU_IDLE_GOV_LADDER
- config CPU_IDLE_GOV_MENU
- 	bool "Menu governor (for tickless system)"
- 
-+config CPU_IDLE_GOV_TEO
-+	bool "Timer events oriented governor (for tickless systems)"
-+	help
-+	  Menu governor derivative that uses a simplified idle state
-+	  selection method focused on timer events and does not do any
-+	  interactivity boosting.
-+
-+	  Some workloads benefit from using this governor and it generally
-+	  should be safe to use.  Say Y here if you are not happy with the
-+	  alternatives.
-+
- config DT_IDLE_STATES
- 	bool
- 
-Index: linux-pm/drivers/cpuidle/governors/Makefile
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/Makefile
-+++ linux-pm/drivers/cpuidle/governors/Makefile
-@@ -4,3 +4,4 @@
- 
- obj-$(CONFIG_CPU_IDLE_GOV_LADDER) += ladder.o
- obj-$(CONFIG_CPU_IDLE_GOV_MENU) += menu.o
-+obj-$(CONFIG_CPU_IDLE_GOV_TEO) += teo.o
-
+Thanks,
+Lina
