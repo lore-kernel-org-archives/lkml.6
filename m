@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BD2C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F29EC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3D7E2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D7E2075C
+	by mail.kernel.org (Postfix) with ESMTP id F1D1B2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:22:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D1B2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeJKWtr (ORCPT
+        id S1729025AbeJKWts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:49:47 -0400
+        Thu, 11 Oct 2018 18:49:48 -0400
 Received: from mga17.intel.com ([192.55.52.151]:21581 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728951AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727400AbeJKWtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 11 Oct 2018 18:49:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +28,9 @@ Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:22:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="77271650"
+   d="scan'208";a="77271633"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:45 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 11 Oct 2018 08:21:44 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v5 11/11] x86/cet: Add PTRACE interface for CET
-Date:   Thu, 11 Oct 2018 08:16:54 -0700
-Message-Id: <20181011151654.27221-12-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 06/11] x86/cet/ibt: Add arch_prctl functions for IBT
+Date:   Thu, 11 Oct 2018 08:16:49 -0700
+Message-Id: <20181011151654.27221-7-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151654.27221-1-yu-cheng.yu@intel.com>
 References: <20181011151654.27221-1-yu-cheng.yu@intel.com>
@@ -66,148 +66,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add REGSET_CET64/REGSET_CET32 to get/set CET MSRs:
+Update ARCH_X86_CET_STATUS and ARCH_X86_CET_DISABLE to include
+Indirect Branch Tracking features.
 
-    IA32_U_CET (user-mode CET settings),
-    IA32_PL3_SSP (user-mode shadow stack),
-    IA32_PL0_SSP (kernel-mode shadow stack),
-    IA32_PL1_SSP (ring-1 shadow stack),
-    IA32_PL2_SSP (ring-2 shadow stack).
+Introduce:
 
+arch_prctl(ARCH_X86_CET_GET_LEGACY_BITMAP, unsigned long *addr)
+    Enable the Indirect Branch Tracking legacy code bitmap.
+    Allocate the bitmap if the task does not have one.
+
+    The parameter 'addr' is a pointer to a user buffer.
+    On returning to the caller, the kernel fills the following:
+
+    *addr = IBT bitmap base address
+    *(addr + 1) = IBT bitmap size
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/fpu/regset.h |  7 +++---
- arch/x86/kernel/fpu/regset.c      | 41 +++++++++++++++++++++++++++++++
- arch/x86/kernel/ptrace.c          | 16 ++++++++++++
- include/uapi/linux/elf.h          |  1 +
- 4 files changed, 62 insertions(+), 3 deletions(-)
+ arch/x86/include/uapi/asm/prctl.h |  1 +
+ arch/x86/kernel/cet_prctl.c       | 35 +++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/regset.h b/arch/x86/include/asm/fpu/regset.h
-index d5bdffb9d27f..edad0d889084 100644
---- a/arch/x86/include/asm/fpu/regset.h
-+++ b/arch/x86/include/asm/fpu/regset.h
-@@ -7,11 +7,12 @@
+diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
+index d962f0ec9ccf..fd4eae92c733 100644
+--- a/arch/x86/include/uapi/asm/prctl.h
++++ b/arch/x86/include/uapi/asm/prctl.h
+@@ -18,5 +18,6 @@
+ #define ARCH_X86_CET_DISABLE		0x3002
+ #define ARCH_X86_CET_LOCK		0x3003
+ #define ARCH_X86_CET_ALLOC_SHSTK	0x3004
++#define ARCH_X86_CET_GET_LEGACY_BITMAP	0x3005
  
- #include <linux/regset.h>
+ #endif /* _ASM_X86_PRCTL_H */
+diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
+index 320dbb620d61..dc7e9785f5e7 100644
+--- a/arch/x86/kernel/cet_prctl.c
++++ b/arch/x86/kernel/cet_prctl.c
+@@ -21,6 +21,8 @@ static int handle_get_status(unsigned long arg2)
  
--extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active;
-+extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active,
-+				cetregs_active;
- extern user_regset_get_fn fpregs_get, xfpregs_get, fpregs_soft_get,
--				xstateregs_get;
-+				xstateregs_get, cetregs_get;
- extern user_regset_set_fn fpregs_set, xfpregs_set, fpregs_soft_set,
--				 xstateregs_set;
-+				 xstateregs_set, cetregs_set;
+ 	if (current->thread.cet.shstk_enabled)
+ 		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
++	if (current->thread.cet.ibt_enabled)
++		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
  
- /*
-  * xstateregs_active == regset_fpregs_active. Please refer to the comment
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index bc02f5144b95..7008eb084d36 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -160,6 +160,47 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
- 	return ret;
+ 	shstk_base = current->thread.cet.shstk_base;
+ 	shstk_size = current->thread.cet.shstk_size;
+@@ -56,6 +58,31 @@ static int handle_alloc_shstk(unsigned long arg2)
+ 	return 0;
  }
  
-+int cetregs_active(struct task_struct *target, const struct user_regset *regset)
++static int handle_bitmap(unsigned long arg2)
 +{
-+#ifdef CONFIG_X86_INTEL_CET
-+	if (target->thread.cet.shstk_enabled || target->thread.cet.ibt_enabled)
-+		return regset->n;
-+#endif
++	unsigned long addr, size;
++
++	if (current->thread.cet.ibt_enabled) {
++		int err;
++
++		err  = cet_setup_ibt_bitmap();
++		if (err)
++			return err;
++
++		addr = current->thread.cet.ibt_bitmap_addr;
++		size = current->thread.cet.ibt_bitmap_size;
++	} else {
++		addr = 0;
++		size = 0;
++	}
++
++	if (put_user(addr, (unsigned long __user *)arg2) ||
++	    put_user(size, (unsigned long __user *)arg2 + 1))
++		return -EFAULT;
++
 +	return 0;
 +}
 +
-+int cetregs_get(struct task_struct *target, const struct user_regset *regset,
-+		unsigned int pos, unsigned int count,
-+		void *kbuf, void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
-+
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_read(fpu);
-+	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
-+int cetregs_set(struct task_struct *target, const struct user_regset *regset,
-+		  unsigned int pos, unsigned int count,
-+		  const void *kbuf, const void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
-+
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_write(fpu);
-+	return user_regset_copyin(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
- #if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
+ int prctl_cet(int option, unsigned long arg2)
+ {
+ 	if (!cpu_x86_cet_enabled())
+@@ -70,6 +97,8 @@ int prctl_cet(int option, unsigned long arg2)
+ 			return -EPERM;
+ 		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
+ 			cet_disable_free_shstk(current);
++		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_IBT)
++			cet_disable_ibt();
  
- /*
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index e2ee403865eb..ac2bc3a18427 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -49,7 +49,9 @@ enum x86_regset {
- 	REGSET_IOPERM64 = REGSET_XFP,
- 	REGSET_XSTATE,
- 	REGSET_TLS,
-+	REGSET_CET64 = REGSET_TLS,
- 	REGSET_IOPERM32,
-+	REGSET_CET32,
- };
+ 		return 0;
  
- struct pt_regs_offset {
-@@ -1276,6 +1278,13 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
- 		.size = sizeof(long), .align = sizeof(long),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET64] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
+@@ -80,6 +109,12 @@ int prctl_cet(int option, unsigned long arg2)
+ 	case ARCH_X86_CET_ALLOC_SHSTK:
+ 		return handle_alloc_shstk(arg2);
  
- static const struct user_regset_view user_x86_64_view = {
-@@ -1331,6 +1340,13 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET32] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
- 
- static const struct user_regset_view user_x86_32_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index 5ef25a565e88..f4cdfdc59c0a 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -401,6 +401,7 @@ typedef struct elf64_shdr {
- #define NT_386_TLS	0x200		/* i386 TLS slots (struct user_desc) */
- #define NT_386_IOPERM	0x201		/* x86 io permission bitmap (1=deny) */
- #define NT_X86_XSTATE	0x202		/* x86 extended state using xsave */
-+#define NT_X86_CET	0x203		/* x86 cet state */
- #define NT_S390_HIGH_GPRS	0x300	/* s390 upper register halves */
- #define NT_S390_TIMER	0x301		/* s390 timer register */
- #define NT_S390_TODCMP	0x302		/* s390 TOD clock comparator register */
++	/*
++	 * Allocate legacy bitmap and return address & size to user.
++	 */
++	case ARCH_X86_CET_GET_LEGACY_BITMAP:
++		return handle_bitmap(arg2);
++
+ 	default:
+ 		return -EINVAL;
+ 	}
 -- 
 2.17.1
 
