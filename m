@@ -2,249 +2,114 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EFDC46464
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A383DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DEB2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DEB2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F48F2087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:08:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bl2FHE7W";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MsCg9Ui5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F48F2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeJKPet (ORCPT
+        id S1728205AbeJKPex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 11:34:49 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:21233 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeJKPet (ORCPT
+        Thu, 11 Oct 2018 11:34:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58518 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbeJKPew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 11:34:49 -0400
-Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 11 Oct
- 2018 16:09:19 +0800
-Subject: Re: [PATCH v4 1/3] clk: meson: add emmc sub clock phase delay driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180809070724.11935-1-yixun.lan@amlogic.com>
- <20180809070724.11935-2-yixun.lan@amlogic.com>
- <8ba84364847ae800fcfcab34573a25996d8724fd.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <0a4aa8d5-8b23-b8cb-fda3-1d2e73845ba7@amlogic.com>
-Date:   Thu, 11 Oct 2018 16:09:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 11 Oct 2018 11:34:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 397B1605FF; Thu, 11 Oct 2018 08:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539245324;
+        bh=bztY30R0HqdBYmuvB1jSZupIQZODwSH/1kw7SYce3xE=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=bl2FHE7Wx4Ha2OHxJ6So2bj82WdjSE+jDmg4waHuEoYscAsadkDP3B1P/xudsnHDL
+         IheEUnWrSR1JTGmdi340r3fR67Jc3Z6doSvkNi012UzVIO67FDKYLlf43qGIfq3B2Z
+         tDeUgF5XCmrSVUmeqxQdjg7zzM9TvncT7P5k1i0I=
+Received: from x230.qca.qualcomm.com (88-114-240-228.elisa-laajakaista.fi [88.114.240.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 18508605FF;
+        Thu, 11 Oct 2018 08:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539245323;
+        bh=bztY30R0HqdBYmuvB1jSZupIQZODwSH/1kw7SYce3xE=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=MsCg9Ui5qse6Tvwo0AGHqkS9KcmHtEV6xQI95D5McekLqGZTTx03Iv4bkFbew4Arb
+         SpHDIG8Sd0quCLCR9qSbvFlpySVDDNy6dRhC4pnjdA6Lu2V93XqTeft45pOd954+rz
+         j+LzmIkQoXRrzoxybD9V9QoYE+6T7RQasuGrK63c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18508605FF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Cc:     Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Igor Mitsyanko <igor.mitsyanko.os@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrey Shevchenko <ashevchenko@quantenna.com>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] qtnfmac: avoid uninitialized variable access
+References: <20181009155757.494212-1-arnd@arndb.de>
+        <20181009202507.xs5bcaq5pi4zcps3@bars>
+        <20181010145625.fn2dy2np7e6xxdci@bars>
+Date:   Thu, 11 Oct 2018 11:08:38 +0300
+In-Reply-To: <20181010145625.fn2dy2np7e6xxdci@bars> (Sergey Matyukevich's
+        message of "Wed, 10 Oct 2018 14:56:33 +0000")
+Message-ID: <87bm80x5vd.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <8ba84364847ae800fcfcab34573a25996d8724fd.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.185]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sergey Matyukevich <sergey.matyukevich.os@quantenna.com> writes:
 
-Hi Jerome,
+>> > When qtnf_trans_send_cmd_with_resp() fails, we have not yet initialized
+>> > 'resp', as pointed out by a valid gcc warning:
+>> >
+>> > drivers/net/wireless/quantenna/qtnfmac/commands.c: In function
+>> > 'qtnf_cmd_send_with_reply':
+>> > drivers/net/wireless/quantenna/qtnfmac/commands.c:133:54: error:
+>> > 'resp' may be used uninitialized in this function
+>> > [-Werror=maybe-uninitialized]
+>> >
+>> > Since 'resp_skb' is also not set here, we can skip all further
+>> > processing and just print the warning and return the failure code.
+>> >
+>> > Fixes: c6ed298ffe09 ("qtnfmac: cleanup and unify command error handling")
+>> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> Thanks for the patch! And for reminding me that I forgot to enable
+>> gcc warnings in CI builds in addition to sparse checks.
+>> 
+>> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+>
+> Hi Kalle,
+>
+> Could you please hold back applying this patch for now. We have got
+> another report for the same function, this time static analysis tool
+> warning. It looks like the patch from Arnd does not cover both cases.
+> So we will take a closer look and send a combined fix later.
 
-Sorry to miss this mail. I thought Yixun has finished this patchset. 
-I will continue his work.
+Ok, I'll drop this from my queue. Please resend whatever patch I need to
+apply.
 
-On 2018/8/10 20:27, Jerome Brunet wrote:
-> On Thu, 2018-08-09 at 15:07 +0800, Yixun Lan wrote:
->> Export the emmc sub clock phase delay ops which will be used
->> by the emmc sub clock driver itself.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  drivers/clk/meson/Makefile          |  2 +-
->>  drivers/clk/meson/clk-phase-delay.c | 96 +++++++++++++++++++++++++++++
->>  drivers/clk/meson/clkc.h            | 13 ++++
->>  3 files changed, 110 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
->>
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index 72ec8c40d848..39ce5661b654 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -2,7 +2,7 @@
->>  # Makefile for Meson specific clk
->>  #
->>  
->> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
->> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
->>  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->>  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
->> new file mode 100644
->> index 000000000000..6f226814cfec
->> --- /dev/null
->> +++ b/drivers/clk/meson/clk-phase-delay.c
->> @@ -0,0 +1,96 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Amlogic Meson MMC Sub Clock Controller Driver
->> + *
->> + * Copyright (c) 2017 Baylibre SAS.
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include "clkc.h"
->> +
->> +#define SD_EMMC_CLOCK			0
-> 
-> Drop this and use struct parm please.
-> 
-OK. I will use struct parm instead. Thanks for your time.
->> +
->> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_clk_phase_delay_data *ph =
->> +		meson_clk_get_phase_delay_data(clk);
->> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
->> +	unsigned long period_ps, p, d;
->> +	int degrees;
->> +	u32 val;
->> +
->> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
->> +	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
->> +	degrees = p * 360 / phase_num;
->> +
->> +	if (ph->delay_mask) {
->> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
->> +					 clk_hw_get_rate(hw));
->> +		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
->> +		degrees += d * ph->delay_step_ps * 360 / period_ps;
->> +		degrees %= 360;
->> +	}
->> +
->> +	return degrees;
->> +}
->> +
->> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
->> +					unsigned int phase,
->> +					unsigned int delay)
->> +{
->> +	struct meson_clk_phase_delay_data *ph = clk->data;
->> +	u32 val;
->> +
->> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
->> +
->> +	val &= ~ph->phase_mask;
->> +	val |= phase << __ffs(ph->phase_mask);
->> +
->> +	if (ph->delay_mask) {
-> 
-> This imply that delay is delay is optional. In such case, it would be a regular
-> "phase" and we already have a  driver for this. Please remove all the related
-> code and make this parameter required for this clock type.
-> 
-OK. I will use APIs from clk-phase.c for ‘core' phase. 
-> In the future, maybe we'll merge the 2 drivers.
-> 
->> +		val &= ~ph->delay_mask;
->> +		val |= delay << __ffs(ph->delay_mask);
->> +	}
->> +
->> +	regmap_write(clk->map, SD_EMMC_CLOCK, val);
->> +}
->> +
->> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_clk_phase_delay_data *ph =
->> +		meson_clk_get_phase_delay_data(clk);
->> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
->> +	unsigned long period_ps, d = 0, r;
->> +	u64 p;
->> +
->> +	p = degrees % 360;
->> +
->> +	if (!ph->delay_mask) {
->> +		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
->> +	} else {
->> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
->> +					 clk_hw_get_rate(hw));
->> +
->> +		/* First compute the phase index (p), the remainder (r) is the
->> +		 * part we'll try to acheive using the delays (d).
->> +		 */
->> +		r = do_div(p, 360 / phase_num);
->> +		d = DIV_ROUND_CLOSEST(r * period_ps,
->> +				      360 * ph->delay_step_ps);
->> +		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
->> +	}
->> +
->> +	meson_clk_apply_phase_delay(clk, p, d);
->> +	return 0;
->> +}
->> +
->> +const struct clk_ops meson_clk_phase_delay_ops = {
->> +	.get_phase = meson_clk_phase_delay_get_phase,
->> +	.set_phase = meson_clk_phase_delay_set_phase,
->> +};
->> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
->> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
->> index 24cec16b6038..499834dd34f2 100644
->> --- a/drivers/clk/meson/clkc.h
->> +++ b/drivers/clk/meson/clkc.h
->> @@ -113,6 +113,18 @@ struct clk_regmap _name = {						\
->>  	},								\
->>  };
->>  
->> +struct meson_clk_phase_delay_data {
->> +	unsigned long			phase_mask;
->> +	unsigned long			delay_mask;
-> 
-> Like every other clock drivers in the amlogic directory, please use struct parm
-> to decribe the fields.
-> 
-OK. I will use struct parm to describe phase and delay register fields.
->> +	unsigned int			delay_step_ps;
->> +};
->> +
->> +static inline struct meson_clk_phase_delay_data *
->> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
->> +{
->> +	return (struct meson_clk_phase_delay_data *)clk->data;
->> +}
->> +
->>  /* clk_ops */
->>  extern const struct clk_ops meson_clk_pll_ro_ops;
->>  extern const struct clk_ops meson_clk_pll_ops;
->> @@ -120,5 +132,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
->>  extern const struct clk_ops meson_clk_mpll_ro_ops;
->>  extern const struct clk_ops meson_clk_mpll_ops;
->>  extern const struct clk_ops meson_clk_phase_ops;
->> +extern const struct clk_ops meson_clk_phase_delay_ops;
->>  
->>  #endif /* __CLKC_H */
-> 
-> 
-> .
-> 
-
+-- 
+Kalle Valo
