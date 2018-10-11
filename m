@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD130C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE67C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0782075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0782075C
+	by mail.kernel.org (Postfix) with ESMTP id 68E9B2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E9B2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbeJKWs7 (ORCPT
+        id S1728809AbeJKWtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:48:59 -0400
-Received: from mga11.intel.com ([192.55.52.93]:21816 "EHLO mga11.intel.com"
+        Thu, 11 Oct 2018 18:49:17 -0400
+Received: from mga05.intel.com ([192.55.52.43]:3986 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728603AbeJKWs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:48:27 -0400
+        id S1728526AbeJKWs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 18:48:26 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:20:48 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 08:20:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,368,1534834800"; 
-   d="scan'208";a="78019172"
+   d="scan'208";a="78019157"
 Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Oct 2018 08:20:47 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 11 Oct 2018 08:20:46 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v5 25/27] mm/mmap: Add Shadow stack pages to memory accounting
-Date:   Thu, 11 Oct 2018 08:15:21 -0700
-Message-Id: <20181011151523.27101-26-yu-cheng.yu@intel.com>
+Subject: [PATCH v5 20/27] x86/cet/shstk: User-mode shadow stack support
+Date:   Thu, 11 Oct 2018 08:15:16 -0700
+Message-Id: <20181011151523.27101-21-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011151523.27101-1-yu-cheng.yu@intel.com>
 References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
@@ -66,36 +66,335 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add shadow stack pages to memory accounting.
+This patch adds basic shadow stack enabling/disabling routines.
+A task's shadow stack is allocated from memory with VM_SHSTK
+flag set and read-only protection.  The shadow stack is
+allocated to a fixed size of RLIMIT_STACK.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- mm/mmap.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/include/asm/cet.h               |  34 +++++++
+ arch/x86/include/asm/disabled-features.h |   8 +-
+ arch/x86/include/asm/msr-index.h         |  14 +++
+ arch/x86/include/asm/processor.h         |   5 ++
+ arch/x86/kernel/Makefile                 |   2 +
+ arch/x86/kernel/cet.c                    | 109 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/common.c             |  25 ++++++
+ arch/x86/kernel/process.c                |   2 +
+ 8 files changed, 198 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/include/asm/cet.h
+ create mode 100644 arch/x86/kernel/cet.c
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index b85292014ec9..fa581ced3f56 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1677,6 +1677,9 @@ static inline int accountable_mapping(struct file *file, vm_flags_t vm_flags)
- 	if (file && is_file_hugepages(file))
- 		return 0;
+diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+new file mode 100644
+index 000000000000..c952a2ec65fe
+--- /dev/null
++++ b/arch/x86/include/asm/cet.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_CET_H
++#define _ASM_X86_CET_H
++
++#ifndef __ASSEMBLY__
++#include <linux/types.h>
++
++struct task_struct;
++/*
++ * Per-thread CET status
++ */
++struct cet_status {
++	unsigned long	shstk_base;
++	unsigned long	shstk_size;
++	unsigned int	shstk_enabled:1;
++};
++
++#ifdef CONFIG_X86_INTEL_CET
++int cet_setup_shstk(void);
++void cet_disable_shstk(void);
++void cet_disable_free_shstk(struct task_struct *p);
++#else
++static inline int cet_setup_shstk(void) { return -EINVAL; }
++static inline void cet_disable_shstk(void) {}
++static inline void cet_disable_free_shstk(struct task_struct *p) {}
++#endif
++
++#define cpu_x86_cet_enabled() \
++	(cpu_feature_enabled(X86_FEATURE_SHSTK) || \
++	 cpu_feature_enabled(X86_FEATURE_IBT))
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* _ASM_X86_CET_H */
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index 33833d1909af..3624a11e5ba6 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -56,6 +56,12 @@
+ # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
+ #endif
  
-+	if (arch_copy_pte_mapping(vm_flags))
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++#define DISABLE_SHSTK	0
++#else
++#define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
++#endif
++
+ /*
+  * Make sure to add features to the correct mask
+  */
+@@ -75,7 +81,7 @@
+ #define DISABLED_MASK13	0
+ #define DISABLED_MASK14	0
+ #define DISABLED_MASK15	0
+-#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
++#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP|DISABLE_SHSTK)
+ #define DISABLED_MASK17	0
+ #define DISABLED_MASK18	0
+ #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 4731f0cf97c5..e073801a44e0 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -777,4 +777,18 @@
+ #define MSR_VM_IGNNE                    0xc0010115
+ #define MSR_VM_HSAVE_PA                 0xc0010117
+ 
++/* Control-flow Enforcement Technology MSRs */
++#define MSR_IA32_U_CET		0x6a0 /* user mode cet setting */
++#define MSR_IA32_S_CET		0x6a2 /* kernel mode cet setting */
++#define MSR_IA32_PL0_SSP	0x6a4 /* kernel shstk pointer */
++#define MSR_IA32_PL3_SSP	0x6a7 /* user shstk pointer */
++#define MSR_IA32_INT_SSP_TAB	0x6a8 /* exception shstk table */
++
++/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
++#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001ULL
++#define MSR_IA32_CET_WRSS_EN		0x0000000000000002ULL
++#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004ULL
++#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008ULL
++#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010ULL
++
+ #endif /* _ASM_X86_MSR_INDEX_H */
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index d53c54b842da..63918cecf367 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -24,6 +24,7 @@ struct vm86;
+ #include <asm/special_insns.h>
+ #include <asm/fpu/types.h>
+ #include <asm/unwind_hints.h>
++#include <asm/cet.h>
+ 
+ #include <linux/personality.h>
+ #include <linux/cache.h>
+@@ -505,6 +506,10 @@ struct thread_struct {
+ 	unsigned int		sig_on_uaccess_err:1;
+ 	unsigned int		uaccess_err:1;	/* uaccess failed */
+ 
++#ifdef CONFIG_X86_INTEL_CET
++	struct cet_status	cet;
++#endif
++
+ 	/* Floating point and extended processor state */
+ 	struct fpu		fpu;
+ 	/*
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 8824d01c0c35..fbb2d91fb756 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -139,6 +139,8 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
+ obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
+ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+ 
++obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
++
+ ###
+ # 64 bit specific files
+ ifeq ($(CONFIG_X86_64),y)
+diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+new file mode 100644
+index 000000000000..ec256ae27a31
+--- /dev/null
++++ b/arch/x86/kernel/cet.c
+@@ -0,0 +1,109 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * cet.c - Control Flow Enforcement (CET)
++ *
++ * Copyright (c) 2018, Intel Corporation.
++ * Yu-cheng Yu <yu-cheng.yu@intel.com>
++ */
++
++#include <linux/types.h>
++#include <linux/mm.h>
++#include <linux/mman.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/sched/signal.h>
++#include <asm/msr.h>
++#include <asm/user.h>
++#include <asm/fpu/xstate.h>
++#include <asm/fpu/types.h>
++#include <asm/compat.h>
++#include <asm/cet.h>
++
++static int set_shstk_ptr(unsigned long addr)
++{
++	u64 r;
++
++	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
++		return -1;
++
++	if ((addr >= TASK_SIZE_MAX) || (!IS_ALIGNED(addr, 4)))
++		return -1;
++
++	rdmsrl(MSR_IA32_U_CET, r);
++	wrmsrl(MSR_IA32_PL3_SSP, addr);
++	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
++	return 0;
++}
++
++static unsigned long get_shstk_addr(void)
++{
++	unsigned long ptr;
++
++	if (!current->thread.cet.shstk_enabled)
++		return 0;
++
++	rdmsrl(MSR_IA32_PL3_SSP, ptr);
++	return ptr;
++}
++
++int cet_setup_shstk(void)
++{
++	unsigned long addr, size;
++
++	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
++		return -EOPNOTSUPP;
++
++	size = rlimit(RLIMIT_STACK);
++	addr = do_mmap_locked(0, size, PROT_READ,
++			      MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK);
++
++	/*
++	 * Return actual error from do_mmap().
++	 */
++	if (addr >= TASK_SIZE_MAX)
++		return addr;
++
++	set_shstk_ptr(addr + size - sizeof(u64));
++	current->thread.cet.shstk_base = addr;
++	current->thread.cet.shstk_size = size;
++	current->thread.cet.shstk_enabled = 1;
++	return 0;
++}
++
++void cet_disable_shstk(void)
++{
++	u64 r;
++
++	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
++		return;
++
++	rdmsrl(MSR_IA32_U_CET, r);
++	r &= ~(MSR_IA32_CET_SHSTK_EN);
++	wrmsrl(MSR_IA32_U_CET, r);
++	wrmsrl(MSR_IA32_PL3_SSP, 0);
++	current->thread.cet.shstk_enabled = 0;
++}
++
++void cet_disable_free_shstk(struct task_struct *tsk)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
++	    !tsk->thread.cet.shstk_enabled)
++		return;
++
++	if (tsk == current)
++		cet_disable_shstk();
++
++	/*
++	 * Free only when tsk is current or shares mm
++	 * with current but has its own shstk.
++	 */
++	if (tsk->mm && (tsk->mm == current->mm) &&
++	    (tsk->thread.cet.shstk_base)) {
++		vm_munmap(tsk->thread.cet.shstk_base,
++			  tsk->thread.cet.shstk_size);
++		tsk->thread.cet.shstk_base = 0;
++		tsk->thread.cet.shstk_size = 0;
++	}
++
++	tsk->thread.cet.shstk_enabled = 0;
++}
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 44c4ef3d989b..c3960326b67f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -52,6 +52,7 @@
+ #include <asm/microcode_intel.h>
+ #include <asm/intel-family.h>
+ #include <asm/cpu_device_id.h>
++#include <asm/cet.h>
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ #include <asm/uv/uv.h>
+@@ -411,6 +412,29 @@ static __init int setup_disable_pku(char *arg)
+ __setup("nopku", setup_disable_pku);
+ #endif /* CONFIG_X86_64 */
+ 
++static __always_inline void setup_cet(struct cpuinfo_x86 *c)
++{
++	if (cpu_x86_cet_enabled())
++		cr4_set_bits(X86_CR4_CET);
++}
++
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++static __init int setup_disable_shstk(char *s)
++{
++	/* require an exact match without trailing characters */
++	if (s[0] != '\0')
++		return 0;
++
++	if (!boot_cpu_has(X86_FEATURE_SHSTK))
 +		return 1;
 +
- 	return (vm_flags & (VM_NORESERVE | VM_SHARED | VM_WRITE)) == VM_WRITE;
++	setup_clear_cpu_cap(X86_FEATURE_SHSTK);
++	pr_info("x86: 'no_cet_shstk' specified, disabling Shadow Stack\n");
++	return 1;
++}
++__setup("no_cet_shstk", setup_disable_shstk);
++#endif
++
+ /*
+  * Some CPU features depend on higher CPUID levels, which may not always
+  * be available due to CPUID level capping or broken virtualization
+@@ -1376,6 +1400,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	x86_init_rdrand(c);
+ 	x86_init_cache_qos(c);
+ 	setup_pku(c);
++	setup_cet(c);
+ 
+ 	/*
+ 	 * Clear/Set all flags overridden by options, need do it
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index c93fcfdf1673..4a776da4c28c 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -39,6 +39,7 @@
+ #include <asm/desc.h>
+ #include <asm/prctl.h>
+ #include <asm/spec-ctrl.h>
++#include <asm/cet.h>
+ 
+ /*
+  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
+@@ -134,6 +135,7 @@ void flush_thread(void)
+ 	flush_ptrace_hw_breakpoint(tsk);
+ 	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
+ 
++	cet_disable_shstk();
+ 	fpu__clear(&tsk->thread.fpu);
  }
  
-@@ -3267,6 +3270,8 @@ void vm_stat_account(struct mm_struct *mm, vm_flags_t flags, long npages)
- 		mm->stack_vm += npages;
- 	else if (is_data_mapping(flags))
- 		mm->data_vm += npages;
-+	else if (arch_copy_pte_mapping(flags))
-+		mm->data_vm += npages;
- }
- 
- static vm_fault_t special_mapping_fault(struct vm_fault *vmf);
 -- 
 2.17.1
 
