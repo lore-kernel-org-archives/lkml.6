@@ -2,189 +2,149 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36459C67837
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C171C28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E996C2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E996C2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id B14712077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:50:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WEnhI+H/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B14712077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbeJLHSC (ORCPT
+        id S1727164AbeJLHTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:18:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58814 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeJLHSC (ORCPT
+        Fri, 12 Oct 2018 03:19:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44350 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeJLHTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:18:02 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gAkgn-0002fR-UF; Thu, 11 Oct 2018 23:48:22 +0000
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     Kees Cook <keescook@chromium.org>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
-Date:   Thu, 11 Oct 2018 16:48:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 03:19:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so4905988pgu.11
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 16:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vsEke3q7vDB4NkCT6Jw+DLcEdkMHhTAquA5LgV63JCU=;
+        b=WEnhI+H/Iizlmp3ty6+6/gzChNFw+jXwPfvhxB1q5kDG/NTWg8X6fzGbvBPKOWjhz1
+         trKxONGuxBDpjjxpNP0OSauEtUjGV0nmET/zua5H2SdolQkhEx9dEnVIqc+SZLzhAlka
+         6sNVGj5dB/0gFJj8ylvBUjl3By9Ac+EHQlz1o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vsEke3q7vDB4NkCT6Jw+DLcEdkMHhTAquA5LgV63JCU=;
+        b=P2WYGZvlKvwn/x3PDmcdx4ZT0TScwu03cxdFTi73u4jISZ2nPBC5gqUFou8nDGJ374
+         HQTgGAg1duFX0be0PR638WQTsVbZqmmbphYypFz9S4T1i1ebxUUjZG5b4ScPNUT+UPbn
+         KLQtKhmYQSOopB/mqp0q46aaqEMuQ/PuYJkxFW9uHZIUp8vm9bmA7JPSjz5UxROdcPZ5
+         szHZZ4SlgQ4Xu4iwvAf5CoMD3y2sJ4QdHojUVukbRxLbs4Ho2ejQqLFS4BlADTIRbbkM
+         D7mcdG2g/DJDh0Ha+RdL4XwAWA2A74PpPHuAexZiimLXrLflpHS2iCkCuQsVl98Q4sjv
+         Ul0Q==
+X-Gm-Message-State: ABuFfogoganpPcfu62O+FgxSS8pF4frraAssSPNVzpri3wjQ2o5z8ES8
+        iBr5zlvF9+brqwhgMLn8LFa4PA==
+X-Google-Smtp-Source: ACcGV60Pn737Q/ZLcsnfWI83DJwpukWXN+BhWOPC0FWKCPoFl1/AYdszvV9BuEpDNk7QvAcYImwOvA==
+X-Received: by 2002:a62:6383:: with SMTP id x125-v6mr3602071pfb.13.1539301816501;
+        Thu, 11 Oct 2018 16:50:16 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id v190-v6sm44300668pgb.16.2018.10.11.16.50.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 16:50:15 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 16:50:15 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
+Message-ID: <20181011235015.GO22824@google.com>
+References: <20180925210255.172734-1-mka@chromium.org>
+ <153906464468.119890.12038987094612660933@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <153906464468.119890.12038987094612660933@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 04:09 PM, Kees Cook wrote:
-> On Thu, Oct 11, 2018 at 3:58 PM, Jordan Glover
-> <Golden_Miller83@protonmail.ch> wrote:
->> On Thursday, October 11, 2018 7:57 PM, Kees Cook <keescook@chromium.org> wrote:
->>>     To switch to SELinux at boot time with
->>>     "CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
->>>     work:
->>>
->>>     selinux=1 security=selinux
->>>
->>>     This will work still, since it will enable selinux (selinux=1) and
->>>     disable all other major LSMs (security=selinux).
->>>
->>>     The new way to enable selinux would be using
->>>     "lsm=yama,loadpin,integrity,selinux".
->>>
->>
->> It seems to me that legacy way is more user friendly than the new one.
->> AppArmor and SElinux are households names but the rest may be enigmatic
->> for most users and the need for explicit passing them all may be
->> troublesome. Especially when the new ones like sara,landlock or cows :)
->> will be incoming. Moreover to knew what you have to pass there, you need
->> to look at CONFIG_LSM in kernel config (which will vary across distros
->> and also mean copy-paste from the web source may won't work as expected)
->> which again most users don't do.
->>
->> I think there is risk that users will end up with "lsm=selinux" without
->> realizing that they may disable something along the way.
->>
->> I would prefer for "lsm=" to work as override to "CONFIG_LSM=" with
->> below assumptions:
->>
->> I. lsm="$lsm" will append "$lsm" at the end of string. Before extreme
->> stacking it will also remove the other major (explicit) lsm from it.
->>
->> II. lsm="!$lsm" will remove "$lsm" from the string.
->>
->> III. If "$lsm" already exist in the string, it's moved at the end of it
->> (this will cover ordering).
+On Mon, Oct 08, 2018 at 10:57:24PM -0700, Stephen Boyd wrote:
+> Quoting Matthias Kaehlcke (2018-09-25 14:02:55)
+> > Add a global binding for the 'aliases' node. This includes an initial list
+> > of standardized alias names for some hardware components that are commonly
+> > found in 'aliases'.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  Documentation/devicetree/bindings/aliases.txt | 47 +++++++++++++++++++
 > 
-> We've had things sort of like this proposed, but if you can convince
-> James and others, I'm all for it. I think the standing objection from
-> James and John about this is that the results of booting with
-> "lsm=something" ends up depending on CONFIG_LSM= for that distro. So
-> you end up with different behaviors instead of a consistent behavior
-> across all distros.
+> Any chance we can get a documentation update for the devicetree spec as
+> well?
+
+I'm not involved in the DT spec process, but I'd certainly welcome an
+update ;-)
+
+> >  1 file changed, 47 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/aliases.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/aliases.txt b/Documentation/devicetree/bindings/aliases.txt
+> > new file mode 100644
+> > index 000000000000..d64ed1c7eb34
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/aliases.txt
+> > @@ -0,0 +1,47 @@
+> > +The aliases node
+> > +----------------
+> > +
+> > +The aliases node contains properties that represent aliases to device tree
+> > +nodes. The name of the property is the alias name, the value is the path of
+> > +a the device tree node that corresponds to the alias. The path may be
 > 
+> s/a //
 
-Its certainly a point that could confuse the user. I do have concerns
-about it, but not something that is on a must haves list
+ack
 
-> Now, in the future blob and extreme stacking world, having the
-> explicit lsm= list shouldn't be too bad since LSMs will effectively
-> ALL be initialized -- but they'll be inactive since they have no
-> policy loaded.
+> > +specified as a string or a phandle.
+> > +
+> > +Alias names are often suffixed with a numeric ID, especially when there may
+> > +be multiple instances of the same type. The ID typically corresponds to the
+> > +hardware layout, it may also be used by drivers for a stable mapping of
+> > +device names and hardware entities.
 > 
+> Indicate the numeric ID is a u32 or something like that?
 
-you are more optimistic about this than I am, but there will be at
-least some movement towards this.
+ok
 
-> But I still agree with you: I'd like a friendlier way to
-> disable/enable specific LSMs, but an explicit lsm= seems to be the
-> only way.
+> > +
+> > +Alias names
+> > +-----------
+> > +
+> > +The devicetree specification doesn't require the use of specific alias
+> > +names to refer to hardware entities of a given type, however the Linux
+> > +kernel aims for a certain level of consistency.
+> > +
+> > +The following standardized alias names shall be used for their
+> > +corresponding hardware components:
+> > +
+> > +  bluetoothN           Bluetooth controller
 > 
-
-Hrmmm, I don't know about the only way, but a way to provide the
-explicit list, and also set a specific set as the default in the
-Kconfig is a hard requirement.
-
-The initial lsm.ebable, lsm.disable had too many issues, and for
-various reasons I never managed to get back to kees' proposal
-for using +.
-
-That said, I do think the right approach for the initial pass is
-the explicit list. It moves the arguments to the side and allows
-this work to move forward.
-
->> It's possible that something lime this was discussed already
->> but without full examples it was hard to me for tracking things.
+> Can we use syntax like:
 > 
-> It's been a painful thread. ;)
+> 	bluetooth<N>
 > 
+> to indicate that <N> is an unsigned integer?
 
-Indeed
+sounds good
+
+Thanks for the review!
+
+Matthias
