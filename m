@@ -2,190 +2,321 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30055C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC3BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5152086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5152086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F63B2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 07:24:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="c+JDwpdb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F63B2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeJKOuC (ORCPT
+        id S1727473AbeJKOui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:50:02 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35497 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeJKOuC (ORCPT
+        Thu, 11 Oct 2018 10:50:38 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52656 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeJKOui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:50:02 -0400
-Received: by mail-vs1-f65.google.com with SMTP id c10so7587967vsk.2;
-        Thu, 11 Oct 2018 00:24:02 -0700 (PDT)
+        Thu, 11 Oct 2018 10:50:38 -0400
+Received: by mail-it1-f193.google.com with SMTP id 134-v6so12018914itz.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 00:24:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:date:message-id:in-reply-to:references:user-agent
+         :subject:mime-version:content-transfer-encoding;
+        bh=O0/z/U2Trlu01OLg2n4mHVQp0lUlbLhSGLB6UOuQPeo=;
+        b=c+JDwpdbqM5v1hriepC0LM9H5C3dpYhL0D01PNSd6gABhBEH6aGi+gYzU9j5xhX7e6
+         IyL/uKWtP/CsHaMXDLTp7i2+h1/SGwGnEXQ9mmqcy5CCruCj4P5RfSk12Yhf22DSP8yY
+         SXrZjQlHA5UhNGngfi8vHuPrx2LoNRjCMDy6Z3Up/4XJtV4WK7VvGQWB1Fy1czHFrrEz
+         xZ0BfOT7KW0nJGdaQgMj1vRiRCAXI1cyaN5RMphPqO2RNr0xuwT5DerdOzF2FKBrYDJS
+         O1wDSiK9jiDGrU2vxecznQCT/NAg48JckH2KSD+PbLjHdRXUDJPzYe5LEBTnYoU13JPc
+         dnlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=InkG2wRiAjpkT0+LPRKp7SOX8QSYe8BRdarKT7AYGVM=;
-        b=HaDRtg6KCt4likz+G+EFYZEQdbZzl5qEYk9nHaHQg+G1GPkEtKBrwA/lFXYU7HjlbV
-         ND9XaE0pj3hTPuJUCzxUd8MiPzGgIFT3kT8gb/CryxUJH0zWvtXekJUPmnzxnfCqjIiN
-         xxpOgcIeVm6XbLa9AhMfKGIbNbyUq2aWLUl7GGQPgMM23MgV+4AhkTjpiT9jBbVMgeCD
-         wKOlFTt8K4UShEW0LN41f/Fd9pjpjc4Qh5mfp94UvHT+ZaIKx120rVSi1w333M/uaUlN
-         V+oMcmk4FI7VOQGiNWzbEJL4UohgmnmHBheSVWMNvrJbGKio2WQekrUZxPeWnJCZ1MMY
-         Q7bw==
-X-Gm-Message-State: ABuFfohRnUQbwj6ELVVLgYXZqKgQgVOwhcezO8jMeYSOoxVttNkisntV
-        SVAN5ygl8preHqyLS6PnLf9QX4Cd41tW2rTt3Zc=
-X-Google-Smtp-Source: ACcGV63phkeXseWI+wlP2lubqbb6W/kD/9AmM1eq4oQgjPXbixOEPJTdL7+mwue3a4qIDYMDORcz309qAPWVECt3Yxg=
-X-Received: by 2002:a9f:31e2:: with SMTP id w31mr198835uad.0.1539242642381;
- Thu, 11 Oct 2018 00:24:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:subject:mime-version
+         :content-transfer-encoding;
+        bh=O0/z/U2Trlu01OLg2n4mHVQp0lUlbLhSGLB6UOuQPeo=;
+        b=hieF6rNtciyZA0czzijy+nkIIeIh0eLTHNUwT2y1BeCXCLKfMjBRvljYuDtTyNfFso
+         xsmwMchRLncT+HhS09vJnKJerx8PPS4sVgZ9RjYQGRhR+UHKTG3VH5w1vk/vXvudyBCV
+         FTiBoqFymUWFYlgJugVHl09CVKP3KUTuBuyo+Ehvk1NK/FR5BGFLWvudGHF8QoMhI9BJ
+         tXbCQtHIylkJxUSkIWTLr3R3pw64us4jjwt4b10IugrAaPwl2RotNnUpLaJbNLw5QXE6
+         y9V2KHQTPOnCSyeHqGidKs7zlpnOj6HD5QCPKuf3nyiVANwN8FYV21RVrQafEaZQGu6I
+         54oA==
+X-Gm-Message-State: ABuFfohH1cDqMAegTXgx26A75IJEozIcsr1t9JmgrbV80JiGvtaZjxFu
+        mcWKIGTrATixn34Bd8BDZb++
+X-Google-Smtp-Source: ACcGV61YOg8Qe+QBIyg05ufXOrrrR1qci5DOnasD7S1XNMOpW/nzGbj3tICVN+E8DZLmsCLGz32E6w==
+X-Received: by 2002:a05:660c:88d:: with SMTP id o13mr584228itk.34.1539242679026;
+        Thu, 11 Oct 2018 00:24:39 -0700 (PDT)
+Received: from [10.20.3.205] ([12.226.92.2])
+        by smtp.gmail.com with ESMTPSA id g73-v6sm8519940itg.37.2018.10.11.00.24.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 00:24:37 -0700 (PDT)
+From:   Paul Moore <paul@paul-moore.com>
+To:     Jann Horn <jannh@google.com>
+CC:     <christian@brauner.io>, Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        <containers@lists.linux-foundation.org>,
+        <suda.akihiro@lab.ntt.co.jp>, Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "linux-security-module" <linux-security-module@vger.kernel.org>,
+        <selinux@tycho.nsa.gov>, Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Date:   Thu, 11 Oct 2018 03:24:34 -0400
+Message-ID: <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io>
+ <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+ <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+ <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+ <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+ <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
+ <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
+User-Agent: AquaMail/1.16.1-1284 (build: 101600100)
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
 MIME-Version: 1.0
-References: <20181010170936.316862-1-lkundrak@v3.sk> <20181010170936.316862-8-lkundrak@v3.sk>
-In-Reply-To: <20181010170936.316862-8-lkundrak@v3.sk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 11 Oct 2018 09:23:49 +0200
-Message-ID: <CAMuHMdXht0icaRCaJWy2GcVny=EVZ2FOfXW7s=hKFizi6sE-8g@mail.gmail.com>
-Subject: Re: [PATCH 07/11] spi: Deal with slaves that return from
- transfer_one() unfinished
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>, quozl@laptop.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lubomir,
-
-On Wed, Oct 10, 2018 at 7:10 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> Some drivers, such as spi-pxa2xx return from the transfer_one callback
-> immediately, idicating that the transfer will be finished asynchronously.
+On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
+> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
+>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
+>>> +cc selinux people explicitly, since they probably have opinions on thi=
+s
+>>
+>> I just spent about twenty minutes working my way through this thread,
+>> and digging through the containers archive trying to get a good
+>> understanding of what you guys are trying to do, and I'm not quite
+>> sure I understand it all.  However, from what I have seen, this
+>> approach looks very ptrace-y to me (I imagine to others as well based
+>> on the comments) and because of this I think ensuring the usual ptrace
+>> access controls are evaluated, including the ptrace LSM hooks, is the
+>> right thing to do.
 >
-> Normally, spi_transfer_one_message() synchronously waits for the
-> transfer to finish with wait_for_completion_timeout(). For slaves, we
-> don't want the transaction to time out as it can complete in a long time
-> in future. Use wait_for_completion_interruptible() instead.
+> Basically the problem is that this new ptrace() API does something
+> that doesn't just influence the target task, but also every other task
+> that has the same seccomp filter. So the classic ptrace check doesn't
+> work here.
+
+Due to some rather unfortunate events today I'm suddenly without easy acces=
+s to the kernel code, but would it be possible to run the LSM ptrace access=
+ control checks against all of the affected tasks?  If it is possible, how =
+painful would it be?
+
 >
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>> If I've missed something, or I'm thinking about this wrong, please
+>> educate me; just a heads-up that I'm largely offline for most of this
+>> week so responses on my end are going to be delayed much more than
+>> usual.
+>>
+>>> On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io>=
+ wrote:
+>>>> On Tue, Oct 09, 2018 at 02:39:53PM +0200, Jann Horn wrote:
+>>>>> On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.i=
+o> wrote:
+>>>>>> On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
+>>>>>>> On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner=
+.io> wrote:
+>>>>>>> > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+>>>>>>> > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@bra=
+uner.io> wrote:
+>>>>>>> > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrot=
+e:
+>>>>>>> > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+>>>>>>> > > > > index 44a31ac8373a..17685803a2af 100644
+>>>>>>> > > > > --- a/kernel/seccomp.c
+>>>>>>> > > > > +++ b/kernel/seccomp.c
+>>>>>>> > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(st=
+ruct task_struct *task,
+>>>>>>> > > > >
+>>>>>>> > > > >       return ret;
+>>>>>>> > > > >  }
+>>>>>>> > > > > +
+>>>>>>> > > > > +long seccomp_new_listener(struct task_struct *task,
+>>>>>>> > > > > +                       unsigned long filter_off)
+>>>>>>> > > > > +{
+>>>>>>> > > > > +     struct seccomp_filter *filter;
+>>>>>>> > > > > +     struct file *listener;
+>>>>>>> > > > > +     int fd;
+>>>>>>> > > > > +
+>>>>>>> > > > > +     if (!capable(CAP_SYS_ADMIN))
+>>>>>>> > > > > +             return -EACCES;
+>>>>>>> > > >
+>>>>>>> > > > I know this might have been discussed a while back but why ex=
+actly do we
+>>>>>>> > > > require CAP_SYS_ADMIN in init_userns and not in the target us=
+erns? What
+>>>>>>> > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target pro=
+cess and
+>>>>>>> > > > use ptrace from in there?
+>>>>>>> > >
+>>>>>>> > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=
+=3DjjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+>>>>>>> > > . Basically, the problem is that this doesn't just give you cap=
+ability
+>>>>>>> > > over the target task, but also over every other task that has t=
+he same
+>>>>>>> > > filter installed; you need some sort of "is the caller capable =
+over
+>>>>>>> > > the filter and anyone who uses it" check.
+>>>>>>> >
+>>>>>>> > Thanks.
+>>>>>>> > But then this new ptrace feature as it stands is imho currently b=
+roken.
+>>>>>>> > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF i=
+f you
+>>>>>>> > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() i=
+tself
+>>>>>>> > if you are ns_cpabable(CAP_SYS_ADMIN)
+>>>>>
+>>>>> Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long a=
+s
+>>>>> you enable the NNP flag, I think?
+>>>>
+>>>> Yes, if you turn on NNP you don't even need sys_admin.
+>>>>
+>>>>>
+>>>>>>> > then either the new ptrace() api
+>>>>>>> > extension should be fixed to allow for this too or the seccomp() =
+way of
+>>>>>>> > retrieving the pid - which I really think we want - needs to be f=
+ixed to
+>>>>>>> > require capable(CAP_SYS_ADMIN) too.
+>>>>>>> > The solution where both require ns_capable(CAP_SYS_ADMIN) is - im=
+ho -
+>>>>>>> > the preferred way to solve this.
+>>>>>>> > Everything else will just be confusing.
+>>>>>>>
+>>>>>>> First you say "broken", then you say "confusing". Which one do you =
+mean?
+>>>>>>
+>>>>>> Both. It's broken in so far as it places a seemingly unnecessary
+>>>>>> restriction that could be fixed. You outlined one possible fix yours=
+elf
+>>>>>> in the link you provided.
+>>>>>
+>>>>> If by "possible fix" you mean "check whether the seccomp filter is
+>>>>> only attached to a single task": That wouldn't fundamentally change
+>>>>> the situation, it would only add an additional special case.
+>>>>>
+>>>>>> And it's confusing in so far as there is a way
+>>>>>> via seccomp() to get the fd without said requirement.
+>>>>>
+>>>>> I don't find it confusing at all. seccomp() and ptrace() are very
+>>>>
+>>>> Fine, then that's a matter of opinion. I find it counterintuitive that
+>>>> you can get an fd without privileges via one interface but not via
+>>>> another.
+>>>>
+>>>>> different situations: When you use seccomp(), infrastructure is
+>>>>
+>>>> Sure. Note, that this is _one_ of the reasons why I want to make sure =
+we
+>>>> keep the native seccomp() only based way of getting an fd without
+>>>> forcing userspace to switching to a differnet kernel api.
+>>>>
+>>>>> already in place for ensuring that your filter is only applied to
+>>>>> processes over which you are capable, and propagation is limited by
+>>>>> inheritance from your task down. When you use ptrace(), you need a
+>>>>> pretty different sort of access check that checks whether you're
+>>>>> privileged over ancestors, siblings and so on of the target task.
+>>>>
+>>>> So, don't get me wrong I'm not arguing against the ptrace() interface =
+in
+>>>> general. If this is something that people find useful, fine. But, I
+>>>> would like to have a simple single-syscall pure-seccomp() based way of
+>>>> getting an fd, i.e. what we have in patch 1 of this series.
+>>>
+>>> Yeah, I also prefer the seccomp() one.
+>>>
+>>>>> But thinking about it more, I think that CAP_SYS_ADMIN over the saved
+>>>>> current->mm->user_ns of the task that installed the filter (stored as
+>>>>> a "struct user_namespace *" in the filter) should be acceptable.
+>>>>
+>>>> Hm... Why not CAP_SYS_PTRACE?
+>>>
+>>> Because LSMs like SELinux add extra checks that apply even if you have
+>>> CAP_SYS_PTRACE, and this would subvert those. The only capability I
+>>> know of that lets you bypass LSM checks by design (if no LSM blocks
+>>> the capability itself) is CAP_SYS_ADMIN.
+>>>
+>>>> One more thing. Citing from [1]
+>>>>
+>>>>> I think there's a security problem here. Imagine the following scenar=
+io:
+>>>>>
+>>>>> 1. task A (uid=3D=3D0) sets up a seccomp filter that uses SECCOMP_RET=
+_USER_NOTIF
+>>>>> 2. task A forks off a child B
+>>>>> 3. task B uses setuid(1) to drop its privileges
+>>>>> 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1=
+)
+>>>>> or via execve()
+>>>>> 5. task C (the attacker, uid=3D=3D1) attaches to task B via ptrace
+>>>>> 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+>>>>
+>>>> Sorry, to be late to the party but would this really pass
+>>>> __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to m=
+e
+>>>> that it would... Doesn't look like it would get past:
+>>>>
+>>>>    tcred =3D __task_cred(task);
+>>>>    if (uid_eq(caller_uid, tcred->euid) &&
+>>>>        uid_eq(caller_uid, tcred->suid) &&
+>>>>        uid_eq(caller_uid, tcred->uid)  &&
+>>>>        gid_eq(caller_gid, tcred->egid) &&
+>>>>        gid_eq(caller_gid, tcred->sgid) &&
+>>>>        gid_eq(caller_gid, tcred->gid))
+>>>>            goto ok;
+>>>>    if (ptrace_has_cap(tcred->user_ns, mode))
+>>>>            goto ok;
+>>>>    rcu_read_unlock();
+>>>>    return -EPERM;
+>>>> ok:
+>>>>    rcu_read_unlock();
+>>>>    mm =3D task->mm;
+>>>>    if (mm &&
+>>>>        ((get_dumpable(mm) !=3D SUID_DUMP_USER) &&
+>>>>         !ptrace_has_cap(mm->user_ns, mode)))
+>>>>        return -EPERM;
+>>>
+>>> Which specific check would prevent task C from attaching to task B? If
+>>> the UIDs match, the first "goto ok" executes; and you're dumpable, so
+>>> you don't trigger the second "return -EPERM".
+>>>
+>>>>> 7. because the seccomp filter is shared by task A and task B, task C
+>>>>> is now able to influence syscall results for syscalls performed by
+>>>>> task A
+>>>>
+>>>> [1]: https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=3DjjJWs=
+O5pCvnH68P+RKO8Ow@mail.gmail.com/
+>>
+>>
+>>
+>> --
+>> paul moore
+>> www.paul-moore.com
 
-Thanks for your patch!
 
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -993,6 +993,44 @@ static int spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
->         return __spi_map_msg(ctlr, msg);
->  }
->
-> +static int spi_transfer_wait(struct spi_controller *ctlr,
-> +                            struct spi_message *msg,
-> +                            struct spi_transfer *xfer)
-> +{
-> +       struct spi_statistics *statm = &ctlr->statistics;
-> +       struct spi_statistics *stats = &msg->spi->statistics;
-> +       unsigned long long ms = 1;
-> +
-> +       if (spi_controller_is_slave(ctlr)) {
-> +               if (wait_for_completion_interruptible(&ctlr->xfer_completion)) {
-> +                       dev_dbg(&msg->spi->dev, "SPI transfer interrupted\n");
-> +                       return -EINTR;
 
-Why not setting msg->status = -EINTR here, but returning an error? ...
-
-> +               }
-> +       } else {
-> +               ms = 8LL * 1000LL * xfer->len;
-> +               do_div(ms, xfer->speed_hz);
-> +               ms += ms + 200; /* some tolerance */
-> +
-> +               if (ms > UINT_MAX)
-> +                       ms = UINT_MAX;
-> +
-> +               ms = wait_for_completion_timeout(&ctlr->xfer_completion,
-> +                                                msecs_to_jiffies(ms));
-> +
-> +               if (ms == 0) {
-> +                       SPI_STATISTICS_INCREMENT_FIELD(statm,
-> +                                                      timedout);
-> +                       SPI_STATISTICS_INCREMENT_FIELD(stats,
-> +                                                      timedout);
-> +                       dev_err(&msg->spi->dev,
-> +                               "SPI transfer timed out\n");
-> +                       msg->status = -ETIMEDOUT;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   * spi_transfer_one_message - Default implementation of transfer_one_message()
->   *
-> @@ -1006,7 +1044,6 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
->         struct spi_transfer *xfer;
->         bool keep_cs = false;
->         int ret = 0;
-> -       unsigned long long ms = 1;
->         struct spi_statistics *statm = &ctlr->statistics;
->         struct spi_statistics *stats = &msg->spi->statistics;
->
-> @@ -1035,28 +1072,11 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
->                                 goto out;
->                         }
->
-> -                       if (ret > 0) {
-> -                               ret = 0;
-> -                               ms = 8LL * 1000LL * xfer->len;
-> -                               do_div(ms, xfer->speed_hz);
-> -                               ms += ms + 200; /* some tolerance */
-> -
-> -                               if (ms > UINT_MAX)
-> -                                       ms = UINT_MAX;
-> +                       if (ret > 0)
-> +                               ret = spi_transfer_wait(ctlr, msg, xfer);
->
-> -                               ms = wait_for_completion_timeout(&ctlr->xfer_completion,
-> -                                                                msecs_to_jiffies(ms));
-> -                       }
-> -
-> -                       if (ms == 0) {
-> -                               SPI_STATISTICS_INCREMENT_FIELD(statm,
-> -                                                              timedout);
-> -                               SPI_STATISTICS_INCREMENT_FIELD(stats,
-> -                                                              timedout);
-> -                               dev_err(&msg->spi->dev,
-> -                                       "SPI transfer timed out\n");
-> -                               msg->status = -ETIMEDOUT;
-> -                       }
-> +                       if (ret < 0)
-> +                               return ret;
-
-... which will return here, skipping all finalization and cleanup below?
-
->                 } else {
->                         if (xfer->len)
->                                 dev_err(&msg->spi->dev,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
