@@ -2,242 +2,110 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1ADC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2844C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A48420644
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:30:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QQWFsXqe";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QQWFsXqe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A48420644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 589A020644
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589A020644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeJKHyx (ORCPT
+        id S1726663AbeJKH4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:54:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbeJKHyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:54:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B53FF60C67; Thu, 11 Oct 2018 00:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539217813;
-        bh=sbZnPt7T1cXWMWA/XJDuCxCS9mza7CUN3fx53yjLqeY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQWFsXqetHxIFm5o20gUOvUUEqbaZu5K/Z7oKJBTJ5gZhmetGQHBqalVTVL4q0lF7
-         i96aTqnvJ0xQwX6nCrPk0DUPw6nseycjH8dSSvoQ0dsbHn83eow/y5wldocrtw9xrS
-         SY3xujBFd4EInnDggJE238tkKhcZ1VYNj0vSA8fo=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C77BA60B0D;
-        Thu, 11 Oct 2018 00:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539217813;
-        bh=sbZnPt7T1cXWMWA/XJDuCxCS9mza7CUN3fx53yjLqeY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQWFsXqetHxIFm5o20gUOvUUEqbaZu5K/Z7oKJBTJ5gZhmetGQHBqalVTVL4q0lF7
-         i96aTqnvJ0xQwX6nCrPk0DUPw6nseycjH8dSSvoQ0dsbHn83eow/y5wldocrtw9xrS
-         SY3xujBFd4EInnDggJE238tkKhcZ1VYNj0vSA8fo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C77BA60B0D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     sboyd@kernel.org, evgreen@chromium.org, marc.zyngier@arm.com
-Cc:     linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to GPIO
-Date:   Wed, 10 Oct 2018 18:29:58 -0600
-Message-Id: <20181011002958.2597-2-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181011002958.2597-1-ilina@codeaurora.org>
-References: <20181011002958.2597-1-ilina@codeaurora.org>
+        Thu, 11 Oct 2018 03:56:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:26527 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726051AbeJKH4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:56:20 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2018 17:31:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,366,1534834800"; 
+   d="scan'208";a="81623903"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
+  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2018 17:31:42 -0700
+Date:   Wed, 10 Oct 2018 17:31:42 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+Subject: Re: [LKP] 4ce5f9c9e7 [ 1.323881] WARNING: CPU: 0 PID: 1 at
+ mm/slab_common.c:1031 kmalloc_slab
+Message-ID: <20181011003141.GA25974@linux.intel.com>
+References: <20181010020641.GE13396@shao2-debian>
+ <87sh1dvmc5.fsf@xmission.com>
+ <87h8htv4lf.fsf@xmission.com>
+ <20181010234148.GA25537@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010234148.GA25537@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
-domain can wakeup the SoC, when interrupts and GPIOs are routed to its
-interrupt controller. Only select GPIOs that are deemed wakeup capable
-are routed to specific PDC pins. During low power state, the pinmux
-interrupt controller may be non-functional but the PDC would be. The PDC
-can detect the wakeup GPIO is triggered and bring the TLMM to an
-operational state.
+On Wed, Oct 10, 2018 at 04:41:48PM -0700, Sean Christopherson wrote:
+> On Wed, Oct 10, 2018 at 05:06:52PM -0500, Eric W. Biederman wrote:
+> > ebiederm@xmission.com (Eric W. Biederman) writes:
+> > 
+> > > So I am flummoxed.  I am reading through the code and I don't see
+> > > anything that could trigger this, and when I ran the supplied reproducer
+> > > it did not reproduce for me.
+> > 
+> > Even more so.  With my tool chain the line that reports the failing
+> > address is impossible.
+> > 
+> > [   73.034423] RIP: 0010:copy_siginfo_from_user+0x4d/0xd0
+> > 
+> > With the supplied configureation my tool chain only has 0x30 bytes for
+> > all of copy_siginfo_from_user.  So I can't even begin to guess where
+> > in that function things are failing.
+> > 
+> > Any additional information that you can provide would be a real help
+> > in tracking down this strange failure.
+> 
+> I don't have the exact toolchain, but I was able to get somewhat close
+> and may have found a smoking gun.  0x4d in my build is in the general
+> vicinity of "sig_sicodes[sig].limit" in known_siginfo_layout().  This
+> lines up with the register state from the log, e.g. RDI=0500104d8,
+> which is the mask generated by sig_specific_sicodes.  From what I can
+> tell, @sig is never bounds checked.  If the compiler generated an AND
+> instruction to compare against sig_specific_sicodes then that could
+> resolve true with any arbitrary value that happened to collide with
+> sig_specific_sicodes and result in an out-of-bounds access to
+> @sig_sicodes.  siginfo_layout() for example explicitly checks @sig
+> before indexing @sig_sicode, e.g. "sig < ARRAY_SIZE(sig_sicodes)".
 
-Interrupts that are level triggered will be detected at the TLMM when
-the controller becomes operational. Edge interrupts however need to be
-replayed again.
+Hmm, siginmask explicitly checks sig < SIGRTMIN, which might squash
+my theory.
 
-Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
-but keep it disabled. During suspend, we can enable the PDC IRQ instead
-of the GPIO IRQ, which may or not be detected.
-
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
-Changes in v4:
-	- Redesign to use PDC interrupts instead of TLMM interrupt
-Changes in v3:
-	- free action->name
-Changes in v2:
-	- Remove IRQF_NO_SUSPEND and IRQF_ONE_SHOT from PDC IRQ
-Changes in v1:
-	- Trigger GPIO in h/w from PDC IRQ handler
-	- Avoid big tables for GPIO-PDC map, pick from DT instead
-	- Use handler_data
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 91 +++++++++++++++++++++++++++++-
- 1 file changed, 90 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 5d72ffad32c2..70b9178eba30 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -719,6 +719,12 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	const struct msm_pingroup *g;
- 	unsigned long flags;
- 	u32 val;
-+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
-+
-+	if (pdc_irqd) {
-+		irq_set_irq_type(pdc_irqd->irq, type);
-+		goto handler;
-+	}
- 
- 	g = &pctrl->soc->groups[d->hwirq];
- 
-@@ -798,6 +804,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 
-+handler:
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
- 		irq_set_handler_locked(d, handle_level_irq);
- 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-@@ -811,9 +818,13 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
- 	unsigned long flags;
-+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
-+	if (pdc_irqd)
-+		irq_set_irq_wake(pdc_irqd->irq, on);
-+
- 	irq_set_irq_wake(pctrl->irq, on);
- 
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-@@ -895,6 +906,83 @@ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
- 	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
- }
- 
-+static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
-+{
-+	struct irq_data *irqd = data;
-+	struct irq_desc *desc = irq_to_desc(irqd->irq);
-+
-+	desc->handle_irq(desc);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int msm_gpio_pdc_pin_request(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	struct platform_device *pdev = to_platform_device(pctrl->dev);
-+	const char *pin_name;
-+	int irq;
-+	int ret;
-+
-+	pin_name = kasprintf(GFP_KERNEL, "gpio%lu", d->hwirq);
-+	if (!pin_name)
-+		return -ENOMEM;
-+
-+	irq = platform_get_irq_byname(pdev, pin_name);
-+	if (irq < 0) {
-+		kfree(pin_name);
-+		return 0;
-+	}
-+
-+	ret = request_irq(irq, wake_irq_gpio_handler, irqd_get_trigger_type(d),
-+			  pin_name, d);
-+	if (ret) {
-+		pr_warn("Error requesting PDC interrupt %d for %s\n",
-+			irq, pin_name);
-+		kfree(pin_name);
-+		return ret;
-+	}
-+	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
-+
-+	return 0;
-+}
-+
-+static int msm_gpio_pdc_pin_release(struct irq_data *d)
-+{
-+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
-+	const void *name;
-+
-+	if (pdc_irqd) {
-+		irq_set_handler_data(d->irq, NULL);
-+		name = free_irq(pdc_irqd->irq, d);
-+		kfree(name);
-+	}
-+
-+	return 0;
-+}
-+
-+static int msm_gpio_irq_reqres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
-+		dev_err(gc->parent, "unable to lock HW IRQ %lu for IRQ\n",
-+			irqd_to_hwirq(d));
-+		return -EINVAL;
-+	}
-+
-+	return msm_gpio_pdc_pin_request(d);
-+}
-+
-+static void msm_gpio_irq_relres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	msm_gpio_pdc_pin_release(d);
-+	gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
-+}
-+
- static int msm_gpio_init(struct msm_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
-@@ -919,6 +1007,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
- 	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
- 	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
-+	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
-+	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
- 
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
-@@ -1072,4 +1162,3 @@ int msm_pinctrl_remove(struct platform_device *pdev)
- 	return 0;
- }
- EXPORT_SYMBOL(msm_pinctrl_remove);
--
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+> 
+> Maybe this?
+> 
+> ---
+>  kernel/signal.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 1c2dd117fee0..6ee7491de906 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2865,7 +2865,8 @@ static bool known_siginfo_layout(int sig, int si_code)
+>         if (si_code == SI_KERNEL)
+>                 return true;
+>         else if ((si_code > SI_USER)) {
+> -               if (sig_specific_sicodes(sig)) {
+> +               if (sig < ARRAY_SIZE(sig_sicodes) &&
+> +                   sig_specific_sicodes(sig)) {
+>                         if (si_code <= sig_sicodes[sig].limit)
+>                                 return true;
+>                 }
