@@ -2,93 +2,200 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4907C6780C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83B4C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01132075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:33:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01132075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 648212098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 19:34:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyRfyEU8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648212098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeJLDCa (ORCPT
+        id S1728355AbeJLDCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:02:30 -0400
-Received: from mga06.intel.com ([134.134.136.31]:5545 "EHLO mga06.intel.com"
+        Thu, 11 Oct 2018 23:02:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbeJLDCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:02:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 12:33:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="80728764"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 11 Oct 2018 12:33:49 -0700
-Message-ID: <d068f923d45c26e4c0f91f4cf0eef8a02ae4a6b0.camel@intel.com>
-Subject: Re: [PATCH v5 00/27] Control Flow Enforcement: Shadow Stack
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Thu, 11 Oct 2018 12:29:03 -0700
-In-Reply-To: <109d1600-340e-e3c2-ba11-1f6096212540@linux.intel.com>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
-         <109d1600-340e-e3c2-ba11-1f6096212540@linux.intel.com>
+        id S1726691AbeJLDCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:02:46 -0400
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A97B72148C;
+        Thu, 11 Oct 2018 19:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539286447;
+        bh=zqgx2pIivn7Ux9M/b303jA60rKWMgt6xDAk/V5tHA8Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hyRfyEU8qu/A1eYLSiddNscati2DkJSDGgMi2BLDhhFy7sjPSDydFPiaiEZZMG+Xn
+         BNMyF0UrEfeiXejq+mqOj+hVEaJiZWuuoio5Qhfdfth1paDbMYastjal82JWbHeG+X
+         MWMJrFuMZ8GPDDCGWu4KD71snPDUBTuUPznMh0os=
+Received: by mail-ed1-f49.google.com with SMTP id v18-v6so9329973edq.12;
+        Thu, 11 Oct 2018 12:34:06 -0700 (PDT)
+X-Gm-Message-State: ABuFfohp0iapBRUvQiQBa9+7CdtH/fXaPiG1aL9pFTQhqlQTNJJ20fxc
+        DsxaaC+ShmfGPFB9ZNXpaIDgQ67q/WJyPtNJkRU=
+X-Google-Smtp-Source: ACcGV61yHB6rCPVPmLKUxRzusYlst9bpNZUHCTj4c8yq/NKrVYhPfDBOuz9ohAnd+BMpSEJ1xm7OZx/c2kVQaeNS7Lg=
+X-Received: by 2002:a50:8bd5:: with SMTP id n21-v6mr4852793edn.41.1539286444998;
+ Thu, 11 Oct 2018 12:34:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <CANk1AXQScT_b1_UOiVuWNcB=LiA3gvvZrw53H1XVSCNqsGPqtA@mail.gmail.com>
+ <1539151495-8110-1-git-send-email-frowand.list@gmail.com> <f20d06c3-5db7-3547-7b8b-d43d474683f1@gmail.com>
+ <CANk1AXQ+-X51unT_ZHw+wxHG3tyGUKUihVsdzOZZ2NJ2zfS3Rg@mail.gmail.com>
+ <e32a99a2-1db5-80e6-5022-83cd8fd07180@gmail.com> <bcbba4ca-0656-aa27-c058-064fb7175d38@gmail.com>
+In-Reply-To: <bcbba4ca-0656-aa27-c058-064fb7175d38@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 11 Oct 2018 14:33:28 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
+Message-ID: <CANk1AXSRifmwu1FQRY_hsuqDESEzcMET_hpLNZOeW4QLrUwsdw@mail.gmail.com>
+Subject: Re: [PATCH 05.1/16] of:overlay: missing name, phandle, linux,phandle
+ in new nodes
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 12:21 -0700, Dave Hansen wrote:
-> On 10/11/2018 08:14 AM, Yu-cheng Yu wrote:
-> > The previous version of CET Shadow Stack patches is at the following
-> > link:
-> > 
-> >   https://lkml.org/lkml/2018/9/21/776
-> 
-> Why are you posting these?  Do you want more review?  Do you simply want
-> the series applied?
+On Thu, Oct 11, 2018 at 12:39 AM Frank Rowand <frowand.list@gmail.com> wrote:
 
-Thanks, Dave!
+[resend of my messed up rejected email of a minute ago, sorry]
 
+>
+> On 10/10/18 14:03, Frank Rowand wrote:
+> > On 10/10/18 13:40, Alan Tull wrote:
+> >> On Wed, Oct 10, 2018 at 1:49 AM Frank Rowand <frowand.list@gmail.com> wrote:
+> >>>
+> >>> On 10/09/18 23:04, frowand.list@gmail.com wrote:
+> >>>> From: Frank Rowand <frank.rowand@sony.com>
+> >>>>
+> >>>>
+> >>>> "of: overlay: use prop add changeset entry for property in new nodes"
+> >>>> fixed a problem where an 'update property' changeset entry was
+> >>>> created for properties contained in nodes added by a changeset.
+> >>>> The fix was to use an 'add property' changeset entry.
+> >>>>
+> >>>> This exposed more bugs in the apply overlay code.  The properties
+> >>>> 'name', 'phandle', and 'linux,phandle' were filtered out by
+> >>>> add_changeset_property() as special properties.  Change the filter
+> >>>> to be only for existing nodes, not newly added nodes.
+> >>>>
+> >>>> The second bug is that the 'name' property does not exist in the
+> >>>> newest FDT version, and has to be constructed from the node's
+> >>>> full_name.  Construct an 'add property' changeset entry for
+> >>>> newly added nodes.
+> >>>>
+> >>>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> >>>> ---
+> >>>>
+> >>>>
+> >>>> Hi Alan,
+> >>>>
+> >>>> Thanks for reporting the problem with missing node names.
+> >>>>
+> >>>> I was able to replicate the problem, and have created this preliminary
+> >>>> version of a patch to fix the problem.
+> >>>>
+> >>>> I have not extensively reviewed the patch yet, but would appreciate
+> >>>> if you can confirm this fixes your problem.
+> >>>>
+> >>>> I created this patch as patch 17 of the series, but have also
+> >>>> applied it as patch 05.1, immediately after patch 05/16, and
+> >>>> built the kernel, booted, and verified name and phandle for
+> >>>> one of the nodes in a unittest overlay for both cases.  So
+> >>>> minimal testing so far on my part.
+> >>>>
+> >>>> I have not verified whether the series builds and boots after
+> >>>> each of patches 06..16 if this patch is applied as patch 05.1.
+> >>>>
+> >>>> There is definitely more work needed for me to complete this
+> >>>> patch because it allocates some more memory, but does not yet
+> >>>> free it when the overlay is released.
+> >>>>
+> >>>> -Frank
+> >>>>
+> >>>>
+> >>>>  drivers/of/overlay.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++----
+> >>>>  1 file changed, 67 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> >>>> index 0b0904f44bc7..9746cea2aa91 100644
+> >>>> --- a/drivers/of/overlay.c
+> >>>> +++ b/drivers/of/overlay.c
+> >>>> @@ -301,10 +301,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+> >>>>       struct property *new_prop = NULL, *prop;
+> >>>>       int ret = 0;
+> >>>>
+> >>>> -     if (!of_prop_cmp(overlay_prop->name, "name") ||
+> >>>> -         !of_prop_cmp(overlay_prop->name, "phandle") ||
+> >>>> -         !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+> >>>> -             return 0;
+> >>>> +     if (target->in_livetree)
+> >>>> +             if (!of_prop_cmp(overlay_prop->name, "name") ||
+> >>>> +                 !of_prop_cmp(overlay_prop->name, "phandle") ||
+> >>>> +                 !of_prop_cmp(overlay_prop->name, "linux,phandle"))
+> >>>> +                     return 0;
+> >>>
+> >>> This is a big hammer patch.
+> >>>
+> >>> Nobody should waste time reviewing this patch.
+> >>
+> >> I wasn't clear if you still could use the testing so I did re-run my
+> >> test.  This patch adds back some of the missing properties, but the
+> >> the kobject names aren't set as dev_name() returns NULL:
+> >>
+> >> * without this patch some of_node properties don't show up in sysfs:
+> >> root@arria10:~# ls
+> >> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+> >> clocks            compatible        interrupt-parent  interrupts        reg
+> >>
+> >> * with this patch, the of_node properties phandle and name are back:
+> >> root@arria10:~#  ls
+> >> /sys/bus/platform/drivers/altera_freeze_br/ff200450.\<NULL\>/of_node
+> >> clocks            compatible        interrupt-parent  interrupts
+> >>  name              phandle           reg
+> >
+> > Thanks for the testing.  I'll keep chasing after this problem today.
 
-Hi Maintainers,
+Glad to help!  Thanks for all your work in this area!
+> >
+> > This is useful data for me as I was not looking under the /sys/bus/...
+> > tree that you reported, but was instead looking at /proc/device-tree/...
+> > which showed the same type of problem since the overlay I was using
+> > does not show up under /sys/bus/...
+> >
+> > I'll have to create a useful overlay test case that will show up under
+> > /sys/bus/...
+> >
+> > In the meantime, can you send me the base FDT and the overlay FDT for
+> > your test case?
+>
+> I now have a test case that shows the problem under /sys/bus/... so I
+> no longer need the base FDT and overlay FDT for your test case.
+>
+> I have determined the location that sets the name to "<NULL>" but do
+> not have the fix yet.  Still working on that.
 
-If there are no more major issues, can we get these applied?
+I understand you're quite busy with all this, but I'm wondering
+whether it might be worth it go ahead and make the properties be
+kernel objects also at this point.  That would be an improvement for
+the case of overlay properties added to non-overlay nodes, so the
+lifespan of the overlay property memory can be coupled with the
+properties kobj's instead of the node kobj's.
 
-Currently the IBT bitmap allocation (in the IBT series) works with GLIBC.
-If GLIBC developers agree to mmap() the bitmap in dlopen(), I will submit an
-additional patch to change how the kernel handles it.
-
-Thanks,
-Yu-cheng
+Alan
