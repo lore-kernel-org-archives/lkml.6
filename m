@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3681C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3118BC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E81B20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4F821476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXLUO8Hw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E81B20652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2wLIT5S9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4F821476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbeJKXG1 (ORCPT
+        id S1729724AbeJKXGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35490 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:27 -0400
+        id S1727569AbeJKXG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1212321477;
-        Thu, 11 Oct 2018 15:38:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE1FB2087A;
+        Thu, 11 Oct 2018 15:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272323;
-        bh=315Lgn2hF8jrt1pRO7JAF6BCa/0GLBMTjtb8BGXLflg=;
+        s=default; t=1539272326;
+        bh=6ezUZqydmzw0gOHEyo4U1SJMV52Sf/xcrY9sV4JYB/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dXLUO8HwiGRuiQW8AYWkWZ+k0pRORea89URk7138d+w32hct1wVwDSRHTti+k2CI+
-         atkkRujn0MhgEZTPF0iyGFFjcfBCc9HAloWcxD6+/kg4lOsdNzNgwzHmsFO+uncbP+
-         s+VJ1s0ROMsDtLOWDKeKlAwAOY0tqSeli0W7tHIs=
+        b=2wLIT5S9Cf3M8OOAEkE5qcxbUgsxgRsnzeZ47YKqX6ndDrvqVFaVGZgbOZWsn0Z10
+         brmGpxkRs3lWm/ZAiDPW81oL6gy9XXUG3W3gSZjFh/ii0x+MSmn8hP2anylxyMwusW
+         Fs9ZHUBsTxDwtCJc1wrihLrQY3lzZHSzr5h7yR2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Stafford Horne <shorne@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 029/120] scsi: ibmvscsi: Improve strings handling
-Date:   Thu, 11 Oct 2018 17:33:30 +0200
-Message-Id: <20181011152550.845309085@linuxfoundation.org>
+Subject: [PATCH 3.18 020/120] crypto: skcipher - Fix -Wstringop-truncation warnings
+Date:   Thu, 11 Oct 2018 17:33:21 +0200
+Message-Id: <20181011152550.491340556@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -65,60 +67,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Stafford Horne <shorne@gmail.com>
 
-[ Upstream commit 1262dc09dc9ae7bf4ad00b6a2c5ed6a6936bcd10 ]
+[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
 
-Currently an open firmware property is copied into partition_name variable
-without keeping a room for \0.
+As of GCC 9.0.0 the build is reporting warnings like:
 
-Later one, this variable (partition_name), which is 97 bytes long, is
-strncpyed into ibmvcsci_host_data->madapter_info->partition_name, which is
-96 bytes long, possibly truncating it 'again' and removing the \0.
+    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       sizeof(rblkcipher.geniv));
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This patch simply decreases the partition name to 96 and just copy using
-strlcpy() which guarantees that the string is \0 terminated. I think there
-is no issue if this there is a truncation in this very first copy, i.e,
-when the open firmware property is read and copied into the driver for the
-very first time;
+This means the strnycpy might create a non null terminated string.  Fix this by
+explicitly performing '\0' termination.
 
-This issue also causes the following warning on GCC 8:
-
-	drivers/scsi/ibmvscsi/ibmvscsi.c:281:2: warning:  strncpy  output may be truncated copying 96 bytes from a string of length 96 [-Wstringop-truncation]
-	...
-	inlined from  ibmvscsi_probe  at drivers/scsi/ibmvscsi/ibmvscsi.c:2221:7:
-	drivers/scsi/ibmvscsi/ibmvscsi.c:265:3: warning:  strncpy  specified bound 97 equals destination size [-Wstringop-truncation]
-
-CC: Bart Van Assche <bart.vanassche@wdc.com>
-CC: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Acked-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ibmvscsi/ibmvscsi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ crypto/ablkcipher.c |    2 ++
+ crypto/blkcipher.c  |    1 +
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/scsi/ibmvscsi/ibmvscsi.c
-+++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
-@@ -93,7 +93,7 @@ static int max_requests = IBMVSCSI_MAX_R
- static int max_events = IBMVSCSI_MAX_REQUESTS_DEFAULT + 2;
- static int fast_fail = 1;
- static int client_reserve = 1;
--static char partition_name[97] = "UNKNOWN";
-+static char partition_name[96] = "UNKNOWN";
- static unsigned int partition_number = -1;
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -382,6 +382,7 @@ static int crypto_ablkcipher_report(stru
+ 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
  
- static struct scsi_transport_template *ibmvscsi_transport_template;
-@@ -261,7 +261,7 @@ static void gather_partition_info(void)
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+@@ -463,6 +464,7 @@ static int crypto_givcipher_report(struc
+ 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
  
- 	ppartition_name = of_get_property(rootdn, "ibm,partition-name", NULL);
- 	if (ppartition_name)
--		strncpy(partition_name, ppartition_name,
-+		strlcpy(partition_name, ppartition_name,
- 				sizeof(partition_name));
- 	p_number_ptr = of_get_property(rootdn, "ibm,partition-no", NULL);
- 	if (p_number_ptr)
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+--- a/crypto/blkcipher.c
++++ b/crypto/blkcipher.c
+@@ -514,6 +514,7 @@ static int crypto_blkcipher_report(struc
+ 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
 
 
