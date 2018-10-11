@@ -2,207 +2,120 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F22C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C4DC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25F442087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344082087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:38:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eR1sSpec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F442087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E/NLsLtB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344082087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeJKQEl (ORCPT
+        id S1728026AbeJKQEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:04:41 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:32970 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeJKQEl (ORCPT
+        Thu, 11 Oct 2018 12:04:48 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36828 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbeJKQEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:04:41 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h13-v6so7473356edq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:38:24 -0700 (PDT)
+        Thu, 11 Oct 2018 12:04:48 -0400
+Received: by mail-io1-f67.google.com with SMTP id p4-v6so5982121iom.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:38:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Kw1LF5tD5rxGhDP2RzfzQC8MbUK5ux1QNSzTZN4cPGM=;
-        b=eR1sSpecg8vbs0DbwGRSrOfOzASjmapk0RnDGd49f3MJuqIn2W4KGMdyuF7DyNmiZC
-         edsnvWRsvjEZcnRWUpXNcZZva/ueB6FrQHSFvPoxzOmPJ8imfjqVhjtjM9ix8/tzGVVB
-         NZkMNupKe7Xdw02zKxNOIVvFlOvzgknvRhfqM=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DIfRoxCe9Yd1nBFSy6QNQ093Pvbhe1FgXabvQCkt62E=;
+        b=E/NLsLtBT2CxRu0XLnDt+DIy4uBHRRdNZMZr8rQNX9ewfpJrQAgN+VCFx4Zc4yhlA0
+         9gia0SDNy0/VJCJ4tO6Xo36G58ZjVtzFBa8DVQJRojKk+yEcMmqmb8DgEBylJiijt2I3
+         XJuyNP2g5AjQ3UDsabABrwybzBcM0RtZclaJA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Kw1LF5tD5rxGhDP2RzfzQC8MbUK5ux1QNSzTZN4cPGM=;
-        b=dXRB5AA1h4k83iMjQYOrlA+awQfs0L0GUrimvORKAWwK+SCc5Evg9c2pr6tkIxH0jc
-         1VmDab4IfUGfOqa98fjZngsAlP9O12TXp5DA+CJbVN3I6CvK1oKYsid/HcAexKRdEuZr
-         JarXC7KZTMasUkyLfaGoJwVPvZTF15BPWjUhj6axHi5nm7Lz2YbdM+G0oTOhGgRx6hYL
-         blzJ899SFlAXa6GVLXJrYBcAhJ9vk2ecNwz+29JPzwK3T+InSZLNIfmVA4dnMYNT54B3
-         RkFXOCY6DYpWjXxvSZSg1Q0cwmQkWY9qSVRBGjQ36P5p0/hIdtoBjTj6A5TWdkEJ/l0n
-         MAlQ==
-X-Gm-Message-State: ABuFfoh/ljRwNQgnL1d+5TzhotFNaiip+N/aAQMnE6VJ9M6Sgl2gxo8C
-        rRS/1y4FssEC9GhV7uHKowcFgg==
-X-Google-Smtp-Source: ACcGV62tCNjchN19J0cnFhoxcC4XLOeY4f3jxwp0d9Qp24LTi1J4mMgF23u5Hv5VhDcyhgfVJkdyuw==
-X-Received: by 2002:a50:a1c6:: with SMTP id 64-v6mr1410558edk.88.1539247103998;
-        Thu, 11 Oct 2018 01:38:23 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm4638865ejc.47.2018.10.11.01.38.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 01:38:21 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 10:38:19 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/drm_vblank: Change EINVAL by the correct errno
-Message-ID: <20181011083818.GW31561@phenom.ffwll.local>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181008145220.p34dllgsiw6rlpod@smtp.gmail.com>
- <153901080237.31254.10116385737520796385@skylake-alporthouse-com>
- <20181008165213.vejfqe6ohiejeeq2@smtp.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DIfRoxCe9Yd1nBFSy6QNQ093Pvbhe1FgXabvQCkt62E=;
+        b=gFKgBJ88D08lMPGo04lDjqn2hcep+klzpUX2ojWWs0VIfZ4cKlbmh7T/YR2X3R2D3H
+         w+ZvMnnW5NiixePBZU3TNZuPtWMGSLA9omSw6DyU0wgN3fok744/SGqma4U7M6c2Axv+
+         /dbXboMTU8T74mxlczGLr9WVGD4R2K4C/BqPReA++kqhMtR1fqcpRUcrryQNIJYE9Ks7
+         tkWWm/9gfSRH/Kkv7iudMTE2R1qNyvuDsVonVf2nN3qMhUW+1TGUnH593O2zOAA1rskt
+         GbnDF0XJAQEFlr5yGhP5HclBLZGJ9Ag9pHtMez+SrBkfTuFtDyoHaZm2G3q2XpMlaQQF
+         F7CA==
+X-Gm-Message-State: ABuFfoi8hcWK8j450KA2vbA8+YszvDMblS3vW49/3hv8xEWGiqvRGlGL
+        ObUdqOGLMU0qapkvEq98F6dYXsh78BAE1CMPn8U50w==
+X-Google-Smtp-Source: ACcGV63s/Ixjm47oYl4EtZJ1f7jYDRadCpZ2+zLL+HsklqjBID3NH36w22GmcaxSn9fWgqtt/c8NTrOf2g+DKGai7sU=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr376216ioa.277.1539247112666;
+ Thu, 11 Oct 2018 01:38:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181008165213.vejfqe6ohiejeeq2@smtp.gmail.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181010142504.233467-1-lkundrak@v3.sk> <20181010142504.233467-9-lkundrak@v3.sk>
+In-Reply-To: <20181010142504.233467-9-lkundrak@v3.sk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 11 Oct 2018 10:38:20 +0200
+Message-ID: <CACRpkdZK3=u-E3KgVQT_Wx8tZBqO3Own_+ASLeq03vaP8q+s7A@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] Input: olpc_apsp: allocate the GPIOs used
+To:     lkundrak@v3.sk, Stephen Boyd <swboyd@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, quozl@laptop.org,
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 01:52:13PM -0300, Rodrigo Siqueira wrote:
-> On 10/08, Chris Wilson wrote:
-> > Quoting Rodrigo Siqueira (2018-10-08 15:52:20)
-> > > For historical reason, the function drm_wait_vblank_ioctl always return
-> > > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > > for the userspace make detailed verification of the problem and take
-> > > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > > support vblank or not. If the driver does not support VBlank, the
-> > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > > the real issue; this patch changes this behavior by return ENOTTY
-> > > (Inappropriate ioctl for device). Additionally, some operations are
-> > > unsupported by this function, and returns EINVAL; this patch changes the
-> > > return value to EOPNOTSUPP (Operation not supported). Lastly, the
-> > > function drm_wait_vblank_ioctl is invoked by libdrm, which is used by
-> > > many compositors; because of this, it is important to check if this
-> > > change breaks any compositor. In this sense, the following projects were
-> > > examined:
-> > > 
-> > > * Drm-hwcomposer
-> > > * Kwin
-> > > * Sway
-> > > * Wlroots
-> > > * Wayland-core
-> > > * Weston
-> > > * Xorg (67 different drivers)
-> > > 
-> > > For each repository the verification happened in three steps:
-> > > 
-> > > * Update the main branch
-> > > * Look for any occurrence "drmWaitVBlank" with the command:
-> > >   git grep -n "drmWaitVBlank"
-> > > * Look in the git history of the project with the command:
-> > >   git log -SdrmWaitVBlank
-> > > 
-> > > Finally, none of the above projects validate the use of EINVAL which
-> > > make safe, at least for these projects, to change the return values.
-> > > 
-> > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/drm_vblank.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > > index 98e091175921..88ec6fb49afb 100644
-> > > --- a/drivers/gpu/drm/drm_vblank.c
-> > > +++ b/drivers/gpu/drm/drm_vblank.c
-> > > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > >         unsigned int flags, pipe, high_pipe;
-> > >  
-> > >         if (!dev->irq_enabled)
-> > > -               return -EINVAL;
-> > > +               return -ENOTTY;
-> > 
-> > Arguable.
-> 
-> Hi Chris, thanks for your review :)
-> 
-> Originally, I noticed that DRM does not provide a mechanism for checking
-> if VBlank is supported or not by the driver. IMHO return ENOTTY can be
-> useful for virtual drivers and some specific devices; the userspace can
-> take this information and infer some information about the device,
-> consequently, handling different scenarios. This issue was raised when I
-> was working to implement the virtual mode in the VKMS (no vblank) and
-> tried to patch IGT to handle modules that do not support Vblank.
-> Finally, I believe that  ENOTTY precisely describes the condition
-> "if (!dev->irq_enabled)". Make sense?
+Hi Lubomir,
 
-I Chris' recent series to do the same for all kms ioctls we've generally
-agreed on EOPNOTSUPP as the errno for "this feature isn't supported on
-this driver". And ENOTTY for the "I have no idea what this ioctl even is"
-kind of stuff.
+thanks for your patch!
 
-So I'm leaning towards EOPNOTSUPP here.
-> 
-> > >  
-> > >         if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > > -               return -EINVAL;
-> > 
-> > User error -> einval.
-> 
-> Here, my primary motivation to add EOPNOTSUPP came from the comment in
-> _DRM_VBLANK_SIGNAL, which says:
-> 
-> _DRM_VBLANK_SIGNAL = 0x40000000 /**< Send signal instead of blocking, unsupported */
-> 
-> Then I thought that EOPNOTSUPP could better describe this situation.
+On Wed, Oct 10, 2018 at 4:26 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
 
-I think either is an ok choice. EINVAL since afaik upstream never
-supported this flag, so it's not different from any other flag with on
-meaning - just another userspace programming bug.
+> Take the GPIO lines are used by the SP. The driver doesn't touch the
+> lines -- this is done to disallow anything else from fiddling with
+> them because that would confuse the SP firmware.
+>
+> Also, the lines are now nicely visible in /sys/kernel/debug/gpio.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-> > > +               return -EOPNOTSUPP;
-> > >  
-> > >         if (vblwait->request.type &
-> > >             ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> > > @@ -1545,7 +1545,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > >                           vblwait->request.type,
-> > >                           (_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> > >                            _DRM_VBLANK_HIGH_CRTC_MASK));
-> > > -               return -EINVAL;
-> > > +               return -EOPNOTSUPP;
-> > 
-> > User error -> einval.
-> 
-> About this one, you are right. Sorry, I misunderstood that part of the
-> code.
+Sadly I do not think this is the right way to do this these days.
+In the past I would have agreed.
 
-Agreed, EINVAL.
+A few months back, Qualcomm engineers working on ACPI
+support ran into similar issues: there were GPIO lines that
+could not be touched by the kernel because they were used
+by firmware (BIOS).
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The solution we devised can be seen in
+commit 726cb3ba49692bdae6caff457755e7cdb432efa4
+"gpiolib: Support 'gpio-reserved-ranges' property"
+which adds a "valid mask" to struct gpio_chip.
+
+It is further refined in the lates working kernel code to make
+it easy for users to set up a custom valid_mask.
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?h=devel&id=f8ec92a9f63b3b11e399409141b7868bb405e6b5
+
+So what you should do is modify the platform set-up for
+the OLPC to mask off these GPIO lines as invalid since
+they are used by the firmware and Linux should not touch
+them.
+
+Sadly I don't know which GPIO driver the XO1 is using,
+but if you tell us I bet me or Andy will be able to help you
+out in finding the right spot to patch.
+
+Yours,
+Linus Walleij
