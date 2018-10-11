@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB566C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B11EC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FDCB213A2
+	by mail.kernel.org (Postfix) with ESMTP id CA02221476
 	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/NiMnc8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDCB213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxgHJfri"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA02221476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732063AbeJKXQH (ORCPT
+        id S1732076AbeJKXQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49804 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:16:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732050AbeJKXQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:05 -0400
+        id S1726794AbeJKXQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFFC021470;
-        Thu, 11 Oct 2018 15:48:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AE2621477;
+        Thu, 11 Oct 2018 15:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272899;
-        bh=7IbEvQ+Yk2B02ufmWke3u4vsm2G0i8Ef58bMa1wcYY0=;
+        s=default; t=1539272902;
+        bh=jfhT6js98ors7Q7DPb3BwYqmqspnMpp2aGCn4A/6tmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/NiMnc8aoiihtYW2H3KcMzdgjLZt3CnZL5qQjKPcGCrtD5Lu61/EzF6aBJ0RhFAn
-         ovHUFqfvpd3QvxD6RYgPf/OU2tNCgFQzsDY52LhXQbGUVc+lLb5AE8HpRaHy0/aZBC
-         QRUSeXTMTWGFQAU44h9tK2fQDjZ68ejzNR2bzm60=
+        b=mxgHJfri3RodVa1AvSrOHXxrEY279UK64StyjnBJJ4II35nZf8asVnZJM7okWL9Eb
+         Za7oi48SQGcS5+p9DIerqE8WQL9zuu1pxmfjkBO5ywOaOqglEh/V3czbRvpwUXx/9t
+         IOAUPBHdu36+Gf/pD6mmA94gsW2FEMUk+s73TXAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.18 32/44] USB: serial: option: add two-endpoints device-id flag
-Date:   Thu, 11 Oct 2018 17:40:10 +0200
-Message-Id: <20181011152453.852573726@linuxfoundation.org>
+        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.18 33/44] usb: cdc_acm: Do not leak URB buffers
+Date:   Thu, 11 Oct 2018 17:40:11 +0200
+Message-Id: <20181011152453.899816514@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -62,73 +61,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-commit 35aecc02b5b621782111f64cbb032c7f6a90bb32 upstream.
+commit f2924d4b16ae138c2de6a0e73f526fb638330858 upstream.
 
-Allow matching on interfaces having two endpoints by adding a new
-device-id flag.
+When the ACM TTY port is disconnected, the URBs it uses must be killed, and
+then the buffers must be freed. Unfortunately a previous refactor removed
+the code freeing the buffers because it looked extremely similar to the
+code killing the URBs.
 
-This allows for the handling of devices whose interface numbers can
-change (e.g. Quectel EP06) to be contained in the device-id table.
+As a result, there were many new leaks for each plug/unplug cycle of a
+CDC-ACM device, that were detected by kmemleak.
 
-Tested-by: Kristian Evensen <kristian.evensen@gmail.com>
+Restore the missing code, and the memory leak is removed.
+
+Fixes: ba8c931ded8d ("cdc-acm: refactor killing urbs")
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/usb/class/cdc-acm.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -561,6 +561,9 @@ static void option_instat_callback(struc
- /* Interface is reserved */
- #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
- 
-+/* Interface must have two endpoints */
-+#define NUMEP2		BIT(16)
-+
- 
- static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
-@@ -1082,7 +1085,7 @@ static const struct usb_device_id option
- 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0xff, 0xff),
--	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) },
-+	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) | NUMEP2 },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0, 0) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
-@@ -1986,7 +1989,6 @@ static int option_probe(struct usb_seria
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1514,6 +1514,7 @@ static void acm_disconnect(struct usb_in
  {
- 	struct usb_interface_descriptor *iface_desc =
- 				&serial->interface->cur_altsetting->desc;
--	struct usb_device_descriptor *dev_desc = &serial->dev->descriptor;
- 	unsigned long device_flags = id->driver_info;
+ 	struct acm *acm = usb_get_intfdata(intf);
+ 	struct tty_struct *tty;
++	int i;
  
- 	/* Never bind to the CD-Rom emulation interface	*/
-@@ -2002,16 +2004,11 @@ static int option_probe(struct usb_seria
- 		return -ENODEV;
+ 	/* sibling interface is already cleaning up */
+ 	if (!acm)
+@@ -1544,6 +1545,11 @@ static void acm_disconnect(struct usb_in
  
- 	/*
--	 * Don't bind to the QMI device of the Quectel EP06/EG06/EM06. Class,
--	 * subclass and protocol is 0xff for both the diagnostic port and the
--	 * QMI interface, but the diagnostic port only has two endpoints (QMI
--	 * has three).
-+	 * Allow matching on bNumEndpoints for devices whose interface numbers
-+	 * can change (e.g. Quectel EP06).
- 	 */
--	if (dev_desc->idVendor == cpu_to_le16(QUECTEL_VENDOR_ID) &&
--	    dev_desc->idProduct == cpu_to_le16(QUECTEL_PRODUCT_EP06) &&
--	    iface_desc->bInterfaceSubClass && iface_desc->bNumEndpoints == 3) {
-+	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
- 		return -ENODEV;
--	}
+ 	tty_unregister_device(acm_tty_driver, acm->minor);
  
- 	/* Store the device flags so we can use them during attach. */
- 	usb_set_serial_data(serial, (void *)device_flags);
++	usb_free_urb(acm->ctrlurb);
++	for (i = 0; i < ACM_NW; i++)
++		usb_free_urb(acm->wb[i].urb);
++	for (i = 0; i < acm->rx_buflimit; i++)
++		usb_free_urb(acm->read_urbs[i]);
+ 	acm_write_buffers_free(acm);
+ 	usb_free_coherent(acm->dev, acm->ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
+ 	acm_read_buffers_free(acm);
 
 
