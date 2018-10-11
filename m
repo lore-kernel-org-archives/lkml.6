@@ -7,55 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3067AC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B293C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC93F20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4CF213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:40:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/1a+6JL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC93F20652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5vj+9j2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4CF213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbeJKXIA (ORCPT
+        id S1730156AbeJKXIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38002 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:08:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJKXH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:07:58 -0400
+        id S1726647AbeJKXIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:08:01 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CC332098A;
-        Thu, 11 Oct 2018 15:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E15421470;
+        Thu, 11 Oct 2018 15:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272414;
-        bh=A2gQ7TDBXsZ+An+IGUzWx5pxL2iYLR7fIYvsnLDkqZw=;
+        s=default; t=1539272417;
+        bh=Bg31v4JlqpXD6boyDSCbHBT1LwadEiCxjZp2MmJOntw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/1a+6JLDlnTyhHgXeobNFgOYi7RHQKp7JVvWJF03ij1P8Bhh+QZ3uyMHR7fswoyP
-         aVLpMUlGp9vVnvIEiV+19vPNZWsthJ3krtFpD50/W6c3b1DVBxeoe6DmisvDDxTbUf
-         I2MdYlYQoo9hcSscoe/6ujSbOg7h6si1XrEwFN8s=
+        b=B5vj+9j25l2Plj16d30+D/wqZKj1+ibxuuK8qSfQuSPgTb4OPSEoPtRbfYz4jc7UW
+         pxgnmbVE2MjxyyApOagOtxgarSFbcvJzzx7Jpx1rHT5pWxecobkoT/tBZ2VyPVhGyD
+         eRONFLzDAcTbCU6oAoId9udVoIyekbsVivuOXMrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ken Chen <kenchen@google.com>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Jann Horn <jannh@google.com>, security@kernel.org,
         Will Deacon <will.deacon@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 3.18 100/120] proc: restrict kernel stack dumps to root
-Date:   Thu, 11 Oct 2018 17:34:41 +0200
-Message-Id: <20181011152553.924485370@linuxfoundation.org>
+        Tony Lindgren <tony@atomide.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 3.18 101/120] fbdev/omapfb: fix omapfb_memory_read infoleak
+Date:   Thu, 11 Oct 2018 17:34:42 +0200
+Message-Id: <20181011152553.964596419@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -73,73 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-commit f8a00cef17206ecd1b30d3d9f99e10d9fa707aa7 upstream.
+commit 1bafcbf59fed92af58955024452f45430d3898c5 upstream.
 
-Currently, you can use /proc/self/task/*/stack to cause a stack walk on
-a task you control while it is running on another CPU.  That means that
-the stack can change under the stack walker.  The stack walker does
-have guards against going completely off the rails and into random
-kernel memory, but it can interpret random data from your kernel stack
-as instruction pointers and stack pointers.  This can cause exposure of
-kernel stack contents to userspace.
+OMAPFB_MEMORY_READ ioctl reads pixels from the LCD's memory and copies
+them to a userspace buffer. The code has two issues:
 
-Restrict the ability to inspect kernel stacks of arbitrary tasks to root
-in order to prevent a local attacker from exploiting racy stack unwinding
-to leak kernel task stack contents.  See the added comment for a longer
-rationale.
+- The user provided width and height could be large enough to overflow
+  the calculations
+- The copy_to_user() can copy uninitialized memory to the userspace,
+  which might contain sensitive kernel information.
 
-There don't seem to be any users of this userspace API that can't
-gracefully bail out if reading from the file fails.  Therefore, I believe
-that this change is unlikely to break things.  In the case that this patch
-does end up needing a revert, the next-best solution might be to fake a
-single-entry stack based on wchan.
+Fix these by limiting the width & height parameters, and only copying
+the amount of data that we actually received from the LCD.
 
-Link: http://lkml.kernel.org/r/20180927153316.200286-1-jannh@google.com
-Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Ken Chen <kenchen@google.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: stable@vger.kernel.org
+Cc: security@kernel.org
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/base.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -279,6 +279,20 @@ static int proc_pid_stack(struct seq_fil
- 	int err;
- 	int i;
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+@@ -493,6 +493,9 @@ static int omapfb_memory_read(struct fb_
+ 	if (!access_ok(VERIFY_WRITE, mr->buffer, mr->buffer_size))
+ 		return -EFAULT;
  
-+	/*
-+	 * The ability to racily run the kernel stack unwinder on a running task
-+	 * and then observe the unwinder output is scary; while it is useful for
-+	 * debugging kernel issues, it can also allow an attacker to leak kernel
-+	 * stack contents.
-+	 * Doing this in a manner that is at least safe from races would require
-+	 * some work to ensure that the remote task can not be scheduled; and
-+	 * even then, this would still expose the unwinder as local attack
-+	 * surface.
-+	 * Therefore, this interface is restricted to root.
-+	 */
-+	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
-+		return -EACCES;
++	if (mr->w > 4096 || mr->h > 4096)
++		return -EINVAL;
 +
- 	entries = kmalloc(MAX_STACK_TRACE_DEPTH * sizeof(*entries), GFP_KERNEL);
- 	if (!entries)
- 		return -ENOMEM;
+ 	if (mr->w * mr->h * 3 > mr->buffer_size)
+ 		return -EINVAL;
+ 
+@@ -506,7 +509,7 @@ static int omapfb_memory_read(struct fb_
+ 			mr->x, mr->y, mr->w, mr->h);
+ 
+ 	if (r > 0) {
+-		if (copy_to_user(mr->buffer, buf, mr->buffer_size))
++		if (copy_to_user(mr->buffer, buf, r))
+ 			r = -EFAULT;
+ 	}
+ 
 
 
