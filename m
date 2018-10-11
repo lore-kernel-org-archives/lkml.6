@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E5BC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E887AC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F832087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC2EF2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7NtqSI5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F832087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUVzRWxo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2EF2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbeJKXGC (ORCPT
+        id S1729610AbeJKXGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:06:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34790 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:06:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:06:01 -0400
+        id S1727569AbeJKXGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:06:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4168B20652;
-        Thu, 11 Oct 2018 15:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0684420652;
+        Thu, 11 Oct 2018 15:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272298;
-        bh=g1V4JqoPJHOQaISgFWA/C1jk8ih0VeZfD9h4DAAPa2Y=;
+        s=default; t=1539272301;
+        bh=eP9PO8qbHkaipGryjfhmdMRFcjfVv9Q3zqyp5jdWxzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q7NtqSI5W7jLHkBKFiI5QQg3V0LGDu10DRLirRjGRvrn7tWZhFs8qZAELmUvYC9ih
-         AohZdTOqkmsvD9+0/ZjNdZ4rpik/3/bk4KbJPfWN4DE0V7L8GjeNClKgo0vbDcoErG
-         0guHkALvVphghlJwUMBry5LyOM0kMUmzwcvvIfKE=
+        b=nUVzRWxoh4zVoIHuWiYV3xBhjk+TRtoDpL0pvaXS1QrmrDGLi31ZPu/Aq84Ac2jg0
+         aYl7Ga5ph2twf+n1HZTf3GZvlvzPXnMPzc47ag6rdIgo0FtxY3rHyLOxwGXguOq/oG
+         5UIKZI71/yu6XEYWvnEqYiQmzS5dBoWC9VuoszqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 3.18 058/120] USB: usbdevfs: restore warning for nonsensical flags
-Date:   Thu, 11 Oct 2018 17:33:59 +0200
-Message-Id: <20181011152552.149744564@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 3.18 059/120] Revert "usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()"
+Date:   Thu, 11 Oct 2018 17:34:00 +0200
+Message-Id: <20181011152552.191441533@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -61,35 +62,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-commit 81e0403b26d94360abd1f6a57311337973bc82cd upstream.
+commit e871db8d78df1c411032cbb3acfdf8930509360e upstream.
 
-If we filter flags before they reach the core we need to generate our
-own warnings.
+This reverts commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 0cb54a3e47cb ("USB: debugging code shouldn't alter control flow")
+The bug the patch describes to, has been already fixed in commit
+2df6948428542 ("USB: cdc-wdm: don't enable interrupts in USB-giveback")
+so need to this, revert it.
+
+Fixes: 6e22e3af7bb3 ("usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()")
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/devio.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/class/cdc-wdm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1531,6 +1531,11 @@ static int proc_do_submiturb(struct usb_
- 		u |= URB_NO_INTERRUPT;
- 	as->urb->transfer_flags = u;
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -452,7 +452,7 @@ static int clear_wdm_read_flag(struct wd
  
-+	if (!allow_short && uurb->flags & USBDEVFS_URB_SHORT_NOT_OK)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_SHORT_NOT_OK.\n");
-+	if (!allow_zero && uurb->flags & USBDEVFS_URB_ZERO_PACKET)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_ZERO_PACKET.\n");
-+
- 	as->urb->transfer_buffer_length = uurb->buffer_length;
- 	as->urb->setup_packet = (unsigned char *)dr;
- 	dr = NULL;
+ 	set_bit(WDM_RESPONDING, &desc->flags);
+ 	spin_unlock_irq(&desc->iuspin);
+-	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
++	rv = usb_submit_urb(desc->response, GFP_KERNEL);
+ 	spin_lock_irq(&desc->iuspin);
+ 	if (rv) {
+ 		dev_err(&desc->intf->dev,
 
 
