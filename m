@@ -2,316 +2,314 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2698CC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9A2C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D8020835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:13:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D8020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 88F5A20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 09:14:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUSopYhv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F5A20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeJKQjs (ORCPT
+        id S1727713AbeJKQko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:39:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34576 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbeJKQjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:39:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 546FDED1;
-        Thu, 11 Oct 2018 02:13:25 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85C223F5BC;
-        Thu, 11 Oct 2018 02:13:23 -0700 (PDT)
-Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
- driver
-To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com>
- <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com>
- <c77e9601-71ca-ff09-f21d-b2493ca7c40b@arm.com>
- <CAKTKpr41udk9dGyLVZjO5pj_J7sf_sU_Td3t2R60UMxJatDDXA@mail.gmail.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <3e9ab774-71db-d81d-5f0a-15fe942dfdb0@arm.com>
-Date:   Thu, 11 Oct 2018 10:13:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 12:40:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45322 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbeJKQko (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:40:44 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q5-v6so8781922wrw.12
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 02:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=MFPPl+fwIKsr0uLSnUhlbiHIz6S6TEHe8aIJT2FPQSk=;
+        b=KUSopYhvUDCqJJ3T48TOyC85YLDExZBwiXq4oDm8ckbQxl3qknGmNFQWvqki/xoQNZ
+         IvixmxvYTBJNqAnf7oPM2Ca5/pgan7WL4vPNW5VsjDhh/slo3ozdrjH10kzGkEz5EUd2
+         9OjXe+t10YZkIYAMjIWFcKSPFpcX7fFyIra3PecfrTuooP6l5RUrgMmBKYe3FikG3Eol
+         8Jwh5tAQ7YlvmJHYg99LVb4AOW441XkmyVWsCBiRjIoQVd9yuNAMwiDq+baSYXj+1F03
+         YjhQDmeyX8fmRmbJ/07K07vI0OlkUnIUx0CRxbLxc+rV+SVchcEP0zBFdoqvQ1iCkbnm
+         BUtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=MFPPl+fwIKsr0uLSnUhlbiHIz6S6TEHe8aIJT2FPQSk=;
+        b=SAtt5a7vvU/GSKQXC6nnflR6ZOewVz9+zMcKJ+KlmvjgHhrvLMfhqQtZTMycS5C/GD
+         KxxRMtRpdjvo6AOHxP6ZBQZDP9HF+BdpuVG8/QW+qEUZtLuoXeuKdbqZtxA+h5Rz4YMf
+         6P+ehH4JB/R0vMFUELrocdkOTS2oiN+RRioDlYYKC4J/wIW8C5lgllhljsn6ZpZ0AgYU
+         1FWn7cwpVvzLsiYG9zOPwiJB+906fmJtDEwtctoqBvsdNwvAVHzVEw1QMZa60WMY4m5H
+         SNowO/Tw/LZJWpNgmDMANHiAoh62maN4AsE8LTKkWhxbb9T+vhrSEyQtGwyHgHkR0DUf
+         1CKg==
+X-Gm-Message-State: ABuFfogwh53LUgXk2OhdIy57k8d/P6ZwqjTGhvo1w8pLgKF9fRPixexX
+        ReuMGw08c913qibL7dmuk20=
+X-Google-Smtp-Source: ACcGV62CjMavAOXHhDT7Q8EyXz/9rnNRPvFFg6zWqeDegV+1QGRQUC15HHd887aoTQ8Cw/7F41VnCg==
+X-Received: by 2002:adf:b64e:: with SMTP id i14-v6mr824566wre.14.1539249259221;
+        Thu, 11 Oct 2018 02:14:19 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id e6-v6sm23991512wrc.70.2018.10.11.02.14.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 02:14:18 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 11:14:16 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <20181011091416.GA79390@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKTKpr41udk9dGyLVZjO5pj_J7sf_sU_Td3t2R60UMxJatDDXA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ganapatrao,
+Greg,
 
-On 11/10/18 07:39, Ganapatrao Kulkarni wrote:
->>> +
->>> +/*
->>> + * We must NOT create groups containing events from multiple hardware PMUs,
->>> + * although mixing different software and hardware PMUs is allowed.
->>> + */
->>> +static bool thunderx2_uncore_validate_event_group(struct perf_event *event)
->>> +{
->>> +     struct pmu *pmu = event->pmu;
->>> +     struct perf_event *leader = event->group_leader;
->>> +     struct perf_event *sibling;
->>> +     int counters = 0;
->>> +
->>> +     if (leader->pmu != event->pmu && !is_software_event(leader))
->>> +             return false;
->>> +
->>> +     for_each_sibling_event(sibling, event->group_leader) {
->>> +             if (is_software_event(sibling))
->>> +                     continue;
->>> +             if (sibling->pmu != pmu)
->>> +                     return false;
->>> +             counters++;
->>> +     }
->>
->> The above loop will not account for :
->> 1) The leader event
->> 2) The event that we are about to add.
->>
->> So you need to allocate counters for both the above to make sure we can
->> accommodate the events.
-> 
-> Is leader also part of sibling list?
+Please pull the latest x86-urgent-for-linus git tree from:
 
-No.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
->>> +static void thunderx2_uncore_start(struct perf_event *event, int flags)
->>> +{
->>> +     struct hw_perf_event *hwc = &event->hw;
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
->>> +     struct thunderx2_pmu_uncore_dev *uncore_dev;
->>> +     unsigned long irqflags;
->>> +
->>> +     hwc->state = 0;
->>> +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
->>> +     uncore_dev = pmu_uncore->uncore_dev;
->>> +
->>> +     raw_spin_lock_irqsave(&uncore_dev->lock, irqflags);
->>> +     uncore_dev->select_channel(event);
->>> +     uncore_dev->start_event(event, flags);
->>> +     raw_spin_unlock_irqrestore(&uncore_dev->lock, irqflags);
->>> +
->>> +     perf_event_update_userpage(event);
->>> +
->>> +     if (!find_last_bit(pmu_uncore->active_counters,
->>> +                             pmu_uncore->uncore_dev->max_counters)) {
->>
->> Are we guaranteed that the counter0 is always allocated ? What if the
->> event is deleted and there are other events active ? A better check
->> would be :
->>          if (find_last_bit(...) != pmu_uncore->uncore_dev->max_counters)
->>
-> IIUC, find_last_bit will return  zero if none of the counters are
-> active and we want to start timer for first active counter.
-> 
+   # HEAD: 184d47f0fd365108bd06ab26cdb3450b716269fd x86/mm: Avoid VLA in pgd_alloc()
 
-Well, if that was the case, how do you know if the bit zero is the only
-bit set ?
+An intel_rdt memory access fix and a VLA fix in pgd_alloc().
 
-AFAICS, lib/find_bit.c has :
+ Thanks,
 
-unsigned long find_last_bit(const unsigned long *addr, unsigned long size)
-{
-         if (size) {
-                 unsigned long val = BITMAP_LAST_WORD_MASK(size);
-                 unsigned long idx = (size-1) / BITS_PER_LONG;
+	Ingo
 
-                 do {
-                         val &= addr[idx];
-                         if (val)
-                                 return idx * BITS_PER_LONG + __fls(val);
+------------------>
+Kees Cook (1):
+      x86/mm: Avoid VLA in pgd_alloc()
 
-                         val = ~0ul;
-                 } while (idx--);
-         }
-         return size;
-}
+Reinette Chatre (1):
+      x86/intel_rdt: Fix out-of-bounds memory access in CBM tests
 
 
-It returns "size" when it can't find a set bit.
+ arch/x86/kernel/cpu/intel_rdt.h             |  6 ++---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 20 ++++++++--------
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++++++++++-----------
+ arch/x86/mm/pgtable.c                       | 10 ++++++--
+ 4 files changed, 45 insertions(+), 27 deletions(-)
 
-
->>> +             thunderx2_uncore_update(event);
->>> +             hwc->state |= PERF_HES_UPTODATE;
->>> +     }
->>> +     raw_spin_unlock_irqrestore(&uncore_dev->lock, irqflags);
->>> +}
->>> +
->>> +static int thunderx2_uncore_add(struct perf_event *event, int flags)
->>> +{
->>> +     struct hw_perf_event *hwc = &event->hw;
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
->>> +     struct thunderx2_pmu_uncore_dev *uncore_dev;
->>> +
->>> +     pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
->>> +     uncore_dev = pmu_uncore->uncore_dev;
->>> +
->>> +     /* Allocate a free counter */
->>> +     hwc->idx  = alloc_counter(pmu_uncore);
->>> +     if (hwc->idx < 0)
->>> +             return -EAGAIN;
->>> +
->>> +     pmu_uncore->events[hwc->idx] = event;
->>> +     /* set counter control and data registers base address */
->>> +     uncore_dev->init_cntr_base(event, uncore_dev);
->>> +
->>> +     hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
->>> +     if (flags & PERF_EF_START)
->>> +             thunderx2_uncore_start(event, flags);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static void thunderx2_uncore_del(struct perf_event *event, int flags)
->>> +{
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore =
->>> +                     pmu_to_thunderx2_pmu_uncore(event->pmu);
->>> +     struct hw_perf_event *hwc = &event->hw;
->>> +
->>> +     thunderx2_uncore_stop(event, PERF_EF_UPDATE);
->>> +
->>> +     /* clear the assigned counter */
->>> +     free_counter(pmu_uncore, GET_COUNTERID(event));
->>> +
->>> +     perf_event_update_userpage(event);
->>> +     pmu_uncore->events[hwc->idx] = NULL;
->>> +     hwc->idx = -1;
->>> +}
->>> +
->>> +static void thunderx2_uncore_read(struct perf_event *event)
->>> +{
->>> +     unsigned long irqflags;
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore =
->>> +                     pmu_to_thunderx2_pmu_uncore(event->pmu);
->>> +
->>> +     raw_spin_lock_irqsave(&pmu_uncore->uncore_dev->lock, irqflags);
->>> +     thunderx2_uncore_update(event);
->>> +     raw_spin_unlock_irqrestore(&pmu_uncore->uncore_dev->lock, irqflags);
->>> +}
->>> +
->>> +static enum hrtimer_restart thunderx2_uncore_hrtimer_callback(
->>> +             struct hrtimer *hrt)
->>> +{
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
->>> +     unsigned long irqflags;
->>> +     int idx;
->>> +     bool restart_timer = false;
->>> +
->>> +     pmu_uncore = container_of(hrt, struct thunderx2_pmu_uncore_channel,
->>> +                     hrtimer);
->>> +
->>> +     raw_spin_lock_irqsave(&pmu_uncore->uncore_dev->lock, irqflags);
->>> +     for_each_set_bit(idx, pmu_uncore->active_counters,
->>> +                     pmu_uncore->uncore_dev->max_counters) {
->>> +             struct perf_event *event = pmu_uncore->events[idx];
->>
->> Do we need to check if the "event" is not NULL ? Couldn't this race with
->> an event_del() operation ?
-> 
-> i dont think so, i have not come across any such race condition during
-> my testing.
-
-Thinking about it further, we may not hit it, as the PMU is "disable"d,
-before "add/del", which implies that the IRQ won't be triggered.
-
-Btw, in general, not hitting a race condition doesn't prove there cannot
-be a race ;)
-
->>> +static int thunderx2_pmu_uncore_register(
->>> +             struct thunderx2_pmu_uncore_channel *pmu_uncore)
->>> +{
->>> +     struct device *dev = pmu_uncore->uncore_dev->dev;
->>> +     char *name = pmu_uncore->uncore_dev->name;
->>> +     int channel = pmu_uncore->channel;
->>> +
->>> +     /* Perf event registration */
->>> +     pmu_uncore->pmu = (struct pmu) {
->>> +             .attr_groups    = pmu_uncore->uncore_dev->attr_groups,
->>> +             .task_ctx_nr    = perf_invalid_context,
->>> +             .event_init     = thunderx2_uncore_event_init,
->>> +             .add            = thunderx2_uncore_add,
->>> +             .del            = thunderx2_uncore_del,
->>> +             .start          = thunderx2_uncore_start,
->>> +             .stop           = thunderx2_uncore_stop,
->>> +             .read           = thunderx2_uncore_read,
->>
->> You must fill in the module field of the PMU to prevent this module from
->> being unloaded while it is in use.
-> 
-> thanks, i will add it.
->>
->>> +     };
->>> +
->>> +     pmu_uncore->pmu.name = devm_kasprintf(dev, GFP_KERNEL,
->>> +                     "%s_%d", name, channel);
->>> +
->>> +     return perf_pmu_register(&pmu_uncore->pmu, pmu_uncore->pmu.name, -1);
->>> +}
->>> +
->>> +static int thunderx2_pmu_uncore_add(struct thunderx2_pmu_uncore_dev *uncore_dev,
->>> +             int channel)
->>> +{
->>> +     struct thunderx2_pmu_uncore_channel *pmu_uncore;
->>> +     int ret, cpu;
->>> +
->>> +     pmu_uncore = devm_kzalloc(uncore_dev->dev, sizeof(*pmu_uncore),
->>> +                     GFP_KERNEL);
->>> +     if (!pmu_uncore)
->>> +             return -ENOMEM;
->>> +
->>> +     cpu = cpumask_any_and(cpumask_of_node(uncore_dev->node),
->>> +                     cpu_online_mask);
->>> +     if (cpu >= nr_cpu_ids)
->>> +             return -EINVAL;
->>
->> Do we need to fail this here ? We could always add this back when a CPU
->> comes online (e.g, maxcpus=n). We do have cpu-hotplug call backs anyway.
-> 
-> we want to fail, since we dont have any cpu to serve.
-> 
-
-I understand that. We can bring up CPUs later from userspace. e.g, on a
-system like ThunderX, to speed up the booting, one could add "maxcpus=8"
-which forces the kernel to only bring up the first 8 CPUs and the rest
-are brought up by the userspace. So, one of the DMC/L3 doesn't have a
-supported CPU booted up during the driver probe, you will not bring
-the PMU up and hence won't be able to use them even after the CPUs are
-brought up later. You can take a look at the arm_dsu_pmu, where we
-handle a similar situation via dsu_pmu_cpu_online().
-
-
->>> +static struct platform_driver thunderx2_uncore_driver = {
->>> +     .probe = thunderx2_uncore_probe,
->>> +     .driver = {
->>> +             .name           = "thunderx2-uncore-pmu",
->>> +             .acpi_match_table = ACPI_PTR(thunderx2_uncore_acpi_match),
->>> +     },
->>> +};
->>
->> Don't we need to unregister the pmu's when we remove the module ?
-> 
-> it is built in module at present, no unload is supported.
-> Anyway i am adding in next version , since i am going for loadable module.
-
-Ok
-
-
-Suzuki
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 285eb3ec4200..3736f6dc9545 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -529,14 +529,14 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
+ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-			   u32 _cbm, int closid, bool exclusive);
++			   unsigned long cbm, int closid, bool exclusive);
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+-				  u32 cbm);
++				  unsigned long cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
+ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
+ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
+ int rdt_pseudo_lock_init(void);
+ void rdt_pseudo_lock_release(void);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 40f3903ae5d9..f8c260d522ca 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -797,25 +797,27 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+ /**
+  * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
+  * @d: RDT domain
+- * @_cbm: CBM to test
++ * @cbm: CBM to test
+  *
+- * @d represents a cache instance and @_cbm a capacity bitmask that is
+- * considered for it. Determine if @_cbm overlaps with any existing
++ * @d represents a cache instance and @cbm a capacity bitmask that is
++ * considered for it. Determine if @cbm overlaps with any existing
+  * pseudo-locked region on @d.
+  *
+- * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
++ * @cbm is unsigned long, even if only 32 bits are used, to make the
++ * bitmap functions work correctly.
++ *
++ * Return: true if @cbm overlaps with pseudo-locked region on @d, false
+  * otherwise.
+  */
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm)
+ {
+-	unsigned long *cbm = (unsigned long *)&_cbm;
+-	unsigned long *cbm_b;
+ 	unsigned int cbm_len;
++	unsigned long cbm_b;
+ 
+ 	if (d->plr) {
+ 		cbm_len = d->plr->r->cache.cbm_len;
+-		cbm_b = (unsigned long *)&d->plr->cbm;
+-		if (bitmap_intersects(cbm, cbm_b, cbm_len))
++		cbm_b = d->plr->cbm;
++		if (bitmap_intersects(&cbm, &cbm_b, cbm_len))
+ 			return true;
+ 	}
+ 	return false;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 1b8e86a5d5e1..b140c68bc14b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -975,33 +975,34 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+  * is false then overlaps with any resource group or hardware entities
+  * will be considered.
+  *
++ * @cbm is unsigned long, even if only 32 bits are used, to make the
++ * bitmap functions work correctly.
++ *
+  * Return: false if CBM does not overlap, true if it does.
+  */
+ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-			   u32 _cbm, int closid, bool exclusive)
++			   unsigned long cbm, int closid, bool exclusive)
+ {
+-	unsigned long *cbm = (unsigned long *)&_cbm;
+-	unsigned long *ctrl_b;
+ 	enum rdtgrp_mode mode;
++	unsigned long ctrl_b;
+ 	u32 *ctrl;
+ 	int i;
+ 
+ 	/* Check for any overlap with regions used by hardware directly */
+ 	if (!exclusive) {
+-		if (bitmap_intersects(cbm,
+-				      (unsigned long *)&r->cache.shareable_bits,
+-				      r->cache.cbm_len))
++		ctrl_b = r->cache.shareable_bits;
++		if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len))
+ 			return true;
+ 	}
+ 
+ 	/* Check for overlap with other resource groups */
+ 	ctrl = d->ctrl_val;
+ 	for (i = 0; i < closids_supported(); i++, ctrl++) {
+-		ctrl_b = (unsigned long *)ctrl;
++		ctrl_b = *ctrl;
+ 		mode = rdtgroup_mode_by_closid(i);
+ 		if (closid_allocated(i) && i != closid &&
+ 		    mode != RDT_MODE_PSEUDO_LOCKSETUP) {
+-			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
++			if (bitmap_intersects(&cbm, &ctrl_b, r->cache.cbm_len)) {
+ 				if (exclusive) {
+ 					if (mode == RDT_MODE_EXCLUSIVE)
+ 						return true;
+@@ -1138,15 +1139,18 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+  * computed by first dividing the total cache size by the CBM length to
+  * determine how many bytes each bit in the bitmask represents. The result
+  * is multiplied with the number of bits set in the bitmask.
++ *
++ * @cbm is unsigned long, even if only 32 bits are used to make the
++ * bitmap functions work correctly.
+  */
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
+-				  struct rdt_domain *d, u32 cbm)
++				  struct rdt_domain *d, unsigned long cbm)
+ {
+ 	struct cpu_cacheinfo *ci;
+ 	unsigned int size = 0;
+ 	int num_b, i;
+ 
+-	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
++	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
+ 	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
+ 	for (i = 0; i < ci->num_leaves; i++) {
+ 		if (ci->info_list[i].level == r->cache_level) {
+@@ -2353,6 +2357,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 	u32 used_b = 0, unused_b = 0;
+ 	u32 closid = rdtgrp->closid;
+ 	struct rdt_resource *r;
++	unsigned long tmp_cbm;
+ 	enum rdtgrp_mode mode;
+ 	struct rdt_domain *d;
+ 	int i, ret;
+@@ -2390,9 +2395,14 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			 * modify the CBM based on system availability.
+ 			 */
+ 			cbm_ensure_valid(&d->new_ctrl, r);
+-			if (bitmap_weight((unsigned long *) &d->new_ctrl,
+-					  r->cache.cbm_len) <
+-					r->cache.min_cbm_bits) {
++			/*
++			 * Assign the u32 CBM to an unsigned long to ensure
++			 * that bitmap_weight() does not access out-of-bound
++			 * memory.
++			 */
++			tmp_cbm = d->new_ctrl;
++			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
++			    r->cache.min_cbm_bits) {
+ 				rdt_last_cmd_printf("no space on %s:%d\n",
+ 						    r->name, d->id);
+ 				return -ENOSPC;
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 089e78c4effd..59274e2c1ac4 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -115,6 +115,8 @@ static inline void pgd_list_del(pgd_t *pgd)
+ 
+ #define UNSHARED_PTRS_PER_PGD				\
+ 	(SHARED_KERNEL_PMD ? KERNEL_PGD_BOUNDARY : PTRS_PER_PGD)
++#define MAX_UNSHARED_PTRS_PER_PGD			\
++	max_t(size_t, KERNEL_PGD_BOUNDARY, PTRS_PER_PGD)
+ 
+ 
+ static void pgd_set_mm(pgd_t *pgd, struct mm_struct *mm)
+@@ -181,6 +183,7 @@ static void pgd_dtor(pgd_t *pgd)
+  * and initialize the kernel pmds here.
+  */
+ #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
++#define MAX_PREALLOCATED_PMDS	MAX_UNSHARED_PTRS_PER_PGD
+ 
+ /*
+  * We allocate separate PMDs for the kernel part of the user page-table
+@@ -189,6 +192,7 @@ static void pgd_dtor(pgd_t *pgd)
+  */
+ #define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
+ 					KERNEL_PGD_PTRS : 0)
++#define MAX_PREALLOCATED_USER_PMDS KERNEL_PGD_PTRS
+ 
+ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ {
+@@ -210,7 +214,9 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ 
+ /* No need to prepopulate any pagetable entries in non-PAE modes. */
+ #define PREALLOCATED_PMDS	0
++#define MAX_PREALLOCATED_PMDS	0
+ #define PREALLOCATED_USER_PMDS	 0
++#define MAX_PREALLOCATED_USER_PMDS 0
+ #endif	/* CONFIG_X86_PAE */
+ 
+ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+@@ -428,8 +434,8 @@ static inline void _pgd_free(pgd_t *pgd)
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd;
+-	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+-	pmd_t *pmds[PREALLOCATED_PMDS];
++	pmd_t *u_pmds[MAX_PREALLOCATED_USER_PMDS];
++	pmd_t *pmds[MAX_PREALLOCATED_PMDS];
+ 
+ 	pgd = _pgd_alloc();
+ 
