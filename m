@@ -2,325 +2,148 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3AFC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D30C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5C52085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:57:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YUvIBcuA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5C52085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 199272087D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 08:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199272087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbeJKQXT (ORCPT
+        id S1728238AbeJKQYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 12:23:19 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52823 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbeJKQXT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:23:19 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 189-v6so8146007wmw.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 01:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uV8y7pmtdnMv3FU3C7SMnZ7zAlGlB+ADcRtxp3UNEt4=;
-        b=YUvIBcuAAU6ZxUrALu+rCPREMql+yhJgVRTiCDS2FS40Z1EDgmtVSJavMowJD3YR/H
-         ktWfN2WcMV4vk40rCtCtAKAPhklZnZkFm5mVXzR1Eex1e9gkuMhr2HSkl8y6rAqdQSC/
-         llMP3hxWLde4JvtpUpsDP9gqTq+d8MI+mGjgE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uV8y7pmtdnMv3FU3C7SMnZ7zAlGlB+ADcRtxp3UNEt4=;
-        b=L5SWytvsqh3ikzRQm059GqscJsPKmV1K+voO8ng0bUIwvTBLAI7CPA9ZEMJcKyow8E
-         /OlMs2hJKjK5178UAuoJCKFQ+cMY9A9QTUaMkTpYnhNZWumnw3tGMgFa6r4aD43SeX0+
-         ujTsDxWiUie0DZuHp2Z7zTtD9dmMjfiMUYiWc2PxiaepfEYyoU0m6PqL0jbz+k6DzV9X
-         7i6LwEZm8wX03eBE4XMPCK8q/Piq8rJ4ZHgAKqritiuQeRAjg8Z/TZyhwivc7KUC1OsY
-         0Ud/6jc3c860/h0GGtHM20M6awp5KuoVMiFjSxT/YubYPPODGSjdgXoEUeHaNzU2MZcE
-         I1bw==
-X-Gm-Message-State: ABuFfohcvIlLD/ncOqtArNphS/4NedpMGRbWGj1yurqo9Z1gzmjsC/cm
-        OhNxNVB3QOopgHV8SaH0YXd8HaNOl98=
-X-Google-Smtp-Source: ACcGV63GF8Ag6pbOMzZdR/ykJqwy4RvgOGs3nttUEHd2TRlX3Rn64OeeCiNngEJdU8s0nLsyoXqNOA==
-X-Received: by 2002:a1c:19c2:: with SMTP id 185-v6mr977764wmz.4.1539248216595;
-        Thu, 11 Oct 2018 01:56:56 -0700 (PDT)
-Received: from [192.168.0.40] (138.168.88.92.rev.sfr.net. [92.88.168.138])
-        by smtp.googlemail.com with ESMTPSA id v129-v6sm13115523wme.45.2018.10.11.01.56.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 01:56:55 -0700 (PDT)
-Subject: Re: [PATCH] thermal: qoriq: add multiple sensors support
-To:     Andy Tang <andy.tang@nxp.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>
-Cc:     "edubezval@gmail.com" <edubezval@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180927024204.17314-1-andy.tang@nxp.com>
- <VI1PR0401MB222469D81006CCD5CA3369C3F3E10@VI1PR0401MB2224.eurprd04.prod.outlook.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <d43575c0-d9c1-f17b-73b8-40b4303599b6@linaro.org>
-Date:   Thu, 11 Oct 2018 10:56:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 11 Oct 2018 12:24:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54649 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbeJKQYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 12:24:49 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1868C309174F;
+        Thu, 11 Oct 2018 08:58:29 +0000 (UTC)
+Received: from [10.36.118.43] (unknown [10.36.118.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EEFD27BCA;
+        Thu, 11 Oct 2018 08:58:26 +0000 (UTC)
+Subject: Re: linux-next: manual merge of the kvm-ppc tree with the kvm-arm
+ tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20181010132224.3bee4dfd@canb.auug.org.au>
+ <20181011130623.59a160f5@canb.auug.org.au>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <044aa41c-d42d-0bab-b9e8-0a14f018e084@redhat.com>
+Date:   Thu, 11 Oct 2018 10:58:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0401MB222469D81006CCD5CA3369C3F3E10@VI1PR0401MB2224.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=gbk
+In-Reply-To: <20181011130623.59a160f5@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 11 Oct 2018 08:58:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 10:07, Andy Tang wrote:
-> Hi Rui,
+On 11/10/2018 04:06, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Appreciate if you can give it a review.
-
-Thanks for the heads up. I'll take care of that.
-
-  -- Daniel
-
-
->> -----Original Message-----
->> From: andy.tang@nxp.com <andy.tang@nxp.com>
->> Sent: 2018Äê9ÔÂ27ÈÕ 10:42
->> To: rui.zhang@intel.com
->> Cc: edubezval@gmail.com; daniel.lezcano@linaro.org;
->> linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; Andy Tang
->> <andy.tang@nxp.com>
->> Subject: [PATCH] thermal: qoriq: add multiple sensors support
+> On Wed, 10 Oct 2018 13:22:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >>
->> From: Yuantian Tang <andy.tang@nxp.com>
+>> Today's linux-next merge of the kvm-ppc tree got a conflict in:
 >>
->> There is only one sensor supported in current driver.
->> Multiple sensors are existing on Layscape socs. To support them, covert
->> this driver to support multiple sensors.
+>>   include/uapi/linux/kvm.h
 >>
->> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
->> ---
->>  drivers/thermal/qoriq_thermal.c |  117
->> +++++++++++++++++++++++----------------
->>  1 files changed, 70 insertions(+), 47 deletions(-)
+>> between commit:
 >>
->> diff --git a/drivers/thermal/qoriq_thermal.c
->> b/drivers/thermal/qoriq_thermal.c index c866cc1..7c1e88a 100644
->> --- a/drivers/thermal/qoriq_thermal.c
->> +++ b/drivers/thermal/qoriq_thermal.c
->> @@ -69,14 +69,21 @@ struct qoriq_tmu_regs {
->>  	u32 ttr3cr;		/* Temperature Range 3 Control Register */
->>  };
+>>   233a7cb23531 ("kvm: arm64: Allow tuning the physical address size for VM")
 >>
->> +struct qoriq_tmu_data;
->> +
->>  /*
->>   * Thermal zone data
->>   */
->> +struct qoriq_sensor {
->> +	struct thermal_zone_device	*tzd;
->> +	struct qoriq_tmu_data		*qdata;
->> +	int				id;
->> +};
->> +
->>  struct qoriq_tmu_data {
->> -	struct thermal_zone_device *tz;
->>  	struct qoriq_tmu_regs __iomem *regs;
->> -	int sensor_id;
->>  	bool little_endian;
->> +	struct qoriq_sensor	*sensor[SITES_MAX];
->>  };
+>> from the kvm-arm tree and commit:
 >>
->>  static void tmu_write(struct qoriq_tmu_data *p, u32 val, void __iomem
->> *addr) @@ -97,48 +104,83 @@ static u32 tmu_read(struct
->> qoriq_tmu_data *p, void __iomem *addr)
+>>   aa069a996951 ("KVM: PPC: Book3S HV: Add a VM capability to enable nested virtualization")
 >>
->>  static int tmu_get_temp(void *p, int *temp)  {
->> +	struct qoriq_sensor *qsensor = p;
->> +	struct qoriq_tmu_data *qdata = qsensor->qdata;
->>  	u32 val;
->> -	struct qoriq_tmu_data *data = p;
+>> from the kvm-ppc tree.
 >>
->> -	val = tmu_read(data, &data->regs->site[data->sensor_id].tritsr);
->> +	val = tmu_read(qdata, &qdata->regs->site[qsensor->id].tritsr);
->>  	*temp = (val & 0xff) * 1000;
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
 >>
->>  	return 0;
->>  }
+>> -- 
+>> Cheers,
+>> Stephen Rothwell
 >>
->> -static int qoriq_tmu_get_sensor_id(void)
->> +static const struct thermal_zone_of_device_ops tmu_tz_ops = {
->> +	.get_temp = tmu_get_temp,
->> +};
->> +
->> +static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
->>  {
->> -	int ret, id;
->> +	struct qoriq_tmu_data *qdata = platform_get_drvdata(pdev);
->>  	struct of_phandle_args sensor_specs;
->>  	struct device_node *np, *sensor_np;
->> +	int ret, id, sites = 0;
->>
->>  	np = of_find_node_by_name(NULL, "thermal-zones");
->>  	if (!np)
->>  		return -ENODEV;
->>
->> -	sensor_np = of_get_next_child(np, NULL);
->> -	ret = of_parse_phandle_with_args(sensor_np, "thermal-sensors",
->> -			"#thermal-sensor-cells",
->> -			0, &sensor_specs);
->> -	if (ret) {
->> +	for_each_available_child_of_node(np, sensor_np) {
->> +		ret = of_parse_phandle_with_args(sensor_np,
->> "thermal-sensors",
->> +				"#thermal-sensor-cells",
->> +				0, &sensor_specs);
->> +		if (ret) {
->> +			of_node_put(np);
->> +			of_node_put(sensor_np);
->> +			return ret;
->> +		}
->> +
->> +		if (sensor_specs.args_count >= 1) {
->> +			id = sensor_specs.args[0];
->> +			WARN(sensor_specs.args_count > 1,
->> +					"%s: too many cells in sensor specifier %d\n",
->> +					sensor_specs.np->name,
->> +					sensor_specs.args_count);
->> +		} else {
->> +			id = 0;
->> +		}
->> +
->>  		of_node_put(np);
->>  		of_node_put(sensor_np);
->> -		return ret;
->> -	}
->>
->> -	if (sensor_specs.args_count >= 1) {
->> -		id = sensor_specs.args[0];
->> -		WARN(sensor_specs.args_count > 1,
->> -				"%s: too many cells in sensor specifier %d\n",
->> -				sensor_specs.np->name, sensor_specs.args_count);
->> -	} else {
->> -		id = 0;
->> +		if (id > SITES_MAX)
->> +			return -EINVAL;
->> +
->> +		qdata->sensor[id] = devm_kzalloc(&pdev->dev,
->> +				sizeof(struct qoriq_sensor), GFP_KERNEL);
->> +		if (!qdata->sensor[id])
->> +			return -ENOMEM;
->> +
->> +		qdata->sensor[id]->id = id;
->> +		qdata->sensor[id]->qdata = qdata;
->> +
->> +		qdata->sensor[id]->tzd =
->> devm_thermal_zone_of_sensor_register(
->> +				&pdev->dev, id, qdata->sensor[id], &tmu_tz_ops);
->> +
->> +		if (IS_ERR(qdata->sensor[id]->tzd)) {
->> +			ret = PTR_ERR(qdata->sensor[id]->tzd);
->> +			dev_err(&pdev->dev,
->> +				"Failed to register thermal zone device.\n");
->> +			return -ENODEV;
->> +		}
->> +
->> +		sites |= 0x1 << (15 - id);
->>  	}
->>
->> -	of_node_put(np);
->> -	of_node_put(sensor_np);
->> +	/* Enable monitoring */
->> +	if (sites != 0)
->> +		tmu_write(qdata, sites | TMR_ME | TMR_ALPF,
->> &qdata->regs->tmr);
->>
->> -	return id;
->> +	return 0;
->>  }
->>
->>  static int qoriq_tmu_calibration(struct platform_device *pdev) @@
->> -188,16 +230,11 @@ static void qoriq_tmu_init_device(struct
->> qoriq_tmu_data *data)
->>  	tmu_write(data, TMR_DISABLE, &data->regs->tmr);  }
->>
->> -static const struct thermal_zone_of_device_ops tmu_tz_ops = {
->> -	.get_temp = tmu_get_temp,
->> -};
->> -
->>  static int qoriq_tmu_probe(struct platform_device *pdev)  {
->>  	int ret;
->>  	struct qoriq_tmu_data *data;
->>  	struct device_node *np = pdev->dev.of_node;
->> -	u32 site = 0;
->>
->>  	if (!np) {
->>  		dev_err(&pdev->dev, "Device OF-Node is NULL"); @@ -213,13
->> +250,6 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
->>
->>  	data->little_endian = of_property_read_bool(np, "little-endian");
->>
->> -	data->sensor_id = qoriq_tmu_get_sensor_id();
->> -	if (data->sensor_id < 0) {
->> -		dev_err(&pdev->dev, "Failed to get sensor id\n");
->> -		ret = -ENODEV;
->> -		goto err_iomap;
->> -	}
->> -
->>  	data->regs = of_iomap(np, 0);
->>  	if (!data->regs) {
->>  		dev_err(&pdev->dev, "Failed to get memory region\n"); @@
->> -233,18 +263,13 @@ static int qoriq_tmu_probe(struct platform_device
->> *pdev)
->>  	if (ret < 0)
->>  		goto err_tmu;
->>
->> -	data->tz = thermal_zone_of_sensor_register(&pdev->dev,
->> data->sensor_id,
->> -				data, &tmu_tz_ops);
->> -	if (IS_ERR(data->tz)) {
->> -		ret = PTR_ERR(data->tz);
->> -		dev_err(&pdev->dev,
->> -			"Failed to register thermal zone device %d\n", ret);
->> -		goto err_tmu;
->> +	ret = qoriq_tmu_register_tmu_zone(pdev);
->> +	if (ret < 0) {
->> +		dev_err(&pdev->dev, "Failed to register sensors\n");
->> +		ret = -ENODEV;
->> +		goto err_iomap;
->>  	}
->>
->> -	/* Enable monitoring */
->> -	site |= 0x1 << (15 - data->sensor_id);
->> -	tmu_write(data, site | TMR_ME | TMR_ALPF, &data->regs->tmr);
->>
->>  	return 0;
->>
->> @@ -261,8 +286,6 @@ static int qoriq_tmu_remove(struct
->> platform_device *pdev)  {
->>  	struct qoriq_tmu_data *data = platform_get_drvdata(pdev);
->>
->> -	thermal_zone_of_sensor_unregister(&pdev->dev, data->tz);
->> -
->>  	/* Disable monitoring */
->>  	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
->>
->> --
->> 1.7.1
+>> diff --cc include/uapi/linux/kvm.h
+>> index 95aa73ca65dc,7f2ff3a76995..000000000000
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@@ -962,7 -954,7 +963,8 @@@ struct kvm_ppc_resize_hpt 
+>>   #define KVM_CAP_NESTED_STATE 157
+>>   #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+>>   #define KVM_CAP_MSR_PLATFORM_INFO 159
+>>  -#define KVM_CAP_PPC_NESTED_HV 160
+>>  +#define KVM_CAP_ARM_VM_IPA_SIZE 160 /* returns maximum IPA bits for a VM */
+>> ++#define KVM_CAP_PPC_NESTED_HV 161
+>>   
+>>   #ifdef KVM_CAP_IRQ_ROUTING
+>>   
 > 
+> This is now a conflict between the kvm tree and the kvm-arm tree.
 
+Indeed, and ARM will be bumped to 161 (whoever comes first to the kvm
+tree wins).
 
--- 
- <http://www.linaro.org/> Linaro.org ©¦ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Paolo
