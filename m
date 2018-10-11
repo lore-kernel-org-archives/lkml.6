@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C5FC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7EFC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57A2F213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329612087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0jJZQoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57A2F213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqqFKMaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329612087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbeJKXF3 (ORCPT
+        id S1729459AbeJKXFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33742 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:28 -0400
+        id S1727569AbeJKXFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:31 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 441BE2087A;
-        Thu, 11 Oct 2018 15:37:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 020512087A;
+        Thu, 11 Oct 2018 15:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272265;
-        bh=Wm/ol6rDe10xbqJg3+fLbZP72WdFaM/Kr/w8ihXdfoM=;
+        s=default; t=1539272268;
+        bh=noSkj90QdSodjf/AaO+4UpY8JBGTQACIZdL5gE6r8Ig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0jJZQoVWN+NBDvvtIPNaCT2edlgsjM/cvjoKqTyUVWnLZwykgaz+Hmm3jvg382vs
-         FfxOpNSHTEHiDHAVIVN8I+jEucl/vJZKGH6rgwDLlCoi5hDiKILnQVJC+HZYCSg9qj
-         g6zAMIL10TwwK4hJVzGj9qS1h/MwWAgcmG4WFWKk=
+        b=dqqFKMaWVFOvttzpz1PRRZvRyQy7en47HODuUu2gYYe80MEm7KMDPcifsuR2I4ovw
+         T7Pq8/eTY/zVztc09eIEYhmLEgKIDSAkuyan/Y5t9gfOgMNwS2a+v0MIcmFyUTFvF5
+         f2u77RKy+XV6ekJSs5CIRNR3o6Y28qrs8sD/aHWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 047/120] nfsd: fix corrupted reply to badly ordered compound
-Date:   Thu, 11 Oct 2018 17:33:48 +0200
-Message-Id: <20181011152551.678365930@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 3.18 048/120] floppy: Do not copy a kernel pointer to user memory in FDGETPRM ioctl
+Date:   Thu, 11 Oct 2018 17:33:49 +0200
+Message-Id: <20181011152551.722569432@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -63,33 +61,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+From: Andy Whitcroft <apw@canonical.com>
 
-[ Upstream commit 5b7b15aee641904ae269be9846610a3950cbd64c ]
+commit 65eea8edc315589d6c993cf12dbb5d0e9ef1fe4e upstream.
 
-We're encoding a single op in the reply but leaving the number of ops
-zero, so the reply makes no sense.
+The final field of a floppy_struct is the field "name", which is a pointer
+to a string in kernel memory.  The kernel pointer should not be copied to
+user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
+including this "name" field.  This pointer cannot be used by the user
+and it will leak a kernel address to user-space, which will reveal the
+location of kernel code and data and undermine KASLR protection.
 
-Somewhat academic as this isn't a case any real client will hit, though
-in theory perhaps that could change in a future protocol extension.
+Model this code after the compat ioctl which copies the returned data
+to a previously cleared temporary structure on the stack (excluding the
+name pointer) and copy out to userspace from there.  As we already have
+an inparam union with an appropriate member and that memory is already
+cleared even for read only calls make use of that as a temporary store.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Based on an initial patch by Brian Belleville.
+
+CVE-2018-7755
+Signed-off-by: Andy Whitcroft <apw@canonical.com>
+Broke up long line.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/nfsd/nfs4proc.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1347,6 +1347,7 @@ nfsd4_proc_compound(struct svc_rqst *rqs
- 	if (status) {
- 		op = &args->ops[0];
- 		op->status = status;
-+		resp->opcnt = 1;
- 		goto encode_op;
- 	}
- 
+---
+ drivers/block/floppy.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3459,6 +3459,9 @@ static int fd_locked_ioctl(struct block_
+ 					  (struct floppy_struct **)&outparam);
+ 		if (ret)
+ 			return ret;
++		memcpy(&inparam.g, outparam,
++				offsetof(struct floppy_struct, name));
++		outparam = &inparam.g;
+ 		break;
+ 	case FDMSGON:
+ 		UDP->flags |= FTD_MSG;
 
 
