@@ -2,159 +2,287 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E26CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF3AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCDAA2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:12:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCDAA2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id E04AF2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 00:13:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="rZcLjrzh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04AF2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeJKHhT (ORCPT
+        id S1726714AbeJKHiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:37:19 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:57918 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeJKHhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:37:19 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1gAOan-0001Ph-O4; Thu, 11 Oct 2018 02:12:41 +0200
-Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
-To:     Chris Clayton <chris2553@googlemail.com>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Azat Khuzhin <a3at.mail@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
- <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
- <98680351-5123-761f-982a-726098da9716@gmail.com>
- <9980dcc1-f7fe-5de7-75be-99b1592c9206@googlemail.com>
- <6b1685ce-22ac-2c71-e1d4-b05748a7d977@googlemail.com>
- <bed5c327-6a2a-99da-8b86-16f897b32548@maciej.szmigiero.name>
- <7199b1e4-ce40-60ae-2a6a-ef7e95e563ea@googlemail.com>
- <0e206e6b-3d0c-de27-dedb-48c30e02649c@gmail.com>
- <9d99060a-db1d-7177-3041-e407b131548e@maciej.szmigiero.name>
- <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <df88dcb6-951d-0568-6104-7346d0c49063@maciej.szmigiero.name>
-Date:   Thu, 11 Oct 2018 02:12:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 11 Oct 2018 03:38:01 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34051 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeJKHiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 03:38:00 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v69-v6so5623413oif.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 17:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wEZxUChQ7My5ldYgn8lVR7BXwMptPVejPczl3HqPJPw=;
+        b=rZcLjrzh3JDN0/PP27oqzlOEVnJbY1gilzMzhwo+dbE+4WHR8SYSGsFr3qLJxoE0oO
+         BWQDApfG1rQZ5oQPNO/SRjAXzNZysADhXrq9e+dxSZDUCybO/YFerNklRR3AKtXXFE4l
+         Td/vPiKCeparSXmwJJNqfqRfWKYJiRRFsRroVp2XsgQjwElfxh7TEQj9PDKPz1+kKq5h
+         ZdZWSYTWVUAJVnWeKKGzGlSaEijgrJhFYGg5RKOXxOOIuboqAMHqW/kkZhzCi5aDMGzS
+         FTGOs80P2R4QALT5ENeRMZPmm0O08U5n4pcXcFTojHqSAFzTn9OMbTAH8oe70VHAHkLb
+         TL8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wEZxUChQ7My5ldYgn8lVR7BXwMptPVejPczl3HqPJPw=;
+        b=IZL4uHzZr9utUSFKZLF/VUr66wPOZQpAcMI6E1z6YaASBnUtO5gczplTZp0D/ziVK0
+         vpapCz7eo+AacJx3950F/RIn3zwOvEFgyKkzqDzDTOm3qsHP1gNNLNqlFHsCNdzbbKcf
+         BLrQSF1RUGuVgYKvPFXPUdcaQEnutke0WHq1kmiDfiJdFOttvrvqOV0W5l7IiB2q3q9C
+         ClKIYiR64y0kgn+ZEmKTLFC1X7NXt1eBnJALuvzFkMqGR87dx+k9KVflhr2HXpn/Q1Er
+         akWDLRXfM5PWNwTVbUnVR0fhTVaffR9uIzITzri4ZZtdN+sBmwu12XJGe/TlOfh0BCC9
+         OUHw==
+X-Gm-Message-State: ABuFfoihdwepIGvavYsUOrS47hQ6lUxzo2kwasDvBP99E6Is0PqjTTfz
+        E36jqYr/W3JdvmPaX3iGlV7tLDtU15FNybPJ833LUw==
+X-Google-Smtp-Source: ACcGV61wnsTcqmkXvsP2TwsMzPYHLAB8/+s4HQa18bB4jH3SGLuXQxJiEofZtdry+AIH6sMaPjw4dej7m41OElMmxyM=
+X-Received: by 2002:aca:ead4:: with SMTP id i203-v6mr2997897oih.149.1539216806611;
+ Wed, 10 Oct 2018 17:13:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0b490a74-c8b3-7206-33ba-d99be73c18fd@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181004074457.GD22173@dhcp22.suse.cz> <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
+ <20181009112216.GM8528@dhcp22.suse.cz> <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
+ <20181010084731.GB5873@dhcp22.suse.cz>
+In-Reply-To: <20181010084731.GB5873@dhcp22.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 10 Oct 2018 17:13:14 -0700
+Message-ID: <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Randomize free memory
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.10.2018 00:49, Chris Clayton wrote:
->> Now, knowing the "right" value you can experiment with what rtl_init_rxcfg()
->> writes (under the "default:" label for your NIC model).
->>
-> 
-> This might be more interesting. Through a combination of viewing the output from pr_notice() and the output from
-> "ethtool -d", I can see RxConfig with the following values
-> 
-> 	During boot:	0x00028700
-> 	Before suspend:	0x0002870e
-> 	During resume:	0x00024000
-> 	Post resume:	0x0002870e
-> 
-> As I did with 4.18.10 early on in the process, I removed the call to rtl_init_rxcfg() from rtl_hw_start() and rebuilt,
-> installed and rebooted. Now I see the following values:
-> 
-> 	During boot:	0x00028700
-> 	Before suspend:	0x0002870e
-> 	During resume:	0x00024000
-> 	Post resume:	0x0002400e
-> 
+On Wed, Oct 10, 2018 at 1:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Tue 09-10-18 10:34:55, Dan Williams wrote:
+> > On Tue, Oct 9, 2018 at 4:28 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > On Thu 04-10-18 09:44:35, Dan Williams wrote:
+> > > > Hi Michal,
+> > > >
+> > > > On Thu, Oct 4, 2018 at 12:53 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > > >
+> > > > > On Wed 03-10-18 19:15:18, Dan Williams wrote:
+> > > > > > Changes since v1:
+> > > > > > * Add support for shuffling hot-added memory (Andrew)
+> > > > > > * Update cover letter and commit message to clarify the performance impact
+> > > > > >   and relevance to future platforms
+> > > > >
+> > > > > I believe this hasn't addressed my questions in
+> > > > > http://lkml.kernel.org/r/20181002143015.GX18290@dhcp22.suse.cz. Namely
+> > > > > "
+> > > > > It is the more general idea that I am not really sure about. First of
+> > > > > all. Does it make _any_ sense to randomize 4MB blocks by default? Why
+> > > > > cannot we simply have it disabled?
+> > > >
+> > > > I'm not aware of any CVE that this would directly preclude, but that
+> > > > said the entropy injected at 4MB boundaries raises the bar on heap
+> > > > attacks. Environments that want more can adjust that with the boot
+> > > > parameter. Given the potential benefits I think it would only make
+> > > > sense to default disable it if there was a significant runtime impact,
+> > > > from what I have seen there isn't.
+> > > >
+> > > > > Then and more concerning question is,
+> > > > > does it even make sense to have this randomization applied to higher
+> > > > > orders than 0? Attacker might fragment the memory and keep recycling the
+> > > > > lowest order and get the predictable behavior that we have right now.
+> > > >
+> > > > Certainly I expect there are attacks that can operate within a 4MB
+> > > > window, as I expect there are attacks that could operate within a 4K
+> > > > window that would need sub-page randomization to deter. In fact I
+> > > > believe that is the motivation for CONFIG_SLAB_FREELIST_RANDOM.
+> > > > Combining that with page allocator randomization makes the kernel less
+> > > > predictable.
+> > >
+> > > I am sorry but this hasn't explained anything (at least to me). I can
+> > > still see a way to bypass this randomization by fragmenting the memory.
+> > > With that possibility in place this doesn't really provide the promissed
+> > > additional security. So either I am missing something or the per-order
+> > > threshold is simply a wrong interface to a broken security misfeature.
+> >
+> > I think a similar argument can be made against
+> > CONFIG_SLAB_FREELIST_RANDOM the randomization benefits can be defeated
+> > with more effort, and more effort is the entire point.
+>
+> If there is relatively simple way to achieve that (which I dunno about
+> the slab free list randomization because I am not familiar with the
+> implementation) then the feature is indeed questionable. I would
+> understand an argument about feasibility if bypassing was extremely hard
+> but fragmenting the memory is relatively a simple task.
+>
+> > > > Is that enough justification for this patch on its own?
+> > >
+> > > I do not think so from what I have heard so far.
+> >
+> > I'm missing what bar you are judging the criteria for these patches,
+> > my bar is increased protection against allocation ordering attacks as
+> > seconded by Kees, and the memory side caching effects.
+>
+> As said above, if it is quite easy to bypass the randomization then
+> calling and advertizing this as a security feature is a dubious. Not
+> enough to ouright nak it of course but also not something I would put my
+> stamp on. And arguments would be much more solid if they were backed by
+> some numbers (not only for the security aspect but also the side caching
+> effects).
 
-Now we can finally see some difference...
-Besides missing RX128_INT_EN (bit 15 or 0x8000) and RX_DMA_BURST
-(bits 8-10 or 0x700) - that rtl_init_rxcfg() would normally set so this
-is kind of expected - one can see that the working configuration
-post-resume has bit 14 (or 0x4000) set, too.
+In fact you don't even need to fragment since you'll have 4MB
+contiguous targets by default, but that's not the point. We'll now
+have more entropy in the allocation order to compliment the entropy
+introduced at the per-SLAB level with CONFIG_SLAB_FREELIST_RANDOM.
 
-This bit is described in the driver as RX_MULTI_EN ("8111c only") and is
-set by rtl_init_rxcfg() for example for RTL_GIGA_MAC_VER_35.
+...and now that I've made that argument I think I've come around to
+your point about the shuffle_page_order parameter. The only entity
+that might have a better clue about "safer" shuffle orders than
+MAX_ORDER is the distribution provider. I'll cut a v4 to move all of
+this under a configuration symbol and make the shuffle order a compile
+time setting.
 
-RTL_GIGA_MAC_VER_35 is described in the driver as being in the same
-family as your RTL_GIGA_MAC_VER_38, so can you please try the following
-change:
---- r8169.c
-+++ r8169.c
-@@ -4271,6 +4271,7 @@ static void rtl_init_rxcfg(struct rtl816
- 	case RTL_GIGA_MAC_VER_18 ... RTL_GIGA_MAC_VER_24:
- 	case RTL_GIGA_MAC_VER_34:
- 	case RTL_GIGA_MAC_VER_35:
-+	case RTL_GIGA_MAC_VER_38:
- 		RTL_W32(tp, RxConfig, RX128_INT_EN | RX_MULTI_EN | RX_DMA_BURST);
- 		break;
- 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
+> > That said I
+> > don't have a known CVE in my mind that would be mitigated by 4MB page
+> > shuffling.
+> >
+> > > > It's
+> > > > debatable. Combine that though with the wider availability of
+> > > > platforms with memory-side-cache and I think it's a reasonable default
+> > > > behavior for the kernel to deploy.
+> > >
+> > > OK, this sounds a bit more interesting. I am going to speculate because
+> > > memory-side-cache is way too generic of a term for me to imagine
+> > > anything specific.
+> >
+> > No need to imagine, a memory side cache shipped on a previous product
+> > as Robert linked in his comments.
+>
+> Could you make this a part of the changelog? I would really appreciate
+> to see justification based on actual numbers rather than quite hand wavy
+> "it helps".
 
-This will add RX_MULTI_EN also for your chip model (you need to add back
-the call to rtl_init_rxcfg() to rtl_hw_start(), naturally).
+I put in the changelog that these patches reduced the cache conflict
+rate by 2.5X on a Java benchmark. I specifically did not put KNL data
+directly into the changelog because that is not a general purpose
+server platform.
 
-If this does not help then I would try another values in the above write:
-1) RTL_W32(tp, RxConfig, 0x00024000);
-2) RTL_W32(tp, RxConfig, 0x00004000);
-3) RTL_W32(tp, RxConfig, RX_DMA_BURST);
-4) RTL_W32(tp, RxConfig, RX128_INT_EN);
+Note, you can also think about this just on pure architecture terms.
+I.e. that for a direct mapped cache anywhere in a system you can have
+a near zero cache conflict rate on a first run of a workload and high
+conflict rate on a second run based on how lucky you are with memory
+allocation placement relative to the first run. Randomization keeps
+you out of such performance troughs and provides more reliable average
+performance.  With the numa emulation patch I referenced an
+administrator could constrain a workload to run in a cache-sized
+subset of the available memory if they really know what they are doing
+and need firmer guarantees.
 
-> Chris
+The risk if Linux does not have this capability is unstable hacks like
+zonesort and rebooting, as referenced in that KNL article, which are
+not suitable for a general purpose kernel / platform.
 
-Maciej
+> > > Many years back while at a university I was playing
+> > > with page coloring as a method to reach a more stable performance
+> > > results due to reduced cache conflicts. It was not always a performance
+> > > gain but it definitely allowed for more stable run-to-run comparable
+> > > results. I can imagine that a randomization might lead to a similar effect
+> > > although I am not sure how much and it would be more interesting to hear
+> > > about that effect.
+> >
+> > Cache coloring is effective up until your workload no longer fits in
+> > that color.
+>
+> Yes, that was my observation back then more or less. But even when you
+> do not fit into the cache a color aware strategy (I was playing with bin
+> hoping as well) produced a more deterministic/stable results. But that
+> is just a side note as it doesn't directly relate to your change.
+>
+> > Randomization helps to attenuate the cache conflict rate
+> > when that happens.
+>
+> I can imagine that. Do we have any numbers to actually back that claim
+> though?
+>
+
+Yes, 2.5X cache conflict rate reduction, in the change log.
+
+> > For workloads that may fit in the cache, and/or
+> > environments that need more explicit cache control we have the recent
+> > changes to numa_emulation [1] to arrange for cache sized numa nodes.
+>
+> Could you point me to some more documentation. My google-fu is failing
+> me and "5.2.27.5 Memory Side Cache Information Structure" doesn't point
+> to anything official (except for your patch referencing it).
+
+http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf
+
+>
+> > > If this is really the case then I would assume on/off
+> > > knob to control the randomization without something as specific as
+> > > order.
+> >
+> > Are we only debating the enabling knob at this point? I'm not opposed
+> > to changing that, but I do think we want to keep the rest of the
+> > infrastructure to allow for shuffling on a variable page size boundary
+> > in case there is enhanced security benefits at smaller buddy-page
+> > sizes.
+>
+> I am still trying to understand the benefit of this change. If the
+> caching effects are actually the most important part and there is a
+> reasonable cut in allocation order to keep the randomization effective
+> during the runtime then I would like to understand the thinking behind
+> that. In other words does the randomization at smaller orders than
+> biggest order still visible in actual benchmarks? If not then on/off
+> knob should be sufficient with potential auto tuning based on actual HW
+> rather than to expect poor admin to google for $RANDOM_ORDER to use on a
+> specific HW and all the potential cargo cult that will grow around it.
+
+So, I've come around to your viewpoint on this. Especially when we
+have CONFIG_SLAB_FREELIST_RANDOM the security benefit of smaller than
+MAX_ORDER shuffling is hard to justify and likely does not need kernel
+parameter based control.
+
+> As I've said before, I am not convinced about the security argument but
+> even if I am wrong here then I am still quite sure that you do not want
+> to expose the security aspect as "chose an order to randomize from"
+> because admins will have no real way to know what is the $RANDOM_ORDER
+> to set. So even then it should be on/off thing. You are going to pay
+> some of the performance because you would lose some page allocator
+> optimizations (e.g. pcp lists) but that is unavoidable AFAICS.
+>
+> With all that being said, I think the overal idea makes sense but you
+> should try much harder to explain _why_ we need it and back your
+> justification by actual _data_ before I would consider my ack.
+
+I don't have a known CVE, I only have the ack of people more
+knowledgeable about security than myself like Kees to say in effect,
+"yes, this complicates attacks". If you won't take Kees' word for it,
+I'm not sure what other justification I can present on the security
+aspect.
+
+2.5X cache conflict reduction on a Java benchmark workload that the
+exceeds the cache size by multiple factors is the data I can provide
+today. Post launch it becomes easier to share more precise data, but
+that's post 4.20. The hope of course is to have this capability
+available in an upstream released kernel in advance of wider hardware
+availability.
