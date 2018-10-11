@@ -3,49 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EB6C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E615C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 195802098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FD65213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2qbkopTD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195802098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rssIhydB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD65213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731743AbeJKXOv (ORCPT
+        id S1731752AbeJKXOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:14:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48056 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731144AbeJKXOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:14:50 -0400
+        id S1726882AbeJKXOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:53 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D35C2085B;
-        Thu, 11 Oct 2018 15:47:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 111CF2085B;
+        Thu, 11 Oct 2018 15:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272824;
-        bh=BSqnccpsFn+B7Jh7//U55stznKg7IkUV8y7X5SM5Q2E=;
+        s=default; t=1539272827;
+        bh=TuUTdJ7AQNoSNj1qNgMUVhtNqnLJ4gfz2eS3OzJRV8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qbkopTD87sivo5yo7urtapUE9aE38Eiu5r3ol1nb/E9Q14nMw9ahVBKdtX3V+jrS
-         9E12JIDP80LkU8sUGCSLYy3nN9TjAk16b53c20qT/xtyoTV+IDv7hLMmQnHQX9Uehz
-         HsHbfomtt8YEHmhycfgs5auaTmCplIrBWk+NKbic=
+        b=rssIhydBfxBIcpPUhsKUOyh+f0bAfQCG2cgcNqY3UyUXYz/abgkKPkTc6uE4H4PaK
+         flgethR8PfZ5DbbEP7u6Q9vwDkMlSy0UWrZh4fcnQN/5uPGtIdEVSPSP6r2i1Rf3sU
+         vWIRNdqYpzJUuGXumsiPHN/V3s4uYgWEGMSpNSx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.14 45/45] ath10k: fix scan crash due to incorrect length calculation
-Date:   Thu, 11 Oct 2018 17:40:12 +0200
-Message-Id: <20181011152510.904872314@linuxfoundation.org>
+        stable@vger.kernel.org, Nikita Sobolev <sobolev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.14 36/45] ARC: clone syscall to setp r25 as thread pointer
+Date:   Thu, 11 Oct 2018 17:40:03 +0200
+Message-Id: <20181011152510.499830925@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -63,61 +62,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhi Chen <zhichen@codeaurora.org>
+From: Vineet Gupta <vgupta@synopsys.com>
 
-commit c8291988806407e02a01b4b15b4504eafbcc04e0 upstream.
+commit c58a584f05e35d1d4342923cd7aac07d9c3d3d16 upstream.
 
-Length of WMI scan message was not calculated correctly. The allocated
-buffer was smaller than what we expected. So WMI message corrupted
-skb_info, which is at the end of skb->data. This fix takes TLV header
-into account even if the element is zero-length.
+Per ARC TLS ABI, r25 is designated TP (thread pointer register).
+However so far kernel didn't do any special treatment, like setting up
+usermode r25, even for CLONE_SETTLS. We instead relied on libc runtime
+to do this, in say clone libc wrapper [1]. This was deliberate to keep
+kernel ABI agnostic (userspace could potentially change TP, specially
+for different ARC ISA say ARCompact vs. ARCv2 with different spare
+registers etc)
 
-Crash log:
-  [49.629986] Unhandled kernel unaligned access[#1]:
-  [49.634932] CPU: 0 PID: 1176 Comm: logd Not tainted 4.4.60 #180
-  [49.641040] task: 83051460 ti: 8329c000 task.ti: 8329c000
-  [49.646608] $ 0   : 00000000 00000001 80984a80 00000000
-  [49.652038] $ 4   : 45259e89 8046d484 8046df30 8024ba70
-  [49.657468] $ 8   : 00000000 804cc4c0 00000001 20306320
-  [49.662898] $12   : 33322037 000110f2 00000000 31203930
-  [49.668327] $16   : 82792b40 80984a80 00000001 804207fc
-  [49.673757] $20   : 00000000 0000012c 00000040 80470000
-  [49.679186] $24   : 00000000 8024af7c
-  [49.684617] $28   : 8329c000 8329db88 00000001 802c58d0
-  [49.690046] Hi    : 00000000
-  [49.693022] Lo    : 453c0000
-  [49.696013] epc   : 800efae4 put_page+0x0/0x58
-  [49.700615] ra    : 802c58d0 skb_release_data+0x148/0x1d4
-  [49.706184] Status: 1000fc03 KERNEL EXL IE
-  [49.710531] Cause : 00800010 (ExcCode 04)
-  [49.714669] BadVA : 45259e89
-  [49.717644] PrId  : 00019374 (MIPS 24Kc)
+However userspace setting up r25, after clone syscall opens a race, if
+child is not scheduled and gets a signal instead. It starts off in
+userspace not in clone but in a signal handler and anything TP sepcific
+there such as pthread_self() fails which showed up with uClibc
+testsuite nptl/tst-kill6 [2]
 
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Brian Norris <briannorris@chromium.org>
+Fix this by having kernel populate r25 to TP value. So this locks in
+ABI, but it was not going to change anyways, and fwiw is same for both
+ARCompact (arc700 core) and ARCvs (HS3x cores)
+
+[1] https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/libc/sysdeps/linux/arc/clone.S
+[2] https://github.com/wbx-github/uclibc-ng-test/blob/master/test/nptl/tst-kill6.c
+
+Fixes: ARC STAR 9001378481
+Cc: stable@vger.kernel.org
+Reported-by: Nikita Sobolev <sobolev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arc/kernel/process.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -1486,10 +1486,10 @@ ath10k_wmi_tlv_op_gen_start_scan(struct
- 	bssid_len = arg->n_bssids * sizeof(struct wmi_mac_addr);
- 	ie_len = roundup(arg->ie_len, 4);
- 	len = (sizeof(*tlv) + sizeof(*cmd)) +
--	      (arg->n_channels ? sizeof(*tlv) + chan_len : 0) +
--	      (arg->n_ssids ? sizeof(*tlv) + ssid_len : 0) +
--	      (arg->n_bssids ? sizeof(*tlv) + bssid_len : 0) +
--	      (arg->ie_len ? sizeof(*tlv) + ie_len : 0);
-+	      sizeof(*tlv) + chan_len +
-+	      sizeof(*tlv) + ssid_len +
-+	      sizeof(*tlv) + bssid_len +
-+	      sizeof(*tlv) + ie_len;
+--- a/arch/arc/kernel/process.c
++++ b/arch/arc/kernel/process.c
+@@ -241,6 +241,26 @@ int copy_thread(unsigned long clone_flag
+ 		task_thread_info(current)->thr_ptr;
+ 	}
  
- 	skb = ath10k_wmi_alloc_skb(ar, len);
- 	if (!skb)
++
++	/*
++	 * setup usermode thread pointer #1:
++	 * when child is picked by scheduler, __switch_to() uses @c_callee to
++	 * populate usermode callee regs: this works (despite being in a kernel
++	 * function) since special return path for child @ret_from_fork()
++	 * ensures those regs are not clobbered all the way to RTIE to usermode
++	 */
++	c_callee->r25 = task_thread_info(p)->thr_ptr;
++
++#ifdef CONFIG_ARC_CURR_IN_REG
++	/*
++	 * setup usermode thread pointer #2:
++	 * however for this special use of r25 in kernel, __switch_to() sets
++	 * r25 for kernel needs and only in the final return path is usermode
++	 * r25 setup, from pt_regs->user_r25. So set that up as well
++	 */
++	c_regs->user_r25 = c_callee->r25;
++#endif
++
+ 	return 0;
+ }
+ 
 
 
