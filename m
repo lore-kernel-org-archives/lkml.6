@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E83AC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC19C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E78132087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3DD120835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:20:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="n4X2Kc7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E78132087D
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VyrsWWus"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3DD120835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbeJKSrQ (ORCPT
+        id S1728523AbeJKSrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 14:47:16 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:24622 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKSrP (ORCPT
+        Thu, 11 Oct 2018 14:47:22 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:48438 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728502AbeJKSrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 14:47:15 -0400
+        Thu, 11 Oct 2018 14:47:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1539256828; x=1570792828;
+  t=1539256834; x=1570792834;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=SmdW1HQJHQDSVi6FD1SR32M8B9tET1DkS7+cPRajD5c=;
-  b=n4X2Kc7wHdWNdl+szwUAotBOtBcByjI2S5XbBWeDRhg+S4A2qi0XN4YF
-   kPkLpRAdAvqUhX7fhWfHgd05nvdITJs/viIz+aVHh/gQf+6mt7v/cZqTX
-   pBlixwjZvuuZLhn72ELH+cotAObA/Pa+Hth12zFEBUiFdkux1smvkmu1J
-   0=;
+  bh=qrT26U14ienmd8ofx66O9VZShPNLz4vCh3UgFdjV4gA=;
+  b=VyrsWWusFeVbTBTEkrVzZThKf8zYDDpxdbBJbYtxzshmarJ4Jv+0Z0WB
+   kMoUiwNEg+U08DOTIHhn5M/ZhUN7ZCzg0MVGWtzFAGZI7zgedxcAOC+aj
+   KcLH6uIVHTYv80s/xy4BwSNtAWCqEfnC84EQy7dKBfzZmxKLSj33L9iaf
+   Y=;
 X-IronPort-AV: E=Sophos;i="5.54,368,1534809600"; 
-   d="scan'208";a="362030531"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 11:20:26 +0000
+   d="scan'208";a="367323644"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-a11fcaa7.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Oct 2018 11:20:32 +0000
 Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9BBKOOr115508
+        by email-inbound-relay-2c-a11fcaa7.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9BBKRvs104304
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 11:20:25 GMT
+        Thu, 11 Oct 2018 11:20:31 GMT
 Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
  EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Oct 2018 11:20:25 +0000
+ id 15.0.1367.3; Thu, 11 Oct 2018 11:20:30 +0000
 Received: from udc4a3e82dbc15a031435.hfa14.amazon.com (10.43.161.25) by
  EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 11 Oct 2018 11:20:19 +0000
+ id 15.0.1367.3; Thu, 11 Oct 2018 11:20:24 +0000
 From:   Talel Shenhar <talel@amazon.com>
 To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <talel@amazon.com>, <jonnyc@amazon.com>, <ronenk@amazon.com>,
         <barakw@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 1/2] dt-bindings: spi: dw: add compatible for Amazon's Alpine spi controller
-Date:   Thu, 11 Oct 2018 14:20:06 +0300
-Message-ID: <1539256807-25676-1-git-send-email-talel@amazon.com>
+Subject: [PATCH 2/2] dw: spi: add support for Amazon's Alpine spi controller
+Date:   Thu, 11 Oct 2018 14:20:07 +0300
+Message-ID: <1539256807-25676-2-git-send-email-talel@amazon.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539209339.1944.23.camel@impinj.com>
+In-Reply-To: <1539256807-25676-1-git-send-email-talel@amazon.com>
 References: <1539209339.1944.23.camel@impinj.com>
+ <1539256807-25676-1-git-send-email-talel@amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.43.161.25]
@@ -72,45 +73,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This compatible adds the ability for dw spi controller driver to work with
-the dw spi controller found on Alpine chips.
-
-The dw spi controller has an auto-deselect of Chip-Select, in case there is
-no data inside the Tx FIFO. While working on platforms with Alpine chips,
-auto-deselect mode causes an issue for some spi devices that can't handle
-the Chip-Select deselect in the middle of a transaction. It is a normal
-behavior for a Tx FIFO to be empty in the middle of a transaction, due to
-busy cpu. In the Alpine chip family an option to change the default
-behavior was added to the original dw spi controller to prevent this issue
-of de-asserting Chip-Select once TX FIFO is empty. The change was to allow
-SW manual control of the Chip-Select. With this change, as long as the
-Slave Enable Register is asserted, the Chip-Select will be asserted. As a
-result, it is necessary to deselect the Slave Select Register once the
-transaction is done. This feature is enabled via a new device compatible
-string called 'amazon,alpine-dw-apb-ssi'.  Once the driver identifies the
-new compatible string, it enables the hw fixup logic, by writing to a
-dedicated register found in the IP reserved area and will start manual
-deselecting the Slave Select Register when the transfer ends.
+Add support for a new devicetree compatible string called
+'amazon,alpine-apb-ssi', which is necessary for the Amazon Alpine spi
+controller. 'amazon,alpine-dw-apb-ssi' is used in the dw spi driver if
+specified in the devicetree.  Otherwise, fall back to driver default
+behavior, i.e. original dw IP hw driver behavior.
 
 Signed-off-by: Talel Shenhar <talel@amazon.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-dw-mmio.c | 9 +++++++++
+ drivers/spi/spi-dw.c      | 6 ++++++
+ drivers/spi/spi-dw.h      | 2 ++
+ 3 files changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-index 642d3fb..2864bc6 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-@@ -2,7 +2,7 @@ Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
+diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+index a768461..3ffb6a40 100644
+--- a/drivers/spi/spi-dw-mmio.c
++++ b/drivers/spi/spi-dw-mmio.c
+@@ -126,6 +126,14 @@ static int dw_spi_mscc_jaguar2_init(struct platform_device *pdev,
+ 				JAGUAR2_IF_SI_OWNER_OFFSET);
+ }
  
- Required properties:
- - compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi", where soc is "ocelot" or
--  "jaguar2"
-+  "jaguar2", or "amazon,alpine-dw-apb-ssi"
- - reg : The register base for the controller. For "mscc,<soc>-spi", a second
-   register set is required (named ICPU_CFG:SPI_MST)
- - interrupts : One interrupt, used by the controller.
++static int dw_spi_alpine_init(struct platform_device *pdev,
++			      struct dw_spi_mmio *dwsmmio)
++{
++	dwsmmio->dws.cs_override = 1;
++
++	return 0;
++}
++
+ static int dw_spi_mmio_probe(struct platform_device *pdev)
+ {
+ 	int (*init_func)(struct platform_device *pdev,
+@@ -230,6 +238,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
+ 	{ .compatible = "snps,dw-apb-ssi", },
+ 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
+ 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
++	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
+ 	{ /* end of table */}
+ };
+ MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
+diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
+index 3e205ab..b705f2b 100644
+--- a/drivers/spi/spi-dw.c
++++ b/drivers/spi/spi-dw.c
+@@ -144,6 +144,8 @@ void dw_spi_set_cs(struct spi_device *spi, bool enable)
+ 
+ 	if (!enable)
+ 		dw_writel(dws, DW_SPI_SER, BIT(spi->chip_select));
++	else if (dws->cs_override)
++		dw_writel(dws, DW_SPI_SER, 0);
+ }
+ EXPORT_SYMBOL_GPL(dw_spi_set_cs);
+ 
+@@ -463,6 +465,10 @@ static void spi_hw_init(struct device *dev, struct dw_spi *dws)
+ 		dws->fifo_len = (fifo == 1) ? 0 : fifo;
+ 		dev_dbg(dev, "Detected FIFO size: %u bytes\n", dws->fifo_len);
+ 	}
++
++	/* enable HW fixup for explicit CS deselect for Amazon's alpine chip */
++	if (dws->cs_override)
++		dw_writel(dws, DW_SPI_CS_OVERRIDE, 0xF);
+ }
+ 
+ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
+diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
+index 0168b08..c9c1588 100644
+--- a/drivers/spi/spi-dw.h
++++ b/drivers/spi/spi-dw.h
+@@ -32,6 +32,7 @@
+ #define DW_SPI_IDR			0x58
+ #define DW_SPI_VERSION			0x5c
+ #define DW_SPI_DR			0x60
++#define DW_SPI_CS_OVERRIDE		0xf4
+ 
+ /* Bit fields in CTRLR0 */
+ #define SPI_DFS_OFFSET			0
+@@ -109,6 +110,7 @@ struct dw_spi {
+ 	u32			fifo_len;	/* depth of the FIFO buffer */
+ 	u32			max_freq;	/* max bus freq supported */
+ 
++	int			cs_override;
+ 	u32			reg_io_width;	/* DR I/O width in bytes */
+ 	u16			bus_num;
+ 	u16			num_cs;		/* supported slave numbers */
 -- 
 2.7.4
 
