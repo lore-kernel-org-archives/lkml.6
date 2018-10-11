@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512F0C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4D2C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186802147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 440842085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtpjXUbE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186802147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOvzZxqU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440842085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbeJKXQA (ORCPT
+        id S1732049AbeJKXQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49694 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:16:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731168AbeJKXQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:00 -0400
+        id S1731168AbeJKXQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:02 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D1521470;
-        Thu, 11 Oct 2018 15:48:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA5D521470;
+        Thu, 11 Oct 2018 15:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272893;
-        bh=ZdO6O/MEA//GizmRDBQL79FWpzbMz3FVrr2katAxjNs=;
+        s=default; t=1539272896;
+        bh=aDMi7liD8LjU9e3BG/erghBFJqqcnNE6+aoTcDEoZcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vtpjXUbEaYUva+MPGwGSs8o7P04/9gZU2hfy8t46xPgcqI81muX2NxNm4Pq482Kg7
-         ixrdU4FRQQubTZAb2ylBIo9gqy4myk145hXmVuOCLKiZ90HsqEZLHpfDuKBqaBiESq
-         mKXG3y6xds5X45cjHy9TAxtLK4gaqanv8XKruRjw=
+        b=uOvzZxqUH8Ma+jQ7Ls8AX61yr0a+fRvMBjjxEeUdxCrNMJAzRrfzg/V/O43antdT7
+         ZGvs2cwTw24jeKmAj/RSviXIRsEYUvySdrlbQIXfjp1WtW3pT52aCZxB/8n/nX4it5
+         eE/tltwSIp3P/mGKAZWc1gUmuHTMzopk2S6mqQ2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Hult <hanshult35@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.18 30/44] USB: serial: simple: add Motorola Tetra MTP6550 id
-Date:   Thu, 11 Oct 2018 17:40:08 +0200
-Message-Id: <20181011152453.758888804@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        Dan Williams <dcbw@redhat.com>, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.18 31/44] USB: serial: option: improve Quectel EP06 detection
+Date:   Thu, 11 Oct 2018 17:40:09 +0200
+Message-Id: <20181011152453.807253915@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -62,129 +62,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Kristian Evensen <kristian.evensen@gmail.com>
 
-commit f5fad711c06e652f90f581fc7c2caee327c33d31 upstream.
+commit 36cae568404a298a19a6e8a3f18641075d4cab04 upstream.
 
-Add device-id for the Motorola Tetra radio MTP6550.
+The Quectel EP06 (and EM06/EG06) LTE modem supports updating the USB
+configuration, without the VID/PID or configuration number changing.
+When the configuration is updated and interfaces are added/removed, the
+interface numbers are updated. This causes our current code for matching
+EP06 not to work as intended, as the assumption about reserved
+interfaces no longer holds. If for example the diagnostic (first)
+interface is removed, option will (try to) bind to the QMI interface.
 
-Bus 001 Device 004: ID 0cad:9012 Motorola CGISS
-Device Descriptor:
-  bLength                18
-  bDescriptorType         1
-  bcdUSB               2.00
-  bDeviceClass            0 (Defined at Interface level)
-  bDeviceSubClass         0
-  bDeviceProtocol         0
-  bMaxPacketSize0        64
-  idVendor           0x0cad Motorola CGISS
-  idProduct          0x9012
-  bcdDevice           24.16
-  iManufacturer           1 Motorola Solutions, Inc.
-  iProduct                2 TETRA PEI interface
-  iSerial                 0
-  bNumConfigurations      1
-  Configuration Descriptor:
-    bLength                 9
-    bDescriptorType         2
-    wTotalLength           55
-    bNumInterfaces          2
-    bConfigurationValue     1
-    iConfiguration          3 Generic Serial config
-    bmAttributes         0x80
-      (Bus Powered)
-    MaxPower              500mA
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        0
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass      0
-      bInterfaceProtocol      0
-      iInterface              0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x81  EP 1 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x01  EP 1 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        1
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass      0
-      bInterfaceProtocol      0
-      iInterface              0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x82  EP 2 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x02  EP 2 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval               0
-Device Qualifier (for other device speed):
-  bLength                10
-  bDescriptorType         6
-  bcdUSB               2.00
-  bDeviceClass            0 (Defined at Interface level)
-  bDeviceSubClass         0
-  bDeviceProtocol         0
-  bMaxPacketSize0        64
-  bNumConfigurations      1
-Device Status:     0x0000
-  (Bus Powered)
+This patch improves EP06 detection by replacing the current match with
+two matches, and those matches check class, subclass and protocol as
+well as VID and PID. The diag interface exports class, subclass and
+protocol as 0xff. For the other serial interfaces, class is 0xff and
+subclass and protocol are both 0x0.
 
-Reported-by: Hans Hult <hanshult35@gmail.com>
+The modem can export the following devices and always in this order:
+diag, nmea, at, ppp. qmi and adb. This means that diag can only ever be
+interface 0, and interface numbers 1-5 should be marked as reserved. The
+three other serial devices can have interface numbers 0-3, but I have
+not marked any interfaces as reserved. The reason is that the serial
+devices are the only interfaces exported by the device where subclass
+and protocol is 0x0.
+
+QMI exports the same class, subclass and protocol values as the diag
+interface. However, the two interfaces have different number of
+endpoints, QMI has three and diag two. I have added a check for number
+of interfaces if VID/PID matches the EP06, and we ignore the device if
+number of interfaces equals three (and subclass is set).
+
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+Acked-by: Dan Williams <dcbw@redhat.com>
+[ johan: drop uneeded RSVD(5) for ADB ]
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial-simple.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/serial/option.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -84,7 +84,8 @@ DEVICE(moto_modem, MOTO_IDS);
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1081,8 +1081,9 @@ static const struct usb_device_id option
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
+ 	  .driver_info = RSVD(4) },
+-	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06),
+-	  .driver_info = RSVD(4) | RSVD(5) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0xff, 0xff),
++	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0, 0) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6003),
+@@ -1985,6 +1986,7 @@ static int option_probe(struct usb_seria
+ {
+ 	struct usb_interface_descriptor *iface_desc =
+ 				&serial->interface->cur_altsetting->desc;
++	struct usb_device_descriptor *dev_desc = &serial->dev->descriptor;
+ 	unsigned long device_flags = id->driver_info;
  
- /* Motorola Tetra driver */
- #define MOTOROLA_TETRA_IDS()			\
--	{ USB_DEVICE(0x0cad, 0x9011) }	/* Motorola Solutions TETRA PEI */
-+	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
-+	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
- DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 	/* Never bind to the CD-Rom emulation interface	*/
+@@ -1999,6 +2001,18 @@ static int option_probe(struct usb_seria
+ 	if (device_flags & RSVD(iface_desc->bInterfaceNumber))
+ 		return -ENODEV;
  
- /* Novatel Wireless GPS driver */
++	/*
++	 * Don't bind to the QMI device of the Quectel EP06/EG06/EM06. Class,
++	 * subclass and protocol is 0xff for both the diagnostic port and the
++	 * QMI interface, but the diagnostic port only has two endpoints (QMI
++	 * has three).
++	 */
++	if (dev_desc->idVendor == cpu_to_le16(QUECTEL_VENDOR_ID) &&
++	    dev_desc->idProduct == cpu_to_le16(QUECTEL_PRODUCT_EP06) &&
++	    iface_desc->bInterfaceSubClass && iface_desc->bNumEndpoints == 3) {
++		return -ENODEV;
++	}
++
+ 	/* Store the device flags so we can use them during attach. */
+ 	usb_set_serial_data(serial, (void *)device_flags);
+ 
 
 
