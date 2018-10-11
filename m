@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDC5C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B4C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F167C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF022098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:48:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0K3B/XV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F167C2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGYfgBk7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF022098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbeJKXPn (ORCPT
+        id S1731979AbeJKXPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:15:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49322 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:15:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeJKXPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:15:43 -0400
+        id S1726727AbeJKXPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:15:45 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 539EB2098A;
-        Thu, 11 Oct 2018 15:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 431EF213A2;
+        Thu, 11 Oct 2018 15:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272876;
-        bh=3e9j3LzU2eVbbwbY4xJWGkiJxsMpleI0UAcxW1/++oc=;
+        s=default; t=1539272879;
+        bh=ET/sw9wzBL+tm8abWCXI20sg52ml7aieUsshtcknT5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K0K3B/XVTmTlnGHfM2Gj7P0a9Jl5HH4LFqhABXAMRo2O+HVMwQfDCOCrcPJr5CkK7
-         Wg0Mubw6f4wJnNf8/HUPR98n3zjxS6KkSShyOrBdZFAf9XhrhOsuJYaQDDyYE6Emwi
-         VVbEvMnjwr1l5+U96yZqntJGOSIpUhZoN0YJBvDI=
+        b=VGYfgBk7B3fvmSvnV4+DPTtgM+Gn6r/7v7xjDnip2FibdzYC+jXelkoy2B9MSvNyt
+         r6SbAfVuD4IDb2dG+BJ/bhbltJZgaSHoB9NVnuNyhYls1iBjlFnKuybciyDyCAVdFI
+         FuLkeFqIyQgeesAmSJmHP1EQs5KYPrrJNIm6aVng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        stable@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 25/44] dm mpath: fix attached_handler_name leak and dangling hw_handler_name pointer
-Date:   Thu, 11 Oct 2018 17:40:03 +0200
-Message-Id: <20181011152453.538311351@linuxfoundation.org>
+Subject: [PATCH 4.18 26/44] dm cache metadata: ignore hints array being too small during resize
+Date:   Thu, 11 Oct 2018 17:40:04 +0200
+Message-Id: <20181011152453.583627204@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -62,93 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit b592211c33f745af67a3271ce77c10fc1e6d6241 upstream.
+commit 4561ffca88c546f96367f94b8f1e4715a9c62314 upstream.
 
-Commit e8f74a0f0011 ("dm mpath: eliminate need to use
-scsi_device_from_queue") introduced 2 regressions:
-1) memory leak occurs if attached_handler_name is not assigned to
-   m->hw_handler_name
-2) m->hw_handler_name can become a dangling pointer if the
-   RETAIN_ATTACHED_HW_HANDLER flag is set and scsi_dh_attach() returns
-   -EBUSY.
+Commit fd2fa9541 ("dm cache metadata: save in-core policy_hint_size to
+on-disk superblock") enabled previously written policy hints to be
+used after a cache is reactivated.  But in doing so the cache
+metadata's hint array was left exposed to out of bounds access because
+on resize the metadata's on-disk hint array wasn't ever extended.
 
-Fix both of these by clearing 'attached_handler_name' pointer passed to
-setup_scsi_dh() after it is assigned to m->hw_handler_name.  And if
-setup_scsi_dh() doesn't consume 'attached_handler_name' parse_path()
-will kfree() it.
+Fix this by ignoring that there are no on-disk hints associated with the
+newly added cache blocks.  An expanded on-disk hint array is later
+rewritten upon the next clean shutdown of the cache.
 
-Fixes: e8f74a0f0011 ("dm mpath: eliminate need to use scsi_device_from_queue")
-Cc: stable@vger.kernel.org # 4.16+
-Reported-by: Bart Van Assche <bvanassche@acm.org>
+Fixes: fd2fa9541 ("dm cache metadata: save in-core policy_hint_size to on-disk superblock")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joe Thornber <ejt@redhat.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-mpath.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/md/dm-cache-metadata.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -806,19 +806,19 @@ static int parse_path_selector(struct dm
- }
- 
- static int setup_scsi_dh(struct block_device *bdev, struct multipath *m,
--			 const char *attached_handler_name, char **error)
-+			 const char **attached_handler_name, char **error)
- {
- 	struct request_queue *q = bdev_get_queue(bdev);
- 	int r;
- 
- 	if (test_bit(MPATHF_RETAIN_ATTACHED_HW_HANDLER, &m->flags)) {
- retain:
--		if (attached_handler_name) {
-+		if (*attached_handler_name) {
- 			/*
- 			 * Clear any hw_handler_params associated with a
- 			 * handler that isn't already attached.
- 			 */
--			if (m->hw_handler_name && strcmp(attached_handler_name, m->hw_handler_name)) {
-+			if (m->hw_handler_name && strcmp(*attached_handler_name, m->hw_handler_name)) {
- 				kfree(m->hw_handler_params);
- 				m->hw_handler_params = NULL;
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -1455,8 +1455,8 @@ static int __load_mappings(struct dm_cac
+ 		if (hints_valid) {
+ 			r = dm_array_cursor_next(&cmd->hint_cursor);
+ 			if (r) {
+-				DMERR("dm_array_cursor_next for hint failed");
+-				goto out;
++				dm_array_cursor_end(&cmd->hint_cursor);
++				hints_valid = false;
  			}
-@@ -830,7 +830,8 @@ retain:
- 			 * handler instead of the original table passed in.
- 			 */
- 			kfree(m->hw_handler_name);
--			m->hw_handler_name = attached_handler_name;
-+			m->hw_handler_name = *attached_handler_name;
-+			*attached_handler_name = NULL;
  		}
- 	}
  
-@@ -867,7 +868,7 @@ static struct pgpath *parse_path(struct
- 	struct pgpath *p;
- 	struct multipath *m = ti->private;
- 	struct request_queue *q;
--	const char *attached_handler_name;
-+	const char *attached_handler_name = NULL;
- 
- 	/* we need at least a path arg */
- 	if (as->argc < 1) {
-@@ -890,7 +891,7 @@ static struct pgpath *parse_path(struct
- 	attached_handler_name = scsi_dh_attached_handler_name(q, GFP_KERNEL);
- 	if (attached_handler_name || m->hw_handler_name) {
- 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
--		r = setup_scsi_dh(p->path.dev->bdev, m, attached_handler_name, &ti->error);
-+		r = setup_scsi_dh(p->path.dev->bdev, m, &attached_handler_name, &ti->error);
- 		if (r) {
- 			dm_put_device(ti, p->path.dev);
- 			goto bad;
-@@ -905,6 +906,7 @@ static struct pgpath *parse_path(struct
- 
- 	return p;
-  bad:
-+	kfree(attached_handler_name);
- 	free_pgpath(p);
- 	return ERR_PTR(r);
- }
 
 
