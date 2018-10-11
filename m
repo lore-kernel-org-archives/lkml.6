@@ -2,62 +2,46 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86B8C28CF8
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951CBC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD8220835
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD8220835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 55B1820835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 23:23:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B1820835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeJLGwC (ORCPT
+        id S1726907AbeJLGxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 02:52:02 -0400
-Received: from mga14.intel.com ([192.55.52.115]:4228 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbeJLGwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 02:52:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 16:22:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,370,1534834800"; 
-   d="scan'208";a="99531901"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.157]) ([10.7.198.157])
-  by orsmga002.jf.intel.com with ESMTP; 11 Oct 2018 16:22:30 -0700
-Subject: Re: [mm PATCH v2 4/6] mm: Do not set reserved flag for hotplug memory
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>, khalid.aziz@oracle.com,
-        rppt@linux.vnet.ibm.com, Vlastimil Babka <vbabka@suse.cz>,
-        sparclinux@vger.kernel.org,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20181011221237.1925.85591.stgit@localhost.localdomain>
- <20181011221351.1925.67694.stgit@localhost.localdomain>
- <CAPcyv4gw4YRJXZrXHunKwqbhXPekiNU6jsYkrpoBtznv0Py-sg@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <0b7001f8-3653-d100-4218-3d9b06ff8b3a@linux.intel.com>
-Date:   Thu, 11 Oct 2018 16:22:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 12 Oct 2018 02:53:17 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:44737 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725850AbeJLGxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 02:53:17 -0400
+Received: from [192.168.0.3] (ip5f5bf16c.dynamic.kabel-deutschland.de [95.91.241.108])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 207302012D0DC1;
+        Fri, 12 Oct 2018 01:23:44 +0200 (CEST)
+Subject: Re: [PATCH] x86/mm: Do not warn about PCI BIOS W+X mappings
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+References: <alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <b1231b76-fd35-4304-8003-b2dccee1ba0d@molgen.mpg.de>
+Date:   Fri, 12 Oct 2018 01:23:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4gw4YRJXZrXHunKwqbhXPekiNU6jsYkrpoBtznv0Py-sg@mail.gmail.com>
+In-Reply-To: <alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,65 +50,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 3:58 PM, Dan Williams wrote:
-> On Thu, Oct 11, 2018 at 3:18 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->> The general suspicion at this point is that the setting of the reserved bit
->> is not really needed for hotplug memory. In addition the setting of this
->> bit results in issues for DAX in that it is not possible to assign the
->> region to KVM if the reserved bit is set in each page.
->>
->> For now we can try just not setting the bit since we suspect it isn't
->> adding value in setting it. If at a later time we find that it is needed we
->> can come back through and re-add it for the hotplug paths.
->>
->> Suggested-by: Michael Hocko <mhocko@suse.com>
->> Reported-by: Dan Williams <dan.j.williams@intel.com>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->> ---
->>   mm/page_alloc.c |   11 -----------
->>   1 file changed, 11 deletions(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 3603d5444865..e435223e2ddb 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -5571,8 +5571,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->>
->>                  page = pfn_to_page(pfn);
->>                  __init_single_page(page, pfn, zone, nid);
->> -               if (context == MEMMAP_HOTPLUG)
->> -                       __SetPageReserved(page);
-> 
-> At a minimum I think we need to do this before removing PageReserved,
-> to make sure zone_device pages are not tracked in the hibernation
-> image.
-> 
-> diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-> index 3d37c279c090..c0613137d726 100644
-> --- a/kernel/power/snapshot.c
-> +++ b/kernel/power/snapshot.c
-> @@ -1285,6 +1285,9 @@ static struct page *saveable_page(struct zone
-> *zone, unsigned long pfn)
->          if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
->                  return NULL;
-> 
-> +       if (is_zone_device_page(page))
-> +               return NULL;
-> +
->          if (PageReserved(page)
->              && (!kernel_page_present(page) || pfn_is_nosave(pfn)))
->                  return NULL;
-> 
+Dear Thomas,
 
-Yeah, I am pretty sure I broke hotplug in general with this too since it 
-seems like it checks for the reserved flag before bringing a range 
-online in online_pages_range.
 
-I think I will drop this patch and go back to what I had before. There 
-was a slight performance gain to be had for not setting the bit at all, 
-but I think we are probably looking at yet another patch set if we want 
-to go through and drop the need for the reserved bit to be set.
+Am 08.10.2018 um 21:53 schrieb Thomas Gleixner:
+> PCI BIOS requires the BIOS area 0x0A0000-0x0FFFFFF to be mapped W+X for
+> various legacy reasons. When CONFIG_DEBUG_WX is enabled, this triggers the
+> WX warning, but this is misleading because the mapping is required and is
+> not a result of an accidental oversight.
+> 
+> Prevent the full warning when PCI BIOS is enabled and the detected WX
+> mapping is in the BIOS area. Just emit a pr_warn() which denotes the
+> fact. This is partially duplicating the info which the PCI BIOS code emits
+> when it maps the area as executable, but that info is not in the context of
+> the WX checking output.
+> 
+> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>   arch/x86/mm/dump_pagetables.c |   35 +++++++++++++++++++++++++++--------
+>   1 file changed, 27 insertions(+), 8 deletions(-)
 
-- Alex
+Thank you for the patch. I tested it on the ASRock E350M1 with coreboot 
+and the SeaBIOS payload, and the insecure warning is gone.
+
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+Should this be tagged for the stable series?
+
+
+Kind regards,
+
+Paul
