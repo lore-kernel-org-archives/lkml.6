@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F4FC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11925C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C5C2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E4B21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1VoBTDzj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C5C2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0CRdcp+i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E4B21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbeJKXOk (ORCPT
+        id S1731705AbeJKXOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:14:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47794 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:14:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726882AbeJKXOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:14:39 -0400
+        id S1726882AbeJKXOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:14:42 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F82B2098A;
-        Thu, 11 Oct 2018 15:46:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09D192085B;
+        Thu, 11 Oct 2018 15:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272813;
-        bh=hcDbqIc29K6CLii2RU44hyfqq65JDlYQfXKqvGsKpsI=;
+        s=default; t=1539272816;
+        bh=RA5C2rgbqvURCzpZsdpi3bvSdJanF8P9Zyk+aInfxsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1VoBTDzjz8OxWPh3RF9Ux+f6h6N28wpI2Xe1N83UWE0uxFww8IK0ky4nepToeYLmf
-         0obuCcrMawM69Oo5GcbgHCTycdY+cbGyngRFO+o3YL+C6CSOwZWOsbJUDIn6llEB0X
-         xe12k9rmiDk7UjtWVytK/jkujDkypF+7ooWM2xDQ=
+        b=0CRdcp+iEbcat5COyGxWmuOHez/Kyvw3/L9YrGi1KsOmppDeATpmb/rljv0kk++wy
+         qtjnmscyzi/xY+fVHYxVH6CdmFT/0CMbat2zoMomzUbOyyg//sIB5BlmOZa0LxC9nH
+         E2SFjDIMg9+A/eB5zJKGU3P6u+AzVlryr2Xj383s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 41/45] ubifs: Check for name being NULL while mounting
-Date:   Thu, 11 Oct 2018 17:40:08 +0200
-Message-Id: <20181011152510.717245613@linuxfoundation.org>
+        stable@vger.kernel.org, Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+Subject: [PATCH 4.14 42/45] rds: rds_ib_recv_alloc_cache() should call alloc_percpu_gfp() instead
+Date:   Thu, 11 Oct 2018 17:40:09 +0200
+Message-Id: <20181011152510.764454011@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
 References: <20181011152508.885515042@linuxfoundation.org>
@@ -63,34 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
 
-commit 37f31b6ca4311b94d985fb398a72e5399ad57925 upstream.
+commit f394ad28feffbeebab77c8bf9a203bd49b957c9a upstream.
 
-The requested device name can be NULL or an empty string.
-Check for that and refuse to continue. UBIFS has to do this manually
-since we cannot use mount_bdev(), which checks for this condition.
+Currently, rds_ib_conn_alloc() calls rds_ib_recv_alloc_caches()
+without passing along the gfp_t flag.  But rds_ib_recv_alloc_caches()
+and rds_ib_recv_alloc_cache() should take a gfp_t parameter so that
+rds_ib_recv_alloc_cache() can call alloc_percpu_gfp() using the
+correct flag instead of calling alloc_percpu().
 
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-Reported-by: syzbot+38bd0f7865e5c6379280@syzkaller.appspotmail.com
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Håkon Bugge <haakon.bugge@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/super.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/rds/ib.h      |    2 +-
+ net/rds/ib_cm.c   |    2 +-
+ net/rds/ib_recv.c |   10 +++++-----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1930,6 +1930,9 @@ static struct ubi_volume_desc *open_ubi(
- 	int dev, vol;
- 	char *endptr;
+--- a/net/rds/ib.h
++++ b/net/rds/ib.h
+@@ -373,7 +373,7 @@ void rds_ib_mr_cqe_handler(struct rds_ib
+ int rds_ib_recv_init(void);
+ void rds_ib_recv_exit(void);
+ int rds_ib_recv_path(struct rds_conn_path *conn);
+-int rds_ib_recv_alloc_caches(struct rds_ib_connection *ic);
++int rds_ib_recv_alloc_caches(struct rds_ib_connection *ic, gfp_t gfp);
+ void rds_ib_recv_free_caches(struct rds_ib_connection *ic);
+ void rds_ib_recv_refill(struct rds_connection *conn, int prefill, gfp_t gfp);
+ void rds_ib_inc_free(struct rds_incoming *inc);
+--- a/net/rds/ib_cm.c
++++ b/net/rds/ib_cm.c
+@@ -946,7 +946,7 @@ int rds_ib_conn_alloc(struct rds_connect
+ 	if (!ic)
+ 		return -ENOMEM;
  
-+	if (!name || !*name)
-+		return ERR_PTR(-EINVAL);
-+
- 	/* First, try to open using the device node path method */
- 	ubi = ubi_open_volume_path(name, mode);
- 	if (!IS_ERR(ubi))
+-	ret = rds_ib_recv_alloc_caches(ic);
++	ret = rds_ib_recv_alloc_caches(ic, gfp);
+ 	if (ret) {
+ 		kfree(ic);
+ 		return ret;
+--- a/net/rds/ib_recv.c
++++ b/net/rds/ib_recv.c
+@@ -98,12 +98,12 @@ static void rds_ib_cache_xfer_to_ready(s
+ 	}
+ }
+ 
+-static int rds_ib_recv_alloc_cache(struct rds_ib_refill_cache *cache)
++static int rds_ib_recv_alloc_cache(struct rds_ib_refill_cache *cache, gfp_t gfp)
+ {
+ 	struct rds_ib_cache_head *head;
+ 	int cpu;
+ 
+-	cache->percpu = alloc_percpu(struct rds_ib_cache_head);
++	cache->percpu = alloc_percpu_gfp(struct rds_ib_cache_head, gfp);
+ 	if (!cache->percpu)
+ 	       return -ENOMEM;
+ 
+@@ -118,13 +118,13 @@ static int rds_ib_recv_alloc_cache(struc
+ 	return 0;
+ }
+ 
+-int rds_ib_recv_alloc_caches(struct rds_ib_connection *ic)
++int rds_ib_recv_alloc_caches(struct rds_ib_connection *ic, gfp_t gfp)
+ {
+ 	int ret;
+ 
+-	ret = rds_ib_recv_alloc_cache(&ic->i_cache_incs);
++	ret = rds_ib_recv_alloc_cache(&ic->i_cache_incs, gfp);
+ 	if (!ret) {
+-		ret = rds_ib_recv_alloc_cache(&ic->i_cache_frags);
++		ret = rds_ib_recv_alloc_cache(&ic->i_cache_frags, gfp);
+ 		if (ret)
+ 			free_percpu(ic->i_cache_incs.percpu);
+ 	}
 
 
