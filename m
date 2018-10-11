@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DB4C46463
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7751C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 184882087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A877E20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 04:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZZso0ALI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184882087A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hPpOjYSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A877E20835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJKLuz (ORCPT
+        id S1727500AbeJKLvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 07:50:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36313 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbeJKLuy (ORCPT
+        Thu, 11 Oct 2018 07:51:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35613 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeJKLu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 07:50:54 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y11-v6so3546274plt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 21:25:31 -0700 (PDT)
+        Thu, 11 Oct 2018 07:50:59 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v133-v6so3534501pgb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Oct 2018 21:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pvlQjB+1GcKl8f0B/W3F+gqZtLa3iEUkFNrQtPj3HWc=;
-        b=ZZso0ALIqKqy3w5dviyj2zQjJEsicQnTcuRJTUAmXDVBXdwqbd57apR/URuhGF/1hC
-         jJtdxgZ28ytj3GMbOZWlv5nf8u27sz1b+j32ZqVxDUqC6N2uaFinwc/cOjETxGn2Lft0
-         M5rnZjx5XqCUwKoKyL/ytVhj3p3s3fy25rM64=
+        bh=uCe8GDuDIsW/oywTVVyhSQ6yR7tNM4OEAIIVzFvTQ8s=;
+        b=hPpOjYSVjWj5QqFPNKKVes0E3Z0l2Mw36Vo/xwjOR18ks3qZ+boyD+BFXZ7/Iglm+G
+         V3+zwimixLlMG1sg0T5HhqYwoSNM5pdfP6gKr1eklWTT9mTtXU768U4mOiO9HReIdFf+
+         moRktkDYccBIbOaRUqgGFdmbt8nxySgXt3FrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pvlQjB+1GcKl8f0B/W3F+gqZtLa3iEUkFNrQtPj3HWc=;
-        b=adligp9sFqngDdHdrn8lOWt/aqkqWSCqw3+4nhnECC5MINHuCwuPCj4faRqNYOWGeC
-         aFfJBpUuO7Ajk345RKsYB/aNhAz374a/WdMoIJ+i4A+h6BGlVq9/o5mfUp85js4Ttr1q
-         HiL4PQEd/Y/mSVUFswG7LlAqiUe3sTfWcoXvxWIZYBIqDFhk+VkEVcRbtRKm/8puogcK
-         d7rDPLMWSOeg7n3/h9CU/g1vJa2mxMsesNgfrjjjb+du15aUSj94GD+MnXCndPmuadyZ
-         YcaIznIgBIbs2tyHymsnNnzNATWRKmnHbesSkZriFMLnFHrOV4VYObL1Z4FfoBNa0Hgk
-         VozQ==
-X-Gm-Message-State: ABuFfogPD5XHnuJxcNUM3WmAATr2k4CQoa0l+cAtGZrjKHWJ/F9eyiUz
-        E+r6rCGAZ8tM+RKgTAj3Q74CvA==
-X-Google-Smtp-Source: ACcGV61dG57w55vVcWlteGPfLCG5fGiPHw29GhWl59hCQmZE3KHGMUY6L8WP9Th2cukBQHDdbzHy0w==
-X-Received: by 2002:a17:902:9896:: with SMTP id s22-v6mr2139054plp.113.1539231930947;
-        Wed, 10 Oct 2018 21:25:30 -0700 (PDT)
+        bh=uCe8GDuDIsW/oywTVVyhSQ6yR7tNM4OEAIIVzFvTQ8s=;
+        b=mXh8zPuPVMLWiUMuQe5p7XY+7+fIA16TPYu17hQa2aZ7LJnouBTBpVBqHA486V3zi1
+         CkzxwtPZOzAumaUPYBfIbkMPxPfMMlRGJFyhdcFqfksLr9Icbefn5InekOml5KHsIPYR
+         14tist8ZsIbZC2mYFTji0GtvYMMQuSLjZXrAZZBiy07kxk6SkfRHg4E38ZHRilcK7IJ/
+         64NWGOSksraGR0ZRQYqfeoR3Q142InftHqbBI+k98p38mNBRXDAUIxmp2EGfUkDc7lzZ
+         opp3B7E3j7lmwABtPtZ+blDBV86ifrKZS3se6Go7Ar2s2LOaxT3E1/gWc7uio4dvgxk5
+         +s4Q==
+X-Gm-Message-State: ABuFfohIPSTNBvN160FeKe9XfcRB4dSd9YvJ3XkTe1gzfYreyAdmfTt5
+        Upk0MWQJncFJbxfVbToXeZjqNg==
+X-Google-Smtp-Source: ACcGV603ALGTW4jnRWJTqSRX27rE1OBXMj8RG2xJB3Za/fx6vYclhUU3X4gt40KT7yc3xYa5PBapAw==
+X-Received: by 2002:a62:4ec9:: with SMTP id c192-v6mr37319155pfb.221.1539231935764;
+        Wed, 10 Oct 2018 21:25:35 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm26113748pfn.9.2018.10.10.21.25.26
+        by smtp.gmail.com with ESMTPSA id n63-v6sm26113748pfn.9.2018.10.10.21.25.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 10 Oct 2018 21:25:30 -0700 (PDT)
+        Wed, 10 Oct 2018 21:25:35 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Fenghua Yu <fenghua.yu@intel.com>,
@@ -65,9 +65,9 @@ To:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v3 1/7] ia64: add __NR_old_getpagesize in uapi/asm/unistd.h
-Date:   Thu, 11 Oct 2018 09:54:49 +0530
-Message-Id: <1539231895-4118-2-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v3 2/7] ia64: replace NR_syscalls macro from asm/unistd.h
+Date:   Thu, 11 Oct 2018 09:54:50 +0530
+Message-Id: <1539231895-4118-3-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539231895-4118-1-git-send-email-firoz.khan@linaro.org>
 References: <1539231895-4118-1-git-send-email-firoz.khan@linaro.org>
@@ -76,31 +76,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sys_getpagesize entry is present in entry.S file to support
-for old user interface. So we need to add an uapi entry too.
+NR_syscalls macro holds the number of system call exist in IA64
+architecture. This macro is currently the part of asm/unistd.h
+file. We have to change the value of NR_syscalls, if we add or
+delete a system call.
 
-Add __NR_old_getpagesize in order to not break old user space
-as it is reserved for backwards compatibility with old __NR_
-getpagesize.
+One of the patch in this patch series has a script which will
+generate a uapi header based on syscall.tbl file. The syscall.tbl
+file contains the number of system call information. So we have
+two option to update NR_syscalls value.
+
+1. Update NR_syscalls in asm/unistd.h manually by counting the
+   no.of system calls. No need to update NR_syscalls until we
+   either add a new system call or delete an existing system
+   call.
+
+2. We can keep this feature it above mentioned script, that'll
+   count the number of syscalls and keep it in a generated file.
+   In this case we don't need to explicitly update NR_syscalls
+   in asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that, I come up
+with another macro - __NR_syscalls which will be updated by the
+script and it will be present in uapi/asm/unistd.h. The macro
+name changed form NR_syscalls to __NR_syscalls for making the
+name convention same across all architecture. While __NR_syscalls
+isn't strictly part of the uapi, having it as part of the generated
+header to simplifies the implementation. We also need to enclose
+this macro with #ifdef __KERNEL__ to avoid side effects.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/ia64/include/uapi/asm/unistd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/ia64/include/asm/unistd.h      | 4 +---
+ arch/ia64/include/uapi/asm/unistd.h | 4 ++++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/arch/ia64/include/asm/unistd.h b/arch/ia64/include/asm/unistd.h
+index ffb705d..397b143 100644
+--- a/arch/ia64/include/asm/unistd.h
++++ b/arch/ia64/include/asm/unistd.h
+@@ -10,9 +10,7 @@
+ 
+ #include <uapi/asm/unistd.h>
+ 
+-
+-
+-#define NR_syscalls			326 /* length of syscall table */
++#define NR_syscalls		__NR_syscalls /* length of syscall table */
+ 
+ /*
+  * The following defines stop scripts/checksyscalls.sh from complaining about
 diff --git a/arch/ia64/include/uapi/asm/unistd.h b/arch/ia64/include/uapi/asm/unistd.h
-index 5fe71d4..4d590c9 100644
+index 4d590c9..4186dc2 100644
 --- a/arch/ia64/include/uapi/asm/unistd.h
 +++ b/arch/ia64/include/uapi/asm/unistd.h
-@@ -161,7 +161,7 @@
- #define __NR_nanosleep			1168
- #define __NR_nfsservctl			1169
- #define __NR_prctl			1170
--/* 1171 is reserved for backwards compatibility with old __NR_getpagesize */
-+#define __NR_old_getpagesize            1171
- #define __NR_mmap2			1172
- #define __NR_pciconfig_read		1173
- #define __NR_pciconfig_write		1174
+@@ -341,4 +341,8 @@
+ #define __NR_preadv2			1348
+ #define __NR_pwritev2			1349
+ 
++#ifdef __KERNEL__
++#define __NR_syscalls			326
++#endif
++
+ #endif /* _UAPI_ASM_IA64_UNISTD_H */
 -- 
 1.9.1
 
