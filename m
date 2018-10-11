@@ -2,171 +2,131 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7FDC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DBDC32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C382087D
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7DB2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:28:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzP4vEUR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C382087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="alhO/D+F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7DB2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeJKWx7 (ORCPT
+        id S1727944AbeJKW4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 18:53:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbeJKWx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:53:59 -0400
-Received: from localhost (unknown [204.56.7.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C76E20841;
-        Thu, 11 Oct 2018 15:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539271579;
-        bh=lE5e6p4fCghmB7zctgdvAZ1GJqH3KzzTTHZGb2MnPqo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=JzP4vEURps+6B744EVuFFXWqymTr8Udc1ZoiWbWeuP5p8eOnVzKD+Bhxb4cJhbC8F
-         K2RT6Tyn4V5h+syYATvCv6ofgeFBmt9MoQ0vjJ7XMwxHosrPNGBHZZjLj9mq7eE5Qr
-         S1Ih3KYb1CdTKXft4yczPGpnQMzQLpq5awhH2qpE=
-Subject: [PATCH v3] PCI/AER: Enable reporting for ports enumerated after AER
- driver registration
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     Dongdong Liu <liudongdong3@huawei.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 11 Oct 2018 10:26:18 -0500
-Message-ID: <153927157816.40414.5263399018962087014.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <153927123657.40414.9802241131940995491.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153927123657.40414.9802241131940995491.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        Thu, 11 Oct 2018 18:56:21 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54147 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJKW4U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 18:56:20 -0400
+Received: by mail-it1-f194.google.com with SMTP id q70-v6so14088538itb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 08:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2O3fbISqZ2mS5H6M0aEft29GcNr4kGewWd3ZG5SJSJQ=;
+        b=alhO/D+FYVHwN1h4HGWW7F/A1qjpn5eJa/9CvdyGmIGqUvtUqsAkrjcYl5elsGoQiq
+         2It0iSF8ltSEisReM9vO00rVtX8H29CKhFVrAzs7KmdLvFLNUfOOVrRD96w++04caivM
+         kvx2ayCXF85UPmU3srkKERUeN4b2pIg5AYkrc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2O3fbISqZ2mS5H6M0aEft29GcNr4kGewWd3ZG5SJSJQ=;
+        b=YTV/sg3s7JeQ+xZ2lBpPQBIytXOzyNKVkjp3aRvhO0gy/jgJdeyz7fKZDc/c5UrSB+
+         zg+lz0EP5i+GcJkYrqGUaQYVzlZhsZbjpfwAmgyDmvniBmCIGQ8KUSp7pJvAdVkuCm8T
+         H7N9b9MiLlXb0nLQJtJm+3MlZvgFnJXUeh9uHnO2jtPQFVMaO8PodmX+nUObBx+LWicz
+         3SeAy6fBnQFKtYOa9TtZtK0v4Ak7hICL2Py4svJ7YIgQLV71V0g/ZQ5YNIsjSe0Nc7lp
+         HPqqlKTUJLE0QDQwPWNuWSeXLorgkYlNZpFnZCb1iZ5E78oLfre5EMzFORuT4mx4e3/Q
+         uLuQ==
+X-Gm-Message-State: ABuFfohFiqYomWqF5JYpAIfTU+gQWv6B9OBh4BxzDG6S/XP2K0Utvzuy
+        Jgc2oPzKW9x8LVdtbLp4WZYk3fp54++uUenpSXnlHw==
+X-Google-Smtp-Source: ACcGV63rtaNL7ckCjYYhVhfTthp2X65VrIB3LTzMt1feaGbMglx9qauXMiFM6AcIDzrW0Q9pcpVbfR5//3ibJ4NY9a4=
+X-Received: by 2002:a24:554c:: with SMTP id e73-v6mr1739874itb.157.1539271719566;
+ Thu, 11 Oct 2018 08:28:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 08:27:59
+ -0700 (PDT)
+In-Reply-To: <20181011111306.GB32752@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-5-git-send-email-rplsssn@codeaurora.org> <20181011111306.GB32752@e107155-lin>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 11 Oct 2018 17:27:59 +0200
+Message-ID: <CAPDyKFpXJ4MbqFOmDboBuR_1sziyuDi3qgKVvhokaAnQQ+kzjA@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 4/8] drivers: qcom: cpu_pd: add cpu power domain
+ support using genpd
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
+        Lina Iyer <ilina@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 11 October 2018 at 13:13, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On Thu, Oct 11, 2018 at 02:50:51AM +0530, Raju P.L.S.S.S.N wrote:
+>> RPMH based targets require that the sleep and wake state request votes
+>> be sent during system low power mode entry. The votes help reduce the
+>> power consumption when the AP is not using them. The votes sent by the
+>> clients are cached in RPMH controller and needs to be flushed when the
+>> last cpu enters low power mode. So add cpu power domain using Linux
+>> generic power domain infrastructure to perform necessary tasks as part
+>> of domain power down.
+>>
+>
+> You seem to have either randomly chosen just 3 patches from Lina/Ulf's
+> CPU genpd series or this series doesn't entirely depend on it ?
 
-Previously we enabled AER error reporting only for Switch Ports that were
-enumerated prior to registering the AER service driver.  Switch Ports
-enumerated after AER driver registration were left with error reporting
-disabled.
+Yep, it not easy to follow. But I do understand what you are trying to do here.
 
-A common order, which works correctly, is that we enumerate devices before
-registering portdrv and the AER driver:
+>
+> If latter, how does this work with PSCI CPU_SUSPEND operations ?
+>
+> And why this can be part of PSCI firmware implementation. Only PSCI
+> firmware needs if RPMH votes need to be flushed or not. So, honestly
+> I don't see the need for this in Linux.
 
-  - Enumerate all the devices at boot-time
+I do think there is clear need for this in Linux. More precisely,
+since the PSCI firmware have knowledge solely about CPUs (and clusters
+of CPUs), but not about other shared resources/devices present on the
+SoC.
 
-  - Register portdrv and bind it to all Root Ports and Switch Ports, which
-    disables error reporting for these Ports
+What Raju is trying to do here, is to manage those resources which
+needs special treatment, before and after the CPU (likely cluster) is
+going idle and returns from idle.
 
-  - Register AER service driver and bind it to all Root Ports, which
-    enables error reporting for the Root Ports and any Switch Ports below
-    them
+One question here though, what particular idle state is relevant for
+the QCOM SoC to take last-man-actions for? I assume it's only cluster
+idle states, and not about cpu idle states, no? Raju, can you please
+clarify?
 
-But if we enumerate devices *after* registering portdrv and the AER driver,
-e.g., if a host bridge driver is loaded as a module, error reporting is not
-enabled correctly:
+Historically, the typical solution have been to use the
+cpu_cluster_pm_enter|exit() notifiers. Those could potentially be
+replaced by instead building a hierarchical topology, using
+master/subdomain of genpd/"power-domains", along the lines of what
+Raju is doing. However, I am not sure if that is the correct approach,
+at least we need to make sure it models the HW in DT correctly.
 
-  - Register portdrv and AER driver (this happens at boot-time)
-
-  - Enumerate a Root Port
-
-  - Bind portdrv to Root Port, disabling its error reporting
-
-  - Bind AER service driver to Root Port, enabling error reporting for it
-    and its children (there are no children, since we haven't enumerated
-    them yet)
-
-  - Enumerate Switch Port below the Root Port
-
-  - Bind portdrv to Switch Port, disabling its error reporting
-
-  - AER service driver doesn't bind to Switch Ports, so error reporting
-    remains disabled
-
-Hot-adding a Switch fails similarly: error reporting is enabled correctly
-for the Root Port, but when the Switch is enumerated, the AER service
-driver doesn't claim it, so there's nothing to enable error reporting for
-the Switch Ports.
-
-Change the AER service driver so it binds to *all* PCIe Ports, including
-Switch Upstream and Downstream Ports.  Enable AER error reporting for all
-these Ports, but not for any children.
-
-Link: https://lore.kernel.org/linux-pci/1536085989-2956-1-git-send-email-jonathan.derrick@intel.com
-Based-on-patch-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aer.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 90b53abf621d..c40c6607849b 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1316,12 +1316,6 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
- 	pci_read_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, &reg32);
- 	pci_write_config_dword(pdev, aer_pos + PCI_ERR_UNCOR_STATUS, reg32);
- 
--	/*
--	 * Enable error reporting for the root port device and downstream port
--	 * devices.
--	 */
--	set_downstream_devices_error_reporting(pdev, true);
--
- 	/* Enable Root Port's interrupt in response to error messages */
- 	pci_read_config_dword(pdev, aer_pos + PCI_ERR_ROOT_COMMAND, &reg32);
- 	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
-@@ -1378,10 +1372,17 @@ static void aer_remove(struct pcie_device *dev)
-  */
- static int aer_probe(struct pcie_device *dev)
- {
-+	struct pci_dev *pdev = dev->port;
-+	int type = pci_pcie_type(pdev);
- 	int status;
- 	struct aer_rpc *rpc;
- 	struct device *device = &dev->device;
- 
-+	if (type == PCI_EXP_TYPE_UPSTREAM || type == PCI_EXP_TYPE_DOWNSTREAM) {
-+		pci_enable_pcie_error_reporting(pdev);
-+		return 0;
-+	}
-+
- 	rpc = devm_kzalloc(device, sizeof(struct aer_rpc), GFP_KERNEL);
- 	if (!rpc) {
- 		dev_printk(KERN_DEBUG, device, "alloc AER rpc failed\n");
-@@ -1399,6 +1400,7 @@ static int aer_probe(struct pcie_device *dev)
- 	}
- 
- 	aer_enable_rootport(rpc);
-+	pci_enable_pcie_error_reporting(pdev);
- 	dev_info(device, "AER enabled with IRQ %d\n", dev->irq);
- 	return 0;
- }
-@@ -1439,7 +1441,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
- 
- static struct pcie_port_service_driver aerdriver = {
- 	.name		= "aer",
--	.port_type	= PCI_EXP_TYPE_ROOT_PORT,
-+	.port_type	= PCIE_ANY_PORT,
- 	.service	= PCIE_PORT_SERVICE_AER,
- 
- 	.probe		= aer_probe,
-
+Kind regards
+Uffe
