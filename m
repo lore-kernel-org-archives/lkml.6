@@ -2,151 +2,200 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD269C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293DDC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8895D2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:43:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k6uYP8Iq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8895D2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id D21632077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 21:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D21632077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJLFMX (ORCPT
+        id S1726731AbeJLFPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 01:12:23 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42376 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeJLFMX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 01:12:23 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w81-v6so8314998oiw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 14:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PsLJxfor8wh4MP1uHMCLdtfsRIyiC2Ui82itUm8oErM=;
-        b=k6uYP8IqARiSLR8v24cY7FEFXlHVydL7JOqgbY4sHM0Z5WMwXeKvEqR61P7gbYfMX/
-         eAFwGTa2OlrlFSmeOHTo+GsCG8W02KsGTTXxlPdAzY1G4CNDBQQNSWe7Rgge5YtOV+RG
-         X/KXe2QlOsRxxzshrpcipciuHKVbB5Qlf7ugX17Dd7VbJ5dFU5SW9e5PY/y+PnOH+lq3
-         726jQiUFsJlvoIeKhaBcYrIax/WCwvnYScESzyAZhL8N3VleHbm1IlMGhV1RXTChAsSp
-         x6D0ovDgMjZylpQuNLJqzhnzgypX3ZOSIvZ2GrpjUkz6huNoVukYMmQeBfOXKOH30d4X
-         ouJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PsLJxfor8wh4MP1uHMCLdtfsRIyiC2Ui82itUm8oErM=;
-        b=RmPxpLHmq0ULkXnzkQRJQ9FMsr52+EYgmHMdQ+gXj/0aT2EXxg0hi1eHQgXKlsyeXI
-         hvjTcTKG2j1Dcp5PZQPJXMlanOcWDl2eGTvx7KTpbcx2U7nRa3LWPeJ35XyZyWpPR4p+
-         x7qzNys+1KvBo2P2Z2Y6yR0gEKlnWNk2BFed16cV1bmIaqNF43c5FGsU7H71ZJlP/nuo
-         0NryQyLoOeVMZlrAH4IyyzrYxsLGrr/XqzwkBJj1mN+Xpkgrqxyy8IWmmvKe4d+Pp8E4
-         hgi/zDXW4CCBJ85hgUAQsbZtxDeQnv9HELASQ3s1v76kPfG2xEv44TiyXPAwfqBD+pby
-         dIHw==
-X-Gm-Message-State: ABuFfohVpMpax6Yqn16IJ+eLcFSAqEReRVeRrrhAtDNg0l39xr/ip8mX
-        55rh76AKKAeymm7hUphtHUW6EpIGkwmnR05DQtPqdA==
-X-Google-Smtp-Source: ACcGV63IEKPpOimqOVOPBJYXJnA1Z+yjMT3K4W/XGtU4Q3iwchZSb483a3DiEHy47PXALeqQrbTTz50ZkyylI+GTT70=
-X-Received: by 2002:aca:c045:: with SMTP id q66-v6mr1950543oif.22.1539294192530;
- Thu, 11 Oct 2018 14:43:12 -0700 (PDT)
+        Fri, 12 Oct 2018 01:15:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35502 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726136AbeJLFPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 01:15:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5A890307D90F;
+        Thu, 11 Oct 2018 21:45:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15B428737D;
+        Thu, 11 Oct 2018 21:45:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix cell proc list
+From:   David Howells <dhowells@redhat.com>
+To:     gregkh@linuxfoundation.org, torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 11 Oct 2018 22:45:49 +0100
+Message-ID: <153929434917.24725.5423867421481211888.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20181011185458.10186-1-kristen@linux.intel.com>
- <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com> <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
-In-Reply-To: <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 11 Oct 2018 23:42:46 +0200
-Message-ID: <CAG48ez0P7dq+j7gy0dbbS8aLOPC-M3rsbNPuHwXHAMh_bfSQgw@mail.gmail.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, kristen@linux.intel.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 11 Oct 2018 21:45:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 10:56 PM Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Oct 11, 2018 at 1:48 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Thu, Oct 11, 2018 at 11:55 AM Kristen Carlson Accardi
-> > <kristen@linux.intel.com> wrote:
-> >>
-> >> This patch aims to make it harder to perform cache timing attacks on data
-> >> left behind by system calls. If we have an error returned from a syscall,
-> >> flush the L1 cache.
-> >>
-> >> It's important to note that this patch is not addressing any specific
-> >> exploit, nor is it intended to be a complete defense against anything.
-> >> It is intended to be a low cost way of eliminating some of side effects
-> >> of a failed system call.
-> >>
-> >> A performance test using sysbench on one hyperthread and a script which
-> >> attempts to repeatedly access files it does not have permission to access
-> >> on the other hyperthread found no significant performance impact.
-> >>
-> >> Suggested-by: Alan Cox <alan@linux.intel.com>
-> >> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> >> ---
-> >>  arch/x86/Kconfig        |  9 +++++++++
-> >>  arch/x86/entry/common.c | 18 ++++++++++++++++++
-> >>  2 files changed, 27 insertions(+)
-> >>
-> >> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> >> index 1a0be022f91d..bde978eb3b4e 100644
-> >> --- a/arch/x86/Kconfig
-> >> +++ b/arch/x86/Kconfig
-> >> @@ -445,6 +445,15 @@ config RETPOLINE
-> >>           code are eliminated. Since this includes the syscall entry path,
-> >>           it is not entirely pointless.
-> >>
-> >> +config SYSCALL_FLUSH
-> >> +       bool "Clear L1 Cache on syscall errors"
-> >> +       default n
-> >> +       help
-> >> +         Selecting 'y' allows the L1 cache to be cleared upon return of
-> >> +         an error code from a syscall if the CPU supports "flush_l1d".
-> >> +         This may reduce the likelyhood of speculative execution style
-> >> +         attacks on syscalls.
-> >> +
-> >>  config INTEL_RDT
-> >>         bool "Intel Resource Director Technology support"
-> >>         default n
-> >> diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-> >> index 3b2490b81918..26de8ea71293 100644
-> >> --- a/arch/x86/entry/common.c
-> >> +++ b/arch/x86/entry/common.c
-> >> @@ -268,6 +268,20 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
-> >>         prepare_exit_to_usermode(regs);
-> >>  }
-> >>
-> >> +__visible inline void l1_cache_flush(struct pt_regs *regs)
-> >> +{
-> >> +       if (IS_ENABLED(CONFIG_SYSCALL_FLUSH) &&
-> >> +           static_cpu_has(X86_FEATURE_FLUSH_L1D)) {
-> >> +               if (regs->ax == 0 || regs->ax == -EAGAIN ||
-> >> +                   regs->ax == -EEXIST || regs->ax == -ENOENT ||
-> >> +                   regs->ax == -EXDEV || regs->ax == -ETIMEDOUT ||
-> >> +                   regs->ax == -ENOTCONN || regs->ax == -EINPROGRESS)
-> >
-> > What about ax > 0?  (Or more generally, any ax outside the range of -1
-> > .. -4095 or whatever the error range is.)  As it stands, it looks like
-> > you'll flush on successful read(), write(), recv(), etc, and that
-> > could seriously hurt performance on real workloads.
->
-> Seems like just changing this with "ax == 0" into "ax >= 0" would solve that?
+Access to the list of cells by /proc/net/afs/cells has a couple of
+problems:
 
-As spender points out on twitter
-(https://twitter.com/grsecurity/status/1050497259937370118 - thanks,
-spender!), struct pt_regs stores register values as "unsigned long",
-and so you'll need to use something like IS_ERR_VALUE().
+ (1) It should be checking against SEQ_START_TOKEN for the keying the
+     header line.
+
+ (2) It's only holding the RCU read lock, so it can't just walk over the
+     list without following the proper RCU methods.
+
+Fix these by using an hlist instead of an ordinary list and using the
+appropriate accessor functions to follow it with RCU.
+
+Since the code that adds a cell to the list must also necessarily change,
+sort the list on insertion whilst we're at it.
+
+Fixes: 989782dcdc91 ("afs: Overhaul cell database management")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/cell.c     |   17 +++++++++++++++--
+ fs/afs/dynroot.c  |    2 +-
+ fs/afs/internal.h |    4 ++--
+ fs/afs/main.c     |    2 +-
+ fs/afs/proc.c     |    7 +++----
+ 5 files changed, 22 insertions(+), 10 deletions(-)
+
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index f3d0bef16d78..6127f0fcd62c 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -514,6 +514,8 @@ static int afs_alloc_anon_key(struct afs_cell *cell)
+  */
+ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
+ {
++	struct hlist_node **p;
++	struct afs_cell *pcell;
+ 	int ret;
+ 
+ 	if (!cell->anonymous_key) {
+@@ -534,7 +536,18 @@ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
+ 		return ret;
+ 
+ 	mutex_lock(&net->proc_cells_lock);
+-	list_add_tail(&cell->proc_link, &net->proc_cells);
++	for (p = &net->proc_cells.first; *p; p = &(*p)->next) {
++		pcell = hlist_entry(*p, struct afs_cell, proc_link);
++		if (strcmp(cell->name, pcell->name) < 0)
++			break;
++	}
++
++	cell->proc_link.pprev = p;
++	cell->proc_link.next = *p;
++	rcu_assign_pointer(*p, &cell->proc_link.next);
++	if (cell->proc_link.next)
++		cell->proc_link.next->pprev = &cell->proc_link.next;
++
+ 	afs_dynroot_mkdir(net, cell);
+ 	mutex_unlock(&net->proc_cells_lock);
+ 	return 0;
+@@ -550,7 +563,7 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
+ 	afs_proc_cell_remove(cell);
+ 
+ 	mutex_lock(&net->proc_cells_lock);
+-	list_del_init(&cell->proc_link);
++	hlist_del_rcu(&cell->proc_link);
+ 	afs_dynroot_rmdir(net, cell);
+ 	mutex_unlock(&net->proc_cells_lock);
+ 
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 1cde710a8013..f29c6dade7f6 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -265,7 +265,7 @@ int afs_dynroot_populate(struct super_block *sb)
+ 		return -ERESTARTSYS;
+ 
+ 	net->dynroot_sb = sb;
+-	list_for_each_entry(cell, &net->proc_cells, proc_link) {
++	hlist_for_each_entry(cell, &net->proc_cells, proc_link) {
+ 		ret = afs_dynroot_mkdir(net, cell);
+ 		if (ret < 0)
+ 			goto error;
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 871a228d7f37..34c02fdcc25f 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -242,7 +242,7 @@ struct afs_net {
+ 	seqlock_t		cells_lock;
+ 
+ 	struct mutex		proc_cells_lock;
+-	struct list_head	proc_cells;
++	struct hlist_head	proc_cells;
+ 
+ 	/* Known servers.  Theoretically each fileserver can only be in one
+ 	 * cell, but in practice, people create aliases and subsets and there's
+@@ -320,7 +320,7 @@ struct afs_cell {
+ 	struct afs_net		*net;
+ 	struct key		*anonymous_key;	/* anonymous user key for this cell */
+ 	struct work_struct	manager;	/* Manager for init/deinit/dns */
+-	struct list_head	proc_link;	/* /proc cell list link */
++	struct hlist_node	proc_link;	/* /proc cell list link */
+ #ifdef CONFIG_AFS_FSCACHE
+ 	struct fscache_cookie	*cache;		/* caching cookie */
+ #endif
+diff --git a/fs/afs/main.c b/fs/afs/main.c
+index e84fe822a960..107427688edd 100644
+--- a/fs/afs/main.c
++++ b/fs/afs/main.c
+@@ -87,7 +87,7 @@ static int __net_init afs_net_init(struct net *net_ns)
+ 	timer_setup(&net->cells_timer, afs_cells_timer, 0);
+ 
+ 	mutex_init(&net->proc_cells_lock);
+-	INIT_LIST_HEAD(&net->proc_cells);
++	INIT_HLIST_HEAD(&net->proc_cells);
+ 
+ 	seqlock_init(&net->fs_lock);
+ 	net->fs_servers = RB_ROOT;
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 476dcbb79713..9101f62707af 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -33,9 +33,8 @@ static inline struct afs_net *afs_seq2net_single(struct seq_file *m)
+ static int afs_proc_cells_show(struct seq_file *m, void *v)
+ {
+ 	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
+-	struct afs_net *net = afs_seq2net(m);
+ 
+-	if (v == &net->proc_cells) {
++	if (v == SEQ_START_TOKEN) {
+ 		/* display header on line 1 */
+ 		seq_puts(m, "USE NAME\n");
+ 		return 0;
+@@ -50,12 +49,12 @@ static void *afs_proc_cells_start(struct seq_file *m, loff_t *_pos)
+ 	__acquires(rcu)
+ {
+ 	rcu_read_lock();
+-	return seq_list_start_head(&afs_seq2net(m)->proc_cells, *_pos);
++	return seq_hlist_start_head_rcu(&afs_seq2net(m)->proc_cells, *_pos);
+ }
+ 
+ static void *afs_proc_cells_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+-	return seq_list_next(v, &afs_seq2net(m)->proc_cells, pos);
++	return seq_hlist_next_rcu(v, &afs_seq2net(m)->proc_cells, pos);
+ }
+ 
+ static void afs_proc_cells_stop(struct seq_file *m, void *v)
+
