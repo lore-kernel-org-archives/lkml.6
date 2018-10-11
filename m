@@ -2,118 +2,182 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183C6C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3EEC4161D
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAC72077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAC72077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EC741205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 11:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC741205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeJKTQW (ORCPT
+        id S1727470AbeJKTTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 15:16:22 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2098 "EHLO huawei.com"
+        Thu, 11 Oct 2018 15:19:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42750 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726071AbeJKTQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 15:16:22 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 5318E543E2806;
-        Thu, 11 Oct 2018 12:49:26 +0100 (IST)
-Received: from FRAEML703-CAH.china.huawei.com (10.206.14.34) by
- LHREML714-CAH.china.huawei.com (10.201.108.37) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Thu, 11 Oct 2018 12:49:27 +0100
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.206]) by
- fraeml703-cah.china.huawei.com ([10.206.14.34]) with mapi id 14.03.0399.000;
- Thu, 11 Oct 2018 13:49:18 +0200
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
-CC:     "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>
-Subject: RE: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-Thread-Topic: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-Thread-Index: AQHUUb0pQn5upG3YtUCPh5BgR8Q9BqUZ5U6AgAAiGGA=
-Date:   Thu, 11 Oct 2018 11:49:18 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA83879AD29@FRAEML521-MBX.china.huawei.com>
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
- <d649de4e-e0cc-4188-5e56-fea1488b9d6b@arm.com>
-In-Reply-To: <d649de4e-e0cc-4188-5e56-fea1488b9d6b@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726788AbeJKTTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 15:19:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 88138ACAD;
+        Thu, 11 Oct 2018 11:52:40 +0000 (UTC)
+Date:   Thu, 11 Oct 2018 13:52:38 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] Randomize free memory
+Message-ID: <20181011115238.GU5873@dhcp22.suse.cz>
+References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181004074457.GD22173@dhcp22.suse.cz>
+ <CAPcyv4ht=ueiZwPTWuY5Y4y1BUOi_z+pHMjfoiXG+Bjd-h55jA@mail.gmail.com>
+ <20181009112216.GM8528@dhcp22.suse.cz>
+ <CAPcyv4gAsyw7Tpp6QKQUA=P3k-Gw=KzutS-PzBiisnxQ1R24gw@mail.gmail.com>
+ <20181010084731.GB5873@dhcp22.suse.cz>
+ <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4j1QZSk_soYY=xpMiv0exYzdGoa0uqWppSs_dJwF4TPnw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iaW4gTXVycGh5IFtt
-YWlsdG86cm9iaW4ubXVycGh5QGFybS5jb21dDQo+IFNlbnQ6IDExIE9jdG9iZXIgMjAxOCAxMjoy
-Ng0KPiBUbzogU2hhbWVlcmFsaSBLb2xvdGh1bSBUaG9kaSA8c2hhbWVlcmFsaS5rb2xvdGh1bS50
-aG9kaUBodWF3ZWkuY29tPjsNCj4gbG9yZW56by5waWVyYWxpc2lAYXJtLmNvbQ0KPiBDYzogd2ls
-bC5kZWFjb25AYXJtLmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207IEd1b2hhbmp1biAoSGFuanVu
-IEd1bykNCj4gPGd1b2hhbmp1bkBodWF3ZWkuY29tPjsgSm9obiBHYXJyeSA8am9obi5nYXJyeUBo
-dWF3ZWkuY29tPjsNCj4gcGFiYmFAY29kZWF1cm9yYS5vcmc7IHZraWxhcmlAY29kZWF1cm9yYS5v
-cmc7IHJydWlncm9rQGNvZGVhdXJvcmEub3JnOw0KPiBsaW51eC1hY3BpQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZzsgTGludXhhcm0gPGxpbnV4YXJtQGh1YXdlaS5jb20+Ow0KPiBuZWls
-Lm0ubGVlZGVyQGdtYWlsLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDIvM10gcGVyZjog
-YWRkIGFybTY0IHNtbXV2MyBwbXUgZHJpdmVyDQo+IA0KPiBIaSBTaGFtZWVyLA0KPiANCj4gT25l
-IG1vcmUgdGhpbmcuLi4NCj4gDQo+IE9uIDIxLzA5LzE4IDE2OjA4LCBTaGFtZWVyIEtvbG90aHVt
-IHdyb3RlOg0KPiBbLi4uXQ0KPiA+ICtzdGF0aWMgaW50IHNtbXVfcG11X3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBzbW11X3BtdSAqc21t
-dV9wbXU7DQo+ID4gKwlzdHJ1Y3QgcmVzb3VyY2UgKnJlc18wLCAqcmVzXzE7DQo+ID4gKwl1MzIg
-Y2ZnciwgcmVnX3NpemU7DQo+ID4gKwl1NjQgY2VpZF82NFsyXTsNCj4gPiArCWludCBpcnEsIGVy
-cjsNCj4gPiArCWNoYXIgKm5hbWU7DQo+ID4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+
-ZGV2Ow0KPiA+ICsNCj4gPiArCXNtbXVfcG11ID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpz
-bW11X3BtdSksIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYgKCFzbW11X3BtdSkNCj4gPiArCQlyZXR1
-cm4gLUVOT01FTTsNCj4gPiArDQo+ID4gKwlzbW11X3BtdS0+ZGV2ID0gZGV2Ow0KPiA+ICsNCj4g
-PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHNtbXVfcG11KTsNCj4gPiArCXNtbXVfcG11
-LT5wbXUgPSAoc3RydWN0IHBtdSkgew0KPiA+ICsJCS50YXNrX2N0eF9uciAgICA9IHBlcmZfaW52
-YWxpZF9jb250ZXh0LA0KPiA+ICsJCS5wbXVfZW5hYmxlCT0gc21tdV9wbXVfZW5hYmxlLA0KPiA+
-ICsJCS5wbXVfZGlzYWJsZQk9IHNtbXVfcG11X2Rpc2FibGUsDQo+ID4gKwkJLmV2ZW50X2luaXQJ
-PSBzbW11X3BtdV9ldmVudF9pbml0LA0KPiA+ICsJCS5hZGQJCT0gc21tdV9wbXVfZXZlbnRfYWRk
-LA0KPiA+ICsJCS5kZWwJCT0gc21tdV9wbXVfZXZlbnRfZGVsLA0KPiA+ICsJCS5zdGFydAkJPSBz
-bW11X3BtdV9ldmVudF9zdGFydCwNCj4gPiArCQkuc3RvcAkJPSBzbW11X3BtdV9ldmVudF9zdG9w
-LA0KPiA+ICsJCS5yZWFkCQk9IHNtbXVfcG11X2V2ZW50X3JlYWQsDQo+ID4gKwkJLmF0dHJfZ3Jv
-dXBzCT0gc21tdV9wbXVfYXR0cl9ncnBzLA0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwlyZXNfMCA9
-IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+ID4gKwlz
-bW11X3BtdS0+cmVnX2Jhc2UgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXNfMCk7DQo+
-IA0KPiBXZSBzdGlsbCBuZWVkIHRvIHNvbHZlIHRoZSByZXNvdXJjZS1jbGFpbWluZyBpc3N1ZSB3
-aGVuIG9uZSAob3IgYm90aCkgb2YNCj4gdGhlIFBNQ0cgcGFnZXMgYmVsb25ncyB0byB0aGUgcGFy
-ZW50IGRldmljZSdzIHJlZ2lzdGVyIHNwYWNlLiBJIHJlY2FsbA0KPiB3ZSBjaHVja2VkIGEgZmV3
-IG5hc2NlbnQgaWRlYXMgYWJvdXQgYmVmb3JlOyBkaWQgYW55b25lIG1hbmFnZSB0byBjb21lDQo+
-IHVwIHdpdGggYW55dGhpbmcgY29uY3JldGU/DQoNClJpZ2h0LiBXZSBoYWQgYW4gZWFybHkgdmVy
-c2lvbiBvZiBhbiBldmFsdWF0aW9uIGJvYXJkIHdoZXJlIHdlIGhhZCB0aGlzIGlzc3VlLCANCmJ1
-dCB0aGlzIGhhcyBiZWVuIGZpeGVkIGluIGFuIHVwZGF0ZWQgcmV2aXNpb24gYW5kIGlzIG5vdCBh
-IHByaW9yaXR5IGZvciBub3cuIA0KDQpBZ3JlZSB0aGF0IHRoaXMgaXMgYW4gaXNzdWUgYXMgdGhl
-IHNwZWMgZG9lc27igJl0IGZvcmJpZCB1c2luZyBwYXJlbnQgU01NVSByZWdpc3Rlcg0Kc3BhY2Ug
-YW5kIGl0IGxvb2tzIGxpa2Ugbm90IGFuIGVhc3kgb25lIHRvIHNvbHZlIGVpdGhlci4gVGhlIGlu
-aXRpYWwgaWRlYSB3YXMgc2V0dGluZw0KdGhlIFBNQ0cgYXMgYSBjaGlsZCBkZXYsIGJ1dCB0aGF0
-IGRpZG7igJl0IGhlbHAuDQoNCkkgaGFkIGFuIG9mZiBsaXN0IGRpc2N1c3Npb24gd2l0aCBMb3Jl
-bnpvIG9uIHRoaXMsIGJ1dCBub3RoaW5nIGNvbmNyZXRlLg0KDQpMb3JlbnpvLCANCg0KUGxlYXNl
-IHVwZGF0ZSBpZiB5b3UgaGF2ZSBhbnkgbmV3IGlkZWFzL3Rob3VnaHRzIG9uIHRoaXMuDQoNClRo
-YW5rcywNClNoYW1lZXINCg0KPiBSb2Jpbi4NCg==
+On Wed 10-10-18 17:13:14, Dan Williams wrote:
+[...]
+> On Wed, Oct 10, 2018 at 1:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+> ...and now that I've made that argument I think I've come around to
+> your point about the shuffle_page_order parameter. The only entity
+> that might have a better clue about "safer" shuffle orders than
+> MAX_ORDER is the distribution provider.
+
+And how is somebody providing a kernel for large variety of workloads
+supposed to know?
+
+[...]
+
+> Note, you can also think about this just on pure architecture terms.
+> I.e. that for a direct mapped cache anywhere in a system you can have
+> a near zero cache conflict rate on a first run of a workload and high
+> conflict rate on a second run based on how lucky you are with memory
+> allocation placement relative to the first run. Randomization keeps
+> you out of such performance troughs and provides more reliable average
+> performance.
+
+I am not disagreeing here. That reliable average might be worse than
+what you get with the non-randomized case. And that might be a fair
+deal for some workloads. You are, however, providing a functionality
+which is enabled by default without any actual numbers (well except for
+_a_java_ workload that seems to benefit) so you should really do your
+homework stop handwaving and give us some numbers and/or convincing
+arguments please.
+
+> With the numa emulation patch I referenced an
+> administrator could constrain a workload to run in a cache-sized
+> subset of the available memory if they really know what they are doing
+> and need firmer guarantees.
+
+Then mention how and what you can achieve by that in the changelog.
+
+> The risk if Linux does not have this capability is unstable hacks like
+> zonesort and rebooting, as referenced in that KNL article, which are
+> not suitable for a general purpose kernel / platform.
+
+We could have lived without those for quite some time so this doesn't
+seem to be anything super urgent to push through without a proper
+justification.
+
+> > > > Many years back while at a university I was playing
+> > > > with page coloring as a method to reach a more stable performance
+> > > > results due to reduced cache conflicts. It was not always a performance
+> > > > gain but it definitely allowed for more stable run-to-run comparable
+> > > > results. I can imagine that a randomization might lead to a similar effect
+> > > > although I am not sure how much and it would be more interesting to hear
+> > > > about that effect.
+> > >
+> > > Cache coloring is effective up until your workload no longer fits in
+> > > that color.
+> >
+> > Yes, that was my observation back then more or less. But even when you
+> > do not fit into the cache a color aware strategy (I was playing with bin
+> > hoping as well) produced a more deterministic/stable results. But that
+> > is just a side note as it doesn't directly relate to your change.
+> >
+> > > Randomization helps to attenuate the cache conflict rate
+> > > when that happens.
+> >
+> > I can imagine that. Do we have any numbers to actually back that claim
+> > though?
+> >
+> 
+> Yes, 2.5X cache conflict rate reduction, in the change log.
+
+Which is a single benchmark result which is not even described in detail
+to be able to reproduce that measurement. I am sorry for nagging
+here but I would expect something less obscure. How does this behave for
+usual workloads that we test cache sensitive workloads. I myself am not
+a benchmark person but I am pretty sure there are people who can help
+you to find proper ones to run and evaluate.
+
+> > > For workloads that may fit in the cache, and/or
+> > > environments that need more explicit cache control we have the recent
+> > > changes to numa_emulation [1] to arrange for cache sized numa nodes.
+> >
+> > Could you point me to some more documentation. My google-fu is failing
+> > me and "5.2.27.5 Memory Side Cache Information Structure" doesn't point
+> > to anything official (except for your patch referencing it).
+> 
+> http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf
+
+Thanks!
+
+[...]
+
+> > With all that being said, I think the overal idea makes sense but you
+> > should try much harder to explain _why_ we need it and back your
+> > justification by actual _data_ before I would consider my ack.
+> 
+> I don't have a known CVE, I only have the ack of people more
+> knowledgeable about security than myself like Kees to say in effect,
+> "yes, this complicates attacks". If you won't take Kees' word for it,
+> I'm not sure what other justification I can present on the security
+> aspect.
+
+In general (nothing against Kees here of course), I prefer a stronger
+justification than "somebody said it will make attacks harder". At least
+my concern about fragmented memory which is not really hard to achieve
+at all should be reasonably clarified. I am fully aware there is no
+absolute measure here but making something harder under ideal conditions
+doesn't really help for common attack strategies which can prepare the
+system into an actual state to exploit allocation predictability. I am
+no expert here but if an attacker can deduce the allocation pattern then
+fragmenting the memory is one easy step to overcome what people would
+consider a security measure.
+
+So color me unconvinced for now.
+
+> 2.5X cache conflict reduction on a Java benchmark workload that the
+> exceeds the cache size by multiple factors is the data I can provide
+> today. Post launch it becomes easier to share more precise data, but
+> that's post 4.20. The hope of course is to have this capability
+> available in an upstream released kernel in advance of wider hardware
+> availability.
+
+I will not comment on timing but in general, any performance related
+changes should come with numbers for a wider variety of workloads.
+
+In any case, I believe the change itself is not controversial as long it
+is opt-in (potentially autotuned based on specific HW) with a reasonable
+API. And no I do not consider $RANDOM_ORDER a good interface.
+-- 
+Michal Hocko
+SUSE Labs
