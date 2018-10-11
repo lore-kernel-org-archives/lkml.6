@@ -2,257 +2,116 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418ACC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3152AC677FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB5221470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDB6321476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkPNPaso"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB5221470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow4epnB3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB6321476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbeJKXL5 (ORCPT
+        id S1731183AbeJKXL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:11:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44180 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:11:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730276AbeJKXL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:11:56 -0400
+        id S1730276AbeJKXL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:11:58 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9F632098A;
-        Thu, 11 Oct 2018 15:44:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EB7B20652;
+        Thu, 11 Oct 2018 15:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272651;
-        bh=RVygJvAiQoPoCUQRxcOIHmq+H4TWlvzt8KMpSyVr9HA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KkPNPaso4JYGeEh/VnkRrDaHrhKkaflHZhC6TnpWdTOIC4rSTv7zRcAhJPQBaQVE1
-         d3P1k8b/JOAhatDez2FIdMA4JtmIRPsDWREXhNgzKZ9Z8R+Kf/0vPjpVIi/Im2WXLo
-         7SmRHAiu92nN/bo/M3CRjCXLsSC+JCQvw8FhSIGQ=
+        s=default; t=1539272654;
+        bh=rbL259K9WOgS9IrjUaKbDhTThv2sLBBfwPe6WlQ5Oc8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ow4epnB3pjrFUx5hVWKrPqL7cIcMhAL2m2lwehRpkMSza8tID7RbaO8WwYaYPACy8
+         hA0HFxUs78Qa5lXw0cmK19ru4KKi861eFp0q0ldQZUFK1aRbejsVoV3xRfKwzMItRc
+         Mviqv3Hdve+yTuQs/6lTKSMwKtDFS4x5JJ+TkUsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/35] 4.9.133-stable review
-Date:   Thu, 11 Oct 2018 17:35:02 +0200
-Message-Id: <20181011152520.174949126@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Loic <hackurx@opensec.fr>
+Subject: [PATCH 4.9 31/35] ebtables: arpreply: Add the standard target sanity check
+Date:   Thu, 11 Oct 2018 17:35:33 +0200
+Message-Id: <20181011152521.425951160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
+References: <20181011152520.174949126@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.133-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.133-rc1
-X-KernelTest-Deadline: 2018-10-13T15:25+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.133 release.
-There are 35 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Oct 13 15:25:09 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.133-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+From: Gao Feng <gfree.wind@vip.163.com>
 
-thanks,
+commit c953d63548207a085abcb12a15fefc8a11ffdf0a upstream.
 
-greg k-h
+The info->target comes from userspace and it would be used directly.
+So we need to add the sanity check to make sure it is a valid standard
+target, although the ebtables tool has already checked it. Kernel needs
+to validate anything coming from userspace.
 
--------------
-Pseudo-Shortlog of commits:
+If the target is set as an evil value, it would break the ebtables
+and cause a panic. Because the non-standard target is treated as one
+offset.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.133-rc1
+Now add one helper function ebt_invalid_target, and we would replace
+the macro INVALID_TARGET later.
 
-Andy Lutomirski <luto@kernel.org>
-    x86/fpu: Finish excising 'eagerfpu'
+Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Loic <hackurx@opensec.fr>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "perf: sync up x86/.../cpufeatures.h"
+---
+ include/linux/netfilter_bridge/ebtables.h |    5 +++++
+ net/bridge/netfilter/ebt_arpreply.c       |    3 +++
+ 2 files changed, 8 insertions(+)
 
-Rik van Riel <riel@redhat.com>
-    x86/fpu: Remove struct fpu::counter
-
-Andy Lutomirski <luto@kernel.org>
-    x86/fpu: Remove use_eager_fpu()
-
-Gao Feng <gfree.wind@vip.163.com>
-    ebtables: arpreply: Add the standard target sanity check
-
-Zhi Chen <zhichen@codeaurora.org>
-    ath10k: fix scan crash due to incorrect length calculation
-
-Frederic Weisbecker <fweisbec@gmail.com>
-    sched/cputime: Fix ksoftirqd cputime accounting regression
-
-Frederic Weisbecker <fweisbec@gmail.com>
-    sched/cputime: Increment kcpustat directly on irqtime account
-
-Frederic Weisbecker <fweisbec@gmail.com>
-    sched/cputime: Convert kcpustat to nsecs
-
-Richard Weinberger <richard@nod.at>
-    ubifs: Check for name being NULL while mounting
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    ucma: fix a use-after-free in ucma_resolve_ip()
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix invalid memory access
-
-Feng Tang <feng.tang@intel.com>
-    x86/mm: Expand static page table for fixmap space
-
-Vineet Gupta <vgupta@synopsys.com>
-    ARC: clone syscall to setp r25 as thread pointer
-
-Michal Suchanek <msuchanek@suse.de>
-    powerpc/fadump: Return error when fadump registration fails
-
-Yu Wang <yyuwang@codeaurora.org>
-    ath10k: fix kernel panic issue during pci probe
-
-Carl Huang <cjhuang@codeaurora.org>
-    ath10k: fix use-after-free in ath10k_wmi_cmd_send_nowait
-
-Prateek Sood <prsood@codeaurora.org>
-    cgroup: Fix deadlock in cpu hotplug path
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: always verify the magic number in xattr blocks
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: add corruption check in ext4_xattr_set_entry()
-
-Guenter Roeck <linux@roeck-us.net>
-    of: unittest: Disable interrupt node tests for old world MAC systems
-
-Dmitry Safonov <dima@arista.com>
-    tty: Drop tty->count on tty_reopen() failure
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: simple: add Motorola Tetra MTP6550 id
-
-Chunfeng Yun <chunfeng.yun@mediatek.com>
-    usb: xhci-mtk: resume USB3 roothub first
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Add missing CAS workaround for Intel Sunrise Point xHCI
-
-Mike Snitzer <snitzer@redhat.com>
-    dm cache: fix resize crash if user doesn't reload cache table
-
-Joe Thornber <ejt@redhat.com>
-    dm cache metadata: ignore hints array being too small during resize
-
-Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-    PM / core: Clear the direct_complete flag on errors
-
-Felix Fietkau <nbd@nbd.name>
-    mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
-
-Daniel Drake <drake@endlessm.com>
-    PCI: Reprogram bridge prefetch registers on resume
-
-Andy Lutomirski <luto@kernel.org>
-    x86/vdso: Fix vDSO syscall fallback asm constraint regression
-
-Andy Lutomirski <luto@kernel.org>
-    x86/vdso: Fix asm constraints on vDSO syscall fallbacks
-
-Jan Beulich <JBeulich@suse.com>
-    xen-netback: fix input validation in xenvif_set_hash_mapping()
-
-Tomi Valkeinen <tomi.valkeinen@ti.com>
-    fbdev/omapfb: fix omapfb_memory_read infoleak
-
-Jann Horn <jannh@google.com>
-    mm/vmstat.c: skip NR_TLB_REMOTE_FLUSH* properly
-
-
--------------
-
-Diffstat:
-
- Documentation/kernel-parameters.txt             |  6 --
- Makefile                                        |  4 +-
- arch/arc/kernel/process.c                       | 20 +++++++
- arch/powerpc/kernel/fadump.c                    | 23 +++++---
- arch/s390/appldata/appldata_os.c                | 16 +++---
- arch/x86/crypto/crc32c-intel_glue.c             | 17 ++----
- arch/x86/entry/vdso/vclock_gettime.c            | 26 +++++----
- arch/x86/include/asm/cpufeatures.h              |  1 -
- arch/x86/include/asm/fixmap.h                   | 10 ++++
- arch/x86/include/asm/fpu/internal.h             | 37 +-----------
- arch/x86/include/asm/fpu/types.h                | 34 -----------
- arch/x86/include/asm/pgtable_64.h               |  3 +-
- arch/x86/include/asm/trace/fpu.h                |  5 +-
- arch/x86/kernel/fpu/core.c                      | 39 ++-----------
- arch/x86/kernel/fpu/signal.c                    |  8 +--
- arch/x86/kernel/fpu/xstate.c                    |  9 ---
- arch/x86/kernel/head_64.S                       | 16 ++++--
- arch/x86/kvm/cpuid.c                            |  4 +-
- arch/x86/kvm/x86.c                              | 10 ----
- arch/x86/mm/pgtable.c                           |  9 +++
- arch/x86/mm/pkeys.c                             |  3 +-
- arch/x86/xen/mmu.c                              |  8 ++-
- drivers/base/power/main.c                       |  5 +-
- drivers/cpufreq/cpufreq.c                       |  6 +-
- drivers/cpufreq/cpufreq_governor.c              |  2 +-
- drivers/cpufreq/cpufreq_stats.c                 |  1 -
- drivers/infiniband/core/ucma.c                  |  2 +
- drivers/macintosh/rack-meter.c                  |  2 +-
- drivers/md/dm-cache-metadata.c                  |  4 +-
- drivers/md/dm-cache-target.c                    |  9 ++-
- drivers/net/wireless/ath/ath10k/debug.c         | 12 +++-
- drivers/net/wireless/ath/ath10k/trace.h         | 12 ++--
- drivers/net/wireless/ath/ath10k/wmi-tlv.c       |  8 +--
- drivers/net/wireless/ath/ath10k/wmi.c           |  2 +-
- drivers/net/xen-netback/hash.c                  | 12 ++--
- drivers/of/unittest.c                           | 28 ++++++---
- drivers/pci/pci.c                               | 27 ++++++---
- drivers/tty/tty_io.c                            | 11 +++-
- drivers/usb/host/xhci-mtk.c                     |  4 +-
- drivers/usb/host/xhci-pci.c                     |  2 +
- drivers/usb/serial/usb-serial-simple.c          |  3 +-
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |  5 +-
- fs/ext4/xattr.c                                 | 28 +++++----
- fs/f2fs/checkpoint.c                            |  9 +--
- fs/proc/stat.c                                  | 68 +++++++++++-----------
- fs/proc/uptime.c                                |  7 +--
- fs/ubifs/super.c                                |  3 +
- include/linux/netfilter_bridge/ebtables.h       |  5 ++
- kernel/cgroup.c                                 |  6 +-
- kernel/sched/cpuacct.c                          |  2 +-
- kernel/sched/cputime.c                          | 75 +++++++++++--------------
- kernel/sched/sched.h                            | 12 +++-
- mm/vmstat.c                                     |  3 +
- net/bridge/netfilter/ebt_arpreply.c             |  3 +
- net/mac80211/cfg.c                              |  2 +-
- tools/arch/x86/include/asm/cpufeatures.h        |  1 -
- 56 files changed, 335 insertions(+), 354 deletions(-)
+--- a/include/linux/netfilter_bridge/ebtables.h
++++ b/include/linux/netfilter_bridge/ebtables.h
+@@ -123,4 +123,9 @@ extern unsigned int ebt_do_table(struct
+ /* True if the target is not a standard target */
+ #define INVALID_TARGET (info->target < -NUM_STANDARD_TARGETS || info->target >= 0)
+ 
++static inline bool ebt_invalid_target(int target)
++{
++	return (target < -NUM_STANDARD_TARGETS || target >= 0);
++}
++
+ #endif
+--- a/net/bridge/netfilter/ebt_arpreply.c
++++ b/net/bridge/netfilter/ebt_arpreply.c
+@@ -67,6 +67,9 @@ static int ebt_arpreply_tg_check(const s
+ 	if (e->ethproto != htons(ETH_P_ARP) ||
+ 	    e->invflags & EBT_IPROTO)
+ 		return -EINVAL;
++	if (ebt_invalid_target(info->target))
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
 
 
