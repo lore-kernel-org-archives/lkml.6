@@ -2,89 +2,145 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BB4C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBF0C677FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501B42054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:03:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501B42054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 886AF204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 18:05:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LpMQoEkz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886AF204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbeJLBbu (ORCPT
+        id S1728185AbeJLBdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 21:31:50 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39745 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbeJLBbt (ORCPT
+        Thu, 11 Oct 2018 21:33:43 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50764 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727765AbeJLBdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 21:31:49 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7799180A1F; Thu, 11 Oct 2018 20:03:28 +0200 (CEST)
-Date:   Thu, 11 Oct 2018 20:03:28 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Subject: -next20181010,1011 regression: thinkpad x60 (32 bit) dies during
- boot.
-Message-ID: <20181011180328.GA6740@amd>
-References: <20181010195920.GA13860@amd>
- <20181010200331.GA13975@amd>
+        Thu, 11 Oct 2018 21:33:43 -0400
+Received: by mail-it1-f196.google.com with SMTP id k206-v6so8789364ite.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 11:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6iv9pjJqyXxpCov0Aj33kLxYNeDF0PBwr+kZy2t85fg=;
+        b=LpMQoEkzwLJPjFoonA0GJ/6/y3T9nrDNm4e0WZLYzDhyLmppY1Jz7xLPfi+BibpbTo
+         4EH289WCp8ppjIU+10LTrrUiLVVoo6rqJkX/9umotGuZTr9hLz3WGl553ABL0J+tFXvB
+         qTJgzNIpI0/U4deHJx0bfiBD2FRNHVlcEbvHR8Eu6A1xz9xOm4lvFJ5syeytgJpO4Vz/
+         c+2clizhitBlAGc9LfPw1JAw2qlhzLgLKQJouwzAqvr0f1GQ/VjPS5OCawZ6uHq0chw0
+         Qis+UFClVmCP5BjIxdGKV8Dd98OyO21omJHhP6sVYnAWSbg2uwzgNA3TLVTI07adlsrc
+         ztXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6iv9pjJqyXxpCov0Aj33kLxYNeDF0PBwr+kZy2t85fg=;
+        b=LMcAxAIDVnxSQw2ocFNspdqiT7CLtsJoGoHLVb+88aF+H4x6Nwg+36fjS3emsqcokq
+         GXrUOyuX7SFhdeHqWzQyWqdJzzd6O7Eu5G+oaudk/JlQ/FZdissAS/YVAV6c1Mm2YzZ1
+         /laZ5LeoFqiztsV6fVAf3IXetmnbz5Xi6FoLqJrczGhQmmYVOes/+fWNXPJar2isLZoR
+         NNVvmX5bcWy7v6mjKAsF6ErXeWQwqf/ghITvub2qjE5rlElojUL43o+4pWgsFfqUtHFF
+         oLH8YBC+/uApJEbDBUGnwtsF3omH+5NRNz7oSEdZQ+vL2JTfsBMNQzGfZsh4zV5C9wne
+         ppnw==
+X-Gm-Message-State: ABuFfohtkYFyxYwkf2WBbJFmkSJ6hWWdC01fKbm3GGVAJeZrGShClUCt
+        obOnx8nCploqDsnfV9BmEXtCIflc2uuKO7yNvI2vCA==
+X-Google-Smtp-Source: ACcGV60OS91obWHLMCkspt1Jt7avidRmFw6c8kjcz3EoKA92jt6SGRdbjgx9/zOXR0P1N9UdQf7Qnl67h6nd7bqca3M=
+X-Received: by 2002:a24:24c9:: with SMTP id f192-v6mr1974518ita.144.1539281123327;
+ Thu, 11 Oct 2018 11:05:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
-Content-Disposition: inline
-In-Reply-To: <20181010200331.GA13975@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 11:05:02
+ -0700 (PDT)
+In-Reply-To: <44d8f927-85bb-cde5-1ddc-93da5ea048ae@redhat.com>
+References: <0000000000004ab2c40577db2115@google.com> <c4d02cc1-0298-533d-bc07-bb4195c2eea9@huawei.com>
+ <44d8f927-85bb-cde5-1ddc-93da5ea048ae@redhat.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 11 Oct 2018 20:05:02 +0200
+Message-ID: <CACT4Y+Y267HH=JXLJzwLOD4Q7A=ah39UwbeEA9wa_dR8NWNrnA@mail.gmail.com>
+Subject: Re: kernel BUG at arch/x86/kvm/x86.c:LINE! (2)
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Du Changbin <duchangbin3@huawei.com>,
+        syzbot <syzbot+f9b42efadea9f5453100@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>, changbin.du@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 11, 2018 at 4:32 PM, Paolo Bonzini <pbonzini@redhat.com> wrote:
+> On 11/10/2018 04:57, Du Changbin wrote:
+>> I think the issue is that using vmx instructions after vmx off. The
+>> scenario is:
+>> 1. kernel is rebooting and vmx is turned off by notification handler
+>> kvm_reboot(),
+>>    and 'kvm_rebooting' is set.
+>> 2. But there is a pending KVM_CREATE_VCPU ioctl which will invoke
+>> vmcs_clear()->
+>>    ____kvm_handle_fault_on_reboot()->kvm_spurious_fault()->BUG().
+>>
+>> Need to improve the handler for such case so won't hang kernel.
+>
+> Why would the kernel be rebooting, given the reproducer (listed below my
+> signature, or at https://syzkaller.appspot.com/x/repro.c?x=131e37c9400000)?
+>
+> I think this is a duplicate of
+>
+>    WARNING: refcount bug in kvm_vm_ioctl
+>    BUG: unable to handle kernel paging request in
+> refcount_inc_not_zero_checked
+>
+> In all cases the refcounts seem to be broken, and kvm_destroy_kvm is
+> called prematurely (which in this case results in hardware_disable_all
+> being called, so that the vmclear fails).
+>
+> Dmitry, have such bugs been reported for subsystems other than KVM?
 
---wac7ysb48OaltWcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We have _all_ types of bugs reported in _all_ subsystems. So you need
+to be more precise :)
 
-On Wed 2018-10-10 22:03:32, Pavel Machek wrote:
-> Hi!
->=20
-> > I updated to todays next... and boot crashes with
-> >=20
-> > ..
-> > Call Trace:
-> > kick_ilb
-> > trigger_load_balance
-> > ? active_load..
-> > scheduler_tick
-> > update_process_times
-> > tick_nohz_handler
-> >=20
-> > -next20181005 worked ok.
+You can see all currently open bugs here:
+https://syzkaller.appspot.com/#upstream
 
-Problem is still there in today's next.
-									Pavel
+And here you can search over reports:
+https://groups.google.com/forum/#!forum/syzkaller-bugs
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+E.g.:
+https://groups.google.com/forum/#!searchin/syzkaller-bugs/refcount_inc_not_zero_checked
 
---wac7ysb48OaltWcw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+We had this recently, which is task_struct refcount bug:
+https://syzkaller.appspot.com/bug?id=e1854417677586ce3d00f498f19816cb4fd15676
+but this seems to be related to rdma. And repro for this bug only
+deals with kvm. So my guess would be that this is a different bug in
+kvm.
+If you can reproduce it, then perhaps logging all refcount operation
+on the thing will help to find whoever releases a ref it does not own.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlu/kHAACgkQMOfwapXb+vIinACeNUOuDYG7wP9CnLU5M83+FSKW
-uhMAnjuf9HBBX3TrwVDJ/FCjtGY7YaYw
-=kBcN
------END PGP SIGNATURE-----
-
---wac7ysb48OaltWcw--
+> Paolo
+>
+> #syz dup: WARNING: refcount bug in kvm_vm_ioctl
+>
+>> # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+>> #{"threaded":true,"repeat":true,"procs":6,"sandbox":"","fault_call":-1,"tmpdir":true}
+>> r0 = openat$kvm(0xffffffffffffff9c, &(0x7f0000000080)='/dev/kvm\x00', 0x0, 0x0)
+>> r1 = ioctl$KVM_CREATE_VM(r0, 0xae01, 0x0)
+>> r2 = ioctl$KVM_CREATE_VCPU(r1, 0xae41, 0x0)
+>> ioctl$KVM_SET_VCPU_EVENTS(r2, 0x4040aea0, &(0x7f0000000000)={0x5, 0x7, 0x40, 0x0, 0x0, 0x0, 0x0, 0x492, 0x5, 0x1, 0xffff, 0x0, 0x0, 0xef, 0x100000000, 0x0, 0x100})
+>> ioctl$KVM_SET_USER_MEMORY_REGION(r1, 0x4020ae46, &(0x7f0000000040)={0x0, 0x0, 0x0, 0x2000, &(0x7f0000ffe000/0x2000)=nil})
+>> ioctl$KVM_SET_SREGS(r2, 0x4138ae84, &(0x7f00000003c0)={{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 0x8005001f, 0x0, 0x0, 0x28, 0x0, 0x6500})
+>> ioctl$KVM_RUN(r2, 0xae80, 0x0)
