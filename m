@@ -2,158 +2,77 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB55C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41309C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC66C20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E70C3206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 02:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Li+CBxcG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T+ZpZ34f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC66C20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T9y7NwKl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70C3206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbeJKJyg (ORCPT
+        id S1726830AbeJKJzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 05:54:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeJKJyg (ORCPT
+        Thu, 11 Oct 2018 05:55:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48516 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJKJzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 05:54:36 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6C31860C86; Thu, 11 Oct 2018 02:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539224974;
-        bh=24QEhOa6b6pADby9FH9M7zyM17kAfwnL7p3AeNWQ2Do=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Li+CBxcGjseQzmCMj88IZKYZhL53E5OiVnrJJkCIej9Ai1j6hvGDV+neOXPXhDFcP
-         kIiT0YLRBOyTNOB7hz9L+biTEmrTArSjcwvJYtsoQozvuls8lMJa7oeBhZf6ZquUat
-         fGkLhHsOreqgZvngy8N43hYJPuDv4UxjdCTE7LBQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 49E3960C64;
-        Thu, 11 Oct 2018 02:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539224972;
-        bh=24QEhOa6b6pADby9FH9M7zyM17kAfwnL7p3AeNWQ2Do=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=T+ZpZ34f3qOEaokTvoxoMTF88l6DJfHiEQsQztiKuQKQau+4qyzDTIRZx2XnXhhO0
-         oOHj6mPHsWfWqy+lVk+GYxIDxo5PrOWrQR79YyvzOAt87wy/E8OwF1ylbIXm4buIci
-         i5rR1EvzGPs1fiB7CuRVyRbkD06PMtv5tR3cz/6g=
+        Thu, 11 Oct 2018 05:55:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=32Sj7YTpr29sCd0zeNTVaXrFBfL4bG09869xpoRzhLg=; b=T9y7NwKlILZtbJA9CVr/aJ9mB
+        cbIa3bSXGigQpLEMBoamURDl/c6vZEYFSSrURskvZug7rUj8eZs2VVGsfgPh8h2jllwWlCxTeBf20
+        3tOZ2UoD8o2HgVXf4lUwzNDKgnJW4Le8yB8vsDYNjNB9VgUkHh08N3XfQvjq3TFVfp+GnZVEuIJPa
+        lnHc2hcGWf5XEBOIlbMo/qzHT/T/vj+QSkmoee/m7j471LjlksUaOxJcdEyCdYocrBD3MluU031AS
+        hm6Q4qOwwMl7iWQ8+H99/HTd7O/wqdGxqSI2ji10rwZXUCwgnL/NkxnmUVmkGTTFeRcX1EN/IbHCw
+        wkhH1kQPA==;
+Received: from 177.43.144.224.dynamic.adsl.gvt.net.br ([177.43.144.224] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAQkN-0004rg-9z; Thu, 11 Oct 2018 02:30:43 +0000
+Date:   Wed, 10 Oct 2018 23:30:39 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [Ksummit-discuss] [PATCH v2 3/3] code-of-conduct: Add back the
+ TAB as the central reporting point
+Message-ID: <20181010233039.6ab78374@coco.lan>
+In-Reply-To: <20181010211313.5a63ce6f@alans-desktop>
+References: <1539202053.12644.8.camel@HansenPartnership.com>
+        <1539202230.12644.12.camel@HansenPartnership.com>
+        <20181010211313.5a63ce6f@alans-desktop>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 11 Oct 2018 07:59:32 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
-        osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-In-Reply-To: <20181010173334.GL5873@dhcp22.suse.cz>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
- <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
- <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
- <20181010173334.GL5873@dhcp22.suse.cz>
-Message-ID: <a2d576a5fc82cdf54fc89409686e58f5@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-10 23:03, Michal Hocko wrote:
-> On Wed 10-10-18 22:26:41, Arun KS wrote:
->> On 2018-10-10 21:00, Vlastimil Babka wrote:
->> > On 10/5/18 10:10 AM, Arun KS wrote:
->> > > When free pages are done with higher order, time spend on
->> > > coalescing pages by buddy allocator can be reduced. With
->> > > section size of 256MB, hot add latency of a single section
->> > > shows improvement from 50-60 ms to less than 1 ms, hence
->> > > improving the hot add latency by 60%. Modify external
->> > > providers of online callback to align with the change.
->> > >
->> > > Signed-off-by: Arun KS <arunks@codeaurora.org>
->> >
->> > [...]
->> >
->> > > @@ -655,26 +655,44 @@ void __online_page_free(struct page *page)
->> > >  }
->> > >  EXPORT_SYMBOL_GPL(__online_page_free);
->> > >
->> > > -static void generic_online_page(struct page *page)
->> > > +static int generic_online_page(struct page *page, unsigned int order)
->> > >  {
->> > > -	__online_page_set_limits(page);
->> >
->> > This is now not called anymore, although the xen/hv variants still do
->> > it. The function seems empty these days, maybe remove it as a followup
->> > cleanup?
->> >
->> > > -	__online_page_increment_counters(page);
->> > > -	__online_page_free(page);
->> > > +	__free_pages_core(page, order);
->> > > +	totalram_pages += (1UL << order);
->> > > +#ifdef CONFIG_HIGHMEM
->> > > +	if (PageHighMem(page))
->> > > +		totalhigh_pages += (1UL << order);
->> > > +#endif
->> >
->> > __online_page_increment_counters() would have used
->> > adjust_managed_page_count() which would do the changes under
->> > managed_page_count_lock. Are we safe without the lock? If yes, there
->> > should perhaps be a comment explaining why.
->> 
->> Looks unsafe without managed_page_count_lock.
+Em Wed, 10 Oct 2018 21:13:13 +0100
+Alan Cox <gnomes@lxorguk.ukuu.org.uk> escreveu:
+
+> On Wed, 10 Oct 2018 13:10:30 -0700
+> > +appropriate to the circumstances. The TAB is obligated to maintain
+> > +confidentiality with regard to the reporter of an incident.  
 > 
-> Why does it matter actually? We cannot online/offline memory in
-> parallel. This is not the case for the boot where we initialize memory
-> in parallel on multiple nodes. So this seems to be safe currently 
-> unless
-> I am missing something. A comment explaining that would be helpful
-> though.
+> I would add (except where required by law.)
 
-Other main callers of adjust_manage_page_count(),
+With the proposed change by Alan, you can add my:
+	Reviewed-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-static inline void free_reserved_page(struct page *page)
-{
-         __free_reserved_page(page);
-         adjust_managed_page_count(page, 1);
-}
-
-static inline void mark_page_reserved(struct page *page)
-{
-         SetPageReserved(page);
-         adjust_managed_page_count(page, -1);
-}
-
-Won't they race with memory hotplug?
-
-Few more,
-./drivers/xen/balloon.c:519:            adjust_managed_page_count(page, 
--1);
-./drivers/virtio/virtio_balloon.c:175:  adjust_managed_page_count(page, 
--1);
-./drivers/virtio/virtio_balloon.c:196:  adjust_managed_page_count(page, 
-1);
-./mm/hugetlb.c:2158:                    adjust_managed_page_count(page, 
-1 << h->order);
-
-Regards,
-Arun
+Thanks,
+Mauro
