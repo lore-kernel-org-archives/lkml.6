@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE28C677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C3DC677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D7521470
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA5121476
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="asC2O+OP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D7521470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="btUMHL/p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA5121476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732220AbeJKXQr (ORCPT
+        id S1732232AbeJKXQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50718 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:16:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731315AbeJKXQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:16:45 -0400
+        id S1731315AbeJKXQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:16:48 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A890921477;
-        Thu, 11 Oct 2018 15:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75EC2213A2;
+        Thu, 11 Oct 2018 15:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272939;
-        bh=NDe3QPncw/y/mvZru5feYqEhYNV2uHxmWaCrtfQswak=;
+        s=default; t=1539272942;
+        bh=gHMGYY92B9tyEPBFSucpaWO+MmsPczC7sco7RypSCfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=asC2O+OPuFQyAYmPyvLl5HOCLrEezTHegNmXbR/IPisR20yKr1mQCmAKWpo5SENq0
-         42/C4+sv8dBMkGnyd4wE6j0zGjhor67xO3v61lNS6NTjCxpj09Xj7G9fIJpQeA2l1u
-         mbYPu8ovF4OXzXbFL6rfrm0MG6fN1rqbY6Lt/BOE=
+        b=btUMHL/p+Aiysc5/XRvs4Kk27iQLNfdfNHqZwU9aE3Ul6jtUELHt0uSRfVbDW82mW
+         0CgD/VX5scSHQDBVVYSOt50SSVhXJifQNHAsiEjqoaB6+8+mK3kvLeQVqBbs7AyoVL
+         mYrZZ8p84X/qMja4FRHORdElAhbXG2cE1FpF30K4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
-        Ying Xue <ying.xue@windriver.com>,
+        stable@vger.kernel.org,
+        syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
         Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 40/44] tipc: call start and done ops directly in __tipc_nl_compat_dumpit()
-Date:   Thu, 11 Oct 2018 17:40:18 +0200
-Message-Id: <20181011152454.213513083@linuxfoundation.org>
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.18 41/44] ucma: fix a use-after-free in ucma_resolve_ip()
+Date:   Thu, 11 Oct 2018 17:40:19 +0200
+Message-Id: <20181011152454.260889796@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
 References: <20181011152452.571669983@linuxfoundation.org>
@@ -65,112 +68,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 8f5c5fcf353302374b36232d6885c1a3b579e5ca upstream.
+commit 5fe23f262e0548ca7f19fb79f89059a60d087d22 upstream.
 
-__tipc_nl_compat_dumpit() uses a netlink_callback on stack,
-so the only way to align it with other ->dumpit() call path
-is calling tipc_dump_start() and tipc_dump_done() directly
-inside it. Otherwise ->dumpit() would always get NULL from
-cb->args[].
+There is a race condition between ucma_close() and ucma_resolve_ip():
 
-But tipc_dump_start() uses sock_net(cb->skb->sk) to retrieve
-net pointer, the cb->skb here doesn't set skb->sk, the net pointer
-is saved in msg->net instead, so introduce a helper function
-__tipc_dump_start() to pass in msg->net.
+CPU0				CPU1
+ucma_resolve_ip():		ucma_close():
 
-Ying pointed out cb->args[0...3] are already used by other
-callbacks on this call path, so we can't use cb->args[0] any
-more, use cb->args[4] instead.
+ctx = ucma_get_ctx(file, cmd.id);
 
-Fixes: 9a07efa9aea2 ("tipc: switch to rhashtable iterator")
-Reported-and-tested-by: syzbot+e93a2c41f91b8e2c7d9b@syzkaller.appspotmail.com
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Cc: Ying Xue <ying.xue@windriver.com>
+        list_for_each_entry_safe(ctx, tmp, &file->ctx_list, list) {
+                mutex_lock(&mut);
+                idr_remove(&ctx_idr, ctx->id);
+                mutex_unlock(&mut);
+		...
+                mutex_lock(&mut);
+                if (!ctx->closing) {
+                        mutex_unlock(&mut);
+                        rdma_destroy_id(ctx->cm_id);
+		...
+                ucma_free_ctx(ctx);
+
+ret = rdma_resolve_addr();
+ucma_put_ctx(ctx);
+
+Before idr_remove(), ucma_get_ctx() could still find the ctx
+and after rdma_destroy_id(), rdma_resolve_addr() may still
+access id_priv pointer. Also, ucma_put_ctx() may use ctx after
+ucma_free_ctx() too.
+
+ucma_close() should call ucma_put_ctx() too which tests the
+refcnt and waits for the last one releasing it. The similar
+pattern is already used by ucma_destroy_id().
+
+Reported-and-tested-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    2 ++
- net/tipc/socket.c         |   17 +++++++++++------
- net/tipc/socket.h         |    1 +
- 3 files changed, 14 insertions(+), 6 deletions(-)
+ drivers/infiniband/core/ucma.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -185,6 +185,7 @@ static int __tipc_nl_compat_dumpit(struc
- 		return -ENOMEM;
- 
- 	buf->sk = msg->dst_sk;
-+	__tipc_dump_start(&cb, msg->net);
- 
- 	do {
- 		int rem;
-@@ -216,6 +217,7 @@ static int __tipc_nl_compat_dumpit(struc
- 	err = 0;
- 
- err_out:
-+	tipc_dump_done(&cb);
- 	kfree_skb(buf);
- 
- 	if (err == -EMSGSIZE) {
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -3233,7 +3233,7 @@ int tipc_nl_sk_walk(struct sk_buff *skb,
- 				       struct netlink_callback *cb,
- 				       struct tipc_sock *tsk))
- {
--	struct rhashtable_iter *iter = (void *)cb->args[0];
-+	struct rhashtable_iter *iter = (void *)cb->args[4];
- 	struct tipc_sock *tsk;
- 	int err;
- 
-@@ -3269,8 +3269,14 @@ EXPORT_SYMBOL(tipc_nl_sk_walk);
- 
- int tipc_dump_start(struct netlink_callback *cb)
- {
--	struct rhashtable_iter *iter = (void *)cb->args[0];
--	struct net *net = sock_net(cb->skb->sk);
-+	return __tipc_dump_start(cb, sock_net(cb->skb->sk));
-+}
-+EXPORT_SYMBOL(tipc_dump_start);
-+
-+int __tipc_dump_start(struct netlink_callback *cb, struct net *net)
-+{
-+	/* tipc_nl_name_table_dump() uses cb->args[0...3]. */
-+	struct rhashtable_iter *iter = (void *)cb->args[4];
- 	struct tipc_net *tn = tipc_net(net);
- 
- 	if (!iter) {
-@@ -3278,17 +3284,16 @@ int tipc_dump_start(struct netlink_callb
- 		if (!iter)
- 			return -ENOMEM;
- 
--		cb->args[0] = (long)iter;
-+		cb->args[4] = (long)iter;
- 	}
- 
- 	rhashtable_walk_enter(&tn->sk_rht, iter);
- 	return 0;
- }
--EXPORT_SYMBOL(tipc_dump_start);
- 
- int tipc_dump_done(struct netlink_callback *cb)
- {
--	struct rhashtable_iter *hti = (void *)cb->args[0];
-+	struct rhashtable_iter *hti = (void *)cb->args[4];
- 
- 	rhashtable_walk_exit(hti);
- 	kfree(hti);
---- a/net/tipc/socket.h
-+++ b/net/tipc/socket.h
-@@ -69,5 +69,6 @@ int tipc_nl_sk_walk(struct sk_buff *skb,
- 				       struct netlink_callback *cb,
- 				       struct tipc_sock *tsk));
- int tipc_dump_start(struct netlink_callback *cb);
-+int __tipc_dump_start(struct netlink_callback *cb, struct net *net);
- int tipc_dump_done(struct netlink_callback *cb);
- #endif
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1759,6 +1759,8 @@ static int ucma_close(struct inode *inod
+ 		mutex_lock(&mut);
+ 		if (!ctx->closing) {
+ 			mutex_unlock(&mut);
++			ucma_put_ctx(ctx);
++			wait_for_completion(&ctx->comp);
+ 			/* rdma_destroy_id ensures that no event handlers are
+ 			 * inflight for that id before releasing it.
+ 			 */
 
 
