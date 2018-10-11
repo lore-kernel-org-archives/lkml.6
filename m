@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716FBC32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B00C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BC92087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F3232098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:39:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EU4ahcr4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BC92087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vfy6dmma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F3232098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeJKXHh (ORCPT
+        id S1730053AbeJKXHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:07:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37376 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:07:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJKXHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:07:36 -0400
+        id S1726721AbeJKXHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:07:38 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 969972098A;
-        Thu, 11 Oct 2018 15:39:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C6A020652;
+        Thu, 11 Oct 2018 15:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272392;
-        bh=AR5Oy3+s1WfAIERaGETDOzoHHgspCNU5eF2S3soBjIA=;
+        s=default; t=1539272394;
+        bh=qTe/izQQzrR5L3vHCPlw7JI83nhXuGNJrZ9dRjemZwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EU4ahcr4dUjg3YlR882sKxCeoR7/1d+O+3q20LjuG7wsVXU8WJK5IJHQ2wWVv6R/7
-         E/ZigoQkoir9XePuZEo42ExBrjcAN3TQsNwj41u/52MXN3md5V2mHqtxk9hC1db1An
-         2Y1rDffMh3185U1aH9F/zva2VE54JcZDv3jbG+cc=
+        b=vfy6dmmaMGtY0qE3Q1R1nBpUM4qelqvbXooheU4ooClT6gX5cz89nrF+DwG+jGpGM
+         xlA8s8o+MpGK0LN1gIxU7IPDKkwvDQQspow1gxVpSaAGZnTO6OA1jHzhSBOLCQ/zSM
+         wDrjeXxiLxSsHXN18bsN7dlH0rNKa+3HFLqwH4g4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wei Liu <wei.liu2@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 092/120] cifs: read overflow in is_valid_oplock_break()
-Date:   Thu, 11 Oct 2018 17:34:33 +0200
-Message-Id: <20181011152553.607091455@linuxfoundation.org>
+Subject: [PATCH 3.18 093/120] xen/manage: dont complain about an empty value in control/sysrq node
+Date:   Thu, 11 Oct 2018 17:34:34 +0200
+Message-Id: <20181011152553.648459419@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -66,41 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit 097f5863b1a0c9901f180bbd56ae7d630655faaa ]
+[ Upstream commit 87dffe86d406bee8782cac2db035acb9a28620a7 ]
 
-We need to verify that the "data_offset" is within bounds.
+When guest receives a sysrq request from the host it acknowledges it by
+writing '\0' to control/sysrq xenstore node. This, however, make xenstore
+watch fire again but xenbus_scanf() fails to parse empty value with "%c"
+format string:
 
-Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+ sysrq: SysRq : Emergency Sync
+ Emergency Sync complete
+ xen:manage: Error -34 reading sysrq code in control/sysrq
+
+Ignore -ERANGE the same way we already ignore -ENOENT, empty value in
+control/sysrq is totally legal.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/misc.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/xen/manage.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -405,9 +405,17 @@ is_valid_oplock_break(char *buffer, stru
- 			(struct smb_com_transaction_change_notify_rsp *)buf;
- 		struct file_notify_information *pnotify;
- 		__u32 data_offset = 0;
-+		size_t len = srv->total_read - sizeof(pSMBr->hdr.smb_buf_length);
-+
- 		if (get_bcc(buf) > sizeof(struct file_notify_information)) {
- 			data_offset = le32_to_cpu(pSMBr->DataOffset);
- 
-+			if (data_offset >
-+			    len - sizeof(struct file_notify_information)) {
-+				cifs_dbg(FYI, "invalid data_offset %u\n",
-+					 data_offset);
-+				return true;
-+			}
- 			pnotify = (struct file_notify_information *)
- 				((char *)&pSMBr->hdr.Protocol + data_offset);
- 			cifs_dbg(FYI, "dnotify on %s Action: 0x%x\n",
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -277,9 +277,11 @@ static void sysrq_handler(struct xenbus_
+ 		/*
+ 		 * The Xenstore watch fires directly after registering it and
+ 		 * after a suspend/resume cycle. So ENOENT is no error but
+-		 * might happen in those cases.
++		 * might happen in those cases. ERANGE is observed when we get
++		 * an empty value (''), this happens when we acknowledge the
++		 * request by writing '\0' below.
+ 		 */
+-		if (err != -ENOENT)
++		if (err != -ENOENT && err != -ERANGE)
+ 			pr_err("Error %d reading sysrq code in control/sysrq\n",
+ 			       err);
+ 		xenbus_transaction_end(xbt, 1);
 
 
