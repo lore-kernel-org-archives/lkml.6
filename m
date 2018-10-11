@@ -2,116 +2,136 @@ Return-Path: <SRS0=bA34=MX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD53C677FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58730C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D136520841
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:33:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="IIL1NgBH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D136520841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 18B0020841
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B0020841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeJKXB3 (ORCPT
+        id S1728304AbeJKXBj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:01:29 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:54832 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeJKXB3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:01:29 -0400
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w9BFXWKU022455;
-        Fri, 12 Oct 2018 00:33:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9BFXWKU022455
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539272013;
-        bh=Cp/gB/J2n37Z+7imvuePQbkNegwSmHeGuREzCbR+aC4=;
-        h=From:Date:Subject:To:Cc:From;
-        b=IIL1NgBHWwgaoafFJv7nI4e1K6KxoJLzA1dZxCVUwjNRsMWwbKKWCyYf+SM3tr25i
-         phQx3cH4+119X567/zRuIjKLeaXOzZIHw0ALUZaWOZOlFH96zJRRdmMSbtY1kDSZe+
-         /JAnBM1n6S+FqGdDOsdq9iiFilIFnoo/WKYMMaw7Nex97Yh+kotKD5Oevn+UHyMxh9
-         17fZ5rMttlaYGHutqzNfiZKw9eepYUv+nlIV67s459bNKqtloEUVIBf6IsG2iyHGBb
-         m1RVZT1wnFsZyr/L86osAD2DVzYR+P9kfhwKWiQDOWojPQ3qdfLkuwHfnNVil/b9iA
-         WFmEjWo+rpaNQ==
-X-Nifty-SrcIP: [209.85.221.176]
-Received: by mail-vk1-f176.google.com with SMTP id b2-v6so2246398vkd.11;
-        Thu, 11 Oct 2018 08:33:33 -0700 (PDT)
-X-Gm-Message-State: ABuFfog5aEcrTSHTmzeiX+VwDKS/jf9XBz0CLd3yHPwDwFhcwYPw4noc
-        M88dHAzyxNcW06RnYGORo3W67AiBxtHhpNcWsPc=
-X-Google-Smtp-Source: ACcGV60BzHF5d3IRz1CQGRigPHPrkzN9qdT8J5C0XjcBzTSl38fbEsDdlHrpKwTIxqsau0POoSyOz7UujmuP3RcJ4Xo=
-X-Received: by 2002:a1f:b215:: with SMTP id b21-v6mr922120vkf.0.1539272011904;
- Thu, 11 Oct 2018 08:33:31 -0700 (PDT)
+        Thu, 11 Oct 2018 19:01:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbeJKXBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:01:39 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E341C4DD49;
+        Thu, 11 Oct 2018 15:33:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EA23B19A7;
+        Thu, 11 Oct 2018 15:33:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com>
+References: <5c6f3d62-4cec-2aea-4693-62928611c526@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 12 Oct 2018 00:32:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQHYH-SM+fZ0PkLYYCpeHZ-yYDKQpFeJKb7BCR7LtCr0A@mail.gmail.com>
-Message-ID: <CAK7LNAQHYH-SM+fZ0PkLYYCpeHZ-yYDKQpFeJKb7BCR7LtCr0A@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v4.19-rc8
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17404.1539272035.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 11 Oct 2018 16:33:55 +0100
+Message-ID: <17405.1539272035@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 11 Oct 2018 15:33:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Okay, this appears to fix the cycle-creation problem.
 
-Please pull a couple of Kbuild fixes.
+It could probably be improved by comparing sequence numbers as Alan suggests,
+but I need to work out how to get at that.
 
-Thanks.
+David
+---
+commit 069c3376f7849044117c866aeafbb1a525f84926
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Oct 4 23:18:59 2018 +0100
 
+    fixes
 
-
-The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
-
-  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v4.19-2
-
-for you to fetch changes up to 5318321d367c21ca1fe9eb00caefc239c938750a:
-
-  samples: disable CONFIG_SAMPLES for UML (2018-10-11 02:15:46 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v4.19 (2nd)
-
- - Fix warnings from recordmcount.pl when building with Clang
-
- - Allow Clang to use GNU toolchains correctly
-
- - Disable CONFIG_SAMPLES for UML to avoid build error
-
-----------------------------------------------------------------
-Joel Stanley (1):
-      ftrace: Build with CPPFLAGS to get -Qunused-arguments
-
-Masahiro Yamada (1):
-      samples: disable CONFIG_SAMPLES for UML
-
-Stefan Agner (1):
-      kbuild: allow to use GCC toolchain not in Clang search path
-
- Makefile               | 8 +++++---
- samples/Kconfig        | 1 +
- scripts/Makefile.build | 2 +-
- 3 files changed, 7 insertions(+), 4 deletions(-)
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+diff --git a/fs/internal.h b/fs/internal.h
+index 17029b30e196..47a6c80c3c51 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -172,6 +172,7 @@ extern void mnt_pin_kill(struct mount *m);
+  * fs/nsfs.c
+  */
+ extern const struct dentry_operations ns_dentry_operations;
++extern struct file_system_type nsfs;
+ 
+ /*
+  * fs/ioctl.c
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e969ded7d54b..25ecd8b3c76b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2388,6 +2388,27 @@ static inline int tree_contains_unbindable(struct mount *mnt)
+ 	return 0;
+ }
+ 
++/*
++ * Object if there are any nsfs mounts in the specified subtree.  These can act
++ * as pins for mount namespaces that aren't checked by the mount-cycle checking
++ * code, thereby allowing cycles to be made.
++ */
++static bool check_for_nsfs_mounts(struct mount *subtree)
++{
++	struct mount *p;
++	bool ret = false;
++
++	lock_mount_hash();
++	for (p = subtree; p; p = next_mnt(p, subtree))
++		if (p->mnt.mnt_sb->s_type == &nsfs)
++			goto out;
++
++	ret = true;
++out:
++	unlock_mount_hash();
++	return ret;
++}
++
+ static int do_move_mount(struct path *old_path, struct path *new_path)
+ {
+ 	struct path parent_path = {.mnt = NULL, .dentry = NULL};
+@@ -2442,6 +2463,8 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	if (IS_MNT_SHARED(p) && tree_contains_unbindable(old))
+ 		goto out1;
+ 	err = -ELOOP;
++	if (!check_for_nsfs_mounts(old))
++		goto out1;
+ 	for (; mnt_has_parent(p); p = p->mnt_parent)
+ 		if (p == old)
+ 			goto out1;
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index f069eb6495b0..d3abcd5c2a23 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -269,7 +269,7 @@ static struct dentry *nsfs_mount(struct file_system_type *fs_type,
+ 	return mount_pseudo(fs_type, "nsfs:", &nsfs_ops,
+ 			&ns_dentry_operations, NSFS_MAGIC);
+ }
+-static struct file_system_type nsfs = {
++struct file_system_type nsfs = {
+ 	.name = "nsfs",
+ 	.mount = nsfs_mount,
+ 	.kill_sb = kill_anon_super,
