@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249E2C32788
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0E8C677FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7B92098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31B9D20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja62Rgdt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7B92098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCL5TNci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B9D20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbeJKXFf (ORCPT
+        id S1729484AbeJKXFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33926 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:34 -0400
+        id S1727569AbeJKXFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:36 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC4420652;
-        Thu, 11 Oct 2018 15:37:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C77620652;
+        Thu, 11 Oct 2018 15:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272271;
-        bh=mVTfcyZl+lt3x7xh58FSQKx3cEGPw3vwTKF6ma5JlLw=;
+        s=default; t=1539272274;
+        bh=pg61y1vWR/1ahl1uXkEVw9fxFAPo5Q35kncDCyP2Y5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ja62RgdtSLq25WsGIVaEXkXVBrSE545Fno/ydTBUK1gNQEEhopL3c7l8CP7+UEVVF
-         ipD7iRU/2SjqUoKum99rlbr0KAIdgWkdRhULc+FNDzMaPjY2ZCNhGrSpuiPRuWNLYP
-         garzC3py/Nb4pkzLG8ag9k8HLaOxoJghQudMXKZA=
+        b=BCL5TNcizK9H1CvghyY7qeVBXOktQHtB2XQ/Z3HIjxRTi2uh/YjANkcYQMZdYM9Pz
+         gp7oOeKB+nuF6y4NQpoTH0qSCpTnW/WiqC0tudjgW6Hj8/sFkKUoRQDonlZqo+MQ6k
+         GL/AhufSr4iI+O+fsWv6dvuL0QvHwT/9Fy1nvK9k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 3.18 049/120] serial: cpm_uart: return immediately from console poll
-Date:   Thu, 11 Oct 2018 17:33:50 +0200
-Message-Id: <20181011152551.775364900@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 023/120] uwb: hwa-rc: fix memory leak at probe
+Date:   Thu, 11 Oct 2018 17:33:24 +0200
+Message-Id: <20181011152550.602859665@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -61,48 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-commit be28c1e3ca29887e207f0cbcd294cefe5074bab6 upstream.
+[ Upstream commit 11b71782c1d10d9bccc31825cf84291cd7588a1e ]
 
-kgdb expects poll function to return immediately and
-returning NO_POLL_CHAR when no character is available.
+hwarc_probe() allocates memory for hwarc, but does not free it
+if uwb_rc_add() or hwarc_get_version() fail.
 
-Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/uwb/hwa-rc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -1054,8 +1054,8 @@ static int poll_wait_key(char *obuf, str
- 	/* Get the address of the host memory buffer.
- 	 */
- 	bdp = pinfo->rx_cur;
--	while (bdp->cbd_sc & BD_SC_EMPTY)
--		;
-+	if (bdp->cbd_sc & BD_SC_EMPTY)
-+		return NO_POLL_CHAR;
- 
- 	/* If the buffer address is in the CPM DPRAM, don't
- 	 * convert it.
-@@ -1089,7 +1089,11 @@ static int cpm_get_poll_char(struct uart
- 		poll_chars = 0;
- 	}
- 	if (poll_chars <= 0) {
--		poll_chars = poll_wait_key(poll_buf, pinfo);
-+		int ret = poll_wait_key(poll_buf, pinfo);
-+
-+		if (ret == NO_POLL_CHAR)
-+			return ret;
-+		poll_chars = ret;
- 		pollp = poll_buf;
- 	}
- 	poll_chars--;
+--- a/drivers/uwb/hwa-rc.c
++++ b/drivers/uwb/hwa-rc.c
+@@ -875,6 +875,7 @@ error_get_version:
+ error_rc_add:
+ 	usb_put_intf(iface);
+ 	usb_put_dev(hwarc->usb_dev);
++	kfree(hwarc);
+ error_alloc:
+ 	uwb_rc_put(uwb_rc);
+ error_rc_alloc:
 
 
