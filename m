@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7EFC677FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 249E2C32788
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 329612087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD7B92098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 11 Oct 2018 15:37:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqqFKMaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329612087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja62Rgdt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7B92098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbeJKXFb (ORCPT
+        id S1729471AbeJKXFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 11 Oct 2018 19:05:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
+        Thu, 11 Oct 2018 19:05:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727569AbeJKXFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:05:31 -0400
+        id S1727569AbeJKXFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:05:34 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020512087A;
-        Thu, 11 Oct 2018 15:37:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDC4420652;
+        Thu, 11 Oct 2018 15:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539272268;
-        bh=noSkj90QdSodjf/AaO+4UpY8JBGTQACIZdL5gE6r8Ig=;
+        s=default; t=1539272271;
+        bh=mVTfcyZl+lt3x7xh58FSQKx3cEGPw3vwTKF6ma5JlLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dqqFKMaWVFOvttzpz1PRRZvRyQy7en47HODuUu2gYYe80MEm7KMDPcifsuR2I4ovw
-         T7Pq8/eTY/zVztc09eIEYhmLEgKIDSAkuyan/Y5t9gfOgMNwS2a+v0MIcmFyUTFvF5
-         f2u77RKy+XV6ekJSs5CIRNR3o6Y28qrs8sD/aHWQ=
+        b=ja62RgdtSLq25WsGIVaEXkXVBrSE545Fno/ydTBUK1gNQEEhopL3c7l8CP7+UEVVF
+         ipD7iRU/2SjqUoKum99rlbr0KAIdgWkdRhULc+FNDzMaPjY2ZCNhGrSpuiPRuWNLYP
+         garzC3py/Nb4pkzLG8ag9k8HLaOxoJghQudMXKZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3.18 048/120] floppy: Do not copy a kernel pointer to user memory in FDGETPRM ioctl
-Date:   Thu, 11 Oct 2018 17:33:49 +0200
-Message-Id: <20181011152551.722569432@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 3.18 049/120] serial: cpm_uart: return immediately from console poll
+Date:   Thu, 11 Oct 2018 17:33:50 +0200
+Message-Id: <20181011152551.775364900@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
 References: <20181011152549.500488630@linuxfoundation.org>
@@ -61,46 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Whitcroft <apw@canonical.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 65eea8edc315589d6c993cf12dbb5d0e9ef1fe4e upstream.
+commit be28c1e3ca29887e207f0cbcd294cefe5074bab6 upstream.
 
-The final field of a floppy_struct is the field "name", which is a pointer
-to a string in kernel memory.  The kernel pointer should not be copied to
-user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
-including this "name" field.  This pointer cannot be used by the user
-and it will leak a kernel address to user-space, which will reveal the
-location of kernel code and data and undermine KASLR protection.
+kgdb expects poll function to return immediately and
+returning NO_POLL_CHAR when no character is available.
 
-Model this code after the compat ioctl which copies the returned data
-to a previously cleared temporary structure on the stack (excluding the
-name pointer) and copy out to userspace from there.  As we already have
-an inparam union with an appropriate member and that memory is already
-cleared even for read only calls make use of that as a temporary store.
-
-Based on an initial patch by Brian Belleville.
-
-CVE-2018-7755
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-Broke up long line.
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/floppy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3459,6 +3459,9 @@ static int fd_locked_ioctl(struct block_
- 					  (struct floppy_struct **)&outparam);
- 		if (ret)
- 			return ret;
-+		memcpy(&inparam.g, outparam,
-+				offsetof(struct floppy_struct, name));
-+		outparam = &inparam.g;
- 		break;
- 	case FDMSGON:
- 		UDP->flags |= FTD_MSG;
+--- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
++++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+@@ -1054,8 +1054,8 @@ static int poll_wait_key(char *obuf, str
+ 	/* Get the address of the host memory buffer.
+ 	 */
+ 	bdp = pinfo->rx_cur;
+-	while (bdp->cbd_sc & BD_SC_EMPTY)
+-		;
++	if (bdp->cbd_sc & BD_SC_EMPTY)
++		return NO_POLL_CHAR;
+ 
+ 	/* If the buffer address is in the CPM DPRAM, don't
+ 	 * convert it.
+@@ -1089,7 +1089,11 @@ static int cpm_get_poll_char(struct uart
+ 		poll_chars = 0;
+ 	}
+ 	if (poll_chars <= 0) {
+-		poll_chars = poll_wait_key(poll_buf, pinfo);
++		int ret = poll_wait_key(poll_buf, pinfo);
++
++		if (ret == NO_POLL_CHAR)
++			return ret;
++		poll_chars = ret;
+ 		pollp = poll_buf;
+ 	}
+ 	poll_chars--;
 
 
