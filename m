@@ -6,74 +6,76 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4B4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10507C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A26E52086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B984B20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFru0LbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26E52086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="siWXPnY/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B984B20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeJLTwz (ORCPT
+        id S1728659AbeJLTyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:52:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47080 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbeJLTwz (ORCPT
+        Fri, 12 Oct 2018 15:54:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36962 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728145AbeJLTyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:52:55 -0400
-Received: by mail-pl1-f195.google.com with SMTP id v5-v6so5857890plz.13;
-        Fri, 12 Oct 2018 05:20:42 -0700 (PDT)
+        Fri, 12 Oct 2018 15:54:21 -0400
+Received: by mail-pg1-f195.google.com with SMTP id c10-v6so5791095pgq.4;
+        Fri, 12 Oct 2018 05:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xhYIggIpeEn8sTmgTHVvnz0DVtwqj5X/9sD4mWFzXKw=;
-        b=CFru0LbFWekrE8bkPCQgayonNkGf6+Fo/ZrRVSKaTBPWioH4/F+th+2/0GTIHtFKhE
-         hEFxvQ902KN1RI0rNbNyFnsq+fQjAdcH/I4cgDK7drcQuDgzrlhaw1BYtmZh5Xmpo3Yf
-         8AVLSo/gHOAPcoQE516GIxoMqf0fKNl6fY7/HrOOAGN/3wAMl0VlyOd+35bVP/+/kv7V
-         URRWNNpdkU1BRp68/n4F26F/DTGKM4jb7HPHcLkqmbrp9DKzIL4Dxl9IFnn5A/iQh0ep
-         EoZjxizhDgzNlnrEmjIC7bnFwP2GSTnfDqhIlVWwHYSWkQzmplKcRDZAWAex5No69dE+
-         9mvg==
+        bh=F4R9ecJYnS9UPL7iseTAbNkPXffhDhUWTtc/W+PDDZM=;
+        b=siWXPnY/dNp5K8TfTLAmBLG17PpFAf4iG1Ij58H8Xd4IF+4ExZTVWukcQo+0P6awBO
+         3w2IdrgiS2cILU8XRqsWwePjOZR2dLyzGjXSNvjW7gR44mrG7EtG8ySvR8yY+x1WXuDr
+         E7x0B0SLwJbAtG7p0lxq5JHTW3VTLELo4vA27tt2Egl+j8D2fIMQPYEncrq4lZan3LNp
+         40Fxy+NwamKwFa2QX6ILjRMKg7jYExeF4K0Inkx0ifgg9vy0gvHz0+0k5cy+KgEo5jcb
+         VltKtmZGkzumC/shCKEAA1qWSewzgEFxAqFMwOSoq3RZGKAcQ6vIYlrB+I8iZuXxhXyJ
+         uTIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xhYIggIpeEn8sTmgTHVvnz0DVtwqj5X/9sD4mWFzXKw=;
-        b=T+AeIfFLx+JdM0Ct4SNriuYHkM8ZuiY7XGtqhNaaA3VRobEZDK9C32FcIXy4GtZY75
-         qnl9biHn5oZwMqRW0rqLkXzON3p1IiZCSYr5nS20hVLGGLa874A524raznB+YEcfhrBZ
-         L1eu138Q/mex12/AZ/4zoDm39YpM8MAMUDKokuueribfA4HRXPY1XsptVpe6ksqTHlYc
-         PbCrg/QSGt8JzdGj21ONNv5KJluRYFAE2X/Xg88rae7s4/cPOU2SJQPKc/KL/phO2tdk
-         NwqS6pCiBfB8byKwcbEdfsh68Bh0N3Nn1bzzvBBbKjmzXL8pvgHY68ZUGeXVuq9Gb02x
-         Gqug==
-X-Gm-Message-State: ABuFfohWXMhUwtG2gnyTDw1MBwSeVZLpZsyoTztT2YTnOX6bXQuIz3tW
-        8k5DyddmY4vKC80tDkDHlg++zN29
-X-Google-Smtp-Source: ACcGV61h84TCgMMEhIrf+kC+RW8P9UMwBD/A+5Tdz6pkkQlTEHdTSgxPiAQI9P6xSbetcabb5ZnXEQ==
-X-Received: by 2002:a17:902:4181:: with SMTP id f1-v6mr5593360pld.248.1539346842285;
-        Fri, 12 Oct 2018 05:20:42 -0700 (PDT)
+        bh=F4R9ecJYnS9UPL7iseTAbNkPXffhDhUWTtc/W+PDDZM=;
+        b=sJl4M3bsFNJL6Xzmbqn8y/zEYqbzoBNnpHYPThlP03eMxlHgNye8gzfeqoPtjeYUs0
+         WZVMws0taQRj5hn7XMLkKvm6x7GyAfSe0hJQd76gaHsAVjdZ6zbrQxUz7qkdbiDwqS/1
+         ZFUpJhD6/o/El8CPEWwlF+iWoRFhGL8vbjrx7kxj5KZNWspPzdOixsogEmBkKbBrrQM4
+         5Sf/bHaJBGOrv/YTKKDdsW41pC6AL3/MVZ+1B+Vhl0U+LWu+PTpU0XQANPkQRk0rUywE
+         dtKozfTs4/6KinAQOVUqvEA8TIKCZZgXSP+AnsQbajbeHUmmL0X59lMJbg73u3+VatG+
+         9fBQ==
+X-Gm-Message-State: ABuFfog9k64ComuxDwGOYNbOkPaJYavQ1Ah8I6HWZOQwxHe1tgETKQPb
+        XZbNdoptWCo9wDgjgmGIkxBOsMDR
+X-Google-Smtp-Source: ACcGV61p7MXXq4hhRMgClXeSlRF0JVlwhO2KHMeTNtX24u6Tqcvo9eu+EdrY+RjJUU60HO495eLAJw==
+X-Received: by 2002:a63:2019:: with SMTP id g25-v6mr5367987pgg.235.1539346927070;
+        Fri, 12 Oct 2018 05:22:07 -0700 (PDT)
 Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p84-v6sm2253059pfi.22.2018.10.12.05.20.41
+        by smtp.gmail.com with ESMTPSA id r73-v6sm2289587pfk.157.2018.10.12.05.22.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 05:20:41 -0700 (PDT)
-Subject: Re: [PATCH 4.9 00/35] 4.9.133-stable review
+        Fri, 12 Oct 2018 05:22:06 -0700 (PDT)
+Subject: Re: [PATCH 4.4 00/27] 4.4.161-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
+        "kernelci.org bot" <bot@kernelci.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-References: <20181011152520.174949126@linuxfoundation.org>
+References: <20181011152534.014964888@linuxfoundation.org>
+ <5bbfcd13.1c69fb81.477c6.d7d9@mx.google.com>
+ <20181012061427.GA19105@kroah.com>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <df9b09c5-b231-5b8f-7b26-7efcac86ddcf@roeck-us.net>
-Date:   Fri, 12 Oct 2018 05:20:40 -0700
+Message-ID: <7f367e7e-7046-0dd5-83c9-744e0036926a@roeck-us.net>
+Date:   Fri, 12 Oct 2018 05:22:05 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
+In-Reply-To: <20181012061427.GA19105@kroah.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,22 +84,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 08:35 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.133 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 10/11/2018 11:14 PM, Greg Kroah-Hartman wrote:
+> On Thu, Oct 11, 2018 at 03:22:11PM -0700, kernelci.org bot wrote:
+>>
+>>
+>> Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.4.y/kernel/v4.4.160-28-gb3522afcec59/
+>> Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y/kernel/v4.4.160-28-gb3522afcec59/
+>>
+>> Tree: stable-rc
+>> Branch: linux-4.4.y
+>> Git Describe: v4.4.160-28-gb3522afcec59
+>> Git Commit: b3522afcec59a6a8030ebf4397f5b285b3e804d2
+>> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+>> Tested: 39 unique boards, 20 SoC families, 13 builds out of 178
+>>
+>> Boot Regressions Detected:
+>>
+>> x86:
+>>
+>>      x86_64_defconfig:
+>>          qemu:
+>>              lab-baylibre: new failure (last pass: v4.4.160)
 > 
-> Responses should be made by Sat Oct 13 15:25:09 UTC 2018.
-> Anything received after that time might be too late.
+> Should I worry about this?
 > 
 
-
-[preliminary]
-
-powerpc:allmodconfig:
-
-drivers/macintosh/rack-meter.c: In function 'get_cpu_idle_time':
-drivers/macintosh/rack-meter.c:94:9: error: implicit declaration of function 'nsecs_to_cputime64'
+I didn't see anything useful in the log. My qemu tests all passed.
 
 Guenter
+
