@@ -2,97 +2,115 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD65C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528CFC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57892075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 191732075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pEOQq7tB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57892075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDvRO5nM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191732075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbeJLXRD (ORCPT
+        id S1729221AbeJLXRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:17:03 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34608 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729069AbeJLXRD (ORCPT
+        Fri, 12 Oct 2018 19:17:55 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36577 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728786AbeJLXRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:17:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f78-v6so626593pfe.1;
-        Fri, 12 Oct 2018 08:43:59 -0700 (PDT)
+        Fri, 12 Oct 2018 19:17:55 -0400
+Received: by mail-it1-f195.google.com with SMTP id c85-v6so18827673itd.1;
+        Fri, 12 Oct 2018 08:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bUZuo1gP6TErFWbVdCIQ8xdLbvYD18chsuGsK6YVOlo=;
-        b=pEOQq7tB3c2OfSQB2qBTSz1ksAWakQhWDISJpuKY57sqJo3Zpo5CPcP7lehQwtjnIF
-         8YI/V+QnccpC3aqEG0M/90eu41L6CqVkrQJiFuOWEWq/+lgLvTcTxRsH1w7jRNBNlsMI
-         VYOJAiGrhiItuwPC5NslMu+lArtUrs2aztI3AuhGW5nc9SONo+ST2MWJCeVRn1IgnRej
-         OvxnjSdSZJqXSKZgTBrqOK7Wiah7CDSurm3MUjVb3A52/id0xsOsFtUeZY9vFyGN7yyw
-         TXdBYwih16FrXacYHPz9vvRkR6JLDO4g9Yw7Agk29o9fD5bdP45pDk/0TOlew9UgyrjH
-         6bJQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xjp22+qgvLfc6zC63ECVLUiRfRlo2/9g+3Wm3uV09tQ=;
+        b=pDvRO5nM7xJIN5tTGvHi9Zr1DzhNfWGa9vfdVQp+Roap+Df3v/6jDdJXsDcj0t4tPD
+         ggpLc9Xt0cEV91gfzeSHw4QqBc2ZgncpxmQsO+Fnw9IiSlgHL0vujJ+4cYghVvvsOrq0
+         0+CFEiOBfhPilZ3owSp3RKTcCc5dLEn7u4biRLeu3JHKbr2wzJ/N/X7XBdMc5bORJqjM
+         3fgMOtaPwBIqIyzLiGVz5K0Bassyr8sJnK7cutcA9ZTMUusx25tXiO6qTlzI7DHsHQ7/
+         UyamjVuSXf50kHagCByXikh7IgD361E+0k+SP3gCkQZV6CnoJO35MwMItQemaZYQinsM
+         Zkng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bUZuo1gP6TErFWbVdCIQ8xdLbvYD18chsuGsK6YVOlo=;
-        b=e1jh7QqfYps4BA817gRJoYyvDEWsexMZqYDjIq13UPb2WJLzsa5Wke/N5gRf+t5cvs
-         K2GC9ycyPez5+S1oC9bMJw6vgtx+o5EVp6Ex2dIg8u3hb/Yi/ff4MPjurdFSoMUaBtKq
-         rzvR3UCUuBb81zF+FGxpMSo6NBmdJLgnlEFHQMeByPwhzMukaF+Q4fOh8NofLjIOFvu+
-         L211UQ0Ez86+9p+SznUXnx0YWXoyk+6poVQwZGL6ZTx7Sz8Y80BPzIT2+WAHKNAXnj4a
-         X9LHsm4cmkZC8NMs0YfwKpVHYUJYFYiDdsXUb0FZdFXRzt5OiSSybupRbiWqURHzH9Zn
-         Xbbg==
-X-Gm-Message-State: ABuFfojRzCb+axFDyXnG5aFM3ar7eV8FSN8AAgAD+3R841TwnnNYRFq4
-        PtIy49j+QDHfXPRB/tF7CWY=
-X-Google-Smtp-Source: ACcGV61xKSSi/6sfTjDU3iy29TA/Wt30tpGgO+4fwtY38pK2i9p3OjCZ8TnBeonrjoT+dBPoRilQQw==
-X-Received: by 2002:a63:5a0d:: with SMTP id o13-v6mr6001681pgb.267.1539359039284;
-        Fri, 12 Oct 2018 08:43:59 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm1864709pgo.34.2018.10.12.08.43.58
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xjp22+qgvLfc6zC63ECVLUiRfRlo2/9g+3Wm3uV09tQ=;
+        b=F6a/BBsvj3YvrlO0JYnKzv+0R5yE70uyyKaAprH2vhgSE3pLmpEb272SHRhg8tPHeg
+         3R0+Nojx3qkD6X2LqP4UiMGCZxL1aNdJWeiBTGgruBZTc/JiqltyWVWr+S1GFzjnD3Wq
+         vkkM5yGdjnwJxBr6pLWpxJ2PYCgnRK0hv3mf3JAjXNIqdAb5iZX0YUbv9iLI+ohHz4jO
+         hdiODEhLycCkAaOnFKDuqq8MfF14jgjkQHqXMPPHF248/B2e/f3j0g1Of+eE846JO1Sm
+         fHFZKXOvmR3pgjrxWAt0XC+I2fj80leq77GtCYIhPLf6yOaR/4sdv1o30GjGuLzYjGt9
+         93AA==
+X-Gm-Message-State: ABuFfogU/7PH8T66p1RWQOkidrUWJz7hVgzJuqt7S0UibpDdO5vfl8Ih
+        Jo/KzARV264ZG0N3RPDb4TFkTVoF
+X-Google-Smtp-Source: ACcGV61JWOwEPQTYvSdzNRUR0tJg67OF6isu3QHtsh6JOPCprFhGvL9SM6hqGofVQO3wRH3ysWI5bA==
+X-Received: by 2002:a02:3f5d:: with SMTP id c29-v6mr5498107jaf.107.1539359090100;
+        Fri, 12 Oct 2018 08:44:50 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id e78-v6sm11657170itc.4.2018.10.12.08.44.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 08:43:58 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 08:43:57 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.18 00/44] 4.18.14-stable review
-Message-ID: <20181012154357.GC13377@roeck-us.net>
-References: <20181011152452.571669983@linuxfoundation.org>
+        Fri, 12 Oct 2018 08:44:49 -0700 (PDT)
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     James Bottomley <jejb@linux.ibm.com>, ndesaulniers@google.com,
+        dhowells@redhat.com
+Cc:     natechancellor@gmail.com, ebiggers@google.com,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <1539357759.2656.7.camel@linux.ibm.com>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <16de2bb3-815a-f534-4618-af854c906017@gmail.com>
+Date:   Fri, 12 Oct 2018 10:44:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1539357759.2656.7.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 05:39:38PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.14 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi James,
+
+>> So instead of having unsigned char h3, can't we simply have bool h3
+>> or unsigned int h3?
 > 
-> Responses should be made by Sat Oct 13 15:24:36 UTC 2018.
-> Anything received after that time might be too late.
+> Given the ambiguity in the standards, the safe thing that will work for
+> all time and all potential compilers is a char *
 > 
 
-Build results:
-	total: 136 pass: 136 fail: 0
-Qemu test results:
-	total: 321 pass: 321 fail: 0
+All right.  You state this with certainty, but I'd still like you to 
+educate me why?
 
-Details are available at https://kerneltests.org/builders/.
+ From the links provided in the patch it seems that one cannot pass 
+char/float/short to va_start().  Fair enough.  So if we make h3 an 
+unsigned int, the issue goes away, no?
 
-Guenter
+  int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+                         unsigned int keylen, unsigned char *h1,
+-                       unsigned char *h2, unsigned char h3, ...);
++                       unsigned char *h2, unsigned int h3, ...);
+
+Regards,
+-Denis
+
