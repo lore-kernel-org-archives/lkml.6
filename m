@@ -2,204 +2,135 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35211C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB7C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83182087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A33820868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:47:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qFpdrdrz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83182087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qxSRSl+w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A33820868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeJLTQZ (ORCPT
+        id S1728360AbeJLTT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:16:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45378 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeJLTQZ (ORCPT
+        Fri, 12 Oct 2018 15:19:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:47053 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJLTT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:16:25 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0EB61258;
-        Fri, 12 Oct 2018 13:44:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539344659;
-        bh=0F2F90DlDyJ2gnJB6mkdXith5iNHf3tBPG5qjyZRi84=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qFpdrdrzHx/nO9DQCkU58AGiJeay+vm6XIcQovW8HFxhcCWHeDdsh5xUXEZnDZXM+
-         wFvzp1xNLMIome7xtwgL4ctVsKmQzXQ/ixpG7u3qINd9xoTRl9lG3nIReMZ8ZniXsm
-         cbiPCoBMHzKXzkXt171t0+/fupUttcQZ9TwJ7rOg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sandeep Jain <Sandeep_Jain@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx ICs
-Date:   Fri, 12 Oct 2018 14:44:23 +0300
-Message-ID: <1884479.fINZhmP2Mi@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
-References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-2-vz@mleia.com>
+        Fri, 12 Oct 2018 15:19:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n11-v6so13019051wru.13;
+        Fri, 12 Oct 2018 04:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DBhIKX0Co8MrWBtqcLwJBv8UaQ45Pc2j6GUQwu2qKeo=;
+        b=qxSRSl+w72uSOakrxLpJxdGBmianI3mzljT4e19diq7oiXnsmPrfF+RHQ6/+6n297n
+         gKl5ISkWoEBO7RddCdcfum1xQyzDjmGWZsALAEh8bwmRHXWRvXrwwnE8x7ugmlLovvD8
+         bTrgkp6c8VlsWlRLyQ35GtgOiZrGyAn9/Bn2KNsG3b+gEszPw2Z5N0w+rLotjNHNaVIw
+         PU8tcT7mKgri2Sv7ykNDWKT/IbYAPcx+toT+38eXTdYT3Aft1ksn8z1XlTDyPshE8lBT
+         sVuUsW1SEAgU0uVLCTUWz6aaTvboMsLFpU/58+BxzxGG9LUd0yQaLqLZcYvgONiYV0sY
+         4hWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DBhIKX0Co8MrWBtqcLwJBv8UaQ45Pc2j6GUQwu2qKeo=;
+        b=iNC1NJYh9gNhJ+xsA7ggRccvTnSl/xo2oxnFnVUQPStwXO4f+tldwhbFOk+0MBdoYQ
+         lJN+S+8MwLYPLs0L0Yvv7e36JB2vlmQoIzn57uzZV5tVgcB++aHS2VdOeab/06WkRgqs
+         xuT7Dpb/P4HXVB/mGTcoQk2+0Y7rYxLLEWGS92QhLtrKKvdDD/rXPPe7lIcxIj41FR+p
+         5YaJ8LSxBocQXkqRAgqeUSfmXSASbTM2X5PMJ+IbL+xhEtigDgyB4YAok6jHf+pv+hg6
+         3gK63NRQYuFinWRexQhNRpBd5kt0y7gaAZm9FnZ8GYGzsWka/Zu8pwEpDoTed5OvlDW3
+         JIfw==
+X-Gm-Message-State: ABuFfoj+11/dic81Us6RmPx0u6zOwB8uaWQsC9XqDaQyYC89lYyrDgir
+        yYJ4ZhhEx2dz9hxdQfqULAY=
+X-Google-Smtp-Source: ACcGV605AFO5S7ZYlJaKoI2PckyBgM4p3SnjwW3uxtICzm61FBgnoh9jrMBe9r2f4FqoHnzNGLHYsQ==
+X-Received: by 2002:adf:f6c4:: with SMTP id y4-v6mr5400556wrp.79.1539344871471;
+        Fri, 12 Oct 2018 04:47:51 -0700 (PDT)
+Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm1006444wrb.30.2018.10.12.04.47.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 04:47:50 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 13:47:49 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     linux-pwm@vger.kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jonathan@marek.ca, ctatlor97@gmail.com
+Subject: Re: [PATCH v2 0/3] treewide: add vibrator support for various MSM
+ SOCs
+Message-ID: <20181012114749.GC31561@ulmo>
+References: <20180926235112.25710-1-masneyb@onstation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
+Content-Disposition: inline
+In-Reply-To: <20180926235112.25710-1-masneyb@onstation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
 
-Thank you for the patch.
+--wxDdMuZNg1r63Hyj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday, 9 October 2018 00:11:59 EEST Vladimir Zapolskiy wrote:
-> From: Sandeep Jain <Sandeep_Jain@mentor.com>
-> 
-> The change adds device tree binding description of TI DS90Ux9xx
-> series of serializer and deserializer controllers which support video,
-> audio and control data transmission over FPD-III Link connection.
-> 
-> Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
-> [vzapolskiy: various updates and corrections of secondary importance]
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> ---
->  .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
-> b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt new file mode
-> 100644
-> index 000000000000..0733da88f7ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
-> @@ -0,0 +1,66 @@
-> +Texas Instruments DS90Ux9xx de-/serializer controllers
-> +
-> +Required properties:
-> +- compatible: Must contain a generic "ti,ds90ux9xx" value and
-> +	may contain one more specific value from the list:
+On Wed, Sep 26, 2018 at 07:51:09PM -0400, Brian Masney wrote:
+> This patch set adds support for the vibrator found on various Qualcomm
+> MSM SOCs. This is based on work from:
+>=20
+> Jonathan Marek from qcom,pwm-vibrator.c in the PostmarketOS repo:
+> https://gitlab.com/postmarketOS/linux-postmarketos/commit/7647fb36cb1cbd0=
+60f8b52087a68ab93583292b5
+>=20
+> Jongrak Kwon and Devin Kim from msm_pwm_vibrator.c in the downstream
+> Android 3.4.0 sources:
+> https://android.googlesource.com/kernel/msm/+/android-msm-lenok-3.10-loll=
+ipop-wear-release/drivers/misc/msm_pwm_vibrator.c
+>=20
+> Driver was tested on a LG Nexus 5 (hammerhead) phone using rumble-test:
+> https://git.collabora.com/cgit/user/sre/rumble-test.git/plain/rumble-test=
+=2Ec
 
-If it "may" contain one more specific value, when should that value be 
-present, and when can it be absent ?
+Looking at all of this it seems like this would be more appropriately
+implemented as a force-feedback input device directly. The only reason
+you seem to be making this a PWM driver is so that it can be used in
+conjunction with pwm-vibrator. The device itself doesn't seem to be a
+generic PWM in the way that the PWM framework expects it.
 
-> +	"ti,ds90ub925q",
-> +	"ti,ds90uh925q",
-> +	"ti,ds90ub927q",
-> +	"ti,ds90uh927q",
-> +	"ti,ds90ub926q",
-> +	"ti,ds90uh926q",
-> +	"ti,ds90ub928q",
-> +	"ti,ds90uh928q",
-> +	"ti,ds90ub940q",
-> +	"ti,ds90uh940q".
-> +
-> +Optional properties:
-> +- reg : Specifies the I2C slave address of a local de-/serializer.
+Thierry
 
-You should explain when the reg property is required and when it isn't. This 
-will in my opinion require a more detailed explanation of the DT model for 
-this device.
+--wxDdMuZNg1r63Hyj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +- power-gpios : GPIO line to control supplied power to the device.
+-----BEGIN PGP SIGNATURE-----
 
-As Marek mentioned, a regulator would be better. I would make it a mandatory 
-property, as the device always needs to be powered.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAieUACgkQ3SOs138+
+s6Edag//XmsTS/HXwJuq0xpBLVXaiqwnPyZAd64I2AhPdhysIBxVktH/+Bj8+Rt4
+XnRe3nksdvLciKBE2k88d4ZSVr2V3tyOHStXpQ9PS/7PhT7dzSfgXrlx4TtAiw86
+lCttOns77DoI6aDMEHWaLHl5nfof0OUasE37zxC8TsJlDmZZF2YevVlkNIqZNaV/
+htDNlMXOuldwpc6eqjRdQFgPF4jHpQBavFuUFy0rCxTzzwOoFxowWamA32BEUNT2
+pNB6SrKjiZkhboGXNCOcWqTDfzPxUJayBWTMFswU73+HzVphpbSVylei7SS7qdcd
+Uy7fM96A83eOQpwY1DKJUXoO8CA41ZRmtv5Ltu5WPwU6FeqzpnfFy/VWI2kIjhKP
+5x/6Mtumh6AIRkIwUDPfiLhalGDvfkuV8MbduXyZrZptmLF4svWUgSxkhC6SClsx
+rdwzj5PhVh9yLjhWHQYH95+dfaKOuw5/5CbON3VOl69msNCcaTP9asyL/MRDzGWe
+G8RekvDWHgfqW07Ichp3BPK6tYpbmAgE5fn5zOGCU9kkz+6Soe43ajhJWK1tXuPZ
+OGZEDdsOr60b+EKZg8Yi0+BYBbIjDEPBO47EC9SOs7shsLN6CreIJefm9o4FHyEY
+IkLiNPsbeGCifxgl4Zk6835MabDBHaiQ6cu+javUoFzCqIRGVWU=
+=yKT2
+-----END PGP SIGNATURE-----
 
-> +- ti,backward-compatible-mode : Overrides backward compatibility mode.
-> +	Possible values are "<1>" or "<0>".
-> +	If "ti,backward-compatible-mode" is not mentioned, the backward
-> +	compatibility mode is not touched and given by hardware pin strapping.
-
-This doesn't seem to be a device description to me, it's a software 
-configuration. You should handle it in drivers.
-
-> +- ti,low-frequency-mode : Overrides low frequency mode.
-> +	Possible values are "<1>" or "<0>".
-> +	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
-> +	is not touched and given by hardware pin strapping.
-
-This sounds the same. How about giving a real life example of a case where you 
-need to set these two properties to override the pin strapping, for the 
-purpose of discussing the DT bindings ?
-
-> +- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
-> +	MAPSEL pin value is ignored.
-> +- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
-> +	MAPSEL pin value is ignored.
-
-I assume those two are mutually exclusive, this should be documented, or you 
-could merge the two properties into one. Same comment as above though, why do 
-you need an override in DT ?
-
-> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
-> +	Possible values are "<1>" or "<0>".
-> +	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
-> +	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
-> +	strobed on the Falling edge of the PCLK.
-> +	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
-> +	value is not touched and given by hardware pin strapping.
-
-We have a standard property in Documentation/devicetree/bindings/media/video-
-interfaces.txt for this, please use it.
-
-> +- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
-> +	Possible values are from "<0>" to "<7>". The same value will be
-> +	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
-> +	found, then SSCG will be disabled.
-
-This makes sense in DT in my opinion, as EMC is a system property. I wonder 
-however if exposing the hardware register directly is the best option. Could 
-you elaborate on how a system designer will select which value to use, in 
-order to find the best DT description ?
-
-> +TI DS90Ux9xx serializers and deserializer device nodes may contain a number
-> +of children device nodes to describe and enable particular subcomponents
-> +found on ICs.
-
-As mentioned in my review of the cover letter I don't think this is necessary. 
-You can make the serializer and deserializer I2C controllers without subnodes. 
-Same goes for GPIO control.
-
-> +Example:
-> +
-> +serializer: serializer@c {
-> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
-> +	reg = <0xc>;
-> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
-> +	ti,backward-compatible-mode = <0>;
-> +	ti,low-frequency-mode = <0>;
-> +	ti,pixel-clock-edge = <0>;
-> +	...
-> +}
-> +
-> +deserializer: deserializer@3c {
-> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
-> +	reg = <0x3c>;
-> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
-> +	...
-> +}
-> +
-
-Extra blank line ?
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+--wxDdMuZNg1r63Hyj--
