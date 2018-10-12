@@ -2,198 +2,128 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A5EC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F4BC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C66E2075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E294620868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T3wwOvpr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C66E2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TDSHcY9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E294620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbeJLXN4 (ORCPT
+        id S1729150AbeJLXPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:13:56 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34244 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbeJLXNz (ORCPT
+        Fri, 12 Oct 2018 19:15:20 -0400
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:43052 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728884AbeJLXPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:13:55 -0400
-Received: by mail-it1-f196.google.com with SMTP id l127-v6so21721916ith.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:40:52 -0700 (PDT)
+        Fri, 12 Oct 2018 19:15:19 -0400
+Received: by mail-ot1-f43.google.com with SMTP id k9so12763316otl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:42:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Z4Ikpf136Bnbq55yv9w3mZmjl+mxMdtKQOPL53E8VuE=;
-        b=T3wwOvprOIFq/PyZD7mv0tAD0oQ08UYzFNcGVjCAYd7ZYkuCjcLyQUzPrYQP4tKuyX
-         PdYgxXArZzEXKISRAtGQXiv3IMFu0WHswtM2sNKehVnQQf6HBmz97vrgnsfnAcPeGjts
-         TMBxq9SEcSjQZcF93dKWnIec+Gyxu7IfwFhNk=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TGKNdRiAqsJ+9vv05Ju7TZ00qhmWcvpBHNFs7xhl1cA=;
+        b=TDSHcY9+usFj9Lg6fBVkeBPBqHzT6L5PlJk9Ilc3Y4gFExb+XQVPOKr6UwRbfZeGGr
+         CnOHT3sZzjpaVCeHWvPPHc0XsgGxVZUI8C4vTB2wH+MvpZKfJT0/+v5fhU0MPlqn532s
+         vkfcBVwsL8e1DeEB7T1mJD4JMapXBL3G5Rbx0p52OwGTzdPCBZYMjqG4yLAKCxCpiUuP
+         Tos9HVlJ+VLVsVE1x6wV6uDYbU+tyTpjiOcYT0/O/bCWdp7XS5Znf3+N7LMTY9UZ0xcE
+         C0Wq5z7dC/wlM7G06Vl7r+t7rzn8yks6Y3axC3NoTtnaRoljKzuzYN8vQKwzejAkJR7x
+         DIQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Z4Ikpf136Bnbq55yv9w3mZmjl+mxMdtKQOPL53E8VuE=;
-        b=i1o2J/F/b57lj1niPWrpVOL2G3zcCyuzvA+J0HEFCtvhf80cGillzm98bCoZpdD+o4
-         yzEySe/7YX7kSmZY3LRKJTYFpoH7UZuop2S15UeyxQCSTFcgqFHSM5Xmt5VTpmy6H7AR
-         Cm3FudYeM+3SXdNdsBttcyll6lhYwaBEPtSQdi4GiXYeaD6ylkjTFz5c9ojNCm4ANtB6
-         cP27mVaRfLLPcVBmu3+z8tFJ4MfrRA0fy2JnyRIXZ0E1PsgFVyUwX72z1AlzokOjeQyc
-         1eJKGWpH4tPFKZquduv08+rLzljIBfvrNWIq/VSTBFIV7uksj7XWU6inPR9AJizmUJ/u
-         D9Sw==
-X-Gm-Message-State: ABuFfogxsUCx3HeWku8ISR1yCgVas8XHrInnAj3sxtJ0xQIAngzYpaav
-        nWFR8Kcd1+Okg5diF39T8TkIe2Kj1o9R6xsm4oU6lQ==
-X-Google-Smtp-Source: ACcGV63Ep2S3KbNUsEEzb58VhPL3R4yzKmafHAAM0Bqp+nKhh6bvEtAUOYxzTzEngEOPjk4/sYl0WvPP8QJZewZHHtg=
-X-Received: by 2002:a02:8a11:: with SMTP id j17-v6mr5574478jak.131.1539358851623;
- Fri, 12 Oct 2018 08:40:51 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TGKNdRiAqsJ+9vv05Ju7TZ00qhmWcvpBHNFs7xhl1cA=;
+        b=EbYUyFdrhtK/pD6mHLR4VONIUegi2aeDWDUbnaCi2GV2sE0VLY+uOCBdp96EUxcS5d
+         n0mzWY8fTkumh07XyZoUuxXq0VSure1mtSJdXifxt5owp51wTs9QVJpiyTjaT1IucDNC
+         AeUrr/L4/ADNbQIQaYdG9nwkGYBeAN/PGnqzN4fdFv8ioQfcoRlB5SLAP2A08hssUotv
+         Kn23Qd0nfgYReyRjQE0x0v5oH6cZgEK73Ab75C4dyhdGjXU9ZaEndBANkH/PJl1mzcbE
+         Pt04Wg1+S2GcXLS3bGWBW33NcmsuoA3UrA0eAp5jLXfJJ5dhGG1PqpHV6PSrdT2k2p2y
+         ihmw==
+X-Gm-Message-State: ABuFfoj0ulBc5kfrZU8706OhoqBtr7WUK2g7iFqoOaROmXT6ugErCxE+
+        BLHNRFcQbIfRVEmTo/4ktynuQZ1v3ZWwT0U2D7tyXg==
+X-Google-Smtp-Source: ACcGV61cjUt8V8FxMstasCIxlwtkFTZbPan+26squLWCdASYJMXaZTFoJxrrQ4ij5X9rlgcwuVWIGtmeKc0CTlXBs9E=
+X-Received: by 2002:a9d:2f23:: with SMTP id h32-v6mr4393271otb.255.1539358936091;
+ Fri, 12 Oct 2018 08:42:16 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:5f97:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 08:40:51
- -0700 (PDT)
-In-Reply-To: <CAPDyKFpTbSdyqkKUY0HrkOo_YHcRJZ25FrJxVtzPOJ_aHRaE8Q@mail.gmail.com>
-References: <cover.1539341929.git.viresh.kumar@linaro.org> <ec154fa205967507c7352a2d0088346aba562ff2.1539341929.git.viresh.kumar@linaro.org>
- <CAPDyKFpTbSdyqkKUY0HrkOo_YHcRJZ25FrJxVtzPOJ_aHRaE8Q@mail.gmail.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Fri, 12 Oct 2018 21:10:51 +0530
-Message-ID: <CAKohpon+ZV5cc14nL56QgK3-8whM9_5MzTR4v6VpjXxhrwEygg@mail.gmail.com>
-Subject: Re: [PATCH V2 5/9] PM / Domains: Add genpd_opp_to_performance_state()
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181011185458.10186-1-kristen@linux.intel.com>
+ <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com>
+ <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com>
+ <CALCETrVG5=iqfohYxKSvAQx3DhzD95MhmDU3mU8+kCegps2cbw@mail.gmail.com>
+ <20181012152515.1d816906@alans-desktop> <77F59E25-5244-4CBC-A3CB-DCF863803CD2@amacapital.net>
+ <20181012160219.7d16ef59@alans-desktop>
+In-Reply-To: <20181012160219.7d16ef59@alans-desktop>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 12 Oct 2018 17:41:49 +0200
+Message-ID: <CAG48ez0r7UL675rxW-EypnfR+tF4LWT_GQkCevg7bTj9TkBM0Q@mail.gmail.com>
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>, kristen@linux.intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 October 2018 at 20:37, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 12 October 2018 at 13:11, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> The OPP core currently stores the performance state in the consumer
->> device's OPP table, but that is going to change going forward and
->> performance state will rather be set directly in the genpd's OPP table.
->>
->> For that we need to get the performance state for genpd's device
->> structure instead of the consumer device's structure. Add a new helper
->> to do that.
+On Fri, Oct 12, 2018 at 5:03 PM Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote=
+:
 >
-> I guess what puzzles me a bit here is that we are using a struct
-> device, while we actually should be talking about an OPP cookie
-> instead, right?
-
-The OPP cookie wouldn't get us to the platform specific conversion
-handler, for that we need something from the genpd itself and so its
-structure.
-
-> So the "genpd's device structure" here is not the same as the virtual
-> devices created by genpd to support multiple PM domains, right? Or is
-> it?
-
-You already found that I believe, it is genpd->dev.
-
->>
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  drivers/base/power/domain.c | 39 +++++++++++++++++++++++++++++++++++++
->>  include/linux/pm_domain.h   |  8 ++++++++
->>  2 files changed, 47 insertions(+)
->>
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index 4b5714199490..2c82194d2a30 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -2508,6 +2508,45 @@ int of_genpd_parse_idle_states(struct device_node *dn,
->>  }
->>  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
->>
->> +/**
->> + * genpd_opp_to_performance_state- Gets performance state of the genpd from its OPP node.
+> > My understanding is that the standard =E2=80=9Cbreadcrumb=E2=80=9D is t=
+hat a cache line is fetched into L1D, and that the cacheline in question wi=
+ll go into L1D even if it was previously not cached at all. So flushing L1D=
+ will cause the timing from a probe to be different, but the breadcrumb is =
+still there, and the attack will still work.
 >
-> Please rename to:
+> Flush not write back. The L1D is empty (or full of other stuff the way
+> the prototype I tested did it as x86 lacked a true L1 flushing primitive)
+
+What about the TLB? Once KPTI is unnecessary, are you going to need an
+extra TLB flush here to prevent PRIME+PROBE on the TLB?
+
+Also: Are you assuming that the attacker would only be able to do
+PRIME+PROBE, not FLUSH+RELOAD or other attacks that rely on shared
+memory (like FLUSH+FLUSH, or the MESI-based stuff that detects when a
+line stops being in modified state on another core)?
+
+> > > At best you have a microscopic window to attack it on the SMT pair.
+> >
+> > So only the extra clever attackers will pull it off. This isn=E2=80=99t=
+ all that reassuring.
 >
-> pm_genpd_opp_to_perfromance_state().
-
-Ok.
-
->> + *
->> + * @genpd_dev: Genpd's device for which the performance-state needs to be found.
+> It's going to be very hard for them to do that. You don't really have the
+> timing control in userspace to do that sort of thing easily.
 >
-> Maybe "genpd_dev" is the correct name to use here, as I understand
-> it's actually the device representing the genpd. However, in other
-> patches in this series you are also using "genpd_dev", while those
-> instead corresponds to the virtual created devices by genpd.
-
-Naming is a mess because I tried to follow the names you followed in
-your multiple domain support. You used genpd_dev for the virtual device :)
-
-> I would appreciate if we could make that more clear in the code.
+> At the end of the day it's an additional hardenening not a fix. It's
+> designed to provide extra protection for the cases we don't know about
+> until we find them and lfence them. All of this (and all sidechannel of
+> any kind) is merely about reducing the bandwidth an attacker can achieve.
 >
-> Maybe distinguish them as:
+> The idea is that it's cheap enough that it's worth doing.
 >
-> genpd_dev
-> genpd_virt_dev
-> or just:
+> > Or I would get a fancy new CPU and use UMONITOR and, unless UMONITOR is=
+ much cleverer than I suspect it is, the gig is up.  The time window for th=
+e attack could be as small as you want, and UMONITOR will catch it.
 >
-> dev
-> virt_dev
-
-Maybe, perhaps we should change domain.c with same naming for the internal
-coding handling multiple domains as well ? I will send the patch for
-that if you agree.
-
->> + * @opp: struct dev_pm_opp of the OPP for which we need to find performance
->> + *     state.
->> + *
->> + * Returns performance state encoded in the OPP of the genpd. This calls
->> + * platform specific genpd->opp_to_performance_state() callback to translate
->> + * power domain OPP to performance state.
->> + *
->> + * Returns performance state on success and 0 on failure.
->> + */
->> +unsigned int genpd_opp_to_performance_state(struct device *genpd_dev,
->> +                                           struct dev_pm_opp *opp)
->> +{
->> +       struct generic_pm_domain *genpd = NULL, *temp;
->> +       int state;
->> +
->> +       lockdep_assert_held(&gpd_list_lock);
+> That would be an interesting line of attack. You would still have to
+> navigate a fair bit of noise.
 >
-> What's this?
-
-Don't we need to protect with a lock while traversing the below list?
-Above is just a check to make sure lock is taken.
-
->> +
->> +       list_for_each_entry(temp, &gpd_list, gpd_list_node) {
->> +               if (&temp->dev == genpd_dev) {
->> +                       genpd = temp;
->> +                       break;
->> +               }
->> +       }
->
-> I think we can do better than this.
-
-I really want to :)
-
-> We really don't want to walk the list of genpds while doing this. The
-> caller should already know (if not now, we should fix it) that the
-> struct device is used to represent a genpd.
-
-Caller knows that genpd_dev here is genpd->dev really. But it doesn't
-have pointer of the genpd itself.
-
-> In other words, I am thinking using a container_of() or a finding a
-> function pointer through the struct device, in any case, it would be
-> better.
-
-I am stupid. Container-of will work just fine I belive.
+> Alan
