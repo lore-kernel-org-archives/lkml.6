@@ -2,182 +2,128 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A7DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB474C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6920A2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6920A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sf-tec.de
+	by mail.kernel.org (Postfix) with ESMTP id 636F82086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:08:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636F82086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeJLTkA (ORCPT
+        id S1728560AbeJLTkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:40:00 -0400
-Received: from mail.sf-mail.de ([78.47.74.12]:37399 "EHLO mail.sf-mail.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbeJLTkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:40:00 -0400
-Received: (qmail 6568 invoked from network); 12 Oct 2018 12:07:49 -0000
-Received: from mail.sf-mail.de ([::ffff:78.47.74.12]:50458 HELO webmail.sf-mail.de) (auth=eike@sf-mail.de)
-        by mail.sf-mail.de (Qsmtpd 0.34dev) with (DHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA
-        for <firoz.khan@linaro.org>; Fri, 12 Oct 2018 14:07:49 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Fri, 12 Oct 2018 15:40:49 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50239 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728040AbeJLTkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 15:40:49 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gAwFA-0005NX-1D; Fri, 12 Oct 2018 14:08:36 +0200
+Message-ID: <1539346114.6204.5.camel@pengutronix.de>
+Subject: Re: [PATCH v2] ARC: HSDK: improve reset driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>
+Date:   Fri, 12 Oct 2018 14:08:34 +0200
+In-Reply-To: <20180928162856.4726-1-Eugeniy.Paltsev@synopsys.com>
+References: <20180928162856.4726-1-Eugeniy.Paltsev@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 12 Oct 2018 14:07:47 +0200
-From:   Rolf Eike Beer <eike-kernel@sf-tec.de>
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, linux-parisc-owner@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
-In-Reply-To: <1539337442-3676-4-git-send-email-firoz.khan@linaro.org>
-References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
- <1539337442-3676-4-git-send-email-firoz.khan@linaro.org>
-Message-ID: <c6280818c999449646ec216984f2df9e@sf-tec.de>
-X-Sender: eike-kernel@sf-tec.de
-User-Agent: Roundcube Webmail/1.3.7
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Firoz Khan wrote:
+Hi Eugeniy,
 
-> diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh
-> b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> new file mode 100644
-> index 0000000..607d4ca
-> --- /dev/null
-> +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> @@ -0,0 +1,35 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +in="$1"
-> +out="$2"
-> +my_abis=`echo "($3)" | tr ',' '|'`
+thank you for the update.
 
-Any reason not to use $() instead of backticks?
-
-> +prefix="$4"
-> +offset="$5"
-> +
-> +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
-> +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-> +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
-> +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> +    echo "#ifndef ${fileguard}"
-> +    echo "#define ${fileguard}"
-> +    echo ""
-> +
-> +    nxt=0
-> +    while read nr abi name entry compat ; do
-> +	if [ -z "$offset" ]; then
-> +	    echo -e "#define __NR_${prefix}${name}\t$nr"
-
-This mixed indentation with both tabs and spaces is a bit messy.
-
-> +	else
-> +	    echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
-> +	fi
-> +	nxt=$nr
-> +	let nxt=nxt+1
-
-Why do you use let here when you do $(()) calculations at other places?
-
-> +    done
-> +
-> +    echo ""
-> +    echo "#ifdef __KERNEL__"
-> +    echo -e "#define __NR_syscalls\t$nxt"
-> +    echo "#endif"
-> +    echo ""
-> +    echo "#endif /* ${fileguard} */"
-> +) > "$out"
-> diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh
-> b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> new file mode 100644
-> index 0000000..04abde7
-> --- /dev/null
-> +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> @@ -0,0 +1,46 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +in="$1"
-> +out="$2"
-> +my_abis=`echo "($3)" | tr ',' '|'`
-> +offset="$4"
-> +
-> +emit() {
-> +    nxt="$1"
-> +    if [ -z "$offset" ]; then
-> +	nr="$2"
-> +    else
-> +	nr="$2"
-> +	nr=$((nr+offset))
-
-This could be one line, no? Or just set offset to 0 if it is empty and 
-avoid that if alltogether.
-
-> +    fi
-> +    entry="$3"
-> +
-> +    while [ $nxt -lt $nr ]; do
-> +	echo "__SYSCALL($nxt, sys_ni_syscall, )"
-> +        let nxt=nxt+1
-> +    done
-> +    echo "__SYSCALL($nxt, $entry, )"
+On Fri, 2018-09-28 at 19:28 +0300, Eugeniy Paltsev wrote:
+> As for today HSDK reset driver implements only
+> .reset() callback.
+> 
+> In case of driver which implements one of standard
+> reset controller usage pattern
+> (call *_deassert() in probe(), call *_assert() in remove())
+> that leads to inoperability of this reset driver.
+> 
+> Improve HSDK reset driver by calling .reset() callback inside of
+> .deassert() callback to avoid each reset controller
+> user adaptation for work with both reset methods
+> (reset() and {.assert() & .deassert()} pair)
+> 
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
+> Changes v1->v2:
+>  * Don't call hsdk_reset_reset in .assert callback.
+> 
+>  drivers/reset/reset-hsdk.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/reset/reset-hsdk.c b/drivers/reset/reset-hsdk.c
+> index 8bce391c6943..399440f197c5 100644
+> --- a/drivers/reset/reset-hsdk.c
+> +++ b/drivers/reset/reset-hsdk.c
+> @@ -84,8 +84,21 @@ static int hsdk_reset_reset(struct reset_controller_dev *rcdev,
+>  	return ret;
+>  }
+>  
+> +static int hsdk_reset_dummy(struct reset_controller_dev *rcd, unsigned long id)
+> +{
+> +	return 0;
 > +}
 > +
-> +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> +    if [ -z "$offset" ]; then
-> +	nxt=0
-> +    else
-> +	nxt=$offset
-> +    fi
+> +/*
+> + * Doing real reset from .assert isn't necessary/useful here. So we pass
+> + * 'hsdk_reset_dummy' to .assert callback to prevent -ENOTSUPP returning by
+> + * reset_control_assert() to make happy drivers which check
+> + * reset_control_{assert | deassert} return status.
+> + */
+>  static const struct reset_control_ops hsdk_reset_ops = {
+>  	.reset	= hsdk_reset_reset,
+> +	.assert = hsdk_reset_dummy,
 
-Another argument for offset=0 as default.
+Is this part really necessary though? reset_control_assert already
+returns 0 in shared mode, so the only thing this does is make
+reset_control_assert return 0 instead of -ENOTSUPP in exclusive mode.
 
-> +
-> +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
+The documentation states that calling reset_control_assert "on an
+exclusive reset controller guarantees that the reset will be asserted."
+Since this is clearly not the case with this driver, it is appropriate
+to keep returning an error in this case.
 
-"<<<" is a bash extension and will not work with /bin/sh.
+If there is a driver that requests an exclusive reset control, calls
+reset_control_assert, and then checks the error value to see whether
+asserting the reset succeeded, it should be made aware that
+we couldn't actually assert the reset line as requested. If the driver
+can continue operation even though the reset line was not asserted,
+it should ignore the error.
 
-> +    while read nr abi name entry compat ; do
-> +	if [ $my_abi = "compat" ]; then
-> +	    if [ -z "$compat" ]; then
-> +		emit $nxt $nr $entry
-> +	    else
-> +		emit $nxt $nr $compat
-> +	    fi
-> +	else
-> +	    emit $nxt $nr $entry
-> +	fi
+So if you need to hide this error, I'd like to know the actual case that
+is fixed by this, to see if we can't fix it in a better way.
 
-I would go for a local variable being set to $compat or $entry and 
-calling emit at only one place. And there should be only one if with 2 
-expressions, no need for 3 branches.
+> +	.deassert = hsdk_reset_reset,
 
-> +        let nxt=nxt+1
+This part is fine.
 
-Inconsistent indentation.
+>  };
+>  
+>  static int hsdk_reset_probe(struct platform_device *pdev)
 
-> +    done
-> +) > "$out"
-
-Eike
+regards
+Philipp
