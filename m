@@ -2,139 +2,77 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F801C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B83BC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 650EC2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CB32098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="gh9nXKK1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650EC2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBRC0+VE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5CB32098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbeJLTDU (ORCPT
+        id S1728333AbeJLTDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:03:20 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:50952 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbeJLTDU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:03:20 -0400
-Date:   Fri, 12 Oct 2018 11:31:13 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1539343877;
-        bh=dk0fdUuD56CSSkiam030Dq9JBhG7YiXUUMwGIy064Bo=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=gh9nXKK1yq/3x4+Egg67WPIMVZUMgyX25z9W4Ch7+RrsUVcS5DBsXCLBlqfwh3GlK
-         7vq4vxsuaZ04SmCnm1e7sYqFlXfzxMYzs/5hbLIqkAXrOClG9QCcg9aXsM/Od9hmdv
-         F28OFEFYt7jZVGeBuOyAZZwQiPgTZb9HNPlqI4/Y=
-To:     John Johansen <john.johansen@canonical.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-Message-ID: <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
-In-Reply-To: <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
- <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
- <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Fri, 12 Oct 2018 15:03:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728131AbeJLTDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 15:03:36 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2CE2086A;
+        Fri, 12 Oct 2018 11:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539343896;
+        bh=2K8UX5xri9WFt3zuq6OR6aDcQQolkHbzoPVwC+EKtWU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CBRC0+VEPT8Ch6WuYgJRlzMAhlfZnr0MvVowYhsPJp4kU0haJ4hl+jvFzA+jmwYug
+         HIxUZZnzuJjlunJxNOyjoLGh9U2fXhxd3qRDnLpWw6tHBG+dzdRIxZGabRjnSNt+11
+         BFNGzKVz+8KLCi5Cmh3xoVOY4Gdi5xKWsdAXkirg=
+Date:   Fri, 12 Oct 2018 13:31:34 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix cell proc list
+Message-ID: <20181012113134.GA22324@kroah.com>
+References: <153929434917.24725.5423867421481211888.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153929434917.24725.5423867421481211888.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sent with ProtonMail Secure Email.
+On Thu, Oct 11, 2018 at 10:45:49PM +0100, David Howells wrote:
+> Access to the list of cells by /proc/net/afs/cells has a couple of
+> problems:
+> 
+>  (1) It should be checking against SEQ_START_TOKEN for the keying the
+>      header line.
+> 
+>  (2) It's only holding the RCU read lock, so it can't just walk over the
+>      list without following the proper RCU methods.
+> 
+> Fix these by using an hlist instead of an ordinary list and using the
+> appropriate accessor functions to follow it with RCU.
+> 
+> Since the code that adds a cell to the list must also necessarily change,
+> sort the list on insertion whilst we're at it.
+> 
+> Fixes: 989782dcdc91 ("afs: Overhaul cell database management")
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Friday, October 12, 2018 3:19 AM, John Johansen <john.johansen@canonical=
-.com> wrote:
->
-> It isn't perfect but it manages consistency across distros as best as
-> can be achieved atm.
->
-> Its just a fact that some LSMs are not going to be built into some
-> kernels. The only way to deal with that is direct people to build
-> their own kernels.
->
-> The other major problem is that the current LSM stacking patches do
-> not deal with "extreme" stacking. So doing
->
-> lsm=3D+apparmor
->
-> (I am going to stick with the + syntax atm to avoid confusion between
-> adding and setting)
->
-> assuming apparmor is builtin will not necessarily get you apparmor if
-> another major lsm is enabled. Yes your specific proposal would as it
-> specifies it overrides the current major, except that ordering
-> important so if say landlock registers before apparmor, you may still
-> not get apparmor.
->
+Now applied, thanks.
 
-I think this will be solved with LSM_ORDER_LAST or something like that
-Kees proposed.
-
-> You proposal does not provide a means to ensure you have only a
-> specific set of LSMs enabled. As an LSM not explicitly listed in lsm=3D
-> lsm=3D! may still be enabled. So the user is going to have to be aware
-> of the initial LSMs list if they are trying to guarentee a specific
-> security arrangement.
->
-
-What about special marker like "!!" which will mean "this string is
-explicit?
-
-lsm=3D!!,apparmor
-
-will enable apparmor and disable everything else.
-
-lsm=3D!!,!apparmor or lsm=3D!!
-
-will set the string empty and disable everything.
-
-"!!" in "CONFIG_LSM" will take precedence over "!!" in "lsm=3D" which
-will make "lsm=3D" totally ignored. This way distro could lock specific
-lsm set which isn't possible with current approach.
-
-CONFIG_LSM=3D!!,yama,loadpin,integrity,apparmor
-
-> This violates one of the hard asks, and I will tell you that this will
-> just mean there is going to be some distro patching to make sure it
-> exists.
->
-
-I think I can quess who will make those patches :)
-
-> The current explicit list is more consistent, and it is amenable to
-> being extended with + or ! as selective add/remove so we are not
-> locked into only supporting an explicit list.
->
-
-Jordan
+greg k-h
