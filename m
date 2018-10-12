@@ -2,108 +2,104 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E79C28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E61BFC28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851602098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:14:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kcreWZgV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851602098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 9AAF520835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAF520835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeJLJo4 (ORCPT
+        id S1726943AbeJLJsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 05:44:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:40427 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbeJLJoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 05:44:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42WWcl2gzfz9s47;
-        Fri, 12 Oct 2018 13:14:47 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539310490;
-        bh=wjKR/4I5eJzBI/bon/+z+4U3r6ozLwdwHa4v1UEGMkY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kcreWZgV5sXY3FDjaC1tCH4n5seN+p6uFdpQPSU/4JkuUmyBtlkZf12+D8wy3Q4vl
-         BfRMYw+lpacGoDn2pcabg6k6qBEztlVzQFIaDhF9xxrlUm4VFL0Fb+R5UwM7Pxn9cs
-         AE1Q5uvb8xfYf/BuLgncuM48jpzwbB4a3wK/mTibY+hQyLyI36leXlsIU7DkrZfqKa
-         bFsY4OclTiH7V/upJdliuNKnV7anp6yrUhkKwI93SIxRbN/dKsuNPV+Odil/F2lxqH
-         KfChqw/Xjpcj8m02WoYqwKgBkXZuGAezI/k4DdLkSChqWal9QoqzJJJ/EjPc00uIgC
-         K8xBFgSEaxAqA==
-Date:   Fri, 12 Oct 2018 13:14:44 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20181012131444.605564b5@canb.auug.org.au>
+        Fri, 12 Oct 2018 05:48:08 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45169 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeJLJsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 05:48:07 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y15-v6so5120854plr.12;
+        Thu, 11 Oct 2018 19:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jvihXHv05MFy2mCQqpPYSRu+gKBsljuKMX5ryrCl8ag=;
+        b=gOf6XhSpWMjHYUTMPUU04RV0yTwJ2kzFmWS1PwOKj1MpH4Gqzs3z1DbjsHgtDlwt+F
+         7RRy31f0Qjng239509IEQNx6LVOPuyU8eeF7Yy9dcshwND/aGiUQejllOkBNOXIKfDZx
+         7b8oAXYL7QCljxqcqKthIb4ynSZFh+UNShbaCDuma4g5J2LLDd9y7dCeAIYArDMcm73Y
+         rIwTh0du190HaRnBRu2ndDBfjQ6cKjbKQV6KoFHMR8S8Q0vFpU5SY0RakgExeFCQOfTO
+         D8nj5USXsNlqyLF3OfRKa8n+UlLaVJLMhHK4p7zZdCY4DcYJoLu0EnYqFFGiQojxsL67
+         Xh4Q==
+X-Gm-Message-State: ABuFfoh12YQ/H3UduuLuHupUhepCOEOceOV84QbxTBfD3fLGd/x0SrTb
+        F1uZ//+E3gKHlUG6stzMM3E=
+X-Google-Smtp-Source: ACcGV627aupojocS584a9BrChGeEVYAnozgNXRR5eXPOdnjXdZYL+2HF41NTGjz385EILtuNiALT6A==
+X-Received: by 2002:a17:902:1101:: with SMTP id d1-v6mr4011881pla.131.1539310683830;
+        Thu, 11 Oct 2018 19:18:03 -0700 (PDT)
+Received: from asus.site ([2601:647:4601:42b4:3842:3e31:3bb6:cf62])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm21477217pfb.130.2018.10.11.19.18.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 19:18:03 -0700 (PDT)
+Subject: Re: [PATCH 1/2] sched/wait: Add wait_event_lock_irq_timeout for
+ TASK_UNINTERRUPTIBLE usage
+To:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        target-devel <target-devel@vger.kernel.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+References: <1539141790-13557-1-git-send-email-nab@linux-iscsi.org>
+ <1539141790-13557-2-git-send-email-nab@linux-iscsi.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <91f50300-5e36-73a5-379d-9c82004947bb@acm.org>
+Date:   Thu, 11 Oct 2018 19:18:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ezwu5_G0L7Bz8/2204BEODX"; protocol="application/pgp-signature"
+In-Reply-To: <1539141790-13557-2-git-send-email-nab@linux-iscsi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ezwu5_G0L7Bz8/2204BEODX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/9/18 8:23 PM, Nicholas A. Bellinger wrote:
+> Short of reverting commit 00d909a107 for v4.19, target-core needs a
+> wait_event_t marco can be executed using TASK_UNINTERRUPTIBLE to
+> function correctly with existing fabric drivers that expect to run
+> with signals pending during session shutdown and active se_cmd I/O
+> quiesce.
+> 
+> The most notable is iscsi-target/iser-target, while ibmvscsi_tgt invokes
+> session shutdown logic from userspace via configfs attribute that could
+> also potentially have signals pending.
+> 
+> So go ahead and introduce wait_event_lock_irq_timeout() to achieve this,
+> and update + rename __wait_event_lock_irq_timeout() to make it accept
+> 'state' as a parameter.
+> 
+> Fixes: 00d909a107 ("scsi: target: Make the session shutdown code also wait for commands that are being aborted")
+> Cc: Bart Van Assche <bvanassche@acm.org>
+> Cc: Mike Christie <mchristi@redhat.com>
+> Cc: Hannes Reinecke <hare@suse.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Sagi Grimberg <sagi@grimberg.me>
+> Cc: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Tested-by: Nicholas Bellinger <nab@linux-iscsi.org>
+> Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
 
-Hi all,
-
-Today's linux-next merge of the tip tree got a conflict in:
-
-  arch/x86/mm/pgtable.c
-
-between commit:
-
-  184d47f0fd36 ("x86/mm: Avoid VLA in pgd_alloc()")
-
-from Linus' tree and commit:
-
-  1be3f247c288 ("x86/mm: Avoid VLA in pgd_alloc()")
-
-from the tip tree.
-
-I fixed it up (I used the version from Linus' tree) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ezwu5_G0L7Bz8/2204BEODX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvAA5QACgkQAVBC80lX
-0GwR5Af9F75MRgtsrz9Y+fOsgP1yq5zOeKFdXDVKnSBRrqMAfEZGPdIwsmJHEU+E
-YiJ7q941M8UnYWnocIa/UrwgYxV9wRuj3p8zXX7O4gj4OmcJyAWYkj+C8SJ0qpGi
-WypKz+WUetVgdGdYzGukFR0ch6kcMSjD6r3Fce91HPpNBRAAkAClak+uyUagGUgy
-ZLjDsrJGvAiLPGnM9qaixRZ3IctCYUoi6CL4p/RR60KM+4+FQca2M3J+Yla7epJS
-sr8EIHUn9utVWoN9L4YwqdQ53Y7uGeofYhoJnFWN1/Mty8es9cqkq1HY2fiseviL
-ERD1Frt6mdt7BpWXLPpUMm50CXyC2g==
-=2yu+
------END PGP SIGNATURE-----
-
---Sig_/ezwu5_G0L7Bz8/2204BEODX--
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
