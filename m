@@ -2,130 +2,100 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D9EC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF616C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB882075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 881382075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:43:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="THij8r3h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB882075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9A1/dh9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881382075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbeJLXQU (ORCPT
+        id S1729253AbeJLXQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:16:20 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39660 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbeJLXQT (ORCPT
+        Fri, 12 Oct 2018 19:16:34 -0400
+Received: from mail-pf1-f173.google.com ([209.85.210.173]:46375 "EHLO
+        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729112AbeJLXQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:16:19 -0400
-Received: by mail-io1-f67.google.com with SMTP id z16-v6so9547425iol.6
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:43:16 -0700 (PDT)
+        Fri, 12 Oct 2018 19:16:33 -0400
+Received: by mail-pf1-f173.google.com with SMTP id r64-v6so6379246pfb.13;
+        Fri, 12 Oct 2018 08:43:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3d6PFUd/o4/ZHnNf/AOMsx/oqE420l4gczfX2C9zDQ4=;
-        b=THij8r3hgrcTvOFxCRwqJKHOsJcPrUsFhW+TfDa6+xRPCeva/uVTbHx9C9DN6DHPDq
-         IZ7XrIBi23bkFuM8i23lWGAs7vtATJIZbE3qtOWn9lxsH2GJ+3Q6g30OGhgghTmMpTGP
-         CemaahrjGAtIfVztgbEtXA4BvjhDaGoKBZ/wI=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TIhVfszhQ3OB4Akjm+tYWa/nECjrT9qw/k0nQDwvkQ0=;
+        b=d9A1/dh9u3VyqWPI2jMQSDFfiwWVoi4bNmke5DrxaOl4uAQKTVv6mrFaAHXfp/6ua9
+         87d1f7sFubEifQLfSsSIoXJo8UzmmIl4yRPdnkJnbebSJRKnxz9mqhE+4tF1H8P0p17w
+         z2TVNQxvMUWr2Ijpl4gAVqHoEKzonYbsAL867mV6RbZEG+FhJ6L/GL9keAjCRJUlMMl5
+         HB8oXMDn6O/JHZblLqWvYVKWtC84wPcRNvXcY0FzrD08oRrbTcFX6F5nBO95C15u0RMH
+         yW/bT881B1cQcf0F+4g9ssV6fLoZOX4pPLH3mS3WgefqiA50qFneP1Pi0cNILs0wncGN
+         WfEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3d6PFUd/o4/ZHnNf/AOMsx/oqE420l4gczfX2C9zDQ4=;
-        b=pa5JkHw2IlRGx5lucPFv06aVAzBLTHIsPuNyCTfZeb6bWd86/9bWr69qMtM4NtN/rV
-         0kT8zbEWitpBCmzeOrMJ16tBk+nWnqV29lJy/q2mBfpvMEpMY3ZUSXSMOh/79IHghvBx
-         rCjicpFc7E4B5j4hNQmFfCT3zWbCBkFTNC/C/ly98xkyHGX6RVNpvPMyf2Qw7pvanUpu
-         vc0KVQKuwGhT79UvUGVhVfa5WvSn53pWCvvS8M7UtfQUui1D3c4LZYRqr3dRf7XK6oB5
-         QNt8xGlviVXnOkHGsJgKMxVlcKgJkMIdlbq+fMVIBPdaQyjTMyVas2e4Zy3tqIHlwc74
-         Akvg==
-X-Gm-Message-State: ABuFfohsM01Z28khuf0z3DLVxGRNYt/bUkvDuhwvaQY6pGPVZyrnwFPi
-        v+5M9Hn8Mbm7eyLvQF0TB2ebKJ3RAWHC6m1SovjMHA==
-X-Google-Smtp-Source: ACcGV63JFvcn7PK7RacJw0xhtvUrYjyjVNhe3rSoadPEzWro2hnFhSS3WMcDtvn2ncidZN1lSyQ3lkXphwoa3Doaaw4=
-X-Received: by 2002:a6b:c586:: with SMTP id v128-v6mr4477027iof.7.1539358995726;
- Fri, 12 Oct 2018 08:43:15 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TIhVfszhQ3OB4Akjm+tYWa/nECjrT9qw/k0nQDwvkQ0=;
+        b=dQWKG9lSZvCqA4duVKv68vovhTqzgoXJ0oYWtKT+++Bz1k5tuPvsWkT1Upz7L6RKAV
+         jpgUfF29vRQ8bL8RbnbW4iI9CtJ2fJLqgFy4dGIfZ2aJz6Thj4KeZB3DN4QDVTlZLDIl
+         r+f03xG4WSLiWSKjsY3xCuJImlIrSsJioBhDNgZOWK+FMaUU35ZETrx5z/NPd3UYP6CS
+         E6nBSaKyXUGgyNXIMOT2sfCo7Q5rL94pfCdcM00y9Mu574CWN37qsENoIGI/f2C69dIr
+         ulDcFyEQ8d28B82L0yJeHO1Qk4XPrqDA2J3bcPrhyF/NoNLIFC68hURYAqucHCMKme/6
+         Rm9g==
+X-Gm-Message-State: ABuFfohaka90TgLxPwXGqAOZjsiS04x/iqYPgXU+zLIaP1fBE1ZLPxRS
+        HQ6gyn2j/FndmzN/xskzVXY=
+X-Google-Smtp-Source: ACcGV61oTohoJW0BYFiGWHxg2wdnxMRmC7wygwRR/dBax86TRY3lgAHiudyfxTMqEAJlaM4eyHDs7w==
+X-Received: by 2002:a62:b286:: with SMTP id z6-v6mr6718506pfl.79.1539359009955;
+        Fri, 12 Oct 2018 08:43:29 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm2074902pgr.61.2018.10.12.08.43.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 08:43:29 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 08:43:28 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/45] 4.14.76-stable review
+Message-ID: <20181012154328.GB13377@roeck-us.net>
+References: <20181011152508.885515042@linuxfoundation.org>
 MIME-Version: 1.0
-Received: by 2002:a02:5f97:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 08:43:15
- -0700 (PDT)
-In-Reply-To: <CAPDyKFojOdmGbAzDMrO8EVJYrEYwYi6PT8YG55J9svGT61a1Cg@mail.gmail.com>
-References: <cover.1539341929.git.viresh.kumar@linaro.org> <110c9e13d8d44dfb59577256b1309dddf2ceda12.1539341929.git.viresh.kumar@linaro.org>
- <CAPDyKFojOdmGbAzDMrO8EVJYrEYwYi6PT8YG55J9svGT61a1Cg@mail.gmail.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Fri, 12 Oct 2018 21:13:15 +0530
-Message-ID: <CAKohpont9Jn0QiZ3yG++xR87ttUAbAL4CAwAmvVL+jMOqVRGdg@mail.gmail.com>
-Subject: Re: [PATCH V2 6/9] OPP: Add dev_pm_opp_{set|put}_genpd_device() helper
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 October 2018 at 20:16, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 12 October 2018 at 13:11, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> Multiple generic power domains for a consumer device are supported with
->> the help of virtual devices, which are created for each consumer device
->> - genpd pair. These are the device structures which are attached to the
->> power domain and are required by the OPP core to set the performance
->> state of the genpd.
->>
->> The helpers added by this commit are required to be called once for each
->> of these virtual devices. These are required only if multiple domains
->> are available for a device, otherwise the actual device structure will
->> be used instead by the OPP core.
->>
->> The new helpers also support the complex cases where the consumer device
->> wouldn't always require all the domains. For example, a camera may
->> require only one power domain during normal operations but two during
->> high resolution operations. The consumer driver can call
->> dev_pm_opp_put_genpd_device(high_resolution_genpd_dev) if it is
->> currently operating in the normal mode and doesn't have any performance
->> requirements from the genpd which manages high resolution power
->> requirements. The consumer driver can later call
->> dev_pm_opp_set_genpd_device(high_resolution_genpd_dev) once it switches
->> back to the high resolution mode.
->>
->> The new helpers differ from other OPP set/put helpers as the new ones
->> can be called with OPPs initialized for the table as we may need to call
->> them on the fly because of the complex case explained above. For this
->> reason it is possible that the genpd_device structure may be used in
->
-> This is a bit unclear. What is really the genpd_device structure?
-> Could you please clarify that here?
+On Thu, Oct 11, 2018 at 05:39:27PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.76 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Oct 13 15:24:53 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-It is the virtual device structures created by genpd.
+For v4.14.75-45-g69707cc:
 
->> parallel while the new helpers are running and a new mutex is added to
->> protect against that. We didn't use the existing opp_table->lock mutex
->> as that is widely used in the OPP core and we will need a lock in the
->> hotpath now, i.e.  while changing OPP and we need to make sure there is
->> not much contention while doing that.
->
-> I not sure this needs to be considered as hotpath. I would be
-> surprised if changing genpd virtual devices for OPP, is something that
-> is going to be done frequently. Rather, this is more depending on the
-> use case, like the camera case you describe above.
->
-> In other words, do you really need a new lock?
+Build results:
+	total: 150 pass: 150 fail: 0
+Qemu test results:
+	total: 318 pass: 318 fail: 0
 
-My bad. I didn't explain it well. If you see a later patch where we started
-configuring the required OPPs, we use genpd_dev or virt-dev within
-opp_set_rate() which also needs this lock. And that is the hot path.
+Details are available at https://kerneltests.org/builders/.
 
---
-viresh
+Guenter
