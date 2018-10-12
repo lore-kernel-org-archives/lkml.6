@@ -2,162 +2,324 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B21D2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CB1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8281120868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8281120868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 13AB920868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:28:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AB920868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbeJLT7S (ORCPT
+        id S1728687AbeJLUAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:59:18 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.39]:16657 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728418AbeJLT7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:59:18 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 45695DE2D5D
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:27:03 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id AwX1gIfshaSeyAwX1geHGk; Fri, 12 Oct 2018 07:27:03 -0500
-X-Authority-Reason: nr=8
-Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:53370 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gAwX0-001ZL5-DE; Fri, 12 Oct 2018 07:27:02 -0500
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        Willem Riede <osst@riede.org>,
-        =?UTF-8?Q?Kai_M=c3=a4kisara?= <Kai.Makisara@kolumbus.fi>,
-        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, osst-users@lists.sourceforge.net
-References: <20181003145535.GA24941@embeddedor.com>
- <yq18t352o9l.fsf@oracle.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] scsi: mark expected switch fall-throughs
-Message-ID: <84512689-d898-e670-075d-509bbff20423@embeddedor.com>
-Date:   Fri, 12 Oct 2018 14:26:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <yq18t352o9l.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 109.24.154.57
-X-Source-L: No
-X-Exim-ID: 1gAwX0-001ZL5-DE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:53370
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 12 Oct 2018 16:00:21 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:36804 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728131AbeJLUAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 16:00:21 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 08B76BFCFE;
+        Fri, 12 Oct 2018 14:28:06 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 6316FC1006; Fri, 12 Oct 2018 14:28:05 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 10C41C1003;
+        Fri, 12 Oct 2018 14:28:00 +0200 (CEST)
+Message-ID: <ff0c60810411c9f25b7412746a8e91d7e099774a.camel@paulk.fr>
+Subject: Re: [RFC PATCH v2] media: docs-rst: Document m2m stateless video
+ decoder interface
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 12 Oct 2018 14:28:34 +0200
+In-Reply-To: <CAAFQd5DvkvjMrdSVd-Ba5RiGUjM6Jp8hruk23A87sd4htoFovw@mail.gmail.com>
+References: <20181004081119.102575-1-acourbot@chromium.org>
+         <7bd6883f43f3ffa1803975236eb18b5e63d3455a.camel@paulk.fr>
+         <CAAFQd5DvkvjMrdSVd-Ba5RiGUjM6Jp8hruk23A87sd4htoFovw@mail.gmail.com>
+X-Priority: 1
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-4D5luGoNjzPR1BXOT9NZ"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
 
-On 10/11/18 4:47 AM, Martin K. Petersen wrote:
-> 
-> Hi Gustavo,
-> 
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
-> 
-> I'm not entirely convinced that all these identified fall through cases
-> are intentional. From a quick glance, some of them look like bugs...
-> 
+--=-4D5luGoNjzPR1BXOT9NZ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I took a second look at this and, certainly, the one below looks more like a
-bug. The rest seem to be false positives.
+Hi,
 
-Also, notice that this code has been there since 2005. So, that's why I was
-inclined to think that all of them are false positives.
+Le mardi 09 octobre 2018 =C3=A0 14:58 +0900, Tomasz Figa a =C3=A9crit :
+> Hi Paul,
+>=20
+> On Thu, Oct 4, 2018 at 9:40 PM Paul Kocialkowski <contact@paulk.fr> wrote=
+:
+> > Hi Alexandre,
+> >=20
+> > Thanks for submitting this second version of the RFC, it is very
+> > appreciated! I will try to provide useful feedback here and hopefully
+> > be more reactive than during v1 review!
+> >=20
+> > Most of it looks good to me, but there is a specific point I'd like to
+> > keep discussing.
+> >=20
+> > Le jeudi 04 octobre 2018 =C3=A0 17:11 +0900, Alexandre Courbot a =C3=A9=
+crit :
+> > > This patch documents the protocol that user-space should follow when
+> > > communicating with stateless video decoders. It is based on the
+> > > following references:
+> > >=20
+> > > * The current protocol used by Chromium (converted from config store =
+to
+> > >   request API)
+> > >=20
+> > > * The submitted Cedrus VPU driver
+> > >=20
+> > > As such, some things may not be entirely consistent with the current
+> > > state of drivers, so it would be great if all stakeholders could poin=
+t
+> > > out these inconsistencies. :)
+> > >=20
+> > > This patch is supposed to be applied on top of the Request API V18 as
+> > > well as the memory-to-memory video decoder interface series by Tomasz
+> > > Figa.
+> > >=20
+> > > Changes since V1:
+> > >=20
+> > > * Applied fixes received as feedback,
+> > > * Moved controls descriptions to the extended controls file,
+> > > * Document reference frame management and referencing (need Hans' fee=
+dback on
+> > >   that).
+> > >=20
+> > > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> > > ---
+> > >  .../media/uapi/v4l/dev-stateless-decoder.rst  | 348 ++++++++++++++++=
+++
+> > >  Documentation/media/uapi/v4l/devices.rst      |   1 +
+> > >  .../media/uapi/v4l/extended-controls.rst      |  25 ++
+> > >  .../media/uapi/v4l/pixfmt-compressed.rst      |  54 ++-
+> > >  4 files changed, 424 insertions(+), 4 deletions(-)
+> > >  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decode=
+r.rst
+> > >=20
+> > > diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b=
+/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> > > new file mode 100644
+> > > index 000000000000..e54246df18d0
+> > > --- /dev/null
+> > > +++ b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> > > @@ -0,0 +1,348 @@
+> > > +.. -*- coding: utf-8; mode: rst -*-
+> > > +
+> > > +.. _stateless_decoder:
+> > > +
+> > > +**************************************************
+> > > +Memory-to-memory Stateless Video Decoder Interface
+> > > +**************************************************
+> > > +
+> > > +A stateless decoder is a decoder that works without retaining any ki=
+nd of state
+> > > +between processing frames. This means that each frame is decoded ind=
+ependently
+> > > +of any previous and future frames, and that the client is responsibl=
+e for
+> > > +maintaining the decoding state and providing it to the driver. This =
+is in
+> > > +contrast to the stateful video decoder interface, where the hardware=
+ maintains
+> > > +the decoding state and all the client has to do is to provide the ra=
+w encoded
+> > > +stream.
+> > > +
+> > > +This section describes how user-space ("the client") is expected to =
+communicate
+> > > +with such decoders in order to successfully decode an encoded stream=
+. Compared
+> > > +to stateful codecs, the driver/client sequence is simpler, but the c=
+ost of this
+> > > +simplicity is extra complexity in the client which must maintain a c=
+onsistent
+> > > +decoding state.
+> > > +
+> > > +Querying capabilities
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +
+> > > +1. To enumerate the set of coded formats supported by the driver, th=
+e client
+> > > +   calls :c:func:`VIDIOC_ENUM_FMT` on the ``OUTPUT`` queue.
+> > > +
+> > > +   * The driver must always return the full set of supported ``OUTPU=
+T`` formats,
+> > > +     irrespective of the format currently set on the ``CAPTURE`` que=
+ue.
+> > > +
+> > > +2. To enumerate the set of supported raw formats, the client calls
+> > > +   :c:func:`VIDIOC_ENUM_FMT` on the ``CAPTURE`` queue.
+> > > +
+> > > +   * The driver must return only the formats supported for the forma=
+t currently
+> > > +     active on the ``OUTPUT`` queue.
+> > > +
+> > > +   * Depending on the currently set ``OUTPUT`` format, the set of su=
+pported raw
+> > > +     formats may depend on the value of some controls (e.g. H264 or =
+VP9
+> > > +     profile). The client is responsible for making sure that these =
+controls
+> > > +     are set to the desired value before querying the ``CAPTURE`` qu=
+eue.
+> >=20
+> > I still think we have a problem when enumerating CAPTURE formats, that
+> > providing the profile/level information does not help solving.
+> >=20
+> > From previous emails on v1 (to which I failed to react to), it seems
+> > that the consensus was to set the profile/level indication beforehand
+> > to reduce the subset of possible formats and return that as enumerated
+> > possible formats.
+>=20
+> I think the consensus was to set all the the parsed header controls
+> and actually Alex seems to have mentioned it slightly further in his
+> patch:
+>=20
+> +   * In order to enumerate raw formats supported by a given coded format=
+, the
+> +     client must thus set that coded format on the ``OUTPUT`` queue firs=
+t, then
+> +     set any control listed on the format's description, and finally enu=
+merate
+> +     the ``CAPTURE`` queue.
+>=20
+> > However, it does not really solve the issue here, given the following
+> > distinct cases:
+> >=20
+> > 1. The VPU can only output the format for the decoded frame and that
+> > format is not known until the first buffer metadata is passed.
+>=20
+> That's why I later suggested metadata (parsed header controls) and not
+> just some selective controls, such as profiles.
 
->> diff --git a/drivers/scsi/ips.c b/drivers/scsi/ips.c
->> index bd6ac6b..8e1c45d 100644
->> --- a/drivers/scsi/ips.c
->> +++ b/drivers/scsi/ips.c
->> @@ -3485,6 +3485,7 @@ ips_send_cmd(ips_ha_t * ha, ips_scb_t * scb)
->>  
->>  		case START_STOP:
->>  			scb->scsi_cmd->result = DID_OK << 16;
->> +			/* fall through */
+Oh sorry, it seems that I misunderstood this part. I totally agree with
+the approach of setting the required codec controls then.
 
-If you confirm this is an actual bug, I can send a separate fix.
+I will look into how that can be managed with VAAPI. I recall that the
+format negotiation part happens very early (no metadata passed yet) and
+I don't think there's a way to change the format afterwards. But if
+there's a problem there, it's definitely on VAAPI's side and that
+should not contaminate our API.
 
->>  
->>  		case TEST_UNIT_READY:
->>  		case INQUIRY:
-> 
+> > Everything that is reported as supported at this point should be
+> > understood as supported formats for the decoded bitstreams, but
+> > userspace would have to pick the one matching the decoded format of the
+> > bitstream to decode. I don't really see the point of trying to reduce
+> > that list by providing the profile/level.
+> >=20
+> > 2. The VPU has some format conversion block in its pipeline and can
+> > actually provide a range of different formats for CAPTURE buffers,
+> > independently from the format of the decoded bitstream.
+> >=20
+> > Either way, I think (correct me if I'm wrong) that players do know the
+> > format from the decoded bitstream here, so enumeration only makes sense
+> > for case 2.
+>=20
+> Players don't know the format for the decoded bitstream, as I already
+> explained before. From stream metadata they would only know whether
+> the stream is YUV 4:2:0 vs 4:2:2, but wouldn't know the exact hardware
+> constraints, e.g. whether NV12 or YUV420 is supported for given YUV
+> 4:2:0 stream.
 
-Thanks for the feedback.
---
-Gustavo
+That's a good point, thanks!
+
+> > Something we could do is to not enumerate any format for case 1., which
+> > we would specify as an indication that only the decoded bitstream
+> > format must be set. Then in case 2., we would enumerate the possible
+> > formats.
+> >=20
+> > For case 1., having the driver expose the supported profiles ensures
+> > that any format in a supported profile is valid although not
+> > enumerated.
+>=20
+> Profile doesn't fully determine a specific pixel format, only the
+> abstract format (see above).
+
+=46rom what I've understood, profile indicates which YUV sub-sampling
+configuration is allowed, but there may be multiple ones. For instance,
+the High 4:4:4 profile allows both 4:2:2 and 4:4:4 sub-sampling.
+
+So I maintain that it doesn't make much sense to set the profile while
+decoding. Instead, I think it should be a read-only control that
+indicates what the hardware can do. Reading this control would allow
+userspace to find out whether the current video can be decoded in
+hardware or not (so this could be added to the Querying capabilities
+part of the doc).
+
+> > Alternatively, we could go with a control that indicates whether the
+> > driver supports a format decorrelated from the decoded bitstream format
+> > and still enumerate all formats in case 1., with the implication that
+> > only the right one must be picked by userspace. Here again, I don't see
+> > the point of reducing the list by setting the profile/level.
+> >=20
+> > So my goal here is to clearly enable userspace to distinguish between
+> > the two situations.
+> >=20
+> > What do you think?
+>=20
+> Why would we need to create a control, if we already have the ENUM_FMT
+> API existing exactly to achieve this? We already have this problem
+> solved for stateful decoders and if we request the userspace to
+> actually set all the necessary metadata beforehand, the resulting
+> behavior (initialization sequence) would be much more consistent
+> between these 2 APIs.
+
+Let's drop this idea altogether, setting required controls feels like a
+much more generic and cleaner approach.
+
+Cheers,
+
+Paul
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-4D5luGoNjzPR1BXOT9NZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvAk3IACgkQhP3B6o/u
+lQwhHA//QjpEnNZTqcwc7ApvVPj/L4CK8Y6d0ZChHL5CpNx9HfKoqdCp9KhsYV+o
+jOZ16/y98fMJsyYmDNWVe0CIkSjHVGqNyHEa0MtyVNov4ikqDGbYrNC6rNIdM5rZ
+Y7nNec+9sAQHfvL7v9GVkwGEhgJ3QrgYzCJaQj13CdPAQrgxqcIYiasSfhBySxLg
+q8gcjzZVCj3G30oEkAvI0mpW7I3xQiSdT/IDIVZtorl/EfEwaKYEExXMNBsdIu1w
+25qXA+CCBQ55wFJofGspjJzslooahJr+iSRMaaixgEhGB8h0gqhE0QC8gw9lJVNF
+vLwfg//4z1UwgP5tNET+OoAcQ1PfLWnK2e8usl+SYQA+MLzwRnTbqYB3wEOeKjlT
+Pbt7wgg6ZNQId+IZHUzwEP0TCrSONekjIZdy2rHkFdI5S/LYzdIrjyKhQOYppazN
+Jqh/yarxegIeenUHF6msPKQckNKwdnmMRBI0KZ6tnwRuvcWQ6f43aIERaCsoE3A9
+pKLazi3aLKqf0geG185FaYdB+pa3rydqNozyZvgowTqaj36zCbDM5+f4iyEZy+IN
+cNKkq3RBMgB9Av6zeWC8LQ8wFZPNuItkyXOPu4La296Mz7eH1H6s+uQFjkTbz7I2
+hOP7NcQR6Q56VRftbJPksdEO6qwwhRTSUrBZhfW1f+LZIUrWjw8=
+=XgDL
+-----END PGP SIGNATURE-----
+
+--=-4D5luGoNjzPR1BXOT9NZ--
+
