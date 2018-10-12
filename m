@@ -5,109 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B676C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211B5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3719B20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3719B20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=santannapisa.it
+	by mail.kernel.org (Postfix) with ESMTP id D460120835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D460120835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbeJLOxs (ORCPT
+        id S1727463AbeJLOzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 10:53:48 -0400
-Received: from ms01.santannapisa.it ([193.205.80.99]:37685 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbeJLOxs (ORCPT
+        Fri, 12 Oct 2018 10:55:42 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46091 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeJLOzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 10:53:48 -0400
-Received: from [151.40.40.188] (account l.abeni@santannapisa.it HELO sweethome)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 133616499; Fri, 12 Oct 2018 09:22:38 +0200
-Date:   Fri, 12 Oct 2018 09:22:31 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, alessio.balsini@gmail.com,
-        bristot@redhat.com, will.deacon@arm.com,
-        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, henrik@austad.us,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [RFD/RFC PATCH 5/8] sched: Add proxy execution
-Message-ID: <20181012092231.0bdb5cf7@sweethome>
-In-Reply-To: <20181011125325.GA9867@hirez.programming.kicks-ass.net>
-References: <20181009092434.26221-1-juri.lelli@redhat.com>
-        <20181009092434.26221-6-juri.lelli@redhat.com>
-        <20181010131048.54afd1b6@luca64>
-        <20181011123448.GS9130@localhost.localdomain>
-        <20181011125325.GA9867@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 12 Oct 2018 10:55:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n11-v6so12173787wru.13
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 00:24:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=U+avXRlO8W7l6RPMXMUVdGk1q67ZpztntT2o3GKDlMw=;
+        b=SSb1i+mfEZdJ5Bj6V/cSSoEM7AP7yAazffoPWd13ptQmrvJTtm/6ncLY5uo7DdYlbB
+         MVPr1xWs6jCGfdjGLzC5vku4rP8nFZzLUDLVdij8mGBCMj/6NncRKPh3YWDBY5HKvt9K
+         Wt4hK8rRf5trMO6SXOg7dlXQm7eT4tJaCsc5FWcDRVqNfPmw7ezX0bfm/ZuCUN9fm3Ld
+         uODJbQhomWqsgdsUIBOOAmKgkvnrjfbXlgFp9/DZIqRWqlLydYZWji1efMJrmH+vxvYN
+         VxpOOklHaiNxdxL4+2EoQhfAcwWgtifePwo6fHQC/6qPfwNP8PolRYZo9bxjOn1jlPJv
+         thUQ==
+X-Gm-Message-State: ABuFfoggNEG2pR4n+mv5Vt1HowtLKTRqRlqk4xhIndjsO+vVuhLAytk8
+        RHmf7r4Cf8+5BqIoJ7MdBsdpsg==
+X-Google-Smtp-Source: ACcGV62aUF0KRWvLKMlS1KsHYLTQOkAywEmFvOnqxdfk62tiEFpmqGaRKTme3yyMJ/teDa+rM8HkDA==
+X-Received: by 2002:adf:ecc9:: with SMTP id s9-v6mr3917619wro.142.1539329075252;
+        Fri, 12 Oct 2018 00:24:35 -0700 (PDT)
+Received: from [192.168.10.150] (94-36-184-18.adsl-ull.clienti.tiscali.it. [94.36.184.18])
+        by smtp.gmail.com with ESMTPSA id k7-v6sm914044wmf.22.2018.10.12.00.24.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 00:24:34 -0700 (PDT)
+Subject: Re: [PATCH] mm: Speed up mremap on large regions
+To:     Jann Horn <jannh@google.com>, joel@joelfernandes.org
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, kernel-team@android.com,
+        Minchan Kim <minchan@google.com>,
+        Hugh Dickins <hughd@google.com>, lokeshgidra@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        pombredanne@nexb.com, Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+References: <20181009201400.168705-1-joel@joelfernandes.org>
+ <CAG48ez3yLkMcyaTXFt_+w8_-HtmrjW=XB51DDQSGdjPj43XWmA@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <927d98c0-ec81-ce7a-994d-6405abce18db@redhat.com>
+Date:   Fri, 12 Oct 2018 09:24:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAG48ez3yLkMcyaTXFt_+w8_-HtmrjW=XB51DDQSGdjPj43XWmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 14:53:25 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On 12/10/2018 05:21, Jann Horn wrote:
+> I don't know how this interacts with shadow paging implementations.
 
-[...]
-> > > > +	if (rq->curr != rq->idle) {
-> > > > +		rq->proxy = rq->idle;
-> > > > +		set_tsk_need_resched(rq->idle);
-> > > > +		/*
-> > > > +		 * XXX [juril] don't we still need to migrate
-> > > > @next to
-> > > > +		 * @owner's CPU?
-> > > > +		 */
-> > > > +		return rq->idle;
-> > > > +	}  
-> > > 
-> > > If I understand well, this code ends up migrating the task only
-> > > if the CPU was previously idle? (scheduling the idle task if the
-> > > CPU was not previously idle)
-> > > 
-> > > Out of curiosity (I admit this is my ignorance), why is this
-> > > needed? If I understand well, after scheduling the idle task the
-> > > scheduler will be invoked again (because of the
-> > > set_tsk_need_resched(rq->idle)) but I do not understand why it is
-> > > not possible to migrate task "p" immediately (I would just check
-> > > "rq->curr != p", to avoid migrating the currently scheduled
-> > > task).  
-[...]
-> I think it was the safe and simple choice; note that we're not
-> migrating just a single @p, but a whole chain of @p.
+Shadow paging simply uses MMU notifiers and that does not assume that
+PTE invalidation is atomic.  The invalidate_range_start and
+invalidate_range_end calls are not affected by Joel's patch, so it's ok
+for KVM and also for other users of MMU notifiers.
 
-Ah, that's the point I was missing... Thanks for explaining, now
-everything looks more clear!
-
-
-But... Here is my next dumb question: once the tasks are migrated to
-the other runqueue, what prevents the scheduler from migrating them
-back? In particular, task p: if it is (for example) a fixed priority
-task an is on this runqueue, it is probably because the FP invariant
-wants this... So, the push mechanism might end up migrating p back to
-this runqueue soon... No?
-
-Another doubt: if I understand well, when a task p "blocks" on a mutex
-the proxy mechanism migrates it (and the whole chain of blocked tasks)
-to the owner's core... Right?
-Now, I understand why this is simpler to implement, but from the
-schedulability point of view shouldn't we migrate the owner to p's core
-instead?
-
-
-			Thanks,
-				Luca
-
-> rq->curr must
-> not be any of the possible @p's. rq->idle, is per definition not one
-> of the @p's.
-> 
-> Does that make sense?
-
+Paolo
