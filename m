@@ -2,234 +2,121 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D95CC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957FBC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1BEC2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 211AF20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WaUTNaz7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BEC2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYdVoDvJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211AF20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbeJLVaI (ORCPT
+        id S1728735AbeJLVb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 17:30:08 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34521 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728527AbeJLVaI (ORCPT
+        Fri, 12 Oct 2018 17:31:26 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39951 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728527AbeJLVb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 17:30:08 -0400
-Received: by mail-yw1-f66.google.com with SMTP id m129-v6so4986197ywc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 06:57:33 -0700 (PDT)
+        Fri, 12 Oct 2018 17:31:26 -0400
+Received: by mail-qt1-f196.google.com with SMTP id b4-v6so13877274qtc.7;
+        Fri, 12 Oct 2018 06:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VDR8cBCAux9gPq7pPMigmtKG5j3yetuE5TZg3+cnUa8=;
-        b=WaUTNaz76TPZi6zwzw4ZK1X/B2IrHxyaC1DEfGT7vq3+Fy0iJmdF6sbrLa9ifdO/KK
-         dBeJc/wVz/9TZFbSCF9qRUG+CWIZZraK+UYiDVDRbA1FhmQ7WYf0x9PhZGpi0ZBbolmC
-         WGYn8k/g7naKtjNpggkpm0Je3sb37y4lC5jM4=
+        bh=dwIDfMoO5x+BincI0WTcYxeasn706BRHFShHFWqdj/I=;
+        b=dYdVoDvJj74kJDJSRvjubzMhk6yZNbHRakkqRLjkE+IcuT3dwZrYmDh8teu3XaDj9/
+         iPXnx535aSqpt7C3RhZNUZcdCLfsxvVAiepEZ8Zu9A4ayGiWWbintX9+UzlPNaZ6/BpO
+         +C01Megnk5iWVhQiDSaEtt4rTuYPY71sZPpR0ajZG1C0ry1zRK8yMazx1RRkSDYjsQd8
+         jQtunO7b0PqkSPhuxmeqS8LC+3ERRnlH3TeSq835YK/f4eUfwHA+MNWFSPS2+bMopK0b
+         P+20ReHdcRsMNt1LboJ+DHBwRlDTUmAz14+Dh4Bf0N43IFCm34xk8C+wkb25g+SakzBM
+         DLdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VDR8cBCAux9gPq7pPMigmtKG5j3yetuE5TZg3+cnUa8=;
-        b=gsy5QZep/Sn+Pzzl48j2EIkrHGjsL4GgU+Ub1Pp7yN1EP5Ki8Xjw/XApBcPuApffWg
-         R0faNMOgu9FkvvKnqxfdQWOBXADOnKvh4zYqsPLvEUpUcQRwd5tpKTeMpCEBi5BPtkrM
-         eQ8eS67XbCJN1DnXJn7WkBT2EOf6edP7cXIXpNc2Q9oCTJgMvjoO3yvAy79Cab0WCdfW
-         ByTB9fxOCuOq2wegJoZMo0kcD7j5bY037E3QDHiqQgn22wwKUfxVK6SY89dSwGhLgysC
-         4ME2g20w8o9RgKPtqNlTR+pR9dVh/CvjRi2maLapwISbVnNNE7J3VkodLGr8558cxH2C
-         4zQg==
-X-Gm-Message-State: ABuFfoj3n8IE8sCwCIjyI4z1yiGh36KENXStyz9X6SJUUdEglrOo3UTQ
-        r5m0O/XSlcIz7Mr7x5vZTGiPEgo4427CsBUe48+BOg==
-X-Google-Smtp-Source: ACcGV628besiVQKgfwFzErPTquB3lD9XVvGMMb0stdIe8ffiBUYtuou+2IrqwUr1FNzsHBp6YkxXGym2589+jQ+AkOI=
-X-Received: by 2002:a81:1b85:: with SMTP id b127-v6mr3517264ywb.381.1539352653412;
- Fri, 12 Oct 2018 06:57:33 -0700 (PDT)
+        bh=dwIDfMoO5x+BincI0WTcYxeasn706BRHFShHFWqdj/I=;
+        b=Uz+/jQ+/NI05lvk1Nh25DIS3+viE0YBow/+7etx1lYh2BzPqpuVZXFSI5U6UkD+3mD
+         CzBolhFnasH3O5oD/2S0E/Qea/N6xnUjuEHkio8/m+wBhnMM/QBFQNrmD04P9mtcarz3
+         7yptiNkd8WHjjqW5dYkNVtAmp/r6lMIQuzViVSlatZY6jzHkPSP5plZ6gwX97BvCqdD9
+         m2rJXYReettEGM5vZhvygb/25KK1SayKd5bdPv8S0kjDdiuGwihwqq8azd62MP547oI5
+         hRmbBrqn84KcuzB8ZUh3B2H84QinjIdFyn9mbi0HsfjaPE4v5/boJ8EujCuRXFWONqbs
+         i6mA==
+X-Gm-Message-State: ABuFfohZckqH4sGrFf7/CvloxT8QHEZU34u3TtGCRyTxA1ZQBHoVkBdK
+        sFdfFnfRrw0ZHNiWqkPyQLV0c8MmI2LV8SN/Pjk=
+X-Google-Smtp-Source: ACcGV61wlIjh4rFhoTqdZ62Q5vFKigeUzmEj2m3cqUi3x28gc+CFjCtjbLfG2UsZFBN0jP5Lom/sEd3S1Yuo55/QeSk=
+X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr5819980qtp.373.1539352730925;
+ Fri, 12 Oct 2018 06:58:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
- <1539337442-3676-4-git-send-email-firoz.khan@linaro.org> <c6280818c999449646ec216984f2df9e@sf-tec.de>
-In-Reply-To: <c6280818c999449646ec216984f2df9e@sf-tec.de>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Fri, 12 Oct 2018 19:27:22 +0530
-Message-ID: <CALxhOnggUEkXVVupq0SebJV0StKqbTTCqQtaaao+oQveUFHgbg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] parisc: add system call table generation support
-To:     eike-kernel@sf-tec.de
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+References: <CGME20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e@eucas1p2.samsung.com>
+ <20180906122436.25610-1-linus.walleij@linaro.org> <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+ <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com> <1539272073.18645.12.camel@toradex.com>
+ <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
+ <1539337415.30485.21.camel@toradex.com> <c1722bee-230a-d0ad-d2de-790ab1ce9fcf@nvidia.com>
+ <20181012104338.GS30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181012104338.GS30658@n2100.armlinux.org.uk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 12 Oct 2018 16:58:38 +0300
+Message-ID: <CAHp75VecxqphJBZ2xUTku-WhyjkDRKQPbxvuGFAZ+-1voZRW9Q@mail.gmail.com>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        linux-parisc-owner@vger.kernel.org
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        jmondi <jacopo@jmondi.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>, philipp.zabel@gmail.com,
+        linux-tegra@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Rolf,
+On Fri, Oct 12, 2018 at 1:45 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+>
+> On Fri, Oct 12, 2018 at 11:39:15AM +0100, Jon Hunter wrote:
+> > We had the same situation for Tegra124 Jetson TK1 but I don't think that
+> > adding a pseudo intermediate regulator is cleaner. If the GPIO controls
+> > more than one regulator, I don't see why is it necessary to change the
+> > DT. There are several other people reporting the same problem with
+> > various different boards. So this does seem to be a common usage.
+>
+> Given that DT describes the hardware, not the software implementation,
+> it must not change just because we move from GPIO numbers to GPIO
+> descriptors.
+>
+> The existing DT description is reasonable, and introducing ficticious
+> regulators in DT to work around the implementation is not reasonable.
 
-Thanks for the comments. It will help me to fine tune my scripts!
+If there is no way to detect shared use of GPIO line for regulators
+(*) from current DT description, DT description should be updated to
+reflect, yes, hardware.
 
-On Fri, 12 Oct 2018 at 17:37, Rolf Eike Beer <eike-kernel@sf-tec.de> wrote:
->
-> Firoz Khan wrote:
->
-> > diff --git a/arch/parisc/kernel/syscalls/syscallhdr.sh
-> > b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> > new file mode 100644
-> > index 0000000..607d4ca
-> > --- /dev/null
-> > +++ b/arch/parisc/kernel/syscalls/syscallhdr.sh
-> > @@ -0,0 +1,35 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +in="$1"
-> > +out="$2"
-> > +my_abis=`echo "($3)" | tr ',' '|'`
->
-> Any reason not to use $() instead of backticks?
->
-> > +prefix="$4"
-> > +offset="$5"
-> > +
-> > +fileguard=_UAPI_ASM_PARISC_`basename "$out" | sed \
-> > +    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-> > +    -e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
-> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> > +    echo "#ifndef ${fileguard}"
-> > +    echo "#define ${fileguard}"
-> > +    echo ""
-> > +
-> > +    nxt=0
-> > +    while read nr abi name entry compat ; do
-> > +     if [ -z "$offset" ]; then
-> > +         echo -e "#define __NR_${prefix}${name}\t$nr"
->
-> This mixed indentation with both tabs and spaces is a bit messy.
->
-> > +     else
-> > +         echo -e "#define __NR_${prefix}${name}\t($offset + $nr)"
-> > +     fi
-> > +     nxt=$nr
-> > +     let nxt=nxt+1
->
-> Why do you use let here when you do $(()) calculations at other places?
->
-> > +    done
-> > +
-> > +    echo ""
-> > +    echo "#ifdef __KERNEL__"
-> > +    echo -e "#define __NR_syscalls\t$nxt"
-> > +    echo "#endif"
-> > +    echo ""
-> > +    echo "#endif /* ${fileguard} */"
-> > +) > "$out"
-> > diff --git a/arch/parisc/kernel/syscalls/syscalltbl.sh
-> > b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> > new file mode 100644
-> > index 0000000..04abde7
-> > --- /dev/null
-> > +++ b/arch/parisc/kernel/syscalls/syscalltbl.sh
-> > @@ -0,0 +1,46 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +in="$1"
-> > +out="$2"
-> > +my_abis=`echo "($3)" | tr ',' '|'`
-> > +offset="$4"
-> > +
-> > +emit() {
-> > +    nxt="$1"
-> > +    if [ -z "$offset" ]; then
-> > +     nr="$2"
-> > +    else
-> > +     nr="$2"
-> > +     nr=$((nr+offset))
->
-> This could be one line, no? Or just set offset to 0 if it is empty and
-> avoid that if alltogether.
->
-> > +    fi
-> > +    entry="$3"
-> > +
-> > +    while [ $nxt -lt $nr ]; do
-> > +     echo "__SYSCALL($nxt, sys_ni_syscall, )"
-> > +        let nxt=nxt+1
-> > +    done
-> > +    echo "__SYSCALL($nxt, $entry, )"
-> > +}
-> > +
-> > +grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
-> > +    if [ -z "$offset" ]; then
-> > +     nxt=0
-> > +    else
-> > +     nxt=$offset
-> > +    fi
->
-> Another argument for offset=0 as default.
->
-> > +
-> > +    my_abi="$(cut -d'|' -f2 <<< $my_abis)"
+(*) Not familiar with the guts of DT descriptive language, don't know
+if there are some ways to do a such without additional flags or so.
 
-Here is the logic of identifying the generated script is for compat interface
-or not. So systbl_abi_syscall_table_c32 := common,compat,32 in Makefile
-will parse the script and check the second string whether this is
-"compat" or not.
-
-Other ways are:
-1. add an extra flag, that will again add the complexity
-2. check if [ ${out: -5} = "c32.h" ], this looks weird
-
-Is there any better way to do the same?
-
->
-> "<<<" is a bash extension and will not work with /bin/sh.
->
-> > +    while read nr abi name entry compat ; do
-> > +     if [ $my_abi = "compat" ]; then
-> > +         if [ -z "$compat" ]; then
-> > +             emit $nxt $nr $entry
-> > +         else
-> > +             emit $nxt $nr $compat
-> > +         fi
-> > +     else
-> > +         emit $nxt $nr $entry
-> > +     fi
->
-> I would go for a local variable being set to $compat or $entry and
-> calling emit at only one place. And there should be only one if with 2
-> expressions, no need for 3 branches.
->
-> > +        let nxt=nxt+1
->
-> Inconsistent indentation.
->
-> > +    done
-> > +) > "$out"
-
-I'll address rest of the comment soon.
-
-Helge, I can update this patches asap with their comments and we can
-perform the
-boot test with next version. And thanks for your great support!
-
-Firoz
-
->
-> Eike
+-- 
+With Best Regards,
+Andy Shevchenko
