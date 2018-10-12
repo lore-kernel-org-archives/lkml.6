@@ -2,139 +2,111 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC5AC67837
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFADC28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCD42085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF352086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="pSTCQMAG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCD42085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJCZNVVj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF352086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeJLIcL (ORCPT
+        id S1727162AbeJLImI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 04:32:11 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35590 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbeJLIcK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:32:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w5-v6so11611533wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 18:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wi7DQQzs1cn8DBSCSTYJL4Er2trNvvKE9aMQTPQT7Co=;
-        b=pSTCQMAGpvvjAI1X6CLmNR7DNKK2puY9pgduoQgpIYwugoR/Xg6uOzH5Sad0hslQMb
-         6IWcmy7x5I3a/2XIv2scOZdubb2yA4Vd+XKGE/mnpXRg3CU9RgmcvPFt9P6rDpmdohPB
-         t3FIjBnq9Hu1ljLJNRBauvNPVeFUCpyCsjP4YGLJg7EPHucZhQgDGtkrQ+YwAl3mPEhf
-         qXwV95JPwqWehBcCwYSC0lzHxbW2lt4beLc90NnsBWUIwu4iNfcrzM0YUqeJpyQlIQOS
-         76eBXCsedTeGwpX0K3PsRGuAyuAc92zODwVFzrvMMWINzfE7IsmjWeEAyLsxl7WU0d6s
-         Z6yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wi7DQQzs1cn8DBSCSTYJL4Er2trNvvKE9aMQTPQT7Co=;
-        b=lplJxfJcpqpmVD5CyEg2y89je3HfrruoaJ4/s/qm73tAzddkhlPz50XFmQCmh6LH35
-         NSTWKS3PGOsroOtPbp3OehzPaC3DTJwrvOZWO8xhL0YycqrXUJvIa4u1ZUeIgnjGBfmm
-         2nFsAuQ+A79JbKhRvOegeWJYgMRMIpI0uXqDL3lbLmi2Owv9k/LTTZRNzmSOwEbuz2K7
-         bmFRKE4sc/Rsmta5QmgmaxkEMlySsZVD2C/oloFMdhPCCUCegFh/fFLXB17s8N1K761f
-         1izZQfw/gFc1/xR4x82WXjXLEyJd0iJV6XpGCI2ON+4hDKYa8giyAfvAdnPGnoH5PTm5
-         BBwg==
-X-Gm-Message-State: ABuFfoiy9jql8ECKaWbbE8izRmlhSSLVj0gp4rdUKXqZqP1wZHz3uHFq
-        OV6FT4KJbCogdBW6vTx/5QPWrDwqdAXD8CrhW6v4WA==
-X-Google-Smtp-Source: ACcGV62gRMUjjKb8Zor/8LPVNvkbZanbigu1ceWGdF5TL7dy9ZISnV5OBt1DO7uDT3P/6hscrZqFq7r83gV04x9r1Ck=
-X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr3434946wra.95.1539306138848;
- Thu, 11 Oct 2018 18:02:18 -0700 (PDT)
+        Fri, 12 Oct 2018 04:42:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726061AbeJLImH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 04:42:07 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E6DC213A2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539306734;
+        bh=1PA4k92Ei1i11cqZCfZvT70a1VCx/S3BpQ5IUfKNjxA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nJCZNVVj0afsTPmP53H/IjReGacwUcaFJ2D/jNC2TW7Ju3mdZuYXRP1IOI4C0dq6z
+         z2emt3vL5PJAo0LBw50vsfTVNy/tTsGbPV01n8eWm8DIVwy5XbiQejlHxn8SR6w/cH
+         F6/K7BSyiYtSkrxLR44dQDubBlW7ZWRexjFrWcaw=
+Received: by mail-wr1-f45.google.com with SMTP id e4-v6so11630472wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 18:12:14 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiZNkKkmT87uq8voKj2q/dYHGNoIRRCchTeBXMvSnjEGjVc0D7l
+        dq+SrOTP7CfckQoqKn5uJEt0oonxG82sS9p8GuA2CA==
+X-Google-Smtp-Source: ACcGV623uGwWe6d3Hmj84fleyLogjjFg+U6/9ZFB4bUbg1zjFfo0MONlX/JNo92Jw4Mdv3fPO1NhGFqD+QCDOYSZZy8=
+X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr3454358wra.95.1539306732837;
+ Thu, 11 Oct 2018 18:12:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
- <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
- <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
- <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
- <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
- <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com> <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Thu, 11 Oct 2018 18:02:06 -0700
-Message-ID: <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+References: <20181009065300.11053-1-cyphar@cyphar.com> <20181009065300.11053-3-cyphar@cyphar.com>
+ <CALCETrUZAYw-g+75WAijS+fmRA_DrTahpv156WrxgYuX3KX2xw@mail.gmail.com> <20181010070747.byi2itbi4j42gynq@ryuk>
+In-Reply-To: <20181010070747.byi2itbi4j42gynq@ryuk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 11 Oct 2018 18:12:01 -0700
+X-Gmail-Original-Message-ID: <CALCETrX_T9CF=UHHiTnb9b06R_uDt4XnZ2sSej-c82ptZ3Lbjw@mail.gmail.com>
+Message-ID: <CALCETrX_T9CF=UHHiTnb9b06R_uDt4XnZ2sSej-c82ptZ3Lbjw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] namei: implement O_BENEATH-style AT_* flags
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SELinux-NSA <selinux@tycho.nsa.gov>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Oct 10, 2018 at 12:08 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
 >
-> On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
-> > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
-> >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
-> >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
-> >>>>> +cc selinux people explicitly, since they probably have opinions on this
-> >>>>
-> >>>> I just spent about twenty minutes working my way through this thread,
-> >>>> and digging through the containers archive trying to get a good
-> >>>> understanding of what you guys are trying to do, and I'm not quite
-> >>>> sure I understand it all.  However, from what I have seen, this
-> >>>> approach looks very ptrace-y to me (I imagine to others as well based
-> >>>> on the comments) and because of this I think ensuring the usual ptrace
-> >>>> access controls are evaluated, including the ptrace LSM hooks, is the
-> >>>> right thing to do.
-> >>>
-> >>> Basically the problem is that this new ptrace() API does something
-> >>> that doesn't just influence the target task, but also every other task
-> >>> that has the same seccomp filter. So the classic ptrace check doesn't
-> >>> work here.
-> >>
-> >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+> On 2018-10-09, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Mon, Oct 8, 2018 at 11:53 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > > * AT_NO_PROCLINK: Disallows ->get_link "symlink" jumping. This is a very
+> > >   specific restriction, and it exists because /proc/$pid/fd/...
+> > >   "symlinks" allow for access outside nd->root and pose risk to
+> > >   container runtimes that don't want to be tricked into accessing a host
+> > >   path (but do want to allow no-funny-business symlink resolution).
 > >
-> > There are currently no backlinks from seccomp filters to the tasks
-> > that use them; the only thing you have is a refcount. If the refcount
-> > is 1, and the target task uses the filter directly (it is the last
-> > installed one), you'd be able to infer that the ptrace target is the
-> > only task with a reference to the filter, and you could just do the
-> > direct check; but if the refcount is >1, you might end up having to
-> > take some spinlock and then iterate over all tasks' filters with that
-> > spinlock held, or something like that.
+> > Can you elaborate on the use case?
+> >
+> > If I'm set up a container namespace and walk it for real (through the
+> > outside /proc/PID/root or otherwise starting from an fd that points
+> > into that namespace), and I walk through that namespace's /proc, I'm
+> > going to see the same thing that the processes in the namespace would
+> > see.  So what's the issue?
+> >
+> > Similarly, if I somehow manage to walk into the outside /proc, then
+> > I've pretty much lost regardless of the links.
 >
-> That's what I was afraid of.
+> Well, there's a couple of reasons:
 >
-> Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
->
+> * The original AT_NO_JUMPS patchset similarly disabled "proclinks" but
+>   it was sort of all contained within AT_NO_JUMPS. In order to have a
+>   precise 1:1 feature mapping we need this in *some* form (and in v1 the
+>   only way to get it was to add a separate flag). According to the
+>   original O_BENEATH changelog, both you and Al pushed for this to be
+>   part of O_BENEATH. :P
 
-I would argue that once "LSM" enters this conversation, it just means
-we're on the wrong track.  Let's try to make this work without ptrace
-if possible :)  The whole seccomp() mechanism is very carefully
-designed so that it's perfectly safe to install seccomp filters
-without involving LSM or even involving credentials at all.
+:)
 
---Andy
+Now that you mention it, I *think* my reasoning involved a rather
+different use case: sandboxing.  If a task is Capsicum-ified or
+seccomp()ed such that it can *only* use O_BENEATH or AT_BENEATH, this
+restriction considerably strengthens the resulting security.
