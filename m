@@ -2,111 +2,214 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFADC28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A2BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF352086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD832086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:12:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJCZNVVj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF352086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GY6b8NgM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N7zIp9AT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD832086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbeJLImI (ORCPT
+        id S1727336AbeJLImT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 04:42:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbeJLImH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:42:07 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 12 Oct 2018 04:42:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34386 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbeJLImT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 04:42:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9573460C60; Fri, 12 Oct 2018 01:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539306746;
+        bh=vKq1IyoNt6CK+w4Id0ltYEvO0ENuAhTu/+4BkIfWqCE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GY6b8NgMFfRn4ucuP1Isd99HcJ3xztzrG6L+aNf3nNXxat1wFMvSgRnhUgtBIcoaF
+         rnpRyw8XD3KYHnL6jBFhkh/nPW1zESXvYXJRq2pr48SmPHYbW7yWaD3bZsM/kBJ2AK
+         tEnIUulREDgoYQNzzx8DIkA6KaO6uYLVbgalFfcI=
+Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E6DC213A2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539306734;
-        bh=1PA4k92Ei1i11cqZCfZvT70a1VCx/S3BpQ5IUfKNjxA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nJCZNVVj0afsTPmP53H/IjReGacwUcaFJ2D/jNC2TW7Ju3mdZuYXRP1IOI4C0dq6z
-         z2emt3vL5PJAo0LBw50vsfTVNy/tTsGbPV01n8eWm8DIVwy5XbiQejlHxn8SR6w/cH
-         F6/K7BSyiYtSkrxLR44dQDubBlW7ZWRexjFrWcaw=
-Received: by mail-wr1-f45.google.com with SMTP id e4-v6so11630472wrs.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 18:12:14 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiZNkKkmT87uq8voKj2q/dYHGNoIRRCchTeBXMvSnjEGjVc0D7l
-        dq+SrOTP7CfckQoqKn5uJEt0oonxG82sS9p8GuA2CA==
-X-Google-Smtp-Source: ACcGV623uGwWe6d3Hmj84fleyLogjjFg+U6/9ZFB4bUbg1zjFfo0MONlX/JNo92Jw4Mdv3fPO1NhGFqD+QCDOYSZZy8=
-X-Received: by 2002:adf:b188:: with SMTP id q8-v6mr3454358wra.95.1539306732837;
- Thu, 11 Oct 2018 18:12:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181009065300.11053-1-cyphar@cyphar.com> <20181009065300.11053-3-cyphar@cyphar.com>
- <CALCETrUZAYw-g+75WAijS+fmRA_DrTahpv156WrxgYuX3KX2xw@mail.gmail.com> <20181010070747.byi2itbi4j42gynq@ryuk>
-In-Reply-To: <20181010070747.byi2itbi4j42gynq@ryuk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 11 Oct 2018 18:12:01 -0700
-X-Gmail-Original-Message-ID: <CALCETrX_T9CF=UHHiTnb9b06R_uDt4XnZ2sSej-c82ptZ3Lbjw@mail.gmail.com>
-Message-ID: <CALCETrX_T9CF=UHHiTnb9b06R_uDt4XnZ2sSej-c82ptZ3Lbjw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] namei: implement O_BENEATH-style AT_* flags
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4EC5D60A98;
+        Fri, 12 Oct 2018 01:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539306745;
+        bh=vKq1IyoNt6CK+w4Id0ltYEvO0ENuAhTu/+4BkIfWqCE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N7zIp9ATmEMU3ziS0M1Fq6IajIjnFkKQ/MtgQtgo/cuaEOGjxVUapCg8HU6wCEKa2
+         y6677BdCpTtVC36G39tQynBfUTLJDVRRK8IKJ77xIcrxiTU0uGTyUG0+Cdohlp8xHW
+         KqaLgqnLGTBpeZvBrlYUfspkQgrMgbkDaCmT6APY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EC5D60A98
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     dianders@chromium.org, subhashj@codeaurora.org,
+        asutoshd@codeaurora.org, vivek.gautam@codeaurora.org,
+        evgreen@chromium.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Can Guo <cang@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/1] scsi: ufs: make UFS Tx lane1 clock optional for QCOM platforms
+Date:   Thu, 11 Oct 2018 18:12:16 -0700
+Message-Id: <1539306736-9519-1-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 12:08 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2018-10-09, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Mon, Oct 8, 2018 at 11:53 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > * AT_NO_PROCLINK: Disallows ->get_link "symlink" jumping. This is a very
-> > >   specific restriction, and it exists because /proc/$pid/fd/...
-> > >   "symlinks" allow for access outside nd->root and pose risk to
-> > >   container runtimes that don't want to be tricked into accessing a host
-> > >   path (but do want to allow no-funny-business symlink resolution).
-> >
-> > Can you elaborate on the use case?
-> >
-> > If I'm set up a container namespace and walk it for real (through the
-> > outside /proc/PID/root or otherwise starting from an fd that points
-> > into that namespace), and I walk through that namespace's /proc, I'm
-> > going to see the same thing that the processes in the namespace would
-> > see.  So what's the issue?
-> >
-> > Similarly, if I somehow manage to walk into the outside /proc, then
-> > I've pretty much lost regardless of the links.
->
-> Well, there's a couple of reasons:
->
-> * The original AT_NO_JUMPS patchset similarly disabled "proclinks" but
->   it was sort of all contained within AT_NO_JUMPS. In order to have a
->   precise 1:1 feature mapping we need this in *some* form (and in v1 the
->   only way to get it was to add a separate flag). According to the
->   original O_BENEATH changelog, both you and Al pushed for this to be
->   part of O_BENEATH. :P
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-:)
+Per Qcom's UFS host controller HW design, the UFS Tx lane1 clock could be
+muxed with Tx lane0 clock, hence keep Tx lane1 clock optional by ignoring
+it if it is not provided in device tree. This change also performs some
+cleanup to lanes per direction checks when enable/disable lane clocks just
+for symmetry.
 
-Now that you mention it, I *think* my reasoning involved a rather
-different use case: sandboxing.  If a task is Capsicum-ified or
-seccomp()ed such that it can *only* use O_BENEATH or AT_BENEATH, this
-restriction considerably strengthens the resulting security.
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+---
+Changes since v2:
+- Incorporated review comments from Doug.
+
+Changes since v1:
+- Incorporated review comments from Doug.
+- Update the commit title and commit message.
+
+ drivers/scsi/ufs/ufs-qcom.c | 55 ++++++++++++++++++++++++---------------------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+index 2b38db2..dbc84cb 100644
+--- a/drivers/scsi/ufs/ufs-qcom.c
++++ b/drivers/scsi/ufs/ufs-qcom.c
+@@ -79,20 +79,28 @@ static int ufs_qcom_get_connected_tx_lanes(struct ufs_hba *hba, u32 *tx_lanes)
+ }
+ 
+ static int ufs_qcom_host_clk_get(struct device *dev,
+-		const char *name, struct clk **clk_out)
++		const char *name, struct clk **clk_out, bool optional)
+ {
+ 	struct clk *clk;
+ 	int err = 0;
+ 
+ 	clk = devm_clk_get(dev, name);
+-	if (IS_ERR(clk)) {
+-		err = PTR_ERR(clk);
+-		dev_err(dev, "%s: failed to get %s err %d",
+-				__func__, name, err);
+-	} else {
++	if (!IS_ERR(clk)) {
+ 		*clk_out = clk;
++		return 0;
+ 	}
+ 
++	err = PTR_ERR(clk);
++
++	if (optional && err == -ENOENT) {
++		*clk_out = NULL;
++		return 0;
++	}
++
++	if (err != -EPROBE_DEFER)
++		dev_err(dev, "failed to get %s err %d",
++				name, err);
++
+ 	return err;
+ }
+ 
+@@ -113,11 +121,9 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
+ 	if (!host->is_lane_clks_enabled)
+ 		return;
+ 
+-	if (host->hba->lanes_per_direction > 1)
+-		clk_disable_unprepare(host->tx_l1_sync_clk);
++	clk_disable_unprepare(host->tx_l1_sync_clk);
+ 	clk_disable_unprepare(host->tx_l0_sync_clk);
+-	if (host->hba->lanes_per_direction > 1)
+-		clk_disable_unprepare(host->rx_l1_sync_clk);
++	clk_disable_unprepare(host->rx_l1_sync_clk);
+ 	clk_disable_unprepare(host->rx_l0_sync_clk);
+ 
+ 	host->is_lane_clks_enabled = false;
+@@ -141,24 +147,21 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
+ 	if (err)
+ 		goto disable_rx_l0;
+ 
+-	if (host->hba->lanes_per_direction > 1) {
+-		err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
++	err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
+ 			host->rx_l1_sync_clk);
+-		if (err)
+-			goto disable_tx_l0;
++	if (err)
++		goto disable_tx_l0;
+ 
+-		err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
++	err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+ 			host->tx_l1_sync_clk);
+-		if (err)
+-			goto disable_rx_l1;
+-	}
++	if (err)
++		goto disable_rx_l1;
+ 
+ 	host->is_lane_clks_enabled = true;
+ 	goto out;
+ 
+ disable_rx_l1:
+-	if (host->hba->lanes_per_direction > 1)
+-		clk_disable_unprepare(host->rx_l1_sync_clk);
++	clk_disable_unprepare(host->rx_l1_sync_clk);
+ disable_tx_l0:
+ 	clk_disable_unprepare(host->tx_l0_sync_clk);
+ disable_rx_l0:
+@@ -172,25 +175,25 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
+ 	int err = 0;
+ 	struct device *dev = host->hba->dev;
+ 
+-	err = ufs_qcom_host_clk_get(dev,
+-			"rx_lane0_sync_clk", &host->rx_l0_sync_clk);
++	err = ufs_qcom_host_clk_get(dev, "rx_lane0_sync_clk",
++					&host->rx_l0_sync_clk, false);
+ 	if (err)
+ 		goto out;
+ 
+-	err = ufs_qcom_host_clk_get(dev,
+-			"tx_lane0_sync_clk", &host->tx_l0_sync_clk);
++	err = ufs_qcom_host_clk_get(dev, "tx_lane0_sync_clk",
++					&host->tx_l0_sync_clk, false);
+ 	if (err)
+ 		goto out;
+ 
+ 	/* In case of single lane per direction, don't read lane1 clocks */
+ 	if (host->hba->lanes_per_direction > 1) {
+ 		err = ufs_qcom_host_clk_get(dev, "rx_lane1_sync_clk",
+-			&host->rx_l1_sync_clk);
++			&host->rx_l1_sync_clk, false);
+ 		if (err)
+ 			goto out;
+ 
+ 		err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+-			&host->tx_l1_sync_clk);
++			&host->tx_l1_sync_clk, true);
+ 	}
+ out:
+ 	return err;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
