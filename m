@@ -2,657 +2,209 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D354DC67869
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C60BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B29921476
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:56:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B29921476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 0350D2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 02:06:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0350D2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeJLJ0x (ORCPT
+        id S1726911AbeJLJgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 05:26:53 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15285 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726061AbeJLJ0w (ORCPT
+        Fri, 12 Oct 2018 05:36:20 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37954 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeJLJgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 05:26:52 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46004207"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 12 Oct 2018 09:56:49 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 625154B6ED50;
-        Fri, 12 Oct 2018 09:56:49 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 12 Oct 2018 09:56:48 +0800
-Date:   Fri, 12 Oct 2018 09:56:11 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>, <ard.biesheuvel@linaro.org>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
-Message-ID: <20181012015611.GC6667@localhost.localdomain>
-References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
- <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
- <20181011105708.GB25435@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181011105708.GB25435@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 625154B6ED50.AD07F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+        Fri, 12 Oct 2018 05:36:20 -0400
+Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 08BB312DE581E;
+        Thu, 11 Oct 2018 19:06:17 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 19:06:15 -0700 (PDT)
+Message-Id: <20181011.190615.78309421924776793.davem@davemloft.net>
+To:     gregkh@linuxfoundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 11 Oct 2018 19:06:18 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 12:57:08PM +0200, Borislav Petkov wrote:
->On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
->> There is a bug that kaslr may randomly chooses some positions
->> which are located in movable memory regions. This will break memory
->> hotplug feature and make the movable memory chosen by KASLR can't be
->> removed. So dig SRAT table from ACPI tables to get memory information.
->> 
->> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
->> tables. Since some operations are not needed here, functions are
->> simplified. Functions will be used to dig only SRAT tables to get
->> information of memory, so that KASLR can the memory in immovable node.
->> 
->> And also, these functions won't influence the initialization of
->> ACPI after start_kernel().
->> 
->> Since use physical address directely, so acpi_os_map_memory()
->> and acpi_os_unmap_memory() are not needed.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/Makefile |   2 +
->>  arch/x86/boot/compressed/acpitb.c | 405 ++++++++++++++++++++++++++++++
->>  arch/x86/boot/compressed/misc.h   |   8 +
->>  3 files changed, 415 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpitb.c
->> 
->> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
->> index 28764dacf018..1609e4efcaed 100644
->> --- a/arch/x86/boot/compressed/Makefile
->> +++ b/arch/x86/boot/compressed/Makefile
->> @@ -83,6 +83,8 @@ ifdef CONFIG_X86_64
->>  	vmlinux-objs-y += $(obj)/pgtable_64.o
->>  endif
->>  
->> +vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
->
 
-So many thanks for your review.
+1) RXRPC receive path fixes from David Howells.
 
->This should be CONFIG_MEMORY_HOTREMOVE *and* CONFIG_RANDOMIZE_BASE.
->Otherwise we don't need all that code.
+2) Re-export __skb_recv_udp(), from Jiri Kosina.
 
-Thanks, I will add CONFIG_RANDOMIZE_BASE.
-In V7, I ever added CONFIG_MEMORY_HOTREMOVE, then I need add in kaslr.c:
+3) Fix refcounting in u32 classificer, from Al Viro.
 
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+       /* Mark the immovable regions we need to choose */
-+       get_immovable_mem();
-+#endif
+4) Userspace netlink ABI fixes from Eugene Syromiatnikov.
 
-Then in V8, follow Kees Cook's suggestion, change the #ifdef to the
-definition of get_immovable_mem() in acpitb.c
-So I drop the CONFIG_MEMORY_HOTREMOVE.
+5) Don't double iounmap on rmmod in ena driver, from Arthur
+   Kiyanovski.
 
-I will splite it to more patch in next version.
+6) Fix devlink string attribute handling, we must pull a copy
+   into a kernel buffer if the lifetime extends past the netlink
+   request.  From Moshe Shemesh.
 
-Thanks,
-Chao Fan
+7) Fix hangs in RDS, from Ka-Cheong Poon.
 
->
->>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
->>  
->>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
->> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
->> new file mode 100644
->> index 000000000000..6b869e3f9780
->> --- /dev/null
->> +++ b/arch/x86/boot/compressed/acpitb.c
->> @@ -0,0 +1,405 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#define BOOT_CTYPE_H
->> +#include "misc.h"
->> +#include "error.h"
->> +
->> +#include <linux/efi.h>
->> +#include <asm/efi.h>
->> +#include <linux/numa.h>
->> +#include <linux/acpi.h>
->> +
->> +extern unsigned long get_cmd_line_ptr(void);
->> +
->> +#define STATIC
->> +#include <linux/decompress/mm.h>
->> +
->> +#ifdef CONFIG_MEMORY_HOTREMOVE
->> +struct mem_vector {
->> +	unsigned long long start;
->> +	unsigned long long size;
->> +};
->> +/* Store the immovable memory regions */
->> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
->> +#endif
->> +
->> +#ifdef CONFIG_EFI
->> +/* Search EFI table for rsdp table. */
->> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->> +{
->> +	efi_system_table_t *systab;
->> +	bool find_rsdp = false;
->> +	bool efi_64 = false;
->> +	void *config_tables;
->> +	struct efi_info *e;
->> +	char *sig;
->> +	int size;
->> +	int i;
->> +
->> +	e = &boot_params->efi_info;
->> +	sig = (char *)&e->efi_loader_signature;
->> +
->> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
->> +		efi_64 = true;
->> +	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
->> +		efi_64 = false;
->> +	else {
->> +		debug_putstr("Wrong EFI loader signature.\n");
->> +		return false;
->> +	}
->> +
->> +	/* Get systab from boot params. Based on efi_init(). */
->> +#ifdef CONFIG_X86_32
->
->Why the efi_64 detection above but the ifdeffery here? Why not test
->efi_64 instead?
+8) Fix recursive locking lockdep warnings in tipc, from Ying Xue.
 
-The efi_64 is used for the efi table size.
+9) Clear RX irq correctly in socionext, from Ilias Apalodimas.
 
->
->> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
->> +		debug_putstr("Table located above 4GB, disabling EFI.\n");
->
->Are you disabling EFI? Where?
->
->Ah, I see, this code is copied from arch/x86/platform/efi/efi.c.
->
->So when copying, fix the user-visible strings too.
+10) bcm_sf2 fixes from Florian Fainelli.
 
-Will change it.
+Please pull, thanks a lot!
 
->
->> +		return false;
->> +	}
->> +	systab = (efi_system_table_t *)e->efi_systab;
->> +#else
->> +	systab = (efi_system_table_t *)(
->> +			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
->> +#endif
->> +
->> +	if (systab == NULL)
->
->	if (!systab)
->
->Fix all other occurrences.
->
->> +		return false;
->> +
->> +	/*
->> +	 * Get EFI tables from systab. Based on efi_config_init() and
->> +	 * efi_config_parse_tables(). Only dig the config_table.
->
->					dig out
->
->> +	 */
->> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
->> +			sizeof(efi_config_table_32_t);
->> +
->> +	for (i = 0; i < systab->nr_tables; i++) {
->> +		efi_guid_t guid;
->> +		unsigned long table;
->> +
->> +		config_tables = (void *)(systab->tables + size * i);
->> +		if (efi_64) {
->> +			efi_config_table_64_t *tmp_table;
->> +
->> +			tmp_table = (efi_config_table_64_t *)config_tables;
->> +			guid = tmp_table->guid;
->> +			table = tmp_table->table;
->> +#ifndef CONFIG_64BIT
->> +			if (table >> 32) {
->> +				debug_putstr("Table located above 4G, disabling EFI.\n");
->
->Fix that.
->
->> +				return false;
->> +			}
->> +#endif
->> +		} else {
->> +			efi_config_table_32_t *tmp_table;
->> +
->> +			tmp_table = (efi_config_table_32_t *)config_tables;
->> +			guid = tmp_table->guid;
->> +			table = tmp_table->table;
->> +		}
->> +
->> +		/*
->> +		 * Get rsdp from EFI tables.
->> +		 * If ACPI20 table found, use it and return true.
->
->You don't have to say "return true" in the comment - that is in the code
->already.
->
->Also, this function - just like get_acpi_rsdp() doesn't need to return
->bool but the pa directly.
->
->> +		 * If ACPI20 table not found, but ACPI table found,
->> +		 * use the ACPI table and return true.
->> +		 * If neither ACPI table nor ACPI20 table found,
->> +		 * return false.
->> +		 */
->> +		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID))) {
->> +			*rsdp_addr = (acpi_physical_address)table;
->> +			find_rsdp = true;
->> +		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
->> +			*rsdp_addr = (acpi_physical_address)table;
->> +			return true;
->> +		}
->> +	}
->> +	return find_rsdp;
->> +}
->> +#else
->> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->> +{
->> +	return false;
->> +}
->> +#endif
->
->Instead of doing this, move the ifdef inside the function:
->
->static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->{
->#ifdef CONFIG_EFI
->
->	/* function body */
->#endif
->}
->
->
->> +
->> +static u8 checksum(u8 *buffer, u32 length)
->
->compute_checksum(...)
->
->> +{
->> +	u8 sum = 0;
->> +	u8 *end = buffer + length;
->> +
->> +	while (buffer < end)
->> +		sum = (u8)(sum + *(buffer++));
->> +
->> +	return sum;
->> +}
->> +
->> +/*
->> + * Used to search a block of memory for the RSDP signature.
->> + * Return Pointer to the RSDP if found, otherwise NULL.
->> + * Based on acpi_tb_scan_memory_for_rsdp().
->> + */
->> +static u8 *scan_mem_for_rsdp(u8 *start_address, u32 length)
->> +{
->> +	struct acpi_table_rsdp *rsdp;
->> +	u8 *end_address;
->> +	u8 *mem_rover;
->> +
->> +	end_address = start_address + length;
->> +
->> +	/* Search from given start address for the requested length */
->> +	for (mem_rover = start_address; mem_rover < end_address;
->> +	     mem_rover += ACPI_RSDP_SCAN_STEP) {
->
->Shorten those variable names so that the loop fits on one line.
->
->> +		/*
->> +		 * The RSDP signature and checksum must both be correct
->> +		 * Note: Sometimes there exists more than one RSDP in memory;
->> +		 * the valid RSDP has a valid checksum, all others have an
->> +		 * invalid checksum.
->> +		 */
->> +		rsdp = (struct acpi_table_rsdp *)mem_rover;
->> +
->> +		/* Nope, BAD Signature */
->> +		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
->> +			continue;
->> +
->> +		/* Check the standard checksum */
->> +		if (checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH) != 0)
->
->No need for "!= 0" at the end. Fix all other tests too.
->
->> +			continue;
->> +
->> +		/* Check extended checksum if table version >= 2 */
->> +		if ((rsdp->revision >= 2) &&
->> +		    (checksum((u8 *) rsdp, ACPI_RSDP_XCHECKSUM_LENGTH) != 0))
->> +			continue;
->> +
->> +		/* Sig and checksum valid, we have found a real RSDP */
->> +		return mem_rover;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +/*
->> + * Used to search RSDP physical address.
->> + * Based on acpi_find_root_pointer(). Since only use physical address
->> + * in this period, so there is no need to do the memory map jobs.
->> + */
->> +static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->> +{
->> +	struct acpi_table_rsdp *rsdp;
->> +	u8 *table_ptr;
->> +	u8 *mem_rover;
->> +	u32 address;
->> +
->> +	/*
->> +	 * Get the location of the Extended BIOS Data Area (EBDA)
->> +	 * Since we use physical address directely, so
->> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
->> +	 * not needed here.
->> +	 */
->> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
->> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
->> +	address <<= 4;
->> +	table_ptr = (u8 *)address;
->> +
->> +	/*
->> +	 * Search EBDA paragraphs (EBDA is required to be a minimum of
->> +	 * 1K length)
->> +	 */
->> +	if (address > 0x400) {
->> +		mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
->> +
->> +		if (mem_rover) {
->> +			address += (u32)ACPI_PTR_DIFF(mem_rover, table_ptr);
->> +			*rsdp_addr = (acpi_physical_address)address;
->> +			return;
->> +		}
->> +	}
->> +
->> +	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
->> +	mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
->> +
->> +	/*
->> +	 * Search upper memory: 16-byte boundaries in E0000h-FFFFFh
->> +	 * Since we use physical address directely, so
->> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
->> +	 * not needed here.
->> +	 */
->> +	if (mem_rover) {
->> +		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
->> +				ACPI_PTR_DIFF(mem_rover, table_ptr));
->> +		*rsdp_addr = (acpi_physical_address)address;
->> +		return;
->
->We will return anyway, without that statement. :)
->
->> +	}
->> +}
->> +
->> +#ifdef CONFIG_KEXEC
->> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
->> +{
->> +	char *args = (char *)get_cmd_line_ptr();
->> +	size_t len = strlen((char *)args);
->> +	char *tmp_cmdline, *param, *val;
->> +	unsigned long long addr = 0;
->> +	char *endptr;
->> +
->> +	if (!strstr(args, "acpi_rsdp="))
->> +		return false;
->> +
->> +	tmp_cmdline = malloc(len+1);
->> +	if (!tmp_cmdline)
->> +		error("Failed to allocate space for tmp_cmdline");
->
->Why do you even need to allocate a tmp cmdline?
->
->Ah, I see what you've done - you've copied handle_mem_options() in
->kaslr.c. Well no, not really.
->
->That functionality needs to get extracted into a separate facility. Oh
->look, there's arch/x86/boot/compressed/cmdline.c which is begging to get
->extended.
->
->:-)
->
->> +
->> +	memcpy(tmp_cmdline, args, len);
->> +	tmp_cmdline[len] = 0;
->> +	args = tmp_cmdline;
->> +
->> +	args = skip_spaces(args);
->> +
->> +	while (*args) {
->> +		args = next_arg(args, &param, &val);
->> +
->> +		if (!val && strcmp(param, "--") == 0) {
->> +			warn("Only '--' specified in cmdline");
->> +			free(tmp_cmdline);
->> +			return false;
->> +		}
->> +
->> +		if (!strcmp(param, "acpi_rsdp")) {
->> +			addr = simple_strtoull(val, &endptr, 0);
->
->WARNING: simple_strtoull is obsolete, use kstrtoull instead
->#321: FILE: arch/x86/boot/compressed/acpitb.c:262:
->+                       addr = simple_strtoull(val, &endptr, 0);
->
->
->Please integrate scripts/checkpatch.pl into your patch creation
->workflow. Some of the warnings/errors *actually* make sense.
->
->> +
->> +			if (addr == 0)
->> +				return false;
->> +
->> +			*rsdp_addr = (acpi_physical_address)addr;
->> +			return true;
->> +		}
->> +	}
->> +	return false;
->> +}
->> +#else
->> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
->> +{
->> +	return false;
->> +}
->> +#endif
->> +
->> +/*
->> + * Used to dig rsdp table from EFI table or BIOS.
->
->Write "rsdp" in all caps in all comments.
->
->> + * If rsdp table found in EFI table, use it. Or search BIOS.
->> + * Based on acpi_os_get_root_pointer().
->> + */
->> +static acpi_physical_address get_rsdp_addr(void)
->> +{
->> +	acpi_physical_address pa = 0;
->> +	bool status = false;
->> +
->> +	status = get_acpi_rsdp(&pa);
->
->Why does this function return bool if pa == 0 is already an invalid
->address. You don't need the initialization to 0 above either.
->
->> +
->> +	if (!status || pa == 0)
->
->	if (!status || !pa)
->
->Fix all other tests.
->
->> +		status = efi_get_rsdp_addr(&pa);
->> +
->> +	if (!status || pa == 0)
->> +		bios_get_rsdp_addr(&pa);
->> +
->> +	return pa;
->> +}
->> +
->> +static struct acpi_table_header *get_acpi_srat_table(void)
->> +{
->> +	char *args = (char *)get_cmd_line_ptr();
->> +	acpi_physical_address acpi_table;
->> +	acpi_physical_address root_table;
->> +	struct acpi_table_header *header;
->> +	struct acpi_table_rsdp *rsdp;
->> +	char *signature;
->> +	u8 *entry;
->> +	u32 count;
->> +	u32 size;
->> +	int i, j;
->> +	u32 len;
->> +
->> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
->> +	if (!rsdp)
->> +		return NULL;
->> +
->> +	/* Get rsdt or xsdt from rsdp. */
->> +	if (!strstr(args, "acpi=rsdt") &&
->> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
->> +		root_table = rsdp->xsdt_physical_address;
->> +		size = ACPI_XSDT_ENTRY_SIZE;
->> +	} else {
->> +		root_table = rsdp->rsdt_physical_address;
->> +		size = ACPI_RSDT_ENTRY_SIZE;
->> +	}
->
->Please rework the cmdline parsing so that the functions can call helpers
->only.
->
->> +
->> +	/* Get ACPI root table from rsdt or xsdt.*/
->> +	header = (struct acpi_table_header *)root_table;
->> +	len = header->length;
->> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
->> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
->> +
->> +	for (i = 0; i < count; i++) {
->> +		u64 address64;
->> +
->> +		if (size == ACPI_RSDT_ENTRY_SIZE)
->> +			acpi_table = ((acpi_physical_address)
->> +				      (*ACPI_CAST_PTR(u32, entry)));
->> +		else {
->> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
->> +			acpi_table = (acpi_physical_address) address64;
->> +		}
->> +
->> +		if (acpi_table) {
->> +			header = (struct acpi_table_header *)acpi_table;
->> +			signature = header->signature;
->> +
->> +			if (!strncmp(signature, "SRAT", 4))
->> +				return header;
->> +		}
->> +		entry += size;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +#ifdef CONFIG_MEMORY_HOTREMOVE
->> +/*
->> + * According to ACPI table, filter the immvoable memory regions
->> + * and store them in immovable_mem[].
->> + */
->> +void get_immovable_mem(void)
->> +{
->> +	char *args = (char *)get_cmd_line_ptr();
->> +	struct acpi_table_header *table_header;
->> +	struct acpi_subtable_header *table;
->> +	struct acpi_srat_mem_affinity *ma;
->> +	unsigned long table_end;
->> +	int i = 0;
->> +
->> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
->> +		return;
->
->Ditto.
->
->> +
->> +	table_header = get_acpi_srat_table();
->> +	if (!table_header)
->> +		return;
->> +
->> +	table_end = (unsigned long)table_header + table_header->length;
->> +
->> +	table = (struct acpi_subtable_header *)
->> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
->> +
->> +	while (((unsigned long)table) + table->length < table_end) {
->> +		if (table->type == 1) {
->> +			ma = (struct acpi_srat_mem_affinity *)table;
->> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> +				immovable_mem[i].start = ma->base_address;
->> +				immovable_mem[i].size = ma->length;
->> +				i++;
->> +			}
->> +
->> +			if (i >= MAX_NUMNODES*2)
->> +				break;
->> +		}
->> +		table = (struct acpi_subtable_header *)
->> +			((unsigned long)table + table->length);
->> +	}
->> +	num_immovable_mem = i;
->> +}
->> +#else
->> +void get_immovable_mem(void)
->> +{
->> +}
->> +#endif
->
->This patch is a pain to review - pls split it into patches adding:
->
->* get_acpi_rsdp
->* efi_get_rsdp_addr
->* bios_get_rsdp_addr
->
->and the needed functionality.
->
->As a prepatch refactor the cmdline parsing pls.
->
->Thx.
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+The following changes since commit c1d84a1b42ef70d8ae601df9cadedc7ed4f1beb1:
 
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-10-06 02:11:30 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to 6b9bab550cac108d86c731c207e3e74ea10eb638:
+
+  Merge branch 'net-dsa-bcm_sf2-Couple-of-fixes' (2018-10-11 15:20:00 -0700)
+
+----------------------------------------------------------------
+Al Viro (1):
+      net: sched: cls_u32: fix hnode refcounting
+
+Arthur Kiyanovski (4):
+      net: ena: fix warning in rmmod caused by double iounmap
+      net: ena: fix rare bug when failed restart/resume is followed by driver removal
+      net: ena: fix NULL dereference due to untimely napi initialization
+      net: ena: fix auto casting to boolean
+
+David Howells (10):
+      rxrpc: Fix some missed refs to init_net
+      rxrpc: Fix the data_ready handler
+      rxrpc: Use the UDP encap_rcv hook
+      rxrpc: Don't need to take the RCU read lock in the packet receiver
+      rxrpc: Don't check RXRPC_CALL_TX_LAST after calling rxrpc_rotate_tx_window()
+      rxrpc: Carry call state out of locked section in rxrpc_rotate_tx_window()
+      rxrpc: Only take the rwind and mtu values from latest ACK
+      rxrpc: Fix connection-level abort handling
+      rxrpc: Fix the rxrpc_tx_packet trace line
+      rxrpc: Fix the packet reception routine
+
+David S. Miller (7):
+      Merge branch 'net-smc-userspace-breakage-fixes'
+      Merge branch 'ena-fixes'
+      Merge branch 'devlink-param-type-string-fixes'
+      Merge tag 'rxrpc-fixes-20181008' of git://git.kernel.org/.../dhowells/linux-fs
+      Merge branch 'net-ipv4-fixes-for-PMTU-when-link-MTU-changes'
+      Merge branch 'net-explicitly-requires-bash-when-needed'
+      Merge branch 'net-dsa-bcm_sf2-Couple-of-fixes'
+
+Eric Dumazet (1):
+      net: make skb_partial_csum_set() more robust against overflows
+
+Eugene Syromiatnikov (2):
+      net/smc: use __aligned_u64 for 64-bit smc_diag fields
+      net/smc: retain old name for diag_mode field
+
+Florian Fainelli (2):
+      net: dsa: bcm_sf2: Fix unbind ordering
+      net: dsa: bcm_sf2: Call setup during switch resume
+
+Giacinto Cifelli (1):
+      qmi_wwan: Added support for Gemalto's Cinterion ALASxx WWAN interface
+
+Ilias Apalodimas (1):
+      net: socionext: clear rx irq correctly
+
+Jiri Kosina (1):
+      udp: Unbreak modules that rely on external __skb_recv_udp() availability
+
+Jon Maloy (1):
+      tipc: set link tolerance correctly in broadcast link
+
+Ka-Cheong Poon (1):
+      rds: RDS (tcp) hangs on sendto() to unresponding address
+
+Maciej S. Szmigiero (1):
+      r8169: set RX_MULTI_EN bit in RxConfig for 8168F-family chips
+
+Mike Rapoport (1):
+      net/ipv6: stop leaking percpu memory in fib6 info
+
+Moshe Shemesh (4):
+      devlink: Fix param set handling for string type
+      devlink: Fix param cmode driverinit for string type
+      devlink: Add helper function for safely copy string param
+      net/mlx4_core: Fix warnings during boot on driverinit param set failures
+
+Paolo Abeni (2):
+      selftests: rtnetlink.sh explicitly requires bash.
+      selftests: udpgso_bench.sh explicitly requires bash
+
+Parthasarathy Bhuvaragan (1):
+      tipc: queue socket protocol error messages into socket receive buffer
+
+Sabrina Dubroca (2):
+      net: ipv4: update fnhe_pmtu when first hop's MTU changes
+      net: ipv4: don't let PMTU updates increase route MTU
+
+Sebastian Andrzej Siewior (1):
+      net: phy: sfp: remove sfp_mutex's definition
+
+Ying Xue (1):
+      tipc: eliminate possible recursive locking detected by LOCKDEP
+
+ drivers/net/dsa/bcm_sf2.c                     |  14 ++-----
+ drivers/net/ethernet/amazon/ena/ena_eth_com.c |   8 ++--
+ drivers/net/ethernet/amazon/ena/ena_netdev.c  |  22 +++++-----
+ drivers/net/ethernet/mellanox/mlx4/main.c     |  43 +++++++------------
+ drivers/net/ethernet/realtek/r8169.c          |   4 +-
+ drivers/net/ethernet/socionext/netsec.c       |   5 ++-
+ drivers/net/phy/sfp.c                         |   2 -
+ drivers/net/usb/qmi_wwan.c                    |   1 +
+ include/linux/netdevice.h                     |   7 ++++
+ include/net/devlink.h                         |  12 +++++-
+ include/net/ip_fib.h                          |   1 +
+ include/trace/events/rxrpc.h                  |   1 +
+ include/uapi/linux/smc_diag.h                 |  25 ++++++-----
+ include/uapi/linux/udp.h                      |   1 +
+ net/core/dev.c                                |  28 ++++++++++++-
+ net/core/devlink.c                            |  43 ++++++++++++++++---
+ net/core/skbuff.c                             |  12 +++---
+ net/ipv4/fib_frontend.c                       |  12 ++++--
+ net/ipv4/fib_semantics.c                      |  50 ++++++++++++++++++++++
+ net/ipv4/route.c                              |   7 ++--
+ net/ipv4/udp.c                                |   2 +-
+ net/ipv6/ip6_fib.c                            |   2 +
+ net/rds/send.c                                |  13 ++++--
+ net/rxrpc/ar-internal.h                       |  23 +++++-----
+ net/rxrpc/call_accept.c                       |  27 ++++++++----
+ net/rxrpc/call_object.c                       |   5 ++-
+ net/rxrpc/conn_client.c                       |  10 +++--
+ net/rxrpc/conn_event.c                        |  26 +++++++-----
+ net/rxrpc/input.c                             | 253 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------
+ net/rxrpc/local_object.c                      |  30 ++++++++++---
+ net/rxrpc/peer_event.c                        |   5 +++
+ net/rxrpc/peer_object.c                       |  29 ++++++++-----
+ net/sched/cls_u32.c                           |  10 ++---
+ net/tipc/link.c                               |  27 ++++++++----
+ net/tipc/socket.c                             |  14 ++++++-
+ tools/testing/selftests/net/rtnetlink.sh      |   2 +-
+ tools/testing/selftests/net/udpgso_bench.sh   |   2 +-
+ 37 files changed, 493 insertions(+), 285 deletions(-)
