@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5FBC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F95C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9BA2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E1EE213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VGVDEnPx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9BA2098A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtZkBfom"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1EE213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeJLWpB (ORCPT
+        id S1729052AbeJLWpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:45:01 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50797 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbeJLWpB (ORCPT
+        Fri, 12 Oct 2018 18:45:06 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55168 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbeJLWpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:45:01 -0400
-Received: by mail-it1-f195.google.com with SMTP id k206-v6so13121617ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:12:06 -0700 (PDT)
+        Fri, 12 Oct 2018 18:45:06 -0400
+Received: by mail-it1-f194.google.com with SMTP id l191-v6so19203313ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=nITRR3k5gq55IMNj95L99RcsiAscLip2fQb0dSg5jQk=;
-        b=VGVDEnPx5Yq+O66xTn4qHFqOdSbcAW0XIRDGgxbmoLFTHXr/7vnBv2xFxnzbe7Xbqw
-         5baR3TfAr5NP1OxoagXicIz2B+Q+d73QW7+qPvJ1cigU8mMeUYYBSVtU1jI3RiTsHEda
-         vm8D6SpD5HRXW8+lVi9slbMfTa+Tl7ykabk8Q=
+        bh=bSzyCGmCsstz+YQAG2MJWawzX5T5S/9q2X5C1g/8PQ0=;
+        b=gtZkBfomJZAgzMRkrkccktrQYBOPf81hQjxJAymRqnDF3qBdaFEU6xLAL1wZRqFsk0
+         IdB9CQyzmQM78Ea4fXRI17ngIbXk3LuRMfCwhw9u9piIoHTcDZOHLlbsSC7H43tU9tXB
+         iDZdfxtBJ/oEZcjsvD0OBiYnnI1JO1IZPfeoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=nITRR3k5gq55IMNj95L99RcsiAscLip2fQb0dSg5jQk=;
-        b=PvzjQZQhvHIk8eP7+ymeWlxSA0uaD1vzPACHnCNpoW0e1TpBVHoh4p/iPpTCvwi7Gm
-         81B7+r4qTCH+pXTtgLjtNW+LPk4GCqenL10ncoIvGkLg/3VgRGvfmfNvVrnyeMzzPAu1
-         jHlwrWPxNz6LqQ7idrOBBm1k/vfZJZ3Ro09SzhvwDVDxFp4Oyast13BJQKVi6hp2lBoL
-         I2yF5FSQ87kDrwsqza2u6QQgBn0TI/m26cQXTHMyLx2xa9tK0i2XZlHUu7+v2X3oLu9z
-         xEZE89IqpqFvwq42UEppdP5f9hf6M15pbW0j6lco9nEx9ftq22PUXKGQQXKD/ny7i78G
-         OJVA==
-X-Gm-Message-State: ABuFfohMUz19aiNm8Co86wWHpa1brU9TkefdstcrNS78DXtfBWDvVi1/
-        NuZiTdFIq+3GN/uEFUhtp6fGZi4ouPlbfzrcfHyRgA==
-X-Google-Smtp-Source: ACcGV619A2NgdiXuWpU9SH3VZPgOC0QfmvPtZKm43cSXvWiFq34gA6jH2Giir/wN8F2Iq6mPjfnJDGplnItH3HjJwkE=
-X-Received: by 2002:a24:4795:: with SMTP id t143-v6mr4836438itb.78.1539357125924;
- Fri, 12 Oct 2018 08:12:05 -0700 (PDT)
+        bh=bSzyCGmCsstz+YQAG2MJWawzX5T5S/9q2X5C1g/8PQ0=;
+        b=aMTUucrUxd+tKq8riS/EeGD2y6MNMSZx2lAjnF4yManUUSGJ0EgXcfSx7NLho5uhkw
+         +RlujAstkF19M9HxbxiXo+d1rholy+/ODQS91iwapIshVzdiDxQt5OXWRPdFtiBce4sC
+         CcOvn9klXDeZ5UPJI1DkVRqG5G75bfvZXZsxLv6XRgrHFD863Oi7lt5aUsQAJhLbdqra
+         tDo5HTxxyD7MgL8eyX3AqUZl8vqBpAONxhGjPTL8lH9DN8xs4kQ35eP0xYYjj5P355jN
+         umCcNNtB43LT1nylcvFbQqKSixabjqiKjhOPYOWVAqcCySLTaM/IWdSoNuDlbJU8co7L
+         3p2Q==
+X-Gm-Message-State: ABuFfojoZnbn3oLyiDS9xu90znhv3Ctrl1TQSgwQnXVkVp70Kb00n8/N
+        WUaUe0RBQGO/cDTstLEydr0adUfs0qflyvpY8yAkcA==
+X-Google-Smtp-Source: ACcGV63AkTVlQJNqlaN80tJLUFW1nCu60VhiDHBWoUBew5/t3HSailm2ihrMB+KAqY/appXQq2ykk0YLfaRp34lGCSI=
+X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr4819234itc.26.1539357130883;
+ Fri, 12 Oct 2018 08:12:10 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 08:11:25
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 08:11:30
  -0700 (PDT)
-In-Reply-To: <8130f5e3128fbd0dd34b02dbca9cde2b042d2494.1539341929.git.viresh.kumar@linaro.org>
-References: <cover.1539341929.git.viresh.kumar@linaro.org> <8130f5e3128fbd0dd34b02dbca9cde2b042d2494.1539341929.git.viresh.kumar@linaro.org>
+In-Reply-To: <8e654324f879a04eb0c93493402520f024d2bc17.1539341929.git.viresh.kumar@linaro.org>
+References: <cover.1539341929.git.viresh.kumar@linaro.org> <8e654324f879a04eb0c93493402520f024d2bc17.1539341929.git.viresh.kumar@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 12 Oct 2018 17:11:25 +0200
-Message-ID: <CAPDyKFrKCDnc_0fXFKpzzUJrvNx4QHft1FmHBWN26Z1v6e1FRA@mail.gmail.com>
-Subject: Re: [PATCH V2 1/9] OPP: Identify and mark genpd OPP tables
+Date:   Fri, 12 Oct 2018 17:11:30 +0200
+Message-ID: <CAPDyKFpgcJ-VUpjYn5q+ut80BXe6S2ZAWVNoX2zBoLmzY9p_Fg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/9] OPP: Separate out custom OPP handler specific code
 To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -77,63 +77,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 12 October 2018 at 13:11, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> We need to handle genpd OPP tables differently, this is already the case
-> at one location and will be extended going forward. Add another field to
-> the OPP table to check if the table belongs to a genpd or not.
+> Create a separate routine to take care of custom set_opp() handler
+> specific stuff.
 >
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
 > ---
->  drivers/opp/of.c  | 6 ++++--
->  drivers/opp/opp.h | 2 ++
->  2 files changed, 6 insertions(+), 2 deletions(-)
+>  drivers/opp/core.c | 67 +++++++++++++++++++++++++++-------------------
+>  1 file changed, 40 insertions(+), 27 deletions(-)
 >
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 5a4b47958073..5f114cd3d88c 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -92,6 +92,9 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
->         of_property_read_u32(np, "voltage-tolerance",
->                              &opp_table->voltage_tolerance_v1);
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 2c2df4e4fc14..ebb3b648e0fd 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -635,6 +635,34 @@ static int _generic_set_opp_regulator(const struct opp_table *opp_table,
+>         return ret;
+>  }
 >
-> +       if (of_find_property(np, "#power-domain-cells", NULL))
-> +               opp_table->is_genpd = true;
+> +static int _set_opp_custom(const struct opp_table *opp_table,
+> +                          struct device *dev, unsigned long old_freq,
+> +                          unsigned long freq,
+> +                          struct dev_pm_opp_supply *old_supply,
+> +                          struct dev_pm_opp_supply *new_supply)
+> +{
+> +       struct dev_pm_set_opp_data *data;
+> +       int size;
 > +
->         /* Get OPP table node */
->         opp_np = _opp_of_get_opp_desc_node(np, index);
->         of_node_put(np);
-> @@ -326,8 +329,7 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
->         ret = of_property_read_u64(np, "opp-hz", &rate);
->         if (ret < 0) {
->                 /* "opp-hz" is optional for devices like power domains. */
-> -               if (!of_find_property(dev->of_node, "#power-domain-cells",
-> -                                     NULL)) {
-> +               if (!opp_table->is_genpd) {
->                         dev_err(dev, "%s: opp-hz not found\n", __func__);
->                         goto free_opp;
->                 }
-> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-> index 9c6544b4f4f9..cdb0c2b095e2 100644
-> --- a/drivers/opp/opp.h
-> +++ b/drivers/opp/opp.h
-> @@ -140,6 +140,7 @@ enum opp_table_access {
->   * @regulators: Supply regulators
->   * @regulator_count: Number of power supply regulators
->   * @genpd_performance_state: Device's power domain support performance state.
-> + * @is_genpd: Marks if the OPP table belongs to a genpd.
->   * @set_opp: Platform specific set_opp callback
->   * @set_opp_data: Data to be passed to set_opp callback
->   * @dentry:    debugfs dentry pointer of the real device directory (not links).
-> @@ -178,6 +179,7 @@ struct opp_table {
->         struct regulator **regulators;
->         unsigned int regulator_count;
->         bool genpd_performance_state;
-> +       bool is_genpd;
+> +       data = opp_table->set_opp_data;
+> +       data->regulators = opp_table->regulators;
+> +       data->regulator_count = opp_table->regulator_count;
+> +       data->clk = opp_table->clk;
+> +       data->dev = dev;
+> +
+> +       data->old_opp.rate = old_freq;
+> +       size = sizeof(*old_supply) * opp_table->regulator_count;
+> +       if (IS_ERR(old_supply))
+> +               memset(data->old_opp.supplies, 0, size);
+> +       else
+> +               memcpy(data->old_opp.supplies, old_supply, size);
+> +
+> +       data->new_opp.rate = freq;
+> +       memcpy(data->new_opp.supplies, new_supply, size);
+> +
+> +       return opp_table->set_opp(data);
+> +}
+> +
+>  /**
+>   * dev_pm_opp_set_rate() - Configure new OPP based on frequency
+>   * @dev:        device for which we do this operation
+> @@ -649,7 +677,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+>         unsigned long freq, old_freq;
+>         struct dev_pm_opp *old_opp, *opp;
+>         struct clk *clk;
+> -       int ret, size;
+> +       int ret;
 >
->         int (*set_opp)(struct dev_pm_set_opp_data *data);
->         struct dev_pm_set_opp_data *set_opp_data;
+>         if (unlikely(!target_freq)) {
+>                 dev_err(dev, "%s: Invalid target frequency %lu\n", __func__,
+> @@ -702,8 +730,17 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+>         dev_dbg(dev, "%s: switching OPP: %lu Hz --> %lu Hz\n", __func__,
+>                 old_freq, freq);
+>
+> -       /* Only frequency scaling */
+> -       if (!opp_table->regulators) {
+> +       if (opp_table->set_opp) {
+> +               ret = _set_opp_custom(opp_table, dev, old_freq, freq,
+> +                                     IS_ERR(old_opp) ? NULL : old_opp->supplies,
+> +                                     opp->supplies);
+> +       } else if (opp_table->regulators) {
+> +               ret = _generic_set_opp_regulator(opp_table, dev, old_freq, freq,
+> +                                                IS_ERR(old_opp) ? NULL : old_opp->supplies,
+> +                                                opp->supplies);
+> +       } else {
+> +               /* Only frequency scaling */
+> +
+>                 /*
+>                  * We don't support devices with both regulator and
+>                  * domain performance-state for now.
+> @@ -714,30 +751,6 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+>                                                       opp->pstate);
+>                 else
+>                         ret = _generic_set_opp_clk_only(dev, clk, old_freq, freq);
+> -       } else if (!opp_table->set_opp) {
+> -               ret = _generic_set_opp_regulator(opp_table, dev, old_freq, freq,
+> -                                                IS_ERR(old_opp) ? NULL : old_opp->supplies,
+> -                                                opp->supplies);
+> -       } else {
+> -               struct dev_pm_set_opp_data *data;
+> -
+> -               data = opp_table->set_opp_data;
+> -               data->regulators = opp_table->regulators;
+> -               data->regulator_count = opp_table->regulator_count;
+> -               data->clk = clk;
+> -               data->dev = dev;
+> -
+> -               data->old_opp.rate = old_freq;
+> -               size = sizeof(*opp->supplies) * opp_table->regulator_count;
+> -               if (IS_ERR(old_opp))
+> -                       memset(data->old_opp.supplies, 0, size);
+> -               else
+> -                       memcpy(data->old_opp.supplies, old_opp->supplies, size);
+> -
+> -               data->new_opp.rate = freq;
+> -               memcpy(data->new_opp.supplies, opp->supplies, size);
+> -
+> -               ret = opp_table->set_opp(data);
+>         }
+>
+>         dev_pm_opp_put(opp);
 > --
 > 2.18.0.rc1.242.g61856ae69a2c
 >
