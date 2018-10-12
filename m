@@ -2,383 +2,145 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A722DC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646BAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6735C2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6735C2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id CA53320865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:06:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA53320865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbeJLTff (ORCPT
+        id S1728409AbeJLTio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:35:35 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:60855 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727816AbeJLTff (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:35:35 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437321|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03275;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D161b8m_1539345771;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D161b8m_1539345771)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Fri, 12 Oct 2018 20:02:51 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V12 3/8] irqchip: add C-SKY APB bus interrupt controller
-Date:   Fri, 12 Oct 2018 20:02:04 +0800
-Message-Id: <02662db882dfdc5033aff79cd58f17728fd9eb44.1539315341.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1539315341.git.ren_guo@c-sky.com>
-References: <cover.1539315341.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1539315341.git.ren_guo@c-sky.com>
-References: <cover.1539315341.git.ren_guo@c-sky.com>
+        Fri, 12 Oct 2018 15:38:44 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:45118 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728040AbeJLTin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 15:38:43 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42WmlT4Kglz9ttwT;
+        Fri, 12 Oct 2018 14:06:29 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0X8qnAkFmApG; Fri, 12 Oct 2018 14:06:29 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42WmlT3ZxVz9ttwJ;
+        Fri, 12 Oct 2018 14:06:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E53A8B8D9;
+        Fri, 12 Oct 2018 14:06:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 2r3cVPuvdW0d; Fri, 12 Oct 2018 14:06:33 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 322DB8B8D5;
+        Fri, 12 Oct 2018 14:06:32 +0200 (CEST)
+Subject: Re: [BUG][linux-next][ppc] kernel panic - not syncing:
+ stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+To:     "Aneesh Kumar K.V" <aneeshkumar.opensource@gmail.com>,
+        Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     sachinp <sachinp@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        npiggin <npiggin@gmail.com>,
+        linux-next <linux-next@vger.kernel.org>,
+        manvanth <manvanth@linux.vnet.ibm.com>
+References: <1539330331.17569.32.camel@abdul.in.ibm.com>
+ <1539330499.17569.33.camel@abdul.in.ibm.com>
+ <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
+ <da8634b4-77ae-90e3-b6b4-fa1284ed8d85@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <fc53fa1c-e7b1-dc84-1b5d-d66870aad4e3@c-s.fr>
+Date:   Fri, 12 Oct 2018 14:06:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <da8634b4-77ae-90e3-b6b4-fa1284ed8d85@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - irq-csky-apb-intc is a simple SOC interrupt controller which is
-   used in a lot of C-SKY CPU SOC products.
 
-Changelog:
- - pass checkpatch.pl.
- - use "bool ret" instead of "int ret"
- - add support-pulse-signal in irq-csky-apb-intc.c
- - change name with upstream feed-back
- - add INTC_IFR to clear irq-pending
- - remove CSKY_VECIRQ_LEGENCY
- - change to generic irq chip framework
- - add License and Copyright
- - use irq_domain_add_linear instead of leagcy
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
----
- drivers/irqchip/Kconfig             |   8 ++
- drivers/irqchip/Makefile            |   1 +
- drivers/irqchip/irq-csky-apb-intc.c | 274 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 283 insertions(+)
- create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
+Le 12/10/2018 à 11:02, Aneesh Kumar K.V a écrit :
+> On 10/12/18 1:38 PM, Christophe LEROY wrote:
+>>
+>>
+>> Le 12/10/2018 à 09:48, Abdul Haleem a écrit :
+>>> On Fri, 2018-10-12 at 13:15 +0530, Abdul Haleem wrote:
+>>>> Greeting's
+>>>>
+>>>> Today's linux-next fails to boot on powerpc bare-metal with this error
+>>>>
+>>>> POWER8 performance monitor hardware support registered
+>>>> rcu: Hierarchical SRCU implementation.
+>>>> smp: Bringing up secondary CPUs ...
+>>>> Kernel panic - not syncing: stack-protector: Kernel stack is 
+>>>> corrupted in: __schedule+0x978/0xa80
+>>>> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 
+>>>> 4.19.0-rc7-next-20181010-autotest-autotest #1
+>>>> Call Trace:
+>>>> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+>>>> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+>>>> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+>>>> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+>>>> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+>>>> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+>>>> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+>>>> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+>>>> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
+>>>> Rebooting in 10 seconds..
+>>>>
+>>>> Machine: Power 8 bare-metal
+>>>> kernel version: 4.19.0-rc7-next-20181010
+>>>> gcc version: 4.8.5 20150623
+>>>> config attach
+>>>
+>>> Attaching the kernel config file
+>>>
+>>
+>> # Linux/powerpc 4.11.0-rc4 Kernel Configuration
+>>
+>> This is not the correct config file. Can you send the .config ?
+>>
+>> Christophe
+> 
+> modified   kernel/sched/idle.c
+> @@ -352,7 +352,6 @@ void cpu_startup_entry(enum cpuhp_state state)
+>        * make this generic (ARM and SH have never invoked the canary
+>        * init for the non boot CPUs!). Will be fixed in 3.11
+>        */
+> -#ifdef CONFIG_X86
+>       /*
+>        * If we're the non-boot CPU, nothing set the stack canary up
+>        * for us. The boot CPU already has it initialized but no harm
+> @@ -361,7 +360,6 @@ void cpu_startup_entry(enum cpuhp_state state)
+>        * canaries already on the stack wont ever trigger).
+>        */
+>       boot_init_stack_canary();
+> -#endif
+>       arch_cpu_idle_prepare();
+>       cpuhp_online_idle(state);
+>       while (1)
+> 
+> 
+> This fixes it for me. But we may have to look at the other arch details 
+> mentioned there.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 8103f6f..41cdca0 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -380,6 +380,14 @@ config CSKY_MPINTC
- 	  In fact it's not mmio map in hw and it use ld/st to visit the
- 	  controller's register inside CPU.
- 
-+config CSKY_APB_INTC
-+	bool "C-SKY APB Interrupt Controller"
-+	depends on CSKY
-+	help
-+	  Say yes here to enable C-SKY APB interrupt controller driver used
-+	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
-+	  the controller's register.
-+
- endmenu
- 
- config SIFIVE_PLIC
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 6b739ea..72eaf53 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -88,4 +88,5 @@ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
- obj-$(CONFIG_NDS32)			+= irq-ativic32.o
- obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
- obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
-+obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
-new file mode 100644
-index 0000000..2543bab
---- /dev/null
-+++ b/drivers/irqchip/irq-csky-apb-intc.c
-@@ -0,0 +1,274 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/module.h>
-+#include <linux/irqdomain.h>
-+#include <linux/irqchip.h>
-+#include <linux/irq.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <asm/irq.h>
-+
-+#define INTC_IRQS		64
-+
-+#define CK_INTC_ICR		0x00
-+#define CK_INTC_PEN31_00	0x14
-+#define CK_INTC_PEN63_32	0x2c
-+#define CK_INTC_NEN31_00	0x10
-+#define CK_INTC_NEN63_32	0x28
-+#define CK_INTC_SOURCE		0x40
-+#define CK_INTC_DUAL_BASE	0x100
-+
-+#define GX_INTC_PEN31_00	0x00
-+#define GX_INTC_PEN63_32	0x04
-+#define GX_INTC_NEN31_00	0x40
-+#define GX_INTC_NEN63_32	0x44
-+#define GX_INTC_NMASK31_00	0x50
-+#define GX_INTC_NMASK63_32	0x54
-+#define GX_INTC_SOURCE		0x60
-+
-+static void __iomem *reg_base;
-+static struct irq_domain *root_domain;
-+
-+static int nr_irq = INTC_IRQS;
-+
-+/*
-+ * When controller support pulse signal, the PEN_reg will hold on signal
-+ * without software trigger.
-+ *
-+ * So, to support pulse signal we need to clear IFR_reg and the address of
-+ * IFR_offset is NEN_offset - 8.
-+ */
-+static void irq_ck_mask_set_bit(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-+	unsigned long ifr = ct->regs.mask - 8;
-+	u32 mask = d->mask;
-+
-+	irq_gc_lock(gc);
-+	*ct->mask_cache |= mask;
-+	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
-+	irq_reg_writel(gc, irq_reg_readl(gc, ifr) & ~mask, ifr);
-+	irq_gc_unlock(gc);
-+}
-+
-+static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
-+			     u32 mask_reg, u32 irq_base)
-+{
-+	struct irq_chip_generic *gc;
-+
-+	gc = irq_get_domain_generic_chip(root_domain, irq_base);
-+	gc->reg_base = reg_base;
-+	gc->chip_types[0].regs.mask = mask_reg;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-+	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+
-+	if (of_find_property(node, "csky,support-pulse-signal", NULL))
-+		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
-+}
-+
-+static inline u32 build_channel_val(u32 idx, u32 magic)
-+{
-+	u32 res;
-+
-+	/*
-+	 * Set the same index for each channel
-+	 */
-+	res = idx | (idx << 8) | (idx << 16) | (idx << 24);
-+
-+	/*
-+	 * Set the channel magic number in descending order.
-+	 * The magic is 0x00010203 for ck-intc
-+	 * The magic is 0x03020100 for gx6605s-intc
-+	 */
-+	return res | magic;
-+}
-+
-+static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
-+{
-+	u32 i;
-+
-+	/* Setup 64 channel slots */
-+	for (i = 0; i < INTC_IRQS; i += 4)
-+		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
-+}
-+
-+static int __init
-+ck_intc_init_comm(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	if (parent) {
-+		pr_err("C-SKY Intc not a root irq controller\n");
-+		return -EINVAL;
-+	}
-+
-+	reg_base = of_iomap(node, 0);
-+	if (!reg_base) {
-+		pr_err("C-SKY Intc unable to map: %p.\n", node);
-+		return -EINVAL;
-+	}
-+
-+	root_domain = irq_domain_add_linear(node, nr_irq,
-+					    &irq_generic_chip_ops, NULL);
-+	if (!root_domain) {
-+		pr_err("C-SKY Intc irq_domain_add failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
-+			"csky_intc", handle_level_irq,
-+			IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
-+	if (ret) {
-+		pr_err("C-SKY Intc irq_alloc_gc failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq,
-+				     u32 irq_base)
-+{
-+	u32 irq;
-+
-+	if (hwirq == 0)
-+		return 0;
-+
-+	while (hwirq) {
-+		irq = __ffs(hwirq);
-+		hwirq &= ~BIT(irq);
-+		handle_domain_irq(root_domain, irq_base + irq, regs);
-+	}
-+
-+	return 1;
-+}
-+
-+/* gx6605s 64 irqs interrupt controller */
-+static void gx_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+
-+	do {
-+		ret  = handle_irq_perbit(regs,
-+				readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
-+		ret |= handle_irq_perbit(regs,
-+				readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
-+	} while (ret);
-+}
-+
-+static int __init
-+gx_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Initial enable reg to disable all interrupts
-+	 */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
-+
-+	/*
-+	 * Initial mask reg with all unmasked, because we only use enalbe reg
-+	 */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
-+
-+	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
-+
-+	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
-+
-+	set_handle_irq(gx_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
-+
-+/*
-+ * C-SKY simple 64 irqs interrupt controller, dual-together could support 128
-+ * irqs.
-+ */
-+static void ck_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+	void __iomem *reg_pen_lo = reg_base + CK_INTC_PEN31_00;
-+	void __iomem *reg_pen_hi = reg_base + CK_INTC_PEN63_32;
-+
-+	do {
-+		/* handle 0 - 31 irqs */
-+		ret  = handle_irq_perbit(regs, readl_relaxed(reg_pen_lo), 0);
-+		ret |= handle_irq_perbit(regs, readl_relaxed(reg_pen_hi), 32);
-+
-+		if (nr_irq == INTC_IRQS)
-+			continue;
-+
-+		/* handle 64 - 127 irqs */
-+		ret |= handle_irq_perbit(regs,
-+			readl_relaxed(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
-+		ret |= handle_irq_perbit(regs,
-+			readl_relaxed(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
-+	} while (ret);
-+}
-+
-+static int __init
-+ck_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
-+
-+	/* Enable irq intc */
-+	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
-+
-+	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
-+
-+	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
-+
-+	set_handle_irq(ck_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_intc, "csky,apb-intc", ck_intc_init);
-+
-+static int __init
-+ck_dual_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	/* dual-apb-intc up to 128 irq sources*/
-+	nr_irq = INTC_IRQS * 2;
-+
-+	ret = ck_intc_init(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
-+
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
-+
-+	setup_irq_channel(0x00010203,
-+			  reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_dual_intc, "csky,dual-apb-intc", ck_dual_intc_init);
--- 
-2.7.4
+I think calling again boot_init_stack_canary() will be an issue for all 
+arches using global canary.
 
+As far as I can see, PPC and X86 are the only arches using non global.
+
+Christophe
