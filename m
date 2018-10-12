@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58159C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD93C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C489213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C489213A2
+	by mail.kernel.org (Postfix) with ESMTP id 82A8D2098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:53:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A8D2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeJLPXi (ORCPT
+        id S1727850AbeJLPYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:23:38 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34086 "EHLO
+        Fri, 12 Oct 2018 11:24:25 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46458 "EHLO
         mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeJLPXh (ORCPT
+        with ESMTP id S1726789AbeJLPYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:23:37 -0400
-Received: by mail-ot1-f68.google.com with SMTP id v2so4403259otk.1;
-        Fri, 12 Oct 2018 00:52:25 -0700 (PDT)
+        Fri, 12 Oct 2018 11:24:24 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o21so11529992otb.13;
+        Fri, 12 Oct 2018 00:53:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UtLMv2ZYUDb6cjred02Ty+Kh+xYn7vbSRp8snPMDRX0=;
-        b=Y9r9FMlDTY4wRg12pm7ZQuybaHVk3i44PHlxwlVGf7hssWaqORuSiWyjbKUV+kMsNc
-         DAG9ThtJ8OU7dB1cwvDWzqro/MfgQTa0defGEcLXZSq0kfZWtya1tsdZAhSB78SGJDnB
-         MHv72mgKqlAZxQl0yg3woWvKGCXQIHgeqS767a5sp4bCzXkj8hmTKK6hKDZqOhsaVmWY
-         3GAc5IfpZuIi1m6Rm9OZxWlBIwPVnkY3+ApaiuDPx6oIOSPtldxTZDEHPEY/YtE+rN7d
-         0QVxoSBuQXb2XQL8HUSXlZ7YPQ20/RBKFtd/2xnlVwAqCaRostWu04Vw/qXzyMTdZ3mI
-         FmGg==
-X-Gm-Message-State: ABuFfoiRTveTx6tz6sRnfn5Mk5P/GzY2X8rGUWXHDpbOoicaYSk4pO8B
-        Rf1BzwDPxPH+h5gzcIj1hQbcNVWEGiZyAf6xIvA=
-X-Google-Smtp-Source: ACcGV62FGj2yzP+4HHDAus8Oe6xcnTOc0iEsudEVPVNNendrIS9psWdL3W+0u8G1xh5hOgbYM5wk0FxqwQhB8ik5L2s=
-X-Received: by 2002:a9d:4c90:: with SMTP id m16mr2980711otf.124.1539330745101;
- Fri, 12 Oct 2018 00:52:25 -0700 (PDT)
+        bh=um6mDg2IyyzdSCVWEY6gHlfduTP44M2OvXQyiVTqqRM=;
+        b=QJC2GuFeQhAy1SWqYlpR+GEYAxUAVwLv+hLYVaL62pD01dqCgHMJWHpsPwpFLQRiDY
+         GXUYv8W64b8PW0Lp/TrYX0xaCDRQDyoqoiGxevu8UPXuGms/XkLUDKKT8HPBg8zbNrUa
+         UQqcIEE4XuLAvOrp8QsIsI29ypoghobBBFqol1rJzvHSoVgNuS0jD53c68me/2ypHDE9
+         VJ8ohOy0ZkWNM7mY5bKIGw9XSibZEVKKuBduVSLXQEs1p5XTKF6yCkqWenmH94+MiYJm
+         Qe1vi88qID9U7HQVi23b7YytIxc/0FpAjOmKbCHfWG2qMw6/U2/zM3nW1AgSwQDMeKc+
+         rA4w==
+X-Gm-Message-State: ABuFfohW6pYI1gYZn4uUvEClYjkmLKR9XY/susJNkAP6zdv15toudSiY
+        arUFqlENZ3OaN5tnO5wsii73DF8lWpNMizy9JGbZ7g==
+X-Google-Smtp-Source: ACcGV62MtCNSqgCKMMvnojDUbj6BVRhraQILs6nF8iyz4FLomt5N00Fjv3ywaH6OJCffn8Y47N6nf6Mc8lwJRECc4PM=
+X-Received: by 2002:a9d:538c:: with SMTP id w12mr3310565otg.139.1539330792613;
+ Fri, 12 Oct 2018 00:53:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181011220134.1408.63391.stgit@localhost.localdomain> <20181011220933.1408.6882.stgit@localhost.localdomain>
-In-Reply-To: <20181011220933.1408.6882.stgit@localhost.localdomain>
+References: <20181011220134.1408.63391.stgit@localhost.localdomain> <20181011220944.1408.39823.stgit@localhost.localdomain>
+In-Reply-To: <20181011220944.1408.39823.stgit@localhost.localdomain>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 12 Oct 2018 09:52:12 +0200
-Message-ID: <CAJZ5v0gEssyHx-Ao+PfopHziBQ=WnU2cspSPpvEN=B_E-EVDPA@mail.gmail.com>
-Subject: Re: [driver-core PATCH v3 3/5] driver core: Probe devices
- asynchronously instead of the driver
+Date:   Fri, 12 Oct 2018 09:53:00 +0200
+Message-ID: <CAJZ5v0ioPTXP6L6TXvRHvHdTQFu-v74izHUYSDoc3b9gYS7wog@mail.gmail.com>
+Subject: Re: [driver-core PATCH v3 5/5] PM core: Use new async_schedule_dev command
 To:     alexander.h.duyck@linux.intel.com
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -68,136 +67,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Fri, Oct 12, 2018 at 12:10 AM Alexander Duyck
 <alexander.h.duyck@linux.intel.com> wrote:
 >
-> This change makes it so that we probe devices asynchronously instead of the
-> driver. This results in us seeing the same behavior if the device is
-> registered before the driver or after. This way we can avoid serializing
-> the initialization should the driver not be loaded until after the devices
-> have already been added.
->
-> The motivation behind this is that if we have a set of devices that
-> take a significant amount of time to load we can greatly reduce the time to
-> load by processing them in parallel instead of one at a time. In addition,
-> each device can exist on a different node so placing a single thread on one
-> CPU to initialize all of the devices for a given driver can result in poor
-> performance on a system with multiple nodes.
->
-> One issue I can see with this patch is that I am using the
-> dev_set/get_drvdata functions to store the driver in the device while I am
-> waiting on the asynchronous init to complete. For now I am protecting it by
-> using the lack of a dev->driver and the device lock.
+> This change makes it so that we use the device specific version of the
+> async_schedule commands to defer various tasks related to power management.
+> By doing this we should see a slight improvement in performance as any
+> device that is sensitive to latency/locality in the setup will now be
+> initializing on the node closest to the device.
 >
 > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
 > ---
->  drivers/base/bus.c |   23 +++--------------------
->  drivers/base/dd.c  |   42 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 45 insertions(+), 20 deletions(-)
+>  drivers/base/power/main.c |   12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index 8bfd27ec73d6..2a17bed657ec 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -616,17 +616,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
->  }
->  static DRIVER_ATTR_WO(uevent);
->
-> -static void driver_attach_async(void *_drv, async_cookie_t cookie)
-> -{
-> -       struct device_driver *drv = _drv;
-> -       int ret;
-> -
-> -       ret = driver_attach(drv);
-> -
-> -       pr_debug("bus: '%s': driver %s async attach completed: %d\n",
-> -                drv->bus->name, drv->name, ret);
-> -}
-> -
->  /**
->   * bus_add_driver - Add a driver to the bus.
->   * @drv: driver.
-> @@ -659,15 +648,9 @@ int bus_add_driver(struct device_driver *drv)
->
->         klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
->         if (drv->bus->p->drivers_autoprobe) {
-> -               if (driver_allows_async_probing(drv)) {
-> -                       pr_debug("bus: '%s': probing driver %s asynchronously\n",
-> -                               drv->bus->name, drv->name);
-> -                       async_schedule(driver_attach_async, drv);
-> -               } else {
-> -                       error = driver_attach(drv);
-> -                       if (error)
-> -                               goto out_unregister;
-> -               }
-> +               error = driver_attach(drv);
-> +               if (error)
-> +                       goto out_unregister;
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index a690fd400260..ebb8b61b52e9 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -726,7 +726,7 @@ void dpm_noirq_resume_devices(pm_message_t state)
+>                 reinit_completion(&dev->power.completion);
+>                 if (is_async(dev)) {
+>                         get_device(dev);
+> -                       async_schedule(async_resume_noirq, dev);
+> +                       async_schedule_dev(async_resume_noirq, dev);
+>                 }
 >         }
->         module_add_driver(drv->owner, drv);
 >
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 169412ee4ae8..5ba366c1cb83 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -864,6 +864,29 @@ void device_initial_probe(struct device *dev)
->         __device_attach(dev, true);
->  }
+> @@ -883,7 +883,7 @@ void dpm_resume_early(pm_message_t state)
+>                 reinit_completion(&dev->power.completion);
+>                 if (is_async(dev)) {
+>                         get_device(dev);
+> -                       async_schedule(async_resume_early, dev);
+> +                       async_schedule_dev(async_resume_early, dev);
+>                 }
+>         }
 >
-> +static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
-> +{
-> +       struct device *dev = _dev;
-> +
-> +       if (dev->parent && dev->bus->need_parent_lock)
-> +               device_lock(dev->parent);
-> +       device_lock(dev);
-> +
-> +       if (!dev->driver) {
-> +               struct device_driver *drv = dev_get_drvdata(dev);
-> +
-> +               driver_probe_device(drv, dev);
-> +       }
-> +
-> +       dev_dbg(dev, "async probe completed\n");
-> +
-> +       device_unlock(dev);
-> +       if (dev->parent && dev->bus->need_parent_lock)
-> +               device_unlock(dev->parent);
-
-The above duplicates some code from __driver_attach().
-
-You could avoid that by adding one more function to call directly from
-__driver_attach() in the "sync" case and from here, along the lines of
-what the PM code does.
-
-> +
-> +       put_device(dev);
-> +}
-> +
->  static int __driver_attach(struct device *dev, void *data)
->  {
->         struct device_driver *drv = data;
-> @@ -891,6 +914,25 @@ static int __driver_attach(struct device *dev, void *data)
->                 return ret;
->         } /* ret > 0 means positive match */
+> @@ -1047,7 +1047,7 @@ void dpm_resume(pm_message_t state)
+>                 reinit_completion(&dev->power.completion);
+>                 if (is_async(dev)) {
+>                         get_device(dev);
+> -                       async_schedule(async_resume, dev);
+> +                       async_schedule_dev(async_resume, dev);
+>                 }
+>         }
 >
-> +       if (driver_allows_async_probing(drv)) {
-> +               /*
-> +                * Instead of probing the device synchronously we will
-> +                * probe it asynchronously to allow for more parallelism.
-> +                *
-> +                * We only take the device lock here in order to guarantee
-> +                * that the dev->driver and driver_data fields are protected
-> +                */
-> +               dev_dbg(dev, "scheduling asynchronous probe\n");
-> +               device_lock(dev);
-> +               if (!dev->driver) {
-> +                       get_device(dev);
-> +                       dev_set_drvdata(dev, drv);
-> +                       async_schedule(__driver_attach_async_helper, dev);
-> +               }
-> +               device_unlock(dev);
-> +               return 0;
-> +       }
-> +
->         if (dev->parent && dev->bus->need_parent_lock)
->                 device_lock(dev->parent);
->         device_lock(dev);
+> @@ -1366,7 +1366,7 @@ static int device_suspend_noirq(struct device *dev)
+>
+>         if (is_async(dev)) {
+>                 get_device(dev);
+> -               async_schedule(async_suspend_noirq, dev);
+> +               async_schedule_dev(async_suspend_noirq, dev);
+>                 return 0;
+>         }
+>         return __device_suspend_noirq(dev, pm_transition, false);
+> @@ -1569,7 +1569,7 @@ static int device_suspend_late(struct device *dev)
+>
+>         if (is_async(dev)) {
+>                 get_device(dev);
+> -               async_schedule(async_suspend_late, dev);
+> +               async_schedule_dev(async_suspend_late, dev);
+>                 return 0;
+>         }
+>
+> @@ -1833,7 +1833,7 @@ static int device_suspend(struct device *dev)
+>
+>         if (is_async(dev)) {
+>                 get_device(dev);
+> -               async_schedule(async_suspend, dev);
+> +               async_schedule_dev(async_suspend, dev);
+>                 return 0;
+>         }
+>
 >
