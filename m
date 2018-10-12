@@ -2,185 +2,112 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B58C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB33C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841E52087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 307BE20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PRNN6xNj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841E52087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XEjl/NQ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307BE20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeJLQKu (ORCPT
+        id S1727982AbeJLQNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:10:50 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39695 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeJLQKu (ORCPT
+        Fri, 12 Oct 2018 12:13:01 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16092 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbeJLQNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:10:50 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y144-v6so12030540wmd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=AgWpzDDXUaZ6/qSSjDNWz4BAsSkxVzb6198yDH5/c2o=;
-        b=PRNN6xNjgHm7bXt77VPO+HBWIwGsdEKRSx1mb4C8RqPN7oUJUZUEjiFfkkYdx4H4B7
-         MOr8jkCgMAcp+DRcemUR+w7sU/nWaOOaYkc65/xmGg+xNhtvgee067p7aloBQIpXfNAI
-         ETCw5B6oOkMvvn5kJAnZqqUjcsLwZChCC7Hxk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=AgWpzDDXUaZ6/qSSjDNWz4BAsSkxVzb6198yDH5/c2o=;
-        b=fAKbRtAJ/OtQg9+TL4lhCg9/0SFBaiARmFXVrPB+hhYQTYfkQDanebjyBJcWV+FYNX
-         rvlYbvXKTe29fsmKuXfF4Q4wXlLuJTVh/UxZZNPxtEApcldyT87GzqT0jVrZGXu7nTwB
-         8vmNDaZZemzZw1wMwQRsKk1fEyk4d1YiOUPP3NS1FNB1IE4FoSHqK1AsvqbfMrV5LRvO
-         /0aBIssfGOZi+EHeEtjYNisDYHNr8/LPkrOC0JHUcUKk96MevjXW0o79ASBpauo8wsn4
-         i6rgMiSW+BI4M7Vr0HBf68oSJL/RzgJj6rkPsWFYbqq28SUZEx8QcENec6lHP7axgLZb
-         0/DQ==
-X-Gm-Message-State: ABuFfoiMx0Vr9+knyC+VjxM1AQwMnUY7dx9+N/PdYB7tUqekCHE685wC
-        U4T5071Pb3xLpXDnmtg7qX5aaw==
-X-Google-Smtp-Source: ACcGV6254v+/be0hL6eYpI7FEWq3a63KTTbzyAdojqAEmAYVppnN89KNh1+dXPvLXboXa4hFU7qPQA==
-X-Received: by 2002:a1c:1d6:: with SMTP id 205-v6mr4550950wmb.0.1539333566963;
-        Fri, 12 Oct 2018 01:39:26 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id y3sm418201wrw.11.2018.10.12.01.39.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 01:39:26 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 09:39:24 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Message-ID: <20181012083924.GW4939@dell>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com>
- <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
+        Fri, 12 Oct 2018 12:13:01 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc05e460000>; Fri, 12 Oct 2018 01:41:42 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 12 Oct 2018 01:41:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 12 Oct 2018 01:41:39 -0700
+Received: from [10.21.132.143] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 12 Oct
+ 2018 08:41:37 +0000
+Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
+ <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
+ <20181011164753.GA7393@ulmo>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <248afd79-1a7d-7342-5939-6fa998d04d5b@nvidia.com>
+Date:   Fri, 12 Oct 2018 09:41:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181011164753.GA7393@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539333702; bh=baFBWpbS77dsiKXVFG2f6UMSu2EP9TPkylSpkvyCZw8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=XEjl/NQ775UxZVQYUv1kuu7u2kR6vWtXU3a63baSPITrMFN2xmmz/f0+dHVqiQH5F
+         Vfr/KIlXo7HIqLuPdqwJRd4daVQcQatFUm992k0Ae+Iej+f/rg/2uKR9TNt+pJfWgf
+         SWB8b3EBkcRgEeSsARHky7ZaKZuKLtsH/mbc80lHri/pxIO6aU0Kg5leI8fcPUqeHr
+         B0sRb6dDVMifhT0aFEryBkz/ModxgsTWw7zn19WO3+xrkiteQ/jtfXEPuPSvZdVa6H
+         QvkaDUGYVFHvtef3Zb5CDaATGOGC8MIQ92t5y/PgNfXzbXbPMXxUsx3Dp21CSiKJim
+         eYrsnRX8lY/yQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
-> On 10/12/2018 09:03 AM, Lee Jones wrote:
-> > On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
-> > 
-> >> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>
-> >> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
-> >> support of subdevice controllers is done in separate drivers, because
-> >> not all IC functionality may be needed in particular situations, and
-> >> this can be fine grained controlled in device tree.
-> >>
-> >> The development of the driver was a collaborative work, the
-> >> contribution done by Balasubramani Vivekanandan includes:
-> >> * original implementation of the driver based on a reference driver,
-> >> * regmap powered interrupt controller support on serializers,
-> >> * support of implicitly or improperly specified in device tree ICs,
-> >> * support of device properties and attributes: backward compatible
-> >>   mode, low frequency operation mode, spread spectrum clock generator.
-> >>
-> >> Contribution by Steve Longerbeam:
-> >> * added ds90ux9xx_read_indirect() function,
-> >> * moved number of links property and added ds90ux9xx_num_fpd_links(),
-> >> * moved and updated ds90ux9xx_get_link_status() function to core driver,
-> >> * added fpd_link_show device attribute.
-> >>
-> >> Sandeep Jain added support of pixel clock edge configuration.
-> >>
-> >> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >> ---
-> >>  drivers/mfd/Kconfig           |  14 +
-> >>  drivers/mfd/Makefile          |   1 +
-> >>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
-> >>  include/linux/mfd/ds90ux9xx.h |  42 ++
-> >>  4 files changed, 936 insertions(+)
-> >>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
-> >>  create mode 100644 include/linux/mfd/ds90ux9xx.h
-> >>
-> >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >> index 8c5dfdce4326..a969fa123f64 100644
-> >> --- a/drivers/mfd/Kconfig
-> >> +++ b/drivers/mfd/Kconfig
-> >> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
-> >>  	  boards.  MSP430 firmware manages resets and power sequencing,
-> >>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
-> >>  
-> >> +config MFD_DS90UX9XX
-> >> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
-> >> +	depends on I2C && OF
-> >> +	select MFD_CORE
-> >> +	select REGMAP_I2C
-> >> +	help
-> >> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
-> >> +
-> >> +	  This driver provides basic support for setting up the de-/serializer
-> >> +	  chips. Additional functionalities like connection handling to
-> >> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
-> >> +	  controller and so on are provided by separate drivers and should
-> >> +	  enabled individually.
-> > 
-> > This is not an MFD driver.
+
+On 11/10/18 17:47, Thierry Reding wrote:
+> On Fri, Sep 28, 2018 at 03:11:48PM +0100, Jon Hunter wrote:
+>> The generic power-domain framework has been updated to allow devices
+>> that require more than one power-domain to create a new device for
+>> each power-domain required and then link these new power-domain
+>> devices to the consumer device.
+>>
+>> Update the Tegra xHCI driver to use the new APIs provided by the
+>> generic power-domain framework so we can use the generic power-domain
+>> framework for managing the xHCI controllers power-domains. Please
+>> note that to maintain backward compatibility with older device-tree
+>> blobs these new generic power-domain APIs are only used if the
+>> 'power-domains' property is present and otherwise we fall back to
+>> using the legacy Tegra APIs for managing the power-domains.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/usb/host/xhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++------
+>>  1 file changed, 77 insertions(+), 12 deletions(-)
 > 
-> Why do you think so? The representation of the ICs into device tree format
-> of hardware description shows that this is a truly MFD driver with multiple
-> IP subcomponents naturally mapped into MFD cells.
+> It'd be nice if we could eventually get rid of the legacy Tegra APIs,
+> but that's a separate issue, and this patch looks fine as-is:
 
-This driver does too much real work ('stuff') to be an MFD driver.
-MFD drivers should not need to care of; links, gates, modes, pixels,
-frequencies maps or properties.  Nor should they contain elaborate
-sysfs structures to control the aforementioned 'stuff'.
+Unfortunately, I don't think it is possible as it will break DT backward
+compatibility. However, one way to do it would be to force on all power
+domains on boot if PM is not supported.
 
-Granted, there may be some code in there which could be appropriate
-for an MFD driver.  However most of it needs moving out into a
-function driver (or two).
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-> Basically it is possible to replace explicit of_platform_populate() by
-> adding a "simple-mfd" compatible, if it is desired.
-> 
-> > After a 30 second Google of what this device actually does, perhaps
-> > drivers/media might be a better fit?
-> 
-> I assume it would be quite unusual to add a driver with NO media functions
-> and controls into drivers/media.
-
-drivers/media may very well not be the correct place for this.  In my
-30 second Google, I saw that this device has a lot to do with cameras,
-hence my media association.
-
-If *all* else fails, there is always drivers/misc, but this should be
-avoided if at all possible.
-
-> Laurent, can you please share your opinion?
+Thanks!
+Jon
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+nvpublic
