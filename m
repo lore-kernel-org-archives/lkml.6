@@ -2,67 +2,87 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17284C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E03C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97542087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97542087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B453620868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B453620868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeJLQxj (ORCPT
+        id S1728201AbeJLQy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:53:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48434 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbeJLQxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:53:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFEDFF;
-        Fri, 12 Oct 2018 02:22:09 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B0C5D3F5B7;
-        Fri, 12 Oct 2018 02:22:09 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E74691AE2DA4; Fri, 12 Oct 2018 10:22:09 +0100 (BST)
-Date:   Fri, 12 Oct 2018 10:22:09 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-        bigeasy@linutronix.de
-Subject: Re: [PATCH v2 4/4] locking/qspinlock, x86: Provide liveness guarantee
-Message-ID: <20181012092209.GE12289@arm.com>
-References: <20181003130257.156322446@infradead.org>
- <20181003130957.183726335@infradead.org>
- <20181010161257.GD17340@arm.com>
+        Fri, 12 Oct 2018 12:54:27 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37404 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727885AbeJLQy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 12:54:27 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d14-v6so13141434qto.4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:22:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BDzXhZnxU4cCMt0EkvgGsmZGFAvXzzlQY5OtoRL7IOA=;
+        b=C8PIlgF4lzKIVUNbQYHVFovFC1mGBNlJBBXHUUmc8KW6hNMh9Z4zQ4KS+meQeBe+rl
+         4IlIvBG1eq550JAvoAzBU4r91QupFr2ve5Y5IFXzaQOk9qMag317fY7I+XQniZWi3wF7
+         htNw+cvvSyC9QS685rVW3s0S6zugMXqutLCIoeUJ85dTRIpUjYSl3thcauFhvGnAK4Nn
+         BPqYYp26MI4fdxptXlBk1uWQL5CeYDDIaU/JOBEKcIpfa0NynW5gmOaRdrmXlOIy5Ggi
+         oRICnbdUapG5MWlaPayllb2OedL1x+fYItrVjUCBPTKMd5RzrbmCN2Cl570sHijh3rUy
+         Ofyw==
+X-Gm-Message-State: ABuFfogdp64TpLja2q3JbfremHrf9WyQRBDUdbCHnMzzqmg9TQS25vLa
+        zVec8Zw1KKUsydSZHiRgHdgDoi+I/3X+wvhIm3M=
+X-Google-Smtp-Source: ACcGV60cDLu+1Csv57I4hwMcJFvSvtKmAhSkTGI0FThyvgVrvQRNV3gKuWslaUJROmwLkTtSVyC8SZfkUgx4NtgdGlk=
+X-Received: by 2002:ac8:2bf0:: with SMTP id n45-v6mr5008260qtn.152.1539336176852;
+ Fri, 12 Oct 2018 02:22:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010161257.GD17340@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1539224450-19928-1-git-send-email-vincentc@andestech.com>
+ <1539224450-19928-2-git-send-email-vincentc@andestech.com>
+ <CAK8P3a2U_-EmBf5r4wELddwTYF-S_GKPBcwPiqhV0cp-Cb44gA@mail.gmail.com> <20181012084945.GB10286@andestech.com>
+In-Reply-To: <20181012084945.GB10286@andestech.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Oct 2018 11:22:40 +0200
+Message-ID: <CAK8P3a1zQD7A40f6xfqW72e+ygDSKvYCJMb4=WjDRVo9au5syA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] nds32: nds32 FPU port
+To:     Vincent Chen <vincentc@andestech.com>
+Cc:     Vincent Chen <deanbo422@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 05:12:57PM +0100, Will Deacon wrote:
-> On Wed, Oct 03, 2018 at 03:03:01PM +0200, Peter Zijlstra wrote:
-> >  arch/x86/include/asm/qspinlock.h |   15 +++++++++++++++
-> >  kernel/locking/qspinlock.c       |   16 +++++++++++++++-
-> >  2 files changed, 30 insertions(+), 1 deletion(-)
-> 
-> I've failed to break this by thinking really hard, so I've updated Catalin's
-> TLA model to see if the tools are still happy. I'll get back to you once
-> they've finished chewing on it.
+On Fri, Oct 12, 2018 at 10:52 AM Vincent Chen <vincentc@andestech.com> wrote:
+>
+> On Thu, Oct 11, 2018 at 03:30:30PM +0800, Arnd Bergmann wrote:
+> > On Thu, Oct 11, 2018 at 4:56 AM Vincent Chen <vincentc@andestech.com> wrote:
 
-The model is happy, so this doesn't introduce any "bad" SC behaviours.
+> > There was a long discussion on RISC-V about what happens when
+> > FPU support is enabled or disabled, you may have seen that as well.
+> >
+> > Can you confirm that:
+> >
+> > a) A kernel with FPU support enabled running on a CPU without an FPU
+> >     will behave the same as a kernel without FPU support, and in particular
+> >     not crash while trying to access the FPU
+> > b) A kernel with FPU support disabled running on a CPU with an FPU
+> >     prevents user space from accessing the FPU, to avoid corrupting
+> >     FPU registers during a task switch when a process accidentally contains
+> >     FPU access
+>
+> In this patch user program will be terminated when accessing FPU register
+> if the FPU support is disabled on kernel. Hence, condition b) is promised.
+> Condition a) is unsupported in this patch. I will add this support in
+> the next version patch.
 
-Reviewed-by: Will Deacon <will.deacon@arm.com>
+Ok, sounds good, thanks
 
-Will
+  Arnd
