@@ -2,175 +2,122 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141CCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D192C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D4620868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5AD62087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:24:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6Cju/XP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D4620868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="hX/XUZTe";
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="CJ6p2Tzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AD62087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=raspberrypi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbeJLQzW (ORCPT
+        id S1728353AbeJLQza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:55:22 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52148 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728210AbeJLQzV (ORCPT
+        Fri, 12 Oct 2018 12:55:30 -0400
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:23767 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727808AbeJLQz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:55:21 -0400
-Received: by mail-it1-f196.google.com with SMTP id 74-v6so17771900itw.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:23:51 -0700 (PDT)
+        Fri, 12 Oct 2018 12:55:29 -0400
+Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
+        by mx07-00252a01.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9C9NGOW016000
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:23:57 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=from : to : cc :
+ subject : date : message-id; s=pp;
+ bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
+ b=hX/XUZTeJkHwvSpVytO22tbsoZm5qmEKmmqfmVtEVYCHgSwMiEyEe1mNERxiPd4bDODv
+ btkSvIcXQAEcTqhpGPE5FI0bj7HcOtsvu/ulrmkuzJwaY3WH/3ZizwUDQUvx/YGuSFzY
+ TPvvgSDhVj5MPtJR8emTNr6W5jlvGYtJ9SQq7/r2oVAXRV+GN2lrz55LDDb2Gim13/Qa
+ 69quj0QDG1Rij75FnAvkpsJR88FB2uNm/evIhL/Ysl3eiArtxw5GfuekkgPrAanwq6xB
+ g9m5T1xjrbccNYlSGzL/UFv0+MU4ibrxfzun0E8VmtI2UaZkX3BEIEvQwQLFfB49Iw8T Ug== 
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        by mx07-00252a01.pphosted.com with ESMTP id 2mxjf0k6tb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:23:57 +0100
+Received: by mail-wm1-f70.google.com with SMTP id i8-v6so5845078wma.9
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:23:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=L4bz17i2/iilgYIT15dkUzlQNdkQ6txC1AG67nSk9Wg=;
-        b=D6Cju/XPCKRyEjKP02BkQyU+BNaKy5O+jnaAl6ANKegCORct6PsU8gBQFlBqCWwavW
-         gVEYadgxwTIRm/bXOUaaLjHhg4X2PkRhdJ6w4CE1W0T3a/O1I2I7jBoEM3IFqAZpPB+Y
-         8MRIYJ1Xg9PwzIx50DZxjM3Dr6VmHuWMxHju4=
+        d=raspberrypi.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
+        b=CJ6p2TzdVoCwmiJ5ZAnw47FNynG2txzB27nI3xodJZW+NwTDd/Si4fr4XkLx+lfLIY
+         ondqtZwEpVcz7V+pxTorgsr+LgWQA7u4FlF2G49EOryxk79Yu8LY0XWe8/dhpgLPKTO1
+         72r4+2hXFXvnAysacdFRP/RDPTgHEqzX0bHHM5A5J8FpCo6XF85nQFQo6/DvnAefPA96
+         A8EndvLNSZUOw1LNBeKu97LvBG+IfkFz3N3BR6uMD+tXDCsumi3Gomlbnl5Krgr9wwXO
+         XgJHf0XVWSFQhxOVuC5Pn+iLI/kRx9F+H4OqqpioHJ/ldAeNqF3hDDeN/wLwAqv30IM/
+         kGsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=L4bz17i2/iilgYIT15dkUzlQNdkQ6txC1AG67nSk9Wg=;
-        b=Hf6A3w958T1T1PngFb8GBgZ0tBUw5TUc0/rrOCQUVxQSMEVdj5kk1pTpuGEJM6aDnG
-         Hy9Ah6yKwWjKVm3ns/s/VHLCN/bZ7+1c9Bxmbe7r7F7tYaBDhH5HKnKWUJFb4bDn49Sj
-         pz5dydMdNJHR37V0BpiESqs9dzZ0a0GfW6dDTp7zjaSA6M6qbxFwl76cz6nfHQJSs0eK
-         x4shf1jw0uYlSjU7mX/bHmDZmCsC13KaNXMk2mAsNZc/znRDTIhJpocyZCeA9tnGObuO
-         8rYuoFAp5eHmRSkw1HYcvqSfbxXVoYI/RPbWxia32WDZC7e8CRbJSd5bKKmASBt3+lA+
-         Ol5g==
-X-Gm-Message-State: ABuFfogHbJFdGQ6ssTOmH2l86oBxuGnQQUxsG953YBVwcKIaWyEIwr89
-        vm4t8OAFH1L+FotaGm8RTCys+nxDVpvNnWvpvQFrPw==
-X-Google-Smtp-Source: ACcGV61LfpEC7F3X90CRRFAsEjdhBu4U4O2yn++tkzneefsVXUxKgFX0N29wwyciasuYQNUhRg9J3IFpyDWSFA4o/jo=
-X-Received: by 2002:a24:554c:: with SMTP id e73-v6mr4073888itb.157.1539336230618;
- Fri, 12 Oct 2018 02:23:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 02:23:10
- -0700 (PDT)
-In-Reply-To: <20181011155956.GA28583@e107155-lin>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
- <1539206455-29342-5-git-send-email-rplsssn@codeaurora.org>
- <20181011111306.GB32752@e107155-lin> <CAPDyKFpXJ4MbqFOmDboBuR_1sziyuDi3qgKVvhokaAnQQ+kzjA@mail.gmail.com>
- <20181011155956.GA28583@e107155-lin>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 12 Oct 2018 11:23:10 +0200
-Message-ID: <CAPDyKFoVv99HN080p_pV_Qbmrk9Jeq3kgYBrpTToP6jwuaUo5A@mail.gmail.com>
-Subject: Re: [PATCH RFC v1 4/8] drivers: qcom: cpu_pd: add cpu power domain
- support using genpd
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
-        Lina Iyer <ilina@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
+        b=S2J8X8e+pUCrElTIRO+V6yjqSQOVIppsjcutiyiKDcY7SS7WDqmtwMHTU9PGE6aITl
+         4ZlfjkPryYtchSdrNoNTBPg94CCiP1+5I6kWo1UI9XFfkfmMBuXepitrLYnpJ8VYrnes
+         AcoHngQtEoROv6nl0KSE0eL+3vMaErqHhsujuLJi7xmV5cHokkxqk4uCl5bFw9NbOaqe
+         42Pahfno0WcnAzoHgTEy/SFRwFdJ6aOD8A+/TAUtjV/raodRTj26eA8EBSlEv6ehhRWR
+         m6uv0T9JUa2+v4AZroKltZ3RKjvOGXBrMfPEeTBghpVmreAWSw4aMHTyxILuZdQLzLGu
+         uFpw==
+X-Gm-Message-State: ABuFfohS90GLu4jDNYQaIKCG6J8LezJY3gzfF1Jq69Bk29IGS20AYbmk
+        LK8hksnOaP7wOhYT98CGnj9cPCLo40vVxGBz9arhAYM4/d4kXIAVdPSHSl05IesLWwB3norpd2s
+        ogM9k2+NythjElaInJfK3MrMA
+X-Received: by 2002:a5d:4151:: with SMTP id c17-v6mr4478417wrq.61.1539336236658;
+        Fri, 12 Oct 2018 02:23:56 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV62PsR5A4vc3G79b9jlFR855x6SnQtBbtm+xXVKts9JK08JXjg6Nc4YfydnZ+0uN3zuQLag+PA==
+X-Received: by 2002:a5d:4151:: with SMTP id c17-v6mr4478406wrq.61.1539336236370;
+        Fri, 12 Oct 2018 02:23:56 -0700 (PDT)
+Received: from buildbot.pitowers.org ([2a00:2381:fdf7:14:d078:5595:7c26:ec82])
+        by smtp.gmail.com with ESMTPSA id e6-v6sm547370wrc.70.2018.10.12.02.23.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 12 Oct 2018 02:23:55 -0700 (PDT)
+From:   Phil Elwell <phil@raspberrypi.org>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH] spi: Make GPIO CSs honour the SPI_NO_CS flag
+Date:   Fri, 12 Oct 2018 10:23:18 +0100
+Message-Id: <1539336198-84179-1-git-send-email-phil@raspberrypi.org>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 October 2018 at 17:59, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Thu, Oct 11, 2018 at 05:27:59PM +0200, Ulf Hansson wrote:
->> On 11 October 2018 at 13:13, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> > On Thu, Oct 11, 2018 at 02:50:51AM +0530, Raju P.L.S.S.S.N wrote:
->> >> RPMH based targets require that the sleep and wake state request votes
->> >> be sent during system low power mode entry. The votes help reduce the
->> >> power consumption when the AP is not using them. The votes sent by the
->> >> clients are cached in RPMH controller and needs to be flushed when the
->> >> last cpu enters low power mode. So add cpu power domain using Linux
->> >> generic power domain infrastructure to perform necessary tasks as part
->> >> of domain power down.
->> >>
->> >
->> > You seem to have either randomly chosen just 3 patches from Lina/Ulf's
->> > CPU genpd series or this series doesn't entirely depend on it ?
->>
->> Yep, it not easy to follow. But I do understand what you are trying to do here.
->>
->> >
->> > If latter, how does this work with PSCI CPU_SUSPEND operations ?
->> >
->> > And why this can be part of PSCI firmware implementation. Only PSCI
->> > firmware needs if RPMH votes need to be flushed or not. So, honestly
->> > I don't see the need for this in Linux.
->>
->> I do think there is clear need for this in Linux. More precisely,
->> since the PSCI firmware have knowledge solely about CPUs (and clusters
->> of CPUs), but not about other shared resources/devices present on the
->> SoC.
->>
->
-> I disagree. Even with OSI, you indicate the cluster power off though
-> PSCI CPU_SUSPEND call. If for any async wakeup reasons, firmware decides
-> not to enter cluster OFF, then it may skip flushing RPMH vote. So doing
-> it in PSCI is more correct and elegant to avoid such corner cases.
->
->> What Raju is trying to do here, is to manage those resources which
->> needs special treatment, before and after the CPU (likely cluster) is
->> going idle and returns from idle.
->>
->
-> OK I get that, but why is Linux better than PSCI. I have my reasoning
-> above.
+The SPI configuration state includes an SPI_NO_CS flag that disables
+all CS line manipulation, for applications that want to manage their
+own chip selects. However, this flag is ignored by the GPIO CS code
+in the SPI framework.
 
-I assume Lina, in the other thread from Raju, have provided you the
-details why PSCI is not the place to do this and why Linux need to be
-involved. In any case, let's continue that discussion in that thread
-rather than here.
+Correct this omission with a trivial patch.
 
->
->> One question here though, what particular idle state is relevant for
->> the QCOM SoC to take last-man-actions for? I assume it's only cluster
->> idle states, and not about cpu idle states, no? Raju, can you please
->> clarify?
->>
->
-> I assume so. I did see some comment or commit message to indicate the
-> same.
->
->> Historically, the typical solution have been to use the
->> cpu_cluster_pm_enter|exit() notifiers. Those could potentially be
->> replaced by instead building a hierarchical topology, using
->> master/subdomain of genpd/"power-domains", along the lines of what
->> Raju is doing. However, I am not sure if that is the correct approach,
->> at least we need to make sure it models the HW in DT correctly.
->>
->
-> Indeed. I am not sure how to represent both PSCI and this power domains ?
-> Though I believe the latter is not required at all.
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+---
+ drivers/spi/spi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-After my re-work of the PSCI power domain series, I believe the
-power-domain that Raju is adding, should then be modeled as the master
-power-domain of the PSCI *cluster* power domain. But, as stated, I am
-not sure if it's the correct way to model the HW/topology. Maybe it
-is.
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 84dfef4..b1d88fe 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -729,7 +729,9 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
+ 		enable = !enable;
+ 
+ 	if (gpio_is_valid(spi->cs_gpio)) {
+-		gpio_set_value(spi->cs_gpio, !enable);
++		/* Honour the SPI_NO_CS flag */
++		if (!(spi->mode & SPI_NO_CS))
++			gpio_set_value(spi->cs_gpio, !enable);
+ 		/* Some SPI masters need both GPIO CS & slave_select */
+ 		if ((spi->controller->flags & SPI_MASTER_GPIO_SS) &&
+ 		    spi->controller->set_cs)
+-- 
+2.7.4
 
-The other option is to explore the cpu_cluster_pm_enter|exit(), which
-today is the only viable solution in the kernel. In principle we then
-need to call cpu_cluster_pm_enter() from the PSCI's cluster PM domain
-genpd ->power_off() callback, and cpu_cluster_pm_exit() from the
-->power_on() callback.
-
-Or maybe we simply need something entirely new, like genpd PM
-domain-on/off notifiers, which may scale better. It has even been
-suggested on the mailing list, long time ago.
-
-Kind regards
-Uffe
