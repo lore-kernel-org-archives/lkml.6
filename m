@@ -2,186 +2,92 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20F7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22927C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6B720645
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:30:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=igel-co-jp.20150623.gappssmtp.com header.i=@igel-co-jp.20150623.gappssmtp.com header.b="hfl6Yu75"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6B720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=igel.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id CEE8320645
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE8320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbeJLMBG (ORCPT
+        id S1727214AbeJLMDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 08:01:06 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43767 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeJLMBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 08:01:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 30-v6so5260922plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 21:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=23rfPD2OIGJcvI4IJwZ6xc8GNGqaZZG0MvxBm+pBoF4=;
-        b=hfl6Yu75zIbMZYm6vxS/YMBqXNkVxZVyoJGY7UNme4vkTfhcTSXJr/WsC8d5WN570z
-         ebNhiJh6g2WXOmLRIzJKopkYx6IeB6I7nAJJlRW/3hSjsIDdJzHl15K2ozbbje1F3b0O
-         7L5csOwRALFIbJ639TJDtLGv1EJk/zWrXCW9BXCv3O0s6X6n+ZKrTNnV/RN6Bzb/p31p
-         uJVhnCkjbF7upGSgsrjC6WaXfUDbGjyw2HwY6YuHWa907pt5yJ6Fwk9Zz7QVMdxcN+bv
-         BoJpq4yhG4h2r388kk4DsW7AFVqCpykmem4cSu9hVR7ydukp+NlDDNHhFxP4m52Xzr+e
-         s/wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=23rfPD2OIGJcvI4IJwZ6xc8GNGqaZZG0MvxBm+pBoF4=;
-        b=EHaXAnsFE07v2FmK1tZtn5vwQiap3GMne0XtKdfvRlsFlIPUQzoAGPobGVrNuvxykM
-         Vbamoy51/iQFZTrvPUNmXT6v5N4QLFq2yvfBondlkxO94Y9mWNKnt+IdCrrrSDOEOKfj
-         lgfVkkoafjR3OJtuenvU3ZB4/A6kcb6i+u1wxCve6WvgmtI3WB2UVWHA2acTXZwm/wr4
-         NYQYri7X6NE2o6sjFihwLGHm+LMMcYV9O3EWou5sRNIKHy3W7JP6MZvpIJcXCUDNGQTt
-         6DKAU5oqIX3yf8iOvElzoageLG4in+WLYOePBddmpePvbRCsAvtyBEcFzbnKBT9DXOCy
-         SrpQ==
-X-Gm-Message-State: ABuFfoh28rwQUvhutzSL1IIdcLWaGJP6rjdZnYgvilHj8MPJ1tTTXrgM
-        5akMN+Df5/u9a51H8A0dwSxXSMV5Opv3Zw==
-X-Google-Smtp-Source: ACcGV63jSLH6iYq4CzvD/k73yZPgUZ535qnwrXavyVwpUzndPUNjJ84QlWUaZf6Qfo3UyphX9s4CZQ==
-X-Received: by 2002:a17:902:f096:: with SMTP id go22mr4358738plb.235.1539318635634;
-        Thu, 11 Oct 2018 21:30:35 -0700 (PDT)
-Received: from [10.16.144.1] (napt.igel.co.jp. [219.106.231.132])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm46844pfk.19.2018.10.11.21.30.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 21:30:34 -0700 (PDT)
-Subject: Re: [PATCH] virtio_net: enable tx after resuming from suspend
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181011075127.2608-1-ake@igel.co.jp>
- <dd530053-efab-b661-3423-1faaab8fb12f@redhat.com>
- <7e87b140-79ae-c79e-40ed-dc76b38eeae4@igel.co.jp>
- <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
-From:   ake <ake@igel.co.jp>
-Message-ID: <b294cbba-24a0-939d-98e8-d1483e3688a1@igel.co.jp>
-Date:   Fri, 12 Oct 2018 13:30:32 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 12 Oct 2018 08:03:36 -0400
+Received: from mga12.intel.com ([192.55.52.136]:21726 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726731AbeJLMDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 08:03:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 21:33:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,371,1534834800"; 
+   d="scan'208";a="98537394"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Oct 2018 21:33:06 -0700
+Received: from fmsmsx126.amr.corp.intel.com (10.18.125.43) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 11 Oct 2018 21:33:06 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX126.amr.corp.intel.com (10.18.125.43) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 11 Oct 2018 21:33:05 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.48]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.245]) with mapi id 14.03.0319.002;
+ Fri, 12 Oct 2018 12:33:03 +0800
+From:   "Zhang, Ning A" <ning.a.zhang@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: question about V4L2_MEMORY_USERPTR on 64bit applications
+Thread-Topic: question about V4L2_MEMORY_USERPTR on 64bit applications
+Thread-Index: AQHUYdg6M/rTSYlERUCXZPSjuhezLaUaf4UA
+Date:   Fri, 12 Oct 2018 04:33:03 +0000
+Message-ID: <1539318782.21249.7.camel@intel.com>
+References: <1539313441.21249.3.camel@intel.com>
+In-Reply-To: <1539313441.21249.3.camel@intel.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.115]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9FBD4F6272ACF147B26934BDF01033E9@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年10月11日 22:06, Jason Wang wrote:
-> 
-> 
-> On 2018年10月11日 18:22, ake wrote:
->>
->> On 2018年10月11日 18:44, Jason Wang wrote:
->>>
->>> On 2018年10月11日 15:51, Ake Koomsin wrote:
->>>> commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
->>>> disabled the virtio tx before going to suspend to avoid a use after
->>>> free.
->>>> However, after resuming, it causes the virtio_net device to lose its
->>>> network connectivity.
->>>>
->>>> To solve the issue, we need to enable tx after resuming.
->>>>
->>>> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during
->>>> reset")
->>>> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
->>>> ---
->>>>    drivers/net/virtio_net.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>> index dab504ec5e50..3453d80f5f81 100644
->>>> --- a/drivers/net/virtio_net.c
->>>> +++ b/drivers/net/virtio_net.c
->>>> @@ -2256,6 +2256,7 @@ static int virtnet_restore_up(struct
->>>> virtio_device *vdev)
->>>>        }
->>>>          netif_device_attach(vi->dev);
->>>> +    netif_start_queue(vi->dev);
->>> I believe this is duplicated with netif_tx_wake_all_queues() in
->>> netif_device_attach() above?
->> Thank you for your review.
->>
->> If both netif_tx_wake_all_queues() and netif_start_queue() result in
->> clearing __QUEUE_STATE_DRV_XOFF, then is it possible that some
->> conditions in netif_device_attach() is not satisfied?
-> 
-> Yes, maybe. One case I can see now is when the device is down, in this
-> case netif_device_attach() won't try to wakeup the queue.
-> 
->>   Without
->> netif_start_queue(), the virtio_net device does not resume properly
->> after waking up.
-> 
-> How do you trigger the issue? Just do suspend/resume?
-
-Yes, simply suspend and resume.
-
-Here is how I trigger the issue:
-
-1) Start the Virtual Machine Manager GUI program.
-2) Create a guest Linux OS. Make sure that the guest OS kernel is
-   >= 4.12. Make sure that it uses virtio_net as its network device.
-   In addition, make sure that the video adapter is VGA. Otherwise,
-   waking up with the virtual power button does not work.
-3) After installing the guest OS, log in, and test the network
-   connectivity by ping the host machine.
-4) Suspend. After this, the screen is blank.
-5) Resume by hitting the virtual power button. The login screen
-   appears again.
-6) Log in again. The guest loses its network connection.
-
-In my test:
-Guest: Ubuntu 16.04/18.04 with kernel 4.15.0-36-generic
-Host: Ubuntu 16.04 with kernel 4.15.0-36-generic/4.4.0-137-generic
-
->>
->> Is it better to report this as a bug first?
-> 
-> Nope, you're very welcome to post patch directly.
-> 
->> If I am to do more
->> investigation, what areas should I look into?
-> 
-> As you've figured out, you can start with why netif_tx_wake_all_queues()
-> were not executed?
-> 
-> (Btw, does the issue disappear if you move netif_tx_disable() under the
-> check of netif_running() in virtnet_freeze_down()?)
-
-The issue disappears if I move netif_tx_disable() under the check of
-netif_running() in virtnet_freeze_down(). Moving netif_tx_disable()
-is probably better as its logic is consistent with
-netif_device_attach() implementation. If you are OK with this idea,
-I will submit another patch.
-
-> Thanks
-> 
->>
->> Best Regards
->> Ake Koomsin
->>
-> 
-
-Best Regards
+c29ycnkgZm9yIHdyb25nIHF1ZXN0aW9uLCBJIHJlYWxseSBtZWV0IG1lbW9yeSBhZGRyZXNzIHRy
+dW5jYXRlZCBpc3N1ZSwNCndoZW4gdXNlIFY0TDIga2VybmVsIEFQSXMuDQoNCmluIGEga2VybmVs
+IHRocmVhZCBjcmVhdGVkIGJ5IGtlcm5lbF90aHJlYWQoKQ0KSSB2bV9tbWFwIGEgc2htZW1fZmls
+ZSB0byBhZGRyOiAwMDAwN2ZmZmY3ZmE4MDAwDQphbmQgcXVldWUgaXQgdG8gVjRMMiwgYWZ0ZXIg
+ZGVxdWV1ZSBpdCwgYW5kIEkgZmluZCB0aGUgYWRkcmVzcyBpcw0KdHJ1bmNhdGVkIHRvIDAwMDAw
+MDAwZjdmYTgwMDANCg0KSSB1c2UgX191NjQge2FrYSBsb25nIGxvbmcgdW5zaWduZWQgaW50fSB0
+byBzYXZlIGFkZHJlc3MsIGFuZCBJIGZpbmQNCnVzZXJwdHIgaXMgdW5zaWduZWQgbG9uZywgd3Jv
+bmdseSB0aGluayBpdCBhcyAiZGF0YSB0cnVuY2F0ZWQiDQphbmQgYSBsb3Qgb2YgX191MzIgaW4g
+dGhpcyBzdHJ1Y3R1cmUuDQoNCmV2ZXJ5dGhpbmcgd29ya3MgZmluZSwgYnV0IEkgc3RpbGwgZG9u
+J3QgdW5kZXJzdGFuZCB3aHkgaGlnaCAzMmJpdCBiZQ0KMC4uDQoNCkJSLg0KTmluZy4NCg0KDQrl
+nKggMjAxOC0xMC0xMuS6lOeahCAxMTowNCArMDgwMO+8jFpoYW5nIE5pbmflhpnpgZPvvJoNCj4g
+SGksDQo+IA0KPiBJIGhhdmUgcXVlc3Rpb24gYWJvdXQgVjRMMl9NRU1PUllfVVNFUlBUUiBvbiA2
+NGJpdCBhcHBsaWNhdGlvbnMuDQo+IA0KPiBzdHJ1Y3QgdjRsMl9idWZmZXIgew0KPiAJX191MzIJ
+CQlpbmRleDsNCj4gCV9fdTMyCQkJdHlwZTsNCj4gCV9fdTMyCQkJYnl0ZXN1c2VkOw0KPiAJX191
+MzIJCQlmbGFnczsNCj4gCV9fdTMyCQkJZmllbGQ7DQo+IAlzdHJ1Y3QgdGltZXZhbAkJdGltZXN0
+YW1wOw0KPiAJc3RydWN0IHY0bDJfdGltZWNvZGUJdGltZWNvZGU7DQo+IAlfX3UzMgkJCXNlcXVl
+bmNlOw0KPiANCj4gCS8qIG1lbW9yeSBsb2NhdGlvbiAqLw0KPiAJX191MzIJCQltZW1vcnk7DQo+
+IAl1bmlvbiB7DQo+IAkJX191MzLCoMKgwqDCoMKgwqDCoMKgwqDCoMKgb2Zmc2V0Ow0KPiAJCXVu
+c2lnbmVkIGxvbmfCoMKgwqB1c2VycHRyOyAgIDw8PC0tLSB0aGlzIGlzIGEgMzJiaXQgYWRkci4N
+Cj4gCQlzdHJ1Y3QgdjRsMl9wbGFuZSAqcGxhbmVzOw0KPiAJCV9fczMyCQlmZDsNCj4gCX0gbTsN
+Cj4gCV9fdTMyCQkJbGVuZ3RoOw0KPiAJX191MzIJCQlyZXNlcnZlZDI7DQo+IAlfX3UzMgkJCXJl
+c2VydmVkOw0KPiB9Ow0KPiANCj4gd2hlbiB1c2UgYSA2NGJpdCBhcHBsaWNhdGlvbiwgbWVtb3J5
+IGZyb20gbWFsbG9jIGlzIDY0Yml0IGFkZHJlc3MuDQo+IG1lbW9yeSBmcm9tIEdQVSAoZWcsIGlu
+dGVsIGk5MTUpIGFyZSBhbHNvIDY0Yml0IGFkZHJlc3MuDQo+IA0KPiB3aGVuIHVzZSB0aGVzZSBr
+aW5kIG9mIG1lbW9yeSBhc8KgVjRMMl9NRU1PUllfVVNFUlBUUiwgYWRkcmVzcyB3aWxsIGJlDQo+
+IHRydW5jYXRlZCBpbnRvIDMyYml0Lg0KPiANCj4gdGhpcyB3b3VsZCBiZSBlcnJvciwgYnV0IGFj
+dHVhbGx5IG5vdC4gSSByZWFsbHkgZG9uJ3QgdW5kZXJzdGFuZC4NCj4gDQo+IEJSLg0KPiBOaW5n
+Lg==
