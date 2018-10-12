@@ -2,129 +2,98 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD44C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D62ADC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF682086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF682086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 871422086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871422086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeJLQmx (ORCPT
+        id S1728060AbeJLQro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:42:53 -0400
-Received: from smtp65.ord1c.emailsrvr.com ([108.166.43.65]:56620 "EHLO
-        smtp65.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726071AbeJLQmx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:42:53 -0400
-X-Greylist: delayed 441 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Oct 2018 12:42:52 EDT
-Received: from smtp25.relay.ord1c.emailsrvr.com (localhost [127.0.0.1])
-        by smtp25.relay.ord1c.emailsrvr.com (SMTP Server) with ESMTP id 9F44B2024B;
-        Fri, 12 Oct 2018 05:04:04 -0400 (EDT)
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp25.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id B769A20229;
-        Fri, 12 Oct 2018 05:04:03 -0400 (EDT)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Fri, 12 Oct 2018 05:04:04 -0400
-Subject: Re: [PATCH] staging: comedi: tio: fix multiple missing break in
- switch bugs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Spencer E. Olson" <olsonse@umich.edu>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20181011190520.GA12609@embeddedor.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <aeb0ea08-86bc-3ce7-ea93-a68b2d522ed0@mev.co.uk>
-Date:   Fri, 12 Oct 2018 10:04:02 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 12:47:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44378 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727808AbeJLQrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 12:47:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A31A72083D; Fri, 12 Oct 2018 11:16:12 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-7-245.w90-88.abo.wanadoo.fr [90.88.129.245])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5EBCF20703;
+        Fri, 12 Oct 2018 11:16:02 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 11:16:03 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: sa1100: avoid VLA in sa1100_setup_mtd
+Message-ID: <20181012111603.0d03e043@bbrezillon>
+In-Reply-To: <20181010184533.691620-1-arnd@arndb.de>
+References: <20181010184533.691620-1-arnd@arndb.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181011190520.GA12609@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 20:05, Gustavo A. R. Silva wrote:
-> Currently, there are multiple missing break statements in two switch code
-> blocks. This makes the execution path to fall all the way down through
-> to the default cases, which makes the function ni_tio_set_gate_src() to
-> always return -EINVAL.
-> 
-> Fix this by adding the missing break statements.
-> 
-> Also, notice that due to the absence of the break statements,
-> the following pieces of code are unreachable:
-> 
-> 1078    if (ret)
-> 1079            return ret;
-> 1080    /* 3.  reenable & set mode to starts things back up */
-> 1081    ni_tio_set_gate_mode(counter, src);
-> 
-> 1098    if (ret)
-> 1099            return ret;
-> 1100    /* 3.  reenable & set mode to starts things back up */
-> 1101    ni_tio_set_gate2_mode(counter, src);
-> 
-> So, by adding the missing breaks, this patch also fixes the problem
-> above.
-> 
-> Addresses-Coverity-ID: 1474165 ("Missing break in switch")
-> Addresses-Coverity-ID: 1474162 ("Structurally dead code")
-> Fixes: 347e244884c3 ("staging: comedi: tio: implement global tio/ctr routing")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/staging/comedi/drivers/ni_tio.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/staging/comedi/drivers/ni_tio.c b/drivers/staging/comedi/drivers/ni_tio.c
-> index 838614e..0eb388c 100644
-> --- a/drivers/staging/comedi/drivers/ni_tio.c
-> +++ b/drivers/staging/comedi/drivers/ni_tio.c
-> @@ -1070,8 +1070,10 @@ int ni_tio_set_gate_src(struct ni_gpct *counter,
->   		case ni_gpct_variant_e_series:
->   		case ni_gpct_variant_m_series:
->   			ret = ni_m_set_gate(counter, chan);
-> +			break;
->   		case ni_gpct_variant_660x:
->   			ret = ni_660x_set_gate(counter, chan);
-> +			break;
->   		default:
->   			return -EINVAL;
->   		}
-> @@ -1090,8 +1092,10 @@ int ni_tio_set_gate_src(struct ni_gpct *counter,
->   		switch (counter_dev->variant) {
->   		case ni_gpct_variant_m_series:
->   			ret = ni_m_set_gate2(counter, chan);
-> +			break;
->   		case ni_gpct_variant_660x:
->   			ret = ni_660x_set_gate2(counter, chan);
-> +			break;
->   		default:
->   			return -EINVAL;
->   		}
-> 
+Hi Arnd,
 
-Thanks for catching that bug!
+On Wed, 10 Oct 2018 20:44:50 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+> Enabling -Wvla found another variable-length array with randconfig
+> testing:
+> 
+> drivers/mtd/maps/sa1100-flash.c: In function 'sa1100_setup_mtd':
+> drivers/mtd/maps/sa1100-flash.c:224:10: error: ISO C90 forbids variable length array 'cdev' [-Werror=vla]
+> 
+> As far as I can tell, there is an upper bound on the number of resources
+> that can be passed, based on the number of CS lines on the bus.
+> In practice, all boards we support have either one or two resources,
+> but using six to be on the safe side has no extra cost.
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Why not dynamically allocate cdev instead? That removes any kind of
+guessing on the max value, and it shouldn't hurt much since this code is
+in the probe path.
+
+--->8---
+diff --git a/drivers/mtd/maps/sa1100-flash.c b/drivers/mtd/maps/sa1100-flash.c
+index 784c6e1a0391..fd5fe12d7461 100644
+--- a/drivers/mtd/maps/sa1100-flash.c
++++ b/drivers/mtd/maps/sa1100-flash.c
+@@ -221,7 +221,14 @@ static struct sa_info *sa1100_setup_mtd(struct platform_device *pdev,
+                info->mtd = info->subdev[0].mtd;
+                ret = 0;
+        } else if (info->num_subdev > 1) {
+-               struct mtd_info *cdev[nr];
++               struct mtd_info **cdev;
++
++               cdev = kmalloc_array(nr, sizeof(*cdev), GFP_KERNEL);
++               if (!cdev) {
++                       ret = -ENOMEM;
++                       goto err;
++               }
++
+                /*
+                 * We detected multiple devices.  Concatenate them together.
+                 */
+@@ -230,6 +237,7 @@ static struct sa_info *sa1100_setup_mtd(struct platform_device *pdev,
+ 
+                info->mtd = mtd_concat_create(cdev, info->num_subdev,
+                                              plat->name);
++               kfree(cdev);
+                if (info->mtd == NULL) {
+                        ret = -ENXIO;
+                        goto err;
