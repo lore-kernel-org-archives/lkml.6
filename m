@@ -2,238 +2,101 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA06C28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8178EC28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B8092085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BA242098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCJfiW1c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8092085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="olh1cYjW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA242098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeJLKiy (ORCPT
+        id S1726731AbeJLKoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 06:38:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45251 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbeJLKiy (ORCPT
+        Fri, 12 Oct 2018 06:44:19 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41538 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbeJLKoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 06:38:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u12-v6so5404925pfn.12;
-        Thu, 11 Oct 2018 20:08:40 -0700 (PDT)
+        Fri, 12 Oct 2018 06:44:18 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q17-v6so5190658plr.8;
+        Thu, 11 Oct 2018 20:14:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kKX4qI+YccaYEgWA94m/omIQM4b5BY5oMeXyVb3b3jA=;
-        b=bCJfiW1cxWhEzm6q2wi8DCL7fPyOF/eLE+1WDjkr+IvhbhUtr5HHiszOR1RnOC5o44
-         je+ZWabpj+kTUgoQ91dIRreIZ0DNCtzQ1owaSfSVE3ytUSz9HaYCWPDGTd3CSN/EnVYw
-         IANbDpZ8rRyh/GpGW5AOgQu01H1So9+j2LIu0R5DwAIe0Go1b0nNYpYDlp/X1piNSQXy
-         ADM+bKyZ+SK5wtgZgzTR/kMx6NT9dxS00vBeXVbOLQIJ/uskz49ULbTOxcM0zMyZpNaU
-         OJ11T5saMNfL+uCXlwKgHPsbAr5mJcfFWRk3fG50zXQovPwNW4ALu8TImA/NXKNNtaw0
-         VNRQ==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=Gq10Tja0XUvcUg2vLUMziAQf2K5i6ue/uwCqC6xStw0=;
+        b=olh1cYjWV69NFStSdMTCIWGDgwpc+/L+EhV86OzUtlqc3PF4wAva4rUxrgUT/Csuxl
+         7FXRnqGBpSlIJBEKOsNMUiiX7KdH2Zy5/8xMlEi8tspMAQAsyWlhKFSebRpzNcfadytu
+         7JRB1mwou+0/WrK//cJeSCBRRy2C24rgs2YZMLNqgNMaY0ThZhbg+XUi1Xoci7GYf5F7
+         VDG9x4aoMvl8ZForO6k09+JKGfyweupdwz/Nl0NBE0Dyu9hsp+nb+ypJ3aBjS9dymGzs
+         tsEDy00TG3/96vf/SEkme8geWueOAjuPW+pq66aZili9LI1znOYTeTaIL26cAkiOO5xf
+         Wncw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kKX4qI+YccaYEgWA94m/omIQM4b5BY5oMeXyVb3b3jA=;
-        b=BphE1IUHkVIA7wxuFEtgEdozOaws4OmyO7BXI4C5ZK5rcuSPg0xxAKJghMBs42bri2
-         M6M0V2vHomDU1ioPuLQh/Na5KXLdFVRKlAthgBl4hi8oa6B3BvRMHBMcM6wU3hu8ZaAd
-         eoFbmd2N4m4mlyFEC1SKb5Fqh+djoeLuCa4MVLbSHyy5opX6s66wtf8q4WtNEfc+gqpU
-         CMqdaIsg9gbQ+feLGxnFF7NdSswYlEoORdsI5vUL/W/usCQfP7LNuV7Z333J8exC8Hg9
-         Klb9wZX0uiVpo01mTRfxong0evvolvEHMxvKfLS3phTkqCnr5z5wsZ79VPfet/8nJqxe
-         IStQ==
-X-Gm-Message-State: ABuFfohZUS3f5xgpTo2q+9xOOb8JGVLwLVXD5DV27wd92TcIUtIQxSLn
-        YcBeNYGEh06w/0m6EyN1fCrZBGxl
-X-Google-Smtp-Source: ACcGV601FNth4D745L0g1qjzwuZ5kyt7ZT057cMo/cW84SAqeziqRK98FU/9cpG9wsqUQC+ULl8snA==
-X-Received: by 2002:a63:ff23:: with SMTP id k35-v6mr3843586pgi.62.1539313719899;
-        Thu, 11 Oct 2018 20:08:39 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm36163902pfo.135.2018.10.11.20.08.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Oct 2018 20:08:39 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 20:08:38 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (pmbus) remove redundant 'default n' from Kconfig
-Message-ID: <20181012030838.GA12708@roeck-us.net>
-References: <CGME20181010143559eucas1p109d607c22ad0d3b2934ac92e14b02256@eucas1p1.samsung.com>
- <20181010143559eucas1p109d607c22ad0d3b2934ac92e14b02256~cRgTZHiWX1762717627eucas1p1I@eucas1p1.samsung.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=Gq10Tja0XUvcUg2vLUMziAQf2K5i6ue/uwCqC6xStw0=;
+        b=XLDUV4AYppVHgUaBgp0XXmBa/8xHAIhCk5VOeMBWOk3Bgtn+IxP639OYN63VzIz0mV
+         h7usFVC6enx5I45xuKFI/wmXfFlv0hFVrN0eEt/iZuy8AXI/oQ9cz1I8CV6ZugBCUby0
+         aziVenYzjNDxk7Gy2cTNV+GucOaR1yeuhLWgxmWCKl7tMSS/nPiDzT5EQlfISV/U00QD
+         YBneQ0J91+hGUm+RZfGzKg7l7DIqWn/MjvLHGlvGEItKLBaconBVoCmoRfmoszOdNS84
+         V7DR0++B8zthBJwylIgPrfALtFsQChkjKEpw63MXxOmpjsuDEc5WHI1j8T8MqwRgWT8c
+         6eNg==
+X-Gm-Message-State: ABuFfog4Gga61H0Da4t7YYiMqriCHiCYw9lc/wnB19wDiFnXArXipMXR
+        Cg8oJQeaFKTMNx0ujAMs/rO8De6n6/Hn0IX21fs=
+X-Google-Smtp-Source: ACcGV62JgPilMztl+BXHPQPlbaIJvjIcwM8OmdLX/+KeDCQ1NHHnd43JUsFSa/3/4+SJ/zoM6qqE23Xodl2kqh2v1qg=
+X-Received: by 2002:a17:902:758f:: with SMTP id j15-v6mr4210495pll.160.1539314043464;
+ Thu, 11 Oct 2018 20:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181010143559eucas1p109d607c22ad0d3b2934ac92e14b02256~cRgTZHiWX1762717627eucas1p1I@eucas1p1.samsung.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+From:   Feng Li <lifeng1519@gmail.com>
+Date:   Fri, 12 Oct 2018 11:13:36 +0800
+Message-ID: <CAEK8JBAgRwHZDBrNDNmmRXC3WgX9tVqeoFk5edLHfJL9OWQ-zg@mail.gmail.com>
+Subject: [PATCH] smartpqi: Fix timeout of smartpqi probe stage
+To:     Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        esc.storagedev@microsemi.com,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 04:35:57PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 'default n' is the default value for any bool or tristate Kconfig
-> setting so there is no need to write it explicitly.
-> 
-> Also since commit f467c5640c29 ("kconfig: only write '# CONFIG_FOO
-> is not set' for visible symbols") the Kconfig behavior is the same
-> regardless of 'default n' being present or not:
-> 
->     ...
->     One side effect of (and the main motivation for) this change is making
->     the following two definitions behave exactly the same:
->     
->         config FOO
->                 bool
->     
->         config FOO
->                 bool
->                 default n
->     
->     With this change, neither of these will generate a
->     '# CONFIG_FOO is not set' line (assuming FOO isn't selected/implied).
->     That might make it clearer to people that a bare 'default n' is
->     redundant.
->     ...
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+I use 'HPE Smart Array E208i-a SR Gen10 Controller', and pass through
+the SAS controller from ESXi 6.0U1 to VM, which is installed CentOS 7.4/7.5.
+The disk is not found.
 
-Applied to hwmon-next.
+The error log is "controller not ready after 30 seconds."
 
-Thanks,
-Guenter
+Add some logs, and could check the probe stage needs nearly 36s to match the
+status.
 
-> ---
->  drivers/hwmon/pmbus/Kconfig |   15 ---------------
->  1 file changed, 15 deletions(-)
-> 
-> Index: b/drivers/hwmon/pmbus/Kconfig
-> ===================================================================
-> --- a/drivers/hwmon/pmbus/Kconfig	2018-10-09 15:58:39.067122941 +0200
-> +++ b/drivers/hwmon/pmbus/Kconfig	2018-10-10 16:31:57.671888538 +0200
-> @@ -5,7 +5,6 @@
->  menuconfig PMBUS
->  	tristate "PMBus support"
->  	depends on I2C
-> -	default n
->  	help
->  	  Say yes here if you want to enable PMBus support.
->  
-> @@ -28,7 +27,6 @@ config SENSORS_PMBUS
->  
->  config SENSORS_ADM1275
->  	tristate "Analog Devices ADM1275 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Analog
->  	  Devices ADM1075, ADM1272, ADM1275, ADM1276, ADM1278, ADM1293,
-> @@ -49,7 +47,6 @@ config SENSORS_IBM_CFFPS
->  
->  config SENSORS_IR35221
->  	tristate "Infineon IR35221"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for the
->  	  Infineon IR35221 controller.
-> @@ -59,7 +56,6 @@ config SENSORS_IR35221
->  
->  config SENSORS_LM25066
->  	tristate "National Semiconductor LM25066 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for National
->  	  Semiconductor LM25056, LM25066, LM5064, and LM5066.
-> @@ -69,7 +65,6 @@ config SENSORS_LM25066
->  
->  config SENSORS_LTC2978
->  	tristate "Linear Technologies LTC2978 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Linear
->  	  Technology LTC2974, LTC2975, LTC2977, LTC2978, LTC2980, LTC3880,
-> @@ -88,7 +83,6 @@ config SENSORS_LTC2978_REGULATOR
->  
->  config SENSORS_LTC3815
->  	tristate "Linear Technologies LTC3815"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Linear
->  	  Technology LTC3815.
-> @@ -98,7 +92,6 @@ config SENSORS_LTC3815
->  
->  config SENSORS_MAX16064
->  	tristate "Maxim MAX16064"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Maxim
->  	  MAX16064.
-> @@ -108,7 +101,6 @@ config SENSORS_MAX16064
->  
->  config SENSORS_MAX20751
->  	tristate "Maxim MAX20751"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Maxim
->  	  MAX20751.
-> @@ -118,7 +110,6 @@ config SENSORS_MAX20751
->  
->  config SENSORS_MAX31785
->  	tristate "Maxim MAX31785 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Maxim
->  	  MAX31785.
-> @@ -128,7 +119,6 @@ config SENSORS_MAX31785
->  
->  config SENSORS_MAX34440
->  	tristate "Maxim MAX34440 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Maxim
->  	  MAX34440, MAX34441, MAX34446, MAX34451, MAX34460, and MAX34461.
-> @@ -138,7 +128,6 @@ config SENSORS_MAX34440
->  
->  config SENSORS_MAX8688
->  	tristate "Maxim MAX8688"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Maxim
->  	  MAX8688.
-> @@ -148,7 +137,6 @@ config SENSORS_MAX8688
->  
->  config SENSORS_TPS40422
->  	tristate "TI TPS40422"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for TI
->  	  TPS40422.
-> @@ -167,7 +155,6 @@ config SENSORS_TPS53679
->  
->  config SENSORS_UCD9000
->  	tristate "TI UCD90120, UCD90124, UCD90160, UCD9090, UCD90910"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for TI
->  	  UCD90120, UCD90124, UCD90160, UCD9090, UCD90910, Sequencer and System
-> @@ -178,7 +165,6 @@ config SENSORS_UCD9000
->  
->  config SENSORS_UCD9200
->  	tristate "TI UCD9220, UCD9222, UCD9224, UCD9240, UCD9244, UCD9246, UCD9248"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for TI
->  	  UCD9220, UCD9222, UCD9224, UCD9240, UCD9244, UCD9246, and UCD9248
-> @@ -189,7 +175,6 @@ config SENSORS_UCD9200
->  
->  config SENSORS_ZL6100
->  	tristate "Intersil ZL6100 and compatibles"
-> -	default n
->  	help
->  	  If you say yes here you get hardware monitoring support for Intersil
->  	  ZL2004, ZL2005, ZL2006, ZL2008, ZL2105, ZL2106, ZL6100, ZL6105,
+Signed-off-by: Li Feng <fengli@smartx.com>
+---
+ drivers/scsi/smartpqi/smartpqi_sis.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/smartpqi/smartpqi_sis.c
+b/drivers/scsi/smartpqi/smartpqi_sis.c
+index 5141bd4c9..bc7efdacb 100644
+--- a/drivers/scsi/smartpqi/smartpqi_sis.c
++++ b/drivers/scsi/smartpqi/smartpqi_sis.c
+@@ -59,7 +59,7 @@
+
+ #define SIS_CTRL_KERNEL_UP 0x80
+ #define SIS_CTRL_KERNEL_PANIC 0x100
+-#define SIS_CTRL_READY_TIMEOUT_SECS 30
++#define SIS_CTRL_READY_TIMEOUT_SECS 90
+ #define SIS_CTRL_READY_RESUME_TIMEOUT_SECS 90
+ #define SIS_CTRL_READY_POLL_INTERVAL_MSECS 10
+
+--
+2.11.0
