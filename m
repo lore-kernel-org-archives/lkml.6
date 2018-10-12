@@ -2,165 +2,82 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5041C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE10C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B3F20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF378204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:27:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pac+Bm6Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B3F20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kuhlQJs8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF378204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeJLLxU (ORCPT
+        id S1727078AbeJLL5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 07:53:20 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39108 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeJLLxU (ORCPT
+        Fri, 12 Oct 2018 07:57:41 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:56048 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbeJLL5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 07:53:20 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p1-v6so10185380ljg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 21:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yzJ0sgs6PDGl6hlm0Sk1q1ByebRwM2HANjSLNgHSGh0=;
-        b=Pac+Bm6QJQLM1FpBTBFwNp7fecxUZsOpwVeiJpcrJQCsAmFIhCJwFkdS6tCIjsLnYz
-         GkmrIHx5IcQ1duP7I/+CeUi6xIAMAdYEOEDSP0ELvOi0MlY55PRP+EQYDQDADarLeBfJ
-         9Du0MDma6cYfLK/3QXmAiM3ldJ5gpEzKkNsRw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yzJ0sgs6PDGl6hlm0Sk1q1ByebRwM2HANjSLNgHSGh0=;
-        b=ZiwLXg28whr6UbZNgHa73z9M835Q5MrpniyF4hgCjS/hmq5T7VjXZ/AY2/p6jBUkdk
-         zwI4lORFUSHx+Q7HUDURgMtWg/mwbRTEDB07ZTTLiIE3ZDmxvtAMJa8a+eCsGDDr9EXi
-         4qt2RFd855XEaI7D6HKHg9JWML7lqhLEhSvmqt5LOQXmuv/bJMcM140l4sQjbuAkKEJZ
-         XvVpPvCNLb8qSW47J3Qdz6ik/J+diUxxaW3esuL9uqaO1t6qWVik0T3DU5z5g1nnQsOW
-         lV3zLstkGQrG+TfZWePUYWVfi/SxeEBT7/6xVyDzR/5ySvPYgx7ECGnILTCyq6i61xbg
-         xsBA==
-X-Gm-Message-State: ABuFfohXexSSZoo66yBQzY/m89jsM6lVdGYZKHw1EToqDUWYsD2pfpiT
-        5436fCFEWyeiyVq33fQ6YFtn2c3yNnZMpqDPRF21Fg==
-X-Google-Smtp-Source: ACcGV60MtyNvWrDcbip11FBdYqj9DxErlL8ZicoQRTAmCEZPKs+UQ3aExF5kazZXO92O4duBWxzAgyfRRl1L2AmCjqQ=
-X-Received: by 2002:a2e:3810:: with SMTP id f16-v6mr2498758lja.77.1539318170306;
- Thu, 11 Oct 2018 21:22:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011152452.571669983@linuxfoundation.org>
-In-Reply-To: <20181011152452.571669983@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 12 Oct 2018 09:52:39 +0530
-Message-ID: <CA+G9fYsM9v9Y+wOd9YAGZ8BV9SPtmeqs_enEBa0AWipEEGVpSw@mail.gmail.com>
-Subject: Re: [PATCH 4.18 00/44] 4.18.14-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 12 Oct 2018 07:57:41 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id w9C4Pvr2024244;
+        Fri, 12 Oct 2018 13:25:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w9C4Pvr2024244
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539318359;
+        bh=ztvEOXJ43f+1FCmmuhQR+Qpq6BD5SQO3Zd5nhEqWf1k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kuhlQJs8aq3aY9qsVdTZw4Pj5Dp4cWyATRBoFlTDQCp+vx1wACg6ifnXkNRubtQ9o
+         1ta28cnCXT9UqOhxUiudZhfjgTF6YxCoHh/MBE+7ISPbnR/AUkqZ9+x6DjcPVqlVKb
+         OmgFh1SZX1QhVsZoATw5Wi+TT1Fa/T8dgMHCedrDBcQE2C00ftLLWJB2aIrV11A49a
+         R3ERgJmvJ8wVJQLtqVkTsFQDL0Ol7w5CfwUkPaPc1J/xSDdpydB73rIqIegQLHH93v
+         qYRrDoIMyNT/K93Ik6obF0cus31/5PBP+fF7Vk1kYJi+kuGIQpR2wEzelPln1Rohrl
+         FQETnQImXZYvA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 2/2] dt-bindings: uniphier: move cache-uniphier.txt to vendor directory
+Date:   Fri, 12 Oct 2018 13:25:24 +0900
+Message-Id: <1539318324-4938-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539318324-4938-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1539318324-4938-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 at 21:18, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.18.14 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Oct 13 15:24:36 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.18.14-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.18.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Now, the Socionext vendor directory is available at
+Documentation/devicetree/bindings/arm/socionext/
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Move cache-uniphier.txt over to it.
 
-Summary
-------------------------------------------------------------------------
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-kernel: 4.18.14-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.18.y
-git commit: 32f54e007e34d795186f0073a5f9f7eafb7a1cf2
-git describe: v4.18.13-45-g32f54e007e34
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
-ild/v4.18.13-45-g32f54e007e34
+Changes in v2:
+  - New patch
 
-No regressions (compared to build v4.18.13)
+ .../devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt    | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt (100%)
 
-No fixes (compared to build v4.18.13)
+diff --git a/Documentation/devicetree/bindings/arm/uniphier/cache-uniphier.txt b/Documentation/devicetree/bindings/arm/socionext/cache-uniphier.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/uniphier/cache-uniphier.txt
+rename to Documentation/devicetree/bindings/arm/socionext/cache-uniphier.txt
+-- 
+2.7.4
 
-
-Ran 21191 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
