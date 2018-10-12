@@ -2,88 +2,121 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5795CC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9BBC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CEE92098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CEE92098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 818472098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:44:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="nwLXll9Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818472098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbeJLWQI (ORCPT
+        id S1729014AbeJLWQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:16:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728703AbeJLWQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:16:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 85BF9AEBC;
-        Fri, 12 Oct 2018 14:43:20 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 16:43:05 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] arch/x86: Introduce new config parameter AMD_QOS
-Message-ID: <20181012144305.GA11859@zn.tnic>
-References: <20181011203223.18157-1-babu.moger@amd.com>
- <20181011203223.18157-10-babu.moger@amd.com>
- <20181011220255.GB21876@zn.tnic>
- <0cf1ea65-0528-b133-2b89-2e04644ea2e6@amd.com>
+        Fri, 12 Oct 2018 18:16:50 -0400
+Received: from imap.thunk.org ([74.207.234.97]:39144 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728354AbeJLWQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:16:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=zML860ItB0gqPneybYVOtnk0sNr+MmFOXzCyTREAjPE=; b=nwLXll9Z+oIsBaKR66cIS1kG5O
+        Qh1rNwl3EK71YQgAwD/v+0k3uxK3v2Fm7+PvsD/YVwTcO0MwR+7j9DpBzxRPRjXYCW93kfUvC9xDi
+        ORdqFgjeHXe81Kc9CFP19og0H+JSIvJ16G0ehQ7BiRNZe1oqM1rWTWdwVx5ruBlbpRfI=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gAyfR-0007m4-SG; Fri, 12 Oct 2018 14:43:53 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AA7107A519B; Fri, 12 Oct 2018 10:43:52 -0400 (EDT)
+Date:   Fri, 12 Oct 2018 10:43:52 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        tcharding <me@tobin.cc>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] random: Move rand_initialize() earlier
+Message-ID: <20181012144352.GE2420@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, tcharding <me@tobin.cc>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+References: <20181011225421.GA21093@beast>
+ <CAK8P3a3N6txZf8tzTdLvLwByrsWQvN_JSabV2TGe+zZenMWWxg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0cf1ea65-0528-b133-2b89-2e04644ea2e6@amd.com>
+In-Reply-To: <CAK8P3a3N6txZf8tzTdLvLwByrsWQvN_JSabV2TGe+zZenMWWxg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 02:40:50PM +0000, Moger, Babu wrote:
-> That is correct. CPU_SUP_AMD implicitly means x86.
-> To be more specific, I will change it to
-> "depends on X86_64 && CPU_SUP_AMD" as this feature is for X86_64 only.
+On Fri, Oct 12, 2018 at 10:42:39AM +0200, Arnd Bergmann wrote:
+> I wonder if mixing in ktime_get_real() is flawed to start with:
+> This depends on read_persistent_clock64() actually returning
+> a meaningful time, but in many cases it does not; x86 being
+> a notable exception.
+> 
+> We have three ways of setting the initial time:
+> 
+> * At early boot using read_persistent_clock64(). This may read
+>   the time from the hypervisor (if any), and on some older
+>   architectures that have a custom RTC abstraction, it
+>   reads from the RTC directly. We generally move away from
+>   the RTC method in favor of the proper rtc class interfaces
+>   (see below)
+> 
+> * At late_initcall time, in rtc_hctosys(). If an RTC driver has
+>   been loaded successfully at this time, it will be read from
+>   there. We also move away from this.
+> 
+> * From user space, which reads the RTC time or NTP,
+>   and then sets the system time from that.
+> 
+> The latter two end up in do_settimeofday64(), but there
+> is no mixing in of the time into the random seed that I can
+> see, and it's not clear whether there should be (it
+> can be called with arbitrary times from user space,
+> provided CAP_SYS_TIME permissions).
 
-No, what I'm saying is, make it dependent *only* on CPU_SUP_AMD.
+I think it adds some real value (although perhaps small) in the first
+two cases.  In all of the cases, though, since we don't add any
+entropy credit, it doesn't hurt to mix it in --- this is the same
+argument why it's fine that /dev/[u]random can be world-writeable.
+Mixing in user-controlled data is harmless, and if it's not visible to
+a remote attacker, it can be helpful.
 
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+						- Ted
