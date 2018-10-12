@@ -2,95 +2,84 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A47C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C850C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B52D214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:33:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B52D214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D28E721470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28E721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeJMDHd (ORCPT
+        id S1726974AbeJMDHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:07:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58214 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbeJMDHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:07:33 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 405B7208B5; Fri, 12 Oct 2018 21:33:30 +0200 (CEST)
-Received: from qschulz (LFbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 852BD20DD8;
-        Fri, 12 Oct 2018 21:33:17 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 21:33:16 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Oskari Lemmela <oskari@lemmela.net>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Fri, 12 Oct 2018 23:07:37 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44112 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbeJMDHg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:07:36 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u74-v6so10702675oia.11;
+        Fri, 12 Oct 2018 12:33:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VVRSg4Ew/RFd1d2ecK/O02QkN62mEw9Ki2l+wroNxns=;
+        b=hLHmgGUusBvPo076jjFC2X2j4MCUoPwUhZz7RFXSyNfz6gw3MAsNzzNInmuoqtE+Ro
+         ajqmlVrhltQ8p/yqaTCV4xHgLMciY9DWjST/VQLSsLRpGVwVq9HKeBaG0LeSJoUXAjWB
+         Yw0wwtZuY5F5EWFnLGDBT+Y0iDKk2upGaNL0aEw8pgNejoeZMFvr/uX6LdwsR4u29znh
+         CvlYBv+HOP+02JHI90JgLy9CjG7V1+OBZcmKrPG8cVOg9HeqDlhXOX9TrKNYjAbrMHUS
+         VCGeSfaHlV0orUAd0MqNAMs0iqR1ORytMDdgNufdfQ+wNU0B4tOe6dwS7MXAQi/jxSep
+         wW9g==
+X-Gm-Message-State: ABuFfojsac0w9byQv2MMbzitWMci67jyzqsFbxGAtiPSlCgDNiQlQ9kO
+        c25v8e8S5ozwHu3XSkVAGQ==
+X-Google-Smtp-Source: ACcGV61JcWwJ+rT7rj1GeLaXyf200ywzbm1368fQb1EgxULzk5IWA/l9PkNKg99ONPFws2b+E0diQw==
+X-Received: by 2002:aca:f154:: with SMTP id p81-v6mr4106288oih.240.1539372815801;
+        Fri, 12 Oct 2018 12:33:35 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h70-v6sm725525oic.17.2018.10.12.12.33.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 12:33:35 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 14:33:34 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Vignesh R <vigneshr@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Nishanth Menon <nm@ti.com>, Peter Rosin <peda@axentia.se>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/7] arm64: dts: allwinner: axp803: add AC and battery
- power supplies
-Message-ID: <20181012193316.p7ph7qfl6x5mao4o@qschulz>
-References: <20181008181908.9456-1-oskari@lemmela.net>
- <20181008181908.9456-4-oskari@lemmela.net>
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c-omap: Add new compatible for
+ AM654 SoCs
+Message-ID: <20181012193334.GA29966@bogus>
+References: <20180928052557.21663-1-vigneshr@ti.com>
+ <20180928052557.21663-2-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cdsluzrm7zn63g3d"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181008181908.9456-4-oskari@lemmela.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180928052557.21663-2-vigneshr@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 28 Sep 2018 10:55:56 +0530, Vignesh R wrote:
+> AM654 SoCs have same I2C IP as OMAP SoCs. Add new compatible to
+> handle AM654 SoCs. While at that reformat the existing compatible list
+> for older SoCs to list one valid compatible per line.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+> 
+> v2: Reformat compatible existing compatible list.
+> 
+>  Documentation/devicetree/bindings/i2c/i2c-omap.txt | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
 
---cdsluzrm7zn63g3d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Oskari,
-
-On Mon, Oct 08, 2018 at 09:19:04PM +0300, Oskari Lemmela wrote:
-> AXP803 is compatible with AXP813. Add DT nodes ADC, GPIO,
-> AC and battery power supplies.
->=20
-
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-
-Thanks,
-Quentin
-
---cdsluzrm7zn63g3d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlvA9vwACgkQhLiadT7g
-8aMqkhAAiV37F/mli5ezA/lOLoko71ieVcEru4rwWBc3baCz6zf/cPMVZa0ur6Qn
-Fasv1PQk/KdofCo5bxqSP7mdMbX5E2uA64cj59GpZ614hqQA3RrYl57LMsV0ErN4
-jIyK7sitkOnA/LWSGFloCiggqTwxndxmIi2HTGSgVML+2OVUjzXuQ5hizlK4PAyt
-giFk35pvpS/08CYfXU7uRQUMexIDw39zLMZ6zCV84D0qp8VVvIKxQ8CQ8USNCeHb
-EsdiAv9jB4B6yylaL/uVC7CC8oCgnju4KKhOycFstt3Ga+fa/2vzxdeQCCQCXKst
-BfC5dSVi83Q+Pg7A4utyor1vhG+sGbDdRQUJX2FJzfELYRpgGuO3R8+py3TZ6icc
-JjOWntOBsxgmE8wNq1LFvVXAtnRBOXhCiDAS28elnZYIaseJK9F3Kqzw6Guyrta4
-UQDEE0RnUV59B1BP2HpBI+ZVWFXLDeTtG4T+i4PBvX2X+V+RiYPnd4ry7qxxb823
-idsROFEkRrQtkAjHPQACxSJ9BkXeWMf37cIJmNcgQ89TaZE0ZCZblyRaah6xzJL9
-GEEVM1sOabfq/ZfeHqioRuLfsc1WVSfl6k6Bmtv3pQXw1tGC/eyCt4hzCLsqZvC4
-gQcT9rFyEigyxX2Gibjud7TWukWZ8nwOYylYvmRHqkTsZf5xdD4=
-=7cwX
------END PGP SIGNATURE-----
-
---cdsluzrm7zn63g3d--
+Reviewed-by: Rob Herring <robh@kernel.org>
