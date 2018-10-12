@@ -2,74 +2,73 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB23EC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1B0C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24E22086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91192086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ns7HCyyi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24E22086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW5yjW2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91192086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbeJMAAI (ORCPT
+        id S1729244AbeJMAAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:00:08 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46363 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbeJMAAH (ORCPT
+        Fri, 12 Oct 2018 20:00:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36803 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729154AbeJMAAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:00:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n11-v6so13987861wru.13;
-        Fri, 12 Oct 2018 09:26:50 -0700 (PDT)
+        Fri, 12 Oct 2018 20:00:11 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y16so14084498wrw.3;
+        Fri, 12 Oct 2018 09:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mat2nPClyH8OZFkoDv8q+tL0+LVOi6YVRjAlX7dy2ug=;
-        b=Ns7HCyyikkEuSK7L1GUt/jf4gkOJsg1yjjKmZYgWP8c2UAXtQiaoPiN9OqF/cnxEqD
-         /5jXAs7JMVfPy5k1j2cJWx8esMMQO8Mu3Y+wfKPUrDxGYVRD5spA4Oxs1zOcWw+T8aMA
-         7sh5M2I6VNBayxsNzme4V7Wp/prXDNwh35mf3YinVV1eJ+MENYmELX1LaLjep9Z/zFKi
-         JI14GgaLn10E1ky/5ZzT7a6wuBIauSeIwxQ/nHxe4XeUHvHp+ODN20WmD5IB31XweIxX
-         IYlu47wY+aPdRKgYgL3DHL8k6UDdTix4OeI79PI3PqESjiqkyiCljWH7PUrNAUgin6Vd
-         K/+w==
+        bh=vykvvw6z8KbAShDoVOxsMwloQTTl5qXhoxhjAjE5d9g=;
+        b=SW5yjW2tEaz8ZRidld3eD8NjfVzgHQ2zZVrFnomqu9BFeMBMyZJUFY6SIXWmHaYLxv
+         HZ1Ni2YxY/hUUhBSuWuwt5HVXx8JS67OE7Vwk9gan0n671FWoi9fVQz0Y7SanQvwU1et
+         C+wnkzy07upy+c2jzQQRaebnhWoCHl6cKKCSEyrP6Zuszxlkrf4fo/dFX3TAtxj15Urn
+         LjokB7mTlI2K10lqOpqTeNWU2n29sCqtkN+pd12R1vzuTcdB5iofmMEmsqYLNKHjiH6C
+         /gUDZrjmrzW56QGuuTqy3Ht7d0waHa92g6UT7TVZLZSxz/8cg3qFUBWZef8J9Df48qK/
+         lSAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=mat2nPClyH8OZFkoDv8q+tL0+LVOi6YVRjAlX7dy2ug=;
-        b=K625ZqSu3/yLS7/xpFrV9cSSCrPbKYBpDdUjDgJIA2WruYN0lGs1P3VAaW1XVoZ2U7
-         S4vL8kiHQp898geHFaDY6GwLdx6vGhK3FXTLkXeTMmTifRcINECK3gnJM0dnci8CteHa
-         fJVDa3Q+dZrNxd1LVR2rEeOLHJPdONUGn303BFIogFwbUO73vqYYOBz4dFJUpNmT3oqc
-         nyGrgfQlHCeXme70iFQYxhYflyVCJ2i7xlP89kX5GTBZn5O27th1hk/JC1anzMwQm+dF
-         8Abs/07ILw/Z8/MaJpysesd7f4CLKUtggRZSdnXlGSqtloyxcu81QnFOo8pL0jQ0ya4A
-         XZkQ==
-X-Gm-Message-State: ABuFfojvWbYvtVSQlOZQz+j6iIWjOWL6n8RZYmeys0mvrz6eBawyGR4u
-        NjF2TWmQJLMfJ/2qDQes1EY=
-X-Google-Smtp-Source: ACcGV63SWRCq7z7Oyas0cDpn/T0b+k2uYffJ6Wo9mMqhtAozmawsowhpjgzpsgygbfq9Cj8a+o67fw==
-X-Received: by 2002:a5d:694c:: with SMTP id r12-v6mr5581651wrw.170.1539361610284;
-        Fri, 12 Oct 2018 09:26:50 -0700 (PDT)
+        bh=vykvvw6z8KbAShDoVOxsMwloQTTl5qXhoxhjAjE5d9g=;
+        b=fCc3Nj8KQT4aOmUp8k6dzK9n1ly+sbrVtmzwc5E6nueWXFTrmv3HaUUaAq09n5q23R
+         nFGkOlw4WQltyguPPzmeMxL4OL3r59YfxR/p7DZPF93RvzBSo+RFzO+zWUMkPTJ5rZH9
+         b3RUkyo+f6oQWh7n5u3ZsZKLdg1bMznrXB15Pewa7Q14EoPu+E8FG1se+ls0OBi7iPUH
+         BykU1l7/2Em9fMU6S4zK9+dSiGB8v7uWZGmfPNIHFY5AvegN5xXE8Zz7YVCMXd5NtvvC
+         BbirMLrZsUjZ5BpvwZiHUNB85VSZiUt2+DsKqlqmX4ak3evGWFjtPK18hT79ZQR90hu5
+         C8uw==
+X-Gm-Message-State: ABuFfohnwIuwfD6VnhvFbaRwmplquZxr8mdMhRwtlP0gNwnZQ+BhRtKC
+        V6AwIsm7H7HSeCuLmqEAI+M=
+X-Google-Smtp-Source: ACcGV61x0fa6UCmycpq05UXgdsZ+okuw+mzhgZNv1Nn2nput+CBbvgs68nZq3aQPxC/gsx+U0FE7pg==
+X-Received: by 2002:adf:fe0f:: with SMTP id n15-v6mr5628051wrr.71.1539361613746;
+        Fri, 12 Oct 2018 09:26:53 -0700 (PDT)
 Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
-        by smtp.gmail.com with ESMTPSA id t198-v6sm1736842wmd.9.2018.10.12.09.26.49
+        by smtp.gmail.com with ESMTPSA id t198-v6sm1736842wmd.9.2018.10.12.09.26.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 12 Oct 2018 09:26:49 -0700 (PDT)
+        Fri, 12 Oct 2018 09:26:52 -0700 (PDT)
 From:   Ben Whitten <ben.whitten@gmail.com>
 X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
 To:     afaerber@suse.de
 Cc:     starnight@g.ncu.edu.tw, hasnain.virk@arm.com,
         netdev@vger.kernel.org, liuxuenetmail@gmail.com, shess@hessware.de,
-        Ben Whitten <ben.whitten@lairdtech.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 lora-next 2/5] net: lora: sx1301: replace burst spi functions with regmap_noinc
-Date:   Fri, 12 Oct 2018 17:26:03 +0100
-Message-Id: <1539361567-3602-3-git-send-email-ben.whitten@lairdtech.com>
+Subject: [PATCH v3 lora-next 4/5] net: lora: sx125x: convert to regmap fields
+Date:   Fri, 12 Oct 2018 17:26:05 +0100
+Message-Id: <1539361567-3602-5-git-send-email-ben.whitten@lairdtech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
 References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
@@ -78,91 +77,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can now use to regmap_noinc API to allow reading and writing to
-the internal FIFO register which controls processor memory.
-We also remove the now defunct spi element from the structure as this
-completes the move to regmap.
+From: Ben Whitten <ben.whitten@gmail.com>
 
-Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+We convert to using regmap fields to allow regmap to take care of read
+modify writes and bit shifting for ofset fields.
+
+Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
 ---
- drivers/net/lora/sx1301.c | 22 ++--------------------
- drivers/net/lora/sx1301.h |  2 --
- 2 files changed, 2 insertions(+), 22 deletions(-)
+ drivers/net/lora/sx125x.c | 59 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 51 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/lora/sx1301.c b/drivers/net/lora/sx1301.c
-index fd29258..9c85fe7 100644
---- a/drivers/net/lora/sx1301.c
-+++ b/drivers/net/lora/sx1301.c
-@@ -74,23 +74,6 @@ static struct regmap_config sx1301_regmap_config = {
- 	.max_register = SX1301_MAX_REGISTER,
+diff --git a/drivers/net/lora/sx125x.c b/drivers/net/lora/sx125x.c
+index dc13d1a..36b61b1 100644
+--- a/drivers/net/lora/sx125x.c
++++ b/drivers/net/lora/sx125x.c
+@@ -25,11 +25,25 @@
+ 
+ #include "sx125x.h"
+ 
+-#define REG_CLK_SELECT_TX_DAC_CLK_SELECT_CLK_IN	BIT(0)
+-#define REG_CLK_SELECT_CLK_OUT			BIT(1)
++enum sx125x_fields {
++	F_CLK_OUT,
++	F_TX_DAC_CLK_SEL,
++	F_SX1257_XOSC_GM_STARTUP,
++	F_SX1257_XOSC_DISABLE_CORE,
++};
++
++static const struct reg_field sx125x_regmap_fields[] = {
++	/* CLK_SELECT */
++	[F_CLK_OUT]        = REG_FIELD(SX125X_CLK_SELECT, 1, 1),
++	[F_TX_DAC_CLK_SEL] = REG_FIELD(SX125X_CLK_SELECT, 0, 0),
++	/* XOSC */ /* TODO maybe make this dynamic */
++	[F_SX1257_XOSC_GM_STARTUP]  = REG_FIELD(SX1257_XOSC, 0, 3),
++	[F_SX1257_XOSC_DISABLE_CORE]  = REG_FIELD(SX1257_XOSC, 5, 5),
++};
+ 
+ struct sx125x_priv {
+ 	struct regmap		*regmap;
++	struct regmap_field     *regmap_fields[ARRAY_SIZE(sx125x_regmap_fields)];
  };
  
--static int sx1301_read_burst(struct sx1301_priv *priv, u8 reg, u8 *val, size_t len)
--{
--	u8 addr = reg & 0x7f;
--	return spi_write_then_read(priv->spi, &addr, 1, val, len);
--}
--
--static int sx1301_write_burst(struct sx1301_priv *priv, u8 reg, const u8 *val, size_t len)
--{
--	u8 addr = reg | BIT(7);
--	struct spi_transfer xfr[2] = {
--		{ .tx_buf = &addr, .len = 1 },
--		{ .tx_buf = val, .len = len },
--	};
--
--	return spi_sync_transfer(priv->spi, xfr, 2);
--}
--
- static int sx1301_soft_reset(struct sx1301_priv *priv)
+ static struct regmap_config __maybe_unused sx125x_regmap_config = {
+@@ -44,11 +58,18 @@ static struct regmap_config __maybe_unused sx125x_regmap_config = {
+ 	.max_register = SX125X_MAX_REGISTER,
+ };
+ 
++static int sx125x_field_write(struct sx125x_priv *priv,
++		enum sx125x_fields field_id, u8 val)
++{
++	return regmap_field_write(priv->regmap_fields[field_id], val);
++}
++
+ static int __maybe_unused sx125x_regmap_probe(struct device *dev, struct regmap *regmap, unsigned int radio)
  {
- 	return regmap_write(priv->regmap, SX1301_PAGE, REG_PAGE_RESET_SOFT_RESET);
-@@ -180,7 +163,7 @@ static int sx1301_load_firmware(struct sx1301_priv *priv, int mcu, const struct
+ 	struct sx125x_priv *priv;
+ 	unsigned int val;
+ 	int ret;
++	int i;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -56,6 +77,18 @@ static int __maybe_unused sx125x_regmap_probe(struct device *dev, struct regmap
+ 
+ 	dev_set_drvdata(dev, priv);
+ 	priv->regmap = regmap;
++	for (i = 0; i < ARRAY_SIZE(sx125x_regmap_fields); i++) {
++		const struct reg_field *reg_fields = sx125x_regmap_fields;
++
++		priv->regmap_fields[i] = devm_regmap_field_alloc(dev,
++				priv->regmap,
++				reg_fields[i]);
++		if (IS_ERR(priv->regmap_fields[i])) {
++			ret = PTR_ERR(priv->regmap_fields[i]);
++			dev_err(dev, "Cannot allocate regmap field: %d\n", ret);
++			return ret;
++		}
++	}
+ 
+ 	if (true) {
+ 		ret = regmap_read(priv->regmap, SX1255_VERSION, &val);
+@@ -66,24 +99,34 @@ static int __maybe_unused sx125x_regmap_probe(struct device *dev, struct regmap
+ 		dev_info(dev, "SX125x version: %02x\n", val);
+ 	}
+ 
+-	val = REG_CLK_SELECT_TX_DAC_CLK_SELECT_CLK_IN;
+ 	if (radio == 1) { /* HACK */
+-		val |= REG_CLK_SELECT_CLK_OUT;
++		ret = sx125x_field_write(priv, F_CLK_OUT, 1);
++		if (ret) {
++			dev_err(dev, "enabling clock output failed\n");
++			return ret;
++		}
++
+ 		dev_info(dev, "enabling clock output\n");
+ 	}
+ 
+-	ret = regmap_write(priv->regmap, SX125X_CLK_SELECT, val);
++	ret = sx125x_field_write(priv, F_TX_DAC_CLK_SEL, 1);
+ 	if (ret) {
+-		dev_err(dev, "clk write failed\n");
++		dev_err(dev, "clock select failed\n");
  		return ret;
  	}
  
--	ret = sx1301_write_burst(priv, SX1301_MPD, fw->data, fw->size);
-+	ret = regmap_noinc_write(priv->regmap, SX1301_MPD, fw->data, fw->size);
- 	if (ret) {
- 		dev_err(priv->dev, "MCU prom data write failed\n");
- 		return ret;
-@@ -196,7 +179,7 @@ static int sx1301_load_firmware(struct sx1301_priv *priv, int mcu, const struct
- 	if (!buf)
- 		return -ENOMEM;
+ 	dev_dbg(dev, "clk written\n");
  
--	ret = sx1301_read_burst(priv, SX1301_MPD, buf, fw->size);
-+	ret = regmap_noinc_read(priv->regmap, SX1301_MPD, buf, fw->size);
- 	if (ret) {
- 		dev_err(priv->dev, "MCU prom data read failed\n");
- 		kfree(buf);
-@@ -566,7 +549,6 @@ static int sx1301_probe(struct spi_device *spi)
- 
- 	spi_set_drvdata(spi, netdev);
- 	priv->dev = &spi->dev;
--	priv->spi = spi;
- 
- 	priv->regmap = devm_regmap_init_spi(spi, &sx1301_regmap_config);
- 	if (IS_ERR(priv->regmap)) {
-diff --git a/drivers/net/lora/sx1301.h b/drivers/net/lora/sx1301.h
-index e939c02..e6400f8 100644
---- a/drivers/net/lora/sx1301.h
-+++ b/drivers/net/lora/sx1301.h
-@@ -12,7 +12,6 @@
- #include <linux/regmap.h>
- #include <linux/gpio/consumer.h>
- #include <linux/lora/dev.h>
--#include <linux/spi/spi.h>
- 
- #define SX1301_CHIP_VERSION 103
- 
-@@ -64,7 +63,6 @@
- struct sx1301_priv {
- 	struct lora_dev_priv lora;
- 	struct device		*dev;
--	struct spi_device	*spi;
- 	struct gpio_desc *rst_gpio;
- 	struct regmap		*regmap;
- };
+ 	if (true) {
+-		ret = regmap_write(priv->regmap, SX1257_XOSC, 13 + 2 * 16);
++		ret = sx125x_field_write(priv, F_SX1257_XOSC_DISABLE_CORE, 1);
++		if (ret) {
++			dev_err(dev, "xosc disable failed\n");
++			return ret;
++		}
++
++		ret = sx125x_field_write(priv, F_SX1257_XOSC_GM_STARTUP, 13);
+ 		if (ret) {
+-			dev_err(dev, "xosc write failed\n");
++			dev_err(dev, "xosc startup adjust failed\n");
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.7.4
 
