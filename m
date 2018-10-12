@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93145C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D0AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 546482086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33632086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:06:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Fp2aTDx6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546482086A
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QL552yNL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33632086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbeJLRhT (ORCPT
+        id S1728405AbeJLRiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:37:19 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48992 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbeJLRhT (ORCPT
+        Fri, 12 Oct 2018 13:38:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34222 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbeJLRiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:37:19 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9CA4aFf147470;
-        Fri, 12 Oct 2018 10:05:36 GMT
+        Fri, 12 Oct 2018 13:38:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9CA4UTp011813;
+        Fri, 12 Oct 2018 10:05:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=/bkO0BrR1JivtILyNmExe07M5GqhYeTrxgnB6cVPpjI=;
- b=Fp2aTDx68v7P4zbNP/3rfaYKKtZul/rgb54R+3iS5n4d7xfPagqR3zd0LEAt/YdhzF9z
- fr7hJhMQbj9LpuZZb/CTwGumHvUcDLjnZIYcnOig13xdxj1fmGfCOm8sohoMbyiIIodC
- uubnoQC432TOMeXHMUGfOQe4eR6hPDnNqkeRI2qBWpGjB50pRBG5D8L0jUf8eNROVujQ
- w+zQVZGxRIZchU+8fre55JxBXQLXhSWiU6zAlfc27SSjCx5MMFPFgqI2jL9q2VQ34Kro
- BTYg2lKYymon7pC6pN82iaT1/Ht0cm5EUnBrm0CTKKFxldm22DifwpBM9qfOhiaaxo3n OQ== 
+ bh=U5eb0BI+bhjjA0FFyFyJx+OwzawEA17ktJtMtVLIfWg=;
+ b=QL552yNL3JiCVapddM0oCkLHJ/Lke0XjhLCpkMUhQsRxhEJmNjZ0O+l8q+WCe4KyrlJV
+ LljdXUOG1XxszQJ7nR9Nvk53yK1X4uXObUsuXH9GA3bEuCyYpCYORLtJHhltgWL5evGr
+ 7DvqWBBxMrmSJC0L97EN+rZN/z1lDZMPzE1UW0ibMAOCUEwDkuVwT5+Ukj4xHy9Cxhw3
+ e9CiUdlsyT3/p6k+yCsHzoyppvNngTyG4/S7yeVoqA3PEufaX1F69YSgQzbhIfy2MzVp
+ u1IdFKI2A3iqCACuINeQickWSi3eajDexwU1aaOcBq5Zl2YnjjwZ36EN0rWDWmUjUyGG cw== 
 Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2mxnprhjd5-1
+        by aserp2120.oracle.com with ESMTP id 2mxn0qhqq5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Oct 2018 10:05:36 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9CA5UeF015533
+        Fri, 12 Oct 2018 10:05:27 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9CA5QVH015293
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Oct 2018 10:05:30 GMT
+        Fri, 12 Oct 2018 10:05:27 GMT
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9CA5UYe003351;
-        Fri, 12 Oct 2018 10:05:30 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9CA5Q46028488;
+        Fri, 12 Oct 2018 10:05:26 GMT
 Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 12 Oct 2018 10:05:29 +0000
+        with ESMTP ; Fri, 12 Oct 2018 10:05:25 +0000
 From:   Jianchao Wang <jianchao.w.wang@oracle.com>
 To:     axboe@kernel.dk
 Cc:     keith.busch@linux.intel.com, ming.lei@redhat.com,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 3/4] blk-mq: realloc hctx when hw queue is mapped to another node
-Date:   Fri, 12 Oct 2018 18:07:27 +0800
-Message-Id: <1539338848-1789-4-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH V2 1/4] blk-mq: adjust debugfs and sysfs register when updating nr_hw_queues
+Date:   Fri, 12 Oct 2018 18:07:25 +0800
+Message-Id: <1539338848-1789-2-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539338848-1789-1-git-send-email-jianchao.w.wang@oracle.com>
 References: <1539338848-1789-1-git-send-email-jianchao.w.wang@oracle.com>
@@ -71,120 +71,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the hw queues and mq_map are updated, a hctx could be mapped
-to a different numa node. At this moment, we need to realloc the
-hctx. If fail to do that, go on using previous hctx.
+blk-mq debugfs and sysfs entries need to be removed before updating
+queue map, otherwise, we get get wrong result there. This patch fixes
+it and remove the redundant debugfs and sysfs register/unregister
+operations during __blk_mq_update_nr_hw_queues.
 
 Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/blk-mq.c | 82 +++++++++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 56 insertions(+), 26 deletions(-)
+ block/blk-mq.c | 39 ++++++++++++---------------------------
+ 1 file changed, 12 insertions(+), 27 deletions(-)
 
 diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 9805d6a..34f3973 100644
+index e3c39ea..32be432 100644
 --- a/block/blk-mq.c
 +++ b/block/blk-mq.c
-@@ -2504,6 +2504,39 @@ static int blk_mq_hw_ctx_size(struct blk_mq_tag_set *tag_set)
- 	return hw_ctx_size;
- }
- 
-+static struct blk_mq_hw_ctx *blk_mq_alloc_and_init_hctx(
-+		struct blk_mq_tag_set *set, struct request_queue *q,
-+		int hctx_idx, int node)
-+{
-+	struct blk_mq_hw_ctx *hctx;
-+
-+	hctx = kzalloc_node(blk_mq_hw_ctx_size(set),
-+			GFP_NOIO | __GFP_NOWARN | __GFP_NORETRY,
-+			node);
-+	if (!hctx)
-+		return NULL;
-+
-+	if (!zalloc_cpumask_var_node(&hctx->cpumask,
-+				GFP_NOIO | __GFP_NOWARN | __GFP_NORETRY,
-+				node)) {
-+		kfree(hctx);
-+		return NULL;
-+	}
-+
-+	atomic_set(&hctx->nr_active, 0);
-+	hctx->numa_node = node;
-+	hctx->queue_num = hctx_idx;
-+
-+	if (blk_mq_init_hctx(q, set, hctx, hctx_idx)) {
-+		free_cpumask_var(hctx->cpumask);
-+		kfree(hctx);
-+		return NULL;
-+	}
-+	blk_mq_hctx_kobj_init(hctx);
-+
-+	return hctx;
-+}
-+
- static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
- 						struct request_queue *q)
+@@ -2137,8 +2137,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
+ 		struct blk_mq_tag_set *set,
+ 		struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
  {
-@@ -2514,37 +2547,34 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+-	blk_mq_debugfs_unregister_hctx(hctx);
+-
+ 	if (blk_mq_hw_queue_mapped(hctx))
+ 		blk_mq_tag_idle(hctx);
+ 
+@@ -2165,6 +2163,7 @@ static void blk_mq_exit_hw_queues(struct request_queue *q,
+ 	queue_for_each_hw_ctx(q, hctx, i) {
+ 		if (i == nr_queue)
+ 			break;
++		blk_mq_debugfs_unregister_hctx(hctx);
+ 		blk_mq_exit_hctx(q, set, hctx, i);
+ 	}
+ }
+@@ -2222,8 +2221,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
+ 	if (hctx->flags & BLK_MQ_F_BLOCKING)
+ 		init_srcu_struct(hctx->srcu);
+ 
+-	blk_mq_debugfs_register_hctx(q, hctx);
+-
+ 	return 0;
+ 
+  free_fq:
+@@ -2512,8 +2509,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+ 	int i, j;
+ 	struct blk_mq_hw_ctx **hctxs = q->queue_hw_ctx;
+ 
+-	blk_mq_sysfs_unregister(q);
+-
+ 	/* protect against switching io scheduler  */
  	mutex_lock(&q->sysfs_lock);
  	for (i = 0; i < set->nr_hw_queues; i++) {
- 		int node;
--
--		if (hctxs[i])
--			continue;
-+		struct blk_mq_hw_ctx *hctx;
- 
- 		node = blk_mq_hw_queue_to_node(q->mq_map, i);
--		hctxs[i] = kzalloc_node(blk_mq_hw_ctx_size(set),
--				GFP_NOIO | __GFP_NOWARN | __GFP_NORETRY,
--				node);
--		if (!hctxs[i])
--			break;
--
--		if (!zalloc_cpumask_var_node(&hctxs[i]->cpumask,
--					GFP_NOIO | __GFP_NOWARN | __GFP_NORETRY,
--					node)) {
--			kfree(hctxs[i]);
--			hctxs[i] = NULL;
--			break;
--		}
--
--		atomic_set(&hctxs[i]->nr_active, 0);
--		hctxs[i]->numa_node = node;
--		hctxs[i]->queue_num = i;
-+		/*
-+		 * If the hw queue has been mapped to another numa node,
-+		 * we need to realloc the hctx. If allocation fails, fallback
-+		 * to use the previous one.
-+		 */
-+		if (hctxs[i] && (hctxs[i]->numa_node == node))
-+			continue;
- 
--		if (blk_mq_init_hctx(q, set, hctxs[i], i)) {
--			free_cpumask_var(hctxs[i]->cpumask);
--			kfree(hctxs[i]);
--			hctxs[i] = NULL;
--			break;
-+		hctx = blk_mq_alloc_and_init_hctx(set, q, i, node);
-+		if (hctx) {
-+			if (hctxs[i]) {
-+				blk_mq_exit_hctx(q, set, hctxs[i], i);
-+				kobject_put(&hctxs[i]->kobj);
-+			}
-+			hctxs[i] = hctx;
-+		} else {
-+			if (hctxs[i])
-+				pr_warn("Allocate new hctx on node %d fails,\
-+						fallback to previous one on node %d\n",
-+						node, hctxs[i]->numa_node);
-+			else
-+				break;
- 		}
--		blk_mq_hctx_kobj_init(hctxs[i]);
+@@ -2561,7 +2556,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
  	}
-+
- 	for (j = i; j < q->nr_hw_queues; j++) {
- 		struct blk_mq_hw_ctx *hctx = hctxs[j];
+ 	q->nr_hw_queues = i;
+ 	mutex_unlock(&q->sysfs_lock);
+-	blk_mq_sysfs_register(q);
+ }
  
+ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+@@ -2659,25 +2653,6 @@ void blk_mq_free_queue(struct request_queue *q)
+ 	blk_mq_exit_hw_queues(q, set, set->nr_hw_queues);
+ }
+ 
+-/* Basically redo blk_mq_init_queue with queue frozen */
+-static void blk_mq_queue_reinit(struct request_queue *q)
+-{
+-	WARN_ON_ONCE(!atomic_read(&q->mq_freeze_depth));
+-
+-	blk_mq_debugfs_unregister_hctxs(q);
+-	blk_mq_sysfs_unregister(q);
+-
+-	/*
+-	 * redo blk_mq_init_cpu_queues and blk_mq_init_hw_queues. FIXME: maybe
+-	 * we should change hctx numa_node according to the new topology (this
+-	 * involves freeing and re-allocating memory, worth doing?)
+-	 */
+-	blk_mq_map_swqueue(q);
+-
+-	blk_mq_sysfs_register(q);
+-	blk_mq_debugfs_register_hctxs(q);
+-}
+-
+ static int __blk_mq_alloc_rq_maps(struct blk_mq_tag_set *set)
+ {
+ 	int i;
+@@ -2987,11 +2962,21 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+ 		if (!blk_mq_elv_switch_none(&head, q))
+ 			goto switch_back;
+ 
++	list_for_each_entry(q, &set->tag_list, tag_set_list) {
++		blk_mq_debugfs_unregister_hctxs(q);
++		blk_mq_sysfs_unregister(q);
++	}
++
+ 	set->nr_hw_queues = nr_hw_queues;
+ 	blk_mq_update_queue_map(set);
+ 	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+ 		blk_mq_realloc_hw_ctxs(set, q);
+-		blk_mq_queue_reinit(q);
++		blk_mq_map_swqueue(q);
++	}
++
++	list_for_each_entry(q, &set->tag_list, tag_set_list) {
++		blk_mq_sysfs_register(q);
++		blk_mq_debugfs_register_hctxs(q);
+ 	}
+ 
+ switch_back:
 -- 
 2.7.4
 
