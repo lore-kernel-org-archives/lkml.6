@@ -2,139 +2,91 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DBCC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0643EC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D522086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D522086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+	by mail.kernel.org (Postfix) with ESMTP id C60B820835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60B820835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbeJLWJ0 (ORCPT
+        id S1728998AbeJLWJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:09:26 -0400
-Received: from mleia.com ([178.79.152.223]:33586 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728354AbeJLWJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:09:26 -0400
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id A30EB41F88C;
-        Fri, 12 Oct 2018 15:36:40 +0100 (BST)
-Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link
- connection driver
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181008211205.2900-1-vz@mleia.com> <20181012060455.GV4939@dell>
- <c8f01b88-c14f-867d-d796-7464b2e8ccfb@mentor.com> <1584081.CVFmJobd6K@avalon>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
-Date:   Fri, 12 Oct 2018 17:36:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 12 Oct 2018 18:09:30 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37800 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbeJLWJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:09:29 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o14so12585592oth.4;
+        Fri, 12 Oct 2018 07:36:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eUvWL5SSUqDX8Gu55QbSqeMG+bs5NR0AwqS1Q0dpwUE=;
+        b=jdi26IIbg4LkyXFWSQeiq+sxnla7qbVrziCZ4FUzyMIlOYGzjhqHn+KwCxr7t+oHUs
+         /gvQj8/TIoXbjn4vIEaVdZItrNZbpmGi1JIQiivVX1XpyYm81QbT/z4JfVwSKXKTgY/P
+         YIChLfhr4+/uiqk4vKPB/PpNK6HK7v7SjOBLBwHnoap37Elr6Kju0skKBV0Svh1BjexK
+         soI/EiLzuSzoiQqJKSRJ777LoC4YgWFPmIIrOfR/Gm7q7z+BRIo5RyxxOCuhC9OnmTvz
+         Q2N23VQw5wd8L4IBODSrzgM1GJLSuTPv4m8Lg/Uz02PS5s+OVORlcpmHsj2bRidi0+nQ
+         2EYw==
+X-Gm-Message-State: ABuFfoizeLEagbXPLFt5J+2saa5BH0BUEyIKAv9Fat75Ku6jkBRVFM92
+        z3MwMq/wp7pf61DXeMbsOg==
+X-Google-Smtp-Source: ACcGV61LjH4U3PRUgCDyvn3lQ5u4JMCvjEOv82gL5InX+DBlDygA+o8K22fY5VWb3r4KfsVjQKcj9A==
+X-Received: by 2002:a9d:44d7:: with SMTP id p23mr3893359otg.316.1539355004587;
+        Fri, 12 Oct 2018 07:36:44 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w128-v6sm322766oiw.15.2018.10.12.07.36.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 07:36:43 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 09:36:42 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, broonie@kernel.org, ctatlor97@gmail.com,
+        linus.walleij@linaro.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: power: Add Spreadtrum SC27XX fuel
+ gauge unit documentation
+Message-ID: <20181012143642.GA9323@bogus>
+References: <2787f18a0366576959557d05112a069dca982269.1538033078.git.baolin.wang@linaro.org>
+ <f87afb701f33f46928c682361235083db8d3d2fc.1538033078.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1584081.CVFmJobd6K@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20181012_153640_691231_9082FA3D 
-X-CRM114-Status: GOOD (  24.34  )
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f87afb701f33f46928c682361235083db8d3d2fc.1538033078.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent
-
-On 10/12/2018 04:12 PM, Laurent Pinchart wrote:
-> Hi Vladimir,
+On Thu, 27 Sep 2018 15:26:56 +0800, Baolin Wang wrote:
+> This patch adds the binding documentation for Spreadtrum SC27XX series PMICs
+> fuel gauge unit device, which is used to calculate the battery capacity.
 > 
-> (CC'ing Wolfram)
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changes from v2:
+>  - Add reviewed tag from Linus.
 > 
-> On Friday, 12 October 2018 10:32:32 EEST Vladimir Zapolskiy wrote:
->> On 10/12/2018 09:04 AM, Lee Jones wrote:
->>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
->>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>
->>>> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
->>>> FPD Link connection handling mechanism.
->>>>
->>>> Access to I2C devices connected to a remote de-/serializer is done in
->>>> a transparent way, on established link detection event such devices
->>>> are registered on an I2C bus, which serves a local de-/serializer IC.
->>>>
->>>> The development of the driver was a collaborative work, the
->>>> contribution done by Balasubramani Vivekanandan includes:
->>>> * original simplistic implementation of the driver,
->>>> * support of implicitly specified devices in device tree,
->>>> * support of multiple FPD links for TI DS90Ux9xx,
->>>> * other kind of valuable review comments, clean-ups and fixes.
->>>>
->>>> Also Steve Longerbeam made the following changes:
->>>> * clear address maps after linked device removal,
->>>> * disable pass-through in disconnection,
->>>> * qualify locked status with non-zero remote address.
->>>>
->>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>> ---
->>>>
->>>>  drivers/mfd/Kconfig                |   8 +
->>>>  drivers/mfd/Makefile               |   1 +
->>>>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
->>>>  3 files changed, 773 insertions(+)
->>>>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
->>>
->>> Shouldn't this live in drivers/i2c?
->>
->> no, the driver is not for an I2C controller of any kind, and the driver does
->> not register itself in the I2C subsystem by calling i2c_add_adapter() or
->> i2c_add_numbered_adapter() or i2c_mux_add_adapter() etc, this topic was
->> discussed with Wolfram also.
-> 
-> (Who is now on CC)
+> Changes from v1:
+>  - Renamed GPIO property.
+>  - Use standand battery properties instead of 'sprd,inner-resist' and
+>    'sprd,ocv-cap-table'.
+>  - Remove battery node's description.
+> ---
+>  .../devicetree/bindings/power/supply/sc27xx-fg.txt |   52 ++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt
 > 
 
-Wolfram has copies of the drivers and discussion right from the beginning,
-hopefully he won't get two copies ;)
-
->> Formally the driver converts the managed IC into a multi-address I2C
->> slave device, I understand that it does not sound like a well suited driver
->> for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers are quite
->> tightly coupled.
-> 
-> As mentioned in other e-mails in this thread I don't think this should be 
-> split out to a separate driver,> I would move the functionality to the 
-> ds90ux9xx driver.
-
-The proposal may have the grounds, but the I2C bridging functionality of ICs
-is quite detached from all other ones, thus it found its place in the cell
-driver per se.
-
-> You may want to register an I2C mux, but as you have a single port, that
-> could be overkill. I haven't studied in details how to best support this
-> chip using the existing I2C subsystems APIs (which we may want to extend
-> if it needed), but I believe that (in your use cases) the deserializer
-> should be a child of the serializer, and modeled as an I2C device.
-> 
-
-Formally in OF terms to define a link between devices by a phandle should
-be sufficient, panels are not the children of LVDS controllers under OF graph
-constraints in DT representation, the panels become secondary in runtime
-only, I'd like to reuse the concept. Also it adds a better sense of symmetry
-of deserializer <-> serializer connections relatively to a SoC/data source.
-
---
-Best wishes,
-Vladimir
+Reviewed-by: Rob Herring <robh@kernel.org>
