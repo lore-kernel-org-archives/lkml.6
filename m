@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF588C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4CFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1BF32086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1BF32086A
+	by mail.kernel.org (Postfix) with ESMTP id 2EF6D2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF6D2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbeJLQtC (ORCPT
+        id S1728350AbeJLQtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 12 Oct 2018 12:49:02 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:49435 "EHLO
+Received: from imap1.codethink.co.uk ([176.9.8.82]:49444 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbeJLQsZ (ORCPT
+        with ESMTP id S1728103AbeJLQsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 12 Oct 2018 12:48:25 -0400
 Received: from [148.252.241.226] (helo=rainbowdash)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1gAtYz-0006u5-En; Fri, 12 Oct 2018 10:16:53 +0100
+        id 1gAtYz-0006u6-FU; Fri, 12 Oct 2018 10:16:53 +0100
 Received: from ben by rainbowdash with local (Exim 4.91)
         (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1gAtYy-0005Yb-Jr; Fri, 12 Oct 2018 10:16:52 +0100
+        id 1gAtYy-0005Ye-Kt; Fri, 12 Oct 2018 10:16:52 +0100
 From:   Ben Dooks <ben.dooks@codethink.co.uk>
 To:     davem@davemloft.net, netdev@vger.kernel.org
 Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kernel@lists.codethink.co.uk, gregkh@linuxfoundation.org,
         bjorn@mork.no, steve.glendinning@shawell.net,
         Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 6/7] net: huawei_cdc_ncm: add usbnet -> priv function
-Date:   Fri, 12 Oct 2018 10:16:41 +0100
-Message-Id: <20181012091642.21294-7-ben.dooks@codethink.co.uk>
+Subject: [PATCH 7/7] net: usb: sr9800: add usbnet -> priv function
+Date:   Fri, 12 Oct 2018 10:16:42 +0100
+Message-Id: <20181012091642.21294-8-ben.dooks@codethink.co.uk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181012091642.21294-1-ben.dooks@codethink.co.uk>
 References: <20181012091642.21294-1-ben.dooks@codethink.co.uk>
@@ -48,73 +48,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a number of places in the huawei driver where it gets the
+There are a number of places in the sr8900 driver where it gets the
 private-data from the usbnet passed in. It would be sensible to have
 one inline function to convert it and change all points in the driver
 to use that.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
----
- drivers/net/usb/huawei_cdc_ncm.c | 15 ++++++++++-----
+ drivers/net/usb/sr9800.c | 15 ++++++++++-----
  1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/huawei_cdc_ncm.c b/drivers/net/usb/huawei_cdc_ncm.c
-index 63f28908afda..d290b8c318be 100644
---- a/drivers/net/usb/huawei_cdc_ncm.c
-+++ b/drivers/net/usb/huawei_cdc_ncm.c
-@@ -38,9 +38,14 @@ struct huawei_cdc_ncm_state {
- 	struct usb_interface *data;
- };
+diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
+index 9277a0f228df..2093ecfff5a5 100644
+--- a/drivers/net/usb/sr9800.c
++++ b/drivers/net/usb/sr9800.c
+@@ -25,6 +25,11 @@
  
-+static inline struct huawei_cdc_ncm_state *usbnet_to_state(struct usbnet *usb)
+ #include "sr9800.h"
+ 
++static inline struct sr_data *usbnet_to_sr(struct usbnet *usb)
 +{
-+	return (struct huawei_cdc_ncm_state *)&usb->data;
++	return (struct sr_data *)&usb->data;
 +}
 +
- static int huawei_cdc_ncm_manage_power(struct usbnet *usbnet_dev, int on)
+ static int sr_read_cmd(struct usbnet *dev, u8 cmd, u16 value, u16 index,
+ 			    u16 size, void *data)
  {
--	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
-+	struct huawei_cdc_ncm_state *drvstate = usbnet_to_state(usbnet_dev);
- 	int rv;
- 
- 	if ((on && atomic_add_return(1, &drvstate->pmcount) == 1) ||
-@@ -72,7 +77,7 @@ static int huawei_cdc_ncm_bind(struct usbnet *usbnet_dev,
- 	struct cdc_ncm_ctx *ctx;
- 	struct usb_driver *subdriver = ERR_PTR(-ENODEV);
- 	int ret = -ENODEV;
--	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
-+	struct huawei_cdc_ncm_state *drvstate = usbnet_to_state(usbnet_dev);
- 	int drvflags = 0;
- 
- 	/* altsetting should always be 1 for NCM devices - so we hard-coded
-@@ -119,7 +124,7 @@ static int huawei_cdc_ncm_bind(struct usbnet *usbnet_dev,
- static void huawei_cdc_ncm_unbind(struct usbnet *usbnet_dev,
- 				  struct usb_interface *intf)
+@@ -296,7 +301,7 @@ static int sr_write_gpio(struct usbnet *dev, u16 value, int sleep)
+ static void sr_set_multicast(struct net_device *net)
  {
--	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
-+	struct huawei_cdc_ncm_state *drvstate = usbnet_to_state(usbnet_dev);
- 	struct cdc_ncm_ctx *ctx = drvstate->ctx;
+ 	struct usbnet *dev = netdev_priv(net);
+-	struct sr_data *data = (struct sr_data *)&dev->data;
++	struct sr_data *data = usbnet_to_sr(dev);
+ 	u16 rx_ctl = SR_DEFAULT_RX_CTL;
  
- 	if (drvstate->subdriver && drvstate->subdriver->disconnect)
-@@ -134,7 +139,7 @@ static int huawei_cdc_ncm_suspend(struct usb_interface *intf,
+ 	if (net->flags & IFF_PROMISC) {
+@@ -436,7 +441,7 @@ sr_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ static int sr_get_eeprom_len(struct net_device *net)
  {
- 	int ret = 0;
- 	struct usbnet *usbnet_dev = usb_get_intfdata(intf);
--	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
-+	struct huawei_cdc_ncm_state *drvstate = usbnet_to_state(usbnet_dev);
- 	struct cdc_ncm_ctx *ctx = drvstate->ctx;
+ 	struct usbnet *dev = netdev_priv(net);
+-	struct sr_data *data = (struct sr_data *)&dev->data;
++	struct sr_data *data = usbnet_to_sr(dev);
  
- 	if (ctx == NULL) {
-@@ -161,7 +166,7 @@ static int huawei_cdc_ncm_resume(struct usb_interface *intf)
+ 	return data->eeprom_len;
+ }
+@@ -493,7 +498,7 @@ static int sr_ioctl(struct net_device *net, struct ifreq *rq, int cmd)
+ static int sr_set_mac_address(struct net_device *net, void *p)
  {
- 	int ret = 0;
- 	struct usbnet *usbnet_dev = usb_get_intfdata(intf);
--	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
-+	struct huawei_cdc_ncm_state *drvstate = usbnet_to_state(usbnet_dev);
- 	bool callsub;
- 	struct cdc_ncm_ctx *ctx = drvstate->ctx;
+ 	struct usbnet *dev = netdev_priv(net);
+-	struct sr_data *data = (struct sr_data *)&dev->data;
++	struct sr_data *data = usbnet_to_sr(dev);
+ 	struct sockaddr *addr = p;
  
+ 	if (netif_running(net))
+@@ -595,7 +600,7 @@ static int sr9800_set_default_mode(struct usbnet *dev)
+ 
+ static int sr9800_reset(struct usbnet *dev)
+ {
+-	struct sr_data *data = (struct sr_data *)&dev->data;
++	struct sr_data *data = usbnet_to_sr(dev);
+ 	int ret, embd_phy;
+ 	u16 rx_ctl;
+ 
+@@ -726,7 +731,7 @@ static int sr9800_phy_powerup(struct usbnet *dev)
+ 
+ static int sr9800_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+-	struct sr_data *data = (struct sr_data *)&dev->data;
++	struct sr_data *data = usbnet_to_sr(dev);
+ 	u16 led01_mux, led23_mux;
+ 	int ret, embd_phy;
+ 	u32 phyid;
 -- 
 2.19.1
 
