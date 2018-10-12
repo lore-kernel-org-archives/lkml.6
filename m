@@ -2,70 +2,67 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D19CDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17284C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFFB20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFFB20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dei.uc.pt
+	by mail.kernel.org (Postfix) with ESMTP id D97542087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97542087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeJLQxc (ORCPT
+        id S1728297AbeJLQxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:53:32 -0400
-Received: from smtp.dei.uc.pt ([193.137.203.253]:60426 "EHLO smtp.dei.uc.pt"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbeJLQxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:53:32 -0400
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-        (user=sneves mech=PLAIN bits=0)
-        by smtp.dei.uc.pt (8.15.2/8.15.2) with ESMTPSA id w9C9L1Et023524
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:21:07 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dei.uc.pt w9C9L1Et023524
-Received: by mail-ed1-f53.google.com with SMTP id x31-v6so10846958edd.8
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:21:07 -0700 (PDT)
-X-Gm-Message-State: ABuFfoh49TJs6Rd56p++gnyZa2vatwaiuRqnO3/L/Sw1IqsfgeJCUwZO
-        dCfzBQYu+SAuT58qQSuDBEiC/G3Fiwvwn+6+RpQ=
-X-Google-Smtp-Source: ACcGV62HPqByDX0nYOogBLQMoYGOlgjx/h/Gmbl0k+n2Igu+70VQWfyVcnJoQJRb8Rcb4H1o9+Eklc/Fn/QU3C6tnqE=
-X-Received: by 2002:a17:906:e1ce:: with SMTP id gp14-v6mr6335446ejb.221.1539336061564;
- Fri, 12 Oct 2018 02:21:01 -0700 (PDT)
+        Fri, 12 Oct 2018 12:53:39 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48434 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728021AbeJLQxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 12:53:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFEDFF;
+        Fri, 12 Oct 2018 02:22:09 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B0C5D3F5B7;
+        Fri, 12 Oct 2018 02:22:09 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E74691AE2DA4; Fri, 12 Oct 2018 10:22:09 +0100 (BST)
+Date:   Fri, 12 Oct 2018 10:22:09 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
+        bigeasy@linutronix.de
+Subject: Re: [PATCH v2 4/4] locking/qspinlock, x86: Provide liveness guarantee
+Message-ID: <20181012092209.GE12289@arm.com>
+References: <20181003130257.156322446@infradead.org>
+ <20181003130957.183726335@infradead.org>
+ <20181010161257.GD17340@arm.com>
 MIME-Version: 1.0
-References: <20181011185458.10186-1-kristen@linux.intel.com> <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-In-Reply-To: <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
-From:   Samuel Neves <sneves@dei.uc.pt>
-Date:   Fri, 12 Oct 2018 10:20:25 +0100
-X-Gmail-Original-Message-ID: <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com>
-Message-ID: <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     kristen@linux.intel.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-FCTUC-DEI-SIC-MailScanner-Information: Please contact helpdesk@dei.uc.pt for more information
-X-FCTUC-DEI-SIC-MailScanner-ID: w9C9L1Et023524
-X-FCTUC-DEI-SIC-MailScanner: Found to be clean
-X-FCTUC-DEI-SIC-MailScanner-SpamCheck: not spam, SpamAssassin (not cached,
-        score=-60.1, required 3.252, autolearn=not spam, ALL_TRUSTED -10.00,
-        BAYES_00 -0.10, L_SMTP_AUTH -50.00)
-X-FCTUC-DEI-SIC-MailScanner-From: sneves@dei.uc.pt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010161257.GD17340@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 8:25 PM Andy Lutomirski <luto@kernel.org> wrote:
-> What exactly is this trying to protect against?  And how many cycles
-> should we expect L1D_FLUSH to take?
+On Wed, Oct 10, 2018 at 05:12:57PM +0100, Will Deacon wrote:
+> On Wed, Oct 03, 2018 at 03:03:01PM +0200, Peter Zijlstra wrote:
+> >  arch/x86/include/asm/qspinlock.h |   15 +++++++++++++++
+> >  kernel/locking/qspinlock.c       |   16 +++++++++++++++-
+> >  2 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> I've failed to break this by thinking really hard, so I've updated Catalin's
+> TLA model to see if the tools are still happy. I'll get back to you once
+> they've finished chewing on it.
 
-As far as I could measure, I got 1660 cycles per wrmsr 0x10b, 0x1 on a
-Skylake chip, and 1220 cycles on a Skylake-SP.
+The model is happy, so this doesn't introduce any "bad" SC behaviours.
+
+Reviewed-by: Will Deacon <will.deacon@arm.com>
+
+Will
