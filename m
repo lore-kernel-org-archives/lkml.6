@@ -5,129 +5,90 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D59CC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D4C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D2220865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D2220865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id B5C06206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C06206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeJMCf4 (ORCPT
+        id S1726530AbeJMCl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:35:56 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.180]:18013 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726040AbeJMCf4 (ORCPT
+        Fri, 12 Oct 2018 22:41:29 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36000 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbeJMCl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:35:56 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id A2337E988
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:02:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id B2gpgY7O68YaUB2h3gzLkX; Fri, 12 Oct 2018 14:01:59 -0500
-X-Authority-Reason: nr=8
-Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:60260 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gB2go-000mRt-9W; Fri, 12 Oct 2018 14:01:34 -0500
-Subject: Re: [PATCH] drm/radeon/r300: Mark expected switch fall-throughs
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181012161236.GA21768@embeddedor.com>
- <CADnq5_ODxnRPUFe-Sr3TN3E7kq+kxXVo_VvOVpT5_CdNSu3oCw@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <bad52b85-fec6-a19a-a2ea-9d63c5e4a97e@embeddedor.com>
-Date:   Fri, 12 Oct 2018 21:01:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 12 Oct 2018 22:41:29 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p89-v6so12281649ljb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 12:07:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J28Hb242yDZErkKbMM8fY2/1sN1P9oMETglvfG+UgJ8=;
+        b=YvMLUVak4z5HuVdUmU9SPchIcNNuFBQnxPUr28y0S1uAuXuWYObdAZ9OypEqOhvikH
+         0/SuluNXihLKFXKQjj4P9ZoL/OVvf2WOLoIZ8fBT7GfV68MDIS1su8MkEI0PFAZLo6PC
+         bP1EbKYZUCste/kzRDcvRIKxE+ynvdWtkXPSuPG8fubu8+Pk5AjEDPbmmPPw04TV6y4Q
+         bRn236zen0WUfhyXphhs6nmd66eIb2/IRRWjUWhbM7crCnRfQJ2j0zYCP6TQ7h6cK4se
+         IiBAmKSZ7YpAZx2KDetlQylOPGLiev3a1vE78gxLzGfBiOi3o1R0xACaajQqXLuWQnTj
+         K2TA==
+X-Gm-Message-State: ABuFfoiWfT75NdnZBRK/YNxkbsaCGrrhVkqA96DK0+yBZO0EZJ3nZ/et
+        Wbww8609pnojDtntaDs5UhvsOz5of/Mf9EcWy5oa2w==
+X-Google-Smtp-Source: ACcGV61BjssJnGDfZuqZRs/3A3niySR5cqMt1C2Gpb6lQgmeR/5u/EhqF2YaI65kmO1IwVundY/z3jfvPen9ClaUeY0=
+X-Received: by 2002:a2e:574f:: with SMTP id r15-v6mr5222762ljd.106.1539371252721;
+ Fri, 12 Oct 2018 12:07:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CADnq5_ODxnRPUFe-Sr3TN3E7kq+kxXVo_VvOVpT5_CdNSu3oCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 109.24.154.57
-X-Source-L: No
-X-Exim-ID: 1gB2go-000mRt-9W
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:60260
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20181012142413.26107-1-benjamin.tissoires@redhat.com> <20181012185342.GA35430@dtor-ws>
+In-Reply-To: <20181012185342.GA35430@dtor-ws>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 12 Oct 2018 21:07:21 +0200
+Message-ID: <CAO-hwJKenvHpOQc6vjxDq0YZesLJVu1MXPuZ-iTSLKxJEbZeAQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Fix Elan I2C touchpads in latest generation from Lenovo
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 12, 2018 at 8:53 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Fri, Oct 12, 2018 at 04:24:08PM +0200, Benjamin Tissoires wrote:
+> > Since v4.18, we unconditionally switch the I2C capable touchpads over I2C.
+> > In the model I had (a pre-prod t480s I guess), the touchpad was behaving
+> > fine.
+> > However, it occurs that later production models don't expose the clickpad
+> > information from I2C. The Windows driver gets all the information from PS/2
+> > so we should do the same.
+> >
+> > The situation is even worse for the P52. Once of the query parameter function
+> > fails, which means the touchpad doesn't even probe. This effectively kills
+> > the touchpad, which is less than ideal.
+> >
+> > Dmitry, I am not sure if we should take those for stable in v4.18+.
+> > I'd like to, but given the series is 5 patches, I don't know if this
+> > will be acceptable.
+> > We could revert in stable df077237cf55928f5 but that would mean
+> > distributions will have to revert the revert if they want to provide
+> > the I2C behavior.
+> >
+> > So, regarding stable: your call :)
+>
+> Heh ;) I think we have to fix it at least in 4.19 stable train. How
+> about we merge it normally into 4.20, and let it cook there for a while.
+> If there is no issues, then we can send it to 4.19 stable manually. How
+> does this sound?
+>
 
+Sounds like a plan :)
 
-On 10/12/18 7:29 PM, Alex Deucher wrote:
-> This and the r420 patch applied.  Thanks!
-> 
-
-Thanks, Alex. :)
---
-Gustavo
+Cheers,
+Benjamin
