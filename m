@@ -2,165 +2,186 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3E1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20F7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7362B2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E6B720645
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:30:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QO9pO8ID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7362B2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=igel-co-jp.20150623.gappssmtp.com header.i=@igel-co-jp.20150623.gappssmtp.com header.b="hfl6Yu75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6B720645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=igel.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeJLL5z (ORCPT
+        id S1727151AbeJLMBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 07:57:55 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40285 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbeJLL5z (ORCPT
+        Fri, 12 Oct 2018 08:01:06 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43767 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbeJLMBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 07:57:55 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t22-v6so8351737lfb.7
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 21:27:25 -0700 (PDT)
+        Fri, 12 Oct 2018 08:01:05 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 30-v6so5260922plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 21:30:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MqFEpk4+cu0BU8obaDIf7lgks+UBqivHg2aCMHVSMCQ=;
-        b=QO9pO8IDxOC+aOdj+VKBX/hYe/xfC/iuZYnQwm9NbhHevycSPQv/aSS1fPsPmD5F31
-         ohcac/khnWH3RvJiB3eJOTHNOWMMdTtXtK2Uh4yydHqR8TVtERRIYihyQu6rnSxl78rL
-         2nDNbnVfVC1sogl3XmuPwu5FnE2Tei1ESlDyQ=
+        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=23rfPD2OIGJcvI4IJwZ6xc8GNGqaZZG0MvxBm+pBoF4=;
+        b=hfl6Yu75zIbMZYm6vxS/YMBqXNkVxZVyoJGY7UNme4vkTfhcTSXJr/WsC8d5WN570z
+         ebNhiJh6g2WXOmLRIzJKopkYx6IeB6I7nAJJlRW/3hSjsIDdJzHl15K2ozbbje1F3b0O
+         7L5csOwRALFIbJ639TJDtLGv1EJk/zWrXCW9BXCv3O0s6X6n+ZKrTNnV/RN6Bzb/p31p
+         uJVhnCkjbF7upGSgsrjC6WaXfUDbGjyw2HwY6YuHWa907pt5yJ6Fwk9Zz7QVMdxcN+bv
+         BoJpq4yhG4h2r388kk4DsW7AFVqCpykmem4cSu9hVR7ydukp+NlDDNHhFxP4m52Xzr+e
+         s/wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MqFEpk4+cu0BU8obaDIf7lgks+UBqivHg2aCMHVSMCQ=;
-        b=BBq4Ef/nXiXPHP3WX2NOl1O/1EiZW1yf1F+OhHgZGu4gc0SjTIel85G/wxyMY+3rhJ
-         lfp7f5yasz311Yooicf0o0z1sNZOf2vqWjo4iah29qTElesIHjz/3kSU+T7f+9aZSqq6
-         bFa7gFxJlJC15q+i4LZFwLnXmSenbaV2HXB33gJClCOnxSxiVTALPLsPCVHGOClZTk2L
-         UuXRZCJtn616Iexd3V4me3tKswcjhRc6v0CqEmq7jlq6Z2lJFlfdBHGxvt+IlWxJF/Fu
-         nSGQsOZwGjGBfXihlwFqoBIH3DZnR5JfDj2//+M8j2Bi8ekAvICzAH5lLRsLJYm3LIj9
-         KSiw==
-X-Gm-Message-State: ABuFfohkAWNZzuLFOOyZrFRnSDqtGS72Wh+PHy9dxBzO1vMlCJVZFVhs
-        UnXGlwsPrGeWrRbT5myDpJggh4+rdVaC6VLluq6fXw==
-X-Google-Smtp-Source: ACcGV61TKSCKIJh8/lg/b0yJxFHSHdOUIk6t6zLPbOcyfEnKX5GsAympmJ7KW5bDbUyHo9jUGQ7Yv2TS0+sqbe5ngnU=
-X-Received: by 2002:a19:6719:: with SMTP id b25-v6mr2700815lfc.54.1539318444177;
- Thu, 11 Oct 2018 21:27:24 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=23rfPD2OIGJcvI4IJwZ6xc8GNGqaZZG0MvxBm+pBoF4=;
+        b=EHaXAnsFE07v2FmK1tZtn5vwQiap3GMne0XtKdfvRlsFlIPUQzoAGPobGVrNuvxykM
+         Vbamoy51/iQFZTrvPUNmXT6v5N4QLFq2yvfBondlkxO94Y9mWNKnt+IdCrrrSDOEOKfj
+         lgfVkkoafjR3OJtuenvU3ZB4/A6kcb6i+u1wxCve6WvgmtI3WB2UVWHA2acTXZwm/wr4
+         NYQYri7X6NE2o6sjFihwLGHm+LMMcYV9O3EWou5sRNIKHy3W7JP6MZvpIJcXCUDNGQTt
+         6DKAU5oqIX3yf8iOvElzoageLG4in+WLYOePBddmpePvbRCsAvtyBEcFzbnKBT9DXOCy
+         SrpQ==
+X-Gm-Message-State: ABuFfoh28rwQUvhutzSL1IIdcLWaGJP6rjdZnYgvilHj8MPJ1tTTXrgM
+        5akMN+Df5/u9a51H8A0dwSxXSMV5Opv3Zw==
+X-Google-Smtp-Source: ACcGV63jSLH6iYq4CzvD/k73yZPgUZ535qnwrXavyVwpUzndPUNjJ84QlWUaZf6Qfo3UyphX9s4CZQ==
+X-Received: by 2002:a17:902:f096:: with SMTP id go22mr4358738plb.235.1539318635634;
+        Thu, 11 Oct 2018 21:30:35 -0700 (PDT)
+Received: from [10.16.144.1] (napt.igel.co.jp. [219.106.231.132])
+        by smtp.gmail.com with ESMTPSA id n79-v6sm46844pfk.19.2018.10.11.21.30.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 21:30:34 -0700 (PDT)
+Subject: Re: [PATCH] virtio_net: enable tx after resuming from suspend
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181011075127.2608-1-ake@igel.co.jp>
+ <dd530053-efab-b661-3423-1faaab8fb12f@redhat.com>
+ <7e87b140-79ae-c79e-40ed-dc76b38eeae4@igel.co.jp>
+ <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
+From:   ake <ake@igel.co.jp>
+Message-ID: <b294cbba-24a0-939d-98e8-d1483e3688a1@igel.co.jp>
+Date:   Fri, 12 Oct 2018 13:30:32 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181011152508.885515042@linuxfoundation.org>
-In-Reply-To: <20181011152508.885515042@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 12 Oct 2018 09:57:12 +0530
-Message-ID: <CA+G9fYv7+m7nyCO1THnqm5tUVVa5D39u2TLXSW8fY3eMS6cRtg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/45] 4.14.76-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a156fd7e-e36e-e4e9-c240-3117ecc5b1b4@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 at 21:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.14.76 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Oct 13 15:24:53 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.76-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.14.76-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: c0c2a4359275ed099acb465f0c929abd22647d64
-git describe: v4.14.75-46-gc0c2a4359275
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.75-46-gc0c2a4359275
-
-No regressions (compared to build v4.14.75)
-
-No fixes (compared to build v4.14.75)
 
 
-Ran 18438 total tests in the following environments and test suites.
+On 2018年10月11日 22:06, Jason Wang wrote:
+> 
+> 
+> On 2018年10月11日 18:22, ake wrote:
+>>
+>> On 2018年10月11日 18:44, Jason Wang wrote:
+>>>
+>>> On 2018年10月11日 15:51, Ake Koomsin wrote:
+>>>> commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+>>>> disabled the virtio tx before going to suspend to avoid a use after
+>>>> free.
+>>>> However, after resuming, it causes the virtio_net device to lose its
+>>>> network connectivity.
+>>>>
+>>>> To solve the issue, we need to enable tx after resuming.
+>>>>
+>>>> Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during
+>>>> reset")
+>>>> Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+>>>> ---
+>>>>    drivers/net/virtio_net.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>> index dab504ec5e50..3453d80f5f81 100644
+>>>> --- a/drivers/net/virtio_net.c
+>>>> +++ b/drivers/net/virtio_net.c
+>>>> @@ -2256,6 +2256,7 @@ static int virtnet_restore_up(struct
+>>>> virtio_device *vdev)
+>>>>        }
+>>>>          netif_device_attach(vi->dev);
+>>>> +    netif_start_queue(vi->dev);
+>>> I believe this is duplicated with netif_tx_wake_all_queues() in
+>>> netif_device_attach() above?
+>> Thank you for your review.
+>>
+>> If both netif_tx_wake_all_queues() and netif_start_queue() result in
+>> clearing __QUEUE_STATE_DRV_XOFF, then is it possible that some
+>> conditions in netif_device_attach() is not satisfied?
+> 
+> Yes, maybe. One case I can see now is when the device is down, in this
+> case netif_device_attach() won't try to wakeup the queue.
+> 
+>>   Without
+>> netif_start_queue(), the virtio_net device does not resume properly
+>> after waking up.
+> 
+> How do you trigger the issue? Just do suspend/resume?
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+Yes, simply suspend and resume.
 
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+Here is how I trigger the issue:
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+1) Start the Virtual Machine Manager GUI program.
+2) Create a guest Linux OS. Make sure that the guest OS kernel is
+   >= 4.12. Make sure that it uses virtio_net as its network device.
+   In addition, make sure that the video adapter is VGA. Otherwise,
+   waking up with the virtual power button does not work.
+3) After installing the guest OS, log in, and test the network
+   connectivity by ping the host machine.
+4) Suspend. After this, the screen is blank.
+5) Resume by hitting the virtual power button. The login screen
+   appears again.
+6) Log in again. The guest loses its network connection.
+
+In my test:
+Guest: Ubuntu 16.04/18.04 with kernel 4.15.0-36-generic
+Host: Ubuntu 16.04 with kernel 4.15.0-36-generic/4.4.0-137-generic
+
+>>
+>> Is it better to report this as a bug first?
+> 
+> Nope, you're very welcome to post patch directly.
+> 
+>> If I am to do more
+>> investigation, what areas should I look into?
+> 
+> As you've figured out, you can start with why netif_tx_wake_all_queues()
+> were not executed?
+> 
+> (Btw, does the issue disappear if you move netif_tx_disable() under the
+> check of netif_running() in virtnet_freeze_down()?)
+
+The issue disappears if I move netif_tx_disable() under the check of
+netif_running() in virtnet_freeze_down(). Moving netif_tx_disable()
+is probably better as its logic is consistent with
+netif_device_attach() implementation. If you are OK with this idea,
+I will submit another patch.
+
+> Thanks
+> 
+>>
+>> Best Regards
+>> Ake Koomsin
+>>
+> 
+
+Best Regards
