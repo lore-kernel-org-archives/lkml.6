@@ -2,256 +2,151 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28011C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8A0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41DC2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:13:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E41DC2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E5FF2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:15:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5FF2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbeJLTpY (ORCPT
+        id S1728610AbeJLTsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:45:24 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36847 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728649AbeJLTpY (ORCPT
+        Fri, 12 Oct 2018 15:48:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:51501 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728213AbeJLTsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:45:24 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438149|-1;CH=blue;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D16CDJJ_1539346361;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D16CDJJ_1539346361)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Fri, 12 Oct 2018 20:12:41 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, will.deacon@arm.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V12 7/8] clocksource: add gx6605s SOC system timer
-Date:   Fri, 12 Oct 2018 20:12:20 +0800
-Message-Id: <cad9e97fd355617a205ee18bf0719f392af73f52.1539315341.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <d6a649276d1b5641f2b8518e55016501d69e6128.1539315341.git.ren_guo@c-sky.com>
-References: <d6a649276d1b5641f2b8518e55016501d69e6128.1539315341.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1539315341.git.ren_guo@c-sky.com>
-References: <cover.1539315341.git.ren_guo@c-sky.com>
+        Fri, 12 Oct 2018 15:48:03 -0400
+Received: from [192.168.178.69] ([109.104.38.145]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Mg6JS-1fjqvk0bbK-00hhsQ; Fri, 12 Oct 2018 14:15:06 +0200
+Received: from [192.168.178.69] ([109.104.38.145]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Mg6JS-1fjqvk0bbK-00hhsQ; Fri, 12 Oct 2018 14:15:06 +0200
+Subject: Re: [PATCH v2 0/2] pwm: sysfs: fix exporting PWM channel
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     gottfried.haider@gmail.com, michal.vokac@ysoft.com,
+        loic.pallardy@st.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hsweeten@visionengravers.com,
+        broonie@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        gohai@sukzessiv.net, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
+ <20181012115500.GD31561@ulmo>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <ad0206b8-2cda-a147-1b71-8e2eced06e61@i2se.com>
+Date:   Fri, 12 Oct 2018 14:15:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181012115500.GD31561@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:7wJgy4vCMZKB/8pS790zVm5spTTpr9MIqkxKYW8OENCVqgw/pnT
+ 98A2GnMTUu1aF36RzOLa1n/coZzWS9L2oS8hehnPI+jliLAbt/+peZRrQ0qkciPW+MSeuTC
+ GCeZ2NNi/+/Rv4iVARs5rNZ5gFc+1OIS1eL/FJjLgOstrZDqMpcJVDXA132hz6idYjunTOC
+ 5868KtprJ5nXtuWPTUCwg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BoSUh/s3x18=:zorMfPo7D8vWIYgwGLUy/i
+ cgITKB0jFl1rM0+clDV8Gw42L+aC1+K74MsGmww9Grs7Xy03iHD3kfWD+Zx8NtzN+WlK9JM/j
+ AtIdVQUJoIyCOYV3dffFMLkynZta++HafX3w6XRCtu6CXz7pLcMTzDw7vDwT0kHjXs7XOGZxi
+ YDdi3lPIPmteTRWPLGyouXqJSw/v/ObMKB2Ar4+YLj88WnBBf3Yp/dkBbUVVn3ONapoDTJuq7
+ CtvYDuyJf+tNdcuEJZnUy7Cnom9LQdo4nvHJjAyTrtatFujy++RDT/lNhrWsxLYYc3fsuyKLM
+ KqffqDRnioHYeSaV1uKBPnmtVxfLMKfkcwnV+3WvgJaa3q2hA/I2XYdDWUu+WEM5AzY8Q8GTQ
+ m5KTH6hGaxIzQSAQsuCeTwZfOov4IOKyhX+HxVaG/avLTZZmtqnOObIEOozkl5J/8t+F0YIy+
+ coK5QA5+NhRb0Ru+iXkoMW4ng9BtQIMN6YzjUTz9ZYCi85bp2J1oBcChkao3LB3oZTHq8ow9d
+ NeJKi0HzHy12qNuXWxsqFOW9PNfxRcnaSo0PnNUp/3Q+53QSm5Mly61sjjRyXG/GYZKYqd6Z3
+ NSMwL+muA7Ud36dTFr2ftGNVCaV5A+1kwpWQ2KC/NG63wccTiyPhp59wSL9QMExZ2glK6asPj
+ 9wAbvTOEo0uaSCHhW8BEFD5s9nxr4/s57WPub+jpMQODoZM450nVnMckwQ5norDfCUZU4ZCmM
+ QrcT868SGFZhfSpr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changelog:
- - pass checkpatch.pl
- - Add COMIPLE_TEST in Kconfig
- - no cast is needed for "struct clock_event_device *ce = dev"
- - remove: extra space after (u64)
- - Add License and Copyright
- - Use timer-of framework
- - Change name with upstream feedback
- - Use clksource_mmio framework
+Am 12.10.2018 um 13:55 schrieb Thierry Reding:
+> On Mon, Oct 01, 2018 at 03:23:55PM +0200, Fabrice Gasnier wrote:
+>> Since commit 7e5d1fd75c3d ("pwm: Set class for exported channels in sysfs")
+>> - it's not possible to export more than one PWM channel
+>> - ABI has changed, as a side effect. It may cause bad behavior as pwmchip
+>>   attributes are wrongly added to pwm channels and report wrong values.
+>> See [1] and [2].
+>>
+>> One purpose of the original patch is to send uevents to udev, when exporting a
+>> PWM channel through the sysfs. This series:
+>> - Reverts the original patch.
+>> - Proposes a new way to send notifications to be used by udev rules.
+>>
+>> - With this series:
+>> $ echo 0 > /sys/class/pwm/pwmchip0/export
+>> $ ls /sys/class/pwm
+>> pwmchip0 pwmchip4
+>>
+>> $ ls /sys/class/pwm/pwmchip0/pwm0/
+>> capture     enable      polarity    uevent
+>> duty_cycle  period      power
+>>
+>> - Without this series:
+>> $ echo 0 > /sys/class/pwm/pwmchip0/export
+>> $ ls /sys/class/pwm
+>> pwm0 pwmchip0 pwmchip4
+>>
+>> $ ls /sys/class/pwm/pwmchip0/pwm0/
+>> capture     duty_cycle  export      period      power       uevent
+>> device      enable      npwm        polarity    subsystem   unexport
+>>
+>> - Backtrace when exporting a 2nd channel (0) on a separate pwmchip device:
+>> $ echo 0 > /sys/class/pwm/pwmchip4/export
+>> [   95.286558] sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+>> [   95.293630] CPU: 0 PID: 54 Comm: sh Not tainted 4.19.0-rc6-00013-g00b49b0 #151
+>> [   95.301344] Hardware name: STM32 (Device Tree Support)
+>> [   95.306833] [<0000c155>] (unwind_backtrace) from [<0000b273>] (show_stack+0xb/0xc)
+>> [   95.315136] [<0000b273>] (show_stack) from [<00092455>] (sysfs_warn_dup+0x31/0x48)
+>> [   95.323247] [<00092455>] (sysfs_warn_dup) from [<00092635>] (sysfs_do_create_link_sd+0x75/0x88)
+>> [   95.332539] [<00092635>] (sysfs_do_create_link_sd) from [<00125823>] (device_add+0x133/0x3b0)
+>> [   95.341694] [<00125823>] (device_add) from [<001059ed>] (export_store+0xb5/0x12c)
+>> [   95.349761] [<001059ed>] (export_store) from [<00091911>] (kernfs_fop_write+0x87/0xda)
+>> [   95.358150] [<00091911>] (kernfs_fop_write) from [<0005beb1>] (__vfs_write+0x1d/0xe0)
+>> [   95.366295] [<0005beb1>] (__vfs_write) from [<0005bfe7>] (vfs_write+0x4f/0x7c)
+>> [   95.374053] [<0005bfe7>] (vfs_write) from [<0005c0bf>] (ksys_write+0x33/0x70)
+>> [   95.381708] [<0005c0bf>] (ksys_write) from [<00009001>] (ret_fast_syscall+0x1/0x58)
+>> [   95.389682] Exception stack(0x01bcffa8 to 0x01bcfff0)
+>> [   95.394946] ffa0:                   00000000 00c4883c 00000001 00c4e590 00000002 00000004
+>> [   95.403639] ffc0: 00000000 00c4883c 00c4cbe8 00000004 00000002 00000020 00000000 00c4d008
+>> [   95.412223] ffe0: 00c29151 00c4cbe8 00c17833 00c13c0c
+>> -sh: write error: File exists
+>>
+>> [1] https://lkml.org/lkml/2018/9/25/713
+>> [2] https://lkml.org/lkml/2018/9/25/447
+>>
+>> ---
+>> Changes in v2:
+>> - update revert commit message
+>> - new patch 2/2 to propose uevent notification (change) on pwmchip
+>>
+>> Fabrice Gasnier (2):
+>>   Revert "pwm: Set class for exported channels in sysfs"
+>>   pwm: send a uevent on the pwmchip device upon channel sysfs (un)export
+>>
+>>  drivers/pwm/sysfs.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+> Both patches applied, thanks. What do you think would be the importance
+> of getting this into stable kernels? We can't get one of the patches in
+> without the other, so they'd both have to be backported. The second one
+> is still fairly small, so would qualify for stable, I think.
+I think the revert patch should go to stable, because it fixes a regression.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/Kconfig         |   8 ++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-gx6605s.c | 154 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 drivers/clocksource/timer-gx6605s.c
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 591c9a8..55c77e4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -630,4 +630,12 @@ config CSKY_MP_TIMER
- 	  csky,mptimer is not only used in SMP system, it also could be used
- 	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
- 
-+config GX6605S_TIMER
-+	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
-+	depends on CSKY
-+	select CLKSRC_MMIO
-+	select TIMER_OF
-+	help
-+	  This option enables support for gx6605s SOC's timer.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 5ce82d3..9196331 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -80,3 +80,4 @@ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
- obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
-+obj-$(CONFIG_GX6605S_TIMER)		+= timer-gx6605s.o
-diff --git a/drivers/clocksource/timer-gx6605s.c b/drivers/clocksource/timer-gx6605s.c
-new file mode 100644
-index 0000000..80d0939
---- /dev/null
-+++ b/drivers/clocksource/timer-gx6605s.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/sched_clock.h>
-+
-+#include "timer-of.h"
-+
-+#define CLKSRC_OFFSET	0x40
-+
-+#define TIMER_STATUS	0x00
-+#define TIMER_VALUE	0x04
-+#define TIMER_CONTRL	0x10
-+#define TIMER_CONFIG	0x20
-+#define TIMER_DIV	0x24
-+#define TIMER_INI	0x28
-+
-+#define GX6605S_STATUS_CLR	BIT(0)
-+#define GX6605S_CONTRL_RST	BIT(0)
-+#define GX6605S_CONTRL_START	BIT(1)
-+#define GX6605S_CONFIG_EN	BIT(0)
-+#define GX6605S_CONFIG_IRQ_EN	BIT(1)
-+
-+static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
-+{
-+	struct clock_event_device *ce = dev;
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	writel_relaxed(GX6605S_STATUS_CLR, base + TIMER_STATUS);
-+
-+	ce->event_handler(ce);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int gx6605s_timer_set_oneshot(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* reset and stop counter */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* enable with irq and start */
-+	writel_relaxed(GX6605S_CONFIG_EN | GX6605S_CONFIG_IRQ_EN,
-+		       base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_set_next_event(unsigned long delta,
-+					struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* use reset to pause timer */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* config next timeout value */
-+	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_shutdown(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	writel_relaxed(0, base + TIMER_CONTRL);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static struct timer_of to = {
-+	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-+	.clkevt = {
-+		.rating			= 300,
-+		.features		= CLOCK_EVT_FEAT_DYNIRQ |
-+					  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_shutdown	= gx6605s_timer_shutdown,
-+		.set_state_oneshot	= gx6605s_timer_set_oneshot,
-+		.set_next_event		= gx6605s_timer_set_next_event,
-+		.cpumask		= cpu_possible_mask,
-+	},
-+	.of_irq = {
-+		.handler		= gx6605s_timer_interrupt,
-+		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
-+	},
-+};
-+
-+static u64 notrace gx6605s_sched_clock_read(void)
-+{
-+	void __iomem *base;
-+
-+	base = timer_of_base(&to) + CLKSRC_OFFSET;
-+
-+	return (u64)readl_relaxed(base + TIMER_VALUE);
-+}
-+
-+static void gx6605s_clkevt_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 2,
-+					ULONG_MAX);
-+}
-+
-+static int gx6605s_clksrc_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_INI);
-+
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	writel_relaxed(GX6605S_CONFIG_EN, base + TIMER_CONFIG);
-+
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	sched_clock_register(gx6605s_sched_clock_read, 32, timer_of_rate(&to));
-+
-+	return clocksource_mmio_init(base + TIMER_VALUE, "gx6605s",
-+			timer_of_rate(&to), 200, 32, clocksource_mmio_readl_up);
-+}
-+
-+static int __init gx6605s_timer_init(struct device_node *np)
-+{
-+	int ret;
-+
-+	/*
-+	 * The timer driver is for nationalchip gx6605s SOC and there are two
-+	 * same timer in gx6605s. We use one for clkevt and another for clksrc.
-+	 *
-+	 * The timer is mmio map to access, so we need give mmio address in dts.
-+	 *
-+	 * It provides a 32bit countup timer and interrupt will be caused by
-+	 * count-overflow.
-+	 * So we need set-next-event by ULONG_MAX - delta in TIMER_INI reg.
-+	 *
-+	 * The counter at 0x0  offset is clock event.
-+	 * The counter at 0x40 offset is clock source.
-+	 * They are the same in hardware, just different used by driver.
-+	 */
-+	ret = timer_of_init(np, &to);
-+	if (ret)
-+		return ret;
-+
-+	gx6605s_clkevt_init(timer_of_base(&to));
-+
-+	return gx6605s_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
-+}
-+TIMER_OF_DECLARE(csky_gx6605s_timer, "csky,gx6605s-timer", gx6605s_timer_init);
--- 
-2.7.4
-
+Thanks
+>
+> However, given that it's taken a long time for somebody to notice this,
+> I'm not sure if this is something that people care about too much in the
+> stable kernels.
+>
+> Thierry
