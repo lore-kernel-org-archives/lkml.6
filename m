@@ -2,160 +2,90 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769EEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D750FC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4EB2087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4EB2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 693F32086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693F32086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeJLSTH (ORCPT
+        id S1728071AbeJLSTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:19:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:17360 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbeJLSTG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:19:06 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9CAl9Oj014651;
-        Fri, 12 Oct 2018 19:47:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Fri, 12 Oct 2018 19:47:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9CAl3GV014603
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 12 Oct 2018 19:47:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>, hannes@cmpxchg.org
-Cc:     linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        Michal Hocko <mhocko@suse.com>, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com
-References: <000000000000dc48d40577d4a587@google.com>
- <20181010151135.25766-1-mhocko@kernel.org>
- <201810110637.w9B6b9eH044188@www262.sakura.ne.jp>
-Message-ID: <7bb967ec-81ae-2c07-7e58-9ad23167bb66@i-love.sakura.ne.jp>
-Date:   Fri, 12 Oct 2018 19:47:03 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 14:19:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726665AbeJLSTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:19:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6906FFBBEE3F2;
+        Fri, 12 Oct 2018 18:47:15 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Fri, 12 Oct 2018
+ 18:47:10 +0800
+From:   John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH 0/7] hisi_sas: Misc bugfixes and an optimisation patch
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <1537801594-207139-1-git-send-email-john.garry@huawei.com>
+ <yq18t354532.fsf@oracle.com>
+CC:     <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Message-ID: <e771c366-2824-8774-4c90-9906992ee813@huawei.com>
+Date:   Fri, 12 Oct 2018 11:47:05 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <201810110637.w9B6b9eH044188@www262.sakura.ne.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
+In-Reply-To: <yq18t354532.fsf@oracle.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/11 15:37, Tetsuo Handa wrote:
-> Michal Hocko wrote:
->> Once we are here, make sure that the reason to trigger the OOM is
->> printed without ratelimiting because this is really valuable to
->> debug what happened.
-> 
-> Here is my version.
-> 
+On 11/10/2018 02:58, Martin K. Petersen wrote:
+>
+> John,
+>
 
-Hmm, per mem_cgroup flag would be better than per task_struct flag.
+Hi Martin,
 
-From 5e80805e4988f23372a3b352fd4185e6bad53f58 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Fri, 12 Oct 2018 16:24:49 +0900
-Subject: [PATCH v2] mm: memcontrol: Don't flood OOM messages with no eligible task.
+>> However it does block us in future from enabling SCSI MQ in the driver.
+>
+> We're going to remove the legacy I/O path so I'm not particularly keen
+> on merging something that's going in the opposite direction.
 
-syzbot is hitting RCU stall at shmem_fault() [1].
-This is because memcg-OOM events with no eligible task (current thread
-is marked as OOM-unkillable) continued calling dump_header() from
-out_of_memory() enabled by commit 3100dab2aa09dc6e ("mm: memcontrol:
-print proper OOM header when no eligible victim left.").
+What I really meant was that we cannot expose multiple queues to upper 
+layer, and nothing related to legacy IO path.
 
-Let's make sure that next dump_header() waits for at least 60 seconds from
-previous "Out of memory and no killable processes..." message, if requested
-memcg already reported it. This change allows threads in requested memcg to
-complete memory allocation requests for doing recovery operation, and also
-allows us to know whether threads in requested memcg is doing recovery
-operation.
+>
+>> This is because the IPTT index must be a unique value per HBA. However,
+>> if we switched to SCSI MQ, the block layer tag becomes unique per queue,
+>> and not per HBA.
+>
+> That doesn't sound right.
+>
 
-[1] https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
+Again, my wording my probably was not accurate. I meant that rq tag is 
+not unqiue across all hw queues.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
----
- include/linux/memcontrol.h |  3 +++
- mm/oom_kill.c              | 23 +++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+As I mentioned in the thread that spawned from this, we actually can't 
+expose multiple hw queues at the moment. And, if we did, we find a 
+performance drop due to having to go back to manage this IPTT internally.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 652f602..8da2340 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -230,6 +230,9 @@ struct mem_cgroup {
- 	 */
- 	bool oom_group;
- 
-+	/* Previous OOM-kill request failed due to no eligible task? */
-+	bool oom_no_eligible_warned;
-+
- 	/* protected by memcg_oom_lock */
- 	bool		oom_lock;
- 	int		under_oom;
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..52a8319 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1106,6 +1106,21 @@ bool out_of_memory(struct oom_control *oc)
- 	select_bad_process(oc);
- 	/* Found nothing?!?! */
- 	if (!oc->chosen) {
-+#ifdef CONFIG_MEMCG
-+		/*
-+		 * Don't flood with dump_header() if already reported, in case
-+		 * current->signal->oom_score_adj == OOM_SCORE_ADJ_MIN. Maybe
-+		 * this variable should be per "struct mem_cgroup". But since
-+		 * we can't prove that multiple concurrent memcg OOM without
-+		 * eligible task won't cause flooding, choose global variable
-+		 * for safety.
-+		 */
-+		static u64 last_warned;
-+
-+		if (is_memcg_oom(oc) && oc->memcg->oom_no_eligible_warned &&
-+		    time_before64(get_jiffies_64(), last_warned + 60 * HZ))
-+			return false;
-+#endif
- 		dump_header(oc, NULL);
- 		pr_warn("Out of memory and no killable processes...\n");
- 		/*
-@@ -1115,6 +1130,14 @@ bool out_of_memory(struct oom_control *oc)
- 		 */
- 		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
- 			panic("System is deadlocked on memory\n");
-+#ifdef CONFIG_MEMCG
-+		if (is_memcg_oom(oc)) {
-+			oc->memcg->oom_no_eligible_warned = true;
-+			last_warned = get_jiffies_64();
-+		}
-+	} else if (is_memcg_oom(oc)) {
-+		oc->memcg->oom_no_eligible_warned = false;
-+#endif
- 	}
- 	if (oc->chosen && oc->chosen != (void *)-1UL)
- 		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
--- 
-1.8.3.1
+So how to handle? We're going to continue to work towards exposing 
+multiple queues to upper layer, but for the moment I think patch 6/7 is 
+a good change.
+
+Please let me know.
+
+Thanks,
+John
+
+
