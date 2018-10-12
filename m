@@ -2,121 +2,100 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F513C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0961FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3930F20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQ/5Sucz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3930F20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C7C2420868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C2420868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeJLSYu (ORCPT
+        id S1728243AbeJLSZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:24:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46740 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJLSYt (ORCPT
+        Fri, 12 Oct 2018 14:25:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60431 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeJLSZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:24:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n11-v6so12845374wru.13
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 03:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=stEK0hPyCvUxQfCtmaOuzIg/Ce472ccHN2oxU3ZUPqE=;
-        b=PQ/5Sucz3MUBlPcPsQs7RsQ5T+EqQ9WqCY7fZ7oBnOKCc4h+QpEX3MWeTmAZXU35Ur
-         s0M4uNWW1HmizvYw1MDg+MoYifUApzMGFC+5v5HrePriITW2LO2qw4T2+9eREOGIbTFH
-         fhcWyIef1CPHv4jOizJ+ByL9MvgzNHpsZwsDPtRubC8Z7SbsR9Bup0K5q9pKyJag3uQ5
-         BDgbi/sSvuNE8v2hnPUghCGdSOPeKx+fETQzF2RYNlktFQ2XkYOgXKTFqnovr98+PWYy
-         TC3bWTKYw/8uk217SYCOiPgaK9A2j2sgf0deXgA5SxHcJOFkpMzz6alzIQTqikzC6nsW
-         qxfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=stEK0hPyCvUxQfCtmaOuzIg/Ce472ccHN2oxU3ZUPqE=;
-        b=CiFeaSCTb9eyw78ESZpI4s6Urtj1sOScMJTwtrYBmpD2IOc0xrWz2LpNFMjLfYre21
-         OuAnThc3+4/XbR3LxaM7glpJAUVxZ9nP/uOL1Aj+KS807OkswFFWJYzb8tO+6KILjsPt
-         iQerG5pJ0H14u2OPvbi4wSK8PC8nn5r6Q6HMJOrISG1Q7cF2wroOJJi92rt7M5CFXy7i
-         tesSkgEnAJlXA94IgQ12Frlm6jEPO8qlFAGCsVURaTqyzAwJP9HJoRgthTq0bpNdh+tb
-         l0SlbP7mH9dovzlaAY76nWWXuf7SEmDa1ZZM+uvpvbaEtC7o+SjZR3x4zUgeZbW0BqVB
-         oUQg==
-X-Gm-Message-State: ABuFfogVX9aGAwbgm4GPYShfe2VTEBrYoyoss1H/U82D+7mWgXIKdLSm
-        518Q8ZKQyzO354vASG9ebH4=
-X-Google-Smtp-Source: ACcGV61bloZoS074EZS6PoTv3kH5qv3LFwLLig/FZ4XPmzsO4uAiKfHAuDjkhaXoq2fRkpP+9BbnIA==
-X-Received: by 2002:adf:c00e:: with SMTP id z14-v6mr4830962wre.268.1539341577483;
-        Fri, 12 Oct 2018 03:52:57 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id t24-v6sm565380wra.5.2018.10.12.03.52.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 03:52:56 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 12:52:54 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, sfr@canb.auug.org.au,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Subject: Re: -next20181010,1011 regression: thinkpad x60 (32 bit) dies during
- boot.
-Message-ID: <20181012105254.GA114888@gmail.com>
-References: <20181010195920.GA13860@amd>
- <20181010200331.GA13975@amd>
- <20181011180328.GA6740@amd>
- <alpine.DEB.2.21.1810112208200.1457@nanos.tec.linutronix.de>
- <20181012102459.GA4469@amd>
+        Fri, 12 Oct 2018 14:25:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9CAps7J2313186
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 12 Oct 2018 03:51:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9CApsnG2313183;
+        Fri, 12 Oct 2018 03:51:54 -0700
+Date:   Fri, 12 Oct 2018 03:51:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for YueHaibing <tipbot@zytor.com>
+Message-ID: <tip-f703fd374ef8fb06e46713b326d255e20d6278ad@git.kernel.org>
+Cc:     tglx@linutronix.de, bp@alien8.de, yuehaibing@huawei.com,
+        hpa@zytor.com, torvalds@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        andriy.shevchenko@linux.intel.com
+Reply-To: bp@alien8.de, tglx@linutronix.de, hpa@zytor.com,
+          yuehaibing@huawei.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          andriy.shevchenko@linux.intel.com, mingo@kernel.org
+In-Reply-To: <1539340822-117563-1-git-send-email-yuehaibing@huawei.com>
+References: <1539340822-117563-1-git-send-email-yuehaibing@huawei.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] x86/cpu: Drop pointless static qualifier in
+ punit_dev_state_show()
+Git-Commit-ID: f703fd374ef8fb06e46713b326d255e20d6278ad
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181012102459.GA4469@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  f703fd374ef8fb06e46713b326d255e20d6278ad
+Gitweb:     https://git.kernel.org/tip/f703fd374ef8fb06e46713b326d255e20d6278ad
+Author:     YueHaibing <yuehaibing@huawei.com>
+AuthorDate: Fri, 12 Oct 2018 10:40:22 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 12 Oct 2018 12:48:44 +0200
 
-* Pavel Machek <pavel@ucw.cz> wrote:
+x86/cpu: Drop pointless static qualifier in punit_dev_state_show()
 
-> Hi!
-> 
-> > > > > I updated to todays next... and boot crashes with
-> > > > > 
-> > > > > ..
-> > > > > Call Trace:
-> > > > > kick_ilb
-> > > > > trigger_load_balance
-> > > > > ? active_load..
-> > > > > scheduler_tick
-> > > > > update_process_times
-> > > > > tick_nohz_handler
-> > > > > 
-> > > > > -next20181005 worked ok.
-> > > 
-> > > Problem is still there in today's next.
-> > 
-> > So what came in between -next20181005 and the first bad one? kernel/sched/*
-> > being the first place to look at.
-> 
-> kernel/sched does not seem to contain anything too scary.
-> 
-> I know that -next20181005 works ok, and I know -next20181010 is
-> bad. Is there easy way to bisect using that information? I can do
-> bisect between -next and mainline, but that's a lot of patches and
-> thus not much fun :-(.
-> 
-> In the meantime, I reproduced the failure with T40p. Is there someone
-> with working x86-32 in -next?
+There is no need to have the 'struct dentry *dev_state' variable static
+since new value always be assigned before use it.
 
-Does latest -tip fail too? If yes then I suspect bisection would be needed.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/1539340822-117563-1-git-send-email-yuehaibing@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/platform/atom/punit_atom_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
+index 41dae0f0d898..6cb6076223ba 100644
+--- a/arch/x86/platform/atom/punit_atom_debug.c
++++ b/arch/x86/platform/atom/punit_atom_debug.c
+@@ -115,7 +115,7 @@ static struct dentry *punit_dbg_file;
+ 
+ static int punit_dbgfs_register(struct punit_device *punit_device)
+ {
+-	static struct dentry *dev_state;
++	struct dentry *dev_state;
+ 
+ 	punit_dbg_file = debugfs_create_dir("punit_atom", NULL);
+ 	if (!punit_dbg_file)
