@@ -2,129 +2,160 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 766A5C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CCFC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BEF20644
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:35:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BEF20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 387CF20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:36:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387CF20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbeJLUHb (ORCPT
+        id S1728579AbeJLUI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:07:31 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58776 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbeJLUHb (ORCPT
+        Fri, 12 Oct 2018 16:08:57 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54755 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727816AbeJLUI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:07:31 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9CF2480A55; Fri, 12 Oct 2018 14:35:12 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 14:35:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, sfr@canb.auug.org.au,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Subject: Re: -next20181010,1011 regression: thinkpad x60 (32 bit) dies during
- boot.
-Message-ID: <20181012123512.GA5565@amd>
-References: <20181010195920.GA13860@amd>
- <20181010200331.GA13975@amd>
- <20181011180328.GA6740@amd>
- <alpine.DEB.2.21.1810112208200.1457@nanos.tec.linutronix.de>
- <20181012102459.GA4469@amd>
- <20181012105254.GA114888@gmail.com>
+        Fri, 12 Oct 2018 16:08:57 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9CCUG7H019323;
+        Fri, 12 Oct 2018 14:36:13 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mxjgyc114-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 12 Oct 2018 14:36:13 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2DD1C31;
+        Fri, 12 Oct 2018 12:36:12 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id ED55E2C14;
+        Fri, 12 Oct 2018 12:36:11 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.49) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 12 Oct
+ 2018 14:36:11 +0200
+Subject: Re: [PATCH v2 0/2] pwm: sysfs: fix exporting PWM channel
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <gottfried.haider@gmail.com>, <michal.vokac@ysoft.com>,
+        <loic.pallardy@st.com>, <linux-pwm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hsweeten@visionengravers.com>,
+        <broonie@kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
+        <gohai@sukzessiv.net>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
+ <20181012115500.GD31561@ulmo> <ad0206b8-2cda-a147-1b71-8e2eced06e61@i2se.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <b56bc059-573f-545e-da45-51765f8937a7@st.com>
+Date:   Fri, 12 Oct 2018 14:36:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
-In-Reply-To: <20181012105254.GA114888@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <ad0206b8-2cda-a147-1b71-8e2eced06e61@i2se.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/12/2018 02:15 PM, Stefan Wahren wrote:
+> Am 12.10.2018 um 13:55 schrieb Thierry Reding:
+>> On Mon, Oct 01, 2018 at 03:23:55PM +0200, Fabrice Gasnier wrote:
+>>> Since commit 7e5d1fd75c3d ("pwm: Set class for exported channels in sysfs")
+>>> - it's not possible to export more than one PWM channel
+>>> - ABI has changed, as a side effect. It may cause bad behavior as pwmchip
+>>>   attributes are wrongly added to pwm channels and report wrong values.
+>>> See [1] and [2].
+>>>
+>>> One purpose of the original patch is to send uevents to udev, when exporting a
+>>> PWM channel through the sysfs. This series:
+>>> - Reverts the original patch.
+>>> - Proposes a new way to send notifications to be used by udev rules.
+>>>
+>>> - With this series:
+>>> $ echo 0 > /sys/class/pwm/pwmchip0/export
+>>> $ ls /sys/class/pwm
+>>> pwmchip0 pwmchip4
+>>>
+>>> $ ls /sys/class/pwm/pwmchip0/pwm0/
+>>> capture     enable      polarity    uevent
+>>> duty_cycle  period      power
+>>>
+>>> - Without this series:
+>>> $ echo 0 > /sys/class/pwm/pwmchip0/export
+>>> $ ls /sys/class/pwm
+>>> pwm0 pwmchip0 pwmchip4
+>>>
+>>> $ ls /sys/class/pwm/pwmchip0/pwm0/
+>>> capture     duty_cycle  export      period      power       uevent
+>>> device      enable      npwm        polarity    subsystem   unexport
+>>>
+>>> - Backtrace when exporting a 2nd channel (0) on a separate pwmchip device:
+>>> $ echo 0 > /sys/class/pwm/pwmchip4/export
+>>> [   95.286558] sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+>>> [   95.293630] CPU: 0 PID: 54 Comm: sh Not tainted 4.19.0-rc6-00013-g00b49b0 #151
+>>> [   95.301344] Hardware name: STM32 (Device Tree Support)
+>>> [   95.306833] [<0000c155>] (unwind_backtrace) from [<0000b273>] (show_stack+0xb/0xc)
+>>> [   95.315136] [<0000b273>] (show_stack) from [<00092455>] (sysfs_warn_dup+0x31/0x48)
+>>> [   95.323247] [<00092455>] (sysfs_warn_dup) from [<00092635>] (sysfs_do_create_link_sd+0x75/0x88)
+>>> [   95.332539] [<00092635>] (sysfs_do_create_link_sd) from [<00125823>] (device_add+0x133/0x3b0)
+>>> [   95.341694] [<00125823>] (device_add) from [<001059ed>] (export_store+0xb5/0x12c)
+>>> [   95.349761] [<001059ed>] (export_store) from [<00091911>] (kernfs_fop_write+0x87/0xda)
+>>> [   95.358150] [<00091911>] (kernfs_fop_write) from [<0005beb1>] (__vfs_write+0x1d/0xe0)
+>>> [   95.366295] [<0005beb1>] (__vfs_write) from [<0005bfe7>] (vfs_write+0x4f/0x7c)
+>>> [   95.374053] [<0005bfe7>] (vfs_write) from [<0005c0bf>] (ksys_write+0x33/0x70)
+>>> [   95.381708] [<0005c0bf>] (ksys_write) from [<00009001>] (ret_fast_syscall+0x1/0x58)
+>>> [   95.389682] Exception stack(0x01bcffa8 to 0x01bcfff0)
+>>> [   95.394946] ffa0:                   00000000 00c4883c 00000001 00c4e590 00000002 00000004
+>>> [   95.403639] ffc0: 00000000 00c4883c 00c4cbe8 00000004 00000002 00000020 00000000 00c4d008
+>>> [   95.412223] ffe0: 00c29151 00c4cbe8 00c17833 00c13c0c
+>>> -sh: write error: File exists
+>>>
+>>> [1] https://lkml.org/lkml/2018/9/25/713
+>>> [2] https://lkml.org/lkml/2018/9/25/447
+>>>
+>>> ---
+>>> Changes in v2:
+>>> - update revert commit message
+>>> - new patch 2/2 to propose uevent notification (change) on pwmchip
+>>>
+>>> Fabrice Gasnier (2):
+>>>   Revert "pwm: Set class for exported channels in sysfs"
+>>>   pwm: send a uevent on the pwmchip device upon channel sysfs (un)export
+>>>
+>>>  drivers/pwm/sysfs.c | 12 +++++++++++-
+>>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>> Both patches applied, thanks. What do you think would be the importance
+>> of getting this into stable kernels? We can't get one of the patches in
+>> without the other, so they'd both have to be backported. The second one
+>> is still fairly small, so would qualify for stable, I think.
+> I think the revert patch should go to stable, because it fixes a regression.
+> 
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi!
+Thierry, Thanks for taking these.
+I also think at least the 1st patch (revert) should be backported in
+stable branch. Not taking the second one may lead to another issue for
+the users that now expect uevents. This is replacement patch to the
+original one. So, I'd advise to push both: revert + replacement patch.
 
-> > > > Problem is still there in today's next.
-> > >=20
-> > > So what came in between -next20181005 and the first bad one? kernel/s=
-ched/*
-> > > being the first place to look at.
-> >=20
-> > kernel/sched does not seem to contain anything too scary.
-> >=20
-> > I know that -next20181005 works ok, and I know -next20181010 is
-> > bad. Is there easy way to bisect using that information? I can do
-> > bisect between -next and mainline, but that's a lot of patches and
-> > thus not much fun :-(.
-> >=20
-> > In the meantime, I reproduced the failure with T40p. Is there someone
-> > with working x86-32 in -next?
->=20
-> Does latest -tip fail too? If yes then I suspect bisection would be neede=
-d.
+Fabrice
 
-I already started bisect on -next (T40p is my test machine, so bisect
-is not that bad).
-
-The log so far is:
-
-								Pavel
-
-# bad: [771b65e89c8a51d611b8049718693a4202e4f732] Add linux-next specific f=
-iles for 20181011
-# good: [7876320f88802b22d4e2daf7eb027dd14175a0f8] Linux 4.19-rc4
-git bisect start '771b65e89c8a51d611b8049718693a4202e4f732' '7876320f88802b=
-22d4e2daf7eb027dd14175a0f8'
-# good: [43faff25da004eabce691268da34065b3690f5ca] Merge remote-tracking br=
-anch 'net-next/master'
-git bisect good 43faff25da004eabce691268da34065b3690f5ca
-# good: [3e2beb7db82a880319aa2f0dcafa820f3f5206d3] Merge remote-tracking br=
-anch 'spi/for-next'
-git bisect good 3e2beb7db82a880319aa2f0dcafa820f3f5206d3
-# bad: [74411e5fd30ae540491c4d6142af6ee6b2b22f09] Merge remote-tracking bra=
-nch 'char-misc/char-misc-next'
-git bisect bad 74411e5fd30ae540491c4d6142af6ee6b2b22f09
-# bad: [c810d907775aa2aa753e836a122613fd2416b14d] Merge remote-tracking bra=
-nch 'kvm/linux-next'
-git bisect bad c810d907775aa2aa753e836a122613fd2416b14d
-# good: [fac07d2ba7b2764e3002ff9bc7861742a84a2ef6] Merge branch 'perf/core'
-git bisect good fac07d2ba7b2764e3002ff9bc7861742a84a2ef6
-# bad: [d74865bd3996c7a6f3e8ce6e626c1fe474e39494] Merge branch 'x86/mm'
-git bisect bad d74865bd3996c7a6f3e8ce6e626c1fe474e39494
-# good: [dcd2d0cece1608b2be9184786c900807ec947076] Merge branch 'x86/asm'
-git bisect good dcd2d0cece1608b2be9184786c900807ec947076
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvAlQAACgkQMOfwapXb+vI5TwCgxLNHJzccyZBJsrW4UByfgsCB
-7d0An0OTtR9pVNdAVRiAl06WrecE6J8D
-=R5nQ
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+> Thanks
+>>
+>> However, given that it's taken a long time for somebody to notice this,
+>> I'm not sure if this is something that people care about too much in the
+>> stable kernels>>
+>> Thierry
