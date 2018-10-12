@@ -2,112 +2,119 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB33C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08508C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307BE20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:41:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XEjl/NQ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307BE20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id C4C9D20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:42:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C9D20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeJLQNB (ORCPT
+        id S1727993AbeJLQOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:13:01 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16092 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbeJLQNB (ORCPT
+        Fri, 12 Oct 2018 12:14:19 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33092 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeJLQOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:13:01 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bc05e460000>; Fri, 12 Oct 2018 01:41:42 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 12 Oct 2018 01:41:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 12 Oct 2018 01:41:39 -0700
-Received: from [10.21.132.143] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 12 Oct
- 2018 08:41:37 +0000
-Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com>
- <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
- <20181011164753.GA7393@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <248afd79-1a7d-7342-5939-6fa998d04d5b@nvidia.com>
-Date:   Fri, 12 Oct 2018 09:41:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 12:14:19 -0400
+Received: by mail-qt1-f196.google.com with SMTP id q40-v6so13077940qte.0;
+        Fri, 12 Oct 2018 01:42:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FVTc9GMyO4KMDgHn2AwcyLnvejB7nu3G4J6uCPyXugA=;
+        b=uEjDZZjTIHcffonJ7AZEq65bVnWjHHLrPnCTDmnTpNhhOx8Wop3Ob9Off0bJ4CqXkw
+         4x6dYpzuv/7ly/fbmD9F1GSxZNCzxm7/h/6Y2A1YkTBy0GDWkF5gfhS33PRzqSbVozVL
+         Y+dGrj8oxcKs7JwlWWucvmRuspRK42hZGOKMYjM+15vk5OXiZ0Wxu8sfF8PpX+0/9tUK
+         TLblUhfQZ5IwOSUuKNAhWRkFtYK3ZNk9z5wtYIhNmpLC8OIYvjl+WLFGWfg160pEYeqg
+         isljHyb1pbZwqsQye/mLkduPSJTz+HFxKZ8FNsLNGSfmajCFptgs48hgSdHkIjZn1+5J
+         gAbA==
+X-Gm-Message-State: ABuFfojyzwlFlQQUAMCv568acWOSckdDVHF8fzyWvL2Ezvzm/tIl5iuw
+        ibq0RbqV6/9+4HZVAbpOXysqt4aOSsudHKD44fg=
+X-Google-Smtp-Source: ACcGV63AxG9fp3LcM+/I7F3rmu0mnOCK3HfKij5zqtlmzY/4IsTW0RdT+8tEoxurFrNT69QjensD9fL0PKRtsCV5zVc=
+X-Received: by 2002:ac8:2bf0:: with SMTP id n45-v6mr4908822qtn.152.1539333776301;
+ Fri, 12 Oct 2018 01:42:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181011164753.GA7393@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539333702; bh=baFBWpbS77dsiKXVFG2f6UMSu2EP9TPkylSpkvyCZw8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=XEjl/NQ775UxZVQYUv1kuu7u2kR6vWtXU3a63baSPITrMFN2xmmz/f0+dHVqiQH5F
-         Vfr/KIlXo7HIqLuPdqwJRd4daVQcQatFUm992k0Ae+Iej+f/rg/2uKR9TNt+pJfWgf
-         SWB8b3EBkcRgEeSsARHky7ZaKZuKLtsH/mbc80lHri/pxIO6aU0Kg5leI8fcPUqeHr
-         B0sRb6dDVMifhT0aFEryBkz/ModxgsTWw7zn19WO3+xrkiteQ/jtfXEPuPSvZdVa6H
-         QvkaDUGYVFHvtef3Zb5CDaATGOGC8MIQ92t5y/PgNfXzbXbPMXxUsx3Dp21CSiKJim
-         eYrsnRX8lY/yQ==
+References: <20181011225421.GA21093@beast>
+In-Reply-To: <20181011225421.GA21093@beast>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Oct 2018 10:42:39 +0200
+Message-ID: <CAK8P3a3N6txZf8tzTdLvLwByrsWQvN_JSabV2TGe+zZenMWWxg@mail.gmail.com>
+Subject: Re: [PATCH] random: Move rand_initialize() earlier
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        tcharding <me@tobin.cc>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 12, 2018 at 12:54 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> Right now rand_initialize() is run as an early_initcall(), but it only
+> depends on timekeeping_init() (for mixing ktime_get_real() into the
+> pools). However, the call to boot_init_stack_canary() for stack canary
+> initialization runs earlier, which triggers a warning at boot:
+>
+> random: get_random_bytes called from start_kernel+0x357/0x548 with crng_init=0
+>
+> Instead, this moves rand_initialize() to after timekeeping_init(), and moves
+> canary initialization here as well.
+>
+> Note that this warning may still remain for machines that do not have
+> UEFI RNG support (which initializes the RNG pools during setup_arch()),
+> or for x86 machines without RDRAND (or booting without "random.trust=on"
+> or CONFIG_RANDOM_TRUST_CPU=y).
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> Alternatively, ktime_get_real() could get mixed into the pools after
+> timekeeping_init(), and rand_initialize() could be run MUCH early,
+> like after setup_arch()...
 
-On 11/10/18 17:47, Thierry Reding wrote:
-> On Fri, Sep 28, 2018 at 03:11:48PM +0100, Jon Hunter wrote:
->> The generic power-domain framework has been updated to allow devices
->> that require more than one power-domain to create a new device for
->> each power-domain required and then link these new power-domain
->> devices to the consumer device.
->>
->> Update the Tegra xHCI driver to use the new APIs provided by the
->> generic power-domain framework so we can use the generic power-domain
->> framework for managing the xHCI controllers power-domains. Please
->> note that to maintain backward compatibility with older device-tree
->> blobs these new generic power-domain APIs are only used if the
->> 'power-domains' property is present and otherwise we fall back to
->> using the legacy Tegra APIs for managing the power-domains.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/usb/host/xhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++------
->>  1 file changed, 77 insertions(+), 12 deletions(-)
-> 
-> It'd be nice if we could eventually get rid of the legacy Tegra APIs,
-> but that's a separate issue, and this patch looks fine as-is:
+I wonder if mixing in ktime_get_real() is flawed to start with:
+This depends on read_persistent_clock64() actually returning
+a meaningful time, but in many cases it does not; x86 being
+a notable exception.
 
-Unfortunately, I don't think it is possible as it will break DT backward
-compatibility. However, one way to do it would be to force on all power
-domains on boot if PM is not supported.
+We have three ways of setting the initial time:
 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+* At early boot using read_persistent_clock64(). This may read
+  the time from the hypervisor (if any), and on some older
+  architectures that have a custom RTC abstraction, it
+  reads from the RTC directly. We generally move away from
+  the RTC method in favor of the proper rtc class interfaces
+  (see below)
 
-Thanks!
-Jon
+* At late_initcall time, in rtc_hctosys(). If an RTC driver has
+  been loaded successfully at this time, it will be read from
+  there. We also move away from this.
 
--- 
-nvpublic
+* From user space, which reads the RTC time or NTP,
+  and then sets the system time from that.
+
+The latter two end up in do_settimeofday64(), but there
+is no mixing in of the time into the random seed that I can
+see, and it's not clear whether there should be (it
+can be called with arbitrary times from user space,
+provided CAP_SYS_TIME permissions).
+
+       Arnd
