@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2552C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F3C6787F
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FEE2148C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79FEE2148C
+	by mail.kernel.org (Postfix) with ESMTP id 4F74E2148C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F74E2148C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeJMB35 (ORCPT
+        id S1727271AbeJMBaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:29:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35510 "EHLO mx1.redhat.com"
+        Fri, 12 Oct 2018 21:30:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37682 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbeJMB35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:29:57 -0400
+        id S1725981AbeJMB37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:29:59 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5391880F8D;
-        Fri, 12 Oct 2018 17:56:18 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 127308830A;
+        Fri, 12 Oct 2018 17:56:20 +0000 (UTC)
 Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74F2082779;
-        Fri, 12 Oct 2018 17:56:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73A4E79453;
+        Fri, 12 Oct 2018 17:56:18 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -42,103 +42,205 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v13 02/11] cpuset: Define data structures to support scheduling partition
-Date:   Fri, 12 Oct 2018 13:55:42 -0400
-Message-Id: <1539366951-8498-3-git-send-email-longman@redhat.com>
+Subject: [PATCH v13 03/11] cpuset: Simply allocation and freeing of cpumasks
+Date:   Fri, 12 Oct 2018 13:55:43 -0400
+Message-Id: <1539366951-8498-4-git-send-email-longman@redhat.com>
 In-Reply-To: <1539366951-8498-1-git-send-email-longman@redhat.com>
 References: <1539366951-8498-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 12 Oct 2018 17:56:18 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 12 Oct 2018 17:56:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From a cpuset point of view, a scheduling partition is a group of
-cpusets with their own set of exclusive CPUs that are not shared by
-other tasks outside the scheduling partition.
+The previous commit introduces a new subparts_cpus mask into the cpuset
+data structure and a new tmpmasks structure.  Managing the allocation
+and freeing of those cpumasks is becoming more complex.
 
-In the legacy hierarchy, scheduling partitions are supported indirectly
-via the right use of the load balancing and the exclusive CPUs flag
-which is not intuitive and can be hard to use.
-
-To fully support the concept of scheduling partitions in the default
-hierarchy, we need to add some new field into the cpuset structure as
-well as a new tmpmasks structure that is used to pre-allocate cpumasks
-at the top level cpuset functions to avoid memory allocation in inner
-functions as memory allocation failure in those inner functions may
-cause a cpuset to have inconsistent states.
+So a number of helper functions are added to simplify and streamline
+the management of those cpumasks. To make it simple, all the cpumasks
+are now pre-cleared on allocation.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/cgroup/cpuset.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ kernel/cgroup/cpuset.c | 104 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 71 insertions(+), 33 deletions(-)
 
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 2b5c447..29a2bdc 100644
+index 29a2bdc..9ac5f94 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -110,6 +110,13 @@ struct cpuset {
- 	nodemask_t effective_mems;
- 
- 	/*
-+	 * CPUs allocated to child sub-partitions (default hierarchy only)
-+	 * - CPUs granted by the parent = effective_cpus U subparts_cpus
-+	 * - effective_cpus and subparts_cpus are mutually exclusive.
-+	 */
-+	cpumask_var_t subparts_cpus;
-+
-+	/*
- 	 * This is old Memory Nodes tasks took on.
- 	 *
- 	 * - top_cpuset.old_mems_allowed is initialized to mems_allowed.
-@@ -134,6 +141,30 @@ struct cpuset {
- 
- 	/* for custom sched domain */
- 	int relax_domain_level;
-+
-+	/* number of CPUs in subparts_cpus */
-+	int nr_subparts_cpus;
-+
-+	/* partition root state */
-+	int partition_root_state;
-+};
-+
-+/*
-+ * Partition root states:
-+ *
-+ *   0 - not a partition root
-+ *   1 - partition root
-+ */
-+#define PRS_DISABLED		0
-+#define PRS_ENABLED		1
-+
-+/*
-+ * Temporary cpumasks for working with partitions that are passed among
-+ * functions to avoid memory allocation in inner functions.
-+ */
-+struct tmpmasks {
-+	cpumask_var_t addmask, delmask;	/* For partition root */
-+	cpumask_var_t new_cpus;		/* For update_cpumasks_hier() */
- };
- 
- static inline struct cpuset *css_cs(struct cgroup_subsys_state *css)
-@@ -218,9 +249,15 @@ static inline int is_spread_slab(const struct cpuset *cs)
- 	return test_bit(CS_SPREAD_SLAB, &cs->flags);
+@@ -456,6 +456,57 @@ static int is_cpuset_subset(const struct cpuset *p, const struct cpuset *q)
  }
  
-+static inline int is_partition_root(const struct cpuset *cs)
+ /**
++ * alloc_cpumasks - allocate three cpumasks for cpuset
++ * @cs:  the cpuset that have cpumasks to be allocated.
++ * @tmp: the tmpmasks structure pointer
++ * Return: 0 if successful, -ENOMEM otherwise.
++ *
++ * Only one of the two input arguments should be non-NULL.
++ */
++static inline int alloc_cpumasks(struct cpuset *cs, struct tmpmasks *tmp)
 +{
-+	return cs->partition_root_state;
++	cpumask_var_t *pmask1, *pmask2, *pmask3;
++
++	if (cs) {
++		pmask1 = &cs->cpus_allowed;
++		pmask2 = &cs->effective_cpus;
++		pmask3 = &cs->subparts_cpus;
++	} else {
++		pmask1 = &tmp->new_cpus;
++		pmask2 = &tmp->addmask;
++		pmask3 = &tmp->delmask;
++	}
++
++	if (!zalloc_cpumask_var(pmask1, GFP_KERNEL))
++		return -ENOMEM;
++
++	if (!zalloc_cpumask_var(pmask2, GFP_KERNEL))
++		goto free_one;
++
++	if (!zalloc_cpumask_var(pmask3, GFP_KERNEL))
++		goto free_two;
++
++	return 0;
++
++free_two:
++	free_cpumask_var(*pmask2);
++free_one:
++	free_cpumask_var(*pmask1);
++	return -ENOMEM;
 +}
 +
- static struct cpuset top_cpuset = {
- 	.flags = ((1 << CS_ONLINE) | (1 << CS_CPU_EXCLUSIVE) |
- 		  (1 << CS_MEM_EXCLUSIVE)),
-+	.partition_root_state = PRS_ENABLED,
- };
++/**
++ * free_cpumasks - free cpumasks in a tmpmasks structure
++ * @tmp: the tmpmasks structure pointer
++ */
++static inline void free_cpumasks(struct tmpmasks *tmp)
++{
++	free_cpumask_var(tmp->new_cpus);
++	free_cpumask_var(tmp->addmask);
++	free_cpumask_var(tmp->delmask);
++}
++
++/**
+  * alloc_trial_cpuset - allocate a trial cpuset
+  * @cs: the cpuset that the trial cpuset duplicates
+  */
+@@ -467,31 +518,26 @@ static struct cpuset *alloc_trial_cpuset(struct cpuset *cs)
+ 	if (!trial)
+ 		return NULL;
+ 
+-	if (!alloc_cpumask_var(&trial->cpus_allowed, GFP_KERNEL))
+-		goto free_cs;
+-	if (!alloc_cpumask_var(&trial->effective_cpus, GFP_KERNEL))
+-		goto free_cpus;
++	if (alloc_cpumasks(trial, NULL)) {
++		kfree(trial);
++		return NULL;
++	}
+ 
+ 	cpumask_copy(trial->cpus_allowed, cs->cpus_allowed);
+ 	cpumask_copy(trial->effective_cpus, cs->effective_cpus);
+ 	return trial;
+-
+-free_cpus:
+-	free_cpumask_var(trial->cpus_allowed);
+-free_cs:
+-	kfree(trial);
+-	return NULL;
+ }
  
  /**
+- * free_trial_cpuset - free the trial cpuset
+- * @trial: the trial cpuset to be freed
++ * free_cpuset - free the cpuset
++ * @cs: the cpuset to be freed
+  */
+-static void free_trial_cpuset(struct cpuset *trial)
++static inline void free_cpuset(struct cpuset *cs)
+ {
+-	free_cpumask_var(trial->effective_cpus);
+-	free_cpumask_var(trial->cpus_allowed);
+-	kfree(trial);
++	free_cpumask_var(cs->effective_cpus);
++	free_cpumask_var(cs->cpus_allowed);
++	free_cpumask_var(cs->subparts_cpus);
++	kfree(cs);
+ }
+ 
+ /*
+@@ -1385,7 +1431,7 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 	if (spread_flag_changed)
+ 		update_tasks_flags(cs);
+ out:
+-	free_trial_cpuset(trialcs);
++	free_cpuset(trialcs);
+ 	return err;
+ }
+ 
+@@ -1769,7 +1815,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+ 		break;
+ 	}
+ 
+-	free_trial_cpuset(trialcs);
++	free_cpuset(trialcs);
+ out_unlock:
+ 	mutex_unlock(&cpuset_mutex);
+ 	kernfs_unbreak_active_protection(of->kn);
+@@ -2024,26 +2070,19 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+ 	if (!cs)
+ 		return ERR_PTR(-ENOMEM);
+-	if (!alloc_cpumask_var(&cs->cpus_allowed, GFP_KERNEL))
+-		goto free_cs;
+-	if (!alloc_cpumask_var(&cs->effective_cpus, GFP_KERNEL))
+-		goto free_cpus;
++
++	if (alloc_cpumasks(cs, NULL)) {
++		kfree(cs);
++		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
+-	cpumask_clear(cs->cpus_allowed);
+ 	nodes_clear(cs->mems_allowed);
+-	cpumask_clear(cs->effective_cpus);
+ 	nodes_clear(cs->effective_mems);
+ 	fmeter_init(&cs->fmeter);
+ 	cs->relax_domain_level = -1;
+ 
+ 	return &cs->css;
+-
+-free_cpus:
+-	free_cpumask_var(cs->cpus_allowed);
+-free_cs:
+-	kfree(cs);
+-	return ERR_PTR(-ENOMEM);
+ }
+ 
+ static int cpuset_css_online(struct cgroup_subsys_state *css)
+@@ -2134,9 +2173,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
+ {
+ 	struct cpuset *cs = css_cs(css);
+ 
+-	free_cpumask_var(cs->effective_cpus);
+-	free_cpumask_var(cs->cpus_allowed);
+-	kfree(cs);
++	free_cpuset(cs);
+ }
+ 
+ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+@@ -2200,6 +2237,7 @@ int __init cpuset_init(void)
+ 
+ 	BUG_ON(!alloc_cpumask_var(&top_cpuset.cpus_allowed, GFP_KERNEL));
+ 	BUG_ON(!alloc_cpumask_var(&top_cpuset.effective_cpus, GFP_KERNEL));
++	BUG_ON(!zalloc_cpumask_var(&top_cpuset.subparts_cpus, GFP_KERNEL));
+ 
+ 	cpumask_setall(top_cpuset.cpus_allowed);
+ 	nodes_setall(top_cpuset.mems_allowed);
 -- 
 1.8.3.1
 
