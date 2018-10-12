@@ -2,156 +2,169 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB5DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB42C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3262075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:03:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGZl1e7s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3262075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 49AB92075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:03:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AB92075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeJLQea (ORCPT
+        id S1728144AbeJLQeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:34:30 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42983 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727819AbeJLQea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:34:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c8-v6so5611638plo.9;
-        Fri, 12 Oct 2018 02:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ecgA7/dAk8I/lT6yAtzH8MiQolUoS+Cs6H4mX4/y0c4=;
-        b=VGZl1e7ssXoNTXiyLf9O7o2pjOWl1ref5rz0tNaHwgptwI8wdS5k9a6azmFG1WS6kT
-         lc5etBOx/b+IeP0tXQ4SfK7FW9fZU7OrlbAZEDyNpS9+CBEqMBou0yY8qgKF0BBihPGN
-         vCtuCs8KmMdJZ7YCwlekbHeq9t0FCrXHTp6qgwN6qn+iUCB5OfXebjKI+ZwlWhL6h7ya
-         u248s7B9H2r/rL2Oqp67C2lxsqrVQqoEgxCLmBqkKA/61KOdCkdz7TR5iq0l+DPFen9U
-         d+bFe2luB4xOt2nCCR2oEqIGHbXY/YHdRxIlOiOyZMHoKvZIQMKj05HD18Imj3AIv/3y
-         YBKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ecgA7/dAk8I/lT6yAtzH8MiQolUoS+Cs6H4mX4/y0c4=;
-        b=tz/IOrwv+pPDgiD1vz6u9mqVtpmVPcui3ArKRsKtqNeRUjjo0CJzVH98HxXR7/03M5
-         IkqAJBV0gwPsdT8ScNBt7dGgHJsi78vQt0kAtx56BQYrOslektUUdX7UZJTJzd9Odktx
-         WP5dXEG3BTGE/8qnkDGoS1/Ttltxysa826u37JKBOsSpmYU9zLeCvfVtLC/3lsuIrPd3
-         4+NhYvS0FLVZIsADHNkTSb7WzCEeIkw4eEBop7X3e8meG7zu67K89nOpK9IhGtD3xpi9
-         KTd5Qj4ObI7U6x3UZ9py0qaosznV62dDrIL+XLQtBM6ZvG96RUxCXhaDCiH+HWi57IP4
-         /BpQ==
-X-Gm-Message-State: ABuFfoi0xsMOVMvHWk7vv7LZxJzmr8zXvKGL7KjCkTyWSF9jEI/G+fjO
-        efjjrkLUn0Efp6g4re9Yxa0=
-X-Google-Smtp-Source: ACcGV62bw9LaI+k0OBk6BmyOly5m0fcsQcuhJZQ1z5+y13vIse24HQsPQd1PY0yXFuEywW/WQXph6w==
-X-Received: by 2002:a17:902:34a:: with SMTP id 68-v6mr5033657pld.39.1539334983845;
-        Fri, 12 Oct 2018 02:03:03 -0700 (PDT)
-Received: from [192.168.0.123] ([106.51.21.108])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm1745584pfm.96.2018.10.12.02.03.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 02:03:03 -0700 (PDT)
-From:   "Aneesh Kumar K.V" <aneeshkumar.opensource@gmail.com>
-X-Google-Original-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [BUG][linux-next][ppc] kernel panic - not syncing:
- stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
-To:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc:     sachinp <sachinp@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        npiggin <npiggin@gmail.com>,
-        linux-next <linux-next@vger.kernel.org>,
-        manvanth <manvanth@linux.vnet.ibm.com>
-References: <1539330331.17569.32.camel@abdul.in.ibm.com>
- <1539330499.17569.33.camel@abdul.in.ibm.com>
- <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
-Message-ID: <da8634b4-77ae-90e3-b6b4-fa1284ed8d85@linux.ibm.com>
-Date:   Fri, 12 Oct 2018 14:32:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 12 Oct 2018 12:34:44 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13623 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbeJLQeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 12:34:44 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 15BC45943982C;
+        Fri, 12 Oct 2018 17:03:11 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Fri, 12 Oct 2018
+ 17:03:02 +0800
+Subject: Re: [PATCH 0/7] hisi_sas: Misc bugfixes and an optimisation patch
+To:     Ming Lei <ming.lei@redhat.com>
+References: <1537801594-207139-1-git-send-email-john.garry@huawei.com>
+ <yq18t354532.fsf@oracle.com> <20181011063603.GA3456@infradead.org>
+ <118d01db-05f4-a85b-850c-c4e5a5616a16@huawei.com>
+ <20181011101534.GA31802@infradead.org>
+ <e2f35903-e28f-0fb5-7c61-47aa7f1a6926@huawei.com>
+ <20181011133159.GA31355@ming.t460p>
+ <519812c7-970a-976c-7db5-a035bf4f4e24@huawei.com>
+ <20181011233633.GA30271@ming.t460p>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        chenxiang <chenxiang66@hisilicon.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <3322d066-d118-320f-eb99-0fb03d530c67@huawei.com>
+Date:   Fri, 12 Oct 2018 10:02:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181011233633.GA30271@ming.t460p>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/18 1:38 PM, Christophe LEROY wrote:
-> 
-> 
-> Le 12/10/2018 à 09:48, Abdul Haleem a écrit :
->> On Fri, 2018-10-12 at 13:15 +0530, Abdul Haleem wrote:
->>> Greeting's
->>>
->>> Today's linux-next fails to boot on powerpc bare-metal with this error
->>>
->>> POWER8 performance monitor hardware support registered
->>> rcu: Hierarchical SRCU implementation.
->>> smp: Bringing up secondary CPUs ...
->>> Kernel panic - not syncing: stack-protector: Kernel stack is 
->>> corrupted in: __schedule+0x978/0xa80
->>> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 
->>> 4.19.0-rc7-next-20181010-autotest-autotest #1
->>> Call Trace:
->>> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
->>> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
->>> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
->>> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
->>> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
->>> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
->>> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
->>> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
->>> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
->>> Rebooting in 10 seconds..
->>>
->>> Machine: Power 8 bare-metal
->>> kernel version: 4.19.0-rc7-next-20181010
->>> gcc version: 4.8.5 20150623
->>> config attach
+Hi Ming,
+
+> In theory, you still may generate and manage the IPTT in the LLDD by
+> simply ignoring rq->tag, meantime enabling SCSI_MQ with 16 hw queues.
+>
+
+Well at the moment we can't expose all 16 hw queues to upper layer 
+anyway, due to ordering restiction imposed by HW on LLDD. We have a plan 
+to solve it.
+
+Regardless, we still found performance better by using rq tag instead of 
+exposing all 16 queues.
+
+> However, not sure how much this way may improve performance, and it may
+> degrade IO perf. If 16 hw queues are exposed to blk-mq, 16*.can_queue
+> requests may be queued to the driver, and allocation & free on the single
+> IPTT pool will become a bottleneck.
+
+Right, this IPTT management doesn't scale (especially for our host with 
+2 sockets @ 48/64 cores each). So if upper layer is already generating a 
+tag which we can use, good to use it.
+
+>
+> Per my experiment on host tagset, it might be a good tradeoff to allocate
+> one hw queue for each node to avoid the remote access on dispatch
+> data/requests structure for this case, but your IPTT pool is still
+> shared all CPUs, maybe you can try the smart sbitmap.
+>
+> https://www.spinics.net/lists/linux-scsi/msg117920.html
+
+I don't understand this about allocating a hw queue per node. Surely 
+having and using all available queues in an intelligent way means less 
+queue contention, right?
+
+Looking at this change:
+@@ -5761,6 +5762,11 @@ static int hpsa_scsi_host_alloc(struct ctlr_info *h)
+  static int hpsa_scsi_add_host(struct ctlr_info *h)
+  {
+  	int rv;
++	/* 256 tags should be high enough to saturate device */
++	int max_queues = DIV_ROUND_UP(h->scsi_host->can_queue, 256);
++
++	/* per NUMA node hw queue */
++	h->scsi_host->nr_hw_queues = min_t(int, nr_node_ids, max_queues);
+
+I assume h->scsi_host->nr_hw_queues was zero-init previously, so we're 
+now using > 1 queue, but why limit?
+
+>
+>
 >>
->> Attaching the kernel config file
+>>>
+>>>>
+>>>>> IFF you device needs different tags for different queues it can use
+>>>>> the blk_mq_unique_tag heper to generate unique global tag.
+>>>>
+>>>> So this helper can't help, as fundamentially the issue is "the tag field in
+>>>> struct request is unique per hardware queue but not all all hw queues".
+>>>> Indeed blk_mq_unique_tag() does give a unique global tag, but cannot be used
+>>>> for the IPTT.
+>>>>
+>>>> OTOH, We could expose 16 queues to upper layer, and drop 6/7, but we found
+>>>> it performs worse.
+>>>
+>>> We discussed this issue before, but not found a good solution yet for
+>>> exposing multiple hw queues to blk-mq.
 >>
-> 
-> # Linux/powerpc 4.11.0-rc4 Kernel Configuration
-> 
-> This is not the correct config file. Can you send the .config ?
-> 
-> Christophe
+>> I just think that it's unfortunate that enabling blk-mq means that the LLDD
+>> loses this unique tag across all queues in range [0, Scsi_host.can_queue),
+>> so much so that we found performance better by not exposing multiple queues
+>> and continuing to use single rq tag...
+>
+> It isn't a new problem, we discussed it a lot on megaraid_sas which has
+> same situation with yours, you may find it in block list.
 
-modified   kernel/sched/idle.c
-@@ -352,7 +352,6 @@ void cpu_startup_entry(enum cpuhp_state state)
-  	 * make this generic (ARM and SH have never invoked the canary
-  	 * init for the non boot CPUs!). Will be fixed in 3.11
-  	 */
--#ifdef CONFIG_X86
-  	/*
-  	 * If we're the non-boot CPU, nothing set the stack canary up
-  	 * for us. The boot CPU already has it initialized but no harm
-@@ -361,7 +360,6 @@ void cpu_startup_entry(enum cpuhp_state state)
-  	 * canaries already on the stack wont ever trigger).
-  	 */
-  	boot_init_stack_canary();
--#endif
-  	arch_cpu_idle_prepare();
-  	cpuhp_online_idle(state);
-  	while (1)
+I'll do some digging.
+
+>
+> Kashyap Desai did lots of test on this case.
+>
+>>
+>>>
+>>> However, we still get good performance in case of none scheduler by the
+>>> following patches:
+>>>
+>>> 8824f62246be blk-mq: fail the request in case issue failure
+>>> 6ce3dd6eec11 blk-mq: issue directly if hw queue isn't busy in case of 'none'
+>>>
+>>
+>> I think that these patches would have been included in our testing. I need
+>> to check.
+>
+> Please switch to none io sched in your test, and it is observed that IO
+> perf becomes good on megaraid_sas.
+
+Hmmm... I thought that deadline was preferred.
+
+>
+> Thanks,
+> Ming
+>
+> .
+>
+
+Much appreciated,
+John
 
 
-This fixes it for me. But we may have to look at the other arch details 
-mentioned there.
-
--aneesh
