@@ -2,131 +2,187 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB98C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FFFC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74A8820865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:17:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Ws9U/VTF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A8820865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2788A20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:21:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2788A20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbeJLXuh (ORCPT
+        id S1728832AbeJLXyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:50:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58870 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbeJLXug (ORCPT
+        Fri, 12 Oct 2018 19:54:12 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34712 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728537AbeJLXyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:50:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KtJGRx1cnHU9gZkM0TGmlzCJx6s9zJ2PqICUwTOjoFo=; b=Ws9U/VTFwMLpWnwOCBk9Gk36k
-        ug2OlzGI5LqJNLXmLCV52Gf8s8xf2dyb2myr8ZoMzxSnG6j0kN7+maX1e/E3HwPYEJDdiYr2K1LDa
-        RBpRBdYbBCrlLC0kqTQeL/99isLApGwfCtZgf+F++XUPX1oqmVJAS9lMtDHGWVezn96L8=;
-Received: from [91.126.136.150] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gB07d-0006Zp-QF; Fri, 12 Oct 2018 16:17:05 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 34B95440078; Fri, 12 Oct 2018 18:17:05 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 18:17:05 +0200
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        jmondi <jacopo@jmondi.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>, philipp.zabel@gmail.com,
-        linux-tegra@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-Message-ID: <20181012161705.GC2340@sirena.org.uk>
-References: <20180906122436.25610-1-linus.walleij@linaro.org>
- <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
- <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
- <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
- <1539272073.18645.12.camel@toradex.com>
- <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
- <1539337415.30485.21.camel@toradex.com>
- <c1722bee-230a-d0ad-d2de-790ab1ce9fcf@nvidia.com>
- <20181012104338.GS30658@n2100.armlinux.org.uk>
- <CAHp75VecxqphJBZ2xUTku-WhyjkDRKQPbxvuGFAZ+-1voZRW9Q@mail.gmail.com>
+        Fri, 12 Oct 2018 19:54:12 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p6-v6so8016078qkg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 09:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version;
+        bh=l4P5ftorzdZFf54e25/mg6dL3Vw3q1rXWX7kpWGKN/g=;
+        b=fOTLandl4illqDgBMqUK7/R3EP+Dh/mvW0dn/JtO/QdkxtMHtz/fOjnug3nimBC7kV
+         bgYG/FCL0JB2xhegGd9av55iWm0I4juG/bQo8ZOTQ9GTLQ1E7EQKexT6pO7eBNfN2SNa
+         /g55LF4rHRuNyBiHhheBjdVS/JrLUivDeudnfVZk0/u5F+vralsEoZO1VboTyci9yC83
+         T6hrJNlSLzE/fL2XvR78KztmMCTr2yRU+yXZ3VvfG62dTGzpBCrREWEeDcCh+6sT28o+
+         tpUqc5G3NyoR0HIH9oHscoZcjnR98fnATj973KHHEB+3go99RwvT/LysxtY3LVyNfca7
+         Ij/A==
+X-Gm-Message-State: ABuFfoj7qbbg8NecM88lg+IAJmYSQcBBU84kgCvm0pseqaIlMuRcHPw2
+        BB1C+p3yCPF2zP8Fz31ZidOuQA==
+X-Google-Smtp-Source: ACcGV60ye7w/eqKzoBT3mNicw3JKgyykZ7MNfkda8WEXb/kTE0b0wQUZg/vQtcVlGir6xjZ85C8EjA==
+X-Received: by 2002:a37:35c8:: with SMTP id c191-v6mr6651754qka.100.1539361257144;
+        Fri, 12 Oct 2018 09:20:57 -0700 (PDT)
+Received: from [172.16.126.1] (pool-108-5-250-108.nwrknj.fios.verizon.net. [108.5.250.108])
+        by smtp.gmail.com with ESMTPSA id n67-v6sm1293680qkh.66.2018.10.12.09.20.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 09:20:55 -0700 (PDT)
+From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
+To:     jglisse@redhat.com
+Cc:     linux-mm@kvack.org, "Andrew Morton" <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Anshuman Khandual" <khandual@linux.vnet.ibm.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "David Nellans" <dnellans@nvidia.com>,
+        "Ingo Molnar" <mingo@elte.hu>,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        "Minchan Kim" <minchan@kernel.org>,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        "Andrea Arcangeli" <aarcange@redhat.com>
+Subject: Re: [PATCH] mm/thp: fix call to mmu_notifier in
+ set_pmd_migration_entry()
+Date:   Fri, 12 Oct 2018 12:20:54 -0400
+X-Mailer: MailMate (1.12r5528)
+Message-ID: <DB07F115-B404-4AB0-9D54-BC20C3A3F2B0@cs.rutgers.edu>
+In-Reply-To: <20181012160953.5841-1-jglisse@redhat.com>
+References: <20181012160953.5841-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VecxqphJBZ2xUTku-WhyjkDRKQPbxvuGFAZ+-1voZRW9Q@mail.gmail.com>
-X-Cookie: He's dead, Jim.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed;
+ boundary="=_MailMate_906B21A9-2CB1-46F5-85D0-2BB0F3A26498_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
---kfjH4zxOES6UT95V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=_MailMate_906B21A9-2CB1-46F5-85D0-2BB0F3A26498_=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 12, 2018 at 04:58:38PM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 12, 2018 at 1:45 PM Russell King - ARM Linux
+On 12 Oct 2018, at 12:09, jglisse@redhat.com wrote:
 
-> > Given that DT describes the hardware, not the software implementation,
-> > it must not change just because we move from GPIO numbers to GPIO
-> > descriptors.
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>
+> Inside set_pmd_migration_entry() we are holding page table locks and
+> thus we can not sleep so we can not call invalidate_range_start/end()
+>
+> So remove call to mmu_notifier_invalidate_range_start/end() and add
+> call to mmu_notifier_invalidate_range(). Note that we are already
+> calling mmu_notifier_invalidate_range_start/end() inside the function
+> calling set_pmd_migration_entry() (see try_to_unmap_one()).
+>
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: David Nellans <dnellans@nvidia.com>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> ---
+>  mm/huge_memory.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 533f9b00147d..93cb80fe12cb 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2885,9 +2885,6 @@ void set_pmd_migration_entry(struct page_vma_mapp=
+ed_walk *pvmw,
+>  	if (!(pvmw->pmd && !pvmw->pte))
+>  		return;
+>
+> -	mmu_notifier_invalidate_range_start(mm, address,
+> -			address + HPAGE_PMD_SIZE);
+> -
+>  	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+>  	pmdval =3D *pvmw->pmd;
+>  	pmdp_invalidate(vma, address, pvmw->pmd);
+> @@ -2898,11 +2895,9 @@ void set_pmd_migration_entry(struct page_vma_map=
+ped_walk *pvmw,
+>  	if (pmd_soft_dirty(pmdval))
+>  		pmdswp =3D pmd_swp_mksoft_dirty(pmdswp);
+>  	set_pmd_at(mm, address, pvmw->pmd, pmdswp);
+> +	mmu_notifier_invalidate_range(mm, address, address + HPAGE_PMD_SIZE);=
 
-> > The existing DT description is reasonable, and introducing ficticious
-> > regulators in DT to work around the implementation is not reasonable.
+>  	page_remove_rmap(page, true);
+>  	put_page(page);
+> -
+> -	mmu_notifier_invalidate_range_end(mm, address,
+> -			address + HPAGE_PMD_SIZE);
+>  }
+>
+>  void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct pa=
+ge *new)
+> -- =
 
-> If there is no way to detect shared use of GPIO line for regulators
-> (*) from current DT description, DT description should be updated to
-> reflect, yes, hardware.
+> 2.17.2
 
-> (*) Not familiar with the guts of DT descriptive language, don't know
-> if there are some ways to do a such without additional flags or so.
+Yes, these are the redundant calls to mmu_notifier_invalidate_range_start=
+/end()
+in set_pmd_migration_entry(). Thanks for the patch.
 
-You can detect this via resolving the GPIOs and seeing if it points back
-to something that's already in use for an enable.  This isn't ideal
-especially if you want to do it up front but it is doable.  You could
-also just assume anything might end up being shared and rather than
-doing it up front which is easier and probably about as good.
+Fixes: 616b8371539a6 (mm: thp: enable thp migration in generic path)
 
---kfjH4zxOES6UT95V
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Zi Yan <zi.yan@cs.rutgers.edu>
+
+
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_906B21A9-2CB1-46F5-85D0-2BB0F3A26498_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvAyQAACgkQJNaLcl1U
-h9AxNAf/dagFIggZW486itfhQDBJTefSA7vwmkxbzYKHZwodlcpEpGhwWUGxveyO
-8kGuCjpCHU1knlsCL1q+8A9HwWnbCRp/aDYLXHpvSS/vghpCaKTdwo2ZBLg7PSjy
-AVd9f/+d4pxoL2eUNgyl6D+EjymXk/v0sgu+uXF6wnHyrAhvD7UAhzAs3EAB00UW
-0pkTrYLtpfSJjM+BKurnp+uQ9H3W7GKp86NOE5coFK8rvGQ4J0Mx2VutuMC4VYeR
-6RBFMAuXFhnd/bhR/is0giBumfxaHD3vX4QVfxk8vhXhJ5OsO+nzSeMBrG7mS8kO
-YXzCtuLAJGuQgrOkXMKYs2UJcZBBZQ==
-=7HRA
+iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAlvAyeYWHHppLnlhbkBj
+cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzLdvB/9sSW6PhPP3b8PepHGMrweMmbAq
+IAHFaZPjvCVTv44YZ252VsCc7Qrbiy2zGyHZiGqSxSBAq/nUykKl5EbgJ/O1j0hT
+L/akDOrb7YCCgogc0UJMGaqZxbtJuCr/YDj0TPG7+5CTpmSrdiojRoVl5U6yiKmF
+lblWlIrITT8K2JjHQuPLmz6MlHWhVL4jhYNzxjMgNBPA+m/2rqcb8Kd9Sq+YhkjC
+3npyQykfs7vg3BIbRXaaXvipvQP/yynLKkhC4AqkIjlzXSjHpuLQU34Dlu1GGjcs
+DyZgn3FwFejiabqzwsnDlkq9XBExfQsfF+dTVk4MyvuowDgFHIRSbPF0/FwX
+=fw1N
 -----END PGP SIGNATURE-----
 
---kfjH4zxOES6UT95V--
+--=_MailMate_906B21A9-2CB1-46F5-85D0-2BB0F3A26498_=--
