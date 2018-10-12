@@ -2,132 +2,107 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB29C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C901DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A132098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:06:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BMvBw36Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A132098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7074020835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:08:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7074020835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeJLPhh (ORCPT
+        id S1727758AbeJLPjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:37:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40642 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeJLPhh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:37:37 -0400
-Received: by mail-io1-f65.google.com with SMTP id w16-v6so8608197iom.7
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:06:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CEw4XGDZWJoIw+L5XfFfLpFOsrwabqrICLfsQN69xlM=;
-        b=BMvBw36ZxXqv6aMdLQNQd2NLYGcb47R65KY5h52bcvM6EjV3d5oJJHpbo6kqxFBqDL
-         jzyQ10tzXIyBaZgt/Xg/job3r6ni1Lmtq3NmNmY+F+SWWCrzII9XHK1Khk6uFlqvRezk
-         +OoucSfHaRzoCKFvYZBJGiO+zJYVH3QP77Ctc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CEw4XGDZWJoIw+L5XfFfLpFOsrwabqrICLfsQN69xlM=;
-        b=oJ3G0CtZUzKdL/uWyS6sSuvDWByMJFCw+OFR6jbJHSmxRawgEUSOmUbtMhzeYTKA8G
-         SxE9VLw5nTKxZEMCqewefjymCUOjIHSg3OmQawNHOGhzvrrmVt5OpoaE2N0q+6V6bG78
-         5sqk4fyuUD2isOF6lZDh2TvZS7vqgr0Saoa6gTLo0svlonxQOZKG5bXYoOKD90b3O/8L
-         NAUF4AHZjn/ZkjH3O3kUqZ7t+rjEG11HYetiFSBkk5zxmTZlosiDXbyFmoO+RaD6YYk8
-         vg/ymybCgIQ1aZcw6n2mJCHJbNDNFWbcpaMBXcGG5MHGQn1oFsxaDWXpI9yWV7mOvTgW
-         Mpuw==
-X-Gm-Message-State: ABuFfojvGTUllnI+Ny3IKZW3ObR3Mj4hV/F/vPdc7Jp2IPN2iyX5CIIJ
-        sJkWG6W98PgpgWx0iKXOJdPwFVOQjWhmFA==
-X-Google-Smtp-Source: ACcGV62t+1u5zFnm6uaMXsQ5kNzEaNQprpZe0CcmLJz37dRgLTwuAurmNU3H+CVWf5KU0aS6x4dSWg==
-X-Received: by 2002:a6b:8d53:: with SMTP id p80-v6mr3183012iod.98.1539331582089;
-        Fri, 12 Oct 2018 01:06:22 -0700 (PDT)
-Received: from mail-it1-f179.google.com (mail-it1-f179.google.com. [209.85.166.179])
-        by smtp.gmail.com with ESMTPSA id d75-v6sm307327itc.41.2018.10.12.01.06.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 01:06:21 -0700 (PDT)
-Received: by mail-it1-f179.google.com with SMTP id c23-v6so17481185itd.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:06:21 -0700 (PDT)
-X-Received: by 2002:a24:c5c7:: with SMTP id f190-v6mr3782840itg.172.1539331580712;
- Fri, 12 Oct 2018 01:06:20 -0700 (PDT)
+        Fri, 12 Oct 2018 11:39:55 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:14278 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbeJLPjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 11:39:55 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42WgT03lzmz9ttwR;
+        Fri, 12 Oct 2018 10:08:36 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ntjDzcRtUXKi; Fri, 12 Oct 2018 10:08:36 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42WgT03GRfz9ttwF;
+        Fri, 12 Oct 2018 10:08:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E15A98B8BE;
+        Fri, 12 Oct 2018 10:08:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id pnEtCV9G6kCV; Fri, 12 Oct 2018 10:08:39 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 77A5E8B8BF;
+        Fri, 12 Oct 2018 10:08:39 +0200 (CEST)
+Subject: Re: [BUG][linux-next][ppc] kernel panic - not syncing:
+ stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     sachinp <sachinp@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        npiggin <npiggin@gmail.com>,
+        linux-next <linux-next@vger.kernel.org>,
+        manvanth <manvanth@linux.vnet.ibm.com>
+References: <1539330331.17569.32.camel@abdul.in.ibm.com>
+ <1539330499.17569.33.camel@abdul.in.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
+Date:   Fri, 12 Oct 2018 10:08:39 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1539071634-1644-1-git-send-email-mgottam@codeaurora.org>
- <CAPBb6MUt_V4zEKGcRYXRXNRVdjF2uspOvEj0T-dH6dBZ9ya9CA@mail.gmail.com> <f1bb2ead-fe8e-af6a-1b96-9460a7b01f29@linaro.org>
-In-Reply-To: <f1bb2ead-fe8e-af6a-1b96-9460a7b01f29@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Fri, 12 Oct 2018 17:06:09 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MXxaGMCY43fXwWYZmYmiVwDA6kdJRwWZGqUHhWOGXSz7Q@mail.gmail.com>
-Message-ID: <CAPBb6MXxaGMCY43fXwWYZmYmiVwDA6kdJRwWZGqUHhWOGXSz7Q@mail.gmail.com>
-Subject: Re: [PATCH] media: venus: add support for key frame
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     mgottam@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539330499.17569.33.camel@abdul.in.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 4:37 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Alex,
->
-> On 10/12/2018 08:26 AM, Alexandre Courbot wrote:
-> > On Tue, Oct 9, 2018 at 4:54 PM Malathi Gottam <mgottam@codeaurora.org> wrote:
-> >>
-> >> When client requests for a keyframe, set the property
-> >> to hardware to generate the sync frame.
-> >>
-> >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> >> ---
-> >>  drivers/media/platform/qcom/venus/venc_ctrls.c | 13 +++++++++++++
-> >>  1 file changed, 13 insertions(+)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> index 45910172..f332c8e 100644
-> >> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> @@ -81,6 +81,8 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>         struct venc_controls *ctr = &inst->controls.enc;
-> >>         u32 bframes;
-> >>         int ret;
-> >> +       void *ptr;
-> >> +       u32 ptype;
-> >>
-> >>         switch (ctrl->id) {
-> >>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
-> >> @@ -173,6 +175,14 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>
-> >>                 ctr->num_b_frames = bframes;
-> >>                 break;
-> >> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
-> >> +               ptype = HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME;
-> >> +               ret = hfi_session_set_property(inst, ptype, ptr);
-> >
-> > The test bot already said it, but ptr is passed to
-> > hfi_session_set_property() uninitialized. And as can be expected the
-> > call returns -EINVAL on my board.
-> >
-> > Looking at other uses of HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME I
-> > see that the packet sent to the firmware does not have room for an
-> > argument, so I tried to pass NULL but got the same result.
->
-> yes, because pdata cannot be NULL. I'd suggest to make a pointer to
-> struct hfi_enable and pass it to the set_property function.
 
-FWIW I also tried doing this and got the same error, strange...
+
+Le 12/10/2018 à 09:48, Abdul Haleem a écrit :
+> On Fri, 2018-10-12 at 13:15 +0530, Abdul Haleem wrote:
+>> Greeting's
+>>
+>> Today's linux-next fails to boot on powerpc bare-metal with this error
+>>
+>> POWER8 performance monitor hardware support registered
+>> rcu: Hierarchical SRCU implementation.
+>> smp: Bringing up secondary CPUs ...
+>> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+>> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
+>> Call Trace:
+>> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+>> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+>> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+>> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+>> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+>> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+>> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+>> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+>> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
+>> Rebooting in 10 seconds..
+>>
+>> Machine: Power 8 bare-metal
+>> kernel version: 4.19.0-rc7-next-20181010
+>> gcc version: 4.8.5 20150623
+>> config attach
+> 
+> Attaching the kernel config file
+> 
+
+# Linux/powerpc 4.11.0-rc4 Kernel Configuration
+
+This is not the correct config file. Can you send the .config ?
+
+Christophe
