@@ -2,133 +2,70 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EED4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19CDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D84632148C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84632148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 8FFFB20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:22:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFFB20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dei.uc.pt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbeJLQwu (ORCPT
+        id S1728273AbeJLQxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:52:50 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:46068 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeJLQwt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:52:49 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1gAtdF-0008Dj-Si; Fri, 12 Oct 2018 11:21:18 +0200
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     linux-wireless@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] bitfield: use BUILD_BUG_ON_ZERO()
-Date:   Fri, 12 Oct 2018 11:21:04 +0200
-Message-Id: <20181012092104.2361-1-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.14.4
+        Fri, 12 Oct 2018 12:53:32 -0400
+Received: from smtp.dei.uc.pt ([193.137.203.253]:60426 "EHLO smtp.dei.uc.pt"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728021AbeJLQxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 12:53:32 -0400
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+        (user=sneves mech=PLAIN bits=0)
+        by smtp.dei.uc.pt (8.15.2/8.15.2) with ESMTPSA id w9C9L1Et023524
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:21:07 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dei.uc.pt w9C9L1Et023524
+Received: by mail-ed1-f53.google.com with SMTP id x31-v6so10846958edd.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:21:07 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh49TJs6Rd56p++gnyZa2vatwaiuRqnO3/L/Sw1IqsfgeJCUwZO
+        dCfzBQYu+SAuT58qQSuDBEiC/G3Fiwvwn+6+RpQ=
+X-Google-Smtp-Source: ACcGV62HPqByDX0nYOogBLQMoYGOlgjx/h/Gmbl0k+n2Igu+70VQWfyVcnJoQJRb8Rcb4H1o9+Eklc/Fn/QU3C6tnqE=
+X-Received: by 2002:a17:906:e1ce:: with SMTP id gp14-v6mr6335446ejb.221.1539336061564;
+ Fri, 12 Oct 2018 02:21:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181011185458.10186-1-kristen@linux.intel.com> <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
+In-Reply-To: <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
+From:   Samuel Neves <sneves@dei.uc.pt>
+Date:   Fri, 12 Oct 2018 10:20:25 +0100
+X-Gmail-Original-Message-ID: <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com>
+Message-ID: <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com>
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     kristen@linux.intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-FCTUC-DEI-SIC-MailScanner-Information: Please contact helpdesk@dei.uc.pt for more information
+X-FCTUC-DEI-SIC-MailScanner-ID: w9C9L1Et023524
+X-FCTUC-DEI-SIC-MailScanner: Found to be clean
+X-FCTUC-DEI-SIC-MailScanner-SpamCheck: not spam, SpamAssassin (not cached,
+        score=-60.1, required 3.252, autolearn=not spam, ALL_TRUSTED -10.00,
+        BAYES_00 -0.10, L_SMTP_AUTH -50.00)
+X-FCTUC-DEI-SIC-MailScanner-From: sneves@dei.uc.pt
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Thu, Oct 11, 2018 at 8:25 PM Andy Lutomirski <luto@kernel.org> wrote:
+> What exactly is this trying to protect against?  And how many cycles
+> should we expect L1D_FLUSH to take?
 
-John Garry requested to be able to use FIELD_PREP() and friends
-in constant initializers, so the thing we can do is switch all
-the compile-time assertions to use BUILD_BUG_ON_ZERO() instead
-of regular BUILD_BUG_ON().
-
-The only downside is that we lose all the error messages, but
-it doesn't seem worthwhile to duplicate all of this into e.g.
-CONST_FIELD_PREP() (for constants) just for that.
-
-Requested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- include/linux/bitfield.h | 40 +++++++++++++++-------------------------
- 1 file changed, 15 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 3f1ef4450a7c..1840dae6448a 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -49,19 +49,15 @@
- 
- #define __bf_shf(x) (__builtin_ffsll(x) - 1)
- 
--#define __BF_FIELD_CHECK(_mask, _reg, _val, _pfx)			\
--	({								\
--		BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),		\
--				 _pfx "mask is not constant");		\
--		BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");	\
--		BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?		\
--				 ~((_mask) >> __bf_shf(_mask)) & (_val) : 0, \
--				 _pfx "value too large for the field"); \
--		BUILD_BUG_ON_MSG((_mask) > (typeof(_reg))~0ull,		\
--				 _pfx "type of reg too small for mask"); \
--		__BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +			\
--					      (1ULL << __bf_shf(_mask))); \
--	})
-+#define __BF_CHECK_POW2(n)	BUILD_BUG_ON_ZERO(((n) & ((n) - 1)) != 0)
-+
-+#define __BF_FIELD_CHECK(_mask, _reg, _val)				\
-+	BUILD_BUG_ON_ZERO(!__builtin_constant_p(_mask)) +		\
-+	BUILD_BUG_ON_ZERO((_mask) == 0) +				\
-+	BUILD_BUG_ON_ZERO(__builtin_constant_p(_val) ?			\
-+				~((_mask) >> __bf_shf(_mask)) & (_val) : 0) + \
-+	BUILD_BUG_ON_ZERO((_mask) > (typeof(_reg))~0ull) +		\
-+	__BF_CHECK_POW2((_mask) + (1ULL << __bf_shf(_mask)))
- 
- /**
-  * FIELD_FIT() - check if value fits in the field
-@@ -71,10 +67,8 @@
-  * Return: true if @_val can fit inside @_mask, false if @_val is too big.
-  */
- #define FIELD_FIT(_mask, _val)						\
--	({								\
--		__BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_FIT: ");	\
--		!((((typeof(_mask))_val) << __bf_shf(_mask)) & ~(_mask)); \
--	})
-+	(__BF_FIELD_CHECK(_mask, 0ULL, _val) +				\
-+	 !((((typeof(_mask))_val) << __bf_shf(_mask)) & ~(_mask)))
- 
- /**
-  * FIELD_PREP() - prepare a bitfield element
-@@ -85,10 +79,8 @@
-  * be combined with other fields of the bitfield using logical OR.
-  */
- #define FIELD_PREP(_mask, _val)						\
--	({								\
--		__BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");	\
--		((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);	\
--	})
-+	(__BF_FIELD_CHECK(_mask, 0ULL, _val) +				\
-+	 (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask)))
- 
- /**
-  * FIELD_GET() - extract a bitfield element
-@@ -99,10 +91,8 @@
-  * bitfield passed in as @_reg by masking and shifting it down.
-  */
- #define FIELD_GET(_mask, _reg)						\
--	({								\
--		__BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: ");	\
--		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
--	})
-+	(__BF_FIELD_CHECK(_mask, _reg, 0U) +				\
-+	 ((typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask))))
- 
- extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
--- 
-2.14.4
-
+As far as I could measure, I got 1660 cycles per wrmsr 0x10b, 0x1 on a
+Skylake chip, and 1220 cycles on a Skylake-SP.
