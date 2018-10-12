@@ -2,361 +2,422 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE602C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D34C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8862A2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:07:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOpoXENZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8862A2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 63B962087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:09:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B962087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeJLSja (ORCPT
+        id S1728094AbeJLSlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:39:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44438 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeJLSja (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:39:30 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so5689692pgu.11;
-        Fri, 12 Oct 2018 04:07:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PfRVg9bkslElvRjN+WwJ6XVt+xZWxED6ICTWbAZDClI=;
-        b=LOpoXENZJParfoq1ObZuxmkctFyiheM80mxYdFRAd0OvjKil2mkBSy6dvKmtDfoccx
-         ZNKIvfTgGhVFfRo6n/bOrrfDDZUMsOezjnsQAmsSyuaFxLSSHaCfHHCqi+bRDAbV6rAL
-         ZIfRpx0CUEcLB0gfqoF7fTSTYVc8hs066acmpdMGHahi/zdauKQK8v+fnYo/WK712Ii4
-         +T6+hZA7tp99LlrSGxpph5RJ1BYJi7vYVJRfDr+7KPp2kROE+GnvNXIJ/+JPAlg+6a37
-         GQDw0BPXaTLdl04uI3emBL/gQpixUia7akLpUHvh+igWnvkUP1Ay6kz2TqUd1aPDmWms
-         MqDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PfRVg9bkslElvRjN+WwJ6XVt+xZWxED6ICTWbAZDClI=;
-        b=f1NH+G2VnjTMEZbP3T1GftQwrmDFeWTJhK5YeMIH81Moitb+GDekLavNuat9ajXzMg
-         4HiZqEpjNohHbSdEJHkMAloa24Vpm8j3K3XE88ARzXSmYJ8ByKINs5rYwwbgrvb0XuEU
-         r+sXI0OhE9LVbJNt1C/z1y9ghhEIMDOP4pdRftw41xqwVz1f9UkPozMRipB962sJD0GO
-         mamf8TOvlMdgXaMBRWsAfNZynUoakXsHN7Mi5WMKlL1cig8QbQk50Ui5k7JFPBj0zGpH
-         lSu9CzfhPBHZzuqFb2i3MrYDbc6XHwNjoc+0uDnsrApjkT4sNcQTEjrnKjtL9Hs1lSlz
-         QheA==
-X-Gm-Message-State: ABuFfojJSudN4WsNrfPhXibK9T40APFG8VcgLLbjxim0zHkKgbNI0csE
-        j3kv18ReZZGqmR/ZQv37VXg=
-X-Google-Smtp-Source: ACcGV63s8/2fpWu6A27C3sQekvGJY+VwpIAjbEHGvbnXMdCz25acx8TpQDAnF+RjakCy//faXVaNlg==
-X-Received: by 2002:a65:594b:: with SMTP id g11-v6mr5114266pgu.260.1539342454407;
-        Fri, 12 Oct 2018 04:07:34 -0700 (PDT)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm1608831pfn.66.2018.10.12.04.07.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 04:07:32 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 22:07:28 +1100
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     john.hubbard@gmail.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 6/6] mm: track gup pages with page->dma_pinned_* fields
-Message-ID: <20181012110728.GL8537@350D>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-7-jhubbard@nvidia.com>
+        Fri, 12 Oct 2018 14:41:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49912 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbeJLSlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:41:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7098EED1;
+        Fri, 12 Oct 2018 04:09:56 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0AA63F5B7;
+        Fri, 12 Oct 2018 04:09:53 -0700 (PDT)
+Subject: Re: [PATCH V8 16/21] csky: SMP support
+To:     Guo Ren <ren_guo@c-sky.com>, akpm@linux-foundation.org,
+        arnd@arndb.de, daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        mark.rutland@arm.com, peterz@infradead.org, robh@kernel.org,
+        tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        c-sky_gcc_upstream@c-sky.com
+References: <cover.1539315390.git.ren_guo@c-sky.com>
+ <608ece7942caa7c4b677b3cedd699e1a85b39d0f.1539315391.git.ren_guo@c-sky.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <50781e74-e19b-e0e0-8ce5-d906878e249d@arm.com>
+Date:   Fri, 12 Oct 2018 12:09:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012060014.10242-7-jhubbard@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <608ece7942caa7c4b677b3cedd699e1a85b39d0f.1539315391.git.ren_guo@c-sky.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 11:00:14PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
+On 12/10/18 05:42, Guo Ren wrote:
+> This patch adds boot, ipi, hotplug code for SMP.
 > 
-> This patch sets and restores the new page->dma_pinned_flags and
-> page->dma_pinned_count fields, but does not actually use them for
-> anything yet.
+> Changelog:
+>  - remove set_ipi_irq_mapping callback.
+>  - Convert the cpumask to an interrupt-controller specific representation
+>    in driver's code, and not the SMP code's.
+>  - csky: remove irq_mapping from smp.c
+>    There are some feedbacks from irqchip, and we need to adjust
+>    "smp.c & smp.h" to match the csky_mp_intc modification.
+>  - Move IPI_IRQ define into drivers/irqchip/csky_mpintc.c, because it's a
+>    interrupt controller specific.
+>  - Bugfix request_irq with IPI_IRQ, we must use irq_mapping return value
+>    not directly use IPI_IRQ. The modification also involves csky_mp_intc.
 > 
-> In order to use these fields at all, the page must be removed from
-> any LRU list that it's on. The patch also adds some precautions that
-> prevent the page from getting moved back onto an LRU, once it is
-> in this state.
-> 
-> This is in preparation to fix some problems that came up when using
-> devices (NICs, GPUs, for example) that set up direct access to a chunk
-> of system (CPU) memory, so that they can DMA to/from that memory.
-> 
-> CC: Matthew Wilcox <willy@infradead.org>
-> CC: Jan Kara <jack@suse.cz>
-> CC: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
 > ---
->  include/linux/mm.h | 15 ++-----------
->  mm/gup.c           | 56 ++++++++++++++++++++++++++++++++++++++++++++--
->  mm/memcontrol.c    |  7 ++++++
->  mm/swap.c          | 51 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 114 insertions(+), 15 deletions(-)
+>  arch/csky/include/asm/smp.h |  28 ++++++
+>  arch/csky/kernel/smp.c      | 237 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 265 insertions(+)
+>  create mode 100644 arch/csky/include/asm/smp.h
+>  create mode 100644 arch/csky/kernel/smp.c
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 76d18aada9f8..44878d21e27b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -944,21 +944,10 @@ static inline void put_page(struct page *page)
->  }
->  
->  /*
-> - * put_user_page() - release a page that had previously been acquired via
-> - * a call to one of the get_user_pages*() functions.
-> - *
->   * Pages that were pinned via get_user_pages*() must be released via
-> - * either put_user_page(), or one of the put_user_pages*() routines
-> - * below. This is so that eventually, pages that are pinned via
-> - * get_user_pages*() can be separately tracked and uniquely handled. In
-> - * particular, interactions with RDMA and filesystems need special
-> - * handling.
-> + * one of these put_user_pages*() routines:
->   */
-> -static inline void put_user_page(struct page *page)
-> -{
-> -	put_page(page);
-> -}
-> -
-> +void put_user_page(struct page *page);
->  void put_user_pages_dirty(struct page **pages, unsigned long npages);
->  void put_user_pages_dirty_lock(struct page **pages, unsigned long npages);
->  void put_user_pages(struct page **pages, unsigned long npages);
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 05ee7c18e59a..fddbc30cde89 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -20,6 +20,51 @@
->  
->  #include "internal.h"
->  
-> +static int pin_page_for_dma(struct page *page)
+> diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
+> new file mode 100644
+> index 0000000..31f7b94
+> --- /dev/null
+> +++ b/arch/csky/include/asm/smp.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __ASM_CSKY_SMP_H
+> +#define __ASM_CSKY_SMP_H
+> +
+> +#include <linux/cpumask.h>
+> +#include <linux/irqreturn.h>
+> +#include <linux/threads.h>
+> +
+> +#ifdef CONFIG_SMP
+> +
+> +void __init setup_smp(void);
+> +
+> +void __init setup_smp_ipi(void);
+> +
+> +void __init enable_smp_ipi(void);
+> +
+> +void arch_send_call_function_ipi_mask(struct cpumask *mask);
+> +
+> +void arch_send_call_function_single_ipi(int cpu);
+> +
+> +void __init set_send_ipi(void (*func)(const struct cpumask *mask), int irq);
+> +
+> +#define raw_smp_processor_id()	(current_thread_info()->cpu)
+> +
+> +#endif /* CONFIG_SMP */
+> +
+> +#endif /* __ASM_CSKY_SMP_H */
+> diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
+> new file mode 100644
+> index 0000000..5ea9516
+> --- /dev/null
+> +++ b/arch/csky/kernel/smp.c
+> @@ -0,0 +1,237 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mm.h>
+> +#include <linux/sched.h>
+> +#include <linux/kernel_stat.h>
+> +#include <linux/notifier.h>
+> +#include <linux/cpu.h>
+> +#include <linux/percpu.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/of.h>
+> +#include <linux/sched/task_stack.h>
+> +#include <linux/sched/mm.h>
+> +#include <asm/irq.h>
+> +#include <asm/traps.h>
+> +#include <asm/sections.h>
+> +#include <asm/mmu_context.h>
+> +#include <asm/pgalloc.h>
+> +
+> +static struct {
+> +	unsigned long bits ____cacheline_aligned;
+> +} ipi_data[NR_CPUS] __cacheline_aligned;
+
+Why isn't this a per-cpu variable?
+
+> +
+> +enum ipi_message_type {
+> +	IPI_EMPTY,
+> +	IPI_RESCHEDULE,
+> +	IPI_CALL_FUNC,
+> +	IPI_MAX
+> +};
+> +
+> +static irqreturn_t handle_ipi(int irq, void *dev)
 > +{
-> +	int ret = 0;
-> +	struct zone *zone;
+> +	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
 > +
-> +	page = compound_head(page);
-> +	zone = page_zone(page);
+> +	while (true) {
+> +		unsigned long ops;
 > +
-> +	spin_lock(zone_gup_lock(zone));
+> +		ops = xchg(pending_ipis, 0);
+> +		if (ops == 0)
+> +			return IRQ_HANDLED;
 > +
-> +	if (PageDmaPinned(page)) {
-> +		/* Page was not on an LRU list, because it was DMA-pinned. */
-> +		VM_BUG_ON_PAGE(PageLRU(page), page);
+> +		if (ops & (1 << IPI_RESCHEDULE))
+> +			scheduler_ipi();
 > +
-> +		atomic_inc(&page->dma_pinned_count);
-> +		goto unlock_out;
+> +		if (ops & (1 << IPI_CALL_FUNC))
+> +			generic_smp_call_function_interrupt();
+> +
+> +		BUG_ON((ops >> IPI_MAX) != 0);
 > +	}
 > +
-> +	/*
-> +	 * Note that page->dma_pinned_flags is unioned with page->lru.
-> +	 * Therefore, the rules are: checking if any of the
-> +	 * PAGE_DMA_PINNED_FLAGS bits are set may be done while page->lru
-> +	 * is in use. However, setting those flags requires that
-> +	 * the page is both locked, and also, removed from the LRU.
-> +	 */
-> +	ret = isolate_lru_page(page);
-> +
-
-isolate_lru_page() can be expensive and in terms of the overall locking order
-sounds like zone_gup_lock is higher in the hierarchy than the locks taken
-inside isolate_lru_page()
-
-> +	if (ret == 0) {
-> +		/* Avoid problems later, when freeing the page: */
-> +		ClearPageActive(page);
-> +		ClearPageUnevictable(page);
-> +
-> +		/* counteract isolate_lru_page's effects: */
-> +		put_page(page);
-
-Can the page get reaped here? What's the expected page count?
-
-> +
-> +		atomic_set(&page->dma_pinned_count, 1);
-> +		SetPageDmaPinned(page);
-> +	}
-> +
-> +unlock_out:
-> +	spin_unlock(zone_gup_lock(zone));
-> +
-> +	return ret;
+> +	return IRQ_HANDLED;
 > +}
 > +
->  static struct page *no_page_table(struct vm_area_struct *vma,
->  		unsigned int flags)
->  {
-> @@ -659,7 +704,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->  		unsigned int gup_flags, struct page **pages,
->  		struct vm_area_struct **vmas, int *nonblocking)
->  {
-> -	long i = 0;
-> +	long i = 0, j;
->  	int err = 0;
->  	unsigned int page_mask;
->  	struct vm_area_struct *vma = NULL;
-> @@ -764,6 +809,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
->  	} while (nr_pages);
->  
->  out:
-> +	if (pages)
-> +		for (j = 0; j < i; j++)
-> +			pin_page_for_dma(pages[j]);
+> +static void (*send_arch_ipi)(const struct cpumask *mask);
 > +
-
-Why does get_user_pages() unconditionally pin_page_for_dma?
-
->  	return i ? i : err;
->  }
->  
-> @@ -1841,7 +1890,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
->  			struct page **pages)
->  {
->  	unsigned long addr, len, end;
-> -	int nr = 0, ret = 0;
-> +	int nr = 0, ret = 0, i;
->  
->  	start &= PAGE_MASK;
->  	addr = start;
-> @@ -1862,6 +1911,9 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
->  		ret = nr;
->  	}
->  
-> +	for (i = 0; i < nr; i++)
-> +		pin_page_for_dma(pages[i]);
-
-Why does get_user_pages_fast() unconditionally pin_page_for_dma?
-
-> +
->  	if (nr < nr_pages) {
->  		/* Try to get the remaining pages with get_user_pages */
->  		start += nr << PAGE_SHIFT;
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e79cb59552d9..af9719756081 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2335,6 +2335,11 @@ static void lock_page_lru(struct page *page, int *isolated)
->  	if (PageLRU(page)) {
->  		struct lruvec *lruvec;
->  
-> +		/* LRU and PageDmaPinned are mutually exclusive: they use the
-> +		 * same fields in struct page, but for different purposes.
-> +		 */
-
-Comment style needs fixing
-
-> +		VM_BUG_ON_PAGE(PageDmaPinned(page), page);
-> +
->  		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
->  		ClearPageLRU(page);
->  		del_page_from_lru_list(page, lruvec, page_lru(page));
-> @@ -2352,6 +2357,8 @@ static void unlock_page_lru(struct page *page, int isolated)
->  
->  		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
->  		VM_BUG_ON_PAGE(PageLRU(page), page);
-> +		VM_BUG_ON_PAGE(PageDmaPinned(page), page);
-> +
->  		SetPageLRU(page);
->  		add_page_to_lru_list(page, lruvec, page_lru(page));
->  	}
-> diff --git a/mm/swap.c b/mm/swap.c
-> index efab3a6b6f91..6b2b1a958a67 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -134,6 +134,46 @@ void put_pages_list(struct list_head *pages)
->  }
->  EXPORT_SYMBOL(put_pages_list);
->  
-> +/*
-> + * put_user_page() - release a page that had previously been acquired via
-> + * a call to one of the get_user_pages*() functions.
-> + *
-> + * Pages that were pinned via get_user_pages*() must be released via
-> + * either put_user_page(), or one of the put_user_pages*() routines
-> + * below. This is so that eventually, pages that are pinned via
-> + * get_user_pages*() can be separately tracked and uniquely handled. In
-> + * particular, interactions with RDMA and filesystems need special
-> + * handling.
-> + */
-> +void put_user_page(struct page *page)
+> +static int ipi_irq;
+> +void __init set_send_ipi(void (*func)(const struct cpumask *mask), int irq)
 > +{
-> +	struct zone *zone = page_zone(page);
-> +
-> +	page = compound_head(page);
-> +
-> +	VM_BUG_ON_PAGE(PageLRU(page), page);
-> +	VM_BUG_ON_PAGE(!PageDmaPinned(page), page);
-> +
-> +	if (atomic_dec_and_test(&page->dma_pinned_count)) {
-> +		spin_lock(zone_gup_lock(zone));
-> +
-> +		/* Re-check while holding the lock, because
-> +		 * pin_page_for_dma() or get_page() may have snuck in right
-> +		 * after the atomic_dec_and_test, and raised the count
-> +		 * above zero again. If so, just leave the flag set. And
-> +		 * because the atomic_dec_and_test above already got the
-> +		 * accounting correct, no other action is required.
-> +		 */
-> +		if (atomic_read(&page->dma_pinned_count) == 0)
-> +			ClearPageDmaPinned(page);
-> +
-> +		spin_unlock(zone_gup_lock(zone));
-> +	}
-> +
-> +	put_page(page);
-> +}
-> +EXPORT_SYMBOL(put_user_page);
-> +
->  /*
->   * put_user_pages_dirty() - for each page in the @pages array, make
->   * that page (or its head page, if a compound page) dirty, if it was
-> @@ -907,6 +947,11 @@ void lru_add_page_tail(struct page *page, struct page *page_tail,
->  	VM_BUG_ON_PAGE(!PageHead(page), page);
->  	VM_BUG_ON_PAGE(PageCompound(page_tail), page);
->  	VM_BUG_ON_PAGE(PageLRU(page_tail), page);
-> +
-> +	/* LRU and PageDmaPinned are mutually exclusive: they use the
-> +	 * same fields in struct page, but for different purposes.
-> +	 */
-> +	VM_BUG_ON_PAGE(PageDmaPinned(page_tail), page);
->  	VM_BUG_ON(NR_CPUS != 1 &&
->  		  !spin_is_locked(&lruvec_pgdat(lruvec)->lru_lock));
->  
-> @@ -946,6 +991,12 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
->  
->  	VM_BUG_ON_PAGE(PageLRU(page), page);
->  
-> +	/* LRU and PageDmaPinned are mutually exclusive: they use the
-> +	 * same fields in struct page, but for different purposes.
-> +	 */
-> +	if (PageDmaPinned(page))
+> +	if (send_arch_ipi)
 > +		return;
 > +
->  	SetPageLRU(page);
->  	/*
->  	 * Page becomes evictable in two ways:
-> -- 
-> 2.19.1
+> +	send_arch_ipi = func;
+> +	ipi_irq = irq;
+> +}
+> +
+> +static void
+> +send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
+> +{
+> +	int i;
+> +
+> +	for_each_cpu(i, to_whom)
+> +		set_bit(operation, &ipi_data[i].bits);
+> +
+> +	smp_mb();
+> +	send_arch_ipi(to_whom);
+> +}
+> +
+> +void arch_send_call_function_ipi_mask(struct cpumask *mask)
+> +{
+> +	send_ipi_message(mask, IPI_CALL_FUNC);
+> +}
+> +
+> +void arch_send_call_function_single_ipi(int cpu)
+> +{
+> +	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
+> +}
+> +
+> +static void ipi_stop(void *unused)
+> +{
+> +	while (1);
+> +}
+> +
+> +void smp_send_stop(void)
+> +{
+> +	on_each_cpu(ipi_stop, NULL, 1);
+> +}
+> +
+> +void smp_send_reschedule(int cpu)
+> +{
+> +	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
+> +}
+> +
+> +void *__cpu_up_stack_pointer[NR_CPUS];
+> +void *__cpu_up_task_pointer[NR_CPUS];
 
+Why aren't these per-cpu variables? More importantly, what are they used
+for? None of the patches in this series are using them.
 
-Balbir
+> +
+> +void __init smp_prepare_boot_cpu(void)
+> +{
+> +}
+> +
+> +void __init smp_prepare_cpus(unsigned int max_cpus)
+> +{
+> +}
+> +
+> +void __init enable_smp_ipi(void)
+> +{
+> +	enable_percpu_irq(ipi_irq, 0);
+> +}
+
+Why isn't this function static?
+
+> +
+> +static int ipi_dummy_dev;
+> +void __init setup_smp_ipi(void)
+> +{
+> +	int rc;
+> +
+> +	if (ipi_irq == 0)
+> +		panic("%s IRQ mapping failed\n", __func__);
+> +
+> +	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
+> +				&ipi_dummy_dev);
+> +	if (rc)
+> +		panic("%s IRQ request failed\n", __func__);
+> +
+> +	enable_smp_ipi();
+> +}
+> +
+> +void __init setup_smp(void)
+> +{
+> +	struct device_node *node = NULL;
+> +	int cpu;
+> +
+> +	while ((node = of_find_node_by_type(node, "cpu"))) {
+> +		if (!of_device_is_available(node))
+> +			continue;
+> +
+> +		if (of_property_read_u32(node, "reg", &cpu))
+> +			continue;
+> +
+> +		if (cpu >= NR_CPUS)
+> +			continue;
+> +
+> +		set_cpu_possible(cpu, true);
+> +		set_cpu_present(cpu, true);
+> +	}
+> +}
+> +
+> +extern void _start_smp_secondary(void);
+> +
+> +volatile unsigned int secondary_hint;
+> +volatile unsigned int secondary_ccr;
+> +volatile unsigned int secondary_stack;
+
+This looks pretty dodgy. Shouldn't you be using READ_ONCE/WRITE_ONCE
+instead?
+
+> +
+> +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> +{
+> +	unsigned int tmp;
+> +
+> +	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
+> +
+> +	secondary_hint = mfcr("cr31");
+> +
+> +	secondary_ccr  = mfcr("cr18");> +
+> +	/* Flush dcache */
+> +	mtcr("cr17", 0x22);
+> +
+> +	/* Enable cpu in SMP reset ctrl reg */
+> +	tmp = mfcr("cr<29, 0>");
+> +	tmp |= 1 << cpu;
+> +	mtcr("cr<29, 0>", tmp);
+> +
+> +	/* Wait for the cpu online */
+> +	while (!cpu_online(cpu));
+> +
+> +	secondary_stack = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +void __init smp_cpus_done(unsigned int max_cpus)
+> +{
+> +}
+> +
+> +int setup_profiling_timer(unsigned int multiplier)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +void csky_start_secondary(void)
+> +{
+> +	struct mm_struct *mm = &init_mm;
+> +	unsigned int cpu = smp_processor_id();
+> +
+> +	mtcr("cr31", secondary_hint);
+> +	mtcr("cr18", secondary_ccr);
+> +
+> +	mtcr("vbr", vec_base);
+> +
+> +	flush_tlb_all();
+> +	write_mmu_pagemask(0);
+> +	TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir);
+> +	TLBMISS_HANDLER_SETUP_PGD_KERNEL(swapper_pg_dir);
+> +
+> +	asid_cache(smp_processor_id()) = ASID_FIRST_VERSION;
+> +
+> +#ifdef CONFIG_CPU_HAS_FPU
+> +	init_fpu();
+> +#endif
+> +
+> +	enable_smp_ipi();
+> +
+> +	mmget(mm);
+> +	mmgrab(mm);
+> +	current->active_mm = mm;
+> +	cpumask_set_cpu(cpu, mm_cpumask(mm));
+> +
+> +	notify_cpu_starting(cpu);
+> +	set_cpu_online(cpu, true);
+> +
+> +	pr_info("CPU%u Online: %s...\n", cpu, __func__);
+> +
+> +	local_irq_enable();
+> +	preempt_disable();
+> +	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+> +}
+> 
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
