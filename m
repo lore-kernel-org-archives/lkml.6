@@ -2,356 +2,96 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9F0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9568C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D3C213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:01:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D3C213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E6F12075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:10:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GhTKW/eY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E6F12075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeJLMcG (ORCPT
+        id S1727370AbeJLMlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 08:32:06 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44446 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727042AbeJLMcG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 08:32:06 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437322|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D0wOU.E_1539320455;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D0wOU.E_1539320455)
-          by smtp.aliyun-inc.com(10.147.42.253);
-          Fri, 12 Oct 2018 13:00:56 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hch@infradead.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, peterz@infradead.org,
-        robh@kernel.org, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        c-sky_gcc_upstream@c-sky.com, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V8 16/21] csky: SMP support
-Date:   Fri, 12 Oct 2018 12:42:51 +0800
-Message-Id: <608ece7942caa7c4b677b3cedd699e1a85b39d0f.1539315391.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1539315390.git.ren_guo@c-sky.com>
-References: <cover.1539315390.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1539315390.git.ren_guo@c-sky.com>
-References: <cover.1539315390.git.ren_guo@c-sky.com>
+        Fri, 12 Oct 2018 08:41:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:50083 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726969AbeJLMlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 08:41:32 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42WbWv5bFVz9s55;
+        Fri, 12 Oct 2018 16:10:51 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539321052;
+        bh=wFEeBBtJx7diIgWcRj9/79VtfRPrBmn3BVu8Ya0UmSE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GhTKW/eY5MBvd/mwqj+vRv0wNbmXdnMvJnJhIObL4pX6JQ+U0BIrNa1ckRSE1drjb
+         +yXMOQ3Ms745XXdA1V89EuZ08Dnsr6UXsyc5S1yja10c30o/OE6TPXiWsHMPsj0S62
+         9AsbZZI4QpqcPHu5GtsqC3vTrTTmYGDjeUjrl/Lf4Jmi9Q1/7NxsgAigCBBE5zYtwR
+         eaAZ8yjO0+1JBXuFIjKUdjlyQK+2j9Cd8mocQclqjzoVmjqHBm/EW86IpMqvjgO34k
+         0u2becKjBivimcTwWn40OtyRHhLZ38HY1B80YgGVdX2j3qE8ZxZd3W3adf5Wh0xT0X
+         Yw4Fq+tK8ilBw==
+Date:   Fri, 12 Oct 2018 16:10:51 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avri Altman <avri.altman@wdc.com>
+Subject: linux-next: build warning after merge of the scsi-mkp tree
+Message-ID: <20181012161051.34223689@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KHqK1_6L2xiani+aCG0g2.z"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds boot, ipi, hotplug code for SMP.
+--Sig_/KHqK1_6L2xiani+aCG0g2.z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Changelog:
- - remove set_ipi_irq_mapping callback.
- - Convert the cpumask to an interrupt-controller specific representation
-   in driver's code, and not the SMP code's.
- - csky: remove irq_mapping from smp.c
-   There are some feedbacks from irqchip, and we need to adjust
-   "smp.c & smp.h" to match the csky_mp_intc modification.
- - Move IPI_IRQ define into drivers/irqchip/csky_mpintc.c, because it's a
-   interrupt controller specific.
- - Bugfix request_irq with IPI_IRQ, we must use irq_mapping return value
-   not directly use IPI_IRQ. The modification also involves csky_mp_intc.
+Hi all,
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- arch/csky/include/asm/smp.h |  28 ++++++
- arch/csky/kernel/smp.c      | 237 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 265 insertions(+)
- create mode 100644 arch/csky/include/asm/smp.h
- create mode 100644 arch/csky/kernel/smp.c
+After merging the scsi-mkp tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
-new file mode 100644
-index 0000000..31f7b94
---- /dev/null
-+++ b/arch/csky/include/asm/smp.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_CSKY_SMP_H
-+#define __ASM_CSKY_SMP_H
-+
-+#include <linux/cpumask.h>
-+#include <linux/irqreturn.h>
-+#include <linux/threads.h>
-+
-+#ifdef CONFIG_SMP
-+
-+void __init setup_smp(void);
-+
-+void __init setup_smp_ipi(void);
-+
-+void __init enable_smp_ipi(void);
-+
-+void arch_send_call_function_ipi_mask(struct cpumask *mask);
-+
-+void arch_send_call_function_single_ipi(int cpu);
-+
-+void __init set_send_ipi(void (*func)(const struct cpumask *mask), int irq);
-+
-+#define raw_smp_processor_id()	(current_thread_info()->cpu)
-+
-+#endif /* CONFIG_SMP */
-+
-+#endif /* __ASM_CSKY_SMP_H */
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-new file mode 100644
-index 0000000..5ea9516
---- /dev/null
-+++ b/arch/csky/kernel/smp.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/sched.h>
-+#include <linux/kernel_stat.h>
-+#include <linux/notifier.h>
-+#include <linux/cpu.h>
-+#include <linux/percpu.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/sched/mm.h>
-+#include <asm/irq.h>
-+#include <asm/traps.h>
-+#include <asm/sections.h>
-+#include <asm/mmu_context.h>
-+#include <asm/pgalloc.h>
-+
-+static struct {
-+	unsigned long bits ____cacheline_aligned;
-+} ipi_data[NR_CPUS] __cacheline_aligned;
-+
-+enum ipi_message_type {
-+	IPI_EMPTY,
-+	IPI_RESCHEDULE,
-+	IPI_CALL_FUNC,
-+	IPI_MAX
-+};
-+
-+static irqreturn_t handle_ipi(int irq, void *dev)
-+{
-+	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-+
-+	while (true) {
-+		unsigned long ops;
-+
-+		ops = xchg(pending_ipis, 0);
-+		if (ops == 0)
-+			return IRQ_HANDLED;
-+
-+		if (ops & (1 << IPI_RESCHEDULE))
-+			scheduler_ipi();
-+
-+		if (ops & (1 << IPI_CALL_FUNC))
-+			generic_smp_call_function_interrupt();
-+
-+		BUG_ON((ops >> IPI_MAX) != 0);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void (*send_arch_ipi)(const struct cpumask *mask);
-+
-+static int ipi_irq;
-+void __init set_send_ipi(void (*func)(const struct cpumask *mask), int irq)
-+{
-+	if (send_arch_ipi)
-+		return;
-+
-+	send_arch_ipi = func;
-+	ipi_irq = irq;
-+}
-+
-+static void
-+send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
-+{
-+	int i;
-+
-+	for_each_cpu(i, to_whom)
-+		set_bit(operation, &ipi_data[i].bits);
-+
-+	smp_mb();
-+	send_arch_ipi(to_whom);
-+}
-+
-+void arch_send_call_function_ipi_mask(struct cpumask *mask)
-+{
-+	send_ipi_message(mask, IPI_CALL_FUNC);
-+}
-+
-+void arch_send_call_function_single_ipi(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
-+}
-+
-+static void ipi_stop(void *unused)
-+{
-+	while (1);
-+}
-+
-+void smp_send_stop(void)
-+{
-+	on_each_cpu(ipi_stop, NULL, 1);
-+}
-+
-+void smp_send_reschedule(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
-+}
-+
-+void *__cpu_up_stack_pointer[NR_CPUS];
-+void *__cpu_up_task_pointer[NR_CPUS];
-+
-+void __init smp_prepare_boot_cpu(void)
-+{
-+}
-+
-+void __init smp_prepare_cpus(unsigned int max_cpus)
-+{
-+}
-+
-+void __init enable_smp_ipi(void)
-+{
-+	enable_percpu_irq(ipi_irq, 0);
-+}
-+
-+static int ipi_dummy_dev;
-+void __init setup_smp_ipi(void)
-+{
-+	int rc;
-+
-+	if (ipi_irq == 0)
-+		panic("%s IRQ mapping failed\n", __func__);
-+
-+	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
-+				&ipi_dummy_dev);
-+	if (rc)
-+		panic("%s IRQ request failed\n", __func__);
-+
-+	enable_smp_ipi();
-+}
-+
-+void __init setup_smp(void)
-+{
-+	struct device_node *node = NULL;
-+	int cpu;
-+
-+	while ((node = of_find_node_by_type(node, "cpu"))) {
-+		if (!of_device_is_available(node))
-+			continue;
-+
-+		if (of_property_read_u32(node, "reg", &cpu))
-+			continue;
-+
-+		if (cpu >= NR_CPUS)
-+			continue;
-+
-+		set_cpu_possible(cpu, true);
-+		set_cpu_present(cpu, true);
-+	}
-+}
-+
-+extern void _start_smp_secondary(void);
-+
-+volatile unsigned int secondary_hint;
-+volatile unsigned int secondary_ccr;
-+volatile unsigned int secondary_stack;
-+
-+int __cpu_up(unsigned int cpu, struct task_struct *tidle)
-+{
-+	unsigned int tmp;
-+
-+	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
-+
-+	secondary_hint = mfcr("cr31");
-+
-+	secondary_ccr  = mfcr("cr18");
-+
-+	/* Flush dcache */
-+	mtcr("cr17", 0x22);
-+
-+	/* Enable cpu in SMP reset ctrl reg */
-+	tmp = mfcr("cr<29, 0>");
-+	tmp |= 1 << cpu;
-+	mtcr("cr<29, 0>", tmp);
-+
-+	/* Wait for the cpu online */
-+	while (!cpu_online(cpu));
-+
-+	secondary_stack = 0;
-+
-+	return 0;
-+}
-+
-+void __init smp_cpus_done(unsigned int max_cpus)
-+{
-+}
-+
-+int setup_profiling_timer(unsigned int multiplier)
-+{
-+	return -EINVAL;
-+}
-+
-+void csky_start_secondary(void)
-+{
-+	struct mm_struct *mm = &init_mm;
-+	unsigned int cpu = smp_processor_id();
-+
-+	mtcr("cr31", secondary_hint);
-+	mtcr("cr18", secondary_ccr);
-+
-+	mtcr("vbr", vec_base);
-+
-+	flush_tlb_all();
-+	write_mmu_pagemask(0);
-+	TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir);
-+	TLBMISS_HANDLER_SETUP_PGD_KERNEL(swapper_pg_dir);
-+
-+	asid_cache(smp_processor_id()) = ASID_FIRST_VERSION;
-+
-+#ifdef CONFIG_CPU_HAS_FPU
-+	init_fpu();
-+#endif
-+
-+	enable_smp_ipi();
-+
-+	mmget(mm);
-+	mmgrab(mm);
-+	current->active_mm = mm;
-+	cpumask_set_cpu(cpu, mm_cpumask(mm));
-+
-+	notify_cpu_starting(cpu);
-+	set_cpu_online(cpu, true);
-+
-+	pr_info("CPU%u Online: %s...\n", cpu, __func__);
-+
-+	local_irq_enable();
-+	preempt_disable();
-+	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
-+}
--- 
-2.7.4
+./usr/include/scsi/scsi_bsg_ufs.h:45: found __[us]{8,16,32,64} type without=
+ #include <linux/types.h>
 
+Introduced by commits
+
+  a851b2bd3632 ("scsi: uapi: ufs: Make utp_upiu_req visible to user space")
+  e77044c5a842 ("scsi: ufs-bsg: Add support for uic commands in ufs_bsg_req=
+uest()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KHqK1_6L2xiani+aCG0g2.z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvALNsACgkQAVBC80lX
+0GyV9Qf8CC42pjmBm+cWGHaPt+OS1yyHafI3aO6UrYXaueLBkNk186OZhGBf32Kd
+FQQoVB7u22VNtlRlopYofiVdygR/s8QesHDm8ZWUsouPO2RIUoTRHvj7s/2qG/PI
+QDpg0Xxmp1xY9QtrSXTAg31KqcFXwr86EjogWDHKm/8pmH/O/GcyFWwIsdhT6oWt
+ViDpyXd1wFS6tj7xfqiIz4yidD6zNnIdMgpJkKIQOq/HnJsVzRy9o8eiZjzgIFIl
+XC1bzLB0HhCZ9VukSmc2BgogbBQxUsR24JwxhVc0zotSFSvaGZrIW3K+M2cSW7M/
+QhE9o8jwmwEgWk5+jCZ4L9QF6xkOtQ==
+=F+6U
+-----END PGP SIGNATURE-----
+
+--Sig_/KHqK1_6L2xiani+aCG0g2.z--
