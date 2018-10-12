@@ -2,99 +2,97 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35F5C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFB9C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F42E2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:24:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDESaIx6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F42E2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 9AE462077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:25:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE462077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeJMD7H (ORCPT
+        id S1727007AbeJMD7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:59:07 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:36370 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeJMD7H (ORCPT
+        Fri, 12 Oct 2018 23:59:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52105 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeJMD7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:59:07 -0400
-Received: by mail-pf1-f172.google.com with SMTP id l81-v6so6741533pfg.3;
-        Fri, 12 Oct 2018 13:24:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3ESDOzR470cAODi2THgeAyCFK5JT7nCcbvpBCMDXPI4=;
-        b=KDESaIx6G+kM0P+VC+leoUzctlycTbT1YcONFifSdeL80r6/dZKYlOWaduM3HGWbTi
-         2zLhf7jfY8yxm7K7l0PD7zXEShsZTTBQ0/cnXgfZ2LMHX7MYHIahmf9y5Gpb38+4Hpm0
-         1kbTUSUiRcti8GIbkEhS6IJnoQEovqThhLMEkdaELnxGroiAZqzgq8XN+571Fwp6G96f
-         Jt6mjVbnO9Yh7350k3iIb31pPnyIb/USHiDXS6T52xVR5ZiZwAmWS6ZPMm/dYvpR5u1b
-         7t8/N9YpNYK0ykznYiugTbrTjsDvLwwLjoautj9ZRJzBYwu/2sObbc9vGVknPW179ZgK
-         i5JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3ESDOzR470cAODi2THgeAyCFK5JT7nCcbvpBCMDXPI4=;
-        b=ic2asd2pF/1OpD8zZsvc/CX9VmEJZ5/UhtbkfYl/+USq1O9062gAtRYryuwBMikaGe
-         bK7Fgu918jO1iQre2Q3ELrPo6dXqUk3KZTory6L0rCEmmbPZYow3OWjsaH7dDQtAa3Lp
-         OckBxrFhXeu7oiEkZIjxAU4aGWnVWepNWg7uM8sixN/hsMOsE9skhOjoYmSdotugDS59
-         ioMg3g59PONJHbe4Si6qQo3CdAxvR+50K8KbwTKCRc/sgZLcQNBYjA/Xdeu0pp3vEI+G
-         da87C+dN0zHfBhCDfcNxXxXrTgKAgV0ygpsw855A3LTR/1F+kBNHuBK4K9R24kij2nVT
-         sW4Q==
-X-Gm-Message-State: ABuFfojGwiVLRXxbH6kvirjDX8sXFNwlmPV40x6iXrvq28sSD76ASQb0
-        +Q5vJYCk94Jjy+jmugyadKU=
-X-Google-Smtp-Source: ACcGV63dKKAD5134X8ZEzX1Ck322n7d/q2nivp4+sfXkOzwpcEGlw6F8+305oCmOh4jNXpP8W3hTCA==
-X-Received: by 2002:a62:5c03:: with SMTP id q3-v6mr7658244pfb.182.1539375895234;
-        Fri, 12 Oct 2018 13:24:55 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm3011633pfn.66.2018.10.12.13.24.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 13:24:54 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 13:24:52 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 000/120] 3.18.124-stable review
-Message-ID: <20181012202452.GA30665@roeck-us.net>
-References: <20181011152549.500488630@linuxfoundation.org>
+        Fri, 12 Oct 2018 23:59:36 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gB3zq-0007k7-KU; Fri, 12 Oct 2018 22:25:18 +0200
+Date:   Fri, 12 Oct 2018 22:25:18 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 11/11] x86/fpu: defer FPU state load until return to
+ userspace
+Message-ID: <20181012202518.2gnmpgwxesvkna6i@linutronix.de>
+References: <20181004140547.13014-1-bigeasy@linutronix.de>
+ <20181004140547.13014-12-bigeasy@linutronix.de>
+ <CALCETrV01t-4gya0WEY0=R7XvuDA4dkf_pssfPZKDm9=1fCBmg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181011152549.500488630@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrV01t-4gya0WEY0=R7XvuDA4dkf_pssfPZKDm9=1fCBmg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 05:33:01PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.124 release.
-> There are 120 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2018-10-04 09:14:33 [-0700], Andy Lutomirski wrote:
+> > diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+> > index 3b2490b819181..3dad5c3b335eb 100644
+> > --- a/arch/x86/entry/common.c
+> > +++ b/arch/x86/entry/common.c
+> > @@ -196,6 +197,14 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
+> >         if (unlikely(cached_flags & EXIT_TO_USERMODE_LOOP_FLAGS))
+> >                 exit_to_usermode_loop(regs, cached_flags);
+> >
+> > +       /* Reload ti->flags; we may have rescheduled above. */
+> > +       cached_flags = READ_ONCE(ti->flags);
+> > +
+> > +       if (unlikely(cached_flags & _TIF_LOAD_FPU))
+> > +               switch_fpu_return();
+> > +       else
+> > +               fpregs_is_state_consistent();
 > 
-> Responses should be made by Sat Oct 13 15:25:29 UTC 2018.
-> Anything received after that time might be too late.
+> Shouldn't this be:
 > 
+> fpregs_assert_state_consistent();  /* see below */
+> 
+> if (unlikely(cached_flags & _TIF_LOAD_FPU))
+>   switch_fpu_return();
 
-For v3.18.123-122-gfaa00f6cbce8:
+hmm. This should work. 
 
-Build results:
-	total: 138 pass: 138 fail: 0
-Qemu test results:
-	total: 221 pass: 221 fail: 0
+> > diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+> > index a9caac9d4a729..e3077860f7333 100644
+> > --- a/arch/x86/include/asm/fpu/api.h
+> > +++ b/arch/x86/include/asm/fpu/api.h
+> > @@ -27,6 +27,17 @@ extern void kernel_fpu_begin(void);
+> >  extern void kernel_fpu_end(void);
+> >  extern bool irq_fpu_usable(void);
+> >
+> > +#ifdef CONFIG_X86_DEBUG_FPU
+> > +extern void fpregs_is_state_consistent(void);
+> > +#else
+> > +static inline void fpregs_is_state_consistent(void) { }
+> > +#endif
+> 
+> Can you name this something like fpregs_assert_state_consistent()?
+sure.
 
-Details are available at https://kerneltests.org/builders/.
-
-Guenter
+Sebastian
