@@ -6,145 +6,139 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BE6C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E957C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B1121470
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B1121470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D708321470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D708321470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeJMBIk (ORCPT
+        id S1727788AbeJMBI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:08:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:55456 "EHLO foss.arm.com"
+        Fri, 12 Oct 2018 21:08:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44766 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJMBIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:08:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1DDCF;
-        Fri, 12 Oct 2018 10:35:05 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE3CA3F5D3;
-        Fri, 12 Oct 2018 10:35:02 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 18:35:00 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        ulf.hansson@linaro.org, khilman@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH RFC v1 8/8] arm64: dtsi: sdm845: Add cpu power domain
- support
-Message-ID: <20181012173500.GB23170@e107155-lin>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
- <1539206455-29342-9-git-send-email-rplsssn@codeaurora.org>
+        id S1726665AbeJMBI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:08:57 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 710117E9FD;
+        Fri, 12 Oct 2018 17:35:23 +0000 (UTC)
+Received: from redhat.com (ovpn-125-5.rdu2.redhat.com [10.10.125.5])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 36EF27B52F;
+        Fri, 12 Oct 2018 17:35:21 +0000 (UTC)
+Date:   Fri, 12 Oct 2018 13:35:19 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Nellans <dnellans@nvidia.com>,
+        Ingo Molnar <mingo@elte.hu>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH] mm/thp: fix call to mmu_notifier in
+ set_pmd_migration_entry()
+Message-ID: <20181012173518.GD6593@redhat.com>
+References: <20181012160953.5841-1-jglisse@redhat.com>
+ <DB07F115-B404-4AB0-9D54-BC20C3A3F2B0@cs.rutgers.edu>
+ <20181012172422.GA7395@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1539206455-29342-9-git-send-email-rplsssn@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181012172422.GA7395@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 12 Oct 2018 17:35:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 02:50:55AM +0530, Raju P.L.S.S.S.N wrote:
-> Add cpu power domain support
+On Fri, Oct 12, 2018 at 01:24:22PM -0400, Andrea Arcangeli wrote:
+> Hello,
 > 
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> On Fri, Oct 12, 2018 at 12:20:54PM -0400, Zi Yan wrote:
+> > On 12 Oct 2018, at 12:09, jglisse@redhat.com wrote:
+> > 
+> > > From: Jérôme Glisse <jglisse@redhat.com>
+> > >
+> > > Inside set_pmd_migration_entry() we are holding page table locks and
+> > > thus we can not sleep so we can not call invalidate_range_start/end()
+> > >
+> > > So remove call to mmu_notifier_invalidate_range_start/end() and add
+> > > call to mmu_notifier_invalidate_range(). Note that we are already
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d3662a8..aadaa20 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -96,6 +96,7 @@
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> +			power-domains = <&cpu_pd>;
->  			L2_0: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -111,6 +112,7 @@
->  			reg = <0x0 0x100>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_100>;
-> +			power-domains = <&cpu_pd>;
->  			L2_100: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -123,6 +125,7 @@
->  			reg = <0x0 0x200>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_200>;
-> +			power-domains = <&cpu_pd>;
->  			L2_200: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -135,6 +138,7 @@
->  			reg = <0x0 0x300>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_300>;
-> +			power-domains = <&cpu_pd>;
->  			L2_300: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -147,6 +151,7 @@
->  			reg = <0x0 0x400>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_400>;
-> +			power-domains = <&cpu_pd>;
->  			L2_400: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -159,6 +164,7 @@
->  			reg = <0x0 0x500>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_500>;
-> +			power-domains = <&cpu_pd>;
->  			L2_500: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -171,6 +177,7 @@
->  			reg = <0x0 0x600>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_600>;
-> +			power-domains = <&cpu_pd>;
->  			L2_600: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -183,6 +190,7 @@
->  			reg = <0x0 0x700>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_700>;
-> +			power-domains = <&cpu_pd>;
->  			L2_700: l2-cache {
->  				compatible = "cache";
->  				next-level-cache = <&L3_0>;
-> @@ -1170,6 +1178,11 @@
->  					  <WAKE_TCS    3>,
->  					  <CONTROL_TCS 1>;
->  
-> +			cpu_pd: power-domain-controller {
-> +				compatible = "qcom,cpu-pm-domain";
-> +				#power-domain-cells = <0>;
-> +			};
-> +
+> Why the call to mmu_notifier_invalidate_range if we're under
+> range_start and followed by range_end? (it's not _range_only_end, if
+> it was _range_only_end the above would be needed)
 
-After all the discussions, I see this power domain actually influence
-not just CPUs but other devices. So this should be top most power domain
-in the system with lots of devices or their power domains pointing to it.
-Why is this just pointing to cpus ?
+I wanted to be extra safe and accept to over invalidate. You are right
+that it is not strictly necessary. I am fine with removing it.
 
---
-Regards,
-Sudeep
+> 
+> > > calling mmu_notifier_invalidate_range_start/end() inside the function
+> > > calling set_pmd_migration_entry() (see try_to_unmap_one()).
+> > >
+> > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > > Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> > > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> > > Cc: Dave Hansen <dave.hansen@intel.com>
+> > > Cc: David Nellans <dnellans@nvidia.com>
+> > > Cc: Ingo Molnar <mingo@elte.hu>
+> > > Cc: Mel Gorman <mgorman@techsingularity.net>
+> > > Cc: Minchan Kim <minchan@kernel.org>
+> > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Vlastimil Babka <vbabka@suse.cz>
+> > > Cc: Michal Hocko <mhocko@kernel.org>
+> > > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > > ---
+> > >  mm/huge_memory.c | 7 +------
+> > >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > >
+> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > index 533f9b00147d..93cb80fe12cb 100644
+> > > --- a/mm/huge_memory.c
+> > > +++ b/mm/huge_memory.c
+> > > @@ -2885,9 +2885,6 @@ void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+> > >  	if (!(pvmw->pmd && !pvmw->pte))
+> > >  		return;
+> > >
+> > > -	mmu_notifier_invalidate_range_start(mm, address,
+> > > -			address + HPAGE_PMD_SIZE);
+> > > -
+> > >  	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+> > >  	pmdval = *pvmw->pmd;
+> > >  	pmdp_invalidate(vma, address, pvmw->pmd);
+> > > @@ -2898,11 +2895,9 @@ void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+> > >  	if (pmd_soft_dirty(pmdval))
+> > >  		pmdswp = pmd_swp_mksoft_dirty(pmdswp);
+> > >  	set_pmd_at(mm, address, pvmw->pmd, pmdswp);
+> > > +	mmu_notifier_invalidate_range(mm, address, address + HPAGE_PMD_SIZE);
+> 
+> It's not obvious why it's needed, if it's needed maybe a comment can
+> be added.
+
+We can remove it. Should i post a v2 without it ?
+
+Cheers,
+Jérôme
