@@ -2,179 +2,142 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56469C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBA9C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 063602098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7EEB2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="caTxx/zx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063602098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZfS4nbFz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZfS4nbFz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7EEB2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbeJLU0k (ORCPT
+        id S1728539AbeJLU1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:26:40 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34088 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbeJLU0j (ORCPT
+        Fri, 12 Oct 2018 16:27:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57876 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLU1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:26:39 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j17-v6so11303043lja.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 05:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=QFWh2VY+/WHVnwKgB1Ultl1aw9SB9K99iEk317UWLjQ=;
-        b=caTxx/zxXkEm9pN8MB3n+ze57S/dfwSqW4I40t+7ScB/77GKpqJ8g4YW0QmGMWp3a6
-         N+axGj5RkOdMWImrLW5ZZUxN4lT6uMaJ3MgVDVw3RdtNl/V+5cQiNJ0WKiypJIQI/+Mq
-         NQZLW7kSDETeX06MRQ6hggCFLq73gCWVTtbKU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QFWh2VY+/WHVnwKgB1Ultl1aw9SB9K99iEk317UWLjQ=;
-        b=MXKmkoLtIgATbHaFvQPAbV0grT+pG543RL862oqfwzGsjWd36fb99UA53T3ZH8mSIQ
-         N8daSxRhTcHFQV5FuW5jueEWedYMU9a4MUFSaJosYJ+4U5Xa0iE3f/RLPrDlfQwWK6sF
-         UwRziTW6uhZgCBllZ4XcSbhY7vhVl2q4ov4tJzrhM5RSEZMs/Zj8kVPFbB2RJ3eOsVIw
-         VrgBlJcfWE5y7WWHPhWT/hE9+0PqtwkZ4k4wFHBs9YrNmin6gg/qO5CbSFjLdNMpCWLY
-         VgZ4vLr1evqC/xB3t4uzF60zPMDuiqhm20fYfpQrYFpPYPijPsk8glb81J7KD9awHOlT
-         7eKA==
-X-Gm-Message-State: ABuFfojayVVXtu8si/bUfw4s+o5+plkd1EPFHnY3UdaHD/Dknmb8bh8t
-        wQsIvDxXM9obDDHwHNb1uWg2AA==
-X-Google-Smtp-Source: ACcGV62PVgvHt6JngNf4p8esuFYrHc9FytB8xZxlwPx+VwyutLvup5H9XzxBo5N9aUAkDmdLhrp1Ow==
-X-Received: by 2002:a2e:9dc4:: with SMTP id x4-v6mr4341433ljj.133.1539348857666;
-        Fri, 12 Oct 2018 05:54:17 -0700 (PDT)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id u7-v6sm252741lju.15.2018.10.12.05.54.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 05:54:15 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v2] regulator/gpio: Allow nonexclusive GPIO access
-Date:   Fri, 12 Oct 2018 14:54:12 +0200
-Message-Id: <20181012125412.21324-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.17.2
+        Fri, 12 Oct 2018 16:27:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E94F360116; Fri, 12 Oct 2018 12:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539348928;
+        bh=Ev0I13m5cYLwqIYwfwPSm3OR0pkwNn5w5dCv4c7K0zM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZfS4nbFzd4pwLNLQtl/VbYVuZ13PUBXAv2Va0z/rxbRormv6cUh/06nP/4+AGi8SB
+         Uhz6oV9VSzxRKL06v5/vN3LsiwfqgXRiSE4geD0XUUN+CmLHvqL7wEdGeO/8gkfHJq
+         IERQRroavXT0EN+lH7eKhuqj1y8IwHUa7rEg/MHI=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 44ABC60116;
+        Fri, 12 Oct 2018 12:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539348928;
+        bh=Ev0I13m5cYLwqIYwfwPSm3OR0pkwNn5w5dCv4c7K0zM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZfS4nbFzd4pwLNLQtl/VbYVuZ13PUBXAv2Va0z/rxbRormv6cUh/06nP/4+AGi8SB
+         Uhz6oV9VSzxRKL06v5/vN3LsiwfqgXRiSE4geD0XUUN+CmLHvqL7wEdGeO/8gkfHJq
+         IERQRroavXT0EN+lH7eKhuqj1y8IwHUa7rEg/MHI=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 12 Oct 2018 05:55:28 -0700
+From:   Sodagudi Prasad <psodagud@codeaurora.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, robin.murphy@arm.com,
+        ynorov@caviumnetworks.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: livelock with hrtimer cpu_base->lock
+In-Reply-To: <20181010164919.GA16512@arm.com>
+References: <8f671ebb6b331cd00ce17d111f28c548@codeaurora.org>
+ <20181010164919.GA16512@arm.com>
+Message-ID: <63fae7b2ef8dc4cc67928329cf7fcb60@codeaurora.org>
+X-Sender: psodagud@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows nonexclusive (simultaneous) access to a single
-GPIO line for the fixed regulator enable line. This happens
-when several regulators use the same GPIO for enabling and
-disabling a regulator, and all need a handle on their GPIO
-descriptor.
+On 2018-10-10 09:49, Will Deacon wrote:
+> Hi Prasad,
+> 
+> On Tue, Oct 09, 2018 at 01:56:14PM -0700, Sodagudi Prasad wrote:
+>> This is regarding - thread "try to fix contention between 
+>> expire_timers and
+>> try_to_del_timer_sync".
+>> https://lkml.org/lkml/2017/7/28/172
+>> 
+>> I think this live lockup issue was discussed earlier but the final set 
+>> of
+>> changes were not concluded.
+> 
+> Well we basically need a way to pick a value for 
+> CPU_RELAX_WFE_THRESHOLD.
+> Do you have any ideas? It could be determined at runtime if necessary.
+> 
+Hi Will,
 
-This solution with a special flag is not entirely elegant
-and should ideally be replaced by something more careful as
-this makes it possible for several consumers to
-enable/disable the same GPIO line to the left and right
-without any consistency. The current use inside the regulator
-core should however be fine as it takes special care to
-handle this.
+Please share what are values need to be tried for 
+CPU_RELAX_WFE_THRESHOLD.
 
-For the state of the GPIO backend, this is still the
-lesser evil compared to going back to global GPIO
-numbers.
+  It would be great if it can be determined from runtime.  Please let me 
+know
+if any testing need to be done with dynamic detection patch.
 
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Fixes: efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Fix the print string to use ternary operator and alternative
-  text.
-- Collect Tested-by's from affected systems.
-- Mark: I tested to apply this on the regulator tree pulled
-  in my for-next branches for GPIO and pin control on top and
-  it seems to work! Could you apply it?
----
- drivers/gpio/gpiolib.c        | 19 +++++++++++++++++--
- drivers/regulator/fixed.c     | 13 +++++++++++++
- include/linux/gpio/consumer.h |  1 +
- 3 files changed, 31 insertions(+), 2 deletions(-)
+-Thanks, Prasad
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7c222df8f834..56178af4ecd9 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4144,8 +4144,23 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 * the device name as label
- 	 */
- 	status = gpiod_request(desc, con_id ? con_id : devname);
--	if (status < 0)
--		return ERR_PTR(status);
-+	if (status < 0) {
-+		if (status == -EBUSY && flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
-+			/*
-+			 * This happens when there are several consumers for
-+			 * the same GPIO line: we just return here without
-+			 * further initialization. It is a bit if a hack.
-+			 * This is necessary to support fixed regulators.
-+			 *
-+			 * FIXME: Make this more sane and safe.
-+			 */
-+			dev_info(dev, "nonexclusive access to GPIO for %s\n",
-+				 con_id ? con_id : devname);
-+			return desc;
-+		} else {
-+			return ERR_PTR(status);
-+		}
-+	}
- 
- 	status = gpiod_configure_flags(desc, con_id, lookupflags, flags);
- 	if (status < 0) {
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index 7d639ad953b6..ccc29038f19a 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -170,6 +170,19 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 			gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
- 	}
- 
-+	/*
-+	 * Some fixed regulators share the enable line between two
-+	 * regulators which makes it necessary to get a handle on the
-+	 * same descriptor for two different consumers. This will get
-+	 * the GPIO descriptor, but only the first call will initialize
-+	 * it so any flags such as inversion or open drain will only
-+	 * be set up by the first caller and assumed identical on the
-+	 * next caller.
-+	 *
-+	 * FIXME: find a better way to deal with this.
-+	 */
-+	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
-+
- 	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL, gflags);
- 	if (IS_ERR(cfg.ena_gpiod))
- 		return PTR_ERR(cfg.ena_gpiod);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 0f350616d372..f2f887795d43 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -39,6 +39,7 @@ struct gpio_descs {
- #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
- #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
- #define GPIOD_FLAGS_BIT_OPEN_DRAIN	BIT(3)
-+#define GPIOD_FLAGS_BIT_NONEXCLUSIVE	BIT(4)
- 
- /**
-  * Optional flags that can be passed to one of gpiod_* to configure direction
+>> I would like to check whether you have new updates on this issue or 
+>> not.
+>> This problem is observed with 4.14 .64 stable kernel too.
+>> We see this problem 2 times in overnight testing.
+>> 
+>> I have to add the following code to avoid live lock. I am thinking 
+>> that
+>> fixing this at the cpu_relax() level.
+>> 
+>> +++ b/kernel/time/hrtimer.c
+>> @@ -52,6 +52,7 @@
+>>  #include <linux/timer.h>
+>>  #include <linux/freezer.h>
+>>  #include <linux/compat.h>
+>> +#include <linux/delay.h>
+>> 
+>>  #include <linux/uaccess.h>
+>> 
+>> @@ -152,6 +153,7 @@ struct hrtimer_clock_base *lock_hrtimer_base(const
+>> struct hrtimer *timer,
+>> raw_spin_unlock_irqrestore(&base->cpu_base->lock, *flags);
+>>                 }
+>>                 cpu_relax();
+>> +               udelay(1);
+>>         }
+>>  }
+>> 
+>> @@ -1067,6 +1069,7 @@ int hrtimer_cancel(struct hrtimer *timer)
+>>                 if (ret >= 0)
+>>                         return ret;
+>>                 cpu_relax();
+>> +               udelay(1);
+>>         }
+>>  }
+>>  EXPORT_SYMBOL_GPL(hrtimer_cancel);
+> 
+> This is just another bodge and likely to hurt in places where 1us is
+> excessive because there isn't contention.
+> 
+> Will
+
 -- 
-2.17.2
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
