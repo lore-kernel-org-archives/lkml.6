@@ -2,97 +2,177 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD87C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F175C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9EB2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:52:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9EB2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B68DF2077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:54:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CZRRtm65"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68DF2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeJLTYh (ORCPT
+        id S1728353AbeJLT0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:24:37 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44369 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbeJLTYh (ORCPT
+        Fri, 12 Oct 2018 15:26:20 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45544 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJLT0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:24:37 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c56-v6so13471271qtd.11;
-        Fri, 12 Oct 2018 04:52:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SDq2t2cMNcJeQ0YcbIahyQwNnd6dr21sidFAAiwbO2s=;
-        b=XFBSuEB9bLP0anP7YOQKPdA8NBzDu4SgXszwCk/PSvIEuDEpUA50XD/jso8T8nXJpw
-         p03rwVXIwcMUWR4aecj1t8A9S+AT9CJh1nUzJO7HytSa6729idtN1uXtTvCvdcqFPU0X
-         X6njZRhkIz70uwqw4yWQsFpu1KWYi0No0d7RLWgxrKUOGMzPmuHU0eogwSKhCbmsuiUg
-         uEhe279XmJTUn5OQbBP6ukiTTscBKKV+DHlIjWFsUn6AxzggFhlteb5SgbkxwOQX4vTx
-         fRCeqUykX6pZKZhZYU7007g1JegwGk/Pi+EFX1UYgP/0/R7LwgpAhPGJLY7d60GyYoI1
-         pLXA==
-X-Gm-Message-State: ABuFfojO8AHEniApF21EAtBsrAAwCG8DDiSe/1Ctc4Eqz7RhQnPUCjVF
-        5TcWAe06EbzcaA3pxAYHtPGMWhzMzYmOw6edH0M=
-X-Google-Smtp-Source: ACcGV60OGIneDWiadoRjHtVwFkF0WvQD+6ea5IhiaCnMx+cC7ClY/7kLVgoM4AR22irTVPjzyl922sPl/U+FwsMFOuc=
-X-Received: by 2002:a0c:881c:: with SMTP id 28mr5462111qvl.40.1539345151218;
- Fri, 12 Oct 2018 04:52:31 -0700 (PDT)
+        Fri, 12 Oct 2018 15:26:20 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 964BD1258;
+        Fri, 12 Oct 2018 13:54:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539345252;
+        bh=rxur9K3s5b3j3jm+9kAMkg7isbcotSDtUm7h3gvEvQ4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CZRRtm65CtstOc9GBsnNmG06tTnUhQLvrjF75Ef2dnHFZRMQsnEmjAgF8xxrjnDnr
+         zlZlqcoSaGENwDVuPBaCEN/GHXOOjDfrm/JOtrqlLhQstsBt62HuOUbbcPjSQZZtmz
+         LEpz+ma6V2ROulZReWrb+I0WgNe4c9pECoHhaFmw=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 2/7] dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx I2C bridge
+Date:   Fri, 12 Oct 2018 14:54:16 +0300
+Message-ID: <1728543.TWj8z2etku@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181008211205.2900-3-vz@mleia.com>
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-3-vz@mleia.com>
 MIME-Version: 1.0
-References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
- <1539337442-3676-6-git-send-email-firoz.khan@linaro.org> <CAK8P3a1gsuM7mBGm9hx-BTs=HAG3cSjB6M7N-kpMmPy3kixeCQ@mail.gmail.com>
- <CALxhOnhj7qUj57tLX12KmbcE5G-zDK2Qf2fTUbQ=jpmiUcr52w@mail.gmail.com>
-In-Reply-To: <CALxhOnhj7qUj57tLX12KmbcE5G-zDK2Qf2fTUbQ=jpmiUcr52w@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 12 Oct 2018 13:52:15 +0200
-Message-ID: <CAK8P3a3BjuLQh0hTPFTDTkipXXQ+j8ADqbWmNpimkMDzoORkRA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] parisc: wire up rseq system call
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Parisc List <linux-parisc@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 12:16 PM Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> Hi Arnd,
->
-> On Fri, 12 Oct 2018 at 15:26, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Fri, Oct 12, 2018 at 11:45 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > >
-> > > Wire up rseq system call requires an architecture specific
-> > > implementation as it not present now.
-> > >
-> > > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> >
-> > Didn't we conclude that this should be skipped?
->
-> Helge told "I prefer to keep the warning for rseq for now.
-> It reminds me that we still may want the rseq syscall.
-> If the warning is a problem, you may simply add the __IGNORE_rseq define."
->
-> I chose this option; I feel it looks clean
-> "# rseq requires an architecture specific implementation" in syscall.tbl
-> hopefully remind him to add rseq syscall implementation in this architecture.
->
+Hi Vladimir,
 
-But he said he wants the warning instead.
+Thank you for the patch.
 
-     Arnd
+On Tuesday, 9 October 2018 00:12:00 EEST Vladimir Zapolskiy wrote:
+> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> 
+> TI DS90Ux9xx de-/serializers are capable to route I2C messages to
+> I2C slave devices connected to a remote de-/serializer in a pair,
+> the change adds description of device tree bindings of the subcontroller
+> to configure and enable this functionality.
+> 
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> ---
+>  .../bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt  | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+> b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt new
+> file mode 100644
+> index 000000000000..4169e382073a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+> @@ -0,0 +1,61 @@
+> +TI DS90Ux9xx de-/serializer I2C bridge subcontroller
+> +
+> +Required properties:
+> +- compatible: Must contain a generic "ti,ds90ux9xx-i2c-bridge" value and
+> +	may contain one more specific value from the list:
+> +	"ti,ds90ux925-i2c-bridge",
+> +	"ti,ds90ux926-i2c-bridge",
+> +	"ti,ds90ux927-i2c-bridge",
+> +	"ti,ds90ux928-i2c-bridge",
+> +	"ti,ds90ux940-i2c-bridge".
+
+I still don't think the I2C bridge should be modeled with a separate 
+compatible string, as explained in my comments to the cover letter and patch 
+1/7.
+
+> +Required properties of a de-/serializer device connected to a local I2C
+> bus:
+> +- ti,i2c-bridges: List of phandles to remote de-/serializer devices with
+> +	two arguments: id of a local de-/serializer FPD link and an assigned
+> +	I2C address of a remote de-/serializer to be accessed on a local
+> +	I2C bus.
+
+Please don't. Just make the deserializer a child of the serializer. This is 
+how DT works, devices are organized in a tree based on the main control bus. 
+When the deserializer is controlled from the serializer through the FPD link, 
+it should be a child of the serializer.
+
+> +Optional properties of a de-/serializer device connected to a local I2C
+> bus:
+> +- ti,i2c-bridge-maps: List of 3-cell values:
+> +	- the first argument is id of a local de-/serializer FPD link,
+> +	- the second argument is an I2C address of a device connected to
+> +	  a remote de-/serializer IC,
+> +	- the third argument is an I2C address of the remote I2C device
+> +	  for access on a local I2C bus.
+> +- ti,i2c-bridge-auto-ack: Enables AUTO ACK mode.
+
+From my experience with GMSL this isn't something you can just enable or 
+disable unconditionally, it needs to be handled at runtime, and doesn't belong 
+to DT anyway.
+
+> +- ti,i2c-bridge-pass-all: Enables PASS ALL mode, remote I2C slave devices
+> +	are accessible on a local (host) I2C bus without I2C address
+> +	remappings.
+
+This property also doesn't seem like a hardware description. Please try to 
+focus on what DT describes, not what the effect of the properties are. 
+Bindings need to describe the model of the device, and that description then 
+leads to effects. It shouldn't be the other way around.
+
+> +Remote de-/serializer device may contain a list of device nodes, each
+> +one represents an I2C device connected to that remote de-/serializer IC.
+> +
+> +Example (remote device is a deserializer with Atmel MXT touchscreen):
+> +
+> +serializer: serializer@c {
+> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
+> +	reg = <0xc>;
+> +
+> +	i2c-bridge {
+> +		compatible = "ti,ds90ux927-i2c-bridge",
+> +			     "ti,ds90ux9xx-i2c-bridge";
+> +		ti,i2c-bridges = <&deserializer 0 0x3b>;
+> +		ti,i2c-bridge-maps = <0 0x4b 0x64>;
+> +	};
+> +};
+> +
+> +deserializer: deserializer {
+> +	compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
+> +
+> +	i2c-bridge {
+> +		compatible = "ti,ds90ux928-i2c-bridge",
+> +			     "ti,ds90ux9xx-i2c-bridge";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		touchscreen@4b {
+> +			compatible = "atmel,maxtouch";
+> +			reg = <0x4b>;
+> +		};
+> +	};
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
