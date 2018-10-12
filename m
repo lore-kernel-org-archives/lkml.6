@@ -2,142 +2,109 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBA9C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5103CC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7EEB2087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:55:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZfS4nbFz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZfS4nbFz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7EEB2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0AFE52086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFE52086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbeJLU1u (ORCPT
+        id S1728574AbeJLUam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:27:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57876 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeJLU1u (ORCPT
+        Fri, 12 Oct 2018 16:30:42 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:23055 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLUam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:27:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E94F360116; Fri, 12 Oct 2018 12:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539348928;
-        bh=Ev0I13m5cYLwqIYwfwPSm3OR0pkwNn5w5dCv4c7K0zM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZfS4nbFzd4pwLNLQtl/VbYVuZ13PUBXAv2Va0z/rxbRormv6cUh/06nP/4+AGi8SB
-         Uhz6oV9VSzxRKL06v5/vN3LsiwfqgXRiSE4geD0XUUN+CmLHvqL7wEdGeO/8gkfHJq
-         IERQRroavXT0EN+lH7eKhuqj1y8IwHUa7rEg/MHI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 44ABC60116;
-        Fri, 12 Oct 2018 12:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539348928;
-        bh=Ev0I13m5cYLwqIYwfwPSm3OR0pkwNn5w5dCv4c7K0zM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZfS4nbFzd4pwLNLQtl/VbYVuZ13PUBXAv2Va0z/rxbRormv6cUh/06nP/4+AGi8SB
-         Uhz6oV9VSzxRKL06v5/vN3LsiwfqgXRiSE4geD0XUUN+CmLHvqL7wEdGeO/8gkfHJq
-         IERQRroavXT0EN+lH7eKhuqj1y8IwHUa7rEg/MHI=
+        Fri, 12 Oct 2018 16:30:42 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9CCwJfq003805;
+        Fri, 12 Oct 2018 21:58:19 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Fri, 12 Oct 2018 21:58:19 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9CCwJra003790
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 12 Oct 2018 21:58:19 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
+ without eligible tasks
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <000000000000dc48d40577d4a587@google.com>
+ <20181010151135.25766-1-mhocko@kernel.org>
+ <20181012112008.GA27955@cmpxchg.org> <20181012120858.GX5873@dhcp22.suse.cz>
+ <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
+ <20181012124137.GA29330@cmpxchg.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
+Date:   Fri, 12 Oct 2018 21:58:19 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20181012124137.GA29330@cmpxchg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 12 Oct 2018 05:55:28 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     catalin.marinas@arm.com, gregkh@linuxfoundation.org,
-        ard.biesheuvel@linaro.org, robin.murphy@arm.com,
-        ynorov@caviumnetworks.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: livelock with hrtimer cpu_base->lock
-In-Reply-To: <20181010164919.GA16512@arm.com>
-References: <8f671ebb6b331cd00ce17d111f28c548@codeaurora.org>
- <20181010164919.GA16512@arm.com>
-Message-ID: <63fae7b2ef8dc4cc67928329cf7fcb60@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-10 09:49, Will Deacon wrote:
-> Hi Prasad,
-> 
-> On Tue, Oct 09, 2018 at 01:56:14PM -0700, Sodagudi Prasad wrote:
->> This is regarding - thread "try to fix contention between 
->> expire_timers and
->> try_to_del_timer_sync".
->> https://lkml.org/lkml/2017/7/28/172
->> 
->> I think this live lockup issue was discussed earlier but the final set 
->> of
->> changes were not concluded.
-> 
-> Well we basically need a way to pick a value for 
-> CPU_RELAX_WFE_THRESHOLD.
-> Do you have any ideas? It could be determined at runtime if necessary.
-> 
-Hi Will,
+Calling printk() people. ;-)
 
-Please share what are values need to be tried for 
-CPU_RELAX_WFE_THRESHOLD.
-
-  It would be great if it can be determined from runtime.  Please let me 
-know
-if any testing need to be done with dynamic detection patch.
-
--Thanks, Prasad
-
->> I would like to check whether you have new updates on this issue or 
->> not.
->> This problem is observed with 4.14 .64 stable kernel too.
->> We see this problem 2 times in overnight testing.
->> 
->> I have to add the following code to avoid live lock. I am thinking 
->> that
->> fixing this at the cpu_relax() level.
->> 
->> +++ b/kernel/time/hrtimer.c
->> @@ -52,6 +52,7 @@
->>  #include <linux/timer.h>
->>  #include <linux/freezer.h>
->>  #include <linux/compat.h>
->> +#include <linux/delay.h>
->> 
->>  #include <linux/uaccess.h>
->> 
->> @@ -152,6 +153,7 @@ struct hrtimer_clock_base *lock_hrtimer_base(const
->> struct hrtimer *timer,
->> raw_spin_unlock_irqrestore(&base->cpu_base->lock, *flags);
->>                 }
->>                 cpu_relax();
->> +               udelay(1);
->>         }
->>  }
->> 
->> @@ -1067,6 +1069,7 @@ int hrtimer_cancel(struct hrtimer *timer)
->>                 if (ret >= 0)
->>                         return ret;
->>                 cpu_relax();
->> +               udelay(1);
->>         }
->>  }
->>  EXPORT_SYMBOL_GPL(hrtimer_cancel);
+On 2018/10/12 21:41, Johannes Weiner wrote:
+> On Fri, Oct 12, 2018 at 09:10:40PM +0900, Tetsuo Handa wrote:
+>> On 2018/10/12 21:08, Michal Hocko wrote:
+>>>> So not more than 10 dumps in each 5s interval. That looks reasonable
+>>>> to me. By the time it starts dropping data you have more than enough
+>>>> information to go on already.
+>>>
+>>> Yeah. Unless we have a storm coming from many different cgroups in
+>>> parallel. But even then we have the allocation context for each OOM so
+>>> we are not losing everything. Should we ever tune this, it can be done
+>>> later with some explicit examples.
+>>>
+>>>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+>>>
+>>> Thanks! I will post the patch to Andrew early next week.
+>>>
+>>
+>> How do you handle environments where one dump takes e.g. 3 seconds?
+>> Counting delay between first message in previous dump and first message
+>> in next dump is not safe. Unless we count delay between last message
+>> in previous dump and first message in next dump, we cannot guarantee
+>> that the system won't lockup due to printk() flooding.
 > 
-> This is just another bodge and likely to hurt in places where 1us is
-> excessive because there isn't contention.
-> 
-> Will
+> How is that different from any other printk ratelimiting? If a dump
+> takes 3 seconds you need to fix your console. It doesn't make sense to
+> design KERN_INFO messages for the slowest serial consoles out there.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+You can't fix the console. It is a hardware limitation.
+
+> 
+> That's what we did, btw. We used to patch out the OOM header because
+> our serial console was so bad, but obviously that's not a generic
+> upstream solution. We've since changed the loglevel on the serial and
+> use netconsole[1] for the chattier loglevels.
+> 
+> [1] https://github.com/facebook/fbkutils/tree/master/netconsd
+> 
