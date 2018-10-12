@@ -2,108 +2,126 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E26C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090C0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E792077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:35:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jc4w0Ir5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E792077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BEA9A2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:36:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA9A2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeJLSHU (ORCPT
+        id S1727853AbeJLSIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:07:20 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38764 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJLSHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:07:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v7-v6so10950850ljg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 03:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pQyx0b+K8yL721nWL3juRtY3M3eLboXG1LSf+lBtyHE=;
-        b=Jc4w0Ir57Ku8/KucHMVfNfNGgdRRISWk7V2XNlhanVqgM6TkMJ7pgRe1BVrqiZbAz9
-         /VKRgiYsV6bXYX3YFcyKrJF/8yII/OAYE+YV8p6yeOikxK7BVcbPDsLp5CE4dnzoITQq
-         ObWQlhuLA8WDF9xUT5kCmckODHqur4yf1Ivyo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pQyx0b+K8yL721nWL3juRtY3M3eLboXG1LSf+lBtyHE=;
-        b=CcgJqp8NF3eQ60zd727ZY+Ac6XTy8sXiErjk1H2Xvd2fDi0g6pwgVWXOOGv/RXA150
-         SfXSQ2CYtoFoQVLxrU+ZKFPNSFO5/f8k5hU/bCuKWjmp7VIJpSXr/jAlY6rIfgc7mcbq
-         iky6yrQUVZYwgUvgK/GuZXyRx/tzRTlEdcUULU5giPjxlD3ciBJxFcdvcJPbMYTM9MnA
-         xSm1PFbrIXzrprgPheD1KrM0FOPUiuHCohpD4/X6aDIOcMl1LfwsJ/ypCzxo5Rp5buGu
-         NpCxnTBclo1KqRXdoiKcdTu4IAGO4TGIGrnc/r9XAA9YLzfSZThPt9ov3MTOkKd3mora
-         Mnng==
-X-Gm-Message-State: ABuFfog1bomiIyVre3+BMbWV3c8rNfj6QKMdVmEagmFfz900n9UmnVzl
-        NyVJk/w1y3SBGuudr7Ejdg+guA==
-X-Google-Smtp-Source: ACcGV62VtPpkLlcGoe5Qes8rtHkviJJ0/ABq4Ul+n9na+o+VjpcKuykBR24gqRGf5dUgTfQucRLHWQ==
-X-Received: by 2002:a2e:58e:: with SMTP id 136-v6mr1312926ljf.130.1539340532239;
-        Fri, 12 Oct 2018 03:35:32 -0700 (PDT)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id h27-v6sm178110lfl.31.2018.10.12.03.35.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 03:35:31 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus <torvalds@linux-foundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v4.19-rc8
-Date:   Fri, 12 Oct 2018 12:35:29 +0200
-Message-Id: <20181012103529.4688-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Fri, 12 Oct 2018 14:08:39 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:64498 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbeJLSIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:08:39 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Wklz6J2Bz9ttDr;
+        Fri, 12 Oct 2018 12:36:47 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id IaD34TTDSBn2; Fri, 12 Oct 2018 12:36:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Wklz5nqQz9ttC6;
+        Fri, 12 Oct 2018 12:36:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7797F8B8D2;
+        Fri, 12 Oct 2018 12:36:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id vRNOlhHFssSr; Fri, 12 Oct 2018 12:36:51 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 04AA98B8CA;
+        Fri, 12 Oct 2018 12:36:50 +0200 (CEST)
+Subject: Re: [BUG][linux-next][ppc] kernel panic - not syncing:
+ stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        npiggin <npiggin@gmail.com>,
+        linux-next <linux-next@vger.kernel.org>,
+        manvanth <manvanth@linux.vnet.ibm.com>
+References: <1539330331.17569.32.camel@abdul.in.ibm.com>
+ <1539330499.17569.33.camel@abdul.in.ibm.com>
+ <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
+ <1539340304.17569.35.camel@abdul.in.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <e711011c-9cba-5166-37e3-e228877cbea8@c-s.fr>
+Date:   Fri, 12 Oct 2018 12:36:50 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1539340304.17569.35.camel@abdul.in.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
-
-Here's a PR with two MMC/WIFI/SDIO fixes intended for v4.19-rc8. Details about
-the highlights are found in the signed tag.
-
-Please pull this in!
-
-Kind regards
-Ulf Hansson
 
 
-The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
+Le 12/10/2018 à 12:31, Abdul Haleem a écrit :
+> On Fri, 2018-10-12 at 10:08 +0200, Christophe LEROY wrote:
+>>
+>> Le 12/10/2018 à 09:48, Abdul Haleem a écrit :
+>>> On Fri, 2018-10-12 at 13:15 +0530, Abdul Haleem wrote:
+>>>> Greeting's
+>>>>
+>>>> Today's linux-next fails to boot on powerpc bare-metal with this error
+>>>>
+>>>> POWER8 performance monitor hardware support registered
+>>>> rcu: Hierarchical SRCU implementation.
+>>>> smp: Bringing up secondary CPUs ...
+>>>> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+>>>> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
+>>>> Call Trace:
+>>>> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+>>>> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+>>>> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+>>>> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+>>>> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+>>>> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+>>>> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+>>>> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+>>>> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
+>>>> Rebooting in 10 seconds..
+>>>>
+>>>> Machine: Power 8 bare-metal
+>>>> kernel version: 4.19.0-rc7-next-20181010
+>>>> gcc version: 4.8.5 20150623
+>>>> config attach
+>>>
+>>> Attaching the kernel config file
+>>>
+>>
+>> # Linux/powerpc 4.11.0-rc4 Kernel Configuration
+>>
+>> This is not the correct config file. Can you send the .config ?
+> 
+> CONFIG_HAVE_STACKPROTECTOR=y
+> CONFIG_CC_HAS_STACKPROTECTOR_NONE=y
+> CONFIG_STACKPROTECTOR=y
+> CONFIG_STACKPROTECTOR_STRONG=y
+> 
+> ah yes, I have attached the correct config now.
 
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+Ok,
 
-are available in the Git repository at:
+Could you please try and add a call to function boot_init_stack_canary() 
+in function start_secondary() in arch/powerpc/kernel/smp.c just before 
+the call to cpu_startup_entry() ?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.19-rc7
-
-for you to fetch changes up to 4f666675cdff0b986195413215eb062b7da6586f:
-
-  libertas: call into generic suspend code before turning off power (2018-10-10 14:01:50 +0200)
-
-----------------------------------------------------------------
-MMC core:
- - Avoid fragile multiblock reads for the last sector in SPI mode
-
-WIFI/SDIO:
- - libertas: Fixup suspend sequence for the SDIO card
-
-----------------------------------------------------------------
-Chris Boot (1):
-      mmc: block: avoid multiblock reads for the last sector in SPI mode
-
-Daniel Mack (1):
-      libertas: call into generic suspend code before turning off power
-
- drivers/mmc/core/block.c                        | 10 ++++++++++
- drivers/net/wireless/marvell/libertas/if_sdio.c |  4 ++++
- 2 files changed, 14 insertions(+)
+Thanks
+Christophe
