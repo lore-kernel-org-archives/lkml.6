@@ -2,148 +2,136 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20DFC28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E676C28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8D720658
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8D720658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id D1C5E2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:22:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qslww6c5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C5E2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJLKvu (ORCPT
+        id S1727056AbeJLKwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 06:51:50 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36522 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726485AbeJLKvu (ORCPT
+        Fri, 12 Oct 2018 06:52:17 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44794 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbeJLKwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 06:51:50 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07480073|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03291;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.D0thR3Q_1539314483;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D0thR3Q_1539314483)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Fri, 12 Oct 2018 11:21:23 +0800
-Date:   Fri, 12 Oct 2018 11:21:23 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, daniel.lezcano@linaro.org,
-        will.deacon@arm.com, jhogan@kernel.org, paul.burton@mips.com,
-        peterz@infradead.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V11 1/8] irqchip: add C-SKY SMP interrupt controller
-Message-ID: <20181012032122.GA20643@guoren-Inspiron-7460>
-References: <cover.1539095311.git.ren_guo@c-sky.com>
- <83d216b3fed039037ebe8b8513f3c51a36934e74.1539095312.git.ren_guo@c-sky.com>
- <8772c090-a139-04e4-a55f-820afe1bb5bd@arm.com>
+        Fri, 12 Oct 2018 06:52:16 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u74-v6so8793238oia.11
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 20:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LWmcAcc5aI6rD0TxwHD+d05i18SLBiVhQijk1UyCPzQ=;
+        b=Qslww6c5/x9a7evzAMIt+iD3NE9iEJBM+Xd7OHzJGvGR+cxNsSSLXGX6Vx//8MPnDA
+         wzvB2wuseUFUzs96kEKrcxuJ/CERNzdsbJQI0I8fGZtHw3HDs0+UBpSO9H4c/tDNvJtP
+         w5sGbbagF2MrL3jWWry2ecewAxnDIMqrg2tnpM5HUiZdVDdP14/DJfBPKc4PT4HYvzD2
+         ZDaISZ323KwLo5BwCIwBlQIgyJLtnXij6vHtfmTpIDYsixiOP+PtaZK/UTyQRRgeNRLy
+         CZDsq1d0fNt8V9kD83qDdt0X8XxRi8dpDV9JuukDs1iHvvllqmCi+Bn5EsuKyowqmOL2
+         Gl3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LWmcAcc5aI6rD0TxwHD+d05i18SLBiVhQijk1UyCPzQ=;
+        b=jQKicK1Ntzw0n8LQ5RN5LKONdI8CGSQG1Iidp4cfsD52eC9RrapxYaPu8hR9qk/AGn
+         0Lx0DS6l1aVgGbee+X2QmhbtXjAvhjbuT/GdTraReJFGAhzk6H1BAIMsBzbF+APB02q+
+         +dl5xwaIdfFvIfTuYe8hjek/yUj2si1ZxJ6c7cm+oOHq3rX8L7V9J6PUKOzbFMJQDxOx
+         ZaGKiYLq/mCr0sHO1h0+JVXOwpWxJolZiupU5Vhp8GAz+lzzEFOLH3KGrm48rLGPP3wL
+         2qmwIyWoU3gIs1nL5S5EdxWvovSCOWDcl8E0DdnkusrYwz98eSEnyegP/bhFBe9XBh5C
+         j8Fw==
+X-Gm-Message-State: ABuFfojRPfhsQp+c4qwqEhR2d4RNzB7XKd3B/VyT4HhBrRjXKUq3Bkdf
+        tud5KeW6RlQuabvQJv9/t8R/i+Yoxhl1a8aBnTMVzA==
+X-Google-Smtp-Source: ACcGV63ynNX53N9PHGNb65YeQ86/qYqgFchRxc/MpkvizWAYSGFmSu0Ejp/JMBxYgzkLEt2ys4cAl/qdZUcbC1tQDYo=
+X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr2247908oih.3.1539314518950;
+ Thu, 11 Oct 2018 20:21:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8772c090-a139-04e4-a55f-820afe1bb5bd@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181009201400.168705-1-joel@joelfernandes.org>
+In-Reply-To: <20181009201400.168705-1-joel@joelfernandes.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 12 Oct 2018 05:21:32 +0200
+Message-ID: <CAG48ez3yLkMcyaTXFt_+w8_-HtmrjW=XB51DDQSGdjPj43XWmA@mail.gmail.com>
+Subject: Re: [PATCH] mm: Speed up mremap on large regions
+To:     joel@joelfernandes.org
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, kernel-team@android.com,
+        Minchan Kim <minchan@google.com>,
+        Hugh Dickins <hughd@google.com>, lokeshgidra@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        pombredanne@nexb.com, Thomas Gleixner <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
++cc xen maintainers and kvm folks
 
-On Tue, Oct 09, 2018 at 04:11:05PM +0100, Marc Zyngier wrote:
-> On 09/10/18 15:41, Guo Ren wrote:
-> >  - Irq-csky-mpintc is C-SKY smp system interrupt controller and it
-> >    could support 16 soft irqs, 16 private irqs, and 992 max common
-> >    irqs.
-> >
-> >Changelog:
-> >  - Convert the cpumask to an interrupt-controller specific representation
-> >    in driver's code, and not the SMP code's.
-> >  - pass checkpatch.pl
-> >  - Move IPI_IRQ into the driver
-> >  - Remove irq_set_default_host() and use set_ipi_irq_mapping()
-> >  - Change name with upstream feed-back
-> >  - Change irq map, reserve soft_irq & private_irq space
-> >  - Add License and Copyright
-> >  - Support set_affinity for irq balance in SMP
-> >
-> >Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> >Cc: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> [...]
-> 
-> >+/* C-SKY multi processor interrupt controller */
-> >+static int __init
-> >+csky_mpintc_init(struct device_node *node, struct device_node *parent)
-> >+{
-> >+	unsigned int cpu, nr_irq;
-> >+	int ret;
-> >+
-> >+	if (parent)
-> >+		return 0;
-> >+
-> >+	ret = of_property_read_u32(node, "csky,num-irqs", &nr_irq);
-> >+	if (ret < 0)
-> >+		nr_irq = INTC_IRQS;
-> >+
-> >+	if (INTCG_base == NULL) {
-> >+		INTCG_base = ioremap(mfcr("cr<31, 14>"),
-> >+				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
-> >+		if (INTCG_base == NULL)
-> >+			return -EIO;
-> >+
-> >+		INTCL_base = INTCG_base + INTCG_SIZE;
-> >+
-> >+		writel_relaxed(BIT(0), INTCG_base + INTCG_ICTLR);
-> >+	}
-> >+
-> >+	root_domain = irq_domain_add_linear(node, nr_irq, &csky_irqdomain_ops,
-> >+					    NULL);
-> >+	if (!root_domain)
-> >+		return -ENXIO;
-> >+
-> >+	/* for every cpu */
-> >+	for_each_present_cpu(cpu) {
-> >+		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
-> >+		writel_relaxed(BIT(0), per_cpu(intcl_reg, cpu) + INTCL_PICTLR);
-> >+	}
-> >+
-> >+	set_handle_irq(&csky_mpintc_handler);
-> >+
-> >+#ifdef CONFIG_SMP
-> >+	set_send_ipi(&csky_mpintc_send_ipi);
-> >+
-> >+	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
-> 
-> Same remark as before.
-> 
-> You do not need this second callback, and you should redefine set_send_ipi
-> to take an irq number:
-> 
-> 	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
-> 	if (!ipi_irq)
-> 		[handle error]
-> 
-> 	set_send_ipi(csky_mpintc_send_ipi, ipi_irq);
-> 
-> and you can then delete both set_ipi_irq_mapping and csky_mpintc_handler,
-> none of which serve any purpose.
-> 
-> In your SMP code:
-> 
-> void __init set_send_ipi(void (*func)(const struct cpumask *), int irq)
-> {
-> 	if (send_arch_ipi)
-> 		return;
-> 
-> 	send_arch_ipi = func;
-> 	ipi_irq = irq;
-> }
-> 
-> and simplify setup_smp_ipi.
-Ok, remove the set_ipi_irq_mapping. See my next version patch.
+On Fri, Oct 12, 2018 at 4:40 AM Joel Fernandes (Google)
+<joel@joelfernandes.org> wrote:
+> Android needs to mremap large regions of memory during memory management
+> related operations. The mremap system call can be really slow if THP is
+> not enabled. The bottleneck is move_page_tables, which is copying each
+> pte at a time, and can be really slow across a large map. Turning on THP
+> may not be a viable option, and is not for us. This patch speeds up the
+> performance for non-THP system by copying at the PMD level when possible.
+[...]
+> +bool move_normal_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+> +                 unsigned long new_addr, unsigned long old_end,
+> +                 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush)
+> +{
+[...]
+> +       /*
+> +        * We don't have to worry about the ordering of src and dst
+> +        * ptlocks because exclusive mmap_sem prevents deadlock.
+> +        */
+> +       old_ptl = pmd_lock(vma->vm_mm, old_pmd);
+> +       if (old_ptl) {
+> +               pmd_t pmd;
+> +
+> +               new_ptl = pmd_lockptr(mm, new_pmd);
+> +               if (new_ptl != old_ptl)
+> +                       spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+> +
+> +               /* Clear the pmd */
+> +               pmd = *old_pmd;
+> +               pmd_clear(old_pmd);
+> +
+> +               VM_BUG_ON(!pmd_none(*new_pmd));
+> +
+> +               /* Set the new pmd */
+> +               set_pmd_at(mm, new_addr, new_pmd, pmd);
+> +               if (new_ptl != old_ptl)
+> +                       spin_unlock(new_ptl);
+> +               spin_unlock(old_ptl);
 
-Best Regards
- Guo Ren
+How does this interact with Xen PV? From a quick look at the Xen PV
+integration code in xen_alloc_ptpage(), it looks to me as if, in a
+config that doesn't use split ptlocks, this is going to temporarily
+drop Xen's type count for the page to zero, causing Xen to de-validate
+and then re-validate the L1 pagetable; if you first set the new pmd
+before clearing the old one, that wouldn't happen. I don't know how
+this interacts with shadow paging implementations.
+
+> +               *need_flush = true;
+> +               return true;
+> +       }
+> +       return false;
+> +}
