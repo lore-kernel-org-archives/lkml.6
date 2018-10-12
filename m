@@ -2,73 +2,201 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1229C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE80C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 872862098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:42:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872862098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1411220835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:54:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1411220835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725986AbeJMFRG (ORCPT
+        id S1726235AbeJMF2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 01:17:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40354 "EHLO mx1.redhat.com"
+        Sat, 13 Oct 2018 01:28:45 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20719 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725755AbeJMFRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 01:17:06 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E4BD30B96EE;
-        Fri, 12 Oct 2018 21:42:40 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B594B19C65;
-        Fri, 12 Oct 2018 21:42:36 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
+        id S1725904AbeJMF2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 01:28:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 14:54:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,374,1534834800"; 
+   d="scan'208";a="98758128"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Oct 2018 14:54:16 -0700
+Message-ID: <1d293d2fb0df99fdb0048825b4e39640840bfabb.camel@intel.com>
+Subject: Re: [PATCH v5 07/27] mm/mmap: Create a guard area between VMAs
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH-tip] locking/lockdep: Remove duplicated lock_class_ops percpu array
-Date:   Fri, 12 Oct 2018 17:42:27 -0400
-Message-Id: <1539380547-16726-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 12 Oct 2018 21:42:40 +0000 (UTC)
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>
+Date:   Fri, 12 Oct 2018 14:49:28 -0700
+In-Reply-To: <CALCETrUJ1t_K=FQExa_K0yg+aXkPot6wn6RHBPDc3BsAxtmMBw@mail.gmail.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+         <20181011151523.27101-8-yu-cheng.yu@intel.com>
+         <CAG48ez3R7XL8MX_sjff1FFYuARX_58wA_=ACbv2im-XJKR8tvA@mail.gmail.com>
+         <CALCETrUJ1t_K=FQExa_K0yg+aXkPot6wn6RHBPDc3BsAxtmMBw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the duplicated lock_class_ops percpu array that is not used
-anywhere.
+On Thu, 2018-10-11 at 13:55 -0700, Andy Lutomirski wrote:
+> On Thu, Oct 11, 2018 at 1:39 PM Jann Horn <jannh@google.com> wrote:
+> > 
+> > On Thu, Oct 11, 2018 at 5:20 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > > Create a guard area between VMAs to detect memory corruption.
+> > 
+> > [...]
+> > > +config VM_AREA_GUARD
+> > > +       bool "VM area guard"
+> > > +       default n
+> > > +       help
+> > > +         Create a guard area between VM areas so that access beyond
+> > > +         limit can be detected.
+> > > +
+> > >  endmenu
+> > 
+> > Sorry to bring this up so late, but Daniel Micay pointed out to me
+> > that, given that VMA guards will raise the number of VMAs by
+> > inhibiting vma_merge(), people are more likely to run into
+> > /proc/sys/vm/max_map_count (which limits the number of VMAs to ~65k by
+> > default, and can't easily be raised without risking an overflow of
+> > page->_mapcount on systems with over ~800GiB of RAM, see
+> > https://lore.kernel.org/lkml/20180208021112.GB14918@bombadil.infradead.org/
+> > and replies) with this change.
+> > 
+> > Playing with glibc's memory allocator, it looks like glibc will use
+> > mmap() for 128KB allocations; so at 65530*128KB=8GB of memory usage in
+> > 128KB chunks, an application could run out of VMAs.
+> 
+> Ugh.
+> 
+> Do we have a free VM flag so we could do VM_GUARD to force a guard
+> page?  (And to make sure that, when a new VMA is allocated, it won't
+> be directly adjacent to a VM_GUARD VMA.)
 
-Fixes: 8ca2b56cd7da ("locking/lockdep: Make class->ops a percpu counter
-and move it under CONFIG_DEBUG_LOCKDEP=y")
+Maybe something like the following?  These vm_start_gap()/vm_end_gap() are used
+in many architectures.  Do we want to put them in a different series?  Comments?
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/lockdep.c | 1 -
- 1 file changed, 1 deletion(-)
+Yu-cheng
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5faeb2e..be76f47 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -435,7 +435,6 @@ static int save_trace(struct stack_trace *trace)
-  * Various lockdep statistics:
-  */
- DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
--DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
+
+
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0416a7204be3..92b580542411 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -224,11 +224,13 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_BIT_2	34	/* bit only usable on 64-bit
+architectures */
+ #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit
+architectures */
+ #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit
+architectures */
++#define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit
+architectures */
+ #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+ #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+ #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+ #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
++#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -266,6 +268,12 @@ extern unsigned int kobjsize(const void *objp);
+ # define VM_MPX		VM_NONE
  #endif
  
- /*
--- 
-1.8.3.1
-
++#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
++#define VM_GUARD	VM_HIGH_ARCH_5
++#else
++#define VM_GUARD	VM_NONE
++#endif
++
+ #ifndef VM_GROWSUP
+ # define VM_GROWSUP	VM_NONE
+ #endif
+@@ -2417,24 +2425,34 @@ static inline struct vm_area_struct *
+find_vma_intersection(struct mm_struct * m
+-static inline unsigned long vm_start_gap(struct vm_area_struct *vma)
++static inline unsigned long vm_start_gap(struct vm_area_struct *vma, vm_flags_t
+flags)
+ {
+ 	unsigned long vm_start = vma->vm_start;
++	unsigned long gap = 0;
++
++	if (vma->vm_flags & VM_GROWSDOWN)
++		gap = stack_guard_gap;
++	else if ((vma->vm_flags & VM_GUARD) || (flags & VM_GUARD))
++		gap = PAGE_SIZE;
++
++	vm_start -= gap;
++	if (vm_start > vma->vm_start)
++		vm_start = 0;
+ 
+-	if (vma->vm_flags & VM_GROWSDOWN) {
+-		vm_start -= stack_guard_gap;
+-		if (vm_start > vma->vm_start)
+-			vm_start = 0;
+-	}
+ 	return vm_start;
+ }
+ 
+-static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
++static inline unsigned long vm_end_gap(struct vm_area_struct *vma, vm_flags_t
+flags)
+ {
+ 	unsigned long vm_end = vma->vm_end;
++	unsigned long gap = 0;
++
++	if (vma->vm_flags & VM_GROWSUP)
++		gap = stack_guard_gap;
++	else if ((vma->vm_flags & VM_GUARD) || (flags & VM_GUARD))
++		gap = PAGE_SIZE;
++
++	vm_end += gap;
++	if (vm_end < vma->vm_end)
++		vm_end = -PAGE_SIZE;
+ 
+-	if (vma->vm_flags & VM_GROWSUP) {
+-		vm_end += stack_guard_gap;
+-		if (vm_end < vma->vm_end)
+-			vm_end = -PAGE_SIZE;
+-	}
+ 	return vm_end;
+ }
