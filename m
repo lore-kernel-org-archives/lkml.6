@@ -2,220 +2,204 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291D2C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35211C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D549720868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D83182087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:44:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IsQoIKI3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D549720868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qFpdrdrz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83182087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeJLTPa (ORCPT
+        id S1728481AbeJLTQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:15:30 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43263 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbeJLTPa (ORCPT
+        Fri, 12 Oct 2018 15:16:25 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45378 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJLTQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:15:30 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n1-v6so13087137wrt.10
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=OmikCrd9BvI0KAfudmKrn9gsVglSyuOuhdhDlsfpWRg=;
-        b=IsQoIKI3+TYuYV/+P3+cIIVhIYMZX91rNvaOv2oSVflGHxO4bCWWOVMU3lCK3YnVz9
-         ZmG8kLOEhbWKs0nh+loxbGGkMwl+zwqYRCgWCad5nlnSFVRZfKgZnmeIz8uiX93F8JUs
-         8xmstre1yT7n/UohzsM26oNdRyCx9lG8eADHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=OmikCrd9BvI0KAfudmKrn9gsVglSyuOuhdhDlsfpWRg=;
-        b=XJYvumsYuLYZ0MLY10LEDRFERUHJFA+YS9RmZY5d5jeFtxBCVf+8NY0XbERzOHyMtY
-         gbLnYJopqgiUAw0fPICsiL64KK72ytbgz1jDSuxdLU2Ui6fv23v2289u4scCCHQVSL+j
-         +Jdzi+fYAxB0/cRDytqY5+5TxbVdMqAYMVq89+SLhJBhzbPZz4kbZFqfNCHjdLEbCSbt
-         zBETJqm2rfX7lSfm/6AzdBC37yc63AuXeJX6/geUfEQPalp4h+Q20us7c895UJt+xO6V
-         lHKR2plpmWTW/T0IqMs5sh7PywOHPTqw5USENWvvw7fRLkNRriNVOLTPoRH+biSHNX6N
-         t4hw==
-X-Gm-Message-State: ABuFfojm4MGjIZi8qzbNFn4+B3ZbEXF/Lxh1WMiB19F6YWD2DQUdSH3l
-        +1ICwgstOjl9YBykQEByvHZzKw==
-X-Google-Smtp-Source: ACcGV63ZGIgc91lFwSTPKQQ8WyjPnwRYcsmKDIi4W0G+jBjNrp9i56uCKyoZGrzvORiAGJps/jSzCw==
-X-Received: by 2002:adf:f248:: with SMTP id b8-v6mr4660754wrp.184.1539344604867;
-        Fri, 12 Oct 2018 04:43:24 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm723291wrv.46.2018.10.12.04.43.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 04:43:23 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 12:43:21 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
+        Fri, 12 Oct 2018 15:16:25 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0EB61258;
+        Fri, 12 Oct 2018 13:44:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539344659;
+        bh=0F2F90DlDyJ2gnJB6mkdXith5iNHf3tBPG5qjyZRi84=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qFpdrdrzHx/nO9DQCkU58AGiJeay+vm6XIcQovW8HFxhcCWHeDdsh5xUXEZnDZXM+
+         wFvzp1xNLMIome7xtwgL4ctVsKmQzXQ/ixpG7u3qINd9xoTRl9lG3nIReMZ8ZniXsm
+         cbiPCoBMHzKXzkXt171t0+/fupUttcQZ9TwJ7rOg=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Marek Vasut <marek.vasut@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Message-ID: <20181012114321.GA4939@dell>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com>
- <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
- <20181012083924.GW4939@dell>
- <3b22c550-0cba-60d7-a8ed-400265c8a9f6@mentor.com>
+        linux-kernel@vger.kernel.org,
+        Sandeep Jain <Sandeep_Jain@mentor.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx ICs
+Date:   Fri, 12 Oct 2018 14:44:23 +0300
+Message-ID: <1884479.fINZhmP2Mi@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-2-vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b22c550-0cba-60d7-a8ed-400265c8a9f6@mentor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
+Hi Vladimir,
 
-> On 10/12/2018 11:39 AM, Lee Jones wrote:
-> > On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
-> >> On 10/12/2018 09:03 AM, Lee Jones wrote:
-> >>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
-> >>>
-> >>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>>
-> >>>> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
-> >>>> support of subdevice controllers is done in separate drivers, because
-> >>>> not all IC functionality may be needed in particular situations, and
-> >>>> this can be fine grained controlled in device tree.
-> >>>>
-> >>>> The development of the driver was a collaborative work, the
-> >>>> contribution done by Balasubramani Vivekanandan includes:
-> >>>> * original implementation of the driver based on a reference driver,
-> >>>> * regmap powered interrupt controller support on serializers,
-> >>>> * support of implicitly or improperly specified in device tree ICs,
-> >>>> * support of device properties and attributes: backward compatible
-> >>>>   mode, low frequency operation mode, spread spectrum clock generator.
-> >>>>
-> >>>> Contribution by Steve Longerbeam:
-> >>>> * added ds90ux9xx_read_indirect() function,
-> >>>> * moved number of links property and added ds90ux9xx_num_fpd_links(),
-> >>>> * moved and updated ds90ux9xx_get_link_status() function to core driver,
-> >>>> * added fpd_link_show device attribute.
-> >>>>
-> >>>> Sandeep Jain added support of pixel clock edge configuration.
-> >>>>
-> >>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>> ---
-> >>>>  drivers/mfd/Kconfig           |  14 +
-> >>>>  drivers/mfd/Makefile          |   1 +
-> >>>>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
-> >>>>  include/linux/mfd/ds90ux9xx.h |  42 ++
-> >>>>  4 files changed, 936 insertions(+)
-> >>>>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
-> >>>>  create mode 100644 include/linux/mfd/ds90ux9xx.h
-> >>>>
-> >>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >>>> index 8c5dfdce4326..a969fa123f64 100644
-> >>>> --- a/drivers/mfd/Kconfig
-> >>>> +++ b/drivers/mfd/Kconfig
-> >>>> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
-> >>>>  	  boards.  MSP430 firmware manages resets and power sequencing,
-> >>>>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
-> >>>>  
-> >>>> +config MFD_DS90UX9XX
-> >>>> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
-> >>>> +	depends on I2C && OF
-> >>>> +	select MFD_CORE
-> >>>> +	select REGMAP_I2C
-> >>>> +	help
-> >>>> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
-> >>>> +
-> >>>> +	  This driver provides basic support for setting up the de-/serializer
-> >>>> +	  chips. Additional functionalities like connection handling to
-> >>>> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
-> >>>> +	  controller and so on are provided by separate drivers and should
-> >>>> +	  enabled individually.
-> >>>
-> >>> This is not an MFD driver.
-> >>
-> >> Why do you think so? The representation of the ICs into device tree format
-> >> of hardware description shows that this is a truly MFD driver with multiple
-> >> IP subcomponents naturally mapped into MFD cells.
-> > 
-> > This driver does too much real work ('stuff') to be an MFD driver.
-> > MFD drivers should not need to care of; links, gates, modes, pixels,
-> > frequencies maps or properties.  Nor should they contain elaborate
-> > sysfs structures to control the aforementioned 'stuff'.
-> > 
-> 
-> What is the reason why device drivers for sort of multimedia ICs like
-> WL1273, WM8994 and other numerous codecs are found in drivers/mfd?
-> 
-> If the same reason can not be applied to this DS90Ux9xx driver, why?
-> 
-> > Granted, there may be some code in there which could be appropriate
-> > for an MFD driver.  However most of it needs moving out into a
-> > function driver (or two).
-> > 
-> >> Basically it is possible to replace explicit of_platform_populate() by
-> >> adding a "simple-mfd" compatible, if it is desired.
-> >>
-> >>> After a 30 second Google of what this device actually does, perhaps
-> >>> drivers/media might be a better fit?
-> >>
-> >> I assume it would be quite unusual to add a driver with NO media functions
-> >> and controls into drivers/media.
-> > 
-> > drivers/media may very well not be the correct place for this.  In my
-> > 30 second Google, I saw that this device has a lot to do with cameras,
-> > hence my media association.
-> 
-> Well, the argument is similar to the statement that Google says that
-> camera sensors *can* be connected to NXP i.MX6 SoC, thus arch/arm/mach-imx
-> contents should be placed into drivers/media
-> 
-> A few TI DS90Ux9xx *cell* drivers may be added to drivers/media, but it is
-> out of the scope of the current series, which is completely integral per se,
-> and actually the cover letter says that the series of drivers immediately
-> allows to output video over DRM to panels, but the discussion is around
-> sensors by some reason. But I hope it won't be seen as a misleading
-> reason to consider to add the MFD driver into drivers/gpu/drm
+Thank you for the patch.
 
-This discussion isn't about not adding enough child devices.  It's
-about there being too much functional work being done in an MFD
-driver, where it doesn't belong.
-
-> > If *all* else fails, there is always drivers/misc, but this should be
-> > avoided if at all possible.
+On Tuesday, 9 October 2018 00:11:59 EEST Vladimir Zapolskiy wrote:
+> From: Sandeep Jain <Sandeep_Jain@mentor.com>
 > 
-> drivers/misc does not sound like a proper place for the MFD driver...
+> The change adds device tree binding description of TI DS90Ux9xx
+> series of serializer and deserializer controllers which support video,
+> audio and control data transmission over FPD-III Link connection.
+> 
+> Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
+> [vzapolskiy: various updates and corrections of secondary importance]
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> ---
+>  .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+> b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt new file mode
+> 100644
+> index 000000000000..0733da88f7ef
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+> @@ -0,0 +1,66 @@
+> +Texas Instruments DS90Ux9xx de-/serializer controllers
+> +
+> +Required properties:
+> +- compatible: Must contain a generic "ti,ds90ux9xx" value and
+> +	may contain one more specific value from the list:
 
-I'd agree with you if this were an MFD driver.
+If it "may" contain one more specific value, when should that value be 
+present, and when can it be absent ?
 
-As I mentioned before, there may well be an argument for and MFD
-driver to be part of this driver-set.  However it needs to be
-significantly reduced with any functional code removed and placed
-where it belongs.
+> +	"ti,ds90ub925q",
+> +	"ti,ds90uh925q",
+> +	"ti,ds90ub927q",
+> +	"ti,ds90uh927q",
+> +	"ti,ds90ub926q",
+> +	"ti,ds90uh926q",
+> +	"ti,ds90ub928q",
+> +	"ti,ds90uh928q",
+> +	"ti,ds90ub940q",
+> +	"ti,ds90uh940q".
+> +
+> +Optional properties:
+> +- reg : Specifies the I2C slave address of a local de-/serializer.
 
-> >> Laurent, can you please share your opinion?
+You should explain when the reg property is required and when it isn't. This 
+will in my opinion require a more detailed explanation of the DT model for 
+this device.
+
+> +- power-gpios : GPIO line to control supplied power to the device.
+
+As Marek mentioned, a regulator would be better. I would make it a mandatory 
+property, as the device always needs to be powered.
+
+> +- ti,backward-compatible-mode : Overrides backward compatibility mode.
+> +	Possible values are "<1>" or "<0>".
+> +	If "ti,backward-compatible-mode" is not mentioned, the backward
+> +	compatibility mode is not touched and given by hardware pin strapping.
+
+This doesn't seem to be a device description to me, it's a software 
+configuration. You should handle it in drivers.
+
+> +- ti,low-frequency-mode : Overrides low frequency mode.
+> +	Possible values are "<1>" or "<0>".
+> +	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
+> +	is not touched and given by hardware pin strapping.
+
+This sounds the same. How about giving a real life example of a case where you 
+need to set these two properties to override the pin strapping, for the 
+purpose of discussing the DT bindings ?
+
+> +- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
+> +	MAPSEL pin value is ignored.
+> +- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
+> +	MAPSEL pin value is ignored.
+
+I assume those two are mutually exclusive, this should be documented, or you 
+could merge the two properties into one. Same comment as above though, why do 
+you need an override in DT ?
+
+> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
+> +	Possible values are "<1>" or "<0>".
+> +	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
+> +	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
+> +	strobed on the Falling edge of the PCLK.
+> +	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
+> +	value is not touched and given by hardware pin strapping.
+
+We have a standard property in Documentation/devicetree/bindings/media/video-
+interfaces.txt for this, please use it.
+
+> +- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
+> +	Possible values are from "<0>" to "<7>". The same value will be
+> +	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
+> +	found, then SSCG will be disabled.
+
+This makes sense in DT in my opinion, as EMC is a system property. I wonder 
+however if exposing the hardware register directly is the best option. Could 
+you elaborate on how a system designer will select which value to use, in 
+order to find the best DT description ?
+
+> +TI DS90Ux9xx serializers and deserializer device nodes may contain a number
+> +of children device nodes to describe and enable particular subcomponents
+> +found on ICs.
+
+As mentioned in my review of the cover letter I don't think this is necessary. 
+You can make the serializer and deserializer I2C controllers without subnodes. 
+Same goes for GPIO control.
+
+> +Example:
+> +
+> +serializer: serializer@c {
+> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
+> +	reg = <0xc>;
+> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
+> +	ti,backward-compatible-mode = <0>;
+> +	ti,low-frequency-mode = <0>;
+> +	ti,pixel-clock-edge = <0>;
+> +	...
+> +}
+> +
+> +deserializer: deserializer@3c {
+> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
+> +	reg = <0x3c>;
+> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
+> +	...
+> +}
+> +
+
+Extra blank line ?
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+
+Laurent Pinchart
+
+
+
