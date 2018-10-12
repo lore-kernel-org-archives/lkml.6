@@ -2,274 +2,240 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0110C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA478C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C352086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C352086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 86BC22086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BC22086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeJLSVt (ORCPT
+        id S1728040AbeJLSWQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:21:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13627 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726664AbeJLSVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:21:49 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A09B4667D002;
-        Fri, 12 Oct 2018 18:49:55 +0800 (CST)
-Received: from HULK-Android.huawei.com (10.113.189.218) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 12 Oct 2018 18:49:51 +0800
-From:   Sheng Yong <shengyong1@huawei.com>
-To:     <jaegeuk@kernel.org>, <yuchao0@huawei.com>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: cleanup dirty pages if recover failed
-Date:   Fri, 12 Oct 2018 18:49:26 +0800
-Message-ID: <20181012104926.244217-1-shengyong1@huawei.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
-References: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+        Fri, 12 Oct 2018 14:22:16 -0400
+Received: from mx.socionext.com ([202.248.49.38]:47639 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726664AbeJLSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:22:16 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 12 Oct 2018 19:50:24 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7C48618023A;
+        Fri, 12 Oct 2018 19:50:24 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 12 Oct 2018 19:50:24 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 379994031A;
+        Fri, 12 Oct 2018 19:50:24 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id DEC5C120424;
+        Fri, 12 Oct 2018 19:50:23 +0900 (JST)
+Date:   Fri, 12 Oct 2018 19:50:23 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Murali Karicheri <m-karicheri2@ti.com>
+In-Reply-To: <20181008143215.GA9596@e107981-ln.cambridge.arm.com>
+References: <dbb43a92-b5c0-0d26-3db0-3dbbccb12b98@ti.com> <20181008143215.GA9596@e107981-ln.cambridge.arm.com>
+Message-Id: <20181012195022.CA43.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.113.189.218]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During recover, we will try to create new dentries for inodes with
-dentry_mark. But if the parent is missing (e.g. killed by fsck),
-recover will break. But those recovered dirty pages are not cleanup.
-This will hit f2fs_bug_on:
+Hi Lorenzo, Kishon,
 
-[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
-[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
-[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
-[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
-[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
-[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546174] Modules linked in:
-[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
-[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
-[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
-[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
-[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
-[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
-[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
-[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
-[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
-[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
-[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   53.546242] Call Trace:
-[   53.546248]  f2fs_submit_page_bio+0x95/0x740
-[   53.546253]  read_node_page+0x161/0x1e0
-[   53.546271]  ? truncate_node+0x650/0x650
-[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
-[   53.546288]  ? pagecache_get_page+0x262/0x2d0
-[   53.546292]  __get_node_page+0x200/0x660
-[   53.546302]  f2fs_update_inode_page+0x4a/0x160
-[   53.546306]  f2fs_write_inode+0x86/0xb0
-[   53.546317]  __writeback_single_inode+0x49c/0x620
-[   53.546322]  writeback_single_inode+0xe4/0x1e0
-[   53.546326]  sync_inode_metadata+0x93/0xd0
-[   53.546330]  ? sync_inode+0x10/0x10
-[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
-[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
-[   53.546351]  f2fs_fill_super+0x287d/0x2d10
-[   53.546367]  ? vsnprintf+0x742/0x7a0
-[   53.546372]  ? f2fs_commit_super+0x180/0x180
-[   53.546379]  ? up_write+0x20/0x40
-[   53.546385]  ? set_blocksize+0x5f/0x140
-[   53.546391]  ? f2fs_commit_super+0x180/0x180
-[   53.546402]  mount_bdev+0x181/0x200
-[   53.546406]  mount_fs+0x94/0x180
-[   53.546411]  vfs_kern_mount+0x6c/0x1e0
-[   53.546415]  do_mount+0xe5e/0x1510
-[   53.546420]  ? fs_reclaim_release+0x9/0x30
-[   53.546424]  ? copy_mount_string+0x20/0x20
-[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
-[   53.546435]  ? __might_sleep+0x2c/0xc0
-[   53.546440]  ? ___might_sleep+0x53/0x170
-[   53.546453]  ? __might_fault+0x4c/0x60
-[   53.546468]  ? _copy_from_user+0x95/0xa0
-[   53.546474]  ? memdup_user+0x39/0x60
-[   53.546478]  ksys_mount+0x88/0xb0
-[   53.546482]  __x64_sys_mount+0x5d/0x70
-[   53.546495]  do_syscall_64+0x65/0x130
-[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   53.547639] ---[ end trace b804d1ea2fec893e ]---
+On Mon, 8 Oct 2018 15:32:16 +0100 <lorenzo.pieralisi@arm.com> wrote:
 
-So if recover fails, we need to drop all recovered data.
+> On Mon, Oct 08, 2018 at 11:15:59AM +0530, Kishon Vijay Abraham I wrote:
+> > Hi Lorenzo,
+> > 
+> > On Friday 28 September 2018 09:13 PM, Lorenzo Pieralisi wrote:
+> > > On Fri, Sep 28, 2018 at 02:17:16PM +0100, Marc Zyngier wrote:
+> > >> On 28/09/18 12:06, Lorenzo Pieralisi wrote:
+> > >>> [+Murali, Marc]
+> > >>>
+> > >>> On Thu, Sep 27, 2018 at 04:44:26PM +0900, Kunihiko Hayashi wrote:
+> > >>>> Hi Lorenzo, Gustavo,
+> > >>>>
+> > >>>> On Wed, 26 Sep 2018 21:31:36 +0900 <hayashi.kunihiko@socionext.com> wrote:
+> > >>>>
+> > >>>>> Hi Lorenzo, Gustavo,
+> > >>>>>
+> > >>>>> Thank you for reviewing.
+> > >>>>>
+> > >>>>> On Tue, 25 Sep 2018 18:53:01 +0100
+> > >>>>> Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
+> > >>>>>
+> > >>>>>> On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
+> > >>>>>>> [+Gustavo, please have a look at INTX/MSI management]
+> > >>>>>>>
+> > >>>>>>> On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
+> > >>>>>>>> This introduces specific glue layer for UniPhier platform to support
+> > >>>>>>>> PCIe host controller that is based on the DesignWare PCIe core, and
+> > >>>>>>>> this driver supports Root Complex (host) mode.
+> > >>>>>>>
+> > >>>>>>> Please read this thread and apply it to next versions:
+> > >>>>>>>
+> > >>>>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
+> > >>>>>
+> > >>>>> I also found this thread in previous linux-pci, and I think it's helpful for me.
+> > >>>>> I'll check it carefully.
+> > >>>>
+> > >>>> [snip]
+> > >>>>
+> > >>>>>>>> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
+> > >>>>>>>> +			       IRQF_SHARED, "pcie", priv);
+> > >>>>>>>
+> > >>>>>>> This is wrong, you should set-up a chained IRQ for INTX.
+> > >>>>>>>
+> > >>>>>>> I *think* that
+> > >>>>>>>
+> > >>>>>>> ks_pcie_setup_interrupts()
+> > >>>>>>>
+> > >>>>>>> is a good example to start with but I wonder whether it is worth
+> > >>>>>>> generalizing the INTX approach to designware as a whole as it was
+> > >>>>>>> done for MSIs.
+> > >>>>>>>
+> > >>>>>>> Thoughts ?
+> > >>>>>>
+> > >>>>>> From what I understood this is for legacy IRQ, right?
+> > >>>>>
+> > >>>>> Yes. For legacy IRQ.
+> > >>>>>
+> > >>>>>> Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
+> > >>>>>> that uses it and can be use as a template for handling this type of interrupts.
+> > >>>>>>
+> > >>>>>> We can try to pass some kind of generic INTX function to the DesignWare host
+> > >>>>>> library to handling this, but this will require some help from keystone and
+> > >>>>>> dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
+> > >>>>>
+> > >>>>> Now I think it's difficult to make a template for INTX function,
+> > >>>>> and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
+> > >>>>
+> > >>>> I understand that there are 2 types of interrupt and the drivers.
+> > >>>>
+> > >>>> One like pci-keystone-dw.c is:
+> > >>>>
+> > >>>>  - there are 4 interrupts for legacy,
+> > >>>>  - invoke handlers for each interrupt, and handle the interrupt,
+> > >>>>  - call irq_set_chained_handler_and_data() to make a chain of the interrupts
+> > >>>>   when initializing
+> > >>>>
+> > >>>> The other like pci-dra7xx.c is:
+> > >>>>
+> > >>>>  - there is 1 IRQ for legacy as a parent,
+> > >>>>  - check an interrupt factor register, and handle the interrupt correspond
+> > >>>>    to the factor,
+> > >>>>  - call request_irq() for the parent IRQ and irq_domain_add_linear() for
+> > >>>>    the factor when initializing
+> > >>>>
+> > >>>> The pcie-uniphier.c is the same type as the latter (like pci-dra7xx.c).
+> > >>>>
+> > >>>> However, in pci-dra7xx.c, MSI and legacy IRQ share the same interrupt number,
+> > >>>> so the same handler is called and the handler divides these IRQs.
+> > >>>> (found in dra7xx_pcie_msi_irq_handler())
+> > >>>>
+> > >>>> In pcie-uniphier.c, MSI and legacy IRQ are independent.
+> > >>>> Therefore it's necessary to prepare the handler for the legacy IRQ.
+> > >>>>
+> > >>>> I think that it's difficult to apply the way of pci-keystone-dw.c, and
+> > >>>> uniphier_pcie_irq_handler() and calling devm_request_irq() are still
+> > >>>> necessary to handle legacy IRQ.
+> > >>>
+> > >>> I do not think it is difficult, the difference is that keystone has
+> > >>> 1 GIC irq line allocated per legacy IRQ, your set-up has one for
+> > >>> all INTX.
+> > >>>
+> > >>> *However*, I would like some clarifications from Murali on this code
+> > >>> in drivers/pci/controller/dwc/pci-keystone.c:
+> > >>>
+> > >>> static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+> > >>> {
+> > >>> 	unsigned int irq = irq_desc_get_irq(desc);
+> > >>> 	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+> > >>> 	struct dw_pcie *pci = ks_pcie->pci;
+> > >>> 	struct device *dev = pci->dev;
+> > >>> 	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+> > >>>
+> > >>> Here the IRQ numbers are virtual IRQs, is it correct to consider
+> > >>> the virq numbers as sequential values ? The "offset" is used to
+> > >>> handle the PCI controller interrupt registers, so it must be a value
+> > >>> between 0-3 IIUC.
+> > >>
+> > >> There is absolutely no reason why virtual interrupt numbers should be
+> > >> contiguous. Shake the allocator hard enough, and you'll see gaps appearing.
+> > >>
+> > >> In general, the only thing that makes sense is to compute this offset based
+> > >> on the hwirq which is HW-specific.
+> > > 
+> > > That was my understanding and why I asked, which means that keystone
+> > > code can break (unless I read it wrong) and Murali will send me a fix as
+> > > soon as possible please to get it right (and Kunihiko will base his
+> > > code on this discussion).
+> > 
+> > I had cleaned up legacy interrupt handling in keystone driver [1] which was
+> > also required for TI's AM654 Platform.
+> > 
+> > But I guess the same issue will occur in MSI interrupt handling. I'll fix that
+> > up in the next version. Btw can you review [2] so that I can fix any other
+> > comments that you may have.
+> 
+> Hi Kishon,
+> 
+> yes I will, I am getting there (sorry for the delay), I don't think we
+> can make it v4.20 material but let me first have a look, maybe we can
+> split it up and simplify its merge.
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Thank you for introducing RFC patches.
+I saw the legacy interrupt part of them and I think that these became easier
+to reference. Especially irq_domain_ops.map() will be the same.
+
+Currently candidate pcie-uniphier driver and some ones are assuming to take
+an interrupt from "interrupts" property because of using single interrupt.
+
+	interrupt-name = "intx";
+	interrupts = <xxx>;
+
+However, keystone has 4 interrupts and Kishon's patch is assuming
+to take it from the property in child "legacy-interrupt-controller" node.
+Maybe latter is more general and I can apply it.
+
+	legacy-interrupt-controller {
+		interrupt-controller;
+		#interrupt-cells = <1>;
+		interrupt-parent = <&gic>;
+		interrupts = <xxx>;
+	};
+
+I'll send v3 patch with reference to these RFC patches for now.
+
+Thank you,
+
 ---
-v2->v1:
- * track all recovered inodes so that if recovery fail, we can find and
-   iput all those inodes
- * clear SB_ACTIVE before destroy_fsync_dnoes to let iput trash all data
- * do not truncate pages of quota inodes, evict will do that
- * no need to track orphan inodes, they are evict immediatelly during
-   recovery (i_count = 0)
----
- fs/f2fs/recovery.c | 32 +++++++++++++++++++++-----------
- fs/f2fs/super.c    | 15 ++++++++++++++-
- 2 files changed, 35 insertions(+), 12 deletions(-)
+Best Regards,
+Kunihiko Hayashi
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 93e3b6c46aae..0f36ea758160 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
- 	return ERR_PTR(err);
- }
- 
--static void del_fsync_inode(struct fsync_inode_entry *entry)
-+static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
- {
-+	if (drop) {
-+		/* inode should not be recovered, drop it */
-+		f2fs_inode_synced(entry->inode);
-+	}
- 	iput(entry->inode);
- 	list_del(&entry->list);
- 	kmem_cache_free(fsync_entry_slab, entry);
-@@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 	return err;
- }
- 
--static void destroy_fsync_dnodes(struct list_head *head)
-+static void destroy_fsync_dnodes(struct list_head *head, int drop)
- {
- 	struct fsync_inode_entry *entry, *tmp;
- 
- 	list_for_each_entry_safe(entry, tmp, head, list)
--		del_fsync_inode(entry);
-+		del_fsync_inode(entry, drop);
- }
- 
- static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-@@ -579,7 +583,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- }
- 
- static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
--						struct list_head *dir_list)
-+		struct list_head *tmp_inode_list, struct list_head *dir_list)
- {
- 	struct curseg_info *curseg;
- 	struct page *page = NULL;
-@@ -633,7 +637,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		}
- 
- 		if (entry->blkaddr == blkaddr)
--			del_fsync_inode(entry);
-+			list_move_tail(&entry->list, tmp_inode_list);
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
-@@ -646,7 +650,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 
- int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- {
--	struct list_head inode_list;
-+	struct list_head inode_list, tmp_inode_list;
- 	struct list_head dir_list;
- 	int err;
- 	int ret = 0;
-@@ -677,6 +681,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	}
- 
- 	INIT_LIST_HEAD(&inode_list);
-+	INIT_LIST_HEAD(&tmp_inode_list);
- 	INIT_LIST_HEAD(&dir_list);
- 
- 	/* prevent checkpoint */
-@@ -695,11 +700,16 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	need_writecp = true;
- 
- 	/* step #2: recover data */
--	err = recover_data(sbi, &inode_list, &dir_list);
-+	err = recover_data(sbi, &inode_list, &tmp_inode_list, &dir_list);
- 	if (!err)
- 		f2fs_bug_on(sbi, !list_empty(&inode_list));
-+	else {
-+		/* restore s_flags to let iput() trash data */
-+		sbi->sb->s_flags = s_flags;
-+	}
- skip:
--	destroy_fsync_dnodes(&inode_list);
-+	destroy_fsync_dnodes(&inode_list, err);
-+	destroy_fsync_dnodes(&tmp_inode_list, err);
- 
- 	/* truncate meta pages to be used by the recovery */
- 	truncate_inode_pages_range(META_MAPPING(sbi),
-@@ -708,13 +718,13 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	if (err) {
- 		truncate_inode_pages_final(NODE_MAPPING(sbi));
- 		truncate_inode_pages_final(META_MAPPING(sbi));
-+	} else {
-+		clear_sbi_flag(sbi, SBI_POR_DOING);
- 	}
--
--	clear_sbi_flag(sbi, SBI_POR_DOING);
- 	mutex_unlock(&sbi->cp_mutex);
- 
- 	/* let's drop all the directory inodes for clean checkpoint */
--	destroy_fsync_dnodes(&dir_list);
-+	destroy_fsync_dnodes(&dir_list, err);
- 
- 	if (need_writecp) {
- 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 79060c96da5b..f95df93096d5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1992,6 +1992,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 	}
- }
- 
-+static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
-+{
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	int type;
-+
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		if (!dqopt->files[type])
-+			continue;
-+		f2fs_inode_synced(dqopt->files[type]);
-+	}
-+}
-+
-+
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- {
- 	*projid = F2FS_I(inode)->i_projid;
-@@ -3282,10 +3295,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- free_meta:
- #ifdef CONFIG_QUOTA
-+	f2fs_truncate_quota_inode_pages(sb);
- 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
- 		f2fs_quota_off_umount(sbi->sb);
- #endif
--	f2fs_sync_inode_meta(sbi);
- 	/*
- 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
- 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
--- 
-2.17.1
 
