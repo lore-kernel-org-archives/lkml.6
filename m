@@ -2,157 +2,114 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0013DC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397C8C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B5C20865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B5C20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A30420865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:41:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A30420865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeJMDOX (ORCPT
+        id S1726907AbeJMDPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:14:23 -0400
-Received: from mga12.intel.com ([192.55.52.136]:3322 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbeJMDOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:14:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 12:40:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="81023155"
-Received: from ray.jf.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga008.jf.intel.com with ESMTP; 12 Oct 2018 12:40:19 -0700
-Subject: Re: [PATCH 10/11] x86/fpu: prepare copy_fpstate_to_sigframe for
- TIF_LOAD_FPU
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-11-bigeasy@linutronix.de>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ef6012c0-52b9-14bb-c581-97627fdd5cb5@linux.intel.com>
-Date:   Fri, 12 Oct 2018 12:40:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 23:15:02 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37683 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeJMDPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:15:02 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d14-v6so15085476qto.4;
+        Fri, 12 Oct 2018 12:40:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+eOPKU0eRu/C8Nhwd98PT6Af0SYY7c2+X+f7G2/L1Ls=;
+        b=fQ1MuwXIjUSNZ0DE5cRuDoODi2aVwZkjE++6+YX4irpGwwfUaWvBv9gB8jYjAHOAqP
+         wqgdep9OPigDv/R45ASjezRLZcfvj2QEVJ+EsYzQP3V/RKczTiUW+jB9Np8fI6OaZqhL
+         6i2x8PP9VWVcG1XTy3VxQDHqTLO7r76hXBNLJnMp9USWKTyWBrstd/2wyv4GIKKC0ClE
+         +GgS+myVllITJIL7qJMOIY/28C9zDshkBF67laHWGvDi6gx9UVKb0QsnPgA1w0WX3hDG
+         fl2hiI66yMvTitlBhigaAf8soZQaNKj7vFubad6EWnsxpYFShNi+pqs4UtfKOE8Y6JZh
+         FJqQ==
+X-Gm-Message-State: ABuFfojaNZpFB6kkrgT6PAPGAukQ2/n8jrlcrBzg2yiiKb80rfUV15UM
+        jEBSwuCJ98F0c+6PFvmwbUyZKmdGdjB4bIXNj0U=
+X-Google-Smtp-Source: ACcGV63NJlUKc2ZUlGqZx1GMzSfFGjMyxQ3PRHr+tbQU9Qug3bdCR9g+/fJWWqeRwVlcMnGyXaT5B7JiMqje2KF7mt8=
+X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr6877845qtl.343.1539373258267;
+ Fri, 12 Oct 2018 12:40:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181004140547.13014-11-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1539231895-4118-1-git-send-email-firoz.khan@linaro.org>
+ <3908561D78D1C84285E8C5FCA982C28F7D40F9DD@ORSMSX107.amr.corp.intel.com>
+ <CALxhOngtGNP7MATzwtMZd_Xw+rqvdhP9NMtTxwCEgmzayZshOQ@mail.gmail.com> <3908561D78D1C84285E8C5FCA982C28F7D410C05@ORSMSX107.amr.corp.intel.com>
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D410C05@ORSMSX107.amr.corp.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Oct 2018 21:40:41 +0200
+Message-ID: <CAK8P3a2uMx8eAa+WAGtePA3O=U_LXXBP7XX62fAO9g1NfpXgNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] ia64: system call table generation support
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     Firoz Khan <firoz.khan@linaro.org>, linux-ia64@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 07:05 AM, Sebastian Andrzej Siewior wrote:
-> From: Rik van Riel <riel@surriel.com>
-> 
-> If TIF_LOAD_FPU is set, then the registers are saved (not loaded). In that case
-> we skip the saving part.
+On Fri, Oct 12, 2018 at 6:12 PM Luck, Tony <tony.luck@intel.com> wrote:
+>
+> > I suspect the offset logic in the system call generation script had a bug. That
+> > I fixed it in this patch series.
+> >
+> > Arnd and Eugene had shared few comments on adding new system call entry in the
+> > table and some other things. Appreciate if you can review this patch
+> > series so I can
+> > finalize system call table implementation for ia64 architecture.
+>
+> The net effect of these is just to make it easier to add new system calls. Just
+> edit the table, instead of editing entry.S and unistd.h picking the next number
+> (and remembering to increase  the NR_syscalls). Right?
 
-This sentence hurts my brain.
+The driving factor here is the addition of the new y2038 syscalls for 32-bit
+architectures that we want to add everywhere at the same time. ia64
+and alpha are obviously not affected by this as they are 64-bit only,
+but to do it right, we should do all architectures together.
 
-	"If TIF_LOAD_FPU is set the registers are ... not loaded"
+Another point is overall maintainability: it is very time-consuming and
+error-prone to find out which architectures in which kernel version support
+a specific system call or don't support it. Having a consistent way to
+work on the tables should make this is a simple 'git grep'.
 
-I think that means that something could use some better naming.
+> I'm currently baffled at which linker magic makes the unsupported system
+> calls alias to sys_ni_syscall.
 
-Should TIF_LOAD_FPU be TIF_NEED_FPU_LOAD, perhaps?
+This is the same method that x86, arm, and s390 have been using
+for a while, by sorting the numbers and filling in the missing ones
+in the script.
 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/kernel/fpu/signal.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-> index c8f5ff58578ed..979dcd1ed82e0 100644
-> --- a/arch/x86/kernel/fpu/signal.c
-> +++ b/arch/x86/kernel/fpu/signal.c
-> @@ -155,13 +155,17 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
->  			sizeof(struct user_i387_ia32_struct), NULL,
->  			(struct _fpstate_32 __user *) buf) ? -1 : 1;
->  
-> -	/* Update the thread's fxstate to save the fsave header. */
-> -	if (ia32_fxstate) {
-> -		copy_fxregs_to_kernel(fpu);
-> -	} else {
-> -		copy_fpregs_to_fpstate(fpu);
-> -		fpregs_deactivate(fpu);
-> +	__fpregs_changes_begin();
-> +	if (!test_thread_flag(TIF_LOAD_FPU)) {
+> I'm also uncertain whether allocating system call numbers and creating
+> entry points for all the unsupported syscalls is the right thing to do. Might
+> that puzzle and frustrate folks whose applications build, but then fail at
+> run-time with -ENOSYS.
 
-This needs commenting, please.
+Again, we want this to be handled consistently across architectures
+more than anything. At the moment, we have some architectures that
+simply assign a number for each syscall added to x86, while others
+don't. Similarly, some architectures drop the entries from unistd.h
+if a syscall gets removed from the kernel, and others keep them.
 
-If we do not need to load the FPU at return to userspace, it means the
-state is in the the registers, not the buffer.  So, update the buffer to
-match the registers.
+I care less about which way we decide to go here, but I want it to
+be done the same way for all architectures.
 
-> +		/* Update the thread's fxstate to save the fsave header. */
-> +		if (ia32_fxstate) {
-> +			copy_fxregs_to_kernel(fpu);
-> +		} else {
-> +			copy_fpregs_to_fpstate(fpu);
-> +			fpregs_deactivate(fpu);
-> +		}
->  	}
-> +	__fpregs_changes_end();
-
-Do we really need the __fpregs_changes_*() abstraction for this single
-call site?
+      Arnd
