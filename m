@@ -2,98 +2,165 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0B7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6409BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D4A320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:25:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D4A320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 159DB2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="xo9PGaNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159DB2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbeJLS5w (ORCPT
+        id S1728121AbeJLTDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:57:52 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41559 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbeJLS5w (ORCPT
+        Fri, 12 Oct 2018 15:03:08 -0400
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:10947 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLTDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:57:52 -0400
-Received: by mail-vs1-f66.google.com with SMTP id w1so11542255vsj.8;
-        Fri, 12 Oct 2018 04:25:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9KwtZp2SD3UzdJnSRMVX2E/VKmFYk6aXO2HZ1884zu8=;
-        b=IGoNuoHSDsO3pw7cLmzHJZIgjHRq0sCtrwxff5ZxnOokw34n0dXIGOtWedxkg+uoki
-         2R4FxGCQ/EThGzBPikzeOvvp9LxNUkbub4JaHQ57LU976ZDdKMgntJLeo99cZ+ujVvgP
-         WlEkbYxsHUI6HfC9z7kJ2uyLuhTCtgXz6s9Vvbzdx9P0SPGedeVQAfjClJ6rTVZuKvHF
-         8qeNR7Uini3UoLXY4YhLD6DnbwNlOke4/OUmqClwGVDOja/AQ2ywBBQP5nZcybhvqFjX
-         eJYPINEcFG/kh+OA35q9r49tBUFLIW52y5qLdQy9zbtCtGaQfxbCYszz/VmvmxZ4hDk2
-         fjzQ==
-X-Gm-Message-State: ABuFfojD1KRu1i3g5fECKxOJUC0wsSUpHIKtlusfFQfhUUoEXTvEll2Q
-        po8g57DtmNXIyZFxQyTycMvgJY/Vf7bsAbw6Ihw=
-X-Google-Smtp-Source: ACcGV63L6/mNF+dfr7McIZztIgM4M8I0OA2iRxeOC1+xq6a5r9ephB7B6LH0TBbzRlZJqS6FPPKo45k945zL1kVIwXM=
-X-Received: by 2002:ab0:6093:: with SMTP id i19mr2370779ual.75.1539343552344;
- Fri, 12 Oct 2018 04:25:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011084249.4520-1-geert+renesas@glider.be>
- <20181011084249.4520-2-geert+renesas@glider.be> <20181012103901.pvyxvxv7v57zo5il@pathway.suse.cz>
-In-Reply-To: <20181012103901.pvyxvxv7v57zo5il@pathway.suse.cz>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 12 Oct 2018 13:25:38 +0200
-Message-ID: <CAMuHMdVA9=JsqEhYDzw_sW==mXqQffmH6L_R8=+0PD5PEsBvvw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] lib/vsprintf: Prepare for more general use of ptr_to_id()
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Fri, 12 Oct 2018 15:03:08 -0400
+Date:   Fri, 12 Oct 2018 11:31:01 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539343864;
+        bh=izOxPkH7jL1Ak8u4g3Gc4duQgc62xru88g3rROadegs=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=xo9PGaNMbbhEJiZA7GF05PxdpIE+OTkXulqPlxogOla3iA1qpbYdneLlKMIHdGc/Z
+         7zop9+QT5kTy+U+z3Nd/nq4zf4bXr8jy++wRlzQo2gyZV/52KoBB6hxjzboA55zJ04
+         /U36+16FxSlg5dW3lqJXJ7l+OAhREPzjOFvfefZo=
+To:     John Johansen <john.johansen@canonical.com>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <oANoEf39nJu-HzALTRaisEW9Um9AoAH5KyO5lM7tpmml58QTZLk7U9aHpTmcg8W_684zTws70sLPZXlK5Z91zLluFesVPYXiEUbIZr98Ljs=@protonmail.ch>
+In-Reply-To: <1a8ac9f4-8f82-5d3b-46ef-08801793443e@canonical.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <37rRa7F7i2XcwVPiT6gLC8cX8p0732iDiT6mGjstlbBi3mcJsQCLA6A8HcDMNjR0SGheErloJl8z-Z5c57XxtJRBF9-LO_fUTUf41EcAGC4=@protonmail.ch>
+ <1a8ac9f4-8f82-5d3b-46ef-08801793443e@canonical.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Friday, October 12, 2018 2:26 AM, John Johansen <john.johansen@canonical=
+.com> wrote:
 
-On Fri, Oct 12, 2018 at 12:39 PM Petr Mladek <pmladek@suse.com> wrote:
-> On Thu 2018-10-11 10:42:47, Geert Uytterhoeven wrote:
-> >   - Make the ptr argument const, to avoid adding casts in future
-> >     callers,
-> >   - Move the function and its dependencies up, so it can be called from
-> >     special pointer type formatting routines.
+> On 10/11/2018 04:53 PM, Jordan Glover wrote:
+>
+> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
+l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90
+> > On Friday, October 12, 2018 1:09 AM, Kees Cook keescook@chromium.org wr=
+ote:
 > >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > We've had things sort of like this proposed, but if you can convince
+> > > James and others, I'm all for it. I think the standing objection from
+> > > James and John about this is that the results of booting with
+> > > "lsm=3Dsomething" ends up depending on CONFIG_LSM=3D for that distro.=
+ So
+> > > you end up with different behaviors instead of a consistent behavior
+> > > across all distros.
+> >
+> > Ok, I'll try :)
+> > The final lsm string contains two parts: Kconfig "CONFIG_LSM=3D" and bo=
+ot
+> > param "lsm=3D". Changing even only one of those parts also changes the
+> > final string.
+> > In case of distros, it's the "CONFIG_LSM=3D" which changes. Even when "=
+lsm=3D"
+> > stays constant, the behavior will be different, example:
+> > Distro A has: CONFIG_LSM=3Dloadpin,integrity,selinux
+> > Distro B has CONFIG_LSM=3Dyama,loadpin,integrity,selinux
+> > User on distro A wants to enable apparmor with:
+> > lsm=3Dloadpin,integrity,apparmor
+> > which they do and add it to howto on wiki.
+> > User on distro B want to enable apparmor, they found info on some wiki =
+and do:
+> > lsm=3Dloadpin,integrity,apparmor
+> > Puff, yama got disabled!
+> > Above example shows why I think "consistent behavior across all distros=
+"
+> > argument for current approach is flawed - because distros aren't
+> > consistent. In my proposition the user will just use "lsm=3Dapparmor" a=
+nd
+> > it will consistently enable apparmor on all distros which is what they
+> > really wanted, but all pre-existing differences across distros will
+> > remain unchanged.
 >
-> I have pushed the changes into printk.git,
-> branch for-4.20-vsprintf-hash-fixes.
+> Are you sure about that? I have had more than one question about
+> security=3DX resulting in a system with more than just X enabled. Ie why
+> is yama enabled when I specifically set security to X.
 >
-> Note that I have split it into two separate commits. The first one
-> adds the const modifier. The second commit does a pure move of
-> the code without any "hidden" changes. I forgot to ask for this
-> when reviewing v1.
+
+So, non-explicit list will match current "security=3D" behavior which users
+are more familiar with. The current answer for this question is "because
+your distro enabled it and you didn't disabled it. With non-explcit list
+that answer will stay the same.
+
+With explicit list, the question will be "why is yama disabled when I
+enabled AppArmor with lsm=3Dapparmor".
+
+To ask both questions user have to know that something like "yama" exist
+in first place.
+
+As for question what users typically want you may look at search results
+for "disable/enable yama" and "disable/enable apparmor/selinux". The
+difference is several orders of magnitude. That's why I think typical user
+just want to switch on/off one major lsm. I don't think anecdotal evidence
+is representative here.
+
+> There will certainly be cases where what you describe is exactly what
+> the user wants. The problem is an explosion of options isn't good
+> for the user either.
 >
-> You might see the result at
-> https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/log/?h=for-4.20-vsprintf-hash-fixes
+> What I want at the moment is the discussion about different ways to
+> enable LSMs to be split off so this work can move forward.
+>
+> > The current approach requires that everyone who dares to touch "lsm=3D"
+> > knows about existence of all lsm, their enabled/disabled status on
+> > target distro and their order. I doubt there are many people other
+> > than recipients of this mail who fit for the above.
+>
+> Without having gotten a chance to review the current set of patches
+> that was not what was discussed, it should only requires they know the
+> set that they want.
+>
 
-Thanks, looks good!
+"it should only requires they know the set that they want" is very
+hard requirement and I don't think most users will pass this.
+Especially when sets like:
 
-Gr{oetje,eeting}s,
+lsm=3Dyama,loadpin,integrity,apparmor
+lsm=3Dloadpin,integrity,yama,apparmor
 
-                        Geert
+will behave differently.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jordan
