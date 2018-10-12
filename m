@@ -2,153 +2,90 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D647AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 169E5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D58206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAD1C206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnrasYjP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D58206B2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cHMGLZg2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD1C206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeJLNeJ (ORCPT
+        id S1727729AbeJLNeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 09:34:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39538 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbeJLNeJ (ORCPT
+        Fri, 12 Oct 2018 09:34:12 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40691 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbeJLNeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 09:34:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 61-v6so12061670wrb.6
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 23:03:19 -0700 (PDT)
+        Fri, 12 Oct 2018 09:34:11 -0400
+Received: by mail-io1-f66.google.com with SMTP id w16-v6so8423463iom.7
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 23:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hZ2WBQRM2g1qFgQDEi858DEffRF50lIeNXjjjnKUSgw=;
-        b=bnrasYjPBRN6d+3/s2peGlzU/hi154Sd5dpsYiLcCZgh02veL/flDSH8eqsZAIZ9YW
-         /Ocwg13pbmKLCuVPix3E95jzHArCFrcdcOocOnTd05ZH2zSIEGUzY8ThTjyfXmxfkI5f
-         lThILg1JIxz9N6YQ1C1fIzLLGHKgl5eZtQg4s=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1FQSCKuIkAaAiYuE6GiVmfbP6AtGw3cssKcsN9qB8Qk=;
+        b=cHMGLZg2CJbHkP3UAjzfRu2ZT4KGXWUp1r4Wif05y1ZPapPKZqvIA3AZaTC1mN6TPC
+         0MAu4PRrUc8OvVYJsjFrMOpwtEuSrl6w30Uvx6GabqL3sF3PZ6TnAtV4DDwdes28q+Vl
+         ypvJ1p4xp7cQRWwWSfaxsWFoN02c1VD4g83UY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=hZ2WBQRM2g1qFgQDEi858DEffRF50lIeNXjjjnKUSgw=;
-        b=Xw4TviD7/MkAKnsqM6dejzf31eck2BbklesKTvcJVPeINLwOQc65o2AInTsVQ3HZkc
-         RRjpQ6svrBCBxsFw76Z67IXBp91Xpmic0NXvgxOHI0e3yHL5Jt1iuR8XYdiKRDynbSuj
-         iFmofBDgHeRlNOTzcD0hi7k2Cfhop6HfjMkEwNZfZExmxwqUdV37ZG6uDmErM3LTWNyt
-         fYWOz60MNqYFyx8hkrfJCIOk5d//nLGflqSkqZVRVuwvtkGDLdG5hUKT2W3HiI5H/xgu
-         cEiyzJojeGq7+QeUlUNb0TvpMcP+VgUeFQgo7joPk1gE4Eeie1umi0UHPu1Pcdnv6XB9
-         ieVQ==
-X-Gm-Message-State: ABuFfohjVR6/paQdvW+hUpayxjlt6XWK/kZ99c90YThddK9g1XBruVg7
-        VwsnVN9zuNSkbYUbnGc3aIH7FA==
-X-Google-Smtp-Source: ACcGV62cCbo908bmXU/V/T49ZesyXT3ap4h/UkAIi+gZx7TXkn3tn2o6tKDwXTNqGIMpGqW8DwdDow==
-X-Received: by 2002:adf:8141:: with SMTP id 59-v6mr3731788wrm.127.1539324198343;
-        Thu, 11 Oct 2018 23:03:18 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm135676wrr.68.2018.10.11.23.03.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 23:03:16 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 07:03:14 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Message-ID: <20181012060314.GU4939@dell>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1FQSCKuIkAaAiYuE6GiVmfbP6AtGw3cssKcsN9qB8Qk=;
+        b=ibEmlQGdqvh2mOAWn6RL/DPOGrzvepeeBvymFyV0jJBes/O5k+Lt7DNuBRvfaPHz+k
+         yOazrrP1qcF7wiGOSipQRIpw08p0e6eihMVDpLrNBEv2ZcuP/CypRZF9WCcAadjfgZ28
+         xPv1t+jaQHoWGmxwKNTyjWpj3XOAgFxN8gbZpZI/X7msnMO1g4nLJSSiOmioepQm+gm9
+         nB0tknDwS3ZP1oouMeDIAP69VRfnG5+zWVN8mwvGk3Dw5M0+mZ4WH1DqGD1eXPjBiCmF
+         1IEETq2ZZqULgwV5EFG1UcWPa0BminjzRy1LGm2BKGMnc4PpeB1ezpvbs4Og5yPKoaIn
+         jxDQ==
+X-Gm-Message-State: ABuFfogGMdEeYtfNN+vLLt871hj0sSNtX7wb53crK7T0GG6YrC+b8YSA
+        OK/Agv6JPzmoLN9GRXZwunrUprmUWVZw+3PKbkEDDw==
+X-Google-Smtp-Source: ACcGV60fl/83PhNMUbhLPOF6Xc+oGl/0+S81iWKTCmSZiAH+8UPu8qkFSjfiekxwxzWjAePopzCYMJ9b9hwDYKPhrNw=
+X-Received: by 2002:a6b:6302:: with SMTP id p2-v6mr3042350iog.175.1539324201274;
+ Thu, 11 Oct 2018 23:03:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181008211205.2900-5-vz@mleia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+ <20181005065300.22882-3-ricardo.ribalda@gmail.com> <9746eba6-63f5-feaf-e63f-7e0ea7638942@ti.com>
+ <CAPybu_1PuRqOx-Fsmba4XCcRsJA0A9tdob1R=8N72-699cxomw@mail.gmail.com> <8d180cc7-d7cb-66eb-001d-f2a5c371d179@ti.com>
+In-Reply-To: <8d180cc7-d7cb-66eb-001d-f2a5c371d179@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 12 Oct 2018 08:03:09 +0200
+Message-ID: <CACRpkdYkhm16i7BiUsr0iemS7EvZZoy3ZvfLL6FJtCxBvNrqjw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        timur@kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        jhugo@codeaurora.org, Linux-OMAP <linux-omap@vger.kernel.org>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+On Fri, Oct 12, 2018 at 7:59 AM Vignesh R <vigneshr@ti.com> wrote:
+> On Thursday 11 October 2018 07:12 PM, Ricardo Ribalda Delgado wrote:
+> > Hi Vignesh
+> >
+> > Ups, it does not look too good :S . Can you check if this change fixes it:
+> >
+>
+> Below diff works for me. I no longer see crash and gpio-hog seems to be
+> working. Thanks!
 
-> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> 
-> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
-> support of subdevice controllers is done in separate drivers, because
-> not all IC functionality may be needed in particular situations, and
-> this can be fine grained controlled in device tree.
-> 
-> The development of the driver was a collaborative work, the
-> contribution done by Balasubramani Vivekanandan includes:
-> * original implementation of the driver based on a reference driver,
-> * regmap powered interrupt controller support on serializers,
-> * support of implicitly or improperly specified in device tree ICs,
-> * support of device properties and attributes: backward compatible
->   mode, low frequency operation mode, spread spectrum clock generator.
-> 
-> Contribution by Steve Longerbeam:
-> * added ds90ux9xx_read_indirect() function,
-> * moved number of links property and added ds90ux9xx_num_fpd_links(),
-> * moved and updated ds90ux9xx_get_link_status() function to core driver,
-> * added fpd_link_show device attribute.
-> 
-> Sandeep Jain added support of pixel clock edge configuration.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> ---
->  drivers/mfd/Kconfig           |  14 +
->  drivers/mfd/Makefile          |   1 +
->  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
->  include/linux/mfd/ds90ux9xx.h |  42 ++
->  4 files changed, 936 insertions(+)
->  create mode 100644 drivers/mfd/ds90ux9xx-core.c
->  create mode 100644 include/linux/mfd/ds90ux9xx.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 8c5dfdce4326..a969fa123f64 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
->  	  boards.  MSP430 firmware manages resets and power sequencing,
->  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
->  
-> +config MFD_DS90UX9XX
-> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
-> +	depends on I2C && OF
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	help
-> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
-> +
-> +	  This driver provides basic support for setting up the de-/serializer
-> +	  chips. Additional functionalities like connection handling to
-> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
-> +	  controller and so on are provided by separate drivers and should
-> +	  enabled individually.
+Ricardo can you send a patch with a Fixes: tag and Vignesh's
+Tested-by/Reported-by?
 
-This is not an MFD driver.
-
-After a 30 second Google of what this device actually does, perhaps
-drivers/media might be a better fit?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
