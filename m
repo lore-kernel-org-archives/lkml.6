@@ -2,322 +2,737 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3202AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B254C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD872098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76F02086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="bqPW4DKN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD872098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gT8b5wAS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76F02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeJLRb3 (ORCPT
+        id S1728357AbeJLRcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:31:29 -0400
-Received: from mail-eopbgr30045.outbound.protection.outlook.com ([40.107.3.45]:40672
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726917AbeJLRb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:31:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tVOuoo4JvCUvh7Tds4hArmaYRqrSSqI8zFEzBWhm4gM=;
- b=bqPW4DKN5QxuCjFAF9ApIuDylQkGWvR/eMUY5ik9DH30csSGjgQ5G4zXtZJGFRFxOEL3OIR26dNmVXFKIrkUqTOempbHDoLJTO+o9Mh7ToaTNh7c4hTxwbjt8qgF+5FynrLJ1cV+sepBY7xv1VQaQwSlBJJ1odBZTFO1AkwMAM4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Szabolcs.Nagy@arm.com; 
-Received: from [10.2.206.68] (217.140.106.49) by
- AM6PR08MB3287.eurprd08.prod.outlook.com (2603:10a6:209:47::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.23; Fri, 12 Oct 2018 09:59:40 +0000
-Cc:     nd@arm.com, Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
+        Fri, 12 Oct 2018 13:32:43 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33775 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727808AbeJLRcn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 13:32:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y140-v6so17679945wmd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 03:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hWcgjal93Vz+qowuZM+zZjIL73xkGNk9/rBggSrAPSk=;
+        b=gT8b5wASgrEgdsgDFNJGVc4TXbHuVWYx565cnOA4TYCWWkDT8ij2+9DmYOTz6GXq7/
+         2FytLSVcfAT14P1vXS4YAT6TKEflC/dbsbABsvlkv4uwBlF/6ZcLRG5l0E8HQ/Pj5RW4
+         QM3SOQh5rIn+ordJRlxowZYFElRepbis4TRQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=hWcgjal93Vz+qowuZM+zZjIL73xkGNk9/rBggSrAPSk=;
+        b=aX8QymiatrA657JflLu68GZHDFjfoN1ZaRkdoox6m7CpJj95EMSBfPzqBoxRuy3UBl
+         shEuDHuNJTC1WHMMq76n4ZUK4czbjQY0qBvuVA6JvFp9OI5E4FgCTpZEwlO0jOmhpX0a
+         yO9pYvwTl7vcJEI3ckY96oWKsVPXmBREfQ/rwToB7vvjCQHxZxEGNnA2ZYDrgp9a/12Y
+         AUYswUWq/dvJo+KcYZcREj75D21hnRUDnFg+DtPGwfFX5WO9ieQU5QepihEPq5HS8W+v
+         gqhig8rdMW6KNAKfEKF8KOfr65dJ1q6ec3hcQOjKNCSu/SzJA/enb/DiiNY6Qoc7Q1QS
+         G8GQ==
+X-Gm-Message-State: ABuFfoj7j/3lNCzwiYn71o7JJ0dM0pvm1lfveHzPURpu03I+AnX2J5KZ
+        Q6tE/xFD6B9z6vDSuZIDbTZrJQ==
+X-Google-Smtp-Source: ACcGV628K4IlSwnSGqAhioVbxbup2L7VjPi3YSH4WzXInq7mM0wEjlq6gOzEuy9LEurgyPYnzT1vOg==
+X-Received: by 2002:a1c:540d:: with SMTP id i13-v6mr4784053wmb.149.1539338463334;
+        Fri, 12 Oct 2018 03:01:03 -0700 (PDT)
+Received: from wifi-122_dhcprange-135.wifi.unimo.it (wifi-122_dhcprange-135.wifi.unimo.it. [155.185.122.135])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm931248wra.37.2018.10.12.03.01.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 03:01:02 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] block, bfq: improve asymmetric scenarios detection
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20181012095557.13744-1-paolo.valente@linaro.org>
+Date:   Fri, 12 Oct 2018 12:01:01 +0200
+Cc:     linux-block <linux-block@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, shuah <shuah@kernel.org>,
-        carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>
-Subject: Re: [RFC PATCH for 4.21 01/16] rseq/selftests: Add reference counter
- to coexist with glibc
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20181010191936.7495-1-mathieu.desnoyers@efficios.com>
- <20181010191936.7495-2-mathieu.desnoyers@efficios.com>
- <38596780-30f7-0763-0c17-7517dbf0bf59@arm.com>
- <1917048565.2402.1539270808972.JavaMail.zimbra@efficios.com>
- <3896e4f5-aab1-ae79-5360-088fd15ed380@arm.com>
- <1680616760.2469.1539275846360.JavaMail.zimbra@efficios.com>
- <f22ef029-2f30-6bd9-e46a-9e7b0a1e9225@arm.com>
- <254339058.2585.1539286978932.JavaMail.zimbra@efficios.com>
-From:   Szabolcs Nagy <szabolcs.nagy@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=szabolcs.nagy@arm.com; keydata=
- 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
-Message-ID: <0dcd1e46-7007-3a99-4ada-f09ab66ab2d5@arm.com>
-Date:   Fri, 12 Oct 2018 10:59:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <254339058.2585.1539286978932.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [217.140.106.49]
-X-ClientProxiedBy: CWLP265CA0343.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:5a::19) To AM6PR08MB3287.eurprd08.prod.outlook.com
- (2603:10a6:209:47::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7a360579-477f-4eae-7669-08d630296e66
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3287;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3287;3:hR25nKMhJrEml4irBqMmtekfXehIQ3kj1QfwnUAA472BNQxjxPKevbSnRbKsU4RMhmPwCOy1/55Yed6wkLQSSip50D2Of8yKoBxIq6goNOPMKLWKOr5Qp75KGTZ4ubT5f2cIP6JBx8Sfl5XUmrngDAG1hfErEJ6BsW2CLz1Qyi4uX6qLumh9iUFlJKtOZbAKMDZURGQsByaUCU2acO0ksuwVVAb597uJ2GGoGnifbzaG+kDEa0ElpHLalH0pb3GU;25:7ZqQenbKf0yf7ToFkwSFQnRm9joDoFZiT7Y3jAWJFwDx7L722/TajhtuIMZb/e34pB6f7QvCEx76vG90WPNx0hkCVKN4msEVfSlH1Ziti4CWA4hD+mmxzterFzRUshUmV6L5ZHnKGoAq9SVrrHBH+GhUn2MluhjRfLMT5eJqCBtHeM1i+6iOqniYu+/JOOK6R5X5VHEmvQ3WdJKE7TNBKNMIkLNWMjRez3q0/2wGJ/8jCREAHGwDa+e3ONSQ9tMpQsNYMzcGkHH/D/hTxtqelwQA2TL4tc4icS79lsfjVdLtxbxbVB+50sqTV9NpSG8BBEUHneaR1Ez3xuXtAl1rhw==;31:k2Nz9xbQlQeRqbPY4utYFFq1Ow/Z1w1i/bo3IcTDnPDv+h7QZb0wFviY7jaJ+LKcquYftqvxRbtjcARMjbVYCZPAZ094DUYZhJnom6kdFRbkQ4SkFj1BgASMlLZdJq63BkHQgC2T74fThpy2BcYhLOwgjck3uyv59TPgb/zyRsmZG4chFf6yqZbNpMfcNp1DIyAiFoTnYGCQuFP6Lpp/gH13sAcXwuDV5lUb8rhkH9M=
-X-MS-TrafficTypeDiagnostic: AM6PR08MB3287:
-NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3287;20:v+hDXZqgTsquNYzHV9skcR0Zd0PG+49o7Ij9Duqzmdwcp9xD4MTNVxha0Web5+nDDSidU8NxdWZITJVoH/nyC6zy4CUbx6of/EKEgO5FlYx1OKK0WX00qr1yXKT6yf88oZ2XZmq40gPztkmLamdOljsE4dfRMIHVKhjLOyMfkWXOwXfP0erJVKfdGXT3KDBv+qwfttPnPWJ1DFknAKclUzUQHqKYa6c4JnfGvGpud2dE9ublr/8CTxqm6FUQBhqu4s+T7lnPPWlvNPwztbG/ch5/385OaOUoU68I4qOH1DuNySmbhGioJzFTxVd5+hnmRpINhP1oWcRkaf6MFv15i57hv7c05F62yawZG2DEX/I1IL+lNr7vuydGlvl8B+ns0IkGD4tkS6urSkDOc1vTNXK42Ca9fiS8RLAHbvVDFAU=;4:qSpnZSy4Bb9SyjykSTBGy+MDavq5qNQvpv2A+gVEcfgFUH4JCqIlOuDDAXIcRW9J5tF61V7dd0wAtN4BPJoDCZYobSz/yMHt2SyNMSTfcbRRsuGXy2PR8y1jAJsjEEBPijBpIUdD6TXDIcGxNTnI55GRHy4W+WXT1Wju9ijrwLGjvUE9eiW+PsltPtWQWA611WzW0/zFdyeycjEBzzVBVTqGXOwDqJAsKXDKrjn5buRHji99WJYsFo1TeJbM6GdO59lavKqN4PMMVnDdacC0GfoiAH33NTJDz6n8FmhzCHRgrpuWLWEEoAypuLU0zZ5IpGCJWDFfO1rpmgDf4xvANKNOs/SJMyvQw804FXNe6SdVRiR1RnSVGuPfIOTV+2St
-X-Microsoft-Antispam-PRVS: <AM6PR08MB3287C24FDC0FB17B8D1D306EEDE20@AM6PR08MB3287.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(5213294742642)(278428928389397);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:AM6PR08MB3287;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3287;
-X-Forefront-PRVS: 0823A5777B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(376002)(39860400002)(346002)(136003)(396003)(366004)(189003)(199004)(53546011)(305945005)(7736002)(39060400002)(316002)(7416002)(4326008)(106356001)(105586002)(93886005)(31686004)(72206003)(6246003)(36756003)(26005)(478600001)(77096007)(6916009)(16576012)(229853002)(186003)(16526019)(53936002)(2906002)(6486002)(81156014)(8676002)(81166006)(47776003)(8936002)(68736007)(65806001)(66066001)(65956001)(44832011)(50466002)(476003)(11346002)(3846002)(5660300001)(446003)(6116002)(2616005)(956004)(54906003)(76176011)(58126008)(230700001)(217873002)(25786009)(31696002)(65826007)(86362001)(386003)(52116002)(97736004)(23676004)(64126003)(52146003)(2486003)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3287;H:[10.2.206.68];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA4TUIzMjg3OzIzOjRXZWQvYlorQTgwTFJ6amYxTFk4SVFlb1Mw?=
- =?utf-8?B?WnN3SGdQZktPMXk3dnRJejBzWW1BZWZsaVJrS3F5KzI3RmFkdkZsUFlvckVW?=
- =?utf-8?B?blozT2Q1dllrNmdMMEo1SldCaTBaS1BiRFc4UUF0QUxrb3dxWWJzaytNNSs0?=
- =?utf-8?B?d0VpZVhlTTRXa0FXbG04aUJZaDFBL29GMHA3WXNCcUszUVlNMEhJVTJZdmFJ?=
- =?utf-8?B?WUxqWTBLY3UwYkNPNkdNQ3JFb0dGWkp3c3JoTXNqY2swWVdsVzhOTzMvWVhP?=
- =?utf-8?B?bjlGamVBaW5pQmJBcXkzeGdZbmFsZ0kwUHVSOEFvWG9DSWFRYnRKS1BpSVd0?=
- =?utf-8?B?a0pSa21BM2VvckNsLzlhSFhZSmRKOUU3cFVlc3VOQzhDRFRKTzVUc1pkMW1C?=
- =?utf-8?B?RDNyYUpJMGhUaUxCRXF2YStmNm5tdmtxaHMzVzF6Rnk2cU53TmRISGRCdDhZ?=
- =?utf-8?B?WEZLOWxlcWljdHpiUU1OYVJBdUsremZzQmh1cDJUNXM0T0QwaFJNK0s0ZWV5?=
- =?utf-8?B?T05UVlRQZUJSVEErcW5WTnUvbFV6eGplV3RrT2lEMERZREdmUlNOWFFoT0Zo?=
- =?utf-8?B?NmordXErNzFOVSs1MWJwd00vUXFxcVUvbktDVnJuUW5WaTdqbVRIRWVnVXdl?=
- =?utf-8?B?R2F1WGhVRW5YSzlZenJyNTVUbEJUNmFIblM2UkJPelVINGJMdGFhRno4ZnZx?=
- =?utf-8?B?RTF5TnB5MmdlNEJxbkw4RUc2ZWxqeVJBd0h2cjN3TzFZUS9kMjByaGtFcG1R?=
- =?utf-8?B?WVdCc0hjQ044L2NPSWZwOW1JcVRWbkhhcVN2Z3oya2tkR2F6RUlOa0YwNVk1?=
- =?utf-8?B?a2xTd3lpRmVaVTlLT2hBcUN4bjJLQnlYRTdtRWlwZHh5ejB2VElhUHhnVmR2?=
- =?utf-8?B?WkFJbFlaemtId21PYlBLRExDUlJqOEN4djVaaEQrem1ZanAwZzRNK3IxYk1M?=
- =?utf-8?B?TWdHN0E5RWN6Q2Zrd01MUG5TeEN4M2szKzlJaXN6c2xFZXJsSjNXTFRmdWht?=
- =?utf-8?B?WVIwaFFqVXNvanAxcE81MjVCTkh2VlZlQ0x6MlRlUTBKRHVQbjhNK0lJWGxh?=
- =?utf-8?B?QXNvY1ZOVWdIRnJEUW1kMXNJTnd1WEdNeWVzaVZWeUNmczhTUHFENmtuUytz?=
- =?utf-8?B?MTcyTmZuU1FlN09rQmtSQUpHSlFZMlM0eDZVdC9EcTNjV1B0VFhVQXlzMG1P?=
- =?utf-8?B?MnhzM05GUFJWNklGQmR4T2pkWXIraHRpUHRZbXpwcGRrRUFnRmZ4anVRenNU?=
- =?utf-8?B?SkFsdk5vbVdRTTN0L2w0SGI1YTBrbmFsYzdHVU9udTBkcS8yMDNCa0xFUEhs?=
- =?utf-8?B?UDJBLzNsMjBPUHNkbFZ1Zk8rb3U4MjNOMW1RRVE1U3NSKzlEVWZwaUx3WHAz?=
- =?utf-8?B?Zkt1cjM5UVNWSzlFdHNyaVBuY2FYaXh5bkFMTWpQZFhjdjEzWFlpZFdsMFl5?=
- =?utf-8?B?MWd1elkvY2lnc2svN0NiMzlpUDdWQlh3TGYxQzN1UEorNjNid2lkdE1uaVFk?=
- =?utf-8?B?VkNWSnBCc29JenVUWXl5MjNwdnU4RDloQm85Yk0zN3N3SG1ZeFVaWDY4Q0Z5?=
- =?utf-8?B?emkyOWZPbnYvQTN2cEF0Y3NidkdMZkdQTTVnTkttc1VtRU9TWkRvNUxuTTZw?=
- =?utf-8?B?M2s4aldWUFoxc2gzQTUxM3IvZjZ4cERpUEVUc1creTBwWnFjTkNTTUV1QVVs?=
- =?utf-8?B?cU9JcGVES05TZkkxL1YwRzF5MjNYMkRpYmVvTFJvYVdrQ0N4dFd3TVVDZWpF?=
- =?utf-8?B?MGFIWnJqOHo3cHYwVVV2NnpmWEFMdFVIanRHSGNndFF0L1lpWnE2TFJhUHc2?=
- =?utf-8?B?bHlreVdYRWpQcC9MU3JQcjZEWFppT25ZbWpINXN0RFIzejhnTjc0MmVrYS84?=
- =?utf-8?B?dUNCT1ZUQnVXeTc5OXN5bTVRTys2WWJUZFRyVCt6TFh3eXZQWWRTTXpXQ29m?=
- =?utf-8?B?QnFrTjFHVGJSWmdUVFY1OE0zcmxDZnRxZlYwcEhDNS9JU0VFVlU4WFFJVUdj?=
- =?utf-8?B?dWlsMFhYRkVJMk9lQ0ViSm1tejg3RFZ4Qk5YUDJUT3lnbTRwenlqcG5qc3V4?=
- =?utf-8?Q?AbF/UgNlgpPyvvdCFnRB3R0Va?=
-X-Microsoft-Antispam-Message-Info: GNjfZHgFZl2wduTXQy0abAYpC4zPItU21hdBTmR4w+PVbM1WWI/dixJWJCik2/zJYAtvNhNGCipmChHZsXO/PP66FPCk2Q4xsKImrJFR+28ifmatYgEBBPzSMSztbFZFRhjY0Rzb2Bq2d2krOROJYMSgdsmnPtBwucMuh0Xwx8Oz9fjLA56+oqkwgovys4llr7XqcNHArf7V+eFaCS/WlfPjMRsmXqWDeUIbq96snbP+XNcroaJYpuRX5p8MN4Z9Pj4ihwzOT+PqUrW1zLmRdWtIplSc8S3RQW1vT3FYhFb/d5ovLfEJWxFoAFhq+yVlV4Lyk+GAXdLTgivqjUvbfnQfOZEQNWhoWDx5ozjJOAQ=
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3287;6:FTRXTFssVJA92PeNRdx3D4MFgGaxa8VaQJSgrf8F07N5SmOt+WLGJbDqYyQ6PTWVdXgh96fnXFOFsBk78G3UshbLGGC99J/CAlE0SExnjPiXKcD9c1AUAXIq/s57dLj23iTkGHZ/DZHh1cDSmSvXhRGXhcZwx7oVfe2RsT1y6UvIs2AZHMU5CiKIAxlgFGfiBAum2zXyKLZodBiNEl7VuF24eexPTlE8Bt6viz0y0BKZpj37OTHaQqgoWPNeidLS9swyNkgTFrlHK1SK0o/xzPCvYLIKYx8Pz24jfUtK1c78G34cNfkziCOle60Tu5NITVdnMQWxN6lMCGEzTiQZ0xczkNYlFEOVtyEOoE83JhwAv34WnbILx1QWbsUo/IXe2X1q6CkkdC3vmNL1y05gvdZdVYYrf2VCaIKzJBcMOnCSwhoNjoIMzCsJG4nRHwIV8SOIvAsyethhG7jklbVjkA==;5:ohqURdK0K7CjEaqKX25QKlFXEhHCArwd4PQQ/RpZbXpDlwvZeaSo653oEc11HvWnl7jgeYTpj8/B2BeLlFQP9a8Pvxl0I056/pH3UiofxjCsU2Znuhg6Rl9s2d+SzQFEZJXl0+C+uV7ETawE2g9aEakOiMSC1RP6g3/wdYiJPEs=;7:SmcFpEOo9Rlpe9ADLCt7M0cfU9BZNOk7mfm4PD9xJcRQLQ7N1aV2gCe6hhFzzVKe2Kkq0N3UmmK3Z4m7MwOG1Cy5AHA3yYg1w1zJsT4YHpi1LIVC3ApvgUGjTw/GcJAb2d0KujaL+f1VGRKKher7oFnaNFIaDy30mZPmfNvEBoAbsAxam4PpA/8Id8bbbO4qSQGZGi114KekFAtMKaG/1Klw6XjzDgdIpemWQWl5264godA4OtojgQ3MunbOuK7h
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2018 09:59:40.9754
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a360579-477f-4eae-7669-08d630296e66
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3287
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        broonie@kernel.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name, Federico Motta <federico@willer.it>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F40EE6B6-73A5-4A99-8F0C-13DEBC8EFB2C@linaro.org>
+References: <20181012095557.13744-1-paolo.valente@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/18 20:42, Mathieu Desnoyers wrote:
-> ----- On Oct 11, 2018, at 1:04 PM, Szabolcs Nagy Szabolcs.Nagy@arm.com wrote:
-> 
->> On 11/10/18 17:37, Mathieu Desnoyers wrote:
->>> ----- On Oct 11, 2018, at 12:20 PM, Szabolcs Nagy Szabolcs.Nagy@arm.com wrote:
->>>> On 11/10/18 16:13, Mathieu Desnoyers wrote:
->>>>> ----- On Oct 11, 2018, at 6:37 AM, Szabolcs Nagy Szabolcs.Nagy@arm.com wrote:
->>>>>> On 10/10/18 20:19, Mathieu Desnoyers wrote:
->>>>>>> +__attribute__((visibility("hidden"))) __thread
->>>>>>> +volatile struct libc_rseq __lib_rseq_abi = {
->>>>>> ...
->>>> but it's in a magic struct that's called "abi" which is confusing,
->>>> the counter is not abi, it's in a hidden object.
->>>
->>> No, it is really an ABI between user-space apps/libs. It's not meant to be
->>> hidden. glibc implements its own register/unregister functions (it does not
->>> link against librseq). librseq exposes register/unregister functions as public
->>> APIs. Those also use the refcount. I also plan to have existing libraries, e.g.
->>> liblttng-ust and possibly liburcu flavors, implement the
->>> registration/unregistration and refcount handling on their own, so we don't
->>> have to add a requirement on additional linking on librseq for pre-existing
->>> libraries.
->>>
->>> So that refcount is not an ABI between kernel and user-space, but it's a
->>> user-space ABI nevertheless (between program and shared objects).
->>>
->>
->> if that's what you want, then your declaration is wrong.
->> the object should not have hidden visibility.
-> 
-> Actually, if we look closer into my patch, it defines two symbols,
-> one of which is an alias:
-> 
-> __attribute__((visibility("hidden"))) __thread
-> volatile struct libc_rseq __lib_rseq_abi = {
->         .cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
-> };
-> 
-> extern __attribute__((weak, alias("__lib_rseq_abi"))) __thread
-> volatile struct rseq __rseq_abi;
-> 
-> Note that the public __rseq_abi symbol is weak but does not have
-> hidden visibility. I do this to ensure I don't get prototype
-> mismatch for __rseq_abi between rseq.c and rseq.h (it is required
-> to be a struct rseq by rseq.h), but I want the space to hold the
-> extra refcount field present in struct libc_rseq.
-> 
+Hi Jens,
+this is based against next, and meant for 4.20, if we are not too late
+again (and, of course, if the patch is acceptable).
 
-but that's wrong: the weak symbol might get resolved to
-a different object in another module, while you increment
-a local refcounter, so there is no coordination between
-userspace components.
+Thanks,
+Paolo
 
-this was the reason for my first question in my original mail,
-as soon as i saw the local counter i suspected this is broken.
-
-and "assume there is an extra counter field" is not
-acceptable as user space abi, if the counter is relevant
-across modules then expose the entire struct.
-
->> either the struct should be public abi (extern tls
->> symbol) or the register/unregister functions should
->> be public abi (so when multiple implementations are
->> present in the same process only one of them will
->> provide definition for the public abi symbol and
->> thus there will be one refcounter).
-> 
-> Those are two possible solutions, indeed. Considering that
-> we already need to expose the __rseq_abi symbol as a public
-> ABI in a way that ensures that multiple implementations
-> in a same process end up only using one of them, it seems
-> straightforward to simply extend that structure and hold the
-> refcount there, rather than having two extra ABI symbols
-> (register/unregister functions).
-> 
-> One very appropriate question here is whether we want to
-> expose the layout of struct libc_rseq (which includes the
-> refcount) in a public header file, and if so, which project
-> should hold it ? Or do we just want to document the layout
-> of this ABI so projects can define the structure layout
-> internally ? As my implementation currently stands, I have
-> the following structure duplicated into rseq selftests,
-> librseq, and glibc:
-> 
-
-"not exposed" and "the counter is abi" together is not
-useful, either you want coordination in user-space or
-not, that decision should imply the userspace abi/api
-(e.g. adding a counter to the user-space struct).
-
-it is true that only modules that implement registration
-need to know about the counter and normal users don't,
-but if you want any coordination then the layout must
-be fixed and that should be exposed somewhere to avoid
-breakage.
-
-(i think ideally the api would be controlled by functions
-and not object symbols with magic layout, but the rseq
-design is already full of such magic. and i think it's
-better to do the registration in libc only without
-coordination but that might not be practical if users
-want it now)
-
+> Il giorno 12 ott 2018, alle ore 11:55, Paolo Valente =
+<paolo.valente@linaro.org> ha scritto:
+>=20
+> From: Federico Motta <federico@willer.it>
+>=20
+> bfq defines as asymmetric a scenario where an active entity, say E
+> (representing either a single bfq_queue or a group of other entities),
+> has a higher weight than some other entities.  If the entity E does =
+sync
+> I/O in such a scenario, then bfq plugs the dispatch of the I/O of the
+> other entities in the following situation: E is in service but
+> temporarily has no pending I/O request.  In fact, without this =
+plugging,
+> all the times that E stops being temporarily idle, it may find the
+> internal queues of the storage device already filled with an
+> out-of-control number of extra requests, from other entities. So E may
+> have to wait for the service of these extra requests, before finally
+> having its own requests served. This may easily break service
+> guarantees, with E getting less than its fair share of the device
+> throughput.  Usually, the end result is that E gets the same fraction =
+of
+> the throughput as the other entities, instead of getting more, =
+according
+> to its higher weight.
+>=20
+> Yet there are two other more subtle cases where E, even if its weight =
+is
+> actually equal to or even lower than the weight of any other active
+> entities, may get less than its fair share of the throughput in case =
+the
+> above I/O plugging is not performed:
+> 1. other entities issue larger requests than E;
+> 2. other entities contain more active child entities than E (or in
+>   general tend to have more backlog than E).
+>=20
+> In the first case, other entities may get more service than E because
+> they get larger requests, than those of E, served during the temporary
+> idle periods of E.  In the second case, other entities get more =
+service
+> because, by having many child entities, they have many requests ready
+> for dispatching while E is temporarily idle.
+>=20
+> This commit addresses this issue by extending the definition of
+> asymmetric scenario: a scenario is asymmetric when
+> - active entities representing bfq_queues have differentiated weights,
+>  as in the original definition
+> or (inclusive)
+> - one or more entities representing groups of entities are active.
+>=20
+> This broader definition makes sure that I/O plugging will be performed
+> in all the above cases, provided that there is at least one active
+> group.  Of course, this definition is very coarse, so it will trigger
+> I/O plugging also in cases where it is not needed, such as, e.g.,
+> multiple active entities with just one child each, and all with the =
+same
+> I/O-request size.  The reason for this coarse definition is just that =
+a
+> finer-grained definition would be rather heavy to compute.
+>=20
+> On the opposite end, even this new definition does not trigger I/O
+> plugging in all cases where there is no active group, and all =
+bfq_queues
+> have the same weight.  So, in these cases some unfairness may occur if
+> there are asymmetries in I/O-request sizes.  We made this choice =
+because
+> I/O plugging may lower throughput, and probably a user that has not
+> created any group cares more about throughput than about perfect
+> fairness.  At any rate, as for possible applications that may care =
+about
+> service guarantees, bfq already guarantees a high responsiveness and a
+> low latency to soft real-time applications automatically.
+>=20
+> Signed-off-by: Federico Motta <federico@willer.it>
+> Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+> ---
+> block/bfq-iosched.c | 223 ++++++++++++++++++++++++--------------------
+> block/bfq-iosched.h |  27 +++---
+> block/bfq-wf2q.c    |  36 +++----
+> 3 files changed, 155 insertions(+), 131 deletions(-)
+>=20
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 1a1b80dfd69d..6075100f03a5 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -624,12 +624,13 @@ void bfq_pos_tree_add_move(struct bfq_data =
+*bfqd, struct bfq_queue *bfqq)
+> }
+>=20
 > /*
->  * linux/rseq.h defines struct rseq as aligned on 32 bytes. The kernel ABI
->  * size is 20 bytes. For support of multiple rseq users within a process,
->  * user-space defines an extra 4 bytes field as a reference count, for a
->  * total of 24 bytes.
+> - * Tell whether there are active queues or groups with differentiated =
+weights.
+> + * Tell whether there are active queues with different weights or
+> + * active groups.
 >  */
-> struct libc_rseq {
->         /* kernel-userspace ABI. */
->         __u32 cpu_id_start;
->         __u32 cpu_id;
->         __u64 rseq_cs;
->         __u32 flags;
->         /* user-space ABI. */
->         __u32 refcount;
-> } __attribute__((aligned(4 * sizeof(__u64))));
-> 
-> That duplicated structure only needs to be present in early-adopter
-> applications/libraries. Those linking on librseq or relying on newer
-> glibc to register rseq don't need to know about this extended layout:
-> all they need to care about is the layout of struct rseq (without the
-> added refcount). 
+> -static bool bfq_differentiated_weights(struct bfq_data *bfqd)
+> +static bool bfq_varied_queue_weights_or_active_groups(struct bfq_data =
+*bfqd)
+> {
+> 	/*
+> -	 * For weights to differ, at least one of the trees must contain
+> +	 * For queue weights to differ, queue_weights_tree must contain
+> 	 * at least two nodes.
+> 	 */
+> 	return (!RB_EMPTY_ROOT(&bfqd->queue_weights_tree) &&
+> @@ -637,9 +638,7 @@ static bool bfq_differentiated_weights(struct =
+bfq_data *bfqd)
+> 		 bfqd->queue_weights_tree.rb_node->rb_right)
+> #ifdef CONFIG_BFQ_GROUP_IOSCHED
+> 	       ) ||
+> -	       (!RB_EMPTY_ROOT(&bfqd->group_weights_tree) &&
+> -		(bfqd->group_weights_tree.rb_node->rb_left ||
+> -		 bfqd->group_weights_tree.rb_node->rb_right)
+> +		(bfqd->num_active_groups > 0
+> #endif
+> 	       );
+> }
+> @@ -657,26 +656,25 @@ static bool bfq_differentiated_weights(struct =
+bfq_data *bfqd)
+>  * 3) all active groups at the same level in the groups tree have the =
+same
+>  *    number of children.
+>  *
+> - * Unfortunately, keeping the necessary state for evaluating exactly =
+the
+> - * above symmetry conditions would be quite complex and =
+time-consuming.
+> - * Therefore this function evaluates, instead, the following stronger
+> - * sub-conditions, for which it is much easier to maintain the needed
+> - * state:
+> + * Unfortunately, keeping the necessary state for evaluating exactly
+> + * the last two symmetry sub-conditions above would be quite complex
+> + * and time consuming.  Therefore this function evaluates, instead,
+> + * only the following stronger two sub-conditions, for which it is
+> + * much easier to maintain the needed state:
+>  * 1) all active queues have the same weight,
+> - * 2) all active groups have the same weight,
+> - * 3) all active groups have at most one active child each.
+> - * In particular, the last two conditions are always true if =
+hierarchical
+> - * support and the cgroups interface are not enabled, thus no state =
+needs
+> - * to be maintained in this case.
+> + * 2) there are no active groups.
+> + * In particular, the last condition is always true if hierarchical
+> + * support or the cgroups interface are not enabled, thus no state
+> + * needs to be maintained in this case.
+>  */
+> static bool bfq_symmetric_scenario(struct bfq_data *bfqd)
+> {
+> -	return !bfq_differentiated_weights(bfqd);
+> +	return !bfq_varied_queue_weights_or_active_groups(bfqd);
+> }
+>=20
+> /*
+>  * If the weight-counter tree passed as input contains no counter for
+> - * the weight of the input entity, then add that counter; otherwise =
+just
+> + * the weight of the input queue, then add that counter; otherwise =
+just
+>  * increment the existing counter.
+>  *
+>  * Note that weight-counter trees contain few nodes in mostly =
+symmetric
+> @@ -687,25 +685,25 @@ static bool bfq_symmetric_scenario(struct =
+bfq_data *bfqd)
+>  * In most scenarios, the rate at which nodes are created/destroyed
+>  * should be low too.
+>  */
+> -void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity =
+*entity,
+> +void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_queue =
+*bfqq,
+> 			  struct rb_root *root)
+> {
+> +	struct bfq_entity *entity =3D &bfqq->entity;
+> 	struct rb_node **new =3D &(root->rb_node), *parent =3D NULL;
+>=20
+> 	/*
+> -	 * Do not insert if the entity is already associated with a
+> +	 * Do not insert if the queue is already associated with a
+> 	 * counter, which happens if:
+> -	 *   1) the entity is associated with a queue,
+> -	 *   2) a request arrival has caused the queue to become both
+> +	 *   1) a request arrival has caused the queue to become both
+> 	 *      non-weight-raised, and hence change its weight, and
+> 	 *      backlogged; in this respect, each of the two events
+> 	 *      causes an invocation of this function,
+> -	 *   3) this is the invocation of this function caused by the
+> +	 *   2) this is the invocation of this function caused by the
+> 	 *      second event. This second invocation is actually =
+useless,
+> 	 *      and we handle this fact by exiting immediately. More
+> 	 *      efficient or clearer solutions might possibly be =
+adopted.
+> 	 */
+> -	if (entity->weight_counter)
+> +	if (bfqq->weight_counter)
+> 		return;
+>=20
+> 	while (*new) {
+> @@ -715,7 +713,7 @@ void bfq_weights_tree_add(struct bfq_data *bfqd, =
+struct bfq_entity *entity,
+> 		parent =3D *new;
+>=20
+> 		if (entity->weight =3D=3D __counter->weight) {
+> -			entity->weight_counter =3D __counter;
+> +			bfqq->weight_counter =3D __counter;
+> 			goto inc_counter;
+> 		}
+> 		if (entity->weight < __counter->weight)
+> @@ -724,66 +722,67 @@ void bfq_weights_tree_add(struct bfq_data *bfqd, =
+struct bfq_entity *entity,
+> 			new =3D &((*new)->rb_right);
+> 	}
+>=20
+> -	entity->weight_counter =3D kzalloc(sizeof(struct =
+bfq_weight_counter),
+> -					 GFP_ATOMIC);
+> +	bfqq->weight_counter =3D kzalloc(sizeof(struct =
+bfq_weight_counter),
+> +				       GFP_ATOMIC);
+>=20
+> 	/*
+> 	 * In the unlucky event of an allocation failure, we just
+> -	 * exit. This will cause the weight of entity to not be
+> -	 * considered in bfq_differentiated_weights, which, in its
+> -	 * turn, causes the scenario to be deemed wrongly symmetric in
+> -	 * case entity's weight would have been the only weight making
+> -	 * the scenario asymmetric. On the bright side, no unbalance
+> -	 * will however occur when entity becomes inactive again (the
+> -	 * invocation of this function is triggered by an activation
+> -	 * of entity). In fact, bfq_weights_tree_remove does nothing
+> -	 * if !entity->weight_counter.
+> +	 * exit. This will cause the weight of queue to not be
+> +	 * considered in bfq_varied_queue_weights_or_active_groups,
+> +	 * which, in its turn, causes the scenario to be deemed
+> +	 * wrongly symmetric in case bfqq's weight would have been
+> +	 * the only weight making the scenario asymmetric.  On the
+> +	 * bright side, no unbalance will however occur when bfqq
+> +	 * becomes inactive again (the invocation of this function
+> +	 * is triggered by an activation of queue).  In fact,
+> +	 * bfq_weights_tree_remove does nothing if
+> +	 * !bfqq->weight_counter.
+> 	 */
+> -	if (unlikely(!entity->weight_counter))
+> +	if (unlikely(!bfqq->weight_counter))
+> 		return;
+>=20
+> -	entity->weight_counter->weight =3D entity->weight;
+> -	rb_link_node(&entity->weight_counter->weights_node, parent, =
+new);
+> -	rb_insert_color(&entity->weight_counter->weights_node, root);
+> +	bfqq->weight_counter->weight =3D entity->weight;
+> +	rb_link_node(&bfqq->weight_counter->weights_node, parent, new);
+> +	rb_insert_color(&bfqq->weight_counter->weights_node, root);
+>=20
+> inc_counter:
+> -	entity->weight_counter->num_active++;
+> +	bfqq->weight_counter->num_active++;
+> }
+>=20
+> /*
+> - * Decrement the weight counter associated with the entity, and, if =
+the
+> + * Decrement the weight counter associated with the queue, and, if =
+the
+>  * counter reaches 0, remove the counter from the tree.
+>  * See the comments to the function bfq_weights_tree_add() for =
+considerations
+>  * about overhead.
+>  */
+> void __bfq_weights_tree_remove(struct bfq_data *bfqd,
+> -			       struct bfq_entity *entity,
+> +			       struct bfq_queue *bfqq,
+> 			       struct rb_root *root)
+> {
+> -	if (!entity->weight_counter)
+> +	if (!bfqq->weight_counter)
+> 		return;
+>=20
+> -	entity->weight_counter->num_active--;
+> -	if (entity->weight_counter->num_active > 0)
+> +	bfqq->weight_counter->num_active--;
+> +	if (bfqq->weight_counter->num_active > 0)
+> 		goto reset_entity_pointer;
+>=20
+> -	rb_erase(&entity->weight_counter->weights_node, root);
+> -	kfree(entity->weight_counter);
+> +	rb_erase(&bfqq->weight_counter->weights_node, root);
+> +	kfree(bfqq->weight_counter);
+>=20
+> reset_entity_pointer:
+> -	entity->weight_counter =3D NULL;
+> +	bfqq->weight_counter =3D NULL;
+> }
+>=20
+> /*
+> - * Invoke __bfq_weights_tree_remove on bfqq and all its inactive
+> - * parent entities.
+> + * Invoke __bfq_weights_tree_remove on bfqq and decrement the number
+> + * of active groups for each queue's inactive parent entity.
+>  */
+> void bfq_weights_tree_remove(struct bfq_data *bfqd,
+> 			     struct bfq_queue *bfqq)
+> {
+> 	struct bfq_entity *entity =3D bfqq->entity.parent;
+>=20
+> -	__bfq_weights_tree_remove(bfqd, &bfqq->entity,
+> +	__bfq_weights_tree_remove(bfqd, bfqq,
+> 				  &bfqd->queue_weights_tree);
+>=20
+> 	for_each_entity(entity) {
+> @@ -797,17 +796,13 @@ void bfq_weights_tree_remove(struct bfq_data =
+*bfqd,
+> 			 * next_in_service for details on why
+> 			 * in_service_entity must be checked too).
+> 			 *
+> -			 * As a consequence, the weight of entity is
+> -			 * not to be removed. In addition, if entity
+> -			 * is active, then its parent entities are
+> -			 * active as well, and thus their weights are
+> -			 * not to be removed either. In the end, this
+> -			 * loop must stop here.
+> +			 * As a consequence, its parent entities are
+> +			 * active as well, and thus this loop must
+> +			 * stop here.
+> 			 */
+> 			break;
+> 		}
+> -		__bfq_weights_tree_remove(bfqd, entity,
+> -					  &bfqd->group_weights_tree);
+> +		bfqd->num_active_groups--;
+> 	}
+> }
+>=20
+> @@ -3506,9 +3501,11 @@ static bool bfq_better_to_idle(struct bfq_queue =
+*bfqq)
+> 	 * symmetric scenario where:
+> 	 * (i)  each of these processes must get the same throughput as
+> 	 *      the others;
+> -	 * (ii) all these processes have the same I/O pattern
+> -		(either sequential or random).
+> -	 * In fact, in such a scenario, the drive will tend to treat
+> +	 * (ii) the I/O of each process has the same properties, in
+> +	 *      terms of locality (sequential or random), direction
+> +	 *      (reads or writes), request sizes, greediness
+> +	 *      (from I/O-bound to sporadic), and so on.
+> +	 * In fact, in such a scenario, the drive tends to treat
+> 	 * the requests of each of these processes in about the same
+> 	 * way as the requests of the others, and thus to provide
+> 	 * each of these processes with about the same throughput
+> @@ -3517,18 +3514,50 @@ static bool bfq_better_to_idle(struct =
+bfq_queue *bfqq)
+> 	 * certainly needed to guarantee that bfqq receives its
+> 	 * assigned fraction of the device throughput (see [1] for
+> 	 * details).
+> +	 * The problem is that idling may significantly reduce
+> +	 * throughput with certain combinations of types of I/O and
+> +	 * devices. An important example is sync random I/O, on flash
+> +	 * storage with command queueing. So, unless bfqq falls in the
+> +	 * above cases where idling also boosts throughput, it would
+> +	 * be important to check conditions (i) and (ii) accurately,
+> +	 * so as to avoid idling when not strictly needed for service
+> +	 * guarantees.
+> +	 *
+> +	 * Unfortunately, it is extremely difficult to thoroughly
+> +	 * check condition (ii). And, in case there are active groups,
+> +	 * it becomes very difficult to check condition (i) too. In
+> +	 * fact, if there are active groups, then, for condition (i)
+> +	 * to become false, it is enough that an active group contains
+> +	 * more active processes or sub-groups than some other active
+> +	 * group. We address this issue with the following bi-modal
+> +	 * behavior, implemented in the function
+> +	 * bfq_symmetric_scenario().
+> 	 *
+> -	 * We address this issue by controlling, actually, only the
+> -	 * symmetry sub-condition (i), i.e., provided that
+> -	 * sub-condition (i) holds, idling is not performed,
+> -	 * regardless of whether sub-condition (ii) holds. In other
+> -	 * words, only if sub-condition (i) holds, then idling is
+> +	 * If there are active groups, then the scenario is tagged as
+> +	 * asymmetric, conservatively, without checking any of the
+> +	 * conditions (i) and (ii). So the device is idled for bfqq.
+> +	 * This behavior matches also the fact that groups are created
+> +	 * exactly if controlling I/O (to preserve bandwidth and
+> +	 * latency guarantees) is a primary concern.
+> +	 *
+> +	 * On the opposite end, if there are no active groups, then
+> +	 * only condition (i) is actually controlled, i.e., provided
+> +	 * that condition (i) holds, idling is not performed,
+> +	 * regardless of whether condition (ii) holds. In other words,
+> +	 * only if condition (i) does not hold, then idling is
+> 	 * allowed, and the device tends to be prevented from queueing
+> -	 * many requests, possibly of several processes. The reason
+> -	 * for not controlling also sub-condition (ii) is that we
+> -	 * exploit preemption to preserve guarantees in case of
+> -	 * symmetric scenarios, even if (ii) does not hold, as
+> -	 * explained in the next two paragraphs.
+> +	 * many requests, possibly of several processes. Since there
+> +	 * are no active groups, then, to control condition (i) it is
+> +	 * enough to check whether all active queues have the same
+> +	 * weight.
+> +	 *
+> +	 * Not checking condition (ii) evidently exposes bfqq to the
+> +	 * risk of getting less throughput than its fair share.
+> +	 * However, for queues with the same weight, a further
+> +	 * mechanism, preemption, mitigates or even eliminates this
+> +	 * problem. And it does so without consequences on overall
+> +	 * throughput. This mechanism and its benefits are explained
+> +	 * in the next three paragraphs.
+> 	 *
+> 	 * Even if a queue, say Q, is expired when it remains idle, Q
+> 	 * can still preempt the new in-service queue if the next
+> @@ -3542,11 +3571,7 @@ static bool bfq_better_to_idle(struct bfq_queue =
+*bfqq)
+> 	 * idling allows the internal queues of the device to contain
+> 	 * many requests, and thus to reorder requests, we can rather
+> 	 * safely assume that the internal scheduler still preserves a
+> -	 * minimum of mid-term fairness. The motivation for using
+> -	 * preemption instead of idling is that, by not idling,
+> -	 * service guarantees are preserved without minimally
+> -	 * sacrificing throughput. In other words, both a high
+> -	 * throughput and its desired distribution are obtained.
+> +	 * minimum of mid-term fairness.
+> 	 *
+> 	 * More precisely, this preemption-based, idleless approach
+> 	 * provides fairness in terms of IOPS, and not sectors per
+> @@ -3565,27 +3590,27 @@ static bool bfq_better_to_idle(struct =
+bfq_queue *bfqq)
+> 	 * 1024/8 times as high as the service received by the other
+> 	 * queue.
+> 	 *
+> -	 * On the other hand, device idling is performed, and thus
+> -	 * pure sector-domain guarantees are provided, for the
+> -	 * following queues, which are likely to need stronger
+> -	 * throughput guarantees: weight-raised queues, and queues
+> -	 * with a higher weight than other queues. When such queues
+> -	 * are active, sub-condition (i) is false, which triggers
+> -	 * device idling.
+> +	 * The motivation for using preemption instead of idling (for
+> +	 * queues with the same weight) is that, by not idling,
+> +	 * service guarantees are preserved (completely or at least in
+> +	 * part) without minimally sacrificing throughput. And, if
+> +	 * there is no active group, then the primary expectation for
+> +	 * this device is probably a high throughput.
+> 	 *
+> -	 * According to the above considerations, the next variable is
+> -	 * true (only) if sub-condition (i) holds. To compute the
+> -	 * value of this variable, we not only use the return value of
+> -	 * the function bfq_symmetric_scenario(), but also check
+> -	 * whether bfqq is being weight-raised, because
+> -	 * bfq_symmetric_scenario() does not take into account also
+> -	 * weight-raised queues (see comments on
+> -	 * bfq_weights_tree_add()). In particular, if bfqq is being
+> -	 * weight-raised, it is important to idle only if there are
+> -	 * other, non-weight-raised queues that may steal throughput
+> -	 * to bfqq. Actually, we should be even more precise, and
+> -	 * differentiate between interactive weight raising and
+> -	 * soft real-time weight raising.
+> +	 * We are now left only with explaining the additional
+> +	 * compound condition that is checked below for deciding
+> +	 * whether the scenario is asymmetric. To explain this
+> +	 * compound condition, we need to add that the function
+> +	 * bfq_symmetric_scenario checks the weights of only
+> +	 * non-weight-raised queues, for efficiency reasons (see
+> +	 * comments on bfq_weights_tree_add()). Then the fact that
+> +	 * bfqq is weight-raised is checked explicitly here. More
+> +	 * precisely, the compound condition below takes into account
+> +	 * also the fact that, even if bfqq is being weight-raised,
+> +	 * the scenario is still symmetric if all active queues happen
+> +	 * to be weight-raised. Actually, we should be even more
+> +	 * precise here, and differentiate between interactive weight
+> +	 * raising and soft real-time weight raising.
+> 	 *
+> 	 * As a side note, it is worth considering that the above
+> 	 * device-idling countermeasures may however fail in the
+> @@ -5392,7 +5417,7 @@ static int bfq_init_queue(struct request_queue =
+*q, struct elevator_type *e)
+> 	bfqd->idle_slice_timer.function =3D bfq_idle_slice_timer;
+>=20
+> 	bfqd->queue_weights_tree =3D RB_ROOT;
+> -	bfqd->group_weights_tree =3D RB_ROOT;
+> +	bfqd->num_active_groups =3D 0;
+>=20
+> 	INIT_LIST_HEAD(&bfqd->active_list);
+> 	INIT_LIST_HEAD(&bfqd->idle_list);
+> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
+> index 37d627afdc2e..77651d817ecd 100644
+> --- a/block/bfq-iosched.h
+> +++ b/block/bfq-iosched.h
+> @@ -108,15 +108,14 @@ struct bfq_sched_data {
+> };
+>=20
+> /**
+> - * struct bfq_weight_counter - counter of the number of all active =
+entities
+> + * struct bfq_weight_counter - counter of the number of all active =
+queues
+>  *                             with a given weight.
+>  */
+> struct bfq_weight_counter {
+> -	unsigned int weight; /* weight of the entities this counter =
+refers to */
+> -	unsigned int num_active; /* nr of active entities with this =
+weight */
+> +	unsigned int weight; /* weight of the queues this counter refers =
+to */
+> +	unsigned int num_active; /* nr of active queues with this weight =
+*/
+> 	/*
+> -	 * Weights tree member (see bfq_data's @queue_weights_tree and
+> -	 * @group_weights_tree)
+> +	 * Weights tree member (see bfq_data's @queue_weights_tree)
+> 	 */
+> 	struct rb_node weights_node;
+> };
+> @@ -151,8 +150,6 @@ struct bfq_weight_counter {
+> struct bfq_entity {
+> 	/* service_tree member */
+> 	struct rb_node rb_node;
+> -	/* pointer to the weight counter associated with this entity */
+> -	struct bfq_weight_counter *weight_counter;
+>=20
+> 	/*
+> 	 * Flag, true if the entity is on a tree (either the active or
+> @@ -266,6 +263,9 @@ struct bfq_queue {
+> 	/* entity representing this queue in the scheduler */
+> 	struct bfq_entity entity;
+>=20
+> +	/* pointer to the weight counter associated with this entity */
+> +	struct bfq_weight_counter *weight_counter;
+> +
+> 	/* maximum budget allowed from the feedback mechanism */
+> 	int max_budget;
+> 	/* budget expiration (in jiffies) */
+> @@ -449,14 +449,9 @@ struct bfq_data {
+> 	 */
+> 	struct rb_root queue_weights_tree;
+> 	/*
+> -	 * rbtree of non-queue @bfq_entity weight counters, sorted by
+> -	 * weight. Used to keep track of whether all @bfq_groups have
+> -	 * the same weight. The tree contains one counter for each
+> -	 * distinct weight associated to some active @bfq_group (see
+> -	 * the comments to the functions bfq_weights_tree_[add|remove]
+> -	 * for further details).
+> +	 * number of groups with requests still waiting for completion
+> 	 */
+> -	struct rb_root group_weights_tree;
+> +	unsigned int num_active_groups;
+>=20
+> 	/*
+> 	 * Number of bfq_queues containing requests (including the
+> @@ -851,10 +846,10 @@ struct bfq_queue *bic_to_bfqq(struct bfq_io_cq =
+*bic, bool is_sync);
+> void bic_set_bfqq(struct bfq_io_cq *bic, struct bfq_queue *bfqq, bool =
+is_sync);
+> struct bfq_data *bic_to_bfqd(struct bfq_io_cq *bic);
+> void bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue =
+*bfqq);
+> -void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity =
+*entity,
+> +void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_queue =
+*bfqq,
+> 			  struct rb_root *root);
+> void __bfq_weights_tree_remove(struct bfq_data *bfqd,
+> -			       struct bfq_entity *entity,
+> +			       struct bfq_queue *bfqq,
+> 			       struct rb_root *root);
+> void bfq_weights_tree_remove(struct bfq_data *bfqd,
+> 			     struct bfq_queue *bfqq);
+> diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
+> index ff7c2d470bb8..476b5a90a5a4 100644
+> --- a/block/bfq-wf2q.c
+> +++ b/block/bfq-wf2q.c
+> @@ -788,25 +788,29 @@ __bfq_entity_update_weight_prio(struct =
+bfq_service_tree *old_st,
+> 		new_weight =3D entity->orig_weight *
+> 			     (bfqq ? bfqq->wr_coeff : 1);
+> 		/*
+> -		 * If the weight of the entity changes, remove the =
+entity
+> -		 * from its old weight counter (if there is a counter
+> -		 * associated with the entity), and add it to the =
+counter
+> -		 * associated with its new weight.
+> +		 * If the weight of the entity changes, and the entity =
+is a
+> +		 * queue, remove the entity from its old weight counter =
+(if
+> +		 * there is a counter associated with the entity).
+> 		 */
+> 		if (prev_weight !=3D new_weight) {
+> -			root =3D bfqq ? &bfqd->queue_weights_tree :
+> -				      &bfqd->group_weights_tree;
+> -			__bfq_weights_tree_remove(bfqd, entity, root);
+> +			if (bfqq) {
+> +				root =3D &bfqd->queue_weights_tree;
+> +				__bfq_weights_tree_remove(bfqd, bfqq, =
+root);
+> +			} else
+> +				bfqd->num_active_groups--;
+> 		}
+> 		entity->weight =3D new_weight;
+> 		/*
+> -		 * Add the entity to its weights tree only if it is
+> -		 * not associated with a weight-raised queue.
+> +		 * Add the entity, if it is not a weight-raised queue,
+> +		 * to the counter associated with its new weight.
+> 		 */
+> -		if (prev_weight !=3D new_weight &&
+> -		    (bfqq ? bfqq->wr_coeff =3D=3D 1 : 1))
+> -			/* If we get here, root has been initialized. */
+> -			bfq_weights_tree_add(bfqd, entity, root);
+> +		if (prev_weight !=3D new_weight) {
+> +			if (bfqq && bfqq->wr_coeff =3D=3D 1) {
+> +				/* If we get here, root has been =
+initialized. */
+> +				bfq_weights_tree_add(bfqd, bfqq, root);
+> +			} else
+> +				bfqd->num_active_groups++;
+> +		}
+>=20
+> 		new_st->wsum +=3D entity->weight;
+>=20
+> @@ -1012,9 +1016,9 @@ static void __bfq_activate_entity(struct =
+bfq_entity *entity,
+> 	if (!bfq_entity_to_bfqq(entity)) { /* bfq_group */
+> 		struct bfq_group *bfqg =3D
+> 			container_of(entity, struct bfq_group, entity);
+> +		struct bfq_data *bfqd =3D bfqg->bfqd;
+>=20
+> -		bfq_weights_tree_add(bfqg->bfqd, entity,
+> -				     &bfqd->group_weights_tree);
+> +		bfqd->num_active_groups++;
+> 	}
+> #endif
+>=20
+> @@ -1692,7 +1696,7 @@ void bfq_add_bfqq_busy(struct bfq_data *bfqd, =
+struct bfq_queue *bfqq)
+>=20
+> 	if (!bfqq->dispatched)
+> 		if (bfqq->wr_coeff =3D=3D 1)
+> -			bfq_weights_tree_add(bfqd, &bfqq->entity,
+> +			bfq_weights_tree_add(bfqd, bfqq,
+> 					     &bfqd->queue_weights_tree);
+>=20
+> 	if (bfqq->wr_coeff > 1)
+> --=20
+> 2.19.1
+>=20
 
-please decide if you want multiple libraries to
-be able to register rseq and coordinate or not
-and document that decision in the public api.
