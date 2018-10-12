@@ -2,139 +2,116 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF2BC71122
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF594C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D9021480
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:50:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w20WtD8t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D9021480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A9FEB20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FEB20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeJMDYs (ORCPT
+        id S1726718AbeJMD0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:24:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeJMDYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:24:48 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E6D7205F4;
-        Fri, 12 Oct 2018 19:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539373843;
-        bh=c+e22TZjW+fq1w0G8vbx+++DzQT5oxmxvPoskMW39+0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=w20WtD8too5yZKyAPG3bjczddGOB5Ak2vA677TTZYng1gm8iTuDacFTja86E40RL9
-         hoUcpRExTyuhJ5RfeexvJpWti+KT4o5RCPSX4UcbkfHLoDSXTBk9TXu1ZKfh4EGf1S
-         F73zXuKxP8tx4G/in76fazFlMhPL3PH8LL+oOipo=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181012184017.GH2843@piout.net>
-Cc:     devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
- <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
- <20180816114755.GH21707@piout.net>
- <153573753043.93865.2420370848457480370@swboyd.mtv.corp.google.com>
- <153936888640.5275.18223880548754104359@swboyd.mtv.corp.google.com>
- <20181012184017.GH2843@piout.net>
-Message-ID: <153937384305.5275.9319960324791639711@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
-Date:   Fri, 12 Oct 2018 12:50:43 -0700
+        Fri, 12 Oct 2018 23:26:55 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:43263 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeJMD0z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:26:55 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MBmDy-1gN7Fe2ipo-00CBLi; Fri, 12 Oct 2018 21:52:34 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MBmDy-1gN7Fe2ipo-00CBLi; Fri, 12 Oct 2018 21:52:34 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, YueHaibing <yuehaibing@huawei.com>,
+        Nithya Mani <nmani@marvell.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] octeontx2-af: remove unused cgx_fwi_link_change
+Date:   Fri, 12 Oct 2018 21:52:22 +0200
+Message-Id: <20181012195232.4024123-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:L13HEqzyhNyByUk8O3uyLFXoaePJwV39to0xAel/zs4OZBUKbVT
+ 7ql3N/BjpSoKr9rB+ysVsVSQ1IXa0reYbvJz0LapRofu9B4XCbFR2d5/+MiT9dXZYJlLdjz
+ H4mMNKg3Y4ANmswroFC1HhCxAC4guOGCGDmfhI9o6r7oyhNdhtRYmY/QMEIh+pXmN/MwE4y
+ FN+Db/BqoRLKaixTeQRUQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:fjkqDAfI1uA=:HDIlaabvYnl1b64sb5BXrc
+ n90JWf7kww5B63VpJVJZNdAUBZ58TL3UaigPMAijB1kLfopRt9Zl8R9bheUPXI1jFHePhcdeR
+ nR7MWSlcjyjP4WYwIZpD33CNg0lpFcppsZ56owGXAgcWiaGvH31sMZVgZlttlzvP4hOz1Mp4d
+ x61vMSqc67AiEMqwKa6rGqOSykAdBAAllDRw15PNibkgjKwLCzdk1ddrlb54idL0YIr42mRQh
+ W7oO2fxmUaPaqPunbGYOWxvXVIAF/MZaUg3iISBdzlRWmfs/mb1pcTgWcfsbErSCJW4M/XGUj
+ JzHGmy1svUnETg6BtzQ8FBN/ro99nU9B0XVszbhuBZ7OoAPoL82CseohQxNiYmyW8YMZ4eE7n
+ ofISJqGpnpognmLgaXn2vRdfOJ1o8adIgBg3hebkHS6O/oNoTBhsPX+EjSVxCzyF6r5HJQy95
+ wSKSRPyFqlypMM7IhJoN2eoEVFgUeezYBGWHfbqIJ9Pj+hvbS8pIKDzK+PcX+NW2sRuX+CgQO
+ Hjxb5OjX4Hz5ZUpj5Ui3josy/3FoJ6+nih7G7mNyLkRnmvENEDlBiHY8SSFqINtE5mXyheG0Z
+ c9mc+hrV67n5MhVLgGoKLhI3V4UNK0+FKe44+NBiYF3qHmUfrJvjGeDPgy92mvJM2EZRj+wvL
+ Vt8vqRCTJ5WskezJWEbn4GH8+jK1wxb1nl23Vh/3vbFh7M+d7NQUrF9kGV4Q6ixKXDq0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexandre Belloni (2018-10-12 11:40:17)
-> On 12/10/2018 11:28:06-0700, Stephen Boyd wrote:
-> > Quoting Stephen Boyd (2018-08-31 10:45:30)
-> > > Quoting Alexandre Belloni (2018-08-16 04:47:55)
-> > > > On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
-> > > > > Quoting Alexandre Belloni (2018-07-17 15:27:41)
-> > > > > > This is the promised rework of the at91 PMC clocks driver. It i=
-s mainly
-> > > > > > necessary to remove the DTC warnings but it also complies with =
-the CCF
-> > > > > > rule that there should be one node per controller instead of on=
-e node
-> > > > > > per clock.
-> > > > > > =
+The newly added driver causes a warning about a function that is
+not used anywhere:
 
-> > > > > > This only handles the PMC, I'm planning to also rework the SCKC=
- bindings
-> > > > > > later (without breaking the DT ABI).
-> > > > > > =
+drivers/net/ethernet/marvell/octeontx2/af/cgx.c:320:12: error: 'cgx_fwi_link_change' defined but not used [-Werror=unused-function]
 
-> > > > > > The series is based on top of clk-next plus at91-dt so I don't =
-think it
-> > > > > > is convenient to have it this cycle. However, I would really li=
-ke to
-> > > > > > ensure we agree on the new bindings this cycle before convertin=
-g all the
-> > > > > > other platforms as this is a bit tedious.
-> > > > > > =
+Remove it for now, until a user gets added. If we want to use this
+function from another module, we also need a declaration in a header
+file, which is currently missing, so it would have to change anyway.
 
-> > > > > > The first two patches are actually fixes and may be considered =
-for this
-> > > > > > cycle.
-> > > > > > =
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-> > > > > > One nice note:
-> > > > > > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
-> > > > > =
-
-> > > > > Patches look mostly good. Rob is happy with the bindings and so a=
-m I.
-> > > > > =
-
-> > > > > One general question is why the drivers can't be moved to real pl=
-atform
-> > > > > drivers instead of using OF_CLK_DECLARE?
-> > > > > =
-
-> > > > =
-
-> > > > I tried, this makes the clocksource drivers fail with -EPROBE_DEFER=
- and
-> > > > so the kernel just stops there.
-> > > > =
-
-> > > =
-
-> > > Ok. We have CLK_OF_DECLARE_DRIVER for that. Can you use that?
-> > > =
-
-> > =
-
-> > I assume this will be resent. I haven't seen anything yet though.
-> > =
-
-> =
-
-> It will, would you be willing to take it for this cycle if I manage to
-> send it on Monday? (it seems that we will have an -rc8).
-> =
-
-
-Well there are fixes to be made, so go at your own pace and don't stress
-yourself to deliver it on Monday. I plan to stop picking most things
-early next week.
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 2cf8e402c31e..5328ecc8cea2 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -58,9 +58,6 @@ struct cgx {
+ 
+ static LIST_HEAD(cgx_list);
+ 
+-/* CGX PHY management internal APIs */
+-static int cgx_fwi_link_change(struct cgx *cgx, int lmac_id, bool en);
+-
+ /* Supported devices */
+ static const struct pci_device_id cgx_id_table[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVID_OCTEONTX2_CGX) },
+@@ -317,20 +314,6 @@ int cgx_lmac_evh_register(struct cgx_event_cb *cb, void *cgxd, int lmac_id)
+ }
+ EXPORT_SYMBOL(cgx_lmac_evh_register);
+ 
+-static int cgx_fwi_link_change(struct cgx *cgx, int lmac_id, bool enable)
+-{
+-	u64 req = 0;
+-	u64 resp;
+-
+-	if (enable)
+-		req = FIELD_SET(CMDREG_ID, CGX_CMD_LINK_BRING_UP, req);
+-	else
+-		req = FIELD_SET(CMDREG_ID, CGX_CMD_LINK_BRING_DOWN, req);
+-
+-	return cgx_fwi_cmd_generic(req, &resp, cgx, lmac_id);
+-}
+-EXPORT_SYMBOL(cgx_fwi_link_change);
+-
+ static inline int cgx_fwi_read_version(u64 *resp, struct cgx *cgx)
+ {
+ 	u64 req = 0;
+-- 
+2.18.0
 
