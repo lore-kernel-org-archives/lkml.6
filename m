@@ -2,98 +2,202 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A8CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58159C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B102098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KRBBgZP4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B102098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C489213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C489213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeJLPXf (ORCPT
+        id S1727816AbeJLPXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:23:35 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15706 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeJLPXf (ORCPT
+        Fri, 12 Oct 2018 11:23:38 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34086 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeJLPXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:23:35 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bc052ad0000>; Fri, 12 Oct 2018 00:52:13 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 12 Oct 2018 00:52:23 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 12 Oct 2018 00:52:23 -0700
-Received: from [10.21.132.143] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 12 Oct
- 2018 07:52:21 +0000
-Subject: Re: [PATCH 4.4 00/27] 4.4.161-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20181011152534.014964888@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <12f82602-d3e0-cc1f-879c-ad8168609d2c@nvidia.com>
-Date:   Fri, 12 Oct 2018 08:52:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 11:23:37 -0400
+Received: by mail-ot1-f68.google.com with SMTP id v2so4403259otk.1;
+        Fri, 12 Oct 2018 00:52:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UtLMv2ZYUDb6cjred02Ty+Kh+xYn7vbSRp8snPMDRX0=;
+        b=Y9r9FMlDTY4wRg12pm7ZQuybaHVk3i44PHlxwlVGf7hssWaqORuSiWyjbKUV+kMsNc
+         DAG9ThtJ8OU7dB1cwvDWzqro/MfgQTa0defGEcLXZSq0kfZWtya1tsdZAhSB78SGJDnB
+         MHv72mgKqlAZxQl0yg3woWvKGCXQIHgeqS767a5sp4bCzXkj8hmTKK6hKDZqOhsaVmWY
+         3GAc5IfpZuIi1m6Rm9OZxWlBIwPVnkY3+ApaiuDPx6oIOSPtldxTZDEHPEY/YtE+rN7d
+         0QVxoSBuQXb2XQL8HUSXlZ7YPQ20/RBKFtd/2xnlVwAqCaRostWu04Vw/qXzyMTdZ3mI
+         FmGg==
+X-Gm-Message-State: ABuFfoiRTveTx6tz6sRnfn5Mk5P/GzY2X8rGUWXHDpbOoicaYSk4pO8B
+        Rf1BzwDPxPH+h5gzcIj1hQbcNVWEGiZyAf6xIvA=
+X-Google-Smtp-Source: ACcGV62FGj2yzP+4HHDAus8Oe6xcnTOc0iEsudEVPVNNendrIS9psWdL3W+0u8G1xh5hOgbYM5wk0FxqwQhB8ik5L2s=
+X-Received: by 2002:a9d:4c90:: with SMTP id m16mr2980711otf.124.1539330745101;
+ Fri, 12 Oct 2018 00:52:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181011152534.014964888@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539330733; bh=AjK8L2zdVHPgj/Q11TlKccwdjht1rJk08dGbSX4X+Qc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=KRBBgZP4lZDvog7aiMG/pemYEQqDLHvZG48mXCKPCWwMR6HaBuuJdsq7yXc6ATshD
-         w7pFyuHhKpZi30tfa6mXus7SKkIHcOKWTGJy3XfFq7rhgjfgCoUsZySXv9Q0k5X5Cv
-         bOkUNhz4QgFpAQqhKr1PvDY7m6U36PorcHDXhRfudlUMZCsGDeB5I18zD47IMM3E9I
-         pr5xuTXHkSaqYEpPs0IhglF/ZWjahztuIH0+Fz3J9ebkx2E5t2e1bhku0lSeHJSbZx
-         rkgSc/on8zolmfqn8HWN6qJqt5a+SvYmTNKrHS74l5/t7DheacOEGYSqr9+0P/uJ3h
-         ZR3eVYtACHUAg==
+References: <20181011220134.1408.63391.stgit@localhost.localdomain> <20181011220933.1408.6882.stgit@localhost.localdomain>
+In-Reply-To: <20181011220933.1408.6882.stgit@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 12 Oct 2018 09:52:12 +0200
+Message-ID: <CAJZ5v0gEssyHx-Ao+PfopHziBQ=WnU2cspSPpvEN=B_E-EVDPA@mail.gmail.com>
+Subject: Re: [driver-core PATCH v3 3/5] driver core: Probe devices
+ asynchronously instead of the driver
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, zwisler@kernel.org,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 12, 2018 at 12:10 AM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
+>
+> This change makes it so that we probe devices asynchronously instead of the
+> driver. This results in us seeing the same behavior if the device is
+> registered before the driver or after. This way we can avoid serializing
+> the initialization should the driver not be loaded until after the devices
+> have already been added.
+>
+> The motivation behind this is that if we have a set of devices that
+> take a significant amount of time to load we can greatly reduce the time to
+> load by processing them in parallel instead of one at a time. In addition,
+> each device can exist on a different node so placing a single thread on one
+> CPU to initialize all of the devices for a given driver can result in poor
+> performance on a system with multiple nodes.
+>
+> One issue I can see with this patch is that I am using the
+> dev_set/get_drvdata functions to store the driver in the device while I am
+> waiting on the asynchronous init to complete. For now I am protecting it by
+> using the lack of a dev->driver and the device lock.
+>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> ---
+>  drivers/base/bus.c |   23 +++--------------------
+>  drivers/base/dd.c  |   42 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 45 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index 8bfd27ec73d6..2a17bed657ec 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -616,17 +616,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+>  }
+>  static DRIVER_ATTR_WO(uevent);
+>
+> -static void driver_attach_async(void *_drv, async_cookie_t cookie)
+> -{
+> -       struct device_driver *drv = _drv;
+> -       int ret;
+> -
+> -       ret = driver_attach(drv);
+> -
+> -       pr_debug("bus: '%s': driver %s async attach completed: %d\n",
+> -                drv->bus->name, drv->name, ret);
+> -}
+> -
+>  /**
+>   * bus_add_driver - Add a driver to the bus.
+>   * @drv: driver.
+> @@ -659,15 +648,9 @@ int bus_add_driver(struct device_driver *drv)
+>
+>         klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
+>         if (drv->bus->p->drivers_autoprobe) {
+> -               if (driver_allows_async_probing(drv)) {
+> -                       pr_debug("bus: '%s': probing driver %s asynchronously\n",
+> -                               drv->bus->name, drv->name);
+> -                       async_schedule(driver_attach_async, drv);
+> -               } else {
+> -                       error = driver_attach(drv);
+> -                       if (error)
+> -                               goto out_unregister;
+> -               }
+> +               error = driver_attach(drv);
+> +               if (error)
+> +                       goto out_unregister;
+>         }
+>         module_add_driver(drv->owner, drv);
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 169412ee4ae8..5ba366c1cb83 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -864,6 +864,29 @@ void device_initial_probe(struct device *dev)
+>         __device_attach(dev, true);
+>  }
+>
+> +static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
+> +{
+> +       struct device *dev = _dev;
+> +
+> +       if (dev->parent && dev->bus->need_parent_lock)
+> +               device_lock(dev->parent);
+> +       device_lock(dev);
+> +
+> +       if (!dev->driver) {
+> +               struct device_driver *drv = dev_get_drvdata(dev);
+> +
+> +               driver_probe_device(drv, dev);
+> +       }
+> +
+> +       dev_dbg(dev, "async probe completed\n");
+> +
+> +       device_unlock(dev);
+> +       if (dev->parent && dev->bus->need_parent_lock)
+> +               device_unlock(dev->parent);
 
-On 11/10/18 16:34, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.161 release.
-> There are 27 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Oct 13 15:25:23 UTC 2018.
-> Anything received after that time might be too late.
-All tests are passing for Tegra ...
+The above duplicates some code from __driver_attach().
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
+You could avoid that by adding one more function to call directly from
+__driver_attach() in the "sync" case and from here, along the lines of
+what the PM code does.
 
-Linux version:	4.4.161-rc1-gb3522afc
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+> +
+> +       put_device(dev);
+> +}
+> +
+>  static int __driver_attach(struct device *dev, void *data)
+>  {
+>         struct device_driver *drv = data;
+> @@ -891,6 +914,25 @@ static int __driver_attach(struct device *dev, void *data)
+>                 return ret;
+>         } /* ret > 0 means positive match */
+>
+> +       if (driver_allows_async_probing(drv)) {
+> +               /*
+> +                * Instead of probing the device synchronously we will
+> +                * probe it asynchronously to allow for more parallelism.
+> +                *
+> +                * We only take the device lock here in order to guarantee
+> +                * that the dev->driver and driver_data fields are protected
+> +                */
+> +               dev_dbg(dev, "scheduling asynchronous probe\n");
+> +               device_lock(dev);
+> +               if (!dev->driver) {
+> +                       get_device(dev);
+> +                       dev_set_drvdata(dev, drv);
+> +                       async_schedule(__driver_attach_async_helper, dev);
+> +               }
+> +               device_unlock(dev);
+> +               return 0;
+> +       }
+> +
+>         if (dev->parent && dev->bus->need_parent_lock)
+>                 device_lock(dev->parent);
+>         device_lock(dev);
+>
