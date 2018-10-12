@@ -2,108 +2,246 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126A5C28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C81C67837
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA3BB2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rU0fBtCU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3BB2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id BDB6A2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB6A2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbeJLItw (ORCPT
+        id S1727365AbeJLIty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 12 Oct 2018 04:49:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59754 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbeJLItw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 12 Oct 2018 04:49:52 -0400
-Received: from mail-eopbgr60042.outbound.protection.outlook.com ([40.107.6.42]:14416
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726108AbeJLItv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:49:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6qklcMITJ0Af7XQgcdvQdM/f67yPoeha3vzzDx8Ce3c=;
- b=rU0fBtCUflAfvaOwPuDhLP0JhsOA9aKrtQE2SAcUngXWk3Tv/d08xpOOOjCKGuK/lSn9XCbewuDiqDy+/jqAQdKPEncRdst1Ved45lM6rV15uRTknkjqntrjVi/d+3j0VBOoHXzFA6H4Nq4V4wbpDpsfPAZZJoTnt1DROwOcgEY=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB1246.eurprd04.prod.outlook.com (10.162.121.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.21; Fri, 12 Oct 2018 01:19:53 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::5c50:30f3:3805:71f9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::5c50:30f3:3805:71f9%4]) with mapi id 15.20.1228.020; Fri, 12 Oct 2018
- 01:19:53 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC] usb: chipidea: Add minimal support for HSIC interface on
- i.MX6QDL
-Thread-Topic: [RFC] usb: chipidea: Add minimal support for HSIC interface on
- i.MX6QDL
-Thread-Index: AQHUXwsDLRUbQlbQbUi4BM689kvOEaUWHfPwgAJUEICAAmL4sA==
-Date:   Fri, 12 Oct 2018 01:19:53 +0000
-Message-ID: <VI1PR04MB532710F1E99B016C52FCDBAD8BE20@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <1539005352-10909-1-git-send-email-frieder.schrempf@exceet.de>
- <VI1PR04MB5327D0F4AA27C5AED5C535388BE70@VI1PR04MB5327.eurprd04.prod.outlook.com>
- <e13ac59e-6698-8ef2-685e-75cd5ed35d98@exceet.de>
-In-Reply-To: <e13ac59e-6698-8ef2-685e-75cd5ed35d98@exceet.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1246;6:ewc2bllFEi7MqloIPq69aMZduxF8FC0ZjypRWg5oPXmF1McJbgMOX7gtYnvOg/ZJwKy4g/F6ocGpVMdWOkndOpsFslmxy5ixPvY2V2HnQjxHLF8XlCy1Scho+oEgnyiFrNyW4uROtmDMYjPeV1ysbYnwG9FB53e73P8wDte1lzkJbBTh/kxt8eyRyjWRw4FxNN1sONjbJxbZkZ0BAoTKYTvCKQA2Niw92KdUjn3EoAHj55+1tL6mfuOPYltS8g+gGRQLCr5n6Y6eKmV6JkLSG0qDzujjl38PtkbPSWWrXnK8aGsMtu0znpT71uB4x2urUzns4ZrJO+L2t8cUX+ahY03wJnQk8m/Dj/iwBQb+5215it0B8bfuguTwZ+A0C7/+vTHUp7NHw93zTN79Cf8WuHpTyjTN/G4LFXrUvo67R6pp+xM6jdRYPQvnN5Wn+2TC5zVX0wCLkKbMr4rUorQe6g==;5:KcpFjEVR1IshuR5Xl0R8mw4XuhCdZI6eeMLWv07b3MVZ6VcF9H6YrqHLHZvaAu93tBA1OUZ5TNUDbG8c8hjhCZUffaTmTJMbI/H5B46Z+ddiKTmaBKC7iRlp9+ls8ZZ7fYQwSDynVKC3+2IYbl3rxRBBTp3ip2VLm7dsmfbZ1DE=;7:z1yRtSzd4Bo7Gqohsjy6w8pDrJUECcJjtR0waMTsVGJxk+1Lq9rITDmTnqcG19rvbAhFwxlysPgXcyh1s14Mp4CMhHXpPzNYmbaVN28ufklHbjf0ZE0t8mGHP2kp4em9+Z4ngKqwpzhBRwE+iP7ACZD66ev3EarKp3w8lwKr8Xk0jkqeKVlQt0neCI3uDCySKzPlI2vE41OHF+9MEFT7DJ6QwBxjaP9o1Llv2loEXDZhEyYs+lqM4G5+DKgZQwQ5
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 54c9c126-cd96-49d6-b9fa-08d62fe0d09a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1246;
-x-ms-traffictypediagnostic: VI1PR04MB1246:
-x-microsoft-antispam-prvs: <VI1PR04MB12468650882DE6002A1308628BE20@VI1PR04MB1246.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:VI1PR04MB1246;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1246;
-x-forefront-prvs: 0823A5777B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(366004)(136003)(189003)(199004)(71200400001)(71190400001)(14454004)(478600001)(9686003)(2900100001)(6916009)(2906002)(55016002)(256004)(14444005)(53936002)(68736007)(4326008)(3846002)(6116002)(6246003)(25786009)(8936002)(316002)(81156014)(81166006)(105586002)(11346002)(446003)(476003)(7736002)(5250100002)(486006)(5660300001)(106356001)(6506007)(8676002)(33656002)(76176011)(102836004)(229853002)(99286004)(186003)(26005)(74316002)(97736004)(7696005)(305945005)(6436002)(86362001)(54906003)(44832011)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1246;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: gB5CixJmWdurnXSOp/mqeflmQQX9hY9RFK4+/lRcGw9G+I0lPqep5EfEZ7yVGnEKS+zojAQ7OMWXU/5gzCZOq0nRWvACXHSYxGXUABSS4af08K62Li8Yw2ebzcNGjp4S3wGDyWkNFtUmRBH0j86YdDkB50UEHkWCC1QTRK4cZ253Idajg+cXn5KtkmPeeUQ40pBIRQO2dB9Mp3OZs9zV82dKtmyQitZuDZS1zFSXuwyMvSPENV5hfUw5pKPSVHuvgd6KzSfQ1Q8WGINN1u2h8uZ+pQLmFAo6F+sape7+0YQ+rzt3zdkhHRrgvv0JM3YGuzbZr1rSbU5ZA4aqeWEzFoc1Q6Wby2MTlEp10e82aXM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1gAm7M-0000Xf-WD; Fri, 12 Oct 2018 01:19:53 +0000
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
+ <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
+Date:   Thu, 11 Oct 2018 18:19:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54c9c126-cd96-49d6-b9fa-08d62fe0d09a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2018 01:19:53.7273
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1246
+In-Reply-To: <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA0KPiA+IFRoYW5rcywgSSBzaG91bGQgZG8gaXQgZWFybGllciwgSSBjb3VsZCBub3QgZmluZCBh
-IHN1aXRhYmxlIGJvYXJkIHdpdGggSFNJQyBzdXBwb3J0DQo+IGF0IG1haW5saW5lIGtlcm5lbC4N
-Cj4gPiBJdCBpcyB2ZXJ5IGtpbmQgdGhhdCB5b3UgY291bGQgaGVscCBvbiBpdCBhbmQgdGVzdCBm
-dW5jdGlvbiBhdCByZWFsDQo+ID4gYm9hcmQuIE15IHN1Z2dlc3Rpb24gaXMgZm9sbG93IGFsbCBm
-bG93cyBpbiBMaW5rIFsyXSBzaW5jZSB3ZSBuZWVkIHRvIGNvdmVyDQo+IHN1c3BlbmQvcmVzdW1l
-IGFuZCByZW1vdGUgd2FrZXVwLg0KPiANCj4gSXQgc2VlbXMgbGlrZSBwb3dlciBtYW5hZ2VtZW50
-IGFuZCBvdGhlciB0aGluZ3MgaW4gdGhlIGxpbnV4LWlteCBrZXJuZWwgYXJlIG5vdA0KPiBmdWxs
-eSBpbXBsZW1lbnRlZCBpbiBtYWlubGluZSBzbyB0aGVyZSBhcmUgcXVpdGUgYSBmZXcgZGlmZmVy
-ZW5jZXMuDQo+IA0KPiBNeSBrbm93bGVkZ2Ugb2YgVVNCLCBldGMuIGlzIHZlcnkgbGltaXRlZCwg
-c28gSSBndWVzcyB0aGlzIGlzIGN1cnJlbnRseSBiZXlvbmQgbXkNCj4gc2tpbGxzLiBDYW4geW91
-IG9yIHNvbWVvbmUgZWxzZSBwcm92aWRlIGEgcGF0Y2ggdG8gZ2V0IHN0YXJ0ZWQ/IEkgY291bGQg
-aGVscCB3aXRoDQo+IHRlc3RpbmcsIHJldmlld2luZywgZXRjLg0KPiANCiANCk9rLCBJIHdpbGwg
-c3VwcGx5IHRoZSBwYXRjaCwgYW5kIHlvdSBjb3VsZCBhZGQgeW91ciBkdHMgY2hhbmdlcyBhcyB3
-ZWxsIGFzIHRlc3RpbmcuDQpUaGFua3MuDQoNClBldGVyDQo=
+On 10/11/2018 05:11 PM, Jordan Glover wrote:
+> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> On Friday, October 12, 2018 1:48 AM, John Johansen <john.johansen@canonical.com> wrote:
+> 
+>> On 10/11/2018 04:09 PM, Kees Cook wrote:
+>>
+>>> On Thu, Oct 11, 2018 at 3:58 PM, Jordan Glover
+>>> Golden_Miller83@protonmail.ch wrote:
+>>>
+>>>> On Thursday, October 11, 2018 7:57 PM, Kees Cook keescook@chromium.org wrote:
+>>>>
+>>>>>     To switch to SELinux at boot time with
+>>>>>     "CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
+>>>>>     work:
+>>>>>
+>>>>>     selinux=1 security=selinux
+>>>>>
+>>>>>     This will work still, since it will enable selinux (selinux=1) and
+>>>>>     disable all other major LSMs (security=selinux).
+>>>>>
+>>>>>     The new way to enable selinux would be using
+>>>>>     "lsm=yama,loadpin,integrity,selinux".
+>>>>>
+>>>>
+>>>> It seems to me that legacy way is more user friendly than the new one.
+>>>> AppArmor and SElinux are households names but the rest may be enigmatic
+>>>> for most users and the need for explicit passing them all may be
+>>>> troublesome. Especially when the new ones like sara,landlock or cows :)
+>>>> will be incoming. Moreover to knew what you have to pass there, you need
+>>>> to look at CONFIG_LSM in kernel config (which will vary across distros
+>>>> and also mean copy-paste from the web source may won't work as expected)
+>>>> which again most users don't do.
+>>>> I think there is risk that users will end up with "lsm=selinux" without
+>>>> realizing that they may disable something along the way.
+>>>> I would prefer for "lsm=" to work as override to "CONFIG_LSM=" with
+>>>> below assumptions:
+>>>> I. lsm="$lsm" will append "$lsm" at the end of string. Before extreme
+>>>> stacking it will also remove the other major (explicit) lsm from it.
+>>>> II. lsm="!$lsm" will remove "$lsm" from the string.
+>>>> III. If "$lsm" already exist in the string, it's moved at the end of it
+>>>> (this will cover ordering).
+>>>
+>>> We've had things sort of like this proposed, but if you can convince
+>>> James and others, I'm all for it. I think the standing objection from
+>>> James and John about this is that the results of booting with
+>>> "lsm=something" ends up depending on CONFIG_LSM= for that distro. So
+>>> you end up with different behaviors instead of a consistent behavior
+>>> across all distros.
+>>
+>> Its certainly a point that could confuse the user. I do have concerns
+>> about it, but not something that is on a must haves list
+>>
+>>> Now, in the future blob and extreme stacking world, having the
+>>> explicit lsm= list shouldn't be too bad since LSMs will effectively
+>>> ALL be initialized -- but they'll be inactive since they have no
+>>> policy loaded.
+>>
+>> you are more optimistic about this than I am, but there will be at
+>> least some movement towards this.
+>>
+>>> But I still agree with you: I'd like a friendlier way to
+>>> disable/enable specific LSMs, but an explicit lsm= seems to be the
+>>> only way.
+>>
+>> Hrmmm, I don't know about the only way, but a way to provide the
+>> explicit list, and also set a specific set as the default in the
+>> Kconfig is a hard requirement.
+>>
+> 
+> My proposition allows for explicit "lsm=" list but also accepts non
+> explicit list. This is it's advantage above current approach.
+> 
+> The current approach works but it seems to target the very same people
+> who designed it :)
+> 
+>> The initial lsm.ebable, lsm.disable had too many issues, and for
+>> various reasons I never managed to get back to kees' proposal
+>> for using +.
+>>
+>> That said, I do think the right approach for the initial pass is
+>> the explicit list. It moves the arguments to the side and allows
+>> this work to move forward.
+>>
+> 
+> I'm afraid when it hits stable kernel and people will rely on it,
+> then it will be too late. Things will be even more hard to change
+> than now when we have to keep legacy syntax of security=xxx.
+> 
+> I added explanation why explicit list doesn't solve consistency
+> across distros in the other reply
+> 
+
+It isn't perfect but it manages consistency across distros as best as
+can be achieved atm.
+
+Its just a fact that some LSMs are not going to be built into some
+kernels. The only way to deal with that is direct people to build
+their own kernels.
+
+The other major problem is that the current LSM stacking patches do
+not deal with "extreme" stacking. So doing
+
+lsm=+apparmor
+
+(I am going to stick with the + syntax atm to avoid confusion between
+adding and setting)
+
+assuming apparmor is builtin will not necessarily get you apparmor if
+another major lsm is enabled.  Yes your specific proposal would as it
+specifies it overrides the current major, except that ordering
+important so if say landlock registers before apparmor, you may still
+not get apparmor.
+
+You proposal does not provide a means to ensure you have only a
+specific set of LSMs enabled. As an LSM not explicitly listed in lsm=
+lsm=! may still be enabled. So the user is going to have to be aware
+of the initial LSMs list if they are trying to guarentee a specific
+security arrangement.
+
+This violates one of the hard asks, and I will tell you that this will
+just mean there is going to be some distro patching to make sure it
+exists.
+
+The current explicit list is more consistent, and it is amenable to
+being extended with + or ! as selective add/remove so we are not
+locked into only supporting an explicit list.
+
+
+>>>> It's possible that something lime this was discussed already
+>>>> but without full examples it was hard to me for tracking things.
+>>>
+>>> It's been a painful thread. ;)
+>>
+>> Indeed
+> 
+> Jordan
+> 
+
