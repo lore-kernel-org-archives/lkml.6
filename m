@@ -2,133 +2,133 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1565AC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35C4C6786D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA6820645
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCAEA21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:12:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmCDhH3f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA6820645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vso2qTfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAEA21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbeJLVix (ORCPT
+        id S1728736AbeJLVom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 17:38:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36817 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeJLVix (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 17:38:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l81-v6so6268272pfg.3;
-        Fri, 12 Oct 2018 07:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=essRwWdABp2tBcZA5XaEwt6EmtxT53M4tnapx8hIE60=;
-        b=UmCDhH3fyD8xvmhyT5PPrsiIs6dXBjdTAN/QO76OwdxIMwWku5La+G0ro319VTfCRf
-         N9A0bYKkHF3FJXkkxJhIghj7VG5XTchu5QoGws0YeokMaeZVXAuqYBJ+ddugkO4X5A1p
-         +aa6aLEdIolM8XY2CExBu7YoCxYB336+Z6KuMZytYr5UbFEDEOmEVw8DTSEcVWYQSGSA
-         BVI9fsHRHx7NGtaCfrO7Pq1fQjyTTT1vjoyVJuidzBqZwJ/hkJ3GGVMJgRaoW5xS6z8n
-         5BE+vvW/TK5PGmLQXIvpcjzoAMgK1g3ag/AbFG9nALxT9Qxw7vUAvko9Z+LXEMGdhXCo
-         yZJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=essRwWdABp2tBcZA5XaEwt6EmtxT53M4tnapx8hIE60=;
-        b=ngy1M7sV9jtwrOZTDrbMC8rF6fT62/atGMgrgdCAm7pn0Nuf57kgjswN303ESVKVO4
-         aY9slZBcTsEAg9t45ok11zIsnZQmTtbCkSBKkjfOvZGTiOVwT2pbbQfyBrilhQX6MCV8
-         VA24CUm3nu47yo7ES+jh0XT61g1loBzc4Q81I7MUbqIBuWfRSBe8hANenZ47285ajCIi
-         RTeuOUCkG3CHQQgEjx8dDAwuKHb92/cpCN38ZzNaa8UmKYVJdtCMvBzzBNJTQeZqZ6ec
-         sDu6bbgFUMWB94ZttSW17HG91UtUkzn0jnrZSsS08FTXYEXCN2yG5KrFGcnCVN2zXnmm
-         joFA==
-X-Gm-Message-State: ABuFfoghM0ZERTW6et2BPZF/T+AgqG2d2m40kgViBpUKQvQTQx4VvE2R
-        qJPnzGCMHFAnCvhyAu4Wn0NdhHO5
-X-Google-Smtp-Source: ACcGV62SyMXmrCHuAN3a3+ImQMB8BckvFpLbgy+1yBo9KaE6ngL+WxpnlxOZNtcUfR4fEuevvakQ+Q==
-X-Received: by 2002:a63:2807:: with SMTP id o7-v6mr5630796pgo.155.1539353176457;
-        Fri, 12 Oct 2018 07:06:16 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id a79-v6sm2545928pfa.124.2018.10.12.07.06.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 07:06:15 -0700 (PDT)
-Subject: Re: [PATCH 3.18 000/120] 3.18.124-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20181011152549.500488630@linuxfoundation.org>
- <9b2c52e4-56ce-37a3-b515-a6ff831fe17e@roeck-us.net>
- <20181012133704.GB3706@kroah.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <10e12992-7e33-9569-5a4f-2a8124d3aae4@roeck-us.net>
-Date:   Fri, 12 Oct 2018 07:06:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 17:44:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727556AbeJLVom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 17:44:42 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BA0D20865;
+        Fri, 12 Oct 2018 14:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539353523;
+        bh=CKvCBuA6IzW7GHE1xVto+p7dZP7LSaW8b+nPCeM/5g0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vso2qTfJPU+23/psH5WDhwLR82G1Xu/UfJQCkrH3NZkxokrlfvAEsOSFfYWnR0k4Y
+         sCcSQmX7eJSd0f76PdynlBHcB4FB81OQ/g/JarYFsUCBS4887qS0hxThnWFXybMSsJ
+         bYjE3L0fLRn4oInjd2g39pm/OecWb2lw4j3dGgB4=
+Date:   Fri, 12 Oct 2018 09:12:02 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Honghui Zhang <honghui.zhang@mediatek.com>,
+        youlin.pei@mediatek.com, devicetree@vger.kernel.org,
+        ulf.hansson@linaro.org, ryder.lee@mediatek.com,
+        marc.zyngier@arm.com, linux-pci@vger.kernel.org,
+        sean.wang@mediatek.com, linux-kernel@vger.kernel.org,
+        yt.shen@mediatek.com, matthias.bgg@gmail.com,
+        linux-mediatek@lists.infradead.org, bhelgaas@google.com,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 2/9] PCI: mediatek: Fixup class ID for MT7622 as
+ PCI_CLASS_BRIDGE_PCI
+Message-ID: <20181012141202.GV5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <1538969088-7136-1-git-send-email-honghui.zhang@mediatek.com>
+ <1538969088-7136-3-git-send-email-honghui.zhang@mediatek.com>
+ <20181008172337.GA13538@e107981-ln.cambridge.arm.com>
+ <1539054495.6246.31.camel@mhfsdcap03>
+ <20181011113748.GA3574@e107981-ln.cambridge.arm.com>
+ <1539331289.6246.61.camel@mhfsdcap03>
+ <20181012102230.GA23257@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181012133704.GB3706@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012102230.GA23257@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2018 06:37 AM, Greg Kroah-Hartman wrote:
-> On Fri, Oct 12, 2018 at 05:19:16AM -0700, Guenter Roeck wrote:
->> On 10/11/2018 08:33 AM, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 3.18.124 release.
->>> There are 120 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Sat Oct 13 15:25:29 UTC 2018.
->>> Anything received after that time might be too late.
->>>
->>
->> [preliminary]
->>
->> arm:allmodconfig:
->>
->> drivers/mtd/spi-nor/fsl-quadspi.c: In function 'fsl_qspi_init_lut':
->> drivers/mtd/spi-nor/fsl-quadspi.c:170:5: error: 'LUT_0' undeclared
-> 
-> That is really odd in that there are no patches that touch this file,
-> and I do not even see "LUT_0" anywhere in the 3.18.y tree.
-> 
+On Fri, Oct 12, 2018 at 11:22:30AM +0100, Lorenzo Pieralisi wrote:
+> On Fri, Oct 12, 2018 at 04:01:29PM +0800, Honghui Zhang wrote:
+>> On Thu, 2018-10-11 at 12:38 +0100, Lorenzo Pieralisi wrote:
+>>> On Tue, Oct 09, 2018 at 11:08:15AM +0800, Honghui Zhang wrote:
+>>>> On Mon, 2018-10-08 at 18:23 +0100, Lorenzo Pieralisi wrote:
+>>>>> On Mon, Oct 08, 2018 at 11:24:41AM +0800, honghui.zhang@mediatek.com wrote:
+>>>>>> From: Honghui Zhang <honghui.zhang@mediatek.com>
+>>>>>> 
+>>>>>> The PCIe controller of MT7622 has TYPE 1 configuration
+>>>>>> space type, but the HW default class type values is
+>>>>>> invalid.
+>>>>>> 
+>>>>>> The commit 101c92dc80c8 ("PCI: mediatek: Set up vendor ID
+>>>>>> and class type for MT7622") have set the class ID for
+>>>>>> MT7622 as PCI_CLASS_BRIDGE_HOSTe, but it's not workable
+>>>>>> for MT7622:
+>>>>>> 
+>>>>>> In __pci_bus_assign_resources, the framework only setup
+>>>>>> bridge's resource window only if class type is
+>>>>>> PCI_CLASS_BRIDGE_PCI. Or it will leave the subordinary PCIe
+>>>>>> device's MMIO window un-touched.
 
-Bisect:
+I think __pci_bus_assign_resources() should be testing dev->hdr_type
+instead of dev->class.  The connection between "Header Type" and the
+layout of the rest of the header is very explicit (PCI r3.0 sec 6.1,
+PCIe r4.0 sec 7.5.1.1.9), and the reason for the switch statement in
+__pci_bus_assign_resources() is precisely to determine which layout to
+use.
 
+There are several other uses of dev->class in setup-bus.c that I think
+should also be changed to use dev->hdr_type.
 
-# bad: [8c4ca12b60ea371a32db58cf78b6cb4e2ba4515c] Linux 3.18.124-rc1
-# good: [921b2fed6a79439ef1609ef4af0ada5cccb3555c] Linux 3.18.123
-git bisect start 'HEAD' 'v3.18.123'
-# good: [aed5b0190528303a3f4d319f95d7e38c94ca32ab] USB: remove LPM management from usb_driver_claim_interface()
-git bisect good aed5b0190528303a3f4d319f95d7e38c94ca32ab
-# good: [10441f560c0ad0aeed00402088d71d4d299d6537] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
-git bisect good 10441f560c0ad0aeed00402088d71d4d299d6537
-# bad: [0661a919177560337d962f43daa46dde2fa4d89e] mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
-git bisect bad 0661a919177560337d962f43daa46dde2fa4d89e
-# good: [d4b130cc92bbef445de4ffe4ecd068935375d591] ocfs2: fix locking for res->tracking and dlm->tracking_list
-git bisect good d4b130cc92bbef445de4ffe4ecd068935375d591
-# bad: [1f002a3e6d7250a62966399bd91eeec308c0b756] fbdev/omapfb: fix omapfb_memory_read infoleak
-git bisect bad 1f002a3e6d7250a62966399bd91eeec308c0b756
-# bad: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
-git bisect bad 5396a79f029d54c1e02409335c7dfde43c55e4a4
-# good: [7da4d144b6922e94aad8c0d405e4cc63a44b8ec5] dm thin metadata: fix __udivdi3 undefined on 32-bit
-git bisect good 7da4d144b6922e94aad8c0d405e4cc63a44b8ec5
-# first bad commit: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
+If we make these changes in setup-bus.c, I suspect the class code you
+assign won't matter too much.  There are a few other tests of the
+class code to figure out whether to leave certain things untouched.
+These seem a little hacky to me, but we're probably stuck with them
+for now, so you should look and see whether they apply to your
+situation.
 
-... and reverting that patch fixes the problem. No idea why; maybe because of include
-file changes.
+>>>> And for MT7622, it integrated with block of internal control
+>>>> registers, type 1 configuration space, and is considered as a
+>>>> root complex.
+>>> 
+>>> I assume you mean a type 1 config header here. I do not think it
+>>> is mandatory for a host bridge to have a type 1 config header (and
+>>> related bridge windows + primary/secondary/subordinate bus
+>>> numbers) but I do not know how the IP you are programming is
+>>> designed.
 
-Guenter
+It is definitely not mandatory for a host bridge to have a type 1
+header.  I'm not even sure that would make sense: the "Primary Bus
+Number" would not apply to a host bridge (since a host bridge's
+primary bus is some sort of CPU bus, not a PCI bus), and a type 1
+device cannot perform address translation between its primary and
+secondary buses, while a host bridge can.
+
+A Root Port is a type 1 device where the primary bus is logically
+internal to the Root Complex.  A host bridge bridges from the CPU bus
+to that internal bus and might perform address translation.  The Root
+Port must be a PCI device.  A host bridge, being a bridge *to* the PCI
+domain, is not itself generally programmed via PCI config space and
+might not even be visible as a device in PCI config space.
+
+Bjorn
