@@ -2,108 +2,288 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BEDC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB92FC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0760520868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E7420835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NieFi0s6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0760520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ntlWzSce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E7420835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbeJMDg6 (ORCPT
+        id S1726750AbeJMDjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:36:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46499 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeJMDg6 (ORCPT
+        Fri, 12 Oct 2018 23:39:36 -0400
+Received: from mail.efficios.com ([167.114.142.138]:37832 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeJMDjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:36:58 -0400
-Received: by mail-pl1-f193.google.com with SMTP id v5-v6so6393622plz.13;
-        Fri, 12 Oct 2018 13:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lYSpIWQWYS9WKuwLeJZxZwDWBgw5oqI+ITRNiswJJ8s=;
-        b=NieFi0s66+8IRIpX7tE4TsJwrFsRWTKs3oaiU115W3mowRU7OghvPhhA3/B/ibfr8F
-         QcOAvyDIVtWLH4VBJ/Z9qeI5hypVHxX1ghLRAok/9MN+si0mBP9xmsxbQ+Zm6KyGfLXc
-         jpZuY7k6J1m0wScGWcU/ze7eOtHP2RT71qONsJqqj4S7FYKuIFwTB9GcieZwdJQyc1nC
-         pme0EFHIGhPh1e75f0UVq4t3rscpiTTxtQeGgm7erxA4jjv0Rsv2H1jAea868T+oWMKv
-         +rOc7/UzvRuRJpmC6lFiH4JAAOSet5poPaMBHODFtk2fayRyqlpEk7hQ9bFylQZdSLnE
-         Zsgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lYSpIWQWYS9WKuwLeJZxZwDWBgw5oqI+ITRNiswJJ8s=;
-        b=LDu3SoWzy81WfThrax++V0WOy3yl3KJLYWUzkgRfa9Oe8zyHJIzN5XS+/ztWC7ijcL
-         /MTz+8jfOYoqJjBIvdLKZsiYenHeOshte4mOoCJbNi/TIFlqWryDHvAjGIum0k77pN0m
-         vA9VhrVeqJcC50W0+aQH9deACyJ9K7Z5UnWGhienMSkS4T0qMaAFzWcabeWKsI4hdrGZ
-         tN1l4/doRUwNK48a/EP7DWlS/oOFK6Cjcg9EPq9q3q/qKrw7rFnYU0CxS9nZBIBa1Ype
-         2PR3hMsc3y7icUUpZTfW9dem3Dn5yhoTR4sN70bizL7UGFTQR3T/1b/eBdxtg0Q6THjb
-         jMSg==
-X-Gm-Message-State: ABuFfohpIig7B+v01YQCwrgPbWjqWAMaOnaseZbWMXCg2v5ykq2fTTBB
-        5wj67UUItM1tqgaObeTeYtS0gPh0RhM=
-X-Google-Smtp-Source: ACcGV632VZmO0TWkn1Kbqj+5rgoFHXIH3+kdWUKwBLpsG2UvLEPvXyzxCs99h/6fWKvuNI12x9p9bA==
-X-Received: by 2002:a17:902:6184:: with SMTP id u4-v6mr7060627plj.121.1539374570593;
-        Fri, 12 Oct 2018 13:02:50 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm3043011pfk.133.2018.10.12.13.02.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 13:02:49 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 13:02:46 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [git pull] Input updates for v4.19-rc7
-Message-ID: <20181012200246.GB35430@dtor-ws>
-References: <20181011235736.GA68543@dtor-ws>
- <20181012105152.GB19643@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012105152.GB19643@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 12 Oct 2018 23:39:36 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 331501B7462;
+        Fri, 12 Oct 2018 16:05:28 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id aXYxaqWbj82k; Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 48F901B745F;
+        Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 48F901B745F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539374727;
+        bh=BUy6aEpZFCnFPPJee/L7zXeKr/QtWs4AoTmH6FKVXnU=;
+        h=From:To:Date:Message-Id;
+        b=ntlWzSceS5dTl7HT+gBRA4AmABM2NtUYmova6fsrzaozTmwwKxJkjeKcHrtHktZPZ
+         c/4xuIi9wPx6T0ZtlwSaPClkV3/mciZ4Nokj2W1hbR1slzITcOTec7xX+c0+fAv1Zb
+         XtpVBTHsIAdf5VMIeiKmHCR9Md5gC34lt1HgKvGQ9r+OEwMn42byKk0DuCYqv7NFwY
+         AGhMm94rae55iG6WQ2G87Upf9JGax4TxWDJm7iFJ/j6vU+6YnU04ImYAfUFl0N5UPH
+         91nMav0Ce80BtOr78VMKqc8H+FD8FLJUWgpiR3kpTjelA0H8Ie2usL8tatlhWcSG6N
+         iifhkAAKlLjtA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id B1sG69jGBHdD; Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id D10661B7455;
+        Fri, 12 Oct 2018 16:05:26 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <james.morris@microsoft.com>,
+        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array iteration
+Date:   Fri, 12 Oct 2018 16:05:23 -0400
+Message-Id: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 12:51:52PM +0200, Greg KH wrote:
-> On Thu, Oct 11, 2018 at 04:57:36PM -0700, Dmitry Torokhov wrote:
-> > Hi Greg,
-> > 
-> > Please pull from:
-> > 
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-> > 
-> > to receive updates for the input subsystem:
-> > 
-> > - we added a few scheduling points into various input interfaces to
-> >   ensure that large writes will not cause RCU stalls
-> > 
-> > - fixed configuring PS/2 keyboards as wakeup devices on newer platforms
-> 
-> That feels like a really "late" contribution, I hope it goes well :)
+commit 46e0c9be206f ("kernel: tracepoints: add support for relative
+references") changes the layout of the __tracepoint_ptrs section on
+architectures supporting relative references. However, it does so
+without turning struct tracepoint * const into const int * elsewhere in
+the tracepoint code, which has the following side-effect:
 
-Yeah, that is true, but I'd be marking it for 4.19 stable anyway as we
-do want newer devices to wake up on keyboard activity, so there was no
-reason not to send it now. If we have to revert we'd be reverting
-everywhere anyways.
+tracepoint_module_{coming,going} invoke
+tp_module_going_check_quiescent() with mod->tracepoints_ptrs
+as first argument, and computes the end address of the array
+for the second argument with:
 
-FWIW Daniel posted the patch a while ago, we just have been working out
-kinks in handling builds with different config options.
+  mod->tracepoints_ptrs + mod->num_tracepoints
 
-Thanks.
+However, because the type of mod->tracepoint_ptrs in module.h
+has not been changed from pointer to int, it passes an end
+pointer which is twice larger than the array, causing out-of-bound
+array accesses.
 
+Fix this by introducing a new typedef: tracepoint_ptr_t, which
+is either "const int" on architectures that have PREL32 relocations,
+or "struct tracepoint * const" on architectures that does not have
+this feature.
+
+Also provide a new tracepoint_ptr_defer() static inline to
+encapsulate deferencing this type rather than duplicate code and
+ugly idefs within the for_each_tracepoint_range() implementation.
+
+This issue appears in 4.19-rc kernels, and should ideally be fixed
+before the end of the rc cycle.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morris <james.morris@microsoft.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/module.h          |  2 +-
+ include/linux/tracepoint-defs.h |  6 ++++++
+ include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
+ kernel/tracepoint.c             | 24 ++++++++--------------
+ 4 files changed, 38 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index f807f15bebbe..cdab2451d6be 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -430,7 +430,7 @@ struct module {
+ 
+ #ifdef CONFIG_TRACEPOINTS
+ 	unsigned int num_tracepoints;
+-	struct tracepoint * const *tracepoints_ptrs;
++	tracepoint_ptr_t *tracepoints_ptrs;
+ #endif
+ #ifdef HAVE_JUMP_LABEL
+ 	struct jump_entry *jump_entries;
+diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+index 22c5a46e9693..49ba9cde7e4b 100644
+--- a/include/linux/tracepoint-defs.h
++++ b/include/linux/tracepoint-defs.h
+@@ -35,6 +35,12 @@ struct tracepoint {
+ 	struct tracepoint_func __rcu *funcs;
+ };
+ 
++#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++typedef const int tracepoint_ptr_t;
++#else
++typedef struct tracepoint * const tracepoint_ptr_t;
++#endif
++
+ struct bpf_raw_event_map {
+ 	struct tracepoint	*tp;
+ 	void			*bpf_func;
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 041f7e56a289..538ba1a58f5b 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
+ #define TRACE_DEFINE_ENUM(x)
+ #define TRACE_DEFINE_SIZEOF(x)
+ 
++#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
++{
++	return offset_to_ptr(p);
++}
++
++#define __TRACEPOINT_ENTRY(name)					\
++	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
++	    "	.balign 4					\n"	\
++	    "	.long 	__tracepoint_" #name " - .		\n"	\
++	    "	.previous					\n")
++#else
++static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
++{
++	return *p;
++}
++
++#define __TRACEPOINT_ENTRY(name)					 \
++	static tracepoint_ptr_t __tracepoint_ptr_##name __used		 \
++	__attribute__((section("__tracepoints_ptrs"))) =		 \
++		&__tracepoint_##name
++#endif
++
+ #endif /* _LINUX_TRACEPOINT_H */
+ 
+ /*
+@@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
+ 		return static_key_false(&__tracepoint_##name.key);	\
+ 	}
+ 
+-#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+-#define __TRACEPOINT_ENTRY(name)					\
+-	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
+-	    "	.balign 4					\n"	\
+-	    "	.long 	__tracepoint_" #name " - .		\n"	\
+-	    "	.previous					\n")
+-#else
+-#define __TRACEPOINT_ENTRY(name)					 \
+-	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
+-	__attribute__((section("__tracepoints_ptrs"))) =		 \
+-		&__tracepoint_##name
+-#endif
+-
+ /*
+  * We have no guarantee that gcc and the linker won't up-align the tracepoint
+  * structures, so we create an array of pointers that will be used for iteration
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index bf2c06ef9afc..a3be42304485 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -28,8 +28,8 @@
+ #include <linux/sched/task.h>
+ #include <linux/static_key.h>
+ 
+-extern struct tracepoint * const __start___tracepoints_ptrs[];
+-extern struct tracepoint * const __stop___tracepoints_ptrs[];
++extern tracepoint_ptr_t __start___tracepoints_ptrs[];
++extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+ 
+ DEFINE_SRCU(tracepoint_srcu);
+ EXPORT_SYMBOL_GPL(tracepoint_srcu);
+@@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
+ }
+ EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
+ 
+-static void for_each_tracepoint_range(struct tracepoint * const *begin,
+-		struct tracepoint * const *end,
++static void for_each_tracepoint_range(
++		tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
+ 		void (*fct)(struct tracepoint *tp, void *priv),
+ 		void *priv)
+ {
++	tracepoint_ptr_t *iter;
++
+ 	if (!begin)
+ 		return;
+-
+-	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
+-		const int *iter;
+-
+-		for (iter = (const int *)begin; iter < (const int *)end; iter++)
+-			fct(offset_to_ptr(iter), priv);
+-	} else {
+-		struct tracepoint * const *iter;
+-
+-		for (iter = begin; iter < end; iter++)
+-			fct(*iter, priv);
+-	}
++	for (iter = begin; iter < end; iter++)
++		fct(tracepoint_ptr_deref(iter), priv);
+ }
+ 
+ #ifdef CONFIG_MODULES
 -- 
-Dmitry
+2.17.1
+
