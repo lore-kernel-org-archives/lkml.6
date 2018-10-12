@@ -2,109 +2,94 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721BFC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2503EC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442722086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:24:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442722086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EBBB620835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBB620835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbeJLV5N (ORCPT
+        id S1728923AbeJLV5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 17:57:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60096 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728616AbeJLV5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 17:57:13 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0CE503001389;
-        Fri, 12 Oct 2018 14:24:33 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-204-150.brq.redhat.com [10.40.204.150])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A043282C5;
-        Fri, 12 Oct 2018 14:24:30 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     KT Liao <kt.liao@emc.com.tw>, Rob Herring <robh+dt@kernel.org>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 5/5] Input: elantech/SMBus - export all capabilities from the PS/2 node
-Date:   Fri, 12 Oct 2018 16:24:13 +0200
-Message-Id: <20181012142413.26107-6-benjamin.tissoires@redhat.com>
-In-Reply-To: <20181012142413.26107-1-benjamin.tissoires@redhat.com>
-References: <20181012142413.26107-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 12 Oct 2018 14:24:33 +0000 (UTC)
+        Fri, 12 Oct 2018 17:57:50 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51950 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728628AbeJLV5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 17:57:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99747ED1;
+        Fri, 12 Oct 2018 07:25:09 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85E143F5BC;
+        Fri, 12 Oct 2018 07:25:06 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 15:25:04 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        ulf.hansson@linaro.org, khilman@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181012142503.GF3401@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent touchpads might not have all the information regarding the
-characteristics through the I2C port.
-On some Lenovo t480s, this results in the touchpad not being detected
-as a clickpad, and on the Lenovo P52, this results in a failure while
-fetching the resolution through I2C.
+On Thu, Oct 11, 2018 at 02:50:54AM +0530, Raju P.L.S.S.S.N wrote:
+> Use cpu hotplug callback mechanism to attach/dettach the cpu in
+> the cpu power domain. During cpu hotplug callback registration,
+> the starting callback is invoked on all online cpus. So there is
+> no need to attach from device probe.
+> 
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> ---
+>  drivers/soc/qcom/cpu_pd.c  | 33 +++++++++++++++++++++++++--------
+>  include/linux/cpuhotplug.h |  1 +
+>  2 files changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/cpu_pd.c b/drivers/soc/qcom/cpu_pd.c
+> index 242eced..bf2d95d 100644
+> --- a/drivers/soc/qcom/cpu_pd.c
+> +++ b/drivers/soc/qcom/cpu_pd.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>   */
+>  
+> +#include <linux/cpuhotplug.h>
+>  #include <linux/ktime.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pm_domain.h>
+> @@ -85,12 +86,26 @@ static int cpu_pd_power_off(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> +static int cpu_pd_starting(unsigned int cpu)
+> +{
+> +	if (!suspend && of_genpd_attach_cpu(cpu))
+> +		pr_err("%s: genpd_attach_cpu fail\n", __func__);
 
-We need to imitate the Windows behavior: fetch the data under PS/2, and
-limit the querries under I2C.
+If it's that serious, return proper error code and drop the message which
+could be annoying if you are running some hotplug test loop.
 
-This patch exports the needed info from PS/2.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1628715
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/input/mouse/elantech.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index 78ac732e8188..f597b5d14de8 100644
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1764,17 +1764,30 @@ static int elantech_create_smbus(struct psmouse *psmouse,
- 				 struct elantech_device_info *info,
- 				 bool leave_breadcrumbs)
- {
--	const struct property_entry i2c_properties[] = {
--		PROPERTY_ENTRY_BOOL("elan,trackpoint"),
--		{ },
--	};
-+	struct property_entry i2c_props[10] = {};
- 	struct i2c_board_info smbus_board = {
- 		I2C_BOARD_INFO("elan_i2c", 0x15),
- 		.flags = I2C_CLIENT_HOST_NOTIFY,
- 	};
-+	unsigned int prop_idx = 0;
-+
-+	smbus_board.properties = i2c_props;
-+
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,max_x", info->x_max);
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,max_y", info->y_max);
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,min_x", info->x_min);
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,min_y", info->y_min);
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,x_res", info->x_res);
-+	i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,y_res", info->y_res);
- 
- 	if (info->has_trackpoint)
--		smbus_board.properties = i2c_properties;
-+		i2c_props[prop_idx++] = PROPERTY_ENTRY_BOOL("elan,trackpoint");
-+
-+	if (info->width)
-+		i2c_props[prop_idx++] = PROPERTY_ENTRY_U32("elan,width", info->width);
-+
-+	if (elantech_is_buttonpad(info))
-+		i2c_props[prop_idx++] = PROPERTY_ENTRY_BOOL("elan,clickpad");
- 
- 	return psmouse_smbus_init(psmouse, &smbus_board, NULL, 0, false,
- 				  leave_breadcrumbs);
--- 
-2.14.3
-
+--
+Regards,
+Sudeep
