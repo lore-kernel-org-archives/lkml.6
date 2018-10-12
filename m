@@ -7,70 +7,67 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B84C67872
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0902C67877
 	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE76D21473
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAAF4213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V9152IgQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE76D21473
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d+1AJnMl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAF4213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbeJLXiL (ORCPT
+        id S1729312AbeJLXiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:38:11 -0400
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:38043 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728972AbeJLXiK (ORCPT
+        Fri, 12 Oct 2018 19:38:12 -0400
+Received: from mail-it1-f201.google.com ([209.85.166.201]:58729 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729021AbeJLXiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:38:10 -0400
-Received: by mail-yw1-f74.google.com with SMTP id j144-v6so7484535ywa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 09:05:00 -0700 (PDT)
+        Fri, 12 Oct 2018 19:38:11 -0400
+Received: by mail-it1-f201.google.com with SMTP id m67-v6so9135857ita.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 09:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=r8ggDEeJtgMIZpCxzFcUwPxBx0c0aMgzrt9OHfAlRck=;
-        b=V9152IgQxAZ5uY+zWh2rOO5LbSH5jahrBJQiYzdrTSIhnrKNae4Mrp0/ZVwEj4+Qru
-         SeQLR77AyYtWJ0Wa5FN2VzzUxWzrb6X9HiP+S/UupBXZSaV9s5PTIfsmOihW+AioawRK
-         zdKvOanz/+T8uoyn8HvJeVpHrqcPsXER7jgjRVdIh2v3s/a1OjigP9qZpZ3wW/Sn4aMR
-         X3hok6kaAJPjXshoVgPwkQZPRGNkk5Et2BRlT4PpwxpYbbU7Hpz7n7Oj7EJk/wsACbsE
-         O+VCjEWELg1D4FHj8wYB7Zb07kgEHfHoVvHxP5PlQsShmgPkSDRBzx4Fn8RhabbJwfzL
-         5Ffw==
+        bh=KXn6nL5lan+vznIeXYaB11EVquYEWKx8A0Az9ipgYuc=;
+        b=d+1AJnMlZxr3tGBIxQFHLflc8HwY79Ra5D4FnizGqfRXlkLV9Ee2Bt8F2mbKRK7XJF
+         ZSnkrTKR4mgzaLEoWoztwGOgoK0rJX3HZjhrxuAYVCbEos1FKHS93QwzDYFWE9+j0AQf
+         22O528i1pW++3yIelKVox4k5KMEWYRVI/iem95qehrYYUr4Nuoas7qYN4l4ejBLpBl3g
+         uUoyzDPagdTnLqw7xBuognw9K6tL9GiWZOG6WVxDFy8s9nwRTeBzXATPk7XXSFonizYQ
+         v5GpE1dAe4F3bSMzCBMoBOUYNi5uoPB3KBHbX/4OHGyOYssvlKtfO+oftVRXZkrPDsvA
+         p2QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=r8ggDEeJtgMIZpCxzFcUwPxBx0c0aMgzrt9OHfAlRck=;
-        b=a9DR5au3VcvrL0G8nQu/6bNkXObdvH+5/OSAhjqa/7hhmYy61y68uwrmKK1nDPUomX
-         t91HEZvk48nM9oQnmjInArv/kj4OvCbRlxQ/xoqARGAUuFvSnaoM9fMYPKe/fR6mzQz3
-         02H/SRe8/fBCHBe9s9FjdQ8q8lA5SM7fs3xHm/pdB0S6wwsLzj83Od2E7eJ/ae/ZoedO
-         JXYWouEaxpZ6An3MCANuopouyxdbXK1cIcKlf7B08blBrwCRigXIiagyROSIEwGqGxOD
-         eHGjwK9/a8usLabzh9auX/UKwnSiYoYlTHb6rh1GtkkD5D7fbHswYrUnc44tHA/DDuqe
-         PTZQ==
-X-Gm-Message-State: ABuFfoiW22aFUfRbEFwO3SThgQroGhNtD7PNiR3IaxQwTRSVgvi3k9Pz
-        Em0t//SCmhjRt25+j6WOgg7qe623I1fa
-X-Google-Smtp-Source: ACcGV62llf6bLqw+32Jy8IMu6LvNRDi0PP+KOcnomp7O/89zFxD0aAj4L2bk8RBT0cEKsk2/a2vevvzsFM0/
-X-Received: by 2002:a25:cf88:: with SMTP id f130-v6mr3714675ybg.29.1539360300292;
- Fri, 12 Oct 2018 09:05:00 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 10:04:47 -0600
+        bh=KXn6nL5lan+vznIeXYaB11EVquYEWKx8A0Az9ipgYuc=;
+        b=HOVu4mYlMOlzPmjYphmDnBJumD606Khc88rCGZTm/V7aQcr8YuQSbFWONh0QQmtWj1
+         5TVDXJxPyRTQOQFwcOVN7vZPj3yFdjpqUyo6cN6RdJcxx5mq5bJZiA8K+aEZc+xN8jtP
+         H94GS4XwCOmn5nMK2JsVRxFnP0w0P9/J+fUlB6XObOxpfZJ+U3LMmqoh3JoAjaWUpYeE
+         Yc1pyVhqf+NBnu9CjvxDuOnnYuhCuLLNnC86kjCvRnXddavAQt+x25zRQCJberASTPtF
+         JYJwRenQh0ATuNmztAwzeCF65ZI7IAZ222F5J8s1DJq+YhU1M6nyA3L/Zc0AnsftNdW4
+         47BA==
+X-Gm-Message-State: ABuFfohcDIcUNG8SxmKW4HVVMH2kgAu9ST7ayIVrf+Vwz8UxcLArnmxQ
+        U6KgoRudVfd3dIJAMvYEy1cFkIt1/DIo
+X-Google-Smtp-Source: ACcGV62vcf2CxSqLgHCmggKjhsrCx60RCosSxVua481tlXTrAIIugnhJjkrxkfabor0VKoddYwQRqLDND5Pv
+X-Received: by 2002:a24:d945:: with SMTP id p66-v6mr5474220itg.21.1539360301725;
+ Fri, 12 Oct 2018 09:05:01 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 10:04:48 -0600
 In-Reply-To: <20181012160448.79018-1-zwisler@google.com>
-Message-Id: <20181012160448.79018-4-zwisler@google.com>
+Message-Id: <20181012160448.79018-5-zwisler@google.com>
 Mime-Version: 1.0
 References: <20181012160448.79018-1-zwisler@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH 3/4] gsmi: Remove autoselected dependency on EFI and EFI_VARS
+Subject: [PATCH 4/4] gsmi: Add GSMI commands to log S0ix info
 From:   Ross Zwisler <zwisler@google.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Duncan Laurie <dlaurie@chromium.org>,
-        Furquan Shaikh <furquan@chromium.org>,
+Cc:     Furquan Shaikh <furquan@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
         Guenter Roeck <groeck@google.com>,
-        linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Ben Zhang <benzh@chromium.org>,
-        Filipe Brandenburger <filbranden@chromium.org>,
-        Furquan Shaikh <furquan@google.com>,
+        linux-kernel@vger.kernel.org, Furquan Shaikh <furquan@google.com>,
         Ross Zwisler <zwisler@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,126 +75,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@chromium.org>
+From: Furquan Shaikh <furquan@chromium.org>
 
-Instead of selecting EFI and EFI_VARS automatically when GSMI is
-enabled let that portion of the driver be conditionally compiled
-if EFI and EFI_VARS are enabled.
+Add new GSMI commands (GSMI_CMD_LOG_S0IX_SUSPEND = 0xa,
+GSMI_CMD_LOG_S0IX_RESUME = 0xb) that allow firmware to log any
+information during S0ix suspend/resume paths.
 
-This allows the rest of the driver (specifically event log) to
-be used if EFI_VARS is not enabled.
+Traditional ACPI suspend S3 involves BIOS both during the suspend and
+the resume paths. However, modern suspend type like S0ix does not
+involve firmware on either of the paths. This command gives the
+firmware an opportunity to log any required information about the
+suspend and resume operations e.g. wake sources.
 
-To test:
-1) verify that EFI_VARS is not automatically selected when
-CONFIG_GOOGLE_GSMI is enabled
-2) verify that the kernel boots on Link and that GSMI event log
-is still available and functional
-3) specifically boot the kernel on Alex to ensure it does not
-try to load efivars and that gsmi also does not load because it
-is not in the supported DMI table
+Additionally, this change adds a module parameter to allow platforms
+to specifically enable S0ix logging if required. This prevents any
+other platforms from unnecessarily making a GSMI call which could have
+any side-effects.
 
-Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
-Reviewed-by: Olof Johansson <olofj@chromium.org>
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Ben Zhang <benzh@chromium.org>
-Signed-off-by: Filipe Brandenburger <filbranden@chromium.org>
+Tested by verifying that wake sources are correctly logged in eventlog.
+
+Signed-off-by: Furquan Shaikh <furquan@chromium.org>
+Reviewed-by: Aaron Durbin <adurbin@chromium.org>
+Reviewed-by: Rajat Jain <rajatja@chromium.org>
 Signed-off-by: Furquan Shaikh <furquan@google.com>
 Tested-by: Furquan Shaikh <furquan@chromium.org>
 Reviewed-by: Aaron Durbin <adurbin@chromium.org>
 [zwisler: update changelog for upstream]
 Signed-off-by: Ross Zwisler <zwisler@google.com>
 ---
- drivers/firmware/google/Kconfig |  6 +++---
- drivers/firmware/google/gsmi.c  | 16 ++++++++++++----
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ drivers/firmware/google/gsmi.c | 93 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 92 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/google/Kconfig b/drivers/firmware/google/Kconfig
-index a456a000048b..9ac36762e503 100644
---- a/drivers/firmware/google/Kconfig
-+++ b/drivers/firmware/google/Kconfig
-@@ -10,12 +10,12 @@ if GOOGLE_FIRMWARE
- 
- config GOOGLE_SMI
- 	tristate "SMI interface for Google platforms"
--	depends on X86 && ACPI && DMI && EFI
--	select EFI_VARS
-+	depends on X86 && ACPI && DMI
- 	help
- 	  Say Y here if you want to enable SMI callbacks for Google
- 	  platforms.  This provides an interface for writing to and
--	  clearing the EFI event log and reading and writing NVRAM
-+	  clearing the event log.  If EFI_VARS is also enabled this
-+	  driver provides an interface for reading and writing NVRAM
- 	  variables.
- 
- config GOOGLE_COREBOOT_TABLE
 diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index 252884787266..edab00cc6bba 100644
+index edab00cc6bba..7ee25ce0e318 100644
 --- a/drivers/firmware/google/gsmi.c
 +++ b/drivers/firmware/google/gsmi.c
-@@ -289,6 +289,10 @@ static int gsmi_exec(u8 func, u8 sub)
- 	return rc;
- }
+@@ -29,6 +29,7 @@
+ #include <linux/efi.h>
+ #include <linux/module.h>
+ #include <linux/ucs2_string.h>
++#include <linux/suspend.h>
  
-+#ifdef CONFIG_EFI_VARS
+ #define GSMI_SHUTDOWN_CLEAN	0	/* Clean Shutdown */
+ /* TODO(mikew@google.com): Tie in HARDLOCKUP_DETECTOR with NMIWDT */
+@@ -70,6 +71,8 @@
+ #define GSMI_CMD_SET_NVRAM_VAR		0x03
+ #define GSMI_CMD_SET_EVENT_LOG		0x08
+ #define GSMI_CMD_CLEAR_EVENT_LOG	0x09
++#define GSMI_CMD_LOG_S0IX_SUSPEND	0x0a
++#define GSMI_CMD_LOG_S0IX_RESUME	0x0b
+ #define GSMI_CMD_CLEAR_CONFIG		0x20
+ #define GSMI_CMD_HANDSHAKE_TYPE		0xC1
+ 
+@@ -122,7 +125,6 @@ struct gsmi_log_entry_type_1 {
+ 	u32	instance;
+ } __packed;
+ 
+-
+ /*
+  * Some platforms don't have explicit SMI handshake
+  * and need to wait for SMI to complete.
+@@ -133,6 +135,15 @@ module_param(spincount, uint, 0600);
+ MODULE_PARM_DESC(spincount,
+ 	"The number of loop iterations to use when using the spin handshake.");
+ 
++/*
++ * Platforms might not support S0ix logging in their GSMI handlers. In order to
++ * avoid any side-effects of generating an SMI for S0ix logging, use the S0ix
++ * related GSMI commands only for those platforms that explicitly enable this
++ * option.
++ */
++static bool s0ix_logging_enable;
++module_param(s0ix_logging_enable, bool, 0600);
 +
-+static struct efivars efivars;
-+
- static efi_status_t gsmi_get_variable(efi_char16_t *name,
- 				      efi_guid_t *vendor, u32 *attr,
- 				      unsigned long *data_size,
-@@ -466,6 +470,8 @@ static const struct efivar_operations efivar_ops = {
- 	.get_next_variable = gsmi_get_next_variable,
+ static struct gsmi_buf *gsmi_buf_alloc(void)
+ {
+ 	struct gsmi_buf *smibuf;
+@@ -781,6 +792,78 @@ static const struct platform_device_info gsmi_dev_info = {
+ 	.dma_mask	= DMA_BIT_MASK(32),
  };
  
-+#endif /* CONFIG_EFI_VARS */
++#ifdef CONFIG_PM
++static void gsmi_log_s0ix_info(u8 cmd)
++{
++	unsigned long flags;
 +
- static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
- 			       struct bin_attribute *bin_attr,
- 			       char *buf, loff_t pos, size_t count)
-@@ -767,7 +773,6 @@ static __init int gsmi_system_valid(void)
- }
- 
- static struct kobject *gsmi_kobj;
--static struct efivars efivars;
- 
- static const struct platform_device_info gsmi_dev_info = {
- 	.name		= "gsmi",
-@@ -891,11 +896,14 @@ static __init int gsmi_init(void)
- 		goto out_remove_bin_file;
- 	}
- 
-+#ifdef CONFIG_EFI_VARS
- 	ret = efivars_register(&efivars, &efivar_ops, gsmi_kobj);
- 	if (ret) {
- 		printk(KERN_INFO "gsmi: Failed to register efivars\n");
--		goto out_remove_sysfs_files;
-+		sysfs_remove_files(gsmi_kobj, gsmi_attrs);
-+		goto out_remove_bin_file;
- 	}
++	/*
++	 * If platform has not enabled S0ix logging, then no action is
++	 * necessary.
++	 */
++	if (!s0ix_logging_enable)
++		return;
++
++	spin_lock_irqsave(&gsmi_dev.lock, flags);
++
++	memset(gsmi_dev.param_buf->start, 0, gsmi_dev.param_buf->length);
++
++	gsmi_exec(GSMI_CALLBACK, cmd);
++
++	spin_unlock_irqrestore(&gsmi_dev.lock, flags);
++}
++
++static int gsmi_log_s0ix_suspend(struct device *dev)
++{
++	/*
++	 * If system is not suspending via firmware using the standard ACPI Sx
++	 * types, then make a GSMI call to log the suspend info.
++	 */
++	if (!pm_suspend_via_firmware())
++		gsmi_log_s0ix_info(GSMI_CMD_LOG_S0IX_SUSPEND);
++
++	/*
++	 * Always return success, since we do not want suspend
++	 * to fail just because of logging failure.
++	 */
++	return 0;
++}
++
++static int gsmi_log_s0ix_resume(struct device *dev)
++{
++	/*
++	 * If system did not resume via firmware, then make a GSMI call to log
++	 * the resume info and wake source.
++	 */
++	if (!pm_resume_via_firmware())
++		gsmi_log_s0ix_info(GSMI_CMD_LOG_S0IX_RESUME);
++
++	/*
++	 * Always return success, since we do not want resume
++	 * to fail just because of logging failure.
++	 */
++	return 0;
++}
++
++static const struct dev_pm_ops gsmi_pm_ops = {
++	.suspend_noirq = gsmi_log_s0ix_suspend,
++	.resume_noirq = gsmi_log_s0ix_resume,
++};
++
++static int gsmi_platform_driver_probe(struct platform_device *dev)
++{
++	return 0;
++}
++
++static struct platform_driver gsmi_driver_info = {
++	.driver = {
++		.name = "gsmi",
++		.pm = &gsmi_pm_ops,
++	},
++	.probe = gsmi_platform_driver_probe,
++};
 +#endif
++
+ static __init int gsmi_init(void)
+ {
+ 	unsigned long flags;
+@@ -792,6 +875,14 @@ static __init int gsmi_init(void)
  
- 	register_reboot_notifier(&gsmi_reboot_notifier);
- 	register_die_notifier(&gsmi_die_notifier);
-@@ -906,8 +914,6 @@ static __init int gsmi_init(void)
+ 	gsmi_dev.smi_cmd = acpi_gbl_FADT.smi_command;
  
- 	return 0;
- 
--out_remove_sysfs_files:
--	sysfs_remove_files(gsmi_kobj, gsmi_attrs);
- out_remove_bin_file:
- 	sysfs_remove_bin_file(gsmi_kobj, &eventlog_bin_attr);
- out_err:
-@@ -927,7 +933,9 @@ static void __exit gsmi_exit(void)
- 	unregister_die_notifier(&gsmi_die_notifier);
- 	atomic_notifier_chain_unregister(&panic_notifier_list,
- 					 &gsmi_panic_notifier);
-+#ifdef CONFIG_EFI_VARS
- 	efivars_unregister(&efivars);
++#ifdef CONFIG_PM
++	ret = platform_driver_register(&gsmi_driver_info);
++	if (unlikely(ret)) {
++		printk(KERN_ERR "gsmi: unable to register platform driver\n");
++		return ret;
++	}
 +#endif
- 
- 	sysfs_remove_files(gsmi_kobj, gsmi_attrs);
- 	sysfs_remove_bin_file(gsmi_kobj, &eventlog_bin_attr);
++
+ 	/* register device */
+ 	gsmi_dev.pdev = platform_device_register_full(&gsmi_dev_info);
+ 	if (IS_ERR(gsmi_dev.pdev)) {
 -- 
 2.19.0.605.g01d371f741-goog
 
