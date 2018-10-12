@@ -2,84 +2,94 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F71C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD98EC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB2D2087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:31:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB2D2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A3E492087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E492087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeJMDF3 (ORCPT
+        id S1726712AbeJMDGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:05:29 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43197 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeJMDF3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:05:29 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k9so13401449otl.10;
-        Fri, 12 Oct 2018 12:31:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XcM8JEM5fApOvt1PNqKt26Nq5HS9EUXp4oFNTEwbIME=;
-        b=kHpK47IDlSgQJ7CNCrv8CtCZ99q61OIJio1m73nrHb/oktudeZeaGb+diFeF6iI8Lk
-         G3pnJXjyB1E2bmAN1jDnMCKdzKXvAwPZ+X/nS+fy2ZOZDgBrQ+tujuMBMOoR1ESYqUqI
-         LMG6tNR9kVeHcUiasZk7c7vgUu+QLY4O9GH5VvInSoeY6Kl1Fa8bUOgHlht5wcW6cdNf
-         +GaMqD4/qk0hKe4TvFZw0rawj9r3Wnb0A4NYD5G9OuoAe/9yeY/0AlihizA/VyZ3zXaT
-         Y1PZ9teYNhLmR28uvUp31O11u3G2FySnP7YS7g8iilCbFcCKtrupng9VD7DKH4mGgrFG
-         zB0w==
-X-Gm-Message-State: ABuFfoglQee1rdmogi3WU7v76bycFQsALiEecT6hdrTzjJATI5m8Me7+
-        eQavE/NIan2BbXWl9GujMQ==
-X-Google-Smtp-Source: ACcGV61mchkNu/QzKPwq7e+djHUTnsS8xG/NSID6UDq7m2sXb3Fj74/GXCZZoBTSDF74kn0Ak1HzUQ==
-X-Received: by 2002:a9d:40f7:: with SMTP id t52mr4273145oti.311.1539372688400;
-        Fri, 12 Oct 2018 12:31:28 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 110sm619165otj.19.2018.10.12.12.31.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 12:31:27 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 14:31:26 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     robh@kernel.org, dmitry.torokhov@gmail.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sebastian.reichel@collabora.co.uk,
-        mark.rutland@arm.com, masneyb@onstation.org
-Subject: Re: [PATCH v2] dt-bindings: input: pwm-vibrator: correct pwms in
- example
-Message-ID: <20181012193126.GA26994@bogus>
-References: <20180927004858.32529-1-masneyb@onstation.org>
+        Fri, 12 Oct 2018 23:06:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58148 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbeJMDGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:06:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BE634207B4; Fri, 12 Oct 2018 21:32:19 +0200 (CEST)
+Received: from qschulz (LFbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 73860206A2;
+        Fri, 12 Oct 2018 21:32:09 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 21:32:08 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Oskari Lemmela <oskari@lemmela.net>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: power: supply: axp20x: add AXP813 AC
+ power DT binding
+Message-ID: <20181012193208.7rq4ukonobqkgrlk@qschulz>
+References: <20181008181908.9456-1-oskari@lemmela.net>
+ <20181008181908.9456-2-oskari@lemmela.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rlkcrtl66eibmebk"
 Content-Disposition: inline
-In-Reply-To: <20180927004858.32529-1-masneyb@onstation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181008181908.9456-2-oskari@lemmela.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018 20:48:58 -0400, Brian Masney wrote:
-> In the example for the pwm-vibrator bindings, pwm8 is the direction pin,
-> and pwm9 is the enable pin. The pwms on the vibrator node has these two
-> values swapped so this patch corrects it.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Changes since v1:
-> - Swapped the pwms values instead of the pwm-names values since enable
->   is required and direction is optional. Based on feedback from
->   Rob Herring.
-> 
->  Documentation/devicetree/bindings/input/pwm-vibrator.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--rlkcrtl66eibmebk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Oskari,
+
+On Mon, Oct 08, 2018 at 09:19:02PM +0300, Oskari Lemmela wrote:
+> The AXP803/AXP813 AC power supply can limit input current and voltage.
+>=20
+
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+
+Thanks,
+Quentin
+
+--rlkcrtl66eibmebk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlvA9rgACgkQhLiadT7g
+8aN3WRAAimDQafFjFU+84EnrqfVeTLrvSoS6mkpsGFJHwtpdgvALLHhfU2uTgVOs
+/Mplrj6/CGEAszLLv3cioYkDiu9RX7JUwthEgFyUcl6wd8BzZk/AWRqYOQKjGlb4
+RuEvHe5G98WO9wAE8TbqAWPnzTDYgg9eOA0ThYX0EbvGafXAArXxtHs/bWuIhkPv
+lssEBG3t7D+ujXA4iQjU1GZtHJ/XRPIejhfL0QTIPjYI3A7wn72Z66vhVPt9OfLj
+gULQGjbWknKMnhZ8nYxXu8OpzWQEWIoYwXHoSEX4tK52CT5Bc7yrOq0kjt/HrPMJ
+AzqrR52/y5T/oS/AUHiAWJpUqLuTTNrHrnKPU7IvW6Vdawc8EGzUTlONIreIu91N
+Nxk5RNKTgkg5kNoeSwLPmhzrt8PPyZ+SZrTi8UsAdabrR4PAnI7uZU9mUerr8vYO
+qOC6svTgRNktoYQ7SEVLj80RysHLe2WQzD/p/tTFcFrvXyx7vyVjNGeUuXem8tam
+fM8umpPwRIl45ECGKZG+HuRwb2rLlETwk37NxdzRh2NdeL2+AfmcLEUvCccEYP/3
++dpjkb2pSrwt02pN6HbL0B895A0NDDYd71SgxDKDQhBiIF3dWxkO5u4xjh8EFP4g
+fSgL8SUiTa0FuMwZLjAfYmStFz7u8Vcl0Tzh0a1iqrJm/ZwEfDg=
+=B93E
+-----END PGP SIGNATURE-----
+
+--rlkcrtl66eibmebk--
