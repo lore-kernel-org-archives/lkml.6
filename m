@@ -2,245 +2,144 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE57C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A74C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64A9B2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A9B2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 68F7C214C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:53:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vLcWDpk6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F7C214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeJLUYH (ORCPT
+        id S1728552AbeJLUZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:24:07 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11509 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbeJLUYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:24:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 05:51:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,372,1534834800"; 
-   d="scan'208";a="80924794"
-Received: from devel-ww.sh.intel.com ([10.239.48.119])
-  by orsmga008.jf.intel.com with ESMTP; 12 Oct 2018 05:51:43 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com
-Cc:     peterz@infradead.org, mingo@redhat.com, rkrcmar@redhat.com,
-        like.xu@intel.com
-Subject: [PATCH v1] KVM/x86/vPMU: Guest PMI Optimization
-Date:   Fri, 12 Oct 2018 20:20:17 +0800
-Message-Id: <1539346817-8638-1-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 12 Oct 2018 16:25:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34960 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLUZq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 16:25:46 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f8-v6so5922593plb.2;
+        Fri, 12 Oct 2018 05:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TlG1E6uoFtOlufZqGcUyT+As3nYy/nnAv0hB8EwO71Q=;
+        b=vLcWDpk6uNvfBe/LFe+kZdaYTooldgTmYskPZM190o4P+4NBIRaemhuSxfzwYL9eKV
+         NVqmUUdL6nM/BfdtqnQzb92xiBDG0ccwynAxsL+xLZVH6AAWpnkKs6oBXOcHx6DgmdIO
+         CNf2uHCxrQYh1psEF/xn6cqkfs9HSM+cRrX/Dg+/EVRrKDOGwk6JY+dzhoE781yrcIND
+         4/YZ8sldTVcNCjZz9j4YyDm1c3j1TENp2FRPpH1RTEWif9yyN1KxrCNltxKhn3CXWWRG
+         DgpeJV7WJJkrSxC3WijFmVHwIgxGK6OXMcPXJMHgHv4HlnsJlHwHkdvZXwVyk9w3m+uP
+         AQbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TlG1E6uoFtOlufZqGcUyT+As3nYy/nnAv0hB8EwO71Q=;
+        b=UEla93uDE4t8of6cTab7+AuvN6Hgo5g+cLm2BCIaxYhJbuubywWUVlNpKbBNTMKmVC
+         44pVRuB+bWGv2FS6lFL85VjYzCEPdrA0wK7lxCaEj2igs19AgzT3W9K19yuH1uHKKJM3
+         sonEDdpJ/zjkfLHd+YS7KW4sCK4v2lznlKSynNYJ4Wh6bi79BaNeGYuKy+3p5jqZiPHy
+         WivI6aCj8K7jenwf6xr4yy2y3lQCFTRAVLLw3lYqRClCYT66ko1gtSfDS8xgo5q0SYWx
+         DsWYOgWVxjaFl41yAjL78XcrfGb9oJjO4VNIF0kgu4Fm+nCRvj1bYp027gdnRCabLyRM
+         MPwQ==
+X-Gm-Message-State: ABuFfogBORS9xRFi3WZxeOLZ92U7NS9XX7K8FA2dMh3OihpvFVG5Ej/6
+        qFqd5dbJzH84NVOsbJsxFDs=
+X-Google-Smtp-Source: ACcGV60+a2DkFcZcrx5pBy2YnuaA3UhwoBH8YVVZ9aNBXlTGyc5D6M7PiVuqyZyFDolFejifQoqlZA==
+X-Received: by 2002:a17:902:3041:: with SMTP id u59-v6mr5715143plb.99.1539348805898;
+        Fri, 12 Oct 2018 05:53:25 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id o7-v6sm5796578pgq.14.2018.10.12.05.53.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 05:53:24 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 18:23:16 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        preid@electromag.com.au, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iio: magnetometer: Add driver support for PNI
+ RM3100
+Message-ID: <20181012125316.GA6480@himanshu-Vostro-3559>
+References: <20181002143812.3661-1-songqiang1304521@gmail.com>
+ <20181012073536.20339-1-songqiang1304521@gmail.com>
+ <20181012073536.20339-4-songqiang1304521@gmail.com>
+ <436097c6-b32b-42e4-e704-a15280e13cb0@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <436097c6-b32b-42e4-e704-a15280e13cb0@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest changing MSR_CORE_PERF_GLOBAL_CTRL causes KVM to reprogram pmc
-counters, which re-allocates a host perf event. This process is
-heavyweight and results in a long guest pmi handling time. This also
-makes the perf samping events in the guest hard to move forward as the
-sampling rate will be adjusted to a low value (e.g. the minimum 250).
+Hi Qiang,
 
-This patch implements a fast path to handle the guest change of
-MSR_CORE_PERF_GLOBAL_CTRL for the guest pmi case. Guest change of the
-msr will be applied to the hardware when entering the guest, and the
-old perf event will continue to be used. The guest setting of the
-perf counter for the next irq period in pmi will also be written
-directly to the hardware counter when entering the guest.
+On Fri, Oct 12, 2018 at 04:36:01PM +0800, Song Qiang wrote:
+> 
+> 
+> On 2018年10月12日 15:35, Song Qiang wrote:
+> > PNI RM3100 is a high resolution, large signal immunity magnetometer,
+> > composed of 3 single sensors and a processing chip with a MagI2C
+> > interface.
+> > 
+> ...
+> > +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf = p;
+> > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > +	unsigned long scan_mask = *indio_dev->active_scan_mask;
+> > +	unsigned int mask_len = indio_dev->masklength;
+> > +	struct rm3100_data *data = iio_priv(indio_dev);
+> > +	struct regmap *regmap = data->regmap;
+> > +	int ret, i, bit;
+> > +
+> > +	mutex_lock(&data->lock);
+> > +	switch (scan_mask) {
+> > +	case BIT(0) | BIT(1) | BIT(2):
+> > +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 9);
+> > +		mutex_unlock(&data->lock);
+> > +		if (ret < 0)
+> > +			goto done;
+> > +	break;
+> > +	case BIT(0) | BIT(1):
+> > +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 6);
+> > +		mutex_unlock(&data->lock);
+> > +		if (ret < 0)
+> > +			goto done;
+> > +	break;
+> > +	case BIT(1) | BIT(2):
+> > +		ret = regmap_bulk_read(regmap, RM3100_REG_MY2, data->buffer, 6);
+> > +		mutex_unlock(&data->lock);
+> > +		if (ret < 0)
+> > +			goto done;
+> > +	break;
+> Hi Jonathan,
+> 
+> I just noticed that these three breaks are not proper aligned.
 
-Tests:
-1. CPU: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-2. Add host booting parameter "nowatchdog" to avoid the noise from
-   watchdog_hld
-3. Run "perf stat -e cycles ./test_program" on the guest
-4. Results
-    - Without this optimization, the guest pmi handling time is
-      ~4500000 ns, and the max sampling rate is reduced to 250.
-    - With this optimization, the guest pmi handling time is ~9000 ns
-      (i.e. 1 / 500 of the non-optimization case), and the max sampling
-      rate remains at the original 100000.
+Please send the new version of a patch as a *new* thread and don't
+use `--in-reply-to` flag(if you're using) to chain into older versions
+as whole thread of older discussion comes up and is often not required.
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/events/intel/core.c      | 35 +++++++++++++++++++++++++++
- arch/x86/include/asm/kvm_host.h   |  2 ++
- arch/x86/include/asm/perf_event.h |  2 ++
- arch/x86/kvm/pmu.c                |  1 +
- arch/x86/kvm/pmu_intel.c          | 50 ++++++++++++++++++++++++++++++++++++---
- 5 files changed, 87 insertions(+), 3 deletions(-)
+The changelog gives enough info of what's new in the revised series.
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 035c374..b1e1294 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -1858,6 +1858,41 @@ static __initconst const u64 knl_hw_cache_extra_regs
- 	},
- };
- 
-+/**
-+ * intel_pmu_disable_guest_counters - disable perf counters for the guest
-+ *
-+ * Disable all the perf counters for the guest via setting the host mask.
-+ * This will cause all the perf counters to be disabled when entering
-+ * the guest.
-+ *
-+ * Returns: the old counter mask.
-+ */
-+u64 intel_pmu_disable_guest_counters(void)
-+{
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+	u64 mask = cpuc->intel_ctrl_host_mask;
-+
-+	cpuc->intel_ctrl_host_mask = ULONG_MAX;
-+
-+	return mask;
-+}
-+EXPORT_SYMBOL_GPL(intel_pmu_disable_guest_counters);
-+
-+/**
-+ * intel_pmu_enable_guest_counters - enable perf counters for the guest
-+ *
-+ * Enable perf counters for the guest via setting the host mask to the
-+ * caller's counter mask. The counters corresponding to the unmasked bits
-+ * will be enabled when entering the guest.
-+ */
-+void intel_pmu_enable_guest_counters(u64 mask)
-+{
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+
-+	cpuc->intel_ctrl_host_mask = mask;
-+}
-+EXPORT_SYMBOL_GPL(intel_pmu_enable_guest_counters);
-+
- /*
-  * Used from PMIs where the LBRs are already disabled.
-  *
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 09b2e3e..9dc2fed 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -427,6 +427,8 @@ struct kvm_pmu {
- 	u64 counter_bitmask[2];
- 	u64 global_ctrl_mask;
- 	u64 reserved_bits;
-+	u64 counter_mask;
-+	bool in_pmi;
- 	u8 version;
- 	struct kvm_pmc gp_counters[INTEL_PMC_MAX_GENERIC];
- 	struct kvm_pmc fixed_counters[INTEL_PMC_MAX_FIXED];
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 78241b7..d653b12 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -296,6 +296,8 @@ static inline void perf_check_microcode(void) { }
- 
- #ifdef CONFIG_CPU_SUP_INTEL
-  extern void intel_pt_handle_vmx(int on);
-+extern u64 intel_pmu_disable_guest_counters(void);
-+extern void intel_pmu_enable_guest_counters(u64 mask);
- #endif
- 
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_AMD)
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 58ead7d..210e5df 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -80,6 +80,7 @@ static void kvm_perf_overflow_intr(struct perf_event *perf_event,
- 			      (unsigned long *)&pmu->reprogram_pmi)) {
- 		__set_bit(pmc->idx, (unsigned long *)&pmu->global_status);
- 		kvm_make_request(KVM_REQ_PMU, pmc->vcpu);
-+		pmu->in_pmi = true;
- 
- 		/*
- 		 * Inject PMI. If vcpu was in a guest mode during NMI PMI
-diff --git a/arch/x86/kvm/pmu_intel.c b/arch/x86/kvm/pmu_intel.c
-index 5ab4a36..5f6ac3c 100644
---- a/arch/x86/kvm/pmu_intel.c
-+++ b/arch/x86/kvm/pmu_intel.c
-@@ -55,6 +55,27 @@ static void reprogram_fixed_counters(struct kvm_pmu *pmu, u64 data)
- 	pmu->fixed_ctr_ctrl = data;
- }
- 
-+static void fast_global_ctrl_changed(struct kvm_pmu *pmu, u64 data)
-+{
-+	pmu->global_ctrl = data;
-+
-+	if (!data) {
-+		/*
-+		 * The guest PMI handler is asking for disabling all the perf
-+		 * counters
-+		 */
-+		pmu->counter_mask = intel_pmu_disable_guest_counters();
-+	} else {
-+		/*
-+		 * The guest PMI handler is asking for enabling the perf
-+		 * counters. This happens at the end of the guest PMI handler,
-+		 * so clear in_pmi.
-+		 */
-+		intel_pmu_enable_guest_counters(pmu->counter_mask);
-+		pmu->in_pmi = false;
-+	}
-+}
-+
- /* function is called when global control register has been updated. */
- static void global_ctrl_changed(struct kvm_pmu *pmu, u64 data)
- {
-@@ -219,6 +240,15 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		}
- 		break; /* RO MSR */
- 	case MSR_CORE_PERF_GLOBAL_CTRL:
-+		/*
-+		 * If this is from the guest PMI handler to disable or enable
-+		 * the perf counters, there is no need to release and allocate
-+		 * a new perf event, which is too time consuming.
-+		 */
-+		if (pmu->in_pmi) {
-+			fast_global_ctrl_changed(pmu, data);
-+			return 0;
-+		}
- 		if (pmu->global_ctrl == data)
- 			return 0;
- 		if (!(data & pmu->global_ctrl_mask)) {
-@@ -237,9 +267,23 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	default:
- 		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
- 		    (pmc = get_fixed_pmc(pmu, msr))) {
--			if (!msr_info->host_initiated)
--				data = (s64)(s32)data;
--			pmc->counter += data - pmc_read_counter(pmc);
-+			if (pmu->in_pmi) {
-+				/*
-+				 * Since we are not re-allocating a perf event
-+				 * to reconfigure the sampling time when the
-+				 * guest pmu is in PMI, just set the value to
-+				 * the hardware perf counter. Counting will
-+				 * continue after the guest enables the
-+				 * counter bit in MSR_CORE_PERF_GLOBAL_CTRL.
-+				 */
-+				struct hw_perf_event *hwc =
-+						&pmc->perf_event->hw;
-+				wrmsrl(hwc->event_base, data);
-+			} else {
-+				if (!msr_info->host_initiated)
-+					data = (s64)(s32)data;
-+				pmc->counter += data - pmc_read_counter(pmc);
-+			}
- 			return 0;
- 		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
- 			if (data == pmc->eventsel)
+
 -- 
-2.7.4
-
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
