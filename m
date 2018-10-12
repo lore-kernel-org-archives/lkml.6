@@ -2,132 +2,159 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F7DC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CE9C67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE792075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00992075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qIExhZYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE792075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNKl1fLt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E00992075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbeJLXTx (ORCPT
+        id S1729349AbeJLXT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:19:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37871 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729302AbeJLXTx (ORCPT
+        Fri, 12 Oct 2018 19:19:59 -0400
+Received: from mail-it1-f175.google.com ([209.85.166.175]:54186 "EHLO
+        mail-it1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729334AbeJLXT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:19:53 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y11-v6so13934718wrd.4;
-        Fri, 12 Oct 2018 08:46:47 -0700 (PDT)
+        Fri, 12 Oct 2018 19:19:59 -0400
+Received: by mail-it1-f175.google.com with SMTP id q70-v6so19400382itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j3yC52M6I2Vmvn+RHlxHcnZkRqRLHKjwCM0LL96FKE0=;
-        b=qIExhZYM4i0GdfetZSBetbVQ52moF7iWqAVO5V35+wvzl/KcO06q+y4DKykFF67p9N
-         rO1/oVXdbOCEnjZe4J7vA1qjTlSKEdZVustrsdSohTkgMjs/D8ERahZ74ysydyLvf7fL
-         Tlurde0kC2nEqyWqE6kCgZSkFTV+DarKSbW7sO1iQzSMJuxPWnt5DV5xNx8lWBV3doDq
-         8Fu6PQeGtZClmWuIka3NF5gJEGgxDGuieqiTSGb0TzTTeC64iJeUce0Jtj7op4pa74hU
-         qnlyUFjPJhtoZgLYLxISTY6x8tHcCqWrK/0U7fkpqaTVIkL3B43QRgSgb10rEoYcVOSq
-         Tw0w==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hY8ZOWDGNqj6KCXufqqzVSUm88ZOQNNpDSkg7zN+Z3Y=;
+        b=UNKl1fLtRDHTHQT05UruYoX0lIdUNZgypRIrVm52s8uKDqHU3wvl9eD/hNscGVVCty
+         r22NH9nxKJZT2Ro57vDwAEugZD5UxijcAomPY91PrVVl3R5XqgJwZtrf0/WNnmg9nUgM
+         N/Fjhb271tWi2a4cDHOkxtLPg3L4e6RRvG1GA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j3yC52M6I2Vmvn+RHlxHcnZkRqRLHKjwCM0LL96FKE0=;
-        b=lGewYchptz6LfboS20n782nYHMi98qtBa9q2n/H9brGzegQw8NAAeSqEkfU2U9ilQa
-         jdKYG/izKctlL71W0bcYg93LgF3YabxZ8MtzxgqSGGHJm8kmm7fxQPRbp3Ynwe7kTHNl
-         ypU1yGgcUuE895857Svt354+LbwnKTPETyYz6UC2XZgRsJAD1oc3eOjlpELHCABpJ3FX
-         deUGAWo+sps/jcoiIV4DY+k4YZLsv/OyyT04N9sDx4ACMcrvujn0FVgwhrZ1y7hQEL2m
-         MdyIuWoe44X+i842r7AEklzC17sg/x+RufFKfqfJe4UAjRa8bmWLPwbJXci4kJxGz4y9
-         Oqsg==
-X-Gm-Message-State: ABuFfogg03ebOYoNPm5E3DGRS0cYEEuQ2KAgO0NYN5nG5fsz5qx98IdF
-        Ibtk2Q/wnge9PulV4nJDOD8=
-X-Google-Smtp-Source: ACcGV63I2MM8HDbb5QbivsCxB6xTHufBViUsVIzp0yvGSqmFyiOp4C2DqX0mnmdD3ANDxa6fsw1NZw==
-X-Received: by 2002:adf:fdc2:: with SMTP id i2-v6mr6218906wrs.276.1539359206924;
-        Fri, 12 Oct 2018 08:46:46 -0700 (PDT)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id s7-v6sm9269852wmd.0.2018.10.12.08.46.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 08:46:45 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 16:46:44 +0100
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: Bad MAINTAINERS pattern in section 'VIRTIO AND VHOST VSOCK
- DRIVER'
-Message-ID: <20181012154644.GM24267@stefanha-x1.localdomain>
-References: <20180928220527.32038-1-joe@perches.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hY8ZOWDGNqj6KCXufqqzVSUm88ZOQNNpDSkg7zN+Z3Y=;
+        b=uJFULq8zTqE2LtNA0/wB3GVmMMeElQF1igySTF5IJBPRo2EYvbbIsDlriTE8nXY3a2
+         QsIMKEHDGVq/HE72aoaCt6YefI4z8yh1gz9cGU6EybsNEJxFlxXSQvFZGahpugTtapgd
+         IIKqne8qGj/hpjV4r0J5fJz5UI3PoHpdG7MiTxsRMeQS/b3qqzFNb4c7GYv8fgQopiZk
+         gh7X54d0fopW/QHzgk/xk8FbCrNRZD2FGXuxXfh9rGacqBbmVXSQbAazfNggxjppxvKQ
+         1eFrxjoXm4Q824xZHX4y41WdhRrDwgf8gKapETiS/trWMLQSeKbhKHJk+fbDHwvRy2zd
+         fcWg==
+X-Gm-Message-State: ABuFfohD3cc24p3nDNXOQw1LJb2nCIhUTHJqXVc6Zg5t+RShxsiiSMMm
+        e2yIPbaNq23U6jajBv4Pbe8sZjYLrIENWLXJ4hnyjQ==
+X-Google-Smtp-Source: ACcGV62fU9yZcWnt8RRVbd7kw4bnVGVPWuAXvr6DsQqL473xSsbVhzY3A4bEX/c72vQl06HaoBL+krHkhsuD1YenA7Y=
+X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr4924522itc.26.1539359214104;
+ Fri, 12 Oct 2018 08:46:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ICrdrp3pM9DyZLTK"
-Content-Disposition: inline
-In-Reply-To: <20180928220527.32038-1-joe@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 08:46:13
+ -0700 (PDT)
+In-Reply-To: <20181012150429.GH3401@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181011112013.GC32752@e107155-lin> <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin> <20181011165822.GB2371@codeaurora.org>
+ <20181011173733.GA26447@e107155-lin> <20181011210609.GD2371@codeaurora.org> <20181012150429.GH3401@e107155-lin>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 12 Oct 2018 17:46:13 +0200
+Message-ID: <CAPDyKFpNuTMav__wTvuMbxU65QpiQPftH_OXkEwztcPAG9FbTw@mail.gmail.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lina Iyer <ilina@codeaurora.org>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12 October 2018 at 17:04, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On Thu, Oct 11, 2018 at 03:06:09PM -0600, Lina Iyer wrote:
+>> On Thu, Oct 11 2018 at 11:37 -0600, Sudeep Holla wrote:
+> [...]
+>
+>> >
+>> > Is DDR managed by Linux ? I assumed it was handled by higher exception
+>> > levels. Can you give examples of resources used by CPU in this context.
+>> > When CPU can be powered on or woken up without Linux intervention, the
+>> > same holds true for CPU power down or sleep states. I still see no reason
+>> > other than the firmware has no support to talk to RPMH.
+>> >
+>> DDR, shared clocks, regulators etc. Imagine you are running something on
+>> the screen and CPUs enter low power mode, while the CPUs were active,
+>> there was a need for bunch of display resources, and things the app may
+>> have requested resources, while the CPU powered down the requests may
+>> not be needed the full extent as when the CPU was running, so they can
+>> voted down to a lower state of in some cases turn off the resources
+>> completely. What the driver voted for is dependent on the runtime state
+>> and the usecase currently active. The 'sleep' state value is also
+>> determined by the driver/framework.
+>>
+>
+> Why does CPU going down says that another (screen - supposedly shared)
+> resource needs to be relinquished ? Shouldn't display decide that on it's
+> own ? I have no idea why screen/display is brought into this discussion.
+> CPU can just say: hey I am going down and I don't need my resource.
+> How can it say: hey I am going down and display or screen also doesn't
+> need the resource. On a multi-cluster, how will the last CPU on one know
+> that it needs to act on behalf of the shared resource instead of another
+> cluster.
 
---ICrdrp3pM9DyZLTK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Apologize for sidetracking the discussion, just want to fold in a few comments.
 
-On Fri, Sep 28, 2018 at 03:05:26PM -0700, Joe Perches wrote:
-> Please fix this defect appropriately.
->=20
-> linux-next MAINTAINERS section:
->=20
-> 	15660	VIRTIO AND VHOST VSOCK DRIVER
-> 	15661	M:	Stefan Hajnoczi <stefanha@redhat.com>
-> 	15662	L:	kvm@vger.kernel.org
-> 	15663	L:	virtualization@lists.linux-foundation.org
-> 	15664	L:	netdev@vger.kernel.org
-> 	15665	S:	Maintained
-> 	15666	F:	include/linux/virtio_vsock.h
-> 	15667	F:	include/uapi/linux/virtio_vsock.h
-> 	15668	F:	include/uapi/linux/vsockmon.h
-> 	15669	F:	include/uapi/linux/vm_sockets_diag.h
-> 	15670	F:	net/vmw_vsock/diag.c
-> 	15671	F:	net/vmw_vsock/af_vsock_tap.c
-> 	15672	F:	net/vmw_vsock/virtio_transport_common.c
-> 	15673	F:	net/vmw_vsock/virtio_transport.c
-> 	15674	F:	drivers/net/vsockmon.c
-> 	15675	F:	drivers/vhost/vsock.c
-> -->	15676	F:	drivers/vhost/vsock.h
+This is becoming a complicated story. May I suggest we pick the GIC as
+an example instead?
 
-Hi Joe,
-Thanks for pointing this out and sorry for the late response.  I have
-sent a patch.
+Let's assume the simple case, we have one cluster and when the cluster
+becomes powered off, the GIC needs to be re-configured and wakeups
+must be routed through some "always on" external logic.
 
-Stefan
+The PSCI spec mentions nothing about how to manage this and not the
+rest of the SoC topology for that matter. Hence if the GIC is managed
+by Linux - then Linux also needs to take actions before cluster power
+down and after cluster power up. So, if PSCI FW can't deal with GIC,
+how would manage it?
 
---ICrdrp3pM9DyZLTK
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> I think we are mixing the system sleep states with CPU idle here.
+> If it's system sleeps states, the we need to deal it in some system ops
+> when it's the last CPU in the system and not the cluster/power domain.
 
------BEGIN PGP SIGNATURE-----
+What is really a system sleep state? One could consider it just being
+another idles state, having heaver residency targets and greater
+enter/exit latency values, couldn't you?
 
-iQEcBAEBAgAGBQJbwMHkAAoJEJykq7OBq3PIdksIAKUz2BUlUnQ3YnlTgD2wZn0i
-veEMPWYwfS3SlO16zUiW/gd+9iPXxtLK2her0WbpMrLWsNO151ha0YotNjV3RR3O
-WImt57CO3RC9SA5B7J2KmsXwwgZZpRGvefcOe0PsaAU0SBIZ/m4aXScJJ3elNLSP
-HguzrrdJFVA91kRnbq5kolpia05hr39LcrrBztEhFESdZrUdEtm63nlDlpJ+592O
-KU163lV8YoWBI795p4NaABxvpExJe2K4Woytk9FnIUGWs+efN+TU2bO2UBnaw3ud
-b8YfMpA+Oh+1PYY1gD8zwINxyzzhscXXZkThOBqlk3tWoFiQxE8AD0STARljg58=
-=eJpJ
------END PGP SIGNATURE-----
+In the end, there is no reason to keep things powered on, unless they
+are being in used (or soon to be used), that is main point.
 
---ICrdrp3pM9DyZLTK--
+We are also working on S2I at Linaro. We strive towards being able to
+show the same power numbers as for S2R, but then we need to get these
+cluster-idle things right.
+
+[...]
+
+Have a nice weekend!
+
+Kind regards
+Uffe
