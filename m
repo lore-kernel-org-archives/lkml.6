@@ -2,93 +2,120 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D4C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFCDC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C06206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C06206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 440AB206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:07:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440AB206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbeJMCl3 (ORCPT
+        id S1726713AbeJMClg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:41:29 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36000 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbeJMCl3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:41:29 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p89-v6so12281649ljb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 12:07:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J28Hb242yDZErkKbMM8fY2/1sN1P9oMETglvfG+UgJ8=;
-        b=YvMLUVak4z5HuVdUmU9SPchIcNNuFBQnxPUr28y0S1uAuXuWYObdAZ9OypEqOhvikH
-         0/SuluNXihLKFXKQjj4P9ZoL/OVvf2WOLoIZ8fBT7GfV68MDIS1su8MkEI0PFAZLo6PC
-         bP1EbKYZUCste/kzRDcvRIKxE+ynvdWtkXPSuPG8fubu8+Pk5AjEDPbmmPPw04TV6y4Q
-         bRn236zen0WUfhyXphhs6nmd66eIb2/IRRWjUWhbM7crCnRfQJ2j0zYCP6TQ7h6cK4se
-         IiBAmKSZ7YpAZx2KDetlQylOPGLiev3a1vE78gxLzGfBiOi3o1R0xACaajQqXLuWQnTj
-         K2TA==
-X-Gm-Message-State: ABuFfoiWfT75NdnZBRK/YNxkbsaCGrrhVkqA96DK0+yBZO0EZJ3nZ/et
-        Wbww8609pnojDtntaDs5UhvsOz5of/Mf9EcWy5oa2w==
-X-Google-Smtp-Source: ACcGV61BjssJnGDfZuqZRs/3A3niySR5cqMt1C2Gpb6lQgmeR/5u/EhqF2YaI65kmO1IwVundY/z3jfvPen9ClaUeY0=
-X-Received: by 2002:a2e:574f:: with SMTP id r15-v6mr5222762ljd.106.1539371252721;
- Fri, 12 Oct 2018 12:07:32 -0700 (PDT)
+        Fri, 12 Oct 2018 22:41:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18449 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbeJMClg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 22:41:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 12:07:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
+   d="scan'208";a="240886094"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.63]) ([10.24.14.63])
+  by orsmga004.jf.intel.com with ESMTP; 12 Oct 2018 12:07:40 -0700
+Subject: Re: [PATCH v3 01/11] arch/x86: Start renaming the rdt files to more
+ generic names
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181011203223.18157-1-babu.moger@amd.com>
+ <20181011203223.18157-2-babu.moger@amd.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <9c0e5be7-20e7-39dd-0852-e9b22d1df156@intel.com>
+Date:   Fri, 12 Oct 2018 12:07:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181012142413.26107-1-benjamin.tissoires@redhat.com> <20181012185342.GA35430@dtor-ws>
-In-Reply-To: <20181012185342.GA35430@dtor-ws>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Fri, 12 Oct 2018 21:07:21 +0200
-Message-ID: <CAO-hwJKenvHpOQc6vjxDq0YZesLJVu1MXPuZ-iTSLKxJEbZeAQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Fix Elan I2C touchpads in latest generation from Lenovo
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181011203223.18157-2-babu.moger@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 8:53 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> On Fri, Oct 12, 2018 at 04:24:08PM +0200, Benjamin Tissoires wrote:
-> > Since v4.18, we unconditionally switch the I2C capable touchpads over I2C.
-> > In the model I had (a pre-prod t480s I guess), the touchpad was behaving
-> > fine.
-> > However, it occurs that later production models don't expose the clickpad
-> > information from I2C. The Windows driver gets all the information from PS/2
-> > so we should do the same.
-> >
-> > The situation is even worse for the P52. Once of the query parameter function
-> > fails, which means the touchpad doesn't even probe. This effectively kills
-> > the touchpad, which is less than ideal.
-> >
-> > Dmitry, I am not sure if we should take those for stable in v4.18+.
-> > I'd like to, but given the series is 5 patches, I don't know if this
-> > will be acceptable.
-> > We could revert in stable df077237cf55928f5 but that would mean
-> > distributions will have to revert the revert if they want to provide
-> > the I2C behavior.
-> >
-> > So, regarding stable: your call :)
->
-> Heh ;) I think we have to fix it at least in 4.19 stable train. How
-> about we merge it normally into 4.20, and let it cook there for a while.
-> If there is no issues, then we can send it to 4.19 stable manually. How
-> does this sound?
->
+Hi Babu,
 
-Sounds like a plan :)
+On 10/11/2018 1:33 PM, Moger, Babu wrote:
+> New generation of AMD processors start supporting RDT(or QOS) features.
+> With more than one vendors supporting these features, it seems more
+> appropriate to rename these files.
+> 
+> Changed intel_rdt to resctrl where applicable.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+>  arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} | 0
+>  arch/x86/kernel/cpu/Makefile                                | 6 +++---
+>  arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c}              | 4 ++--
+>  arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h}              | 6 +++---
+>  .../cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c}  | 2 +-
+>  .../kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c}   | 2 +-
+>  .../cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c}  | 6 +++---
+>  ..._rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} | 2 +-
+>  .../kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} | 4 ++--
+>  arch/x86/kernel/process_32.c                                | 2 +-
+>  arch/x86/kernel/process_64.c                                | 2 +-
+>  11 files changed, 18 insertions(+), 18 deletions(-)
+>  rename arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} (100%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} (95%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} (99%)
+> 
 
-Cheers,
-Benjamin
+I missed this earlier ... this change creates a need to change the
+MAINTAINERS file. There were some other things that a run of
+"checkpatch.pl --strict" picked up in the other patches that you could
+consider.
+
+Reinette
