@@ -2,126 +2,121 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12043C67877
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 085FCC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C17042087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:00:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="EEn66hIV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17042087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	by mail.kernel.org (Postfix) with ESMTP id D1FF92087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FF92087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeJMBeF (ORCPT
+        id S1727061AbeJMBfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:34:05 -0400
-Received: from sonic316-8.consmr.mail.gq1.yahoo.com ([98.137.69.32]:35533 "EHLO
-        sonic316-8.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725981AbeJMBeF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:34:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1539367224; bh=ZOcg8hBbbIYxmvjOTZg/CZt6vhIGoyhwB4ZhaV2X2J4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=EEn66hIVdM/aziq9TCNO6H4O9ZpjgdfBat0APiAGdysVXo/R9mCTT8z1WR9GqfDf+U09/BKsD309V3s1bcJz8wF3/BKMaR80O0c1u+LTYTvRDcRUsdUej6dOp2Xeoq9Bfgs/nbLxo19bOtJaYYFlAeBo97bJx69iNt4/5U1RLjzHl+d1Qn2GKEOKzluOwPN4xkHSljwj7dt9GpGWDmh7ECN7q/KyCcMcuZT/4xeYfUFhh8tXCpH80KlXMeOoaWOUBh7iwYtjXPNE4seXzrGOKHFZSpa+PazyG70VQqj2hVWvIXX7TAc1snqBjV2oEdJG4tzR4eB+TWrRUxiwG8hctg==
-X-YMail-OSG: t.lGShQVM1mSu0vl8XqWUxJrTjhth9LLyds6h4DgvwsHkPMoX638TL_mZ8K8uiv
- CqeUEwly17J_Y34MtbMLHlIkGa1f9_SgXNOpv2cHd0aBslf7UH_mZDib0mSzN1otKDZhaSz9ul6P
- kvMcVECB7wPWQKgcWj8zH18HJc4nmElmddgtxN5sRDEV64wQV8uGDrDGx4Y5tpu4Rnveqm.KwGF8
- jtcbCyj_oZgJYSFSha3O05iiPqOwJ.XSXcu_kGVE0lg1JMy9HYJhUEUbCYCPd3CaIdz8YDKZD_.V
- dV4M4xdplf9vvwkJStSyBRixhPKHSAVWfO.v5DwMwo.L1aKbAFlIfDtD._xLDP51h5xKNTHGsoCT
- in4elWrket8bY0lx6f_k6e71NF1TUT.gYls3fU.9SfNi_6kzt1ZXZek7bCUl_z48L3cw4TIMs0dB
- YpxOPp8TECMbhCHxgsTvy3i9eSTi8e4nwu0CuxDxHu.B0.Q_uLkb4l6qO1nrXAeV2_lhzseXiLli
- GbJo.5WtwnhWBcTvS8Gy8Ccvj.Gja2ikYR6tp_5id7hlYPv_JB0vsn2QMkXLMle8Gw4Q.EpYtubM
- Kg5.GZEbGrplLkLGduCEOl0Qw5sZnQ33u3453wU48ZVgUWiE18MAriU21LhyDKcvgkQ_hRag5uw3
- adw.Fixf0q3c3Btc0SWVG.S4Xc65Y1JUm0jd15d0W3cura52MUmWH0tZg1NT_1qj3laNbR5RkWqu
- Et8sxRTvBuUyZy6JmHYs5tc.QujZAlKHqEArREY0hq5NkHFhuxbHMXhvKWbtkJsyff78rNmJoJ.a
- Sb8tP9Xisx6fSt5JoAtcU4ClzBS0kdChdsV5SfC_INO.G2ywKJdHYfpi3L92_l0z1fuEjjAk.R36
- Hl1kcCntJ_NZigVkoQYG94SHgE8xZU1r1KRZQiCKg8qwQ9iZ_tAFbwM6pYCXiCo6NDJ3q0jjUKGE
- T1dzZAs0LqU07.MgtCA9FuCqUgFJX07rU5pDD8wqXOIcj7wd_U5Y1NpJRYUuRuwRUxNmxER1q5f3
- 3NuGaaXioX8wO3g03AExJxhx__XeIaHeWrdU_FLs_xEO7KWzI0wHzEM6QoTUcFDkCwzKhotA-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 12 Oct 2018 18:00:24 +0000
-Received: from 183.156.49.100 (EHLO localhost.localdomain) ([183.156.49.100])
-          by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ed195a26657336ad6610d1a74a356e02;
-          Fri, 12 Oct 2018 18:00:22 +0000 (UTC)
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH RESEND] staging: erofs: clean erofs_lookup()
-Date:   Sat, 13 Oct 2018 01:59:49 +0800
-Message-Id: <1539367189-20186-1-git-send-email-hsiangkao@aol.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <a267e4b0-887e-6de9-38db-7ca9a5518b72@aol.com>
-References: <a267e4b0-887e-6de9-38db-7ca9a5518b72@aol.com>
+        Fri, 12 Oct 2018 21:35:00 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48818 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726717AbeJMBfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:35:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:01:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
+   d="scan'208";a="82143394"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga006.jf.intel.com with ESMTP; 12 Oct 2018 11:01:19 -0700
+Subject: [PATCH v7 0/7] mm: Merge hmm into devm_memremap_pages, mark GPL-only
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date:   Fri, 12 Oct 2018 10:49:31 -0700
+Message-ID: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@ZenIV.linux.org.uk>
+[ apologies for the resend, script error ]
 
-	d_splice_alias() does the right thing when given
-ERR_PTR(-E...) for inode.  No need for gotos, multiple
-returns, etc. in there.
+Changes since v6 [1]:
+* Rebase on next-20181008 and fixup conflicts with the xarray conversion
+  and hotplug optimizations
+* It has soaked on a 0day visible branch for a few days without any
+  reports.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+[1]: https://lkml.org/lkml/2018/9/13/104
+
 ---
-Hi,
 
-Frankly, I think it is a straight-forward cleanup by Al enough
-to be submitted to Linux 4.20 in constant to other pending fixes
-found in the process of EROFS productization these days, which
-I need more time to think over and fix formally to the community.
+Hi Andrew,
 
-p.s. I have no idea whether this patch has been already queued up
-in Al's fs tree for 4.20... :'( +Cc Greg / the staging mailing
-list as well. Or please ignore this email...
+Jérôme has reviewed the cleanups, thanks Jérôme. We still disagree on
+the EXPORT_SYMBOL_GPL status of the core HMM implementation, but Logan,
+Christoph and I continue to support marking all devm_memremap_pages()
+derivatives EXPORT_SYMBOL_GPL.
 
-Thanks,
-Gao Xiang
+HMM has been upstream for over a year, with no in-tree users it is clear
+it was designed first and foremost for out of tree drivers. It takes
+advantage of a facility Christoph and I spearheaded to support
+persistent memory. It continues to see expanding use cases with no clear
+end date when it will stop attracting features / revisions. It is not
+suitable to export devm_memremap_pages() as a stable 3rd party driver
+api.
 
- drivers/staging/erofs/namei.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+devm_memremap_pages() is a facility that can create struct page entries
+for any arbitrary range and give out-of-tree drivers the ability to
+subvert core aspects of page management. It, and anything derived from
+it (e.g. hmm, pcip2p, etc...), is a deep integration point into the core
+kernel, and an EXPORT_SYMBOL_GPL() interface. 
 
-diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
-index 0039b76..5596c52 100644
---- a/drivers/staging/erofs/namei.c
-+++ b/drivers/staging/erofs/namei.c
-@@ -223,18 +223,13 @@ static struct dentry *erofs_lookup(struct inode *dir,
- 	if (err == -ENOENT) {
- 		/* negative dentry */
- 		inode = NULL;
--		goto negative_out;
--	} else if (unlikely(err))
--		return ERR_PTR(err);
--
--	debugln("%s, %s (nid %llu) found, d_type %u", __func__,
--		dentry->d_name.name, nid, d_type);
--
--	inode = erofs_iget(dir->i_sb, nid, d_type == EROFS_FT_DIR);
--	if (IS_ERR(inode))
--		return ERR_CAST(inode);
--
--negative_out:
-+	} else if (unlikely(err)) {
-+		inode = ERR_PTR(err);
-+	} else {
-+		debugln("%s, %s (nid %llu) found, d_type %u", __func__,
-+			dentry->d_name.name, nid, d_type);
-+		inode = erofs_iget(dir->i_sb, nid, d_type == EROFS_FT_DIR);
-+	}
- 	return d_splice_alias(inode, dentry);
- }
- 
--- 
-2.7.4
+Commit 31c5bda3a656 "mm: fix exports that inadvertently make put_page()
+EXPORT_SYMBOL_GPL" was merged ahead of this series to relieve some of
+the pressure from innocent consumers of put_page(), but now we need this
+series to address *producers* of device pages.
 
+More details and justification in the changelogs. The 0day
+infrastructure has reported success across 152 configs and this survives
+the libnvdimm unit test suite. Aside from the controversial bits the
+diffstat is compelling at:
+
+	7 files changed, 126 insertions(+), 323 deletions(-)
+
+Note that the series has some minor collisions with Alex's recent series
+to improve devm_memremap_pages() scalability [2]. So, whichever you take
+first the other will need a minor rebase.
+
+[2]: https://www.lkml.org/lkml/2018/9/11/10
+
+Dan Williams (7):
+      mm, devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
+      mm, devm_memremap_pages: Kill mapping "System RAM" support
+      mm, devm_memremap_pages: Fix shutdown handling
+      mm, devm_memremap_pages: Add MEMORY_DEVICE_PRIVATE support
+      mm, hmm: Use devm semantics for hmm_devmem_{add,remove}
+      mm, hmm: Replace hmm_devmem_pages_create() with devm_memremap_pages()
+      mm, hmm: Mark hmm_devmem_{add,add_resource} EXPORT_SYMBOL_GPL
+
+
+ drivers/dax/pmem.c                |   14 --
+ drivers/nvdimm/pmem.c             |   13 +-
+ include/linux/hmm.h               |    4 
+ include/linux/memremap.h          |    2 
+ kernel/memremap.c                 |   94 +++++++----
+ mm/hmm.c                          |  305 +++++--------------------------------
+ tools/testing/nvdimm/test/iomap.c |   17 ++
+ 7 files changed, 126 insertions(+), 323 deletions(-)
