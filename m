@@ -2,132 +2,99 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705D3C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 473E4C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D66C20865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:56:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nm0L5HCZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D66C20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DB0C20865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB0C20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbeJMCaS (ORCPT
+        id S1726869AbeJMCbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:30:18 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:36296 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeJMCaS (ORCPT
+        Fri, 12 Oct 2018 22:31:12 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48704 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeJMCbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:30:18 -0400
-Received: by mail-yb1-f194.google.com with SMTP id 5-v6so5307587ybf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 11:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Ng2L27+kqckUIzZZmjjZ7l5TLIFksEymtlPTUrjBE6U=;
-        b=nm0L5HCZuI/vWOBoJk2diV7DF75mnmvijFxiUBRTnK/OH07VQZymoHS+w0LsJQscxE
-         OxX1XeUEqJloRF/Wf5fK+RvQU4VqlX6e+Jd/L9i8JgqA4C1cwpGWQ9/DuDM/wbzwV0do
-         7qBlhsnGbM9d7knX8tCjpRL0H9EffetU1nTHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Ng2L27+kqckUIzZZmjjZ7l5TLIFksEymtlPTUrjBE6U=;
-        b=qIZ4w/nVO4e2voqaz2cobcer1T89fk7Tt0ML5vy6oh98eMukuuv0TVFdVFbxTA4mWl
-         ciX9Hn8vwRtD8xlEY9IpL7M/2VL25hePT1QE5vFfNuWwRG9+FY8a4A4f1nkc0hteuiEF
-         3ML7CNrXqWicTpGRuur5owYHqR+HM5toadPIv6c+AQZjAJzw0P7I3PfrBCxGGXhxElA6
-         +KXO3+fWCAXdkqEYBtQ4STI7kpzONqMnl2HAflJRqJW9w5ACCxXd65/mbnMNrLb6P5J7
-         /y6KjeTkjwJTbDpHRrWOfVWWShW8B2qqcPf2FYKhf0TuK387yarhNTqHljYVgrfSlyAZ
-         tK4g==
-X-Gm-Message-State: ABuFfoghI49He2H5tEtvAdV6SHrO5M9kVFvaOIA7HoiN2RTBKhOsdm90
-        byq26kaTO5+jS6TOpb81BNYMnjLipLM=
-X-Google-Smtp-Source: ACcGV63Q2yAb2YuKKZYzF/aYF5AUA6sPn2WVcl6d7/xm383U4SEm/tS+HszZJc6gCP9qX5RNg21l0A==
-X-Received: by 2002:a25:5987:: with SMTP id n129-v6mr3894734ybb.50.1539370583661;
-        Fri, 12 Oct 2018 11:56:23 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id q1-v6sm461820ywa.92.2018.10.12.11.56.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 11:56:22 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 184-v6so5304385ybg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 11:56:21 -0700 (PDT)
-X-Received: by 2002:a25:2395:: with SMTP id j143-v6mr3948870ybj.137.1539370581360;
- Fri, 12 Oct 2018 11:56:21 -0700 (PDT)
+        Fri, 12 Oct 2018 22:31:12 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 81EC080A64; Fri, 12 Oct 2018 20:57:16 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 20:57:15 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, arnd@arndb.de,
+        akpm@linux-foundation.org, luto@kernel.org,
+        dave.hansen@linux.intel.com, jroedel@suse.de,
+        keescook@chromium.org, torvalds@linux-foundation.org,
+        toshi.kani@hpe.com, Thomas Gleixner <tglx@linutronix.de>,
+        sfr@canb.auug.org.au, kernel list <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org
+Subject: Re: Avoid VLA in pgd_alloc kills boot on 32-bit machines was Re:
+ -next20181010,1011 regression: thinkpad x60 (32 bit) dies during boot.
+Message-ID: <20181012185715.GA16126@amd>
+References: <20181010195920.GA13860@amd>
+ <20181010200331.GA13975@amd>
+ <20181011180328.GA6740@amd>
+ <alpine.DEB.2.21.1810112208200.1457@nanos.tec.linutronix.de>
+ <20181012102459.GA4469@amd>
+ <20181012105254.GA114888@gmail.com>
+ <20181012181011.GA9098@amd>
+ <20181012181335.GG12328@zn.tnic>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 11:56:19
- -0700 (PDT)
-In-Reply-To: <20181012104744.GA105548@gmail.com>
-References: <20181012131444.605564b5@canb.auug.org.au> <CAGXu5jKVnDhu5sv+K+W=AWg0BqtTfoK9=1m6u-0dpDxP9ow74Q@mail.gmail.com>
- <20181012104744.GA105548@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 12 Oct 2018 11:56:19 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+5uKbSMoPS55vhn2qPauddr16COTsJSTki346-JC+gFw@mail.gmail.com>
-Message-ID: <CAGXu5j+5uKbSMoPS55vhn2qPauddr16COTsJSTki346-JC+gFw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@elte.hu>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Disposition: inline
+In-Reply-To: <20181012181335.GG12328@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 3:47 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Kees Cook <keescook@chromium.org> wrote:
->
->> On Thu, Oct 11, 2018 at 7:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > Hi all,
->> >
->> > Today's linux-next merge of the tip tree got a conflict in:
->> >
->> >   arch/x86/mm/pgtable.c
->> >
->> > between commit:
->> >
->> >   184d47f0fd36 ("x86/mm: Avoid VLA in pgd_alloc()")
->> >
->> > from Linus' tree and commit:
->> >
->> >   1be3f247c288 ("x86/mm: Avoid VLA in pgd_alloc()")
->> >
->> > from the tip tree.
->> >
->> > I fixed it up (I used the version from Linus' tree) and can carry the
->> > fix as necessary. This is now fixed as far as linux-next is concerned,
->> > but any non trivial conflicts should be mentioned to your upstream
->> > maintainer when your tree is submitted for merging.  You may also want
->> > to consider cooperating with the maintainer of the conflicting tree to
->> > minimise any particularly complex conflicts.
->
-> This is the correct resolution, thanks Stephen!
->
->> Ingo, it looks like that commit needs to be split up again ... Linus's
->> tree still needs the fix for the fix?
->
-> -next still had the old commit, I've now refreshed tip:auto-latest so the
-> conflict should go away in the next iteration.
->
-> Linus's tree has the correct fix.
 
-Ah! Gotcha, okay. I had it backwards. Thanks for checking!
+--zhXaljGHf11kAtnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Kees
+On Fri 2018-10-12 20:13:35, Borislav Petkov wrote:
+> On Fri, Oct 12, 2018 at 08:10:11PM +0200, Pavel Machek wrote:
+> > And the winner is...
+> >=20
+> > [1be3f247c2882a82279cbcf43717581ea943b692] x86/mm: Avoid VLA in
+> > pgd_alloc()
+>=20
+> That should be fixed now:
+>=20
+> https://git.kernel.org/tip/184d47f0fd365108bd06ab26cdb3450b716269fd
 
--- 
-Kees Cook
-Pixel Security
+Aha, ok.
+
+-next20181012 indeed works.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--zhXaljGHf11kAtnf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvA7osACgkQMOfwapXb+vK7XgCggLlNsJz1djA9DA+d1t0dTaBU
+6ZIAoKOM/j8VAC3XCfC94qjohdVojdFc
+=MHSa
+-----END PGP SIGNATURE-----
+
+--zhXaljGHf11kAtnf--
