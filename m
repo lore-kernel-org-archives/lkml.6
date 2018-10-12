@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C95DC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBBEC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0868821470
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DAA12098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KYMFzyXT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0868821470
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZOGAsLOd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAA12098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbeJMFLT (ORCPT
+        id S1726077AbeJMFN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 01:11:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37621 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbeJMFLT (ORCPT
+        Sat, 13 Oct 2018 01:13:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36852 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeJMFN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 01:11:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so6416576pgq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:36:53 -0700 (PDT)
+        Sat, 13 Oct 2018 01:13:57 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y11-v6so6494951plt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=z/2xvSJDGaTwmEZWVkDTPm9IrKZ9HQDc62jBchJwo+4=;
-        b=KYMFzyXT0O1cMipC91ANU2CK6QJThBYI/2AiYRorDi/oWFql0YcjeJ6JhNlU/YLNR7
-         ZU04ZTwh0fa22n1peHsifRloXqS134UWVrojeF3FWrCVOx3Noq1TwGAh/x0AwYOP8KLt
-         QWmuzeZFdiLcDrVpti21FgZnc8E+YDDp/IeEs=
+        bh=Vk5Yg+7wL+R/Po/ZLnSQfaZxah1u4gswNcqEQ2U4fwE=;
+        b=ZOGAsLOdWRdec+6+BxtR4qnFuh/9HAlhGNJ/UXm01Rg34UByKT89clW7wfYxsw6GWZ
+         DvT3ADfE0o0r9KvyskhQBdZhQbFwAUnj0N8JGlpSXGnbg4aIY8UGpG+CPv38rBVqki8S
+         O9UuNV5nqQQm6uag6/QmYi17a213idm7WAvZU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=z/2xvSJDGaTwmEZWVkDTPm9IrKZ9HQDc62jBchJwo+4=;
-        b=ssRwFrSpIaLV2KxUdN03nZ9+omvXTPTbdXHxtxhKp2PFDBzvT786GW5K+5ZmKgohnd
-         iAS5t5Vj8mSPlKHuTAm5Gg9PBcF3KBsd24SSRuMzC+cYADwg8tNSSfcFYNJ+lRwdC3Ft
-         gygFl8GXTqUVPmVo0fV09QPA8KsiLSxIASenvESe1UdOewbvgX8T3HHF6llWLTQeUgLL
-         ObDlYFk3FsslER/sNJ5ex6j2dE+69F3A8jzHAFBxwp/a7FSe176pWjFtGy93b+oLh7Av
-         1OX2rQOrZTmSkJuUv+NeY5J9WHmGTOrsYfuzuOI1SYvWH7LVEepfl+B2Uybx7DG3EE0Q
-         8ZKg==
-X-Gm-Message-State: ABuFfoid/0BYhLjJN3GdnR0gn8lgIjATanD1ZQCio8/7xVctzaFugwBw
-        4nB3fOHgIbu0crKsfZVRCwAPKg==
-X-Google-Smtp-Source: ACcGV60or6xUaPcu7Tcu2Ve8+TqQEuZoGbzircERRucHHLvRVomnPNvQYSfR3pLETstTw2VhL/MuRA==
-X-Received: by 2002:a62:3a84:: with SMTP id v4-v6mr7649099pfj.118.1539380213472;
-        Fri, 12 Oct 2018 14:36:53 -0700 (PDT)
+        bh=Vk5Yg+7wL+R/Po/ZLnSQfaZxah1u4gswNcqEQ2U4fwE=;
+        b=H1HCj56gsFydJ+4Y4OBh5hK/PkEkGJBnH2lA3w/th8JG88hrYV0xyiOjibqzdGl6X2
+         JCpBiCm6WIPMGyXJ9TYYmkDj4Lya5ZZS8qUp5vGoqav70FxvMDleLLLyQMPWYrfKzd7H
+         kJLMfbmG9/o1DTUj3Oag9AlQmCRWoVPU/BDkkyqJElnB85sSlHDLBGFj/A9s/xHvV3P+
+         C+0Lw60q8w/VWJgkMAT842z8vq6OTn8FpOQ48sGztF505YHUHrLE3QqgAANT/CRsS9Dz
+         581pW4348LWeviEElz92hxQnHZBIyggy9bXdHKHYEfqHPEqDrnXhv7HYjBeC+x33LM1U
+         DwyA==
+X-Gm-Message-State: ABuFfojKMev5TPiFcuj8wchnp8Q7JdOD0KI8d5Xm7WorBgWSgHhpuQTk
+        i8DLlb7xNiV9CwcJI1h3NqOs/g==
+X-Google-Smtp-Source: ACcGV60sW6zrW3Md3QoribPXFDoX/nvfj55hLHuTKkbb6/KOkyac71CrrxPxhfnzKosD9T1JZRJ5mw==
+X-Received: by 2002:a17:902:854c:: with SMTP id d12-v6mr7407991plo.313.1539380372112;
+        Fri, 12 Oct 2018 14:39:32 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id q127-v6sm8240570pgq.19.2018.10.12.14.36.52
+        by smtp.gmail.com with ESMTPSA id g88-v6sm3975672pfd.181.2018.10.12.14.39.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 14:36:52 -0700 (PDT)
+        Fri, 12 Oct 2018 14:39:31 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
+        "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc:     Can Guo <cang@codeaurora.org>, evgreen@chromium.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, sayalil@codeaurora.org,
-        Varadarajan Narayanan <varada@codeaurora.org>,
         asutoshd@codeaurora.org, Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, liwei <liwei213@huawei.com>,
+        linux-kernel@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] dt-bindings: phy-qcom-qmp: Fix several mistakes from prior commits
-Date:   Fri, 12 Oct 2018 14:36:32 -0700
-Message-Id: <20181012213632.252346-1-dianders@chromium.org>
+Subject: [PATCH] dt-bindings: ufs: Fix the compatible string definition
+Date:   Fri, 12 Oct 2018 14:39:26 -0700
+Message-Id: <20181012213926.253765-1-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,121 +77,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Digging through the "phy-qcom-qmp" showed me many inconsistencies
-between the bindings and the reality of the driver.  Let's fix them
-all.
+If you look at the bindings for the UFS Host Controller it says:
 
-* In commit 2d66eab18375 ("dt-bindings: phy: qmp: Add support for QMP
-  phy in IPQ8074") we probably should have explicitly listed that
-  there are no clocks for this PHY and also added the reset names in
-  alphabetical order.  You can see that there are no clocks in the
-  driver where "clk_list" is NULL.
+- compatible: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+              also list one or more of the following:
+                 "qcom,msm8994-ufshc"
+                 "qcom,msm8996-ufshc"
+                 "qcom,ufshc"
 
-* In commit 8587b220f05e ("dt-bindings: phy-qcom-qmp: Update bindings
-  for QMP V3 USB PHY") we probably should have listed the resets for
-  this new PHY and also removed the "(Optional)" marking for the "cfg"
-  reset since PHYs that need "cfg" really do need it.  It's just that
-  not all PHYs need it.
+My reading of that is that it's fine to just have either of these:
+1. "qcom,msm8996-ufshc", "jedec,ufs-2.0"
+2. "qcom,ufshc", "jedec,ufs-2.0"
 
-* In commit 7f0802074120 ("dt-bindings: phy-qcom-qmp: Update bindings
-  for sdm845") we forgot to update one instance of the string
-  "qcom,qmp-v3-usb3-phy" to be "qcom,sdm845-qmp-usb3-phy".  Let's fix
-  that.  We should also have added "qcom,sdm845-qmp-usb3-uni-phy" to
-  the clock-names and reset-names lists.
+As far as I can tell neither of the above is actually a good idea.
 
-* In commit 99c7c7364b71 ("dt-bindings: phy-qcom-qmp: Add UFS phy
-  compatible string for sdm845") we should have added the set of
-  clocks and resets for "qcom,sdm845-qmp-ufs-phy".  These were taken
-  from the driver.
+For #1 it turns out that the driver currently only keys off the
+compatible string "qcom,ufshc" so it won't actually probe.
 
-* Cleanup the wording for what properties child nodes have to make it
-  more obvious which types of PHYs need clocks and resets.  This was
-  sorta implicit in the "-names" description but I found myself
-  confused.
+For #2 the driver won't probe but it's not a good idea to keep the SoC
+name out of the compatible string.
 
-* As per the code not all "pcie qmp phys" have resets.  Specifically
-  note that the "has_lane_rst" property in the driver is false for
-  "ipq8074-qmp-pcie-phy".  Thus make it clear exactly which PHYs need
-  child nodes with resets.
+Let's update the compatible string to make it really explicit.  We'll
+include a nod to the existing driver and the old binding and say that
+we should always include the "qcom,ufshc" string in addition to the
+SoC compatible string.
 
+While we're at it we'll also include another example SoC known to have
+UFS: sdm845.
+
+Fixes: 47555a5c8a11 ("scsi: ufs: make the UFS variant a platform device")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 31 ++++++++++++++-----
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt       | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index adf20b2bdf71..fbc198d5dd39 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -40,24 +40,36 @@ Required properties:
- 		"ref" for 19.2 MHz ref clk,
- 		"com_aux" for phy common block aux clock,
- 		"ref_aux" for phy reference aux clock,
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index 2df00524bd21..69a06a1b732e 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -4,11 +4,14 @@ UFSHC nodes are defined to describe on-chip UFS host controllers.
+ Each UFS controller instance should have its own node.
+ 
+ Required properties:
+-- compatible		: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+-			  also list one or more of the following:
+-					  "qcom,msm8994-ufshc"
+-					  "qcom,msm8996-ufshc"
+-					  "qcom,ufshc"
++- compatible		: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0"
 +
-+		For "qcom,ipq8074-qmp-pcie-phy": no clocks are listed.
- 		For "qcom,msm8996-qmp-pcie-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
--		For "qcom,qmp-v3-usb3-phy" must contain:
-+		For "qcom,sdm845-qmp-usb3-phy" must contain:
-+			"aux", "cfg_ahb", "ref", "com_aux".
-+		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
- 			"aux", "cfg_ahb", "ref", "com_aux".
-+		For "qcom,sdm845-qmp-ufs-phy" must contain:
-+			"ref", "ref_aux".
++			  For Qualcomm SoCs must contain, as below, an
++			  SoC-specific compatible along with "qcom,ufshc" and
++			  the appropriate jedec string:
++			    "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
++			    "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
++			    "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+ - interrupts        : <interrupt mapping for UFS host controller IRQ>
+ - reg               : <registers mapping>
  
-  - resets: a list of phandles and reset controller specifier pairs,
- 	   one for each entry in reset-names.
-  - reset-names: "phy" for reset of phy block,
- 		"common" for phy common block reset,
--		"cfg" for phy's ahb cfg block reset (Optional).
-+		"cfg" for phy's ahb cfg block reset.
-+
-+		For "qcom,ipq8074-qmp-pcie-phy" must contain:
-+			"phy", "common".
- 		For "qcom,msm8996-qmp-pcie-phy" must contain:
--		 "phy", "common", "cfg".
-+			"phy", "common", "cfg".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain
--		 "phy", "common".
--		For "qcom,ipq8074-qmp-pcie-phy" must contain:
--		 "phy", "common".
-+			"phy", "common".
-+		For "qcom,sdm845-qmp-usb3-phy" must contain:
-+			"phy", "common".
-+		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
-+			"phy", "common".
-+		For "qcom,sdm845-qmp-ufs-phy": no resets are listed.
- 
-  - vdda-phy-supply: Phandle to a regulator supply to PHY core block.
-  - vdda-pll-supply: Phandle to 1.8V regulator supply to PHY refclk pll block.
-@@ -79,9 +91,10 @@ Required properties for child node:
- 
-  - #phy-cells: must be 0
- 
-+Required properties child node of pcie and usb3 qmp phys:
-  - clocks: a list of phandles and clock-specifier pairs,
- 	   one for each entry in clock-names.
-- - clock-names: Must contain following for pcie and usb qmp phys:
-+ - clock-names: Must contain following:
- 		 "pipe<lane-number>" for pipe clock specific to each lane.
-  - clock-output-names: Name of the PHY clock that will be the parent for
- 		       the above pipe clock.
-@@ -91,9 +104,11 @@ Required properties for child node:
- 			(or)
- 		  "pcie20_phy1_pipe_clk"
- 
-+Required properties for child node of PHYs with lane reset, AKA:
-+	"qcom,msm8996-qmp-pcie-phy"
-  - resets: a list of phandles and reset controller specifier pairs,
- 	   one for each entry in reset-names.
-- - reset-names: Must contain following for pcie qmp phys:
-+ - reset-names: Must contain following:
- 		 "lane<lane-number>" for reset specific to each lane.
- 
- Example:
 -- 
 2.19.0.605.g01d371f741-goog
 
