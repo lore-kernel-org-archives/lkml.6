@@ -2,122 +2,103 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D192C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606A2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5AD62087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AEC72098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:25:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="hX/XUZTe";
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="CJ6p2Tzd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AD62087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=raspberrypi.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p7g5Etjg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AEC72098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeJLQza (ORCPT
+        id S1728190AbeJLQ4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:55:30 -0400
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:23767 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727808AbeJLQz3 (ORCPT
+        Fri, 12 Oct 2018 12:56:45 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46469 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727808AbeJLQ4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:55:29 -0400
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9C9NGOW016000
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:23:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=from : to : cc :
- subject : date : message-id; s=pp;
- bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
- b=hX/XUZTeJkHwvSpVytO22tbsoZm5qmEKmmqfmVtEVYCHgSwMiEyEe1mNERxiPd4bDODv
- btkSvIcXQAEcTqhpGPE5FI0bj7HcOtsvu/ulrmkuzJwaY3WH/3ZizwUDQUvx/YGuSFzY
- TPvvgSDhVj5MPtJR8emTNr6W5jlvGYtJ9SQq7/r2oVAXRV+GN2lrz55LDDb2Gim13/Qa
- 69quj0QDG1Rij75FnAvkpsJR88FB2uNm/evIhL/Ysl3eiArtxw5GfuekkgPrAanwq6xB
- g9m5T1xjrbccNYlSGzL/UFv0+MU4ibrxfzun0E8VmtI2UaZkX3BEIEvQwQLFfB49Iw8T Ug== 
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        by mx07-00252a01.pphosted.com with ESMTP id 2mxjf0k6tb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:23:57 +0100
-Received: by mail-wm1-f70.google.com with SMTP id i8-v6so5845078wma.9
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:23:57 -0700 (PDT)
+        Fri, 12 Oct 2018 12:56:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r64-v6so5883696pfb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
-        b=CJ6p2TzdVoCwmiJ5ZAnw47FNynG2txzB27nI3xodJZW+NwTDd/Si4fr4XkLx+lfLIY
-         ondqtZwEpVcz7V+pxTorgsr+LgWQA7u4FlF2G49EOryxk79Yu8LY0XWe8/dhpgLPKTO1
-         72r4+2hXFXvnAysacdFRP/RDPTgHEqzX0bHHM5A5J8FpCo6XF85nQFQo6/DvnAefPA96
-         A8EndvLNSZUOw1LNBeKu97LvBG+IfkFz3N3BR6uMD+tXDCsumi3Gomlbnl5Krgr9wwXO
-         XgJHf0XVWSFQhxOVuC5Pn+iLI/kRx9F+H4OqqpioHJ/ldAeNqF3hDDeN/wLwAqv30IM/
-         kGsw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KqifFnPKTRWHjCi8W57X+9Rl1Ju1BHxfx5lZUbg0488=;
+        b=p7g5Etjg3FfiRAR3CF9Oh5TZ/jbPhHQG6ru8RmNUPpprKjg/yGmw8HVl3st44V6XXn
+         D79x1vABwxUig/rcBWqkndfnchYvBRfP8oL4N4KBb3VxTo+NzELAu/9Zh2YyS67+dVKR
+         kswUSmsyz+PziXeetFtfQjyskETiI+EJ7YhvfCQuzVCJYQQ4vZp9minLunJ0gUqEcjVF
+         hLLA1rRVn2nR/NAYvs+1+DnSMnEVxNpSiULe81kOIJMiIiV86C4uf9ceSwPY2awc8JGQ
+         AANxB6AXMkZ9SeXHsQ9xHpSgy5Rco0pyR3TqLgtBywUZqap4x+05jVwo2CXDzqrKeidc
+         eDZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mrY1CyvyMabVXJ4QRkAlmBNpSzFpNgQzn+xS2PQnbj4=;
-        b=S2J8X8e+pUCrElTIRO+V6yjqSQOVIppsjcutiyiKDcY7SS7WDqmtwMHTU9PGE6aITl
-         4ZlfjkPryYtchSdrNoNTBPg94CCiP1+5I6kWo1UI9XFfkfmMBuXepitrLYnpJ8VYrnes
-         AcoHngQtEoROv6nl0KSE0eL+3vMaErqHhsujuLJi7xmV5cHokkxqk4uCl5bFw9NbOaqe
-         42Pahfno0WcnAzoHgTEy/SFRwFdJ6aOD8A+/TAUtjV/raodRTj26eA8EBSlEv6ehhRWR
-         m6uv0T9JUa2+v4AZroKltZ3RKjvOGXBrMfPEeTBghpVmreAWSw4aMHTyxILuZdQLzLGu
-         uFpw==
-X-Gm-Message-State: ABuFfohS90GLu4jDNYQaIKCG6J8LezJY3gzfF1Jq69Bk29IGS20AYbmk
-        LK8hksnOaP7wOhYT98CGnj9cPCLo40vVxGBz9arhAYM4/d4kXIAVdPSHSl05IesLWwB3norpd2s
-        ogM9k2+NythjElaInJfK3MrMA
-X-Received: by 2002:a5d:4151:: with SMTP id c17-v6mr4478417wrq.61.1539336236658;
-        Fri, 12 Oct 2018 02:23:56 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV62PsR5A4vc3G79b9jlFR855x6SnQtBbtm+xXVKts9JK08JXjg6Nc4YfydnZ+0uN3zuQLag+PA==
-X-Received: by 2002:a5d:4151:: with SMTP id c17-v6mr4478406wrq.61.1539336236370;
-        Fri, 12 Oct 2018 02:23:56 -0700 (PDT)
-Received: from buildbot.pitowers.org ([2a00:2381:fdf7:14:d078:5595:7c26:ec82])
-        by smtp.gmail.com with ESMTPSA id e6-v6sm547370wrc.70.2018.10.12.02.23.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 12 Oct 2018 02:23:55 -0700 (PDT)
-From:   Phil Elwell <phil@raspberrypi.org>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH] spi: Make GPIO CSs honour the SPI_NO_CS flag
-Date:   Fri, 12 Oct 2018 10:23:18 +0100
-Message-Id: <1539336198-84179-1-git-send-email-phil@raspberrypi.org>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
- signatures=0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KqifFnPKTRWHjCi8W57X+9Rl1Ju1BHxfx5lZUbg0488=;
+        b=Um4B0WyNagGg+vLUeVL+xaf+sL0t28XaJd9DHc+ez6Z+kU0yPjM0o/Q4h63ZdWQ5WU
+         j62stVw/i4ZM8XybvB7J5ysnN7TU0gI0jZL1AhFwqTmyluhHcTEL2ioxFkQz/vlFoNH3
+         RAIaNT4R2AV9oIBbNKTusnPupBYiBBSfTeM84YPnq9D2Cnu1zg0l6XzVaQs1z+OIyHmb
+         g/fzrHYFW9t1BbrXRx2jBmfyma3BW6tNswfQUFH6wKAm9f/Csykb8jSkcDLxhkRTpcpg
+         b5UNgwqdZ02yCBY8SyquNKpXYRGX70rx7Gk/cCZVxlHl69E0zcPJyWApwYYspgIZqRpi
+         ifrA==
+X-Gm-Message-State: ABuFfoj1Ty2ChHdokAOqoORkd0k6ciTC+mPx79oLqY3MB9PQ6x7MZjNB
+        R9bAQM/ktzcNZJWyUQYDuZA=
+X-Google-Smtp-Source: ACcGV60rPuViUPgone/Bkhio6Jb5MrQWfhI+iQGOHK1L5K6h+1E1YQ2K5P6hw8NwZ84f2CRgkMLPzA==
+X-Received: by 2002:a62:221c:: with SMTP id i28-v6mr5308619pfi.196.1539336314604;
+        Fri, 12 Oct 2018 02:25:14 -0700 (PDT)
+Received: from localhost ([110.70.57.157])
+        by smtp.gmail.com with ESMTPSA id k63-v6sm1191762pga.36.2018.10.12.02.25.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 02:25:13 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 18:25:09 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/3] printk: some pr_cont tweaks and cleanups
+Message-ID: <20181012092509.GA19882@jagdpanzerIV>
+References: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
+ <20181012082701.fsx6ikd5h5ohr57h@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012082701.fsx6ikd5h5ohr57h@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SPI configuration state includes an SPI_NO_CS flag that disables
-all CS line manipulation, for applications that want to manage their
-own chip selects. However, this flag is ignored by the GPIO CS code
-in the SPI framework.
+On (10/12/18 10:27), Petr Mladek wrote:
+> > 	Forked from "printk feature for syzbot". Let's have a separate
+> > discussion thread.
+> > 	A buch of pr_cont tweaks and cleanups, please see commits and
+> > commits' messages for more details.
+> > 
+> > Sergey Senozhatsky (3):
+> >   printk: keep kernel cont support always enabled
+> >   printk: lock/unlock console only for new logbuf entries
+> >   printk: do not preliminary split up cont buffer
+> 
+> JFYI, I have pushed all three patches into printk.git, for-4.20
+> branch.
 
-Correct this omission with a trivial patch.
+Thanks.
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
----
- drivers/spi/spi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 84dfef4..b1d88fe 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -729,7 +729,9 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
- 		enable = !enable;
- 
- 	if (gpio_is_valid(spi->cs_gpio)) {
--		gpio_set_value(spi->cs_gpio, !enable);
-+		/* Honour the SPI_NO_CS flag */
-+		if (!(spi->mode & SPI_NO_CS))
-+			gpio_set_value(spi->cs_gpio, !enable);
- 		/* Some SPI masters need both GPIO CS & slave_select */
- 		if ((spi->controller->flags & SPI_MASTER_GPIO_SS) &&
- 		    spi->controller->set_cs)
--- 
-2.7.4
-
+	-ss
