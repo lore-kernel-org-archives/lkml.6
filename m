@@ -2,68 +2,110 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94487C67877
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1817BC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687CA2148C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:30:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687CA2148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id BB5D121470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:33:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5D121470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJMBEP (ORCPT
+        id S1727463AbeJMBGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:04:15 -0400
-Received: from ms.lwn.net ([45.79.88.28]:51164 "EHLO ms.lwn.net"
+        Fri, 12 Oct 2018 21:06:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:8054 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbeJMBEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:04:15 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 0FABC2E5;
-        Fri, 12 Oct 2018 17:30:42 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 11:30:40 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Wesley Sheng <wesleyshenggit@sina.com>
-Cc:     kurt.schwemmer@microsemi.com, logang@deltatee.com,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        linux-ntb@googlegroups.com,
-        Wesley Yung <wesley.yung@microchip.com>,
-        Kelvin Cao <kelvin.cao@microchip.com>
-Subject: Re: [PATCH v3] NTB: switchtec_ntb: Update switchtec documentation
- with pre-requisites for NTB
-Message-ID: <20181012113040.52bfff58@lwn.net>
-In-Reply-To: <1539174788-25878-1-git-send-email-wesleyshenggit@sina.com>
-References: <1539174788-25878-1-git-send-email-wesleyshenggit@sina.com>
-Organization: LWN.net
+        id S1725854AbeJMBGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:06:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 10:33:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
+   d="scan'208";a="98699410"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Oct 2018 10:33:03 -0700
+Received: from [10.252.3.227] (abudanko-mobl.ccr.corp.intel.com [10.252.3.227])
+        by linux.intel.com (Postfix) with ESMTP id E4B88580378;
+        Fri, 12 Oct 2018 10:33:02 -0700 (PDT)
+Subject: Re: [PATCH v1] KVM/x86/vPMU: Guest PMI Optimization
+To:     Andi Kleen <ak@linux.intel.com>, Wei Wang <wei.w.wang@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        rkrcmar@redhat.com, like.xu@intel.com
+References: <1539346817-8638-1-git-send-email-wei.w.wang@intel.com>
+ <20181012163058.GN32651@tassilo.jf.intel.com>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <6fc2a49d-38e5-25de-43c5-bf79f1cb833a@linux.intel.com>
+Date:   Fri, 12 Oct 2018 20:33:01 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181012163058.GN32651@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 20:33:08 +0800
-Wesley Sheng <wesleyshenggit@sina.com> wrote:
+Hi,
 
-> The ntb_hw_switchtec driver has requirements on kernel configuration
-> so we add these notes to the documentation and also clean up a few 
-> other sentences in the documentation.
+On 12.10.2018 19:30, Andi Kleen wrote:
+>> 4. Results
+>>     - Without this optimization, the guest pmi handling time is
+>>       ~4500000 ns, and the max sampling rate is reduced to 250.
+>>     - With this optimization, the guest pmi handling time is ~9000 ns
+>>       (i.e. 1 / 500 of the non-optimization case), and the max sampling
+>>       rate remains at the original 100000.
 > 
-> Signed-off-by: Wesley Yung <wesley.yung@microchip.com>
-> Signed-off-by: Kelvin Cao <kelvin.cao@microchip.com>
-> Signed-off-by: Wesley Sheng <wesleyshenggit@sina.com>
+> Impressive performance improvement!
 
-So why all of these signoffs for such a small patch?  Who is the actual
-author of the patch?
+Might want it into distributions' and secondary kernels as well.
 
 Thanks,
+Alexey
 
-jon
+> 
+> It's not clear to me why you're special casing PMIs here. The optimization
+> should work generically, right?
+> 
+> perf will enable/disable the PMU even outside PMIs, e.g. on context
+> switches, which is a very important path too.
+> 
+>> @@ -237,9 +267,23 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>>  	default:
+>>  		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
+>>  		    (pmc = get_fixed_pmc(pmu, msr))) {
+>> -			if (!msr_info->host_initiated)
+>> -				data = (s64)(s32)data;
+>> -			pmc->counter += data - pmc_read_counter(pmc);
+>> +			if (pmu->in_pmi) {
+>> +				/*
+>> +				 * Since we are not re-allocating a perf event
+>> +				 * to reconfigure the sampling time when the
+>> +				 * guest pmu is in PMI, just set the value to
+>> +				 * the hardware perf counter. Counting will
+>> +				 * continue after the guest enables the
+>> +				 * counter bit in MSR_CORE_PERF_GLOBAL_CTRL.
+>> +				 */
+>> +				struct hw_perf_event *hwc =
+>> +						&pmc->perf_event->hw;
+>> +				wrmsrl(hwc->event_base, data);
+> 
+> Is that guaranteed to be always called on the right CPU that will run the vcpu?
+> 
+> AFAIK there's an ioctl to set MSRs in the guest from qemu, I'm pretty sure
+> it won't handle that.
+> 
+> May need to be delayed to entry time.
+> 
+> -Andi
+> 
