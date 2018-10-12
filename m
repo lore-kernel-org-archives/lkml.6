@@ -2,352 +2,92 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0A5C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314C8C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301422098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:47:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQbEqB2W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301422098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EB5952098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5952098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeJLWUC (ORCPT
+        id S1728877AbeJLWVZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:20:02 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42377 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbeJLWUC (ORCPT
+        Fri, 12 Oct 2018 18:21:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46147 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbeJLWVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:20:02 -0400
-Received: by mail-io1-f65.google.com with SMTP id n18-v6so9380575ioa.9
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=5bCilt14bUCMbEv+yM2AiRTaMrftspdIO36qn2GRgNY=;
-        b=cQbEqB2WyUJJHVlc9kfQrwzShR9WnHSYKVfIoalQmGV62rl9RrfTVPUaH5s/JNZd5r
-         umOtoITPLeuDPXplyGvRP3dh9lLgqnHIkoCl9gfGmzWtLqvT8DMzqcMrJi/LUxBlyP6m
-         qVb2qBzD8M0jHS4FqUlJroeH7LvOxK9M5uAho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5bCilt14bUCMbEv+yM2AiRTaMrftspdIO36qn2GRgNY=;
-        b=aYNqB/V2VEbzKATMF8ibVI8Nkno9nTz6gEE0LeRPp5NY3Z6o3lCm4RBA1mQGlJHOk8
-         OpFz/bzsq6tc8KWA0Z4y7pBGryLxWPN3xNjIJVbhiP+egqsKlCaf4wCBcRLPtIX5CFVW
-         vaPBfthapr1w4CJ5LuZ8Ta8+y9TSSZjG99xLDya6v10p7K+dfEkQWahj0hEB5Rw+8oTH
-         lrUI5yd+lI9jyO97S+OQxK8dyWOJAij8wDtFJ0p8FIj9T8v0tsKeboalZeIHQJsl+Pfs
-         qzLnzLGtbfyqruLFVBIWL/LoRFu8ihhzEQ4ocsGElEteVDM7UmrjU0N98hFLA1gahZFl
-         0WYw==
-X-Gm-Message-State: ABuFfojuha7hGp5sEIWD/TO16tskAUSjQc8Djv7m+Y0T1WRkZgJEePbv
-        7UGU85nkSB2LQaP5ZRNMsr4+0z2en23+zYeOk0TkqQ==
-X-Google-Smtp-Source: ACcGV62ezGo+SmToO7bN69LpWkGDHzXyfwZKUOsdTie2CZ3yjyuRIjxB5izyD6HTRIw+LhOXdpWJpnmz/uhXHOzi6GY=
-X-Received: by 2002:a6b:8fcb:: with SMTP id r194-v6mr4632666iod.266.1539355633748;
- Fri, 12 Oct 2018 07:47:13 -0700 (PDT)
+        Fri, 12 Oct 2018 18:21:25 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gAyjx-0002U2-1q; Fri, 12 Oct 2018 14:48:33 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [media] exynos4-is: fix spelling mistake ACTURATOR -> ACTUATOR
+Date:   Fri, 12 Oct 2018 15:48:32 +0100
+Message-Id: <20181012144832.20722-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 07:46:33
- -0700 (PDT)
-In-Reply-To: <110c9e13d8d44dfb59577256b1309dddf2ceda12.1539341929.git.viresh.kumar@linaro.org>
-References: <cover.1539341929.git.viresh.kumar@linaro.org> <110c9e13d8d44dfb59577256b1309dddf2ceda12.1539341929.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 12 Oct 2018 16:46:33 +0200
-Message-ID: <CAPDyKFojOdmGbAzDMrO8EVJYrEYwYi6PT8YG55J9svGT61a1Cg@mail.gmail.com>
-Subject: Re: [PATCH V2 6/9] OPP: Add dev_pm_opp_{set|put}_genpd_device() helper
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 October 2018 at 13:11, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> Multiple generic power domains for a consumer device are supported with
-> the help of virtual devices, which are created for each consumer device
-> - genpd pair. These are the device structures which are attached to the
-> power domain and are required by the OPP core to set the performance
-> state of the genpd.
->
-> The helpers added by this commit are required to be called once for each
-> of these virtual devices. These are required only if multiple domains
-> are available for a device, otherwise the actual device structure will
-> be used instead by the OPP core.
->
-> The new helpers also support the complex cases where the consumer device
-> wouldn't always require all the domains. For example, a camera may
-> require only one power domain during normal operations but two during
-> high resolution operations. The consumer driver can call
-> dev_pm_opp_put_genpd_device(high_resolution_genpd_dev) if it is
-> currently operating in the normal mode and doesn't have any performance
-> requirements from the genpd which manages high resolution power
-> requirements. The consumer driver can later call
-> dev_pm_opp_set_genpd_device(high_resolution_genpd_dev) once it switches
-> back to the high resolution mode.
->
-> The new helpers differ from other OPP set/put helpers as the new ones
-> can be called with OPPs initialized for the table as we may need to call
-> them on the fly because of the complex case explained above. For this
-> reason it is possible that the genpd_device structure may be used in
+From: Colin Ian King <colin.king@canonical.com>
 
-This is a bit unclear. What is really the genpd_device structure?
-Could you please clarify that here?
+Trivial fix to spelling mistake in macro name and text string
+ERROR_SENSOR_ACTURATOR_INIT_FAIL -> ERROR_SENSOR_ACTUATOR_INIT_FAIL
 
-> parallel while the new helpers are running and a new mutex is added to
-> protect against that. We didn't use the existing opp_table->lock mutex
-> as that is widely used in the OPP core and we will need a lock in the
-> hotpath now, i.e.  while changing OPP and we need to make sure there is
-> not much contention while doing that.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is-errno.c | 4 ++--
+ drivers/media/platform/exynos4-is/fimc-is-errno.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I not sure this needs to be considered as hotpath. I would be
-surprised if changing genpd virtual devices for OPP, is something that
-is going to be done frequently. Rather, this is more depending on the
-use case, like the camera case you describe above.
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.c b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+index e050e63fe358..bbb08576492e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.c
+@@ -90,8 +90,8 @@ const char *fimc_is_param_strerr(unsigned int error)
+ 		return "ERROR_SENSOR_INVALID_SIZE";
+ 	case ERROR_SENSOR_INVALID_SETTING:
+ 		return "ERROR_SENSOR_INVALID_SETTING";
+-	case ERROR_SENSOR_ACTURATOR_INIT_FAIL:
+-		return "ERROR_SENSOR_ACTURATOR_INIT_FAIL";
++	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
++		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
+ 	case ERROR_SENSOR_INVALID_AF_POS:
+ 		return "ERROR_SENSOR_INVALID_AF_POS";
+ 	case ERROR_SENSOR_UNSUPPORT_FUNC:
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-errno.h b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+index ef981e74513a..77f4fc860be5 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-errno.h
++++ b/drivers/media/platform/exynos4-is/fimc-is-errno.h
+@@ -189,7 +189,7 @@ enum fimc_is_error {
+ 	ERROR_SENSOR_INVALID_EXPOSURETIME,
+ 	ERROR_SENSOR_INVALID_SIZE,
+ 	ERROR_SENSOR_INVALID_SETTING,
+-	ERROR_SENSOR_ACTURATOR_INIT_FAIL,
++	ERROR_SENSOR_ACTUATOR_INIT_FAIL,
+ 	ERROR_SENSOR_INVALID_AF_POS,
+ 	ERROR_SENSOR_UNSUPPORT_FUNC,
+ 	ERROR_SENSOR_UNSUPPORT_PERI,
+-- 
+2.17.1
 
-In other words, do you really need a new lock?
-
-Other than that, this looks good to me.
-
-Kind regards
-Uffe
-
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/opp/core.c     | 88 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/opp/of.c       | 16 +++++++-
->  drivers/opp/opp.h      |  4 ++
->  include/linux/pm_opp.h |  8 ++++
->  4 files changed, 115 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 02a69a62dac8..8d7bf9d83752 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -823,6 +823,7 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
->                 return NULL;
->
->         mutex_init(&opp_table->lock);
-> +       mutex_init(&opp_table->genpd_dev_lock);
->         INIT_LIST_HEAD(&opp_table->dev_list);
->
->         opp_dev = _add_opp_dev(dev, opp_table);
-> @@ -920,6 +921,7 @@ static void _opp_table_kref_release(struct kref *kref)
->                 _remove_opp_dev(opp_dev, opp_table);
->         }
->
-> +       mutex_destroy(&opp_table->genpd_dev_lock);
->         mutex_destroy(&opp_table->lock);
->         list_del(&opp_table->node);
->         kfree(opp_table);
-> @@ -1602,6 +1604,92 @@ void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_unregister_set_opp_helper);
->
-> +/**
-> + * dev_pm_opp_set_genpd_device - Set virtual genpd device for an index
-> + * @dev: Consumer device for which the genpd device is getting set.
-> + * @genpd_dev: virtual genpd device.
-> + * @index: index.
-> + *
-> + * Multiple generic power domains for a device are supported with the help of
-> + * virtual genpd devices, which are created for each consumer device - genpd
-> + * pair. These are the device structures which are attached to the power domain
-> + * and are required by the OPP core to set the performance state of the genpd.
-> + *
-> + * This helper will normally be called by the consumer driver of the device
-> + * "dev", as only that has details of the genpd devices.
-> + *
-> + * This helper needs to be called once for each of those virtual devices, but
-> + * only if multiple domains are available for a device. Otherwise the original
-> + * device structure will be used instead by the OPP core.
-> + */
-> +struct opp_table *dev_pm_opp_set_genpd_device(struct device *dev,
-> +                                             struct device *genpd_device,
-> +                                             int index)
-> +{
-> +       struct opp_table *opp_table;
-> +
-> +       opp_table = dev_pm_opp_get_opp_table(dev);
-> +       if (!opp_table)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       mutex_lock(&opp_table->genpd_dev_lock);
-> +
-> +       if (unlikely(!opp_table->genpd_devices ||
-> +                    index >= opp_table->required_opp_count ||
-> +                    opp_table->genpd_devices[index])) {
-> +
-> +               dev_err(dev, "Invalid request to set required device\n");
-> +               dev_pm_opp_put_opp_table(opp_table);
-> +               mutex_unlock(&opp_table->genpd_dev_lock);
-> +
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       opp_table->genpd_devices[index] = genpd_device;
-> +       mutex_unlock(&opp_table->genpd_dev_lock);
-> +
-> +       return opp_table;
-> +}
-> +
-> +/**
-> + * dev_pm_opp_put_genpd_device() - Releases resources blocked for genpd device.
-> + * @opp_table: OPP table returned by dev_pm_opp_set_genpd_device().
-> + * @genpd_device: virtual genpd device.
-> + *
-> + * This releases the resource previously acquired with a call to
-> + * dev_pm_opp_set_genpd_device(). The consumer driver shall call this helper if
-> + * it doesn't want OPP core to update performance state of a power domain
-> + * anymore.
-> + */
-> +void dev_pm_opp_put_genpd_device(struct opp_table *opp_table,
-> +                                struct device *genpd_device)
-> +{
-> +       int i;
-> +
-> +       /*
-> +        * Acquire genpd_dev_lock to make sure genpd_device isn't getting used
-> +        * in parallel.
-> +        */
-> +       mutex_lock(&opp_table->genpd_dev_lock);
-> +
-> +       for (i = 0; i < opp_table->required_opp_count; i++) {
-> +               if (opp_table->genpd_devices[i] != genpd_device)
-> +                       continue;
-> +
-> +               opp_table->genpd_devices[i] = NULL;
-> +               dev_pm_opp_put_opp_table(opp_table);
-> +
-> +               /* Drop the vote */
-> +               dev_pm_genpd_set_performance_state(genpd_device, 0);
-> +               break;
-> +       }
-> +
-> +       mutex_unlock(&opp_table->genpd_dev_lock);
-> +
-> +       if (unlikely(i == opp_table->required_opp_count))
-> +               dev_err(genpd_device, "Failed to find required device entry\n");
-> +}
-> +
->  /**
->   * dev_pm_opp_add()  - Add an OPP table from a table definitions
->   * @dev:       device for which we do this operation
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index ffaeefef98ce..fd67c9b55d7d 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -134,6 +134,7 @@ static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
->  static void _opp_table_free_required_tables(struct opp_table *opp_table)
->  {
->         struct opp_table **required_opp_tables = opp_table->required_opp_tables;
-> +       struct device **genpd_devices = opp_table->genpd_devices;
->         int i;
->
->         if (!required_opp_tables)
-> @@ -147,8 +148,10 @@ static void _opp_table_free_required_tables(struct opp_table *opp_table)
->         }
->
->         kfree(required_opp_tables);
-> +       kfree(genpd_devices);
->
->         opp_table->required_opp_count = 0;
-> +       opp_table->genpd_devices = NULL;
->         opp_table->required_opp_tables = NULL;
->  }
->
-> @@ -161,6 +164,7 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
->                                              struct device_node *opp_np)
->  {
->         struct opp_table **required_opp_tables;
-> +       struct device **genpd_devices = NULL;
->         struct device_node *required_np, *np;
->         int count, i;
->
-> @@ -175,11 +179,21 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
->         if (!count)
->                 goto put_np;
->
-> +       if (count > 1) {
-> +               genpd_devices = kcalloc(count, sizeof(*genpd_devices),
-> +                                       GFP_KERNEL);
-> +               if (!genpd_devices)
-> +                       goto put_np;
-> +       }
-> +
->         required_opp_tables = kcalloc(count, sizeof(*required_opp_tables),
->                                       GFP_KERNEL);
-> -       if (!required_opp_tables)
-> +       if (!required_opp_tables) {
-> +               kfree(genpd_devices);
->                 goto put_np;
-> +       }
->
-> +       opp_table->genpd_devices = genpd_devices;
->         opp_table->required_opp_tables = required_opp_tables;
->         opp_table->required_opp_count = count;
->
-> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-> index 24b340ad18d1..aea69a24c26b 100644
-> --- a/drivers/opp/opp.h
-> +++ b/drivers/opp/opp.h
-> @@ -135,6 +135,8 @@ enum opp_table_access {
->   * @parsed_static_opps: True if OPPs are initialized from DT.
->   * @shared_opp: OPP is shared between multiple devices.
->   * @suspend_opp: Pointer to OPP to be used during device suspend.
-> + * @genpd_dev_lock: Mutex protecting the genpd device pointers.
-> + * @genpd_devices: List of virtual devices for multiple genpd support.
->   * @required_opp_tables: List of device OPP tables that are required by OPPs in
->   *             this table.
->   * @required_opp_count: Number of required devices.
-> @@ -177,6 +179,8 @@ struct opp_table {
->         enum opp_table_access shared_opp;
->         struct dev_pm_opp *suspend_opp;
->
-> +       struct mutex genpd_dev_lock;
-> +       struct device **genpd_devices;
->         struct opp_table **required_opp_tables;
->         unsigned int required_opp_count;
->
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 5d399eeef172..b14600ce078f 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -126,6 +126,8 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
->  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
->  struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
->  void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
-> +struct opp_table *dev_pm_opp_set_genpd_device(struct device *dev, struct device *genpd_device, int index);
-> +void dev_pm_opp_put_genpd_device(struct opp_table *opp_table, struct device *genpd_device);
->  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
->  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
->  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
-> @@ -272,6 +274,12 @@ static inline struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const
->
->  static inline void dev_pm_opp_put_clkname(struct opp_table *opp_table) {}
->
-> +static inline struct opp_table *dev_pm_opp_set_genpd_device(struct device *dev, struct device *genpd_device, int index)
-> +{
-> +       return ERR_PTR(-ENOTSUPP);
-> +}
-> +
-> +static inline void dev_pm_opp_put_genpd_device(struct opp_table *opp_table, struct device *genpd_device) {}
->  static inline int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
->  {
->         return -ENOTSUPP;
-> --
-> 2.18.0.rc1.242.g61856ae69a2c
->
