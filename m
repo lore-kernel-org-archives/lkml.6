@@ -2,128 +2,139 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE33C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B067FC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81F820835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 663C3213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:43:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="MlRtEkfq";
-	dkim=pass (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="dfpggKXa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81F820835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlid.com
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="GUKqwg38"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663C3213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728751AbeJLVLy (ORCPT
+        id S1728746AbeJLVP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 17:11:54 -0400
-Received: from forward106o.mail.yandex.net ([37.140.190.187]:56795 "EHLO
-        forward106o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728447AbeJLVLx (ORCPT
+        Fri, 12 Oct 2018 17:15:28 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45440 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728576AbeJLVP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 17:11:53 -0400
-Received: from mxback3o.mail.yandex.net (mxback3o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::1d])
-        by forward106o.mail.yandex.net (Yandex) with ESMTP id AE04278704D;
-        Fri, 12 Oct 2018 16:39:19 +0300 (MSK)
-Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
-        by mxback3o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id PyIlBU19dD-dHZCItIX;
-        Fri, 12 Oct 2018 16:39:19 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539351559;
-        bh=UDgDfRZhaZ79J4/IZ8CNyBmcITAgLulkoSlZ3oLYy3w=;
-        h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To;
-        b=MlRtEkfq0TYcJUR3MqZw7JgNliAmm7PVhi91c78qzYVPEzfx+kD2D/KNv7SZYJt/v
-         fVEk/gOZhf76HQx4gOtn4/om5XyWfZuawIWIX81vz/EBjqpnqMPwl9TTEBH1R1bo5T
-         OznyaWyr9+A9dRVMIzabcx0Z0l/ksWq8EC9wXoyY=
-Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id DyUvoURzV7-dF1WFtvN;
-        Fri, 12 Oct 2018 16:39:15 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539351556;
-        bh=UDgDfRZhaZ79J4/IZ8CNyBmcITAgLulkoSlZ3oLYy3w=;
-        h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To;
-        b=dfpggKXaLdfCJntB6/zBmfxtXY0gg+ZfwxzWjw6DeGskZm/+x1Olkc8y7EOm/HEHS
-         4l39n5qcd2Ra1lN9rfap2hmAGo2yw/Ex+st5Hm8jP9LKM30ZIpI3Okr9CSzEyl22ST
-         PR6Hh7P0BWpILLW523c9O8FAaww4sjdYSMJth2qU=
-Authentication-Results: smtp1j.mail.yandex.net; dkim=pass header.i=@emlid.com
-Date:   Fri, 12 Oct 2018 16:39:14 +0300
-From:   Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        David Lechner <david@lechnology.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] arm64: dts: allwinner: new board - Emlid Neutis N5
-Message-ID: <20181012133914.GA32670@imagebutcher>
-References: <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539339841-22235-1-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539339841-22235-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <b47c5458-683e-3e96-0bbe-f9db84579c77@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b47c5458-683e-3e96-0bbe-f9db84579c77@suse.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 12 Oct 2018 17:15:27 -0400
+Received: by mail-ed1-f66.google.com with SMTP id v18-v6so11506824edq.12
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 06:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id;
+        bh=9kl+AFhdfAuyYLrIxjH1tHnSVPLXqMk9wXDpKHphUiw=;
+        b=GUKqwg38yWeBSUKo4vOp+XTPjirRVvA0NvpjqsNjLskgUI/n0EHcmsG6C6BPeHqhUj
+         vsuSdAwIQuBg0mbuw/t0QPyzmSAvOEidNtW5wDLQ8/ipDa8h6U9gqS1tcVNFg6UsU1ez
+         bSSLoCLVIXTKhc3p0pnFDxqRBNW42ppbc1UA2d0vD4lCi+JAaW25XkbG8SBvq6GD2ZHX
+         W/6+OQ2S9esc3h6nxdL619sxOGg0Jfs4YBGS1JOviMuDR1DFqefBHQeDjxVaN2tEMCKz
+         EK6sxoGJIjbd76Rr6WFS6IshgATTLacLEog6emY83kIZn2eFUehzkpEhHqJMMlu2UZI1
+         Myfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9kl+AFhdfAuyYLrIxjH1tHnSVPLXqMk9wXDpKHphUiw=;
+        b=haCroGCFj+NYOcJUJcmd3150bxMja4wt3ia1VG4SVsiEvZNnBvar193nHvp4nXeR9Q
+         9XVLaEvQ34SyjkCjsUPcLQFdeKHEfsHEI2Elo4mC1DlYGWghMYO8J3dULRZ+A5QmNncp
+         THQr3ZUNUhon7htKj6s5NvZYUxmkT9ODodHOIf9TUKp1Jg9KSP782cjkkqJT/Yap9pBl
+         ahrztERx8vRYH7otGoRNw+a/m+GdSCop8CO4OB886VBLfb+nWBDcyJTF0FFiRxhTWn84
+         UW4Cp4lU6o9yfLGJztVHb2gtUmu6AOcbpImeZa8CX7+tdm8ao1038Zqeu2bVBzucnijb
+         eGQQ==
+X-Gm-Message-State: ABuFfoidd6IDZ1e5hlu8if90Shtre33S+wEoZFx/sxQJyon+0cfxcfVs
+        j+1dc8Zcu+RGKy9XkrqT1QRiNMKx/vU=
+X-Google-Smtp-Source: ACcGV63iIyQoOyt/YpQ4LhjCIv7bgdXSTZbkqb7cNJtL5/FfjsGaGJ2BVzIy2RqGn28PY+245T0SFg==
+X-Received: by 2002:a50:8881:: with SMTP id d1-v6mr8746464edd.156.1539351775147;
+        Fri, 12 Oct 2018 06:42:55 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id k42-v6sm577292ede.94.2018.10.12.06.42.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 06:42:54 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirsky <luto@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        John Stultz <john.stultz@linaro.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-efi@vger.kernel.org, netdev@vger.kernel.org
+Subject: [RFC-resend 0/2] compat: in_compat_syscall() differs on x86
+Date:   Fri, 12 Oct 2018 14:42:51 +0100
+Message-Id: <20181012134253.23266-1-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+Reading xfrm (ipsec) code I've found such code:
 
-Thanks for your feedback!
+: #ifdef CONFIG_COMPAT
+:         if (in_compat_syscall())
+:                 return -EOPNOTSUPP;
+: #endif
 
-> > + *
-> > + * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "sun50i-h5-emlid-neutis-n5.dtsi"
-> > +
-> > +/ {
-> > +	model = "Emlid Neutis N5 Developer board";
-> > +	compatible = "emlid,neutis-n5-devboard",
-> > +		     "emlid,neutis-n5",
-> 
-> You are lacking bindings definitions for these new identifiers. The
-> vendor prefix should be patch 1/3, the SoM/board compatibles 2/3 and
-> this .dts[i] patch 3/3, so that only vendor prefixes and compatibles
-> that are defined and don't result in checkpatch.pl warnings get used.
+While I can read that it's false on native i386, it's a bit misleading
+and in result it's better to introduce a helper for that.
+Grepping other code, I've found that there are already such helpers.
+And the uniq behavior of in_compat_syscall() on x86 is disturbing.
 
-Patch 2/3:
+Adjusting it to generic with the following..
 
-commit 46dcb8632b36644cb20e6b35ede12ff0088a60eb
-Author: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-Date:   Fri Oct 12 16:22:28 2018 +0300
+(on the first non-resend RFC I managed to forget Cc'ing Andy..
+ sorry about that, was sure I did add him).
 
-    dt-bindings: arm: sunxi: emlid,neutis-n5(-devboard)
-    
-    sunxi: add new compatibles for Emlid Neutis Dev board and SoM module
-    
-    Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirsky <luto@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+Cc: linux-efi@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-index e4beec3..a907e52 100644
---- a/Documentation/devicetree/bindings/arm/sunxi.txt
-+++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-@@ -19,3 +19,5 @@ using one of the following compatible strings:
-   allwinner,sun9i-a80
-   allwinner,sun50i-a64
-   nextthing,gr8
-+  emlid,neutis-n5
-+  emlid,neutis-n5-devboard
+Dmitry Safonov (2):
+  x86/compat: Adjust in_compat_syscall() to generic code under !COMPAT
+  compat: Cleanup in_compat_syscall() callers
 
-Is this right place for the neutis compatibles?
+ arch/x86/include/asm/compat.h  |  9 ++++++++-
+ arch/x86/include/asm/ftrace.h  |  4 +---
+ arch/x86/kernel/process_64.c   |  4 ++--
+ arch/x86/kernel/sys_x86_64.c   | 11 ++++++-----
+ arch/x86/mm/hugetlbpage.c      |  4 ++--
+ arch/x86/mm/mmap.c             |  2 +-
+ drivers/firmware/efi/efivars.c | 16 ++++------------
+ include/linux/compat.h         |  4 ++--
+ kernel/time/time.c             |  2 +-
+ net/xfrm/xfrm_state.c          |  2 --
+ net/xfrm/xfrm_user.c           |  2 --
+ 11 files changed, 27 insertions(+), 33 deletions(-)
 
-Aleksandr
+-- 
+2.13.6
 
