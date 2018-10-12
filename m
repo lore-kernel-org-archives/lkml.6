@@ -2,31 +2,31 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76F0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C24C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB95C2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB95C2077C
+	by mail.kernel.org (Postfix) with ESMTP id CA6972077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:03:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6972077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeJLTfN (ORCPT
+        id S1728569AbeJLTf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:35:13 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44794 "EHLO
+        Fri, 12 Oct 2018 15:35:29 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58982 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727816AbeJLTfN (ORCPT
+        by vger.kernel.org with ESMTP id S1727816AbeJLTf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:35:13 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1466227|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03278;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D169lim_1539345752;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D169lim_1539345752)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Fri, 12 Oct 2018 20:02:33 +0800
+        Fri, 12 Oct 2018 15:35:29 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2325464|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.D16Be4h_1539345769;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D16Be4h_1539345769)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Fri, 12 Oct 2018 20:02:49 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com,
@@ -34,62 +34,77 @@ To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         paul.burton@mips.com, peterz@infradead.org, arnd@arndb.de
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V12 0/8] C-SKY(csky) Linux Kernel Driver
-Date:   Fri, 12 Oct 2018 20:02:01 +0800
-Message-Id: <cover.1539315341.git.ren_guo@c-sky.com>
+Subject: [PATCH V12 2/8] dt-bindings: interrupt-controller: C-SKY SMP intc
+Date:   Fri, 12 Oct 2018 20:02:03 +0800
+Message-Id: <80b0f7fa6dc72c5b176284f0a5d7dd09895e47be.1539315341.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1539315341.git.ren_guo@c-sky.com>
+References: <cover.1539315341.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1539315341.git.ren_guo@c-sky.com>
+References: <cover.1539315341.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is about 12th patchset for C-SKY linux drivers and it should pair
-with 8th kernel patchset.
+Dt-bindings doc about C-SKY Multi-processors interrupt controller.
 
 Changelog:
- - Remove the set_irq_createmapping call back in csky-mp-intc.c.
- - Convert the cpumask to an interrupt-controller specific representation
-   in driver's code, and not the SMP code's, and also modify the related
-   codes in csky kernel patchset.
- - Add COMPILE_TEST for csky_mp_timer.
- - Fixup smp boot error, cpuhp_setup_state must after timer_of_init()
-   for csky_mp_timer.
+ - Should be: '#interrupt-cells' not 'interrupt-cells'
 
-Any feedback is welcome, thx for all people review my patchset.
-
-Guo Ren (8):
-  irqchip: add C-SKY SMP interrupt controller
-  dt-bindings: interrupt-controller: C-SKY SMP intc
-  irqchip: add C-SKY APB bus interrupt controller
-  dt-bindings: interrupt-controller: C-SKY APB intc
-  clocksource: add C-SKY SMP timer
-  dt-bindings: timer: C-SKY Multi-processor timer
-  clocksource: add gx6605s SOC system timer
-  dt-bindings: timer: gx6605s SOC timer
-
- .../interrupt-controller/csky,apb-intc.txt         |  62 +++++
- .../bindings/interrupt-controller/csky,mpintc.txt  |  40 +++
- .../bindings/timer/csky,gx6605s-timer.txt          |  42 ++++
- .../devicetree/bindings/timer/csky,mptimer.txt     |  42 ++++
- drivers/clocksource/Kconfig                        |  18 ++
- drivers/clocksource/Makefile                       |   2 +
- drivers/clocksource/timer-gx6605s.c                | 154 ++++++++++++
- drivers/clocksource/timer-mp-csky.c                | 173 +++++++++++++
- drivers/irqchip/Kconfig                            |  17 ++
- drivers/irqchip/Makefile                           |   2 +
- drivers/irqchip/irq-csky-apb-intc.c                | 274 +++++++++++++++++++++
- drivers/irqchip/irq-csky-mpintc.c                  | 198 +++++++++++++++
- include/linux/cpuhotplug.h                         |   1 +
- 13 files changed, 1025 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/interrupt-controller/csky,mpintc.txt  | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
- create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
- create mode 100644 drivers/clocksource/timer-gx6605s.c
- create mode 100644 drivers/clocksource/timer-mp-csky.c
- create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
- create mode 100644 drivers/irqchip/irq-csky-mpintc.c
 
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+new file mode 100644
+index 0000000..ab921f1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+@@ -0,0 +1,40 @@
++===========================================
++C-SKY Multi-processors Interrupt Controller
++===========================================
++
++C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
++SMP soc, and it also could be used in non-SMP system.
++
++Interrupt number definition:
++
++  0-15  : software irq, and we use 15 as our IPI_IRQ.
++ 16-31  : private  irq, and we use 16 as the co-processor timer.
++ 31-1024: common irq for soc ip.
++
++=============================
++intc node bindings definition
++=============================
++
++	Description: Describes SMP interrupt controller
++
++	PROPERTIES
++
++	- compatible
++		Usage: required
++		Value type: <string>
++		Definition: must be "csky,mpintc"
++	- #interrupt-cells
++		Usage: required
++		Value type: <u32>
++		Definition: must be <1>
++	- interrupt-controller:
++		Usage: required
++
++Examples:
++---------
++
++	intc: interrupt-controller {
++		compatible = "csky,mpintc";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++	};
 -- 
 2.7.4
 
