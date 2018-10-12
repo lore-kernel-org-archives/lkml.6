@@ -2,84 +2,83 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB255C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B08BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0C820645
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:23:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0C820645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D9F932087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:23:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ux/T3ivc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F932087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeJLRzJ (ORCPT
+        id S1728515AbeJLRzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:55:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:49823 "EHLO ozlabs.org"
+        Fri, 12 Oct 2018 13:55:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbeJLRzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:55:09 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1728311AbeJLRzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 13:55:35 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42WkSV5t9yz9s47;
-        Fri, 12 Oct 2018 21:23:22 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Jann Horn <jannh@google.com>, Michal Hocko <mhocko@suse.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        abdhalee@linux.vnet.ibm.com, joel@jms.id.au,
-        Kees Cook <keescook@chromium.org>, jasone@google.com,
-        davidtgoldblatt@gmail.com, trasz@freebsd.org,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: don't clobber partially overlapping VMA with MAP_FIXED_NOREPLACE
-In-Reply-To: <CAG48ez04KK62doMwsTVN4nN8y_wmv7hn+4my2jk5VXKL0wP7Lg@mail.gmail.com>
-References: <20181010152736.99475-1-jannh@google.com> <20181010171944.GJ5873@dhcp22.suse.cz> <CAG48ez04KK62doMwsTVN4nN8y_wmv7hn+4my2jk5VXKL0wP7Lg@mail.gmail.com>
-Date:   Fri, 12 Oct 2018 21:23:21 +1100
-Message-ID: <87tvlr1n1i.fsf@concordia.ellerman.id.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CAE820645;
+        Fri, 12 Oct 2018 10:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539339832;
+        bh=+A3mcT6ON7YbpG5Z5V7ytNAZ+OV8B9W8UfdzTpQaLQA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ux/T3ivcoTDyLO2zIl5uKpI25bk4WWQH0UMUbQy3YLII1lnirVE59RK+pOptcNrsF
+         ewxCxy5fZ4NLJHn2vI8EvYX/iqH2K/M4qEoXkLr8lmGHJGpu9zDg62cvSedMMsPHV4
+         f2raglMD8I29+lJzWO3iT6PmPtzs0pcgB1vRU/+8=
+Date:   Fri, 12 Oct 2018 12:23:49 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 000/120] 3.18.124-stable review
+Message-ID: <20181012102349.GA29897@kroah.com>
+References: <20181011152549.500488630@linuxfoundation.org>
+ <595061ee-35ff-f906-f76c-efcc253b81d4@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <595061ee-35ff-f906-f76c-efcc253b81d4@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann Horn <jannh@google.com> writes:
-> On Wed, Oct 10, 2018 at 7:19 PM Michal Hocko <mhocko@suse.com> wrote:
->> On Wed 10-10-18 17:27:36, Jann Horn wrote:
->> > Daniel Micay reports that attempting to use MAP_FIXED_NOREPLACE in an
->> > application causes that application to randomly crash. The existing check
->> > for handling MAP_FIXED_NOREPLACE looks up the first VMA that either
->> > overlaps or follows the requested region, and then bails out if that VMA
->> > overlaps *the start* of the requested region. It does not bail out if the
->> > VMA only overlaps another part of the requested region.
->>
->> I do not understand. Could you give me an example?
->
-> Sure.
->
-> =======
-> user@debian:~$ cat mmap_fixed_simple.c
-> #include <sys/mman.h>
-> #include <errno.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
+On Thu, Oct 11, 2018 at 04:46:16PM -0600, Shuah Khan wrote:
+> On 10/11/2018 09:33 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 3.18.124 release.
+> > There are 120 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Oct 13 15:25:29 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.124-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-..
+Thanks for testing all of these and letting me know.
 
-Mind if I turn that into a selftest?
-
-cheers
+greg k-h
