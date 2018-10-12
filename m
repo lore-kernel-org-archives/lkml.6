@@ -2,110 +2,190 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90100C67877
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFA7C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E1921477
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E1921477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A1F3214C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A1F3214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbeJMB2k (ORCPT
+        id S1726928AbeJMB3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:28:40 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11376 "EHLO mga14.intel.com"
+        Fri, 12 Oct 2018 21:29:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37626 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbeJMB2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:28:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 10:55:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="81000327"
-Received: from ray.jf.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga008.jf.intel.com with ESMTP; 12 Oct 2018 10:55:00 -0700
-Subject: Re: [PATCH 06/11] x86/pkeys: make init_pkru_value static
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-7-bigeasy@linutronix.de>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6b8e44b3-426d-2a81-8aa9-d76ef73f549e@linux.intel.com>
-Date:   Fri, 12 Oct 2018 10:55:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181004140547.13014-7-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1725981AbeJMB3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:29:54 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A84C80471;
+        Fri, 12 Oct 2018 17:56:14 +0000 (UTC)
+Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC064171AC;
+        Fri, 12 Oct 2018 17:56:08 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v13 00/11] cpuset: Enable cpuset controller in default hierarchy
+Date:   Fri, 12 Oct 2018 13:55:40 -0400
+Message-Id: <1539366951-8498-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 12 Oct 2018 17:56:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 07:05 AM, Sebastian Andrzej Siewior wrote:
-> The variable init_pkru_value isn't used outside of this file.
-> Make init_pkru_value static.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+v13:
+ - A major rewrite of the partition code so that there will be no
+   auto-turning off anymore. Instead, the partition root can enter into
+   an error state that can be restored back to a partition root later on.
+ - Patches 1 and 9 are the same as previous version, the rests are
+   either new or substantially revised.
 
-Looks good.
+v12:
+ - Take out the debugging patch to print partitions.
+ - Add a patch to force turning off partition flag if newly modified CPU
+   list doesn't meet the requirement of being a partition root.
+ - Remove some unneeded checking code in update_reserved_cpumask().
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+v11:
+ - Change the "domain_root" name to "partition" as suggested by Peter and
+   update the documentation and code accordingly.
+ - Remove the dying cgroup check in update_reserved_cpus() as the check
+   may not be needed after all.
+ - Document the effect of losing CPU affinity after offling all the cpus
+   in a partition.
+ - There is no other major code changes in this version.
+
+v10:
+ - Remove the cpuset.sched.load_balance patch for now as it may not
+   be that useful.
+ - Break the large patch 2 into smaller patches to make them a bit
+   easier to review.
+ - Test and fix issues related to changing "cpuset.cpus" and cpu
+   online/offline in a domain root.
+ - Rename isolated_cpus to reserved_cpus as this cpumask holds CPUs
+   reserved for child sched domains.
+ - Rework the scheduling domain debug printing code in the last patch.
+ - Document update to the newly moved
+   Documentation/admin-guide/cgroup-v2.rst.
+
+v10 patch: https://lkml.org/lkml/2018/6/18/3
+v11 patch: https://lkml.org/lkml/2018/6/24/30
+v12 patch: https://lkml.org/lkml/2018/8/27/423
+
+The purpose of this patchset is to provide a basic set of cpuset control
+files for cgroup v2. This basic set includes the non-root "cpus",
+"mems" and "sched.partition". The "cpus.effective" and "mems.effective"
+will appear in all cpuset-enabled cgroups.
+
+The new control file that is unique to v2 is "sched.partition". It is
+a tristate flag file that designates if a cgroup is the root of a new
+scheduling domain or partition with its own set of unique list of CPUs
+from scheduling perspective disjointed from other partitions. An user
+can write only "1" or "0" into this file to turn on and off partition root.
+Depending on circumstances, a partition root may become erroneous and has
+a flag value of -1. However, if condition becomes favorable again, it can
+be changed back to a partition root automatically.
+
+The root cgroup is always a partition root. Multiple levels of partitions
+are supported with some limitations. So a container partition root can
+behave like a real root.
+
+When a partition root cgroup is removed, its list of exclusive CPUs
+will be returned back to the parent's cpus.effective automatically.
+
+A container root can be a partition root with sub-partitions
+created underneath it. One difference from the real root is that the
+"cpuset.sched.partition" flag isn't present in the real root, but is
+present in a container root. This is also true for other cpuset control
+files as well as those from the other controllers. This is a general
+issue that is not going to be addressed here in this patchset.
+
+This patchset does not exclude the possibility of adding more features
+in the future after careful consideration.
+
+Patch 1 enables cpuset in cgroup v2 with cpus, mems and their effective
+counterparts.
+
+Patch 2 defines new data structures to support partitioning.
+
+Patch 3 simplifies the allocation and freeing of cpumasks in the cpuset
+code and prepares for use by subsequent patches.
+
+Patch 4 adds a new "sched.partition" control file for setting up multiple
+scheduling domains or partitions. A partition root implies cpu_exclusive.
+
+Patch 5 makes new "sched.partition" file to have a new error value of -1
+which indicates that the partition root enters into an erroneous state
+where some of the constraints of a partition root (like cpu_exclusive)
+will still hold but it is not a real partition root anymore. This allows
+the cpuset to change back to a partition root later on automatically
+if the conditions become favorable again.
+
+Patch 6 adds tracking of the number of cpusets that use the parent's
+effective_cpus in order to make sure that those cpusets will be properly
+updated if their parents effective cpus changes because of changes in
+sibling partitions.
+
+Patch 7 makes the hotplug code deal with partition root properly.
+
+Patch 8 updates the scheduling domain genaration code to work with
+the new partition feature.
+
+Patch 9 exposes cpus.effective and mems.effective to the root cgroup
+as enabling child partitions will take CPUs away from the root cgroup.
+So it will be nice to monitor what CPUs are left there.
+
+Patch 10 updates the cgroup v2 documentation file with information
+about the new "sched.partition" file.
+
+Patch 11 adds a new read-only "cpus.subpartitions" file that list the
+CPUs in the subparts_cpus mask in the cpuset data structure when the
+command line option "cgroup_debug" is specified. This is mostly used
+for debugging and verification purposes.
+
+A test script with various cpuset configurations was run on both regular
+and debug kernels with this patchset applied to verify that the cpusets
+behaved appropriate without unexpected error.
+
+Waiman Long (11):
+  cpuset: Enable cpuset controller in default hierarchy
+  cpuset: Define data structures to support scheduling partition
+  cpuset: Simply allocation and freeing of cpumasks
+  cpuset: Add new v2 cpuset.sched.partition flag
+  cpuset: Add an error state to cpuset.sched.partition
+  cpuset: Track cpusets that use parent's effective_cpus
+  cpuset: Make CPU hotplug work with partition
+  cpuset: Make generate_sched_domains() work with partition
+  cpuset: Expose cpus.effective and mems.effective on cgroup v2 root
+  cpuset: Add documentation about the new "cpuset.sched.partition" flag
+  cpuset: Expose cpuset.cpus.subpartitions with cgroup_debug
+
+ Documentation/admin-guide/cgroup-v2.rst | 175 ++++++-
+ include/linux/cgroup-defs.h             |   1 +
+ kernel/cgroup/cgroup-internal.h         |   2 +
+ kernel/cgroup/cgroup.c                  |  14 +-
+ kernel/cgroup/cpuset.c                  | 887 +++++++++++++++++++++++++++++---
+ kernel/cgroup/debug.c                   |   4 +-
+ 6 files changed, 1007 insertions(+), 76 deletions(-)
+
+-- 
+1.8.3.1
+
