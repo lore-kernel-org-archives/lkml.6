@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C02C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 505FAC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D562087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D562087D
+	by mail.kernel.org (Postfix) with ESMTP id 16B9B2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B9B2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeJLQs2 (ORCPT
+        id S1728302AbeJLQs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:48:28 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:49442 "EHLO
+        Fri, 12 Oct 2018 12:48:27 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:49443 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbeJLQs0 (ORCPT
+        with ESMTP id S1728099AbeJLQs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 12 Oct 2018 12:48:26 -0400
 Received: from [148.252.241.226] (helo=rainbowdash)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1gAtYz-0006u3-DB; Fri, 12 Oct 2018 10:16:53 +0100
+        id 1gAtYz-0006u0-0F; Fri, 12 Oct 2018 10:16:53 +0100
 Received: from ben by rainbowdash with local (Exim 4.91)
         (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1gAtYy-0005YV-Hs; Fri, 12 Oct 2018 10:16:52 +0100
+        id 1gAtYy-0005YM-Ep; Fri, 12 Oct 2018 10:16:52 +0100
 From:   Ben Dooks <ben.dooks@codethink.co.uk>
 To:     davem@davemloft.net, netdev@vger.kernel.org
 Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kernel@lists.codethink.co.uk, gregkh@linuxfoundation.org,
         bjorn@mork.no, steve.glendinning@shawell.net,
         Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 4/7] net: qmi_wwan: add usbnet -> priv function
-Date:   Fri, 12 Oct 2018 10:16:39 +0100
-Message-Id: <20181012091642.21294-5-ben.dooks@codethink.co.uk>
+Subject: [PATCH 1/7] net: smsc75xx: add usbnet -> priv function
+Date:   Fri, 12 Oct 2018 10:16:36 +0100
+Message-Id: <20181012091642.21294-2-ben.dooks@codethink.co.uk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181012091642.21294-1-ben.dooks@codethink.co.uk>
 References: <20181012091642.21294-1-ben.dooks@codethink.co.uk>
@@ -49,149 +49,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a number of places in the qmi_wwan driver where it gets the
+There are a number of places in the smsc75xx driver where it gets the
 private-data from the usbnet passed in. It would be sensible to have
 one inline function to convert it and change all points in the driver
 to use that.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- drivers/net/usb/qmi_wwan.c | 31 ++++++++++++++++++-------------
+ drivers/net/usb/smsc75xx.c | 31 ++++++++++++++++++-------------
  1 file changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 533b6fb8d923..45930758a945 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -76,6 +76,11 @@ struct qmimux_priv {
- 	u8 mux_id;
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index 05553d252446..6d12fcd9b4b0 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -73,6 +73,11 @@ struct smsc75xx_priv {
+ 	u8 suspend_flags;
  };
  
-+static inline struct qmi_wwan_state *usbnet_to_qmi(struct usbnet *usb)
++static inline struct smsc75xx_priv *usbnet_to_smsc(struct usbnet *dev)
 +{
-+	return (void *) &usb->data;
++	return (struct smsc75xx_priv *)dev->data[0];
 +}
 +
- static int qmimux_open(struct net_device *dev)
+ struct usb_context {
+ 	struct usb_ctrlrequest req;
+ 	struct usbnet *dev;
+@@ -469,7 +474,7 @@ static int smsc75xx_dataport_wait_not_busy(struct usbnet *dev)
+ static int smsc75xx_dataport_write(struct usbnet *dev, u32 ram_select, u32 addr,
+ 				   u32 length, u32 *buf)
  {
- 	struct qmimux_priv *priv = netdev_priv(dev);
-@@ -253,7 +258,7 @@ static void qmimux_unregister_device(struct net_device *dev)
- static void qmi_wwan_netdev_setup(struct net_device *net)
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 dp_sel;
+ 	int i, ret;
+ 
+@@ -553,7 +558,7 @@ static void smsc75xx_deferred_multicast_write(struct work_struct *param)
+ static void smsc75xx_set_multicast(struct net_device *netdev)
+ {
+ 	struct usbnet *dev = netdev_priv(netdev);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	unsigned long flags;
+ 	int i;
+ 
+@@ -718,7 +723,7 @@ static void smsc75xx_ethtool_get_wol(struct net_device *net,
+ 				     struct ethtool_wolinfo *wolinfo)
  {
  	struct usbnet *dev = netdev_priv(net);
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
  
- 	if (info->flags & QMI_WWAN_FLAG_RAWIP) {
- 		net->header_ops      = NULL;  /* No header */
-@@ -276,7 +281,7 @@ static void qmi_wwan_netdev_setup(struct net_device *net)
- static ssize_t raw_ip_show(struct device *d, struct device_attribute *attr, char *buf)
+ 	wolinfo->supported = SUPPORTED_WAKE;
+ 	wolinfo->wolopts = pdata->wolopts;
+@@ -728,7 +733,7 @@ static int smsc75xx_ethtool_set_wol(struct net_device *net,
+ 				    struct ethtool_wolinfo *wolinfo)
  {
- 	struct usbnet *dev = netdev_priv(to_net_dev(d));
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 
- 	return sprintf(buf, "%c\n", info->flags & QMI_WWAN_FLAG_RAWIP ? 'Y' : 'N');
- }
-@@ -284,7 +289,7 @@ static ssize_t raw_ip_show(struct device *d, struct device_attribute *attr, char
- static ssize_t raw_ip_store(struct device *d,  struct device_attribute *attr, const char *buf, size_t len)
- {
- 	struct usbnet *dev = netdev_priv(to_net_dev(d));
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	bool enable;
+ 	struct usbnet *dev = netdev_priv(net);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
  	int ret;
  
-@@ -346,7 +351,7 @@ static ssize_t add_mux_show(struct device *d, struct device_attribute *attr, cha
- static ssize_t add_mux_store(struct device *d,  struct device_attribute *attr, const char *buf, size_t len)
+ 	pdata->wolopts = wolinfo->wolopts & SUPPORTED_WAKE;
+@@ -945,7 +950,7 @@ static int smsc75xx_set_features(struct net_device *netdev,
+ 	netdev_features_t features)
  {
- 	struct usbnet *dev = netdev_priv(to_net_dev(d));
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	u8 mux_id;
+ 	struct usbnet *dev = netdev_priv(netdev);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	unsigned long flags;
  	int ret;
  
-@@ -391,7 +396,7 @@ static ssize_t del_mux_show(struct device *d, struct device_attribute *attr, cha
- static ssize_t del_mux_store(struct device *d,  struct device_attribute *attr, const char *buf, size_t len)
+@@ -1051,7 +1056,7 @@ static int smsc75xx_phy_gig_workaround(struct usbnet *dev)
+ 
+ static int smsc75xx_reset(struct usbnet *dev)
  {
- 	struct usbnet *dev = netdev_priv(to_net_dev(d));
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	struct net_device *del_dev;
- 	u8 mux_id;
- 	int ret = 0;
-@@ -468,7 +473,7 @@ static const u8 buggy_fw_addr[ETH_ALEN] = {0x00, 0xa0, 0xc6, 0x00, 0x00, 0x00};
-  */
- static int qmi_wwan_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 buf;
+ 	int ret = 0, timeout;
+ 
+@@ -1515,7 +1520,7 @@ static int smsc75xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 
+ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
  {
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	bool rawip = info->flags & QMI_WWAN_FLAG_RAWIP;
- 	__be16 proto;
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	if (pdata) {
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+@@ -1571,7 +1576,7 @@ static int smsc75xx_write_wuff(struct usbnet *dev, int filter, u32 wuf_cfg,
  
-@@ -555,7 +560,7 @@ static const struct net_device_ops qmi_wwan_netdev_ops = {
-  */
- static int qmi_wwan_manage_power(struct usbnet *dev, int on)
+ static int smsc75xx_enter_suspend0(struct usbnet *dev)
  {
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	int rv;
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 val;
+ 	int ret;
  
- 	dev_dbg(&dev->intf->dev, "%s() pmcount=%d, on=%d\n", __func__,
-@@ -589,7 +594,7 @@ static int qmi_wwan_register_subdriver(struct usbnet *dev)
+@@ -1597,7 +1602,7 @@ static int smsc75xx_enter_suspend0(struct usbnet *dev)
+ 
+ static int smsc75xx_enter_suspend1(struct usbnet *dev)
  {
- 	int rv;
- 	struct usb_driver *subdriver = NULL;
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 val;
+ 	int ret;
  
- 	/* collect bulk endpoints */
- 	rv = usbnet_get_endpoints(dev, info->data);
-@@ -651,7 +656,7 @@ static int qmi_wwan_bind(struct usbnet *dev, struct usb_interface *intf)
- 	struct usb_cdc_union_desc *cdc_union;
- 	struct usb_cdc_ether_desc *cdc_ether;
- 	struct usb_driver *driver = driver_of(intf);
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	struct usb_cdc_parsed_header hdr;
+@@ -1633,7 +1638,7 @@ static int smsc75xx_enter_suspend1(struct usbnet *dev)
  
- 	BUILD_BUG_ON((sizeof(((struct usbnet *)0)->data) <
-@@ -746,7 +751,7 @@ static int qmi_wwan_bind(struct usbnet *dev, struct usb_interface *intf)
- 
- static void qmi_wwan_unbind(struct usbnet *dev, struct usb_interface *intf)
+ static int smsc75xx_enter_suspend2(struct usbnet *dev)
  {
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	struct usb_driver *driver = driver_of(intf);
- 	struct usb_interface *other;
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 val;
+ 	int ret;
  
-@@ -785,7 +790,7 @@ static void qmi_wwan_unbind(struct usbnet *dev, struct usb_interface *intf)
- static int qmi_wwan_suspend(struct usb_interface *intf, pm_message_t message)
+@@ -1659,7 +1664,7 @@ static int smsc75xx_enter_suspend2(struct usbnet *dev)
+ 
+ static int smsc75xx_enter_suspend3(struct usbnet *dev)
+ {
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 val;
+ 	int ret;
+ 
+@@ -1794,7 +1799,7 @@ static int smsc75xx_autosuspend(struct usbnet *dev, u32 link_up)
+ static int smsc75xx_suspend(struct usb_interface *intf, pm_message_t message)
  {
  	struct usbnet *dev = usb_get_intfdata(intf);
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u32 val, link_up;
  	int ret;
  
- 	/* Both usbnet_suspend() and subdriver->suspend() MUST return 0
-@@ -808,7 +813,7 @@ static int qmi_wwan_suspend(struct usb_interface *intf, pm_message_t message)
- static int qmi_wwan_resume(struct usb_interface *intf)
+@@ -2095,7 +2100,7 @@ static int smsc75xx_suspend(struct usb_interface *intf, pm_message_t message)
+ static int smsc75xx_resume(struct usb_interface *intf)
  {
  	struct usbnet *dev = usb_get_intfdata(intf);
--	struct qmi_wwan_state *info = (void *)&dev->data;
-+	struct qmi_wwan_state *info = usbnet_to_qmi(dev);
- 	int ret = 0;
- 	bool callsub = (intf == info->control && info->subdriver &&
- 			info->subdriver->resume);
-@@ -1406,7 +1411,7 @@ static void qmi_wwan_disconnect(struct usb_interface *intf)
- 	/* called twice if separate control and data intf */
- 	if (!dev)
- 		return;
--	info = (void *)&dev->data;
-+	info = usbnet_to_qmi(dev);
- 	if (info->flags & QMI_WWAN_FLAG_MUX) {
- 		if (!rtnl_trylock()) {
- 			restart_syscall();
+-	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
++	struct smsc75xx_priv *pdata = usbnet_to_smsc(dev);
+ 	u8 suspend_flags = pdata->suspend_flags;
+ 	int ret;
+ 	u32 val;
 -- 
 2.19.1
 
