@@ -2,143 +2,136 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E957C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635FBC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D708321470
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D708321470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FC9721470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRhvvDPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC9721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbeJMBI5 (ORCPT
+        id S1727851AbeJMBJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:08:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44766 "EHLO mx1.redhat.com"
+        Fri, 12 Oct 2018 21:09:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJMBI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:08:57 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726665AbeJMBJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:09:19 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 710117E9FD;
-        Fri, 12 Oct 2018 17:35:23 +0000 (UTC)
-Received: from redhat.com (ovpn-125-5.rdu2.redhat.com [10.10.125.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 36EF27B52F;
-        Fri, 12 Oct 2018 17:35:21 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 13:35:19 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Nellans <dnellans@nvidia.com>,
-        Ingo Molnar <mingo@elte.hu>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH] mm/thp: fix call to mmu_notifier in
- set_pmd_migration_entry()
-Message-ID: <20181012173518.GD6593@redhat.com>
-References: <20181012160953.5841-1-jglisse@redhat.com>
- <DB07F115-B404-4AB0-9D54-BC20C3A3F2B0@cs.rutgers.edu>
- <20181012172422.GA7395@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id BD07E21470;
+        Fri, 12 Oct 2018 17:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539365744;
+        bh=Rgt1QL6cPUerUj+FNhXWL/Yz8dn6bcl8zgyM915Sbnw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ZRhvvDPnAvqj0e+JSfSGZT6Hyxc/vr+XnqjED0B9lf7jZpUvA9nUqXM04O5SBl21W
+         HfvPGgJVbQvUBcZMxyvuoTnVUhcaopPy0asSWGknSe4ZQY4bUNdzBdibQXsOQ6DK5d
+         umF1vqLfG7UojurDT2PbLabSiEiauJgfhtWkVQCw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181012172422.GA7395@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 12 Oct 2018 17:35:23 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+ <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+ <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+ <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+Message-ID: <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
+Date:   Fri, 12 Oct 2018 10:35:44 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 01:24:22PM -0400, Andrea Arcangeli wrote:
-> Hello,
-> 
-> On Fri, Oct 12, 2018 at 12:20:54PM -0400, Zi Yan wrote:
-> > On 12 Oct 2018, at 12:09, jglisse@redhat.com wrote:
-> > 
-> > > From: Jérôme Glisse <jglisse@redhat.com>
-> > >
-> > > Inside set_pmd_migration_entry() we are holding page table locks and
-> > > thus we can not sleep so we can not call invalidate_range_start/end()
-> > >
-> > > So remove call to mmu_notifier_invalidate_range_start/end() and add
-> > > call to mmu_notifier_invalidate_range(). Note that we are already
-> 
-> Why the call to mmu_notifier_invalidate_range if we're under
-> range_start and followed by range_end? (it's not _range_only_end, if
-> it was _range_only_end the above would be needed)
+Quoting Taniya Das (2018-10-09 23:12:27)
+> =
 
-I wanted to be extra safe and accept to over invalidate. You are right
-that it is not strictly necessary. I am fine with removing it.
+> =
 
-> 
-> > > calling mmu_notifier_invalidate_range_start/end() inside the function
-> > > calling set_pmd_migration_entry() (see try_to_unmap_one()).
-> > >
-> > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > > Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> > > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > > Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> > > Cc: Dave Hansen <dave.hansen@intel.com>
-> > > Cc: David Nellans <dnellans@nvidia.com>
-> > > Cc: Ingo Molnar <mingo@elte.hu>
-> > > Cc: Mel Gorman <mgorman@techsingularity.net>
-> > > Cc: Minchan Kim <minchan@kernel.org>
-> > > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > > Cc: Michal Hocko <mhocko@kernel.org>
-> > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > ---
-> > >  mm/huge_memory.c | 7 +------
-> > >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > >
-> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index 533f9b00147d..93cb80fe12cb 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -2885,9 +2885,6 @@ void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
-> > >  	if (!(pvmw->pmd && !pvmw->pte))
-> > >  		return;
-> > >
-> > > -	mmu_notifier_invalidate_range_start(mm, address,
-> > > -			address + HPAGE_PMD_SIZE);
-> > > -
-> > >  	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
-> > >  	pmdval = *pvmw->pmd;
-> > >  	pmdp_invalidate(vma, address, pvmw->pmd);
-> > > @@ -2898,11 +2895,9 @@ void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
-> > >  	if (pmd_soft_dirty(pmdval))
-> > >  		pmdswp = pmd_swp_mksoft_dirty(pmdswp);
-> > >  	set_pmd_at(mm, address, pvmw->pmd, pmdswp);
-> > > +	mmu_notifier_invalidate_range(mm, address, address + HPAGE_PMD_SIZE);
-> 
-> It's not obvious why it's needed, if it's needed maybe a comment can
-> be added.
+> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-10-09 10:26:38)
+> >> Hello Stephen,
+> >>
+> >> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+> >>> Quoting Taniya Das (2018-10-04 05:02:26)
+> >>>> Add support for the lpass clock controller found on SDM845 based dev=
+ices.
+> >>>> This would allow lpass peripheral loader drivers to control the cloc=
+ks to
+> >>>> bring the subsystem out of reset.
+> >>>> LPASS clocks present on the global clock controller would be registe=
+red
+> >>>> with the clock framework based on the device tree flag. Also do not =
+gate
+> >>>> these clocks if they are left unused.
+> >>>
+> >>> Why not gate them? This statement states what the code is doing, not =
+why
+> >>> it's doing it which is the more crucial information that should be
+> >>> described in the commit text. Also, please add a comment about it to =
+the
+> >>> code next to the flag.
+> >>>
+> >>> I am concerned that it doesn't make any sense though, so probably it
+> >>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
+> >>> other larger bug that needs to be fixed.
+> >>>
+> >>
+> >> It does not have any bug, it is just that to access these lpass
+> >> registers we would need the GCC lpass registers to be enabled. I would
+> >> update the same in the commit text.
+> >>
+> >> During clock late_init these clocks should not be accessed to check the
+> >> clock status as they would result in unclocked access. The client would
+> >> request these clocks in the correct order and it would not have any is=
+sue.
+> >>
+> > =
 
-We can remove it. Should i post a v2 without it ?
+> > That seems like the bug right there. If the LPASS registers can't be
+> > accessed unless the clks in GCC are enabled then this driver needs to
+> > turn the clks on before reading/writing registers. Marking the clks as
+> > ignore unused is skipping around the real problem.
+> > =
 
-Cheers,
-Jérôme
+> =
+
+> If the driver requests for the clocks they would maintain the order. But =
+
+> if the clock late init call is invoked before the driver requests, there =
+
+> is no way I could manage this dependency, that is the only reason to =
+
+> mark them unused.
+> =
+
+
+Which driver are we talking about here? The lpass clk driver? Presumably
+the lpass clk driver would request the GCC clks and turn them on in
+probe and then register any lpass clks. If the lpass clk driver probes
+bfeore late init, then the gcc clks will be enabled and everything
+works, and if the lpass clk driver probes after late init then the clks
+that can't be touched without gcc clks enabled won't be registered, and
+then they won't be touched. What goes wrong?
+
+
