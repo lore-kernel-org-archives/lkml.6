@@ -2,325 +2,220 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C75FDC28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3E4C28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7586C205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1A220644
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="Jp1Vp26M";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GdeO24Hz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7586C205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iXeahS7N";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B20uJHTT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1A220644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeJLILZ (ORCPT
+        id S1727061AbeJLIZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 04:11:25 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:46167 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725850AbeJLILZ (ORCPT
+        Fri, 12 Oct 2018 04:25:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54528 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbeJLIZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:11:25 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id C6728C8F;
-        Thu, 11 Oct 2018 20:41:38 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 11 Oct 2018 20:41:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=message-id:subject:from:to:cc:date
-        :in-reply-to:references:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=z1fgj2d+suX+knPafrN7OTjMsn
-        77IfeCCYKPlT6cnxM=; b=Jp1Vp26MuC83jA/zj6x/qqXS7alSHokDj8M+9PxmqK
-        e3Y5Hai9irnJ7jki9dOeyCY9Wuz+IVdFbe2KnN6pAAvEBQZknYM0dt3cHnj14yZq
-        LUDJBHhCAIWNJgKjnEvdTbrxU5yOeg9xtppE5LcJU8IooGypa6Cd7zY1Z6JVVC39
-        Vt3joIaXv7SDYkNuqNtYIFSOSSyOWecNl5L9vmuwar8pXHajEnRZfyfjcgv2L1+F
-        JqJzOVmW8yQRrJzidPhQjo+swaz+U+S5/Mayj5o6BFt8NITWONl0oAz3Tq2lai7F
-        gbIPgks/9jLIuPzv2edGVP1ye57svu+0iePqzCs/fZnA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=z1fgj2d+suX+knPafrN7OTjMsn77IfeCCYKPlT6cn
-        xM=; b=GdeO24Hz7WOQDpai6hAl4ZVX084PGP1XUQ09+eh7pPc57BB8wmF8etrkp
-        bFW5Vw6zM0XaN7xCiWKzh9G7OaslSB5kbO1gNSnOpm/WNdFgUORJ6nBTCXQ2lfLL
-        LJ+0cqR/1qeRiXOaJy3MIEosPqEybtvefn+w+D7Sf5InKJzyxTLVLurqCnd9gjIT
-        kXAwWK/MCaJ320a/qJOVfQfRxe69g5SIp20LwUhgnKomReVHStwR+Nc8inm59dk2
-        4WbSWYI2wDO+pRPOMpVrZIYNWrp03uPNwkcgNvrd0/nQBYtlRZUHJcuP/EomHEue
-        527LfHli25PbwXOMZAlB0z5kD+czQ==
-X-ME-Sender: <xms:we2_W6xYYY7qDiwGjJaC-URQ7sraEeW2VLMmwIr3MVAPKFlLtprsWw>
-X-ME-Proxy: <xmx:we2_W3Y8wIYGNN5LtHa7kko-59f-aE7w8-bQK3SAg_BNihZQO1mhQg>
-    <xmx:we2_WyGZQML2OezeW2Sq3osPa7aOcx14Cxf_HVlglAh1bAAEAVwxmw>
-    <xmx:we2_Ww3R8lNpYKpl26_tbCXlcueUqdPUqu5o0qu2LxF28Ht6Ejj4Ag>
-    <xmx:we2_WydxHTIMDz0DcU9WhF-1gaZ-weriquk8PKfXOAvmF8sOpte3zw>
-    <xmx:we2_WzNfFhNzdjr3a9gZisRFoEWwAUgDKf_wQTc4he9DcGVeJQ73WQ>
-    <xmx:wu2_W-v1Jf2-5uJNauPoScURDzzYfCRZPl7ITDV4368N8XukCUVs1g>
-Received: from v4 (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 99A7BE4439;
-        Thu, 11 Oct 2018 20:41:34 -0400 (EDT)
-Message-ID: <0291dc2447720438a25c9c922252ab71e92985dd.camel@mendozajonas.com>
-Subject: Re: [PATCH net-next v3 1/2] net/ncsi: Add NCSI Broadcom OEM command
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     Vijay Khemka <vijaykhemka@fb.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
-        Justin.Lee1@Dell.com, joel@jms.id.au, linux-aspeed@lists.ozlabs.org
-Date:   Fri, 12 Oct 2018 11:41:31 +1100
-In-Reply-To: <20181011230518.3204700-1-vijaykhemka@fb.com>
-References: <20181011230518.3204700-1-vijaykhemka@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 12 Oct 2018 04:25:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ABCB660C60; Fri, 12 Oct 2018 00:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539305726;
+        bh=NBlomhmy8pJqwpVilnH8sLnIQGcR7aWMCSAPqJXMne0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iXeahS7N9RS88Ua8JP2zF/kkwSQQ5+P+kSOy6nTV2NosJmkIublLCpSyUwKz9H3rh
+         gb0l4rWmg8q3k0hSc8PbFzuvpdHJSCOME0HJ8pr+DqmQ2iw0LVuKfChBaSq6Z0kEly
+         swuBkMi1Ca2+3x/wdvXjEEouSGHg/+uqJQalnnDo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id ADB4F60866;
+        Fri, 12 Oct 2018 00:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539305725;
+        bh=NBlomhmy8pJqwpVilnH8sLnIQGcR7aWMCSAPqJXMne0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=B20uJHTTvUeFIMIMVkhNxSmmWzasg+EAi8IMdf9jttd8tJRhWZ5adyn7CxQnUVer4
+         us7XUb3MySe8hIsN5TRvHp2l2QJdRCZ5DINCkjOzYJdvsl4TJLyWYToUAlSXgmk4o3
+         j1RezeaMidLOTLWGuYtIJemGYowmJVCXaPxwpXt0=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 12 Oct 2018 08:55:25 +0800
+From:   cang@codeaurora.org
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     subhashj@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        venkatg@codeaurora.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] scsi: ufs: make UFS Tx lane1 clock optional for
+ QCOM platforms
+In-Reply-To: <CAD=FV=VSyJAna4JwLXJi1=Z_Y1mzr8cW4iD+vJLPU2GASP3wQA@mail.gmail.com>
+References: <1539261196-14550-1-git-send-email-cang@codeaurora.org>
+ <CAD=FV=VSyJAna4JwLXJi1=Z_Y1mzr8cW4iD+vJLPU2GASP3wQA@mail.gmail.com>
+Message-ID: <0f371e5e2cd1fe47834560a5072c0581@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-11 at 16:05 -0700, Vijay Khemka wrote:
-> This patch adds OEM Broadcom commands and response handling. It also
-> defines OEM Get MAC Address handler to get and configure the device.
+Hi Doug,
+
+On 2018-10-12 04:21, Doug Anderson wrote:
+> Hi,
 > 
-> ncsi_oem_gma_handler_bcm: This handler send NCSI broadcom command for
-> getting mac address.
-> ncsi_rsp_handler_oem_bcm: This handles response received for all
-> broadcom OEM commands.
-> ncsi_rsp_handler_oem_bcm_gma: This handles get mac address response and
-> set it to device.
+> On Thu, Oct 11, 2018 at 5:33 AM Can Guo <cang@codeaurora.org> wrote:
+>>  static int ufs_qcom_host_clk_get(struct device *dev,
+>> -               const char *name, struct clk **clk_out)
+>> +               const char *name, struct clk **clk_out, bool optional)
+>>  {
+>>         struct clk *clk;
+>>         int err = 0;
+>> 
+>>         clk = devm_clk_get(dev, name);
+>> -       if (IS_ERR(clk)) {
+>> +       if (clk == ERR_PTR(-EPROBE_DEFER)) {
+>> +               err = -EPROBE_DEFER;
+>> +               dev_warn(dev, "required clock %s hasn't probed yet, 
+>> err %d\n",
+>> +                               name, err);
+>> +       } else if (IS_ERR(clk)) {
+>> +               if (optional)
+>> +                       return 0;
 > 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  net/ncsi/Kconfig       |  6 ++++
->  net/ncsi/internal.h    |  8 +++++
->  net/ncsi/ncsi-manage.c | 70 ++++++++++++++++++++++++++++++++++++++++++
->  net/ncsi/ncsi-pkt.h    |  8 +++++
->  net/ncsi/ncsi-rsp.c    | 40 +++++++++++++++++++++++-
->  5 files changed, 131 insertions(+), 1 deletion(-)
+> Change this function to:
 > 
-> diff --git a/net/ncsi/Kconfig b/net/ncsi/Kconfig
-> index 08a8a6031fd7..7f2b46108a24 100644
-> --- a/net/ncsi/Kconfig
-> +++ b/net/ncsi/Kconfig
-> @@ -10,3 +10,9 @@ config NET_NCSI
->  	  support. Enable this only if your system connects to a network
->  	  device via NCSI and the ethernet driver you're using supports
->  	  the protocol explicitly.
-> +config NCSI_OEM_CMD_GET_MAC
-> +	bool "Get NCSI OEM MAC Address"
-> +	depends on NET_NCSI
-> +	---help---
-> +	  This allows to get MAC address from NCSI firmware and set them back to
-> +		controller.
-> diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-> index 3d0a33b874f5..45883b32790e 100644
-> --- a/net/ncsi/internal.h
-> +++ b/net/ncsi/internal.h
-> @@ -71,6 +71,13 @@ enum {
->  /* OEM Vendor Manufacture ID */
->  #define NCSI_OEM_MFR_MLX_ID             0x8119
->  #define NCSI_OEM_MFR_BCM_ID             0x113d
-> +/* Broadcom specific OEM Command */
-> +#define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
-> +/* OEM Command payload lengths*/
-> +#define NCSI_OEM_BCM_CMD_GMA_LEN        12
-> +/* Mac address offset in OEM response */
-> +#define BCM_MAC_ADDR_OFFSET             28
-> +
->  
->  struct ncsi_channel_version {
->  	u32 version;		/* Supported BCD encoded NCSI version */
-> @@ -240,6 +247,7 @@ enum {
->  	ncsi_dev_state_probe_dp,
->  	ncsi_dev_state_config_sp	= 0x0301,
->  	ncsi_dev_state_config_cis,
-> +	ncsi_dev_state_config_oem_gma,
->  	ncsi_dev_state_config_clear_vids,
->  	ncsi_dev_state_config_svf,
->  	ncsi_dev_state_config_ev,
-> diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-> index 091284760d21..75504ccd1b95 100644
-> --- a/net/ncsi/ncsi-manage.c
-> +++ b/net/ncsi/ncsi-manage.c
-> @@ -635,6 +635,39 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
->  	return 0;
->  }
->  
-> +#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
-> +
-> +/* NCSI OEM Command APIs */
-> +static void ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
-> +{
-> +	int ret = 0;
-> +	unsigned char data[NCSI_OEM_BCM_CMD_GMA_LEN];
-> +
-> +	nca->payload = NCSI_OEM_BCM_CMD_GMA_LEN;
-> +
-> +	memset(data, 0, NCSI_OEM_BCM_CMD_GMA_LEN);
-> +	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_BCM_ID);
-> +	data[5] = NCSI_OEM_BCM_CMD_GMA;
-> +
-> +	nca->data = data;
-> +
-> +	ret = ncsi_xmit_cmd(nca);
-> +	if (ret)
-> +		netdev_err(nca->ndp->ndev.dev,
-> +			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
-> +			   nca->type);
-> +}
-> +
-> +/* OEM Command handlers initialization */
-> +static struct ncsi_oem_gma_handler {
-> +	unsigned int	mfr_id;
-> +	void		(*handler)(struct ncsi_cmd_arg *nca);
-> +} ncsi_oem_gma_handlers[] = {
-> +	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
-> +};
-> +
-> +#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-> +
->  static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
->  {
->  	struct ncsi_dev *nd = &ndp->ndev;
-> @@ -685,6 +718,43 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
->  			goto error;
->  		}
->  
-> +#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
-> +		nd->state = ncsi_dev_state_config_oem_gma;
-> +		break;
-> +	case ncsi_dev_state_config_oem_gma:
-> +		nca.type = NCSI_PKT_CMD_OEM;
-> +		nca.package = np->id;
-> +		nca.channel = nc->id;
-> +		ndp->pending_req_num = 1;
-> +
-> +		/* Check for manufacturer id and Find the handler */
-> +		struct ncsi_oem_gma_handler *nch = NULL;
-> +		int i;
-> +
+> static int ufs_qcom_host_clk_get(struct device *dev,
+>     const char *name, struct clk **clk_out, bool optional)
+> {
+>   struct clk *clk;
+>   int err;
+> 
+>   clk = devm_clk_get(dev, name);
+>   if (!IS_ERR(clk)) {
+>     *clk_out = clk;
+>     return 0;
+>   }
+> 
+>   err = PTR_ERR(clk);
+> 
+>   if (optional && err == -ENOENT) {
+>     *clk_out = NULL;
+>     return 0;
+>   }
+> 
+>   if (err != -EPROBE_DEFER)
+>     dev_err(dev, "failed to get %s err %d",
+>         name, err);
+> 
+>   return err;
+> }
+> 
+> Specifically:
+> 
+> * Typically it just spams the log to print something when you see an
+> -EPROBE_DEFER.
+> 
+> * If a clock is optional you should only consider things a success
+> only if "-ENOENT" was returned.  All other errors should be considered
+> fatal.
+> 
+> * If a clock is optional it's slightly cleaner to set *clk_out to
+> NULL.  I know you're initting global data that happened to already be
+> NULL by default, but it still feels nice for the abstraction of the
+> function to do this.
+> 
+> * Please don't pass __func__ to your error messages.
+> 
+> 
 
-This has the opposite affect, now if we do compile with
-CONFIG_NCSI_OEM_CMD_GET_MAC we get:
+Thank you for the detailed instructions. Shall make the change like so.
 
-../net/ncsi/ncsi-manage.c: In function ‘ncsi_configure_channel’:
-../net/ncsi/ncsi-manage.c:769:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-   struct ncsi_oem_gma_handler *nch = NULL;
-   ^~~~~~
+>>                 err = PTR_ERR(clk);
+>>                 dev_err(dev, "%s: failed to get %s err %d",
+>>                                 __func__, name, err);
+>> @@ -113,10 +119,10 @@ static void ufs_qcom_disable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>         if (!host->is_lane_clks_enabled)
+>>                 return;
+>> 
+>> -       if (host->hba->lanes_per_direction > 1)
+>> +       if (host->tx_l1_sync_clk)
+> 
+> Remove this "if".  Always call clk_disable_unprepare() which will be a
+> no-op if "host->tx_l1_sync_clk" is NULL.  clk_disable_unprepare() is a
+> no-op for NULL clocks by design specifically to make code like this
+> cleaner.
+> 
+> 
 
-Perhaps we should lay this out slightly differently. For example we could go
-through the ncsi_dev_state_config_oem_gma state regardless and call some other
-function that finds and calls the handler, or does nothing if the config option
-isn't set.
+Shall do.
 
-Regards,
-Sam
+>>                 clk_disable_unprepare(host->tx_l1_sync_clk);
+>>         clk_disable_unprepare(host->tx_l0_sync_clk);
+>> -       if (host->hba->lanes_per_direction > 1)
+>> +       if (host->rx_l1_sync_clk)
+> 
+> Remove this "if".  Always call clk_disable_unprepare() which will be a
+> no-op if "host->rx_l1_sync_clk" is NULL.  clk_disable_unprepare() is a
+> no-op for NULL clocks by design specifically to make code like this
+> cleaner.
+> 
+> 
 
-> +		for (i = 0; i < ARRAY_SIZE(ncsi_oem_gma_handlers); i++) {
-> +			if (ncsi_oem_gma_handlers[i].mfr_id ==
-> +					nc->version.mf_id) {
-> +				if (ncsi_oem_gma_handlers[i].handler)
-> +					nch = &ncsi_oem_gma_handlers[i];
-> +				else
-> +					nch = NULL;
-> +
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (!nch) {
-> +			netdev_err(ndp->ndev.dev, "No handler available for GMA with MFR-ID (0x%x)\n",
-> +				   nc->version.mf_id);
-> +			nd->state = ncsi_dev_state_config_clear_vids;
-> +			schedule_work(&ndp->work);
-> +			break;
-> +		}
-> +
-> +		/* Get Mac address from NCSI device */
-> +		nch->handler(&nca);
-> +#endif /* CONFIG_NCSI_OEM_CMD_GET_MAC */
-> +
->  		nd->state = ncsi_dev_state_config_clear_vids;
->  		break;
->  	case ncsi_dev_state_config_clear_vids:
-> diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
-> index 0f2087c8d42a..4d3f06be38bd 100644
-> --- a/net/ncsi/ncsi-pkt.h
-> +++ b/net/ncsi/ncsi-pkt.h
-> @@ -165,6 +165,14 @@ struct ncsi_rsp_oem_pkt {
->  	unsigned char           data[];      /* Payload data      */
->  };
->  
-> +/* Broadcom Response Data */
-> +struct ncsi_rsp_oem_bcm_pkt {
-> +	unsigned char           ver;         /* Payload Version   */
-> +	unsigned char           type;        /* OEM Command type  */
-> +	__be16                  len;         /* Payload Length    */
-> +	unsigned char           data[];      /* Cmd specific Data */
-> +};
-> +
->  /* Get Link Status */
->  struct ncsi_rsp_gls_pkt {
->  	struct ncsi_rsp_pkt_hdr rsp;        /* Response header   */
-> diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-> index d66b34749027..31672e967db2 100644
-> --- a/net/ncsi/ncsi-rsp.c
-> +++ b/net/ncsi/ncsi-rsp.c
-> @@ -596,12 +596,50 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
->  	return 0;
->  }
->  
-> +/* Response handler for Broadcom command Get Mac Address */
-> +static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
-> +{
-> +	struct ncsi_rsp_oem_pkt *rsp;
-> +	struct ncsi_dev_priv *ndp = nr->ndp;
-> +	struct net_device *ndev = ndp->ndev.dev;
-> +	int ret = 0;
-> +	const struct net_device_ops *ops = ndev->netdev_ops;
-> +	struct sockaddr saddr;
-> +
-> +	/* Get the response header */
-> +	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-> +
-> +	saddr.sa_family = ndev->type;
-> +	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-> +	memcpy(saddr.sa_data, &rsp->data[BCM_MAC_ADDR_OFFSET], ETH_ALEN);
-> +	ret = ops->ndo_set_mac_address(ndev, &saddr);
-> +	if (ret < 0)
-> +		netdev_warn(ndev, "NCSI: Writing mac address to device failed\n");
-> +
-> +	return ret;
-> +}
-> +
-> +/* Response handler for Broadcom card */
-> +static int ncsi_rsp_handler_oem_bcm(struct ncsi_request *nr)
-> +{
-> +	struct ncsi_rsp_oem_pkt *rsp;
-> +	struct ncsi_rsp_oem_bcm_pkt *bcm;
-> +
-> +	/* Get the response header */
-> +	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
-> +	bcm = (struct ncsi_rsp_oem_bcm_pkt *)(rsp->data);
-> +
-> +	if (bcm->type == NCSI_OEM_BCM_CMD_GMA)
-> +		return ncsi_rsp_handler_oem_bcm_gma(nr);
-> +	return 0;
-> +}
-> +
->  static struct ncsi_rsp_oem_handler {
->  	unsigned int	mfr_id;
->  	int		(*handler)(struct ncsi_request *nr);
->  } ncsi_rsp_oem_handlers[] = {
->  	{ NCSI_OEM_MFR_MLX_ID, NULL },
-> -	{ NCSI_OEM_MFR_BCM_ID, NULL }
-> +	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
->  };
->  
->  /* Response handler for OEM command */
+Shall do.
 
+>>                 clk_disable_unprepare(host->rx_l1_sync_clk);
+>>         clk_disable_unprepare(host->rx_l0_sync_clk);
+>> 
+>> @@ -141,12 +147,14 @@ static int ufs_qcom_enable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>         if (err)
+>>                 goto disable_rx_l0;
+>> 
+>> -       if (host->hba->lanes_per_direction > 1) {
+>> +       if (host->rx_l1_sync_clk) {
+> 
+> Remove this "if".  Always call ufs_qcom_host_clk_enable().  The
+> clk_prepare_enable() inside ufs_qcom_host_clk_enable() will be a no-op
+> if "host->rx_l1_sync_clk" is NULL and will return 0 (no error).
+> 
+> 
 
+Shall do so.
+
+>>                 err = ufs_qcom_host_clk_enable(dev, 
+>> "rx_lane1_sync_clk",
+>>                         host->rx_l1_sync_clk);
+>>                 if (err)
+>>                         goto disable_tx_l0;
+>> +       }
+>> 
+>> +       if (host->tx_l1_sync_clk) {
+> 
+> Remove this "if".  Always call ufs_qcom_host_clk_enable().  The
+> clk_prepare_enable() inside ufs_qcom_host_clk_enable() will be a no-op
+> if "host->tx_l1_sync_clk" is NULL and will return 0 (no error).
+> 
+> 
+> -Doug
+
+Shall do so. Thank you.
+
+-Can Guo
