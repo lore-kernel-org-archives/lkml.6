@@ -2,288 +2,144 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB92FC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0E8C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E7420835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 316632087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ntlWzSce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E7420835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wv3KQJCw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316632087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeJMDjg (ORCPT
+        id S1726906AbeJMDkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:39:36 -0400
-Received: from mail.efficios.com ([167.114.142.138]:37832 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeJMDjg (ORCPT
+        Fri, 12 Oct 2018 23:40:37 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45328 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeJMDkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:39:36 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 331501B7462;
-        Fri, 12 Oct 2018 16:05:28 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id aXYxaqWbj82k; Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 48F901B745F;
-        Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 48F901B745F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1539374727;
-        bh=BUy6aEpZFCnFPPJee/L7zXeKr/QtWs4AoTmH6FKVXnU=;
-        h=From:To:Date:Message-Id;
-        b=ntlWzSceS5dTl7HT+gBRA4AmABM2NtUYmova6fsrzaozTmwwKxJkjeKcHrtHktZPZ
-         c/4xuIi9wPx6T0ZtlwSaPClkV3/mciZ4Nokj2W1hbR1slzITcOTec7xX+c0+fAv1Zb
-         XtpVBTHsIAdf5VMIeiKmHCR9Md5gC34lt1HgKvGQ9r+OEwMn42byKk0DuCYqv7NFwY
-         AGhMm94rae55iG6WQ2G87Upf9JGax4TxWDJm7iFJ/j6vU+6YnU04ImYAfUFl0N5UPH
-         91nMav0Ce80BtOr78VMKqc8H+FD8FLJUWgpiR3kpTjelA0H8Ie2usL8tatlhWcSG6N
-         iifhkAAKlLjtA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id B1sG69jGBHdD; Fri, 12 Oct 2018 16:05:27 -0400 (EDT)
-Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id D10661B7455;
-        Fri, 12 Oct 2018 16:05:26 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <james.morris@microsoft.com>,
-        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Fri, 12 Oct 2018 23:40:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id u22so13467122ota.12
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 13:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
+        b=Wv3KQJCwZZffnr9xmpNIUnptsIKSFgA9EiAwatfbv+YM20VkNox/0y55fUkx/7ghw+
+         pnrbPE0fitpeqXABKqxZ+DtjjL1Qu65KSmBgc6CHpwdWI14YfGcE3F2yVTuv/ffTEm8n
+         9uNpIqAY5Cfz8GNrip5DtYxjdXBAvNeKaUEaATCpizlb+zBSQ/p2lqI0G8N9xrcEdkRR
+         wcZAQdPiZzGnBZK70fstC3MWOVJUy1OJ2wX6V5udh8g8RziR4jbHd448LKVYGMrfF/Xg
+         PKqv8XwX3EY6kTW+wGvHdUqy3ETgGyZKA9nqRVw5SxMRe7kN+Eb979vgqqbfvjy6zjXT
+         b4iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
+        b=BKuSPvD6KRGJ9fRcrvVkq8Ity1hYfDSPGNQeVOBn3/ZqcNVAbvpEY8sf3V5fzl6F5I
+         VgDS045jZopOAqFYNRusAEcqSK4PV+iugHxShz0kTrdrzbVi5UqDxfPZL188md/uM4gT
+         amHlLCHGU8M+nU9V1Kto+rv3/6fQ3HnAMOlsEkJIjIU2yn6KjK7EymRYyn3lqGipPVBk
+         KG9o7oh04E90hkdf2dyAk8DYa/5khw+FxN5PmDkPc4KOAgAPgqh/oQhl1fwaXd7DvEv5
+         jDpzgNJWLgmQY9YGm9A+WRmIZj9Cl5Ht3r9y7z2/upsHH6+jqWMJLalghDsM0bDEYIGb
+         cLoA==
+X-Gm-Message-State: ABuFfogMcyIq/kO6U9LH5VyJB2TgaJK3kUZan8fmmsLeOA2a0B4X/qB9
+        WkNtmWwtRu0A1aE5/t/7OtG8TRH8lfwBP/vmRxMyEg==
+X-Google-Smtp-Source: ACcGV62U4W/sXvna70NoU1KyEKejpbKQBChwBNYTGG28EyCI8YeyFJcWp1xqVhTcTI5fj1vWnuvWWF345JRwK/1HisM=
+X-Received: by 2002:a9d:4c15:: with SMTP id l21mr4905031otf.242.1539374787986;
+ Fri, 12 Oct 2018 13:06:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
+ <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
+ <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com>
+ <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com> <20181012200220.GC5530@cisco>
+In-Reply-To: <20181012200220.GC5530@cisco>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 12 Oct 2018 22:06:00 +0200
+Message-ID: <CAG48ez3o0t6UjtdsuiUck7ijJiA39uy5Jfno28UMMq_Q1d=s8g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Paul Moore <paul@paul-moore.com>, christian@brauner.io,
         Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array iteration
-Date:   Fri, 12 Oct 2018 16:05:23 -0400
-Message-Id: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 46e0c9be206f ("kernel: tracepoints: add support for relative
-references") changes the layout of the __tracepoint_ptrs section on
-architectures supporting relative references. However, it does so
-without turning struct tracepoint * const into const int * elsewhere in
-the tracepoint code, which has the following side-effect:
+On Fri, Oct 12, 2018 at 10:02 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> On Thu, Oct 11, 2018 at 06:02:06PM -0700, Andy Lutomirski wrote:
+> > On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
+> > > > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
+> > > >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
+> > > >>>>> +cc selinux people explicitly, since they probably have opinions on this
+> > > >>>>
+> > > >>>> I just spent about twenty minutes working my way through this thread,
+> > > >>>> and digging through the containers archive trying to get a good
+> > > >>>> understanding of what you guys are trying to do, and I'm not quite
+> > > >>>> sure I understand it all.  However, from what I have seen, this
+> > > >>>> approach looks very ptrace-y to me (I imagine to others as well based
+> > > >>>> on the comments) and because of this I think ensuring the usual ptrace
+> > > >>>> access controls are evaluated, including the ptrace LSM hooks, is the
+> > > >>>> right thing to do.
+> > > >>>
+> > > >>> Basically the problem is that this new ptrace() API does something
+> > > >>> that doesn't just influence the target task, but also every other task
+> > > >>> that has the same seccomp filter. So the classic ptrace check doesn't
+> > > >>> work here.
+> > > >>
+> > > >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+> > > >
+> > > > There are currently no backlinks from seccomp filters to the tasks
+> > > > that use them; the only thing you have is a refcount. If the refcount
+> > > > is 1, and the target task uses the filter directly (it is the last
+> > > > installed one), you'd be able to infer that the ptrace target is the
+> > > > only task with a reference to the filter, and you could just do the
+> > > > direct check; but if the refcount is >1, you might end up having to
+> > > > take some spinlock and then iterate over all tasks' filters with that
+> > > > spinlock held, or something like that.
+> > >
+> > > That's what I was afraid of.
+> > >
+> > > Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
+> > >
+> >
+> > I would argue that once "LSM" enters this conversation, it just means
+> > we're on the wrong track.  Let's try to make this work without ptrace
+> > if possible :)  The whole seccomp() mechanism is very carefully
+> > designed so that it's perfectly safe to install seccomp filters
+> > without involving LSM or even involving credentials at all.
+>
+> In a last ditch effort to save the ptrace() interface: can we just
+> only allow it when refcount_read(filter->usage) == 1?
 
-tracepoint_module_{coming,going} invoke
-tp_module_going_check_quiescent() with mod->tracepoints_ptrs
-as first argument, and computes the end address of the array
-for the second argument with:
-
-  mod->tracepoints_ptrs + mod->num_tracepoints
-
-However, because the type of mod->tracepoint_ptrs in module.h
-has not been changed from pointer to int, it passes an end
-pointer which is twice larger than the array, causing out-of-bound
-array accesses.
-
-Fix this by introducing a new typedef: tracepoint_ptr_t, which
-is either "const int" on architectures that have PREL32 relocations,
-or "struct tracepoint * const" on architectures that does not have
-this feature.
-
-Also provide a new tracepoint_ptr_defer() static inline to
-encapsulate deferencing this type rather than duplicate code and
-ugly idefs within the for_each_tracepoint_range() implementation.
-
-This issue appears in 4.19-rc kernels, and should ideally be fixed
-before the end of the rc cycle.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morris <james.morris@microsoft.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/module.h          |  2 +-
- include/linux/tracepoint-defs.h |  6 ++++++
- include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
- kernel/tracepoint.c             | 24 ++++++++--------------
- 4 files changed, 38 insertions(+), 30 deletions(-)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index f807f15bebbe..cdab2451d6be 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -430,7 +430,7 @@ struct module {
- 
- #ifdef CONFIG_TRACEPOINTS
- 	unsigned int num_tracepoints;
--	struct tracepoint * const *tracepoints_ptrs;
-+	tracepoint_ptr_t *tracepoints_ptrs;
- #endif
- #ifdef HAVE_JUMP_LABEL
- 	struct jump_entry *jump_entries;
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 22c5a46e9693..49ba9cde7e4b 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -35,6 +35,12 @@ struct tracepoint {
- 	struct tracepoint_func __rcu *funcs;
- };
- 
-+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+typedef const int tracepoint_ptr_t;
-+#else
-+typedef struct tracepoint * const tracepoint_ptr_t;
-+#endif
-+
- struct bpf_raw_event_map {
- 	struct tracepoint	*tp;
- 	void			*bpf_func;
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 041f7e56a289..538ba1a58f5b 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
- #define TRACE_DEFINE_ENUM(x)
- #define TRACE_DEFINE_SIZEOF(x)
- 
-+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-+{
-+	return offset_to_ptr(p);
-+}
-+
-+#define __TRACEPOINT_ENTRY(name)					\
-+	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
-+	    "	.balign 4					\n"	\
-+	    "	.long 	__tracepoint_" #name " - .		\n"	\
-+	    "	.previous					\n")
-+#else
-+static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-+{
-+	return *p;
-+}
-+
-+#define __TRACEPOINT_ENTRY(name)					 \
-+	static tracepoint_ptr_t __tracepoint_ptr_##name __used		 \
-+	__attribute__((section("__tracepoints_ptrs"))) =		 \
-+		&__tracepoint_##name
-+#endif
-+
- #endif /* _LINUX_TRACEPOINT_H */
- 
- /*
-@@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
- 		return static_key_false(&__tracepoint_##name.key);	\
- 	}
- 
--#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
--#define __TRACEPOINT_ENTRY(name)					\
--	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
--	    "	.balign 4					\n"	\
--	    "	.long 	__tracepoint_" #name " - .		\n"	\
--	    "	.previous					\n")
--#else
--#define __TRACEPOINT_ENTRY(name)					 \
--	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
--	__attribute__((section("__tracepoints_ptrs"))) =		 \
--		&__tracepoint_##name
--#endif
--
- /*
-  * We have no guarantee that gcc and the linker won't up-align the tracepoint
-  * structures, so we create an array of pointers that will be used for iteration
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index bf2c06ef9afc..a3be42304485 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -28,8 +28,8 @@
- #include <linux/sched/task.h>
- #include <linux/static_key.h>
- 
--extern struct tracepoint * const __start___tracepoints_ptrs[];
--extern struct tracepoint * const __stop___tracepoints_ptrs[];
-+extern tracepoint_ptr_t __start___tracepoints_ptrs[];
-+extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
- 
- DEFINE_SRCU(tracepoint_srcu);
- EXPORT_SYMBOL_GPL(tracepoint_srcu);
-@@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
- }
- EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
- 
--static void for_each_tracepoint_range(struct tracepoint * const *begin,
--		struct tracepoint * const *end,
-+static void for_each_tracepoint_range(
-+		tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
- 		void (*fct)(struct tracepoint *tp, void *priv),
- 		void *priv)
- {
-+	tracepoint_ptr_t *iter;
-+
- 	if (!begin)
- 		return;
--
--	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
--		const int *iter;
--
--		for (iter = (const int *)begin; iter < (const int *)end; iter++)
--			fct(offset_to_ptr(iter), priv);
--	} else {
--		struct tracepoint * const *iter;
--
--		for (iter = begin; iter < end; iter++)
--			fct(*iter, priv);
--	}
-+	for (iter = begin; iter < end; iter++)
-+		fct(tracepoint_ptr_deref(iter), priv);
- }
- 
- #ifdef CONFIG_MODULES
--- 
-2.17.1
-
+From a security perspective, I think that would be fine, assuming that
+we know that the target task is stopped. (But note that if the target
+process e.g. uses the filter on multiple threads, the refcount will be
+higher.)
