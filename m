@@ -7,64 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD228C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAB1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1D02098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCAE12087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPGChhOU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1D02098A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5rUBQr1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAE12087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728433AbeJLSnv (ORCPT
+        id S1728464AbeJLSnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:43:51 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38407 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbeJLSnu (ORCPT
+        Fri, 12 Oct 2018 14:43:55 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45047 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728368AbeJLSnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:43:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id q19-v6so2707463pll.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:11:54 -0700 (PDT)
+        Fri, 12 Oct 2018 14:43:53 -0400
+Received: by mail-pl1-f193.google.com with SMTP id p25-v6so5778651pli.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DQoC/dGulf7GeSU4tYiMeHj0m5zjqTSJW02yJ/gDIGc=;
-        b=VPGChhOU/EqM6/yck0FUGBiRf8kidRyRqg6f0gzXWR+IxmnZ/Ut+uUg3Rf+MGaIu5T
-         JN5NwQH/9MhZj162Inqwcpt7M3ZL55+JHl5wvDcpGfdLF4BEf7eFjZV1LFAqwd1eCoGe
-         mJNManKmK6IqGy4MQzm7XD7caUj7zR1N6fjGs=
+        bh=blaWPqPFlJGJ+DD2m7muSQ78d8p4LHOlTL3txRfKTuM=;
+        b=D5rUBQr1vrcVc2BiXCmd7EiQMTO1uXdbtMYnWRamB5cquWHi9NzLxeEsCMD0M9wOgo
+         PHNKNZrl2nVXuRuwsowZrfnIswszWdoTKiBxdadMSfSDWAEwRn7SPyGBVf8ezP66W1TL
+         GtoFhOj9S7JgD8sZTolBIrQkHyr3Xfi0uqygY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DQoC/dGulf7GeSU4tYiMeHj0m5zjqTSJW02yJ/gDIGc=;
-        b=hEux9d4vEhw1uc/9yLkg85Xjtg2P8cPoTbmy+x9Gh1pPVSBJAF2+UXnmlNq2FTJBhW
-         M1hL6pUz8nUeQiCBm/ofJbFf6wyjKYEFx7FGvHy4/+41vxOERDSSl3XLewTjTPtEgyGZ
-         qm43ETh3W8P9EOpsa6Ezk6wawMvuLYat8dbkU0hv71q4UoP6MJ5BUpPgrouce3XSaVRF
-         9pKC4e00kXz+vLjWzKrT16q+QXt5fCw6xwgQBJPLLyoDzOm1pMSJqjb2nCmf49UNhido
-         vD/x7GtsBNkRQiif29j75iLLErnYQug8oEIRNBSMllL87vji53Mjk+aedJPIBlQB7Ll9
-         O4NA==
-X-Gm-Message-State: ABuFfog/StZt9D7V+wDpE5MDudwolPdWg0Gm4e1m0tHq5oP8FExOuIPv
-        bkE9/2Ym+31oHmfHFwqfDwWY0w==
-X-Google-Smtp-Source: ACcGV63GzpdVawUJJfjolP1QxuqWjd3e9tKX9TKEAEKZaTkkYp6yOZMiptISn0uoJ8eriUERM54Y5g==
-X-Received: by 2002:a17:902:850b:: with SMTP id bj11-v6mr5594013plb.107.1539342714321;
-        Fri, 12 Oct 2018 04:11:54 -0700 (PDT)
+        bh=blaWPqPFlJGJ+DD2m7muSQ78d8p4LHOlTL3txRfKTuM=;
+        b=sWKHsjxkk74jNippRcwoHC/k09fmyUB3rIwSW1cXSZhAY3GK3qLaUo24GizmqLSH0p
+         ZsYFbWJawI/XliPvbcB0DD3SC6Iffpnb7zaoSkxBUWbJAIwMzN+gAbXHCqqWgU0T+NPa
+         L6LQm84/TO+PSzT9YijgV9pN86bCFMnaroVLmEkrw29cTF7Vnu6neNrClz0vD2tUZXJN
+         DlUDHxJFOj1rBr3itq0tNO+3v3AcRniEFe7W0M2c4TdFs/XEzju/daw5lU60LVAaFRYP
+         BIeuj2eSqDn96JrJzW0m7gQGIV0GKoT15LQmeSoyku9jX4FiCSQGO7nhezbk9V9Km0Vg
+         +51w==
+X-Gm-Message-State: ABuFfogPFe04KhMd5u6UzgQP5dd30xznIelCmaMeIUFGXd1CvOayShe2
+        NEAhosiW35t+1pJcVgiqFbb0Rg==
+X-Google-Smtp-Source: ACcGV63JM5te/uuGWCSK65s+DowlSq8SaJditcZxpAVtvofBuSo9+hBbIVxppn9VuMAAIvZr4IajxQ==
+X-Received: by 2002:a17:902:1129:: with SMTP id d38-v6mr156721pla.270.1539342717651;
+        Fri, 12 Oct 2018 04:11:57 -0700 (PDT)
 Received: from localhost ([122.171.67.41])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm1293959pgp.94.2018.10.12.04.11.53
+        by smtp.gmail.com with ESMTPSA id l129-v6sm2092376pfc.155.2018.10.12.04.11.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 04:11:53 -0700 (PDT)
+        Fri, 12 Oct 2018 04:11:57 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+To:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>, niklas.cassel@linaro.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/9] OPP: Populate OPPs from "required-opps" property
-Date:   Fri, 12 Oct 2018 16:41:12 +0530
-Message-Id: <16fe09d146a2bcd892a62fec595252b1cb2e539d.1539341929.git.viresh.kumar@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        niklas.cassel@linaro.org, rnayak@codeaurora.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 5/9] PM / Domains: Add genpd_opp_to_performance_state()
+Date:   Fri, 12 Oct 2018 16:41:13 +0530
+Message-Id: <ec154fa205967507c7352a2d0088346aba562ff2.1539341929.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
 In-Reply-To: <cover.1539341929.git.viresh.kumar@linaro.org>
 References: <cover.1539341929.git.viresh.kumar@linaro.org>
@@ -73,184 +75,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An earlier commit populated the OPP tables from the "required-opps"
-property, this commit populates the individual OPPs. This is repeated
-for each OPP in the OPP table and these populated OPPs will be used by
-later commits.
+The OPP core currently stores the performance state in the consumer
+device's OPP table, but that is going to change going forward and
+performance state will rather be set directly in the genpd's OPP table.
+
+For that we need to get the performance state for genpd's device
+structure instead of the consumer device's structure. Add a new helper
+to do that.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/opp/core.c |  1 +
- drivers/opp/of.c   | 81 ++++++++++++++++++++++++++++++++++++++++++++--
- drivers/opp/opp.h  |  6 ++++
- 3 files changed, 86 insertions(+), 2 deletions(-)
+ drivers/base/power/domain.c | 39 +++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  8 ++++++++
+ 2 files changed, 47 insertions(+)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 85174a5c4850..02a69a62dac8 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -976,6 +976,7 @@ static void _opp_kref_release(struct kref *kref)
- 	 * frequency/voltage list.
- 	 */
- 	blocking_notifier_call_chain(&opp_table->head, OPP_EVENT_REMOVE, opp);
-+	_of_opp_free_required_opps(opp_table, opp);
- 	opp_debug_remove_one(opp);
- 	list_del(&opp->node);
- 	kfree(opp);
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index b5605196122a..ffaeefef98ce 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -259,6 +259,77 @@ void _of_clear_opp_table(struct opp_table *opp_table)
- 	_opp_table_free_required_tables(opp_table);
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 4b5714199490..2c82194d2a30 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2508,6 +2508,45 @@ int of_genpd_parse_idle_states(struct device_node *dn,
  }
+ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
  
-+/*
-+ * Release all resources previously acquired with a call to
-+ * _of_opp_alloc_required_opps().
++/**
++ * genpd_opp_to_performance_state- Gets performance state of the genpd from its OPP node.
++ *
++ * @genpd_dev: Genpd's device for which the performance-state needs to be found.
++ * @opp: struct dev_pm_opp of the OPP for which we need to find performance
++ *	state.
++ *
++ * Returns performance state encoded in the OPP of the genpd. This calls
++ * platform specific genpd->opp_to_performance_state() callback to translate
++ * power domain OPP to performance state.
++ *
++ * Returns performance state on success and 0 on failure.
 + */
-+void _of_opp_free_required_opps(struct opp_table *opp_table,
-+				struct dev_pm_opp *opp)
++unsigned int genpd_opp_to_performance_state(struct device *genpd_dev,
++					    struct dev_pm_opp *opp)
 +{
-+	struct dev_pm_opp **required_opps = opp->required_opps;
-+	int i;
++	struct generic_pm_domain *genpd = NULL, *temp;
++	int state;
 +
-+	if (!required_opps)
-+		return;
++	lockdep_assert_held(&gpd_list_lock);
 +
-+	for (i = 0; i < opp_table->required_opp_count; i++) {
-+		if (!required_opps[i])
++	list_for_each_entry(temp, &gpd_list, gpd_list_node) {
++		if (&temp->dev == genpd_dev) {
++			genpd = temp;
 +			break;
-+
-+		/* Put the reference back */
-+		dev_pm_opp_put(required_opps[i]);
++		}
 +	}
 +
-+	kfree(required_opps);
-+	opp->required_opps = NULL;
-+}
-+
-+/* Populate all required OPPs which are part of "required-opps" list */
-+static int _of_opp_alloc_required_opps(struct opp_table *opp_table,
-+				       struct dev_pm_opp *opp)
-+{
-+	struct dev_pm_opp **required_opps;
-+	struct opp_table *required_table;
-+	struct device_node *np;
-+	int i, ret, count = opp_table->required_opp_count;
-+
-+	if (!count)
++	if (unlikely(!genpd || !genpd->opp_to_performance_state))
 +		return 0;
 +
-+	required_opps = kcalloc(count, sizeof(*required_opps), GFP_KERNEL);
-+	if (!required_opps)
-+		return -ENOMEM;
++	genpd_lock(genpd);
++	state = genpd->opp_to_performance_state(genpd, opp);
++	genpd_unlock(genpd);
 +
-+	opp->required_opps = required_opps;
++	return state;
++}
++EXPORT_SYMBOL_GPL(genpd_opp_to_performance_state);
 +
-+	for (i = 0; i < count; i++) {
-+		required_table = opp_table->required_opp_tables[i];
-+
-+		np = of_parse_required_opp(opp->np, i);
-+		if (unlikely(!np)) {
-+			ret = -ENODEV;
-+			goto free_required_opps;
-+		}
-+
-+		required_opps[i] = _find_opp_of_np(required_table, np);
-+		of_node_put(np);
-+
-+		if (!required_opps[i]) {
-+			pr_err("%s: Unable to find required OPP node: %pOF (%d)\n",
-+			       __func__, opp->np, i);
-+			ret = -ENODEV;
-+			goto free_required_opps;
-+		}
-+	}
-+
+ /**
+  * of_genpd_opp_to_performance_state- Gets performance state of device's
+  * power domain corresponding to a DT node's "required-opps" property.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 776c546d581a..e03f300f7468 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -233,6 +233,8 @@ int of_genpd_add_subdomain(struct of_phandle_args *parent,
+ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
+ int of_genpd_parse_idle_states(struct device_node *dn,
+ 			       struct genpd_power_state **states, int *n);
++unsigned int genpd_opp_to_performance_state(struct device *genpd_dev,
++					    struct dev_pm_opp *opp);
+ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+ 				struct device_node *np);
+ 
+@@ -274,6 +276,12 @@ static inline int of_genpd_parse_idle_states(struct device_node *dn,
+ 	return -ENODEV;
+ }
+ 
++static inline unsigned int
++genpd_opp_to_performance_state(struct device *genpd_dev, struct dev_pm_opp *opp)
++{
 +	return 0;
-+
-+free_required_opps:
-+	_of_opp_free_required_opps(opp_table, opp);
-+
-+	return ret;
 +}
 +
- static bool _opp_is_supported(struct device *dev, struct opp_table *opp_table,
- 			      struct device_node *np)
- {
-@@ -503,6 +574,10 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 	new_opp->dynamic = false;
- 	new_opp->available = true;
- 
-+	ret = _of_opp_alloc_required_opps(opp_table, new_opp);
-+	if (ret)
-+		goto free_opp;
-+
- 	if (!of_property_read_u32(np, "clock-latency-ns", &val))
- 		new_opp->clock_latency_ns = val;
- 
-@@ -510,14 +585,14 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 
- 	ret = opp_parse_supplies(new_opp, dev, opp_table);
- 	if (ret)
--		goto free_opp;
-+		goto free_required_opps;
- 
- 	ret = _opp_add(dev, new_opp, opp_table, rate_not_available);
- 	if (ret) {
- 		/* Don't return error for duplicate OPPs */
- 		if (ret == -EBUSY)
- 			ret = 0;
--		goto free_opp;
-+		goto free_required_opps;
- 	}
- 
- 	/* OPP to select on device suspend */
-@@ -547,6 +622,8 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 	blocking_notifier_call_chain(&opp_table->head, OPP_EVENT_ADD, new_opp);
- 	return new_opp;
- 
-+free_required_opps:
-+	_of_opp_free_required_opps(opp_table, new_opp);
- free_opp:
- 	_opp_free(new_opp);
- 
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 024e1be23d37..24b340ad18d1 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -63,6 +63,7 @@ extern struct list_head opp_tables;
-  * @supplies:	Power supplies voltage/current values
-  * @clock_latency_ns: Latency (in nanoseconds) of switching to this OPP's
-  *		frequency from any other OPP's frequency.
-+ * @required_opps: List of OPPs that are required by this OPP.
-  * @opp_table:	points back to the opp_table struct this opp belongs to
-  * @np:		OPP's device node.
-  * @dentry:	debugfs dentry pointer (per opp)
-@@ -84,6 +85,7 @@ struct dev_pm_opp {
- 
- 	unsigned long clock_latency_ns;
- 
-+	struct dev_pm_opp **required_opps;
- 	struct opp_table *opp_table;
- 
- 	struct device_node *np;
-@@ -216,10 +218,14 @@ void _put_opp_list_kref(struct opp_table *opp_table);
- void _of_init_opp_table(struct opp_table *opp_table, struct device *dev, int index);
- void _of_clear_opp_table(struct opp_table *opp_table);
- struct opp_table *_managed_opp(struct device *dev, int index);
-+void _of_opp_free_required_opps(struct opp_table *opp_table,
-+				struct dev_pm_opp *opp);
- #else
- static inline void _of_init_opp_table(struct opp_table *opp_table, struct device *dev, int index) {}
- static inline void _of_clear_opp_table(struct opp_table *opp_table) {}
- static inline struct opp_table *_managed_opp(struct device *dev, int index) { return NULL; }
-+static inline void _of_opp_free_required_opps(struct opp_table *opp_table,
-+					      struct dev_pm_opp *opp) {}
- #endif
- 
- #ifdef CONFIG_DEBUG_FS
+ static inline unsigned int
+ of_genpd_opp_to_performance_state(struct device *dev,
+ 				  struct device_node *np)
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
