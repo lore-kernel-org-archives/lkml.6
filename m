@@ -2,71 +2,72 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2032EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E29C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D788D2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D788D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 32FB62086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:28:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r4J/Om3K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FB62086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeJLP61 (ORCPT
+        id S1727947AbeJLP7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:58:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51692 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727151AbeJLP60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:58:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BA242AEFE;
-        Fri, 12 Oct 2018 08:27:06 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 10:27:01 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH 0/3] printk: some pr_cont tweaks and cleanups
-Message-ID: <20181012082701.fsx6ikd5h5ohr57h@pathway.suse.cz>
-References: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
+        Fri, 12 Oct 2018 11:59:41 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58788 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJLP7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 11:59:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1vTKXVDVFJPI+HY0+yqcDUf/+R3fPKlrZNeTV8zkVWQ=; b=r4J/Om3KK7upIGhqzwxA8a/E+
+        YQ6k1ojUnjHR06jLKcOb9rVeN5rohKyqpT1kKM6Za3s7shHSRnovQ2hG0CbIl54xptP6pI4tmfeZl
+        7iXppQl3xGtD4fddRXnOZoUqJ24jEnrKoXMlyjc4VqEh2+/pZXBBqLawb9EhKCYlkOEbRsw80oEdV
+        H72wNL+rX4UHHtPmuikX14QRMLrZiX5Rkt/s6UWNXYbgkur0ygq9JlE2orTO3zWCj9GhtiqVGP2GO
+        5cB/TOKumeEKMij8McXg3qjAa6cmra1SjqJcbw5AVTqv8qyTEdxRH8muMBmWWiWFcPUtNO8IX9BSA
+        vF/8fVPtg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gAsnw-0007pN-2P; Fri, 12 Oct 2018 08:28:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CF96F2027E186; Fri, 12 Oct 2018 10:28:12 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 10:28:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael@kernel.org, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 1/2] sched: Factor out nr_iowait and nr_iowait_cpu
+Message-ID: <20181012082812.GO9848@hirez.programming.kicks-ass.net>
+References: <1538654644-32705-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1538654644-32705-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-10-02 11:38:33, Sergey Senozhatsky wrote:
-> 	Hello,
+On Thu, Oct 04, 2018 at 02:04:02PM +0200, Daniel Lezcano wrote:
+> The function nr_iowait_cpu() can be used directly by nr_iowait() instead
+> of duplicating code.
 > 
-> 	RFC
+> Call nr_iowait_cpu() from nr_iowait()
 > 
-> 	Forked from "printk feature for syzbot". Let's have a separate
-> discussion thread.
-> 	A buch of pr_cont tweaks and cleanups, please see commits and
-> commits' messages for more details.
-> 
-> Sergey Senozhatsky (3):
->   printk: keep kernel cont support always enabled
->   printk: lock/unlock console only for new logbuf entries
->   printk: do not preliminary split up cont buffer
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-JFYI, I have pushed all three patches into printk.git, for-4.20
-branch.
-
-Best Regards,
-Petr
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
