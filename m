@@ -2,108 +2,96 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59F2C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6304C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A00520865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A00520865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AC5AC20865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5AC20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeJLXEg (ORCPT
+        id S1729149AbeJLXFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:04:36 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43067 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728896AbeJLXEg (ORCPT
+        Fri, 12 Oct 2018 19:05:24 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43430 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728857AbeJLXFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:04:36 -0400
-Received: by mail-lf1-f65.google.com with SMTP id p34-v6so9613083lfg.10
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 08:31:35 -0700 (PDT)
+        Fri, 12 Oct 2018 19:05:24 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k9so12730951otl.10;
+        Fri, 12 Oct 2018 08:32:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gGOgPpxHabdlfaa8kF6e+iMWj1eaZSwypQdSRUJOT4o=;
-        b=KKWVOCdA0V0SZuUcyZ0/ydR1nFRM1AW6sRuw9zdEmAocxGIFNMFQXEFlibacFZ9NgF
-         hsaZGjjYVDJlqVLHBprHXWjkcQMqOwSAtIb0bywcjqX72HDWdbLh1QOJaPvrGeFR1/35
-         AA53zJPNKFW2Gn9/KIOsX2hH87F27nTJEabvC/CpQTKtWIMm9I1BUXkiTjX2B206n2MH
-         HuEePHi2xTj9qmgMWp7S3rRqr1w+Ar/IiBn+h1TP9wZmIj8nfIlGQYWarj1/VpPPOV8H
-         6L73bl9t52wCnwO8h7gpU8r/PsuTmSfdoloUgEutiscVuqjjCZ2nMc4Jvof0RgfmO8pd
-         2GmQ==
-X-Gm-Message-State: ABuFfojXa6LSshCxxyUxp3rVk2fTBO0A6MxKGetanEi+Z0tfiOGk10SX
-        5n2mFrQStfMsq09Rm5towREbipJ0uqe0fmlmjRk=
-X-Google-Smtp-Source: ACcGV62RMnR0Gl/r/Bt0mIJTBZCBqD0/c6dsLUEwIiPKVjT3PaEozJgPv8okFhGLTT/NWmFMptaJvz83vc4s2fKUhi8=
-X-Received: by 2002:a19:6f0a:: with SMTP id k10-v6mr4364429lfc.8.1539358294319;
- Fri, 12 Oct 2018 08:31:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c3Er9xlOl/80PyAQ9uxJ5l3IRvUPkTzLiHqMRBxEdp4=;
+        b=GwplVOk/GvyYyfgAwGOq+FV8zOLqAg+aWO4y3fpofU9rJz3RDCGjW39EBU55ajbU5a
+         QP1WtwmkwW/Rg/HxQmXE3i7EtZOYvNmYhDVUByZ6vG9tg9LNyN9zhjAImtoTmjRDMs4i
+         kOV8ebKOaP8A1y+OVrTr5N/yN7TuAZQ9oHQwaLqXlQjt+Fqv6BFuvNpujMca5nAIyU1k
+         e2nVEC7U4iRIv6auCCfm0X1263HjDsfsA67UDKxMOO7Bu7+BmcgPvJTpqj2LdTFUY66l
+         3HcABQag7lLT9VMB0hOBW3hEQUZroTI5hUTT179M9UeFn7xZMicXHWncHUT8EtYSyWFr
+         H/xg==
+X-Gm-Message-State: ABuFfohp0kpd4+Syz0qICduCn3ctQ05JL6T5LRbz9iwq3exR164GUgjn
+        BVnaMohv/5DtEG4tInKKNg==
+X-Google-Smtp-Source: ACcGV61axsrk3ftmW7USIt/DurTmm29RfSdlhh5UWeJycaz3/DsbmIBLwxXeLC0R1ypCzkotikft2A==
+X-Received: by 2002:a9d:554a:: with SMTP id h10-v6mr3816594oti.151.1539358343773;
+        Fri, 12 Oct 2018 08:32:23 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 19-v6sm394569oty.16.2018.10.12.08.32.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 08:32:23 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 10:32:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        Pascal PAILLET-LME <p.paillet@st.com>
+Subject: Re: [PATCH v3 3/8] dt-bindings: regulator: document stpmic1 pmic
+  regulators
+Message-ID: <20181012153222.GA29914@bogus>
+References: <1539016176-4072-1-git-send-email-p.paillet@st.com>
+ <1539016176-4072-4-git-send-email-p.paillet@st.com>
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 12 Oct 2018 17:31:17 +0200
-Message-ID: <CAK8P3a0V3ddscW3x94rU0Yfh3HuTWhuhTsaKhKVy85+8ygf3Lg@mail.gmail.com>
-Subject: [GIT PULL] ARM: SoC fixes for 4.19
-To:     gregkh <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539016176-4072-4-git-send-email-p.paillet@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef38:
+On Mon, 8 Oct 2018 16:29:40 +0000, Pascal PAILLET-LME wrote:
+> From: pascal paillet <p.paillet@st.com>
+> 
+> The STPMIC1 regulators supply power to the application processor as well as
+> to the external system peripherals such as DDR, Flash memories and system
+> devices.
+> 
+> Signed-off-by: pascal paillet <p.paillet@st.com>
+> ---
+> changes in v3: nothing
+> 
+>  .../bindings/regulator/st,stpmic1-regulator.txt    | 68 ++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+> 
 
-  Linux 4.19-rc6 (2018-09-30 07:15:35 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
-tags/armsoc-fixes-4.19
-
-for you to fetch changes up to 3f4258bbe0363b3d5330b93de0e86b7796ff1a74:
-
-  Merge tag 'soc-fsl-fix-v4.19-2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux into fixes
-(2018-10-04 18:01:20 +0200)
-
-----------------------------------------------------------------
-ARM: SoC fixes for 4.19
-
-Two last minute bugfixes, both for NXP platforms:
-
-* The Layerscape 'qbman' infrastructure suffers from probe ordering
-  bugs in some configurations, a two-patch series adds a hotfix for
-  this. 4.20 will have a longer set of patches to rework it.
-
-* The old imx53-qsb board regressed in 4.19 after the addition
-  of cpufreq support, adding a set of explicit operating points
-  fixes this.
-
-----------------------------------------------------------------
-Arnd Bergmann (2):
-      Merge tag 'imx-fixes-4.19-2' of
-git://git.kernel.org/.../shawnguo/linux into fixes
-      Merge tag 'soc-fsl-fix-v4.19-2' of
-git://git.kernel.org/.../leo/linux into fixes
-
-Laurentiu Tudor (2):
-      soc: fsl: qbman: add APIs to retrieve the probing status
-      soc: fsl: qman_portals: defer probe after qman's probe
-
-Sascha Hauer (1):
-      ARM: dts: imx53-qsb: disable 1.2GHz OPP
-
- arch/arm/boot/dts/imx53-qsb-common.dtsi | 11 +++++++++++
- drivers/soc/fsl/qbman/bman_ccsr.c       | 11 +++++++++++
- drivers/soc/fsl/qbman/qman_ccsr.c       | 11 +++++++++++
- drivers/soc/fsl/qbman/qman_portal.c     |  8 ++++++++
- include/soc/fsl/bman.h                  |  8 ++++++++
- include/soc/fsl/qman.h                  |  8 ++++++++
- 6 files changed, 57 insertions(+)
+Reviewed-by: Rob Herring <robh@kernel.org>
