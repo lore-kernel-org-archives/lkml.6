@@ -2,143 +2,139 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6ADC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 962E62086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:41:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqIFSLUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962E62086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2882C2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2882C2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeJLSNn (ORCPT
+        id S1728058AbeJLSNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:13:43 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37207 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727583AbeJLSNm (ORCPT
+        Fri, 12 Oct 2018 14:13:42 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:35955 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbeJLSNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 12 Oct 2018 14:13:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y11-v6so12887917wrd.4;
-        Fri, 12 Oct 2018 03:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fPDxcroJciIMsvfFT+WvfSSZGRz40ykKSUracXzD23Y=;
-        b=dqIFSLUjkJDFGfPIgZkmQBCwM8kEXq6NKnTbWTDm6aAYo0uQeU3tF1pwEm+EzWRr+V
-         irxU+MhlM0Pu1BJn/oN3AyX6GTLmbFk9tri4OqIGipwkZMTtgdaXDADFTeFnnwLudt52
-         n3qt98gr7qbwk9zbnZ5w9ioaIUBgc+6AHmvYCT8gNFzxqUkGMMETyb0gUmGIAePJZjVP
-         jLxmlj/ygZYrfSXLLmtfVkzgIlxpBKPpGe6V5sicYryd1qVkWS+kNJ6olEkdM9c0BT53
-         sCyRMCYTZADaCjHu/q7GzqdCwzl6dsT+QJi9i1dTw6mdlcYB56v/VnkHN2rA/hT1NaHN
-         dQNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fPDxcroJciIMsvfFT+WvfSSZGRz40ykKSUracXzD23Y=;
-        b=QjgizwEqATFrG43PfMz1WHay62VIPuqK5TORdR0tcIlzw2BBXsYWLUeGHkRSKR3aJM
-         y4zEUJTI3jud0kcOmDYAfjrNO2OEKDsyF/2VpiRRqT3d84SMRqu0QVrc19EK5ZQx+ZQT
-         ueoN1h7M6sYP2M/aoR8OHJJpkVECGUIFSqlSW6yVYmOemu7+bqdh+lpKbdbPzBHw5k+C
-         KjOiFFeD00Guq0SD2A7I4mMnZFIY7Mw+EZvlirNMFHkSjzPo0qpm+Uw2qxlmD2WZgl2x
-         VJsne/FJYiP5GqNh9s2sLXEyL727trTbPp6ILoMsCCSF7T2U+ytAfHRryeV7JACl4T3X
-         rvIw==
-X-Gm-Message-State: ABuFfohxvxA8T+QD8k7xhfJ3hRVUZnMEjxu2Hw4ut0LGHRvbyopbquhz
-        265oJWTs0DBQt280MEVcuxw=
-X-Google-Smtp-Source: ACcGV63S61DkjUKnutYPOSb34zVjavbTjZzNkDDVOTY37UfcPpm6CDzvOmoTNoM1o2OLE3U0MnLZbw==
-X-Received: by 2002:a5d:620b:: with SMTP id y11-v6mr4788024wru.105.1539340912279;
-        Fri, 12 Oct 2018 03:41:52 -0700 (PDT)
-Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm818238wrt.79.2018.10.12.03.41.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 03:41:51 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 12:41:50 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC,
- use COMPILE_TEST
-Message-ID: <20181012104150.GH9162@ulmo>
-References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-15-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J/zg8ciPNcraoWb6"
-Content-Disposition: inline
-In-Reply-To: <20180821171635.22740-15-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MauJJ-1fes7e041z-00cTLa; Fri, 12 Oct 2018 12:41:45 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MauJJ-1fes7e041z-00cTLa; Fri, 12 Oct 2018 12:41:45 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Avri Altman <avri.altman@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     linux-scsi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: ufs: fix integer type usage in uapi header
+Date:   Fri, 12 Oct 2018 12:41:28 +0200
+Message-Id: <20181012104143.1931393-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:RpmlNXRZ1eGDPsL4xmG9LGqc8hOihdqy0zHaqzxuyfHzp9QObgX
+ YRQvPpajbO8elCmgvDozxmROd40dvo/VeQrpvH7A0ypmoC7roacYn9cSG3fEq1pyOTvDeDn
+ HmKPk5/l0cB4RZYXQY67tAzE5I9aTfZLOfd8sCUuTfMcYaCaI81ITIj2t7Mq1nfI4BCrFvu
+ J+H4g1aqSHx8EVaq7ZB2w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PRp9f2VvG4A=:E5/yilLsljnCBjIAFqKe1c
+ 8i0EoSfo2UxZ8VB8gkqZRn+H5AAHHqOcoVWwggqg4CNoTx8tJmCmUv5h0TY/nRAKh3Pmhhxmy
+ qv4etUY5EHl73YU3rzum+KukmuteeHLnarDAN/13m5bqaQ7NRJEn4WhS4BmzJumywGyccG2q0
+ I598KkBHUxOJvBD8JGCOUqFR7kGxG9suvsHNKdVf0oOUCqTPO8YlJANaUvy9yO8nkU3COkWRf
+ nQZS2m4su+TT3TGa/Yn1Q0sPTnEncmKtgx1KS3L99tiEGIu+HU7yAHfJBsiOUbbX88Hm9DzbR
+ wiQLceEbATA5Ehm0tNScTsKqw+1LuRayBTBsQlG9npKogN3XlFeupZbsGVPYUL5tUXV24Bh0f
+ ZXSYK7grJzh+DY4CUA0j8EUy79TDqspsnx95lVV1AJRMDEv1YMpTfGVFhNBrpAmtqjECW48sH
+ KbHFmNNSuWm1o7hvPibsszuJrXU3gHfiJI0GnAqoPsKVGZ5vTxLQ3/7lmPs5VkueERXBygnDh
+ S7J9BBOYHiGFoLOcgTLF/CjmlYGFDj0hsBRYjTTfcBvbiaMwr6Efa4MWuVaadkj49GnRByQw0
+ hWGcTYtz0eBJBB1vCYxDOxRLjZY4CdOx/V4ojh+cGxClI95tPiBIrLjhpSNA+pGdeC0ECjIyY
+ odY3ynqEDml82c3ERs0Fbpe1aRVPThbbyTbv4Ox/GKZc02Rtwpbqw7FOPErwnXcbhoCs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We get a warning from 'make headers_check' about a newly introduced
+usage of integer types in the scsi/scsi_bsg_ufs.h uapi header:
 
---J/zg8ciPNcraoWb6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+usr/include/scsi/scsi_bsg_ufs.h:18: found __[us]{8,16,32,64} type without #include <linux/types.h>
 
-On Tue, Aug 21, 2018 at 07:16:25PM +0200, Paul Cercueil wrote:
-> Depending on MACH_INGENIC prevent us from creating a generic kernel that
-> works on more than one MIPS board. Instead, we just depend on MIPS being
-> set.
->=20
-> On other architectures, this driver can still be built, thanks to
-> COMPILE_TEST. This is used by automated tools to find bugs, for
-> instance.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->=20
-> Notes:
->      v5: New patch
->    =20
->      v6: No change
->    =20
->      v7: No change
->=20
->  drivers/pwm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Aside from the missing linux/types.h inclusion, I also noticed that it
+uses the wrong types: 'u32' is not available at all in user space,
+and 'uint32_t' depends on the inclusion of a standard header that
+we should not include from kernel headers.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Change the all to __u32 and similar types here.
 
---J/zg8ciPNcraoWb6
-Content-Type: application/pgp-signature; name="signature.asc"
+I also note the usage of '__be32' and '__be16' that seems unfortunate
+for a user space API. I wonder if it would be better to define the
+interface in terms of a CPU-endian structure and convert it in kernel
+space.
 
------BEGIN PGP SIGNATURE-----
+Fixes: e77044c5a842 ("scsi: ufs-bsg: Add support for uic commands in ufs_bsg_request()")
+Fixes: df032bf27a41 ("scsi: ufs: Add a bsg endpoint that supports UPIUs")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/uapi/scsi/scsi_bsg_ufs.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAem4ACgkQ3SOs138+
-s6G1TRAAux8060Bb39lvD0m2DyAcY+wj728JjVVoR4ewIrMKra16L/zRXspBZiK5
-NE29yVOUrXx3h/C0/JD5zNTx7b6LajBoTYJ48FS2UVh3u04rky6MLHCyH97SnIA7
-WKt+PWrDi5pXZ5ooh6tNURClbe5iETYuVjjXudUFjVtNC0ptAEaY9PvX7HrlcB0R
-Eu1OUbp0k/RBhktlJJPkX/K/NqpBhncHo1GqHa2SRKf7+xkLia3V2SrszJC4q/g/
-EtLjaOrsOjHkcolpePxX9Gc1V52Jpy6yDuB/TSmsAAkZGLbUBDZWh5VH21XJlbBZ
-EDC28EJRnPDp3L6i9S2Kpy2anUNFblez+DAYY+takC3q/B+pKs/z4crRI9EwcVBA
-AQFDwWbovRGB0Ery54rZSUYIOBKclO1hlBbMYROpd7bsadsA/PE4VtjGjrlkSJhz
-GDF3anIdsvB5h23zZySwW3rOAKr8hGehlrWWu9tPCxacnKLZavMOHOThSDG2St9v
-60glgFNZCH86gcJ47HOgg3pr+xejpvwF9s85dN378nNIqxiMEPiF6rrvELG+YzFp
-Tv89gFw+06At4es9Gh+BlTqwYoiNGuIakwJHKoczVXCKxRThMiLkrjzhpomgh28y
-x9DLbMSigzYstEPL1Q/VlRZGEYWRRa/vCWqu9Y0RMSSxnmMSLkc=
-=ywfF
------END PGP SIGNATURE-----
+diff --git a/include/uapi/scsi/scsi_bsg_ufs.h b/include/uapi/scsi/scsi_bsg_ufs.h
+index 1b25930688bc..17c7abd0803a 100644
+--- a/include/uapi/scsi/scsi_bsg_ufs.h
++++ b/include/uapi/scsi/scsi_bsg_ufs.h
+@@ -8,6 +8,7 @@
+ #ifndef SCSI_BSG_UFS_H
+ #define SCSI_BSG_UFS_H
+ 
++#include <linux/types.h>
+ /*
+  * This file intended to be included by both kernel and user space
+  */
+@@ -15,7 +16,7 @@
+ #define UFS_CDB_SIZE	16
+ #define UPIU_TRANSACTION_UIC_CMD 0x1F
+ /* uic commands are 4DW long, per UFSHCI V2.1 paragraph 5.6.1 */
+-#define UIC_CMD_SIZE (sizeof(u32) * 4)
++#define UIC_CMD_SIZE (sizeof(__u32) * 4)
+ 
+ /**
+  * struct utp_upiu_header - UPIU header structure
+@@ -59,7 +60,7 @@ struct utp_upiu_query {
+  */
+ struct utp_upiu_cmd {
+ 	__be32 exp_data_transfer_len;
+-	u8 cdb[UFS_CDB_SIZE];
++	__u8 cdb[UFS_CDB_SIZE];
+ };
+ 
+ /**
+@@ -81,7 +82,7 @@ struct utp_upiu_req {
+ 
+ /* request (CDB) structure of the sg_io_v4 */
+ struct ufs_bsg_request {
+-	uint32_t msgcode;
++	__u32 msgcode;
+ 	struct utp_upiu_req upiu_req;
+ };
+ 
+@@ -95,10 +96,10 @@ struct ufs_bsg_reply {
+ 	 * msg and status fields. The per-msgcode reply structure
+ 	 * will contain valid data.
+ 	 */
+-	uint32_t result;
++	__u32 result;
+ 
+ 	/* If there was reply_payload, how much was received? */
+-	uint32_t reply_payload_rcv_len;
++	__u32 reply_payload_rcv_len;
+ 
+ 	struct utp_upiu_req upiu_rsp;
+ };
+-- 
+2.18.0
 
---J/zg8ciPNcraoWb6--
