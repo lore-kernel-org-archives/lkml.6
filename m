@@ -2,222 +2,86 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1A0C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06983C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078902147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:43:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2kQhr9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078902147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B1C462087F
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C462087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbeJMHRy (ORCPT
+        id S1726077AbeJMHbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 03:17:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbeJMHRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 03:17:54 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A559221470;
-        Fri, 12 Oct 2018 23:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539387787;
-        bh=cWvNVFtpqgxwHEOE+rzrb5rU6OU3+lS9DtFcSf9Qt5E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z2kQhr9uhhqkfAaR8RhgEVYZH/dF5I3K5gYP+QLq6hk0KwLM1dPpl92Glw8qaJCQj
-         z0ktnmF9HSSZWGrxFfQJa5dswSwmvE0TbOJJ6+nU+gqbwXhZVyEow5rkmO1PxDFV2d
-         hqMydNgdVALvFf1s3q5COfHnb4O4JKYPvv07J500=
-Date:   Fri, 12 Oct 2018 18:43:06 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc:     lukas@wunner.de, linux-scsi@vger.kernel.org,
-        linux-pci@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sathya Prakash <Sathya.Prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        linux-kernel@vger.kernel.org, benh@kernel.crashing.org,
-        ruscur@russell.cc, sbobroff@linux.ibm.com,
-        Oliver <oohall@gmail.com>
-Subject: Re: [PATCH v4 1/6] mpt3sas: Introduce
- mpt3sas_base_pci_device_is_available
-Message-ID: <20181012234306.GZ5906@bhelgaas-glaptop.roam.corp.google.com>
-References: <1537935759-14754-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1537935759-14754-2-git-send-email-suganath-prabu.subramani@broadcom.com>
- <20180926213241.GI28024@bhelgaas-glaptop.roam.corp.google.com>
- <20180927070327.wvl5glb4c7gtjoa3@wunner.de>
- <20180927184746.GM28024@bhelgaas-glaptop.roam.corp.google.com>
- <20180927190959.dio4qwti3i4accjm@wunner.de>
- <CA+RiK64EdoSngTzDMUP4xXNcZQa6KfyucsRw42+DUo3s+JPmVQ@mail.gmail.com>
- <20181001204051.GD142872@bhelgaas-glaptop.roam.corp.google.com>
- <20181002140443.GA120535@bhelgaas-glaptop.roam.corp.google.com>
- <CA+RiK65MkxcHapivDqcGC5pM=OL8MHN3nk58_kxmS-hsKCGWkA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+RiK65MkxcHapivDqcGC5pM=OL8MHN3nk58_kxmS-hsKCGWkA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 13 Oct 2018 03:31:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45630 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbeJMHbp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 03:31:45 -0400
+Received: from localhost.localdomain (c-24-4-154-175.hsd1.ca.comcast.net [24.4.154.175])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7127F7F;
+        Fri, 12 Oct 2018 23:56:56 +0000 (UTC)
+Date:   Fri, 12 Oct 2018 16:56:55 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Clark Williams <williams@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm/kasan: make quarantine_lock a raw_spinlock_t
+Message-Id: <20181012165655.f067886428a394dc7fbae7af@linux-foundation.org>
+In-Reply-To: <20181010214945.5owshc3mlrh74z4b@linutronix.de>
+References: <20180918152931.17322-1-williams@redhat.com>
+        <20181005163018.icbknlzymwjhdehi@linutronix.de>
+        <20181005163320.zkacovxvlih6blpp@linutronix.de>
+        <CACT4Y+YoNCm=0C6PZtQR1V1j4QeQ0cFcJzpJF1hn34Oaht=jwg@mail.gmail.com>
+        <20181009142742.ikh7xv2dn5skjjbe@linutronix.de>
+        <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
+        <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
+        <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
+        <20181010095343.6qxved3owi6yokoa@linutronix.de>
+        <CACT4Y+ZpMjYBPS0GHP0AsEJZZmDjwV9DJBiVUzYKBnD+r9W4+A@mail.gmail.com>
+        <20181010214945.5owshc3mlrh74z4b@linutronix.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 12:14:40PM +0530, Suganath Prabu Subramani wrote:
-> On Tue, Oct 2, 2018 at 7:34 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Mon, Oct 01, 2018 at 03:40:51PM -0500, Bjorn Helgaas wrote:
-> > > I think the names "pci_device_is_present()" and
-> > > "mpt3sas_base_pci_device_is_available()" contribute to the
-> > > problem because they make promises that can't be kept -- all we
-> > > can say is that the device *was* present, but we don't know
-> > > whether it is *still* present.
+On Wed, 10 Oct 2018 23:49:45 +0200 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+
+> On 2018-10-10 11:57:41 [+0200], Dmitry Vyukov wrote:
+> > Yes. Clark's patch looks good to me. Probably would be useful to add a
+> > comment as to why raw spinlock is used (otherwise somebody may
+> > refactor it back later).
 > 
-> In the patch we are using '!' (i.e. not operation) of
-> pci_device_is_present(), which is logically same as pci_device_is
-> absent, and it is same for mpt3sas_base_pci_device_is_available().
->
-> My understanding is that, you want us to rename these functions for
-> better readability.  Is that correct ?
+> If you really insist, I could add something but this didn't happen so
+> far. git's changelog should provide enough information why to why it was
+> changed.
 
-I think "pci_device_is_present()" is a poor name, but I'm not
-suggesting you fix it in this patch.  Changing that would be a PCI
-core change that would also touch the tg3, igb, nvme, and now mpt3sas
-drivers that use it.
+Requiring code readers to look up changelogs in git is rather user-hostile.
+There are several reasons for using raw_*, so an explanatory comment at
+each site is called for.
 
-My personal opinion is that you should do something like the patch
-below.  The main point is that you should for the device being
-unreachable *at the places where you might learn that*.
+However it would be smarter to stop "using raw_* for several reasons". 
+Instead, create a differently named variant for each such reason.  ie, do
 
-If you WRITE to a device that has been removed, the write will mostly
-likely get dropped and you won't learn anything.  But when you READ
-from a device that has been removed, you'll most likely get ~0 data
-back, and you can check for that.
+/*
+ * Nice comment goes here.  It explains all the possible reasons why -rt
+ * might use a raw_spin_lock when a spin_lock could otherwise be used.
+ */
+#define raw_spin_lock_for_rt	raw_spinlock
 
-Of course, it's also possible that pci_device_is_present() can tell
-you something.  So you *could* sprinkle those all over, as in your
-patch.  But you end up with code like this:
-
-  if (!pci_device_is_present())
-    return;
-
-  writel();
-  readl();
-
-Here, the device might be removed right after pci_device_is_present()
-returns true.  You do the writel() and the readl() anyway, so you
-really haven't gained anything.  And if the readl() returned ~0, you
-assume it's valid data when it's not.
-
-It's better to do this:
-
-  writel();
-  val = readl();
-  if (val == ~0) {
-    /* device is unreachable, clean things up */
-    ...
-  }
-
-(Obviously it's possible that ~0 is a valid value for whatever you
-read from the device.  That depends on the device and you have to use
-your knowledge of the hardware.  If you read ~0 from a register where
-that might be a valid value, you can read from a different register
-for with ~0 is *not* a valid value.)
-
-I don't claim the patch below is complete because I don't know
-anything about your hardware and what sort of registers or ring
-buffers it uses.  You still have to arrange to flush or complete
-whatever is outstanding when you learn the device is gone.
-
-Bjorn
-
-
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 59d7844ee022..37b09362b31a 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -6145,6 +6145,11 @@ _base_diag_reset(struct MPT3SAS_ADAPTER *ioc)
- 		drsprintk(ioc, pr_info(MPT3SAS_FMT
- 			"wrote magic sequence: count(%d), host_diagnostic(0x%08x)\n",
- 		    ioc->name, count, host_diagnostic));
-+		if (host_diagnostic == ~0) {
-+			ioc->remove_host = 1;
-+			pr_err(MPT3SAS_FMT "HBA unreachable\n", ioc->name);
-+			goto out;
-+		}
- 
- 	} while ((host_diagnostic & MPI2_DIAG_DIAG_WRITE_ENABLE) == 0);
- 
-@@ -6237,6 +6242,11 @@ _base_make_ioc_ready(struct MPT3SAS_ADAPTER *ioc, enum reset_type type)
- 	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
- 	dhsprintk(ioc, pr_info(MPT3SAS_FMT "%s: ioc_state(0x%08x)\n",
- 	    ioc->name, __func__, ioc_state));
-+	if (ioc_state == ~0) {
-+		pr_err(MPT3SAS_FMT "%s: HBA unreachable (ioc_state=0x%x)\n",
-+			ioc->name, __func__, ioc_state);
-+		return -EFAULT;
-+	}
- 
- 	/* if in RESET state, it should move to READY state shortly */
- 	count = 0;
-@@ -6251,6 +6261,11 @@ _base_make_ioc_ready(struct MPT3SAS_ADAPTER *ioc, enum reset_type type)
- 			}
- 			ssleep(1);
- 			ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-+			if (ioc_state == ~0) {
-+				pr_err(MPT3SAS_FMT "%s: HBA unreachable (ioc_state=0x%x)\n",
-+					ioc->name, __func__, ioc_state);
-+				return -EFAULT;
-+			}
- 		}
- 	}
- 
-@@ -6854,6 +6869,11 @@ mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
- 	ioc->pending_io_count = 0;
- 
- 	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-+	if (ioc_state == ~0) {
-+		pr_err(MPT3SAS_FMT "%s: HBA unreachable\n",
-+		       ioc->name, __func__);
-+		return;
-+	}
- 	if ((ioc_state & MPI2_IOC_STATE_MASK) != MPI2_IOC_STATE_OPERATIONAL)
- 		return;
- 
-@@ -6909,6 +6929,14 @@ mpt3sas_base_hard_reset_handler(struct MPT3SAS_ADAPTER *ioc,
- 	    MPT3_DIAG_BUFFER_IS_RELEASED))) {
- 		is_trigger = 1;
- 		ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-+		if (ioc_state == ~0) {
-+			pr_err(MPT3SAS_FMT "%s: HBA unreachable\n",
-+			       ioc->name, __func__);
-+			ioc->schedule_dead_ioc_flush_running_cmds(ioc);
-+			r = 0;
-+			mutex_unlock(&ioc->reset_in_progress_mutex);
-+			goto out_unlocked;
-+		}
- 		if ((ioc_state & MPI2_IOC_STATE_MASK) == MPI2_IOC_STATE_FAULT)
- 			is_fault = 1;
- 	}
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 53133cfd420f..d0d4c8d94a10 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -2653,6 +2653,11 @@ mpt3sas_scsih_issue_tm(struct MPT3SAS_ADAPTER *ioc, u16 handle, u64 lun,
- 	}
- 
- 	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-+	if (ioc_state == ~0) {
-+		pr_info(MPT3SAS_FMT "%s: HBA unreachable\n",
-+                    __func__, ioc->name);
-+		return FAILED;
-+	}
- 	if (ioc_state & MPI2_DOORBELL_USED) {
- 		dhsprintk(ioc, pr_info(MPT3SAS_FMT
- 			"unexpected doorbell active!\n", ioc->name));
+Then use raw_spin_lock_for_rt() at all such sites.
