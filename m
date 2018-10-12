@@ -2,252 +2,103 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D434C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01D2C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C315220865
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DL0nJxvG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C315220865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 93E9220865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:40:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E9220865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJMDON (ORCPT
+        id S1726794AbeJMDOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:14:13 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:56552 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeJMDON (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:14:13 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4667024E229E;
-        Fri, 12 Oct 2018 12:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1539373210; bh=DPPZ4GtNeL6vLcEFBprmQ5emeFctajh0Yeh6E1bQ/4s=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=DL0nJxvGX3zmxVmGut2dZDFjK3KiXtOUYcRvURT45NI3gsh4osMpdrSGYhJD0LSvW
-         oo9TyGrxz4OtVyB4y0QU2m3joavbkW/RgwEdJTaskT2zQcBcK1RNmrppguRhcaYPez
-         EeHWl04v0SBuONOn3hZQJappdh6r0e8WmhC8eqvlsaJlASoX0fa2MpSePQmSUNmTPw
-         esmXrg03zIa+Tzj7IdqHcKbGe5Mw0zwO4u+aJ/4V5Vi43LLSLP6jGiz60Q7f8EbE6g
-         D3wL67h6uQ9LWPXaegPMBfKOjPLx2JUgAtUTqGgzY+JVnc+ejF/BoNUigfAJbRxg28
-         /V4xeVg5DkWiQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 85F6434A6;
-        Fri, 12 Oct 2018 12:40:05 -0700 (PDT)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0415.000; Fri, 12 Oct 2018 12:40:05 -0700
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "will.deacon@arm.com" <will.deacon@arm.com>,
-        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "npiggin@gmail.com" <npiggin@gmail.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
-        "riel@surriel.com" <riel@surriel.com>,
-        "Richard Henderson" <rth@twiddle.net>,
-        Mark Salter <msalter@redhat.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Ley Foon Tan <lftan@altera.com>,
-        Jonas Bonn <jonas@southpole.se>, Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH 12/18] arch/tlb: Clean up simple architectures
-Thread-Topic: [PATCH 12/18] arch/tlb: Clean up simple architectures
-Thread-Index: AQHUVY/nhmqBcI9pS02soNYbpANFuA==
-Date:   Fri, 12 Oct 2018 19:40:04 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0ADA16@US01WEMBX2.internal.synopsys.com>
-References: <20180926113623.863696043@infradead.org>
- <20180926114801.146189550@infradead.org>
- <C2D7FE5348E1B147BCA15975FBA23075012B09A59E@us01wembx1.internal.synopsys.com>
- <20181011150406.GL9848@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 12 Oct 2018 23:14:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:25967 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbeJMDOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:14:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 12:40:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
+   d="scan'208";a="240893045"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.63]) ([10.24.14.63])
+  by orsmga004.jf.intel.com with ESMTP; 12 Oct 2018 12:40:16 -0700
+Subject: Re: [PATCH v3 02/11] arch/x86: Rename the RDT functions and
+ definitions
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181011203223.18157-1-babu.moger@amd.com>
+ <20181011203223.18157-3-babu.moger@amd.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <80310bdc-9b46-78a5-1920-4d7411348725@intel.com>
+Date:   Fri, 12 Oct 2018 12:40:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181011203223.18157-3-babu.moger@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 08:06 AM, Peter Zijlstra wrote:=0A=
-> On Wed, Oct 03, 2018 at 05:03:50PM +0000, Vineet Gupta wrote:=0A=
->> On 09/26/2018 04:56 AM, Peter Zijlstra wrote:=0A=
->>> There are generally two cases:=0A=
->>>=0A=
->>>  1) either the platform has an efficient flush_tlb_range() and=0A=
->>>     asm-generic/tlb.h doesn't need any overrides at all.=0A=
->>>=0A=
->>>  2) or an architecture lacks an efficient flush_tlb_range() and=0A=
->>>     we override tlb_end_vma() and tlb_flush().=0A=
->>>=0A=
->>> Convert all 'simple' architectures to one of these two forms.=0A=
->>>=0A=
->>> --- a/arch/arc/include/asm/tlb.h=0A=
->>> +++ b/arch/arc/include/asm/tlb.h=0A=
->>> @@ -9,29 +9,6 @@=0A=
->>>  #ifndef _ASM_ARC_TLB_H=0A=
->>>  #define _ASM_ARC_TLB_H=0A=
->>>  =0A=
->>> -#define tlb_flush(tlb)				\=0A=
->>> -do {						\=0A=
->>> -	if (tlb->fullmm)			\=0A=
->>> -		flush_tlb_mm((tlb)->mm);	\=0A=
->>> -} while (0)=0A=
->>> -=0A=
->>> -/*=0A=
->>> - * This pair is called at time of munmap/exit to flush cache and TLB e=
-ntries=0A=
->>> - * for mappings being torn down.=0A=
->>> - * 1) cache-flush part -implemented via tlb_start_vma( ) for VIPT alia=
-sing D$=0A=
->>> - * 2) tlb-flush part - implemted via tlb_end_vma( ) flushes the TLB ra=
-nge=0A=
->>> - *=0A=
->>> - * Note, read https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lk=
-ml.org_lkml_2004_1_15_6&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3Dc14YS-cH-=
-kdhTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=3D5jiyvgRek4SKK5DUWDBGufVcuLez5G-jJCh3=
-K-ndHsg&s=3D7uAzzw_jdAXMfb07B-vGPh3V1vggbTAsB7xL6Kie47A&e=3D=0A=
->>> - */=0A=
->>> -=0A=
->>> -#define tlb_end_vma(tlb, vma)						\=0A=
->>> -do {									\=0A=
->>> -	if (!tlb->fullmm)						\=0A=
->>> -		flush_tlb_range(vma, vma->vm_start, vma->vm_end);	\=0A=
->>> -} while (0)=0A=
->>> -=0A=
->>> -#define __tlb_remove_tlb_entry(tlb, ptep, address)=0A=
->>> -=0A=
->>>  #include <linux/pagemap.h>=0A=
->>>  #include <asm-generic/tlb.h>=0A=
->> LGTM per discussion in an earlier thread. However given that for "simple=
-r" arches=0A=
->> the whole series doesn't apply can you please beef up the changelog so I=
- don't go=0A=
->> scratching my head 2 years down the line. It currently describes the how=
-s of=0A=
->> things but not exactly whys: shift_arg_pages missing tlb_start_vma,=0A=
->> move_page_tables look dodgy, yady yadda ?=0A=
-> Right you are. Thanks for pointing out the somewhat sparse Changelog;=0A=
-> typically I end up kicking myself a few years down the line.=0A=
->=0A=
-> I think I will in fact change the implementation a little and provide a=
-=0A=
-> symbol/Kconfig to switch the default implementation between=0A=
-> flush_tlb_vma() and flush_tlb_mm().=0A=
->=0A=
-> That avoids some of the repetition. But see here a preview of the new=0A=
-> Changelog, does that clarify things enough?=0A=
->=0A=
-> ---=0A=
-> Subject: arch/tlb: Clean up simple architectures=0A=
-> From: Peter Zijlstra <peterz@infradead.org>=0A=
-> Date: Tue Sep 4 17:04:07 CEST 2018=0A=
->=0A=
-> The generic mmu_gather implementation is geared towards range tracking=0A=
-> and provided the architecture provides a fairly efficient=0A=
-> flush_tlb_range() implementation (or provides a custom tlb_flush()=0A=
-> implementation) things will work well.=0A=
->=0A=
-> The one case this doesn't cover well is where there is no (efficient)=0A=
-> range invalidate at all. In this case we can select=0A=
-> MMU_GATHER_NO_RANGE.=0A=
->=0A=
-> So this reduces to two cases:=0A=
->=0A=
->  1) either the platform has an efficient flush_tlb_range() and=0A=
->     asm-generic/tlb.h doesn't need any overrides at all.=0A=
->=0A=
->  2) or an architecture lacks an efficient flush_tlb_range() and=0A=
->     we need to select MMU_GATHER_NO_RANGE.=0A=
->=0A=
-> Convert all 'simple' architectures to one of these two forms.=0A=
->=0A=
-> alpha:	    has no range invalidate -> 2=0A=
-> arc:	    already used flush_tlb_range() -> 1=0A=
-> c6x:	    has no range invalidate -> 2=0A=
-> hexagon:    has an efficient flush_tlb_range() -> 1=0A=
->             (flush_tlb_mm() is in fact a full range invalidate,=0A=
-> 	     so no need to shoot down everything)=0A=
-> m68k:	    has inefficient flush_tlb_range() -> 2=0A=
-> microblaze: has no flush_tlb_range() -> 2=0A=
-> mips:	    has efficient flush_tlb_range() -> 1=0A=
-> 	    (even though it currently seems to use flush_tlb_mm())=0A=
-> nds32:	    already uses flush_tlb_range() -> 1=0A=
-> nios2:	    has inefficient flush_tlb_range() -> 2=0A=
-> 	    (no limit on range iteration)=0A=
-> openrisc:   has inefficient flush_tlb_range() -> 2=0A=
-> 	    (no limit on range iteration)=0A=
-> parisc:	    already uses flush_tlb_range() -> 1=0A=
-> sparc32:    already uses flush_tlb_range() -> 1=0A=
-> unicore32:  has inefficient flush_tlb_range() -> 2=0A=
-> 	    (no limit on range iteration)=0A=
-> xtensa:	    has efficient flush_tlb_range() -> 1=0A=
->=0A=
-> Note this also fixes a bug in the existing code for a number=0A=
-> platforms. Those platforms that did:=0A=
->=0A=
->   tlb_end_vma() -> if (!fullmm) flush_tlb_*()=0A=
->   tlb_flush -> if (full_mm) flush_tlb_mm()=0A=
->=0A=
-> missed the case of shift_arg_pages(), which doesn't have @fullmm set,=0A=
-> nor calls into tlb_*vma(), but still frees page-tables and thus needs=0A=
-> an invalidate. The new code handles this by detecting a non-empty=0A=
-> range, and either issuing the matching range invalidate or a full=0A=
-> invalidate, depending on the capabilities.=0A=
->=0A=
-> Cc: Nick Piggin <npiggin@gmail.com>=0A=
-> Cc: "David S. Miller" <davem@davemloft.net>=0A=
-> Cc: Michal Simek <monstr@monstr.eu>=0A=
-> Cc: Helge Deller <deller@gmx.de>=0A=
-> Cc: Greentime Hu <green.hu@gmail.com>=0A=
-> Cc: Richard Henderson <rth@twiddle.net>=0A=
-> Cc: Andrew Morton <akpm@linux-foundation.org>=0A=
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>=0A=
-> Cc: Will Deacon <will.deacon@arm.com>=0A=
-> Cc: Ley Foon Tan <lftan@altera.com>=0A=
-> Cc: Jonas Bonn <jonas@southpole.se>=0A=
-> Cc: Mark Salter <msalter@redhat.com>=0A=
-> Cc: Richard Kuo <rkuo@codeaurora.org=0A=
-> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
-> Cc: Paul Burton <paul.burton@mips.com>=0A=
-> Cc: Max Filippov <jcmvbkbc@gmail.com>=0A=
-> Cc: Guan Xuetao <gxt@pku.edu.cn>=0A=
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>=0A=
-=0A=
-Very nice. Thx for doing this.=0A=
-=0A=
-Once you have redone this, please point me to a branch so I can give this a=
- spin.=0A=
-I've always been interested in tracking down / optimizing the full TLB flus=
-hes -=0A=
-which ARC implements by simply moving the MMU/process to a new ASID (TLB en=
-tries=0A=
-tagged with an 8 bit value - unique per process). When I started looking in=
-to this=0A=
-, a simple ls (fork+execve) would increment the ASID by 13 which I'd optimi=
-zed to=0A=
-a reasonable 4. Haven't checked that in recent times though so would be fun=
- to=0A=
-revive that measurement.=0A=
-=0A=
--Vineet=0A=
+Hi Babu,
+
+On 10/11/2018 1:33 PM, Moger, Babu wrote:
+> @@ -883,20 +883,20 @@ static int __init intel_rdt_late_init(void)
+>  	rdt_online = state;
+>  
+>  	for_each_alloc_capable_rdt_resource(r)
+> -		pr_info("Intel RDT %s allocation detected\n", r->name);
+> +		pr_info("RESCTRL %s allocation detected\n", r->name);
+>  
+>  	for_each_mon_capable_rdt_resource(r)
+> -		pr_info("Intel RDT %s monitoring detected\n", r->name);
+> +		pr_info("RESCTRL %s monitoring detected\n", r->name);
+>  
+
+I'm sorry - I know it was me who suggested the change to RESCTRL but I
+clearly did not consider the final result which is (for example):
+
+resctrl: RESCTRL %s allocation detected
+
+Perhaps we could just drop that RESCTRL text?
+
+Reinette
