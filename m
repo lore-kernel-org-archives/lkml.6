@@ -2,124 +2,102 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECACFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC018C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB7E2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB7E2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id B71FB2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:35:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nndl/WVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71FB2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeJLQGY (ORCPT
+        id S1728200AbeJLQG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 12:06:24 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:48204 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeJLQFd (ORCPT
+        Fri, 12 Oct 2018 12:06:28 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51076 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728177AbeJLQG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 12:05:33 -0400
-Received: from [148.252.241.226] (helo=rainbowdash)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1gAstc-0005TZ-Lz; Fri, 12 Oct 2018 09:34:08 +0100
-Received: from ben by rainbowdash with local (Exim 4.91)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1gAstc-00052b-5Z; Fri, 12 Oct 2018 09:34:08 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     netdev@vger.kernel.org
-Cc:     oneukum@suse.com, davem@davemloft.net, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 3/8] usbnet: smsc95xx: simplify tx_fixup code
-Date:   Fri, 12 Oct 2018 09:34:00 +0100
-Message-Id: <20181012083405.19246-4-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181012083405.19246-1-ben.dooks@codethink.co.uk>
-References: <20181012083405.19246-1-ben.dooks@codethink.co.uk>
+        Fri, 12 Oct 2018 12:06:27 -0400
+Received: by mail-it1-f195.google.com with SMTP id k206-v6so11505984ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=JTMJ0vEG5WDoVKecOSaNNeBKlZdU16j5j6PCb/UEo+c=;
+        b=Nndl/WVhUZ7JDEwYazRx73OBfJV9ubzpl+8wRYnt4ed6WW8T4PSnDGAKgdn3CLtHkh
+         9uZCsr66VNr1CzZr7n8zBaUtoChvaq6jp6iUOXzeMrN5aoi6Ie3jEa39gXZHnv8xwChi
+         ycvX/IAHbuKdhyNvC6FXwU+MMyw9C6rStSTRE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=JTMJ0vEG5WDoVKecOSaNNeBKlZdU16j5j6PCb/UEo+c=;
+        b=W9y3Mv4wG62D1/x0kyWU/oVH/iP/zOR4yjUadkBX55rC028dLM2Hgulw7HEmAn6pzw
+         q2GXswvjkj20mOmvm6LdW1CQVN9SYm30v6walEijI5xnEyUckUT+YO2nV+35fXb1IQ5W
+         lm+6QrYDKqhTW+v8AV1q3pQhRrDP8JDtDIw5muS7ago7hxGbehC6CtaRcUmYNe/zbDlO
+         1d/5TazUfrw8Ad+n4nBXTclTF5VYCEDhmsH642k9tcvSx9sFTGx9qVAmsbjFfSghp+zf
+         nst95GO1K7MpfvQ2IUevJeVE7xcik0fh0qdFpFdi8VWqAn+tAhBnU4x0dmjtzKOR5gGu
+         cj3Q==
+X-Gm-Message-State: ABuFfoj6EEuy6YORgHQA21TugPBxORd49gfHKFY3sNnNYzeBRPsOnv6J
+        ymbKR+MwcExERy8H6yjHfROivSTrBU77U+bltDeWMg==
+X-Google-Smtp-Source: ACcGV61EqGYkBWaDW5CKD0O2bXTONMiGqfivQJsUeLSaxw/pzBqUa9pCflADK35gcHVB2JRc6HTj7vPxWD3bBAvDm8Q=
+X-Received: by 2002:a02:7789:: with SMTP id g131-v6mr4032545jac.66.1539333307241;
+ Fri, 12 Oct 2018 01:35:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 12 Oct 2018 10:34:55 +0200
+Message-ID: <CACRpkdb-KP_m6+2oB9r-WbR9K3juC+EMjgktv7v-PS_OACie=w@mail.gmail.com>
+Subject: [GIT PULL] GPIO fix for v4.19
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The smsc95xx_tx_fixup is doing multiple calls to skb_push() to
-put an 8-byte command header onto the packet. It would be easier
-to do one skb_push() and then copy the data in once the push is
-done.
+Hi Greg,
 
-We also make the code smaller by using proper unaligned puts for
-the header. This merges in the CPU to LE32 conversion as well and
-makes the whole sequence easier to understand hopefully.
+here is a last minute GPIO fix for the v4.19 series.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Since v1:
-- Add alignment changes using put_unaligned_le32()
----
- drivers/net/usb/smsc95xx.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+This fixes GPIO IRQchip parent assignment on a lot
+of GPIO drivers.
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index cb19aea139d3..0c083d1b7f34 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -2006,6 +2006,7 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 	bool csum = skb->ip_summed == CHECKSUM_PARTIAL;
- 	int overhead = csum ? SMSC95XX_TX_OVERHEAD_CSUM : SMSC95XX_TX_OVERHEAD;
- 	u32 tx_cmd_a, tx_cmd_b;
-+	void *ptr;
- 
- 	/* We do not advertise SG, so skbs should be already linearized */
- 	BUG_ON(skb_shinfo(skb)->nr_frags);
-@@ -2019,6 +2020,9 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 		return NULL;
- 	}
- 
-+	tx_cmd_b = (u32)skb->len;
-+	tx_cmd_a = tx_cmd_b | TX_CMD_A_FIRST_SEG_ | TX_CMD_A_LAST_SEG_;
-+
- 	if (csum) {
- 		if (skb->len <= 45) {
- 			/* workaround - hardware tx checksum does not work
-@@ -2032,24 +2036,18 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 			csum = false;
- 		} else {
- 			u32 csum_preamble = smsc95xx_calc_csum_preamble(skb);
--			skb_push(skb, 4);
--			cpu_to_le32s(&csum_preamble);
--			memcpy(skb->data, &csum_preamble, 4);
-+			ptr = skb_push(skb, 4);
-+			put_unaligned_le32(csum_preamble, ptr);
-+
-+			tx_cmd_a += 4;
-+			tx_cmd_b += 4;
-+			tx_cmd_b |= TX_CMD_B_CSUM_ENABLE;
- 		}
- 	}
- 
--	skb_push(skb, 4);
--	tx_cmd_b = (u32)(skb->len - 4);
--	if (csum)
--		tx_cmd_b |= TX_CMD_B_CSUM_ENABLE;
--	cpu_to_le32s(&tx_cmd_b);
--	memcpy(skb->data, &tx_cmd_b, 4);
--
--	skb_push(skb, 4);
--	tx_cmd_a = (u32)(skb->len - 8) | TX_CMD_A_FIRST_SEG_ |
--		TX_CMD_A_LAST_SEG_;
--	cpu_to_le32s(&tx_cmd_a);
--	memcpy(skb->data, &tx_cmd_a, 4);
-+	ptr = skb_push(skb, 8);
-+	put_unaligned_le32(tx_cmd_a, ptr);
-+	put_unaligned_le32(tx_cmd_b, ptr+4);
- 
- 	return skb;
- }
--- 
-2.19.1
+Please pull it in!
 
+Yours,
+Linus Walleij
+
+The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
+
+  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.19-4
+
+for you to fetch changes up to 3e779a2e7f909015f21428b66834127496110b6d:
+
+  gpio: Assign gpio_irq_chip::parents to non-stack pointer (2018-10-10
+14:03:27 +0200)
+
+----------------------------------------------------------------
+GPIO fix for the v4.19 series:
+- Fix up the interrupt parent for the irqdomains.
+
+----------------------------------------------------------------
+Stephen Boyd (1):
+      gpio: Assign gpio_irq_chip::parents to non-stack pointer
+
+ drivers/gpio/gpiolib.c      | 3 ++-
+ include/linux/gpio/driver.h | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
