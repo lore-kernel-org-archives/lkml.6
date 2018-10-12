@@ -2,149 +2,115 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330E7C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531AFC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D920620835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:52:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D920620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 16EE920835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:53:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQufs+6W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EE920835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbeJLXZK (ORCPT
+        id S1729180AbeJLX0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:25:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11800 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728857AbeJLXZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:25:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 08:52:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="98869420"
-Received: from unknown (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 12 Oct 2018 08:52:03 -0700
-Subject: Re: [PATCH 03/11] x86/fpu: make __raw_xsave_addr() use feature number
- instead of mask
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-4-bigeasy@linutronix.de>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <225ca4ed-a0c8-9566-4a40-00d7876b623b@linux.intel.com>
-Date:   Fri, 12 Oct 2018 08:52:03 -0700
+        Fri, 12 Oct 2018 19:26:54 -0400
+Received: from mail-it1-f177.google.com ([209.85.166.177]:51493 "EHLO
+        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729071AbeJLX0y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 19:26:54 -0400
+Received: by mail-it1-f177.google.com with SMTP id 74-v6so19448347itw.1;
+        Fri, 12 Oct 2018 08:53:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wNLSJKUU5zXLjOjVF17hVK61QMMaYTLJ9qx/1sQMUfU=;
+        b=TQufs+6W7sg/L4cpQUEp4ordO5yIZRic7jRt3QCBy1NKlkAhGkc355bqj+GpMqOYQ7
+         a3yqgvZynXu3PB2YzfIE+DVVxbHKgImS9H4N4D+f/4iA98Mi8VhulSEoGYJDl2Rima4l
+         DphTS6FhUfybstj6+ltbxDbR7wjrvoKSzzLs5BOLaEXJWc8uzXTkXtn6KjLmVav6B9EO
+         LoY2xwIa+rpQnvSd8P2PubQBKKl7YifP0R17oZGry/e3XC/WUZmD0CeGKc7QM+RdXCRc
+         dhLsml/aIrlPvzMB+ynfmQYg3jNODM0CddKZWzk4Em9gXEQwbmnkYSrcRPwbkYoRzA4F
+         mWqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wNLSJKUU5zXLjOjVF17hVK61QMMaYTLJ9qx/1sQMUfU=;
+        b=PRU2nm45G6qIcH5EAZfCDCrEJMfabVxZGhKDmytihXxqUcD4iMRmvVApSahPZRsnTW
+         oTgS5y48SLl6v1ijBZj+uNe/gJaG/R2YCFbr5uBVx1uYgVfbUXmQvufNjCA+misRrhBw
+         RjyPyvBCbdGH9ZUii42I79wpXh384cio/2PC1xj+lTgoehN6+8ExKW8ZD8kHH9bTLFAN
+         tRJljZ1jjn6zLbphJ8HJmVMLYbvF0wXp8yEEqgVEun0brdXt/k6BY40LrcaG3q9k8heQ
+         4pWsli+JREqfVsJDtMjOML8DYVQiS5NOH7B7cut9jdE6+ujc7UAeFfV5/eQZ18SZis6V
+         vn8g==
+X-Gm-Message-State: ABuFfohZ7r7tw2StthkdUtJd9QyWFO2IvXtk+ry0tVxsh8NW8BttrZoZ
+        sLnxVm3YWG4IqdWctXH7ac1ymcfc
+X-Google-Smtp-Source: ACcGV62TQXlIH30dOgYAdODYOEYISwwVQdukRloAR4LmkWH851BJcXkgHH3naOVQvYbnpsUXRVa+rA==
+X-Received: by 2002:a05:660c:fd2:: with SMTP id m18mr1543644itn.92.1539359626595;
+        Fri, 12 Oct 2018 08:53:46 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id y4-v6sm414057iom.73.2018.10.12.08.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 08:53:45 -0700 (PDT)
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     James Bottomley <jejb@linux.ibm.com>, ndesaulniers@google.com,
+        dhowells@redhat.com
+Cc:     natechancellor@gmail.com, ebiggers@google.com,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <1539357759.2656.7.camel@linux.ibm.com>
+ <16de2bb3-815a-f534-4618-af854c906017@gmail.com>
+ <1539359181.2656.13.camel@linux.ibm.com>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com>
+Date:   Fri, 12 Oct 2018 10:53:43 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181004140547.13014-4-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1539359181.2656.13.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 07:05 AM, Sebastian Andrzej Siewior wrote:
-> Most users of __raw_xsave_addr() use a feature number, shift it to a
-> mask and then __raw_xsave_addr() shifts it back to the feature number.
+Hi James,
+
+>>   From the links provided in the patch it seems that one cannot pass
+>> char/float/short to va_start().  Fair enough.  So if we make h3 an
+>> unsigned int, the issue goes away, no?
 > 
-> Make __raw_xsave_addr() use the feature number as argument.
+> For the current version of clang, yes.  However, if we're fixing this
+> for good a char * pointer is the only guaranteed thing because it
+> mirrors current use in printf.
+> 
 
-This generally looks like a nice cleanup.  Thanks for taking a look at it!
+All right.  I guess I wasn't aware that non-printf like variadic 
+functions are now considered harmful or of the impending crusade against 
+them :)
 
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 87a57b7642d36..38d0b5ea40425 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -811,10 +811,8 @@ void fpu__resume_cpu(void)
->   *
->   * Note: does not work for compacted buffers.
->   */
-> -void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-> +void *__raw_xsave_addr(struct xregs_state *xsave, int feature_nr)
->  {
+But in the context of this patch, can we please use something less 
+invasive than changing all the arguments around?  Promoting h3 to a bool 
+(if possible) or int/unsigned int would get my vote.
 
-Could we call this 'xfeature_nr' consistently?
+Regards,
+-Denis
 
-> -	int feature_nr = fls64(xstate_feature_mask) - 1;
-> -
->  	if (!xfeature_enabled(feature_nr)) {
->  		WARN_ON_FPU(1);
->  		return NULL;
-> @@ -842,6 +840,7 @@ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
->   */
->  void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
->  {
-> +	int feature_nr;
->  	/*
->  	 * Do we even *have* xsave state?
->  	 */
-> @@ -869,7 +868,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
->  	if (!(xsave->header.xfeatures & xstate_feature))
->  		return NULL;
->  
-> -	return __raw_xsave_addr(xsave, xstate_feature);
-> +	feature_nr = fls64(xstate_feature) - 1;
-> +	return __raw_xsave_addr(xsave, feature_nr);
->  }
-
-Should we also be using a feature number for get_xsave_addr()?  In other
-words, could you take a look and see how widely we should be doing this
-kind of conversion and not just limit it to __raw_xsave_addr()?
