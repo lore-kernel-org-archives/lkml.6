@@ -2,69 +2,80 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A32AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAC4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2099E213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB0322075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X0VMkdwn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DSYHCvvO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2099E213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KEZlIIkV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0322075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeJLN2U (ORCPT
+        id S1727627AbeJLNaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 09:28:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33016 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbeJLN2U (ORCPT
+        Fri, 12 Oct 2018 09:30:11 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:56026 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbeJLNaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 09:28:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5803160C60; Fri, 12 Oct 2018 05:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539323851;
-        bh=IDdUDH5mhO07VUL6h/96nk7cgEfI4vl01Y6eKFX/ZiU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X0VMkdwnnE5dmTAeuAOgpwY7Hqe4Yjz0zmsFkuJyfEuoshGrZUVw6G9ZeAhLLgtrt
-         XJv5mYPFGpyNwJcp+gKeyyjfumfyUkjtDfq/gwcid8iJ/PaDv5VjwP+LqfcTWtTnms
-         EeMEK/CYYXu7G2PgxgB+xtqPq/7AJOshbJQ0mXII=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 781D36072E;
-        Fri, 12 Oct 2018 05:57:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539323850;
-        bh=IDdUDH5mhO07VUL6h/96nk7cgEfI4vl01Y6eKFX/ZiU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DSYHCvvOhr4LYb2Kr2c2Ms/E5O/oSI0OypfD6NNQELvQWHOFZ3hgpaRKX0FsPbE0/
-         0RwEuhELgM3WBOZ9w4MzZ3lD37amGmI4NlIZwKjj2fZGxk8g0RXi+pTd/W+N+OqoSs
-         NN4WWjDFpoEsnxB/ZLB8ckcVCoNowK/4wd9Cz3Lw=
+        Fri, 12 Oct 2018 09:30:10 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9C5x9rn105127;
+        Fri, 12 Oct 2018 00:59:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539323949;
+        bh=jKvrAYUNsto3rl9PON9aj7xozO7/L+LvjYqF9NG009E=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KEZlIIkVpI6w1syahxYuUOD23xAJJEy41SlyFJopZLToFfbYhjQ0OH85Oy2ihtKOd
+         pB3fvJdSIpfiUOrPcw2CSpXCG6sDKNMw/hG1DDLgU/iibmCOU29TlaApLa8LTmJz7y
+         mUg45dHoPI0m3gyI0sfw+UeoJUye8SWH4FIqzmUE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9C5x9So026987;
+        Fri, 12 Oct 2018 00:59:09 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 12
+ Oct 2018 00:59:09 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 12 Oct 2018 00:59:09 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9C5x4sD002788;
+        Fri, 12 Oct 2018 00:59:06 -0500
+Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Timur Tabi <timur@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        "Strashko, Grygorii" <grygorii.strashko@ti.com>
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+ <20181005065300.22882-3-ricardo.ribalda@gmail.com>
+ <9746eba6-63f5-feaf-e63f-7e0ea7638942@ti.com>
+ <CAPybu_1PuRqOx-Fsmba4XCcRsJA0A9tdob1R=8N72-699cxomw@mail.gmail.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <8d180cc7-d7cb-66eb-001d-f2a5c371d179@ti.com>
+Date:   Fri, 12 Oct 2018 11:29:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <CAPybu_1PuRqOx-Fsmba4XCcRsJA0A9tdob1R=8N72-699cxomw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 12 Oct 2018 11:27:30 +0530
-From:   mgautam@codeaurora.org
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] phy: qcom-qusb2: Fix HSTX_TRIM tuning with fused value
- for SDM845
-In-Reply-To: <CAD=FV=UgFBzUzjqakJp2OCoKVcbEksrv-QrQ5-303ZqTCfv=hw@mail.gmail.com>
-References: <20181005090920.26108-1-mgautam@codeaurora.org>
- <CAD=FV=UgFBzUzjqakJp2OCoKVcbEksrv-QrQ5-303ZqTCfv=hw@mail.gmail.com>
-Message-ID: <4f1adeecf61643fcba4202be1c520561@codeaurora.org>
-X-Sender: mgautam@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,119 +83,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 2018-10-11 04:06, Doug Anderson wrote:
-> Hi,
+On Thursday 11 October 2018 07:12 PM, Ricardo Ribalda Delgado wrote:
+> Hi Vignesh
 > 
-> On Fri, Oct 5, 2018 at 2:09 AM Manu Gautam <mgautam@codeaurora.org> 
-> wrote:
->> 
->> Tune1 register on sdm845 is used to update HSTX_TRIM with fused
->> setting. Enable same by specifying update_tune1_with_efuse flag
->> for sdm845, otherwise driver ends up programming tune2 register.
->> While at it, also fix HSTX_TRIM tuning logic which instead of
->> using fused value as HSTX_TRIM, incorrectly performs bitwise OR
->> operation with existing default value.
->> 
->> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
->> ---
->>  drivers/phy/qualcomm/phy-qcom-qusb2.c | 12 +++++++-----
->>  1 file changed, 7 insertions(+), 5 deletions(-)
+> Ups, it does not look too good :S . Can you check if this change fixes it:
 > 
-> It's a little weird that the old code wasn't causing more problems.
-> Any idea why?  On SDM845 it looks like the old code was clobbering the
-> "fstx slew rate control" bits.
 
-Thanks for reviewing it.
-I am assuming changing 'fstx slew rc' didn't have major impact other 
-than
-some interoperability or electrical compliance issues.
+Below diff works for me. I no longer see crash and gpio-hog seems to be
+working. Thanks!
 
-> 
-> In any case, this looks like it fixes several commits:
-> 
-> 1. The bitwise OR vs. setting the bits w/ mask fixes the original
-> driver at commit ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2
-> PHY on Qcom chips").  It'll be slightly annoying to backport past
-> commit c71dabf27c3a ("phy: qcom-qusb2: Add support for different
-> register layouts") but you should still tag "Fixes" with the original
-> commit in case anyone wants to do it.
-> 
-> 2. On sdm845 it was updating the wrong register (tune2 instead of
-> tune1).  This fixes commit ef17f6e212ca ("phy: qcom-qusb2: Add QUSB2
-> PHYs support for sdm845").
-> 
-> ...because of the above I'd suggest splitting this into two commits:
-> one that fixes the qusb2_write_mask() and one that fixes sdm845.  Then
-> add the "Fixes:" tag.  This will really help in the backports to
-> linux-stable.
+Regards
+Vignesh
 
-Sure, will split in two.
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e016b22658ff..bcd0ef49ce97 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1349,6 +1349,9 @@ int gpiochip_add_data_with_key(struct gpio_chip
+> *chip, void *data,
+> 
+>         spin_unlock_irqrestore(&gpio_lock, flags);
+> 
+> +       for (i = 0; i < chip->ngpio; i++)
+> +               gdev->descs[i].gdev = gdev;
+> +
+>  #ifdef CONFIG_PINCTRL
+>         INIT_LIST_HEAD(&gdev->pin_ranges);
+>  #endif
+> @@ -1380,8 +1383,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
+> *chip, void *data,
+>         for (i = 0; i < chip->ngpio; i++) {
+>                 struct gpio_desc *desc = &gdev->descs[i];
+> 
+> -               desc->gdev = gdev;
+> -
+>                 if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+>                         desc->flags = !chip->get_direction(chip, i) ?
+>                                         (1 << FLAG_IS_OUT) : 0;
+> 
+> 
+> Thanks!
+> On Thu, Oct 11, 2018 at 2:18 PM Vignesh R <vigneshr@ti.com> wrote:
+>>
+>> Hi,
+>>
+>> On Friday 05 October 2018 12:23 PM, Ricardo Ribalda Delgado wrote:
+>>> Current code assumes that the direction is input if direction_input
+>>> function is set.
+>>> This might not be the case on GPIOs with programmable direction.
+>>>
+>>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>>> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>>
+>> This patch causes oops on TI's AM335x-ICEv2 board on next-20181011:
+>>
+>> [    0.563797] OMAP GPIO hardware version 0.1
+>> [    0.577589] Unable to handle kernel NULL pointer dereference at virtual address 000002b8
+>> [    0.586127] pgd = (ptrval)
+>> [    0.588934] [000002b8] *pgd=00000000
+>> [    0.592732] Internal error: Oops: 5 [#1] SMP ARM
+>> [    0.597499] Modules linked in:
+>> [    0.600668] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7-next-20181011 #70
+>> [    0.608466] Hardware name: Generic AM33XX (Flattened Device Tree)
+>> [    0.614770] PC is at gpiod_hog+0x30/0x154
+>> [    0.618913] LR is at of_gpiochip_add+0x2fc/0x4e4
+>> [    0.623671] pc : [<c055213c>]    lr : [<c0553ff0>]    psr: 60000013
+>> [    0.630130] sp : ce09bba0  ip : cdf08095  fp : 00000000
+>> [    0.635516] r10: c0bfcf24  r9 : 00000000  r8 : 00000007
+>> [    0.640902] r7 : cdf08088  r6 : 00000000  r5 : 00000000  r4 : ce191e40
+>> [    0.647630] r3 : 00000000  r2 : 00000000  r1 : cdf08088  r0 : ce191e40
+>> [    0.654361] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>> [    0.661718] Control: 10c5387d  Table: 80004019  DAC: 00000051
+>> [    0.667642] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+>> [...]
+>> [    0.973593] [<c055213c>] (gpiod_hog) from [<c0553ff0>] (of_gpiochip_add+0x2fc/0x4e4)
+>> [    0.981588] [<c0553ff0>] (of_gpiochip_add) from [<c05528a0>] (gpiochip_add_data_with_key+
+>> 0x5a0/0x990)
+>> [    0.991102] [<c05528a0>] (gpiochip_add_data_with_key) from [<c0556d8c>] (omap_gpio_probe+
+>> 0x37c/0x75c)
+>> [    1.000613] [<c0556d8c>] (omap_gpio_probe) from [<c06049c0>] (platform_drv_probe+0x48/0x9
+>> 8)
+>> [    1.009237] [<c06049c0>] (platform_drv_probe) from [<c0602a04>] (really_probe+0x220/0x2d4
+>> )
+>> [    1.017764] [<c0602a04>] (really_probe) from [<c0602c18>] (driver_probe_device+0x5c/0x164
+>> )
+>> [    1.026293] [<c0602c18>] (driver_probe_device) from [<c0600d44>] (bus_for_each_drv+0x54/0
+>> xb8)
+>> [    1.035090] [<c0600d44>] (bus_for_each_drv) from [<c060276c>] (__device_attach+0xcc/0x13c
+>> )
+>> [    1.043615] [<c060276c>] (__device_attach) from [<c0601b88>] (bus_probe_device+0x88/0x90)
+>> [    1.052051] [<c0601b88>] (bus_probe_device) from [<c05fea18>] (device_add+0x3d8/0x608)
+>> [    1.060223] [<c05fea18>] (device_add) from [<c07343b8>] (of_platform_device_create_pdata+
+>> 0x8c/0xc0)
+>> [    1.069552] [<c07343b8>] (of_platform_device_create_pdata) from [<c07345c4>] (of_platform
+>> _bus_create+0x190/0x228)
+>> [    1.080134] [<c07345c4>] (of_platform_bus_create) from [<c0734610>] (of_platform_bus_crea
+>> te+0x1dc/0x228)
+>> [    1.089909] [<c0734610>] (of_platform_bus_create) from [<c073478c>] (of_platform_populate
+>> +0x5c/0xac)
+>> [    1.099333] [<c073478c>] (of_platform_populate) from [<c0d12614>] (pdata_quirks_init+0x6c
+>> /0x90)
+>> [    1.108306] [<c0d12614>] (pdata_quirks_init) from [<c0d12144>] (omap_generic_init+0xc/0x1
+>> 8)
+>> [    1.116933] [<c0d12144>] (omap_generic_init) from [<c0d03eb0>] (customize_machine+0x1c/0x
+>> 30)
+>> [    1.125645] [<c0d03eb0>] (customize_machine) from [<c01030e4>] (do_one_initcall+0x80/0x31
+>> 0)
+>> [    1.134265] [<c01030e4>] (do_one_initcall) from [<c0d01244>] (kernel_init_freeable+0x3c4/
+>> 0x4ac)
+>> [    1.143238] [<c0d01244>] (kernel_init_freeable) from [<c0900f28>] (kernel_init+0x8/0x114)
+>> [    1.151673] [<c0900f28>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+>> [    1.159475] Exception stack(0xce09bfb0 to 0xce09bff8)
+>> [    1.164686] bfa0:                                     00000000 00000000 00000000 00000000
+>> [    1.173119] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> [    1.181551] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>> [    1.188378] Code: 0a000002 e3530000 01a09003 159392b4 (e59352b8)
+>> [    1.194766] ---[ end trace d5c17cd400f50a22 ]---
+>> [    1.199606] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+>> [    1.199606]
+>> [    1.209052] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000
+>> 00b
+>> [    1.209052]  ]---
+>> [    3.172292] random: fast init done
+>>
+>> Full log: https://pastebin.ubuntu.com/p/jG8nN6CTBP/
+>>
+>> Reverting this patch from linux-next allows to boot to prompt.
+>>
+>> Regards
+>> Vignesh
+>>
+>>> ---
+>>>  drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
+>>>  1 file changed, 13 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>> index 907019b67a58..e016b22658ff 100644
+>>> --- a/drivers/gpio/gpiolib.c
+>>> +++ b/drivers/gpio/gpiolib.c
+>>> @@ -1349,20 +1349,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>>>
+>>>       spin_unlock_irqrestore(&gpio_lock, flags);
+>>>
+>>> -     for (i = 0; i < chip->ngpio; i++) {
+>>> -             struct gpio_desc *desc = &gdev->descs[i];
+>>> -
+>>> -             desc->gdev = gdev;
+>>> -
+>>> -             /* REVISIT: most hardware initializes GPIOs as inputs (often
+>>> -              * with pullups enabled) so power usage is minimized. Linux
+>>> -              * code should set the gpio direction first thing; but until
+>>> -              * it does, and in case chip->get_direction is not set, we may
+>>> -              * expose the wrong direction in sysfs.
+>>> -              */
+>>> -             desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
+>>> -     }
+>>> -
+>>>  #ifdef CONFIG_PINCTRL
+>>>       INIT_LIST_HEAD(&gdev->pin_ranges);
+>>>  #endif
+>>> @@ -1391,6 +1377,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>>>       if (status)
+>>>               goto err_remove_chip;
+>>>
+>>> +     for (i = 0; i < chip->ngpio; i++) {
+>>> +             struct gpio_desc *desc = &gdev->descs[i];
+>>> +
+>>> +             desc->gdev = gdev;
+>>> +
+>>> +             if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+>>> +                     desc->flags = !chip->get_direction(chip, i) ?
+>>> +                                     (1 << FLAG_IS_OUT) : 0;
+>>> +             else
+>>> +                     desc->flags = !chip->direction_input ?
+>>> +                                     (1 << FLAG_IS_OUT) : 0;
+>>> +     }
+>>> +
+>>>       acpi_gpiochip_add(chip);
+>>>
+>>>       machine_gpiochip_add(chip);
+>>>
+>>
+> 
+> 
 
-> 
-> 
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c 
->> b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> index e70e425f26f5..defeb0b7cfa0 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> @@ -231,6 +231,7 @@ static const struct qusb2_phy_cfg sdm845_phy_cfg = 
->> {
->>         .mask_core_ready = CORE_READY_STATUS,
->>         .has_pll_override = true,
->>         .autoresume_en    = BIT(0),
->> +       .update_tune1_with_efuse = true,
->>  };
->> 
->>  static const char * const qusb2_phy_vreg_names[] = {
->> @@ -415,12 +416,13 @@ static void qusb2_phy_set_tune2_param(struct 
->> qusb2_phy *qphy)
->> 
->>         /* Fused TUNE1/2 value is the higher nibble only */
->>         if (cfg->update_tune1_with_efuse)
->> -               qusb2_setbits(qphy->base, 
->> cfg->regs[QUSB2PHY_PORT_TUNE1],
->> -                             val[0] << 0x4);
->> +               qusb2_write_mask(qphy->base, 
->> cfg->regs[QUSB2PHY_PORT_TUNE1],
->> +                                val[0] << HSTX_TRIM_SHIFT,
->> +                                HSTX_TRIM_MASK);
->>         else
->> -               qusb2_setbits(qphy->base, 
->> cfg->regs[QUSB2PHY_PORT_TUNE2],
->> -                             val[0] << 0x4);
->> -
->> +               qusb2_write_mask(qphy->base, 
->> cfg->regs[QUSB2PHY_PORT_TUNE2],
->> +                                val[0] << HSTX_TRIM_SHIFT,
->> +                                HSTX_TRIM_MASK);
-> 
-> In general your patch seems like something we should take.  ...but it
-> made me look a bit more at the code and I think your patch will tickle
-> another bug that we probably need to fix first.
-> 
-> Specifically there are two ways to set HSTX_TRIM.  One is in
-> qusb2_phy_set_tune2_param() and the other is in
-> qusb2_phy_override_phy_params().  At the moment we first call
-> qusb2_phy_override_phy_params() and then we call
-> qusb2_phy_set_tune2_param().  That means that (now that we've fixed
-> qusb2_phy_set_tune2_param()) we'll _always_ set the tuning based on
-> qusb2_phy_set_tune2_param() assuming that the nvmem is specified (and
-> non-zero).  ...and it's specified in sdm845.dtsi so that means that on
-> SDM845 it's _always_ specified.
-> 
-> Said another way: the 'qcom,hstx-trim-value' in sdm845-mtp.dts is
-> totally useless because it will always be overridden by the fuse which
-> is specified in sdm845.dtsi.
-> 
-> I have no idea how the fused value vs. the device tree value are
-> supposed to interact, but that doesn't seem right.  ...or is the fused
-> value really supposed to override and it'll be 0 if it's not supposed
-> to?
-
-Fused value is supposed to always override. If value is not fused for 
-some
-parts (which I believe is case with some early samples), then driver 
-will
-read it is '0' from nvmem and should use hstx-trim value passed from DT.
-
--Manu
