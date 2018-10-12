@@ -2,133 +2,112 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5203EC67877
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F5BC67877
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A1B206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:33:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD2921470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:40:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="SBw2cksV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A1B206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RdUbXrOO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD2921470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeJMCGr (ORCPT
+        id S1726762AbeJMCNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:06:47 -0400
-Received: from mail-co1nam03on0058.outbound.protection.outlook.com ([104.47.40.58]:6224
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726097AbeJMCGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:06:47 -0400
+        Fri, 12 Oct 2018 22:13:50 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37085 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbeJMCNt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 22:13:49 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c10-v6so6238516pgq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 11:39:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kYL6qSxXwQ2ruD4+REbfreawJl79X3RE9FzYT7BvNZI=;
- b=SBw2cksVGKvq43hKql6d9SVnveFAyXudu1Wq4J0+PPhPGxI0iXxoKYqdSgLmY3JxA4aB1qWT1QPHoJnVHUKtvTZbWQG7h5BmuewhvP7Qe/2LLj8rGo/WLNNdApxoF0GgmyObD6Q5NFz5JvTZeV0A48JPB0Ld2Hm7oIfQAGm7jD8=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1452.namprd12.prod.outlook.com (10.172.38.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Fri, 12 Oct 2018 18:32:53 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828%3]) with mapi id 15.20.1228.020; Fri, 12 Oct 2018
- 18:32:53 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Borislav Petkov <bp@suse.de>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] arch/x86: Introduce new config parameter AMD_QOS
-Thread-Topic: [PATCH v3 09/11] arch/x86: Introduce new config parameter
- AMD_QOS
-Thread-Index: AQHUYaGv1vrx53eHGU6x4h2+Q6V546UamQ+AgADC/ICAAFR2gIAAQDCA
-Date:   Fri, 12 Oct 2018 18:32:53 +0000
-Message-ID: <5715b473-046c-cc19-bc41-e555b7f829b4@amd.com>
-References: <20181011203223.18157-1-babu.moger@amd.com>
- <20181011203223.18157-10-babu.moger@amd.com> <20181011220255.GB21876@zn.tnic>
- <0cf1ea65-0528-b133-2b89-2e04644ea2e6@amd.com>
- <20181012144305.GA11859@zn.tnic>
-In-Reply-To: <20181012144305.GA11859@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0035.namprd02.prod.outlook.com
- (2603:10b6:803:2e::21) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1452;20:4RQ0WExHDAEMIPwlwj0lFzowba9F5XNt4AsYoZxoBjxjXWIoL0967JlagPKVzLnOK/8NcUet+iCTjmdIZ/ZeqTSq6PiySESqXkDEI6LX1nLhMvRxrHEYFeXJHNCa99SbBBC+VOTxVVKXVKIU0vtQRP6WPiAN+0k5AWv02OlcIKUB2afAV8dSRJ2ahK4iNlvseEGVLslGIQK7T5Hud8KPoyiao/wE4WzrJBh4pr8QREkhcILcreUSysO9cEqOqV14
-x-ms-office365-filtering-correlation-id: ff67739b-c5b3-4921-a13f-08d630711ef8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1452;
-x-ms-traffictypediagnostic: DM5PR12MB1452:
-x-microsoft-antispam-prvs: <DM5PR12MB14523E9719ED984644BE1DA495E20@DM5PR12MB1452.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991067);SRVR:DM5PR12MB1452;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1452;
-x-forefront-prvs: 0823A5777B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(39860400002)(396003)(366004)(189003)(199004)(71190400001)(81156014)(66066001)(81166006)(229853002)(93886005)(8936002)(7416002)(71200400001)(53546011)(305945005)(7736002)(5250100002)(316002)(386003)(11346002)(6506007)(31696002)(478600001)(26005)(256004)(52116002)(476003)(5660300001)(2616005)(76176011)(99286004)(86362001)(6486002)(8676002)(68736007)(72206003)(486006)(2900100001)(25786009)(6512007)(36756003)(105586002)(3846002)(31686004)(14454004)(186003)(6436002)(54906003)(2906002)(446003)(102836004)(6916009)(97736004)(4326008)(53936002)(6246003)(6116002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1452;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: NThyPaqYBjJXQISoZW9XQg+1UukkJgQCDjLctW1AVCdRW481qoqrbcyphfq7UtU+eyW0YnIxUozJRVe47wcYp7qS/YHphvmDHAzBLx9dNXFHLo5BkwAgUSrIxReBI9pEU5QRtpgJaKbA4S+f+89BVtz+cYyYP22k9z29vtv9snd+PumsL8h6rLq+Czom1+eA/x93EW/vLH/ITrrVNaE+TtKLmaSyWDrp1JulNk+ir5dp4bFK/rF9XhcyPb+Hr5TYcJgjMoceyGD3fxGPsaIWa7POsLyxihcCzvr+RC0x64VR4q1+foHFA+1FhmrcJv5anr6tvf4SBFaybV6+YtZRp/koZ2wSqEnufMy6rqlAIos=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EC3969BEF4A91B41BC8DD67B93582168@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9lK1p+yKCg807ip8R1qJBOm8Q080zyC38JR2CGpeqQw=;
+        b=RdUbXrOOFiufwf5+6cWV+QGczne5bL1DWXSfXGMK8Bnjp5qJmp44NLNbNsXzDrYvY5
+         mytnD+v6dKP6IO/jTkWZD2nIGVrGhRi0gTQ2HWFrjVO62CqN7LNW5Ck46HkIzYb/nrM1
+         xlVnpbvYPkVr0I3CkElGR9OkV7iM8E7QgYMsQvqyttGERgKOPaUJ7kg3xTCX8cCtA20S
+         yaxMfvczTxLnj8JoPb3nZHPYq75OmOkHEkSAKdRkiPjNbmMKssB2JhaA5bUKzX4R6e/U
+         /OFuNorwSbWF51B8VsaHJZY4q2CeRc89tZePXbp3YBWA1pBQxzVA6jV2rfeiXyom7MEv
+         0aPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9lK1p+yKCg807ip8R1qJBOm8Q080zyC38JR2CGpeqQw=;
+        b=jWUyRdm0fJQjrvsDOK7nz4ATC79ysciYexL3EQRJLQ+3kxDEemskTlUvz4PFMMhlmz
+         rrzvj+8bggVN6eDbs0kWBKX6cdD6wca/wZeHvtGYZRNRDM7mjO4fmO6ADpq8iXiZMlg6
+         oaovPBA+UBhpI4+eSaBhujC6R3uBFvWurEP2SpP2OhDzg3pZex3HFtKwO8rGadhxBh+O
+         7/Yf4RoEPz/RK55l1AuV5DHnuWQRTouXouKNqeD5SDb7JZZV25fAyEGfSVaVBLDwtFwA
+         nalkKgceYp2k08Qa3+oqozhwCW3Cv6YsF+HzZ0c02QK5m897ZDKabEbBq/0SKWljONJs
+         dUoQ==
+X-Gm-Message-State: ABuFfoiiOShS0ALXxrr8Gza0RitzdbmMULvU7hkOmDqc1MSIMWIgxbWg
+        4hxrZiGkkXiJGtJpcI+0HmtcvtSYWlieM48nMXfeZQ==
+X-Google-Smtp-Source: ACcGV61gFIRhsajAv9g44Q7k3y0Zq4OPAaM0mlksItiteFswcQ454oSMCIt/RD8k2YF2qfUTy18LfvmPWg0GX/Vn47o=
+X-Received: by 2002:a63:a047:: with SMTP id u7-v6mr6591478pgn.145.1539369599299;
+ Fri, 12 Oct 2018 11:39:59 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff67739b-c5b3-4921-a13f-08d630711ef8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2018 18:32:53.3836
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1452
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com> <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com> <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+ <80837c90-0425-aadd-38d7-c3c866d29a0a@gmail.com>
+In-Reply-To: <80837c90-0425-aadd-38d7-c3c866d29a0a@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 12 Oct 2018 11:39:47 -0700
+Message-ID: <CAKwvOdmL0kkZs7m+F5eXutVNqs0tjpKcKy-O4N8+-F2FOkL9gQ@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     denkenz@gmail.com
+Cc:     jejb@linux.ibm.com, dhowells@redhat.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAxMC8xMi8yMDE4IDA5OjQzIEFNLCBCb3Jpc2xhdiBQZXRrb3Ygd3JvdGU6DQo+IE9uIEZy
-aSwgT2N0IDEyLCAyMDE4IGF0IDAyOjQwOjUwUE0gKzAwMDAsIE1vZ2VyLCBCYWJ1IHdyb3RlOg0K
-Pj4gVGhhdCBpcyBjb3JyZWN0LiBDUFVfU1VQX0FNRCBpbXBsaWNpdGx5IG1lYW5zIHg4Ni4NCj4+
-IFRvIGJlIG1vcmUgc3BlY2lmaWMsIEkgd2lsbCBjaGFuZ2UgaXQgdG8NCj4+ICJkZXBlbmRzIG9u
-IFg4Nl82NCAmJiBDUFVfU1VQX0FNRCIgYXMgdGhpcyBmZWF0dXJlIGlzIGZvciBYODZfNjQgb25s
-eS4NCj4gDQo+IE5vLCB3aGF0IEknbSBzYXlpbmcgaXMsIG1ha2UgaXQgZGVwZW5kZW50ICpvbmx5
-KiBvbiBDUFVfU1VQX0FNRC4NCg0KU3VyZS4gV2lsbCBkbyBpbiBuZXh0IHJldmlzaW9uLiBUaGFu
-a3MNCg0K
+On Fri, Oct 12, 2018 at 10:27 AM Denis Kenzior <denkenz@gmail.com> wrote:
+>
+> Hi Nick,
+>
+> >> So maybe I'm misunderstanding something, but the issue seems to be that
+> >> unsigned char is promoted to 'unsigned char *' by Clang and probably
+> >> unsigned int or int by gcc.
+> >
+> > No. This is extremely well defined behavior in C.  In C, integral
+> > types are NEVER promoted to pointer to integer types, only to larger
+> > integral types through rules more complicated than the correct flags
+> > to pass to `tar`.
+> > https://xkcd.com/1168/
+> >
+>
+> Ah right.  Thanks for the correction.  So looks like bool won't work for
+> the same reasons.  But unsigned int should work right?  But then again
+> this is a boolean value and if we want to be paranoid we can simply
+> tweak the 'c = h3' assignment to be something like:
+>
+> c = !!h3;
+>
+> So in the end, I'm happy with int or unsigned int.
+
+Thanks for the feedback.  I'll wait wait to see if James is also cool
+with that approach, and if so, send a v2 based on the next-keys branch
+in the security tree as per Nathan, with yours and his Suggested-by
+tags.
+
+-- 
+Thanks,
+~Nick Desaulniers
