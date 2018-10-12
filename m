@@ -2,125 +2,115 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9DCC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE17C67877
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10621205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10621205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 42357205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:27:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYJoKQ3N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42357205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeJMA6l (ORCPT
+        id S1727469AbeJMBAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:58:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55312 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbeJMA6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:58:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95EF8F;
-        Fri, 12 Oct 2018 10:25:09 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F79E3F5D3;
-        Fri, 12 Oct 2018 10:25:06 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 18:25:00 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
-        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
-        mka@chromium.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
- the domain
-Message-ID: <20181012172500.GA23170@e107155-lin>
-References: <20181011112013.GC32752@e107155-lin>
- <20181011160053.GA2371@codeaurora.org>
- <20181011161927.GC28583@e107155-lin>
- <20181011165822.GB2371@codeaurora.org>
- <20181011173733.GA26447@e107155-lin>
- <20181011210609.GD2371@codeaurora.org>
- <20181012150429.GH3401@e107155-lin>
- <20181012160427.GG2371@codeaurora.org>
- <20181012170040.GA21057@e107155-lin>
- <20181012171910.GI2371@codeaurora.org>
+        Fri, 12 Oct 2018 21:00:35 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51729 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbeJMBAf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:00:35 -0400
+Received: by mail-it1-f196.google.com with SMTP id 74-v6so19887197itw.1;
+        Fri, 12 Oct 2018 10:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1c8CzJ13SCIpEhVf+sCWxU+rNfx1+0YK8EYSi19xYkI=;
+        b=MYJoKQ3NyRWaUYBHomHu0Ip1MnozaJKS7+BsXIiy/WDLyjHZCUTXhJjeh7aMn39M0s
+         cXTnTgA2z/G5MsvRtuwhDwdteaHd6h8uagd15//7jj+nd8gFiToTvv/u7jfcBKwijnCg
+         JSdfHEBPCmYu0I7/1HIrQ8FKLtxDFiX1OLyIaAx5kZ6/DkQcuIiHAS2a1WnyQEFITSFr
+         MzmuyWUpB+WUlNNhiRyvuJ5yFOPOFFM6YIpqbYAp96q/NnfzCtBu5JwFkru7rE/r7r6L
+         xaAb8GNaWHgvSvDjzO9IGaqkNpyIeVM+zVPNtAym9laxnzAQwEb0q2d2uGeJn4be4vlE
+         q+lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1c8CzJ13SCIpEhVf+sCWxU+rNfx1+0YK8EYSi19xYkI=;
+        b=nDd1icSg+kRc9QwkAf4zmsToyjht8XJkGvEvUPeYFz8QMq8bSXHWeSuNR2ROQCd6u3
+         TkOfvI6cQhsXS22VVwX8kbLke0aA3zmlajWYTa7gtP3WoK0mElJQpND9RcvKkrztnhFZ
+         YEUWkQ9deL/Np9TMRK6da9uldgk6sl4FlQoZqIqSsJKnvIqe2WMg39lHEwXuiLxG56pD
+         7gO3J7qSVEUiXMhlx6/0X6XfX9eoTZ4vjEYTZOMd6RoffQO9HFmqycRwKw1jt0EtgUYe
+         gwD0SvpMHsGLsZdn0laEIxy2BWO3ycNCKGthZI505bOncZW7v2aPZnDZaBvSYPNLi/Ph
+         e6EQ==
+X-Gm-Message-State: ABuFfojN/bENr/UzAJj99Qw9cPuWeVF0P7vdfampwmabBeDWpOSt5qwY
+        O7gSwDicAK6tjzZo+MU99iBwtFsn
+X-Google-Smtp-Source: ACcGV63XEYOAIyvR4FY1ax6BObNpHbQDhDcbqWCI8Hwgvdsf24iT8fYxSCMj0U2jAQTmo0hraBtxCA==
+X-Received: by 2002:a24:4169:: with SMTP id x102-v6mr5620897ita.128.1539365222366;
+        Fri, 12 Oct 2018 10:27:02 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id s10-v6sm876799itb.38.2018.10.12.10.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 10:27:01 -0700 (PDT)
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     jejb@linux.ibm.com, dhowells@redhat.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <80837c90-0425-aadd-38d7-c3c866d29a0a@gmail.com>
+Date:   Fri, 12 Oct 2018 12:27:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012171910.GI2371@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 11:19:10AM -0600, Lina Iyer wrote:
-> On Fri, Oct 12 2018 at 11:01 -0600, Sudeep Holla wrote:
-> > On Fri, Oct 12, 2018 at 10:04:27AM -0600, Lina Iyer wrote:
-> > > On Fri, Oct 12 2018 at 09:04 -0600, Sudeep Holla wrote:
-> >
-> > [...]
-> >
-> > Yes all these are fine but with multiple power-domains/cluster, it's
-> > hard to determine the first CPU. You may be able to identify it within
-> > the power domain but not system wide. So this doesn't scale with large
-> > systems(e.g. 4 - 8 clusters with 16 CPUs).
-> >
-> We would probably not worry too much about power savings in a msec
-> scale, if we have that big a system. The driver is a platform specific
-> driver, primarily intended for a mobile class CPU and usage. In fact, we
-> haven't done this for QC's server class CPUs.
->
+Hi Nick,
 
-OK, along as there's no attempt to make it generic and keep it platform
-specific, I am not that bothered.
+>> So maybe I'm misunderstanding something, but the issue seems to be that
+>> unsigned char is promoted to 'unsigned char *' by Clang and probably
+>> unsigned int or int by gcc.
+> 
+> No. This is extremely well defined behavior in C.  In C, integral
+> types are NEVER promoted to pointer to integer types, only to larger
+> integral types through rules more complicated than the correct flags
+> to pass to `tar`.
+> https://xkcd.com/1168/
+> 
 
-> > > > I think we are mixing the system sleep states with CPU idle here.
-> > > > If it's system sleeps states, the we need to deal it in some system ops
-> > > > when it's the last CPU in the system and not the cluster/power domain.
-> > > >
-> > > I think the confusion for you is system sleep vs suspend. System sleep
-> > > here (probably more of a QC terminology), refers to powering down the
-> > > entire SoC for very small durations, while not actually suspended. The
-> > > drivers are unaware that this is happening. No hotplug happens and the
-> > > interrupts are not migrated during system sleep. When all the CPUs go
-> > > into cpuidle, the system sleep state is activated and the resource
-> > > requirements are lowered. The resources are brought back to their
-> > > previous active values before we exit cpuidle on any CPU. The drivers
-> > > have no idea that this happened. We have been doing this on QCOM SoCs
-> > > for a decade, so this is not something new for this SoC. Every QCOM SoC
-> > > has been doing this, albeit differently because of their architecture.
-> > > The newer ones do most of these transitions in hardware as opposed to an
-> > > remote CPU. But this is the first time, we are upstreaming this :)
-> > >
-> >
-> > Indeed, I know mobile platforms do such optimisations and I agree it may
-> > save power. As I mentioned above it doesn't scale well with large systems
-> > and also even with single power domains having multiple idle states where
-> > only one state can do this system level idle but not all. As I mentioned
-> > in the other email to Ulf, it's had to generalise this even with DT.
-> > So it's better to have this dealt transparently in the firmware.
-> >
-> Good, then we are on agreement here.
+Ah right.  Thanks for the correction.  So looks like bool won't work for 
+the same reasons.  But unsigned int should work right?  But then again 
+this is a boolean value and if we want to be paranoid we can simply 
+tweak the 'c = h3' assignment to be something like:
 
-No worries.
+c = !!h3;
 
-> But this is how this platform is. It cannot be done in firmware and what
-> we doing here is a Linux platform driver that cleans up nicely without
-> having to piggy back on an external dependency.
->
-Yes Qcom always says it can't be done in firmware. Even PSCI was adopted 
-after couple of years of pushback.
+So in the end, I'm happy with int or unsigned int.
 
---
 Regards,
-Sudeep
+-Denis
