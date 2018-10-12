@@ -2,115 +2,135 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31D3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 748A4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85DC2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:28:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="onJL/c0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B85DC2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 321242087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:30:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321242087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeJLP76 (ORCPT
+        id S1727945AbeJLQBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:59:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50788 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeJLP75 (ORCPT
+        Fri, 12 Oct 2018 12:01:37 -0400
+Received: from mail-ed1-f48.google.com ([209.85.208.48]:44795 "EHLO
+        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbeJLQBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:59:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZVkCFujIr5udvdQVB2emw/fqd6coQE//m6uQ2EQ7MXE=; b=onJL/c0i3VF3iJX4fG86hh8AM
-        APr+2MnGbh74/VoRSEFaTs1fX1WQBmXvVYgKSXbG5KqgP9/DTWG7HQRS078pqJXcRssZ5paf2qYB7
-        FwLYjcPqYb6VkWsCESemPjApkHGOE5gLKWgnNl4iC+AiDpbKeTYragMJTwiwpCLulCIC8ZNi5g5At
-        09JmdG0/J3zCP6UcFTNSCWxppxzDiNOx6KHsEKLF19YLbPqISQdBCNLDAIo7oIHBVKDyT/R/ns5yV
-        xc+MO00NMW3IQHH1FPwTWFxBxNOY85ohnXmpcoL13nSt3w3qDzjqLLhcO+Jh76okIlAx2Bzl4v8HA
-        RgF9daQGg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gAso8-00039c-MQ; Fri, 12 Oct 2018 08:28:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 86CE52027E186; Fri, 12 Oct 2018 10:28:26 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 10:28:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@android.com>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Alex Shi <alex.shi@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 2/2] cpuidle/drivers/menu: Remove get_loadavg in the
- performance multiplier
-Message-ID: <20181012082826.GP9848@hirez.programming.kicks-ass.net>
-References: <1538654644-32705-1-git-send-email-daniel.lezcano@linaro.org>
- <1538654644-32705-2-git-send-email-daniel.lezcano@linaro.org>
+        Fri, 12 Oct 2018 12:01:37 -0400
+Received: by mail-ed1-f48.google.com with SMTP id z21-v6so10713410edb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:30:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0uFJzDeiKzDpzpa+RpZEwszDt2nMNJOOP32gfeVX2u8=;
+        b=r+qS19Fla735P/Zj4CQL1r8/wwaYp5Y1EdEQPVmVaPTX7P7F+lUonhUjbHNCUvKJOZ
+         lEkHepDwrr/zJxBdkJIeGoRrbQ+WighJ2+aAHdNbO7h8Jw0yHeLUULEkARYjQmcEamu6
+         ksol2cN89xEgw01noxKPxVJLgRmkfCOlnyU2bwHHtXQ8GoYXGEqsWxa9e2BN2cjQB+JD
+         qGArMNtgfnTcvpo0xZCRZ8QhsvK8T+PrZWMrDr6zpsPGvVfH7ddw/J6aKUVqrsPxCfiW
+         2+0Qc/+S2h9CfLr9mtFZFrtYnfiYYgdzF5BzhH0ccxmt296vDMwsTONX+nY3LcE0EgQi
+         Z79Q==
+X-Gm-Message-State: ABuFfohRgwhoR3ae+nWn2e96rxGnD3s/3cbh3CFmtnU6bUOgCIRoQxs2
+        SgUEI7BgsV8N4jupLv1r+yVs5A==
+X-Google-Smtp-Source: ACcGV62HdrST8+GM8Q9ohyzKEGdgw+piE2Wws5t0ykuOI4tGk1/ygKqLL6KeUX8sI98l0e3EvbQCUw==
+X-Received: by 2002:a17:906:70c3:: with SMTP id g3-v6mr6029253ejk.194.1539333016000;
+        Fri, 12 Oct 2018 01:30:16 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD31613C1F2E846AEDA540D.dip0.t-ipconnect.de. [2003:ef:2bd3:1613:c1f2:e846:aeda:540d])
+        by smtp.gmail.com with ESMTPSA id s46-v6sm413233edb.49.2018.10.12.01.30.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 01:30:14 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 10:30:10 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     luca abeni <luca.abeni@santannapisa.it>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        rostedt@goodmis.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, alessio.balsini@gmail.com,
+        bristot@redhat.com, will.deacon@arm.com,
+        andrea.parri@amarulasolutions.com, dietmar.eggemann@arm.com,
+        patrick.bellasi@arm.com, henrik@austad.us,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [RFD/RFC PATCH 5/8] sched: Add proxy execution
+Message-ID: <20181012083010.GV9130@localhost.localdomain>
+References: <20181009092434.26221-1-juri.lelli@redhat.com>
+ <20181009092434.26221-6-juri.lelli@redhat.com>
+ <20181010131048.54afd1b6@luca64>
+ <20181011123448.GS9130@localhost.localdomain>
+ <20181011125325.GA9867@hirez.programming.kicks-ass.net>
+ <20181012092231.0bdb5cf7@sweethome>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538654644-32705-2-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <20181012092231.0bdb5cf7@sweethome>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 02:04:03PM +0200, Daniel Lezcano wrote:
-> The function get_loadavg() returns almost always zero. To be more
-> precise, statistically speaking for a total of 1023379 times passing
-> in the function, the load is equal to zero 1020728 times, greater than
-> 100, 610 times, the remaining is between 0 and 5.
+On 12/10/18 09:22, luca abeni wrote:
+> On Thu, 11 Oct 2018 14:53:25 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> In 2011, the get_loadavg() was removed from the Android tree because
-> of the above [1]. At this time, the load was:
+> [...]
+> > > > > +	if (rq->curr != rq->idle) {
+> > > > > +		rq->proxy = rq->idle;
+> > > > > +		set_tsk_need_resched(rq->idle);
+> > > > > +		/*
+> > > > > +		 * XXX [juril] don't we still need to migrate
+> > > > > @next to
+> > > > > +		 * @owner's CPU?
+> > > > > +		 */
+> > > > > +		return rq->idle;
+> > > > > +	}  
+> > > > 
+> > > > If I understand well, this code ends up migrating the task only
+> > > > if the CPU was previously idle? (scheduling the idle task if the
+> > > > CPU was not previously idle)
+> > > > 
+> > > > Out of curiosity (I admit this is my ignorance), why is this
+> > > > needed? If I understand well, after scheduling the idle task the
+> > > > scheduler will be invoked again (because of the
+> > > > set_tsk_need_resched(rq->idle)) but I do not understand why it is
+> > > > not possible to migrate task "p" immediately (I would just check
+> > > > "rq->curr != p", to avoid migrating the currently scheduled
+> > > > task).  
+> [...]
+> > I think it was the safe and simple choice; note that we're not
+> > migrating just a single @p, but a whole chain of @p.
 > 
-> unsigned long this_cpu_load(void)
-> {
->         struct rq *this = this_rq();
->         return this->cpu_load[0];
-> }
+> Ah, that's the point I was missing... Thanks for explaining, now
+> everything looks more clear!
 > 
-> In 2014, the code was changed by commit 372ba8cb46b2 (cpuidle: menu: Lookup CPU
-> runqueues less) and the load is:
 > 
-> void get_iowait_load(unsigned long *nr_waiters, unsigned long *load)
-> {
->         struct rq *rq = this_rq();
->         *nr_waiters = atomic_read(&rq->nr_iowait);
->         *load = rq->load.weight;
-> }
-> 
-> with the same result.
-> 
-> Both measurements show using the load in this code path does no matter
-> anymore. Removing it.
-> 
-> [1] https://android.googlesource.com/kernel/common/+/4dedd9f124703207895777ac6e91dacde0f7cc17
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Ramesh Thomas <ramesh.thomas@intel.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> But... Here is my next dumb question: once the tasks are migrated to
+> the other runqueue, what prevents the scheduler from migrating them
+> back? In particular, task p: if it is (for example) a fixed priority
+> task an is on this runqueue, it is probably because the FP invariant
+> wants this... So, the push mechanism might end up migrating p back to
+> this runqueue soon... No?
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Not if p is going to be proxying for owner on owner's rq.
+OTOH, I guess we might have counter-migrations generated by push/pull
+decisions. Maybe we should remove potential proxies from pushable?
+We'd still have the same problem for FAIR though.
+In general it seems to make sense to me the fact that potential proxies
+shouldn't participate to load balancing while waiting to be activated by
+the mutex owner; they are basically sleeping, even if they are not.
+
+> Another doubt: if I understand well, when a task p "blocks" on a mutex
+> the proxy mechanism migrates it (and the whole chain of blocked tasks)
+> to the owner's core... Right?
+> Now, I understand why this is simpler to implement, but from the
+> schedulability point of view shouldn't we migrate the owner to p's core
+> instead?
+
+Guess the most important reason is that we need to respect owner's
+affinity, p (and the rest of the list) might have affinity mask that
+doesn't work well with owner's.
