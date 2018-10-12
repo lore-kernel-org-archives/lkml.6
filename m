@@ -2,113 +2,99 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
+	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD20C6787F
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBEDC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ABD21477
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39971205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:50:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ztApA76S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29ABD21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0zEAnyK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39971205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeJMBWf (ORCPT
+        id S1726717AbeJMBYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:22:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJMBWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:22:35 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42EC620644;
-        Fri, 12 Oct 2018 17:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539366538;
-        bh=Ak1iUSeun0foLkLjtG8/O0QnLK9KJ4noGMA0eOjORIA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ztApA76SByyihZKveHAjaOW6ntJ1y2Ezx5YEpMWKHKEwJ86jbiJWksvW/GpMoaiLt
-         h2pyBEyvOSa9rlXoqRTpCNlBdfRD2MkgNklzq8nzXjZkL2OlZVuyS5LH68nekggYJ5
-         C3IDX6NTyWLMr0T74/gaik7i8x10V3s6000yV8Xs=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 12 Oct 2018 21:24:05 -0400
+Received: from mail-pg1-f169.google.com ([209.85.215.169]:44403 "EHLO
+        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeJMBYF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:24:05 -0400
+Received: by mail-pg1-f169.google.com with SMTP id g2-v6so6164956pgu.11;
+        Fri, 12 Oct 2018 10:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Aj15l2cEApeqHsAshcdV7obPJ1IzQYJUiv8+UAkSWaQ=;
+        b=B0zEAnyKtf1NIHD6GQpKUMmb+nkqekxV5iPsJkHGTaw4FtKyI6jZ6oig5pr42Ltksm
+         AMXOMWsciGX43aCfrsagabHqOFx3RPz4q1aNAub3IQqd1a83jgQ5u3SKo48Rok5FppQy
+         8eXRjYVWRuh0/w6avXoESrWmS8kBtuw4yOZJ78TdXJHo2zl3Xi8nunQoRRgNJGjf4xm5
+         YBIveyqJvF7Lls/pEZh0QE8wAtm6bOiSx1Wybh8ewpFoakS5p+mTuOcB2QeAdjgtAHzd
+         P2FPkfPWOLV5gsREMUlz1AwdCL3qHzT+Tv41VpmMLsZtjjOPhbU2RqrgJ5Xz+Sdpvisy
+         i3lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Aj15l2cEApeqHsAshcdV7obPJ1IzQYJUiv8+UAkSWaQ=;
+        b=iixSQco7AxBpZFkPSZKX39GWH2G54ePJR7iA3r5MErTMCS/LKQAYMU/4ttSYxpNooP
+         tgRSfwy886HORq8K3IwNoN5ZVPM6k+F7Q3gTmvNVvErC3XoruZsphizwjwAPUHx7x7PC
+         x5j0mq4lJe2rEiqU5/zSyQa1rA46ESHBy28PUpAE1oaUE5TD/jZfjT8NC0jo7NNvXTqX
+         2UluJLpxbZtaVMt0N6pJLWkjDQzvvrI3+J8PMFhLu/dHK5Rl0LV/UBUx7OCSUt/bxETy
+         UOksnoH/5x+AIEGoGehzlh/0NPW2LsZw0NM5paslpULfoYx1M4tWyOPsFAn5UaZRe2bl
+         Boig==
+X-Gm-Message-State: ABuFfohPRaR3KLmKtNjFms0q/+PPmA/G34kgVFqoeoz+7IRJs4KN5fS0
+        L8pIiBJChSq0WcAjSP7CHWc=
+X-Google-Smtp-Source: ACcGV61FkZaLjH7XXGd2igE+OK2NNEVXYtW3Z9qGliIlhahnA1VJSgWuBI/pCtWVt8rqqJ8UsH9G3Q==
+X-Received: by 2002:a62:e414:: with SMTP id r20-v6mr7084155pfh.25.1539366627954;
+        Fri, 12 Oct 2018 10:50:27 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id y144-v6sm3268690pfb.81.2018.10.12.10.50.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 10:50:26 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 10:50:25 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/35] 4.9.133-stable review
+Message-ID: <20181012175025.GA25636@roeck-us.net>
+References: <20181011152520.174949126@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAMRc=McmvkWEKV71pX9_PbNaYYf2VpovO2JrUQckWJ_0taqCZw@mail.gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <CAMRc=McmvkWEKV71pX9_PbNaYYf2VpovO2JrUQckWJ_0taqCZw@mail.gmail.com>
-Message-ID: <153936653758.5275.9529030954345523691@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 0/4] devres: provide and use devm_kstrdup_const()
-Date:   Fri, 12 Oct 2018 10:48:57 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011152520.174949126@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2018-09-20 05:59:54)
-> 2018-08-28 11:33 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> > This series implements devm_kstrdup_const() together with some
-> > prerequisite changes and uses it in pmc-atom driver.
-> >
-> > v1 -> v2:
-> > - fixed the changelog in the patch implementing devm_kstrdup_const()
-> > - fixed the kernel doc
-> > - moved is_kernel_rodata() to asm-generic/sections.h
-> > - fixed constness
-> >
-> > Bartosz Golaszewski (4):
-> >   devres: constify p in devm_kfree()
-> >   mm: move is_kernel_rodata() to asm-generic/sections.h
-> >   devres: provide devm_kstrdup_const()
-> >   clk: pmc-atom: use devm_kstrdup_const()
-> >
-> >  drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
-> >  drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
-> >  include/asm-generic/sections.h | 14 +++++++++++
-> >  include/linux/device.h         |  5 +++-
-> >  mm/util.c                      |  7 ------
-> >  5 files changed, 63 insertions(+), 25 deletions(-)
-> >
-> > --
-> > 2.18.0
-> >
-> =
+On Thu, Oct 11, 2018 at 05:35:02PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.133 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Oct 13 15:25:09 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-> If there are no objections - can this be picked up for 4.20?
-> =
+For v4.9.132-33-ge4e7bd48c9de:
 
+Build results:
+	total: 150 pass: 150 fail: 0
+Qemu test results:
+	total: 308 pass: 308 fail: 0
 
-There are so many people on To: line who do you want to pick this up?
-Maybe you can send a pull request to Greg directly.
+Details are available at https://kerneltests.org/builders/.
 
+Guenter
