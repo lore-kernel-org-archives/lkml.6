@@ -2,109 +2,146 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3216EC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25631C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC40620835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5B5F20835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:15:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCw5596U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC40620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFI3an8L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B5F20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbeJLWq7 (ORCPT
+        id S1729080AbeJLWsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:46:59 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43366 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbeJLWq7 (ORCPT
+        Fri, 12 Oct 2018 18:48:05 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42099 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbeJLWsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:46:59 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so9451253ioa.10;
-        Fri, 12 Oct 2018 08:14:03 -0700 (PDT)
+        Fri, 12 Oct 2018 18:48:05 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so5979927pgq.9;
+        Fri, 12 Oct 2018 08:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OX0jD8o5jFFMWMMxlWPTg+rLnbH5CF/R0JGC9Srfuo8=;
-        b=dCw5596UuGVifnScmeUSHblReg2vSTtdwfxx0uX8gMmwpnabDh02aLmoRHOdj2uhYK
-         qG0PGd5vCkK+oOgu1YH/VMN/GDKQgyggcpO1++qVeqkHfCyTPtmrIlDiRWn5HOeYyFyR
-         524cUUR56TTVbNUCzLoP5N0FGMTIa1dyQYZ72sM3GP3BUFy2ag4DBZ1wmub1+WwSD/Sd
-         OqSqAoStd/8XkvBso7ZA0SqgGAG2PAQqmed96RvmkRPVIAQ3NIN3RyPmzCQga/OLPDC6
-         2DPn6jKrTmu2OC5eK2AZ91vvv7LNOJ1KhCjEtfV2C3EAJ2nCEFoykih4cW0qEeIyTOq4
-         PQBA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8Jf8mbEPCp+RopOAvnT0YEpEzncJlSyge8QrQS3XyGs=;
+        b=RFI3an8L73aoFvFdwSRADE/ICVuAFW/rkocftiUHnrcynITM/ECg5pXmFwvENKi7jR
+         xJfWjAWiLYrGv1CHrEqEpov9m7hmqiW9asXt593IklRZMeLKMoHuaXkd9Nrdt67jha6t
+         onlERTX4iwt16iv6ld334Tat80ZPO/6C5MZrVWO9kl54TZ74A8U8n2dZPjlfsvC8JsWb
+         v68ELdLHa5pb2n4DwOmCdtYgG+AG/GMmSuq/4rd75hxy70g2MbjuEuptCCgy9x4J75VF
+         T1iv+dRV4kdRAgZWzYp7Od0w35MfhxDwb+zLQRJQf53hwUI7l2MQka3rPF+1MDPBZrgh
+         Bbxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OX0jD8o5jFFMWMMxlWPTg+rLnbH5CF/R0JGC9Srfuo8=;
-        b=KEaSrfeZy2jhNQhqWxotEYXMr6wwPspbb8WdO/AIMOEWvXPvAM3r0W4yEKauqXUkgA
-         kBTdZ0BexbLMRN+rA9oHdjrU7xSAOm+W9cySpKfqZ+nS5DrD4Zz3AV3l0c9oysAqYS7e
-         xsV5K0ZWri/yP5pRnCvljbUIhdNDI3No6BQMc2xWt5v/EayBt94kVz4wk2wq53IHokzY
-         bVACsM32QMOAtZSDmIU3DChixDcvBiJOTPuS4uI4ZUXJ6w0QI16/xnsIdR6HKIX2ZrYN
-         diO2kJCABaFlrjey1ZMKVBgqaXGZ7Qb45bKLqXlnL5EwFvLRDXWTsJgkriSf6fHwqWrV
-         NDMQ==
-X-Gm-Message-State: ABuFfoiTJuvDWVs0INEpbYuUTuJjT7gQrQKeP6cO7ZNYexn4Zfh5FVOP
-        Ku5pTGxsfadHwVMTqt/B1cuaDRQ5zcY=
-X-Google-Smtp-Source: ACcGV60+saWOTdthyC0uEkZ9FJkIyVcNWu2SZ7aFPiuisI1NNFgaluYsXNZr3XFEqjZkeSbRIjCBpA==
-X-Received: by 2002:a6b:e217:: with SMTP id z23-v6mr4401215ioc.70.1539357243273;
-        Fri, 12 Oct 2018 08:14:03 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id x21-v6sm722203ita.6.2018.10.12.08.13.59
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8Jf8mbEPCp+RopOAvnT0YEpEzncJlSyge8QrQS3XyGs=;
+        b=JV0H6IkATrxDEMuzJcClvYwvVoHzzOt6YwgzNiSQiB4WI0BiMHPp5vZvBp91GIWyE3
+         NIfeQx4eRTYuYvRNMz2RoyIztwgycO0HAKjxPpFUZaL5nqLHmbHw2BcdVx/6PT6wYcBX
+         YJf4I4xsrQFyl2HlUPc9ipLb1Idi+4UIlwr5jgl4QQoXDW3vsBItso29IRQw/IYTP09g
+         z541CiAGeaYLP5QwQsKyuwZfp29PHr3YwgNIrH7ToyZ48jpTSXvTd+KrqPZ5gh7/nZED
+         QnQ1oXwGB1WVhnphJTeB9OZxKq8VLnoly1L/oOB6TyiF4x8Ls1Q88JJC2hnTOjJ8vIMO
+         LJUA==
+X-Gm-Message-State: ABuFfoiSJpFQsdDj//Cer0O6BP9yQ8YJ6AXgsXIDBjuRLLzox0aWef6S
+        PiFeQbCAZ7h1gRkX/q0Bx2iDsIfr
+X-Google-Smtp-Source: ACcGV62Ac+i0D+KVbuBcd+0RN7AG33g6IpquDqCiP8nWakwTsq2NniH0hHNIZGdq/Bl9LAkiYQlD4w==
+X-Received: by 2002:a63:4b44:: with SMTP id k4-v6mr5862687pgl.51.1539357309150;
+        Fri, 12 Oct 2018 08:15:09 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id c124-v6sm2611069pfa.119.2018.10.12.08.15.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 08:14:00 -0700 (PDT)
-Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     James Bottomley <jejb@linux.ibm.com>, ndesaulniers@google.com,
-        dhowells@redhat.com
-Cc:     natechancellor@gmail.com, ebiggers@google.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
- <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
- <1539356751.2656.5.camel@linux.ibm.com>
-From:   Denis Kenzior <denkenz@gmail.com>
-Message-ID: <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
-Date:   Fri, 12 Oct 2018 10:13:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Fri, 12 Oct 2018 08:15:08 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 08:15:06 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 000/120] 3.18.124-stable review
+Message-ID: <20181012151506.GA17468@roeck-us.net>
+References: <20181011152549.500488630@linuxfoundation.org>
+ <9b2c52e4-56ce-37a3-b515-a6ff831fe17e@roeck-us.net>
+ <20181012133704.GB3706@kroah.com>
+ <10e12992-7e33-9569-5a4f-2a8124d3aae4@roeck-us.net>
+ <20181012142110.GA10817@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <1539356751.2656.5.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012142110.GA10817@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-
->> So can't we simply use 'bool' or uint32 as the type for h3 instead
->> of re-ordering everything
+On Fri, Oct 12, 2018 at 04:21:10PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Oct 12, 2018 at 07:06:13AM -0700, Guenter Roeck wrote:
+> > On 10/12/2018 06:37 AM, Greg Kroah-Hartman wrote:
+> > > On Fri, Oct 12, 2018 at 05:19:16AM -0700, Guenter Roeck wrote:
+> > > > On 10/11/2018 08:33 AM, Greg Kroah-Hartman wrote:
+> > > > > This is the start of the stable review cycle for the 3.18.124 release.
+> > > > > There are 120 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > > 
+> > > > > Responses should be made by Sat Oct 13 15:25:29 UTC 2018.
+> > > > > Anything received after that time might be too late.
+> > > > > 
+> > > > 
+> > > > [preliminary]
+> > > > 
+> > > > arm:allmodconfig:
+> > > > 
+> > > > drivers/mtd/spi-nor/fsl-quadspi.c: In function 'fsl_qspi_init_lut':
+> > > > drivers/mtd/spi-nor/fsl-quadspi.c:170:5: error: 'LUT_0' undeclared
+> > > 
+> > > That is really odd in that there are no patches that touch this file,
+> > > and I do not even see "LUT_0" anywhere in the 3.18.y tree.
+> > > 
+> > 
+> > Bisect:
+> > 
+> > 
+> > # bad: [8c4ca12b60ea371a32db58cf78b6cb4e2ba4515c] Linux 3.18.124-rc1
+> > # good: [921b2fed6a79439ef1609ef4af0ada5cccb3555c] Linux 3.18.123
+> > git bisect start 'HEAD' 'v3.18.123'
+> > # good: [aed5b0190528303a3f4d319f95d7e38c94ca32ab] USB: remove LPM management from usb_driver_claim_interface()
+> > git bisect good aed5b0190528303a3f4d319f95d7e38c94ca32ab
+> > # good: [10441f560c0ad0aeed00402088d71d4d299d6537] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
+> > git bisect good 10441f560c0ad0aeed00402088d71d4d299d6537
+> > # bad: [0661a919177560337d962f43daa46dde2fa4d89e] mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
+> > git bisect bad 0661a919177560337d962f43daa46dde2fa4d89e
+> > # good: [d4b130cc92bbef445de4ffe4ecd068935375d591] ocfs2: fix locking for res->tracking and dlm->tracking_list
+> > git bisect good d4b130cc92bbef445de4ffe4ecd068935375d591
+> > # bad: [1f002a3e6d7250a62966399bd91eeec308c0b756] fbdev/omapfb: fix omapfb_memory_read infoleak
+> > git bisect bad 1f002a3e6d7250a62966399bd91eeec308c0b756
+> > # bad: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
+> > git bisect bad 5396a79f029d54c1e02409335c7dfde43c55e4a4
+> > # good: [7da4d144b6922e94aad8c0d405e4cc63a44b8ec5] dm thin metadata: fix __udivdi3 undefined on 32-bit
+> > git bisect good 7da4d144b6922e94aad8c0d405e4cc63a44b8ec5
+> > # first bad commit: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
+> > 
+> > ... and reverting that patch fixes the problem. No idea why; maybe because of include
+> > file changes.
 > 
-> The problem is the standard is ambiguious.  The only thing that's
-> guaranteed to work for all time is a char *.  If you want to keep the
-> order, what I'd suggest is inserting a dummy pointer argument which is
-> always expected to be NULL between the h3 and the varargs.
+> That patch _adds_ two .h files to be included in
+> include/linux/seq_file.h, not removes any.
+> 
+> Ugh, that's a mess.
+> 
+> I've seen the LUT_0 thing show up a long time ago due to some other odd
+> arm thing.  But I don't remember how it was ever resolved.  Maybe I'll
+> just let this one go and see if anyone notices :)
+> 
+See commit 04850c4d8613127a9b488321c0ad83bff7519311. I'll check if it applies
+and fixes the problem, and let you know.
 
-So maybe I'm misunderstanding something, but the issue seems to be that 
-unsigned char is promoted to 'unsigned char *' by Clang and probably 
-unsigned int or int by gcc.
-
-So instead of having unsigned char h3, can't we simply have bool h3 or 
-unsigned int h3?
-
-Regards,
--Denis
-
+Guenter
