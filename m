@@ -2,141 +2,132 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD93C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60394C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A8D2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:53:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A8D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E9C22098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 07:58:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9C22098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeJLPYZ (ORCPT
+        id S1727787AbeJLP3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:24:25 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46458 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeJLPYY (ORCPT
+        Fri, 12 Oct 2018 11:29:16 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:34681 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbeJLP3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:24:24 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o21so11529992otb.13;
-        Fri, 12 Oct 2018 00:53:13 -0700 (PDT)
+        Fri, 12 Oct 2018 11:29:16 -0400
+Received: by mail-io1-f69.google.com with SMTP id y3-v6so10391244iob.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 00:58:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=um6mDg2IyyzdSCVWEY6gHlfduTP44M2OvXQyiVTqqRM=;
-        b=QJC2GuFeQhAy1SWqYlpR+GEYAxUAVwLv+hLYVaL62pD01dqCgHMJWHpsPwpFLQRiDY
-         GXUYv8W64b8PW0Lp/TrYX0xaCDRQDyoqoiGxevu8UPXuGms/XkLUDKKT8HPBg8zbNrUa
-         UQqcIEE4XuLAvOrp8QsIsI29ypoghobBBFqol1rJzvHSoVgNuS0jD53c68me/2ypHDE9
-         VJ8ohOy0ZkWNM7mY5bKIGw9XSibZEVKKuBduVSLXQEs1p5XTKF6yCkqWenmH94+MiYJm
-         Qe1vi88qID9U7HQVi23b7YytIxc/0FpAjOmKbCHfWG2qMw6/U2/zM3nW1AgSwQDMeKc+
-         rA4w==
-X-Gm-Message-State: ABuFfohW6pYI1gYZn4uUvEClYjkmLKR9XY/susJNkAP6zdv15toudSiY
-        arUFqlENZ3OaN5tnO5wsii73DF8lWpNMizy9JGbZ7g==
-X-Google-Smtp-Source: ACcGV62MtCNSqgCKMMvnojDUbj6BVRhraQILs6nF8iyz4FLomt5N00Fjv3ywaH6OJCffn8Y47N6nf6Mc8lwJRECc4PM=
-X-Received: by 2002:a9d:538c:: with SMTP id w12mr3310565otg.139.1539330792613;
- Fri, 12 Oct 2018 00:53:12 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=DMfYInh7HkkSpq62RtwbjuxS5cv9PVeARfdTMs1yTRU=;
+        b=CZF5058B8AJVxOmzXFGwE+sMuOs6cOS+oIpMxhlH5J+WskkyFxygkjcbsbydHi4pdC
+         k3jSBRfdasbWANeu3BRtVgQYMKPXBnq2MgVmUB1CGCvdWY9zv90DY4mZtvqN64fzzmos
+         F9sZMBe2IMgldzC7XdLCYD3r7yQr+NnhwR1OCd0Hw6gsNJzuBwz3PHpnd8XTULY/LzvG
+         Z5gByQ6+hDVnOn45Rv/d2JRQIeufkJLFlu44Rkiki4bahbjmfk47iWFjU/gRWP0i0wL5
+         JOVzRZ/7ScZDQNIUF9DLgc1gwYP8iFNu1Wzwf+RmNQVMl2eUtNd0cl3wYwz7Z0WFhovU
+         rsfg==
+X-Gm-Message-State: ABuFfoi7vbUYdfzu9Y2/mEC2StYujSQbwlmODgzCWhNLcFExEdd//Tvi
+        DR43tfwoV70Po+5/JyW0/r8Q5RZgxb6VloPZZPMzw1YYQ9vm
+X-Google-Smtp-Source: ACcGV61oP9RrA1kO+etNl1I3kCNt8G1v2NJXhXmw1lyUucG0e7pTU0ur7OsyQgpCUD4up/qK47hjUZpfW9a0FU3bTljfG2g8gmGm
 MIME-Version: 1.0
-References: <20181011220134.1408.63391.stgit@localhost.localdomain> <20181011220944.1408.39823.stgit@localhost.localdomain>
-In-Reply-To: <20181011220944.1408.39823.stgit@localhost.localdomain>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 12 Oct 2018 09:53:00 +0200
-Message-ID: <CAJZ5v0ioPTXP6L6TXvRHvHdTQFu-v74izHUYSDoc3b9gYS7wog@mail.gmail.com>
-Subject: Re: [driver-core PATCH v3 5/5] PM core: Use new async_schedule_dev command
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, zwisler@kernel.org,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:e38c:: with SMTP id d134-v6mr4154016ith.38.1539331082838;
+ Fri, 12 Oct 2018 00:58:02 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 00:58:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000627205057803724d@google.com>
+Subject: BUG: please report to dccp@vger.kernel.org => prev = 5, last = 5 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_his
+From:   syzbot <syzbot+e326127852f785c44347@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dccp@vger.kernel.org, garsilva@embeddedor.com,
+        gerrit@erg.abdn.ac.uk, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 12:10 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> This change makes it so that we use the device specific version of the
-> async_schedule commands to defer various tasks related to power management.
-> By doing this we should see a slight improvement in performance as any
-> device that is sensitive to latency/locality in the setup will now be
-> initializing on the node closest to the device.
->
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> ---
->  drivers/base/power/main.c |   12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index a690fd400260..ebb8b61b52e9 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -726,7 +726,7 @@ void dpm_noirq_resume_devices(pm_message_t state)
->                 reinit_completion(&dev->power.completion);
->                 if (is_async(dev)) {
->                         get_device(dev);
-> -                       async_schedule(async_resume_noirq, dev);
-> +                       async_schedule_dev(async_resume_noirq, dev);
->                 }
->         }
->
-> @@ -883,7 +883,7 @@ void dpm_resume_early(pm_message_t state)
->                 reinit_completion(&dev->power.completion);
->                 if (is_async(dev)) {
->                         get_device(dev);
-> -                       async_schedule(async_resume_early, dev);
-> +                       async_schedule_dev(async_resume_early, dev);
->                 }
->         }
->
-> @@ -1047,7 +1047,7 @@ void dpm_resume(pm_message_t state)
->                 reinit_completion(&dev->power.completion);
->                 if (is_async(dev)) {
->                         get_device(dev);
-> -                       async_schedule(async_resume, dev);
-> +                       async_schedule_dev(async_resume, dev);
->                 }
->         }
->
-> @@ -1366,7 +1366,7 @@ static int device_suspend_noirq(struct device *dev)
->
->         if (is_async(dev)) {
->                 get_device(dev);
-> -               async_schedule(async_suspend_noirq, dev);
-> +               async_schedule_dev(async_suspend_noirq, dev);
->                 return 0;
->         }
->         return __device_suspend_noirq(dev, pm_transition, false);
-> @@ -1569,7 +1569,7 @@ static int device_suspend_late(struct device *dev)
->
->         if (is_async(dev)) {
->                 get_device(dev);
-> -               async_schedule(async_suspend_late, dev);
-> +               async_schedule_dev(async_suspend_late, dev);
->                 return 0;
->         }
->
-> @@ -1833,7 +1833,7 @@ static int device_suspend(struct device *dev)
->
->         if (is_async(dev)) {
->                 get_device(dev);
-> -               async_schedule(async_suspend, dev);
-> +               async_schedule_dev(async_suspend, dev);
->                 return 0;
->         }
->
->
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgNzcxYjY1ZTg5YzhhIEFkZCBsaW51eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAy
+MDE4MTAxMQ0KZ2l0IHRyZWU6ICAgICAgIGxpbnV4LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBodHRw
+czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNjdkMjM3NjQwMDAwMA0Ka2Vy
+bmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PTQ1
+ZjFjMDZjNGRhMGE5MjUNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBzcG90
+LmNvbS9idWc/ZXh0aWQ9ZTMyNjEyNzg1MmY3ODVjNDQzNDcNCmNvbXBpbGVyOiAgICAgICBnY2Mg
+KEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwgSSBk
+b24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JUQU5U
+OiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhl
+IGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrZTMyNjEyNzg1MmY3ODVjNDQzNDdAc3l6a2Fs
+bGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQpCVUc6IHBsZWFzZSByZXBvcnQgdG8gZGNjcEB2Z2VyLmtl
+cm5lbC5vcmcgPT4gcHJldiA9IDUsIGxhc3QgPSA1IGF0ICANCm5ldC9kY2NwL2NjaWRzL2xpYi9w
+YWNrZXRfaGlzdG9yeS5jOjQyNS90ZnJjX3J4X2hpc3Rfc2FtcGxlX3J0dCgpDQpDUFU6IDEgUElE
+OiAxNiBDb21tOiBrc29mdGlycWQvMSBOb3QgdGFpbnRlZCA0LjE5LjAtcmM3LW5leHQtMjAxODEw
+MTErICM5Mg0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9Hb29n
+bGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCkNhbGwgVHJhY2U6
+DQogIF9fZHVtcF9zdGFjayBsaWIvZHVtcF9zdGFjay5jOjc3IFtpbmxpbmVdDQogIGR1bXBfc3Rh
+Y2srMHgyNDQvMHgzYWIgbGliL2R1bXBfc3RhY2suYzoxMTMNCiAgdGZyY19yeF9oaXN0X3NhbXBs
+ZV9ydHQuY29sZC4zKzB4NTQvMHg1YyAgDQpuZXQvZGNjcC9jY2lkcy9saWIvcGFja2V0X2hpc3Rv
+cnkuYzo0MjINCiAgY2NpZDNfaGNfcnhfcGFja2V0X3JlY3YrMHg1YzQvMHhlYjAgbmV0L2RjY3Av
+Y2NpZHMvY2NpZDMuYzo3NjcNCiAgY2NpZF9oY19yeF9wYWNrZXRfcmVjdiBuZXQvZGNjcC9jY2lk
+Lmg6MTg1IFtpbmxpbmVdDQogIGRjY3BfZGVsaXZlcl9pbnB1dF90b19jY2lkcysweGYwLzB4Mjgw
+IG5ldC9kY2NwL2lucHV0LmM6MTgwDQogIGRjY3BfcmN2X2VzdGFibGlzaGVkKzB4ODcvMHhiMCBu
+ZXQvZGNjcC9pbnB1dC5jOjM3OA0KICBkY2NwX3Y0X2RvX3JjdisweDE1My8weDE4MCBuZXQvZGNj
+cC9pcHY0LmM6NjU2DQogIHNrX2JhY2tsb2dfcmN2IGluY2x1ZGUvbmV0L3NvY2suaDo5MzIgW2lu
+bGluZV0NCiAgX19za19yZWNlaXZlX3NrYisweDNlMC8weGViMCBuZXQvY29yZS9zb2NrLmM6NDcz
+DQpiaW5kZXI6IHNlbmQgZmFpbGVkIHJlcGx5IGZvciB0cmFuc2FjdGlvbiA0MSB0byAyNzM4ODoy
+NzM4OQ0KICBkY2NwX3Y0X3JjdisweDEwZjkvMHgxZjU4IG5ldC9kY2NwL2lwdjQuYzo4NzcNCiAg
+aXBfbG9jYWxfZGVsaXZlcl9maW5pc2grMHgyZTkvMHhkYTAgbmV0L2lwdjQvaXBfaW5wdXQuYzoy
+MTUNCiAgTkZfSE9PSyBpbmNsdWRlL2xpbnV4L25ldGZpbHRlci5oOjI4OSBbaW5saW5lXQ0KICBp
+cF9sb2NhbF9kZWxpdmVyKzB4MWU0LzB4NzQwIG5ldC9pcHY0L2lwX2lucHV0LmM6MjU2DQogIGRz
+dF9pbnB1dCBpbmNsdWRlL25ldC9kc3QuaDo0NTAgW2lubGluZV0NCiAgaXBfcmN2X2ZpbmlzaCsw
+eDFmOS8weDMwMCBuZXQvaXB2NC9pcF9pbnB1dC5jOjQxNQ0KICBORl9IT09LIGluY2x1ZGUvbGlu
+dXgvbmV0ZmlsdGVyLmg6Mjg5IFtpbmxpbmVdDQogIGlwX3JjdisweGU4LzB4NjAwIG5ldC9pcHY0
+L2lwX2lucHV0LmM6NTI0DQogIF9fbmV0aWZfcmVjZWl2ZV9za2Jfb25lX2NvcmUrMHgxNGQvMHgy
+MDAgbmV0L2NvcmUvZGV2LmM6NDkwOA0KICBfX25ldGlmX3JlY2VpdmVfc2tiKzB4MjcvMHgxZTAg
+bmV0L2NvcmUvZGV2LmM6NTAxOA0KICBwcm9jZXNzX2JhY2tsb2crMHgyNGUvMHg3YTAgbmV0L2Nv
+cmUvZGV2LmM6NTgyMg0KICBuYXBpX3BvbGwgbmV0L2NvcmUvZGV2LmM6NjI0MiBbaW5saW5lXQ0K
+ICBuZXRfcnhfYWN0aW9uKzB4N2ZhLzB4MTliMCBuZXQvY29yZS9kZXYuYzo2MzA4DQogIF9fZG9f
+c29mdGlycSsweDMwZC8weGIyNiBrZXJuZWwvc29mdGlycS5jOjI5Mg0KICBydW5fa3NvZnRpcnFk
+KzB4NWUvMHgxMDAga2VybmVsL3NvZnRpcnEuYzo2NTQNCiAgc21wYm9vdF90aHJlYWRfZm4rMHg2
+OGIvMHhhMDAga2VybmVsL3NtcGJvb3QuYzoxNjQNCiAga3RocmVhZCsweDM1YS8weDQ0MCBrZXJu
+ZWwva3RocmVhZC5jOjI0Ng0KICByZXRfZnJvbV9mb3JrKzB4M2EvMHg1MCBhcmNoL3g4Ni9lbnRy
+eS9lbnRyeV82NC5TOjM1Mg0KZGNjcF9jbG9zZTogQUJPUlQgd2l0aCA1MjIyNCBieXRlcyB1bnJl
+YWQNCmJpbmRlcjogc2VuZCBmYWlsZWQgcmVwbHkgZm9yIHRyYW5zYWN0aW9uIDQzIHRvIDI3Mzk5
+OjI3NDA0DQpkY2NwX2Nsb3NlOiBBQk9SVCB3aXRoIDM1ODQgYnl0ZXMgdW5yZWFkDQpiaW5kZXI6
+IHNlbmQgZmFpbGVkIHJlcGx5IGZvciB0cmFuc2FjdGlvbiA0NSB0byAyNzQxNzoyNzQxOA0KYmlu
+ZGVyOiBzZW5kIGZhaWxlZCByZXBseSBmb3IgdHJhbnNhY3Rpb24gNDcgdG8gMjc0MjQ6Mjc0MjUN
+CmRjY3BfY2xvc2U6IEFCT1JUIHdpdGggMTA1OTg0IGJ5dGVzIHVucmVhZA0KZGNjcF9jbG9zZTog
+QUJPUlQgd2l0aCAxMDU5ODQgYnl0ZXMgdW5yZWFkDQpkY2NwX2Nsb3NlOiBBQk9SVCB3aXRoIDEw
+NTk4NCBieXRlcyB1bnJlYWQNCm5mX2Nvbm50cmFjazogZGVmYXVsdCBhdXRvbWF0aWMgaGVscGVy
+IGFzc2lnbm1lbnQgaGFzIGJlZW4gdHVybmVkIG9mZiBmb3IgIA0Kc2VjdXJpdHkgcmVhc29ucyBh
+bmQgQ1QtYmFzZWQgIGZpcmV3YWxsIHJ1bGUgbm90IGZvdW5kLiBVc2UgdGhlIGlwdGFibGVzIENU
+ICANCnRhcmdldCB0byBhdHRhY2ggaGVscGVycyBpbnN0ZWFkLg0KRGVhZCBsb29wIG9uIHZpcnR1
+YWwgZGV2aWNlIGlwNl92dGkwLCBmaXggaXQgdXJnZW50bHkhDQpEZWFkIGxvb3Agb24gdmlydHVh
+bCBkZXZpY2UgaXA2X3Z0aTAsIGZpeCBpdCB1cmdlbnRseSENCkRlYWQgbG9vcCBvbiB2aXJ0dWFs
+IGRldmljZSBpcDZfdnRpMCwgZml4IGl0IHVyZ2VudGx5IQ0KRGVhZCBsb29wIG9uIHZpcnR1YWwg
+ZGV2aWNlIGlwNl92dGkwLCBmaXggaXQgdXJnZW50bHkhDQpEZWFkIGxvb3Agb24gdmlydHVhbCBk
+ZXZpY2UgaXA2X3Z0aTAsIGZpeCBpdCB1cmdlbnRseSENCkRlYWQgbG9vcCBvbiB2aXJ0dWFsIGRl
+dmljZSBpcDZfdnRpMCwgZml4IGl0IHVyZ2VudGx5IQ0KSVBWUzogc3luYyB0aHJlYWQgc3RhcnRl
+ZDogc3RhdGUgPSBCQUNLVVAsIG1jYXN0X2lmbiA9IHRlYW1fc2xhdmVfMCwgc3luY2lkICANCj0g
+MCwgaWQgPSAwDQpEZWFkIGxvb3Agb24gdmlydHVhbCBkZXZpY2UgaXA2X3Z0aTAsIGZpeCBpdCB1
+cmdlbnRseSENCklQVlM6IHN5bmMgdGhyZWFkIHN0YXJ0ZWQ6IHN0YXRlID0gQkFDS1VQLCBtY2Fz
+dF9pZm4gPSB0ZWFtX3NsYXZlXzAsIHN5bmNpZCAgDQo9IDAsIGlkID0gMA0KSVBWUzogZnRwOiBs
+b2FkZWQgc3VwcG9ydCBvbiBwb3J0WzBdID0gMjENCgE6IHJlbmFtZWQgZnJvbSBicHEwDQpJUFZT
+OiBmdHA6IGxvYWRlZCBzdXBwb3J0IG9uIHBvcnRbMF0gPSAyMQ0KDQoNCi0tLQ0KVGhpcyBidWcg
+aXMgZ2VuZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6
+Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJv
+dCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20u
+DQoNCnN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRw
+czovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmlj
+YXRlIHdpdGggIA0Kc3l6Ym90Lg0K
