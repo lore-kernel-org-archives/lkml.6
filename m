@@ -6,54 +6,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C26EC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0F6C67877
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0254A21473
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A92721470
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:01:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Dg6nfyRX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0254A21473
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="p9QXpWX9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A92721470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeJMAei (ORCPT
+        id S1727705AbeJMAel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:34:38 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47838 "EHLO
+        Fri, 12 Oct 2018 20:34:41 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47836 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeJMAei (ORCPT
+        with ESMTP id S1725854AbeJMAek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:34:38 -0400
+        Fri, 12 Oct 2018 20:34:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=WKaviPFIE+VeKHuCD5uQZgOiRtIPi0A2BFmbyQnBM8g=; b=Dg6nfyRXOhvx
-        pp7MnFIDAIvkFY7RRAKFEg+MdVpPwhICHcG33FhxfZYTiSTXpT7S767wpboZtmf5tttrfO9+Lug5G
-        +OKddKgXn8Ki94Ly8vDVjnduRgsucU7do1UFpuYjdxffWyLl0etd3i8iMHj3DjKyyUIGUFgqXCLlj
-        jvi8Q=;
+        List-Archive; bh=fmk3s/jkhrvZ6MOxcYmoqP2PObM6FV5TA4daM/kOpJU=; b=p9QXpWX9nCro
+        hVJUZR6iNcoMX4cQ5Tg5fMEvL/rFwE8Vaxyya71+fivv2q4OEn0GvxGiJ4ESATnIwcoyWocFu558M
+        HIKpkZ64tzvI4hN1DVgH7XFa7NMBKAbw6Dn2g0Oavcsn82WNgleaUzyJCcnO0mD3WCmIYgcqJ3ZDY
+        tpARY=;
 Received: from [91.126.136.150] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gB0oH-0006eC-0w; Fri, 12 Oct 2018 17:01:09 +0000
+        id 1gB0oJ-0006eI-Gx; Fri, 12 Oct 2018 17:01:11 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 785A1440078; Fri, 12 Oct 2018 19:01:08 +0200 (CEST)
+        id 19C1E440078; Fri, 12 Oct 2018 19:01:11 +0200 (CEST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator/gpio: Allow nonexclusive GPIO access" to the regulator tree
+To:     Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: lochnagar: Add support for the Cirrus Logic Lochnagar" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181012170108.785A1440078@finisterre.ee.mobilebroadband>
-Date:   Fri, 12 Oct 2018 19:01:08 +0200 (CEST)
+Message-Id: <20181012170111.19C1E440078@finisterre.ee.mobilebroadband>
+Date:   Fri, 12 Oct 2018 19:01:11 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator/gpio: Allow nonexclusive GPIO access
+   regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
 
 has been applied to the regulator tree at
 
@@ -86,109 +81,326 @@ to this mail.
 Thanks,
 Mark
 
-From b0ce7b29bfcd090ddba476f45a75ec0a797b048a Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 Oct 2018 14:54:12 +0200
-Subject: [PATCH] regulator/gpio: Allow nonexclusive GPIO access
+From bef9391cbec547351c6a13e52f3a26bb2d271ec7 Mon Sep 17 00:00:00 2001
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Date: Mon, 8 Oct 2018 14:25:41 +0100
+Subject: [PATCH] regulator: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
 
-This allows nonexclusive (simultaneous) access to a single
-GPIO line for the fixed regulator enable line. This happens
-when several regulators use the same GPIO for enabling and
-disabling a regulator, and all need a handle on their GPIO
-descriptor.
+Lochnagar is an evaluation and development board for Cirrus
+Logic Smart CODEC and Amp devices. It allows the connection of
+most Cirrus Logic devices on mini-cards, as well as allowing
+connection of various application processor systems to provide a
+full evaluation platform. This driver supports the board
+controller chip on the Lochnagar board.
 
-This solution with a special flag is not entirely elegant
-and should ideally be replaced by something more careful as
-this makes it possible for several consumers to
-enable/disable the same GPIO line to the left and right
-without any consistency. The current use inside the regulator
-core should however be fine as it takes special care to
-handle this.
+The Lochnagar board provides power supplies for the attached
+CODEC/Amp device. Currently this driver supports the microphone
+supplies and the digital core voltage for the attached
+device. There are some additional supplies that will be
+added in time but these supplies are sufficient for most
+systems/use-cases.
 
-For the state of the GPIO backend, this is still the
-lesser evil compared to going back to global GPIO
-numbers.
-
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Fixes: efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpio/gpiolib.c        | 19 +++++++++++++++++--
- drivers/regulator/fixed.c     | 13 +++++++++++++
- include/linux/gpio/consumer.h |  1 +
- 3 files changed, 31 insertions(+), 2 deletions(-)
+ drivers/regulator/Kconfig               |   7 +
+ drivers/regulator/Makefile              |   1 +
+ drivers/regulator/lochnagar-regulator.c | 255 ++++++++++++++++++++++++
+ 3 files changed, 263 insertions(+)
+ create mode 100644 drivers/regulator/lochnagar-regulator.c
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e8f8a1999393..8228306aba46 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3908,8 +3908,23 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 * the device name as label
- 	 */
- 	status = gpiod_request(desc, con_id ? con_id : devname);
--	if (status < 0)
--		return ERR_PTR(status);
-+	if (status < 0) {
-+		if (status == -EBUSY && flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
-+			/*
-+			 * This happens when there are several consumers for
-+			 * the same GPIO line: we just return here without
-+			 * further initialization. It is a bit if a hack.
-+			 * This is necessary to support fixed regulators.
-+			 *
-+			 * FIXME: Make this more sane and safe.
-+			 */
-+			dev_info(dev, "nonexclusive access to GPIO for %s\n",
-+				 con_id ? con_id : devname);
-+			return desc;
-+		} else {
-+			return ERR_PTR(status);
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 026d480a7ac5..926cee0d0b5f 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -356,6 +356,13 @@ config REGULATOR_LM363X
+ 	  One boost output voltage is configurable and always on.
+ 	  Other LDOs are used for the display module.
+ 
++config REGULATOR_LOCHNAGAR
++	tristate "Cirrus Logic Lochnagar regulator driver"
++	depends on MFD_LOCHNAGAR
++	help
++	  This enables regulator support on the Cirrus Logic Lochnagar audio
++	  development board.
++
+ config REGULATOR_LP3971
+ 	tristate "National Semiconductors LP3971 PMIC regulator driver"
+ 	depends on I2C
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 300bc4ce01d6..72488ef11b8a 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -46,6 +46,7 @@ obj-$(CONFIG_REGULATOR_HI655X) += hi655x-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL6271A) += isl6271a-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL9305) += isl9305.o
+ obj-$(CONFIG_REGULATOR_LM363X) += lm363x-regulator.o
++obj-$(CONFIG_REGULATOR_LOCHNAGAR) += lochnagar-regulator.o
+ obj-$(CONFIG_REGULATOR_LP3971) += lp3971.o
+ obj-$(CONFIG_REGULATOR_LP3972) += lp3972.o
+ obj-$(CONFIG_REGULATOR_LP872X) += lp872x.o
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+new file mode 100644
+index 000000000000..54d791d20408
+--- /dev/null
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -0,0 +1,255 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Lochnagar regulator driver
++ *
++ * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
++
++#include <linux/mfd/lochnagar.h>
++
++static const struct regulator_ops lochnagar_micvdd_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++};
++
++static const struct regulator_linear_range lochnagar_micvdd_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1000000, 0,    0xC, 50000),
++	REGULATOR_LINEAR_RANGE(1700000, 0xD, 0x1F, 100000),
++};
++
++static int lochnagar_micbias_enable(struct regulator_dev *rdev)
++{
++	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
++	int ret;
++
++	mutex_lock(&lochnagar->analogue_config_lock);
++
++	ret = regulator_enable_regmap(rdev);
++	if (ret < 0)
++		goto err;
++
++	ret = lochnagar_update_config(lochnagar);
++
++err:
++	mutex_unlock(&lochnagar->analogue_config_lock);
++
++	return ret;
++}
++
++static int lochnagar_micbias_disable(struct regulator_dev *rdev)
++{
++	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
++	int ret;
++
++	mutex_lock(&lochnagar->analogue_config_lock);
++
++	ret = regulator_disable_regmap(rdev);
++	if (ret < 0)
++		goto err;
++
++	ret = lochnagar_update_config(lochnagar);
++
++err:
++	mutex_unlock(&lochnagar->analogue_config_lock);
++
++	return ret;
++}
++
++static const struct regulator_ops lochnagar_micbias_ops = {
++	.enable = lochnagar_micbias_enable,
++	.disable = lochnagar_micbias_disable,
++	.is_enabled = regulator_is_enabled_regmap,
++};
++
++static const struct regulator_ops lochnagar_vddcore_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++};
++
++static const struct regulator_linear_range lochnagar_vddcore_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0x8, 0x41, 12500),
++};
++
++enum lochnagar_regulators {
++	LOCHNAGAR_MICVDD,
++	LOCHNAGAR_MIC1VDD,
++	LOCHNAGAR_MIC2VDD,
++	LOCHNAGAR_VDDCORE,
++};
++
++static int lochnagar_micbias_of_parse(struct device_node *np,
++				      const struct regulator_desc *desc,
++				      struct regulator_config *config)
++{
++	struct lochnagar *lochnagar = config->driver_data;
++	int shift = (desc->id - LOCHNAGAR_MIC1VDD) *
++		    LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT;
++	int mask = LOCHNAGAR2_P1_MICBIAS_SRC_MASK << shift;
++	unsigned int val;
++	int ret;
++
++	ret = of_property_read_u32(np, "cirrus,micbias-input", &val);
++	if (ret >= 0) {
++		mutex_lock(&lochnagar->analogue_config_lock);
++		ret = regmap_update_bits(lochnagar->regmap,
++					 LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++					 mask, val << shift);
++		mutex_unlock(&lochnagar->analogue_config_lock);
++		if (ret < 0) {
++			dev_err(lochnagar->dev,
++				"Failed to update micbias source: %d\n", ret);
++			return ret;
 +		}
 +	}
- 
- 	status = gpiod_configure_flags(desc, con_id, lookupflags, flags);
- 	if (status < 0) {
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index 7d639ad953b6..ccc29038f19a 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -170,6 +170,19 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 			gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
- 	}
- 
-+	/*
-+	 * Some fixed regulators share the enable line between two
-+	 * regulators which makes it necessary to get a handle on the
-+	 * same descriptor for two different consumers. This will get
-+	 * the GPIO descriptor, but only the first call will initialize
-+	 * it so any flags such as inversion or open drain will only
-+	 * be set up by the first caller and assumed identical on the
-+	 * next caller.
-+	 *
-+	 * FIXME: find a better way to deal with this.
-+	 */
-+	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
 +
- 	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL, gflags);
- 	if (IS_ERR(cfg.ena_gpiod))
- 		return PTR_ERR(cfg.ena_gpiod);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 21ddbe440030..33695a1d8b35 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -30,6 +30,7 @@ struct gpio_descs {
- #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
- #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
- #define GPIOD_FLAGS_BIT_OPEN_DRAIN	BIT(3)
-+#define GPIOD_FLAGS_BIT_NONEXCLUSIVE	BIT(4)
- 
- /**
-  * Optional flags that can be passed to one of gpiod_* to configure direction
++	return 0;
++}
++
++static const struct regulator_desc lochnagar_regulators[] = {
++	[LOCHNAGAR_MICVDD] = {
++		.name = "MICVDD",
++		.supply_name = "SYSVDD",
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 32,
++		.ops = &lochnagar_micvdd_ops,
++
++		.id = LOCHNAGAR_MICVDD,
++		.of_match = of_match_ptr("MICVDD"),
++
++		.enable_reg = LOCHNAGAR2_MICVDD_CTRL1,
++		.enable_mask = LOCHNAGAR2_MICVDD_REG_ENA_MASK,
++		.vsel_reg = LOCHNAGAR2_MICVDD_CTRL2,
++		.vsel_mask = LOCHNAGAR2_MICVDD_VSEL_MASK,
++
++		.linear_ranges = lochnagar_micvdd_ranges,
++		.n_linear_ranges = ARRAY_SIZE(lochnagar_micvdd_ranges),
++
++		.enable_time = 3000,
++		.ramp_delay = 1000,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_MIC1VDD] = {
++		.name = "MIC1VDD",
++		.supply_name = "MICBIAS1",
++		.type = REGULATOR_VOLTAGE,
++		.ops = &lochnagar_micbias_ops,
++
++		.id = LOCHNAGAR_MIC1VDD,
++		.of_match = of_match_ptr("MIC1VDD"),
++		.of_parse_cb = lochnagar_micbias_of_parse,
++
++		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++		.enable_mask = LOCHNAGAR2_P1_INPUT_BIAS_ENA_MASK,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_MIC2VDD] = {
++		.name = "MIC2VDD",
++		.supply_name = "MICBIAS2",
++		.type = REGULATOR_VOLTAGE,
++		.ops = &lochnagar_micbias_ops,
++
++		.id = LOCHNAGAR_MIC2VDD,
++		.of_match = of_match_ptr("MIC2VDD"),
++		.of_parse_cb = lochnagar_micbias_of_parse,
++
++		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++		.enable_mask = LOCHNAGAR2_P2_INPUT_BIAS_ENA_MASK,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_VDDCORE] = {
++		.name = "VDDCORE",
++		.supply_name = "SYSVDD",
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 57,
++		.ops = &lochnagar_vddcore_ops,
++
++		.id = LOCHNAGAR_VDDCORE,
++		.of_match = of_match_ptr("VDDCORE"),
++
++		.enable_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL1,
++		.enable_mask = LOCHNAGAR2_VDDCORE_CDC_REG_ENA_MASK,
++		.vsel_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL2,
++		.vsel_mask = LOCHNAGAR2_VDDCORE_CDC_VSEL_MASK,
++
++		.linear_ranges = lochnagar_vddcore_ranges,
++		.n_linear_ranges = ARRAY_SIZE(lochnagar_vddcore_ranges),
++
++		.enable_time = 3000,
++		.ramp_delay = 1000,
++
++		.owner = THIS_MODULE,
++	},
++};
++
++static int lochnagar_regulator_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct lochnagar *lochnagar = dev_get_drvdata(dev->parent);
++	struct regulator_config config = { };
++	struct regulator_dev *rdev;
++	int ret, i;
++
++	config.dev = lochnagar->dev;
++	config.regmap = lochnagar->regmap;
++	config.driver_data = lochnagar;
++
++	for (i = 0; i < ARRAY_SIZE(lochnagar_regulators); i++) {
++		const struct regulator_desc *desc = &lochnagar_regulators[i];
++
++		rdev = devm_regulator_register(dev, desc, &config);
++		if (IS_ERR(rdev)) {
++			ret = PTR_ERR(rdev);
++			dev_err(dev, "Failed to register %s regulator: %d\n",
++				desc->name, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static struct platform_driver lochnagar_regulator_driver = {
++	.driver = {
++		.name = "lochnagar-regulator",
++	},
++
++	.probe = lochnagar_regulator_probe,
++};
++module_platform_driver(lochnagar_regulator_driver);
++
++MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
++MODULE_DESCRIPTION("Regulator driver for Cirrus Logic Lochnagar Board");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:lochnagar-regulator");
 -- 
 2.19.0
 
