@@ -2,84 +2,80 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAEBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6377AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F682086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:17:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDQji4bJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F682086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B3FC2151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 08:20:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3FC2151C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbeJLPsb (ORCPT
+        id S1727856AbeJLPvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 11:48:31 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55358 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbeJLPsb (ORCPT
+        Fri, 12 Oct 2018 11:51:43 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44887 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbeJLPvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 11:48:31 -0400
-Received: by mail-it1-f196.google.com with SMTP id c23-v6so17516875itd.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 01:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dMmrgELM0EOpqrClWyzxVHq2KGRABZMtIJ/PbthJ3EI=;
-        b=fDQji4bJC8QwX901rQB2rWOnUGa6ML9lUxs125ufs0BE8syg+PzF4KlifzuCG1T93W
-         SfHd2Xs/bi8GRYU/u53RYUx+dJgsNLmy7ntaoRBnu+6UmGRg35DSzrFF2/5uewRZbSfb
-         KvNv7TXzX5xvqFoQgpCKXfbZglb8ifsqSSkMo=
+        Fri, 12 Oct 2018 11:51:42 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so11603889otf.11;
+        Fri, 12 Oct 2018 01:20:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dMmrgELM0EOpqrClWyzxVHq2KGRABZMtIJ/PbthJ3EI=;
-        b=MW3JNnfMa2Hhqn5PXpp9ohxPUo7KNw20UEjkIDvTC+EzA7xPwOg8+VcIgA+gAw30xl
-         KD3jiJs01+vo0rYehR4tWEdlXVuRIrBmg5x4qb9X1k+eWgIgv21wKJh62461FQ4dhzTW
-         Nl+Ipgz96iRCC1+S4XCsdaRQegj5xrykZ8dLmvIC+t6/5UCSQVtqb2nwX0Mx9Ppsrnez
-         D85UpizfX3hvRqZ3UND5ZmhV7HuQ1waAYEYm1JCQFKOVJP8c+4dd9ZWiiuE+LuTnvo8a
-         dObWSmM/CTGVaPnM/VAtngGGoF5lA1mJW/Y9OsAU2CFHO40EwB8rx5t3VTX1LF4Dg0SF
-         3Lcg==
-X-Gm-Message-State: ABuFfojg33dNED6CsgwVWJKhqRAvfIcJcSuYLK7HC6s6PorHx+pBqM9d
-        WHLgZs5vAelUcbdNYB1z3YFLNXyWJI00d87DbXxRCw==
-X-Google-Smtp-Source: ACcGV61xlGfI8Kf0PfwC4wOttGVk8l7aX6I610kuZA2QOmcTCj6rQwJhjoMyajDrbs5SbZuLKFhhmSk9pBvdQP+KO48=
-X-Received: by 2002:a24:e0c8:: with SMTP id c191-v6mr3114723ith.156.1539332233838;
- Fri, 12 Oct 2018 01:17:13 -0700 (PDT)
+        bh=xk0q5CX14sZOPWbQK339Ju32BvuX+ClvFiXhhTcsPXA=;
+        b=AoctDalrCkja2pWxDNzbXvi3taz4nMIPhbhnAWa1COKd8GvjABmnMw+VVde0TgoKyg
+         LWLj+eucWnKCTA+kno6hT4h4MKrIS4JTUvIrKuT8hCrAhHI2t/oCBYM883SBiusdDNJY
+         sWt461m7G+ot1THD+mwPCzOdQQeX0gL80cQbKtZnqIYnhJE272qqu0oMg3+BhaA781sQ
+         z+G/nFNqC/jjroL3hSM5xGEDt7zSuSA72REv4TQt3vRvwmy4fWe9PfZ5P18fA8SyxzL5
+         JmsT6YS8jk6WhILnNyzAOWJiHiRoGDCBp0JB2aIWkxavC6c1w2BKfROozJfmK8ymy+JB
+         dMBA==
+X-Gm-Message-State: ABuFfoi3ebAEm3xJdaMPcvZ7e2Crx0XsNmVRPp3W26/zyyjJdn285wT4
+        r6TntpBGMxadAJjfNfVs0RaoXqbNu2T1anpiM28iWQ==
+X-Google-Smtp-Source: ACcGV62JSPdR0zGdZZlJi3dafNa9Uyg4dDJQ+7XEaZRb+6twre1GQFrfC2j2L1UcxFK6v9QgSiF24rHlYdMdUPSzA+M=
+X-Received: by 2002:a9d:4c90:: with SMTP id m16mr3025959otf.124.1539332424901;
+ Fri, 12 Oct 2018 01:20:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181012061136.11421-1-ricardo.ribalda@gmail.com>
-In-Reply-To: <20181012061136.11421-1-ricardo.ribalda@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 12 Oct 2018 10:17:01 +0200
-Message-ID: <CACRpkdbnNh6bzD_zp+Dc078c5Bi6JMTZRu9k5BZDYApS6kn54g@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Initialize gdev field before is used
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Vignesh R <vigneshr@ti.com>, jhugo@codeaurora.org,
-        timur@kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181009214633.16390-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20181009214633.16390-1-srinivas.pandruvada@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 12 Oct 2018 10:20:13 +0200
+Message-ID: <CAJZ5v0i3_2pxX48iZOwm+AyuU12E2g-bEnxNEaFURUsXyJpX3w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] cpufreq: intel_pstate: Base frequency attribute
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Prashanth Prakash <pprakash@codeaurora.org>,
+        George Cherian <george.cherian@cavium.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, devel@acpica.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 8:11 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-
-> gpio_hog depends on gdev field being initialized. This patch fixes an
-> OOPs during initialization of TI's AM335x-ICEv2.
+On Tue, Oct 9, 2018 at 11:46 PM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
 >
-> Fixes: 3edfb7bd76bd1cba ("gpiolib: Show correct direction from the beginning")
-> Tested-by: Vignesh R <vigneshr@ti.com>
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> This series presents base frequency to cpufreq sysfs when intel_pstate
+> is in use in HWP mode.
+>
+> Changes:
+> v2
+> - Removed guaranteed attribute addition to acpi_cppc sysfs
+> - Using the cppc_acpi interface to get base frequency and present
 
-Patch applied. Thanks to both of you for sorting this out!
+The code changes are fine by me, but what about documenting the new sysfs attr?
 
-Yours,
-Linus Walleij
+Thanks,
+Rafael
