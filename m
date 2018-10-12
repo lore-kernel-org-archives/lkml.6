@@ -2,125 +2,479 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFB2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116B7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF2020868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:35:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="wibu2jX2";
-	dkim=pass (1024-bit key) header.d=emlid.com header.i=@emlid.com header.b="C99gi8HL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF2020868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlid.com
+	by mail.kernel.org (Postfix) with ESMTP id A30D32087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30D32087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbeJLRHN (ORCPT
+        id S1728258AbeJLRI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:07:13 -0400
-Received: from forward101o.mail.yandex.net ([37.140.190.181]:50808 "EHLO
-        forward101o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728104AbeJLRHN (ORCPT
+        Fri, 12 Oct 2018 13:08:57 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:25643 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728104AbeJLRI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:07:13 -0400
-Received: from mxback14j.mail.yandex.net (mxback14j.mail.yandex.net [IPv6:2a02:6b8:0:1619::90])
-        by forward101o.mail.yandex.net (Yandex) with ESMTP id F06F31343FCF;
-        Fri, 12 Oct 2018 12:35:28 +0300 (MSK)
-Received: from smtp2o.mail.yandex.net (smtp2o.mail.yandex.net [2a02:6b8:0:1a2d::26])
-        by mxback14j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id iKME9nwAU6-ZRmCZnQW;
-        Fri, 12 Oct 2018 12:35:28 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539336928;
-        bh=q9rzQg/RRM8PekrIaQxbrtckEUlHk6xUQmonWjcu5SY=;
-        h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To;
-        b=wibu2jX2REIz1yLHiMlnDKkF+vyPGfS5tfDhq7TWh4kDZjgwoeM7vETJjmDbhOWzS
-         lGuTOAQxIDfbcGgBQCimZ1GiJO0NFGz6HWRzBpbCJt5FR3F2nJw9XgWnEmmeNlXq+I
-         Y3u6lzbb15nwkuY4tTcAkN/Rn2hmas5LARzqkftY=
-Received: by smtp2o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 4whhjU2oR3-ZPMCOgb7;
-        Fri, 12 Oct 2018 12:35:25 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emlid.com; s=mail; t=1539336925;
-        bh=q9rzQg/RRM8PekrIaQxbrtckEUlHk6xUQmonWjcu5SY=;
-        h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To;
-        b=C99gi8HLD3IxNc3CaYhoj5Iue5q2lkV0KxwpiHDsY9XeNeRLdlyGQygrQqojXUn5/
-         lRrE0pCMtTz/y6bILcB+uisqkUawaL7a/EYJjClExJQOrEQOBWPHkiqDycv7wP0ySY
-         PoXwcTwkOp1EsW89pPweMUBJHYirB0l0OZxuuMVw=
-Authentication-Results: smtp2o.mail.yandex.net; dkim=pass header.i=@emlid.com
-Date:   Fri, 12 Oct 2018 12:35:23 +0300
-From:   Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        David Lechner <david@lechnology.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] arm64: new board - Emlid Neutis N5
-Message-ID: <20181012093523.GA29014@imagebutcher>
-References: <1538745949-13188-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-1-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <20181010144957.exrlupoph7ovsmdw@flea>
- <9398571539259289@myt4-929fb874f3f2.qloud-c.yandex.net>
- <2d09d6c0-0404-589d-2c34-da846cff4fb8@suse.de>
+        Fri, 12 Oct 2018 13:08:57 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="46028578"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Oct 2018 17:37:22 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 6A9934B6ED68;
+        Fri, 12 Oct 2018 17:37:22 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 12 Oct 2018 17:37:21 +0800
+Date:   Fri, 12 Oct 2018 17:36:38 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <rjw@rjwysocki.net>,
+        <lenb@kernel.org>, <ard.biesheuvel@linaro.org>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v8 1/3] x86/boot: Add acpitb.c to parse acpi tables
+Message-ID: <20181012093638.GA1898@localhost.localdomain>
+References: <20181010084119.17539-1-fanc.fnst@cn.fujitsu.com>
+ <20181010084119.17539-2-fanc.fnst@cn.fujitsu.com>
+ <20181011105708.GB25435@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d09d6c0-0404-589d-2c34-da846cff4fb8@suse.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181011105708.GB25435@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 6A9934B6ED68.AE47A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Oct 11, 2018 at 12:57:08PM +0200, Borislav Petkov wrote:
+>On Wed, Oct 10, 2018 at 04:41:17PM +0800, Chao Fan wrote:
+[...]
+>> +		 * If ACPI20 table not found, but ACPI table found,
+>> +		 * use the ACPI table and return true.
+>> +		 * If neither ACPI table nor ACPI20 table found,
+>> +		 * return false.
+>> +		 */
+>> +		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID))) {
+>> +			*rsdp_addr = (acpi_physical_address)table;
+>> +			find_rsdp = true;
+>> +		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
+>> +			*rsdp_addr = (acpi_physical_address)table;
+>> +			return true;
+>> +		}
+>> +	}
+>> +	return find_rsdp;
+>> +}
+>> +#else
+>> +static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>> +{
+>> +	return false;
+>> +}
+>> +#endif
+>
+>Instead of doing this, move the ifdef inside the function:
+>
+>static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>{
+>#ifdef CONFIG_EFI
+>
+>	/* function body */
+>#endif
+>}
+>
 
-> >>      +/ {
-> >>      + model = "Emlid Neutis N5 Developer board";
-> >>      + compatible = "emlid,emlid-neutis-n5-devboard",
-> >>      + "emlid,emlid-neutis-n5",
-> >>
-> >> Do you need the two emlid there? What comes before the comma is the
-> >> vendor, while what is after is the model.
-> >  
-> > I think emlid-neutis-n5 module could be useful in the future, no need
-> > this now.
-> 
-> You misunderstand: The point would be to use, e.g., "emlid,neutis-n5"
-> instead of "emlid,emlid-neutis-n5" with duplicate "emlid,emlid-". It is
-> orthogonal to having multiple compatible strings.
+Hi Borislav,
 
-Oh, I agree. No need to duplicate "emlid". Thank you!
+Thank you for review the detail, but may I ask you why this style is better?
 
-> >>  +&uart1 {
-> >>  + pinctrl-names = "default";
-> >>  + pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-> >>  + status = "okay";
-> >>  +};
-> >>
-> >> I guess this is for bluetooth? Have you tested serdev drivers?
-> >>
-> > Yes, bluetooth is connected over uart1.
-> > You mean if I have tested bluetooth stack via serial device?
-> 
-> Not quite, we're missing a child node within uart1 for a serdev driver.
-> Is there no such driver yet for your Bluetooth chipset, or did you not
-> yet check?
+Since the Documentation/process/coding-style.rst said:
+Instead,
+use such conditionals in a header file defining functions for use in those .c
+files, providing no-op stub versions in the #else case, and then call those
+functions unconditionally from .c files.  The compiler will avoid generating
+any code for the stub calls, producing identical results, but the logic will
+remain easy to follow.
 
-Got it. I haven't checked a serdev driver.
+Prefer to compile out entire functions, rather than portions of functions or
+portions of expressions.  Rather than putting an ifdef in an expression, factor
+out part or all of the expression into a separate helper function and apply the
+conditional to that function.
 
-Maxim, the SoM can't be run without a motherboard. According to your last message
-I don't change dts files, right?
+So I am puzzled. If my understanding is wrong, please let me know.
 
-Aleksandr 
+Thanks,
+Chao Fan
+
+>> +
+>> +static u8 checksum(u8 *buffer, u32 length)
+>
+>compute_checksum(...)
+>
+>> +{
+>> +	u8 sum = 0;
+>> +	u8 *end = buffer + length;
+>> +
+>> +	while (buffer < end)
+>> +		sum = (u8)(sum + *(buffer++));
+>> +
+>> +	return sum;
+>> +}
+>> +
+>> +/*
+>> + * Used to search a block of memory for the RSDP signature.
+>> + * Return Pointer to the RSDP if found, otherwise NULL.
+>> + * Based on acpi_tb_scan_memory_for_rsdp().
+>> + */
+>> +static u8 *scan_mem_for_rsdp(u8 *start_address, u32 length)
+>> +{
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	u8 *end_address;
+>> +	u8 *mem_rover;
+>> +
+>> +	end_address = start_address + length;
+>> +
+>> +	/* Search from given start address for the requested length */
+>> +	for (mem_rover = start_address; mem_rover < end_address;
+>> +	     mem_rover += ACPI_RSDP_SCAN_STEP) {
+>
+>Shorten those variable names so that the loop fits on one line.
+>
+>> +		/*
+>> +		 * The RSDP signature and checksum must both be correct
+>> +		 * Note: Sometimes there exists more than one RSDP in memory;
+>> +		 * the valid RSDP has a valid checksum, all others have an
+>> +		 * invalid checksum.
+>> +		 */
+>> +		rsdp = (struct acpi_table_rsdp *)mem_rover;
+>> +
+>> +		/* Nope, BAD Signature */
+>> +		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
+>> +			continue;
+>> +
+>> +		/* Check the standard checksum */
+>> +		if (checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH) != 0)
+>
+>No need for "!= 0" at the end. Fix all other tests too.
+>
+>> +			continue;
+>> +
+>> +		/* Check extended checksum if table version >= 2 */
+>> +		if ((rsdp->revision >= 2) &&
+>> +		    (checksum((u8 *) rsdp, ACPI_RSDP_XCHECKSUM_LENGTH) != 0))
+>> +			continue;
+>> +
+>> +		/* Sig and checksum valid, we have found a real RSDP */
+>> +		return mem_rover;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>> +/*
+>> + * Used to search RSDP physical address.
+>> + * Based on acpi_find_root_pointer(). Since only use physical address
+>> + * in this period, so there is no need to do the memory map jobs.
+>> + */
+>> +static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>> +{
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	u8 *table_ptr;
+>> +	u8 *mem_rover;
+>> +	u32 address;
+>> +
+>> +	/*
+>> +	 * Get the location of the Extended BIOS Data Area (EBDA)
+>> +	 * Since we use physical address directely, so
+>> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
+>> +	 * not needed here.
+>> +	 */
+>> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
+>> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
+>> +	address <<= 4;
+>> +	table_ptr = (u8 *)address;
+>> +
+>> +	/*
+>> +	 * Search EBDA paragraphs (EBDA is required to be a minimum of
+>> +	 * 1K length)
+>> +	 */
+>> +	if (address > 0x400) {
+>> +		mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
+>> +
+>> +		if (mem_rover) {
+>> +			address += (u32)ACPI_PTR_DIFF(mem_rover, table_ptr);
+>> +			*rsdp_addr = (acpi_physical_address)address;
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
+>> +	mem_rover = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
+>> +
+>> +	/*
+>> +	 * Search upper memory: 16-byte boundaries in E0000h-FFFFFh
+>> +	 * Since we use physical address directely, so
+>> +	 * acpi_os_map_memory() and acpi_os_unmap_memory() are
+>> +	 * not needed here.
+>> +	 */
+>> +	if (mem_rover) {
+>> +		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
+>> +				ACPI_PTR_DIFF(mem_rover, table_ptr));
+>> +		*rsdp_addr = (acpi_physical_address)address;
+>> +		return;
+>
+>We will return anyway, without that statement. :)
+>
+>> +	}
+>> +}
+>> +
+>> +#ifdef CONFIG_KEXEC
+>> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	size_t len = strlen((char *)args);
+>> +	char *tmp_cmdline, *param, *val;
+>> +	unsigned long long addr = 0;
+>> +	char *endptr;
+>> +
+>> +	if (!strstr(args, "acpi_rsdp="))
+>> +		return false;
+>> +
+>> +	tmp_cmdline = malloc(len+1);
+>> +	if (!tmp_cmdline)
+>> +		error("Failed to allocate space for tmp_cmdline");
+>
+>Why do you even need to allocate a tmp cmdline?
+>
+>Ah, I see what you've done - you've copied handle_mem_options() in
+>kaslr.c. Well no, not really.
+>
+>That functionality needs to get extracted into a separate facility. Oh
+>look, there's arch/x86/boot/compressed/cmdline.c which is begging to get
+>extended.
+>
+>:-)
+>
+>> +
+>> +	memcpy(tmp_cmdline, args, len);
+>> +	tmp_cmdline[len] = 0;
+>> +	args = tmp_cmdline;
+>> +
+>> +	args = skip_spaces(args);
+>> +
+>> +	while (*args) {
+>> +		args = next_arg(args, &param, &val);
+>> +
+>> +		if (!val && strcmp(param, "--") == 0) {
+>> +			warn("Only '--' specified in cmdline");
+>> +			free(tmp_cmdline);
+>> +			return false;
+>> +		}
+>> +
+>> +		if (!strcmp(param, "acpi_rsdp")) {
+>> +			addr = simple_strtoull(val, &endptr, 0);
+>
+>WARNING: simple_strtoull is obsolete, use kstrtoull instead
+>#321: FILE: arch/x86/boot/compressed/acpitb.c:262:
+>+                       addr = simple_strtoull(val, &endptr, 0);
+>
+>
+>Please integrate scripts/checkpatch.pl into your patch creation
+>workflow. Some of the warnings/errors *actually* make sense.
+>
+>> +
+>> +			if (addr == 0)
+>> +				return false;
+>> +
+>> +			*rsdp_addr = (acpi_physical_address)addr;
+>> +			return true;
+>> +		}
+>> +	}
+>> +	return false;
+>> +}
+>> +#else
+>> +static bool get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+>> +{
+>> +	return false;
+>> +}
+>> +#endif
+>> +
+>> +/*
+>> + * Used to dig rsdp table from EFI table or BIOS.
+>
+>Write "rsdp" in all caps in all comments.
+>
+>> + * If rsdp table found in EFI table, use it. Or search BIOS.
+>> + * Based on acpi_os_get_root_pointer().
+>> + */
+>> +static acpi_physical_address get_rsdp_addr(void)
+>> +{
+>> +	acpi_physical_address pa = 0;
+>> +	bool status = false;
+>> +
+>> +	status = get_acpi_rsdp(&pa);
+>
+>Why does this function return bool if pa == 0 is already an invalid
+>address. You don't need the initialization to 0 above either.
+>
+>> +
+>> +	if (!status || pa == 0)
+>
+>	if (!status || !pa)
+>
+>Fix all other tests.
+>
+>> +		status = efi_get_rsdp_addr(&pa);
+>> +
+>> +	if (!status || pa == 0)
+>> +		bios_get_rsdp_addr(&pa);
+>> +
+>> +	return pa;
+>> +}
+>> +
+>> +static struct acpi_table_header *get_acpi_srat_table(void)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	acpi_physical_address acpi_table;
+>> +	acpi_physical_address root_table;
+>> +	struct acpi_table_header *header;
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	char *signature;
+>> +	u8 *entry;
+>> +	u32 count;
+>> +	u32 size;
+>> +	int i, j;
+>> +	u32 len;
+>> +
+>> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+>> +	if (!rsdp)
+>> +		return NULL;
+>> +
+>> +	/* Get rsdt or xsdt from rsdp. */
+>> +	if (!strstr(args, "acpi=rsdt") &&
+>> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+>> +		root_table = rsdp->xsdt_physical_address;
+>> +		size = ACPI_XSDT_ENTRY_SIZE;
+>> +	} else {
+>> +		root_table = rsdp->rsdt_physical_address;
+>> +		size = ACPI_RSDT_ENTRY_SIZE;
+>> +	}
+>
+>Please rework the cmdline parsing so that the functions can call helpers
+>only.
+>
+>> +
+>> +	/* Get ACPI root table from rsdt or xsdt.*/
+>> +	header = (struct acpi_table_header *)root_table;
+>> +	len = header->length;
+>> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+>> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		u64 address64;
+>> +
+>> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+>> +			acpi_table = ((acpi_physical_address)
+>> +				      (*ACPI_CAST_PTR(u32, entry)));
+>> +		else {
+>> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+>> +			acpi_table = (acpi_physical_address) address64;
+>> +		}
+>> +
+>> +		if (acpi_table) {
+>> +			header = (struct acpi_table_header *)acpi_table;
+>> +			signature = header->signature;
+>> +
+>> +			if (!strncmp(signature, "SRAT", 4))
+>> +				return header;
+>> +		}
+>> +		entry += size;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>> +#ifdef CONFIG_MEMORY_HOTREMOVE
+>> +/*
+>> + * According to ACPI table, filter the immvoable memory regions
+>> + * and store them in immovable_mem[].
+>> + */
+>> +void get_immovable_mem(void)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	struct acpi_table_header *table_header;
+>> +	struct acpi_subtable_header *table;
+>> +	struct acpi_srat_mem_affinity *ma;
+>> +	unsigned long table_end;
+>> +	int i = 0;
+>> +
+>> +	if (!strstr(args, "movable_node") || strstr(args, "acpi=off"))
+>> +		return;
+>
+>Ditto.
+>
+>> +
+>> +	table_header = get_acpi_srat_table();
+>> +	if (!table_header)
+>> +		return;
+>> +
+>> +	table_end = (unsigned long)table_header + table_header->length;
+>> +
+>> +	table = (struct acpi_subtable_header *)
+>> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+>> +
+>> +	while (((unsigned long)table) + table->length < table_end) {
+>> +		if (table->type == 1) {
+>> +			ma = (struct acpi_srat_mem_affinity *)table;
+>> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>> +				immovable_mem[i].start = ma->base_address;
+>> +				immovable_mem[i].size = ma->length;
+>> +				i++;
+>> +			}
+>> +
+>> +			if (i >= MAX_NUMNODES*2)
+>> +				break;
+>> +		}
+>> +		table = (struct acpi_subtable_header *)
+>> +			((unsigned long)table + table->length);
+>> +	}
+>> +	num_immovable_mem = i;
+>> +}
+>> +#else
+>> +void get_immovable_mem(void)
+>> +{
+>> +}
+>> +#endif
+>
+>This patch is a pain to review - pls split it into patches adding:
+>
+>* get_acpi_rsdp
+>* efi_get_rsdp_addr
+>* bios_get_rsdp_addr
+>
+>and the needed functionality.
+>
+>As a prepatch refactor the cmdline parsing pls.
+>
+>Thx.
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
 
