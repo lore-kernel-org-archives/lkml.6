@@ -2,81 +2,140 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C09CC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B1DC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D9E2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:12:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D9E2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 73D1420868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:25:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CixZwotb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D1420868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725978AbeJMEq1 convert rfc822-to-8bit (ORCPT
+        id S1726059AbeJME7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 00:46:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42832 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725755AbeJMEq0 (ORCPT
+        Sat, 13 Oct 2018 00:59:22 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44440 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbeJME7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 00:46:26 -0400
-Received: from localhost.localdomain (c-24-4-154-175.hsd1.ca.comcast.net [24.4.154.175])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B78ECF10;
-        Fri, 12 Oct 2018 21:12:05 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 14:12:03 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] HMM updates, improvements and fixes
-Message-Id: <20181012141203.40a0c5272821e43e97382894@linux-foundation.org>
-In-Reply-To: <20181012181545.GG6593@redhat.com>
-References: <20180824192549.30844-1-jglisse@redhat.com>
-        <20181012181545.GG6593@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Sat, 13 Oct 2018 00:59:22 -0400
+Received: by mail-pl1-f193.google.com with SMTP id p25-v6so6472793pli.11
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=LF/YoHEd6r00UlYo875GaIQxjYz0VZX1XmCm0FXDGnY=;
+        b=CixZwotbFH8KgYAAQfsjqqPc8VX4nNMA3w3JlMX9LFnULIo2RvcC5Xa0rVBeVHRS7M
+         THTu8xr5tkBslxN+iZkx/zAVU2oGvto3o4nw9bDs4jYrosdllNKh2yRNeIx2gR9SsGT6
+         DqEJtkPXG6FhZGx1WwlhqrLposZKAqyW3Cqu7CGcOufea11aJpb2bJ4tajgLYwZbFfhi
+         fpz797F46bZshzvh8nTRYtlwTiZXdSNeR5YClakfoCwc1wbaDVrg8Fcjt4gbUuCxEIw1
+         JsdCHluRL6h1I9+i2KeTsfCkjth5tIl5tI85Ttgcos6r6hRrlx/Y4i06ub6uWPeUGOTz
+         IUUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=LF/YoHEd6r00UlYo875GaIQxjYz0VZX1XmCm0FXDGnY=;
+        b=GMwC1k5OPYAiHVb6njSpgZOTu3BjjLbmD8VZAgFAjNpB97VwQ+EEOx4KSjvCDOflYN
+         Z/M3OHzdiTpGT/jT/YcdaOSiiv6jfUtuKvI4LLlvP84JNKVw8ygveiidBbcRAl0oR/uf
+         5zo/9e8oVUUjDY8E5Hirp5A/hubm38UyMzcN+6jzXx/xW+etliNAj8lmEozf75asKvTJ
+         u/sZYa87k5W4MSgELyAUL8IrAwVjN0F92dbZqVJ4m5shBjPnNXgBcqIuRlywtyiQz6Pw
+         eJTSDMJweOgiVPJfsfMplPPqRllRnQf6BgK/feG+AkU48OwQ4dcHHE6j7R13bh+0UBGO
+         v9EA==
+X-Gm-Message-State: ABuFfohbtNyuLYef3O/Q2rC1UYhYkc6vA3yUwxaMBunn9fvCHg+XGQW/
+        dYX/pxwJLkezxNkyBsTtG4BUog==
+X-Google-Smtp-Source: ACcGV61ZNx1mUBELOUYEHjUrEGA4ZFvKoEeT5JrrP495aULPzFHQxGuPrff/j0QsJYYmMhZEhqkruQ==
+X-Received: by 2002:a17:902:74c2:: with SMTP id f2-v6mr7269417plt.45.1539379499023;
+        Fri, 12 Oct 2018 14:24:59 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id g3-v6sm2981344pgn.37.2018.10.12.14.24.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 14:24:58 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 14:24:57 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [patch] mm, slab: avoid high-order slab pages when it does not reduce
+ waste
+Message-ID: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 12 Oct 2018 14:15:45 -0400 Jerome Glisse <jglisse@redhat.com> wrote:
+The slab allocator has a heuristic that checks whether the internal
+fragmentation is satisfactory and, if not, increases cachep->gfporder to
+try to improve this.
 
-> On Fri, Aug 24, 2018 at 03:25:42PM -0400, jglisse@redhat.com wrote:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > Few fixes that only affect HMM users. Improve the synchronization call
-> > back so that we match was other mmu_notifier listener do and add proper
-> > support to the new blockable flags in the process.
-> > 
-> > For curious folks here are branches to leverage HMM in various existing
-> > device drivers:
-> > 
-> > https://cgit.freedesktop.org/~glisse/linux/log/?h=hmm-nouveau-v01
-> > https://cgit.freedesktop.org/~glisse/linux/log/?h=hmm-radeon-v00
-> > https://cgit.freedesktop.org/~glisse/linux/log/?h=hmm-intel-v00
-> > 
-> > More to come (amd gpu, Mellanox, ...)
-> > 
-> > I expect more of the preparatory work for nouveau will be merge in 4.20
-> > (like we have been doing since 4.16) and i will wait until this patchset
-> > is upstream before pushing the patches that actualy make use of HMM (to
-> > avoid complex tree inter-dependency).
-> > 
-> 
-> Andrew do you want me to repost this on top of lastest mmotm ?
-> All conflict should be pretty trivial to fix.
+If the amount of waste is the same at higher cachep->gfporder values,
+there is no significant benefit to allocating higher order memory.  There
+will be fewer calls to the page allocator, but each call will require
+zone->lock and finding the page of best fit from the per-zone free areas.
 
-Please.  I ducked v1 because a v2 was in the works.  It's very late in
-the cycle so you might want to prepare an urgent-for-4.19 series and a
-for-4.20 series.  Or, better, a single series with the appropriate
-Cc:stable tags.
+Instead, it is better to allocate order-0 memory if possible so that pages
+can be returned from the per-cpu pagesets (pcp).
 
-Please ensure that all review questions which have thus far been
-received are appropriately answered in code comments and in changelogs.
-Because if one reader was wondering about something, others will
-wonder the same thing in the future.
+There are two reasons to prefer this over allocating high order memory:
 
+ - allocating from the pcp lists does not require a per-zone lock, and
+
+ - this reduces stranding of MIGRATE_UNMOVABLE pageblocks on pcp lists
+   that increases slab fragmentation across a zone.
+
+We are particularly interested in the second point to eliminate cases
+where all other pages on a pageblock are movable (or free) and fallback to
+pageblocks of other migratetypes from the per-zone free areas causes
+high-order slab memory to be allocated from them rather than from free
+MIGRATE_UNMOVABLE pages on the pcp.
+
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ mm/slab.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/mm/slab.c b/mm/slab.c
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1748,6 +1748,7 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
+ 	for (gfporder = 0; gfporder <= KMALLOC_MAX_ORDER; gfporder++) {
+ 		unsigned int num;
+ 		size_t remainder;
++		int order;
+ 
+ 		num = cache_estimate(gfporder, size, flags, &remainder);
+ 		if (!num)
+@@ -1803,6 +1804,20 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
+ 		 */
+ 		if (left_over * 8 <= (PAGE_SIZE << gfporder))
+ 			break;
++
++		/*
++		 * If a higher gfporder would not reduce internal fragmentation,
++		 * no need to continue.  The preference is to keep gfporder as
++		 * small as possible so slab allocations can be served from
++		 * MIGRATE_UNMOVABLE pcp lists to avoid stranding.
++		 */
++		for (order = gfporder + 1; order <= slab_max_order; order++) {
++			cache_estimate(order, size, flags, &remainder);
++			if (remainder < left_over)
++				break;
++		}
++		if (order > slab_max_order)
++			break;
+ 	}
+ 	return left_over;
+ }
