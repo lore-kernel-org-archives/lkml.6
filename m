@@ -2,208 +2,170 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC131C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6A8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9E02087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9E02087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id D88A320868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:00:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="L1Yqe0X/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88A320868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbeJLSae (ORCPT
+        id S1728294AbeJLScT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:30:34 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:50451 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbeJLSad (ORCPT
+        Fri, 12 Oct 2018 14:32:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39424 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727640AbeJLScT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:30:33 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gAv9A-0000E7-IO from Vladimir_Zapolskiy@mentor.com ; Fri, 12 Oct 2018 03:58:20 -0700
-Received: from [137.202.108.125] (137.202.0.90) by
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Fri, 12 Oct 2018 11:58:15 +0100
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-To:     <kieran.bingham@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com> <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
- <20181012083924.GW4939@dell>
- <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
-CC:     Vladimir Zapolskiy <vz@mleia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
-Date:   Fri, 12 Oct 2018 13:58:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Fri, 12 Oct 2018 14:32:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r9-v6so5692457pgv.6
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GEbrC9WoMx7yLYsqRtPBIyhrSuV+9giyvr/7VnB22LM=;
+        b=L1Yqe0X/Iqbxggpg5gRFq0LOixMi+S3+WUyl1dAahvrs/73UFCbyJB7p7xUNsJCqz2
+         J/55GuQdzQeSrWw5vmoMEE8bXsjr2xRVwJHTHHWhSP2jbj8b5qLJctFEjk10PIoV/lXH
+         XRGrqfDuXDTB2dTifT9N9Bz0Z3yh9v9PMVqv3dbfw7yAAcEXQ0+UeFCamQfoVqfGxpX2
+         n0PDkLLD5QlFBx8GJW+Q/DG4bztQIqOGF9zjZnnP60DiSaD8otbMye1DdStyUPUfiJ3Z
+         wv5TAaNIBxLEG/OUwcGmdq6Msj/IPw4Yeu/wLa4P7U2V4G/BGO0bgJ6aChv4zFKsQoIk
+         1SbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GEbrC9WoMx7yLYsqRtPBIyhrSuV+9giyvr/7VnB22LM=;
+        b=Ju97LipcNUaNAbCcuH1fNDbslE+ajOWjkl9GMRpakdASRNhbYp72WjimglPI523AgM
+         ZWDmeUVswbfH8Kedop+GMP5ddQXta4wTFavw9awmfn8F9b473Gt/+tgnyPcXzULeaTu7
+         9HSl+scKBxOIge7QFM3zriIaz6UUQ5nIAhhVr4pcX0emqV5vFc9e3Ldzw8blFklXTj+O
+         0ju4yb21d20l3bLC59CiuJtlQaXLmSzhfOz1pVsQTfbZ151yordms+Q06les6pxvEMpZ
+         hRpo5iwNVcelaQSQDObxGJfVN6e6tWGKj/ERf/B6l/PeZx3iU9Uvvghysp5pBMa3SfgS
+         5qMg==
+X-Gm-Message-State: ABuFfogz0WgpPPdCnThkd3fK47YJdddWZR+Wg9F35p2aLLo0L3XKJxtQ
+        3u0hkhK2iOzGsqL7skAcCqfXQg==
+X-Google-Smtp-Source: ACcGV63koZtTeExokCUUCsPLV/i/1S/yoXhw+2CogLyBAt9QXtAalOEi9ocMmbIibE8F8TX2ngTkdQ==
+X-Received: by 2002:a62:830e:: with SMTP id h14-v6mr5683608pfe.29.1539342025895;
+        Fri, 12 Oct 2018 04:00:25 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.42])
+        by smtp.gmail.com with ESMTPSA id r73-v6sm1962024pfk.157.2018.10.12.04.00.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 04:00:24 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 85BBE300030; Fri, 12 Oct 2018 14:00:20 +0300 (+03)
+Date:   Fri, 12 Oct 2018 14:00:20 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Keith Busch <keith.busch@intel.com>, Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCHv2] mm/gup: Cache dev_pagemap while pinning pages
+Message-ID: <20181012110020.pu5oanl6tnz4mibr@kshutemo-mobl1>
+References: <20181011175542.13045-1-keith.busch@intel.com>
+ <CAPcyv4gGqhGpR8g-HmNzoEnMAysO5uAO+8njeAokHq2CT9x71A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-09.mgc.mentorg.com (139.181.222.9) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gGqhGpR8g-HmNzoEnMAysO5uAO+8njeAokHq2CT9x71A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-
-On 10/12/2018 12:20 PM, Kieran Bingham wrote:
-> Hi Vladimir,
+On Thu, Oct 11, 2018 at 04:24:02PM -0700, Dan Williams wrote:
+> On Thu, Oct 11, 2018 at 11:00 AM Keith Busch <keith.busch@intel.com> wrote:
+> >
+> > Getting pages from ZONE_DEVICE memory needs to check the backing device's
+> > live-ness, which is tracked in the device's dev_pagemap metadata. This
+> > metadata is stored in a radix tree and looking it up adds measurable
+> > software overhead.
+> >
+> > This patch avoids repeating this relatively costly operation when
+> > dev_pagemap is used by caching the last dev_pagemap while getting user
+> > pages. The gup_benchmark kernel self test reports this reduces time to
+> > get user pages to as low as 1/3 of the previous time.
+> >
+> > Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
+> > Cc: Dave Hansen <dave.hansen@intel.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Keith Busch <keith.busch@intel.com>
 > 
-> On 12/10/18 09:39, Lee Jones wrote:
->> On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
->>> On 10/12/2018 09:03 AM, Lee Jones wrote:
->>>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
->>>>
->>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>>
->>>>> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
->>>>> support of subdevice controllers is done in separate drivers, because
->>>>> not all IC functionality may be needed in particular situations, and
->>>>> this can be fine grained controlled in device tree.
->>>>>
->>>>> The development of the driver was a collaborative work, the
->>>>> contribution done by Balasubramani Vivekanandan includes:
->>>>> * original implementation of the driver based on a reference driver,
->>>>> * regmap powered interrupt controller support on serializers,
->>>>> * support of implicitly or improperly specified in device tree ICs,
->>>>> * support of device properties and attributes: backward compatible
->>>>>   mode, low frequency operation mode, spread spectrum clock generator.
->>>>>
->>>>> Contribution by Steve Longerbeam:
->>>>> * added ds90ux9xx_read_indirect() function,
->>>>> * moved number of links property and added ds90ux9xx_num_fpd_links(),
->>>>> * moved and updated ds90ux9xx_get_link_status() function to core driver,
->>>>> * added fpd_link_show device attribute.
->>>>>
->>>>> Sandeep Jain added support of pixel clock edge configuration.
->>>>>
->>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>> ---
->>>>>  drivers/mfd/Kconfig           |  14 +
->>>>>  drivers/mfd/Makefile          |   1 +
->>>>>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
->>>>>  include/linux/mfd/ds90ux9xx.h |  42 ++
->>>>>  4 files changed, 936 insertions(+)
->>>>>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
->>>>>  create mode 100644 include/linux/mfd/ds90ux9xx.h
->>>>>
->>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->>>>> index 8c5dfdce4326..a969fa123f64 100644
->>>>> --- a/drivers/mfd/Kconfig
->>>>> +++ b/drivers/mfd/Kconfig
->>>>> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
->>>>>  	  boards.  MSP430 firmware manages resets and power sequencing,
->>>>>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
->>>>>  
->>>>> +config MFD_DS90UX9XX
->>>>> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
->>>>> +	depends on I2C && OF
->>>>> +	select MFD_CORE
->>>>> +	select REGMAP_I2C
->>>>> +	help
->>>>> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
->>>>> +
->>>>> +	  This driver provides basic support for setting up the de-/serializer
->>>>> +	  chips. Additional functionalities like connection handling to
->>>>> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
->>>>> +	  controller and so on are provided by separate drivers and should
->>>>> +	  enabled individually.
->>>>
->>>> This is not an MFD driver.
->>>
->>> Why do you think so? The representation of the ICs into device tree format
->>> of hardware description shows that this is a truly MFD driver with multiple
->>> IP subcomponents naturally mapped into MFD cells.
->>
->> This driver does too much real work ('stuff') to be an MFD driver.
->> MFD drivers should not need to care of; links, gates, modes, pixels,
->> frequencies maps or properties.  Nor should they contain elaborate
->> sysfs structures to control the aforementioned 'stuff'.
->>
->> Granted, there may be some code in there which could be appropriate
->> for an MFD driver.  However most of it needs moving out into a
->> function driver (or two).
->>
->>> Basically it is possible to replace explicit of_platform_populate() by
->>> adding a "simple-mfd" compatible, if it is desired.
->>>
->>>> After a 30 second Google of what this device actually does, perhaps
->>>> drivers/media might be a better fit?
->>>
->>> I assume it would be quite unusual to add a driver with NO media functions
->>> and controls into drivers/media.
->>
->> drivers/media may very well not be the correct place for this.  In my
->> 30 second Google, I saw that this device has a lot to do with cameras,
->> hence my media association.
->>
->> If *all* else fails, there is always drivers/misc, but this should be
->> avoided if at all possible.
+> Other than the 2 comments below, this looks good to me:
 > 
-> The device as a whole is FPD Link for camera devices I believe, but it
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
-I still don't understand (I could be biased though) why there is such
-a strong emphasis on cameras and media stuff in the discussion.
+Looks good to me too:
 
-No, "the device as a whole is FPD Link for camera devices" is a wrong
-statement. On hand I have a number of boards with serializers/deserializers
-from the TI DS90Ux9xx IC series and sensors are NOT connected to them.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-> certainly has different functions which are broken out in this
-> implementation.
-
-No, there is absolutely nothing broken out from the presented MFD drivers,
-the drivers are completely integral and basically I don't expect any.
-
-If you are concerned about media functionality, the correspondent MFD
-*cell* drivers will be added into drivers/media, drivers/gpu/drm or
-whatever is to be a proper place.
-
-> I think it might be quite awkward having the i2c components in
-> drivers/i2c and the media components in drivers/media/i2c, so what about
-> creating drivers/media/i2c/fpd-link (or such) as a container?
-
-I open drivers/media/i2c/Kconfig and all entries with no exception are
-under from 'if VIDEO_V4L2'. The MFD drivers do NOT require on depend on
-VIDEO_V4L2 or any other multimedia frameworks, nor the MFD drivers export
-any multimedia controls.
-
-> Our GMSL implementation is also a complex camera(s) device - but does
-> not yet use the MFD framework, perhaps that's something to add to my
-> todo list.
 > 
-
-Okay, but the TI DS90Ux9xx is NOT a camera device, and it is NOT a multimedia
-device, but it is a pure MFD device so the argument is not applicable.
-
-> We currently keep all of the complexity within the max9286.c driver, but
-> I could foresee that being split further if more devices add to the
-> complexity of managing the bus. At which point we might want an
-> equivalent drivers/media/i2c/gmsl/ perhaps?
+> [..]
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index 1abc8b4afff6..d2700dff6f66 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> [..]
+> > @@ -431,7 +430,22 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
+> >                 return no_page_table(vma, flags);
+> >         }
+> >
+> > -       return follow_p4d_mask(vma, address, pgd, flags, page_mask);
+> > +       return follow_p4d_mask(vma, address, pgd, flags, ctx);
+> > +}
+> > +
+> > +struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+> > +                        unsigned int foll_flags)
+> > +{
+> > +       struct page *page;
+> > +       struct follow_page_context ctx = {
+> > +               .pgmap = NULL,
+> > +               .page_mask = 0,
+> > +       };
 > 
-
---
-Best wishes,
-Vladimir
-
->>> Laurent, can you please share your opinion?
+> You don't need to init all members. It is defined that if you init at
+> least one member then all non initialized members are set to zero, so
+> you should be able to do " = { 0 }".
 > 
+> > +
+> > +       page = follow_page_mask(vma, address, foll_flags, &ctx);
+> > +       if (ctx.pgmap)
+> > +               put_dev_pagemap(ctx.pgmap);
+> > +       return page;
+> >  }
+> >
+> >  static int get_gate_page(struct mm_struct *mm, unsigned long address,
+> > @@ -659,9 +673,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+> >                 unsigned int gup_flags, struct page **pages,
+> >                 struct vm_area_struct **vmas, int *nonblocking)
+> >  {
+> > -       long i = 0;
+> > -       unsigned int page_mask;
+> > +       long ret = 0, i = 0;
+> >         struct vm_area_struct *vma = NULL;
+> > +       struct follow_page_context ctx = {};
+> 
+> Does this have defined behavior? I would feel better with " = { 0 }"
+> to be explicit.
+
+Well, it's not allowed by the standart, but GCC allows this.
+You can see a warning with -pedantic.
+
+We use empty-list initializers a lot in the kernel:
+$ git grep 'struct .*= {};' | wc -l
+997
+
+It should be fine.
+
+-- 
+ Kirill A. Shutemov
