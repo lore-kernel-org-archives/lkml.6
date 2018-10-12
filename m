@@ -2,70 +2,74 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E15C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C9CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A50D2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:33:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A50D2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 438252077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438252077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeJLSFL (ORCPT
+        id S1727876AbeJLSGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:05:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48902 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726665AbeJLSFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:05:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11FC4AF0E;
-        Fri, 12 Oct 2018 10:33:25 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 12:33:24 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: fix integer overflow in setup_log_buf()
-Message-ID: <20181012103324.gsczzzf4wiaq5tfm@pathway.suse.cz>
-References: <20181010103808.882-1-sergey.senozhatsky@gmail.com>
- <20181010113308.9337-1-sergey.senozhatsky@gmail.com>
- <20181012090159.nmqcrodrxi66n2lz@pathway.suse.cz>
- <20181012092724.GB19882@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012092724.GB19882@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Fri, 12 Oct 2018 14:06:10 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:51718 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726788AbeJLSGK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:06:10 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.53 with ESMTP; 12 Oct 2018 19:34:22 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.168.176.142)
+        by 156.147.1.121 with ESMTP; 12 Oct 2018 19:34:22 +0900
+X-Original-SENDERIP: 10.168.176.142
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+To:     davem@davemloft.net, ktkhai@virtuozzo.com, viro@zeniv.linux.org.uk,
+        garsilva@embeddedor.com, jbaron@akamai.com, dvlasenk@redhat.com,
+        xiyou.wangcong@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kyeongdon.kim@lge.com
+Subject: [PATCH] net: fix waring in af_unix
+Date:   Fri, 12 Oct 2018 19:34:14 +0900
+Message-Id: <1539340454-67970-1-git-send-email-kyeongdon.kim@lge.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-10-12 18:27:24, Sergey Senozhatsky wrote:
-> On (10/12/18 11:01), Petr Mladek wrote:
-> > > Make "free" unsigned integer and use appropriate printk() specifier.
-> > > 
-> > > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > 
-> > I have pushed this fix into printk.git, for-4.20 branch.
-> 
-> Thanks.
-> 
-> > Please note that this 2nd hunk was already part of the commit
-> > e6fe3e5b7d16e8f14 ("printk: Give error on attempt to set log
-> > buffer length to over 2G"), see
-> > https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/commit/?h=for-4.20&id=e6fe3e5b7d16e8f146a4ae7fe481bc6e97acde1e
-> 
-> Oh, indeed. I guess I used linux-next which didn't have your commit.
+This fixes the "'hash' may be used uninitialized in this function"
 
-Yeah, I forgot to push some recent changes for linux-next.
+net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  addr->hash = hash ^ sk->sk_type;
+                      ^
 
-Best Regards,
-Petr
+Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+---
+ net/unix/af_unix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index d1edfa3..e6cecc8 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -989,7 +989,7 @@ static int unix_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 	struct sockaddr_un *sunaddr = (struct sockaddr_un *)uaddr;
+ 	char *sun_path = sunaddr->sun_path;
+ 	int err;
+-	unsigned int hash;
++	unsigned int hash = 0;
+ 	struct unix_address *addr;
+ 	struct hlist_head *list;
+ 	struct path path = { };
+-- 
+2.6.2
+
