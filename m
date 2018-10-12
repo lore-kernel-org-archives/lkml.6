@@ -2,83 +2,82 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F24EC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5DEC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10CC520868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10CC520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C015F2098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:45:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C015F2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729267AbeJLXSB (ORCPT
+        id S1729217AbeJLXSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:18:01 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44540 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbeJLXSA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:18:00 -0400
-Received: by mail-ot1-f67.google.com with SMTP id p23so12772575otf.11;
-        Fri, 12 Oct 2018 08:44:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SNMcl54Y6Krk95hO65gPoH9kIGL4aQ/px4ov2SSS1fg=;
-        b=lo+OhdKRugmsj1zf6c3QElLx2M9OlwUlZ/EnOqx/KEVs29xJg47Kf955NjvTsJBULE
-         SulHo1n8DCL7f3omkkOvTgwpQQ1wjHEoei8j5c42TzN895cMIBpFiMrJ5p7gRubN8b9L
-         IF1Fmg413DQh5/jgYZk7Uz62BMJ8otH80KjL3OY5I/Np/J2MIv02dg1MeqS74ZZ+ICgK
-         TY7IB5rIAPPwMe/+/ppGVv59I5CNsj8JVVlOtImIGb8yQO2O9x0LIF5tMP8BXqIW9Aei
-         5Mb+i9i3Ka0+EdKyhjykp520NT6oBgjqGaUrhBd/ZP0+EIdBx39gKtOlxmVmbBcUckFy
-         uVgQ==
-X-Gm-Message-State: ABuFfoiSEQXsOl3jGtNFsW1XxEwQSu55CcLj2KIQPUB/Z342giTmAhw3
-        qpmyd+SYM+caUteeMPa8HQ==
-X-Google-Smtp-Source: ACcGV60ZCzb0QIdBS8ERyTfnFZCAkh6EaI+pP4bFWv2ko7R7dQS/1GsJOidGS0UVbQY3LQdLkOjSHw==
-X-Received: by 2002:a9d:805:: with SMTP id 5mr4076798oty.161.1539359096009;
-        Fri, 12 Oct 2018 08:44:56 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w37sm426186oti.77.2018.10.12.08.44.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 08:44:55 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 10:44:54 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Oskari Lemmela <oskari@lemmela.net>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: power: supply: axp20x: add AXP813 AC
- power DT binding
-Message-ID: <20181012154454.GA15048@bogus>
-References: <20181008181908.9456-1-oskari@lemmela.net>
- <20181008181908.9456-2-oskari@lemmela.net>
+        Fri, 12 Oct 2018 19:18:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:53476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728786AbeJLXSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 19:18:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6765BF;
+        Fri, 12 Oct 2018 08:45:34 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3824A3F5BC;
+        Fri, 12 Oct 2018 08:45:34 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A668E1AE09F2; Fri, 12 Oct 2018 16:45:34 +0100 (BST)
+Date:   Fri, 12 Oct 2018 16:45:34 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Sodagudi Prasad <psodagud@codeaurora.org>
+Cc:     catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, robin.murphy@arm.com,
+        ynorov@caviumnetworks.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: livelock with hrtimer cpu_base->lock
+Message-ID: <20181012154534.GA11387@arm.com>
+References: <8f671ebb6b331cd00ce17d111f28c548@codeaurora.org>
+ <20181010164919.GA16512@arm.com>
+ <63fae7b2ef8dc4cc67928329cf7fcb60@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181008181908.9456-2-oskari@lemmela.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <63fae7b2ef8dc4cc67928329cf7fcb60@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  8 Oct 2018 21:19:02 +0300, Oskari Lemmela wrote:
-> The AXP803/AXP813 AC power supply can limit input current and voltage.
+On Fri, Oct 12, 2018 at 05:55:28AM -0700, Sodagudi Prasad wrote:
+> On 2018-10-10 09:49, Will Deacon wrote:
+> >On Tue, Oct 09, 2018 at 01:56:14PM -0700, Sodagudi Prasad wrote:
+> >>This is regarding - thread "try to fix contention between expire_timers
+> >>and
+> >>try_to_del_timer_sync".
+> >>https://lkml.org/lkml/2017/7/28/172
+> >>
+> >>I think this live lockup issue was discussed earlier but the final set
+> >>of
+> >>changes were not concluded.
+> >
+> >Well we basically need a way to pick a value for CPU_RELAX_WFE_THRESHOLD.
+> >Do you have any ideas? It could be determined at runtime if necessary.
+> >
 > 
-> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> ---
->  .../devicetree/bindings/power/supply/axp20x_ac_power.txt       | 3 +++
->  1 file changed, 3 insertions(+)
+> Please share what are values need to be tried for CPU_RELAX_WFE_THRESHOLD.
 > 
+>  It would be great if it can be determined from runtime.  Please let me know
+> if any testing need to be done with dynamic detection patch.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I was actually hoping you'd have some ideas about how to write the patch. I
+don't have a good feel for how to determine this threshold, and you have
+hardware that needs it...
+
+One avenue of exploration might be to tune the fallback to WFE based on
+what percentage of the eventstream period we've been polling, e.g. 50%.
+
+Will
