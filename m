@@ -2,83 +2,84 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2E1C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F71C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EA6E2087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA6E2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DB2D2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 19:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB2D2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeJMDDk (ORCPT
+        id S1726695AbeJMDF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:03:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:56622 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbeJMDDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:03:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D14B2F;
-        Fri, 12 Oct 2018 12:29:40 -0700 (PDT)
-Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 358C83F5BC;
-        Fri, 12 Oct 2018 12:29:40 -0700 (PDT)
-From:   Jeremy Linton <jeremy.linton@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        ard.biesheuvel@linaro.org, james.morse@arm.com,
-        rafael.j.wysocki@intel.com, takahiro.akashi@linaro.org,
-        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com, ahs3@redhat.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH 2/2] arm64: acpi: Prepare for longer MADTs
-Date:   Fri, 12 Oct 2018 14:29:37 -0500
-Message-Id: <20181012192937.3819951-1-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.14.3
+        Fri, 12 Oct 2018 23:05:29 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43197 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeJMDF3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 23:05:29 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k9so13401449otl.10;
+        Fri, 12 Oct 2018 12:31:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XcM8JEM5fApOvt1PNqKt26Nq5HS9EUXp4oFNTEwbIME=;
+        b=kHpK47IDlSgQJ7CNCrv8CtCZ99q61OIJio1m73nrHb/oktudeZeaGb+diFeF6iI8Lk
+         G3pnJXjyB1E2bmAN1jDnMCKdzKXvAwPZ+X/nS+fy2ZOZDgBrQ+tujuMBMOoR1ESYqUqI
+         LMG6tNR9kVeHcUiasZk7c7vgUu+QLY4O9GH5VvInSoeY6Kl1Fa8bUOgHlht5wcW6cdNf
+         +GaMqD4/qk0hKe4TvFZw0rawj9r3Wnb0A4NYD5G9OuoAe/9yeY/0AlihizA/VyZ3zXaT
+         Y1PZ9teYNhLmR28uvUp31O11u3G2FySnP7YS7g8iilCbFcCKtrupng9VD7DKH4mGgrFG
+         zB0w==
+X-Gm-Message-State: ABuFfoglQee1rdmogi3WU7v76bycFQsALiEecT6hdrTzjJATI5m8Me7+
+        eQavE/NIan2BbXWl9GujMQ==
+X-Google-Smtp-Source: ACcGV61mchkNu/QzKPwq7e+djHUTnsS8xG/NSID6UDq7m2sXb3Fj74/GXCZZoBTSDF74kn0Ak1HzUQ==
+X-Received: by 2002:a9d:40f7:: with SMTP id t52mr4273145oti.311.1539372688400;
+        Fri, 12 Oct 2018 12:31:28 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 110sm619165otj.19.2018.10.12.12.31.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 12:31:27 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 14:31:26 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     robh@kernel.org, dmitry.torokhov@gmail.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sebastian.reichel@collabora.co.uk,
+        mark.rutland@arm.com, masneyb@onstation.org
+Subject: Re: [PATCH v2] dt-bindings: input: pwm-vibrator: correct pwms in
+ example
+Message-ID: <20181012193126.GA26994@bogus>
+References: <20180927004858.32529-1-masneyb@onstation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927004858.32529-1-masneyb@onstation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BAD_MADT_GICC_ENTRY check is a little too strict because
-it rejects MADT entries that don't match the currently known
-lengths. We should remove this restriction to avoid problems
-if the table length changes. Future code which might depend on
-additional fields should be written to validate those fields
-before using them, rather than trying to globally check
-known MADT version lengths.
+On Wed, 26 Sep 2018 20:48:58 -0400, Brian Masney wrote:
+> In the example for the pwm-vibrator bindings, pwm8 is the direction pin,
+> and pwm9 is the enable pin. The pwms on the vibrator node has these two
+> values swapped so this patch corrects it.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v1:
+> - Swapped the pwms values instead of the pwm-names values since enable
+>   is required and direction is optional. Based on feedback from
+>   Rob Herring.
+> 
+>  Documentation/devicetree/bindings/input/pwm-vibrator.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/include/asm/acpi.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
-index 709208dfdc8b..4d0946bd485a 100644
---- a/arch/arm64/include/asm/acpi.h
-+++ b/arch/arm64/include/asm/acpi.h
-@@ -22,12 +22,12 @@
- #include <asm/tlbflush.h>
- 
- /* Macros for consistency checks of the GICC subtable of MADT */
--#define ACPI_MADT_GICC_LENGTH	\
--	(acpi_gbl_FADT.header.revision < 6 ? 76 : 80)
-+#define ACPI_MADT_GICC_MIN_LENGTH   ACPI_OFFSET(  \
-+	struct acpi_madt_generic_interrupt, efficiency_class)
- 
- #define BAD_MADT_GICC_ENTRY(entry, end)					\
--	(!(entry) || (entry)->header.length != ACPI_MADT_GICC_LENGTH ||	\
--	(unsigned long)(entry) + ACPI_MADT_GICC_LENGTH > (end))
-+	(!(entry) || (entry)->header.length < ACPI_MADT_GICC_MIN_LENGTH || \
-+	(unsigned long)(entry) + (entry)->header.length > (end))
- 
- /* Basic configuration for ACPI */
- #ifdef	CONFIG_ACPI
--- 
-2.14.3
-
+Reviewed-by: Rob Herring <robh@kernel.org>
