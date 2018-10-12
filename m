@@ -2,128 +2,304 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0772C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96802C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610382098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347F82077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="FXMPX+XW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610382098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0aWrDg/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347F82077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbeJMEgL (ORCPT
+        id S1726097AbeJMEmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 00:36:11 -0400
-Received: from mail-cys01nam02on0127.outbound.protection.outlook.com ([104.47.37.127]:64081
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725743AbeJMEgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 00:36:11 -0400
+        Sat, 13 Oct 2018 00:42:12 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35209 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbeJMEmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 00:42:11 -0400
+Received: by mail-it1-f196.google.com with SMTP id p64-v6so20105770itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AGRwn8YE4jZ84dvnO7Kq0GeuWtvukM3AjHK4dk9dSlA=;
- b=FXMPX+XWVkcC5O4xfgHRYUd+PmxvYpm/g41u1HZkjzEpnipJbaLO5hzLTXiNr0rPnKBvmJgRnM8Ph8pDa43hKW4RlcAYW0C+vsWX+viQDBReKZC6QSYWQFmWVBVsdKMOVCH+M8AU9VFJHA4szt047FgcFGprzLoaXpJKZrEOw9M=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1422.namprd22.prod.outlook.com (10.172.63.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.21; Fri, 12 Oct 2018 21:01:49 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::781f:63:481a:efdf]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::781f:63:481a:efdf%10]) with mapi id 15.20.1228.020; Fri, 12 Oct 2018
- 21:01:49 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Maksym Kokhan <maksym.kokhan@globallogic.com>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Daniel Walker <dwalker@fifo99.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Andrii Bordunov <aborduno@cisco.com>,
-        Ruslan Bilovol <rbilovol@cisco.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/8] mips: convert to generic builtin command line
-Thread-Topic: [PATCH 7/8] mips: convert to generic builtin command line
-Thread-Index: AQHUVoMf+XdDhAaEwESEN/TIkkcHlKUEeo4AgBE44YCABn0egA==
-Date:   Fri, 12 Oct 2018 21:01:49 +0000
-Message-ID: <20181012210147.32x4gy6o5ilfdy7l@pburton-laptop>
-References: <1538067417-6007-1-git-send-email-maksym.kokhan@globallogic.com>
- <20180927185626.gcvx5qjemxbff3zt@pburton-laptop>
- <CAMT6-xi+E1-ATYRXpkmcAprrwykLVHnUc2D+QBQLgPBv4hhwUg@mail.gmail.com>
-In-Reply-To: <CAMT6-xi+E1-ATYRXpkmcAprrwykLVHnUc2D+QBQLgPBv4hhwUg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR21CA0035.namprd21.prod.outlook.com
- (2603:10b6:300:129::21) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1422;6:qB2XmPo/JNPai1VGfOGl78X3XDYuxZ4ZS3cEMIv23mkzMZoyoxNhGMPVfWqPKnlHS/mZXG1vaDiPSZ8K+HAWXVhjRBBnCo0gWz19sKRdm6+n6ZENv4pTFunaAH6LnbMNCWCLbPiYYd9f0qFM95sP3yqvG0NSf2RuROQACjxyIz5Gjd3doDGdcJyC4TQijywa6YgzOm7lBZvIJ2DRCiw5SIgUcWxftVvUYhM4KONZM0WEwOwZAbMzOhAlVsRe+9HLygGqCV5KO1v9crMrBzTrIf8q7MTmgfoaegsM4RSREeysecFWaIO3zZl8YzEjahpU4pjPd2FFuyIc+YjBO0Vcg2XGGR6xeOF0s9nXWctYSjcmiUUdcRwJjGKLBinru2God3hpbx3ovq4GMlGnl7pDXIdp07VwgcXo20a4ZxTXwsCRkWpsL0V5xRznQwDddQSl9FL+pQJMmRH5nlqgjjg/YQ==;5:6EW0XTz0OmIg5XoQ6c89kJTjaJ7mml4NkojEe0E5xiYiI8Z84w+/RsaHwl2IkdRwn+NLWYo6WtvF9xtD7ECZTlIovQqkihIpbW0nXdxlSHDU+dchDR2y9fB8F5SAtrJUfbCIQzf8F2aEruWmhbMttKfG3jCsPqVSF9wGW8EA5hw=;7:M/FJTWxRW0Gb4pHZtZqNnGjFVKB3dFCoGXS+SDv6L0uwhEeCgwIkzV3A6uo5ax0SuiXXkaI7rEIRsrkYCSVv2eWA0H8rHmI58Hp7V6HhzfhcHxBqYuKA8S0wVep1nmdooXNbCSfeM6FpCOjL8b1b05QBnmQjrB5wDysK0cwO2d3N/5UOLPJd/9/l0+bk23b9S89oSqFwQxIQS2QACLtM85rYFl0J8pRU40vklKX62L0pJOeZTIdZOYCIA4jPNLCk
-x-ms-office365-filtering-correlation-id: 95091703-dfe1-468e-580d-08d63085ed11
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1422;
-x-ms-traffictypediagnostic: MWHPR2201MB1422:
-x-microsoft-antispam-prvs: <MWHPR2201MB1422365C9101C2BCEAC28278C1E20@MWHPR2201MB1422.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(149066)(150057)(6041310)(20161123560045)(20161123558120)(2016111802025)(20161123562045)(20161123564045)(6043046)(201708071742011)(7699051);SRVR:MWHPR2201MB1422;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1422;
-x-forefront-prvs: 0823A5777B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(136003)(346002)(39850400004)(376002)(396003)(199004)(189003)(52314003)(8936002)(7736002)(54906003)(2906002)(81166006)(6246003)(4326008)(25786009)(305945005)(8676002)(14454004)(68736007)(81156014)(229853002)(106356001)(5250100002)(1076002)(6916009)(9686003)(105586002)(5660300001)(6116002)(6512007)(3846002)(42882007)(53936002)(486006)(14444005)(186003)(2900100001)(71200400001)(71190400001)(256004)(386003)(6506007)(26005)(53546011)(102836004)(6436002)(44832011)(11346002)(476003)(33716001)(446003)(97736004)(6486002)(52116002)(316002)(58126008)(99286004)(66066001)(76176011)(33896004)(508600001)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1422;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: OnQaXaJLfYd+vCN/dEml1+plDTqvA/rKteuKPTYCCWXQYUDEJwHJQlEn88lMitjNMFUACzvMAW7A9CC8NCyfMuq21vqQJUohOWK2M4rVjJKHGvz/6TDKU8GNKkd+Ty6AkQI5sMFsC0LWvzjYqY0OdEB/f8CvlHNQwFLIEDoocNrH6h71V1133M7Pe3FobctuYq2q6L4xGwUJciKCRTBstNm8OospVpaYlEE8rSIydY6GjS1bht28y2JJHbZ9DzF1d/uLrQBL/p+1K5a7XaCibHS0xjnVtXxtB+JCuhGHWbeRqgHCLPz7ViNNLllPZvMQMfSjbOud6BmhGxCLXnzP3WJJWhC9qFUTHGbpixtxOqg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D8C593175FBA95469D59F1E1F08DBA22@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2tZ/rXRJfNEeNIYYYIX2Mv2wSyX9a2Yft5L5dqUeX9g=;
+        b=Q0aWrDg/8UXpmvXja/gjmAIwmhUUB0rK3geMmswVGOGje3Z29KJ9KyxvC9z77JkpUx
+         QQ/cogmzUPUAVHFY8dx4+Id9TwDB2B46IXLuYMtuPepFPvSSunjcko6VmrrCRrB1HHOf
+         0cj5r4VfX0eXZC+hPUSUgoGJzsWsJ1WRFjJOw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2tZ/rXRJfNEeNIYYYIX2Mv2wSyX9a2Yft5L5dqUeX9g=;
+        b=Knmf+5DWQC/0W6ss+PmkTGOcu4r6Y+XcDw9z2SMdkTeqclSm8dFWCanDEvMdDogxX/
+         18NgUiU4CJ6eKQaZifgmSSExcM8nvBtIOtRuKMPeWjcMli3o+BI0X//Yg1MBQ+ptFeyL
+         2KG8kc42WcpMbO1jYIfvpXkIyrdhD7IhoH5qwVX7twlsgIzlkk0RXWyUKP7j9gVNEm5l
+         pQP1L4c1fzbQGvdH/uRs2mI72km12md+9jH5MiznXpf9SCTGfkmigMjoJlvKqntw5Kxa
+         nti6JxnWFtnbGT0ItozeXXmvLaOwsCO4SM3sQTPMOh6LaSPXahKdAFlxCsJOQ/3JsnVM
+         HFFA==
+X-Gm-Message-State: ABuFfoja8ukUor8ESZz8O8z6wUa/Mer8VjeC/LhGOBiAfDeZq2yh4N6e
+        yuUz0fX/GHkVRGA11KBbB78OFIrLeN8QAgsVjTEShw==
+X-Google-Smtp-Source: ACcGV60er55U2rLWd1lzifVDHqAFFCq7IPF/ix8cWB9kEpoNYERsbH7NtFMeo4f4nZrFUP/oEfSYILAR+/QvYpIWVZA=
+X-Received: by 2002:a24:4ac5:: with SMTP id k188-v6mr6649506itb.158.1539378470307;
+ Fri, 12 Oct 2018 14:07:50 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95091703-dfe1-468e-580d-08d63085ed11
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2018 21:01:49.2811
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1422
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 14:07:49
+ -0700 (PDT)
+In-Reply-To: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+References: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 12 Oct 2018 23:07:49 +0200
+Message-ID: <CAKv+Gu_2xWvpNPucLSZwSXMj3YsxDUavsQvR9bKxRNqKaRRX9g@mail.gmail.com>
+Subject: Re: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array iteration
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <james.morris@microsoft.com>,
+        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maksym,
+Hi Mathieu,
 
-On Mon, Oct 08, 2018 at 08:56:25PM +0300, Maksym Kokhan wrote:
-> On Thu, Sep 27, 2018 at 9:56 PM Paul Burton <paul.burton@mips.com> wrote:
-> > It also doesn't allow for the various Kconfig options which allow us to
-> > ignore some of the sources of command line arguments, nor does it honor
-> > the ordering that those existing options allow. In practice perhaps we
-> > can cut down on some of this configurability anyway, but if we do that
-> > it needs to be thought through & the commit message should describe the
-> > changes in behaviour.
->=20
-> Yes, this generic command line implementation lacks some of the
-> features, existing in the current mips command line code, and we
-> are going to expand functionality of generic command line code to
-> correspond it, but it would be easier to initially merge this simple
-> implementation and then develop it step by step.
+On 12 October 2018 at 22:05, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+> commit 46e0c9be206f ("kernel: tracepoints: add support for relative
+> references") changes the layout of the __tracepoint_ptrs section on
+> architectures supporting relative references. However, it does so
+> without turning struct tracepoint * const into const int * elsewhere in
+> the tracepoint code, which has the following side-effect:
+>
+> tracepoint_module_{coming,going} invoke
+> tp_module_going_check_quiescent() with mod->tracepoints_ptrs
+> as first argument, and computes the end address of the array
+> for the second argument with:
+>
+>   mod->tracepoints_ptrs + mod->num_tracepoints
+>
+> However, because the type of mod->tracepoint_ptrs in module.h
+> has not been changed from pointer to int, it passes an end
+> pointer which is twice larger than the array, causing out-of-bound
+> array accesses.
+>
+> Fix this by introducing a new typedef: tracepoint_ptr_t, which
+> is either "const int" on architectures that have PREL32 relocations,
+> or "struct tracepoint * const" on architectures that does not have
+> this feature.
+>
+> Also provide a new tracepoint_ptr_defer() static inline to
+> encapsulate deferencing this type rather than duplicate code and
+> ugly idefs within the for_each_tracepoint_range() implementation.
+>
 
-The problem occurs if merging the simple implementation breaks currently
-working systems. That is a no-go, and that is what I believe will happen
-with the current patchset.
+Apologies for the breakage. FWIW, this looks like the correct approach
+to me (and mirrors what I did for initcalls in the same series)
 
-"Knowingly break it now & say we'll fix it later" is not an acceptable
-approach.
+> This issue appears in 4.19-rc kernels, and should ideally be fixed
+> before the end of the rc cycle.
+>
 
-Thanks,
-    Paul
++1
+
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: James Morris <james.morris@microsoft.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Nicolas Pitre <nico@linaro.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Cc: Thomas Garnier <thgarnie@google.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+> ---
+>  include/linux/module.h          |  2 +-
+>  include/linux/tracepoint-defs.h |  6 ++++++
+>  include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
+>  kernel/tracepoint.c             | 24 ++++++++--------------
+>  4 files changed, 38 insertions(+), 30 deletions(-)
+>
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index f807f15bebbe..cdab2451d6be 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -430,7 +430,7 @@ struct module {
+>
+>  #ifdef CONFIG_TRACEPOINTS
+>         unsigned int num_tracepoints;
+> -       struct tracepoint * const *tracepoints_ptrs;
+> +       tracepoint_ptr_t *tracepoints_ptrs;
+>  #endif
+>  #ifdef HAVE_JUMP_LABEL
+>         struct jump_entry *jump_entries;
+> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+> index 22c5a46e9693..49ba9cde7e4b 100644
+> --- a/include/linux/tracepoint-defs.h
+> +++ b/include/linux/tracepoint-defs.h
+> @@ -35,6 +35,12 @@ struct tracepoint {
+>         struct tracepoint_func __rcu *funcs;
+>  };
+>
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +typedef const int tracepoint_ptr_t;
+> +#else
+> +typedef struct tracepoint * const tracepoint_ptr_t;
+> +#endif
+> +
+>  struct bpf_raw_event_map {
+>         struct tracepoint       *tp;
+>         void                    *bpf_func;
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 041f7e56a289..538ba1a58f5b 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
+>  #define TRACE_DEFINE_ENUM(x)
+>  #define TRACE_DEFINE_SIZEOF(x)
+>
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+> +{
+> +       return offset_to_ptr(p);
+> +}
+> +
+> +#define __TRACEPOINT_ENTRY(name)                                       \
+> +       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+> +           "   .balign 4                                       \n"     \
+> +           "   .long   __tracepoint_" #name " - .              \n"     \
+> +           "   .previous                                       \n")
+> +#else
+> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+> +{
+> +       return *p;
+> +}
+> +
+> +#define __TRACEPOINT_ENTRY(name)                                        \
+> +       static tracepoint_ptr_t __tracepoint_ptr_##name __used           \
+> +       __attribute__((section("__tracepoints_ptrs"))) =                 \
+> +               &__tracepoint_##name
+> +#endif
+> +
+>  #endif /* _LINUX_TRACEPOINT_H */
+>
+>  /*
+> @@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
+>                 return static_key_false(&__tracepoint_##name.key);      \
+>         }
+>
+> -#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> -#define __TRACEPOINT_ENTRY(name)                                       \
+> -       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+> -           "   .balign 4                                       \n"     \
+> -           "   .long   __tracepoint_" #name " - .              \n"     \
+> -           "   .previous                                       \n")
+> -#else
+> -#define __TRACEPOINT_ENTRY(name)                                        \
+> -       static struct tracepoint * const __tracepoint_ptr_##name __used  \
+> -       __attribute__((section("__tracepoints_ptrs"))) =                 \
+> -               &__tracepoint_##name
+> -#endif
+> -
+>  /*
+>   * We have no guarantee that gcc and the linker won't up-align the tracepoint
+>   * structures, so we create an array of pointers that will be used for iteration
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index bf2c06ef9afc..a3be42304485 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -28,8 +28,8 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/static_key.h>
+>
+> -extern struct tracepoint * const __start___tracepoints_ptrs[];
+> -extern struct tracepoint * const __stop___tracepoints_ptrs[];
+> +extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+> +extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+>
+>  DEFINE_SRCU(tracepoint_srcu);
+>  EXPORT_SYMBOL_GPL(tracepoint_srcu);
+> @@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
+>  }
+>  EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
+>
+> -static void for_each_tracepoint_range(struct tracepoint * const *begin,
+> -               struct tracepoint * const *end,
+> +static void for_each_tracepoint_range(
+> +               tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
+>                 void (*fct)(struct tracepoint *tp, void *priv),
+>                 void *priv)
+>  {
+> +       tracepoint_ptr_t *iter;
+> +
+>         if (!begin)
+>                 return;
+> -
+> -       if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
+> -               const int *iter;
+> -
+> -               for (iter = (const int *)begin; iter < (const int *)end; iter++)
+> -                       fct(offset_to_ptr(iter), priv);
+> -       } else {
+> -               struct tracepoint * const *iter;
+> -
+> -               for (iter = begin; iter < end; iter++)
+> -                       fct(*iter, priv);
+> -       }
+> +       for (iter = begin; iter < end; iter++)
+> +               fct(tracepoint_ptr_deref(iter), priv);
+>  }
+>
+>  #ifdef CONFIG_MODULES
+> --
+> 2.17.1
+>
