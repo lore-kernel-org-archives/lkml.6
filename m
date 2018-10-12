@@ -2,238 +2,183 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7853CC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5330AC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467DD21477
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:51:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467DD21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EB0722150D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:53:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QUvj46lr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ceiQ8fRC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0722150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeJMBZX (ORCPT
+        id S1726917AbeJMB0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:25:23 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42706 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbeJMBZX (ORCPT
+        Fri, 12 Oct 2018 21:26:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53596 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeJMB0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:25:23 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j46-v6so14723379qtc.9
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 10:51:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4qmu83MR5VX3tzffJ5LBoeWXTlCd2NWBGIEiIg8b/GA=;
-        b=XGnpnr7z8gRwRnoRxU9hvR8A46bZ0jnXDl1olOL7d1nY80kHt0PxG8p6lgY34AUTNn
-         27H5SHpTNW3xcO4ydnq/jlaNm0lcLdyzEkiuCE9PPHls0SVbiFOBri/RhJe5VktoogDj
-         qmzjTVoYjPmYKnfwM0qnn4qn3/HOKajicZQWlP6uEBW3qrBFzqwVEvMg4sfWFB1cYOBd
-         xxANhiGmVJa+fSpb6YSeaLVFwIYFcg2tkjkpx0Ef255oGTj5QGf6x9bpsPDPk6NzMDPR
-         JKMw5I3TJ16ChlFPnX4Bpu9QISw6wN4b32n/I4sSthKSZ/Nub4iYPoxcO9L8udeqgAAO
-         pC6Q==
-X-Gm-Message-State: ABuFfohsm7eAOllPGN3ie5GILKP9BPWbw8IfbfMh5EzZUon2YXC41cNA
-        ouVQE1vFojgCQbcsXcUZqP25bQ==
-X-Google-Smtp-Source: ACcGV61kmC6jFk/pr1ZtyiRfYGPpEMOzlIVOTnLHfocjlpgp9jMYVzIL98dzsUefR9sIhyo14PPsEQ==
-X-Received: by 2002:ac8:468e:: with SMTP id g14-v6mr6482319qto.137.1539366704667;
-        Fri, 12 Oct 2018 10:51:44 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0? ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
-        by smtp.gmail.com with ESMTPSA id 144-v6sm1027795qkk.63.2018.10.12.10.51.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 10:51:43 -0700 (PDT)
-Subject: Re: [PATCH] staging: ion: Rework ion_map_dma_buf() to minimize
- re-mapping
-To:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Beata Michalska <Beata.Michalska@arm.com>,
-        Matt Szczesiak <matt.szczesiak@arm.com>,
-        Anders Pedersen <Anders.Pedersen@arm.com>,
-        John Reitan <John.Reitan@arm.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        dri-devel@lists.freedesktop.org
-References: <1539214413-26173-1-git-send-email-john.stultz@linaro.org>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <7534ca1d-f874-7809-6125-d9fc72f70e39@redhat.com>
-Date:   Fri, 12 Oct 2018 10:51:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 21:26:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8983860AD8; Fri, 12 Oct 2018 17:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539366777;
+        bh=du7PJrqkGUD50YQFbBoXW+9X9LDanKXmoeyCRpP3/oI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QUvj46lr2w5c7Cy/oTddu1DlUKnabDCN7IzK/gJnkYtRt4tLjONHLtY1gNsDGDwxn
+         KseTG26/jsRLrrzfk6Fs9DpUjEX4eP+2TtMk4ZY3YFSd9UYxiI3QUrdjzkn902uyuX
+         lndNG/7KVyraZTge7GPFHDnWmypl2psFoZ3hdTcM=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8CF996063F;
+        Fri, 12 Oct 2018 17:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539366776;
+        bh=du7PJrqkGUD50YQFbBoXW+9X9LDanKXmoeyCRpP3/oI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ceiQ8fRCip+ZdsX3BUoBPP0BJwBaucdXxJFbDzaNUWYzn3c8ya+iCBouqkf+Ti19P
+         qqpNKa4l03sSSLTnYWm4y5Z9YgYtPGQVbFsBOeUT9bVCyOcm4If1ei0ln431cqMAER
+         j+XGbe6+ItkxoEvcTAYIK3m5LfxiT4XWkTGsYHH0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CF996063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 12 Oct 2018 11:52:55 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
+        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org
+Subject: Re: [PATCH RFC v1 8/8] arm64: dtsi: sdm845: Add cpu power domain
+ support
+Message-ID: <20181012175255.GJ2371@codeaurora.org>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-9-git-send-email-rplsssn@codeaurora.org>
+ <20181012173500.GB23170@e107155-lin>
 MIME-Version: 1.0
-In-Reply-To: <1539214413-26173-1-git-send-email-john.stultz@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181012173500.GB23170@e107155-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/2018 04:33 PM, John Stultz wrote:
-> Since 4.12, much later narrowed down to commit 2a55e7b5e544
-> ("staging: android: ion: Call dma_map_sg for syncing and mapping"),
-> we have seen graphics performance issues on the HiKey960.
-> 
-> This was initially confounded by the fact that the out-of-tree
-> DRM driver was using HiSi custom ION heap which broke with the
-> 4.12 ION abi changes, so there was lots of suspicion that the
-> performance problems were due to switching to a somewhat simple
-> cma based DRM driver for HiKey960. Additionally, as no
-> performance regression was seen w/ the original HiKey board
-> (which is SMP, not big.LITTLE as w/ HiKey960), there was some
-> thought that the out-of-tree EAS code wasn't quite optimized.
-> 
-> But after chasing a number of other leads, I found that
-> reverting the ION code to 4.11-era got the majority of the
-> graphics performance back (there may yet be further EAS tweaks
-> needed), which lead me to the dma_map_sg change.
-> 
-> In talking w/ Laura and Liam, it was suspected that the extra
-> cache operations were causing the trouble. Additionally, I found
-> that part of the reason we didn't see this w/ the original
-> HiKey board is that its (proprietary blob) GL code uses ion_mmap
-> and ion_map_dma_buf is called very rarely, where as with
-> HiKey960, the (also proprietary blob) GL code calls
-> ion_map_dma_buf much more frequently via the kernel driver.
-> 
-> Anyway, with the cause of the performance regression isolated,
-> I've tried to find a way to improve the performance of the
-> current code.
-> 
-> This approach, which I've mostly copied from the drm_prime
-> implementation is to try to track the direction we're mapping
-> the buffers so we can avoid calling dma_map/unmap_sg on every
-> ion_map_dma_buf/ion_unmap_dma_buf call, and instead try to do
-> the work in attach/detach paths.
-> 
-> I'm not 100% sure of the correctness here, so close review would
-> be good, but it gets the performance back to being similar to
-> reverting the ION code to the 4.11-era.
-> 
-> Feedback would be greatly appreciated!
-> 
-> Cc: Beata Michalska <Beata.Michalska@arm.com>
-> Cc: Matt Szczesiak <matt.szczesiak@arm.com>
-> Cc: Anders Pedersen <Anders.Pedersen@arm.com>
-> Cc: John Reitan <John.Reitan@arm.com>
-> Cc: Liam Mark <lmark@codeaurora.org>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Todd Kjos <tkjos@android.com>
-> Cc: Martijn Coenen <maco@android.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> ---
->   drivers/staging/android/ion/ion.c | 36 +++++++++++++++++++++++++++++++-----
->   1 file changed, 31 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 9907332..a4d7fca 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -199,6 +199,7 @@ struct ion_dma_buf_attachment {
->   	struct device *dev;
->   	struct sg_table *table;
->   	struct list_head list;
-> +	enum dma_data_direction dir;
->   };
->   
->   static int ion_dma_buf_attach(struct dma_buf *dmabuf,
-> @@ -220,6 +221,7 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf,
->   
->   	a->table = table;
->   	a->dev = attachment->dev;
-> +	a->dir = DMA_NONE;
->   	INIT_LIST_HEAD(&a->list);
->   
->   	attachment->priv = a;
-> @@ -236,6 +238,18 @@ static void ion_dma_buf_detatch(struct dma_buf *dmabuf,
->   {
->   	struct ion_dma_buf_attachment *a = attachment->priv;
->   	struct ion_buffer *buffer = dmabuf->priv;
-> +	struct sg_table *table;
-> +
-> +	if (!a)
-> +		return;
-> +
-> +	table = a->table;
-> +	if (table) {
-> +		if (a->dir != DMA_NONE)
-> +			dma_unmap_sg(attachment->dev, table->sgl, table->nents,
-> +				     a->dir);
-> +		sg_free_table(table);
-> +	}
->   
->   	free_duped_table(a->table);
->   	mutex_lock(&buffer->lock);
-> @@ -243,6 +257,7 @@ static void ion_dma_buf_detatch(struct dma_buf *dmabuf,
->   	mutex_unlock(&buffer->lock);
->   
->   	kfree(a);
-> +	attachment->priv = NULL;
->   }
->   
->   static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
-> @@ -251,12 +266,24 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
->   	struct ion_dma_buf_attachment *a = attachment->priv;
->   	struct sg_table *table;
->   
-> -	table = a->table;
-> +	if (WARN_ON(direction == DMA_NONE || !a))
-> +		return ERR_PTR(-EINVAL);
->   
-> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> -			direction))
-> -		return ERR_PTR(-ENOMEM);
-> +	if (a->dir == direction)
-> +		return a->table;
->   
-> +	if (WARN_ON(a->dir != DMA_NONE))
-> +		return ERR_PTR(-EBUSY);
-> +
-> +	table = a->table;
-> +	if (!IS_ERR(table)) {
-> +		if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> +				direction)) {
-> +			table = ERR_PTR(-ENOMEM);
-> +		} else {
-> +			a->dir = direction;
-> +		}
-> +	}
->   	return table;
->   }
->   
-> @@ -264,7 +291,6 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
->   			      struct sg_table *table,
->   			      enum dma_data_direction direction)
->   {
-> -	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
+On Fri, Oct 12 2018 at 11:35 -0600, Sudeep Holla wrote:
+>On Thu, Oct 11, 2018 at 02:50:55AM +0530, Raju P.L.S.S.S.N wrote:
+>> Add cpu power domain support
+>>
+>> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index d3662a8..aadaa20 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -96,6 +96,7 @@
+>>  			reg = <0x0 0x0>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_0>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_0: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -111,6 +112,7 @@
+>>  			reg = <0x0 0x100>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_100>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_100: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -123,6 +125,7 @@
+>>  			reg = <0x0 0x200>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_200>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_200: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -135,6 +138,7 @@
+>>  			reg = <0x0 0x300>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_300>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_300: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -147,6 +151,7 @@
+>>  			reg = <0x0 0x400>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_400>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_400: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -159,6 +164,7 @@
+>>  			reg = <0x0 0x500>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_500>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_500: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -171,6 +177,7 @@
+>>  			reg = <0x0 0x600>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_600>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_600: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -183,6 +190,7 @@
+>>  			reg = <0x0 0x700>;
+>>  			enable-method = "psci";
+>>  			next-level-cache = <&L2_700>;
+>> +			power-domains = <&cpu_pd>;
+>>  			L2_700: l2-cache {
+>>  				compatible = "cache";
+>>  				next-level-cache = <&L3_0>;
+>> @@ -1170,6 +1178,11 @@
+>>  					  <WAKE_TCS    3>,
+>>  					  <CONTROL_TCS 1>;
+>>
+>> +			cpu_pd: power-domain-controller {
+>> +				compatible = "qcom,cpu-pm-domain";
+>> +				#power-domain-cells = <0>;
+>> +			};
+>> +
+>
+>After all the discussions, I see this power domain actually influence
+>not just CPUs but other devices. So this should be top most power domain
+>in the system with lots of devices or their power domains pointing to it.
+>Why is this just pointing to cpus ?
+>
+The domain powers off even when devices remains powered on. The devices
+themselves are not part of this domain, they have their own rails,
+clocks and domains. Those domains will get powered off when the devices
+are suspended or the device are not in use.
 
-This changes the semantics so that the only time a buffer
-gets unmapped is on detach. I don't think we want to restrict
-Ion to that behavior but I also don't know if anyone else
-is relying on that. I thought there might have been some Qualcomm
-stuff that did that (Liam? Todd?)
+This CPU domain is responsible for setting the domain controller to
+enter a low power state and in addition help lower the state of the
+shared resources that are used by the devices even when the devices
+themselves are powered on.
 
-I suspect most of the cost of the dma_map/dma_unmap is from the
-cache flushing and not the actual mapping operations. If this
-is the case, another option might be to figure out how to
-incorporate dma_attrs so drivers can use DMA_ATTR_SKIP_CPU_SYNC
-to decide when they actually want to sync.
-
-Thanks,
-Laura
-
->   }
->   
->   static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
-> 
+-- Lina
 
