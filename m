@@ -2,268 +2,102 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAC4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69488C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB0322075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32999206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 05:59:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KEZlIIkV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0322075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LyuxmGTz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32999206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbeJLNaL (ORCPT
+        id S1727658AbeJLNa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 09:30:11 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56026 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeJLNaK (ORCPT
+        Fri, 12 Oct 2018 09:30:27 -0400
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:39809 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbeJLNa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 09:30:10 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9C5x9rn105127;
-        Fri, 12 Oct 2018 00:59:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539323949;
-        bh=jKvrAYUNsto3rl9PON9aj7xozO7/L+LvjYqF9NG009E=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KEZlIIkVpI6w1syahxYuUOD23xAJJEy41SlyFJopZLToFfbYhjQ0OH85Oy2ihtKOd
-         pB3fvJdSIpfiUOrPcw2CSpXCG6sDKNMw/hG1DDLgU/iibmCOU29TlaApLa8LTmJz7y
-         mUg45dHoPI0m3gyI0sfw+UeoJUye8SWH4FIqzmUE=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9C5x9So026987;
-        Fri, 12 Oct 2018 00:59:09 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 12
- Oct 2018 00:59:09 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 12 Oct 2018 00:59:09 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9C5x4sD002788;
-        Fri, 12 Oct 2018 00:59:06 -0500
-Subject: Re: [PATCH v5 3/3] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
- <20181005065300.22882-3-ricardo.ribalda@gmail.com>
- <9746eba6-63f5-feaf-e63f-7e0ea7638942@ti.com>
- <CAPybu_1PuRqOx-Fsmba4XCcRsJA0A9tdob1R=8N72-699cxomw@mail.gmail.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <8d180cc7-d7cb-66eb-001d-f2a5c371d179@ti.com>
-Date:   Fri, 12 Oct 2018 11:29:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 09:30:27 -0400
+Received: by mail-qk1-f176.google.com with SMTP id q5-v6so7040714qki.6
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 22:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=1iaDiMR/vCCuR1t5UcRyCxEKhR0z9t76HvyP/s7dUtM=;
+        b=LyuxmGTzN+QjDy+e/sRWZwyTGKR+WEc5fuo1lCcEFNHBh2tlT4eisNEx9pIn++hgVR
+         eg9srnUfDqDU1WXt4cZGdGmVGHNZSYdc35u+syb1pxHroHO/CqKDVfw0oTLnTc0Y7HDE
+         qhuU1aXcLuxOFu77R9MU37gllt6gzRTQQ2/kEHx1hz20PR8IIRIqAbBfmOIsyXR3wWBO
+         +2h5KWTNwHOuU4VENvyrwNWE1mMtyJLFcYcXZ6AoVvtH3r6/KLLtluR/vQd9slntIFpl
+         ynX2aS3CSGBifgKOI6+RzNPpIKxRhYRF5M4FO23B1Gys2YoqZ85tdM3mqNJrLJpgrVvi
+         8eXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=1iaDiMR/vCCuR1t5UcRyCxEKhR0z9t76HvyP/s7dUtM=;
+        b=gWA3uVd9bYCuku91Qx6sG5kZNQzNowHLtzCXGpqnAB909jm5upJSL+KC5nDcKIO1gL
+         RoU0UFYl7I54QmdYCbOAgjqiUrwKjXyY3edWQIn5gEf19AKywSqRm0o1yxwEhieiavyv
+         E1yk1f68PkiCILgkb9iFq/DUg6CIjo4ZlA4uQJBNAa9aLK2SgPPUryTURU1rBhlphSGw
+         KduDWqk20rlHxXExKItNxt0xYXKT6dAPjiNxf+VldMRs7TiP3hQe64DkdqMYjvZX1ZeU
+         aI8NTk+qR4l/e8QyVFbtMqgyd8Xs8xsSZxofSoIxP0IfgH5Y4dYqdw07KkjY1VztpCHx
+         i2og==
+X-Gm-Message-State: ABuFfogwjyLqG7Bm014XPTx3EzNDaVqvTpzXma+GxSHvd1DDgZuw9KxE
+        qLtGg5IM0eSASQedm3Z5s+nwaNtf22pgDpvpN0H2JyVn
+X-Google-Smtp-Source: ACcGV62zhKq/+aR4r2SgheDyLA5kOCHbdHD1lN5O3YevTtdyNtYVLMn8n2+qLvT1zQqdxmubMovoTKCzDXzGXie3KWs=
+X-Received: by 2002:a37:4b44:: with SMTP id y65-v6mr4321296qka.218.1539323978208;
+ Thu, 11 Oct 2018 22:59:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPybu_1PuRqOx-Fsmba4XCcRsJA0A9tdob1R=8N72-699cxomw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 12 Oct 2018 15:59:26 +1000
+Message-ID: <CAPM=9tzc0vn_bC9eXGpHyf562RmXx7C_rO9=g_JjYz2+xz8TmA@mail.gmail.com>
+Subject: [git pull[ drm fixes for 4.19-rc8
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Greg,
 
-On Thursday 11 October 2018 07:12 PM, Ricardo Ribalda Delgado wrote:
-> Hi Vignesh
-> 
-> Ups, it does not look too good :S . Can you check if this change fixes it:
-> 
+just a single nouveau fix from last week. Seems to be winding now correctly.
 
-Below diff works for me. I no longer see crash and gpio-hog seems to be
-working. Thanks!
+Dave.
 
-Regards
-Vignesh
+drm-fixes-2018-10-12-1:
+single nouveau runtime reference and mst change
+The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e016b22658ff..bcd0ef49ce97 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1349,6 +1349,9 @@ int gpiochip_add_data_with_key(struct gpio_chip
-> *chip, void *data,
-> 
->         spin_unlock_irqrestore(&gpio_lock, flags);
-> 
-> +       for (i = 0; i < chip->ngpio; i++)
-> +               gdev->descs[i].gdev = gdev;
-> +
->  #ifdef CONFIG_PINCTRL
->         INIT_LIST_HEAD(&gdev->pin_ranges);
->  #endif
-> @@ -1380,8 +1383,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
-> *chip, void *data,
->         for (i = 0; i < chip->ngpio; i++) {
->                 struct gpio_desc *desc = &gdev->descs[i];
-> 
-> -               desc->gdev = gdev;
-> -
->                 if (chip->get_direction && gpiochip_line_is_valid(chip, i))
->                         desc->flags = !chip->get_direction(chip, i) ?
->                                         (1 << FLAG_IS_OUT) : 0;
-> 
-> 
-> Thanks!
-> On Thu, Oct 11, 2018 at 2:18 PM Vignesh R <vigneshr@ti.com> wrote:
->>
->> Hi,
->>
->> On Friday 05 October 2018 12:23 PM, Ricardo Ribalda Delgado wrote:
->>> Current code assumes that the direction is input if direction_input
->>> function is set.
->>> This might not be the case on GPIOs with programmable direction.
->>>
->>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->>> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>
->> This patch causes oops on TI's AM335x-ICEv2 board on next-20181011:
->>
->> [    0.563797] OMAP GPIO hardware version 0.1
->> [    0.577589] Unable to handle kernel NULL pointer dereference at virtual address 000002b8
->> [    0.586127] pgd = (ptrval)
->> [    0.588934] [000002b8] *pgd=00000000
->> [    0.592732] Internal error: Oops: 5 [#1] SMP ARM
->> [    0.597499] Modules linked in:
->> [    0.600668] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7-next-20181011 #70
->> [    0.608466] Hardware name: Generic AM33XX (Flattened Device Tree)
->> [    0.614770] PC is at gpiod_hog+0x30/0x154
->> [    0.618913] LR is at of_gpiochip_add+0x2fc/0x4e4
->> [    0.623671] pc : [<c055213c>]    lr : [<c0553ff0>]    psr: 60000013
->> [    0.630130] sp : ce09bba0  ip : cdf08095  fp : 00000000
->> [    0.635516] r10: c0bfcf24  r9 : 00000000  r8 : 00000007
->> [    0.640902] r7 : cdf08088  r6 : 00000000  r5 : 00000000  r4 : ce191e40
->> [    0.647630] r3 : 00000000  r2 : 00000000  r1 : cdf08088  r0 : ce191e40
->> [    0.654361] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
->> [    0.661718] Control: 10c5387d  Table: 80004019  DAC: 00000051
->> [    0.667642] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
->> [...]
->> [    0.973593] [<c055213c>] (gpiod_hog) from [<c0553ff0>] (of_gpiochip_add+0x2fc/0x4e4)
->> [    0.981588] [<c0553ff0>] (of_gpiochip_add) from [<c05528a0>] (gpiochip_add_data_with_key+
->> 0x5a0/0x990)
->> [    0.991102] [<c05528a0>] (gpiochip_add_data_with_key) from [<c0556d8c>] (omap_gpio_probe+
->> 0x37c/0x75c)
->> [    1.000613] [<c0556d8c>] (omap_gpio_probe) from [<c06049c0>] (platform_drv_probe+0x48/0x9
->> 8)
->> [    1.009237] [<c06049c0>] (platform_drv_probe) from [<c0602a04>] (really_probe+0x220/0x2d4
->> )
->> [    1.017764] [<c0602a04>] (really_probe) from [<c0602c18>] (driver_probe_device+0x5c/0x164
->> )
->> [    1.026293] [<c0602c18>] (driver_probe_device) from [<c0600d44>] (bus_for_each_drv+0x54/0
->> xb8)
->> [    1.035090] [<c0600d44>] (bus_for_each_drv) from [<c060276c>] (__device_attach+0xcc/0x13c
->> )
->> [    1.043615] [<c060276c>] (__device_attach) from [<c0601b88>] (bus_probe_device+0x88/0x90)
->> [    1.052051] [<c0601b88>] (bus_probe_device) from [<c05fea18>] (device_add+0x3d8/0x608)
->> [    1.060223] [<c05fea18>] (device_add) from [<c07343b8>] (of_platform_device_create_pdata+
->> 0x8c/0xc0)
->> [    1.069552] [<c07343b8>] (of_platform_device_create_pdata) from [<c07345c4>] (of_platform
->> _bus_create+0x190/0x228)
->> [    1.080134] [<c07345c4>] (of_platform_bus_create) from [<c0734610>] (of_platform_bus_crea
->> te+0x1dc/0x228)
->> [    1.089909] [<c0734610>] (of_platform_bus_create) from [<c073478c>] (of_platform_populate
->> +0x5c/0xac)
->> [    1.099333] [<c073478c>] (of_platform_populate) from [<c0d12614>] (pdata_quirks_init+0x6c
->> /0x90)
->> [    1.108306] [<c0d12614>] (pdata_quirks_init) from [<c0d12144>] (omap_generic_init+0xc/0x1
->> 8)
->> [    1.116933] [<c0d12144>] (omap_generic_init) from [<c0d03eb0>] (customize_machine+0x1c/0x
->> 30)
->> [    1.125645] [<c0d03eb0>] (customize_machine) from [<c01030e4>] (do_one_initcall+0x80/0x31
->> 0)
->> [    1.134265] [<c01030e4>] (do_one_initcall) from [<c0d01244>] (kernel_init_freeable+0x3c4/
->> 0x4ac)
->> [    1.143238] [<c0d01244>] (kernel_init_freeable) from [<c0900f28>] (kernel_init+0x8/0x114)
->> [    1.151673] [<c0900f28>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->> [    1.159475] Exception stack(0xce09bfb0 to 0xce09bff8)
->> [    1.164686] bfa0:                                     00000000 00000000 00000000 00000000
->> [    1.173119] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [    1.181551] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> [    1.188378] Code: 0a000002 e3530000 01a09003 159392b4 (e59352b8)
->> [    1.194766] ---[ end trace d5c17cd400f50a22 ]---
->> [    1.199606] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->> [    1.199606]
->> [    1.209052] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000
->> 00b
->> [    1.209052]  ]---
->> [    3.172292] random: fast init done
->>
->> Full log: https://pastebin.ubuntu.com/p/jG8nN6CTBP/
->>
->> Reverting this patch from linux-next allows to boot to prompt.
->>
->> Regards
->> Vignesh
->>
->>> ---
->>>  drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
->>>  1 file changed, 13 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->>> index 907019b67a58..e016b22658ff 100644
->>> --- a/drivers/gpio/gpiolib.c
->>> +++ b/drivers/gpio/gpiolib.c
->>> @@ -1349,20 +1349,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->>>
->>>       spin_unlock_irqrestore(&gpio_lock, flags);
->>>
->>> -     for (i = 0; i < chip->ngpio; i++) {
->>> -             struct gpio_desc *desc = &gdev->descs[i];
->>> -
->>> -             desc->gdev = gdev;
->>> -
->>> -             /* REVISIT: most hardware initializes GPIOs as inputs (often
->>> -              * with pullups enabled) so power usage is minimized. Linux
->>> -              * code should set the gpio direction first thing; but until
->>> -              * it does, and in case chip->get_direction is not set, we may
->>> -              * expose the wrong direction in sysfs.
->>> -              */
->>> -             desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
->>> -     }
->>> -
->>>  #ifdef CONFIG_PINCTRL
->>>       INIT_LIST_HEAD(&gdev->pin_ranges);
->>>  #endif
->>> @@ -1391,6 +1377,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->>>       if (status)
->>>               goto err_remove_chip;
->>>
->>> +     for (i = 0; i < chip->ngpio; i++) {
->>> +             struct gpio_desc *desc = &gdev->descs[i];
->>> +
->>> +             desc->gdev = gdev;
->>> +
->>> +             if (chip->get_direction && gpiochip_line_is_valid(chip, i))
->>> +                     desc->flags = !chip->get_direction(chip, i) ?
->>> +                                     (1 << FLAG_IS_OUT) : 0;
->>> +             else
->>> +                     desc->flags = !chip->direction_input ?
->>> +                                     (1 << FLAG_IS_OUT) : 0;
->>> +     }
->>> +
->>>       acpi_gpiochip_add(chip);
->>>
->>>       machine_gpiochip_add(chip);
->>>
->>
-> 
-> 
+  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
 
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-10-12-1
+
+for you to fetch changes up to 5ba15878f23c4bafb95afa0dabe9d08d89520259:
+
+  Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into
+drm-fixes (2018-10-08 16:37:59 +1000)
+
+----------------------------------------------------------------
+single nouveau runtime reference and mst change
+
+----------------------------------------------------------------
+Dave Airlie (1):
+      Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into drm-fixes
+
+Lyude Paul (1):
+      drm/nouveau/drm/nouveau: Grab runtime PM ref in nv50_mstc_detect()
+
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
