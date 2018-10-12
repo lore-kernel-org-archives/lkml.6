@@ -2,201 +2,132 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DATE_IN_PAST_24_48,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5ABC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CBCC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB9D72054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A15CA2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:05:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRb6AMUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9D72054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5DBLTBX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15CA2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbeJLXiF (ORCPT
+        id S1729176AbeJLXio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:38:05 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36097 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728660AbeJLXiF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:38:05 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l81-v6so6430280pfg.3;
-        Fri, 12 Oct 2018 09:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IkgJTXU2KMmUNbg8R4P9gmqinHJnXup6lY0sYNRyuK8=;
-        b=bRb6AMUd3jHNo4xhaaw3BBolF+UNauOjttqm5KAFKbwK4Vhr0ptLVA8j1q/uTQvzJd
-         VjzJqKS878BCQhq32G+j+f6R9+26KG9GHwj5SNguR+D++sfyfVViDHm+jJNjVfyOBt2U
-         /lAScVYPP9o6zkF58gotzAAtodl9m1s7WJlI6ZWNLD5mv/n2jouhg6FD8whQbPbNWQ90
-         pN34eiVH9WlpFyGy6MCSGj/9tL8uQKCG0eFb/zu5SxDQrc1Jo9X0+gPvj+Kql+TDZWRQ
-         dHTnwrlDu0/CxSOcvwQsf88hIdmvUbXVk0KZHIKorCBkNZicEGn8Qy7FtD81Wb2Olb1u
-         SiBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IkgJTXU2KMmUNbg8R4P9gmqinHJnXup6lY0sYNRyuK8=;
-        b=Lm8w+eieh88GFzacxt36ksRfwDb0h7PUHZ7TNGpvoTyq7FUEtoBtbl3+H8IT8Zybis
-         niX0PtH1cRSRiYh831JhfYT7xIs92tiVpwn7XoarvIVvEKdDYJpU0nH13M4LXQlCKCDp
-         u6kruVHp24tpyOJyB1HIz/iexZXriWsvZkM3dnSX80tc5h9ifD8WeKT2SH5x/oSd7Mf9
-         kuAWB582empem8HxTC+WEdt126Mzg43/isk7OOGK9AEgm5n1lI6PAV60T7Qjxu5Esot8
-         hnoQnxAWHuICqE5NVJww02YphrqnEaodvGdbrFP+2Fc3qFi2klpK449D4VTGsESb6INu
-         LgLQ==
-X-Gm-Message-State: ABuFfogTZtX5L4oZAtcelQkA44FwgCyN9yZbv+878YuXnh9MO2/DVJo1
-        4tDybQ4cHZkaDyMGf3Gly7JCXHvjyvZRpBBR
-X-Google-Smtp-Source: ACcGV61t6/yxog4HZ1bwaEuJi6QFCRiLveBp5Crf/6u4ZxzfBSM8jI7LiWOhKZJ3furnkIZDiT5eGA==
-X-Received: by 2002:a63:b25e:: with SMTP id t30-v6mr6057511pgo.401.1539360295464;
-        Fri, 12 Oct 2018 09:04:55 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([113.87.163.157])
-        by smtp.gmail.com with ESMTPSA id z63-v6sm2629571pfz.31.2018.10.12.09.04.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 09:04:54 -0700 (PDT)
-From:   Guoju Fang <fangguoju@gmail.com>
-To:     colyli@suse.de, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Guoju Fang <fangguoju@gmail.com>
-Subject: [PATCH] bcache: fix superblock being corrupted with non-4KB page size
-Date:   Thu, 11 Oct 2018 02:27:43 +0800
-Message-Id: <1539196063-129439-1-git-send-email-fangguoju@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 12 Oct 2018 19:38:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728832AbeJLXio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 19:38:44 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C5A3204EC;
+        Fri, 12 Oct 2018 16:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539360334;
+        bh=LGhgAD8SrTUVt/weeDLG68RxKwFEOj2bx0CK6CCd1yk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j5DBLTBXcxcoInzeyZAhOD6GpXXJhRmgJwWFnzrWx7yvjM9J557T3nwDW3Sj5kQ8l
+         Ajm5ixlymME6BTaem/Uxy89r+x9MWr6I7RnPkPC9T8zHfPiTsgb343P7AsI4amSkGE
+         S5vuUfScp8cvW24BF5OrloFNewXCDQt1IfhV+vmw=
+Date:   Fri, 12 Oct 2018 18:05:31 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 000/120] 3.18.124-stable review
+Message-ID: <20181012160531.GA28524@kroah.com>
+References: <20181011152549.500488630@linuxfoundation.org>
+ <9b2c52e4-56ce-37a3-b515-a6ff831fe17e@roeck-us.net>
+ <20181012133704.GB3706@kroah.com>
+ <10e12992-7e33-9569-5a4f-2a8124d3aae4@roeck-us.net>
+ <20181012142110.GA10817@kroah.com>
+ <20181012151506.GA17468@roeck-us.net>
+ <20181012153916.GA13257@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012153916.GA13257@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In read_super(), after read super block  by __bread(), a page is used to
-cache the data. But it will cause superblock corrupted when PAGE_SIZE is
-8KB or larger, because bh->b_data doesn't always point to the beginning
-of the page. So use a bio_vec struct to point the superblock cached.
+On Fri, Oct 12, 2018 at 08:39:16AM -0700, Guenter Roeck wrote:
+> On Fri, Oct 12, 2018 at 08:15:06AM -0700, Guenter Roeck wrote:
+> > On Fri, Oct 12, 2018 at 04:21:10PM +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, Oct 12, 2018 at 07:06:13AM -0700, Guenter Roeck wrote:
+> > > > On 10/12/2018 06:37 AM, Greg Kroah-Hartman wrote:
+> > > > > On Fri, Oct 12, 2018 at 05:19:16AM -0700, Guenter Roeck wrote:
+> > > > > > On 10/11/2018 08:33 AM, Greg Kroah-Hartman wrote:
+> > > > > > > This is the start of the stable review cycle for the 3.18.124 release.
+> > > > > > > There are 120 patches in this series, all will be posted as a response
+> > > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > > let me know.
+> > > > > > > 
+> > > > > > > Responses should be made by Sat Oct 13 15:25:29 UTC 2018.
+> > > > > > > Anything received after that time might be too late.
+> > > > > > > 
+> > > > > > 
+> > > > > > [preliminary]
+> > > > > > 
+> > > > > > arm:allmodconfig:
+> > > > > > 
+> > > > > > drivers/mtd/spi-nor/fsl-quadspi.c: In function 'fsl_qspi_init_lut':
+> > > > > > drivers/mtd/spi-nor/fsl-quadspi.c:170:5: error: 'LUT_0' undeclared
+> > > > > 
+> > > > > That is really odd in that there are no patches that touch this file,
+> > > > > and I do not even see "LUT_0" anywhere in the 3.18.y tree.
+> > > > > 
+> > > > 
+> > > > Bisect:
+> > > > 
+> > > > 
+> > > > # bad: [8c4ca12b60ea371a32db58cf78b6cb4e2ba4515c] Linux 3.18.124-rc1
+> > > > # good: [921b2fed6a79439ef1609ef4af0ada5cccb3555c] Linux 3.18.123
+> > > > git bisect start 'HEAD' 'v3.18.123'
+> > > > # good: [aed5b0190528303a3f4d319f95d7e38c94ca32ab] USB: remove LPM management from usb_driver_claim_interface()
+> > > > git bisect good aed5b0190528303a3f4d319f95d7e38c94ca32ab
+> > > > # good: [10441f560c0ad0aeed00402088d71d4d299d6537] r8169: Clear RTL_FLAG_TASK_*_PENDING when clearing RTL_FLAG_TASK_ENABLED
+> > > > git bisect good 10441f560c0ad0aeed00402088d71d4d299d6537
+> > > > # bad: [0661a919177560337d962f43daa46dde2fa4d89e] mac80211: fix setting IEEE80211_KEY_FLAG_RX_MGMT for AP mode keys
+> > > > git bisect bad 0661a919177560337d962f43daa46dde2fa4d89e
+> > > > # good: [d4b130cc92bbef445de4ffe4ecd068935375d591] ocfs2: fix locking for res->tracking and dlm->tracking_list
+> > > > git bisect good d4b130cc92bbef445de4ffe4ecd068935375d591
+> > > > # bad: [1f002a3e6d7250a62966399bd91eeec308c0b756] fbdev/omapfb: fix omapfb_memory_read infoleak
+> > > > git bisect bad 1f002a3e6d7250a62966399bd91eeec308c0b756
+> > > > # bad: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
+> > > > git bisect bad 5396a79f029d54c1e02409335c7dfde43c55e4a4
+> > > > # good: [7da4d144b6922e94aad8c0d405e4cc63a44b8ec5] dm thin metadata: fix __udivdi3 undefined on 32-bit
+> > > > git bisect good 7da4d144b6922e94aad8c0d405e4cc63a44b8ec5
+> > > > # first bad commit: [5396a79f029d54c1e02409335c7dfde43c55e4a4] Make file credentials available to the seqfile interfaces
+> > > > 
+> > > > ... and reverting that patch fixes the problem. No idea why; maybe because of include
+> > > > file changes.
+> > > 
+> > > That patch _adds_ two .h files to be included in
+> > > include/linux/seq_file.h, not removes any.
+> > > 
+> > > Ugh, that's a mess.
+> > > 
+> > > I've seen the LUT_0 thing show up a long time ago due to some other odd
+> > > arm thing.  But I don't remember how it was ever resolved.  Maybe I'll
+> > > just let this one go and see if anyone notices :)
+> > > 
+> > See commit 04850c4d8613127a9b488321c0ad83bff7519311. I'll check if it applies
+> > and fixes the problem, and let you know.
+> > 
+> I confirmed that commit 04850c4d86131 applies and fixes the problem.
 
-Signed-off-by: Guoju Fang <fangguoju@gmail.com>
----
- drivers/md/bcache/super.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+Great, now queued up, thanks!
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 30ba9ae..64715a8 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -58,7 +58,7 @@
- /* Superblock */
- 
- static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
--			      struct page **res)
-+			      struct bio_vec *bv)
- {
- 	const char *err;
- 	struct cache_sb *s;
-@@ -188,7 +188,9 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
- 	err = NULL;
- 
- 	get_page(bh->b_page);
--	*res = bh->b_page;
-+	bv->bv_page = bh->b_page;
-+	bv->bv_len = SB_SIZE;
-+	bv->bv_offset = (unsigned long)bh->b_data & ~PAGE_MASK;
- err:
- 	put_bh(bh);
- 	return err;
-@@ -204,7 +206,8 @@ static void write_bdev_super_endio(struct bio *bio)
- 
- static void __write_super(struct cache_sb *sb, struct bio *bio)
- {
--	struct cache_sb *out = page_address(bio_first_page_all(bio));
-+	struct cache_sb *out = page_address(bio_first_bvec_all(bio)->bv_page) +
-+		    bio_first_bvec_all(bio)->bv_offset;
- 	unsigned int i;
- 
- 	bio->bi_iter.bi_sector	= SB_SECTOR;
-@@ -1277,7 +1280,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
- 
- /* Cached device - bcache superblock */
- 
--static void register_bdev(struct cache_sb *sb, struct page *sb_page,
-+static void register_bdev(struct cache_sb *sb, struct bio_vec *bv,
- 				 struct block_device *bdev,
- 				 struct cached_dev *dc)
- {
-@@ -1290,8 +1293,8 @@ static void register_bdev(struct cache_sb *sb, struct page *sb_page,
- 	dc->bdev->bd_holder = dc;
- 
- 	bio_init(&dc->sb_bio, dc->sb_bio.bi_inline_vecs, 1);
--	bio_first_bvec_all(&dc->sb_bio)->bv_page = sb_page;
--	get_page(sb_page);
-+	memcpy(bio_first_bvec_all(&dc->sb_bio), bv, sizeof(*bv));
-+	get_page(bv->bv_page);
- 
- 
- 	if (cached_dev_init(dc, sb->block_size << 9))
-@@ -2089,7 +2092,7 @@ static int cache_alloc(struct cache *ca)
- 	return 0;
- }
- 
--static int register_cache(struct cache_sb *sb, struct page *sb_page,
-+static int register_cache(struct cache_sb *sb, struct bio_vec *bv,
- 				struct block_device *bdev, struct cache *ca)
- {
- 	const char *err = NULL; /* must be set for any error case */
-@@ -2101,8 +2104,8 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
- 	ca->bdev->bd_holder = ca;
- 
- 	bio_init(&ca->sb_bio, ca->sb_bio.bi_inline_vecs, 1);
--	bio_first_bvec_all(&ca->sb_bio)->bv_page = sb_page;
--	get_page(sb_page);
-+	memcpy(bio_first_bvec_all(&ca->sb_bio), bv, sizeof(*bv));
-+	get_page(bv->bv_page);
- 
- 	if (blk_queue_discard(bdev_get_queue(bdev)))
- 		ca->discard = CACHE_DISCARD(&ca->sb);
-@@ -2195,7 +2198,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	char *path = NULL;
- 	struct cache_sb *sb = NULL;
- 	struct block_device *bdev = NULL;
--	struct page *sb_page = NULL;
-+	struct bio_vec bv = { NULL };
- 
- 	if (!try_module_get(THIS_MODULE))
- 		return -EBUSY;
-@@ -2233,7 +2236,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	if (set_blocksize(bdev, 4096))
- 		goto err_close;
- 
--	err = read_super(sb, bdev, &sb_page);
-+	err = read_super(sb, bdev, &bv);
- 	if (err)
- 		goto err_close;
- 
-@@ -2245,7 +2248,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			goto err_close;
- 
- 		mutex_lock(&bch_register_lock);
--		register_bdev(sb, sb_page, bdev, dc);
-+		register_bdev(sb, &bv, bdev, dc);
- 		mutex_unlock(&bch_register_lock);
- 	} else {
- 		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
-@@ -2253,12 +2256,12 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 		if (!ca)
- 			goto err_close;
- 
--		if (register_cache(sb, sb_page, bdev, ca) != 0)
-+		if (register_cache(sb, &bv, bdev, ca) != 0)
- 			goto err;
- 	}
- out:
--	if (sb_page)
--		put_page(sb_page);
-+	if (bv.bv_page)
-+		put_page(bv.bv_page);
- 	kfree(sb);
- 	kfree(path);
- 	module_put(THIS_MODULE);
--- 
-1.8.3.1
-
+greg k-h
