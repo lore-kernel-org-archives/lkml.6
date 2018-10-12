@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CB7C6787F
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6C5C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC9A2148C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC9A2148C
+	by mail.kernel.org (Postfix) with ESMTP id AB3EA21477
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 17:56:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB3EA21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeJMBaW (ORCPT
+        id S1727583AbeJMBaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:30:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35710 "EHLO mx1.redhat.com"
+        Fri, 12 Oct 2018 21:30:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46114 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbeJMBaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:30:22 -0400
+        id S1727051AbeJMBaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:30:23 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D098080F7D;
-        Fri, 12 Oct 2018 17:56:42 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8255C3002DD2;
+        Fri, 12 Oct 2018 17:56:44 +0000 (UTC)
 Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 268EC82779;
-        Fri, 12 Oct 2018 17:56:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED33279425;
+        Fri, 12 Oct 2018 17:56:42 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -42,103 +42,158 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v13 10/11] cpuset: Add documentation about the new "cpuset.sched.partition" flag
-Date:   Fri, 12 Oct 2018 13:55:50 -0400
-Message-Id: <1539366951-8498-11-git-send-email-longman@redhat.com>
+Subject: [PATCH v13 11/11] cpuset: Expose cpuset.cpus.subpartitions with cgroup_debug
+Date:   Fri, 12 Oct 2018 13:55:51 -0400
+Message-Id: <1539366951-8498-12-git-send-email-longman@redhat.com>
 In-Reply-To: <1539366951-8498-1-git-send-email-longman@redhat.com>
 References: <1539366951-8498-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 12 Oct 2018 17:56:43 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 12 Oct 2018 17:56:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cgroup-v2.rst file is updated to document the purpose of the new
-"cpuset.sched.partition" flag and how its usage.
+For debugging purpose, it will be useful to expose the content of the
+subparts_cpus as a read-only file to see if the code work correctly.
+However, subparts_cpus will not be used at all in most use cases. So
+adding a new cpuset file that clutters the cgroup directory may not be
+desirable.  This is now being done by using the hidden "cgroup_debug"
+kernel command line option to expose a new "cpuset.cpus.subpartitions"
+file.
+
+That option was originally used by the debug controller to expose
+itself when configured into the kernel. This is now extended to set an
+internal flag used by cgroup_addrm_files(). A new CFTYPE_DEBUG flag
+can now be used to specify that a cgroup file should only be created
+when the "cgroup_debug" option is specified.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 66 +++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ include/linux/cgroup-defs.h     |  1 +
+ kernel/cgroup/cgroup-internal.h |  2 ++
+ kernel/cgroup/cgroup.c          | 14 +++++++++++++-
+ kernel/cgroup/cpuset.c          | 11 +++++++++++
+ kernel/cgroup/debug.c           |  4 +---
+ 5 files changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 533e85c..178cda4 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1686,6 +1686,72 @@ Cpuset Interface Files
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index ff20b67..94c7a78 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -91,6 +91,7 @@ enum {
  
- 	Its value will be affected by memory nodes hotplug events.
+ 	CFTYPE_NO_PREFIX	= (1 << 3),	/* (DON'T USE FOR NEW FILES) no subsys prefix */
+ 	CFTYPE_WORLD_WRITABLE	= (1 << 4),	/* (DON'T USE FOR NEW FILES) S_IWUGO */
++	CFTYPE_DEBUG		= (1 << 5),	/* create when cgroup_debug */
  
-+  cpuset.sched.partition
-+	A read-write single value file which exists on non-root
-+	cpuset-enabled cgroups.  It accepts either "0" (off) or "1"
-+	(on) when written to.  This flag is set and owned by the
-+	parent cgroup.
-+
-+	If set, it indicates that the current cgroup is the root of a
-+	new partition or scheduling domain that comprises itself and
-+	all its descendants except those that are separate partition
-+	roots themselves and their descendants.  The root cgroup is
-+	always a partition root.
-+
-+	There are constraints on where this flag can be set.  It can
-+	only be set in a cgroup if all the following conditions are true.
-+
-+	1) The "cpuset.cpus" is not empty and the list of CPUs are
-+	   exclusive, i.e. they are not shared by any of its siblings.
-+	2) The parent cgroup is a partition root.
-+	3) The "cpuset.cpus" is also a proper subset of the parent's
-+	   "cpuset.cpus.effective".
-+	4) There is no child cgroups with cpuset enabled.  This is for
-+	   eliminating corner cases that have to be handled if such a
-+	   condition is allowed.
-+
-+	Setting this flag will take the CPUs away from the effective
-+	CPUs of the parent cgroup.  Once it is set, this flag cannot
-+	be cleared if there are any child cgroups with cpuset enabled.
-+
-+	A parent partition cannot distribute all its CPUs to its
-+	child partitions.  There must be at least one cpu left in the
-+	parent partition.
-+
-+	Once becoming a partition root, changes to "cpuset.cpus" is
-+	generally allowed as long as the first condition above is true,
-+	the change will not take away all the CPUs from the parent
-+	partition and the new "cpuset.cpus" value is a superset of its
-+	children's "cpuset.cpus" values.
-+
-+	Sometimes, external factors like changes to ancestors'
-+	"cpuset.cpus" or cpu hotplug can cause the state of the partition
-+	root to change.  On read, the "cpuset.sched.partition" file
-+	can show the following values.
-+
-+	"0"  Not a partition root
-+	"1"  Partition root
-+	"-1" Erroneous partition root
-+
-+	It is a partition root if the first 2 partition root conditions
-+	above are true and at least one CPU from "cpuset.cpus" is
-+	granted by the parent cgroup.
-+
-+	A partition root can become an erroneous partition root if none
-+	of CPUs requested in "cpuset.cpus" can be granted by the parent
-+	cgroup or the parent cgroup is no longer a partition root.
-+	In this case, it is not a real partition even though the
-+	restriction of the first partition root condition above will
-+	still apply.  All the tasks in the cgroup will be migrated to
-+	the nearest ancestor partition.
-+
-+	An erroneous partition root can be transitioned back to a real
-+	partition root if at least one of the requested CPUs can now be
-+	granted by its parent.	In this case, the tasks will be migrated
-+	back to the newly created partition.  Clearing the partition
-+	flag of an erroneous partition root is always allowed even if
-+	child cpusets are present.
-+
+ 	/* internal flags, do not use outside cgroup core proper */
+ 	__CFTYPE_ONLY_ON_DFL	= (1 << 16),	/* only on default hierarchy */
+diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
+index 75568fc..c950864 100644
+--- a/kernel/cgroup/cgroup-internal.h
++++ b/kernel/cgroup/cgroup-internal.h
+@@ -11,6 +11,8 @@
+ #define TRACE_CGROUP_PATH_LEN 1024
+ extern spinlock_t trace_cgroup_path_lock;
+ extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++extern bool cgroup_debug;
++extern void __init enable_debug_cgroup(void);
  
- Device controller
- -----------------
+ /*
+  * cgroup_path() takes a spin lock. It is good practice not to take
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index aae10ba..067e48a 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -85,6 +85,7 @@
+ 
+ DEFINE_SPINLOCK(trace_cgroup_path_lock);
+ char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++bool cgroup_debug __read_mostly;
+ 
+ /*
+  * Protects cgroup_idr and css_idr so that IDs can be released without
+@@ -3616,7 +3617,8 @@ static int cgroup_addrm_files(struct cgroup_subsys_state *css,
+ 			continue;
+ 		if ((cft->flags & CFTYPE_ONLY_ON_ROOT) && cgroup_parent(cgrp))
+ 			continue;
+-
++		if ((cft->flags & CFTYPE_DEBUG) && !cgroup_debug)
++			continue;
+ 		if (is_add) {
+ 			ret = cgroup_add_file(css, cgrp, cft);
+ 			if (ret) {
+@@ -5695,6 +5697,16 @@ static int __init cgroup_disable(char *str)
+ }
+ __setup("cgroup_disable=", cgroup_disable);
+ 
++void __init __weak enable_debug_cgroup(void) { }
++
++static int __init enable_cgroup_debug(char *str)
++{
++	cgroup_debug = true;
++	enable_debug_cgroup();
++	return 1;
++}
++__setup("cgroup_debug", enable_cgroup_debug);
++
+ /**
+  * css_tryget_online_from_dir - get corresponding css from a cgroup dentry
+  * @dentry: directory dentry of interest
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index a3b81d4..9db4f10 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2190,6 +2190,7 @@ static void cpuset_attach(struct cgroup_taskset *tset)
+ 	FILE_MEMLIST,
+ 	FILE_EFFECTIVE_CPULIST,
+ 	FILE_EFFECTIVE_MEMLIST,
++	FILE_SUBPARTS_CPULIST,
+ 	FILE_CPU_EXCLUSIVE,
+ 	FILE_MEM_EXCLUSIVE,
+ 	FILE_MEM_HARDWALL,
+@@ -2371,6 +2372,9 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
+ 	case FILE_EFFECTIVE_MEMLIST:
+ 		seq_printf(sf, "%*pbl\n", nodemask_pr_args(&cs->effective_mems));
+ 		break;
++	case FILE_SUBPARTS_CPULIST:
++		seq_printf(sf, "%*pbl\n", cpumask_pr_args(cs->subparts_cpus));
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 	}
+@@ -2576,6 +2580,13 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
+ 
++	{
++		.name = "cpus.subpartitions",
++		.seq_show = cpuset_common_seq_show,
++		.private = FILE_SUBPARTS_CPULIST,
++		.flags = CFTYPE_DEBUG,
++	},
++
+ 	{ }	/* terminate */
+ };
+ 
+diff --git a/kernel/cgroup/debug.c b/kernel/cgroup/debug.c
+index 9caeda6..5f1b873 100644
+--- a/kernel/cgroup/debug.c
++++ b/kernel/cgroup/debug.c
+@@ -373,11 +373,9 @@ struct cgroup_subsys debug_cgrp_subsys = {
+  * On v2, debug is an implicit controller enabled by "cgroup_debug" boot
+  * parameter.
+  */
+-static int __init enable_cgroup_debug(char *str)
++void __init enable_debug_cgroup(void)
+ {
+ 	debug_cgrp_subsys.dfl_cftypes = debug_files;
+ 	debug_cgrp_subsys.implicit_on_dfl = true;
+ 	debug_cgrp_subsys.threaded = true;
+-	return 1;
+ }
+-__setup("cgroup_debug", enable_cgroup_debug);
 -- 
 1.8.3.1
 
