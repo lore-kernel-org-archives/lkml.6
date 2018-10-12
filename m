@@ -2,133 +2,131 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3114C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD565C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726222077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6F42077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:11:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VmnmrCxL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726222077C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5I2tJ7d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6F42077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbeJLSnh (ORCPT
+        id S1728215AbeJLSnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:43:37 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32947 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeJLSnh (ORCPT
+        Fri, 12 Oct 2018 14:43:40 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41406 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbeJLSnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:43:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y18-v6so5720941pge.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:11:41 -0700 (PDT)
+        Fri, 12 Oct 2018 14:43:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23-v6so5699587pgc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 04:11:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=lC+8ZnXbEaknaWpQYGS8dSHNeFRKofdA00EXaBKsxz8=;
-        b=VmnmrCxL/eQoplTJ59zWk0guAGacHTMND2LzCpJ/FT/gjXwx8S8BpCjy/L896FURNx
-         R1qkTmCMdPraeopkIH3HlfQ+tZJJZa2NIh1Kg71uxRdXkoKKNPciBMHDMJh0AOU3PkMt
-         c40Fqv/pYE38NV7TiMNOSqj784DyN6AN9+Z+k=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6VbMN0cDbtfY/RD+G5z/cfGgvp3V9Mjd6fc+0SIk7q0=;
+        b=b5I2tJ7dYL9/0L0H4NCF86b+4oh+7rhuCZQsxYhHf5eKcv5WOkx1x9x3Rv0KYV9L+Z
+         RkTM33S6nvAkGdZGrkQWTBcwdootynnw1ZdClJjxguLb90w0I4z5KgY33hQYTGFHKjJk
+         Rs1z+H0rOepvLaCpOOrXRNsjk4QVrrNBxqiY0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lC+8ZnXbEaknaWpQYGS8dSHNeFRKofdA00EXaBKsxz8=;
-        b=dw8PaLTbBFxijCAkgobS8TdRDBVpIfroSwkHYT70/BUro7a67wPj32xvPvbRjuZeyH
-         8VQJoyIg5PkTTTAVPb50XXcH0Vde2107yiMqXZC146IZjdI79uL8sxoPKDuo4jL3qIQK
-         owIUkN6OcS5XXAOvFDyoh1FvAK6VZU2vHCsfcXitiWnYJsM1T6wddQpFS+Rnq5NzEMJh
-         RXt4cFlk+iOyRfYWkyZ8bRGvIi3ZsZRRhj/eLhWVlxA+KGJJ4HnGDkYdf/DPzy+THvmI
-         O5DdcvAF2x9vm44nkzH+kJkKN1fdrph/WKKP6u1O2xm1QfRoGLM8YkLUsgIpMXSTzqfy
-         p8EQ==
-X-Gm-Message-State: ABuFfoh2CpTLDFlkVgaSXJP+mCOhRuHCb+qvdIFwe9mBXy2cTsNiu8i0
-        Ai+nZxBgOTWNvXXE1UfkstQ74A==
-X-Google-Smtp-Source: ACcGV61glFsYMfY8CHckcfheKlaaHsA87t/hHenzPtv7ahSRcLRj8J17KAySyk53aQ5zhRlEqbcgvg==
-X-Received: by 2002:a63:2503:: with SMTP id l3-v6mr5102928pgl.69.1539342700956;
-        Fri, 12 Oct 2018 04:11:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=6VbMN0cDbtfY/RD+G5z/cfGgvp3V9Mjd6fc+0SIk7q0=;
+        b=maiCEMoMd5tt6w0FP424I3xoGGBnbuXpLLiJS9It8D98gdBtYFGgYwNhyxrgoEbtYz
+         aCTv9Eh3Sx6K1+z1LtI0ROHyCe6Q3hwf2FNrgU6U1AO4mIV3aOXcf2zp58k4oYk+c3RW
+         TC49jyk4yresvai6LM8DU8mA1nam5qWVyUbvX2SCMo8IVuOw+rraSmnk9hH5pRsMH2j8
+         LIpTBgM7np9MSjjyRu8NCUgz7V16GJjyn9n1qWFKhlCwUnU+3yF6V3sgNfenNPjph67D
+         KrJQ1j8VyWU/5gPovGhUVtaM3ZG0GbQh6VPiGCtxkDBh+p7TX7InWrs5lj6S2cNFTmCs
+         f9Pg==
+X-Gm-Message-State: ABuFfoj8Sq8k91TdbY8GMiVRogPW+AaxkKBFzq5Idi9SNDo8sEyzohrO
+        4mT8xI+0x9B/l6Cq9gG6uJVuMA==
+X-Google-Smtp-Source: ACcGV620I0k5iXb47orWTSCv3aumeuNlWlNftKPIQG+to8Z+CryOO92I/BcXVv10PPPE3+boDFi7rg==
+X-Received: by 2002:a62:d046:: with SMTP id p67-v6mr5811016pfg.147.1539342704246;
+        Fri, 12 Oct 2018 04:11:44 -0700 (PDT)
 Received: from localhost ([122.171.67.41])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm1385179pgc.68.2018.10.12.04.11.39
+        by smtp.gmail.com with ESMTPSA id p1-v6sm3701574pfj.72.2018.10.12.04.11.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 04:11:40 -0700 (PDT)
+        Fri, 12 Oct 2018 04:11:43 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     ulf.hansson@linaro.org, Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>
+To:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        niklas.cassel@linaro.org, rnayak@codeaurora.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 0/9] OPP: Support multiple power-domains per device
-Date:   Fri, 12 Oct 2018 16:41:08 +0530
-Message-Id: <cover.1539341929.git.viresh.kumar@linaro.org>
+        Rafael Wysocki <rjw@rjwysocki.net>, niklas.cassel@linaro.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 1/9] OPP: Identify and mark genpd OPP tables
+Date:   Fri, 12 Oct 2018 16:41:09 +0530
+Message-Id: <8130f5e3128fbd0dd34b02dbca9cde2b042d2494.1539341929.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+In-Reply-To: <cover.1539341929.git.viresh.kumar@linaro.org>
+References: <cover.1539341929.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+We need to handle genpd OPP tables differently, this is already the case
+at one location and will be extended going forward. Add another field to
+the OPP table to check if the table belongs to a genpd or not.
 
-We are already at 4.19-rc7 and there may not enough time to get this
-reviewed/tested/ready for the upcoming merge window and so there is no
-hurry in getting this merged. The purpose to send now is to get this
-reviewed/tested, which would allow more more development to happen on
-top of this.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/opp/of.c  | 6 ++++--
+ drivers/opp/opp.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-This series improves the OPP core (and a bit of genpd core as well) to
-support multiple phandles in the "required-opps" property, which are
-only used for multiple power-domains per device for now.
-
-We still don't propagate the changes to master domains for the
-sub-domains, but this patchset is an important stepping stone for that
-to happen.
-
-Tested on Hikey960 after faking some power domains for CPUs.
-
-V1->V2:
-- Had a discussion at Linaro connect with Ulf regarding the changes V1
-  did in the genpd core and what his objections are to them. Based on
-  his suggestions many changes are made.
-- The OPP core still needs the virtual device pointers to set the
-  performance state for multiple domains, but the genpd core doesn't
-  provide them automatically to the OPP core. One of the reasons behind
-  this is to give more power to the consumer drivers which may not want
-  to enable all the genpds at once.
-- The consumer drivers would now need to call the APIs
-  dev_pm_opp_{set|put}_genpd_device() in order to set/reset these
-  virtual device pointers.
-- More locking is put in place to protect the genpd device pointers in
-  OPP core.
-- Reorg of the code at many places to make code less redundant.
-
---
-viresh
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 5a4b47958073..5f114cd3d88c 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -92,6 +92,9 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
+ 	of_property_read_u32(np, "voltage-tolerance",
+ 			     &opp_table->voltage_tolerance_v1);
  
-Viresh Kumar (9):
-  OPP: Identify and mark genpd OPP tables
-  OPP: Separate out custom OPP handler specific code
-  OPP: Populate required opp tables from "required-opps" property
-  OPP: Populate OPPs from "required-opps" property
-  PM / Domains: Add genpd_opp_to_performance_state()
-  OPP: Add dev_pm_opp_{set|put}_genpd_device() helper
-  OPP: Configure all required OPPs
-  OPP: Rename and relocate of_genpd_opp_to_performance_state()
-  OPP: Remove of_dev_pm_opp_find_required_opp()
-
- drivers/base/power/domain.c |  51 +++---
- drivers/opp/core.c          | 261 ++++++++++++++++++++++--------
- drivers/opp/of.c            | 313 +++++++++++++++++++++++++++++++-----
- drivers/opp/opp.h           |  20 +++
- include/linux/pm_domain.h   |   7 +-
- include/linux/pm_opp.h      |  16 +-
- 6 files changed, 519 insertions(+), 149 deletions(-)
-
++	if (of_find_property(np, "#power-domain-cells", NULL))
++		opp_table->is_genpd = true;
++
+ 	/* Get OPP table node */
+ 	opp_np = _opp_of_get_opp_desc_node(np, index);
+ 	of_node_put(np);
+@@ -326,8 +329,7 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+ 	ret = of_property_read_u64(np, "opp-hz", &rate);
+ 	if (ret < 0) {
+ 		/* "opp-hz" is optional for devices like power domains. */
+-		if (!of_find_property(dev->of_node, "#power-domain-cells",
+-				      NULL)) {
++		if (!opp_table->is_genpd) {
+ 			dev_err(dev, "%s: opp-hz not found\n", __func__);
+ 			goto free_opp;
+ 		}
+diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+index 9c6544b4f4f9..cdb0c2b095e2 100644
+--- a/drivers/opp/opp.h
++++ b/drivers/opp/opp.h
+@@ -140,6 +140,7 @@ enum opp_table_access {
+  * @regulators: Supply regulators
+  * @regulator_count: Number of power supply regulators
+  * @genpd_performance_state: Device's power domain support performance state.
++ * @is_genpd: Marks if the OPP table belongs to a genpd.
+  * @set_opp: Platform specific set_opp callback
+  * @set_opp_data: Data to be passed to set_opp callback
+  * @dentry:	debugfs dentry pointer of the real device directory (not links).
+@@ -178,6 +179,7 @@ struct opp_table {
+ 	struct regulator **regulators;
+ 	unsigned int regulator_count;
+ 	bool genpd_performance_state;
++	bool is_genpd;
+ 
+ 	int (*set_opp)(struct dev_pm_set_opp_data *data);
+ 	struct dev_pm_set_opp_data *set_opp_data;
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
