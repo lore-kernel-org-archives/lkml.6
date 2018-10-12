@@ -2,270 +2,97 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C9AC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3169FC67877
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFC1020645
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC1020645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E946320645
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E946320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeJMBtg (ORCPT
+        id S1726758AbeJMBw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:49:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32555 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeJMBtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:49:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:15:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="81006018"
-Received: from ray.jf.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga008.jf.intel.com with ESMTP; 12 Oct 2018 11:15:51 -0700
-Subject: Re: [PATCH 08/11] x86/fpu: Always store the registers in
- copy_fpstate_to_sigframe()
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-9-bigeasy@linutronix.de>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <53f013ca-d6ff-2387-f9b0-d6c6df66d082@linux.intel.com>
-Date:   Fri, 12 Oct 2018 11:15:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181004140547.13014-9-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 12 Oct 2018 21:52:26 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:48626 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeJMBwZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:52:25 -0400
+Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 33244136DD156;
+        Fri, 12 Oct 2018 11:18:37 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 11:18:36 -0700 (PDT)
+Message-Id: <20181012.111836.1569129998592378186.davem@davemloft.net>
+To:     joel@joelfernandes.org
+Cc:     kirill@shutemov.name, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, minchan@kernel.org, pantin@google.com,
+        hughd@google.com, lokeshgidra@google.com, dancol@google.com,
+        mhocko@kernel.org, akpm@linux-foundation.org,
+        aryabinin@virtuozzo.com, luto@kernel.org, bp@alien8.de,
+        catalin.marinas@arm.com, chris@zankel.net,
+        dave.hansen@linux.intel.com, elfring@users.sourceforge.net,
+        fenghua.yu@intel.com, geert@linux-m68k.org, gxt@pku.edu.cn,
+        deller@gmx.de, mingo@redhat.com, jejb@parisc-linux.org,
+        jdike@addtoit.com, jonas@southpole.se, Julia.Lawall@lip6.fr,
+        kasan-dev@googlegroups.com, kvmarm@lists.cs.columbia.edu,
+        lftan@altera.com, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, jcmvbkbc@gmail.com,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        peterz@infradead.org, richard@nod.at
+Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181012125046.GA170912@joelaf.mtv.corp.google.com>
+References: <20181012013756.11285-2-joel@joelfernandes.org>
+        <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1>
+        <20181012125046.GA170912@joelaf.mtv.corp.google.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 12 Oct 2018 11:18:39 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 07:05 AM, Sebastian Andrzej Siewior wrote:
-> From: Rik van Riel <riel@surriel.com>
-> 
-> copy_fpstate_to_sigframe() has two callers and both invoke the function only if
-> fpu->initialized is set. So the check in the function for ->initialized makes
-> no sense. It might be a relict from the lazy-FPU time: If the FPU registers
-> were "loaded" then we could save them directly. Otherwise (the FPU
-> registers are not up to date) they are saved in the FPU struct and
-> it could be used for memcpy().
-> 
-> Since the registers always loaded at this point, save them and copy
-> later.
-> This code is extracted from an earlier version of the patchset while
-> there still was lazy-FPU on x86. This is a preparation for loading the
-> FPU registers on return to userland.
+From: Joel Fernandes <joel@joelfernandes.org>
+Date: Fri, 12 Oct 2018 05:50:46 -0700
 
-Could you make a pass through all the changelogs at at least make sure
-they look sane and consistent?  The text width and paragraph spacing
-here looks rather cobbled together.
+> If its an issue, then how do transparent huge pages work on Sparc?  I don't
+> see the huge page code (move_huge_pages) during mremap doing anything special
+> for Sparc architecture when moving PMDs..
 
-> ---
->  arch/x86/include/asm/fpu/internal.h | 45 ----------------------------
->  arch/x86/kernel/fpu/signal.c        | 46 +++++++----------------------
->  2 files changed, 11 insertions(+), 80 deletions(-)
+This is because all huge pages are larger than SHMLBA.  So no cache flushing
+necessary.
 
-The diffstat here is really nice.
+> Also, do we not flush the caches from any path when we munmap
+> address space?  We do call do_munmap on the old mapping from mremap
+> after moving to the new one.
 
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 4ecaf4d22954e..df8816be3efdd 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -126,22 +126,6 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
->  		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_fprestore)	\
->  		     : output : input)
->  
-> -static inline int copy_fregs_to_user(struct fregs_state __user *fx)
-> -{
-> -	return user_insn(fnsave %[fx]; fwait,  [fx] "=m" (*fx), "m" (*fx));
-> -}
-> -
-> -static inline int copy_fxregs_to_user(struct fxregs_state __user *fx)
-> -{
-> -	if (IS_ENABLED(CONFIG_X86_32))
-> -		return user_insn(fxsave %[fx], [fx] "=m" (*fx), "m" (*fx));
-> -	else if (IS_ENABLED(CONFIG_AS_FXSAVEQ))
-> -		return user_insn(fxsaveq %[fx], [fx] "=m" (*fx), "m" (*fx));
-> -
-> -	/* See comment in copy_fxregs_to_kernel() below. */
-> -	return user_insn(rex64/fxsave (%[fx]), "=m" (*fx), [fx] "R" (fx));
-> -}
-> -
->  static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
->  {
->  	if (IS_ENABLED(CONFIG_X86_32)) {
-> @@ -352,35 +336,6 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
->  	XSTATE_XRESTORE(xstate, lmask, hmask);
->  }
->  
-> -/*
-> - * Save xstate to user space xsave area.
-> - *
-> - * We don't use modified optimization because xrstor/xrstors might track
-> - * a different application.
-> - *
-> - * We don't use compacted format xsave area for
-> - * backward compatibility for old applications which don't understand
-> - * compacted format of xsave area.
-> - */
-> -static inline int copy_xregs_to_user(struct xregs_state __user *buf)
-> -{
-> -	int err;
-> -
-> -	/*
-> -	 * Clear the xsave header first, so that reserved fields are
-> -	 * initialized to zero.
-> -	 */
-> -	err = __clear_user(&buf->header, sizeof(buf->header));
-> -	if (unlikely(err))
-> -		return -EFAULT;
-> -
-> -	stac();
-> -	XSTATE_OP(XSAVE, buf, -1, -1, err);
-> -	clac();
-> -
-> -	return err;
-> -}
-> -
->  /*
->   * Restore xstate from user space xsave area.
->   */
-> diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-> index 23f1691670b66..c8f5ff58578ed 100644
-> --- a/arch/x86/kernel/fpu/signal.c
-> +++ b/arch/x86/kernel/fpu/signal.c
-> @@ -117,23 +117,6 @@ static inline int save_xstate_epilog(void __user *buf, int ia32_frame)
->  
->  	return err;
->  }
-> -
-> -static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-> -{
-> -	int err;
-> -
-> -	if (use_xsave())
-> -		err = copy_xregs_to_user(buf);
-> -	else if (use_fxsr())
-> -		err = copy_fxregs_to_user((struct fxregs_state __user *) buf);
-> -	else
-> -		err = copy_fregs_to_user((struct fregs_state __user *) buf);
-> -
-> -	if (unlikely(err) && __clear_user(buf, fpu_user_xstate_size))
-> -		err = -EFAULT;
-> -	return err;
-> -}
-> -
->  /*
->   * Save the fpu, extended register state to the user signal frame.
->   *
-> @@ -172,27 +155,20 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
->  			sizeof(struct user_i387_ia32_struct), NULL,
->  			(struct _fpstate_32 __user *) buf) ? -1 : 1;
->  
-> -	if (fpu->initialized || using_compacted_format()) {
-> -		/* Save the live register state to the user directly. */
-> -		if (copy_fpregs_to_sigframe(buf_fx))
-> -			return -1;
-> -		/* Update the thread's fxstate to save the fsave header. */
-> -		if (ia32_fxstate)
-> -			copy_fxregs_to_kernel(fpu);
-> +	/* Update the thread's fxstate to save the fsave header. */
-> +	if (ia32_fxstate) {
-> +		copy_fxregs_to_kernel(fpu);
->  	} else {
-> -		/*
-> -		 * It is a *bug* if kernel uses compacted-format for xsave
-> -		 * area and we copy it out directly to a signal frame. It
-> -		 * should have been handled above by saving the registers
-> -		 * directly.
-> -		 */
-> -		if (boot_cpu_has(X86_FEATURE_XSAVES)) {
-> -			WARN_ONCE(1, "x86/fpu: saving compacted-format xsave area to a signal frame!\n");
-> -			return -1;
-> -		}
-> +		copy_fpregs_to_fpstate(fpu);
-> +		fpregs_deactivate(fpu);
-> +	}
+Sparc makes sure that shared mapping have consistent colors.  Therefore
+all that's left are private mappings and those will be initialized by
+block stores to clear the page out or similar.
 
-Could you add a high-level comment for this if{}else{} block that says
-something like:
+Also, when creating new mappings, we flush the D-cache when necessary
+in update_mmu_cache().
 
-	/* Save the registers to the fpstate. */
+We also maintain a bit in the page struct to track when a page which
+was potentially written to on one cpu ends up mapped into another
+address space and flush as necessary.
 
-I also think it's worthwhile to explain the asymmetry between the
-ia32_fxstate case and the other branch.  Why don't we
-fpregs_deactivate() in the ia32_fxstate path, for instance?
-
-> +	if (using_compacted_format()) {
-> +		copy_xstate_to_user(buf_fx, xsave, 0, size);
-> +	} else {
->  		fpstate_sanitize_xstate(fpu);
-> -		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
-> +		size = fpu_user_xstate_size;
-> +		if (__copy_to_user(buf_fx, xsave, size))
->  			return -1;
->  	}
-
-This seems unnecessary.  Why are you updating 'size' like this?
-
+The cache is write-through, which simplifies the preconditions we have
+to maintain.
