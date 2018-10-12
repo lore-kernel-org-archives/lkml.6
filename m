@@ -2,74 +2,121 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 009E2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F513C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE6E20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3930F20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3mxTJm5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE6E20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQ/5Sucz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3930F20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbeJLSXq (ORCPT
+        id S1728180AbeJLSYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:23:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeJLSXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:23:46 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0645120868;
-        Fri, 12 Oct 2018 10:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539341515;
-        bh=yrGpgoKZc3GC2wCHcm7dD21NvoZqUA7y87dzC2wXJ1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s3mxTJm5czQ4ugLUHhkN1lmf2UOjIEPxN0Ps5bY3B4r72mRaQA7QWyq3iShzUmZWr
-         +qrr1yILk+Y3sqhwhW3GohQgH+L8lRdvRhrHezGJjsKgFUjxmMLD1IltqwYyYKF7al
-         ibtL2i1F+FENWGJ2rBSkXWox6yPcAcvRtVBqcaGY=
-Date:   Fri, 12 Oct 2018 12:51:52 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [git pull] Input updates for v4.19-rc7
-Message-ID: <20181012105152.GB19643@kroah.com>
-References: <20181011235736.GA68543@dtor-ws>
+        Fri, 12 Oct 2018 14:24:50 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46740 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeJLSYt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:24:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n11-v6so12845374wru.13
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 03:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=stEK0hPyCvUxQfCtmaOuzIg/Ce472ccHN2oxU3ZUPqE=;
+        b=PQ/5Sucz3MUBlPcPsQs7RsQ5T+EqQ9WqCY7fZ7oBnOKCc4h+QpEX3MWeTmAZXU35Ur
+         s0M4uNWW1HmizvYw1MDg+MoYifUApzMGFC+5v5HrePriITW2LO2qw4T2+9eREOGIbTFH
+         fhcWyIef1CPHv4jOizJ+ByL9MvgzNHpsZwsDPtRubC8Z7SbsR9Bup0K5q9pKyJag3uQ5
+         BDgbi/sSvuNE8v2hnPUghCGdSOPeKx+fETQzF2RYNlktFQ2XkYOgXKTFqnovr98+PWYy
+         TC3bWTKYw/8uk217SYCOiPgaK9A2j2sgf0deXgA5SxHcJOFkpMzz6alzIQTqikzC6nsW
+         qxfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=stEK0hPyCvUxQfCtmaOuzIg/Ce472ccHN2oxU3ZUPqE=;
+        b=CiFeaSCTb9eyw78ESZpI4s6Urtj1sOScMJTwtrYBmpD2IOc0xrWz2LpNFMjLfYre21
+         OuAnThc3+4/XbR3LxaM7glpJAUVxZ9nP/uOL1Aj+KS807OkswFFWJYzb8tO+6KILjsPt
+         iQerG5pJ0H14u2OPvbi4wSK8PC8nn5r6Q6HMJOrISG1Q7cF2wroOJJi92rt7M5CFXy7i
+         tesSkgEnAJlXA94IgQ12Frlm6jEPO8qlFAGCsVURaTqyzAwJP9HJoRgthTq0bpNdh+tb
+         l0SlbP7mH9dovzlaAY76nWWXuf7SEmDa1ZZM+uvpvbaEtC7o+SjZR3x4zUgeZbW0BqVB
+         oUQg==
+X-Gm-Message-State: ABuFfogVX9aGAwbgm4GPYShfe2VTEBrYoyoss1H/U82D+7mWgXIKdLSm
+        518Q8ZKQyzO354vASG9ebH4=
+X-Google-Smtp-Source: ACcGV61bloZoS074EZS6PoTv3kH5qv3LFwLLig/FZ4XPmzsO4uAiKfHAuDjkhaXoq2fRkpP+9BbnIA==
+X-Received: by 2002:adf:c00e:: with SMTP id z14-v6mr4830962wre.268.1539341577483;
+        Fri, 12 Oct 2018 03:52:57 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t24-v6sm565380wra.5.2018.10.12.03.52.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 03:52:56 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 12:52:54 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, sfr@canb.auug.org.au,
+        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org
+Subject: Re: -next20181010,1011 regression: thinkpad x60 (32 bit) dies during
+ boot.
+Message-ID: <20181012105254.GA114888@gmail.com>
+References: <20181010195920.GA13860@amd>
+ <20181010200331.GA13975@amd>
+ <20181011180328.GA6740@amd>
+ <alpine.DEB.2.21.1810112208200.1457@nanos.tec.linutronix.de>
+ <20181012102459.GA4469@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181011235736.GA68543@dtor-ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181012102459.GA4469@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 04:57:36PM -0700, Dmitry Torokhov wrote:
-> Hi Greg,
-> 
-> Please pull from:
-> 
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-> 
-> to receive updates for the input subsystem:
-> 
-> - we added a few scheduling points into various input interfaces to
->   ensure that large writes will not cause RCU stalls
-> 
-> - fixed configuring PS/2 keyboards as wakeup devices on newer platforms
 
-That feels like a really "late" contribution, I hope it goes well :)
+* Pavel Machek <pavel@ucw.cz> wrote:
 
-Now merged, thanks.
+> Hi!
+> 
+> > > > > I updated to todays next... and boot crashes with
+> > > > > 
+> > > > > ..
+> > > > > Call Trace:
+> > > > > kick_ilb
+> > > > > trigger_load_balance
+> > > > > ? active_load..
+> > > > > scheduler_tick
+> > > > > update_process_times
+> > > > > tick_nohz_handler
+> > > > > 
+> > > > > -next20181005 worked ok.
+> > > 
+> > > Problem is still there in today's next.
+> > 
+> > So what came in between -next20181005 and the first bad one? kernel/sched/*
+> > being the first place to look at.
+> 
+> kernel/sched does not seem to contain anything too scary.
+> 
+> I know that -next20181005 works ok, and I know -next20181010 is
+> bad. Is there easy way to bisect using that information? I can do
+> bisect between -next and mainline, but that's a lot of patches and
+> thus not much fun :-(.
+> 
+> In the meantime, I reproduced the failure with T40p. Is there someone
+> with working x86-32 in -next?
 
-greg k-h
+Does latest -tip fail too? If yes then I suspect bisection would be needed.
+
+Thanks,
+
+	Ingo
