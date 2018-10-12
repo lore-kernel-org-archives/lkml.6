@@ -2,111 +2,183 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40285C28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0757C28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71D720835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C70120835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:11:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RKrHH+ez"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71D720835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="kX2/+2VT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C70120835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJLHki (ORCPT
+        id S1727401AbeJLHlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:40:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:42941 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbeJLHkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:40:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42WSsr4H5Yz9s8J;
-        Fri, 12 Oct 2018 11:10:56 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539303056;
-        bh=as0NkWqkxarQOnYPcezCc662rFfIc9f0SYF8/PAk4S0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RKrHH+ezx+AUz5UcLvEp1omIaerOUMdzs2ea8bVVbWKA23Ygg2NIPQBfixjfaafC6
-         4exiF3dG/sjqeCuz8Gn6+ds3bqt22S1lu1/n/ys9Hz60sUMc4hsJQASkA2u722+Lpp
-         H73qfXL4KvJ2HU1y/hyjv9QoPXFhgpXwXSLmeve2W3RD+mNCbaFCAOrgLNBQeSI+jf
-         iUMdl23/ROdWlRFmrNYKHpjMwUv6znO7PMh0udO8OHTYo/MIaxzfQO0NpDgqFl4SGo
-         xxTcmC44KDYPy/XHsLyBK45FXu5sWSIpMWXz6hItSHys8j55zXu0Hdi+hdtB9RHya3
-         kETYaIt1MFBFw==
-Date:   Fri, 12 Oct 2018 11:10:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20181012111055.31eaf9f3@canb.auug.org.au>
-In-Reply-To: <20181012105329.40678d21@canb.auug.org.au>
-References: <20181012105329.40678d21@canb.auug.org.au>
+        Fri, 12 Oct 2018 03:41:21 -0400
+Received: from mail-40130.protonmail.ch ([185.70.40.130]:60765 "EHLO
+        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbeJLHlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 03:41:21 -0400
+Date:   Fri, 12 Oct 2018 00:11:35 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539303098;
+        bh=R9YJ0WBGDm6ageo88/BRQUUmTFlQCv4Z3xaPCSe6Lso=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=kX2/+2VTZHKwtASOPBBGxHV8WyoMugii3a3s9nfUOlLCHuIUfpfyeCSXnuNQ8LlfH
+         /wAEW/rBI4W3NTxvo8+LymLFEBFfDwW3FAeEdyiFHgTge/jwAmVHeXwdhVOIvNJJaH
+         XE2Qdmx9M7yHjhg19CKGYpVmCVzY5fVuE5yvorNA=
+To:     John Johansen <john.johansen@canonical.com>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
+In-Reply-To: <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rz2Y5V4nJVSwrBhq8yt2=5f"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rz2Y5V4nJVSwrBhq8yt2=5f
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Friday, October 12, 2018 1:48 AM, John Johansen <john.johansen@canonical=
+.com> wrote:
 
-Hi all,
-
-On Fri, 12 Oct 2018 10:53:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+> On 10/11/2018 04:09 PM, Kees Cook wrote:
 >
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   net/rxrpc/input.c
->=20
-> between commit:
->=20
->   5271953cad31 ("rxrpc: Use the UDP encap_rcv hook")
->=20
-> from the net tree and commit:
->=20
->   d2944b1c66a5 ("rxrpc: Use rxrpc_free_skb() rather than rxrpc_lose_skb()=
-")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (I used the net tree version) and can carry the fix as
+> > On Thu, Oct 11, 2018 at 3:58 PM, Jordan Glover
+> > Golden_Miller83@protonmail.ch wrote:
+> >
+> > > On Thursday, October 11, 2018 7:57 PM, Kees Cook keescook@chromium.or=
+g wrote:
+> > >
+> > > >     To switch to SELinux at boot time with
+> > > >     "CONFIG_LSM=3Dyama,loadpin,integrity,apparmor", the old way con=
+tinues to
+> > > >     work:
+> > > >
+> > > >     selinux=3D1 security=3Dselinux
+> > > >
+> > > >     This will work still, since it will enable selinux (selinux=3D1=
+) and
+> > > >     disable all other major LSMs (security=3Dselinux).
+> > > >
+> > > >     The new way to enable selinux would be using
+> > > >     "lsm=3Dyama,loadpin,integrity,selinux".
+> > > >
+> > >
+> > > It seems to me that legacy way is more user friendly than the new one=
+.
+> > > AppArmor and SElinux are households names but the rest may be enigmat=
+ic
+> > > for most users and the need for explicit passing them all may be
+> > > troublesome. Especially when the new ones like sara,landlock or cows =
+:)
+> > > will be incoming. Moreover to knew what you have to pass there, you n=
+eed
+> > > to look at CONFIG_LSM in kernel config (which will vary across distro=
+s
+> > > and also mean copy-paste from the web source may won't work as expect=
+ed)
+> > > which again most users don't do.
+> > > I think there is risk that users will end up with "lsm=3Dselinux" wit=
+hout
+> > > realizing that they may disable something along the way.
+> > > I would prefer for "lsm=3D" to work as override to "CONFIG_LSM=3D" wi=
+th
+> > > below assumptions:
+> > > I. lsm=3D"$lsm" will append "$lsm" at the end of string. Before extre=
+me
+> > > stacking it will also remove the other major (explicit) lsm from it.
+> > > II. lsm=3D"!$lsm" will remove "$lsm" from the string.
+> > > III. If "$lsm" already exist in the string, it's moved at the end of =
+it
+> > > (this will cover ordering).
+> >
+> > We've had things sort of like this proposed, but if you can convince
+> > James and others, I'm all for it. I think the standing objection from
+> > James and John about this is that the results of booting with
+> > "lsm=3Dsomething" ends up depending on CONFIG_LSM=3D for that distro. S=
+o
+> > you end up with different behaviors instead of a consistent behavior
+> > across all distros.
+>
+> Its certainly a point that could confuse the user. I do have concerns
+> about it, but not something that is on a must haves list
+>
+> > Now, in the future blob and extreme stacking world, having the
+> > explicit lsm=3D list shouldn't be too bad since LSMs will effectively
+> > ALL be initialized -- but they'll be inactive since they have no
+> > policy loaded.
+>
+> you are more optimistic about this than I am, but there will be at
+> least some movement towards this.
+>
+> > But I still agree with you: I'd like a friendlier way to
+> > disable/enable specific LSMs, but an explicit lsm=3D seems to be the
+> > only way.
+>
+> Hrmmm, I don't know about the only way, but a way to provide the
+> explicit list, and also set a specific set as the default in the
+> Kconfig is a hard requirement.
+>
 
-Just to be clear, I did not use the whole file from the net tree, just
-the net tree version of the conflicting hunks.  There are other non
-conflicting changes on both sides.
+My proposition allows for explicit "lsm=3D" list but also accepts non
+explicit list. This is it's advantage above current approach.
 
---=20
-Cheers,
-Stephen Rothwell
+The current approach works but it seems to target the very same people
+who designed it :)
 
---Sig_/rz2Y5V4nJVSwrBhq8yt2=5f
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> The initial lsm.ebable, lsm.disable had too many issues, and for
+> various reasons I never managed to get back to kees' proposal
+> for using +.
+>
+> That said, I do think the right approach for the initial pass is
+> the explicit list. It moves the arguments to the side and allows
+> this work to move forward.
+>
 
------BEGIN PGP SIGNATURE-----
+I'm afraid when it hits stable kernel and people will rely on it,
+then it will be too late. Things will be even more hard to change
+than now when we have to keep legacy syntax of security=3Dxxx.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu/5o8ACgkQAVBC80lX
-0GwRmQf+JCNu33Ov5fRwh0OUyduXN4JjiHqv7lG5yWtbjcGo9J+l7eFCiOyMTSyf
-lbiXPAZY3jBELlZoWT8N7bfTN0JSYykNK0Gy+Z/9i0ya0h/PHLYyttEahSoCDGFf
-BHFe+Y6P9JmGhr0vqmY9N1JB5ys1qOwmbygYbrfDrytkDnwng+nlI7R+U0Qe/lK7
-nRoWp6TVKPw2si2q4BS3yNbBdyuxrAB4h1a/BiDsXH77Irej+xhN+CNSX5IEOjqN
-tu1UOrZYjaK2lHjdMBrlG5+vN59TJC0XUbn92QkDf3VUKUd9jnQITaDtYyJLKFqk
-+nSXXAgjE+PlNkyOHqXIQwfe9aF0Zw==
-=Ddtc
------END PGP SIGNATURE-----
+I added explanation why explicit list doesn't solve consistency
+across distros in the other reply
 
---Sig_/rz2Y5V4nJVSwrBhq8yt2=5f--
+> > > It's possible that something lime this was discussed already
+> > > but without full examples it was hard to me for tracking things.
+> >
+> > It's been a painful thread. ;)
+>
+> Indeed
+
+Jordan
+
