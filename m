@@ -2,176 +2,189 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7698C28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD11FC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F642077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 678882098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 00:37:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bS69ll8S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F642077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="hWfqulv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678882098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeJLIFj (ORCPT
+        id S1727034AbeJLIHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 04:05:39 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39673 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbeJLIFi (ORCPT
+        Fri, 12 Oct 2018 04:07:20 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:12503 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726061AbeJLIHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:05:38 -0400
-Received: by mail-ot1-f66.google.com with SMTP id l58so10791930otd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 17:35:55 -0700 (PDT)
+        Fri, 12 Oct 2018 04:07:19 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie2.idc.renesas.com with ESMTP; 12 Oct 2018 09:37:33 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 79CFB5FE39;
+        Fri, 12 Oct 2018 09:37:33 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,370,1534777200"; 
+   d="scan'208";a="293323219"
+Received: from mail-ty1jpn01lp0184.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.184])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 12 Oct 2018 09:37:33 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=O3dVQ2VpkzyEy5AtqvYVsyf5CfAZqFhRMHYDEQWhI2o=;
-        b=bS69ll8SS+45FdCeCQXRdeyX1WZ70u0jLFH95oHGj594lfmYJy5ZlueYOW4wgzxCAA
-         i+6QwpNRSKZohJK1iHuKzd2ud6l0Rpmw4iF0tAFO64asFxetHsUth2VjoF3CNPMsJJn7
-         YDCiv46PJbZMlJCkp5hAzP9OE0BVbOVuPJ50gvEPBU/FLXlyaSry4LZxFt2JEWdQOXma
-         lkwGxMYIxta7tId0ea1pAdPtbZRnQp+Ow8+ZeqoRWZPRalg8zWzJ3vOHGJ4+sb3rbhnm
-         cVlcKFWX5CeQk354e6EbK4LxQsPditor+/Tr7mtd+IkNvVeLJqVZv6Z6m/DeFztSi4kq
-         sBxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=O3dVQ2VpkzyEy5AtqvYVsyf5CfAZqFhRMHYDEQWhI2o=;
-        b=cO3X6NScTMywT14ci44mVV6Vvhnu2r4reeYGHcwu+NGfCMGUEvoLJeS27W6qQIRmfR
-         fg5XX+FGhdlRnejdOAgvQyjX+uTxYzOHx4yiWcxzohPj2pFu5vzQUGmEIZ+8w6hc7wbM
-         M+R3O3tNe2+p8AFp0YCh3bqa6q+vv6wKFO8C6JRwDojs6AZqT+9yZsH5tihxe7AOQZ7U
-         RhT1AILrqPVdIJjRZlWabwN4BJfcGNbvVY90JqbDX3xxLkX8rqyQe4RUTQKW/oyuNxH4
-         OyG0ZdDF0vPCDE5+irLnQN0fQfAPskSqrlp/l0mxzr1xcOOLBxY/mqtoVkp4uxseuj8T
-         boGg==
-X-Gm-Message-State: ABuFfohSwviPTbidMxuWHrBBnsaD+WnCnXwQvY8w7rd4pIYaae00Bx8g
-        /+CXMVgZORuU81JfDEAW6OmXSmHncaacMNg6JNJApQ==
-X-Google-Smtp-Source: ACcGV60wE/h4NRkFdQ03NEnOmZoRdeLRTJcSpJ1zcAmPTq5izdvagVxIQ4ZJUoHY5xKfIgBlSsz+ANnQ9QlcAlC5H3g=
-X-Received: by 2002:a9d:4917:: with SMTP id e23mr2664587otf.73.1539304555105;
- Thu, 11 Oct 2018 17:35:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011233117.7883-1-rick.p.edgecombe@intel.com> <20181011233117.7883-2-rick.p.edgecombe@intel.com>
-In-Reply-To: <20181011233117.7883-2-rick.p.edgecombe@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 12 Oct 2018 02:35:28 +0200
-Message-ID: <CAG48ez2fWg64nGxDXUQS3695KpVNrakAbarXJnYPd6xv5wOD+A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] modules: Create rlimit for module space
-To:     rick.p.edgecombe@intel.com
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, jeyu@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>, kristen@linux.intel.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        deneen.t.dock@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uDFMRkX1SDsJt9xRaUKZuupmLHYRVgNYid0YHXjkP4U=;
+ b=hWfqulv64z1ewV8iPR2j46FXZjGjBxqZVTq0c9xO9MerCcp+7ahHdoaA3mhJ+K8P8AgAEywrXPOr2MbpwwVSsED4VceMCf9hKC6/IKFydwMLMoP3Mkaqd2Gyg5RshoJANZ9Ve7XcJU3e4yXXUKhMIyQlFFfza3/m5dkskQLn64U=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSAPR01MB1859.jpnprd01.prod.outlook.com (2603:1096:603:2d::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.24; Fri, 12 Oct 2018 00:37:30 +0000
+Message-ID: <87woqoaty1.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: add 74aup1g157gw 2-input multiplexer as clock driver
+In-Reply-To: <153923999820.207691.114282732524143268@swboyd.mtv.corp.google.com>
+References: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
+        <87bm821rkf.wl-kuninori.morimoto.gx@renesas.com>
+        <153923999820.207691.114282732524143268@swboyd.mtv.corp.google.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 12 Oct 2018 00:37:30 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: TYAPR01CA0074.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::14) To OSAPR01MB1859.jpnprd01.prod.outlook.com
+ (2603:1096:603:2d::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dae962b5-4482-4aa8-9ed0-08d62fdae496
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB1859;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;3:cP3qAvtbfQqfl5WTKEPzi9zI62KDWJfNSt/tOty/ZVdYCl8XaXI51LY/rYn1Rq7TE/ORQ2gwL5Vl/Bhn/HoPQ2pB+4z1VFaQORnxoDIHOfLt8i4yfanUEht5pkc30jBZX3P2p6VMzozFoGLFMkKht++kEfgqZQ1B1MeWQL4X44Y7Me+qzY7IJHE0bzUTTNoJYFWtdKgXPrmRmAheFAK5V+e6nGIdqclFxp1ARaF570Ry5c8+aVREvMvZxpwpGlEx;25:tXazAG/ic7b8QsX21zE119hEbF9OLkWKuO0kwK2rcMQYF5/5iKQNpxotLVcn9SkULgnZ/fJO+euMDoqcAEqHYeumSCx3ffoQtVynSTLk4R9ADguH26oxwo25tf8U6+5kajh5vEMT3xp/2bvBRj3NH+YLDpKrUbIU/416SJjomFWy7CZ6cjzL0AVWm4j4axWDEqns2x+f6FYhXiT00bth/NpbwvC19sQha/SsRx9XSgpmVig7xBHeO4tAy7HzddHrIUtd0oLzGTULSr0jp1+V4v1r0SyuuH900kdEezYjpRXj0xYlYgeuk6dYjrnRtAhn+tqPrbjuLFl/+Qh2QoWSbg==;31:SHeXIDrT6fIyYWMOaDl4vn6C+p1DIip5rTtMKXmXyUPUSxiUUiHCILwCl/ye3KrlG4uRrr4daFK1IiHcJOCvZzq6SazI6Ldm3YOlHhY3btcQ6G0a4xZcZg7LEqtY6EuBTCgajv1HH+st7CFUpbuaYqO3TmUNSs9DRQXnr8gpx+x8XrvCVWyr2saoma2vY/F7QZXlX62ighU+IWTUt7Nmk+w80mP6idIapuLOIRYpYZA=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB1859:
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;20:aig9V/wLFqiWWQVTNXfCqT4XsAjkFLalYRJHyzB4gkIlyqqkjGB5cWvCL/oHJ1PptLZVBlZ2mVes6WBcZ3SBA0QSmKn+CnDqZ+XNULpMt84lntaEPUevh469IZY3lbwlNluVh0s3ZUlA3dNaZohSrdcTBm8S7W+a1BJxjQeMUaph6bPtfpZfHg8q1Q4envm1o9mQHc8cXr42NX27FpI+NhMxpRI9Mn060pZIA0RaIwnvU3kn9eFBmXmgN8JBmNoPfcEhbvIdjlzZRirCs3tz4kK/OeCfaMsMX3YYSNDyc2UkbDc2Sd1aU+I8QZC9j/8VCEkold66fbs1NaLExStVlYdmu5QizqFmJmWYtyNkUyaxBq3mLrqXRrD2JfKK0PJntJW3mrvn1ALWMBV6VGxDW2q1DXm2PvFGas0tychtQPVjZC62wRdsbq8uIdXbE80f2yTsR7JZlJZGos9d/UmdZRw13tV+dvsek4N4esMycAJu77cnB+dlAcXobaht2Eg5;4:LeoLiyFm4/xTiJO6k6lD7rUhAdc60OJ9clcAOQFrqE1T2wwOJIkWhj50T4X/lZgT5y9zu35YhobFhzBA08prDSqwT5AeyYtfn3/9badjxdKuQadW6oQARcCd8jEZdwqbHeMLQlXazlrhQvEN8iwqxPRXQIF873QFELZ3lt1nR0Vjd3/2HQEnUxL/AD/L9XMywsiIrPfKZv8aBFIWhr7N/qJR8Z/1nleYtHOD/nLhMkfoc5lJiXAPxx13aN120mDQtMEwS4GMrfPtaVTmlj0e6Q==
+X-Microsoft-Antispam-PRVS: <OSAPR01MB1859A1B550073FB6B7D824AED4E20@OSAPR01MB1859.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991067);SRVR:OSAPR01MB1859;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB1859;
+X-Forefront-PRVS: 0823A5777B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(136003)(39860400002)(366004)(376002)(396003)(199004)(189003)(8936002)(23726003)(16586007)(54906003)(58126008)(53416004)(316002)(3846002)(6116002)(81166006)(6246003)(8676002)(81156014)(47776003)(345774005)(106356001)(305945005)(7736002)(50466002)(2906002)(68736007)(105586002)(16526019)(66066001)(186003)(476003)(26005)(486006)(25786009)(5660300001)(53936002)(14444005)(446003)(2616005)(956004)(36756003)(76176011)(11346002)(229853002)(6486002)(7696005)(97736004)(69596002)(575784001)(52116002)(86362001)(6916009)(478600001)(4326008)(386003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1859;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB1859;23:Wfgbcwki9+zboSXtZMx/K1qSCyixRuWSRu/q/RrR5?=
+ =?us-ascii?Q?8oraD61SyzgmGWmXt0WYpmvNj53wlE4gVccmeR2V4u1ss6NtccL85xZAKdwq?=
+ =?us-ascii?Q?tbc3tjZV5V50gXjpmIeMLuAiHpoaag+kYba9txYlxnKOpey9kD4hCpCjpR/6?=
+ =?us-ascii?Q?PX1AEKPjjRl6XvdaoIoAzsBFlDcmtCs+gu/QyUnutm4yBOyaPSQNGeoZ3UMN?=
+ =?us-ascii?Q?UMJeMGhMJBO2Y2MkQ7gltD2Ver0rAhWdLfLnAGUqn0SxK5VA3Ikz2ZMCZHsb?=
+ =?us-ascii?Q?FvzYS7FvIv52lAQwa5MA4v4pXNBn2mw/xW+vbKqXNytDWsdZzk659nhjL1kn?=
+ =?us-ascii?Q?v9DBnFZ9bW8+W0/g4ak/5y4IrfkzXurAVE/mz3HrEAaBfweLiqaBb3TjeQv2?=
+ =?us-ascii?Q?ZWsaemuona0BWDwYc2dZTSLw8aw/6r8IaxzRX/wmYemEHkNKwSLtwkRYQhZh?=
+ =?us-ascii?Q?HgqcTKhWLvdkkilgCL76uGhD5KAzP9kIv8XBA95FQ0yL1QphcmyeO3VTOSOU?=
+ =?us-ascii?Q?sgNB9QYbc0HmNc4WT+aua0WUldnPPfEFcv4nDynqqEztUMFebcf0WkK6ktXr?=
+ =?us-ascii?Q?RoDhXK7NDMwWHmF9ZCRezbC/jhv6evqBvszoaInbDM3vhHki9KfdU3bYVDiA?=
+ =?us-ascii?Q?XLPMeJYNOP3mqjpohtPvClgrbD4SAPcNTzHz8+uewFty/c7xlcuxU+1q81dD?=
+ =?us-ascii?Q?XfALDO6iPyWcsMe84xXOfUhxcbIMMluLuSyazSQpSlg0KpWIbNFL8YMSk9Z+?=
+ =?us-ascii?Q?uoHakH+vi4S9vCq56o3z2gE3qpzr38h07zZcmP2MhuJQ5gfrrsbUn7DGQQqf?=
+ =?us-ascii?Q?0fA+Pt7wPMtHncoFytrAX7HDc+eLN1l6quLAJsFD6h/CAgbmR/UXheB+elZL?=
+ =?us-ascii?Q?g07VP6o8EFRC7+xZiyeCN9QIB2rAdySUiWpT5yVXZkcbt0ev23u97hH5AOHN?=
+ =?us-ascii?Q?LIdz7Ct/F2MFY27B7awbqpV4zzCKT96IqrLhOOwbdW4CeI5nJFxyyqF98niS?=
+ =?us-ascii?Q?np8Vx0pS6b0ZmmvvV9gJXExFSFsl1Fj2kxfHeS3mFaqZDdU1czcf28Gu37bx?=
+ =?us-ascii?Q?SbgrfZ36Z+3wpIXPs+9bmGkNcCLd2RE+mVPABE6BuoQVkVSnsdtRrEr3dcsH?=
+ =?us-ascii?Q?o9Nv4eEIPQcwTvOs2d0WzjWk9ekdZznYP/cRQHqi07wSGmBs14dcf0xu6BaS?=
+ =?us-ascii?Q?vz/s0/xy5/bwndFiM3yogsQiHrcuNqtycJCII3siOKGUH6ikBYr7pl01CNME?=
+ =?us-ascii?Q?5PIRgppkyp+IVvdAeewIu9BgABWjGngu5ntNdi5lak6/OuO4Gs7/60giFrN/?=
+ =?us-ascii?Q?PDlMYi4vTdNEwVaTtq8dho=3D?=
+X-Microsoft-Antispam-Message-Info: Ufg8mjamd/HL/jzmq0tcNbfN6l+LKUB+m8g9+N03HNbsbEBujwz51e00r9gaNeniJkh0X4K/PJpQiwGp4HhHbPOBie//vcERVRQk5wrQkO4QK3+gIFAmhgcsBeFaBd3kO7DeuXQQU1LMK5W8fPdH7IZFSoJQisoSQxg1EdWYVOqTHuRF3RcaO8qogo+Bwp7GFfcAfENbn4flgFAxaO9EYAFZaw0PPM9TX19oQNfbTPhbUnlEGFdQLYlPrl4hZqYxZMLfJXcBoNgdrbtO221mn+C4wdiOm35h/9JGcum97h5ck67kBLjiAupRv5Ti6H+mXK3IIXpi4TC8a1QeQsXiH3OT1PEHnSLC3XBgOYA+sr0=
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;6:XMVmJ1I08PSqopwNcr01EChd6PEO84BgQL+F2v36uitpNu8igIQ98Ih/zWG3wLN9FQBdkHaFXFcBk709MDBNHEKv03osA+ryf3uua/wg7njHS/qoA5EQOUDdWnnGjBFKNg/6xHG5DTkmssU3oEPbP8T6oSyZdOyjcyOpPBmLdeNKJj7wXX5eqnuKP4+bSCWnr61tIw9yBtpHzXob+cCvGNJxqp4hSf/EZeR0yTC/o7tTgcpKQS04uB1V6kziqjyTtZvqetoC863oFJ2CZlvMMyEPMf+tkT84YnBPHRCy6nF7RILB0zTGRRAu1M8pJ+/HtmhdJGK+ioybvi0lzyGXIR/38IrxjnG1DYrF+4qZotb8oyM8pql8Qqrj3JhmEodb8PJPybXq9XLuMejVpX4T71gHItEhSMoVNGgIwoG2ToMRk7U3Wbvi5f4G7C2JwgxLYoWewtmylvXYwxXA+P/rIQ==;5:emc0zfnetwJR7sEmi1iwgEmFuC0IB04IRDHSYJ0y6UYoQzJ33QwRuj7nKQ3TBP9L2roxhKUgK1Y0exmrWwHBEK//L+PgnlFBIsD06XlyM/dVCYygWwRZZUjJ60KMtt5QGV6RSDIbKfZ7SRFug6+xIDwDKtN0MKPJ8NILNCSTl/M=;7:Cx9lfqxV5Dagxz4H61IzLR19scGVXdq1LNES5eXUWeE65oEWoRxD/4ry+TwdauGwR+I96Kl5iAvu7CMss3hEpPAFpqXa8FT5krsFbbfHdUA4QAt9+0dz9Wdi4b4G8SBmhxsUOKVBIpNw6wDapeHIvZmSqnn6TrDonn21Rpz4R8yWIe4BV6CSkrB8/Uz40RtARuK4dt7Tv0COrjGorpWSoPrio2qhIHIAlF6xk8PfsNULOv+zalpUCwu7IKIGnOjG
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1859;20:hpG3MFhxQJpoOh8pG68E2UgP5jNEmMp+0TT+6H4Cj5cYQqgKruh9b/BRcsr0XuTJ9tMTEvRhV+GwHK9slp+f5nkQC7RrZh3PMbEyp//0d+/crv0HHBYpiUz90bC2WenEAEENVyPFGw4/p+yT7oYxeSMl332unET5tRBQpaN3fJ0=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2018 00:37:30.2475 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dae962b5-4482-4aa8-9ed0-08d62fdae496
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1859
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 1:40 AM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
-> This introduces a new rlimit, RLIMIT_MODSPACE, which limits the amount of
-> module space a user can use. The intention is to be able to limit module =
-space
-> allocations that may come from un-privlidged users inserting e/BPF filter=
-s.
 
-Note that in some configurations (iirc e.g. the default Ubuntu
-config), normal users can use the subuid mechanism (the /etc/subuid
-config file and the /usr/bin/newuidmap setuid helper) to gain access
-to 65536 UIDs, which means that in such a configuration,
-RLIMIT_MODSPACE*65537 is the actual limit for one user. (Same thing
-applies to RLIMIT_MEMLOCK.)
+Hi Stephen
 
-Also, it is probably possible to waste a few times as much virtual
-memory as permitted by the limit by deliberately fragmenting virtual
-memory?
+Thank you for your feedback
 
-> There is unfortunately no cross platform place to perform this accounting
-> during allocation in the module space, so instead two helpers are created=
- to be
-> inserted into the various arch=E2=80=99s that implement module_alloc. The=
-se
-> helpers perform the checks and help with tracking. The intention is that =
-they
-> an be added to the various arch=E2=80=99s as easily as possible.
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 292056b..9cfeb0e 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -299,5 +299,6 @@ source "drivers/clk/sunxi-ng/Kconfig"
+> >  source "drivers/clk/tegra/Kconfig"
+> >  source "drivers/clk/ti/Kconfig"
+> >  source "drivers/clk/uniphier/Kconfig"
+> > +source "drivers/clk/nxp/Kconfig"
+> 
+> Please sort this alphabetically.
 
-nit: s/an/can/
+Will do
 
-[...]
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 6746c85511fe..2ef9ed95bf60 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2110,9 +2110,139 @@ static void free_module_elf(struct module *mod)
->  }
->  #endif /* CONFIG_LIVEPATCH */
->
-> +struct mod_alloc_user {
-> +       struct rb_node node;
-> +       unsigned long addr;
-> +       unsigned long pages;
-> +       kuid_t uid;
-> +};
-> +
-> +static struct rb_root alloc_users =3D RB_ROOT;
-> +static DEFINE_SPINLOCK(alloc_users_lock);
+> >  obj-$(CONFIG_ARCH_MXS)                 += mxs/
+> > -obj-$(CONFIG_COMMON_CLK_NXP)           += nxp/
+> > +obj-y                                  += nxp/
+> 
+> There's the CONFIG_COMMON_CLK_NXP config symbol that could go into the
+> drivers/clk/nxp/Kconfig file then and also wrap the Makefile contents in
+> the nxp subdirectory too? We don't want to lose that config option and
+> start enabling this driver all the time.
 
-Why all the rbtree stuff instead of stashing a pointer in struct
-vmap_area, or something like that?
+OK, will do
 
-[...]
-> +int check_inc_mod_rlimit(unsigned long size)
-> +{
-> +       struct user_struct *user =3D get_current_user();
-> +       unsigned long modspace_pages =3D rlimit(RLIMIT_MODSPACE) >> PAGE_=
-SHIFT;
-> +       unsigned long cur_pages =3D atomic_long_read(&user->module_vm);
-> +       unsigned long new_pages =3D get_mod_page_cnt(size);
-> +
-> +       if (rlimit(RLIMIT_MODSPACE) !=3D RLIM_INFINITY
-> +                       && cur_pages + new_pages > modspace_pages) {
-> +               free_uid(user);
-> +               return 1;
-> +       }
-> +
-> +       atomic_long_add(new_pages, &user->module_vm);
-> +
-> +       if (atomic_long_read(&user->module_vm) > modspace_pages) {
-> +               atomic_long_sub(new_pages, &user->module_vm);
-> +               free_uid(user);
-> +               return 1;
-> +       }
-> +
-> +       free_uid(user);
+> Nitpick: This macro is just obfuscating, there isn't any container_of()
+> usage going on so please remove it.
+(snip)
+> Nitpick: This macros isn't making things any shorter, so please remove
+> it.
 
-If you drop the reference on the user_struct, an attacker with two
-UIDs can charge module allocations to UID A, keep the associated
-sockets alive as UID B, and then log out and back in again as UID A.
-At that point, nobody is charged for the module space anymore. If you
-look at the eBPF implementation, you'll see that
-bpf_prog_charge_memlock() actually stores a refcounted pointer to the
-user_struct.
+will fix
 
-> +       return 0;
-> +}
+> > +static const struct clk_ops clk74_ops = {
+> > +       .set_rate       = clk74_set_rate,
+> > +       .round_rate     = clk74_round_rate,
+> > +       .recalc_rate    = clk74_recalc_rate,
+> > +       .get_parent     = clk74_get_parent,
+> > +};
+> 
+> Can this all be handled by the 'gpio-mux-clock' compatible/driver? I
+> suppose it may need an update to add the rounding policy that you want
+> via some sort of DT property, but otherwise it would be fine?
+
+Hmm.. not sure.
+If we can add new feature (= .round_rate ?) on gpio-mux-clock,
+I can consider it.
+
+> You mean -ENOMEM?
+(snip)
+> Please return actual error code instead of overriding and returning
+> probe defer.
+(snip)
+> Please return the actual error.
+(snip)
+> Please remove noise like this.
+(snip)
+> Nitpick: I'd prefer to not have the macro.
+
+will fix
+
+Best regards
+---
+Kuninori Morimoto
