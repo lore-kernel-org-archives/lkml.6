@@ -2,139 +2,140 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB41C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFA7C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3507D2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CC22098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kwIDdQxg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3507D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="wHzSYHtW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CC22098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbeJLWPK (ORCPT
+        id S1728985AbeJLWP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:15:10 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38280 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbeJLWPJ (ORCPT
+        Fri, 12 Oct 2018 18:15:58 -0400
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:41974 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728703AbeJLWP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:15:09 -0400
-Received: by mail-io1-f65.google.com with SMTP id n5-v6so9382766ioh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:42:23 -0700 (PDT)
+        Fri, 12 Oct 2018 18:15:58 -0400
+Received: by mail-pf1-f180.google.com with SMTP id m77-v6so6305606pfi.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WjgFyqyRa78f+1i5JkGQPsMS31A9+K6HH+fpTDCIC6Q=;
-        b=kwIDdQxg8AVBSU326jP4keInmQpRhsxE8JZGrjH20BRUGG8apUXqnFIU9RZkSmuXxf
-         AfqusWMsc6ZB0+lUrbQGbVilhuzzoNlvwuslYamrznTRLT6QTUe+lK5o76+A7qZ2uFUK
-         jKY8T0W1Dvp/rKCUPdbmoPocXGVVWJIP2swrwfnnL3EtF/nd5OXhflAFQ1CPRKiusEKT
-         APOXJ3RS87qgzgp5vB8AYnb5wOiW99JxkHMSACgnxA4kMRoYxodHVnQP4xV9D+/Ay50Z
-         ZHeeHjHEKitQs7R+cv5hxKv+6AEcRfE7KRGhrKD10IMTYIL7cAnQYXK1zXNV9fRDWYnv
-         MLsQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=MVIhcoy2987S0IkbqRssZBMMuTl+ECmSYs1VE8q++Qo=;
+        b=wHzSYHtWI1FWvpqWMoI29Nv0pD5eMm4aUHRjMemE3tiMkwzlord9gz9x6kxJT4NbPK
+         R/J6X44TXQJ+TUfrx3zf4CdymfRfmvl84sfwrfYGQzyh+9obG3MtzaAlSEiMRZOiYoc0
+         A5StWg7VIC6oJRs5dTXIqI4zeew51SYzbbqGI/VHBheEgTVl6Lqj09pk7BzrW0a/Bpvn
+         Ah7D+HwjFOsXs44OyMarnTQPX14piq4cGVcua6j4WT450V3/9fzXLguBlTWpmPAGn/p6
+         +M4EMcihWCqcYocKEZ17AcwoyqyC5MWkWIQlE0FeTV0ZkXCd5vj0KYYnREvFyEPwfin7
+         3ijQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WjgFyqyRa78f+1i5JkGQPsMS31A9+K6HH+fpTDCIC6Q=;
-        b=C9gowsRJSmlGyPZNGsttUy9eZG6KI0brg4HRuXEHFl5jmm8S89hawHMNvFtF/7WPfd
-         3SYEwLVmI3MVwb3L7Tpy3yjZ98iavmFvzIHYeP6F0dMBb9+ZJSpb7X/GXJEPm5uJWNOg
-         /TtHay2emwpPd7PIGkoXcARjxATtwQotQLjBXOAe6mlVLM2Rf5q25FemhtELEah2AC/R
-         /ryQ2kctU7j5CtNTIn7PN3erHQ3YSerLsvCIreiwlovF2jGBTEkxA4yX9rDSEbdG7Mje
-         Hiu2D0Guy7JqMiuMP2c12t4D1xifuNQYjCRWe4tHvL06aawT/LD/RWf27IqoCqalRE6m
-         w5bQ==
-X-Gm-Message-State: ABuFfohjAJdQAYfcm76Xi62GhpexFawSAlhGpF7RtlxUQZTlcJAi450E
-        b7wo/2wW7zX75dTb9LmXs7FZAPSCShxrfcEkfESr2+oV
-X-Google-Smtp-Source: ACcGV61xx7uePlh/dx0A2n40URfF7jAbUTh8j/1Svcq8JHF4EH8VerEW11j+w7emn9+mpmj7Y/6liYJshjJZp/p9Rgc=
-X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr4082445iog.271.1539355342427;
- Fri, 12 Oct 2018 07:42:22 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 07:42:01
- -0700 (PDT)
-In-Reply-To: <20181011142808.GC32030@nautica>
-References: <000000000000fddb150577c15af6@google.com> <20181009020949.GA29622@nautica>
- <CACT4Y+bv5dWx0JwCzTPD3mWJRaMHOtRVcvpV5fdQ5KS7zAF_fA@mail.gmail.com>
- <20181010144059.GA20918@nautica> <CACT4Y+Zx5nDN-H8WfC4WtgK7YeAWZig9WsDr1J4DXZBZb+vgWQ@mail.gmail.com>
- <20181010155814.GC20918@nautica> <CACT4Y+bJvxXeJxbAKCPTm0X608t302Kcq+F7Ccot3_-wx7sdog@mail.gmail.com>
- <20181011131045.GA32030@nautica> <CACT4Y+YvJ-KT4UxtOXpou1xpT3wBASDkt135zr2BwrRi0gv4Tw@mail.gmail.com>
- <CACT4Y+bM4DxysCzhWvhURgBVpnLR4uu+oxhLpdZ3x92cKwtAzA@mail.gmail.com> <20181011142808.GC32030@nautica>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 12 Oct 2018 16:42:01 +0200
-Message-ID: <CACT4Y+amrywC10vUSN7DQi0O_cx1Y6WysyktPUNMP_u8RMJoHA@mail.gmail.com>
-Subject: Re: 9p/RDMA for syzkaller (Was: BUG: corrupted list in p9_read_work)
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        netdev <netdev@vger.kernel.org>,
-        Ron Minnich <rminnich@sandia.gov>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=MVIhcoy2987S0IkbqRssZBMMuTl+ECmSYs1VE8q++Qo=;
+        b=eObQD4du7fh4fuxxnLP9465qjFeqL3zl6FmYnP/Ric5o1TeAOmka3W2rx0QqEuVPJJ
+         +uv5zC9HX9Zv33FaMTmEHWO+G5l07BstlnD8aOBl8LZmgTbitAiOax5M5ytioUhsHZJ3
+         VSDpvrzuSq6Hg0GHB9+i04ENHcPjWZGj2K8ePD9lxZsC8Yrsl5Ft97+CiPZjg2GGzf9H
+         iDi0vSfEyxvz0OfihY62KJyaXeFyZLzKAjndrMBHTlh59VrqLH3R8k2qVPWWuH+6NKDT
+         YDFJlmbN9bh7k1ZgI1CZYi0n6xhlejHKhgLdiKQI4EysSCFxVDH/LsBk7VdOxvYkuYgZ
+         5wSA==
+X-Gm-Message-State: ABuFfoiEDvqFlft3bCAAnNGyHPXUvDoUHYFs3xIYk2RsiazU4UQ7h+Rb
+        1Hhdr2r4bA/gCdnAtzO3tcda8w==
+X-Google-Smtp-Source: ACcGV62HSFR6NkxnI9xd0Zu8SKiOaJE2mhOz346FyPov/sz6BPJ1H+zH5OSvphZX76jeJCOdJ2Ckqg==
+X-Received: by 2002:a63:3285:: with SMTP id y127-v6mr5940351pgy.104.1539355391686;
+        Fri, 12 Oct 2018 07:43:11 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b023:6e7d:49f6:3296:7822:7f09? ([2600:1010:b023:6e7d:49f6:3296:7822:7f09])
+        by smtp.gmail.com with ESMTPSA id z25-v6sm3015392pfl.58.2018.10.12.07.43.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 07:43:10 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20181012152515.1d816906@alans-desktop>
+Date:   Fri, 12 Oct 2018 07:43:09 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <77F59E25-5244-4CBC-A3CB-DCF863803CD2@amacapital.net>
+References: <20181011185458.10186-1-kristen@linux.intel.com> <CALCETrVaZu2eq67ai0Oh=HWyZKg-OaoZx7yUT2AvStAhQ+rxyQ@mail.gmail.com> <CAGXu5jLWO1StCz2ejBPW-p4B5XHEKdCGvOi1JKrKxg5UFSa3Ag@mail.gmail.com> <CALCETrVG5=iqfohYxKSvAQx3DhzD95MhmDU3mU8+kCegps2cbw@mail.gmail.com> <20181012152515.1d816906@alans-desktop>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 4:28 PM, Dominique Martinet
-<asmadeus@codewreck.org> wrote:
-> Dmitry Vyukov wrote on Thu, Oct 11, 2018:
->> > Now we are talking!
->> > We generally assume that all modules are simply compiled into kernel.
->> > At least that's we have on syzbot. If somebody can't compile them in,
->> > we can suggest to add modprobe into init.
->> > So this boils down to just writing to /sys/module/rdma_rxe/parameters/add.
->>
->> This fails for me:
->>
->> root@syzkaller:~# echo -n syz1 > /sys/module/rdma_rxe/parameters/add
->> [20992.905406] rdma_rxe: interface syz1 not found
->> bash: echo: write error: Invalid argument
->
-> Works here, I just did:
->
-> [root@f2 ~]# modprobe rdma_rxe
-> [root@f2 ~]# echo -n ens3 > /sys/module/rdma_rxe/parameters/add
->
-> dmesg says:
-> [   35.595534] rdma_rxe: set rxe0 active
-> [   35.595541] rdma_rxe: added rxe0 to ens3
->
->
-> Actually for a dummy interface if I try the echo directly the echo
-> works, and a verb device is created, and I just confirmed I can use
-> it... so not sure why rxe_cfg said EINVAL earlier...
->
-> [root@f2 ~]# ip link add dummy0 type dummy
-> [root@f2 ~]# ip link set dummy0 up
-> [root@f2 ~]# ip addr add 10.1.1.1/24 dev dummy0
-> [root@f2 ~]# modprobe rdma_rxe
-> [root@f2 ~]# echo -n dummy0 > /sys/module/rdma_rxe/parameters/add
->
->
-> (then using my test client:
-> [root@f2 src]# ./rcat -s
-> INFO:  trans_rdma.c (879), msk_cma_event_handler: CONNECT_REQUEST
-> INFO:  trans_rdma.c (862), msk_cma_event_handler: ESTABLISHED
-> INFO:  trans_rdma.c (917), msk_cma_event_handler: DISCONNECT EVENT...
->
-> [root@f2 src]# ./rcat -c 10.1.1.1
-> INFO:  trans_rdma.c (862), msk_cma_event_handler: ESTABLISHED
-> ^C
-> )
->
->
-> I assume your syz1 interface is a tap device as you were saying earlier?
-> Got anything in dmesg?
 
-Umm... nope, just a random string.
-Don't assume any prior knowledge on my side :)
+
+On Oct 12, 2018, at 7:25 AM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+
+>> But this really needs to be clarified.  Alan said that a bunch of the
+>> "yet another Spectre variant" attacks would have been mitigated by
+>> this patch.  An explanation of *how* would be in order.
+>=20
+> Today you have the situation where something creates a speculative
+> disclosure gadget. So we run around and we try and guess where to fix
+> them all with lfence. If you miss one then it leaves a trace in the L1D
+> cache, which is what you measure.
+>=20
+> In almost every case we have looked at when you leave a footprint in the
+> L1D you resolve to an error path so the syscall errors.
+>=20
+> In other words every time we fail to find a
+>=20
+>                if (foo < limit) {
+>                        gadget(array[foo]);
+>        } else
+>            return -EINVAL;
+>=20
+> we turn that from being an easy to use gadget into something really
+> tricky because by the time the code flow has gotten back to the caller
+> the breadcrumbs have been eaten by the L1D flush.
+
+My understanding is that the standard =E2=80=9Cbreadcrumb=E2=80=9D is that a=
+ cache line is fetched into L1D, and that the cacheline in question will go i=
+nto L1D even if it was previously not cached at all. So flushing L1D will ca=
+use the timing from a probe to be different, but the breadcrumb is still the=
+re, and the attack will still work.
+
+Am I wrong?
+
+>=20
+>=20
+> At best you have a microscopic window to attack it on the SMT pair.
+
+So only the extra clever attackers will pull it off. This isn=E2=80=99t all t=
+hat reassuring.
+
+If I had the time to try to break this, I would set it up so that the cache l=
+ines that get probed are cached remotely, and I=E2=80=99d spin, waiting unti=
+l one of them gets stolen. The spin loop would be much faster this way.
+
+Or I would get a fancy new CPU and use UMONITOR and, unless UMONITOR is much=
+ cleverer than I suspect it is, the gig is up.  The time window for the atta=
+ck could be as small as you want, and UMONITOR will catch it.
+
+(Have I mentioned that I think that Intel needs to remove UMONITOR, PCOMMIT-=
+style?  That instruction is simply the wrong solution to whatever problem it=
+=E2=80=99s trying to solve.)
+
+>=20
+> Alan
