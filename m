@@ -2,46 +2,47 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085FCC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A21EC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1FF92087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FF92087D
+	by mail.kernel.org (Postfix) with ESMTP id 1D4AF2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D4AF2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeJMBfA (ORCPT
+        id S1727191AbeJMBfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:35:00 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48818 "EHLO mga06.intel.com"
+        Fri, 12 Oct 2018 21:35:06 -0400
+Received: from mga17.intel.com ([192.55.52.151]:28982 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbeJMBfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:35:00 -0400
+        id S1726134AbeJMBfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:35:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:01:19 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:01:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="82143394"
+   d="scan'208";a="81002487"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006.jf.intel.com with ESMTP; 12 Oct 2018 11:01:19 -0700
-Subject: [PATCH v7 0/7] mm: Merge hmm into devm_memremap_pages, mark GPL-only
+  by orsmga008.jf.intel.com with ESMTP; 12 Oct 2018 11:01:24 -0700
+Subject: [PATCH v7 1/7] mm,
+ devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>,
+Cc:     Michal Hocko <mhocko@suse.com>,
         =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Fri, 12 Oct 2018 10:49:31 -0700
-Message-ID: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 12 Oct 2018 10:49:37 -0700
+Message-ID: <153936657702.1198040.119388737535638846.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,72 +52,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ apologies for the resend, script error ]
-
-Changes since v6 [1]:
-* Rebase on next-20181008 and fixup conflicts with the xarray conversion
-  and hotplug optimizations
-* It has soaked on a 0day visible branch for a few days without any
-  reports.
-
-[1]: https://lkml.org/lkml/2018/9/13/104
-
----
-
-Hi Andrew,
-
-Jérôme has reviewed the cleanups, thanks Jérôme. We still disagree on
-the EXPORT_SYMBOL_GPL status of the core HMM implementation, but Logan,
-Christoph and I continue to support marking all devm_memremap_pages()
-derivatives EXPORT_SYMBOL_GPL.
-
-HMM has been upstream for over a year, with no in-tree users it is clear
-it was designed first and foremost for out of tree drivers. It takes
-advantage of a facility Christoph and I spearheaded to support
-persistent memory. It continues to see expanding use cases with no clear
-end date when it will stop attracting features / revisions. It is not
-suitable to export devm_memremap_pages() as a stable 3rd party driver
-api.
-
 devm_memremap_pages() is a facility that can create struct page entries
-for any arbitrary range and give out-of-tree drivers the ability to
-subvert core aspects of page management. It, and anything derived from
-it (e.g. hmm, pcip2p, etc...), is a deep integration point into the core
-kernel, and an EXPORT_SYMBOL_GPL() interface. 
+for any arbitrary range and give drivers the ability to subvert core
+aspects of page management.
 
-Commit 31c5bda3a656 "mm: fix exports that inadvertently make put_page()
-EXPORT_SYMBOL_GPL" was merged ahead of this series to relieve some of
-the pressure from innocent consumers of put_page(), but now we need this
-series to address *producers* of device pages.
+Specifically the facility is tightly integrated with the kernel's memory
+hotplug functionality. It injects an altmap argument deep into the
+architecture specific vmemmap implementation to allow allocating from
+specific reserved pages, and it has Linux specific assumptions about
+page structure reference counting relative to get_user_pages() and
+get_user_pages_fast(). It was an oversight and a mistake that this was
+not marked EXPORT_SYMBOL_GPL from the outset.
 
-More details and justification in the changelogs. The 0day
-infrastructure has reported success across 152 configs and this survives
-the libnvdimm unit test suite. Aside from the controversial bits the
-diffstat is compelling at:
+Again, devm_memremap_pagex() exposes and relies upon core kernel
+internal assumptions and will continue to evolve along with 'struct
+page', memory hotplug, and support for new memory types / topologies.
+Only an in-kernel GPL-only driver is expected to keep up with this
+ongoing evolution. This interface, and functionality derived from this
+interface, is not suitable for kernel-external drivers.
 
-	7 files changed, 126 insertions(+), 323 deletions(-)
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ kernel/memremap.c                 |    2 +-
+ tools/testing/nvdimm/test/iomap.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Note that the series has some minor collisions with Alex's recent series
-to improve devm_memremap_pages() scalability [2]. So, whichever you take
-first the other will need a minor rebase.
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index 6ec81e0d7a33..1bbb2e892941 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -232,7 +232,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+  err_array:
+ 	return ERR_PTR(error);
+ }
+-EXPORT_SYMBOL(devm_memremap_pages);
++EXPORT_SYMBOL_GPL(devm_memremap_pages);
+ 
+ unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
+ {
+diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
+index ff9d3a5825e1..ed18a0cbc0c8 100644
+--- a/tools/testing/nvdimm/test/iomap.c
++++ b/tools/testing/nvdimm/test/iomap.c
+@@ -113,7 +113,7 @@ void *__wrap_devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 		return nfit_res->buf + offset - nfit_res->res.start;
+ 	return devm_memremap_pages(dev, pgmap);
+ }
+-EXPORT_SYMBOL(__wrap_devm_memremap_pages);
++EXPORT_SYMBOL_GPL(__wrap_devm_memremap_pages);
+ 
+ pfn_t __wrap_phys_to_pfn_t(phys_addr_t addr, unsigned long flags)
+ {
 
-[2]: https://www.lkml.org/lkml/2018/9/11/10
-
-Dan Williams (7):
-      mm, devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
-      mm, devm_memremap_pages: Kill mapping "System RAM" support
-      mm, devm_memremap_pages: Fix shutdown handling
-      mm, devm_memremap_pages: Add MEMORY_DEVICE_PRIVATE support
-      mm, hmm: Use devm semantics for hmm_devmem_{add,remove}
-      mm, hmm: Replace hmm_devmem_pages_create() with devm_memremap_pages()
-      mm, hmm: Mark hmm_devmem_{add,add_resource} EXPORT_SYMBOL_GPL
-
-
- drivers/dax/pmem.c                |   14 --
- drivers/nvdimm/pmem.c             |   13 +-
- include/linux/hmm.h               |    4 
- include/linux/memremap.h          |    2 
- kernel/memremap.c                 |   94 +++++++----
- mm/hmm.c                          |  305 +++++--------------------------------
- tools/testing/nvdimm/test/iomap.c |   17 ++
- 7 files changed, 126 insertions(+), 323 deletions(-)
