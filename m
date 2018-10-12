@@ -2,151 +2,131 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759E1C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05AEC67877
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388E921470
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F1C120645
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1fRmNY3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388E921470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ThcCXgke";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o1wgeDgA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1C120645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeJMBni (ORCPT
+        id S1726974AbeJMBn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:43:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeJMBni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:43:38 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        Fri, 12 Oct 2018 21:43:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40274 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbeJMBn5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:43:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2401F6060A; Fri, 12 Oct 2018 18:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539367814;
+        bh=Ey+ZGPDZyApzqlv5ZuaPFV9POqnj6Fs3XioaOsm8rRQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ThcCXgkerfxZ3WFN0A3Fx3QjY40WWlTBdF3EbhaWVHnAs/dElQO/roGKpuDwHUsle
+         hWv6bzin0wwp5fIVrm+xKzXyJFKQz2y2F8UCwhz48s72YwcmgZtujNsnDtuKghUV3x
+         +AO0O1l0VIjqL5VolCcG1TjvVNmCH3xB+/Wafl9g=
+Received: from [192.168.1.3] (unknown [183.83.77.22])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5840621524
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 18:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539367794;
-        bh=bqY6yoggV2wlerq78M5PLQiDOBJeTtjzULeSXpd5ABU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Y1fRmNY3b6BeIQdDriLMx5nBtA4RKUERQQqEVwavaY4WTqKLoe3Ra8smCbyC8YIwZ
-         BrG9F8r2BFJ4jsEwfEA6MTzwWTP/RfIaiFo3Tu8UhcrcHo/+DLMWwM3mY/yU6+BGIe
-         Okk7b5Je51YN+lCVO3F11XFFMXbIDE6DPHpCsUCU=
-Received: by mail-wm1-f46.google.com with SMTP id 185-v6so13809185wmt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 11:09:54 -0700 (PDT)
-X-Gm-Message-State: ABuFfoi8ogC76NZ+6DRUlE3fmYTQy95ZIEjtPbQ4Kbw15SOfd9baTAel
-        QNlqKOPGUrkkM23AOwROkh4S7xlWCxBu4nLs8PLdpQ==
-X-Google-Smtp-Source: ACcGV61Hlh+ef+Kd3QDgXVAaoCrEh/Y7lRW4JZhhExD7L9wmqtt2NBL2/Arv88xOdfSKAqCsIQbKKis4kPnN6WsP1RA=
-X-Received: by 2002:a1c:d4b:: with SMTP id 72-v6mr6439698wmn.102.1539367792688;
- Fri, 12 Oct 2018 11:09:52 -0700 (PDT)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 041136060A;
+        Fri, 12 Oct 2018 18:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539367813;
+        bh=Ey+ZGPDZyApzqlv5ZuaPFV9POqnj6Fs3XioaOsm8rRQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=o1wgeDgAZ7oz7xklfnOBMQkAv2XHS0J7WTA1AtSG82uW4W3Usi8aASKKvlc7MuZMG
+         0EhC5qtkMJX8olD0lm9xj1fqrzPsJGIQB82XdM3iMCqoUaNcxENVW2weXJ4+fKcuo2
+         pbpL8/8R9DMoL4lmSVyY44988zd2Ybtxp+Fv6IQ8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 041136060A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        ulf.hansson@linaro.org, khilman@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181012142503.GF3401@e107155-lin>
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+Message-ID: <f3452af3-a180-8700-43c7-b20dbaa2549e@codeaurora.org>
+Date:   Fri, 12 Oct 2018 23:40:05 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181004140547.13014-1-bigeasy@linutronix.de> <20181004140547.13014-5-bigeasy@linutronix.de>
- <76caafd5-c85d-61bb-62ec-8056cd6d95ac@linux.intel.com>
-In-Reply-To: <76caafd5-c85d-61bb-62ec-8056cd6d95ac@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 12 Oct 2018 11:09:41 -0700
-X-Gmail-Original-Message-ID: <CALCETrVcrHUrYHd7EgfYSirc8JmtyU+b_ccFqm_Ux=9FB0we=A@mail.gmail.com>
-Message-ID: <CALCETrVcrHUrYHd7EgfYSirc8JmtyU+b_ccFqm_Ux=9FB0we=A@mail.gmail.com>
-Subject: Re: [PATCH 04/11] x86/fpu: eager switch PKRU state
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181012142503.GF3401@e107155-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 10:51 AM Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
->
-> On 10/04/2018 07:05 AM, Sebastian Andrzej Siewior wrote:
-> > From: Rik van Riel <riel@surriel.com>
-> >
-> > While most of a task's FPU state is only needed in user space,
-> > the protection keys need to be in place immediately after a
-> > context switch.
-> >
-> > The reason is that any accesses to userspace memory while running
-> > in kernel mode also need to abide by the memory permissions
-> > specified in the protection keys.
-> >
-> > The "eager switch" is a preparation for loading the FPU state on return
-> > to userland. Instead of decoupling PKRU state from xstate I update PKRU
-> > within xstate on write operations by the kernel.
-> >
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > [bigeasy: save pkru to xstate, no cache]
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >  arch/x86/include/asm/fpu/internal.h | 20 +++++++++++++++----
-> >  arch/x86/include/asm/fpu/xstate.h   |  2 ++
-> >  arch/x86/include/asm/pgtable.h      |  6 +-----
-> >  arch/x86/include/asm/pkeys.h        |  2 +-
-> >  arch/x86/kernel/fpu/core.c          |  2 +-
-> >  arch/x86/mm/pkeys.c                 | 31 ++++++++++++++++++++++-------
-> >  include/linux/pkeys.h               |  2 +-
-> >  7 files changed, 46 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> > index 16c4077ffc945..956d967ca824a 100644
-> > --- a/arch/x86/include/asm/fpu/internal.h
-> > +++ b/arch/x86/include/asm/fpu/internal.h
-> > @@ -570,11 +570,23 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-> >   */
-> >  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
-> >  {
-> > -     bool preload = static_cpu_has(X86_FEATURE_FPU) &&
-> > -                    new_fpu->initialized;
-> > +     bool load_fpu;
-> >
-> > -     if (preload)
-> > -             __fpregs_load_activate(new_fpu, cpu);
-> > +     load_fpu = static_cpu_has(X86_FEATURE_FPU) && new_fpu->initialized;
-> > +     if (!load_fpu)
-> > +             return;
->
-> Needs comments, please.  Especially around what an uninitialized new_fpu
-> means.
 
-See my other comment about getting rid of ->initialized *first*.
 
->
-> > +     __fpregs_load_activate(new_fpu, cpu);
-> > +
-> > +#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-> > +     if (static_cpu_has(X86_FEATURE_OSPKE)) {
->
-> FWIW, you should be able to use cpu_feature_enabled() instead of an
-> explicit #ifdef here.
->
-> > +             struct pkru_state *pk;
-> > +
-> > +             pk = __raw_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
-> > +             if (pk->pkru != __read_pkru())
-> > +                     __write_pkru(pk->pkru);
-> > +     }
-> > +#endif
-> >  }
->
-> Comments here as well, please.
->
-> I think the goal is to keep the PKRU state in the 'init state' when
-> possible and also to save the cost of WRPKRU.  But, it would be really
-> nice to be explicit.
+On 10/12/2018 7:55 PM, Sudeep Holla wrote:
+> On Thu, Oct 11, 2018 at 02:50:54AM +0530, Raju P.L.S.S.S.N wrote:
+>> Use cpu hotplug callback mechanism to attach/dettach the cpu in
+>> the cpu power domain. During cpu hotplug callback registration,
+>> the starting callback is invoked on all online cpus. So there is
+>> no need to attach from device probe.
+>>
+>> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+>> ---
+>>   drivers/soc/qcom/cpu_pd.c  | 33 +++++++++++++++++++++++++--------
+>>   include/linux/cpuhotplug.h |  1 +
+>>   2 files changed, 26 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/cpu_pd.c b/drivers/soc/qcom/cpu_pd.c
+>> index 242eced..bf2d95d 100644
+>> --- a/drivers/soc/qcom/cpu_pd.c
+>> +++ b/drivers/soc/qcom/cpu_pd.c
+>> @@ -3,6 +3,7 @@
+>>    * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>>    */
+>>   
+>> +#include <linux/cpuhotplug.h>
+>>   #include <linux/ktime.h>
+>>   #include <linux/of_platform.h>
+>>   #include <linux/pm_domain.h>
+>> @@ -85,12 +86,26 @@ static int cpu_pd_power_off(struct generic_pm_domain *domain)
+>>   	return 0;
+>>   }
+>>   
+>> +static int cpu_pd_starting(unsigned int cpu)
+>> +{
+>> +	if (!suspend && of_genpd_attach_cpu(cpu))
+>> +		pr_err("%s: genpd_attach_cpu fail\n", __func__);
+> 
+> If it's that serious, return proper error code and drop the message which
+> could be annoying if you are running some hotplug test loop.
 
-I suspect that this makes basically no difference.  PKRU is almost
-never in the init state on Linux.  Also, it's a single word -- I doubt
-that the init state optimization is worth much.
+Sure will do that.
 
-But maybe WRPKRU is more expensive than RDPKRU and a branch?
+Thanks Sudeep.
+
+- Raju
+
+> 
+> --
+> Regards,
+> Sudeep
+> 
