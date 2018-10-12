@@ -2,237 +2,314 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947F0C71122
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E29C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9402087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1A12087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 20:18:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a+Eq51TC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9402087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hPXQLfgZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D1A12087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeJMDvZ (ORCPT
+        id S1727300AbeJMDwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:51:25 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35470 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbeJMDvY (ORCPT
+        Fri, 12 Oct 2018 23:52:31 -0400
+Received: from mail.efficios.com ([167.114.142.138]:48020 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeJMDwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:51:24 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9CKH9LK028879;
-        Fri, 12 Oct 2018 15:17:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539375429;
-        bh=bqKTNj6UCXTvYaT/JmFtNfELonVklcIHr1Dw/PTwpAs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=a+Eq51TCSIo0OJwj/XTXytpldnFwTKwKBg1ltChKlxXl/sXq1nVhOSToYzfD/2QnY
-         vrqFIidRjxf3SvMRgbi+jcDGNvVsEUPls6NNGAvK1g4+ZrVTxjxpeRLvuGEoswD6rL
-         x0sXlRHwr4mRzuRYeCqYvhKfYs0SU2ZaOexNpwwo=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9CKH9aR011715;
-        Fri, 12 Oct 2018 15:17:09 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 12
- Oct 2018 15:17:09 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 12 Oct 2018 15:17:09 -0500
-Received: from uda0869644a.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9CKH7EV000402;
-        Fri, 12 Oct 2018 15:17:09 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jyri Sarha <jsarha@ti.com>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v4 1/8] drm/omap: Add ability to check if requested plane modes can be supported
-Date:   Fri, 12 Oct 2018 15:16:56 -0500
-Message-ID: <20181012201703.29065-2-bparrot@ti.com>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20181012201703.29065-1-bparrot@ti.com>
-References: <20181012201703.29065-1-bparrot@ti.com>
+        Fri, 12 Oct 2018 23:52:30 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 106ED1B779E;
+        Fri, 12 Oct 2018 16:18:18 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id nssS-Ga7FiWB; Fri, 12 Oct 2018 16:18:17 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3527E1B7790;
+        Fri, 12 Oct 2018 16:18:17 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3527E1B7790
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539375497;
+        bh=fmuAM3HT4TRtr0z91ISuPeRg2Vt5phGjcJTZh+LARKQ=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=hPXQLfgZaIE+rc8t32UOV/h35tejOM0WiFQcTDFEPNsDzRsAOld+6VUVxfbk6VzRj
+         0X6HahgMc1rCa/fYfhKa4JcPa014GwYp/qxPoQ2ZWc/G1M/QRT9Ih05yJLSefN23lU
+         mOpPg7Q+oBEBknEXPFAPNNioCU70zAxwpssSFuPm1B72bBD9afZuJXCZJj0JrbI+08
+         3pWjOY6r4Yeu+nCgmb4wv8ls9PKbUtvg1Un+qxTIuZqgF2+LpPNYBjxNxAftkukwof
+         r6aFJAXfINvYyGOGkRu40lxr7SZdble1FCEZ0N4bgAWNnHMRITAvcaMV3UKcG8eUxf
+         kzDY65iChxClg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id Okq5Wzzmnpi1; Fri, 12 Oct 2018 16:18:17 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 0DE9C1B778A;
+        Fri, 12 Oct 2018 16:18:17 -0400 (EDT)
+Date:   Fri, 12 Oct 2018 16:18:16 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <james.morris@microsoft.com>,
+        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <1371474979.3387.1539375496985.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+References: <20181012200523.23731-1-mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array
+ iteration
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3039)
+Thread-Topic: tracepoint: Fix: out-of-bound tracepoint array iteration
+Thread-Index: FbluJA5Q+krlaWs8K7qoGWXwDRpAoA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently assume that an overlay has the same maximum width and
-maximum height as the overlay manager. This assumption is incorrect. On
-some variants the overlay manager maximum width is twice the maximum
-width that the overlay can handle. We need to add the appropriate data
-per variant as well as export a helper function to retrieve the data so
-check can be made dynamically in omap_plane_atomic_check().
+----- On Oct 12, 2018, at 4:05 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
----
- drivers/gpu/drm/omapdrm/dss/dispc.c   | 24 ++++++++++++++++++++++++
- drivers/gpu/drm/omapdrm/dss/omapdss.h |  2 ++
- drivers/gpu/drm/omapdrm/omap_plane.c  | 14 ++++++++++++++
- 3 files changed, 40 insertions(+)
+> commit 46e0c9be206f ("kernel: tracepoints: add support for relative
+> references") changes the layout of the __tracepoint_ptrs section on
+> architectures supporting relative references. However, it does so
+> without turning struct tracepoint * const into const int * elsewhere in
+> the tracepoint code, which has the following side-effect:
 
-diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
-index fe0b5f6ede72..70c3e3353947 100644
---- a/drivers/gpu/drm/omapdrm/dss/dispc.c
-+++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
-@@ -103,6 +103,8 @@ struct dispc_features {
- 	u8 mgr_height_start;
- 	u16 mgr_width_max;
- 	u16 mgr_height_max;
-+	u16 ovl_width_max;
-+	u16 ovl_height_max;
- 	unsigned long max_lcd_pclk;
- 	unsigned long max_tv_pclk;
- 	unsigned int max_downscale;
-@@ -2596,6 +2598,13 @@ static int dispc_ovl_calc_scaling(struct dispc_device *dispc,
- 	return 0;
- }
- 
-+static void dispc_ovl_get_max_size(struct dispc_device *dispc,
-+				   u16 *width, u16 *height)
-+{
-+	*width = dispc->feat->ovl_width_max;
-+	*height = dispc->feat->ovl_height_max;
-+}
-+
- static int dispc_ovl_setup_common(struct dispc_device *dispc,
- 				  enum omap_plane_id plane,
- 				  enum omap_overlay_caps caps,
-@@ -4247,6 +4256,8 @@ static const struct dispc_features omap24xx_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	66500000,
- 	.max_downscale		=	2,
- 	/*
-@@ -4284,6 +4295,8 @@ static const struct dispc_features omap34xx_rev1_0_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	173000000,
- 	.max_tv_pclk		=	59000000,
- 	.max_downscale		=	4,
-@@ -4318,6 +4331,8 @@ static const struct dispc_features omap34xx_rev3_0_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	173000000,
- 	.max_tv_pclk		=	59000000,
- 	.max_downscale		=	4,
-@@ -4352,6 +4367,8 @@ static const struct dispc_features omap36xx_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	173000000,
- 	.max_tv_pclk		=	59000000,
- 	.max_downscale		=	4,
-@@ -4386,6 +4403,8 @@ static const struct dispc_features am43xx_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	173000000,
- 	.max_tv_pclk		=	59000000,
- 	.max_downscale		=	4,
-@@ -4420,6 +4439,8 @@ static const struct dispc_features omap44xx_dispc_feats = {
- 	.mgr_height_start	=	26,
- 	.mgr_width_max		=	2048,
- 	.mgr_height_max		=	2048,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	2048,
- 	.max_lcd_pclk		=	170000000,
- 	.max_tv_pclk		=	185625000,
- 	.max_downscale		=	4,
-@@ -4459,6 +4480,8 @@ static const struct dispc_features omap54xx_dispc_feats = {
- 	.mgr_height_start	=	27,
- 	.mgr_width_max		=	4096,
- 	.mgr_height_max		=	4096,
-+	.ovl_width_max		=	2048,
-+	.ovl_height_max		=	4096,
- 	.max_lcd_pclk		=	170000000,
- 	.max_tv_pclk		=	192000000,
- 	.max_downscale		=	4,
-@@ -4734,6 +4757,7 @@ static const struct dispc_ops dispc_ops = {
- 	.ovl_enable = dispc_ovl_enable,
- 	.ovl_setup = dispc_ovl_setup,
- 	.ovl_get_color_modes = dispc_ovl_get_color_modes,
-+	.ovl_get_max_size = dispc_ovl_get_max_size,
- 
- 	.wb_get_framedone_irq = dispc_wb_get_framedone_irq,
- 	.wb_setup = dispc_wb_setup,
-diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
-index 1f698a95a94a..45334d5c618e 100644
---- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
-+++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
-@@ -632,6 +632,8 @@ struct dispc_ops {
- 
- 	const u32 *(*ovl_get_color_modes)(struct dispc_device *dispc,
- 					  enum omap_plane_id plane);
-+	void (*ovl_get_max_size)(struct dispc_device *dispc,
-+				 u16 *width, u16 *height);
- 
- 	u32 (*wb_get_framedone_irq)(struct dispc_device *dispc);
- 	int (*wb_setup)(struct dispc_device *dispc,
-diff --git a/drivers/gpu/drm/omapdrm/omap_plane.c b/drivers/gpu/drm/omapdrm/omap_plane.c
-index 161233cbc9a0..e1e338e76841 100644
---- a/drivers/gpu/drm/omapdrm/omap_plane.c
-+++ b/drivers/gpu/drm/omapdrm/omap_plane.c
-@@ -106,11 +106,18 @@ static void omap_plane_atomic_disable(struct drm_plane *plane,
- static int omap_plane_atomic_check(struct drm_plane *plane,
- 				   struct drm_plane_state *state)
- {
-+	struct omap_drm_private *priv = plane->dev->dev_private;
- 	struct drm_crtc_state *crtc_state;
-+	u16 width, height;
-+	u32 width_fp, height_fp;
- 
- 	if (!state->fb)
- 		return 0;
- 
-+	priv->dispc_ops->ovl_get_max_size(priv->dispc, &width, &height);
-+	width_fp = width << 16;
-+	height_fp = height << 16;
-+
- 	/* crtc should only be NULL when disabling (i.e., !state->fb) */
- 	if (WARN_ON(!state->crtc))
- 		return 0;
-@@ -132,6 +139,13 @@ static int omap_plane_atomic_check(struct drm_plane *plane,
- 	if (state->crtc_y + state->crtc_h > crtc_state->adjusted_mode.vdisplay)
- 		return -EINVAL;
- 
-+	/* Make sure dimensions are within bounds. */
-+	if (state->src_h > height_fp || state->crtc_h > height)
-+		return -EINVAL;
-+
-+	if (state->src_w > width_fp || state->crtc_w > width)
-+		return -EINVAL;
-+
- 	if (state->rotation != DRM_MODE_ROTATE_0 &&
- 	    !omap_framebuffer_supports_rotation(state->fb))
- 		return -EINVAL;
+Actually, the above sentence should read:
+
+"However, it does so without turning struct tracepoint * const into const int
+elsewhere in the tracepoint code [...]" (I had mistakenly worded it "const int *").
+
+Thanks,
+
+Mathieu
+
+
+> 
+> tracepoint_module_{coming,going} invoke
+> tp_module_going_check_quiescent() with mod->tracepoints_ptrs
+> as first argument, and computes the end address of the array
+> for the second argument with:
+> 
+>  mod->tracepoints_ptrs + mod->num_tracepoints
+> 
+> However, because the type of mod->tracepoint_ptrs in module.h
+> has not been changed from pointer to int, it passes an end
+> pointer which is twice larger than the array, causing out-of-bound
+> array accesses.
+> 
+> Fix this by introducing a new typedef: tracepoint_ptr_t, which
+> is either "const int" on architectures that have PREL32 relocations,
+> or "struct tracepoint * const" on architectures that does not have
+> this feature.
+> 
+> Also provide a new tracepoint_ptr_defer() static inline to
+> encapsulate deferencing this type rather than duplicate code and
+> ugly idefs within the for_each_tracepoint_range() implementation.
+> 
+> This issue appears in 4.19-rc kernels, and should ideally be fixed
+> before the end of the rc cycle.
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: James Morris <james.morris@microsoft.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Nicolas Pitre <nico@linaro.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Cc: Thomas Garnier <thgarnie@google.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> include/linux/module.h          |  2 +-
+> include/linux/tracepoint-defs.h |  6 ++++++
+> include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
+> kernel/tracepoint.c             | 24 ++++++++--------------
+> 4 files changed, 38 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index f807f15bebbe..cdab2451d6be 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -430,7 +430,7 @@ struct module {
+> 
+> #ifdef CONFIG_TRACEPOINTS
+> 	unsigned int num_tracepoints;
+> -	struct tracepoint * const *tracepoints_ptrs;
+> +	tracepoint_ptr_t *tracepoints_ptrs;
+> #endif
+> #ifdef HAVE_JUMP_LABEL
+> 	struct jump_entry *jump_entries;
+> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+> index 22c5a46e9693..49ba9cde7e4b 100644
+> --- a/include/linux/tracepoint-defs.h
+> +++ b/include/linux/tracepoint-defs.h
+> @@ -35,6 +35,12 @@ struct tracepoint {
+> 	struct tracepoint_func __rcu *funcs;
+> };
+> 
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +typedef const int tracepoint_ptr_t;
+> +#else
+> +typedef struct tracepoint * const tracepoint_ptr_t;
+> +#endif
+> +
+> struct bpf_raw_event_map {
+> 	struct tracepoint	*tp;
+> 	void			*bpf_func;
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 041f7e56a289..538ba1a58f5b 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
+> #define TRACE_DEFINE_ENUM(x)
+> #define TRACE_DEFINE_SIZEOF(x)
+> 
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+> +{
+> +	return offset_to_ptr(p);
+> +}
+> +
+> +#define __TRACEPOINT_ENTRY(name)					\
+> +	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
+> +	    "	.balign 4					\n"	\
+> +	    "	.long 	__tracepoint_" #name " - .		\n"	\
+> +	    "	.previous					\n")
+> +#else
+> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+> +{
+> +	return *p;
+> +}
+> +
+> +#define __TRACEPOINT_ENTRY(name)					 \
+> +	static tracepoint_ptr_t __tracepoint_ptr_##name __used		 \
+> +	__attribute__((section("__tracepoints_ptrs"))) =		 \
+> +		&__tracepoint_##name
+> +#endif
+> +
+> #endif /* _LINUX_TRACEPOINT_H */
+> 
+> /*
+> @@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
+> 		return static_key_false(&__tracepoint_##name.key);	\
+> 	}
+> 
+> -#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> -#define __TRACEPOINT_ENTRY(name)					\
+> -	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
+> -	    "	.balign 4					\n"	\
+> -	    "	.long 	__tracepoint_" #name " - .		\n"	\
+> -	    "	.previous					\n")
+> -#else
+> -#define __TRACEPOINT_ENTRY(name)					 \
+> -	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
+> -	__attribute__((section("__tracepoints_ptrs"))) =		 \
+> -		&__tracepoint_##name
+> -#endif
+> -
+> /*
+>  * We have no guarantee that gcc and the linker won't up-align the tracepoint
+>  * structures, so we create an array of pointers that will be used for iteration
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index bf2c06ef9afc..a3be42304485 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -28,8 +28,8 @@
+> #include <linux/sched/task.h>
+> #include <linux/static_key.h>
+> 
+> -extern struct tracepoint * const __start___tracepoints_ptrs[];
+> -extern struct tracepoint * const __stop___tracepoints_ptrs[];
+> +extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+> +extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+> 
+> DEFINE_SRCU(tracepoint_srcu);
+> EXPORT_SYMBOL_GPL(tracepoint_srcu);
+> @@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp,
+> void *probe, void *data)
+> }
+> EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
+> 
+> -static void for_each_tracepoint_range(struct tracepoint * const *begin,
+> -		struct tracepoint * const *end,
+> +static void for_each_tracepoint_range(
+> +		tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
+> 		void (*fct)(struct tracepoint *tp, void *priv),
+> 		void *priv)
+> {
+> +	tracepoint_ptr_t *iter;
+> +
+> 	if (!begin)
+> 		return;
+> -
+> -	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
+> -		const int *iter;
+> -
+> -		for (iter = (const int *)begin; iter < (const int *)end; iter++)
+> -			fct(offset_to_ptr(iter), priv);
+> -	} else {
+> -		struct tracepoint * const *iter;
+> -
+> -		for (iter = begin; iter < end; iter++)
+> -			fct(*iter, priv);
+> -	}
+> +	for (iter = begin; iter < end; iter++)
+> +		fct(tracepoint_ptr_deref(iter), priv);
+> }
+> 
+> #ifdef CONFIG_MODULES
+> --
+> 2.17.1
+
 -- 
-2.9.0
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
