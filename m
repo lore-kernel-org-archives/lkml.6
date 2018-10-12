@@ -2,112 +2,101 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237DFC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80495C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1FD820835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="ZxItNO8I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FD820835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 5186D2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5186D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dei.uc.pt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeJLWCA (ORCPT
+        id S1728843AbeJLWCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:02:00 -0400
-Received: from imap.thunk.org ([74.207.234.97]:38744 "EHLO imap.thunk.org"
+        Fri, 12 Oct 2018 18:02:07 -0400
+Received: from smtp.dei.uc.pt ([193.137.203.253]:49786 "EHLO smtp.dei.uc.pt"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728354AbeJLWB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:01:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=zi31qG3qH9AZyZHEVqdwHwXbr9/mGY3toZbBL2IPqwk=; b=ZxItNO8Ix2rX4Vv7qKG5V4v/WX
-        yXr12xS9h/i1RzkB47+Xd4/pDqf2ot0tR18Q2sFU+iQWNsCxeonHpxnHXy5xxbWpFeE9/fMRethy2
-        bbC1hqmyagzGScWVdTevH6Z44ko68pvfIhscroNV9fFCuk8zqN8DON9jouxYkUgA5GnQ=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gAyR5-0007iN-A3; Fri, 12 Oct 2018 14:29:03 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 40DD77A519B; Fri, 12 Oct 2018 10:29:02 -0400 (EDT)
-Date:   Fri, 12 Oct 2018 10:29:02 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Tobin C. Harding" <me@tobin.cc>, Arnd Bergmann <arnd@arndb.de>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] random: Move rand_initialize() earlier
-Message-ID: <20181012142902.GD2420@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        Laura Abbott <labbott@redhat.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Tobin C. Harding" <me@tobin.cc>, Arnd Bergmann <arnd@arndb.de>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20181011225421.GA21093@beast>
+        id S1728354AbeJLWCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:02:07 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        (user=sneves mech=PLAIN bits=0)
+        by smtp.dei.uc.pt (8.15.2/8.15.2) with ESMTPSA id w9CESceM010961
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 15:28:43 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dei.uc.pt w9CESceM010961
+Received: by mail-ed1-f54.google.com with SMTP id c26-v6so11679617edt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:28:43 -0700 (PDT)
+X-Gm-Message-State: ABuFfoi92grEMV30vIlI8fj247zUGo1fiKJ3XTWmnwTMOAMnbXfkULg4
+        hqW00gHmsAAl/h+eLT6cS0/njvffsDtl37Hphe4=
+X-Google-Smtp-Source: ACcGV61Ft496CrOqU3/trjao5DSZ3CzW5Dj9Riis5GJL/BVu704DtgFquO81cRWsO5tvcwVMwTmTmR/A2+bfcA2MX08=
+X-Received: by 2002:a50:9583:: with SMTP id w3-v6mr9437897eda.33.1539354517878;
+ Fri, 12 Oct 2018 07:28:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011225421.GA21093@beast>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20181011185458.10186-1-kristen@linux.intel.com>
+ <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
+ <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com> <CAG48ez0aTJMREb1JL6SaT5rNLs6oUZVevj+BGrUzVEprZNFKOw@mail.gmail.com>
+In-Reply-To: <CAG48ez0aTJMREb1JL6SaT5rNLs6oUZVevj+BGrUzVEprZNFKOw@mail.gmail.com>
+From:   Samuel Neves <sneves@dei.uc.pt>
+Date:   Fri, 12 Oct 2018 15:28:01 +0100
+X-Gmail-Original-Message-ID: <CAEX_ruHf5hDTvL+4BNyL8HsTjKKU+fvAB4uKrszVVfpPen25Mw@mail.gmail.com>
+Message-ID: <CAEX_ruHf5hDTvL+4BNyL8HsTjKKU+fvAB4uKrszVVfpPen25Mw@mail.gmail.com>
+Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
+To:     Jann Horn <jannh@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, kristen@linux.intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-FCTUC-DEI-SIC-MailScanner-Information: Please contact helpdesk@dei.uc.pt for more information
+X-FCTUC-DEI-SIC-MailScanner-ID: w9CESceM010961
+X-FCTUC-DEI-SIC-MailScanner: Found to be clean
+X-FCTUC-DEI-SIC-MailScanner-SpamCheck: not spam, SpamAssassin (cached,
+        score=-60.1, required 3.252, autolearn=not spam, ALL_TRUSTED -10.00,
+        BAYES_00 -0.10, L_SMTP_AUTH -50.00)
+X-FCTUC-DEI-SIC-MailScanner-From: sneves@dei.uc.pt
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 03:54:21PM -0700, Kees Cook wrote:
-> Right now rand_initialize() is run as an early_initcall(), but it only
-> depends on timekeeping_init() (for mixing ktime_get_real() into the
-> pools). However, the call to boot_init_stack_canary() for stack canary
-> initialization runs earlier, which triggers a warning at boot:
-> 
-> random: get_random_bytes called from start_kernel+0x357/0x548 with crng_init=0
-> 
-> Instead, this moves rand_initialize() to after timekeeping_init(), and moves
-> canary initialization here as well.
-> 
-> Note that this warning may still remain for machines that do not have
-> UEFI RNG support (which initializes the RNG pools durting setup_arch()),
-> or for x86 machines without RDRAND (or booting without "random.trust=on"
-> or CONFIG_RANDOM_TRUST_CPU=y).
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Fri, Oct 12, 2018 at 2:26 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Oct 12, 2018 at 11:41 AM Samuel Neves <sneves@dei.uc.pt> wrote:
+> >
+> > On Thu, Oct 11, 2018 at 8:25 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > > What exactly is this trying to protect against?  And how many cycles
+> > > should we expect L1D_FLUSH to take?
+> >
+> > As far as I could measure, I got 1660 cycles per wrmsr 0x10b, 0x1 on a
+> > Skylake chip, and 1220 cycles on a Skylake-SP.
+>
+> Is that with L1D mostly empty, with L1D mostly full with clean lines,
+> or with L1D full of dirty lines that need to be written back?
 
-This seems reasonable to me.  Were you hoping to get this in for -rc8?
-It looks sane, and I don't see any _obvious_ unintended consequences
-of such a change, but it's rather late in the development cycle, and
-it isn't regression fix.
+Mostly empty, as this is flushing repeatedly without bothering to
+refill L1d with anything.
 
-My druthers would be wait until -rc2, as a minor low-risk improvement
-that goes in after the merge window, although some people are of the
-belief that -rc2 should be a strict feature freeze delimiter.  My
-personal opinion is no major feature changes except during the merge
-window, and we go into bug-fix only mode after -rc4, and by -rc6 it's
-regression and major security fixes only.  (This is however not a
-universally held opinion; see the "bug-introducing patches" thread
-which Sasha started on the ksummit-discuss thread.)
+On Skylake the (averaged) uops breakdown is something like
 
-					- Ted
+port 0: 255
+port 1: 143
+port 2: 176
+port 3: 177
+port 4: 524
+port 5: 273
+port 6: 616
+port 7: 182
+
+The number of port 4 dispatches is very close to the number of cache
+lines, suggesting one write per line (with respective 176+177+182 port
+{2, 3, 7} address generations).
+
+Furthermore, I suspect it also clears L1i cache. For 2^20 wrmsr
+executions, we have around 2^20 frontend_retired_l1i_miss events, but
+a negligible amount of frontend_retired_l2_miss ones.
