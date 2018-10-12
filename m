@@ -2,221 +2,110 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0627C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469AFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8213020835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hNGQVULQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XIqlIJoM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8213020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 02DA02086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 06:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DA02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeJLOR4 (ORCPT
+        id S1727600AbeJLOaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 10:17:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbeJLORz (ORCPT
+        Fri, 12 Oct 2018 10:30:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58316 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727358AbeJLOaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 10:17:55 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A891660881; Fri, 12 Oct 2018 06:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539326816;
-        bh=W+8sGBJfRSMI6wJL78AtWz+XZVIQfxToprQ2ykkqsfA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hNGQVULQ2gN/Af7y9xR3DNRGYjp7gx90Fl+imSJtHpLYS9Vb4/ZRvUrLkzJzRDuVw
-         A+PrTHBbmEwbiMOfzr/eFTwfQZA/IXPbjxf7RX8b56O2zyjTDc0SCyrDGjGxZDXH5h
-         pd8LgALl4MlVV7N2Iz62/khcJePoM6zRlhT7YnUU=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id ACA7A6079C;
-        Fri, 12 Oct 2018 06:46:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539326815;
-        bh=W+8sGBJfRSMI6wJL78AtWz+XZVIQfxToprQ2ykkqsfA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XIqlIJoMXw7KkGhHPO1IFhUMo7KXIqFYd/EoPkAdGe9oG+LHaSa4fMkAWsFedkE2+
-         KOazt+8SoAPtqYFDM0CdZRtntL0GX19Jb52DPCu3tr+53mGPKPtmlhrqjRBek69Tqq
-         0XSsffwGPZr7RsrnHJOoAqLdL+gRIMDytbbAZuxY=
+        Fri, 12 Oct 2018 10:30:06 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9C6oS36194985
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:58:57 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n2kbnphww-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:58:56 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 12 Oct 2018 07:58:39 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Oct 2018 07:58:35 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9C6wYgH8061234
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Oct 2018 06:58:34 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28C5DAE04D;
+        Fri, 12 Oct 2018 09:57:16 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8262AE051;
+        Fri, 12 Oct 2018 09:57:13 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri, 12 Oct 2018 09:57:13 +0100 (BST)
+Date:   Fri, 12 Oct 2018 12:28:31 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 1/3] powerpc: Detect the presence of big-cores via
+ "ibm,thread-groups"
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1539235983-25259-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1539235983-25259-2-git-send-email-ego@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 12 Oct 2018 14:46:55 +0800
-From:   cang@codeaurora.org
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     dianders@chromium.org, subhashj@codeaurora.org,
-        asutoshd@codeaurora.org, evgreen@chromium.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] scsi: ufs: make UFS Tx lane1 clock optional for
- QCOM platforms
-In-Reply-To: <462df3c4-582b-ccf1-8ced-e0c084bca0f2@codeaurora.org>
-References: <1539306736-9519-1-git-send-email-cang@codeaurora.org>
- <462df3c4-582b-ccf1-8ced-e0c084bca0f2@codeaurora.org>
-Message-ID: <6d24a84708f5682df0540d852f60314d@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1539235983-25259-2-git-send-email-ego@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18101206-0016-0000-0000-0000021208E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101206-0017-0000-0000-00003269837B
+Message-Id: <20181012065831.GA28228@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=589 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810120069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2018-10-12 14:10, Vivek Gautam wrote:
-> On 10/12/2018 6:42 AM, Can Guo wrote:
->> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> 
->> Per Qcom's UFS host controller HW design, the UFS Tx lane1 clock could 
->> be
->> muxed with Tx lane0 clock, hence keep Tx lane1 clock optional by 
->> ignoring
->> it if it is not provided in device tree. This change also performs 
->> some
->> cleanup to lanes per direction checks when enable/disable lane clocks 
->> just
->> for symmetry.
->> 
->> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->> Changes since v2:
->> - Incorporated review comments from Doug.
->> 
->> Changes since v1:
->> - Incorporated review comments from Doug.
->> - Update the commit title and commit message.
->> 
->>   drivers/scsi/ufs/ufs-qcom.c | 55 
->> ++++++++++++++++++++++++---------------------
->>   1 file changed, 29 insertions(+), 26 deletions(-)
->> 
->> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
->> index 2b38db2..dbc84cb 100644
->> --- a/drivers/scsi/ufs/ufs-qcom.c
->> +++ b/drivers/scsi/ufs/ufs-qcom.c
->> @@ -79,20 +79,28 @@ static int ufs_qcom_get_connected_tx_lanes(struct 
->> ufs_hba *hba, u32 *tx_lanes)
->>   }
->>     static int ufs_qcom_host_clk_get(struct device *dev,
->> -		const char *name, struct clk **clk_out)
->> +		const char *name, struct clk **clk_out, bool optional)
->>   {
->>   	struct clk *clk;
->>   	int err = 0;
->>     	clk = devm_clk_get(dev, name);
->> -	if (IS_ERR(clk)) {
->> -		err = PTR_ERR(clk);
->> -		dev_err(dev, "%s: failed to get %s err %d",
->> -				__func__, name, err);
->> -	} else {
->> +	if (!IS_ERR(clk)) {
->>   		*clk_out = clk;
->> +		return 0;
->>   	}
->>   +	err = PTR_ERR(clk);
->> +
->> +	if (optional && err == -ENOENT) {
->> +		*clk_out = NULL;
->> +		return 0;
->> +	}
->> +
->> +	if (err != -EPROBE_DEFER)
->> +		dev_err(dev, "failed to get %s err %d",
->> +				name, err);
->> +
->>   	return err;
->>   }
->>   @@ -113,11 +121,9 @@ static void ufs_qcom_disable_lane_clks(struct 
->> ufs_qcom_host *host)
->>   	if (!host->is_lane_clks_enabled)
->>   		return;
->>   -	if (host->hba->lanes_per_direction > 1)
->> -		clk_disable_unprepare(host->tx_l1_sync_clk);
->> +	clk_disable_unprepare(host->tx_l1_sync_clk);
->>   	clk_disable_unprepare(host->tx_l0_sync_clk);
->> -	if (host->hba->lanes_per_direction > 1)
->> -		clk_disable_unprepare(host->rx_l1_sync_clk);
->> +	clk_disable_unprepare(host->rx_l1_sync_clk);
->>   	clk_disable_unprepare(host->rx_l0_sync_clk);
->>     	host->is_lane_clks_enabled = false;
->> @@ -141,24 +147,21 @@ static int ufs_qcom_enable_lane_clks(struct 
->> ufs_qcom_host *host)
->>   	if (err)
->>   		goto disable_rx_l0;
->>   -	if (host->hba->lanes_per_direction > 1) {
->> -		err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
->> +	err = ufs_qcom_host_clk_enable(dev, "rx_lane1_sync_clk",
->>   			host->rx_l1_sync_clk);
->> -		if (err)
->> -			goto disable_tx_l0;
->> +	if (err)
->> +		goto disable_tx_l0;
->>   -		err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
->> +	err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
->>   			host->tx_l1_sync_clk);
->> -		if (err)
->> -			goto disable_rx_l1;
->> -	}
->> +	if (err)
->> +		goto disable_rx_l1;
->>     	host->is_lane_clks_enabled = true;
->>   	goto out;
->>     disable_rx_l1:
->> -	if (host->hba->lanes_per_direction > 1)
->> -		clk_disable_unprepare(host->rx_l1_sync_clk);
->> +	clk_disable_unprepare(host->rx_l1_sync_clk);
->>   disable_tx_l0:
->>   	clk_disable_unprepare(host->tx_l0_sync_clk);
->>   disable_rx_l0:
->> @@ -172,25 +175,25 @@ static int ufs_qcom_init_lane_clks(struct 
->> ufs_qcom_host *host)
->>   	int err = 0;
->>   	struct device *dev = host->hba->dev;
->>   -	err = ufs_qcom_host_clk_get(dev,
->> -			"rx_lane0_sync_clk", &host->rx_l0_sync_clk);
->> +	err = ufs_qcom_host_clk_get(dev, "rx_lane0_sync_clk",
->> +					&host->rx_l0_sync_clk, false);
->>   	if (err)
->>   		goto out;
->>   -	err = ufs_qcom_host_clk_get(dev,
->> -			"tx_lane0_sync_clk", &host->tx_l0_sync_clk);
->> +	err = ufs_qcom_host_clk_get(dev, "tx_lane0_sync_clk",
->> +					&host->tx_l0_sync_clk, false);
->>   	if (err)
->>   		goto out;
->>     	/* In case of single lane per direction, don't read lane1 clocks 
->> */
->>   	if (host->hba->lanes_per_direction > 1) {
->>   		err = ufs_qcom_host_clk_get(dev, "rx_lane1_sync_clk",
->> -			&host->rx_l1_sync_clk);
->> +			&host->rx_l1_sync_clk, false);
->>   		if (err)
->>   			goto out;
->>     		err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
->> -			&host->tx_l1_sync_clk);
->> +			&host->tx_l1_sync_clk, true);
->>   	}
->>   out:
->>   	return err;
+> +DECLARE_PER_CPU(cpumask_var_t, cpu_smallcore_map);
 > 
-> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> +/*
+> + * On big-cores system, cpu_l1_cache_map for each CPU corresponds to
+> + * the set its siblings that share the L1-cache.
+> + */
+> +DEFINE_PER_CPU(cpumask_var_t, cpu_l1_cache_map);
 > 
-> Best regards
-> Vivek
 
-Thank you Vivek.
+Nit:
+Can you add a comment on how cpu_l1_cache_map differs from
+cpu_smallcore_map?.
 
--Can Guo
+Everything else looks okay to me.
+
