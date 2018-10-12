@@ -2,114 +2,95 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34851C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146D8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCECD20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:39:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWS1RJjW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCECD20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CC06D20835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:40:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC06D20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJLLJ2 (ORCPT
+        id S1727074AbeJLLKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 07:09:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42400 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeJLLJ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 07:09:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i4-v6so5146039pgq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 20:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VpjNeQKHTnltOQHRbPEIXs8j04MXHt8bRqmOw0HdQIw=;
-        b=WWS1RJjWz87fXvMdz07TVuvrL7+xdsZNdPvbLHhgMSPqKgj/KK0ChVtbC4BN8vHCWL
-         bh1WUHmep7CgEQaejOitnVYOo6u+eEbMS82W3kMrSQuv5uMghMxlA3G1g0fGRNYJD4Mi
-         Eh+CM5E8m0vJiWbyXh3NKs7evR0/FTEUwTbnU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VpjNeQKHTnltOQHRbPEIXs8j04MXHt8bRqmOw0HdQIw=;
-        b=scJx+RH4JMYpLNNuZS6l12sN2lMkSyro1RSxXP/LJxwnIU0KhoUKxoDtWPtaHyQd7G
-         EL3My0qbF8G6ZKaCzZS4HcauGr8ZahTV7q7C/0bXJIW5moN6o1dad9/jVsWA/MzfWqJ8
-         h8PpC51ouLAmmlnwDDkU0wt+gBFBImDkJGhJHHQbDq+CKpB92MpEXciY9FrRO5s0tLzu
-         2I1ipPNGGatz4nIA1UGI3mIhKqPuCbU4bS424w+zd7cU8wR3dIYy0Hc55WmIhCMwtl7C
-         P6gvxKobVeA+NYlXujMg8O1TuYhnQnm9ykgfPy6dG3DqSVPxLDicHaVYhcqynxgIO7v4
-         ILgg==
-X-Gm-Message-State: ABuFfohApY8ntZehx4jid0rv6tNNCoBDCiRRrdBdFY13xoWMD/AFfJ1g
-        hZ3gGuIn2XAoM0Guwbvc2n7zm1VBTg==
-X-Google-Smtp-Source: ACcGV62kn7p/AI/DQ3fUs3FyCtzIMU8e+9HOEnJSQJ0ZFdSoTg+C299lkBp9+voNG/pV0pAnaKi2Sg==
-X-Received: by 2002:a62:3942:: with SMTP id g63-v6mr4466851pfa.170.1539315546780;
-        Thu, 11 Oct 2018 20:39:06 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:902:ab1e:5434:2d24:93e3:3797])
-        by smtp.gmail.com with ESMTPSA id s23-v6sm34885306pgg.67.2018.10.11.20.39.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 20:39:06 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 09:08:58 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        xuwei5@hisilicon.com
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add clock support for Hi3670 SoC
-Message-ID: <20181012033857.GA5438@Mani-XPS-13-9360>
-References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+        Fri, 12 Oct 2018 07:10:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13649 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726183AbeJLLK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 07:10:29 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 38C9B750E08C6;
+        Fri, 12 Oct 2018 11:40:05 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Fri, 12 Oct 2018
+ 11:39:59 +0800
+Subject: Re: [PATCH stable 4.4 V2 0/6] fix SegmentSmack in stable branch
+ (CVE-2018-5390)
+To:     salil GK <gksalil@gmail.com>, <gregkh@linux-foundation.org>
+References: <1536913450-12380-1-git-send-email-maowenan@huawei.com>
+ <83856420-af5a-e469-5b5b-e24634fc290f@huawei.com>
+ <20180926202121.GB23881@kroah.com> <20181011140735.GA9507@kroah.com>
+ <CAPACB-yF16qtiYn9e41_iFNRUzHB349NEiAGubUvW-kiUwpRMQ@mail.gmail.com>
+CC:     <netdev@vger.kernel.org>, <dwmw2@infradead.org>,
+        <eric.dumazet@gmail.com>, <davem@davemloft.net>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <maowenan@huawei.com>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <fc4e5613-6b7b-4b8d-49ca-f2ecc109c4a6@huawei.com>
+Date:   Fri, 12 Oct 2018 11:39:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAPACB-yF16qtiYn9e41_iFNRUzHB349NEiAGubUvW-kiUwpRMQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:00:59PM -0700, Manivannan Sadhasivam wrote:
-> This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
-> the HiSi common clock code. While adding clock support, let's remove the
-> fixed clock for UART and source SoC clock on HiKey970 board.
-> 
-> This patchset has been verified on HiKey970 board.
->
 
-Hi,
 
-Any update on this series?
+On 2018/10/12 10:28, salil GK wrote:
+> I was looking for fix for CVE-2018-5390 and CVE-2018-5390) in 4.18.x. Will these fix be available in 4.18 train ?
 
-Thanks,
-Mani
+The fixes of CVE-2018-5390 have already existed in stable 4.18. These fixes only available with < 4.9 that don't using RB tree.
 
-> Thanks,
-> Mani
+58152ec tcp: add tcp_ooo_try_coalesce() helper
+8541b21 tcp: call tcp_drop() from tcp_data_queue_ofo()
+3d4bf93 tcp: detect malicious patterns in tcp_collapse_ofo_queue()
+f4a3313 tcp: avoid collapses in tcp_prune_queue() if possible
+72cd43b tcp: free batches of packets in tcp_prune_ofo_queue()
+
+
 > 
-> Manivannan Sadhasivam (4):
->   dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
->   arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
->   arm64: dts: hisilicon: Source SoC clock for UART6
->   clk: hisilicon: Add clock driver for Hi3670 SoC
+> Thanks
+> ~S
 > 
->  .../bindings/clock/hi3670-clock.txt           |   43 +
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
->  drivers/clk/hisilicon/Kconfig                 |    7 +
->  drivers/clk/hisilicon/Makefile                |    1 +
->  drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
->  include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
->  6 files changed, 1458 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
->  create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
->  create mode 100644 include/dt-bindings/clock/hi3670-clock.h
+> On Oct 11, 2018 7:38 PM, "Greg KH" <gregkh@linux-foundation.org <mailto:gregkh@linux-foundation.org>> wrote:
 > 
-> -- 
-> 2.17.1
+>     On Wed, Sep 26, 2018 at 10:21:21PM +0200, Greg KH wrote:
+>     > On Tue, Sep 25, 2018 at 10:10:15PM +0800, maowenan wrote:
+>     > > Hi Greg:
+>     > >
+>     > > can you review this patch set?
+>     >
+>     > It is still in the queue, don't worry.  It will take some more time to
+>     > properly review and test it.
+>     >
+>     > Ideally you could get someone else to test this and provide a
+>     > "tested-by:" tag for it?
 > 
+>     All now queued up, let's see what breaks :)
+> 
+>     thanks,
+> 
+>     greg k-h
+> 
+> 
+
