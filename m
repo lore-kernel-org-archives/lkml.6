@@ -2,198 +2,123 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB31C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE30C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB7920835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB7920835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 59F9520835
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F9520835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbeJLWGj (ORCPT
+        id S1728912AbeJLWGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:06:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52048 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728708AbeJLWGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:06:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 878F4F;
-        Fri, 12 Oct 2018 07:33:55 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 977AC3F5BC;
-        Fri, 12 Oct 2018 07:33:52 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 15:33:50 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        ulf.hansson@linaro.org, khilman@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, ilina@codeaurora.org
-Subject: Re: [PATCH RFC v1 4/8] drivers: qcom: cpu_pd: add cpu power domain
- support using genpd
-Message-ID: <20181012143350.GG3401@e107155-lin>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
- <1539206455-29342-5-git-send-email-rplsssn@codeaurora.org>
+        Fri, 12 Oct 2018 18:06:46 -0400
+Received: from mga18.intel.com ([134.134.136.126]:44390 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728738AbeJLWGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:06:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 07:34:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,372,1534834800"; 
+   d="scan'208";a="94673819"
+Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.158])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Oct 2018 07:34:01 -0700
+Date:   Fri, 12 Oct 2018 22:32:44 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com, maxime.coquelin@redhat.com
+Subject: Re: [PATCH net-next V2 6/8] vhost: packed ring support
+Message-ID: <20181012143244.GA28400@debian>
+References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
+ <1531711691-6769-7-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1539206455-29342-5-git-send-email-rplsssn@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1531711691-6769-7-git-send-email-jasowang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 02:50:51AM +0530, Raju P.L.S.S.S.N wrote:
-> RPMH based targets require that the sleep and wake state request votes
-> be sent during system low power mode entry. The votes help reduce the
-> power consumption when the AP is not using them. The votes sent by the
-> clients are cached in RPMH controller and needs to be flushed when the
-> last cpu enters low power mode. So add cpu power domain using Linux
-> generic power domain infrastructure to perform necessary tasks as part
-> of domain power down.
->
-> Suggested-by: Lina Iyer <ilina@codeaurora.org>
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> ---
->  drivers/soc/qcom/Kconfig  |   9 ++++
->  drivers/soc/qcom/Makefile |   1 +
->  drivers/soc/qcom/cpu_pd.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 114 insertions(+)
->  create mode 100644 drivers/soc/qcom/cpu_pd.c
->
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index ba79b60..91e8b3b 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -95,6 +95,7 @@ config QCOM_RMTFS_MEM
->  config QCOM_RPMH
->  	bool "Qualcomm RPM-Hardened (RPMH) Communication"
->  	depends on ARCH_QCOM && ARM64 && OF || COMPILE_TEST
-> +	select QCOM_CPU_PD
->  	help
->  	  Support for communication with the hardened-RPM blocks in
->  	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
-> @@ -102,6 +103,14 @@ config QCOM_RPMH
->  	  of hardware components aggregate requests for these resources and
->  	  help apply the aggregated state on the resource.
->
-> +config QCOM_CPU_PD
-> +    bool "Qualcomm cpu power domain driver"
-> +    depends on QCOM_RPMH && PM_GENERIC_DOMAINS || COMPILE_TEST
-> +    help
-> +	  Support for QCOM platform cpu power management to perform tasks
-> +	  necessary while application processor votes for deeper modes so that
-> +	  the firmware can enter SoC level low power modes to save power.
-> +
->  config QCOM_SMEM
->  	tristate "Qualcomm Shared Memory Manager (SMEM)"
->  	depends on ARCH_QCOM
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index f25b54c..57a1b0e 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -12,6 +12,7 @@ obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
->  obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
->  qcom_rpmh-y			+= rpmh-rsc.o
->  qcom_rpmh-y			+= rpmh.o
-> +obj-$(CONFIG_QCOM_CPU_PD) += cpu_pd.o
->  obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
->  obj-$(CONFIG_QCOM_SMEM) +=	smem.o
->  obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-> diff --git a/drivers/soc/qcom/cpu_pd.c b/drivers/soc/qcom/cpu_pd.c
-> new file mode 100644
-> index 0000000..565c510
-> --- /dev/null
-> +++ b/drivers/soc/qcom/cpu_pd.c
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/of_platform.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/qcom/rpmh.h>
-> +
-> +static struct device *cpu_pd_dev;
-> +
+On Mon, Jul 16, 2018 at 11:28:09AM +0800, Jason Wang wrote:
+[...]
+> @@ -1367,10 +1397,48 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+>  		vq->last_avail_idx = s.num;
+>  		/* Forget the cached index value. */
+>  		vq->avail_idx = vq->last_avail_idx;
+> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
+> +			vq->last_avail_wrap_counter = wrap_counter;
+> +			vq->avail_wrap_counter = vq->last_avail_wrap_counter;
+> +		}
+>  		break;
+>  	case VHOST_GET_VRING_BASE:
+>  		s.index = idx;
+>  		s.num = vq->last_avail_idx;
+> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> +			s.num |= vq->last_avail_wrap_counter << 31;
+> +		if (copy_to_user(argp, &s, sizeof(s)))
+> +			r = -EFAULT;
+> +		break;
+> +	case VHOST_SET_VRING_USED_BASE:
+> +		/* Moving base with an active backend?
+> +		 * You don't want to do that.
+> +		 */
+> +		if (vq->private_data) {
+> +			r = -EBUSY;
+> +			break;
+> +		}
+> +		if (copy_from_user(&s, argp, sizeof(s))) {
+> +			r = -EFAULT;
+> +			break;
+> +		}
+> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
+> +			wrap_counter = s.num >> 31;
+> +			s.num &= ~(1 << 31);
+> +		}
+> +		if (s.num > 0xffff) {
+> +			r = -EINVAL;
+> +			break;
+> +		}
 
-This doesn't scale if you have 2 instances.
+Do we want to put wrap_counter at bit 15?
 
-> +static int cpu_pd_power_off(struct generic_pm_domain *domain)
-> +{
-> +	if (rpmh_ctrlr_idle(cpu_pd_dev)) {
+If put wrap_counter at bit 31, the check (s.num > 0xffff)
+won't be able to catch the illegal index 0x8000~0xffff for
+packed ring.
 
-How is this expected to compile ? I couldn't find any instance of this.
+> +		vq->last_used_idx = s.num;
+> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> +			vq->last_used_wrap_counter = wrap_counter;
+> +		break;
+> +	case VHOST_GET_VRING_USED_BASE:
 
-> +		/* Flush the sleep/wake sets */
-> +		rpmh_flush(cpu_pd_dev);
+Do we need the new VHOST_GET_VRING_USED_BASE and
+VHOST_SET_VRING_USED_BASE ops?
 
-So it's just flushing the pending requests on the controller. The function
-implementation carries a note that it's assumed to be called only from
-system PM and we may call it in cpu idle path here. Is that fine ?
-If so, may be the comment needs to be dropped.
+We are going to merge below series in DPDK:
 
-Also, where exactly this voting for CPU is happening in this path ?
+http://patches.dpdk.org/patch/45874/
 
-> +	} else {
-> +		pr_debug("rpmh controller is busy\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cpu_pm_domain_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct generic_pm_domain *cpu_pd;
-> +	int ret = -EINVAL, cpu;
-> +
-> +	if (!np) {
-> +		dev_err(dev, "device tree node not found\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (!of_find_property(np, "#power-domain-cells", NULL)) {
-> +		pr_err("power-domain-cells not found\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	cpu_pd_dev = &pdev->dev;
-> +	if (IS_ERR_OR_NULL(cpu_pd_dev))
+We may need to reach an agreement first.
 
-Isn't this too late to check ? You would have crashed on dev->of_node.
-So sounds pretty useless
 
-> +		return PTR_ERR(cpu_pd_dev);
-> +
-> +	cpu_pd = devm_kzalloc(dev, sizeof(*cpu_pd), GFP_KERNEL);
-> +	if (!cpu_pd)
-> +		return -ENOMEM;
-> +
-> +	cpu_pd->name = kasprintf(GFP_KERNEL, "%s", np->name);
-> +	if (!cpu_pd->name)
-> +		goto free_cpu_pd;
-> +	cpu_pd->name = kbasename(cpu_pd->name);
-> +	cpu_pd->power_off = cpu_pd_power_off;
-
-If some kind of voting is done in off, why is there nothing to take care
-of that in pd_power_on  if it's per EL(linux/hyp/secure).
-
---
-Regards,
-Sudeep
+> +		s.index = idx;
+> +		s.num = vq->last_used_idx;
+> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+> +			s.num |= vq->last_used_wrap_counter << 31;
+>  		if (copy_to_user(argp, &s, sizeof s))
+>  			r = -EFAULT;
+>  		break;
+[...]
