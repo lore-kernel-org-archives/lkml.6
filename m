@@ -2,135 +2,294 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB7C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278E5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A33820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B4520868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:48:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qxSRSl+w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A33820868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t91u6D/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B4520868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbeJLTT6 (ORCPT
+        id S1728437AbeJLTUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:19:58 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:47053 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeJLTT6 (ORCPT
+        Fri, 12 Oct 2018 15:20:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45470 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJLTUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:19:58 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n11-v6so13019051wru.13;
-        Fri, 12 Oct 2018 04:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DBhIKX0Co8MrWBtqcLwJBv8UaQ45Pc2j6GUQwu2qKeo=;
-        b=qxSRSl+w72uSOakrxLpJxdGBmianI3mzljT4e19diq7oiXnsmPrfF+RHQ6/+6n297n
-         gKl5ISkWoEBO7RddCdcfum1xQyzDjmGWZsALAEh8bwmRHXWRvXrwwnE8x7ugmlLovvD8
-         bTrgkp6c8VlsWlRLyQ35GtgOiZrGyAn9/Bn2KNsG3b+gEszPw2Z5N0w+rLotjNHNaVIw
-         PU8tcT7mKgri2Sv7ykNDWKT/IbYAPcx+toT+38eXTdYT3Aft1ksn8z1XlTDyPshE8lBT
-         sVuUsW1SEAgU0uVLCTUWz6aaTvboMsLFpU/58+BxzxGG9LUd0yQaLqLZcYvgONiYV0sY
-         4hWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DBhIKX0Co8MrWBtqcLwJBv8UaQ45Pc2j6GUQwu2qKeo=;
-        b=iNC1NJYh9gNhJ+xsA7ggRccvTnSl/xo2oxnFnVUQPStwXO4f+tldwhbFOk+0MBdoYQ
-         lJN+S+8MwLYPLs0L0Yvv7e36JB2vlmQoIzn57uzZV5tVgcB++aHS2VdOeab/06WkRgqs
-         xuT7Dpb/P4HXVB/mGTcoQk2+0Y7rYxLLEWGS92QhLtrKKvdDD/rXPPe7lIcxIj41FR+p
-         5YaJ8LSxBocQXkqRAgqeUSfmXSASbTM2X5PMJ+IbL+xhEtigDgyB4YAok6jHf+pv+hg6
-         3gK63NRQYuFinWRexQhNRpBd5kt0y7gaAZm9FnZ8GYGzsWka/Zu8pwEpDoTed5OvlDW3
-         JIfw==
-X-Gm-Message-State: ABuFfoj+11/dic81Us6RmPx0u6zOwB8uaWQsC9XqDaQyYC89lYyrDgir
-        yYJ4ZhhEx2dz9hxdQfqULAY=
-X-Google-Smtp-Source: ACcGV605AFO5S7ZYlJaKoI2PckyBgM4p3SnjwW3uxtICzm61FBgnoh9jrMBe9r2f4FqoHnzNGLHYsQ==
-X-Received: by 2002:adf:f6c4:: with SMTP id y4-v6mr5400556wrp.79.1539344871471;
-        Fri, 12 Oct 2018 04:47:51 -0700 (PDT)
-Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm1006444wrb.30.2018.10.12.04.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 04:47:50 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 13:47:49 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     linux-pwm@vger.kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathan@marek.ca, ctatlor97@gmail.com
-Subject: Re: [PATCH v2 0/3] treewide: add vibrator support for various MSM
- SOCs
-Message-ID: <20181012114749.GC31561@ulmo>
-References: <20180926235112.25710-1-masneyb@onstation.org>
+        Fri, 12 Oct 2018 15:20:04 -0400
+Received: from [10.250.110.10] (89-145-231-171.xdsl.murphx.net [89.145.231.171])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 546A31258;
+        Fri, 12 Oct 2018 13:47:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539344877;
+        bh=rpOpKKeIpyQO9zo7lNBvq+Jp5w6s8SnyAP5Eu6PTqjI=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=t91u6D/xGLcn83WKySoEM4HtUD0wLqo9CilcU+DblIyJ0vfPIsDTAHEF3Wxk5q1vF
+         8pYJjKjBuQ+c5XWL6RL5ZL70lSMumtCKbJ0sGZyCP+zC12+A28jvDwmCqxxemikXtf
+         D4xEWmR85FvH4hV4JDHbZEKeHl+JeIR/qt5i8H3Q=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
+ driver
+To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-5-vz@mleia.com> <20181012060314.GU4939@dell>
+ <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
+ <20181012083924.GW4939@dell>
+ <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
+ <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
+Date:   Fri, 12 Oct 2018 12:47:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
-Content-Disposition: inline
-In-Reply-To: <20180926235112.25710-1-masneyb@onstation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vladimir,
 
---wxDdMuZNg1r63Hyj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/10/18 11:58, Vladimir Zapolskiy wrote:
+> Hi Kieran,
+> 
+> On 10/12/2018 12:20 PM, Kieran Bingham wrote:
+>> Hi Vladimir,
+>>
+>> On 12/10/18 09:39, Lee Jones wrote:
+>>> On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
+>>>> On 10/12/2018 09:03 AM, Lee Jones wrote:
+>>>>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+>>>>>
+>>>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>>>>>
+>>>>>> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
+>>>>>> support of subdevice controllers is done in separate drivers, because
+>>>>>> not all IC functionality may be needed in particular situations, and
+>>>>>> this can be fine grained controlled in device tree.
+>>>>>>
+>>>>>> The development of the driver was a collaborative work, the
+>>>>>> contribution done by Balasubramani Vivekanandan includes:
+>>>>>> * original implementation of the driver based on a reference driver,
+>>>>>> * regmap powered interrupt controller support on serializers,
+>>>>>> * support of implicitly or improperly specified in device tree ICs,
+>>>>>> * support of device properties and attributes: backward compatible
+>>>>>>   mode, low frequency operation mode, spread spectrum clock generator.
+>>>>>>
+>>>>>> Contribution by Steve Longerbeam:
+>>>>>> * added ds90ux9xx_read_indirect() function,
+>>>>>> * moved number of links property and added ds90ux9xx_num_fpd_links(),
+>>>>>> * moved and updated ds90ux9xx_get_link_status() function to core driver,
+>>>>>> * added fpd_link_show device attribute.
+>>>>>>
+>>>>>> Sandeep Jain added support of pixel clock edge configuration.
+>>>>>>
+>>>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>>>>> ---
+>>>>>>  drivers/mfd/Kconfig           |  14 +
+>>>>>>  drivers/mfd/Makefile          |   1 +
+>>>>>>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
+>>>>>>  include/linux/mfd/ds90ux9xx.h |  42 ++
+>>>>>>  4 files changed, 936 insertions(+)
+>>>>>>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
+>>>>>>  create mode 100644 include/linux/mfd/ds90ux9xx.h
+>>>>>>
+>>>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>>>>>> index 8c5dfdce4326..a969fa123f64 100644
+>>>>>> --- a/drivers/mfd/Kconfig
+>>>>>> +++ b/drivers/mfd/Kconfig
+>>>>>> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
+>>>>>>  	  boards.  MSP430 firmware manages resets and power sequencing,
+>>>>>>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
+>>>>>>  
+>>>>>> +config MFD_DS90UX9XX
+>>>>>> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
+>>>>>> +	depends on I2C && OF
+>>>>>> +	select MFD_CORE
+>>>>>> +	select REGMAP_I2C
+>>>>>> +	help
+>>>>>> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
+>>>>>> +
+>>>>>> +	  This driver provides basic support for setting up the de-/serializer
+>>>>>> +	  chips. Additional functionalities like connection handling to
+>>>>>> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
+>>>>>> +	  controller and so on are provided by separate drivers and should
+>>>>>> +	  enabled individually.
+>>>>>
+>>>>> This is not an MFD driver.
+>>>>
+>>>> Why do you think so? The representation of the ICs into device tree format
+>>>> of hardware description shows that this is a truly MFD driver with multiple
+>>>> IP subcomponents naturally mapped into MFD cells.
+>>>
+>>> This driver does too much real work ('stuff') to be an MFD driver.
+>>> MFD drivers should not need to care of; links, gates, modes, pixels,
+>>> frequencies maps or properties.  Nor should they contain elaborate
+>>> sysfs structures to control the aforementioned 'stuff'.
+>>>
+>>> Granted, there may be some code in there which could be appropriate
+>>> for an MFD driver.  However most of it needs moving out into a
+>>> function driver (or two).
+>>>
+>>>> Basically it is possible to replace explicit of_platform_populate() by
+>>>> adding a "simple-mfd" compatible, if it is desired.
+>>>>
+>>>>> After a 30 second Google of what this device actually does, perhaps
+>>>>> drivers/media might be a better fit?
+>>>>
+>>>> I assume it would be quite unusual to add a driver with NO media functions
+>>>> and controls into drivers/media.
+>>>
+>>> drivers/media may very well not be the correct place for this.  In my
+>>> 30 second Google, I saw that this device has a lot to do with cameras,
+>>> hence my media association.
+>>>
+>>> If *all* else fails, there is always drivers/misc, but this should be
+>>> avoided if at all possible.
+>>
+>> The device as a whole is FPD Link for camera devices I believe, but it
+> 
+> I still don't understand (I could be biased though) why there is such
+> a strong emphasis on cameras and media stuff in the discussion.
+> 
+> No, "the device as a whole is FPD Link for camera devices" is a wrong
+> statement. On hand I have a number of boards with serializers/deserializers
+> from the TI DS90Ux9xx IC series and sensors are NOT connected to them.
 
-On Wed, Sep 26, 2018 at 07:51:09PM -0400, Brian Masney wrote:
-> This patch set adds support for the vibrator found on various Qualcomm
-> MSM SOCs. This is based on work from:
->=20
-> Jonathan Marek from qcom,pwm-vibrator.c in the PostmarketOS repo:
-> https://gitlab.com/postmarketOS/linux-postmarketos/commit/7647fb36cb1cbd0=
-60f8b52087a68ab93583292b5
->=20
-> Jongrak Kwon and Devin Kim from msm_pwm_vibrator.c in the downstream
-> Android 3.4.0 sources:
-> https://android.googlesource.com/kernel/msm/+/android-msm-lenok-3.10-loll=
-ipop-wear-release/drivers/misc/msm_pwm_vibrator.c
->=20
-> Driver was tested on a LG Nexus 5 (hammerhead) phone using rumble-test:
-> https://git.collabora.com/cgit/user/sre/rumble-test.git/plain/rumble-test=
-=2Ec
 
-Looking at all of this it seems like this would be more appropriately
-implemented as a force-feedback input device directly. The only reason
-you seem to be making this a PWM driver is so that it can be used in
-conjunction with pwm-vibrator. The device itself doesn't seem to be a
-generic PWM in the way that the PWM framework expects it.
+Yes - My apologies, this is a good point.
 
-Thierry
+Especially as the clue is in the name "Flat Panel Display".
+I have been stuck with my GMSL hat on for too long.
 
---wxDdMuZNg1r63Hyj
-Content-Type: application/pgp-signature; name="signature.asc"
+Even GMSL is in the same boat. It's just that 'we' are using GMSL for
+cameras, but it can be used equally for displays and data.
 
------BEGIN PGP SIGNATURE-----
+These devices are serialiser-deserialiser pairs with power and control
+paths.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAieUACgkQ3SOs138+
-s6Edag//XmsTS/HXwJuq0xpBLVXaiqwnPyZAd64I2AhPdhysIBxVktH/+Bj8+Rt4
-XnRe3nksdvLciKBE2k88d4ZSVr2V3tyOHStXpQ9PS/7PhT7dzSfgXrlx4TtAiw86
-lCttOns77DoI6aDMEHWaLHl5nfof0OUasE37zxC8TsJlDmZZF2YevVlkNIqZNaV/
-htDNlMXOuldwpc6eqjRdQFgPF4jHpQBavFuUFy0rCxTzzwOoFxowWamA32BEUNT2
-pNB6SrKjiZkhboGXNCOcWqTDfzPxUJayBWTMFswU73+HzVphpbSVylei7SS7qdcd
-Uy7fM96A83eOQpwY1DKJUXoO8CA41ZRmtv5Ltu5WPwU6FeqzpnfFy/VWI2kIjhKP
-5x/6Mtumh6AIRkIwUDPfiLhalGDvfkuV8MbduXyZrZptmLF4svWUgSxkhC6SClsx
-rdwzj5PhVh9yLjhWHQYH95+dfaKOuw5/5CbON3VOl69msNCcaTP9asyL/MRDzGWe
-G8RekvDWHgfqW07Ichp3BPK6tYpbmAgE5fn5zOGCU9kkz+6Soe43ajhJWK1tXuPZ
-OGZEDdsOr60b+EKZg8Yi0+BYBbIjDEPBO47EC9SOs7shsLN6CreIJefm9o4FHyEY
-IkLiNPsbeGCifxgl4Zk6835MabDBHaiQ6cu+javUoFzCqIRGVWU=
-=yKT2
------END PGP SIGNATURE-----
+Essentially they are multi purpose buses - which do not yet have a home.
+We have used media as a home because of our use case.
 
---wxDdMuZNg1r63Hyj--
+The use case whether they transfer frames from a camera or to a display
+are of course closely related, but ultimately covered by two separate
+subsystems at the pixel level (DRM vs V4L, or other for other data)
+
+Perhaps as they are buses - on a level with USB or I2C (except they can
+of course carry I2C or Serial as well as 'bi-directional video' etc ),
+they are looking for their own subsystem.
+
+Except I don't think we don't want to add a new subsystem for just one
+(or two) devices...
+
+--
+Kieran
+
+
+
+
+>> certainly has different functions which are broken out in this
+>> implementation.
+> 
+> No, there is absolutely nothing broken out from the presented MFD drivers,
+> the drivers are completely integral and basically I don't expect any.
+> 
+> If you are concerned about media functionality, the correspondent MFD
+> *cell* drivers will be added into drivers/media, drivers/gpu/drm or
+> whatever is to be a proper place.
+> 
+>> I think it might be quite awkward having the i2c components in
+>> drivers/i2c and the media components in drivers/media/i2c, so what about
+>> creating drivers/media/i2c/fpd-link (or such) as a container?
+> 
+> I open drivers/media/i2c/Kconfig and all entries with no exception are
+> under from 'if VIDEO_V4L2'. The MFD drivers do NOT require on depend on
+> VIDEO_V4L2 or any other multimedia frameworks, nor the MFD drivers export
+> any multimedia controls.
+> 
+>> Our GMSL implementation is also a complex camera(s) device - but does
+>> not yet use the MFD framework, perhaps that's something to add to my
+>> todo list.
+>>
+> 
+> Okay, but the TI DS90Ux9xx is NOT a camera device, and it is NOT a multimedia
+> device, but it is a pure MFD device so the argument is not applicable.
+> 
+>> We currently keep all of the complexity within the max9286.c driver, but
+>> I could foresee that being split further if more devices add to the
+>> complexity of managing the bus. At which point we might want an
+>> equivalent drivers/media/i2c/gmsl/ perhaps?
+>>
+> 
+> --
+> Best wishes,
+> Vladimir
+> 
+>>>> Laurent, can you please share your opinion?
+>>
