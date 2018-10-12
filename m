@@ -2,157 +2,160 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EE0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769EEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6202086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:45:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="NBcp3ZqQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6202086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mork.no
+	by mail.kernel.org (Postfix) with ESMTP id 1E4EB2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 10:47:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4EB2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeJLSRI (ORCPT
+        id S1727838AbeJLSTH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:17:08 -0400
-Received: from canardo.mork.no ([148.122.252.1]:43819 "EHLO canardo.mork.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJLSRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:17:07 -0400
-Received: from miraculix.mork.no ([IPv6:2a02:2121:30d:eedc:c8fa:53ff:fe7c:53d8])
+        Fri, 12 Oct 2018 14:19:07 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:17360 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbeJLSTG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:19:06 -0400
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9CAl9Oj014651;
+        Fri, 12 Oct 2018 19:47:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Fri, 12 Oct 2018 19:47:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
         (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id w9CAj3SM007864
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 12 Oct 2018 12:45:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1539341105; bh=JBznSEKUii9lq/dT1QSymWGDarAORjbzd01/9hVJJho=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=NBcp3ZqQqkekB3vEguOvIIW8vm9Wvz5O65fSyFqppQow4evBQxRKozvXh26jeYk9V
-         hZhM9hCjaN98VjkMCXX6ASlfRYbi733u/XiIijAvynfyEr+46AJkMwElHeTKVqOuCK
-         uTLb5/D9ooLbd4b1phXIwrUaHDeyZhEBAYSLq7KQ=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
-        (envelope-from <bjorn@mork.no>)
-        id 1gAuwD-0007nm-PJ; Fri, 12 Oct 2018 12:44:57 +0200
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@lists.codethink.co.uk, gregkh@linuxfoundation.org,
-        steve.glendinning@shawell.net
-Subject: Re: [PATCH 4/7] net: qmi_wwan: add usbnet -> priv function
-Organization: m
-References: <20181012091642.21294-1-ben.dooks@codethink.co.uk>
-        <20181012091642.21294-5-ben.dooks@codethink.co.uk>
-Date:   Fri, 12 Oct 2018 12:44:57 +0200
-In-Reply-To: <20181012091642.21294-5-ben.dooks@codethink.co.uk> (Ben Dooks's
-        message of "Fri, 12 Oct 2018 10:16:39 +0100")
-Message-ID: <87woqn30ly.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9CAl3GV014603
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 12 Oct 2018 19:47:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
+ without eligible tasks
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Michal Hocko <mhocko@kernel.org>, hannes@cmpxchg.org
+Cc:     linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        Michal Hocko <mhocko@suse.com>, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com
+References: <000000000000dc48d40577d4a587@google.com>
+ <20181010151135.25766-1-mhocko@kernel.org>
+ <201810110637.w9B6b9eH044188@www262.sakura.ne.jp>
+Message-ID: <7bb967ec-81ae-2c07-7e58-9ad23167bb66@i-love.sakura.ne.jp>
+Date:   Fri, 12 Oct 2018 19:47:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.100.1 at canardo
-X-Virus-Status: Clean
+In-Reply-To: <201810110637.w9B6b9eH044188@www262.sakura.ne.jp>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben Dooks <ben.dooks@codethink.co.uk> writes:
+On 2018/10/11 15:37, Tetsuo Handa wrote:
+> Michal Hocko wrote:
+>> Once we are here, make sure that the reason to trigger the OOM is
+>> printed without ratelimiting because this is really valuable to
+>> debug what happened.
+> 
+> Here is my version.
+> 
 
-> +static inline struct qmi_wwan_state *usbnet_to_qmi(struct usbnet *usb)
-> +{
-> +	return (void *) &usb->data;
-> +}
+Hmm, per mem_cgroup flag would be better than per task_struct flag.
 
+From 5e80805e4988f23372a3b352fd4185e6bad53f58 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Fri, 12 Oct 2018 16:24:49 +0900
+Subject: [PATCH v2] mm: memcontrol: Don't flood OOM messages with no eligible task.
 
-checkpatch doesn't like this, and it is also inconsistent with the
-coding style elsewhere in the driver.
+syzbot is hitting RCU stall at shmem_fault() [1].
+This is because memcg-OOM events with no eligible task (current thread
+is marked as OOM-unkillable) continued calling dump_header() from
+out_of_memory() enabled by commit 3100dab2aa09dc6e ("mm: memcontrol:
+print proper OOM header when no eligible victim left.").
 
-CHECK: No space is necessary after a cast
-#30: FILE: drivers/net/usb/qmi_wwan.c:81:
-+       return (void *) &usb->data;
+Let's make sure that next dump_header() waits for at least 60 seconds from
+previous "Out of memory and no killable processes..." message, if requested
+memcg already reported it. This change allows threads in requested memcg to
+complete memory allocation requests for doing recovery operation, and also
+allows us to know whether threads in requested memcg is doing recovery
+operation.
 
-total: 0 errors, 0 warnings, 1 checks, 115 lines checked
+[1] https://syzkaller.appspot.com/bug?id=4ae3fff7fcf4c33a47c1192d2d62d2e03efffa64
 
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/memcontrol.h |  3 +++
+ mm/oom_kill.c              | 23 +++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-And as for consistency:  I realize that "dev" is a very generic name,
-but it's used consistendly for all struct usbnet pointers in the driver:
-
-
-bjorn@miraculix:/usr/local/src/git/linux$ git grep 'struct usbnet' drivers/=
-net/usb/qmi_wwan.c
-drivers/net/usb/qmi_wwan.c:static struct net_device *qmimux_find_dev(struct=
- usbnet *dev, u8 mux_id)
-drivers/net/usb/qmi_wwan.c:static bool qmimux_has_slaves(struct usbnet *dev)
-drivers/net/usb/qmi_wwan.c:static int qmimux_rx_fixup(struct usbnet *dev, s=
-truct sk_buff *skb)
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D netdev_priv(net);
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D netdev_priv(to_net_d=
-ev(d));
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D netdev_priv(to_net_d=
-ev(d));
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D netdev_priv(to_net_d=
-ev(d));
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D netdev_priv(to_net_d=
-ev(d));
-drivers/net/usb/qmi_wwan.c:static int qmi_wwan_rx_fixup(struct usbnet *dev,=
- struct sk_buff *skb)
-drivers/net/usb/qmi_wwan.c:static int qmi_wwan_manage_power(struct usbnet *=
-dev, int on)
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D usb_get_intfdata(int=
-f);
-drivers/net/usb/qmi_wwan.c:static int qmi_wwan_register_subdriver(struct us=
-bnet *dev)
-drivers/net/usb/qmi_wwan.c:static int qmi_wwan_change_dtr(struct usbnet *de=
-v, bool on)
-drivers/net/usb/qmi_wwan.c:static int qmi_wwan_bind(struct usbnet *dev, str=
-uct usb_interface *intf)
-drivers/net/usb/qmi_wwan.c:     BUILD_BUG_ON((sizeof(((struct usbnet *)0)->=
-data) <
-drivers/net/usb/qmi_wwan.c:static void qmi_wwan_unbind(struct usbnet *dev, =
-struct usb_interface *intf)
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D usb_get_intfdata(int=
-f);
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D usb_get_intfdata(int=
-f);
-drivers/net/usb/qmi_wwan.c:     struct usbnet *dev =3D usb_get_intfdata(int=
-f);
-
-The name was chosen to be consistent with the cdc_ether usage. I'd
-prefer it if this function could use the "dev" name, to avoid confusing
-things unnecessarly with yet another generic name like "usb". Which
-isn't used anywhere else in the driver, and could just as easily refer
-to a struct usb_device or struct usb_interface.
-
-(yes, I know there are a couple of "struct usb_device *dev" cases. But
-I'd rather see those renamed TBH)
-
-I also don't see why this function should be qmi_wwan specific. No need
-to duplicate the same function in every minidriver, when you can do with
-two generic helpers (maybe with more meaningful names):
-
-static inline void *usbnet_priv(const struct usbnet *dev)
-{
-        return (void *)&dev->data;
-}
-
-static inline void *usbnet_priv0(const struct usbnet * *dev)
-{
-	return (void *)dev->data[0];
-}
-
-
-Please fix the checkpatch warning and consider the other comments.
-
-Personally I don't really think it makes the code any easier to read.
-But if you want it, then I'm fine this. I guess I've grown too used to
-seeing those casts ;-)
-
-
-Bj=C3=B8rn
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 652f602..8da2340 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -230,6 +230,9 @@ struct mem_cgroup {
+ 	 */
+ 	bool oom_group;
+ 
++	/* Previous OOM-kill request failed due to no eligible task? */
++	bool oom_no_eligible_warned;
++
+ 	/* protected by memcg_oom_lock */
+ 	bool		oom_lock;
+ 	int		under_oom;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..52a8319 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -1106,6 +1106,21 @@ bool out_of_memory(struct oom_control *oc)
+ 	select_bad_process(oc);
+ 	/* Found nothing?!?! */
+ 	if (!oc->chosen) {
++#ifdef CONFIG_MEMCG
++		/*
++		 * Don't flood with dump_header() if already reported, in case
++		 * current->signal->oom_score_adj == OOM_SCORE_ADJ_MIN. Maybe
++		 * this variable should be per "struct mem_cgroup". But since
++		 * we can't prove that multiple concurrent memcg OOM without
++		 * eligible task won't cause flooding, choose global variable
++		 * for safety.
++		 */
++		static u64 last_warned;
++
++		if (is_memcg_oom(oc) && oc->memcg->oom_no_eligible_warned &&
++		    time_before64(get_jiffies_64(), last_warned + 60 * HZ))
++			return false;
++#endif
+ 		dump_header(oc, NULL);
+ 		pr_warn("Out of memory and no killable processes...\n");
+ 		/*
+@@ -1115,6 +1130,14 @@ bool out_of_memory(struct oom_control *oc)
+ 		 */
+ 		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
+ 			panic("System is deadlocked on memory\n");
++#ifdef CONFIG_MEMCG
++		if (is_memcg_oom(oc)) {
++			oc->memcg->oom_no_eligible_warned = true;
++			last_warned = get_jiffies_64();
++		}
++	} else if (is_memcg_oom(oc)) {
++		oc->memcg->oom_no_eligible_warned = false;
++#endif
+ 	}
+ 	if (oc->chosen && oc->chosen != (void *)-1UL)
+ 		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
+-- 
+1.8.3.1
