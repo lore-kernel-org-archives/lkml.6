@@ -2,136 +2,139 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318C5C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DBCC6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0093920835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0093920835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 66D522086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D522086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbeJLWIQ (ORCPT
+        id S1728916AbeJLWJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:08:16 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36549 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbeJLWIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:08:16 -0400
-Received: by mail-oi1-f193.google.com with SMTP id p125-v6so10023833oic.3;
-        Fri, 12 Oct 2018 07:35:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YwVfaSO92we1ZAmc6v9BDIq47cpl1Ky0G9WYjwEqf/M=;
-        b=Ks1aTrUtE04q8xNJIhOG+u7SS15JOsASPX1qLf8jq0NPvmCbXAaq+T16Etw/kWY8OT
-         zwY5eyrX4gYiYxM1S//tXjc4jNcRXLLkKVUQ71eSDk5lfK0GOnlk2Q0fml4UkM4LxQU7
-         eDkmDMBkaxntHnb3i847TtnQYeYC8I/D+5fXyDYaYyK5IDGmZQOgti9hELFueQDZfkjJ
-         1Z/t3Uimfg47U/GtD6Q4IP/1M+nEM7o4J91+vVNEWJ/0qHrfnxtXR1dzibU705SN8M/5
-         dceg/Wp6mvE9RMXcqudiNaGPQKz1VoNBjTJ/3CLVfXXURepl6xBTPWi9KIFZ7uOU63Ux
-         kI2Q==
-X-Gm-Message-State: ABuFfohX0nebgR5B0DEJW3CVkEKRXicQijzyYClwXvxHqikyOw3OW6bo
-        QcVqxdwqryBbs8kcd7eSiA==
-X-Google-Smtp-Source: ACcGV63GIgonsYiwULSItOPSBLFH8ounXwg9OcflTgmtDQ4JgjQ9PCPCOHQRjK/1korhcOo9cHWROg==
-X-Received: by 2002:aca:704:: with SMTP id 4-v6mr3148770oih.119.1539354932180;
-        Fri, 12 Oct 2018 07:35:32 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 31-v6sm369846ota.23.2018.10.12.07.35.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 07:35:31 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 09:35:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     sre@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yuanjiang.yu@unisoc.com, broonie@kernel.org, ctatlor97@gmail.com,
-        linus.walleij@linaro.org
-Subject: Re: [PATCH v3 2/4] power: supply: core: Introduce properties to
- present the battery OCV capacity table
-Message-ID: <20181012143530.GA28145@bogus>
-References: <2787f18a0366576959557d05112a069dca982269.1538033078.git.baolin.wang@linaro.org>
- <7dccec1694a05a524710e59a63859974b4cdae89.1538033078.git.baolin.wang@linaro.org>
+        Fri, 12 Oct 2018 18:09:26 -0400
+Received: from mleia.com ([178.79.152.223]:33586 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728354AbeJLWJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:09:26 -0400
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id A30EB41F88C;
+        Fri, 12 Oct 2018 15:36:40 +0100 (BST)
+Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link
+ connection driver
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181008211205.2900-1-vz@mleia.com> <20181012060455.GV4939@dell>
+ <c8f01b88-c14f-867d-d796-7464b2e8ccfb@mentor.com> <1584081.CVFmJobd6K@avalon>
+From:   Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
+Date:   Fri, 12 Oct 2018 17:36:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7dccec1694a05a524710e59a63859974b4cdae89.1538033078.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1584081.CVFmJobd6K@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20181012_153640_691231_9082FA3D 
+X-CRM114-Status: GOOD (  24.34  )
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 03:26:55PM +0800, Baolin Wang wrote:
-> Some battery driver will use the open circuit voltage (OCV) value to look
-> up the corresponding battery capacity percent in one certain degree Celsius.
-> Thus this patch provides some battery properties to present the OCV table
-> temperatures and OCV capacity table values. Moreover it also provides some
-> helper functions to use the OCV capacity table for users.
+Hi Laurent
+
+On 10/12/2018 04:12 PM, Laurent Pinchart wrote:
+> Hi Vladimir,
 > 
-> Suggested-by: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Changes from v2:
->  - Use type __be32 to calculate the table length.
->  - Update error messages.
->  - Add some helper functions.
+> (CC'ing Wolfram)
 > 
-> Changes from v1:
->  - New patch in v2.
-> ---
->  .../devicetree/bindings/power/supply/battery.txt   |   14 +++
-
-Please split binding patches.
-
->  drivers/power/supply/power_supply_core.c           |  125 +++++++++++++++++++-
->  include/linux/power_supply.h                       |   19 +++
->  3 files changed, 157 insertions(+), 1 deletion(-)
+> On Friday, 12 October 2018 10:32:32 EEST Vladimir Zapolskiy wrote:
+>> On 10/12/2018 09:04 AM, Lee Jones wrote:
+>>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>>>
+>>>> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
+>>>> FPD Link connection handling mechanism.
+>>>>
+>>>> Access to I2C devices connected to a remote de-/serializer is done in
+>>>> a transparent way, on established link detection event such devices
+>>>> are registered on an I2C bus, which serves a local de-/serializer IC.
+>>>>
+>>>> The development of the driver was a collaborative work, the
+>>>> contribution done by Balasubramani Vivekanandan includes:
+>>>> * original simplistic implementation of the driver,
+>>>> * support of implicitly specified devices in device tree,
+>>>> * support of multiple FPD links for TI DS90Ux9xx,
+>>>> * other kind of valuable review comments, clean-ups and fixes.
+>>>>
+>>>> Also Steve Longerbeam made the following changes:
+>>>> * clear address maps after linked device removal,
+>>>> * disable pass-through in disconnection,
+>>>> * qualify locked status with non-zero remote address.
+>>>>
+>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>>> ---
+>>>>
+>>>>  drivers/mfd/Kconfig                |   8 +
+>>>>  drivers/mfd/Makefile               |   1 +
+>>>>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
+>>>>  3 files changed, 773 insertions(+)
+>>>>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
+>>>
+>>> Shouldn't this live in drivers/i2c?
+>>
+>> no, the driver is not for an I2C controller of any kind, and the driver does
+>> not register itself in the I2C subsystem by calling i2c_add_adapter() or
+>> i2c_add_numbered_adapter() or i2c_mux_add_adapter() etc, this topic was
+>> discussed with Wolfram also.
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
-> index 938d027..cad38df 100644
-> --- a/Documentation/devicetree/bindings/power/supply/battery.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/battery.txt
-> @@ -23,6 +23,16 @@ Optional Properties:
->   - constant-charge-current-max-microamp: maximum constant input current
->   - constant-charge-voltage-max-microvolt: maximum constant input voltage
->   - factory-internal-resistance-micro-ohms: battery factory internal resistance
-> + - ocv-capacity-table-0: An array providing the battery capacity percent
-> +   with corresponding open circuit voltage (OCV) of the battery, which
-> +   is used to look up battery capacity according to current OCV value.
-> + - ocv-capacity-table-1: Same as ocv-capacity-table-0
-> + ......
-> + - ocv-capacity-table-n: Same as ocv-capacity-table-0
+> (Who is now on CC)
+> 
 
-So it is tubles of (percent, voltage)? What's the units for voltage?
+Wolfram has copies of the drivers and discussion right from the beginning,
+hopefully he won't get two copies ;)
 
-What determines the # of entries for each table? Do all tables have the 
-same number of entries?
+>> Formally the driver converts the managed IC into a multi-address I2C
+>> slave device, I understand that it does not sound like a well suited driver
+>> for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers are quite
+>> tightly coupled.
+> 
+> As mentioned in other e-mails in this thread I don't think this should be 
+> split out to a separate driver,> I would move the functionality to the 
+> ds90ux9xx driver.
 
-> + - ocv-capacity-table-temperatures: An array containing the temperature
-> +   in degree Celsius, for each of the battery capacity lookup table.
-> +   The first temperature value specifies the OCV table 0, and the second
-> +   temperature value specifies the OCV table 1, and so on.
+The proposal may have the grounds, but the I2C bridging functionality of ICs
+is quite detached from all other ones, thus it found its place in the cell
+driver per se.
 
-This should have unit suffix. Perhaps just "ocv-capacity-celsius" to 
-avoid being too long.
+> You may want to register an I2C mux, but as you have a single port, that
+> could be overkill. I haven't studied in details how to best support this
+> chip using the existing I2C subsystems APIs (which we may want to extend
+> if it needed), but I believe that (in your use cases) the deserializer
+> should be a child of the serializer, and modeled as an I2C device.
+> 
 
->  Battery properties are named, where possible, for the corresponding
->  elements in enum power_supply_property, defined in
-> @@ -44,6 +54,10 @@ Example:
->  		constant-charge-current-max-microamp = <900000>;
->  		constant-charge-voltage-max-microvolt = <4200000>;
->  		factory-internal-resistance-micro-ohms = <250000>;
-> +		ocv-capacity-table-temperatures = <(-10) 0 10>;
-> +		ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>, ...;
-> +		ocv-capacity-table-1 = <4200000 100>, <4185000 95>, <4113000 90>, ...;
-> +		ocv-capacity-table-2 = <4250000 100>, <4200000 95>, <4185000 90>, ...;
->  	};
->  
->  	charger: charger@11 {
+Formally in OF terms to define a link between devices by a phandle should
+be sufficient, panels are not the children of LVDS controllers under OF graph
+constraints in DT representation, the panels become secondary in runtime
+only, I'd like to reuse the concept. Also it adds a better sense of symmetry
+of deserializer <-> serializer connections relatively to a SoC/data source.
+
+--
+Best wishes,
+Vladimir
