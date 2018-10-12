@@ -2,142 +2,328 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015F6C67877
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEFEC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA90A2087D
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA90A2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 828A32087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828A32087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeJMBfY (ORCPT
+        id S1727473AbeJMBf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:35:24 -0400
-Received: from mga09.intel.com ([134.134.136.24]:30365 "EHLO mga09.intel.com"
+        Fri, 12 Oct 2018 21:35:27 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48898 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbeJMBfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:35:24 -0400
+        id S1726134AbeJMBf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:35:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:01:43 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 11:01:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,373,1534834800"; 
-   d="scan'208";a="265201463"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga005.jf.intel.com with ESMTP; 12 Oct 2018 11:01:42 -0700
-To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+   d="scan'208";a="87908312"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by FMSMGA003.fm.intel.com with ESMTP; 12 Oct 2018 11:01:45 -0700
+Subject: [PATCH v7 5/7] mm, hmm: Use devm semantics for hmm_devmem_{add,
+ remove}
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>
-References: <44347e72-d595-5c2d-3983-7237526c71c6@oracle.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: Gang scheduling
-Message-ID: <c08136ad-3e68-ce1c-af03-b591acc582fc@linux.intel.com>
-Date:   Fri, 12 Oct 2018 11:01:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+Date:   Fri, 12 Oct 2018 10:49:57 -0700
+Message-ID: <153936659786.1198040.630824016667907174.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <44347e72-d595-5c2d-3983-7237526c71c6@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/10/2018 05:09 PM, Subhra Mazumdar wrote:
-> Hi,
-> 
-> I was following the Coscheduling patch discussion on lkml and Peter mentioned he had a patch series. I found the following on github.
-> 
-> https://github.com/pdxChen/gang/commits/sched_1.23-loadbal
-> 
-> I would like to test this with KVMs. Are the commits from 38d5acb to f019876 sufficient? Also is there any documentaion on how to use it (any knobs I need to turn on for gang scheduling to happen?) or is it enabled by default for KVMs?
-> 
-> Thanks,
-> Subhra
-> 
+devm semantics arrange for resources to be torn down when
+device-driver-probe fails or when device-driver-release completes.
+Similar to devm_memremap_pages() there is no need to support an explicit
+remove operation when the users properly adhere to devm semantics.
 
-I would suggest you try 
-https://github.com/pdxChen/gang/tree/sched_1.23-base
-without the load balancing part of gang scheduling.
-It is enabled by default for KVMs.
+Note that devm_kzalloc() automatically handles allocating node-local
+memory.
 
-Due to the constant change in gang scheduling status of the QEMU thread
-depending on whether vcpu is loaded or unloaded,
-the load balancing part of the code doesn't work very well.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/hmm.h |    4 --
+ mm/hmm.c            |  127 ++++++++++-----------------------------------------
+ 2 files changed, 25 insertions(+), 106 deletions(-)
 
-The current version of the code need to be optimized further.  Right now
-the QEMU thread constantly does vcpu load and unload during VM enter and exit.
-We gang schedule only after vcpu load and register the thread to be gang
-scheduled.  When we do vcpu unload, the thread is removed from the set
-to be gang scheduled.  Each time there's a synchronization with the
-sibling thread that's expensive.
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index dde947083d4e..5888ae9f6abf 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -499,8 +499,7 @@ struct hmm_devmem {
+  * enough and allocate struct page for it.
+  *
+  * The device driver can wrap the hmm_devmem struct inside a private device
+- * driver struct. The device driver must call hmm_devmem_remove() before the
+- * device goes away and before freeing the hmm_devmem struct memory.
++ * driver struct.
+  */
+ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 				  struct device *device,
+@@ -508,7 +507,6 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 					   struct device *device,
+ 					   struct resource *res);
+-void hmm_devmem_remove(struct hmm_devmem *devmem);
+ 
+ /*
+  * hmm_devmem_page_set_drvdata - set per-page driver data field
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 774d684fa2b4..60e4b275ad78 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -939,7 +939,6 @@ static void hmm_devmem_ref_exit(void *data)
+ 
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_exit(ref);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_exit, data);
+ }
+ 
+ static void hmm_devmem_ref_kill(void *data)
+@@ -950,7 +949,6 @@ static void hmm_devmem_ref_kill(void *data)
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_kill(ref);
+ 	wait_for_completion(&devmem->completion);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_kill, data);
+ }
+ 
+ static int hmm_devmem_fault(struct vm_area_struct *vma,
+@@ -988,7 +986,7 @@ static void hmm_devmem_radix_release(struct resource *resource)
+ 	mutex_unlock(&hmm_devmem_lock);
+ }
+ 
+-static void hmm_devmem_release(struct device *dev, void *data)
++static void hmm_devmem_release(void *data)
+ {
+ 	struct hmm_devmem *devmem = data;
+ 	struct resource *resource = devmem->resource;
+@@ -996,11 +994,6 @@ static void hmm_devmem_release(struct device *dev, void *data)
+ 	struct zone *zone;
+ 	struct page *page;
+ 
+-	if (percpu_ref_tryget_live(&devmem->ref)) {
+-		dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+-		percpu_ref_put(&devmem->ref);
+-	}
+-
+ 	/* pages are dead and unused, undo the arch mapping */
+ 	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
+ 	npages = ALIGN(resource_size(resource), PA_SECTION_SIZE) >> PAGE_SHIFT;
+@@ -1126,19 +1119,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+ 	return ret;
+ }
+ 
+-static int hmm_devmem_match(struct device *dev, void *data, void *match_data)
+-{
+-	struct hmm_devmem *devmem = data;
+-
+-	return devmem->resource == match_data;
+-}
+-
+-static void hmm_devmem_pages_remove(struct hmm_devmem *devmem)
+-{
+-	devres_release(devmem->device, &hmm_devmem_release,
+-		       &hmm_devmem_match, devmem->resource);
+-}
+-
+ /*
+  * hmm_devmem_add() - hotplug ZONE_DEVICE memory for device memory
+  *
+@@ -1166,8 +1146,7 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 
+ 	dev_pagemap_get_ops();
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1181,11 +1160,11 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit, &devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+ 	size = ALIGN(size, PA_SECTION_SIZE);
+ 	addr = min((unsigned long)iomem_resource.end,
+@@ -1205,16 +1184,12 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 
+ 		devmem->resource = devm_request_mem_region(device, addr, size,
+ 							   dev_name(device));
+-		if (!devmem->resource) {
+-			ret = -ENOMEM;
+-			goto error_no_resource;
+-		}
++		if (!devmem->resource)
++			return ERR_PTR(-ENOMEM);
+ 		break;
+ 	}
+-	if (!devmem->resource) {
+-		ret = -ERANGE;
+-		goto error_no_resource;
+-	}
++	if (!devmem->resource)
++		return ERR_PTR(-ERANGE);
+ 
+ 	devmem->resource->desc = IORES_DESC_DEVICE_PRIVATE_MEMORY;
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+@@ -1223,28 +1198,13 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_pages;
+-
+-	devres_add(device, devmem);
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_pages:
+-	devm_release_mem_region(device, devmem->resource->start,
+-				resource_size(devmem->resource));
+-error_no_resource:
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add);
+ 
+@@ -1260,8 +1220,7 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 
+ 	dev_pagemap_get_ops();
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1275,12 +1234,12 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit,
++			&devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
+-
++		return ERR_PTR(ret);
+ 
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+ 	devmem->pfn_last = devmem->pfn_first +
+@@ -1288,59 +1247,21 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+-	devres_add(device, devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_kill,
++			&devmem->ref);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add_resource);
+ 
+-/*
+- * hmm_devmem_remove() - remove device memory (kill and free ZONE_DEVICE)
+- *
+- * @devmem: hmm_devmem struct use to track and manage the ZONE_DEVICE memory
+- *
+- * This will hot-unplug memory that was hotplugged by hmm_devmem_add on behalf
+- * of the device driver. It will free struct page and remove the resource that
+- * reserved the physical address range for this device memory.
+- */
+-void hmm_devmem_remove(struct hmm_devmem *devmem)
+-{
+-	resource_size_t start, size;
+-	struct device *device;
+-	bool cdm = false;
+-
+-	if (!devmem)
+-		return;
+-
+-	device = devmem->device;
+-	start = devmem->resource->start;
+-	size = resource_size(devmem->resource);
+-
+-	cdm = devmem->resource->desc == IORES_DESC_DEVICE_PUBLIC_MEMORY;
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-	hmm_devmem_pages_remove(devmem);
+-
+-	if (!cdm)
+-		devm_release_mem_region(device, start, size);
+-}
+-EXPORT_SYMBOL(hmm_devmem_remove);
+-
+ /*
+  * A device driver that wants to handle multiple devices memory through a
+  * single fake device can use hmm_device to do so. This is purely a helper
 
-However, for QEMU, there's a one to one correspondence between the QEMU
-thread and vcpu.  So we don't have to change the gang scheduling status
-for such thread to avoid the church and sync with the sibling. That should
-be helpful for VM with lots of I/O causing constant VM exits.  We're
-still working on this optimization.  And the load balancing should be
-better after this change.
-
-Tim
