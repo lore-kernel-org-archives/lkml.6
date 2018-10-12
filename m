@@ -2,264 +2,145 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35708C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12C1C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E797C20645
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:04:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jyMX2hzp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E797C20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 8214C20865
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 15:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8214C20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbeJLWhG (ORCPT
+        id S1729060AbeJLWh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:37:06 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:59979 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbeJLWhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:37:06 -0400
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w9CF3Jrb020441;
-        Sat, 13 Oct 2018 00:03:20 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w9CF3Jrb020441
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539356600;
-        bh=Ijvj8UKDrYTSBMT9G9pTlrMy76MLy0F0jK69xfZQqas=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jyMX2hzp8XmN4JP4yXSa1r9cGSd8I6yeF+b9Ei1mXdsh1uujrfFnjYimbhSyW8HEv
-         5Q8Jl7U8NffTeRrSaBrM5CgG7VqIhPGDLsqYd/+LSRRQQvmkRm1ObYr0PfNwxiB3Sc
-         FNF77HzzdrWP6bAzm9BzvE7qg28ChCbbmHH9tk4EY8PLLAeM+h5uQTT7kvv9By+hhw
-         8f4jCfJgrZ0AKm6fegQ/D14qQOaUNM03pe7BKKVc4dlJNqyLPSSe+ycYFz38XD9OvA
-         eUf5ZWpYyL80r4RduLl/OeGm/cxk0BG+CDFUq3uoRrPtVT2VkD0OM/V3EgTTzApnVy
-         KvM4x5PZTDr5A==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] mmc: tmio: simplify the DMA mode test
-Date:   Sat, 13 Oct 2018 00:03:08 +0900
-Message-Id: <1539356588-18191-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 12 Oct 2018 18:37:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52960 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728786AbeJLWh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:37:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8BCDF;
+        Fri, 12 Oct 2018 08:04:34 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A435F3F5BC;
+        Fri, 12 Oct 2018 08:04:31 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 16:04:29 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
+        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181012150429.GH3401@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181011112013.GC32752@e107155-lin>
+ <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin>
+ <20181011165822.GB2371@codeaurora.org>
+ <20181011173733.GA26447@e107155-lin>
+ <20181011210609.GD2371@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011210609.GD2371@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-host->chan_{rx,tx} represents the DMA capability of the platform.
-Even if DMA is supported, there are cases where we want to use PIO,
-for example, data length is short enough as commit 5f52c3552946
-("mmc: tmio: use PIO for short transfers") mentioned.
+On Thu, Oct 11, 2018 at 03:06:09PM -0600, Lina Iyer wrote:
+> On Thu, Oct 11 2018 at 11:37 -0600, Sudeep Holla wrote:
+[...]
 
-Regarding the hardware control flow, we are interested in whether DMA
-is currently enabled or not, instead of whether the platform has the
-DMA capability.
+> >
+> > Is DDR managed by Linux ? I assumed it was handled by higher exception
+> > levels. Can you give examples of resources used by CPU in this context.
+> > When CPU can be powered on or woken up without Linux intervention, the
+> > same holds true for CPU power down or sleep states. I still see no reason
+> > other than the firmware has no support to talk to RPMH.
+> >
+> DDR, shared clocks, regulators etc. Imagine you are running something on
+> the screen and CPUs enter low power mode, while the CPUs were active,
+> there was a need for bunch of display resources, and things the app may
+> have requested resources, while the CPU powered down the requests may
+> not be needed the full extent as when the CPU was running, so they can
+> voted down to a lower state of in some cases turn off the resources
+> completely. What the driver voted for is dependent on the runtime state
+> and the usecase currently active. The 'sleep' state value is also
+> determined by the driver/framework.
+>
 
-Hence, the several conditionals in tmio_mmc_core.c end up with
-checking host->chan_{rx,tx} and !host->force_pio. This is not nice.
+Why does CPU going down says that another (screen - supposedly shared)
+resource needs to be relinquished ? Shouldn't display decide that on it's
+own ? I have no idea why screen/display is brought into this discussion.
+CPU can just say: hey I am going down and I don't need my resource.
+How can it say: hey I am going down and display or screen also doesn't
+need the resource. On a multi-cluster, how will the last CPU on one know
+that it needs to act on behalf of the shared resource instead of another
+cluster.
 
-Let's flip the flag host->force_pio into host->dma_on.
+I think we are mixing the system sleep states with CPU idle here.
+If it's system sleeps states, the we need to deal it in some system ops
+when it's the last CPU in the system and not the cluster/power domain.
 
-host->dma_on represents whether the DMA is currently enabled or not.
-This flag is set false in the beginning of each command, then should
-be set true by tmio_mmc_start_dma() when the DMA is turned on.
+[...]
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> > Oh interesting, wasn't aware RPMH really needs to care about exception
+> > level. For me, we know CPU is powering down, so it needs to release all
+> > the resource. RPMH needs to know that and any exception level can let
+> > RPMH know that. Sorry may be I don't have enough knowledge on SDM SoC.
+> >
+> Some resources are secure resources used in secure environments. They
+> cannot be requested from non-secure. Hence secure levels are voters of
+> their own accord.
+>
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 ++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 10 ++++------
- drivers/mmc/host/tmio_mmc.h                   |  2 +-
- drivers/mmc/host/tmio_mmc_core.c              | 14 +++++++-------
- drivers/mmc/host/uniphier-sd.c                |  6 ++++--
- 5 files changed, 18 insertions(+), 17 deletions(-)
+I still don't think RPMH can more than refcounting and all I am saying
+is for CPU's EL3 can manage that refcount on behalf of all ELx
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index ca0b439..885676b 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -201,13 +201,14 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
- 					    sg_dma_address(sg));
- 
-+	host->dma_on = true;
-+
- 	return;
- 
- force_pio_with_unmap:
- 	dma_unmap_sg(&host->pdev->dev, sg, host->sg_len, mmc_get_dma_dir(data));
- 
- force_pio:
--	host->force_pio = true;
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
- }
- 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 5389c48..3c97831 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -213,10 +213,8 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN) {
--		host->force_pio = true;
-+	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
- 		return;
--	}
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
-@@ -240,6 +238,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
-+		host->dma_on = true;
- 	}
- pio:
- 	if (!desc) {
-@@ -286,10 +285,8 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN) {
--		host->force_pio = true;
-+	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
- 		return;
--	}
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
-@@ -318,6 +315,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
-+		host->dma_on = true;
- 	}
- pio:
- 	if (!desc) {
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 18b4308..1c3bdad 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -142,7 +142,7 @@ struct tmio_mmc_host {
- 	struct tmio_mmc_data *pdata;
- 
- 	/* DMA support */
--	bool			force_pio;
-+	bool			dma_on;
- 	struct dma_chan		*chan_rx;
- 	struct dma_chan		*chan_tx;
- 	struct tasklet_struct	dma_issue;
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index a571106..38be3fc 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -364,7 +364,7 @@ static void tmio_mmc_pio_irq(struct tmio_mmc_host *host)
- 	unsigned int count;
- 	unsigned long flags;
- 
--	if ((host->chan_tx || host->chan_rx) && !host->force_pio) {
-+	if (host->dma_on) {
- 		pr_err("PIO IRQ in DMA mode!\n");
- 		return;
- 	} else if (!data) {
-@@ -436,7 +436,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	 */
- 
- 	if (data->flags & MMC_DATA_READ) {
--		if (host->chan_rx && !host->force_pio)
-+		if (host->dma_on)
- 			tmio_mmc_check_bounce_buffer(host);
- 		dev_dbg(&host->pdev->dev, "Complete Rx request %p\n",
- 			host->mrq);
-@@ -473,7 +473,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
- 	    stat & TMIO_STAT_TXUNDERRUN)
- 		data->error = -EILSEQ;
--	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
-+	if (host->dma_on && (data->flags & MMC_DATA_WRITE)) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
- 
-@@ -497,7 +497,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
- 			tmio_mmc_dataend_dma(host);
- 		}
--	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
-+	} else if (host->dma_on && (data->flags & MMC_DATA_READ)) {
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
- 		tmio_mmc_dataend_dma(host);
- 	} else {
-@@ -550,7 +550,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	 */
- 	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
--			if (host->force_pio || !host->chan_rx) {
-+			if (!host->dma_on) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
-@@ -558,7 +558,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 				tasklet_schedule(&host->dma_issue);
- 			}
- 		} else {
--			if (host->force_pio || !host->chan_tx) {
-+			if (!host->dma_on) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_WRITEOP);
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
-@@ -688,7 +688,7 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 
- 	tmio_mmc_init_sg(host, data);
- 	host->data = data;
--	host->force_pio = false;
-+	host->dma_on = false;
- 
- 	/* Set transfer length / blocksize */
- 	sd_ctrl_write16(host, CTL_SD_XFER_LEN, data->blksz);
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 1ee9fd0..91a2be4 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -157,13 +157,14 @@ static void uniphier_sd_external_dma_start(struct tmio_mmc_host *host,
- 	if (cookie < 0)
- 		goto unmap_sg;
- 
-+	host->dma_on = true;
-+
- 	return;
- 
- unmap_sg:
- 	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
- 		     priv->dma_dir);
- force_pio:
--	host->force_pio = true;
- 	uniphier_sd_dma_endisable(host, 0);
- }
- 
-@@ -283,9 +284,10 @@ static void uniphier_sd_internal_dma_start(struct tmio_mmc_host *host,
- 	writel(lower_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_L);
- 	writel(upper_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_H);
- 
-+	host->dma_on = true;
-+
- 	return;
- force_pio:
--	host->force_pio = true;
- 	uniphier_sd_dma_endisable(host, 0);
- }
- 
--- 
-2.7.4
+> Now, since we are considering linux and secure (infact linux,hyp,secure)
+> as separate voters they have to each request their votes and release
+> their votes separately. PSCI cannot release a request made from Linux.
 
+Why should Linux make that request at the first instance as CPU is
+already up and running.
+
+> This is how the SoC is designed. All exception levels will abide by
+> that.
+>
+> > > Yes, we are close to having a platform have both, possibly.
+> > >
+> >
+> > Comparison numbers please :)
+> >
+> We are far from it, for that, atleast now. But we will get there.
+>
+
+Hopefully one day. We are waiting for that day for few years now :)
+
+> > Having to adapt DT to the firmware though the feature is fully discoverable
+> > is not at all good IMO. So the DT in this series *should work* with OSI
+> > mode if the firmware has the support for it, it's as simple as that.
+> >
+> The firmware is ATF and does not support OSI.
+>
+
+OK, to keep it simple: If a platform with PC mode only replaces the firmware
+with one that has OSI mode, we *shouldn't need* to change DT to suite it.
+I think I asked Ulf to add something similar in DT bindings.
+
+--
+Regards,
+Sudeep
