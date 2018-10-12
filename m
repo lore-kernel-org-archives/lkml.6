@@ -2,184 +2,167 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3201C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB23EC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6674A2098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6674A2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id A24E22086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:26:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ns7HCyyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24E22086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeJMAAB (ORCPT
+        id S1729152AbeJMAAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:00:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728744AbeJMAAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:00:00 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ECBE2075B;
-        Fri, 12 Oct 2018 16:26:42 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 12:26:41 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [RFC][PATCH] x86: ptrace: Add function argument access API
-Message-ID: <20181012122641.3d87ed29@gandalf.local.home>
-In-Reply-To: <20181011230021.0a7604fa@vmware.local.home>
-References: <20181011230021.0a7604fa@vmware.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 12 Oct 2018 20:00:08 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46363 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729086AbeJMAAH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 20:00:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n11-v6so13987861wru.13;
+        Fri, 12 Oct 2018 09:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mat2nPClyH8OZFkoDv8q+tL0+LVOi6YVRjAlX7dy2ug=;
+        b=Ns7HCyyikkEuSK7L1GUt/jf4gkOJsg1yjjKmZYgWP8c2UAXtQiaoPiN9OqF/cnxEqD
+         /5jXAs7JMVfPy5k1j2cJWx8esMMQO8Mu3Y+wfKPUrDxGYVRD5spA4Oxs1zOcWw+T8aMA
+         7sh5M2I6VNBayxsNzme4V7Wp/prXDNwh35mf3YinVV1eJ+MENYmELX1LaLjep9Z/zFKi
+         JI14GgaLn10E1ky/5ZzT7a6wuBIauSeIwxQ/nHxe4XeUHvHp+ODN20WmD5IB31XweIxX
+         IYlu47wY+aPdRKgYgL3DHL8k6UDdTix4OeI79PI3PqESjiqkyiCljWH7PUrNAUgin6Vd
+         K/+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=mat2nPClyH8OZFkoDv8q+tL0+LVOi6YVRjAlX7dy2ug=;
+        b=K625ZqSu3/yLS7/xpFrV9cSSCrPbKYBpDdUjDgJIA2WruYN0lGs1P3VAaW1XVoZ2U7
+         S4vL8kiHQp898geHFaDY6GwLdx6vGhK3FXTLkXeTMmTifRcINECK3gnJM0dnci8CteHa
+         fJVDa3Q+dZrNxd1LVR2rEeOLHJPdONUGn303BFIogFwbUO73vqYYOBz4dFJUpNmT3oqc
+         nyGrgfQlHCeXme70iFQYxhYflyVCJ2i7xlP89kX5GTBZn5O27th1hk/JC1anzMwQm+dF
+         8Abs/07ILw/Z8/MaJpysesd7f4CLKUtggRZSdnXlGSqtloyxcu81QnFOo8pL0jQ0ya4A
+         XZkQ==
+X-Gm-Message-State: ABuFfojvWbYvtVSQlOZQz+j6iIWjOWL6n8RZYmeys0mvrz6eBawyGR4u
+        NjF2TWmQJLMfJ/2qDQes1EY=
+X-Google-Smtp-Source: ACcGV63SWRCq7z7Oyas0cDpn/T0b+k2uYffJ6Wo9mMqhtAozmawsowhpjgzpsgygbfq9Cj8a+o67fw==
+X-Received: by 2002:a5d:694c:: with SMTP id r12-v6mr5581651wrw.170.1539361610284;
+        Fri, 12 Oct 2018 09:26:50 -0700 (PDT)
+Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
+        by smtp.gmail.com with ESMTPSA id t198-v6sm1736842wmd.9.2018.10.12.09.26.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 12 Oct 2018 09:26:49 -0700 (PDT)
+From:   Ben Whitten <ben.whitten@gmail.com>
+X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
+To:     afaerber@suse.de
+Cc:     starnight@g.ncu.edu.tw, hasnain.virk@arm.com,
+        netdev@vger.kernel.org, liuxuenetmail@gmail.com, shess@hessware.de,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 lora-next 2/5] net: lora: sx1301: replace burst spi functions with regmap_noinc
+Date:   Fri, 12 Oct 2018 17:26:03 +0100
+Message-Id: <1539361567-3602-3-git-send-email-ben.whitten@lairdtech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
+References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We can now use to regmap_noinc API to allow reading and writing to
+the internal FIFO register which controls processor memory.
+We also remove the now defunct spi element from the structure as this
+completes the move to regmap.
 
-Anyone have any issues with this patch?
+Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+---
+ drivers/net/lora/sx1301.c | 22 ++--------------------
+ drivers/net/lora/sx1301.h |  2 --
+ 2 files changed, 2 insertions(+), 22 deletions(-)
 
--- Steve
-
-
-On Thu, 11 Oct 2018 23:00:21 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> [
->   A while ago I posted an RFC patchset for dynamic function based
->   events. But Masami pointed out that this could be done with kprobes
->   with minimal changes. He posted a patch set back in March
->   http://lkml.kernel.org/r/152049860385.7289.14079393589900496424.stgit@devbox
->   I've pulled this in locally, but haven't had the time until recently
->   to look at it seriously. I even plan to talk about these changes in
->   my talk at Open Source Summit in Edinburgh less than two weeks away
->   (talk about conference driven development!).
->   Anyway, the one patch that really needs external approval is the one
->   that creates a new architecture dependent API to retrieve function
->   arguments from pt_regs if the ip is at the start of the function call
->   (via a breakpoint or ftrace fentry). That's this patch.
-> 
->   Anyone have any issues with it? If not, I'm going to start doing some
->   serious testing of this code and try to get it into the next merge
->   window.
-> 
->   Thanks!
-> 
->   -- Steve
-> ]
-> 
-> From: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Add regs_get_argument() which returns N th argument of the
-> function call.
-> Note that this chooses most probably assignment, in some case
-> it can be incorrect (e.g. passing data structure or floating
-> point etc.)
-> 
-> This is expected to be called from kprobes or ftrace with regs
-> where the top of stack is the return address.
-> 
-> Link: http://lkml.kernel.org/r/152465885737.26224.2822487520472783854.stgit@devbox
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  arch/Kconfig                  |  7 +++++++
->  arch/x86/Kconfig              |  1 +
->  arch/x86/include/asm/ptrace.h | 38 +++++++++++++++++++++++++++++++++++
->  3 files changed, 46 insertions(+)
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 6801123932a5..facace0c90fc 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -290,6 +290,13 @@ config HAVE_RSEQ
->  	  This symbol should be selected by an architecture if it
->  	  supports an implementation of restartable sequences.
->  
-> +config HAVE_FUNCTION_ARG_ACCESS_API
-> +	bool
-> +	help
-> +	  This symbol should be selected by an architecure if it supports
-> +	  the API needed to access function arguments from pt_regs,
-> +	  declared in asm/ptrace.h
-> +
->  config HAVE_CLK
->  	bool
->  	help
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1a0be022f91d..972973851779 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -184,6 +184,7 @@ config X86
->  	select HAVE_RCU_TABLE_INVALIDATE	if HAVE_RCU_TABLE_FREE
->  	select HAVE_REGS_AND_STACK_ACCESS_API
->  	select HAVE_RELIABLE_STACKTRACE		if X86_64 && (UNWINDER_FRAME_POINTER || UNWINDER_ORC) && STACK_VALIDATION
-> +	select HAVE_FUNCTION_ARG_ACCESS_API
->  	select HAVE_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
->  	select HAVE_STACK_VALIDATION		if X86_64
->  	select HAVE_RSEQ
-> diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-> index 6de1fd3d0097..c2304b25e2fd 100644
-> --- a/arch/x86/include/asm/ptrace.h
-> +++ b/arch/x86/include/asm/ptrace.h
-> @@ -256,6 +256,44 @@ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
->  		return 0;
->  }
->  
-> +/**
-> + * regs_get_kernel_argument() - get Nth function argument in kernel
-> + * @regs:	pt_regs of that context
-> + * @n:		function argument number (start from 0)
-> + *
-> + * regs_get_argument() returns @n th argument of the function call.
-> + * Note that this chooses most probably assignment, in some case
-> + * it can be incorrect.
-> + * This is expected to be called from kprobes or ftrace with regs
-> + * where the top of stack is the return address.
-> + */
-> +static inline unsigned long regs_get_kernel_argument(struct pt_regs *regs,
-> +						     unsigned int n)
-> +{
-> +	static const unsigned int argument_offs[] = {
-> +#ifdef __i386__
-> +		offsetof(struct pt_regs, ax),
-> +		offsetof(struct pt_regs, cx),
-> +		offsetof(struct pt_regs, dx),
-> +#define NR_REG_ARGUMENTS 3
-> +#else
-> +		offsetof(struct pt_regs, di),
-> +		offsetof(struct pt_regs, si),
-> +		offsetof(struct pt_regs, dx),
-> +		offsetof(struct pt_regs, cx),
-> +		offsetof(struct pt_regs, r8),
-> +		offsetof(struct pt_regs, r9),
-> +#define NR_REG_ARGUMENTS 6
-> +#endif
-> +	};
-> +
-> +	if (n >= NR_REG_ARGUMENTS) {
-> +		n -= NR_REG_ARGUMENTS - 1;
-> +		return regs_get_kernel_stack_nth(regs, n);
-> +	} else
-> +		return regs_get_register(regs, argument_offs[n]);
-> +}
-> +
->  #define arch_has_single_step()	(1)
->  #ifdef CONFIG_X86_DEBUGCTLMSR
->  #define arch_has_block_step()	(1)
+diff --git a/drivers/net/lora/sx1301.c b/drivers/net/lora/sx1301.c
+index fd29258..9c85fe7 100644
+--- a/drivers/net/lora/sx1301.c
++++ b/drivers/net/lora/sx1301.c
+@@ -74,23 +74,6 @@ static struct regmap_config sx1301_regmap_config = {
+ 	.max_register = SX1301_MAX_REGISTER,
+ };
+ 
+-static int sx1301_read_burst(struct sx1301_priv *priv, u8 reg, u8 *val, size_t len)
+-{
+-	u8 addr = reg & 0x7f;
+-	return spi_write_then_read(priv->spi, &addr, 1, val, len);
+-}
+-
+-static int sx1301_write_burst(struct sx1301_priv *priv, u8 reg, const u8 *val, size_t len)
+-{
+-	u8 addr = reg | BIT(7);
+-	struct spi_transfer xfr[2] = {
+-		{ .tx_buf = &addr, .len = 1 },
+-		{ .tx_buf = val, .len = len },
+-	};
+-
+-	return spi_sync_transfer(priv->spi, xfr, 2);
+-}
+-
+ static int sx1301_soft_reset(struct sx1301_priv *priv)
+ {
+ 	return regmap_write(priv->regmap, SX1301_PAGE, REG_PAGE_RESET_SOFT_RESET);
+@@ -180,7 +163,7 @@ static int sx1301_load_firmware(struct sx1301_priv *priv, int mcu, const struct
+ 		return ret;
+ 	}
+ 
+-	ret = sx1301_write_burst(priv, SX1301_MPD, fw->data, fw->size);
++	ret = regmap_noinc_write(priv->regmap, SX1301_MPD, fw->data, fw->size);
+ 	if (ret) {
+ 		dev_err(priv->dev, "MCU prom data write failed\n");
+ 		return ret;
+@@ -196,7 +179,7 @@ static int sx1301_load_firmware(struct sx1301_priv *priv, int mcu, const struct
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	ret = sx1301_read_burst(priv, SX1301_MPD, buf, fw->size);
++	ret = regmap_noinc_read(priv->regmap, SX1301_MPD, buf, fw->size);
+ 	if (ret) {
+ 		dev_err(priv->dev, "MCU prom data read failed\n");
+ 		kfree(buf);
+@@ -566,7 +549,6 @@ static int sx1301_probe(struct spi_device *spi)
+ 
+ 	spi_set_drvdata(spi, netdev);
+ 	priv->dev = &spi->dev;
+-	priv->spi = spi;
+ 
+ 	priv->regmap = devm_regmap_init_spi(spi, &sx1301_regmap_config);
+ 	if (IS_ERR(priv->regmap)) {
+diff --git a/drivers/net/lora/sx1301.h b/drivers/net/lora/sx1301.h
+index e939c02..e6400f8 100644
+--- a/drivers/net/lora/sx1301.h
++++ b/drivers/net/lora/sx1301.h
+@@ -12,7 +12,6 @@
+ #include <linux/regmap.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/lora/dev.h>
+-#include <linux/spi/spi.h>
+ 
+ #define SX1301_CHIP_VERSION 103
+ 
+@@ -64,7 +63,6 @@
+ struct sx1301_priv {
+ 	struct lora_dev_priv lora;
+ 	struct device		*dev;
+-	struct spi_device	*spi;
+ 	struct gpio_desc *rst_gpio;
+ 	struct regmap		*regmap;
+ };
+-- 
+2.7.4
 
