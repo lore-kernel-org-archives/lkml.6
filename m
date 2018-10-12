@@ -2,140 +2,80 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B1DC6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E51EC6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D1420868
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7DC120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 21:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CixZwotb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D1420868
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EiZ592V3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DC120868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbeJME7W (ORCPT
+        id S1726281AbeJMFAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 00:59:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44440 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbeJME7W (ORCPT
+        Sat, 13 Oct 2018 01:00:45 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:37596 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeJMFAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 00:59:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id p25-v6so6472793pli.11
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:24:59 -0700 (PDT)
+        Sat, 13 Oct 2018 01:00:45 -0400
+Received: by mail-wr1-f47.google.com with SMTP id y11-v6so14808110wrd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 14:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=LF/YoHEd6r00UlYo875GaIQxjYz0VZX1XmCm0FXDGnY=;
-        b=CixZwotbFH8KgYAAQfsjqqPc8VX4nNMA3w3JlMX9LFnULIo2RvcC5Xa0rVBeVHRS7M
-         THTu8xr5tkBslxN+iZkx/zAVU2oGvto3o4nw9bDs4jYrosdllNKh2yRNeIx2gR9SsGT6
-         DqEJtkPXG6FhZGx1WwlhqrLposZKAqyW3Cqu7CGcOufea11aJpb2bJ4tajgLYwZbFfhi
-         fpz797F46bZshzvh8nTRYtlwTiZXdSNeR5YClakfoCwc1wbaDVrg8Fcjt4gbUuCxEIw1
-         JsdCHluRL6h1I9+i2KeTsfCkjth5tIl5tI85Ttgcos6r6hRrlx/Y4i06ub6uWPeUGOTz
-         IUUw==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Ky/hwcktm81qh6cVpdbTrJeL1bzyNIt4g7dMkNUjmuY=;
+        b=EiZ592V3M8YCvv8yLdOkXjOkn8HMy/HNBRqw0RyLq1oxSSuLiktR4pKKUvMb9yAoRo
+         dtn1maFkI9OiZt0/HLJ39W6qnw39mX4LV/97KWORIQWzweFeSXeTvFmEfd3kRcIcQjPM
+         H6Ch7C+JQIvJToktehOEnu1ery7V2khixAE5uvK/3eYZVupS77eRvPVV05LHrUKJVAsy
+         CiAbQbr8aq6CRB/aAPlM/tQfy2TccrwZe0fhDNWWKIDUKzt6Ow1kmY09FW3Z4rLzwbBk
+         ZPj63L4to01P3v60BiyMfnT+o+LeEBFA4aC6gjVOsCWKc4x6NkzTN5ALReoYjq1I1S6T
+         7F8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=LF/YoHEd6r00UlYo875GaIQxjYz0VZX1XmCm0FXDGnY=;
-        b=GMwC1k5OPYAiHVb6njSpgZOTu3BjjLbmD8VZAgFAjNpB97VwQ+EEOx4KSjvCDOflYN
-         Z/M3OHzdiTpGT/jT/YcdaOSiiv6jfUtuKvI4LLlvP84JNKVw8ygveiidBbcRAl0oR/uf
-         5zo/9e8oVUUjDY8E5Hirp5A/hubm38UyMzcN+6jzXx/xW+etliNAj8lmEozf75asKvTJ
-         u/sZYa87k5W4MSgELyAUL8IrAwVjN0F92dbZqVJ4m5shBjPnNXgBcqIuRlywtyiQz6Pw
-         eJTSDMJweOgiVPJfsfMplPPqRllRnQf6BgK/feG+AkU48OwQ4dcHHE6j7R13bh+0UBGO
-         v9EA==
-X-Gm-Message-State: ABuFfohbtNyuLYef3O/Q2rC1UYhYkc6vA3yUwxaMBunn9fvCHg+XGQW/
-        dYX/pxwJLkezxNkyBsTtG4BUog==
-X-Google-Smtp-Source: ACcGV61ZNx1mUBELOUYEHjUrEGA4ZFvKoEeT5JrrP495aULPzFHQxGuPrff/j0QsJYYmMhZEhqkruQ==
-X-Received: by 2002:a17:902:74c2:: with SMTP id f2-v6mr7269417plt.45.1539379499023;
-        Fri, 12 Oct 2018 14:24:59 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm2981344pgn.37.2018.10.12.14.24.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 14:24:58 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 14:24:57 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [patch] mm, slab: avoid high-order slab pages when it does not reduce
- waste
-Message-ID: <alpine.DEB.2.21.1810121424420.116562@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Ky/hwcktm81qh6cVpdbTrJeL1bzyNIt4g7dMkNUjmuY=;
+        b=FON1EnGvPToflocBF9qQNJnGDQ5z855ixGpwgb5BQVboGp4dyEq92LOwJv0uQ+cfmD
+         NiY4uROz561OJe5WdPrK1NCx4nn9tucUeroypHDrbHD6eygEQvPd8ebxkyQ2Mdd+LLW6
+         wqt0kZmbkrDjDDy1z7vkTTQ+ZH7a004tMXGUgQKiEPXu9sHxg4vXlkyLSvjib9UgCXv8
+         40XaqsizVm7roJMIOLU8Aegl2lnxfx+83mh6e8KbsQv7s2QwLnsPAB7oXar9nbOnRYOi
+         a4b20gYrHL5uO7NaHwgTRrXcDL05OO2K5jD9NoZZi2y6AT4KmPl4iVR2HoJAwDQK3q4M
+         Tm4Q==
+X-Gm-Message-State: ABuFfojW0MgCfbgEIHU3SWo/pLJrkxU4h9sH3YN3Xs0dGU0WNy1lkenP
+        DlzSmPm06JLdYP67TeD/HKzspZwxmmlLG9Y7a0WORjBIfK0=
+X-Google-Smtp-Source: ACcGV61f+kDYLAJQVlmF9rblF+fotcHvRrAgHXZeY1SHEfOq0oqOs9rMxfFT0lCRBAxmkIklo9bCPj8dCCNe7Nn9z54=
+X-Received: by 2002:adf:ed06:: with SMTP id a6-v6mr6194417wro.262.1539379580663;
+ Fri, 12 Oct 2018 14:26:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Stephane Eranian <eranian@google.com>
+Date:   Fri, 12 Oct 2018 14:26:09 -0700
+Message-ID: <CABPqkBTEOwKrq6ZJo3W-rZQi56OWorWo3VcOTwV17QxZBckS0Q@mail.gmail.com>
+Subject: [BUG] perf stat: hangs with -p and process completes
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The slab allocator has a heuristic that checks whether the internal
-fragmentation is satisfactory and, if not, increases cachep->gfporder to
-try to improve this.
+Hi,
 
-If the amount of waste is the same at higher cachep->gfporder values,
-there is no significant benefit to allocating higher order memory.  There
-will be fewer calls to the page allocator, but each call will require
-zone->lock and finding the page of best fit from the per-zone free areas.
+I am running into a perf stat issue with the -p option which allows you
+to attach to a running process. If that process happens to terminate
+while under monitoring
+perf hangs in there and never terminates. The proper behavior would be to stop.
+I can see the issue in that the attached process is not a child, so
+wait() would not work.
 
-Instead, it is better to allocate order-0 memory if possible so that pages
-can be returned from the per-cpu pagesets (pcp).
+To reproduce:
+  $ sleep 10 &
+  $ perf stat -p $!
 
-There are two reasons to prefer this over allocating high order memory:
-
- - allocating from the pcp lists does not require a per-zone lock, and
-
- - this reduces stranding of MIGRATE_UNMOVABLE pageblocks on pcp lists
-   that increases slab fragmentation across a zone.
-
-We are particularly interested in the second point to eliminate cases
-where all other pages on a pageblock are movable (or free) and fallback to
-pageblocks of other migratetypes from the per-zone free areas causes
-high-order slab memory to be allocated from them rather than from free
-MIGRATE_UNMOVABLE pages on the pcp.
-
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- mm/slab.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/mm/slab.c b/mm/slab.c
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -1748,6 +1748,7 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
- 	for (gfporder = 0; gfporder <= KMALLOC_MAX_ORDER; gfporder++) {
- 		unsigned int num;
- 		size_t remainder;
-+		int order;
- 
- 		num = cache_estimate(gfporder, size, flags, &remainder);
- 		if (!num)
-@@ -1803,6 +1804,20 @@ static size_t calculate_slab_order(struct kmem_cache *cachep,
- 		 */
- 		if (left_over * 8 <= (PAGE_SIZE << gfporder))
- 			break;
-+
-+		/*
-+		 * If a higher gfporder would not reduce internal fragmentation,
-+		 * no need to continue.  The preference is to keep gfporder as
-+		 * small as possible so slab allocations can be served from
-+		 * MIGRATE_UNMOVABLE pcp lists to avoid stranding.
-+		 */
-+		for (order = gfporder + 1; order <= slab_max_order; order++) {
-+			cache_estimate(order, size, flags, &remainder);
-+			if (remainder < left_over)
-+				break;
-+		}
-+		if (order > slab_max_order)
-+			break;
- 	}
- 	return left_over;
- }
+doing the same with perf record works, so there is a solution to this problem.
