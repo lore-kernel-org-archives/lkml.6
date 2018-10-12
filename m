@@ -2,116 +2,100 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA35C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BE8C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC5A2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC5A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BE102086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 04:01:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VxD7h1hu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE102086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeJLLbL (ORCPT
+        id S1727421AbeJLLcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 07:31:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46044 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbeJLLbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 07:31:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D3FFEBD;
-        Thu, 11 Oct 2018 21:00:46 -0700 (PDT)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DDA863F5B7;
-        Thu, 11 Oct 2018 21:00:42 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        Steven.Price@arm.com, steve.capper@arm.com,
-        catalin.marinas@arm.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: [PATCH V2 5/5] arm64/mm: Enable HugeTLB migration for contiguous bit HugeTLB pages
-Date:   Fri, 12 Oct 2018 09:29:59 +0530
-Message-Id: <1539316799-6064-6-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539316799-6064-1-git-send-email-anshuman.khandual@arm.com>
-References: <1539316799-6064-1-git-send-email-anshuman.khandual@arm.com>
+        Fri, 12 Oct 2018 07:32:06 -0400
+Received: from mail-yw1-f50.google.com ([209.85.161.50]:33938 "EHLO
+        mail-yw1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbeJLLcF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 07:32:05 -0400
+Received: by mail-yw1-f50.google.com with SMTP id m129-v6so4477025ywc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Oct 2018 21:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bML/mDmDI//IU4h/fTLC2TM4+sEZurQ5hghChA7ypBQ=;
+        b=VxD7h1hutE92QjAH2aWkHhHKRaA6eZVFazfG0EWG+xN01xSFhQoucM4Ae5x0wJ9PI0
+         4T/EcTOtYjPBIx941gFwnYXMiUeSFPD0I1s8Qg5Hg3bO0ZdVOMML6bTpVL/BCXA3Pbw/
+         ylby9rZCjF9ohjg1Ci5CV51obg0KyuHGx/6co=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bML/mDmDI//IU4h/fTLC2TM4+sEZurQ5hghChA7ypBQ=;
+        b=Zt9kUxlkyULEnDwMuBLO1c3gR4hF+1+hgdLNpdmKq+LJHnUbcugvZvCz0lDDbRcxz/
+         VWsDX495wTChXuaLllHP4cpssxPKmaiu2I5k5RZ4YgVKZvHpMYWLWVBrUkS1tw69WK9j
+         iAorB28Va7pwssLneCWOE0UnEx79VwuD6vYdMq3/3XWBbQEKM2KBpgSf+j60wEln8rpk
+         QeDY/3BxNphhZR0l5aHyubL17NWnmgpM9am7zmgEUUfpmZc+IxmisUVk0ZjWsze2F7CK
+         +Hbw5tMf05e88C1SHWeFIAN3G2WLEy7BZdLZpWYmD4b3Su/z7XCTWrcvIoqpB8c78kIA
+         NksA==
+X-Gm-Message-State: ABuFfoj144acF9LfL8U0CYFVctmWTut6IeM0mFcyZTKZDDgQyfygalX7
+        pc/kc381NvKnCLy5U9SrDuPMpcfLn3NV/s4wnpP+yg==
+X-Google-Smtp-Source: ACcGV6266DKMgue+pxntfSJ79e2cFPFhfptq7hwRe0KMkyPJOhm367mfz9zr7PbDfqeXrQSxh8qrUM9dgK3Fz+L4pyo=
+X-Received: by 2002:a0d:d801:: with SMTP id a1-v6mr2429648ywe.399.1539316900991;
+ Thu, 11 Oct 2018 21:01:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539231895-4118-1-git-send-email-firoz.khan@linaro.org> <3908561D78D1C84285E8C5FCA982C28F7D40F9DD@ORSMSX107.amr.corp.intel.com>
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D40F9DD@ORSMSX107.amr.corp.intel.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Fri, 12 Oct 2018 09:31:30 +0530
+Message-ID: <CALxhOngtGNP7MATzwtMZd_Xw+rqvdhP9NMtTxwCEgmzayZshOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] ia64: system call table generation support
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let arm64 subscribe to the previously added framework in which architecture
-can inform whether a given huge page size is supported for migration. This
-just overrides the default function arch_hugetlb_migration_supported() and
-enables migration for all possible HugeTLB page sizes on arm64. With this,
-HugeTLB migration support on arm64 now covers all possible HugeTLB options.
+Hi Tony,
 
-        CONT PTE    PMD    CONT PMD    PUD
-        --------    ---    --------    ---
-4K:        64K      2M        32M      1G
-16K:        2M     32M         1G
-64K:        2M    512M        16G
+On Thu, 11 Oct 2018 at 22:59, Luck, Tony <tony.luck@intel.com> wrote:
+>
+> Third time lucky. This series boots without any obvious errors on my ia64 machine.
 
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/include/asm/hugetlb.h |  5 +++++
- arch/arm64/mm/hugetlbpage.c      | 20 ++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+Great! Thanks for your support!
 
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index e73f685..656f70e 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -20,6 +20,11 @@
- 
- #include <asm/page.h>
- 
-+#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-+#define arch_hugetlb_migration_supported arch_hugetlb_migration_supported
-+extern bool arch_hugetlb_migration_supported(struct hstate *h);
-+#endif
-+
- static inline pte_t huge_ptep_get(pte_t *ptep)
- {
- 	return READ_ONCE(*ptep);
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 4eafd9f..28f4795 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -27,6 +27,26 @@
- #include <asm/tlbflush.h>
- #include <asm/pgalloc.h>
- 
-+#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-+bool arch_hugetlb_migration_supported(struct hstate *h)
-+{
-+	size_t pagesize = huge_page_size(h);
-+
-+	switch (pagesize) {
-+#ifdef CONFIG_ARM64_4K_PAGES
-+	case PUD_SIZE:
-+#endif
-+	case PMD_SIZE:
-+	case CONT_PMD_SIZE:
-+	case CONT_PTE_SIZE:
-+		return true;
-+	}
-+	pr_warn("%s: unrecognized huge page size 0x%lx\n",
-+			__func__, pagesize);
-+	return false;
-+}
-+#endif
-+
- int pmd_huge(pmd_t pmd)
- {
- 	return pmd_val(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
--- 
-2.7.4
+>
+> That's not and Ack or Review ... I just applied, compiled and booted.
 
+I suspect the offset logic in the system call generation script had a bug. That
+I fixed it in this patch series.
+
+Arnd and Eugene had shared few comments on adding new system call entry in the
+table and some other things. Appreciate if you can review this patch
+series so I can
+finalize system call table implementation for ia64 architecture.
+
+Firoz
+
+>
+> -Tony
