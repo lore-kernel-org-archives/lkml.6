@@ -2,274 +2,199 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078CDC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04008C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A881920835
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F1DA2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 13:05:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cvh9hGvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A881920835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="OltG0tVo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1DA2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbeJLUeR (ORCPT
+        id S1728616AbeJLUiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:34:17 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46412 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeJLUeQ (ORCPT
+        Fri, 12 Oct 2018 16:38:16 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:46991 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbeJLUiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:34:16 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 88DE51258;
-        Fri, 12 Oct 2018 15:01:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539349312;
-        bh=3tlewyIU92RqBPLzC7uVMHA+77jhewxLtlEndzeGgyY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvh9hGvhsfkfsPTW+WJ1L6X8XjUACXiqBqdG2YyIv5O0cYFCMaVGbPjIikxFLMHB9
-         oxSWV4yG4Wv2yIDHgohkcrP08RAQ+PRQaqjalBU8KRxM8NXVk2J6SAiBoZY/LHgB3m
-         0Y7gMzAnFmPTUoQSkojnxZ5Oe361uOdI35DlTmzE=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD driver
-Date:   Fri, 12 Oct 2018 16:01:56 +0300
-Message-ID: <3599186.afdMBtdL0k@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
-References: <20181008211205.2900-1-vz@mleia.com> <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com> <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
+        Fri, 12 Oct 2018 16:38:16 -0400
+X-IronPort-AV: E=Sophos;i="5.54,372,1534834800"; 
+   d="scan'208";a="19404043"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Oct 2018 06:05:54 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 12 Oct 2018 06:05:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4E7w7OEzGT3AazUHTBwUL/+ncVfGIuyrNNejDEic6H8=;
+ b=OltG0tVo6V2UmhzuYgnJmT23RvJS2GI2VoRwqi0eyxWQXg8wyHzaVgxVNGzdzfvQSUJKgf5cBbBqbR0O9VCpWvAq1A5G1F9yJONnz5EFLQ6VPUfwz1WkemVoxWaRi75jiVCzKVCeMbNWW6HCb4eS2ni/P74kPCymPrknlJys0y8=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0616.namprd11.prod.outlook.com (10.163.159.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.25; Fri, 12 Oct 2018 13:05:50 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::2157:35fc:958a:34ff]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::2157:35fc:958a:34ff%6]) with mapi id 15.20.1228.020; Fri, 12 Oct 2018
+ 13:05:50 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <thierry.reding@gmail.com>
+CC:     <mark.rutland@arm.com>, <linux-pwm@vger.kernel.org>,
+        <alexandre.belloni@bootlin.com>, <shc_work@mail.ru>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RESEND PATCH v5 8/9] pwm: add documentation for pwm push-pull
+ mode
+Thread-Topic: [RESEND PATCH v5 8/9] pwm: add documentation for pwm push-pull
+ mode
+Thread-Index: AQHUYiWuPxymrtUSmUOBVwlQPFCphKUblDoA
+Date:   Fri, 12 Oct 2018 13:05:50 +0000
+Message-ID: <f4a1f9e3-b3a8-2847-f13e-bb07dab400e6@microchip.com>
+References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+ <1535461286-12308-9-git-send-email-claudiu.beznea@microchip.com>
+ <20181012121552.GE31561@ulmo>
+In-Reply-To: <20181012121552.GE31561@ulmo>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0802CA0002.eurprd08.prod.outlook.com
+ (2603:10a6:800:aa::12) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0616;6:BU/eFEI2itwTz57gYe1240b/mDlkq3TGSc7CIePtT6MoY4MRl1huz3v3eIsXw1VBn4ag/aRapfqARDL4qd0Y4tlrd2EBF1r3uVItqi2bRB8O5OjC//UniJHDTYw51Ak9vIOhitklq1oUwXtps3IGSJ4WU2M1cdROrfbjyRt+HMeniu3PXMncD+dLpRLSlJU0A6mx+uVBKf1jq29h1K2PddJvBhlZB1OZHbi0cuu8/CR6Fiss229s3EBA2mWda7qoI7/CyBVuomw+SlXpbXfSLHlwOuGVVfyxF8I2dt9CiLE8AbzntMWJ7eeYVg/NF3wDiETcISy+ppyrKofJEjbkSiY5aaWYy+b2B4VPLvx4o88YUhlhwPtg+or+vQXjlcSvjrU9ufjM8Wl/Gh2p5wGDv83cWyhy+bH4Jz9R0TXIlWgf2GgsGG/HyOjulfjqv+58yNpBMK10TWr/5al7lQDl+g==;5:GvfUzt6nyV7ym38SbW9LFsLRXW6t/XisyGndrm2eOUGRYn18ncl5iwEQ3CWGcjs6OYI2TKlIg4AVG6dng6n2LFhM0jk6lYPEoYKgSaxG7k7B5er6M+nU1o74gPf7gV0qYxht1jxDckmi/Jr6rHyOHdtCt6fLgrHId6c6wzEOV7g=;7:phruU2bza9fGYd5Iq3Ok0z+oAVxGH0fL/hesuy/0dNg3vSK+/QzLtOGiFI8a1PsBE0x/7FHmLj4EZf6LtPeIVjc8oqCTYHs7MBq9HooCeICZ/ksK9tivQd2LGU1uguQK2MqZMFP8sJCFHTyJnuL69pqQ8h7oDaNzNHisbzoAPsz8eiDFseMkPYaNDTwwfWV10/n4dZD+jcfzrLxH7xyGAwvR1QnNYYShQ1g8uVRfInPt6ScpxL9LH7aalg7x7aWa
+x-ms-office365-filtering-correlation-id: dab36c79-039f-4e77-c72a-08d630436e75
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0616;
+x-ms-traffictypediagnostic: BY2PR11MB0616:
+x-microsoft-antispam-prvs: <BY2PR11MB06166D8DE37BB4AA78143B8487E20@BY2PR11MB0616.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(4982022)(52105095)(3002001)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991067);SRVR:BY2PR11MB0616;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0616;
+x-forefront-prvs: 0823A5777B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(136003)(376002)(39860400002)(199004)(189003)(2900100001)(31686004)(386003)(6506007)(6306002)(6512007)(31696002)(5250100002)(76176011)(53546011)(2616005)(102836004)(2906002)(68736007)(256004)(575784001)(26005)(86362001)(6436002)(53936002)(316002)(7416002)(52116002)(14454004)(54906003)(8676002)(39060400002)(81156014)(81166006)(105586002)(8936002)(6116002)(3846002)(36756003)(106356001)(186003)(5660300001)(1720100001)(6486002)(229853002)(6246003)(72206003)(99286004)(478600001)(217873002)(71190400001)(476003)(7736002)(25786009)(486006)(966005)(11346002)(446003)(71200400001)(66066001)(6916009)(305945005)(97736004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0616;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 7uLVxwjh+beaxYWOlWGUj2XCBBDRl4o8knGRj9KHNkY39h1rFn1dSD20GxrIeRBzbQCRvv4FjJcwLO1DDPDi4C/6cN6gYBq10nTgUxB8e3qGItAAZhKx9Tdxarefr3XkpHVK4UU57icpFEoCfmdP/aAg7iuRh7MQPwHHMDDpTPflYn75dgwBjI2vpD+vn5ghzdeiTfm8K1KUhmuS3CAayOnsucCYG6qAzUiF5rMleUrIS/pHlCwFYe35k8Am36ui9hmrMPVp2hUpKNdAVLWXl1Tt+wENT+/UbHOrN9H7xeFNcmU8tBzkUBn1TXfjWn0ymrvEF7litgTK5Od2MOGf40GnmrWDyv5UpMjDDdMCxYU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <2122BCBB722E1A45B16B7E23800C80D3@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MS-Exchange-CrossTenant-Network-Message-Id: dab36c79-039f-4e77-c72a-08d630436e75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2018 13:05:50.1415
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0616
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Vladimir,
-
-On Friday, 12 October 2018 14:47:52 EEST Kieran Bingham wrote:
-> On 12/10/18 11:58, Vladimir Zapolskiy wrote:
-> > On 10/12/2018 12:20 PM, Kieran Bingham wrote:
-> >> On 12/10/18 09:39, Lee Jones wrote:
-> >>> On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
-> >>>> On 10/12/2018 09:03 AM, Lee Jones wrote:
-> >>>>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
-> >>>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>>>> 
-> >>>>>> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
-> >>>>>> support of subdevice controllers is done in separate drivers, because
-> >>>>>> not all IC functionality may be needed in particular situations, and
-> >>>>>> this can be fine grained controlled in device tree.
-> >>>>>> 
-> >>>>>> The development of the driver was a collaborative work, the
-> >>>>>> contribution done by Balasubramani Vivekanandan includes:
-> >>>>>> * original implementation of the driver based on a reference driver,
-> >>>>>> * regmap powered interrupt controller support on serializers,
-> >>>>>> * support of implicitly or improperly specified in device tree ICs,
-> >>>>>> * support of device properties and attributes: backward compatible
-> >>>>>> 
-> >>>>>>   mode, low frequency operation mode, spread spectrum clock
-> >>>>>>   generator.
-> >>>>>> 
-> >>>>>> Contribution by Steve Longerbeam:
-> >>>>>> * added ds90ux9xx_read_indirect() function,
-> >>>>>> * moved number of links property and added ds90ux9xx_num_fpd_links(),
-> >>>>>> * moved and updated ds90ux9xx_get_link_status() function to core
-> >>>>>> driver,
-> >>>>>> * added fpd_link_show device attribute.
-> >>>>>> 
-> >>>>>> Sandeep Jain added support of pixel clock edge configuration.
-> >>>>>> 
-> >>>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>>>> ---
-> >>>>>> 
-> >>>>>>  drivers/mfd/Kconfig           |  14 +
-> >>>>>>  drivers/mfd/Makefile          |   1 +
-> >>>>>>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++
-> >>>>>>  include/linux/mfd/ds90ux9xx.h |  42 ++
-> >>>>>>  4 files changed, 936 insertions(+)
-> >>>>>>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
-> >>>>>>  create mode 100644 include/linux/mfd/ds90ux9xx.h
-> >>>>>> 
-> >>>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >>>>>> index 8c5dfdce4326..a969fa123f64 100644
-> >>>>>> --- a/drivers/mfd/Kconfig
-> >>>>>> +++ b/drivers/mfd/Kconfig
-> >>>>>> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
-> >>>>>> 
-> >>>>>>  	  boards.  MSP430 firmware manages resets and power sequencing,
-> >>>>>>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
-> >>>>>> 
-> >>>>>> +config MFD_DS90UX9XX
-> >>>>>> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
-> >>>>>> +	depends on I2C && OF
-> >>>>>> +	select MFD_CORE
-> >>>>>> +	select REGMAP_I2C
-> >>>>>> +	help
-> >>>>>> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer
-> >>>>>> ICs.
-> >>>>>> +
-> >>>>>> +	  This driver provides basic support for setting up the
-> >>>>>> de-/serializer
-> >>>>>> +	  chips. Additional functionalities like connection handling to
-> >>>>>> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
-> >>>>>> +	  controller and so on are provided by separate drivers and should
-> >>>>>> +	  enabled individually.
-> >>>>> 
-> >>>>> This is not an MFD driver.
-> >>>> 
-> >>>> Why do you think so? The representation of the ICs into device tree
-> >>>> format of hardware description shows that this is a truly MFD driver
-> >>>> with multiple IP subcomponents naturally mapped into MFD cells.
-> >>> 
-> >>> This driver does too much real work ('stuff') to be an MFD driver.
-> >>> MFD drivers should not need to care of; links, gates, modes, pixels,
-> >>> frequencies maps or properties.  Nor should they contain elaborate
-> >>> sysfs structures to control the aforementioned 'stuff'.
-> >>> 
-> >>> Granted, there may be some code in there which could be appropriate
-> >>> for an MFD driver.  However most of it needs moving out into a
-> >>> function driver (or two).
-> >>> 
-> >>>> Basically it is possible to replace explicit of_platform_populate() by
-> >>>> adding a "simple-mfd" compatible, if it is desired.
-> >>>> 
-> >>>>> After a 30 second Google of what this device actually does, perhaps
-> >>>>> drivers/media might be a better fit?
-> >>>> 
-> >>>> I assume it would be quite unusual to add a driver with NO media
-> >>>> functions and controls into drivers/media.
-> >>> 
-> >>> drivers/media may very well not be the correct place for this.  In my
-> >>> 30 second Google, I saw that this device has a lot to do with cameras,
-> >>> hence my media association.
-> >>> 
-> >>> If *all* else fails, there is always drivers/misc, but this should be
-> >>> avoided if at all possible.
-> >> 
-> >> The device as a whole is FPD Link for camera devices I believe, but it
-> > 
-> > I still don't understand (I could be biased though) why there is such
-> > a strong emphasis on cameras and media stuff in the discussion.
-> > 
-> > No, "the device as a whole is FPD Link for camera devices" is a wrong
-> > statement. On hand I have a number of boards with
-> > serializers/deserializers from the TI DS90Ux9xx IC series and sensors are
-> > NOT connected to them.
-
-I understand what is not connected to them, but could you tell us what is 
-connected then ? :-)
-
-> Yes - My apologies, this is a good point.
-> 
-> Especially as the clue is in the name "Flat Panel Display".
-> I have been stuck with my GMSL hat on for too long.
-> 
-> Even GMSL is in the same boat. It's just that 'we' are using GMSL for
-> cameras, but it can be used equally for displays and data.
-> 
-> These devices are serialiser-deserialiser pairs with power and control
-> paths.
-
-And data paths, that are designed to transport video (and audio in this case). 
-The devices are thus media-focussed, although in a broader sense than drivers/
-media/
-
-> Essentially they are multi purpose buses - which do not yet have a home.
-> We have used media as a home because of our use case.
-> 
-> The use case whether they transfer frames from a camera or to a display
-> are of course closely related, but ultimately covered by two separate
-> subsystems at the pixel level (DRM vs V4L, or other for other data)
-> 
-> Perhaps as they are buses - on a level with USB or I2C (except they can
-> of course carry I2C or Serial as well as 'bi-directional video' etc ),
-> they are looking for their own subsystem.
-> 
-> Except I don't think we don't want to add a new subsystem for just one
-> (or two) devices...
-
-I'm not sure a new subsystem is needed. As you've noted there's an overlap 
-between drivers/media/ and drivers/gpu/drm/ in terms of supported hardware. We 
-even have a devices supported by two drivers, one in drivers/media/ and one in 
-drivers/gpu/drm/ (I'm thinking about the adv7511 in particular). This is a 
-well known issue, and so far nothing has been done in mainline to try and 
-solve it.
-
-Trying to find another home in drivers/mfd/ to escape from the problem isn't a 
-good solution in my opinion. The best option from a Linux point of view would 
-be to unify V4L2 and DRM/KMS when it comes to bridge support, but that's a 
-long way down the road (I won't complain if you want to give it a go though 
-:-)). As your use cases are display, focused, I would propose to start with 
-drivers/gpu/drm/bridge/, and leave the problem of camera support for first 
-person who will have such a use case.
-
-> >> certainly has different functions which are broken out in this
-> >> implementation.
-> > 
-> > No, there is absolutely nothing broken out from the presented MFD drivers,
-> > the drivers are completely integral and basically I don't expect any.
-> > 
-> > If you are concerned about media functionality, the correspondent MFD
-> > *cell* drivers will be added into drivers/media, drivers/gpu/drm or
-> > whatever is to be a proper place.
-> > 
-> >> I think it might be quite awkward having the i2c components in
-> >> drivers/i2c and the media components in drivers/media/i2c, so what about
-> >> creating drivers/media/i2c/fpd-link (or such) as a container?
-> > 
-> > I open drivers/media/i2c/Kconfig and all entries with no exception are
-> > under from 'if VIDEO_V4L2'. The MFD drivers do NOT require on depend on
-> > VIDEO_V4L2 or any other multimedia frameworks, nor the MFD drivers export
-> > any multimedia controls.
-> > 
-> >> Our GMSL implementation is also a complex camera(s) device - but does
-> >> not yet use the MFD framework, perhaps that's something to add to my
-> >> todo list.
-
-Nope, please don't :-) The GMSL (de)serializers are no MFD devices either.
-
-> > Okay, but the TI DS90Ux9xx is NOT a camera device, and it is NOT a
-> > multimedia device, but it is a pure MFD device so the argument is not
-> > applicable.
-
-For the reasons pointed out in the review of other patches, and also pointed 
-out by Lee in his review of this patch, I disagree with that. This isn't an 
-MFD device.
-
-> >> We currently keep all of the complexity within the max9286.c driver, but
-> >> I could foresee that being split further if more devices add to the
-> >> complexity of managing the bus. At which point we might want an
-> >> equivalent drivers/media/i2c/gmsl/ perhaps?
-> >> 
-> >>>> Laurent, can you please share your opinion?
-
-Done :-)
-
-I'd like to mention that I would prefer focusing on the DT bindings first, and 
-then move to the driver side. In that area I would like to have a full example 
-of a system using these chips, as the "initial support" is too limited for a 
-proper review. This won't come as a surprise, but I will expect the OF graph 
-bindings to be used to model data connections.
-
--- 
-Regards,
-
-Laurent Pinchart
 
 
+On 12.10.2018 15:15, Thierry Reding wrote:
+> On Tue, Aug 28, 2018 at 04:01:25PM +0300, Claudiu Beznea wrote:
+>> Add documentation for PWM push-pull mode.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  Documentation/devicetree/bindings/pwm/pwm.txt |  2 ++
+>>  Documentation/pwm.txt                         | 16 ++++++++++++++++
+>>  include/dt-bindings/pwm/pwm.h                 |  1 +
+>>  3 files changed, 19 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentati=
+on/devicetree/bindings/pwm/pwm.txt
+>> index 7c8aaac43f92..6a60c0fca112 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+>> @@ -49,6 +49,8 @@ Optionally, the pwm-specifier can encode a number of f=
+lags (defined in
+>>  - PWM_MODE_COMPLEMENTARY: PWM complementary working mode (for PWM chann=
+els
+>>  with two outputs); if not specified, the default for PWM channel will b=
+e
+>>  used
+>> +- PWM_MODE_PUSH_PULL: PWM push-pull working modes (for PWM channels wit=
+h
+>> +two outputs); if not specified the default for PWM channel will be used
+>=20
+> What if somebody has this in the DT:
+>=20
+> 	PWM_MODE_COMPLEMENTARY | PWM_MODE_PUSH_PULL
+>=20
+> which one takes precedence, or do we reject it?
 
+The first valid one will be selected.
+
+In patch 1/1 from this series, changes added to of_pwm_xlate_with_flags()
+function, there is this code:
+
++		for (modebit =3D PWMC_MODE_COMPLEMENTARY_BIT;
++		     modebit < PWMC_MODE_CNT; modebit++) {
++			unsigned long mode =3D BIT(modebit);
++
++			if ((args->args[2] & mode) &&
++			    pwm_mode_valid(pwm, mode)) {
++				pwm->args.mode =3D mode;
++				break;
++			}
++		}
+
+And since the modes bits are defined as follows:
+
+enum {
+	PWMC_MODE_NORMAL_BIT,
+	PWMC_MODE_COMPLEMENTARY_BIT,
+	PWMC_MODE_PUSH_PULL_BIT,
+	PWMC_MODE_CNT,
+};
+
+in your proposed scenario: PWM_MODE_COMPLEMENTARY | PWM_MODE_PUSH_PULL
+the PWM_MODE_COMPLEMENTARY mode will be selected since it is the first
+valid one.
+
+>=20
+> Wouldn't it be preferable to either move the modes into an extra field
+> within the flags field, or perhaps even add another field?
+
+This approach was proposed in version 2 of this series and based on the
+discussions I had with Rob Herring [1] I decided to use the remaining space
+from cell specific to PWM flags.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lkml.org/lkml/2018/1/22/655
+
+>=20
+> I guess since Rob's already acked this, that concern may be unfounded.
+>=20
+> Thierry
+>=20
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
