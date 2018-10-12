@@ -2,109 +2,110 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5103CC6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39446C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFE52086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFE52086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id E721E2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:59:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WOfb4efr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E721E2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeJLUam (ORCPT
+        id S1728594AbeJLUbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:30:42 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:23055 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeJLUam (ORCPT
+        Fri, 12 Oct 2018 16:31:52 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51494 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLUbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:30:42 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9CCwJfq003805;
-        Fri, 12 Oct 2018 21:58:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Fri, 12 Oct 2018 21:58:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9CCwJra003790
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 12 Oct 2018 21:58:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] memcg, oom: throttle dump_header for memcg ooms
- without eligible tasks
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <000000000000dc48d40577d4a587@google.com>
- <20181010151135.25766-1-mhocko@kernel.org>
- <20181012112008.GA27955@cmpxchg.org> <20181012120858.GX5873@dhcp22.suse.cz>
- <9174f087-3f6f-f0ed-6009-509d4436a47a@i-love.sakura.ne.jp>
- <20181012124137.GA29330@cmpxchg.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0417c888-d74e-b6ae-a8f0-234cbde03d38@i-love.sakura.ne.jp>
-Date:   Fri, 12 Oct 2018 21:58:19 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 12 Oct 2018 16:31:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NG4XuLdYHT3yPUOmLHVgfEUhGAGgaOjVLAgb1Rz3Yj0=; b=WOfb4efrDd3mTiOvw2V7BCn8b
+        +1BSzK+fdhZSms0mlQNC+hFhSty7NeHWCAo4g5V7DIdfHJUs4vebAapLpD7uShnCC3VCCST8DM+Zz
+        /23ZUBoaJXYnOM48r8NlIZd8R3NfcRQPFws+7Rv2RsRwhNf07pdvwYet/X3nQcZEB02jo=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:33592)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gAx2H-0001Cy-HA; Fri, 12 Oct 2018 13:59:21 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gAx2B-0003dR-I2; Fri, 12 Oct 2018 13:59:16 +0100
+Date:   Fri, 12 Oct 2018 13:59:12 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>,
+        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
+        "jacopo@jmondi.org" <jacopo@jmondi.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "shc_work@mail.ru" <shc_work@mail.ru>,
+        "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "zonque@gmail.com" <zonque@gmail.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "jmkrzyszt@gmail.com" <jmkrzyszt@gmail.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Message-ID: <20181012125911.GT30658@n2100.armlinux.org.uk>
+References: <20180906122436.25610-1-linus.walleij@linaro.org>
+ <20181011090112eucas1p286d8c1edfc1a2a207d8a11c5ad7eb20e~cglSx9qcr2394623946eucas1p2y@eucas1p2.samsung.com>
+ <CACRpkdbTdmQQTg1D9jbcHGcT4kZermwVA+QEnUJGf+VYqoKRkg@mail.gmail.com>
+ <c2726f18-f0cd-0d3d-c950-3e7212efd34d@nvidia.com>
+ <1539272073.18645.12.camel@toradex.com>
+ <CACRpkdYDoFhBJy484Hvf0e+zv51w23hqtBYLFxXsiLmWs63CWw@mail.gmail.com>
+ <1539337415.30485.21.camel@toradex.com>
+ <c1722bee-230a-d0ad-d2de-790ab1ce9fcf@nvidia.com>
+ <20181012104338.GS30658@n2100.armlinux.org.uk>
+ <1539344591.30485.28.camel@toradex.com>
 MIME-Version: 1.0
-In-Reply-To: <20181012124137.GA29330@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539344591.30485.28.camel@toradex.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling printk() people. ;-)
+On Fri, Oct 12, 2018 at 11:43:13AM +0000, Marcel Ziswiler wrote:
+> I don't think it is that fictitious as it makes it crystal clear that
+> there is something shared with all its pros and cons. E.g. what happens
+> if one of them regulators wants to turn off while the other one still
+> needs power? The regular regulator dependency tree would nicely make
+> this all clear.
 
-On 2018/10/12 21:41, Johannes Weiner wrote:
-> On Fri, Oct 12, 2018 at 09:10:40PM +0900, Tetsuo Handa wrote:
->> On 2018/10/12 21:08, Michal Hocko wrote:
->>>> So not more than 10 dumps in each 5s interval. That looks reasonable
->>>> to me. By the time it starts dropping data you have more than enough
->>>> information to go on already.
->>>
->>> Yeah. Unless we have a storm coming from many different cgroups in
->>> parallel. But even then we have the allocation context for each OOM so
->>> we are not losing everything. Should we ever tune this, it can be done
->>> later with some explicit examples.
->>>
->>>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->>>
->>> Thanks! I will post the patch to Andrew early next week.
->>>
->>
->> How do you handle environments where one dump takes e.g. 3 seconds?
->> Counting delay between first message in previous dump and first message
->> in next dump is not safe. Unless we count delay between last message
->> in previous dump and first message in next dump, we cannot guarantee
->> that the system won't lockup due to printk() flooding.
-> 
-> How is that different from any other printk ratelimiting? If a dump
-> takes 3 seconds you need to fix your console. It doesn't make sense to
-> design KERN_INFO messages for the slowest serial consoles out there.
+If you're introducing a regulator that doesn't exist in reality
+just to be able to share a GPIO line that is wired to several
+real regulators, then it _is_ ficticious.  You're not describing
+the hardware, you're describing something else to work around the
+shortcomings of the implementation that can't cope with how stuff
+is wired up in the real world.  You're making the DT description
+fit the software implementation, rather than the software
+implementation fit the real world hardware.
 
-You can't fix the console. It is a hardware limitation.
+Having a single GPIO that controls multiple separate regulators
+which have entirely separate supplies of their own is very common
+in electronics.
 
-> 
-> That's what we did, btw. We used to patch out the OOM header because
-> our serial console was so bad, but obviously that's not a generic
-> upstream solution. We've since changed the loglevel on the serial and
-> use netconsole[1] for the chattier loglevels.
-> 
-> [1] https://github.com/facebook/fbkutils/tree/master/netconsd
-> 
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
