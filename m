@@ -2,101 +2,89 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8178EC28CF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B57C28CF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA242098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:14:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="olh1cYjW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA242098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7689E2098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 03:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7689E2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJLKoT (ORCPT
+        id S1726943AbeJLKp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 06:44:19 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41538 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeJLKoS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 06:44:18 -0400
-Received: by mail-pl1-f195.google.com with SMTP id q17-v6so5190658plr.8;
-        Thu, 11 Oct 2018 20:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=Gq10Tja0XUvcUg2vLUMziAQf2K5i6ue/uwCqC6xStw0=;
-        b=olh1cYjWV69NFStSdMTCIWGDgwpc+/L+EhV86OzUtlqc3PF4wAva4rUxrgUT/Csuxl
-         7FXRnqGBpSlIJBEKOsNMUiiX7KdH2Zy5/8xMlEi8tspMAQAsyWlhKFSebRpzNcfadytu
-         7JRB1mwou+0/WrK//cJeSCBRRy2C24rgs2YZMLNqgNMaY0ThZhbg+XUi1Xoci7GYf5F7
-         VDG9x4aoMvl8ZForO6k09+JKGfyweupdwz/Nl0NBE0Dyu9hsp+nb+ypJ3aBjS9dymGzs
-         tsEDy00TG3/96vf/SEkme8geWueOAjuPW+pq66aZili9LI1znOYTeTaIL26cAkiOO5xf
-         Wncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Gq10Tja0XUvcUg2vLUMziAQf2K5i6ue/uwCqC6xStw0=;
-        b=XLDUV4AYppVHgUaBgp0XXmBa/8xHAIhCk5VOeMBWOk3Bgtn+IxP639OYN63VzIz0mV
-         h7usFVC6enx5I45xuKFI/wmXfFlv0hFVrN0eEt/iZuy8AXI/oQ9cz1I8CV6ZugBCUby0
-         aziVenYzjNDxk7Gy2cTNV+GucOaR1yeuhLWgxmWCKl7tMSS/nPiDzT5EQlfISV/U00QD
-         YBneQ0J91+hGUm+RZfGzKg7l7DIqWn/MjvLHGlvGEItKLBaconBVoCmoRfmoszOdNS84
-         V7DR0++B8zthBJwylIgPrfALtFsQChkjKEpw63MXxOmpjsuDEc5WHI1j8T8MqwRgWT8c
-         6eNg==
-X-Gm-Message-State: ABuFfog4Gga61H0Da4t7YYiMqriCHiCYw9lc/wnB19wDiFnXArXipMXR
-        Cg8oJQeaFKTMNx0ujAMs/rO8De6n6/Hn0IX21fs=
-X-Google-Smtp-Source: ACcGV62JgPilMztl+BXHPQPlbaIJvjIcwM8OmdLX/+KeDCQ1NHHnd43JUsFSa/3/4+SJ/zoM6qqE23Xodl2kqh2v1qg=
-X-Received: by 2002:a17:902:758f:: with SMTP id j15-v6mr4210495pll.160.1539314043464;
- Thu, 11 Oct 2018 20:14:03 -0700 (PDT)
+        Fri, 12 Oct 2018 06:45:27 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36459 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726034AbeJLKp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 06:45:27 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9F51D38FA8176;
+        Fri, 12 Oct 2018 11:15:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 12 Oct 2018 11:14:54 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <sudeep.dutt@intel.com>, <ashutosh.dixit@intel.com>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <mhocko@suse.com>,
+        <akpm@linux-foundation.org>, <leon@kernel.org>,
+        <natechancellor@gmail.com>, <christian.koenig@amd.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] misc: mic: scif: remove set but not used variables 'src_dma_addr, dst_dma_addr'
+Date:   Fri, 12 Oct 2018 03:25:56 +0000
+Message-ID: <1539314756-154517-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-From:   Feng Li <lifeng1519@gmail.com>
-Date:   Fri, 12 Oct 2018 11:13:36 +0800
-Message-ID: <CAEK8JBAgRwHZDBrNDNmmRXC3WgX9tVqeoFk5edLHfJL9OWQ-zg@mail.gmail.com>
-Subject: [PATCH] smartpqi: Fix timeout of smartpqi probe stage
-To:     Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I use 'HPE Smart Array E208i-a SR Gen10 Controller', and pass through
-the SAS controller from ESXi 6.0U1 to VM, which is installed CentOS 7.4/7.5.
-The disk is not found.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The error log is "controller not ready after 30 seconds."
+drivers/misc/mic/scif/scif_dma.c: In function 'scif_rma_list_dma_copy_wrapper':
+drivers/misc/mic/scif/scif_dma.c:1558:27: warning:
+ variable 'dst_dma_addr' set but not used [-Wunused-but-set-variable]
 
-Add some logs, and could check the probe stage needs nearly 36s to match the
-status.
+drivers/misc/mic/scif/scif_dma.c:1558:13: warning:
+ variable 'src_dma_addr' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Li Feng <fengli@smartx.com>
+They never used since introduction in
+commit 7cc31cd27752 ("misc: mic: SCIF DMA and CPU copy interface")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/smartpqi/smartpqi_sis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/mic/scif/scif_dma.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_sis.c
-b/drivers/scsi/smartpqi/smartpqi_sis.c
-index 5141bd4c9..bc7efdacb 100644
---- a/drivers/scsi/smartpqi/smartpqi_sis.c
-+++ b/drivers/scsi/smartpqi/smartpqi_sis.c
-@@ -59,7 +59,7 @@
+diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
+index 03af8b5..2babbac 100644
+--- a/drivers/misc/mic/scif/scif_dma.c
++++ b/drivers/misc/mic/scif/scif_dma.c
+@@ -1555,7 +1555,6 @@ static int scif_rma_list_dma_copy_wrapper(struct scif_endpt *epd,
+ 	u8 *temp = NULL;
+ 	bool src_local = true;
+ 	struct scif_dma_comp_cb *comp_cb;
+-	dma_addr_t src_dma_addr, dst_dma_addr;
+ 	int err;
+ 
+ 	if (is_dma_copy_aligned(chan->device, 1, 1, 1))
+@@ -1569,8 +1568,6 @@ static int scif_rma_list_dma_copy_wrapper(struct scif_endpt *epd,
+ 
+ 	if (work->loopback)
+ 		return scif_rma_list_cpu_copy(work);
+-	src_dma_addr = __scif_off_to_dma_addr(work->src_window, src_offset);
+-	dst_dma_addr = __scif_off_to_dma_addr(work->dst_window, dst_offset);
+ 	src_local = work->src_window->type == SCIF_WINDOW_SELF;
+ 
+ 	/* Allocate dma_completion cb */
 
- #define SIS_CTRL_KERNEL_UP 0x80
- #define SIS_CTRL_KERNEL_PANIC 0x100
--#define SIS_CTRL_READY_TIMEOUT_SECS 30
-+#define SIS_CTRL_READY_TIMEOUT_SECS 90
- #define SIS_CTRL_READY_RESUME_TIMEOUT_SECS 90
- #define SIS_CTRL_READY_POLL_INTERVAL_MSECS 10
-
---
-2.11.0
