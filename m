@@ -2,101 +2,101 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80495C6783C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1512C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5186D2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:29:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5186D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dei.uc.pt
+	by mail.kernel.org (Postfix) with ESMTP id 6B0D4213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 14:33:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0tgJQdts"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B0D4213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbeJLWCH (ORCPT
+        id S1728847AbeJLWFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:02:07 -0400
-Received: from smtp.dei.uc.pt ([193.137.203.253]:49786 "EHLO smtp.dei.uc.pt"
+        Fri, 12 Oct 2018 18:05:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728354AbeJLWCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:02:07 -0400
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-        (user=sneves mech=PLAIN bits=0)
-        by smtp.dei.uc.pt (8.15.2/8.15.2) with ESMTPSA id w9CESceM010961
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 15:28:43 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dei.uc.pt w9CESceM010961
-Received: by mail-ed1-f54.google.com with SMTP id c26-v6so11679617edt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 07:28:43 -0700 (PDT)
-X-Gm-Message-State: ABuFfoi92grEMV30vIlI8fj247zUGo1fiKJ3XTWmnwTMOAMnbXfkULg4
-        hqW00gHmsAAl/h+eLT6cS0/njvffsDtl37Hphe4=
-X-Google-Smtp-Source: ACcGV61Ft496CrOqU3/trjao5DSZ3CzW5Dj9Riis5GJL/BVu704DtgFquO81cRWsO5tvcwVMwTmTmR/A2+bfcA2MX08=
-X-Received: by 2002:a50:9583:: with SMTP id w3-v6mr9437897eda.33.1539354517878;
- Fri, 12 Oct 2018 07:28:37 -0700 (PDT)
+        id S1728354AbeJLWFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 18:05:43 -0400
+Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3A5820835;
+        Fri, 12 Oct 2018 14:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539354780;
+        bh=5jXZlJ/dIGQIyx/TGvkuXSH4shejyurjFKIYiEAaWHA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0tgJQdtsIQlm5EX9oqkDFhZGBp4uUusjg7pZXbiGskPo7Wbp2TnRXmVYkInLCN2G3
+         QUdvr8o+AQIFTHIxbzZC8pL6XBhyzWdceosm2U/YOm0Yib0HU5g7pNV/NTS0JTeo3F
+         EH20X8PXubW3NYhuhVLo3vxEf15pWXFL0SXWMbwA=
+Date:   Fri, 12 Oct 2018 16:32:54 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
+        keescook@chromium.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, kristen@linux.intel.com,
+        arjan@linux.intel.com, deneen.t.dock@intel.com
+Subject: Re: [PATCH v2 4/7] arm64/modules: Add rlimit checking for arm64
+ modules
+Message-ID: <20181012143254.idy65qbvaaw5k3ge@linux-8ccs>
+References: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
+ <20181011233117.7883-5-rick.p.edgecombe@intel.com>
+ <25951d99-8ba7-5c9e-938e-baf92395f9e0@intel.com>
 MIME-Version: 1.0
-References: <20181011185458.10186-1-kristen@linux.intel.com>
- <CALCETrW5sNz-TO8w8e+7d1oD_CmnUX_txnBuKe2+wM7qFaK64A@mail.gmail.com>
- <CAEX_ruGcWOYuhF6Gtm0a9kh8JsUvZzRLxzi8Q982iiWA2ioYpg@mail.gmail.com> <CAG48ez0aTJMREb1JL6SaT5rNLs6oUZVevj+BGrUzVEprZNFKOw@mail.gmail.com>
-In-Reply-To: <CAG48ez0aTJMREb1JL6SaT5rNLs6oUZVevj+BGrUzVEprZNFKOw@mail.gmail.com>
-From:   Samuel Neves <sneves@dei.uc.pt>
-Date:   Fri, 12 Oct 2018 15:28:01 +0100
-X-Gmail-Original-Message-ID: <CAEX_ruHf5hDTvL+4BNyL8HsTjKKU+fvAB4uKrszVVfpPen25Mw@mail.gmail.com>
-Message-ID: <CAEX_ruHf5hDTvL+4BNyL8HsTjKKU+fvAB4uKrszVVfpPen25Mw@mail.gmail.com>
-Subject: Re: [PATCH] x86: entry: flush the cache if syscall error
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, kristen@linux.intel.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-FCTUC-DEI-SIC-MailScanner-Information: Please contact helpdesk@dei.uc.pt for more information
-X-FCTUC-DEI-SIC-MailScanner-ID: w9CESceM010961
-X-FCTUC-DEI-SIC-MailScanner: Found to be clean
-X-FCTUC-DEI-SIC-MailScanner-SpamCheck: not spam, SpamAssassin (cached,
-        score=-60.1, required 3.252, autolearn=not spam, ALL_TRUSTED -10.00,
-        BAYES_00 -0.10, L_SMTP_AUTH -50.00)
-X-FCTUC-DEI-SIC-MailScanner-From: sneves@dei.uc.pt
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <25951d99-8ba7-5c9e-938e-baf92395f9e0@intel.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 2:26 PM Jann Horn <jannh@google.com> wrote:
++++ Dave Hansen [11/10/18 16:47 -0700]:
+>On 10/11/2018 04:31 PM, Rick Edgecombe wrote:
+>> +	if (check_inc_mod_rlimit(size))
+>> +		return NULL;
+>> +
+>>  	p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
+>>  				module_alloc_base + MODULES_VSIZE,
+>>  				gfp_mask, PAGE_KERNEL_EXEC, 0,
+>> @@ -65,6 +68,8 @@ void *module_alloc(unsigned long size)
+>>  		return NULL;
+>>  	}
+>>
+>> +	update_mod_rlimit(p, size);
 >
-> On Fri, Oct 12, 2018 at 11:41 AM Samuel Neves <sneves@dei.uc.pt> wrote:
-> >
-> > On Thu, Oct 11, 2018 at 8:25 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > > What exactly is this trying to protect against?  And how many cycles
-> > > should we expect L1D_FLUSH to take?
-> >
-> > As far as I could measure, I got 1660 cycles per wrmsr 0x10b, 0x1 on a
-> > Skylake chip, and 1220 cycles on a Skylake-SP.
+>Is there a reason we couldn't just rename all of the existing per-arch
+>module_alloc() calls to be called, say, "arch_module_alloc()", then put
+>this new rlimit code in a generic helper that does:
 >
-> Is that with L1D mostly empty, with L1D mostly full with clean lines,
-> or with L1D full of dirty lines that need to be written back?
+>
+>	if (check_inc_mod_rlimit(size))
+>		return NULL;
+>
+>	p = arch_module_alloc(...);
+>
+>	...
+>
+>	update_mod_rlimit(p, size);
+>
 
-Mostly empty, as this is flushing repeatedly without bothering to
-refill L1d with anything.
+I second this suggestion. Just make module_{alloc,memfree} generic,
+non-weak functions that call the rlimit helpers in addition to the
+arch-specific arch_module_{alloc,memfree} functions.
 
-On Skylake the (averaged) uops breakdown is something like
-
-port 0: 255
-port 1: 143
-port 2: 176
-port 3: 177
-port 4: 524
-port 5: 273
-port 6: 616
-port 7: 182
-
-The number of port 4 dispatches is very close to the number of cache
-lines, suggesting one write per line (with respective 176+177+182 port
-{2, 3, 7} address generations).
-
-Furthermore, I suspect it also clears L1i cache. For 2^20 wrmsr
-executions, we have around 2^20 frontend_retired_l1i_miss events, but
-a negligible amount of frontend_retired_l2_miss ones.
+Jessica
