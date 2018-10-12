@@ -2,203 +2,192 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A21DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C620C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98622077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 11:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E613E2077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 12:01:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOBwvpet"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98622077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QBsmMwc3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E613E2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeJLT1L (ORCPT
+        id S1728447AbeJLTdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:27:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40817 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeJLT1L (ORCPT
+        Fri, 12 Oct 2018 15:33:05 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45596 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbeJLTdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:27:11 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z204-v6so12698006wmc.5;
-        Fri, 12 Oct 2018 04:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=urOnk3xgFScUzGb94oxh5qbnOa3yFehZolR1WbPy2rs=;
-        b=KOBwvpetR3IecA3jjPDDX8n3nyQ9lnIS7wBrxiEJKsyakGnHee8BZLA0KwvRoOFj2P
-         f5jAYMOx75eTH2o3xRoTATUA8grgGd79LUCyNjK8sHPN1+DpQdQkZZt9fB6u+UfA+Zwg
-         DSZpC0gs5SjB9PQF1Dn6sYv8ylPInOH3MZJCDVaqeaDMUE5axObwtQ6j8KaCRhNjfRon
-         89rxRysDatmITzDJr7XpqEnTOw8PD4VP4HilObB6NsgmYyz4LfEI3Wjg73TH/GjGBM11
-         kQGPRP/DlJqaXR4eqTusxfMe+5Vx7kr1IG5lq0JysUtyX0kJVZn76iAfpPai4HprPYGx
-         3/bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=urOnk3xgFScUzGb94oxh5qbnOa3yFehZolR1WbPy2rs=;
-        b=sBaJxTsGza798lH22KTllhCukgA3Ydl1RkBJHBVmIazUtLUuRj8kBZTiMTnBlrwuBg
-         kKAe1w7eX62/S72wsLUqR8f54nHPdOO4WDgT97toGfSzMm0u2EIRPB3YdzmnyKT2/NqA
-         8RwbU+KJK8LkfaXi9q86X0rnVD3zb9Wx8Q3AKBRindzeAVJI1h3bCvSMIOPwvLbok8T8
-         hinFqVtXlA8j+Abwsq+kQ4uRJUyloXwMAgKstTllZzqJuAeFLuBaNf7Lr/mZtWGMs0L4
-         fIoKvJGaX9S6JZWecrrQXU+qldN5tlqechMRuEL5tfrpg6rJqFgcbSRYWdrLsU02E3s7
-         DUWg==
-X-Gm-Message-State: ABuFfohOXhCvxarqyJE1GJDbif6JTSorrCp/CF+henWS5LIHWE1SJmqN
-        Floxy/9cGhdowSHsfbHTLE4=
-X-Google-Smtp-Source: ACcGV60LDIqHOj7UY2/PmGiIjboUAVCKJdHfkFB0GgsSrpFOmTWMwh7xUXfEJ5cJhEmXFwxi3wOXjg==
-X-Received: by 2002:a1c:1e8e:: with SMTP id e136-v6mr5047379wme.100.1539345302749;
-        Fri, 12 Oct 2018 04:55:02 -0700 (PDT)
-Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id h82-v6sm1055820wmf.14.2018.10.12.04.55.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 04:55:01 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 13:55:00 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     gottfried.haider@gmail.com, stefan.wahren@i2se.com,
-        hsweeten@visionengravers.com, loic.pallardy@st.com,
-        broonie@kernel.org, gohai@sukzessiv.net, michal.vokac@ysoft.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] pwm: sysfs: fix exporting PWM channel
-Message-ID: <20181012115500.GD31561@ulmo>
-References: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
+        Fri, 12 Oct 2018 15:33:05 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D5361258;
+        Fri, 12 Oct 2018 14:00:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539345656;
+        bh=Qbb5k7XBcYqORA401fYqW5106slM4BoLdum7gzbnVh4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QBsmMwc38bhBYxPd84UDiS1xRw1IeZy14T+Ik9MdgwBmBFv6GBmvzPpi15GNuiA6f
+         6q4u9oT4Z0DUMCJ6JS2P5vdkT1AphaPOIr8adLeyqPi+xyDEsUtZo3tjpotFmHEpJK
+         IdWwPR7G6bC9QjaXiyYNoEjtS4TAtpnMAboeLxzs=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of TI DS90Ux9xx pinmux
+Date:   Fri, 12 Oct 2018 15:01:00 +0300
+Message-ID: <8675619.KiXOS7fxCj@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181008211205.2900-4-vz@mleia.com>
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-4-vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Q0rSlbzrZN6k9QnT"
-Content-Disposition: inline
-In-Reply-To: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vladimir,
 
---Q0rSlbzrZN6k9QnT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On Mon, Oct 01, 2018 at 03:23:55PM +0200, Fabrice Gasnier wrote:
-> Since commit 7e5d1fd75c3d ("pwm: Set class for exported channels in sysfs=
-")
-> - it's not possible to export more than one PWM channel
-> - ABI has changed, as a side effect. It may cause bad behavior as pwmchip
->   attributes are wrongly added to pwm channels and report wrong values.
-> See [1] and [2].
->=20
-> One purpose of the original patch is to send uevents to udev, when export=
-ing a
-> PWM channel through the sysfs. This series:
-> - Reverts the original patch.
-> - Proposes a new way to send notifications to be used by udev rules.
->=20
-> - With this series:
-> $ echo 0 > /sys/class/pwm/pwmchip0/export
-> $ ls /sys/class/pwm
-> pwmchip0 pwmchip4
->=20
-> $ ls /sys/class/pwm/pwmchip0/pwm0/
-> capture     enable      polarity    uevent
-> duty_cycle  period      power
->=20
-> - Without this series:
-> $ echo 0 > /sys/class/pwm/pwmchip0/export
-> $ ls /sys/class/pwm
-> pwm0 pwmchip0 pwmchip4
->=20
-> $ ls /sys/class/pwm/pwmchip0/pwm0/
-> capture     duty_cycle  export      period      power       uevent
-> device      enable      npwm        polarity    subsystem   unexport
->=20
-> - Backtrace when exporting a 2nd channel (0) on a separate pwmchip device:
-> $ echo 0 > /sys/class/pwm/pwmchip4/export
-> [   95.286558] sysfs: cannot create duplicate filename '/class/pwm/pwm0'
-> [   95.293630] CPU: 0 PID: 54 Comm: sh Not tainted 4.19.0-rc6-00013-g00b4=
-9b0 #151
-> [   95.301344] Hardware name: STM32 (Device Tree Support)
-> [   95.306833] [<0000c155>] (unwind_backtrace) from [<0000b273>] (show_st=
-ack+0xb/0xc)
-> [   95.315136] [<0000b273>] (show_stack) from [<00092455>] (sysfs_warn_du=
-p+0x31/0x48)
-> [   95.323247] [<00092455>] (sysfs_warn_dup) from [<00092635>] (sysfs_do_=
-create_link_sd+0x75/0x88)
-> [   95.332539] [<00092635>] (sysfs_do_create_link_sd) from [<00125823>] (=
-device_add+0x133/0x3b0)
-> [   95.341694] [<00125823>] (device_add) from [<001059ed>] (export_store+=
-0xb5/0x12c)
-> [   95.349761] [<001059ed>] (export_store) from [<00091911>] (kernfs_fop_=
-write+0x87/0xda)
-> [   95.358150] [<00091911>] (kernfs_fop_write) from [<0005beb1>] (__vfs_w=
-rite+0x1d/0xe0)
-> [   95.366295] [<0005beb1>] (__vfs_write) from [<0005bfe7>] (vfs_write+0x=
-4f/0x7c)
-> [   95.374053] [<0005bfe7>] (vfs_write) from [<0005c0bf>] (ksys_write+0x3=
-3/0x70)
-> [   95.381708] [<0005c0bf>] (ksys_write) from [<00009001>] (ret_fast_sysc=
-all+0x1/0x58)
-> [   95.389682] Exception stack(0x01bcffa8 to 0x01bcfff0)
-> [   95.394946] ffa0:                   00000000 00c4883c 00000001 00c4e59=
-0 00000002 00000004
-> [   95.403639] ffc0: 00000000 00c4883c 00c4cbe8 00000004 00000002 0000002=
-0 00000000 00c4d008
-> [   95.412223] ffe0: 00c29151 00c4cbe8 00c17833 00c13c0c
-> -sh: write error: File exists
->=20
-> [1] https://lkml.org/lkml/2018/9/25/713
-> [2] https://lkml.org/lkml/2018/9/25/447
->=20
+On Tuesday, 9 October 2018 00:12:01 EEST Vladimir Zapolskiy wrote:
+> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> 
+> TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
+> in particular a pin may have selectable functions of GPIO, GPIO line
+> transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
+> 
+> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
+> controllers.
+> 
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 > ---
-> Changes in v2:
-> - update revert commit message
-> - new patch 2/2 to propose uevent notification (change) on pwmchip
->=20
-> Fabrice Gasnier (2):
->   Revert "pwm: Set class for exported channels in sysfs"
->   pwm: send a uevent on the pwmchip device upon channel sysfs (un)export
->=20
->  drivers/pwm/sysfs.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  .../bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt | 83 +++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+> b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt new
+> file mode 100644
+> index 000000000000..fbfa1a3cdf9f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+> @@ -0,0 +1,83 @@
+> +TI DS90Ux9xx de-/serializer pinmux and GPIO subcontroller
+> +
+> +Required properties:
+> +- compatible: Must contain a generic "ti,ds90ux9xx-pinctrl" value and
+> +	may contain one more specific value from the list:
+> +	"ti,ds90ux925-pinctrl",
+> +	"ti,ds90ux926-pinctrl",
+> +	"ti,ds90ux927-pinctrl",
+> +	"ti,ds90ux928-pinctrl",
+> +	"ti,ds90ux940-pinctrl".
 
-Both patches applied, thanks. What do you think would be the importance
-of getting this into stable kernels? We can't get one of the patches in
-without the other, so they'd both have to be backported. The second one
-is still fairly small, so would qualify for stable, I think.
+No need for a subnode, you can mark the main DT node with gpio-controller 
+directly.
 
-However, given that it's taken a long time for somebody to notice this,
-I'm not sure if this is something that people care about too much in the
-stable kernels.
+> +- gpio-controller: Marks the device node as a GPIO controller.
+> +
+> +- #gpio-cells: Must be set to 2,
+> +	- the first cell is the GPIO offset number within the controller,
+> +	- the second cell is used to specify the GPIO line polarity.
+> +
+> +- gpio-ranges: Mapping to pin controller pins (as described in
+> +	Documentation/devicetree/bindings/gpio/gpio.txt)
+> +
+> +Optional properties:
+> +- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
 
-Thierry
+Please use standard properties to configure bus width. There is one defined in 
+Documentation/devicetree/bindings/media/video-interfaces.txt.
 
---Q0rSlbzrZN6k9QnT
-Content-Type: application/pgp-signature; name="signature.asc"
+> +Available pins, groups and functions (reference to device datasheets):
+> +
+> +function: "gpio" ("gpio4" is on DS90Ux925 and DS90Ux926 only,
+> +		  "gpio9" is on DS90Ux940 only)
+> + - pins: "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
+> +	 "gpio7", "gpio8", "gpio9"
+> +
+> +function: "gpio-remote"
+> + - pins: "gpio0", "gpio1", "gpio2", "gpio3"
+> +
+> +function: "pass" (DS90Ux940 specific only)
+> + - pins: "gpio0", "gpio3"
 
------BEGIN PGP SIGNATURE-----
+What do those functions mean ?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAi5QACgkQ3SOs138+
-s6EKTA/+JaRokyKNvfPT6Td1ZQDzT30HpYUrTNmIoa2d4/y0lRDqTpKr6fTurt4z
-LKVpyhoKZUjCYmCZZupGW9mJEdPwh95dYIgUchfkl03iLrDWL9K8DX6pzWSUt/Sj
-YcxfuhEQEG0tkoUeHPiJ7V83673PcI9m7DBibFfjEondhxjqy/JVqU8uzduNLSQ6
-HwYmuvM3VyqSzsIggyWC0ibnshdpx3afXQi/I4AO5ZM9mGvSX+Y73Hal39dTHTXy
-rjWru/TXkIU5BRmSr7880lB2e1E+vq8NlWganuwXb3USCWMWew9P7OqrJ3wL4vP9
-KsQIdllkI88chkZ9njUMppmldTEygMOFN0I5YcgLJoPU2jZRO0CfkAh60Y5gDvDC
-vLvCWRBlcpm+s2KDPfmvIXYMGWbM/cHvRm4ic6wtr4ahQ9LFxlrrjn3lKKrgJX16
-AfwzOAAcdNcsINE9QeSgGOZ7SQqxZvsx4Mwp8qUkGxdhXJTlyo2IKH9nployMIhi
-PfgdrI/mB/rALsnZEDY2O5mzT8ftclkU21cuaLnaUglKNRc8DOVMHu+K8wKmvQvc
-3sz4Q+GpbQB5KYOIeD+gBpPlKMy3oi4kD9g/+eVdt8oKi+lBSQEAI15yNUe0MQrV
-7VK6pQ7yIHHBrlHcpmvN7WPbxcacwNXiwH7mGpO0rn2DiPAqpdo=
-=VkA1
------END PGP SIGNATURE-----
+> +function: "i2s-1"
+> + - group: "i2s-1"
+> +
+> +function: "i2s-2"
+> + - group: "i2s-2"
+> +
+> +function: "i2s-3" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
+> + - group: "i2s-3"
+> +
+> +function: "i2s-4" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
+> + - group: "i2s-4"
+> +
+> +function: "i2s-m" (DS90Ux928 and DS90Ux940 specific only)
+> + - group: "i2s-m"
 
---Q0rSlbzrZN6k9QnT--
+Do we really need all this ? I think a better model would be to describe the 
+audio interfaces explicitly, and configure pinmuxing automatically based on 
+which audio interfaces are in use.
+
+> +function: "parallel" (DS90Ux925 and DS90Ux926 specific only)
+> + - group: "parallel"
+> +
+> +Example (deserializer with pins GPIO[3:0] set to bridged output
+> +	 function and pin GPIO4 in standard hogged GPIO function):
+> +
+> +deserializer {
+> +	compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
+> +
+> +	ds90ux928_pctrl: pin-controller {
+> +		compatible = "ti,ds90ux928-pinctrl", "ti,ds90ux9xx-pinctrl";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		gpio-ranges = <&ds90ux928_pctrl 0 0 8>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ds90ux928_pins>;
+> +
+> +		ds90ux928_pins: pinmux {
+> +			gpio-remote {
+> +				pins = "gpio0", "gpio1", "gpio2", "gpio3";
+> +				function = "gpio-remote";
+> +			};
+> +		};
+> +
+> +		rst {
+> +			gpio-hog;
+> +			gpios = <4 GPIO_ACTIVE_HIGH>;
+> +			output-high;
+> +		};
+> +	};
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
