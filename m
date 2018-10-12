@@ -2,128 +2,156 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B65C67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8085C6783C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7DA2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:31:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llUXA/aD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7DA2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 651972098A
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 16:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651972098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbeJMAEd (ORCPT
+        id S1729015AbeJMAGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:04:33 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35520 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728744AbeJMAEd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:04:33 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y19-v6so12037580edd.2;
-        Fri, 12 Oct 2018 09:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CtHqhucVpoRJ9ZZE2L0WHY7oYNoqXEFljxT1F1BgAiw=;
-        b=llUXA/aDq4Y7S7zn3jvNEMPiMfbxpLDj/ZZwP3IN2xi8kViqPif50ZSDCRw6rnrUSi
-         q0xvMAMvfWhHDZEnEb2tN2cQnwE0EJF2oWxssz0K9i+Xh3C//2GUP6TSK+aLbVD1o4GX
-         ug5UwmjRxSQpWhCXtGiojLKSl5xCpsAKQScC2+bwYa3PqhyTZNBlyjDpm4SKtw7Waj/5
-         KhoZPNwjJQBdsIZkzPnYKtDXGN7SYQqEcF6QYkXReYc6W1hujAa0Mx6t3uFsLwaZ4de9
-         9Glqp3cH1pq2oUtu3RwpzjYCdlkRTb5BCUsWLhHX5lQ0OGzPuT1tCcU9XJ/vCKGwNAQJ
-         DXqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CtHqhucVpoRJ9ZZE2L0WHY7oYNoqXEFljxT1F1BgAiw=;
-        b=kyI+287nA2rswBMPBc3m5gQJAmRLPGhVfIwJonMCj5VetCAWej4NZylW2eXwXQKnDo
-         kKi9J06KlgSWme/o/+5rQqw8iNGUm0OWcO5QlhDNsD6ITEyKSdg3v8mCX9Osb0d/CGxk
-         xyzYKctzdpJmVJYJseGVA/rDZSQanVl1K4nV1N5W+uPjvNAli+rUNUcUzBlKTLEaV86X
-         mf8O7nfG4uvXGsUOJ97NQnUvtgBdMTVNAji1W1e6LsK0eQ68bqHJmcR7K6OJEsw7RPmo
-         mPl8sUsU7J5+K3GRgahefgN/kR//lUT40X7Mys6KKV72dlU5VHmWsdkABAIPyb74IJ58
-         OctQ==
-X-Gm-Message-State: ABuFfojW508Wpe1GLPFTSPWfj63T72ElJ3lN6jPUMA3XpnnhnU64WQCg
-        WT7IMWS3mwHX8yZmbPFTXQU=
-X-Google-Smtp-Source: ACcGV62vGLozIOOik8Ri4qdwfF7/+92mPxomlq0PlJMirOdPpT0Jr++5wN0QqSUHP9QqGemIu5z24Q==
-X-Received: by 2002:a17:906:b01:: with SMTP id u1-v6mr8156076ejg.124.1539361874024;
-        Fri, 12 Oct 2018 09:31:14 -0700 (PDT)
-Received: from debian64.daheim (p200300D5FBC368FCD63D7EFFFEBDE96E.dip0.t-ipconnect.de. [2003:d5:fbc3:68fc:d63d:7eff:febd:e96e])
-        by smtp.gmail.com with ESMTPSA id e8-v6sm429592ejm.75.2018.10.12.09.31.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 09:31:13 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.91)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1gB0LI-0003WH-8I; Fri, 12 Oct 2018 18:31:12 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        Fri, 12 Oct 2018 20:06:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:54230 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728537AbeJMAGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 20:06:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75D91F;
+        Fri, 12 Oct 2018 09:33:18 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 621EA3F5D3;
+        Fri, 12 Oct 2018 09:33:15 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 17:33:09 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, swboyd@chromium.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: Add bindings for aliases node
-Date:   Fri, 12 Oct 2018 18:31:11 +0200
-Message-ID: <1626442.UsWqDEgn3j@debian64>
-In-Reply-To: <20181012000837.GP22824@google.com>
-References: <20180925210255.172734-1-mka@chromium.org> <20181009183141.GA126050@ban.mtv.corp.google.com> <20181012000837.GP22824@google.com>
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181012163309.GA14841@e107155-lin>
+References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
+ <1539206455-29342-8-git-send-email-rplsssn@codeaurora.org>
+ <20181011112013.GC32752@e107155-lin>
+ <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin>
+ <20181011165822.GB2371@codeaurora.org>
+ <20181011173733.GA26447@e107155-lin>
+ <20181011210609.GD2371@codeaurora.org>
+ <20181012150429.GH3401@e107155-lin>
+ <CAPDyKFpNuTMav__wTvuMbxU65QpiQPftH_OXkEwztcPAG9FbTw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpNuTMav__wTvuMbxU65QpiQPftH_OXkEwztcPAG9FbTw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, October 12, 2018 2:08:37 AM CEST Matthias Kaehlcke wrote:
-> Maybe the doc should include a recommendation to use aliases
-> sparingly? I'm open to input on that from folks who have a better
-> understanding of the potential pitfalls 
+On Fri, Oct 12, 2018 at 05:46:13PM +0200, Ulf Hansson wrote:
+[...]
 
-I had a similar discussion with the OpenWrt devs over the
-use of "led-$function" aliases in a DTS. I did a bit of digging and
-found this wonderful emails from Mark Rutland regarding the general
-use and abuse of aliases in a reply to a patch by Christer Weinigel 
-"devicetree - document using aliases to set spi bus number."
+>
+> Apologize for sidetracking the discussion, just want to fold in a few comments.
+>
+No need to apologize, you are just contributing to get better
+understanding of the system.
 
-<https://patchwork.kernel.org/patch/9133903/#19207021>
+> This is becoming a complicated story. May I suggest we pick the GIC as
+> an example instead?
+>
 
-|"If those ports are physically organised and labelled the same, then
-|using aliases could make sense, to describe the well-defined physical
-|labels. If you've assigned the numbers artificially, or if the physical
-|organisation differs across boards, then aliases are not the right tool
-|for the job.
-|
-|In the latter cases we're altering the hardware description to suit an
-|application, rather than providing the necessary abstraction, which is
-|the kind of (ab)use of aliases which we want to avoid."
+Sure.
 
-And he followed it up with a summary:
-<https://patchwork.kernel.org/comment/19207071/>
+> Let's assume the simple case, we have one cluster and when the cluster
+> becomes powered off, the GIC needs to be re-configured and wakeups
+> must be routed through some "always on" external logic.
+>
 
-|Typically, serial ports are much more user-accessible (physically), and
-|much more directly useful to a user in a generic fashion. They're often
-|labelled (physically or in a manual) with a number, and we use aliases
-|to describe those labels to the kernel. The fact that the kernel may use
-|that to drive its own internal numbering is immaterial to the binding.
+OK, but is the cluster powered off with any wakeup configured(idling)
+or with selected wakeups(system suspend/idle)
 
-So the gist of this is that aliases are meant for user-accessible /
-physically devices/ports/etc... that are labeled as such. And this of
-course works perfectly for power/status LEDs and such because they
-usually have little "power" symbols/pictograms/lables near them. 
+> The PSCI spec mentions nothing about how to manage this and not the
+> rest of the SoC topology for that matter. Hence if the GIC is managed
+> by Linux - then Linux also needs to take actions before cluster power
+> down and after cluster power up. So, if PSCI FW can't deal with GIC,
+> how would manage it?
+>
 
+To add to the complications, some of the configurations in GIC can be
+done only in higher exception level. So we expect PSCI to power down
+the GIC if possible and move the wakeup source accordingly based on the
+platform. So PSCI F/W unable to deal with GIC is simply impossible.
+It configures Group0/1 interrupts and generally Linux deals with Group 1.
+E.g. First 8 SGI are put in Group 0 which is secure interrupts.
 
+So by default, GIC driver in Linux sets MASK_ON_SUSPEND which ensures
+only wake-up sources are kept enabled before entering suspend. If the
+GIC is being powered down, secure side has to do it's book-keeping if
+any and transfer the wakeups to any external always on wakeup controller.
+
+> >
+> > I think we are mixing the system sleep states with CPU idle here.
+> > If it's system sleeps states, the we need to deal it in some system ops
+> > when it's the last CPU in the system and not the cluster/power domain.
+>
+> What is really a system sleep state? One could consider it just being
+> another idles state, having heaver residency targets and greater
+> enter/exit latency values, couldn't you?
+>
+
+Yes, but theses are user triggered states where the system resources are
+informed before entering it. By that I am referring system_suspend_ops.
+
+> In the end, there is no reason to keep things powered on, unless they
+> are being in used (or soon to be used), that is main point.
+>
+
+I assume by "they", you refer the GIC for example.
+
+> We are also working on S2I at Linaro. We strive towards being able to
+> show the same power numbers as for S2R, but then we need to get these
+> cluster-idle things right.
+>
+
+I don't think anything prevents it. You may need to check how to execute
+cpu_pm_suspend which in case S2R gets executed as syscore_suspend_ops.
+
+We can't assume any idle states will take the GIC down and do that
+always. At the same, representing this is DT is equal challenging as we
+can't assume single idle state power domains. So the platform specific
+firmware need to handle this transparently for OSPM.
+
+> [...]
+>
+> Have a nice weekend!
+>
+
+You too have a nice one.
+
+--
+Regards,
+Sudeep
