@@ -2,654 +2,78 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82378C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF14C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE5572086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:56:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GLz6MDjS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5572086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 49C232087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 09:56:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C232087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbeJLR1p (ORCPT
+        id S1728327AbeJLR2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:27:45 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35055 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbeJLR1p (ORCPT
+        Fri, 12 Oct 2018 13:28:01 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42228 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727808AbeJLR2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:27:45 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w5-v6so12758012wrt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 02:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=OFOR2uQslXhxA7Jdw2PeICb+EkVLAXaO2xn9CUvo87E=;
-        b=GLz6MDjS/iDNeBjb48YimZgFCmizY6cjfcjDfLnQoaaft7be2rI/p9kZfodfqFH3qD
-         55rOvZvLXXK0ougfEdJWkgOxM5FZERGoOlCWlbnDjzW2t5CLNX0p/bLQTEFsDg+C9X9n
-         mxKuicVlneq+zruC5fZT9iQRy8+qh+82emThE=
+        Fri, 12 Oct 2018 13:28:00 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j46-v6so13199316qtc.9;
+        Fri, 12 Oct 2018 02:56:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OFOR2uQslXhxA7Jdw2PeICb+EkVLAXaO2xn9CUvo87E=;
-        b=ItR/o5pX0AxHV8iNL91nOB5TymZvfzyZTSpCtJkllKDU8lHTFrIwd48OvNFTKLpYYi
-         nDeMpb/2DwPjaWLxruncqBpjkhoT6SG7mffQ6HCZa1jIWcf+LaUotxHY/W+f+SbLE+3i
-         EnVczCymm4BXizCzrM1n2FzwuzPXMxgSL6jTQn2vPuWIxnN0EAsWNquFxmuIu2OBk3D1
-         sl01X3gy63NVQ2UXq/xEaS6mIvHDNUdziWuXyRlnEF9ONAyBfAKtCOxoNmWnWgF2u8jh
-         h6P4B/882XNC1G4TB9q0dV/ZDZR+UcYttbR1g6rbx2W8JsSPYjgsaTBFX14d/8XRGK76
-         5fdA==
-X-Gm-Message-State: ABuFfoisrPIszrSeUqH0c6gZr5Zk8/Zh70Ui7AvMOnVuwSQJnscEvNKb
-        ll+FP3I60L05J55KdFgYlAT/5Q==
-X-Google-Smtp-Source: ACcGV63Hu0QdkWBrcrFV/yckqhppedmAim9CJrJKMzbn/IphUZP+4x4EDTLnRCU+GqKuzijN3piJIA==
-X-Received: by 2002:adf:fc0b:: with SMTP id i11-v6mr5018611wrr.9.1539338165015;
-        Fri, 12 Oct 2018 02:56:05 -0700 (PDT)
-Received: from wifi-122_dhcprange-135.wifi.unimo.it (wifi-122_dhcprange-135.wifi.unimo.it. [155.185.122.135])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm561158wrp.42.2018.10.12.02.56.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 02:56:04 -0700 (PDT)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, Federico Motta <federico@willer.it>,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH] block, bfq: improve asymmetric scenarios detection
-Date:   Fri, 12 Oct 2018 11:55:57 +0200
-Message-Id: <20181012095557.13744-1-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YFrLitvFg/SUyZV6CcC+XcOsTS0Y5sOEqTVSA2lo1HA=;
+        b=ET+otUW3w2z9yysMZomouSMbbihowI8ZWMSeTaKovl6kKLdq5E4l6YSlXyk00bnByp
+         dRQez4x/q+rfgquwRU0lgFkuQeZ7Z3rg2rT/359YJ7bKXulLJpuWBvkrbNOAHql748Ly
+         CYYrQeoF3aF2aTC9BJPgFWkHREYPqOk6s69Ai3eN/dtltKFxOKGs3mOLkyMGl5gnAa5g
+         TfLFC7eYzT2AnkGmXUOQ5nk/l1cy604YZNUT8PgsqvT5LSsRzChp94slZhBMwm0G1EDi
+         RFn13dc6blHN/3xshAVsRdgtlNLOl4Lr5gQKzJ1O71fdVTtaj2ZA/91D4XiFfAMHlEub
+         IKRA==
+X-Gm-Message-State: ABuFfoizjzrYIx6YX6qi6UH4exY3J14i0ZB3CXGzflIQWxSXw2hM3mgT
+        +LQb26BDHxO0/anyQ6pQDo1dtZUQ64jH/PKBCJ0=
+X-Google-Smtp-Source: ACcGV62app08hTC/bIEJGwnZpFkSSjR2RIWJAXp1wqRoGJrQvBbu18RzyRgpa1Gag1PGSbGovi/6icsA6TzfZ4S6UnA=
+X-Received: by 2002:aed:2aa1:: with SMTP id t30-v6mr4868757qtd.319.1539338183342;
+ Fri, 12 Oct 2018 02:56:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org> <1539337442-3676-6-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1539337442-3676-6-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Oct 2018 11:56:06 +0200
+Message-ID: <CAK8P3a1gsuM7mBGm9hx-BTs=HAG3cSjB6M7N-kpMmPy3kixeCQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] parisc: wire up rseq system call
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Parisc List <linux-parisc@vger.kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Federico Motta <federico@willer.it>
+On Fri, Oct 12, 2018 at 11:45 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Wire up rseq system call requires an architecture specific
+> implementation as it not present now.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 
-bfq defines as asymmetric a scenario where an active entity, say E
-(representing either a single bfq_queue or a group of other entities),
-has a higher weight than some other entities.  If the entity E does sync
-I/O in such a scenario, then bfq plugs the dispatch of the I/O of the
-other entities in the following situation: E is in service but
-temporarily has no pending I/O request.  In fact, without this plugging,
-all the times that E stops being temporarily idle, it may find the
-internal queues of the storage device already filled with an
-out-of-control number of extra requests, from other entities. So E may
-have to wait for the service of these extra requests, before finally
-having its own requests served. This may easily break service
-guarantees, with E getting less than its fair share of the device
-throughput.  Usually, the end result is that E gets the same fraction of
-the throughput as the other entities, instead of getting more, according
-to its higher weight.
+Didn't we conclude that this should be skipped?
 
-Yet there are two other more subtle cases where E, even if its weight is
-actually equal to or even lower than the weight of any other active
-entities, may get less than its fair share of the throughput in case the
-above I/O plugging is not performed:
-1. other entities issue larger requests than E;
-2. other entities contain more active child entities than E (or in
-   general tend to have more backlog than E).
-
-In the first case, other entities may get more service than E because
-they get larger requests, than those of E, served during the temporary
-idle periods of E.  In the second case, other entities get more service
-because, by having many child entities, they have many requests ready
-for dispatching while E is temporarily idle.
-
-This commit addresses this issue by extending the definition of
-asymmetric scenario: a scenario is asymmetric when
-- active entities representing bfq_queues have differentiated weights,
-  as in the original definition
-or (inclusive)
-- one or more entities representing groups of entities are active.
-
-This broader definition makes sure that I/O plugging will be performed
-in all the above cases, provided that there is at least one active
-group.  Of course, this definition is very coarse, so it will trigger
-I/O plugging also in cases where it is not needed, such as, e.g.,
-multiple active entities with just one child each, and all with the same
-I/O-request size.  The reason for this coarse definition is just that a
-finer-grained definition would be rather heavy to compute.
-
-On the opposite end, even this new definition does not trigger I/O
-plugging in all cases where there is no active group, and all bfq_queues
-have the same weight.  So, in these cases some unfairness may occur if
-there are asymmetries in I/O-request sizes.  We made this choice because
-I/O plugging may lower throughput, and probably a user that has not
-created any group cares more about throughput than about perfect
-fairness.  At any rate, as for possible applications that may care about
-service guarantees, bfq already guarantees a high responsiveness and a
-low latency to soft real-time applications automatically.
-
-Signed-off-by: Federico Motta <federico@willer.it>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 223 ++++++++++++++++++++++++--------------------
- block/bfq-iosched.h |  27 +++---
- block/bfq-wf2q.c    |  36 +++----
- 3 files changed, 155 insertions(+), 131 deletions(-)
-
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 1a1b80dfd69d..6075100f03a5 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -624,12 +624,13 @@ void bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue *bfqq)
- }
- 
- /*
-- * Tell whether there are active queues or groups with differentiated weights.
-+ * Tell whether there are active queues with different weights or
-+ * active groups.
-  */
--static bool bfq_differentiated_weights(struct bfq_data *bfqd)
-+static bool bfq_varied_queue_weights_or_active_groups(struct bfq_data *bfqd)
- {
- 	/*
--	 * For weights to differ, at least one of the trees must contain
-+	 * For queue weights to differ, queue_weights_tree must contain
- 	 * at least two nodes.
- 	 */
- 	return (!RB_EMPTY_ROOT(&bfqd->queue_weights_tree) &&
-@@ -637,9 +638,7 @@ static bool bfq_differentiated_weights(struct bfq_data *bfqd)
- 		 bfqd->queue_weights_tree.rb_node->rb_right)
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
- 	       ) ||
--	       (!RB_EMPTY_ROOT(&bfqd->group_weights_tree) &&
--		(bfqd->group_weights_tree.rb_node->rb_left ||
--		 bfqd->group_weights_tree.rb_node->rb_right)
-+		(bfqd->num_active_groups > 0
- #endif
- 	       );
- }
-@@ -657,26 +656,25 @@ static bool bfq_differentiated_weights(struct bfq_data *bfqd)
-  * 3) all active groups at the same level in the groups tree have the same
-  *    number of children.
-  *
-- * Unfortunately, keeping the necessary state for evaluating exactly the
-- * above symmetry conditions would be quite complex and time-consuming.
-- * Therefore this function evaluates, instead, the following stronger
-- * sub-conditions, for which it is much easier to maintain the needed
-- * state:
-+ * Unfortunately, keeping the necessary state for evaluating exactly
-+ * the last two symmetry sub-conditions above would be quite complex
-+ * and time consuming.  Therefore this function evaluates, instead,
-+ * only the following stronger two sub-conditions, for which it is
-+ * much easier to maintain the needed state:
-  * 1) all active queues have the same weight,
-- * 2) all active groups have the same weight,
-- * 3) all active groups have at most one active child each.
-- * In particular, the last two conditions are always true if hierarchical
-- * support and the cgroups interface are not enabled, thus no state needs
-- * to be maintained in this case.
-+ * 2) there are no active groups.
-+ * In particular, the last condition is always true if hierarchical
-+ * support or the cgroups interface are not enabled, thus no state
-+ * needs to be maintained in this case.
-  */
- static bool bfq_symmetric_scenario(struct bfq_data *bfqd)
- {
--	return !bfq_differentiated_weights(bfqd);
-+	return !bfq_varied_queue_weights_or_active_groups(bfqd);
- }
- 
- /*
-  * If the weight-counter tree passed as input contains no counter for
-- * the weight of the input entity, then add that counter; otherwise just
-+ * the weight of the input queue, then add that counter; otherwise just
-  * increment the existing counter.
-  *
-  * Note that weight-counter trees contain few nodes in mostly symmetric
-@@ -687,25 +685,25 @@ static bool bfq_symmetric_scenario(struct bfq_data *bfqd)
-  * In most scenarios, the rate at which nodes are created/destroyed
-  * should be low too.
-  */
--void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
-+void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 			  struct rb_root *root)
- {
-+	struct bfq_entity *entity = &bfqq->entity;
- 	struct rb_node **new = &(root->rb_node), *parent = NULL;
- 
- 	/*
--	 * Do not insert if the entity is already associated with a
-+	 * Do not insert if the queue is already associated with a
- 	 * counter, which happens if:
--	 *   1) the entity is associated with a queue,
--	 *   2) a request arrival has caused the queue to become both
-+	 *   1) a request arrival has caused the queue to become both
- 	 *      non-weight-raised, and hence change its weight, and
- 	 *      backlogged; in this respect, each of the two events
- 	 *      causes an invocation of this function,
--	 *   3) this is the invocation of this function caused by the
-+	 *   2) this is the invocation of this function caused by the
- 	 *      second event. This second invocation is actually useless,
- 	 *      and we handle this fact by exiting immediately. More
- 	 *      efficient or clearer solutions might possibly be adopted.
- 	 */
--	if (entity->weight_counter)
-+	if (bfqq->weight_counter)
- 		return;
- 
- 	while (*new) {
-@@ -715,7 +713,7 @@ void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
- 		parent = *new;
- 
- 		if (entity->weight == __counter->weight) {
--			entity->weight_counter = __counter;
-+			bfqq->weight_counter = __counter;
- 			goto inc_counter;
- 		}
- 		if (entity->weight < __counter->weight)
-@@ -724,66 +722,67 @@ void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
- 			new = &((*new)->rb_right);
- 	}
- 
--	entity->weight_counter = kzalloc(sizeof(struct bfq_weight_counter),
--					 GFP_ATOMIC);
-+	bfqq->weight_counter = kzalloc(sizeof(struct bfq_weight_counter),
-+				       GFP_ATOMIC);
- 
- 	/*
- 	 * In the unlucky event of an allocation failure, we just
--	 * exit. This will cause the weight of entity to not be
--	 * considered in bfq_differentiated_weights, which, in its
--	 * turn, causes the scenario to be deemed wrongly symmetric in
--	 * case entity's weight would have been the only weight making
--	 * the scenario asymmetric. On the bright side, no unbalance
--	 * will however occur when entity becomes inactive again (the
--	 * invocation of this function is triggered by an activation
--	 * of entity). In fact, bfq_weights_tree_remove does nothing
--	 * if !entity->weight_counter.
-+	 * exit. This will cause the weight of queue to not be
-+	 * considered in bfq_varied_queue_weights_or_active_groups,
-+	 * which, in its turn, causes the scenario to be deemed
-+	 * wrongly symmetric in case bfqq's weight would have been
-+	 * the only weight making the scenario asymmetric.  On the
-+	 * bright side, no unbalance will however occur when bfqq
-+	 * becomes inactive again (the invocation of this function
-+	 * is triggered by an activation of queue).  In fact,
-+	 * bfq_weights_tree_remove does nothing if
-+	 * !bfqq->weight_counter.
- 	 */
--	if (unlikely(!entity->weight_counter))
-+	if (unlikely(!bfqq->weight_counter))
- 		return;
- 
--	entity->weight_counter->weight = entity->weight;
--	rb_link_node(&entity->weight_counter->weights_node, parent, new);
--	rb_insert_color(&entity->weight_counter->weights_node, root);
-+	bfqq->weight_counter->weight = entity->weight;
-+	rb_link_node(&bfqq->weight_counter->weights_node, parent, new);
-+	rb_insert_color(&bfqq->weight_counter->weights_node, root);
- 
- inc_counter:
--	entity->weight_counter->num_active++;
-+	bfqq->weight_counter->num_active++;
- }
- 
- /*
-- * Decrement the weight counter associated with the entity, and, if the
-+ * Decrement the weight counter associated with the queue, and, if the
-  * counter reaches 0, remove the counter from the tree.
-  * See the comments to the function bfq_weights_tree_add() for considerations
-  * about overhead.
-  */
- void __bfq_weights_tree_remove(struct bfq_data *bfqd,
--			       struct bfq_entity *entity,
-+			       struct bfq_queue *bfqq,
- 			       struct rb_root *root)
- {
--	if (!entity->weight_counter)
-+	if (!bfqq->weight_counter)
- 		return;
- 
--	entity->weight_counter->num_active--;
--	if (entity->weight_counter->num_active > 0)
-+	bfqq->weight_counter->num_active--;
-+	if (bfqq->weight_counter->num_active > 0)
- 		goto reset_entity_pointer;
- 
--	rb_erase(&entity->weight_counter->weights_node, root);
--	kfree(entity->weight_counter);
-+	rb_erase(&bfqq->weight_counter->weights_node, root);
-+	kfree(bfqq->weight_counter);
- 
- reset_entity_pointer:
--	entity->weight_counter = NULL;
-+	bfqq->weight_counter = NULL;
- }
- 
- /*
-- * Invoke __bfq_weights_tree_remove on bfqq and all its inactive
-- * parent entities.
-+ * Invoke __bfq_weights_tree_remove on bfqq and decrement the number
-+ * of active groups for each queue's inactive parent entity.
-  */
- void bfq_weights_tree_remove(struct bfq_data *bfqd,
- 			     struct bfq_queue *bfqq)
- {
- 	struct bfq_entity *entity = bfqq->entity.parent;
- 
--	__bfq_weights_tree_remove(bfqd, &bfqq->entity,
-+	__bfq_weights_tree_remove(bfqd, bfqq,
- 				  &bfqd->queue_weights_tree);
- 
- 	for_each_entity(entity) {
-@@ -797,17 +796,13 @@ void bfq_weights_tree_remove(struct bfq_data *bfqd,
- 			 * next_in_service for details on why
- 			 * in_service_entity must be checked too).
- 			 *
--			 * As a consequence, the weight of entity is
--			 * not to be removed. In addition, if entity
--			 * is active, then its parent entities are
--			 * active as well, and thus their weights are
--			 * not to be removed either. In the end, this
--			 * loop must stop here.
-+			 * As a consequence, its parent entities are
-+			 * active as well, and thus this loop must
-+			 * stop here.
- 			 */
- 			break;
- 		}
--		__bfq_weights_tree_remove(bfqd, entity,
--					  &bfqd->group_weights_tree);
-+		bfqd->num_active_groups--;
- 	}
- }
- 
-@@ -3506,9 +3501,11 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * symmetric scenario where:
- 	 * (i)  each of these processes must get the same throughput as
- 	 *      the others;
--	 * (ii) all these processes have the same I/O pattern
--		(either sequential or random).
--	 * In fact, in such a scenario, the drive will tend to treat
-+	 * (ii) the I/O of each process has the same properties, in
-+	 *      terms of locality (sequential or random), direction
-+	 *      (reads or writes), request sizes, greediness
-+	 *      (from I/O-bound to sporadic), and so on.
-+	 * In fact, in such a scenario, the drive tends to treat
- 	 * the requests of each of these processes in about the same
- 	 * way as the requests of the others, and thus to provide
- 	 * each of these processes with about the same throughput
-@@ -3517,18 +3514,50 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * certainly needed to guarantee that bfqq receives its
- 	 * assigned fraction of the device throughput (see [1] for
- 	 * details).
-+	 * The problem is that idling may significantly reduce
-+	 * throughput with certain combinations of types of I/O and
-+	 * devices. An important example is sync random I/O, on flash
-+	 * storage with command queueing. So, unless bfqq falls in the
-+	 * above cases where idling also boosts throughput, it would
-+	 * be important to check conditions (i) and (ii) accurately,
-+	 * so as to avoid idling when not strictly needed for service
-+	 * guarantees.
-+	 *
-+	 * Unfortunately, it is extremely difficult to thoroughly
-+	 * check condition (ii). And, in case there are active groups,
-+	 * it becomes very difficult to check condition (i) too. In
-+	 * fact, if there are active groups, then, for condition (i)
-+	 * to become false, it is enough that an active group contains
-+	 * more active processes or sub-groups than some other active
-+	 * group. We address this issue with the following bi-modal
-+	 * behavior, implemented in the function
-+	 * bfq_symmetric_scenario().
- 	 *
--	 * We address this issue by controlling, actually, only the
--	 * symmetry sub-condition (i), i.e., provided that
--	 * sub-condition (i) holds, idling is not performed,
--	 * regardless of whether sub-condition (ii) holds. In other
--	 * words, only if sub-condition (i) holds, then idling is
-+	 * If there are active groups, then the scenario is tagged as
-+	 * asymmetric, conservatively, without checking any of the
-+	 * conditions (i) and (ii). So the device is idled for bfqq.
-+	 * This behavior matches also the fact that groups are created
-+	 * exactly if controlling I/O (to preserve bandwidth and
-+	 * latency guarantees) is a primary concern.
-+	 *
-+	 * On the opposite end, if there are no active groups, then
-+	 * only condition (i) is actually controlled, i.e., provided
-+	 * that condition (i) holds, idling is not performed,
-+	 * regardless of whether condition (ii) holds. In other words,
-+	 * only if condition (i) does not hold, then idling is
- 	 * allowed, and the device tends to be prevented from queueing
--	 * many requests, possibly of several processes. The reason
--	 * for not controlling also sub-condition (ii) is that we
--	 * exploit preemption to preserve guarantees in case of
--	 * symmetric scenarios, even if (ii) does not hold, as
--	 * explained in the next two paragraphs.
-+	 * many requests, possibly of several processes. Since there
-+	 * are no active groups, then, to control condition (i) it is
-+	 * enough to check whether all active queues have the same
-+	 * weight.
-+	 *
-+	 * Not checking condition (ii) evidently exposes bfqq to the
-+	 * risk of getting less throughput than its fair share.
-+	 * However, for queues with the same weight, a further
-+	 * mechanism, preemption, mitigates or even eliminates this
-+	 * problem. And it does so without consequences on overall
-+	 * throughput. This mechanism and its benefits are explained
-+	 * in the next three paragraphs.
- 	 *
- 	 * Even if a queue, say Q, is expired when it remains idle, Q
- 	 * can still preempt the new in-service queue if the next
-@@ -3542,11 +3571,7 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * idling allows the internal queues of the device to contain
- 	 * many requests, and thus to reorder requests, we can rather
- 	 * safely assume that the internal scheduler still preserves a
--	 * minimum of mid-term fairness. The motivation for using
--	 * preemption instead of idling is that, by not idling,
--	 * service guarantees are preserved without minimally
--	 * sacrificing throughput. In other words, both a high
--	 * throughput and its desired distribution are obtained.
-+	 * minimum of mid-term fairness.
- 	 *
- 	 * More precisely, this preemption-based, idleless approach
- 	 * provides fairness in terms of IOPS, and not sectors per
-@@ -3565,27 +3590,27 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- 	 * 1024/8 times as high as the service received by the other
- 	 * queue.
- 	 *
--	 * On the other hand, device idling is performed, and thus
--	 * pure sector-domain guarantees are provided, for the
--	 * following queues, which are likely to need stronger
--	 * throughput guarantees: weight-raised queues, and queues
--	 * with a higher weight than other queues. When such queues
--	 * are active, sub-condition (i) is false, which triggers
--	 * device idling.
-+	 * The motivation for using preemption instead of idling (for
-+	 * queues with the same weight) is that, by not idling,
-+	 * service guarantees are preserved (completely or at least in
-+	 * part) without minimally sacrificing throughput. And, if
-+	 * there is no active group, then the primary expectation for
-+	 * this device is probably a high throughput.
- 	 *
--	 * According to the above considerations, the next variable is
--	 * true (only) if sub-condition (i) holds. To compute the
--	 * value of this variable, we not only use the return value of
--	 * the function bfq_symmetric_scenario(), but also check
--	 * whether bfqq is being weight-raised, because
--	 * bfq_symmetric_scenario() does not take into account also
--	 * weight-raised queues (see comments on
--	 * bfq_weights_tree_add()). In particular, if bfqq is being
--	 * weight-raised, it is important to idle only if there are
--	 * other, non-weight-raised queues that may steal throughput
--	 * to bfqq. Actually, we should be even more precise, and
--	 * differentiate between interactive weight raising and
--	 * soft real-time weight raising.
-+	 * We are now left only with explaining the additional
-+	 * compound condition that is checked below for deciding
-+	 * whether the scenario is asymmetric. To explain this
-+	 * compound condition, we need to add that the function
-+	 * bfq_symmetric_scenario checks the weights of only
-+	 * non-weight-raised queues, for efficiency reasons (see
-+	 * comments on bfq_weights_tree_add()). Then the fact that
-+	 * bfqq is weight-raised is checked explicitly here. More
-+	 * precisely, the compound condition below takes into account
-+	 * also the fact that, even if bfqq is being weight-raised,
-+	 * the scenario is still symmetric if all active queues happen
-+	 * to be weight-raised. Actually, we should be even more
-+	 * precise here, and differentiate between interactive weight
-+	 * raising and soft real-time weight raising.
- 	 *
- 	 * As a side note, it is worth considering that the above
- 	 * device-idling countermeasures may however fail in the
-@@ -5392,7 +5417,7 @@ static int bfq_init_queue(struct request_queue *q, struct elevator_type *e)
- 	bfqd->idle_slice_timer.function = bfq_idle_slice_timer;
- 
- 	bfqd->queue_weights_tree = RB_ROOT;
--	bfqd->group_weights_tree = RB_ROOT;
-+	bfqd->num_active_groups = 0;
- 
- 	INIT_LIST_HEAD(&bfqd->active_list);
- 	INIT_LIST_HEAD(&bfqd->idle_list);
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 37d627afdc2e..77651d817ecd 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -108,15 +108,14 @@ struct bfq_sched_data {
- };
- 
- /**
-- * struct bfq_weight_counter - counter of the number of all active entities
-+ * struct bfq_weight_counter - counter of the number of all active queues
-  *                             with a given weight.
-  */
- struct bfq_weight_counter {
--	unsigned int weight; /* weight of the entities this counter refers to */
--	unsigned int num_active; /* nr of active entities with this weight */
-+	unsigned int weight; /* weight of the queues this counter refers to */
-+	unsigned int num_active; /* nr of active queues with this weight */
- 	/*
--	 * Weights tree member (see bfq_data's @queue_weights_tree and
--	 * @group_weights_tree)
-+	 * Weights tree member (see bfq_data's @queue_weights_tree)
- 	 */
- 	struct rb_node weights_node;
- };
-@@ -151,8 +150,6 @@ struct bfq_weight_counter {
- struct bfq_entity {
- 	/* service_tree member */
- 	struct rb_node rb_node;
--	/* pointer to the weight counter associated with this entity */
--	struct bfq_weight_counter *weight_counter;
- 
- 	/*
- 	 * Flag, true if the entity is on a tree (either the active or
-@@ -266,6 +263,9 @@ struct bfq_queue {
- 	/* entity representing this queue in the scheduler */
- 	struct bfq_entity entity;
- 
-+	/* pointer to the weight counter associated with this entity */
-+	struct bfq_weight_counter *weight_counter;
-+
- 	/* maximum budget allowed from the feedback mechanism */
- 	int max_budget;
- 	/* budget expiration (in jiffies) */
-@@ -449,14 +449,9 @@ struct bfq_data {
- 	 */
- 	struct rb_root queue_weights_tree;
- 	/*
--	 * rbtree of non-queue @bfq_entity weight counters, sorted by
--	 * weight. Used to keep track of whether all @bfq_groups have
--	 * the same weight. The tree contains one counter for each
--	 * distinct weight associated to some active @bfq_group (see
--	 * the comments to the functions bfq_weights_tree_[add|remove]
--	 * for further details).
-+	 * number of groups with requests still waiting for completion
- 	 */
--	struct rb_root group_weights_tree;
-+	unsigned int num_active_groups;
- 
- 	/*
- 	 * Number of bfq_queues containing requests (including the
-@@ -851,10 +846,10 @@ struct bfq_queue *bic_to_bfqq(struct bfq_io_cq *bic, bool is_sync);
- void bic_set_bfqq(struct bfq_io_cq *bic, struct bfq_queue *bfqq, bool is_sync);
- struct bfq_data *bic_to_bfqd(struct bfq_io_cq *bic);
- void bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue *bfqq);
--void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
-+void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 			  struct rb_root *root);
- void __bfq_weights_tree_remove(struct bfq_data *bfqd,
--			       struct bfq_entity *entity,
-+			       struct bfq_queue *bfqq,
- 			       struct rb_root *root);
- void bfq_weights_tree_remove(struct bfq_data *bfqd,
- 			     struct bfq_queue *bfqq);
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index ff7c2d470bb8..476b5a90a5a4 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -788,25 +788,29 @@ __bfq_entity_update_weight_prio(struct bfq_service_tree *old_st,
- 		new_weight = entity->orig_weight *
- 			     (bfqq ? bfqq->wr_coeff : 1);
- 		/*
--		 * If the weight of the entity changes, remove the entity
--		 * from its old weight counter (if there is a counter
--		 * associated with the entity), and add it to the counter
--		 * associated with its new weight.
-+		 * If the weight of the entity changes, and the entity is a
-+		 * queue, remove the entity from its old weight counter (if
-+		 * there is a counter associated with the entity).
- 		 */
- 		if (prev_weight != new_weight) {
--			root = bfqq ? &bfqd->queue_weights_tree :
--				      &bfqd->group_weights_tree;
--			__bfq_weights_tree_remove(bfqd, entity, root);
-+			if (bfqq) {
-+				root = &bfqd->queue_weights_tree;
-+				__bfq_weights_tree_remove(bfqd, bfqq, root);
-+			} else
-+				bfqd->num_active_groups--;
- 		}
- 		entity->weight = new_weight;
- 		/*
--		 * Add the entity to its weights tree only if it is
--		 * not associated with a weight-raised queue.
-+		 * Add the entity, if it is not a weight-raised queue,
-+		 * to the counter associated with its new weight.
- 		 */
--		if (prev_weight != new_weight &&
--		    (bfqq ? bfqq->wr_coeff == 1 : 1))
--			/* If we get here, root has been initialized. */
--			bfq_weights_tree_add(bfqd, entity, root);
-+		if (prev_weight != new_weight) {
-+			if (bfqq && bfqq->wr_coeff == 1) {
-+				/* If we get here, root has been initialized. */
-+				bfq_weights_tree_add(bfqd, bfqq, root);
-+			} else
-+				bfqd->num_active_groups++;
-+		}
- 
- 		new_st->wsum += entity->weight;
- 
-@@ -1012,9 +1016,9 @@ static void __bfq_activate_entity(struct bfq_entity *entity,
- 	if (!bfq_entity_to_bfqq(entity)) { /* bfq_group */
- 		struct bfq_group *bfqg =
- 			container_of(entity, struct bfq_group, entity);
-+		struct bfq_data *bfqd = bfqg->bfqd;
- 
--		bfq_weights_tree_add(bfqg->bfqd, entity,
--				     &bfqd->group_weights_tree);
-+		bfqd->num_active_groups++;
- 	}
- #endif
- 
-@@ -1692,7 +1696,7 @@ void bfq_add_bfqq_busy(struct bfq_data *bfqd, struct bfq_queue *bfqq)
- 
- 	if (!bfqq->dispatched)
- 		if (bfqq->wr_coeff == 1)
--			bfq_weights_tree_add(bfqd, &bfqq->entity,
-+			bfq_weights_tree_add(bfqd, bfqq,
- 					     &bfqd->queue_weights_tree);
- 
- 	if (bfqq->wr_coeff > 1)
--- 
-2.19.1
-
+       Arnd
