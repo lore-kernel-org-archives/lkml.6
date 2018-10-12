@@ -2,101 +2,146 @@ Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8771C71122
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 374B3C6787C
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6CF205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:40:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6CF205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id F2C262087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 18:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C262087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeJMCOT (ORCPT
+        id S1726960AbeJMCPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:14:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57225 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeJMCOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:14:19 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 72AF4207B4; Fri, 12 Oct 2018 20:40:26 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 43048206A2;
-        Fri, 12 Oct 2018 20:40:16 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 20:40:17 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
-Message-ID: <20181012184017.GH2843@piout.net>
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
- <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
- <20180816114755.GH21707@piout.net>
- <153573753043.93865.2420370848457480370@swboyd.mtv.corp.google.com>
- <153936888640.5275.18223880548754104359@swboyd.mtv.corp.google.com>
+        Fri, 12 Oct 2018 22:15:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52020 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeJMCPN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 12 Oct 2018 22:15:13 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gB2N9-0006FP-CI; Fri, 12 Oct 2018 20:41:15 +0200
+Date:   Fri, 12 Oct 2018 20:41:15 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
+ cpu_online_mask
+Message-ID: <20181012184114.w332lnkc34evd4sm@linutronix.de>
+References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
+ <20180911160532.GJ4225@linux.vnet.ibm.com>
+ <20180911162142.cc3vgook2gctus4c@linutronix.de>
+ <20180911170222.GO4225@linux.vnet.ibm.com>
+ <20180919205521.GE902964@devbig004.ftw2.facebook.com>
+ <20180919221140.GH4222@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <153936888640.5275.18223880548754104359@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180919221140.GH4222@linux.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 11:28:06-0700, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2018-08-31 10:45:30)
-> > Quoting Alexandre Belloni (2018-08-16 04:47:55)
-> > > On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
-> > > > Quoting Alexandre Belloni (2018-07-17 15:27:41)
-> > > > > This is the promised rework of the at91 PMC clocks driver. It is mainly
-> > > > > necessary to remove the DTC warnings but it also complies with the CCF
-> > > > > rule that there should be one node per controller instead of one node
-> > > > > per clock.
-> > > > > 
-> > > > > This only handles the PMC, I'm planning to also rework the SCKC bindings
-> > > > > later (without breaking the DT ABI).
-> > > > > 
-> > > > > The series is based on top of clk-next plus at91-dt so I don't think it
-> > > > > is convenient to have it this cycle. However, I would really like to
-> > > > > ensure we agree on the new bindings this cycle before converting all the
-> > > > > other platforms as this is a bit tedious.
-> > > > > 
-> > > > > The first two patches are actually fixes and may be considered for this
-> > > > > cycle.
-> > > > > 
-> > > > > One nice note:
-> > > > > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
-> > > > 
-> > > > Patches look mostly good. Rob is happy with the bindings and so am I.
-> > > > 
-> > > > One general question is why the drivers can't be moved to real platform
-> > > > drivers instead of using OF_CLK_DECLARE?
-> > > > 
-> > > 
-> > > I tried, this makes the clocksource drivers fail with -EPROBE_DEFER and
-> > > so the kernel just stops there.
-> > > 
-> > 
-> > Ok. We have CLK_OF_DECLARE_DRIVER for that. Can you use that?
-> > 
+On 2018-09-19 15:11:40 [-0700], Paul E. McKenney wrote:
+> On Wed, Sep 19, 2018 at 01:55:21PM -0700, Tejun Heo wrote:
+> > Unbound workqueue is NUMA-affine by default, so using it by default
+> > might not harm anything.
 > 
-> I assume this will be resent. I haven't seen anything yet though.
+> OK, so the above workaround would function correctly on -rt, thank you!
 > 
+> Sebastian, is there a counterpart to CONFIG_PREEMPT_RT already in
+> mainline?  If so, I would be happy to make mainline safe for -rt.
 
-It will, would you be willing to take it for this cycle if I manage to
-send it on Monday? (it seems that we will have an -rc8).
+Now that I stumbled upon it again, I noticed that I never replied here.
+Sorry for that.
 
+Let me summarize:
+sync_rcu_exp_select_cpus() used
+	queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+which was changed in commit fcc6354365015 ("rcu: Make expedited GPs
+handle CPU 0 being offline"). The commit claims that this is needed in
+case CPU0 is offline so it tries to find another CPU starting with the
+possible offline CPU. It might cross to another NUMA node but that is
+not really a problem, it just tries to remain on the "local NUMA node".
+
+After that commit, the code invokes queue_work_on() within a
+preempt_disable() section because it can't use cpus_read_lock() to
+ensure that the CPU won't go offline in the middle of testing (and
+preempt_disable() does the trick).
+For RT reasons I would like to get rid of queue_work_on() within the
+preempt_disable() section.
+Tejun said that enqueueing an item on an unbound workqueue is NUMA
+affine.
+
+I figured out that enqueueing an item on an offline CPU is not a problem
+and it will pop up on a "random" CPU which means it will be carried out
+asap and will not wait until the CPU gets back online. Therefore I don't
+understand the commit fcc6354365015.
+
+May I suggest the following change? It will enqueue the work item on
+the first CPU on the NUMA node and the "unbound" part of the work queue
+ensures that a CPU of that NUMA node will perform the work.
+This is mostly a revert of fcc6354365015 except that the workqueue
+gained the WQ_UNBOUND flag.
+
+------------------>8----
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0b760c1369f76..94d6c50c4e796 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -4162,7 +4162,7 @@ void __init rcu_init(void)
+ 	/* Create workqueue for expedited GPs and for Tree SRCU. */
+ 	rcu_gp_wq = alloc_workqueue("rcu_gp", WQ_MEM_RECLAIM, 0);
+ 	WARN_ON(!rcu_gp_wq);
+-	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM, 0);
++	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
+ 	WARN_ON(!rcu_par_gp_wq);
+ }
+ 
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 0b2c2ad69629c..a0486414edb40 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -472,7 +472,6 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+ 				     smp_call_func_t func)
+ {
+-	int cpu;
+ 	struct rcu_node *rnp;
+ 
+ 	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
+@@ -494,13 +493,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+ 			continue;
+ 		}
+ 		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
+-		preempt_disable();
+-		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
+-		/* If all offline, queue the work on an unbound CPU. */
+-		if (unlikely(cpu > rnp->grphi))
+-			cpu = WORK_CPU_UNBOUND;
+-		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
+-		preempt_enable();
++		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
+ 		rnp->exp_need_flush = true;
+ 	}
+ 
+
+> 
+> 							Thanx, Paul
+
+Sebastian
