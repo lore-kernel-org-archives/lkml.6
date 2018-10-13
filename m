@@ -2,221 +2,130 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AF6C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91ACC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23C42064E
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:21:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q6Dk+Jfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23C42064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8305A2064E
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8305A2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeJNB76 (ORCPT
+        id S1726791AbeJNCEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 21:59:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39799 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeJNB76 (ORCPT
+        Sat, 13 Oct 2018 22:04:51 -0400
+Received: from gateway23.websitewelcome.com ([192.185.48.251]:24247 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726668AbeJNCEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 21:59:58 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w14-v6so7380312plp.6;
-        Sat, 13 Oct 2018 11:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UfQXMSNisUUKmBzXqUHPaIbusGk3SzE8gAzbgyVuffg=;
-        b=q6Dk+Jfd1plcRUVCetPi02VP/EDFJLVNrZvOseo3Eu+4TqZw7tyFy0C5YA3KDrDTgy
-         F47EX4H1PP3uo8mx3nn+CUqAY3+H7vpW6/m0+d4w0ERYpwFC3BBpuZFboDjfD6ULU7RL
-         vyj/EvbNLINf7hcK7XKT+B74yHSwUxZlDcX3j7SrrgxRWBo7XlZQnyfmA8N8M6zI1/gp
-         haVBp1c54mM8RM96DYt5cjsQDqhG+mrVOWUozorp1mUc8mPwX6C1Gup64NECbX5yd0GE
-         W1Y7Oe6g+W0JHXbLe1TX2Qka0lurJgkdw6SohVzASsc4gQEeh6jDLNofhRtQ9IE6xb0P
-         wjWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UfQXMSNisUUKmBzXqUHPaIbusGk3SzE8gAzbgyVuffg=;
-        b=bHtlNAMOY9Lrcti3bavOl+BuOnSQ3js0e42HV1ADTQFrix80udGafn2v+MsWc1ACXS
-         Ek76VM28g29VF5LI5DAeiDlZ+1R5O4lXnLGTM4A/CROsDzDtRBnRWNTsslbCoPrW9DuX
-         IcyaavUVx9fCLK85TogsqOd7dC6IPUU/CISHkZy8sIAgx/TZSE18PG97yoKjmJl2uAXz
-         tU7r+/HEcc7Gt1+4jJMes23e4WcJe8igHBhf6pqPOr6QSw0HJuYo0OIWS5cxzlI6b09k
-         1pZ9RBNMGFDKbSw1O+vwp1y9xpPH/2k67ww0I5lM5CjIx7Et5wicrcZMw1wu/vidqy1T
-         i+vw==
-X-Gm-Message-State: ABuFfoj3PbL67/o6ld4QgVpBi373aCGGeOKnq+wik2G0SRzcnexa7ksw
-        +a3xCrG6saPOjSp1OsZUifw=
-X-Google-Smtp-Source: ACcGV62b49HOD9b+By+DkRSbqPTQh8XJfjhdYytcv7JK4I3AmKpoXRS+8vo2n02QqMMIWeiS96ITqw==
-X-Received: by 2002:a17:902:89:: with SMTP id a9-v6mr10288718pla.279.1539454908660;
-        Sat, 13 Oct 2018 11:21:48 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm6241739pgm.79.2018.10.13.11.21.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Oct 2018 11:21:48 -0700 (PDT)
-Subject: Re: [PATCH v2 12/18] of: overlay: check prevents multiple fragments
- add or delete same node
-To:     Joe Perches <joe@perches.com>, Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-References: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
- <1539406418-18162-13-git-send-email-frowand.list@gmail.com>
- <97b26203e6792795bdc0a66ce4cdb47571ff16c1.camel@perches.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <651a8488-caec-b153-43c7-1fb81f641f1a@gmail.com>
-Date:   Sat, 13 Oct 2018 11:21:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 13 Oct 2018 22:04:50 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 60F947A38
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 13:26:40 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BOcag91bgBcCXBOcagQlLx; Sat, 13 Oct 2018 13:26:40 -0500
+X-Authority-Reason: nr=8
+Received: from 57.154.24.109.rev.sfr.net ([109.24.154.57]:38162 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gBOcZ-0041sz-R6; Sat, 13 Oct 2018 13:26:40 -0500
+Subject: Re: [PATCH] ath10k: htt_rx: Fix signedness bug in
+ ath10k_update_per_peer_tx_stats
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181005184245.GA11700@embeddedor.com>
+ <20181013172330.1CC8E60BFE@smtp.codeaurora.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <832fd7db-4e67-b757-d1bb-dbc109a90571@embeddedor.com>
+Date:   Sat, 13 Oct 2018 20:26:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <97b26203e6792795bdc0a66ce4cdb47571ff16c1.camel@perches.com>
+In-Reply-To: <20181013172330.1CC8E60BFE@smtp.codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 109.24.154.57
+X-Source-L: No
+X-Exim-ID: 1gBOcZ-0041sz-R6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 57.154.24.109.rev.sfr.net ([192.168.43.69]) [109.24.154.57]:38162
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/13/18 05:51, Joe Perches wrote:
-> On Fri, 2018-10-12 at 21:53 -0700, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> Multiple overlay fragments adding or deleting the same node is not
->> supported.  Replace code comment of such, with check to detect the
->> attempt and fail the overlay apply.
->>
->> Devicetree unittest where multiple fragments added the same node was
->> added in the previous patch in the series.  After applying this patch
->> the unittest messages will no longer include:
->>
->>    Duplicate name in motor-1, renamed to "controller#1"
->>    OF: overlay: of_overlay_apply() err=0
->>    ### dt-test ### of_overlay_fdt_apply() expected -22, ret=0, overlay_bad_add_dup_node
->>    ### dt-test ### FAIL of_unittest_overlay_high_level():2419 Adding overlay 'overlay_bad_add_dup_node' failed
->>
->>    ...
->>
->>    ### dt-test ### end of unittest - 210 passed, 1 failed
->>
->> but will instead include:
->>
->>    OF: overlay: ERROR: multiple overlay fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller
->>
->>    ...
->>
->>    ### dt-test ### end of unittest - 211 passed, 0 failed
-> []
->> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-> []
->> @@ -523,6 +515,54 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
->>  }
->>  
->>  /**
->> + * check_changeset_dup_add_node() - changeset validation: duplicate add node
->> + * @ovcs:	Overlay changeset
->> + *
->> + * Check changeset @ovcs->cset for multiple add node entries for the same
->> + * node.
->> + *
->> + * Returns 0 on success, -ENOMEM if memory allocation failure, or -EINVAL if
->> + * invalid overlay in @ovcs->fragments[].
->> + */
->> +static int check_changeset_dup_add_node(struct overlay_changeset *ovcs)
->> +{
->> +	struct of_changeset_entry *ce_1, *ce_2;
->> +	char *fn_1, *fn_2;
->> +	int name_match;
->> +
->> +	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
->> +
->> +		if (ce_1->action == OF_RECONFIG_ATTACH_NODE ||
->> +		    ce_1->action == OF_RECONFIG_DETACH_NODE) {
->> +
->> +			ce_2 = ce_1;
->> +			list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
->> +				if (ce_2->action == OF_RECONFIG_ATTACH_NODE ||
->> +				    ce_2->action == OF_RECONFIG_DETACH_NODE) {
->> +					/* inexpensive name compare */
->> +					if (!of_node_cmp(ce_1->np->full_name,
->> +					    ce_2->np->full_name)) {
-> 
-> A bit of odd indentation here.
-> This line is normally aligned to the second ( on the line above.
 
-Yes, thanks.
-
-
+On 10/13/18 7:23 PM, Kalle Valo wrote:
 > 
->> +						/* expensive full path name compare */
->> +						fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
->> +						fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
->> +						name_match = !strcmp(fn_1, fn_2);
->> +						kfree(fn_1);
->> +						kfree(fn_2);
->> +						if (name_match) {
->> +							pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
->> +							       ce_1->np);
->> +							return -EINVAL;
->> +						}
->> +					}
->> +				}
->> +			}
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
+> Patch applied to ath-next branch of ath.git, thanks.
 > 
-> Style trivia:
-> 
-> Using inverted tests and continue would reduce indentation.
-
-Yes, thanks.
-
--Frank
-
-
-> 
-> 	list_for_each_entry(ce_1, &ovcs->cset.entries, node) {
-> 		if (ce_1->action != OF_RECONFIG_ATTACH_NODE &&
-> 		    ce_1->action != OF_RECONFIG_DETACH_NODE)
-> 			continue;
-> 
-> 		ce_2 = ce_1;
-> 		list_for_each_entry_continue(ce_2, &ovcs->cset.entries, node) {
-> 			if (ce_2->action != OF_RECONFIG_ATTACH_NODE &&
-> 			    ce_2->action != OF_RECONFIG_DETACH_NODE)
-> 				continue;
-> 
-> 			/* inexpensive name compare */
-> 			if (of_node_cmp(ce_1->np->full_name, ce_2->np->full_name))
-> 				continue;
-> 
-> 			/* expensive full path name compare */
-> 			fn_1 = kasprintf(GFP_KERNEL, "%pOF", ce_1->np);
-> 			fn_2 = kasprintf(GFP_KERNEL, "%pOF", ce_2->np);
-> 			name_match = !strcmp(fn_1, fn_2);
-> 			kfree(fn_1);
-> 			kfree(fn_2);
-> 			if (name_match) {
-> 				pr_err("ERROR: multiple overlay fragments add and/or delete node %pOF\n",
-> 				       ce_1->np);
-> 				return -EINVAL;
-> 			}
-> 		}
-> 	}
-> 
-> 
+> 9d9cdbf3f9ed ath10k: htt_rx: fix signedness bug in ath10k_update_per_peer_tx_stats
 > 
 
+Thank you, Kalle.
+--
+Gustavo
