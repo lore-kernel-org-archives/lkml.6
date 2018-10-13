@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BECC71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE2BC71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B83020877
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00E9420877
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEGPa6QJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B83020877
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZMjwXcI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00E9420877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeJMWc3 (ORCPT
+        id S1727006AbeJMWce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:32:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40418 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeJMWc3 (ORCPT
+        Sat, 13 Oct 2018 18:32:34 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38780 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeJMWce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:32:29 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n31-v6so7160985pgm.7;
-        Sat, 13 Oct 2018 07:55:03 -0700 (PDT)
+        Sat, 13 Oct 2018 18:32:34 -0400
+Received: by mail-pl1-f193.google.com with SMTP id q19-v6so4182598pll.5;
+        Sat, 13 Oct 2018 07:55:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xfRQSfuAnDwpnOZIhNPY62J4SefIE5r3CvTTeCEiYqw=;
-        b=kEGPa6QJhdMHlGHes7FOLSyU0rDOjoeamuSKvaf+coDqupnJrSDNQRDrzS7q53a/Z5
-         EN6Nt7Y22s9Nmaocti3wGyH563gtz2RKfb1KxaR0SuWJHpWvEJAlOdlGK7x4/cjQZmi1
-         nDt7/gWfEljVzI0IDxRYo3QYzGDiiOjfEEt1UxaEg5wqOf7LuK2TomFcqWgLZ38vJIxC
-         D+CKBK/5qQCR2YvWoVKhbQzwBH5+hyHPhH2wUgnVt4gDGdUVWnEnx9dpry90Hb9lgxlx
-         JDccZzyHuorSPVrX1Tn00yiipQQBgokGg9odBcmd3eAz7HMcS7wJvW4Ft2KeqA2b/bZc
-         uc6g==
+        bh=q/7F43zhWx/k3N9zoPwgZYybcBw1Pe45+WdtmLtkfPE=;
+        b=iZMjwXcIZQ64Vc7p72mkpjWEZuW++pmBRYnTO420QfKWfgp/Oz9qnwRlrR3tD6md4u
+         m0KtdxhX9jnvyaKY182mG9HaiciZcpxsiHS01J3/J88qay558wvMaAD3ot/Fh2hiWNLZ
+         TbdFOCKCfL/E33aQUBMZSd8zpFb5wTqw3n3K7IcOL3gz6vKWfVneu9BdniNbOhMpbNvP
+         huWxK8AB0IPNaR+U2azLVoStK7ig28McwBp+VjPAFW7A4Ocxj11mAwrHFL6yRkOWOcQw
+         1yKZHBNiXqd+6u3PHKpUZZI+S7gyjpodLAW+RkcpCPcqORmHk8HslnS984bX6ZZbS1BJ
+         bFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xfRQSfuAnDwpnOZIhNPY62J4SefIE5r3CvTTeCEiYqw=;
-        b=He005Zo4zWSkBmTZjJwki5olZ21+ACcnRA2vKcEl8ezsEebiWmHJMSOBrtT5sZJERI
-         rpq4Y7G5mppPFAm2pwka4+p0jEo92drgdOHv9hLx1uAV7ZzGQqm99zalYusl8RKwmWxz
-         kAeL3HdPe52NIrKxgbONzkdIGGOawtAVgmkRdh2L2I1Vjr2LQsFTEUOUZyJK9poRoElH
-         wVQK/0ly/4kWOjFyzaUJ8cU3jUfykXOeceoVNYzQqdT2sjfh/s4sn7SzoNH3cL0s+YlV
-         TfCN2LWzchO/YWB6pkGQrwLCl2whUPDr4pC2OdTa9QCxgO6qitdLDPf1aXTZgtyD7CmO
-         a2hw==
-X-Gm-Message-State: ABuFfogBqjOnnb4JT6sDAKQUbgu8OZ+68cOpOSULiaeqMdZ5OdC6bGvL
-        lhK/tT5dmxJJrmyKvBeSaD4=
-X-Google-Smtp-Source: ACcGV633MgP2AR9dFAN09KFqFM/iiL4+YwpQcy51rm9ZiZRF1JKK0idSdE4JVatp10eY+XqRqDk5+Q==
-X-Received: by 2002:a63:7d2:: with SMTP id 201-v6mr9785713pgh.129.1539442503414;
-        Sat, 13 Oct 2018 07:55:03 -0700 (PDT)
+        bh=q/7F43zhWx/k3N9zoPwgZYybcBw1Pe45+WdtmLtkfPE=;
+        b=rLrE2zDj8qnELyutVYKIjvk+iwfgb9Hppz5L6RewL24ct3nAzdQ3doJ3xvTYujwQqt
+         nxEP0ohSD70D+q8ioAgiyffMBfx3rTZGCWNRb9zL7AcIgajp+q1UjUF/NozL8cHwIDep
+         Rc4Oso1dATJMt6+uvROZZtVlncVENj5vQ4SAbiCPNBM516cIM0a/O8mZpF+I9Jf2mY32
+         UbI0eFhRJ04Kz/8lqLQgK11KersrBfgvsStoOEXuWznhg7cdJOsgbeMs+wl7UKv/jZ4O
+         xR5Wy9KdxZqJ4G2mzC6IGtYzirOGZmGQg5FCT0jKoA7DE3ESui+0kJvcZ6XRTioCMMgf
+         e+ug==
+X-Gm-Message-State: ABuFfogGVURdBk+//O/t/v3CSQhrzxAv63GFTE3ww9VAaFwYnDpm3OYP
+        kvTEFvn5vqoM4cnjUyqfHGk=
+X-Google-Smtp-Source: ACcGV60FwrRWDNj+IcKMRZrOX1DRC7j2CMJerg5Mj2+tBbXgLwDK8Vd9p+YXEoRXbDiHzYWedN6KfQ==
+X-Received: by 2002:a17:902:b58c:: with SMTP id a12-v6mr9905953pls.226.1539442507928;
+        Sat, 13 Oct 2018 07:55:07 -0700 (PDT)
 Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.54.59
+        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 07:55:02 -0700 (PDT)
+        Sat, 13 Oct 2018 07:55:07 -0700 (PDT)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
@@ -67,9 +67,9 @@ Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
         devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
         vkuznets@redhat.com
-Subject: [PATCH V4 6/15] KVM/MMU: Flush tlb directly in the kvm_set_pte_rmapp()
-Date:   Sat, 13 Oct 2018 22:53:57 +0800
-Message-Id: <20181013145406.4911-7-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V4 7/15] KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+Date:   Sat, 13 Oct 2018 22:53:58 +0800
+Message-Id: <20181013145406.4911-8-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
 References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
@@ -81,28 +81,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-This patch is to flush tlb directly in the kvm_set_pte_rmapp()
-and return 0.
+Originally, flush tlb is done by slot_handle_level_range(). This patch
+is to flush tlb directly in the kvm_zap_gfn_range() when range
+flush is available.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
- arch/x86/kvm/mmu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kvm/mmu.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 5d3a180c57e2..f3742ff4ec18 100644
+index f3742ff4ec18..c4f7679f12c3 100644
 --- a/arch/x86/kvm/mmu.c
 +++ b/arch/x86/kvm/mmu.c
-@@ -1781,6 +1781,11 @@ static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
+@@ -5647,6 +5647,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ {
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
++	bool flush = false;
+ 	int i;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+@@ -5654,18 +5655,27 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 		slots = __kvm_memslots(kvm, i);
+ 		kvm_for_each_memslot(memslot, slots) {
+ 			gfn_t start, end;
++			bool flush_tlb = true;
+ 
+ 			start = max(gfn_start, memslot->base_gfn);
+ 			end = min(gfn_end, memslot->base_gfn + memslot->npages);
+ 			if (start >= end)
+ 				continue;
+ 
+-			slot_handle_level_range(kvm, memslot, kvm_zap_rmapp,
+-						PT_PAGE_TABLE_LEVEL, PT_MAX_HUGEPAGE_LEVEL,
+-						start, end - 1, true);
++			if (kvm_available_flush_tlb_with_range())
++				flush_tlb = false;
++
++			flush = slot_handle_level_range(kvm, memslot,
++					kvm_zap_rmapp, PT_PAGE_TABLE_LEVEL,
++					PT_MAX_HUGEPAGE_LEVEL, start,
++					end - 1, flush_tlb);
  		}
  	}
  
-+	if (need_flush && kvm_available_flush_tlb_with_range()) {
-+		kvm_flush_remote_tlbs_with_address(kvm, gfn, 1);
-+		return 0;
-+	}
++	if (flush && kvm_available_flush_tlb_with_range())
++		kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
++				gfn_end - gfn_start + 1);
 +
- 	return need_flush;
+ 	spin_unlock(&kvm->mmu_lock);
  }
  
 -- 
