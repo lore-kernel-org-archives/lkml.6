@@ -1,87 +1,115 @@
-Return-Path: <SRS0=REtU=MY=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06983C6787C
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A63C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C462087F
-	for <linux-kernel@archiver.kernel.org>; Fri, 12 Oct 2018 23:57:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C462087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BB7620895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:04:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB7620895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbeJMHbp (ORCPT
+        id S1726116AbeJMHjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 03:31:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45630 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbeJMHbp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 03:31:45 -0400
-Received: from localhost.localdomain (c-24-4-154-175.hsd1.ca.comcast.net [24.4.154.175])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7127F7F;
-        Fri, 12 Oct 2018 23:56:56 +0000 (UTC)
-Date:   Fri, 12 Oct 2018 16:56:55 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Clark Williams <williams@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] mm/kasan: make quarantine_lock a raw_spinlock_t
-Message-Id: <20181012165655.f067886428a394dc7fbae7af@linux-foundation.org>
-In-Reply-To: <20181010214945.5owshc3mlrh74z4b@linutronix.de>
-References: <20180918152931.17322-1-williams@redhat.com>
-        <20181005163018.icbknlzymwjhdehi@linutronix.de>
-        <20181005163320.zkacovxvlih6blpp@linutronix.de>
-        <CACT4Y+YoNCm=0C6PZtQR1V1j4QeQ0cFcJzpJF1hn34Oaht=jwg@mail.gmail.com>
-        <20181009142742.ikh7xv2dn5skjjbe@linutronix.de>
-        <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
-        <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
-        <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
-        <20181010095343.6qxved3owi6yokoa@linutronix.de>
-        <CACT4Y+ZpMjYBPS0GHP0AsEJZZmDjwV9DJBiVUzYKBnD+r9W4+A@mail.gmail.com>
-        <20181010214945.5owshc3mlrh74z4b@linutronix.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 13 Oct 2018 03:39:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:30897 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbeJMHjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 03:39:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Oct 2018 17:04:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,374,1534834800"; 
+   d="scan'208";a="98998257"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by orsmga001.jf.intel.com with ESMTP; 12 Oct 2018 17:04:15 -0700
+Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
+ ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 12 Oct 2018 17:04:15 -0700
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.23]) by
+ ORSMSX151.amr.corp.intel.com ([169.254.7.31]) with mapi id 14.03.0319.002;
+ Fri, 12 Oct 2018 17:04:14 -0700
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "jannh@google.com" <jannh@google.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH v2 1/7] modules: Create rlimit for module space
+Thread-Topic: [PATCH v2 1/7] modules: Create rlimit for module space
+Thread-Index: AQHUYbu9YVGPZz5pJkS2xS0Q9I41w6UbONMAgAEU74CAAASBAIAAcLMA
+Date:   Sat, 13 Oct 2018 00:04:14 +0000
+Message-ID: <657e6d0ada18e8ca0350bc6b3a80c49b3c0b341c.camel@intel.com>
+References: <20181011233117.7883-1-rick.p.edgecombe@intel.com>
+         <20181011233117.7883-2-rick.p.edgecombe@intel.com>
+         <CAG48ez2fWg64nGxDXUQS3695KpVNrakAbarXJnYPd6xv5wOD+A@mail.gmail.com>
+         <7b0714e26c7c2216721641d7df16a49687927e37.camel@intel.com>
+         <CAG48ez0XfGFAWDYa75COMPCsKqqGfBFOtcNuGD4_dubGf2YeAQ@mail.gmail.com>
+In-Reply-To: <CAG48ez0XfGFAWDYa75COMPCsKqqGfBFOtcNuGD4_dubGf2YeAQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.168]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F6FE45CE01A01A4E863307362D74EA2F@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 10 Oct 2018 23:49:45 +0200 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> On 2018-10-10 11:57:41 [+0200], Dmitry Vyukov wrote:
-> > Yes. Clark's patch looks good to me. Probably would be useful to add a
-> > comment as to why raw spinlock is used (otherwise somebody may
-> > refactor it back later).
-> 
-> If you really insist, I could add something but this didn't happen so
-> far. git's changelog should provide enough information why to why it was
-> changed.
-
-Requiring code readers to look up changelogs in git is rather user-hostile.
-There are several reasons for using raw_*, so an explanatory comment at
-each site is called for.
-
-However it would be smarter to stop "using raw_* for several reasons". 
-Instead, create a differently named variant for each such reason.  ie, do
-
-/*
- * Nice comment goes here.  It explains all the possible reasons why -rt
- * might use a raw_spin_lock when a spin_lock could otherwise be used.
- */
-#define raw_spin_lock_for_rt	raw_spinlock
-
-Then use raw_spin_lock_for_rt() at all such sites.
+T24gRnJpLCAyMDE4LTEwLTEyIGF0IDE5OjIyICswMjAwLCBKYW5uIEhvcm4gd3JvdGU6DQo+IE9u
+IEZyaSwgT2N0IDEyLCAyMDE4IGF0IDc6MDQgUE0gRWRnZWNvbWJlLCBSaWNrIFANCj4gPHJpY2su
+cC5lZGdlY29tYmVAaW50ZWwuY29tPiB3cm90ZToNCj4gPiBPbiBGcmksIDIwMTgtMTAtMTIgYXQg
+MDI6MzUgKzAyMDAsIEphbm4gSG9ybiB3cm90ZToNCj4gPiA+IFdoeSBhbGwgdGhlIHJidHJlZSBz
+dHVmZiBpbnN0ZWFkIG9mIHN0YXNoaW5nIGEgcG9pbnRlciBpbiBzdHJ1Y3QNCj4gPiA+IHZtYXBf
+YXJlYSwgb3Igc29tZXRoaW5nIGxpa2UgdGhhdD8NCj4gPiANCj4gPiBTaW5jZSB0aGUgdHJhY2tp
+bmcgd2FzIG5vdCBmb3IgYWxsIHZtYWxsb2MgdXNhZ2UsIHRoZSBpbnRlbnRpb24gd2FzIHRvIG5v
+dA0KPiA+IGJsb2F0DQo+ID4gdGhlIHN0cnVjdHVyZSBmb3Igb3RoZXIgdXNhZ2VzIGxpa2VzIHN0
+YWNrcy4gSSB0aG91Z2h0IHVzdWFsbHkgdGhlcmUNCj4gPiB3b3VsZG4ndCBiZQ0KPiA+IG5lYXJs
+eSBhcyBtdWNoIG1vZHVsZSBzcGFjZSBhbGxvY2F0aW9ucyBhcyB0aGVyZSB3b3VsZCBiZSBrZXJu
+ZWwgc3RhY2tzLCBidXQNCj4gPiBJDQo+ID4gZGlkbid0IGRvIGFueSBhY3R1YWwgbWVhc3VyZW1l
+bnRzIG9uIHRoZSB0cmFkZW9mZnMuDQo+IA0KPiBJIGltYWdpbmUgdGhhdCBvbmUgZXh0cmEgcG9p
+bnRlciBpbiB0aGVyZSAtIHBvaW50aW5nIHRvIHlvdXIgc3RydWN0DQo+IG1vZF9hbGxvY191c2Vy
+IC0gd291bGQgcHJvYmFibHkgbm90IGJlIHRlcnJpYmxlLiA4IGJ5dGVzIG1vcmUgcGVyDQo+IGtl
+cm5lbCBzdGFjayBzaG91bGRuJ3QgYmUgc28gYmFkPw0KDQpJIGxvb2tlZCBpbnRvIHRoaXMgYW5k
+IGl0IHN0YXJ0cyB0byBsb29rIGEgbGl0dGxlIG1lc3N5LiBUaGUgbm9tbXUuYyB2ZXJzaW9uIG9m
+DQp2bWFsbG9jIGRvZXNuJ3QgdXNlIG9yIGV4cG9zZSBhY2Nlc3MgdG8gdm1hcF9hcmVhIG9yIHZt
+X3N0cnVjdC4gU28gaXQgc3RhcnRzIHRvDQpsb29rIGxpa2UgYSBidW5jaCBvZiBJRkRFRnMgdG8g
+cmVtb3ZlIHRoZSBybGltaXQgaW4gdGhlIG5vbW11IGNhc2Ugb3IgbWFraW5nIGENCnN0YW5kIGlu
+IHRoYXQgbWFpbnRhaW5zIHByZXRlbmQgdm0gc3RydWN0J3MgaW4gbm9tbXUuYy4gSSBoYWQgYWN0
+dWFsbHkNCnByZXZpb3VzbHkgdHJpZWQgdG8gYXQgbGVhc3QgcHVsbCB0aGUgYWxsb2NhdGlvbnMg
+c2l6ZSBmcm9tIHZtYWxsb2Mgc3RydWN0cywgYnV0IGl0IGJyb2tlIG9uIG5vbW11Lg0KDQpUaG91
+Z2h0IEkgd291bGQgY2hlY2sgYmFjayBhbmQgc2VlLiBIb3cgaW1wb3J0YW50IGRvIHlvdSB0aGlu
+ayB0aGlzIGlzPw0KDQoNCg==
