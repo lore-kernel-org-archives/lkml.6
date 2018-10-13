@@ -7,69 +7,67 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F863C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B549CC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5739A2098A
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781A021470
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uIAOJZ8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5739A2098A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jm2sWbFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781A021470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeJMWdC (ORCPT
+        id S1727306AbeJMWdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:33:02 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32786 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbeJMWdC (ORCPT
+        Sat, 13 Oct 2018 18:33:06 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37124 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeJMWdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:33:02 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y18-v6so7180781pge.0;
-        Sat, 13 Oct 2018 07:55:35 -0700 (PDT)
+        Sat, 13 Oct 2018 18:33:05 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u6-v6so4524253plz.4;
+        Sat, 13 Oct 2018 07:55:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=edYmQmptl6FFGWDz2Nvl8dA2M4x32rlDzx++JvAzsf0=;
-        b=uIAOJZ8NzyM0649O/t33OHU4s/dcTKtUTpcQLxDGeDQrx0ejP7RLn3TdxlOlcthasd
-         yOa70X6VW0G17Dy72OvF0eOwQbnhM6Yu7wiCHSNS6jbFhngOJvdHL4dJWzpZ+cLxSOV0
-         5/MT8gm0Uwn+htZ/Fyf5ooOPmvIZ5l8EyqA12R96Qtop/zbM/jKGTuj/z8pLKYJ22xmV
-         DKOkToGi3emeGpFowqiroOBQVs0BQp0R0rWdXZgOrlwrXufCg1Qlb0cTAvwDZWMPsMyE
-         hXuGRM1axytA9EcKwyN/rlnTIEDKMe8PEozm8WjAKftPWEr62Ix5mPXSyc9AsD3+jN/q
-         mTIA==
+        bh=byTks6Uml08Lo+qLgYsZ5PYGqWDLW22IQ+rNseBWblk=;
+        b=Jm2sWbFhTSLnXc8wJHNiDD4qKyZ9uTfBBfLKLhsDQanJKmPIOxpJPHRuCI0Y8w0fiq
+         Hj6CTbNDDvo4EQSJkU6qtmtc2uPSbj1sGRIHF9wCrMVRN4sjzuQtmrTiiuOtrrRjVa9R
+         3f/RfTGGpHpeCu+S9S6db0MHOIIJZ9nTvxiNxqDtqq/SH04gPlCs/08fbYYVDiP8+Ynv
+         cXm+KvUiXXVYqJmf/qvnfRWAfEaVV+xKvj3QgP+qiVHUEUJZKe7LHnmiCNF5w3HDKtMB
+         /3g43znyWaIv4R1bN2fW5bzgR4KuOS9xSw4IJrWZbMv5mkY/+lzpZ7WzJhIipjQm0W7F
+         +bOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=edYmQmptl6FFGWDz2Nvl8dA2M4x32rlDzx++JvAzsf0=;
-        b=BpLuh47SeSStFo3XTW0YubfyWGjNh/7nu7Dk/d8HUZNZuATzL+fuWoq8FLU/SRO9SB
-         05fy99OCHJzvjX9rXjDqn1V7a/f9a9oDsRVLExuP+GD3oH4AE7K+nk0zY0HDIcm4hAzx
-         2j7D3nBTtUhvoIX2AKWDmxup5RycthJisBabF7+RUxIIj47oMOQpj3KT9fHNwINv+OBO
-         AvDpZ/ZGRXNS219rpI1VMWyqfFttUe6eXDhBb6X4wbrCDPLBFsENdU4jfeMgVYpxD3Ou
-         Pb81OwVbgD764jr93UP1L5jt+kA7GKqh8qlFdJRp4VP3s4xrdqAUHM+lK+JStkwoJQZL
-         POmg==
-X-Gm-Message-State: ABuFfojS0FRCTs1DqZDMko7yTLKed4EPBDWzpSUEbOuSUC8aAiTIpHke
-        GQsmu3BsH8J9wPuAlJWjiL0=
-X-Google-Smtp-Source: ACcGV638Om/Wez6O/eiw9a//a9MxRdrL+QZHotA6bRU7swiBWgU4GbcvKWmMWtR7zyyHb0Vto4LSfQ==
-X-Received: by 2002:a63:65c7:: with SMTP id z190-v6mr9572294pgb.146.1539442535625;
-        Sat, 13 Oct 2018 07:55:35 -0700 (PDT)
+        bh=byTks6Uml08Lo+qLgYsZ5PYGqWDLW22IQ+rNseBWblk=;
+        b=F8A4zcX90tM6wq6JNpJM4YWWKWC3cfz6fnl3NBcRUbjI9aoogWtWJMmwGUljswM2Dl
+         M1nXn6BhG54eyOiJOtTad4k/lhkeH/L7I98bXd1+CYtq1Gvh2kWKsd155t3RJBSwU3b0
+         P7Qkm4BZMxIZjSkaxv3+jfA8l1UxrqXLniDR9jiAC4TX0LOxtYJkUalzl+BLiNRUQd8D
+         LgMuIMQNyRy1rQXthVNgZoM4jG2/YBtr8SKkvG+RAhDh8AXU6r1HM9bfsTOstz4lwvM3
+         92QM5o7cmCgvSNmFLkQ9G9IKwyTXvefSS7sFkXBVCcM6tMAiUYRhzGnjUPP7KZLf3v/d
+         uqSA==
+X-Gm-Message-State: ABuFfojmcm7JHTjbiCcD2hSAYEw+00dlfsk4yHmI+fH4/0SA8028XqFK
+        Ni/7fDwnFum2tcoJ7D4Exrg=
+X-Google-Smtp-Source: ACcGV60nYZslKlVtd7hgQT0HDfZDEb1RqNOgenH/UTeUu9CMKkGOcsHfyItf+f1kDIeXkAFH7qa+xQ==
+X-Received: by 2002:a17:902:5a8b:: with SMTP id r11-v6mr10429812pli.305.1539442539565;
+        Sat, 13 Oct 2018 07:55:39 -0700 (PDT)
 Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.31
+        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 07:55:35 -0700 (PDT)
+        Sat, 13 Oct 2018 07:55:38 -0700 (PDT)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
-        vkuznets@redhat.com
-Subject: [PATCH V4 13/15] x86/Hyper-v: Add trace in the hyperv_nested_flush_guest_mapping_range()
-Date:   Sat, 13 Oct 2018 22:54:04 +0800
-Message-Id: <20181013145406.4911-14-Tianyu.Lan@microsoft.com>
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
+        kys@microsoft.com, vkuznets@redhat.com
+Subject: [PATCH V4 14/15] KVM/VMX: Change hv flush logic when ept tables are mismatched.
+Date:   Sat, 13 Oct 2018 22:54:05 +0800
+Message-Id: <20181013145406.4911-15-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
 References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
@@ -81,52 +79,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-This patch is to trace log in the hyperv_nested_flush_
-guest_mapping_range().
+If ept table pointers are mismatched, flushing tlb for each vcpus via
+hv flush interface still helps to reduce vmexits which are triggered
+by IPI and INEPT emulation.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
- arch/x86/hyperv/nested.c            |  1 +
- arch/x86/include/asm/trace/hyperv.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ arch/x86/kvm/vmx.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
-index a6fdfec63c7d..4850c74508f3 100644
---- a/arch/x86/hyperv/nested.c
-+++ b/arch/x86/hyperv/nested.c
-@@ -135,6 +135,7 @@ int hyperv_flush_guest_mapping_range(u64 as, struct hyperv_tlb_range *range)
- 	else
- 		ret = status;
- fault:
-+	trace_hyperv_nested_flush_guest_mapping_range(as, ret);
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 6f44d3a63434..8ff13f3aed11 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1571,7 +1571,8 @@ static void check_ept_pointer_match(struct kvm *kvm)
+ 
+ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ {
+-	int ret;
++	struct kvm_vcpu *vcpu;
++	int ret = -ENOTSUPP, i;
+ 
+ 	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+ 
+@@ -1579,14 +1580,14 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ 		check_ept_pointer_match(kvm);
+ 
+ 	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
+-		ret = -ENOTSUPP;
+-		goto out;
++		kvm_for_each_vcpu(i, vcpu, kvm)
++			ret |= hyperv_flush_guest_mapping(
++				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer);
++	} else {
++		ret = hyperv_flush_guest_mapping(
++				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+ 	}
+ 
+-	ret = hyperv_flush_guest_mapping(
+-			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+-
+-out:
+ 	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
  	return ret;
  }
- EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping_range);
-diff --git a/arch/x86/include/asm/trace/hyperv.h b/arch/x86/include/asm/trace/hyperv.h
-index 2e6245a023ef..ace464f09681 100644
---- a/arch/x86/include/asm/trace/hyperv.h
-+++ b/arch/x86/include/asm/trace/hyperv.h
-@@ -42,6 +42,20 @@ TRACE_EVENT(hyperv_nested_flush_guest_mapping,
- 	    TP_printk("address space %llx ret %d", __entry->as, __entry->ret)
- 	);
- 
-+TRACE_EVENT(hyperv_nested_flush_guest_mapping_range,
-+	    TP_PROTO(u64 as, int ret),
-+	    TP_ARGS(as, ret),
-+
-+	    TP_STRUCT__entry(
-+		    __field(u64, as)
-+		    __field(int, ret)
-+		    ),
-+	    TP_fast_assign(__entry->as = as;
-+			   __entry->ret = ret;
-+		    ),
-+	    TP_printk("address space %llx ret %d", __entry->as, __entry->ret)
-+	);
-+
- TRACE_EVENT(hyperv_send_ipi_mask,
- 	    TP_PROTO(const struct cpumask *cpus,
- 		     int vector),
 -- 
 2.14.4
 
