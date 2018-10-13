@@ -2,135 +2,124 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77503C6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A01C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA3B20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA3B20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 558D920868
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:31:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZNWozwu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 558D920868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbeJMKBr (ORCPT
+        id S1726340AbeJMKHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 06:01:47 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43835 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbeJMKBr (ORCPT
+        Sat, 13 Oct 2018 06:07:03 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38821 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbeJMKHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 06:01:47 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y20-v6so13067425eds.10;
-        Fri, 12 Oct 2018 19:26:28 -0700 (PDT)
+        Sat, 13 Oct 2018 06:07:03 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q19-v6so3644056pll.5;
+        Fri, 12 Oct 2018 19:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZfrBtM5rZl984irl4Xcc+nCf/LTw6boDhHYObfCHvS4=;
+        b=dZNWozwuTT0OzYcMzSHS67H27dkEPpkHeh2CVzkfy90W9QoHJrRE6dKFh2ToiFP5WZ
+         i8BoJLH9kZ2gtBDOJEPEeRoIJsaUqli/3pM7lfhnPriVnNCNcXhedKAawYgkmKmKZ7Ba
+         5qWLialTEmtwbBnOGVQeLtSURrwGTIm/LpuHmmxfpx598J0MfLNT64YDroPCanZ4UHfX
+         50wDN9agG8+vi07Np7VR6BgnHE7Tp8e5cauGbt/kJIrJUBzlzLczHJt6qgKjqHoOgp7S
+         HuUS7kaqTkxW6qnLuOBVfxUcEaX12Fn0QIYM6DpZJkIAnTjNTDeZybF/xp6V9Jn3nC4x
+         pQ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+oxrHtI0zGX9gGTV4ikOtS7b7TmIoW1ok6jGY2PVgGI=;
-        b=Taw7CRscUy+zArkvU5QoZakmYET1b0yZeVUgopjM/kD5MX2ZRrhh3q4zOplvw5zX63
-         Nb5ec0Oe7LgFPa8q6gHVgB0OCRRDnhFULkWMZeTanVPSBZ0tjAIZqdR64+n5gM37+MOM
-         NvNsK0eCuc6IrPuHHvXW1Z0Yp/TzA/aLDtOvmxkMDC7ZTDZeXD8Vu3Uo81y+VQbGx4uy
-         GNPOInBnUK6T5sdz1O/iDzbWPXiu0uvlRPW3KF7kxDg9KBCr/2w/1v11cgMavpg5xKvA
-         oEsfmwah+EMR2IWFOWgUiEB0/XmqyPs4YbEvb0q1O8gpV6ZZ5CiUOR8Rl405za/Qcpab
-         uk3Q==
-X-Gm-Message-State: ABuFfoioii3Kg0G1e/3Yl82UIzJeNthtFK20Qg1seKoypp5xOIjJM8c/
-        mbFdHPHjTnkFv1k71rqu8/MWP++9AiA=
-X-Google-Smtp-Source: ACcGV61GMBSIwihmU56Z0pgPaqptVztFHJDtAOwpleHHkI0RS8ZiKXPlLua6BohrWUVDzV1Wl5RIAg==
-X-Received: by 2002:a17:906:4f98:: with SMTP id o24-v6mr9722825eju.237.1539397586691;
-        Fri, 12 Oct 2018 19:26:26 -0700 (PDT)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
-        by smtp.gmail.com with ESMTPSA id b26-v6sm1043467edw.0.2018.10.12.19.26.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZfrBtM5rZl984irl4Xcc+nCf/LTw6boDhHYObfCHvS4=;
+        b=bozNtBP7Ggd/Q1Fhy1BcH3O/NezSC4l28zLvWpPXqGWJ42oE7rnigZnlyULDXOpfjg
+         18auWl83a+d24p4LneCs/kqYSNytr+3K4O5n9TVx8bfAkmIKpXrulLQ5YLiAx7kEZj8a
+         5aq8gFTLZbIimByaFhBUCDYt5HCXYiTe0bUoQZR70rlZT7zusFkib6yX8Ir5sRlCWI3j
+         2uOdZo6o/AQLyXgWyoibJJvP/4FJ76VUTgJEtvqMua/AfIyAQOx8eFiZ43ke+MhlFEI7
+         Cp7SNQ0vg9RDkU0jLiHP+YYSYD/943BonRhzN77EHKWfFlffXCKFN8jAGIWZvGKr6Bv6
+         dGqw==
+X-Gm-Message-State: ABuFfojZuvC3ZPdPkNtseZJ8ic3f7z9oPUCZKab5XiR6J5bgmFxvpkdz
+        HZBJ7wbFeH0OtUT0GUPMdvM=
+X-Google-Smtp-Source: ACcGV61VmXmyp5L6SWX9s4ZkyKrSdKbStqNZfuO2+qU6tg3q8f5YubMKzffxgsdAy+aSw2eKjLKeFw==
+X-Received: by 2002:a17:902:b611:: with SMTP id b17-v6mr8216277pls.217.1539397903806;
+        Fri, 12 Oct 2018 19:31:43 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:4ee2])
+        by smtp.gmail.com with ESMTPSA id d197-v6sm3891276pga.1.2018.10.12.19.31.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 19:26:24 -0700 (PDT)
-Received: by mail-wr1-f49.google.com with SMTP id d2-v6so15266418wro.7;
-        Fri, 12 Oct 2018 19:26:23 -0700 (PDT)
-X-Received: by 2002:a5d:480b:: with SMTP id l11-v6mr7540908wrq.28.1539397583289;
- Fri, 12 Oct 2018 19:26:23 -0700 (PDT)
+        Fri, 12 Oct 2018 19:31:42 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 19:31:40 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     joelaf@google.com, linux-kernel@vger.kernel.org,
+        timmurray@google.com, netdev@vger.kernel.org,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH v4] Wait for running BPF programs when updating map-in-map
+Message-ID: <20181013023138.m445q6itdmyxdtoc@ast-mbp.dhcp.thefacebook.com>
+References: <20180816040145.gqzqicab4s6kcbye@ast-mbp.dhcp.thefacebook.com>
+ <20181012105427.243779-1-dancol@google.com>
 MIME-Version: 1.0
-References: <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539339841-22235-1-git-send-email-aleksandr.aleksandrov@emlid.com>
- <1539339841-22235-2-git-send-email-aleksandr.aleksandrov@emlid.com>
- <b47c5458-683e-3e96-0bbe-f9db84579c77@suse.de> <20181012133914.GA32670@imagebutcher>
- <20181012202330.tdwedsof2bsnxkxn@flea>
-In-Reply-To: <20181012202330.tdwedsof2bsnxkxn@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 13 Oct 2018 10:26:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67406+vo_eF6-UvA0hPSx50kyXWTtcaeiOoXaz8uM1TQA@mail.gmail.com>
-Message-ID: <CAGb2v67406+vo_eF6-UvA0hPSx50kyXWTtcaeiOoXaz8uM1TQA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] arm64: dts: allwinner: new board - Emlid Neutis N5
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     aleksandr.aleksandrov@emlid.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, david@lechnology.com,
-        Thierry Reding <treding@nvidia.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, johan@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012105427.243779-1-dancol@google.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 4:23 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Oct 12, 2018 at 04:39:14PM +0300, Aleksandr Aleksandrov wrote:
-> > Hi Andreas,
-> >
-> > Thanks for your feedback!
-> >
-> > > > + *
-> > > > + * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> > > > + */
-> > > > +
-> > > > +/dts-v1/;
-> > > > +
-> > > > +#include "sun50i-h5-emlid-neutis-n5.dtsi"
-> > > > +
-> > > > +/ {
-> > > > + model = "Emlid Neutis N5 Developer board";
-> > > > + compatible = "emlid,neutis-n5-devboard",
-> > > > +              "emlid,neutis-n5",
-> > >
-> > > You are lacking bindings definitions for these new identifiers. The
-> > > vendor prefix should be patch 1/3, the SoM/board compatibles 2/3 and
-> > > this .dts[i] patch 3/3, so that only vendor prefixes and compatibles
-> > > that are defined and don't result in checkpatch.pl warnings get used.
-> >
-> > Patch 2/3:
-> >
-> > commit 46dcb8632b36644cb20e6b35ede12ff0088a60eb
-> > Author: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> > Date:   Fri Oct 12 16:22:28 2018 +0300
-> >
-> >     dt-bindings: arm: sunxi: emlid,neutis-n5(-devboard)
-> >
-> >     sunxi: add new compatibles for Emlid Neutis Dev board and SoM module
-> >
-> >     Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-> > index e4beec3..a907e52 100644
-> > --- a/Documentation/devicetree/bindings/arm/sunxi.txt
-> > +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-> > @@ -19,3 +19,5 @@ using one of the following compatible strings:
-> >    allwinner,sun9i-a80
-> >    allwinner,sun50i-a64
-> >    nextthing,gr8
-> > +  emlid,neutis-n5
-> > +  emlid,neutis-n5-devboard
-> >
-> > Is this right place for the neutis compatibles?
->
-> No, those are for SoCs compatible. I'm not sure we ever created a
-> board compatible files.
+On Fri, Oct 12, 2018 at 03:54:27AM -0700, Daniel Colascione wrote:
+> The map-in-map frequently serves as a mechanism for atomic
+> snapshotting of state that a BPF program might record.  The current
+> implementation is dangerous to use in this way, however, since
+> userspace has no way of knowing when all programs that might have
+> retrieved the "old" value of the map may have completed.
+> 
+> This change ensures that map update operations on map-in-map map types
+> always wait for all references to the old map to drop before returning
+> to userspace.
+> 
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+> ---
+>  kernel/bpf/syscall.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 8339d81cba1d..d7c16ae1e85a 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -741,6 +741,18 @@ static int map_lookup_elem(union bpf_attr *attr)
+>  	return err;
+>  }
+>  
+> +static void maybe_wait_bpf_programs(struct bpf_map *map)
+> +{
+> +	/* Wait for any running BPF programs to complete so that
+> +	 * userspace, when we return to it, knows that all programs
+> +	 * that could be running use the new map value.
+> +	 */
+> +	if (map->map_type == BPF_MAP_TYPE_HASH_OF_MAPS ||
+> +	    map->map_type == BPF_MAP_TYPE_ARRAY_OF_MAPS) {
+> +		synchronize_rcu();
+> +	}
 
-We never did. We don't even have all vendor prefixes in, only the ones
-that seem more popular, and actually have an identifiable website.
+extra {} were not necessary. I removed them while applying to bpf-next.
+Please run checkpatch.pl next time.
+Thanks
 
-ChenYu
