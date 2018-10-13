@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32440C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E74EC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3ABE205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFFE7205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:55:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p7aMZYhW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ABE205C9
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t+uV2466"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFE7205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJMWcx (ORCPT
+        id S1727233AbeJMWc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:32:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37322 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeJMWcw (ORCPT
+        Sat, 13 Oct 2018 18:32:58 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:32801 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeJMWc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:32:52 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so7170022pgq.4;
-        Sat, 13 Oct 2018 07:55:26 -0700 (PDT)
+        Sat, 13 Oct 2018 18:32:57 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s4-v6so7282942plp.0;
+        Sat, 13 Oct 2018 07:55:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QEtGioVQnwjoy8CvMEOGuifAVgR2MythhiJN5MZX70o=;
-        b=p7aMZYhWwo0/507UqW9FC6KUcsuuKvXkkEif3ZXk2oec/QIt/QroYMy7XuUZ+DlZrX
-         qTDjckaxO1up1hvYEl+TJJJtgDBzL9JZ8bAlD4qVZ4jNWxnaxuQfA53x4SindwhDZWto
-         +AJFI+bUBhjZlR5HWeB2BDVBt1bA2u5dZJ4dCaPvPIZYE4HRV1o6bP3CDSTRnD8VaEiQ
-         tQTD9p5AsnWvRwBDS4u7aByKNwlbtNmvc3s8cI+xan2mzxuPv0kUPqv5lzrTEGnchgaO
-         /uq6/VCCBsIhbupDjmtkpWe7po6q/iBoai9tIT7rWkfOcFrcTsfrtKPtIOLK5UNThsqu
-         6xxQ==
+        bh=Z2myOoj9IFC9zB8XQQZnHOE6BJZwQlrFqhO+Eu8mLO4=;
+        b=t+uV2466XfgOFLuHl6DzFiiuwjVmpzL0K7lBpHsttTwTHEq/B1fDJQgBJ8brLhnfar
+         pfWQwdWeGMBU8pxZns4d59yRC9zXXw9fhzbUgid71Wgqwj+piBSCbr/zID9oE8sH4YF7
+         H4wgchAMDOtm1cMJEpRoAEy6FTZZwYA0aSn6b6UxJvwlqRPcYINVKnbUormwD44UBTbM
+         X+hp+ixotgmNiUFf5/WaNt2m30TFIlHP1E5sa1HMUEVoh0J62ea98DHo+pdSrmSQJLmO
+         HATwo/eTxWvj5TsWtA5RtB8c+fFctlDv7cTgMIL3VOdAHCuA/2e2f8wPMG6IAxGWyBO9
+         1Olw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QEtGioVQnwjoy8CvMEOGuifAVgR2MythhiJN5MZX70o=;
-        b=deLCuLVgtyMit5aL5Q4M0jNo0hDFPwHpm1WpF6ivQO/rxV4yqDlsCuqlixIyDU80S4
-         l91Oy8qALyBebdREq2Tfyac/BRvNSf6T5UMSJxycSKNTwyPrGvNSLMcwDDGxPeZUMQqS
-         CHG2wxnBh+JhcZ4xG1eV8Jz3O1cN+Id/gGb5vUg0mQlIOyqVvyZdWDPBZZypESI58A1L
-         ryh200s6tHLiYFEDWiAJklxEP2TOcsRPh11gluqTrKkQj6oNdVYc0JHzo7K35NRN+bOw
-         R34H10FyrdWOkSgNMINlNsOH9gNamWLF9jKk/Hi83C0LtIrdHJLNVdJWXk4aKxE63Hht
-         V8JQ==
-X-Gm-Message-State: ABuFfoh4W+ifUrl4Vlt3Dpn6Wib4wz+ffWOJjF5q48WgvvgF4EZq5Giz
-        XKjiG1Nws+dVmrDywe88XQc=
-X-Google-Smtp-Source: ACcGV62b2xGnF8XhJgk4wk8jovL7sAE2sxrOQ6PaGnUqb7f5lJEo26JGltHJ9tY23hFXn3ReJexGAA==
-X-Received: by 2002:a63:7c5e:: with SMTP id l30-v6mr9438836pgn.45.1539442526347;
-        Sat, 13 Oct 2018 07:55:26 -0700 (PDT)
+        bh=Z2myOoj9IFC9zB8XQQZnHOE6BJZwQlrFqhO+Eu8mLO4=;
+        b=iY+jh/U2XuPgT5s5DhJARjR9suuxL7zrMCaRvs9bYPlLxKSxjQsv5T2+mXlgYPpdAD
+         Jmgct6oBwe0jdZ5jLmdRktLi6PjqO1xDXJPhGiAZxFhnPw4KmPisX0Pt/LZUycKV+E7P
+         QL0sMl74LlfZ0u1v8nnZ+Z+Gp1KjG8g6OVovstGaiafaJCbOiprYs8TGV3Bju1NbR1On
+         mCUX0dS9xJlSyo86BxFaqWzRjwAlCBOSobByxE5IMpw2Bxfjb3gMUt6vVf1Cm8Cnd9M2
+         YuaffTSiNYiQaHjuxMzJZoWTgWak/pUslUXrHP0PLz4uHsCMNka5n/zQS1OzyYnXJ57z
+         ZBkg==
+X-Gm-Message-State: ABuFfogzctuHsHC13giWNSJ2A6q/eM7EHJqa5dRIpyvSFj67WAka4xDk
+        J5/Jt5o3sKzxeIf+NJlxTFjlsKfEt84=
+X-Google-Smtp-Source: ACcGV631lWroPtRgeYzV7XUZoAm6GcI3n8pVNiMq/beeKilrp10gffyDr/4DHkWuaVQlz0ih5nBVAg==
+X-Received: by 2002:a17:902:b943:: with SMTP id h3-v6mr10217074pls.5.1539442531071;
+        Sat, 13 Oct 2018 07:55:31 -0700 (PDT)
 Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.22
+        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.55.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 07:55:25 -0700 (PDT)
+        Sat, 13 Oct 2018 07:55:30 -0700 (PDT)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
@@ -67,9 +67,9 @@ Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
         devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
         vkuznets@redhat.com
-Subject: [PATCH V4 11/15] KVM/MMU: Replace tlb flush function with range list flush function
-Date:   Sat, 13 Oct 2018 22:54:02 +0800
-Message-Id: <20181013145406.4911-12-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V4 12/15] x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+Date:   Sat, 13 Oct 2018 22:54:03 +0800
+Message-Id: <20181013145406.4911-13-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
 References: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
@@ -81,104 +81,226 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-This patch is to use range list flush function in the
-mmu_sync_children(), kvm_mmu_commit_zap_page() and
-FNAME(sync_page)().
+Hyper-V provides HvFlushGuestAddressList() hypercall to flush EPT tlb
+with specified ranges. This patch is to add the hypercall support.
 
+Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
- arch/x86/kvm/mmu.c         | 26 +++++++++++++++++++++++---
- arch/x86/kvm/paging_tmpl.h |  5 ++++-
- 2 files changed, 27 insertions(+), 4 deletions(-)
+Change since v2:
+      Fix some coding style issues
+        - Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+	hyperv-tlfs.h.
+	- Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+	- Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+	struct hv_guest_mapping_flush_list.
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 393f4048dd7a..69e4cff1115d 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1100,6 +1100,13 @@ static void update_gfn_disallow_lpage_count(struct kvm_memory_slot *slot,
- 	}
- }
+Change since v1:
+       Add hyperv tlb flush struct to avoid use kvm tlb flush struct
+in the hyperv file.
+---
+ arch/x86/hyperv/nested.c           | 84 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h | 32 +++++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 16 ++++++++
+ 3 files changed, 132 insertions(+)
+
+diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
+index b8e60cc50461..a6fdfec63c7d 100644
+--- a/arch/x86/hyperv/nested.c
++++ b/arch/x86/hyperv/nested.c
+@@ -7,6 +7,7 @@
+  *
+  * Author : Lan Tianyu <Tianyu.Lan@microsoft.com>
+  */
++#define pr_fmt(fmt)  "Hyper-V: " fmt
  
-+static void kvm_mmu_queue_flush_request(struct kvm_mmu_page *sp,
-+		struct list_head *flush_list)
+ 
+ #include <linux/types.h>
+@@ -54,3 +55,86 @@ int hyperv_flush_guest_mapping(u64 as)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping);
++
++static int fill_flush_list(union hv_gpa_page_range gpa_list[],
++		int offset, u64 start_gfn, u64 pages)
 +{
-+	if (sp->sptep && is_last_spte(*sp->sptep, sp->role.level))
-+		list_add(&sp->flush_link, flush_list);
++	int gpa_n = offset;
++	u64 cur = start_gfn;
++	u64 additional_pages;
++
++	do {
++		/*
++		 * If flush requests exceed max flush count, go back to
++		 * flush tlbs without range.
++		 */
++		if (gpa_n >= HV_MAX_FLUSH_REP_COUNT)
++			return -ENOSPC;
++
++		additional_pages = min_t(u64, pages, HV_MAX_FLUSH_PAGES) - 1;
++
++		gpa_list[gpa_n].page.additional_pages = additional_pages;
++		gpa_list[gpa_n].page.largepage = false;
++		gpa_list[gpa_n].page.basepfn = cur;
++
++		pages -= additional_pages + 1;
++		cur += additional_pages + 1;
++		gpa_n++;
++	} while (pages > 0);
++
++	return gpa_n;
 +}
 +
- void kvm_mmu_gfn_disallow_lpage(struct kvm_memory_slot *slot, gfn_t gfn)
- {
- 	update_gfn_disallow_lpage_count(slot, gfn, 1);
-@@ -2372,12 +2379,16 @@ static void mmu_sync_children(struct kvm_vcpu *vcpu,
- 
- 	while (mmu_unsync_walk(parent, &pages)) {
- 		bool protected = false;
-+		LIST_HEAD(flush_list);
- 
--		for_each_sp(pages, sp, parents, i)
-+		for_each_sp(pages, sp, parents, i) {
- 			protected |= rmap_write_protect(vcpu, sp->gfn);
-+			kvm_mmu_queue_flush_request(sp, &flush_list);
-+		}
- 
- 		if (protected) {
--			kvm_flush_remote_tlbs(vcpu->kvm);
-+			kvm_flush_remote_tlbs_with_list(vcpu->kvm,
-+					&flush_list);
- 			flush = false;
- 		}
- 
-@@ -2713,6 +2724,7 @@ static void kvm_mmu_commit_zap_page(struct kvm *kvm,
- 				    struct list_head *invalid_list)
- {
- 	struct kvm_mmu_page *sp, *nsp;
-+	LIST_HEAD(flush_list);
- 
- 	if (list_empty(invalid_list))
- 		return;
-@@ -2726,7 +2738,15 @@ static void kvm_mmu_commit_zap_page(struct kvm *kvm,
- 	 * In addition, kvm_flush_remote_tlbs waits for all vcpus to exit
- 	 * guest mode and/or lockless shadow page table walks.
- 	 */
--	kvm_flush_remote_tlbs(kvm);
-+	if (kvm_available_flush_tlb_with_range()) {
-+		list_for_each_entry(sp, invalid_list, link)
-+			kvm_mmu_queue_flush_request(sp, &flush_list);
++int hyperv_flush_guest_mapping_range(u64 as, struct hyperv_tlb_range *range)
++{
++	struct hv_guest_mapping_flush_list **flush_pcpu;
++	struct hv_guest_mapping_flush_list *flush;
++	u64 status = 0;
++	unsigned long flags;
++	int ret = -ENOTSUPP;
++	int gpa_n = 0;
 +
-+		if (!list_empty(&flush_list))
-+			kvm_flush_remote_tlbs_with_list(kvm, &flush_list);
-+	} else {
-+		kvm_flush_remote_tlbs(kvm);
++	if (!hv_hypercall_pg)
++		goto fault;
++
++	local_irq_save(flags);
++
++	flush_pcpu = (struct hv_guest_mapping_flush_list **)
++		this_cpu_ptr(hyperv_pcpu_input_arg);
++
++	flush = *flush_pcpu;
++	if (unlikely(!flush)) {
++		local_irq_restore(flags);
++		goto fault;
 +	}
++
++	flush->address_space = as;
++	flush->flags = 0;
++
++	if (!range->flush_list)
++		gpa_n = fill_flush_list(flush->gpa_list, gpa_n,
++				range->start_gfn, range->pages);
++	else if (range->parse_flush_list_func)
++		gpa_n = range->parse_flush_list_func(flush->gpa_list, gpa_n,
++				range->flush_list, fill_flush_list);
++	else
++		gpa_n = -1;
++
++	if (gpa_n < 0) {
++		local_irq_restore(flags);
++		goto fault;
++	}
++
++	status = hv_do_rep_hypercall(HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST,
++				     gpa_n, 0, flush, NULL);
++
++	local_irq_restore(flags);
++
++	if (!(status & HV_HYPERCALL_RESULT_MASK))
++		ret = 0;
++	else
++		ret = status;
++fault:
++	return ret;
++}
++EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping_range);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 00e01d215f74..cf59250c284a 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -10,6 +10,7 @@
+ #define _ASM_X86_HYPERV_TLFS_H
  
- 	list_for_each_entry_safe(sp, nsp, invalid_list, link) {
- 		WARN_ON(!sp->role.invalid || sp->root_count);
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 833e8855bbc9..e44737ce6bad 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -973,6 +973,7 @@ static int FNAME(sync_page)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
- 	bool host_writable;
- 	gpa_t first_pte_gpa;
- 	int set_spte_ret = 0;
-+	LIST_HEAD(flush_list);
+ #include <linux/types.h>
++#include <asm/page.h>
  
- 	/* direct kvm_mmu_page can not be unsync. */
- 	BUG_ON(sp->role.direct);
-@@ -1033,10 +1034,12 @@ static int FNAME(sync_page)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
- 					 pte_access, PT_PAGE_TABLE_LEVEL,
- 					 gfn, spte_to_pfn(sp->spt[i]),
- 					 true, false, host_writable);
-+		if (set_spte_ret && kvm_available_flush_tlb_with_range())
-+			kvm_mmu_queue_flush_request(sp, &flush_list);
- 	}
+ /*
+  * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
+@@ -353,6 +354,7 @@ struct hv_tsc_emulation_status {
+ #define HVCALL_POST_MESSAGE			0x005c
+ #define HVCALL_SIGNAL_EVENT			0x005d
+ #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE 0x00af
++#define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST 0x00b0
  
- 	if (set_spte_ret & SET_SPTE_NEED_REMOTE_TLB_FLUSH)
--		kvm_flush_remote_tlbs(vcpu->kvm);
-+		kvm_flush_remote_tlbs_with_list(vcpu->kvm, &flush_list);
+ #define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
+ #define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
+@@ -752,6 +754,36 @@ struct hv_guest_mapping_flush {
+ 	u64 flags;
+ };
  
- 	return nr_present;
++/*
++ *  HV_MAX_FLUSH_PAGES = "additional_pages" + 1. It's limited
++ *  by the bitwidth of "additional_pages" in union hv_gpa_page_range.
++ */
++#define HV_MAX_FLUSH_PAGES (2048)
++
++/* HvFlushGuestPhysicalAddressList hypercall */
++union hv_gpa_page_range {
++	u64 address_space;
++	struct {
++		u64 additional_pages:11;
++		u64 largepage:1;
++		u64 basepfn:52;
++	} page;
++};
++
++/*
++ * All input flush parameters should be in single page. The max flush
++ * count is equal with how many entries of union hv_gpa_page_range can
++ * be populated into the input parameter page.
++ */
++#define HV_MAX_FLUSH_REP_COUNT (PAGE_SIZE - 2 * sizeof(u64) /	\
++				sizeof(union hv_gpa_page_range))
++
++struct hv_guest_mapping_flush_list {
++	u64 address_space;
++	u64 flags;
++	union hv_gpa_page_range gpa_list[HV_MAX_FLUSH_REP_COUNT];
++};
++
+ /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+ struct hv_tlb_flush {
+ 	u64 address_space;
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index f37704497d8f..19f49fbcf94d 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -22,6 +22,16 @@ struct ms_hyperv_info {
+ 
+ extern struct ms_hyperv_info ms_hyperv;
+ 
++struct hyperv_tlb_range {
++	u64 start_gfn;
++	u64 pages;
++	struct list_head *flush_list;
++	int (*parse_flush_list_func)(union hv_gpa_page_range gpa_list[],
++		int offset, struct list_head *flush_list,
++		int (*fill_flush_list)(union hv_gpa_page_range gpa_list[],
++		int offset, u64 start_gfn, u64 end_gfn));
++};
++
+ /*
+  * Generate the guest ID.
+  */
+@@ -348,6 +358,7 @@ void set_hv_tscchange_cb(void (*cb)(void));
+ void clear_hv_tscchange_cb(void);
+ void hyperv_stop_tsc_emulation(void);
+ int hyperv_flush_guest_mapping(u64 as);
++int hyperv_flush_guest_mapping_range(u64 as, struct hyperv_tlb_range *range);
+ 
+ #ifdef CONFIG_X86_64
+ void hv_apic_init(void);
+@@ -368,6 +379,11 @@ static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
+ 	return NULL;
  }
+ static inline int hyperv_flush_guest_mapping(u64 as) { return -1; }
++static inline int hyperv_flush_guest_mapping_range(u64 as,
++		struct hyperv_tlb_range *range)
++{
++	return -1;
++}
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
 -- 
 2.14.4
 
