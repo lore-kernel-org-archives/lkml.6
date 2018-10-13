@@ -2,117 +2,293 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B494C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93495C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC58C20895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="USyS9cwA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC58C20895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C00420895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:40:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C00420895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeJMVLh (ORCPT
+        id S1726636AbeJMVRR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 17:11:37 -0400
-Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:11632
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726281AbeJMVLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 17:11:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i8m/8kKJ5N0iT+fv5TrhYPceo1FnCEIb2JLs6qLPUzM=;
- b=USyS9cwAgvP1mavQued7usdz4uFt1Bg/XW1Oc80pzK24tszJntNYhNdqaJ6ChBIsaoPHRBdUmYeMqzeyTl8X3/0PwVv+t872DnYEO+DI72xFaAMAx3kehNZ1TxqMztjD665OO0lMnlkw4GdKnvsYQYdBfI8a5GfaUB/vqp14duo=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5060.eurprd04.prod.outlook.com (20.177.40.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.25; Sat, 13 Oct 2018 13:33:54 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1228.020; Sat, 13 Oct 2018
- 13:33:54 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>
-Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Thread-Topic: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Thread-Index: AQHUQOYAqzg0fl5c6km76P92aepQ6qTin9AQgBBfjVCABM4uAIAAv5kggBzYKaCACAuTYA==
-Date:   Sat, 13 Oct 2018 13:33:54 +0000
-Message-ID: <AM0PR04MB4211DBDC8D0684442A927CE580E30@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
- <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5060;6:nM+WUeNYZamMZCDeaBABPRyIXPz/KgxGHi7Qz2zfVLayqFM31LgDg8Px2++4pDKLL2YxXgNvrvFFfzsUHnpEsREGqUweIkI8gBLvqQXPosSc6iChLbg4oQGu0KQsaUqDzUM02uUS/oeKprA9SOwrC08IL4Np32hHrguKrvi1NjfYMCTB6ytA3jnctsR/jHdg38y5YLOUtccmhRYTc8388I4rzwfdHT8gSnA9ySNCANUIxhRKCZyZ6lzzTjaE1L2vSxFK/edjx1wanx2KFlEBjMDjeAIzLb7sOU9THA+Jp1o/ZFYvl9Lo+pG/o7qzAimNz0C5t8J0HHYwhHiN6BuOw5hrCx5ILJuNTiClRfF2nGN+0tOtW1vgGHT/y/6KyZj+lZs4hEzpZezNjvcE8quvGVbPNK4yintdaZJ3LWmZ8k1TEnx/9uf7bvk4iXXIcct2k/lZyiPXHsQLwYUaxadFgQ==;5:rBA5U7RSzPYm90Gy5PDsbm31AlSZFCIX0pYx2wU8swOsjM4KJXab26nIZUH6XtHfyQOWTg7WM5n9Um+I9qO/1JDVRk1qSb9jfKfjvyA0HLXVeKlL2P4M78gDjsvI7SBJBmUnUENmRFtT5l5oslk5IKf2vN0sY7/qlP4eUusBTrE=;7:v7WjPclYx9w8jRnJseRa3FCQUflkWuaRIOTDF+qpz8abh7MAFipUcqtgBy7shaKBDMGlof0LN9Q+f+0yox5YJdi1b+nTZIkrRx8CbV5bfycLKErOFJRaXLogbkh8HhavkPt8pfGISRndIDnWx7QjbMMJA930c73NZv9lASh7xEj7gyg9BDb1KkTKjaHr9dZf1NvwnBt9cxlrBBKKmkE2Qr/fH+wvagifSMRYu+yOIUTRcF3tRvbrtCFUofotamxt
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: b3ced4ec-1761-43b5-a83c-08d631108515
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5060;
-x-ms-traffictypediagnostic: AM0PR04MB5060:
-x-microsoft-antispam-prvs: <AM0PR04MB50604526C764BA4FE43E92B680E30@AM0PR04MB5060.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(9452136761055)(258649278758335)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:AM0PR04MB5060;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5060;
-x-forefront-prvs: 082465FB26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(396003)(366004)(346002)(199004)(189003)(13464003)(86362001)(2201001)(68736007)(8676002)(3846002)(54906003)(6116002)(97736004)(5660300001)(106356001)(105586002)(102836004)(110136005)(8936002)(256004)(33656002)(71190400001)(14454004)(71200400001)(2906002)(478600001)(81156014)(81166006)(55016002)(25786009)(9686003)(4326008)(53936002)(74316002)(6436002)(11346002)(229853002)(6246003)(316002)(305945005)(99286004)(7736002)(26005)(76176011)(486006)(186003)(2900100001)(93886005)(2501003)(476003)(446003)(5250100002)(66066001)(7696005)(53546011)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5060;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: yhn7//pbBwlwnU36kzCCItTVgW2Lk3ekHc7GadEZ4VtFpoag+QthqOW4Dw0D63Ywa3acMx8eLXT52kLSKPvx6sWPhFMLPKxha+kS5f4MNvgTfVKhuf4aZ6MxDRk5r7Aed9n/TcM0xqy5MgqJ9kbYb/SxC9K2wHPGb+9Ge0umsg9NiJg7VNitBA85mSSnmBf4o0PWZhtuxSWSbmnI+aP1T9iEoUK2Pnv9bInmJieriEm3HAoyncqDPSrR3oTKz7HPejzmZecgdWVtppLD9p31/6fXILRyqhAr1uTTC4AcenVtIMXtF94oS+0e8POvQ8y5x5IXXAehlqiWkzDuaXu1rb3p57Rt+SRYZAugSr55DLM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3ced4ec-1761-43b5-a83c-08d631108515
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2018 13:33:54.0830
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5060
+        Sat, 13 Oct 2018 17:17:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:33541 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbeJMVRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 17:17:17 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 42XQmz5rwkz9sCW; Sun, 14 Oct 2018 00:40:03 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, jannh@google.com, mhocko@suse.com,
+        linux-mm@kvack.org, khalid.aziz@oracle.com, aarcange@redhat.com,
+        fweimer@redhat.com, jhubbard@nvidia.com, willy@infradead.org,
+        abdhalee@linux.vnet.ibm.com, joel@jms.id.au, keescook@chromium.org,
+        jasone@google.com, davidtgoldblatt@gmail.com, trasz@freebsd.org,
+        danielmicay@gmail.com
+Subject: [PATCH] selftests/vm: Add a test for MAP_FIXED_NOREPLACE
+Date:   Sun, 14 Oct 2018 00:39:29 +1100
+Message-Id: <20181013133929.28653-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGluZw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEEucy4gRG9uZw0K
-PiBTZW50OiBNb25kYXksIE9jdG9iZXIgOCwgMjAxOCA2OjQzIFBNDQo+IFRvOiB0aG9yLnRoYXll
-ckBsaW51eC5pbnRlbC5jb207IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IHNib3lkQGtlcm5l
-bC5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNoYXdu
-Z3VvQGtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyBoZGVn
-b2VkZUByZWRoYXQuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggVjYgMC80XSBjbGs6IG5ldyBB
-UElzIHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2Nrcw0KPiANCj4gSGkgU3RlcGhlbiwNCj4g
-DQo+IEdlbnRseSBwaW5nIGFnYWluLi4NCj4gDQo+ID4gPiA+DQo+ID4gPiBKdXN0IGNoZWNraW5n
-IG9uIHRoZSBzdGF0dXMgb2YgdGhpcyBwYXRjaC4gVGhlIGNsb2NrIHJvdXRpbmVzDQo+ID4gPiAo
-cGF0Y2hlcw0KPiA+ID4gMS0zKSBhcmUgdXNlZnVsIGZvciBvbmUgb2YgbXkgZHJpdmVycyBidXQg
-aWYgdGhleSBhcmVuJ3QgYWNjZXB0ZWQgb3INCj4gPiA+IHdpbGwgdGFrZSBhIGxvbmcgdGltZSB0
-byBiZSBhY2NlcHRlZCwgSSdsbCBuZWVkIHRvIHJlZmFjdG9yIG15IGRyaXZlci4NCj4gPiA+DQo+
-ID4NCj4gPiBUaGFua3MgZm9yIHRoaXMgaW5mb3JtYXRpb24uDQo+ID4NCj4gPiBTdGVwaGVuLA0K
-PiA+IFdvdWxkIHlvdSBoZWxwIHRvIHByb2NlZWQgdGhpcz8NCj4gPg0KPiANCj4gUmVnYXJkcw0K
-PiBEb25nIEFpc2hlbmcNCg==
+Add a test for MAP_FIXED_NOREPLACE, based on some code originally by
+Jann Horn. This would have caught the overlap bug reported by Daniel Micay.
+
+I originally suggested to Michal that we create MAP_FIXED_NOREPLACE, but
+instead of writing a selftest I spent my time bike-shedding whether it
+should be called MAP_FIXED_SAFE/NOCLOBBER/WEAK/NEW .. mea culpa.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ tools/testing/selftests/vm/.gitignore         |   1 +
+ tools/testing/selftests/vm/Makefile           |   1 +
+ .../selftests/vm/map_fixed_noreplace.c        | 206 ++++++++++++++++++
+ 3 files changed, 208 insertions(+)
+ create mode 100644 tools/testing/selftests/vm/map_fixed_noreplace.c
+
+diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
+index af5ff83f6d7f..31b3c98b6d34 100644
+--- a/tools/testing/selftests/vm/.gitignore
++++ b/tools/testing/selftests/vm/.gitignore
+@@ -13,3 +13,4 @@ mlock-random-test
+ virtual_address_range
+ gup_benchmark
+ va_128TBswitch
++map_fixed_noreplace
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index e94b7b14bcb2..6e67e726e5a5 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -12,6 +12,7 @@ TEST_GEN_FILES += gup_benchmark
+ TEST_GEN_FILES += hugepage-mmap
+ TEST_GEN_FILES += hugepage-shm
+ TEST_GEN_FILES += map_hugetlb
++TEST_GEN_FILES += map_fixed_noreplace
+ TEST_GEN_FILES += map_populate
+ TEST_GEN_FILES += mlock-random-test
+ TEST_GEN_FILES += mlock2-tests
+diff --git a/tools/testing/selftests/vm/map_fixed_noreplace.c b/tools/testing/selftests/vm/map_fixed_noreplace.c
+new file mode 100644
+index 000000000000..d91bde511268
+--- /dev/null
++++ b/tools/testing/selftests/vm/map_fixed_noreplace.c
+@@ -0,0 +1,206 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Test that MAP_FIXED_NOREPLACE works.
++ *
++ * Copyright 2018, Jann Horn <jannh@google.com>
++ * Copyright 2018, Michael Ellerman, IBM Corporation.
++ */
++
++#include <sys/mman.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#ifndef MAP_FIXED_NOREPLACE
++#define MAP_FIXED_NOREPLACE 0x100000
++#endif
++
++#define BASE_ADDRESS	(256ul * 1024 * 1024)
++
++
++static void dump_maps(void)
++{
++	char cmd[32];
++
++	snprintf(cmd, sizeof(cmd), "cat /proc/%d/maps", getpid());
++	system(cmd);
++}
++
++int main(void)
++{
++	unsigned long flags, addr, size, page_size;
++	char *p;
++
++	page_size = sysconf(_SC_PAGE_SIZE);
++
++	flags = MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE;
++
++	// Check we can map all the areas we need below
++	errno = 0;
++	addr = BASE_ADDRESS;
++	size = 5 * page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p == MAP_FAILED) {
++		dump_maps();
++		printf("Error: couldn't map the space we need for the test\n");
++		return 1;
++	}
++
++	errno = 0;
++	if (munmap((void *)addr, 5 * page_size) != 0) {
++		dump_maps();
++		printf("Error: munmap failed!?\n");
++		return 1;
++	}
++	printf("unmap() successful\n");
++
++	errno = 0;
++	addr = BASE_ADDRESS + page_size;
++	size = 3 * page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p == MAP_FAILED) {
++		dump_maps();
++		printf("Error: first mmap() failed unexpectedly\n");
++		return 1;
++	}
++
++	/*
++	 * Exact same mapping again:
++	 *   base |  free  | new
++	 *     +1 | mapped | new
++	 *     +2 | mapped | new
++	 *     +3 | mapped | new
++	 *     +4 |  free  | new
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS;
++	size = 5 * page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p != MAP_FAILED) {
++		dump_maps();
++		printf("Error:1: mmap() succeeded when it shouldn't have\n");
++		return 1;
++	}
++
++	/*
++	 * Second mapping contained within first:
++	 *
++	 *   base |  free  |
++	 *     +1 | mapped |
++	 *     +2 | mapped | new
++	 *     +3 | mapped |
++	 *     +4 |  free  |
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS + (2 * page_size);
++	size = page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p != MAP_FAILED) {
++		dump_maps();
++		printf("Error:2: mmap() succeeded when it shouldn't have\n");
++		return 1;
++	}
++
++	/*
++	 * Overlap end of existing mapping:
++	 *   base |  free  |
++	 *     +1 | mapped |
++	 *     +2 | mapped |
++	 *     +3 | mapped | new
++	 *     +4 |  free  | new
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS + (3 * page_size);
++	size = 2 * page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p != MAP_FAILED) {
++		dump_maps();
++		printf("Error:3: mmap() succeeded when it shouldn't have\n");
++		return 1;
++	}
++
++	/*
++	 * Overlap start of existing mapping:
++	 *   base |  free  | new
++	 *     +1 | mapped | new
++	 *     +2 | mapped |
++	 *     +3 | mapped |
++	 *     +4 |  free  |
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS;
++	size = 2 * page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p != MAP_FAILED) {
++		dump_maps();
++		printf("Error:4: mmap() succeeded when it shouldn't have\n");
++		return 1;
++	}
++
++	/*
++	 * Adjacent to start of existing mapping:
++	 *   base |  free  | new
++	 *     +1 | mapped |
++	 *     +2 | mapped |
++	 *     +3 | mapped |
++	 *     +4 |  free  |
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS;
++	size = page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p == MAP_FAILED) {
++		dump_maps();
++		printf("Error:5: mmap() failed when it shouldn't have\n");
++		return 1;
++	}
++
++	/*
++	 * Adjacent to end of existing mapping:
++	 *   base |  free  |
++	 *     +1 | mapped |
++	 *     +2 | mapped |
++	 *     +3 | mapped |
++	 *     +4 |  free  |  new
++	 */
++	errno = 0;
++	addr = BASE_ADDRESS + (4 * page_size);
++	size = page_size;
++	p = mmap((void *)addr, size, PROT_NONE, flags, -1, 0);
++	printf("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
++
++	if (p == MAP_FAILED) {
++		dump_maps();
++		printf("Error:6: mmap() failed when it shouldn't have\n");
++		return 1;
++	}
++
++	addr = BASE_ADDRESS;
++	size = 5 * page_size;
++	if (munmap((void *)addr, size) != 0) {
++		dump_maps();
++		printf("Error: munmap failed!?\n");
++		return 1;
++	}
++	printf("unmap() successful\n");
++
++	printf("OK\n");
++	return 0;
++}
+-- 
+2.17.1
+
