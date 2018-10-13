@@ -2,242 +2,105 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517D5C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F49C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175D620895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175D620895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 464EA20895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:51:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tTG4y1qZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464EA20895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbeJMVZr (ORCPT
+        id S1726707AbeJMV2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 17:25:47 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:39901 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeJMVZr (ORCPT
+        Sat, 13 Oct 2018 17:28:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44504 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbeJMV2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 17:25:47 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gBKGn-0002t8-2T from Vladimir_Zapolskiy@mentor.com ; Sat, 13 Oct 2018 06:47:53 -0700
-Received: from [137.202.108.125] (137.202.0.90) by
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Sat, 13 Oct 2018 14:47:48 +0100
-Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
- TI DS90Ux9xx pinmux
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-4-vz@mleia.com> <8675619.KiXOS7fxCj@avalon>
-CC:     Vladimir Zapolskiy <vz@mleia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <9bd129b4-ce18-b036-9376-2cb1cb76aaf2@mentor.com>
-Date:   Sat, 13 Oct 2018 16:47:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Sat, 13 Oct 2018 17:28:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+XMwMXMjq9ROKzgzKBhLcRtyHTBtbPVhm0+mGC7F25k=; b=tTG4y1qZX3e+AOTlwqIM8VsFl
+        ZI6NsUSboNcK+vog+UQlgu4r+p3qXD7ZB/+V5aDBJJ1+TCHtkmk2Zww1Pr8BQDov1l8GnT43Mdpsd
+        xCYX8w5r8aqxU9jtDrYjpUhFq3UaAYPALjak0KUhEx0W0217S41zDGMzo+5YOQuE7BTkR81ML8HwW
+        9P+a0rPZVNBGE/LWtjFtuTgr9DcN8XC+tn0olrnVzf+7eYcJ+OdUpTpx0bCn9RkHQ2KLrKChlDE/g
+        3rus+31DMMwUUW83k9bctO6ePdmebIZt6RN+tqOoZ5TOm7KParB7U2a9PUYreaPWo08zgTXLh7Uuk
+        4aGz1Pctg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gBKJq-0005zA-9P; Sat, 13 Oct 2018 13:51:02 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id C07B16E079E; Sat, 13 Oct 2018 15:50:58 +0200 (CEST)
+Date:   Sat, 13 Oct 2018 15:50:58 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Clark Williams <williams@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm/kasan: make quarantine_lock a raw_spinlock_t
+Message-ID: <20181013135058.GC4931@worktop.programming.kicks-ass.net>
+References: <20181005163320.zkacovxvlih6blpp@linutronix.de>
+ <CACT4Y+YoNCm=0C6PZtQR1V1j4QeQ0cFcJzpJF1hn34Oaht=jwg@mail.gmail.com>
+ <20181009142742.ikh7xv2dn5skjjbe@linutronix.de>
+ <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
+ <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
+ <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
+ <20181010095343.6qxved3owi6yokoa@linutronix.de>
+ <CACT4Y+ZpMjYBPS0GHP0AsEJZZmDjwV9DJBiVUzYKBnD+r9W4+A@mail.gmail.com>
+ <20181010214945.5owshc3mlrh74z4b@linutronix.de>
+ <20181012165655.f067886428a394dc7fbae7af@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <8675619.KiXOS7fxCj@avalon>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012165655.f067886428a394dc7fbae7af@linux-foundation.org>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-thank you for review, please find my comments below.
-
-On 10/12/2018 03:01 PM, Laurent Pinchart wrote:
-> Hi Vladimir,
+On Fri, Oct 12, 2018 at 04:56:55PM -0700, Andrew Morton wrote:
+> There are several reasons for using raw_*, so an explanatory comment at
+> each site is called for.
 > 
-> Thank you for the patch.
+> However it would be smarter to stop "using raw_* for several reasons". 
+> Instead, create a differently named variant for each such reason.  ie, do
 > 
-> On Tuesday, 9 October 2018 00:12:01 EEST Vladimir Zapolskiy wrote:
->> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>
->> TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
->> in particular a pin may have selectable functions of GPIO, GPIO line
->> transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
->>
->> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
->> controllers.
->>
->> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->> ---
->>  .../bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt | 83 +++++++++++++++++++
->>  1 file changed, 83 insertions(+)
->>  create mode 100644
->> Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
->>
->> diff --git
->> a/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
->> b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt new
->> file mode 100644
->> index 000000000000..fbfa1a3cdf9f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
->> @@ -0,0 +1,83 @@
->> +TI DS90Ux9xx de-/serializer pinmux and GPIO subcontroller
->> +
->> +Required properties:
->> +- compatible: Must contain a generic "ti,ds90ux9xx-pinctrl" value and
->> +	may contain one more specific value from the list:
->> +	"ti,ds90ux925-pinctrl",
->> +	"ti,ds90ux926-pinctrl",
->> +	"ti,ds90ux927-pinctrl",
->> +	"ti,ds90ux928-pinctrl",
->> +	"ti,ds90ux940-pinctrl".
+> /*
+>  * Nice comment goes here.  It explains all the possible reasons why -rt
+>  * might use a raw_spin_lock when a spin_lock could otherwise be used.
+>  */
+> #define raw_spin_lock_for_rt	raw_spinlock
 > 
-> No need for a subnode, you can mark the main DT node with gpio-controller 
-> directly.
+> Then use raw_spin_lock_for_rt() at all such sites.
 
-If the IC is seen as an MFD, and you guess I highly prefer it and I object
-the "overkill" argument, then the subnode is requred.
+The whole raw_spinlock_t is for RT, no other reason. It is the one true
+spinlock.
 
-Also the more complicated part of the subcontroller and its device driver
-is to provide pinmuxing function to consumers rather than to allow GPIO
-line configuration.
+From this, it naturally follows that:
 
-The pinctrl/GPIO driver can not be alloyed with the base driver's code
-to sustain maintainability, so it will reside in drivers/pinctrl as
-a separate cell driver, and by the way that is the reason why it earns
-its own very non-trivial DT binding description documentation.
+ - nesting order: raw_spinlock_t < spinlock_t < mutex_t
+ - raw_spinlock_t sections must be bounded
 
->> +- gpio-controller: Marks the device node as a GPIO controller.
->> +
->> +- #gpio-cells: Must be set to 2,
->> +	- the first cell is the GPIO offset number within the controller,
->> +	- the second cell is used to specify the GPIO line polarity.
->> +
->> +- gpio-ranges: Mapping to pin controller pins (as described in
->> +	Documentation/devicetree/bindings/gpio/gpio.txt)
->> +
->> +Optional properties:
->> +- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
-> 
-> Please use standard properties to configure bus width. There is one defined in 
-> Documentation/devicetree/bindings/media/video-interfaces.txt.
+The patch under discussion is the result of the nesting order rule; and
+is allowed to violate the second rule, by virtue of it being debug code.
 
-Here it is not a bus width description or property, but rather it is a custom
-pinmux control.
-
-It could make sense to reduce the scope of the property to "parallel" pin
-function only though, like in
-
-	ds90ux927_0_pins: pinmux {
-		parallel {
-			groups = "parallel";
-			function = "parallel";
-			ti,video-depth-18bit;
-		};
-	};
-
-Alternatively the removal of the property would be almost loseless, it is
-needed just in one very specific case, please reference to the driver code
-for details, there you'll find a comment in ds90ux9xx_parse_dt_properties()
-function.
-
->> +Available pins, groups and functions (reference to device datasheets):
->> +
->> +function: "gpio" ("gpio4" is on DS90Ux925 and DS90Ux926 only,
->> +		  "gpio9" is on DS90Ux940 only)
->> + - pins: "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
->> +	 "gpio7", "gpio8", "gpio9"
->> +
->> +function: "gpio-remote"
->> + - pins: "gpio0", "gpio1", "gpio2", "gpio3"
->> +
->> +function: "pass" (DS90Ux940 specific only)
->> + - pins: "gpio0", "gpio3"
-> 
-> What do those functions mean ?
-> 
-
-"gpio" function should be already familiar to you.
-
-"gpio-remote" function is the pin function for a GPIO line bridging.
-
-"pass" function sets a pin to a status pin function for detecting
-display timing issues, namely DE or Vsync length value mismatch.
-
->> +function: "i2s-1"
->> + - group: "i2s-1"
->> +
->> +function: "i2s-2"
->> + - group: "i2s-2"
->> +
->> +function: "i2s-3" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
->> + - group: "i2s-3"
->> +
->> +function: "i2s-4" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
->> + - group: "i2s-4"
->> +
->> +function: "i2s-m" (DS90Ux928 and DS90Ux940 specific only)
->> + - group: "i2s-m"
-> 
-> Do we really need all this ? I think a better model would be to describe the 
-> audio interfaces explicitly, and configure pinmuxing automatically based on 
-> which audio interfaces are in use.
-
-Yes, all the pin functions are needed, because they are transparent pinmux
-controls.
-
-I really don't want to copy a part of gpio and pinctrl frameworks to
-the driver to hunt out why a user configured audio bridging and a GPIO
-line, and then something goes funny due to a pin conflict. To forget
-about such very possible pin and pin function conflicts I'm happy to
-shift the task to the neat Linus' frameworks.
-
->> +function: "parallel" (DS90Ux925 and DS90Ux926 specific only)
->> + - group: "parallel"
->> +
->> +Example (deserializer with pins GPIO[3:0] set to bridged output
->> +	 function and pin GPIO4 in standard hogged GPIO function):
->> +
->> +deserializer {
->> +	compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
->> +
->> +	ds90ux928_pctrl: pin-controller {
->> +		compatible = "ti,ds90ux928-pinctrl", "ti,ds90ux9xx-pinctrl";
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +		gpio-ranges = <&ds90ux928_pctrl 0 0 8>;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&ds90ux928_pins>;
->> +
->> +		ds90ux928_pins: pinmux {
->> +			gpio-remote {
->> +				pins = "gpio0", "gpio1", "gpio2", "gpio3";
->> +				function = "gpio-remote";
->> +			};
->> +		};
->> +
->> +		rst {
->> +			gpio-hog;
->> +			gpios = <4 GPIO_ACTIVE_HIGH>;
->> +			output-high;
->> +		};
->> +	};
->> +};
-> 
-
---
-Best wishes,
-Vladimir
+There are no other reasons; and I'm somewhat confused by what you
+propose.
