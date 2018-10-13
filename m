@@ -2,108 +2,94 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A9C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D25C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8F620659
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD1F220659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:24:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eNBHvBGs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8F620659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GR44ZSt5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1F220659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeJMX7d (ORCPT
+        id S1726758AbeJNABt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 19:59:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45520 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJMX7d (ORCPT
+        Sat, 13 Oct 2018 20:01:49 -0400
+Received: from mail-io1-f53.google.com ([209.85.166.53]:45265 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbeJNABt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 19:59:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=x4O2hnMK3ivZixLfSIEiDWuEI7e2xM9wTrjw8QvfE0w=; b=eNBHvBGsqItvyKYNzdLjyaaN1g
-        hjCpE4/dBoDW62t3y6w0t5TJ3RQ4XE/iYzQ4602YV8MmEN87somwaDKjEArTjv1FoZqhnQDYSKk6M
-        qovbLFDBmS8yt6hB6hnpHcGCUuPsXNSO/iWm5X9b5WtmK9Ops8Ps8m+p5liz57ijQ62u6Qh+XfNS5
-        Sx0JO5ohb5Tr6S+r+IXUVyCyHUqVHWO2nDk08ieBEz/7l+UlakIBxBjycqIv2nbZFST5GWjGqymc9
-        JGI6c6RzsK2oOqSyt2NC/pwhyPmCDT43EAlP9xJ7baOZoHPbWGmWA9zt//xVz+sikxwJh1xAWb0N9
-        mi7Kn7AA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBMfg-0006lj-N8; Sat, 13 Oct 2018 16:21:44 +0000
-Subject: Re: [PATCH] ubifs: Fix WARN_ON logic in exit path
-To:     Richard Weinberger <richard@nod.at>, gregkh@linuxfoundation.org
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dunlap@infradead.org
-References: <20181013081841.13369-1-richard@nod.at>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ab4fe8b1-330d-3aa9-a45b-761f65a31f2c@infradead.org>
-Date:   Sat, 13 Oct 2018 09:21:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 13 Oct 2018 20:01:49 -0400
+Received: by mail-io1-f53.google.com with SMTP id e12-v6so11349992iok.12
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 09:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l/TacTj6uF8UhIINFeU1msPOQMn4LKN87lkL9ibztlc=;
+        b=GR44ZSt5GY8QRv15WTdaP2jURUblkVaarVTyCnS1DHJrVb+CXBNx9qQvF7vNMYwLpa
+         IJvRnQDJV2sXE8plpeVWiwuk4rM+licXFMiGuAmZ2pTFLRkOnk1m/BEAJEJ/Bz80uDQi
+         nL8LW8d+BX5mmsuEpd12jk9OZm4tSwtIITgWA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l/TacTj6uF8UhIINFeU1msPOQMn4LKN87lkL9ibztlc=;
+        b=gsqWTOvnoPv0g86VoYuL+mlcLVW9YfEIKQtLEg9XddMR+fSPV88Il7wQwsyUPmxgHB
+         mGNpClVpr6kVDs1EOZVINqFlKOwE+ZKl+seVEnTke47m7A9QM81x7raoMGX0H+zW9lkc
+         Ym0QQEFkITplTi9JcxdeVflHMnfm68yR1jUoUU0EuqgWbrWsaFiZ7dGldy/dSvx0nrjz
+         /mJkjB0YKgJEQEsOZoTf95rhicez21xkA8eiBY0SwAisb/KNkAwnVbegqxJ5VqEImkRl
+         +pWfajn1THou5NivN04E1Pn2WtskuvXYI7ztyIBUkAQTJ1q4PfItUPqsbTZQgrGB/peY
+         Pv6g==
+X-Gm-Message-State: ABuFfohIXEP2G9cwFR8Iz2WcgMbsVmxaYNlE0HnVt0bxvxotHQayNvSJ
+        aVCpizofl4zqjKGZBd0GLHDBouhIjSgRD7rPPeu7ig==
+X-Google-Smtp-Source: ACcGV61NVcm8jDeuCuP5AHH04vTGjQdLtungTTSoju/UdW+FPE5vigxdjGCfnf0wSzBtUtTvbnfzAm9Uu0yCH9SPQgI=
+X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr7351876iof.304.1539447842456;
+ Sat, 13 Oct 2018 09:24:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181013081841.13369-1-richard@nod.at>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+ <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
+ <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com> <efcb67bf-bdf3-e3a8-5139-0f778ea00f1d@elektron.elka.pw.edu.pl>
+In-Reply-To: <efcb67bf-bdf3-e3a8-5139-0f778ea00f1d@elektron.elka.pw.edu.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 13 Oct 2018 18:23:50 +0200
+Message-ID: <CACRpkdaeBMc-wqZxh0vVXRiRMvTHDFXxOk0aaxN=swcnLBhG5w@mail.gmail.com>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+To:     wzabolot@elektron.elka.pw.edu.pl
+Cc:     Michal Simek <michal.simek@xilinx.com>, wzab@ise.pw.edu.pl,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/13/18 1:18 AM, Richard Weinberger wrote:
-> ubifs_assert() is not WARN_ON(), so we have to invert
-> the checks.
-> Randy faced this warning with UBIFS being a module, since
-> most users use UBIFS as builtin because UBIFS is the rootfs
-> nobody noticed so far. :-(
-> Including me.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Fixes: 54169ddd382d ("ubifs: Turn two ubifs_assert() into a WARN_ON()")
-> Signed-off-by: Richard Weinberger <richard@nod.at>
+On Sat, Oct 13, 2018 at 5:53 PM wzabolot@elektron.elka.pw.edu.pl
+<wzabolot@elektron.elka.pw.edu.pl> wrote:
 
-Thanks.  Works for me.
+> The question is, if there may be any other in-tree GPIO controller
+> driver that does not initialize those flags?
 
-> ---
-> Greg,
-> 
-> can you please take this patch directly?
-> It fixes a brown paper bug which was introduced in rc1, I'd like to avoid
-> having it in a release and going the -stable path.
-> 
-> Thanks,
-> //richard
-> ---
->  fs/ubifs/super.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-> index bf000c8aeffb..fec62e9dfbe6 100644
-> --- a/fs/ubifs/super.c
-> +++ b/fs/ubifs/super.c
-> @@ -2337,8 +2337,8 @@ late_initcall(ubifs_init);
->  
->  static void __exit ubifs_exit(void)
->  {
-> -	WARN_ON(list_empty(&ubifs_infos));
-> -	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) == 0);
-> +	WARN_ON(!list_empty(&ubifs_infos));
-> +	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) != 0);
->  
->  	dbg_debugfs_exit();
->  	ubifs_compressors_exit();
-> 
+So as I said, I looked over them and they all initialize
+their flags.
 
+> Anyway the current situation is somehow dangerous.
 
--- 
-~Randy
+Not very dangerous compared to much other kernel code.
+
+> Maybe the best solution would be to initialize the automatic variable in
+> the of_find_gpio?
+
+Patches welcom, make sure they are tested with mainline
+code and drivers.
+
+Yours.
+Linus Walleij
