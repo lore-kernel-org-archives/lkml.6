@@ -2,122 +2,169 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E557C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E14BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADD72087D
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:42:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VHgTMtor"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADD72087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B94A820895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:55:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94A820895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbeJMNSL (ORCPT
+        id S1726309AbeJMNbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 09:18:11 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35366 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbeJMNSL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 09:18:11 -0400
-Received: by mail-yw1-f66.google.com with SMTP id y76-v6so5776621ywd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 22:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A5ZjR93lsk/QsNDThJvHfL1tgNrmPXJa5FymhsNnm0I=;
-        b=VHgTMtorjUbUY2Xd5bq7mxiDC2IIAUhn22HMGgE3gLMM+7YsOXMo9F8R45xTwAD7fv
-         zcHRYvCNdhL9CQpHkRNY9baExri+XpDVEikMxSLMqHTvUR4yKgqKptus+mBAdfQAeOqg
-         SzAuMjEeOy5qykBgM48M0ehW+be6hveM6eg5Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A5ZjR93lsk/QsNDThJvHfL1tgNrmPXJa5FymhsNnm0I=;
-        b=iWKtBqmDA5BBUHM6zQsvI3NsQIGJoxO3Q3+koXLu+x3t4Aagw3y5pXCfGICRUZcXte
-         24WK0e7osMNY7Wa87Evym+skjZ33q50lL1IKQ5QyaSis/pDNBJ1zY0csWbvnEDUO/Xh7
-         6YFlhI/GDcGH/G6DJTUvnXCQCHbXqgiVbTIepDMCUjrtEFrX+PDxThbA93KLylaBWTsL
-         SoX2Wmgeg+GnfR7DCvvaAjuRUvJg5oVHs6UUMI6BbkpYfrk6jhhqR9HBg1TlYnrCmQfH
-         CJrbQkxrKPbDe1nYMsphUd05Ny7lyzP1KR3ieylS/0aH/9tasQEu/p42mgNMbnMgLph8
-         mPkw==
-X-Gm-Message-State: ABuFfogYdAqGnQdeXTPeHV2HkWGqTKKZi4p13gSoMY/itpwQxSGFJ7Gd
-        wKbvm1W5D1kSw7wONghWckFiHVsZgNbScAOyuAdM5A==
-X-Google-Smtp-Source: ACcGV63i0zwnXwhptJ4IbdxPER4TiOK9TlLasNMVDDJZvd/QKEnds3DEFD7PqdtSmpKss8ARmR3ozVuufd74cxptqvA=
-X-Received: by 2002:a81:1b85:: with SMTP id b127-v6mr5180363ywb.381.1539409342769;
- Fri, 12 Oct 2018 22:42:22 -0700 (PDT)
+        Sat, 13 Oct 2018 09:31:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35278 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbeJMNbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 09:31:31 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EF667207A3; Sat, 13 Oct 2018 07:55:37 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A3D6820717;
+        Sat, 13 Oct 2018 07:55:37 +0200 (CEST)
+Date:   Sat, 13 Oct 2018 07:55:37 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mtd: rawnand: Provide helper for polling GPIO
+ R/B pin
+Message-ID: <20181013075537.291e145f@bbrezillon>
+In-Reply-To: <20181012204101.26274-1-jmkrzyszt@gmail.com>
+References: <20181003120028.9257-1-jmkrzyszt@gmail.com>
+        <20181012204101.26274-1-jmkrzyszt@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1539337442-3676-1-git-send-email-firoz.khan@linaro.org>
- <1539337442-3676-6-git-send-email-firoz.khan@linaro.org> <CAK8P3a1gsuM7mBGm9hx-BTs=HAG3cSjB6M7N-kpMmPy3kixeCQ@mail.gmail.com>
- <CALxhOnhj7qUj57tLX12KmbcE5G-zDK2Qf2fTUbQ=jpmiUcr52w@mail.gmail.com>
- <CAK8P3a3BjuLQh0hTPFTDTkipXXQ+j8ADqbWmNpimkMDzoORkRA@mail.gmail.com> <71ea9dc5-7502-40af-2022-b2196dd2d690@gmx.de>
-In-Reply-To: <71ea9dc5-7502-40af-2022-b2196dd2d690@gmx.de>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Sat, 13 Oct 2018 11:12:12 +0530
-Message-ID: <CALxhOniSbukoQYFzeLmWyD9tYE7Bgye6iq1O+fovvi1_G+56-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] parisc: wire up rseq system call
-To:     Helge Deller <deller@gmx.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Helge,
+Hi Janusz,
 
-On Sat, 13 Oct 2018 at 01:53, Helge Deller <deller@gmx.de> wrote:
->
-> On 12.10.2018 13:52, Arnd Bergmann wrote:
-> > On Fri, Oct 12, 2018 at 12:16 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> >>
-> >> Hi Arnd,
-> >>
-> >> On Fri, 12 Oct 2018 at 15:26, Arnd Bergmann <arnd@arndb.de> wrote:
-> >>>
-> >>> On Fri, Oct 12, 2018 at 11:45 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> >>>>
-> >>>> Wire up rseq system call requires an architecture specific
-> >>>> implementation as it not present now.
-> >>>>
-> >>>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-> >>>
-> >>> Didn't we conclude that this should be skipped?
-> >>
-> >> Helge told "I prefer to keep the warning for rseq for now.
-> >> It reminds me that we still may want the rseq syscall.
-> >> If the warning is a problem, you may simply add the __IGNORE_rseq define."
-> >>
-> >> I chose this option; I feel it looks clean
-> >> "# rseq requires an architecture specific implementation" in syscall.tbl
-> >> hopefully remind him to add rseq syscall implementation in this architecture.
-> >
-> > But he said he wants the warning instead.
->
-> Correct.
-> Firoz, please simply drop this patch completely.
-> That way one will see generated warnings about the missing rseq (which is what
-> we want).
+On Fri, 12 Oct 2018 22:41:00 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Sure. will do!
+> Each controller driver with access to NAND R/B pin over GPIO would have 
+> to reimplement the polling loop otherwise.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+> Changelog:
+> v2:
+> New patch - v1 consisted of only one patch (the followning one)
+> 
+> 
+>  drivers/mtd/nand/raw/nand_base.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mtd/rawnand.h      | 10 ++++++++++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 05bd0779fe9b..ff1ac4a3c647 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -45,6 +45,9 @@
+>  #include <linux/io.h>
+>  #include <linux/mtd/partitions.h>
+>  #include <linux/of.h>
+> +#ifdef CONFIG_GPIOLIB
+> +#include <linux/gpio/consumer.h>
+> +#endif
 
-Firoz
+The ifdef is not needed here, linux/gpio/consumer.h already has dummy
+wrappers when CONFIG_GPIOLIB is not enabled.
 
->
-> Thanks,
-> Helge
+>  
+>  #include "internals.h"
+>  
+> @@ -531,6 +534,41 @@ int nand_soft_waitrdy(struct nand_chip *chip, unsigned long timeout_ms)
+>  };
+>  EXPORT_SYMBOL_GPL(nand_soft_waitrdy);
+>  
+> +#ifdef CONFIG_GPIOLIB
+> +/**
+> + * nand_gpio_waitrdy - Poll R/B GPIO pin until ready
+> + * @chip: NAND chip structure
+> + * @gpiod: GPIO descriptor of R/B pin
+> + * @timeout_ms: Timeout in ms
+> + *
+> + * Poll the R/B GPIO pin until it becomes ready. If that does not happen
+> + * whitin the specified timeout, -ETIMEDOUT is returned.
+> + *
+> + * This helper is intended to be used when the controller has access to the
+> + * NAND R/B pin over GPIO.
+> + *
+> + * Be aware that calling this helper from an ->exec_op() implementation means
+> + * ->exec_op() must be re-entrant.
+
+This is not true for this function: it does not call nand_exec_op().
+
+> + *
+> + * Return 0 if the R/B pin indicates chip is ready, a negative error otherwise.
+> + */
+> +int nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod,
+> +		      unsigned long timeout_ms)
+> +{
+> +	/* Wait until command is processed or timeout occurs */
+> +	timeout_ms = jiffies + msecs_to_jiffies(timeout_ms);
+> +	do {
+> +		if (gpiod_get_value_cansleep(gpiod))
+> +			return 0;
+> +
+> +		cond_resched();
+> +	} while	(time_before(jiffies, timeout_ms));
+
+> +
+> +	return gpiod_get_value_cansleep(gpiod) ? 0 : -ETIMEDOUT;
+> +};
+> +EXPORT_SYMBOL_GPL(nand_gpio_waitrdy);
+> +#endif
+
+Hm, I don't see any other helpers defined in #ifdef blocks though most
+of them are optionals and are most of the time not used by drivers.
+Let's keep things consistent (at the expense of embedding unused code
+in nand.o) and remove the #ifdef here. If someone starts complaining
+about the size of the rawnand core, we'll consider doing that.
+
+> +
+>  /**
+>   * panic_nand_get_device - [GENERIC] Get chip for selected access
+>   * @chip: the nand chip descriptor
+> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> index e10b126e148f..09f0ed1345b1 100644
+> --- a/include/linux/mtd/rawnand.h
+> +++ b/include/linux/mtd/rawnand.h
+> @@ -1346,4 +1346,14 @@ void nand_release(struct nand_chip *chip);
+>   */
+>  int nand_soft_waitrdy(struct nand_chip *chip, unsigned long timeout_ms);
+>  
+> +#ifdef CONFIG_GPIOLIB
+> +struct gpio_desc;
+> +/*
+> + * External helper for controller drivers that have to implement the WAITRDY
+> + * instruction and do have GPIO pin to check it.
+> + */
+
+You can drop this comment, this is already explained in the kerneldoc
+header above the function def.
+
+> +int nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod,
+> +		      unsigned long timeout_ms);
+> +#endif
+> +
+>  #endif /* __LINUX_MTD_RAWNAND_H */
+
+Regards,
+
+Boris
