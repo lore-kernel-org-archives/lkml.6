@@ -2,255 +2,386 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BDBC71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54888C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B5D20652
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E65F220693
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 19:05:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPKEmAlT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B5D20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="YXF6WklM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65F220693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeJNCYi (ORCPT
+        id S1726781AbeJNCoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 22:24:38 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:50728 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeJNCYi (ORCPT
+        Sat, 13 Oct 2018 22:44:09 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53722 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeJNCoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 22:24:38 -0400
-Received: by mail-it1-f193.google.com with SMTP id k206-v6so17314559ite.0;
-        Sat, 13 Oct 2018 11:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ht9qzv6lxiNyotcWhcdWeZ3yUTA1eze4zuzWvV5XneY=;
-        b=TPKEmAlTU/VTKdpKQ8eUQrPd21hCGf2iwnfmJZm3iEW8XPba79cbwzRUxQY0Ec8HOh
-         k+FivImXb94NFJSkitxo24Sxtn/TsAVnVr3J1Gs4hTXhqL5FtMLQYj23+Bpa6f2vWTvM
-         YG66H2DDk//LgsPfMYkuhQ1jqlicpZEPh9ki238tHimu6x8Vc3mGL9/hOjEDcMELByPs
-         3Ki++h7/ZLG6OGNibshk6siz0xzyo7Flo9NVKu+b4lB+kdHIrruT1L0AlH2f0uIXQvqu
-         Ulu7wuZwS5ZJVmOoxhbUY6Qs2Qa0BzoucJ3O9m2ijbns2dOdykcNMcnmWoklEi7/bGRD
-         lX5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ht9qzv6lxiNyotcWhcdWeZ3yUTA1eze4zuzWvV5XneY=;
-        b=sQenDj81Z48xroMHthfqYHwmxpaSEH32Tf4YMI7Yo+qNq3O9+2jtadjGLiN03PUYft
-         ZR0YvysHMz0PizBrKtj4CfppSMWtqYAL9x6boEAYviVLw+VX91gofYw8+MCSUhPkzAfQ
-         mofXkpoFSBvoChnQOedfv+QCRCz7ZSzHiC7+fs3luXgjRgexs6P1YYtT4U4t9j0N7brM
-         UVQCYG3Df50WAielylhSsTPFrsMgpUrmhJU4SRy+x6CEkBfttxuIEybHbJ7f19cilzlD
-         a1OOf4HJeijY1jvYy9M17JuhtL4iMMv5+qUZWSRK+RO82+bXhbFmcjooORBF+O0T5zRd
-         XnIQ==
-X-Gm-Message-State: ABuFfoiVB9hrIdD/DmF4L2pXYSYoR9IAn/5Vj2zGMw0Wt0iPZTCU41w3
-        ZVMM0W5VAsYe4MVptXkQLvJyb7Gz3SsTEKqLnicghA==
-X-Google-Smtp-Source: ACcGV636JTUbmZx0kdsM1/NYDGsut1NrkrXO18/2TRlPDAn9ORpAb54KAYEMTW9idhWbWmq1v374PSuZHEaUOO0bWu4=
-X-Received: by 2002:a24:5f15:: with SMTP id r21-v6mr8387248itb.6.1539456384628;
- Sat, 13 Oct 2018 11:46:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011221237.1925.85591.stgit@localhost.localdomain>
- <20181011221334.1925.31961.stgit@localhost.localdomain> <CAGM2rebWT43mTrpsbiwqpioNa=K68OQp=fstBmgov3tdkXjPiQ@mail.gmail.com>
- <CAKgT0Uc7DSEqKqfymyBzDhN-TpWZSxSmS=W_iiY0_A7YY-voSg@mail.gmail.com> <CAGM2reZpV8OuAe2=VP5fiHJ7yTGAOH35U78BsULbKbXZ9fR9ng@mail.gmail.com>
-In-Reply-To: <CAGM2reZpV8OuAe2=VP5fiHJ7yTGAOH35U78BsULbKbXZ9fR9ng@mail.gmail.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Sat, 13 Oct 2018 11:46:13 -0700
-Message-ID: <CAKgT0UdsZCFW5FwjXjYMaKmOPzRixQwOtEgDy5P3FUr3kv9DTA@mail.gmail.com>
-Subject: Re: [mm PATCH v2 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-To:     pasha.tatashin@gmail.com
-Cc:     alexander.h.duyck@linux.intel.com, linux-mm <linux-mm@kvack.org>,
+        Sat, 13 Oct 2018 22:44:09 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id D0C461A85C5;
+        Sat, 13 Oct 2018 15:05:52 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id vIHICBElxZKn; Sat, 13 Oct 2018 15:05:52 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E99BB1A85C0;
+        Sat, 13 Oct 2018 15:05:51 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E99BB1A85C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539457552;
+        bh=qpWdJUsKQlnbVIZaPhK+z0NJKGHc2cltWAVNOS+paZg=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=YXF6WklMoDLdJZfvvc/5EHT13DiFWeBQEnJE7G+byWfrfS9HJQALks46eKQQQ4AF1
+         7EJcUshn+X+LqAzcqB+IaFjOe12WdcjyCP1xudoX3wXmjj3chcBc/if9zTlJmyq3WY
+         D1DKiUAB9MZSRPMUa9+x0hgXavUfxDNuQ1tLBEKif08akPHBXcTp/Dzi2XUy8Yqmuc
+         jG1zon89Sh7ArK++gf0/DEkptG+1USLzfnnLwuYO4Pp3bhKaW/Z7noeyoXbPSgcpSP
+         XsKRDmab2qtsWzS+hHAohr0Aye1+yrrm0SFL0ElUIGks//T2RrIq6aR3IY2DYqB2Il
+         rcATCJi/ou1/w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id GsnAkVTEoH5E; Sat, 13 Oct 2018 15:05:51 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id C27471A85AF;
+        Sat, 13 Oct 2018 15:05:51 -0400 (EDT)
+Date:   Sat, 13 Oct 2018 15:05:51 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <james.morris@microsoft.com>,
+        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
-        dave.jiang@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com,
-        Vlastimil Babka <vbabka@suse.cz>, sparclinux@vger.kernel.org,
-        dan.j.williams@intel.com, ldufour@linux.vnet.ibm.com,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <733933348.3575.1539457551669.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1921357606.3547.1539455663932.JavaMail.zimbra@efficios.com>
+References: <20181012200523.23731-1-mathieu.desnoyers@efficios.com> <CAKv+Gu_2xWvpNPucLSZwSXMj3YsxDUavsQvR9bKxRNqKaRRX9g@mail.gmail.com> <CAKv+Gu8gLivx7dDkKeUS4BHi3s8jEoX0=Q+WUeDXPmi7WT6BGA@mail.gmail.com> <1921357606.3547.1539455663932.JavaMail.zimbra@efficios.com>
+Subject: Re: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array
+ iteration
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3039)
+Thread-Topic: tracepoint: Fix: out-of-bound tracepoint array iteration
+Thread-Index: Yq0g2RTNffX73sk0E+n4pHd0vAah/rUx2wi1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the test system I had I was initializing 384GB of RAM per node,
-the average time per node dropped from 1.8s to 1.1s after this patch.
-In the case of the persistent memory on the system the initialization
-time for 3TB per node dropped from 24.8s to 23.8s on average. I saw
-similar results on my development system though I don't recall the
-exact amount, it was something like 640ms down to 470ms or so.
-Thanks.
+----- On Oct 13, 2018, at 2:34 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-- Alex
+> ----- On Oct 13, 2018, at 11:24 AM, Ard Biesheuvel ard.biesheuvel@linaro.org
+> wrote:
+> 
+>> On 12 October 2018 at 23:07, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>> Hi Mathieu,
+>>>
+>>> On 12 October 2018 at 22:05, Mathieu Desnoyers
+>>> <mathieu.desnoyers@efficios.com> wrote:
+>>>> commit 46e0c9be206f ("kernel: tracepoints: add support for relative
+>>>> references") changes the layout of the __tracepoint_ptrs section on
+>>>> architectures supporting relative references. However, it does so
+>>>> without turning struct tracepoint * const into const int * elsewhere in
+>>>> the tracepoint code, which has the following side-effect:
+>>>>
+>>>> tracepoint_module_{coming,going} invoke
+>>>> tp_module_going_check_quiescent() with mod->tracepoints_ptrs
+>>>> as first argument, and computes the end address of the array
+>>>> for the second argument with:
+>>>>
+>>>>   mod->tracepoints_ptrs + mod->num_tracepoints
+>>>>
+>>>> However, because the type of mod->tracepoint_ptrs in module.h
+>>>> has not been changed from pointer to int, it passes an end
+>>>> pointer which is twice larger than the array, causing out-of-bound
+>>>> array accesses.
+>>>>
+>>>> Fix this by introducing a new typedef: tracepoint_ptr_t, which
+>>>> is either "const int" on architectures that have PREL32 relocations,
+>>>> or "struct tracepoint * const" on architectures that does not have
+>>>> this feature.
+>>>>
+>>>> Also provide a new tracepoint_ptr_defer() static inline to
+>>>> encapsulate deferencing this type rather than duplicate code and
+>>>> ugly idefs within the for_each_tracepoint_range() implementation.
+>>>>
+>>>
+>>> Apologies for the breakage. FWIW, this looks like the correct approach
+>>> to me (and mirrors what I did for initcalls in the same series)
+>>>
+>>>> This issue appears in 4.19-rc kernels, and should ideally be fixed
+>>>> before the end of the rc cycle.
+>>>>
+>>>
+>>> +1
+>>>
+>>>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>> Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
+>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>>> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>>>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: James Morris <james.morris@microsoft.com>
+>>>> Cc: James Morris <jmorris@namei.org>
+>>>> Cc: Jessica Yu <jeyu@kernel.org>
+>>>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>>>> Cc: Kees Cook <keescook@chromium.org>
+>>>> Cc: Nicolas Pitre <nico@linaro.org>
+>>>> Cc: Paul Mackerras <paulus@samba.org>
+>>>> Cc: Petr Mladek <pmladek@suse.com>
+>>>> Cc: Russell King <linux@armlinux.org.uk>
+>>>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>>>> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+>>>> Cc: Thomas Garnier <thgarnie@google.com>
+>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>
+>>> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>
+>> 
+>> This fixes the build breakage for me that kbuild test robot reports.
+>> 
+>> diff --git a/include/linux/module.h b/include/linux/module.h
+>> index cdab2451d6be..e19ae08c7fb8 100644
+>> --- a/include/linux/module.h
+>> +++ b/include/linux/module.h
+>> @@ -20,6 +20,7 @@
+>> #include <linux/export.h>
+>> #include <linux/rbtree_latch.h>
+>> #include <linux/error-injection.h>
+>> +#include <linux/tracepoint-defs.h>
+> 
+> You've beat me to it :) I'll fold this change in a v2 of the patch,
 
-On Sat, Oct 13, 2018 at 10:49 AM Pavel Tatashin
-<pasha.tatashin@gmail.com> wrote:
->
-> Still, lets get some real data, please provide Intel data before vs
-> after. I could test on an ARM processor.
->
-> Pavel
->
-> On Sat, Oct 13, 2018 at 1:18 PM Alexander Duyck
-> <alexander.duyck@gmail.com> wrote:
-> >
-> > Well in the case of x86 the call to memset is expensive as well. In
-> > most cases it is 16 cycles plus 1 cycle per 16 bytes if I recall
-> > correctly. So for example in the case of skbuff which was a little
-> > over 192 bytes I know Jesper Brouer and myself were going back and
-> > forth with the idea of if we should try to do something similar.
-> >
-> > I'm suspecting for the 64b architectures impacted by this change there
-> > should be little to no negative impact. The main reason for that being
-> > the fact that the compiler can actually drop some of the writes by
-> > merging them with the later assignments.
-> >
-> > Thanks.
-> >
-> > - Alex
-> >
-> > On Sat, Oct 13, 2018 at 9:58 AM Pavel Tatashin <pasha.tatashin@gmail.com> wrote:
-> > >
-> > > I am worried about this change. I added SPARC optimized
-> > > mm_zero_struct_page() specifically to SPARC because it has a poor
-> > > performance with small memset()s, since it uses STBI instructions.
-> > > However, other architectures might not suffer with small memset()s,
-> > > and have hardware optimized memset variants for small sizes. Don't
-> > > forget, this is a leaf routine on most arches, so the function call
-> > > should be cheap. Also, the macro itself is not very flexible: when
-> > > size of struct page is changed, it also must be modified (we could add
-> > > fall throughs though), I would add this macro only to those arches
-> > > that benefit from this change, in other words, I would like to see
-> > > performance data.
-> > >
-> > > I will review the rest of the patches in this series on Monday.
-> > >
-> > > Thank you,
-> > > Pavel
-> > > On Thu, Oct 11, 2018 at 6:17 PM Alexander Duyck
-> > > <alexander.h.duyck@linux.intel.com> wrote:
-> > > >
-> > > > This change makes it so that we use the same approach that was already in
-> > > > use on Sparc on all the archtectures that support a 64b long.
-> > > >
-> > > > This is mostly motivated by the fact that 8 to 10 store/move instructions
-> > > > are likely always going to be faster than having to call into a function
-> > > > that is not specialized for handling page init.
-> > > >
-> > > > An added advantage to doing it this way is that the compiler can get away
-> > > > with combining writes in the __init_single_page call. As a result the
-> > > > memset call will be reduced to only about 4 write operations, or at least
-> > > > that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
-> > > > count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
-> > > > my system.
-> > > >
-> > > > One change I had to make to the function was to reduce the minimum page
-> > > > size to 56 to support some powerpc64 configurations.
-> > > >
-> > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > ---
-> > > >  arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
-> > > >  include/linux/mm.h                  |   34 ++++++++++++++++++++++++++++++++++
-> > > >  2 files changed, 34 insertions(+), 30 deletions(-)
-> > > >
-> > > > diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-> > > > index 1393a8ac596b..22500c3be7a9 100644
-> > > > --- a/arch/sparc/include/asm/pgtable_64.h
-> > > > +++ b/arch/sparc/include/asm/pgtable_64.h
-> > > > @@ -231,36 +231,6 @@
-> > > >  extern struct page *mem_map_zero;
-> > > >  #define ZERO_PAGE(vaddr)       (mem_map_zero)
-> > > >
-> > > > -/* This macro must be updated when the size of struct page grows above 80
-> > > > - * or reduces below 64.
-> > > > - * The idea that compiler optimizes out switch() statement, and only
-> > > > - * leaves clrx instructions
-> > > > - */
-> > > > -#define        mm_zero_struct_page(pp) do {                                    \
-> > > > -       unsigned long *_pp = (void *)(pp);                              \
-> > > > -                                                                       \
-> > > > -        /* Check that struct page is either 64, 72, or 80 bytes */     \
-> > > > -       BUILD_BUG_ON(sizeof(struct page) & 7);                          \
-> > > > -       BUILD_BUG_ON(sizeof(struct page) < 64);                         \
-> > > > -       BUILD_BUG_ON(sizeof(struct page) > 80);                         \
-> > > > -                                                                       \
-> > > > -       switch (sizeof(struct page)) {                                  \
-> > > > -       case 80:                                                        \
-> > > > -               _pp[9] = 0;     /* fallthrough */                       \
-> > > > -       case 72:                                                        \
-> > > > -               _pp[8] = 0;     /* fallthrough */                       \
-> > > > -       default:                                                        \
-> > > > -               _pp[7] = 0;                                             \
-> > > > -               _pp[6] = 0;                                             \
-> > > > -               _pp[5] = 0;                                             \
-> > > > -               _pp[4] = 0;                                             \
-> > > > -               _pp[3] = 0;                                             \
-> > > > -               _pp[2] = 0;                                             \
-> > > > -               _pp[1] = 0;                                             \
-> > > > -               _pp[0] = 0;                                             \
-> > > > -       }                                                               \
-> > > > -} while (0)
-> > > > -
-> > > >  /* PFNs are real physical page numbers.  However, mem_map only begins to record
-> > > >   * per-page information starting at pfn_base.  This is to handle systems where
-> > > >   * the first physical page in the machine is at some huge physical address,
-> > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > > index 273d4dbd3883..dee407998366 100644
-> > > > --- a/include/linux/mm.h
-> > > > +++ b/include/linux/mm.h
-> > > > @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long limit) { }
-> > > >   * zeroing by defining this macro in <asm/pgtable.h>.
-> > > >   */
-> > > >  #ifndef mm_zero_struct_page
-> > > > +#if BITS_PER_LONG == 64
-> > > > +/* This function must be updated when the size of struct page grows above 80
-> > > > + * or reduces below 64. The idea that compiler optimizes out switch()
-> > > > + * statement, and only leaves move/store instructions
-> > > > + */
-> > > > +#define        mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
-> > > > +static inline void __mm_zero_struct_page(struct page *page)
-> > > > +{
-> > > > +       unsigned long *_pp = (void *)page;
-> > > > +
-> > > > +        /* Check that struct page is either 56, 64, 72, or 80 bytes */
-> > > > +       BUILD_BUG_ON(sizeof(struct page) & 7);
-> > > > +       BUILD_BUG_ON(sizeof(struct page) < 56);
-> > > > +       BUILD_BUG_ON(sizeof(struct page) > 80);
-> > > > +
-> > > > +       switch (sizeof(struct page)) {
-> > > > +       case 80:
-> > > > +               _pp[9] = 0;     /* fallthrough */
-> > > > +       case 72:
-> > > > +               _pp[8] = 0;     /* fallthrough */
-> > > > +       default:
-> > > > +               _pp[7] = 0;     /* fallthrough */
-> > > > +       case 56:
-> > > > +               _pp[6] = 0;
-> > > > +               _pp[5] = 0;
-> > > > +               _pp[4] = 0;
-> > > > +               _pp[3] = 0;
-> > > > +               _pp[2] = 0;
-> > > > +               _pp[1] = 0;
-> > > > +               _pp[0] = 0;
-> > > > +       }
-> > > > +}
-> > > > +#else
-> > > >  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
-> > > >  #endif
-> > > > +#endif
-> > > >
-> > > >  /*
-> > > >   * Default maximum number of active map areas, this limits the number of vmas
-> > > >
-> > >
+Digging a bit deeper into module.c, I notice it's not really an
+out-of-bound access that is generated by this issue, because
+setting mod->num_tracepoints is done in by module.c like this:
+
+        mod->tracepoints_ptrs = section_objs(info, "__tracepoints_ptrs",
+                                             sizeof(*mod->tracepoints_ptrs),
+                                             &mod->num_tracepoints);
+
+So basically, since sizeof(*mod->tracepoints_ptrs) is a pointer size
+(rather than sizeof(int)), num_tracepoints is erroneously set to half the
+size it should be on 64-bit arch. So we an odd number of tracepoints, we
+lose the last tracepoint due to effect of integer division.
+
+So in the module going notifier:
+
+                        for_each_tracepoint_range(mod->tracepoints_ptrs,
+                                mod->tracepoints_ptrs + mod->num_tracepoints,
+                                tp_module_going_check_quiescent, NULL);
+
+the expression (mod->tracepoints_ptrs + mod->num_tracepoints) actually
+evaluates to something within the bounds of the array, but miss the
+last tracepoint if the number of tracepoints is odd on 64-bit arch.
+
+So I'll also update the patch changelog in v2. Given it does not change
+the patch content, I'll keep your acked-by. Please let me know if you
+spot anything.
+
+Thanks,
+
+Mathieu
+
+
+
+> 
+> Thanks!
+> 
+> Mathieu
+> 
+>> 
+>> #include <linux/percpu.h>
+>> #include <asm/module.h>
+>> 
+>> 
+>> 
+>> 
+>> 
+>>>> ---
+>>>>  include/linux/module.h          |  2 +-
+>>>>  include/linux/tracepoint-defs.h |  6 ++++++
+>>>>  include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
+>>>>  kernel/tracepoint.c             | 24 ++++++++--------------
+>>>>  4 files changed, 38 insertions(+), 30 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/module.h b/include/linux/module.h
+>>>> index f807f15bebbe..cdab2451d6be 100644
+>>>> --- a/include/linux/module.h
+>>>> +++ b/include/linux/module.h
+>>>> @@ -430,7 +430,7 @@ struct module {
+>>>>
+>>>>  #ifdef CONFIG_TRACEPOINTS
+>>>>         unsigned int num_tracepoints;
+>>>> -       struct tracepoint * const *tracepoints_ptrs;
+>>>> +       tracepoint_ptr_t *tracepoints_ptrs;
+>>>>  #endif
+>>>>  #ifdef HAVE_JUMP_LABEL
+>>>>         struct jump_entry *jump_entries;
+>>>> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+>>>> index 22c5a46e9693..49ba9cde7e4b 100644
+>>>> --- a/include/linux/tracepoint-defs.h
+>>>> +++ b/include/linux/tracepoint-defs.h
+>>>> @@ -35,6 +35,12 @@ struct tracepoint {
+>>>>         struct tracepoint_func __rcu *funcs;
+>>>>  };
+>>>>
+>>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>>> +typedef const int tracepoint_ptr_t;
+>>>> +#else
+>>>> +typedef struct tracepoint * const tracepoint_ptr_t;
+>>>> +#endif
+>>>> +
+>>>>  struct bpf_raw_event_map {
+>>>>         struct tracepoint       *tp;
+>>>>         void                    *bpf_func;
+>>>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+>>>> index 041f7e56a289..538ba1a58f5b 100644
+>>>> --- a/include/linux/tracepoint.h
+>>>> +++ b/include/linux/tracepoint.h
+>>>> @@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
+>>>>  #define TRACE_DEFINE_ENUM(x)
+>>>>  #define TRACE_DEFINE_SIZEOF(x)
+>>>>
+>>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>>> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>>>> +{
+>>>> +       return offset_to_ptr(p);
+>>>> +}
+>>>> +
+>>>> +#define __TRACEPOINT_ENTRY(name)                                       \
+>>>> +       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+>>>> +           "   .balign 4                                       \n"     \
+>>>> +           "   .long   __tracepoint_" #name " - .              \n"     \
+>>>> +           "   .previous                                       \n")
+>>>> +#else
+>>>> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>>>> +{
+>>>> +       return *p;
+>>>> +}
+>>>> +
+>>>> +#define __TRACEPOINT_ENTRY(name)                                        \
+>>>> +       static tracepoint_ptr_t __tracepoint_ptr_##name __used           \
+>>>> +       __attribute__((section("__tracepoints_ptrs"))) =                 \
+>>>> +               &__tracepoint_##name
+>>>> +#endif
+>>>> +
+>>>>  #endif /* _LINUX_TRACEPOINT_H */
+>>>>
+>>>>  /*
+>>>> @@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
+>>>>                 return static_key_false(&__tracepoint_##name.key);      \
+>>>>         }
+>>>>
+>>>> -#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>>> -#define __TRACEPOINT_ENTRY(name)                                       \
+>>>> -       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+>>>> -           "   .balign 4                                       \n"     \
+>>>> -           "   .long   __tracepoint_" #name " - .              \n"     \
+>>>> -           "   .previous                                       \n")
+>>>> -#else
+>>>> -#define __TRACEPOINT_ENTRY(name)                                        \
+>>>> -       static struct tracepoint * const __tracepoint_ptr_##name __used  \
+>>>> -       __attribute__((section("__tracepoints_ptrs"))) =                 \
+>>>> -               &__tracepoint_##name
+>>>> -#endif
+>>>> -
+>>>>  /*
+>>>>   * We have no guarantee that gcc and the linker won't up-align the tracepoint
+>>>>   * structures, so we create an array of pointers that will be used for iteration
+>>>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+>>>> index bf2c06ef9afc..a3be42304485 100644
+>>>> --- a/kernel/tracepoint.c
+>>>> +++ b/kernel/tracepoint.c
+>>>> @@ -28,8 +28,8 @@
+>>>>  #include <linux/sched/task.h>
+>>>>  #include <linux/static_key.h>
+>>>>
+>>>> -extern struct tracepoint * const __start___tracepoints_ptrs[];
+>>>> -extern struct tracepoint * const __stop___tracepoints_ptrs[];
+>>>> +extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+>>>> +extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+>>>>
+>>>>  DEFINE_SRCU(tracepoint_srcu);
+>>>>  EXPORT_SYMBOL_GPL(tracepoint_srcu);
+>>>> @@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp,
+>>>> void *probe, void *data)
+>>>>  }
+>>>>  EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
+>>>>
+>>>> -static void for_each_tracepoint_range(struct tracepoint * const *begin,
+>>>> -               struct tracepoint * const *end,
+>>>> +static void for_each_tracepoint_range(
+>>>> +               tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
+>>>>                 void (*fct)(struct tracepoint *tp, void *priv),
+>>>>                 void *priv)
+>>>>  {
+>>>> +       tracepoint_ptr_t *iter;
+>>>> +
+>>>>         if (!begin)
+>>>>                 return;
+>>>> -
+>>>> -       if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
+>>>> -               const int *iter;
+>>>> -
+>>>> -               for (iter = (const int *)begin; iter < (const int *)end; iter++)
+>>>> -                       fct(offset_to_ptr(iter), priv);
+>>>> -       } else {
+>>>> -               struct tracepoint * const *iter;
+>>>> -
+>>>> -               for (iter = begin; iter < end; iter++)
+>>>> -                       fct(*iter, priv);
+>>>> -       }
+>>>> +       for (iter = begin; iter < end; iter++)
+>>>> +               fct(tracepoint_ptr_deref(iter), priv);
+>>>>  }
+>>>>
+>>>>  #ifdef CONFIG_MODULES
+>>>> --
+>>>> 2.17.1
+> 
+> --
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
