@@ -2,73 +2,72 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC73C71123
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C23C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B50D02075B
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B89C620868
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vf2+ez73"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B50D02075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pVv8pjmv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89C620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeJMIag (ORCPT
+        id S1726871AbeJMIlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 04:30:36 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45100 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeJMIaf (ORCPT
+        Sat, 13 Oct 2018 04:41:15 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39613 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeJMIlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 04:30:35 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y15-v6so6649631plr.12
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 17:55:34 -0700 (PDT)
+        Sat, 13 Oct 2018 04:41:15 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 61-v6so15152684wrb.6;
+        Fri, 12 Oct 2018 18:06:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=szr5KLhOEepnxhuji3Nc/YMARBLGRK4oTE2y29Q5DuI=;
-        b=Vf2+ez732wRfmVM5sn8xhWJ3KJnSnR4AoDZzbC6Vwr6SxJ2oi+WphOdQ7d1JF1g/VW
-         DsWjigQ6B3oVlmy6rHzucW3S3IsbNj9y9HiY5cQzFKImG/RuJJbnS1UakIeCGlD7ip45
-         X+G/DJNufbQ4WVt1LKM36ZidXZOhb5pZ7DeB0=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zGxy2ubzTBSouwPwQiqQbyQC3qXilAaiz7ydWREdEWs=;
+        b=pVv8pjmvnfKzBULvW1FjWjA/0eLniMS7sBP4Z07ynrsB3aJf40BhG+1LzUzVV5lvvq
+         CRO4dZ2YZQ/09iG4RE+CNPwPq9/t4nb51mYpd79F3OEObpMnZslXlBkddrvSL3ZeoGOe
+         li15Q+b6nKlnToSoeofZzHEo65yvKf3/UPxm9CoTN1sD3EuzuMI2EUgWKYWdlB2V51AU
+         Bqsn7adEmIWss+pbwFY2PiaKRpa9kRYKd4cjX0IW0K3fjsARkFq5pGNxtB2WkJoguJhB
+         h08HvEXSkTtVAvQgxwamFEk66SHmxifbfyhfqminkRY9aJLAvrdvfSl/eAer+aagWD+0
+         M0Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=szr5KLhOEepnxhuji3Nc/YMARBLGRK4oTE2y29Q5DuI=;
-        b=OJQ0Zj5xEThYAkxov2SFswwqG3WmYBWBuhWAEqtme3Fuc6uu8NLBpiORlQFC+LYJV3
-         YklyvrW77FMltcpUr2gOx+WNDlynvwrVGbkzV3RMglrPfK5POmBjrZiddxifmyluK21K
-         VOAUrEMEOtpCFGcNx002/F6bfbm902S7bJCWCc1/r3EABevkX69saVgiHF3NEh2rH7FW
-         AwrowLWYYOQcunLKxvivOAHQbCLCYcMBhtYRGwTmJWOuBUGD+uIc8cHl382jQYcxnJ6l
-         6kzJuF/FrF25AgQXKon9tcG+Hzdsj7STCHpbvTiugTL8zvjWy3qhYIjofyST2lROm9Zp
-         Jkrg==
-X-Gm-Message-State: ABuFfojV3Oflkaprm2rZ31QlnidA9GFOgJSGSV+YCrNJk7rilDH1VF+Y
-        H6mirc+oljYc4vx4o7GGoAPOt6i54qvDww==
-X-Google-Smtp-Source: ACcGV61Zu1kR1AYSCorKL4Rnwd2Ixd4lQtWeU4CYJ3liGav4XVMNIc+mMIc1AgBkcymlOtFlH5hF9g==
-X-Received: by 2002:a17:902:50e3:: with SMTP id c32-v6mr5923263plj.129.1539392134274;
-        Fri, 12 Oct 2018 17:55:34 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm2766183pgv.63.2018.10.12.17.55.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zGxy2ubzTBSouwPwQiqQbyQC3qXilAaiz7ydWREdEWs=;
+        b=TlxPx5A1XQSzD55WOcnu+SxrB7apkXLvyipRs1jyqEqAA+t5UHtnOsOaqdtnTkHn+6
+         f2wt8jtTpM6BaL07qRerRyOcoVgbD7X5Yi9nzOyG0p3tSbsLcIme5F6970Z2/OAAZ2dD
+         ghfDywTCLxjMkfRQj0pRmEKFddha2qG959X1fl1VLGL+gd4V8ljOc8nBjW0xvwOxRz+F
+         l01ThgZpLwZBJSsG8kfVH6+O5yjqZ6CGqzPc74uHH1H/5cTZbFnSW8NfCKqR+eB2WgQT
+         r/7NXnlSafhX0CFYQX87cqruDAqPu6/jDPxzvC4EB1+apLHpEYQoFE+q9Kln9mOyiMMt
+         CzVg==
+X-Gm-Message-State: ABuFfogGNUNe0U13pi3mh6SKmLPadgClgNnnFgr7K766u+6y8ChT2xVy
+        wma3jPmhdRUboXy2+OGMGX8=
+X-Google-Smtp-Source: ACcGV62yg3iMnEhQZwuGMGabwQ65R2bFMt29TIZB0gRnxJRvqoT5WJ23fCdxCAjlG59e/3Xa/GriJg==
+X-Received: by 2002:adf:8382:: with SMTP id 2-v6mr6790095wre.13.1539392770940;
+        Fri, 12 Oct 2018 18:06:10 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 193-v6sm3270873wmj.21.2018.10.12.18.06.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 17:55:33 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Kalle Valo <kvalo@qca.qualcomm.com>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4/4] ath10k: snoc: fix unbalanced clock error handling
-Date:   Fri, 12 Oct 2018 17:55:04 -0700
-Message-Id: <20181013005504.46399-4-briannorris@chromium.org>
-X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
-In-Reply-To: <20181013005504.46399-1-briannorris@chromium.org>
-References: <20181013005504.46399-1-briannorris@chromium.org>
+        Fri, 12 Oct 2018 18:06:10 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] efi/libstub: Disable some warnings for x86{,_64}
+Date:   Fri, 12 Oct 2018 18:03:49 -0700
+Message-Id: <20181013010348.6740-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,29 +75,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to regulator error handling, we should only start tearing down
-the 'i - 1' clock when clock 'i' fails to enable. Otherwise, we might
-end up with an unbalanced clock, where we never successfully enabled the
-clock, but we try to disable it anyway.
+When building the kernel with Clang, some disabled warnings appear
+because this Makefile overrides KBUILD_CFLAGS for x86{,_64}. Add them to
+this list so that the build is clean again.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+-Wpointer-sign was disabled for the whole kernel before the beginning
+of git history.
+
+-Waddress-of-packed-member was disabled for the whole kernel in
+commit bfb38988c51e ("kbuild: clang: Disable 'address-of-packed-member'
+warning") and for x86/boot/compressed in commit 20c6c1890455 ("x86/boot:
+Disable the address-of-packed-member compiler warning").
+
+-Wgnu was disabled for the whole kernel in commit 61163efae020 ("kbuild:
+LLVMLinux: Add Kbuild support for building kernel with Clang") and for
+x86/boot/compressed in commit 6c3b56b19730 ("x86/boot: Disable Clang
+warnings about GNU extensions").
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/112
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index 5a8e87339df2..a835599a8d55 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -1470,7 +1470,7 @@ static int ath10k_snoc_clk_init(struct ath10k *ar)
- 	return 0;
+Nick expressed concern that this Makefile is overwriting KBUILD_CFLAGS
+and suggested potentially rewriting the x86 portion of this Makefile to
+behave like the arm/arm64 one where problematic flags are filtered out.
+While that comes to fruition, it would be nice for this folder to behave
+like the rest of the kernel when it comes to this warnings so that the
+build is cleaner, thus this patch.
+
+ drivers/firmware/efi/libstub/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index c51627660dbb..d9845099635e 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -9,7 +9,10 @@ cflags-$(CONFIG_X86_32)		:= -march=i386
+ cflags-$(CONFIG_X86_64)		:= -mcmodel=small
+ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
+ 				   -fPIC -fno-strict-aliasing -mno-red-zone \
+-				   -mno-mmx -mno-sse -fshort-wchar
++				   -mno-mmx -mno-sse -fshort-wchar \
++				   -Wno-pointer-sign \
++				   $(call cc-disable-warning, address-of-packed-member) \
++				   $(call cc-disable-warning, gnu)
  
- err_clock_config:
--	for (; i >= 0; i--) {
-+	for (i = i - 1; i >= 0; i--) {
- 		clk_info = &ar_snoc->clk[i];
- 
- 		if (!clk_info->handle)
+ # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+ # disable the stackleak plugin
 -- 
-2.19.1.331.ge82ca0e54c-goog
+2.19.1
 
