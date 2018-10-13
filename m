@@ -2,114 +2,102 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10763C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEF2C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF3920895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:11:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rc2QHsnu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF3920895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AFC120895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:16:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AFC120895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbeJMQr0 (ORCPT
+        id S1726854AbeJMQws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 12:47:26 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:41542 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbeJMQrZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 12:47:25 -0400
-Received: by mail-ua1-f68.google.com with SMTP id m7so408579uao.8;
-        Sat, 13 Oct 2018 02:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=0gDOkoiJUjld+PXiiXevRwIaKP7GgxhN0O0sa1VhFe4=;
-        b=Rc2QHsnudOydd71JCECcq45RItJ6HHj4VktSKpEL5tbSD/7h+hNZV9rTT+9G7CGk8S
-         0QW9s1INC9z4mzgXJujzu49TpiukElRqnMpicxdlvpJraPbDuoAiunZHVRyj1ZqEaMQl
-         HviPmFLvlInK+ZeaIpG/v+mGlcg11gULaEYcOcqPfv1pyKWam80K6WkneFKkx5vl3Tgk
-         k/rwO2KDGVNewjfVHdw6rP3qCGPadQ0Lnqy1Kcaxm+WYjZVwjCOy1jM+xrk7Ah457H+k
-         /NP2gfMoJHZaTZKptmrVimdje1DkbHUqw/bt99dSydiOnoeRMXrbaGRSCgsxJ5m+dqyt
-         jMvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=0gDOkoiJUjld+PXiiXevRwIaKP7GgxhN0O0sa1VhFe4=;
-        b=p4reLSBYy1lLDnhVIf7F5MjsjQPTuokBcsY9KLlgCqBeg9snYZcEmtuM+FF0JvXJyT
-         KbVq+hg0B+PzXdcEJYWB8XU07Y8KCNaOUDvfVoYytfNtXkIWLC0GkLvh8ENOwAgSfciz
-         KJvxhxKSk9MXc+dFHZdKecLIjbsTX18rJ8ZvRAlhN5wJCqrMmsAjpnqCKzd7n350a0t5
-         eqDgUT+yewbXENjyCeYtZPPd96mv+8EdniCDVguCBwveFUY/aLzL9DNnL7sNCphgWuMN
-         j/Pv4urm+X9/aqp8wLHFUIu26JP0O02jCwmETfQQCxqgUoWNYWBfZgzpflfZxyeSDk6a
-         qQHQ==
-X-Gm-Message-State: ABuFfojRbcFkAUxWcV71mv8Bw8rkOmhX09Dgw0PP4Yfh0gEGPvHQ09rL
-        aEvRdItpNPKyRGOpLv3A4SHNMNPYiK7hYcSu4MEpuXHb
-X-Google-Smtp-Source: ACcGV63KDU3foqEZX/lCkwrzWWrrU5GdWbXmO8MciQtxRY8EF4vaa1C09ZuaUemptPOBLPHmb1WtgDuPjW1u9/DDXXU=
-X-Received: by 2002:ab0:30d3:: with SMTP id c19mr3957815uam.58.1539421861419;
- Sat, 13 Oct 2018 02:11:01 -0700 (PDT)
-MIME-Version: 1.0
-From:   Da Shi Cao <dscao999@gmail.com>
-Date:   Sat, 13 Oct 2018 17:10:50 +0800
-Message-ID: <CAG3POB=BYJ_+iYy-xNygzp2RVOaUY2qEhRn9kTSNXYUo=9a5Og@mail.gmail.com>
-Subject: [PATCH] Add support of TI ICDI to USB simple serial device
-To:     linux-usb@vger.kernel.org, linux-terminal@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 13 Oct 2018 12:52:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:12748 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726123AbeJMQws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 12:52:48 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42XJwd4y0Gz9ttFt;
+        Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id xl_QyuytFTXF; Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42XJwd4P8Qz9ttFr;
+        Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E454B8B782;
+        Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id E8m8eOxeGacV; Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A195C8B74B;
+        Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 605656F2BD; Sat, 13 Oct 2018 09:16:22 +0000 (UTC)
+Message-Id: <f79824d5da910441ede885fa32a25083c4cc9359.1539422122.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/traps: restore recoverability of machine_check
+ interrupts
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Sat, 13 Oct 2018 09:16:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In-Circuit Debug Interface is a debugging interface for TI ARM
-microcontrollers. It has three USB interfaces and two of them are
-presented as standard ACM serial device. The 3rd interface is the
-debugging interface and it can be driven as a Linux USB simple
-terminal. With it, debugging session and firmware up/down loading are
-supported on Linux.
+commit b96672dd840f ("powerpc: Machine check interrupt is a non-
+maskable interrupt") added a call to nmi_enter() at the beginning of
+machine check restart exception handler. Due to that, in_interrupt()
+always returns true regardless of the state before entering the
+exception, and die() panics even when the system was not already in
+interrupt.
 
-Signed-off-by: Dashi Cao <dscao999@hotmail.com, dscao999@gmail.com>
+This patch calls nmi_exit() before calling die() in order to restore
+the interrupt state we had before calling nmi_enter()
+
+Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/usb/serial/usb-serial-simple.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/powerpc/kernel/traps.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/serial/usb-serial-simple.c
-b/drivers/usb/serial/usb-serial-simple.c
-index 4d0273508043..ae43088b659e 100644
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -109,6 +109,11 @@ DEVICE(suunto, SUUNTO_IDS);
-        { USB_DEVICE(0x908, 0x0004) }
- DEVICE(siemens_mpi, SIEMENS_IDS);
-
-+/* TI In-Circuit Debug Interface */
-+#define ICDI_IDS()              \
-+       { USB_DEVICE_INTERFACE_CLASS(0x1cbe, 0x00fd, USB_CLASS_VENDOR_SPEC) }
-+DEVICE(ti_icdi, ICDI_IDS);
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index fd58749b4d6b..4f880c2a6e4c 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -765,12 +765,17 @@ void machine_check_exception(struct pt_regs *regs)
+ 	if (check_io_access(regs))
+ 		goto bail;
+ 
+-	die("Machine check", regs, SIGBUS);
+-
+ 	/* Must die if the interrupt is not recoverable */
+ 	if (!(regs->msr & MSR_RI))
+ 		nmi_panic(regs, "Unrecoverable Machine check");
+ 
++	if (!nested)
++		nmi_exit();
 +
- /* All of the above structures mushed into two lists */
- static struct usb_serial_driver * const serial_drivers[] = {
-        &carelink_device,
-@@ -124,6 +129,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
-        &hp4x_device,
-        &suunto_device,
-        &siemens_mpi_device,
-+       &ti_icdi_device,
-        NULL
- };
++	die("Machine check", regs, SIGBUS);
++
++	return;
++
+ bail:
+ 	if (!nested)
+ 		nmi_exit();
+-- 
+2.13.3
 
-@@ -141,6 +147,7 @@ static const struct usb_device_id id_table[] = {
-        HP4X_IDS(),
-        SUUNTO_IDS(),
-        SIEMENS_IDS(),
-+       ICDI_IDS(),
-        { },
- };
- MODULE_DEVICE_TABLE(usb, id_table);
---
-2.11.0
