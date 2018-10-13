@@ -3,145 +3,230 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F223CC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB337C71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADDC220835
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADDC220835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B28932098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 08:09:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28932098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbeJMPp2 (ORCPT
+        id S1726867AbeJMPpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 11:45:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60396 "EHLO mx1.redhat.com"
+        Sat, 13 Oct 2018 11:45:47 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:15486 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeJMPp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 11:45:27 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726647AbeJMPpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 11:45:47 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E801780F95;
-        Sat, 13 Oct 2018 08:09:15 +0000 (UTC)
-Received: from [10.36.116.42] (ovpn-116-42.ams2.redhat.com [10.36.116.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5384F68D67;
-        Sat, 13 Oct 2018 08:09:13 +0000 (UTC)
-Subject: Re: [PATCH v1] KVM/x86/vPMU: Guest PMI Optimization
-To:     Andi Kleen <ak@linux.intel.com>, Wei Wang <wei.w.wang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com, rkrcmar@redhat.com,
-        like.xu@intel.com
-References: <1539346817-8638-1-git-send-email-wei.w.wang@intel.com>
- <20181012163058.GN32651@tassilo.jf.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0c774dad-9f16-e9c1-56ea-3865cdfaeee0@redhat.com>
-Date:   Sat, 13 Oct 2018 10:09:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        by mx2.mailbox.org (Postfix) with ESMTPS id 54858A1055;
+        Sat, 13 Oct 2018 10:09:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id XCZxRiz5c-OY; Sat, 13 Oct 2018 10:09:29 +0200 (CEST)
+Date:   Sat, 13 Oct 2018 19:09:08 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] namei: implement O_BENEATH-style AT_* flags
+Message-ID: <20181013080907.yqpuy3zbbfe46gm4@ryuk>
+References: <20181009070230.12884-1-cyphar@cyphar.com>
+ <20181009070230.12884-2-cyphar@cyphar.com>
+ <20181013073319.GS32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20181012163058.GN32651@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sat, 13 Oct 2018 08:09:16 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dst6zextluqynn7a"
+Content-Disposition: inline
+In-Reply-To: <20181013073319.GS32577@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 18:30, Andi Kleen wrote:
->> 4. Results
->>     - Without this optimization, the guest pmi handling time is
->>       ~4500000 ns, and the max sampling rate is reduced to 250.
->>     - With this optimization, the guest pmi handling time is ~9000 ns
->>       (i.e. 1 / 500 of the non-optimization case), and the max sampling
->>       rate remains at the original 100000.
-> 
-> Impressive performance improvement!
 
-Agreed!
+--dst6zextluqynn7a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> It's not clear to me why you're special casing PMIs here. The optimization
-> should work generically, right?
+On 2018-10-13, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> First of all, dirfd_path_init() part should be in a separate commit.  And=
+ I'm
+> really not happy with the logics in there.  dirfd_path_init() itself is
+> kinda-sorta reasonable.
 
-Yeah, you can even just check if the counter is in the struct
-cpu_hw_events guest mask, and if so always write the counter MSR directly.
+Sure, I can do that.
 
->> @@ -237,9 +267,23 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>  	default:
->>  		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
->>  		    (pmc = get_fixed_pmc(pmu, msr))) {
->> -			if (!msr_info->host_initiated)
->> -				data = (s64)(s32)data;
->> -			pmc->counter += data - pmc_read_counter(pmc);
->> +			if (pmu->in_pmi) {
->> +				/*
->> +				 * Since we are not re-allocating a perf event
->> +				 * to reconfigure the sampling time when the
->> +				 * guest pmu is in PMI, just set the value to
->> +				 * the hardware perf counter. Counting will
->> +				 * continue after the guest enables the
->> +				 * counter bit in MSR_CORE_PERF_GLOBAL_CTRL.
->> +				 */
->> +				struct hw_perf_event *hwc =
->> +						&pmc->perf_event->hw;
->> +				wrmsrl(hwc->event_base, data);
-> 
-> Is that guaranteed to be always called on the right CPU that will run the vcpu?
-> 
-> AFAIK there's an ioctl to set MSRs in the guest from qemu, I'm pretty sure
-> it won't handle that.
+> It is equivalent to setting the starting point for
+> relative pathnames + setting ->root for LOOKUP_BENEATH, right?
 
-How much of the performance improvement comes from here?  In theory
-pmc_read_counter() should always hit a relatively fast path, because the
-smp_call_function_single in perf_event_read doesn't need an IPI.
+Right.
 
-In any case, this should be a separate patch.
+> But the part in path_init() is too bloody convoluted for its own good.  L=
+et me
+> try to translate:
+>=20
+> > +	if (unlikely(flags & LOOKUP_XDEV)) {
+> > +		error =3D dirfd_path_init(nd);
+> > +		if (unlikely(error))
+> > +			return ERR_PTR(error);
+> > +	}
+>=20
+> * if LOOKUP_XDEV is set, set the starting point as if it was a relative
+>   pathname.  If LOOKUP_BENEATH was set as well, set ->root to the same
+>   point.
 
-Paolo
+Right. This is for two reasons (though if you disagree with these
+semantics we can change this as well):
 
-> May need to be delayed to entry time.
-> 
-> -Andi
-> 
+1. It's not clear to me whether openat(somefd->"/", "/tmp", O_XDEV)
+   should return an -EXDEV or completely ignore the starting point. Same
+   argument with AT_FDCWD. I opted to make it so that the starting point
+   has to be on the same mountpoint, but I totally understand if you
+   feel this is insane -- and I'd be happy to change it. The real
+   problem comes from (2).
 
+2. AT_THIS_ROOT chroot-scope absolute paths, and so in the second patch
+   LOOKUP_CHROOT also triggers this codepath. The main argument for this
+   semantic is somewhat elaborated in the cover letter -- but
+   the short version is because AT_THIS_ROOT has to chroot-scope
+   absolute symlinks it would be somewhat strange if it didn't scope
+   absolute paths you give it -- otherwise it could either be a footgun
+   or would require always returning -EXDEV here.
+
+   Though, as above, if you feel that the current semantics (absolute
+   paths override whatever dirfd you give), then -EXDEV is the
+   alternative I would pitch.
+
+> * if it's an absolute pathname,=20
+> >  	if (*s =3D=3D '/') {
+> ... and we hadn't come here with LOOKUP_XDEV + LOOKUP_BENEATH, set ->root.
+> > +		if (likely(!nd->root.mnt))
+> > +			set_root(nd);
+> * if it's an absolute pathname, set the starting point to ->root.  Note t=
+hat
+> if we came here with LOOKUP_XDEV, we'll discard the starting point we'd
+> calculated.
+
+We wouldn't discard it -- nd_jump_root() will check whether a mount
+crossing was implied here (otherwise an absolute symlink could cause you
+to cross a mountpoint).
+
+But as above, if you'd prefer that absolute paths disable all dirfd
+handling (as is the case now), I can remove this semantic.
+
+> > +		error =3D nd_jump_root(nd);
+> > +		if (unlikely(error))
+> > +			s =3D ERR_PTR(error);
+> >  		return s;
+> >  	}
+> > +	if (likely(!nd->path.mnt)) {
+> * if we didn't have LOOKUP_XDEV, set the starting point as if it was a re=
+lative
+> pathname (which it is) and, if LOOKUP_BENEATH is also there, set ->root t=
+here
+> as well.
+> > +		error =3D dirfd_path_init(nd);
+> > +		if (unlikely(error))
+> > +			return ERR_PTR(error);
+> > +	}
+> > +	return s;
+> >  }
+>=20
+> Pardon me, but... huh?  The reason for your two calls of dirfd_path_init(=
+) is,
+> AFAICS, the combination of absolute pathname with both LOOKUP_XDEV and
+> LOOKUP_BENEATH at the same time.  That combination is treated as if the p=
+athname
+> had been relative.  Note that LOOKUP_BENEATH alone is ignored for absolut=
+e ones
+> (and with a good reason - it's a no-op on path_init() level in that case).
+>=20
+> What the hell?  It complicates your code and doesn't seem to provide any =
+benefits
+> whatsoever
+
+The reasoning for this is because of how AT_THIS_ROOT uses both of these
+codepaths (it causes dirfd_path_init() to be called before the absolute
+check, and also causes ->root to be set).
+
+I wrote the features in parallel and then split out the code for
+AT_THIS_ROOT so it could be discussed separately (and so removing it if
+it was rejected would be simpler). But unfortunately this does result in
+the dirfd_path_init() code looking completely superfluous without seeing
+the second patch.
+
+> -- you could bloody well have passed the relative pathname to start with.
+
+(I think you mean always doing dirfd_path_init() first here?)
+
+Right, but I didn't want to discard nd->path unnecessarily -- if we do
+all of the code to grab AT_FDCWD and then it is completely unused (not
+even in the AT_XDEV sense of "unused") it seems like a waste.
+
+Did I misunderstand your suggestion? Were you referring to userspace
+just being able to "[pass] the relative pathname to start with"?
+
+> IDGI...  Without that kludge it becomes simply "do as we currently do for=
+ absolute
+> pathnames, call dirfd_path_init() for relative ones".  And I would argue =
+that
+> taking LOOKUP_BENEATH handling out of dirfd_path_init() into path_init() =
+(relative)
+> case would be a good idea.
+
+Right, I could definitely do that -- though for AT_THIS_ROOT we'd
+duplicate the ->root setting in both places.
+
+> As it is, the logics is very hard to follow.
+
+Sorry about that. Would you prefer if the two patches (AT_BENEATH family
+and AT_THIS_ROOT) were sent as a single patch -- with the
+dirfd_path_init() code split out? Or that the second patch do all of the
+structural changes to refactor dirfd_path_init() usage?
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--dst6zextluqynn7a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvBqCEACgkQnhiqJn3b
+jbQxqg/+Kh8EJI8aqy0Yr1G79viNi3O0TUKOL0miieS39gPO12GEjHX/UJ43G6Yx
+40vteAcFl08N1v6UIFmNfrw3N2h6Nz+Ss+1vCPF8GjQZyiGrRfSn0dTFgPDd9rOp
+oJg+1fDjrPOPBwC8f1gsme6slLm9xlk+LRXZCi4yltttiDc8nydWpG5/Zn61thTL
+/dw0ZjwZSIERA401EYpgtnsrdxcyAKh0OwPm2OGHvcaHfn950rYgvIRwptY2Xgzf
+6kIJDX1bc/m3hWyQ1PLvZWdws63+7duT9b8ojtZqRrko9+M1tBn+skp1KpqfL6+q
+Gdb+O2hJELJPBH2fgXfi5jDxGNuamJeNEkiabBEGGviGESGLOnloEtsU4v63gRC9
+Md0V8F6Y8n0o5XzzgXh/dRAAvZ2cdd9JD4sJzo4NIW934ukkzJAI28zYuWdA36sy
+qGA52jro88jukSsef5g/F+4f5OzT8U+bVhtwnAZGBHxaLIImn3j5595+mfR7nVmD
+RrlVn2/OZ66Z9rboXGfeWm7SGCSagobQCUD6JY973Zx4XHOr/kwAkokFMJotbmnq
+CNLzVsU9Idy/Z9O+qCTDrQgjQgMWI0YUubvJbGe9Gh9jOphDH71wskUsC8BahIqK
+QPzRQPs+RCZ841+KCg+vhyQ+9SECubA8gQ87UNOEsSN3ZIgIcDE=
+=SNGq
+-----END PGP SIGNATURE-----
+
+--dst6zextluqynn7a--
