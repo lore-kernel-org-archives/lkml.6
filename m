@@ -2,128 +2,121 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E6FC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0446BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3286920835
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:45:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvBRjetS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3286920835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C95F620835
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95F620835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeJMRVd (ORCPT
+        id S1727044AbeJMRVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 13:21:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45421 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeJMRVd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 13:21:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q5-v6so15880796wrw.12;
-        Sat, 13 Oct 2018 02:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=5zoa/6o2NMGwyWnXNc+7JnTarUKk9/4IQ4KcNFli70U=;
-        b=EvBRjetSAlKOg55fxap2dH3++ie+mr5C5cfKhzJlidDN0aE1CyNduNYQbP3Gu+oJdD
-         H54jNdsm7Y3FWgUnJaB3VADuXG43ADhwx5Sm4pDaSrbHr3tRBZXfBCPakGn/l0wWP8y1
-         muk13TaAN2yWsx5leJ8P/kSlv5rbQC3vZFYfjTdBCrBNqpqy/cpyXCh7mxV9XWHyTp3K
-         TuX1iuqH0eNWV9X13NCSut+QqgUmFRcphIA3tMD6/37zK/3uN0unwk5YWHvraTBOwHxY
-         1Lg9Uudeb/hg95OGNJsg+Vz+cBmsoxY45y88jpnKXzAeXLXZ5QFYwBdlmuqQ0KxHjM3Z
-         lHLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=5zoa/6o2NMGwyWnXNc+7JnTarUKk9/4IQ4KcNFli70U=;
-        b=P9xuo3Dw/sWLR10O7aAeP8eXENFF4RywSQhsIsszmMalciDP1Z0SQZ/awSqFf4f87Z
-         AgUF1SrUK/5wTUud7WcJZ+jMUMRy+0ETI1Qmwgv0THZpfdtz23y3lj8lPeBqfA2rM/4G
-         V6N9xBK0+5mJRoAlLn99lATuFWW0HWCOE2bixWhx8EtEG6t6OPTnih8MNPPlo7sWxLnE
-         J/Kzp/A2a+9U/WFKJ0gSV5ZssAjHzF5h2HzGz4jhYYCR+YlAQU6X92VQYMgUUk8ntw0l
-         MbEmGkhnb7HUi8B0KBOctaO1slKHQbbMVKEBIRuqXPNNRCaopbcLIC/M7otbaO3pQexS
-         BhWw==
-X-Gm-Message-State: ABuFfojm/oJav8bgjzUpgSAnE+22xUwA8miabXq37O8tPrJl2WF4sZah
-        pFBmUTvAE9+BgAY8Krd+ZwZHBIm5tBk=
-X-Google-Smtp-Source: ACcGV60t7FCGKRWY3h7XyMMtnYYBfdlgksq/LcUIflCgujCgZbftpMGGjKwC9fldVaKR9CxUdRHPLQ==
-X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr8044403wrm.145.1539423903801;
-        Sat, 13 Oct 2018 02:45:03 -0700 (PDT)
-Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
-        by smtp.gmail.com with ESMTPSA id w192-v6sm2724382wmf.33.2018.10.13.02.45.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Oct 2018 02:45:03 -0700 (PDT)
-Subject: Re: [PATCH 31/34] vfs: syscall: Add fspick() to select a superblock
- for reconfiguration [ver #12]
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754766004.17872.9829232103614083565.stgit@warthog.procyon.org.uk>
- <9b8bf436-65de-13b9-0002-0479d11c18ca@gmail.com>
- <20181013061141.GR32577@ZenIV.linux.org.uk>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <68a2107f-bf70-055b-86cf-1ba2ba9422bf@gmail.com>
-Date:   Sat, 13 Oct 2018 10:45:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181013061141.GR32577@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+        Sat, 13 Oct 2018 13:21:42 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:24529 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726666AbeJMRVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 13:21:41 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42XKYv4RqDz9ttFt;
+        Sat, 13 Oct 2018 11:45:07 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id GDSymDLByBox; Sat, 13 Oct 2018 11:45:07 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42XKYv3cJsz9ttFr;
+        Sat, 13 Oct 2018 11:45:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C5FD18B782;
+        Sat, 13 Oct 2018 11:45:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id IWppLi9istWc; Sat, 13 Oct 2018 11:45:12 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 936E88B74B;
+        Sat, 13 Oct 2018 11:45:12 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 574C16F433; Sat, 13 Oct 2018 09:45:12 +0000 (UTC)
+Message-Id: <a2694b8ffeb6c52d1c755d8a7bfaac689c4e1c6d.1539423893.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/64: properly initialise the stackprotector canary on
+ SMP.
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        abdhalee@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Sat, 13 Oct 2018 09:45:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/10/2018 07:11, Al Viro wrote:
-> On Fri, Oct 12, 2018 at 03:49:50PM +0100, Alan Jenkins wrote:
->>> +SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
->>> +{
->>> +	struct fs_context *fc;
->>> +	struct path target;
->>> +	unsigned int lookup_flags;
->>> +	int ret;
->>> +
->>> +	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
->>> +		return -EPERM;
->>
->> This seems to accept basically any mount.  Specifically: are you sure it's
->> OK to return a handle to a SB_NO_USER superblock?
-> Umm...  As long as we don't try to do pathname resolution from its ->s_root,
-> shouldn't be a problem and I don't see anything that would do that.  I might've
-> missed something, but...
+commit 06ec27aea9fc ("powerpc/64: add stack protector support")
+doesn't initialise the stack canary on SMP secondary CPU's paca,
+leading to the following false positive report from the
+stack protector.
 
-Sorry, I guess SB_NOUSER was the wrong word.  I was trying find if 
-anything stopped things like
+smp: Bringing up secondary CPUs ...
+Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
+Call Trace:
+[c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
+[c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
+[c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
+[c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
+[c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
+[c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
+[c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
+[c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
+[c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
 
-int memfd = memfd_create("foo", 0);
-int fsfd = fspick(memfd, "", FSPICK_EMPTY_PATH);
+This patch properly initialises the stack_canary of the secondary
+idle tasks.
 
-fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-fsconfig(fsfd, FSCONFIG_SET_STRING, "size", "100M", 0);
-fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Fixes: 06ec27aea9fc ("powerpc/64: add stack protector support")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/smp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-So far I'm getting -EBUSY if I try to apply the "ro", -EINVAL if I try 
-to apply the "size=100M".  But if I don't apply either, then 
-FSCONFIG_CMD_RECONFIGURE succeeds.
-
-It seems worrying that it might let me set options on shm_mnt. Or at 
-least letting me get as far as the -EBUSY check for the "ro" superblock 
-flag.
-
-I'm not sure why I'm getting the -EINVAL setting the "size" option.  But 
-it would be much more reassuring if I was getting -EPERM :-).
-
-Alan
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 61c1fadbc644..e774d3bf3a03 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -34,6 +34,7 @@
+ #include <linux/topology.h>
+ #include <linux/profile.h>
+ #include <linux/processor.h>
++#include <linux/random.h>
+ 
+ #include <asm/ptrace.h>
+ #include <linux/atomic.h>
+@@ -810,9 +811,16 @@ static void cpu_idle_thread_init(unsigned int cpu, struct task_struct *idle)
+ {
+ 	struct thread_info *ti = task_thread_info(idle);
+ 
++#ifdef CONFIG_STACKPROTECTOR
++	idle->stack_canary = get_random_canary();
++#endif
++
+ #ifdef CONFIG_PPC64
+ 	paca_ptrs[cpu]->__current = idle;
+ 	paca_ptrs[cpu]->kstack = (unsigned long)ti + THREAD_SIZE - STACK_FRAME_OVERHEAD;
++#ifdef CONFIG_STACKPROTECTOR
++	paca_ptrs[cpu]->canary = idle->stack_canary;
++#endif
+ #endif
+ 	ti->cpu = cpu;
+ 	secondary_ti = current_set[cpu] = ti;
+-- 
+2.13.3
 
