@@ -2,72 +2,73 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6287AC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B2CC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4EC20895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA4C02098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:16:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="V+bKPnLr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF4EC20895
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ImJwcrbs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4C02098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeJMUwg (ORCPT
+        id S1727031AbeJMUxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 16:52:36 -0400
-Received: from mail-eopbgr710053.outbound.protection.outlook.com ([40.107.71.53]:51429
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Sat, 13 Oct 2018 16:53:17 -0400
+Received: from mail-eopbgr680048.outbound.protection.outlook.com ([40.107.68.48]:5096
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726417AbeJMUwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 16:52:34 -0400
+        id S1726292AbeJMUwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 16:52:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NQ7cMSEj0mU8CoxY+j5JS4MhJlWqCI3RHxHnEPqjzbY=;
- b=V+bKPnLr0ZMA8Amn3HEK5xcN5E1FFvw+9cw/TYvAoxWh/uy0WJ4OwJEd6E8IXMkC0wcK1sJM7L0CGnLRrOYxi9jfgBtUuIgKnS99vFIYbZOKmDtbegtPSQ9aGkHUVUESVxjnQlmR53Ng28tLKPZfeawA9qecMMXeoupjabiHOIk=
-Received: from CY4PR02CA0014.namprd02.prod.outlook.com (2603:10b6:903:18::24)
- by BYAPR02MB4325.namprd02.prod.outlook.com (2603:10b6:a03:56::26) with
+ bh=X8gXjybF9RNvKBv2HMFTL/dscQJuoX30GOc5BO55GWo=;
+ b=ImJwcrbsDPv2LDCmGU6Y/iDDc8dN/EMqTBQIzzdB1JmvQ2KoGbkwGBbqT71QIFlag7+vVNUhZTOSvdRlTilgYHxDGb08taR1P8WDDcnif0Sher90zE0A30Tuz8enX0/ZpBk3jONehv/dRm+hFt930OcmJmUBfMHgxLEIXTvDTEU=
+Received: from BYAPR02CA0014.namprd02.prod.outlook.com (2603:10b6:a02:ee::27)
+ by DM6PR02MB4457.namprd02.prod.outlook.com (2603:10b6:5:29::26) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1228.24; Sat, 13 Oct
- 2018 13:15:26 +0000
-Received: from SN1NAM02FT011.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::202) by CY4PR02CA0014.outlook.office365.com
- (2603:10b6:903:18::24) with Microsoft SMTP Server (version=TLS1_2,
+ 2018 13:15:22 +0000
+Received: from SN1NAM02FT015.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::203) by BYAPR02CA0014.outlook.office365.com
+ (2603:10b6:a02:ee::27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1228.24 via Frontend
- Transport; Sat, 13 Oct 2018 13:15:26 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ Transport; Sat, 13 Oct 2018 13:15:21 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT011.mail.protection.outlook.com (10.152.72.82) with Microsoft SMTP
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT015.mail.protection.outlook.com (10.152.72.109) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1250.11
- via Frontend Transport; Sat, 13 Oct 2018 13:15:21 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:58104 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+ via Frontend Transport; Sat, 13 Oct 2018 13:15:20 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1gBJlI-0001Gj-8L; Sat, 13 Oct 2018 06:15:20 -0700
+        id 1gBJlH-00068g-Bt; Sat, 13 Oct 2018 06:15:19 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1gBJlD-0007wb-2W; Sat, 13 Oct 2018 06:15:15 -0700
-Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w9DDF45P026366;
-        Sat, 13 Oct 2018 06:15:04 -0700
+        id 1gBJlC-0007wb-7S; Sat, 13 Oct 2018 06:15:14 -0700
+Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w9DDF4om026380;
+        Sat, 13 Oct 2018 06:15:05 -0700
 Received: from [172.23.64.8] (helo=xhdvnc108.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <anuragku@xilinx.com>)
-        id 1gBJl1-0007nN-Qu; Sat, 13 Oct 2018 06:15:04 -0700
+        id 1gBJl2-0007np-7E; Sat, 13 Oct 2018 06:15:04 -0700
 Received: by xhdvnc108.xilinx.com (Postfix, from userid 15427)
-        id BB568604D5; Sat, 13 Oct 2018 18:45:01 +0530 (IST)
+        id A3413604A3; Sat, 13 Oct 2018 18:45:02 +0530 (IST)
 From:   Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -81,112 +82,307 @@ CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Tejas Joglekar <tejas.joglekar@synopsys.com>,
         Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
         Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: [PATCH V6 00/10] usb: dwc3: Fix broken BULK stream support to dwc3 gadget driver
-Date:   Sat, 13 Oct 2018 18:44:47 +0530
-Message-ID: <1539436498-24892-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Subject: [PATCH V6 01/10] usb: gadget: udc: Add timer for stream capable endpoints
+Date:   Sat, 13 Oct 2018 18:44:48 +0530
+Message-ID: <1539436498-24892-2-git-send-email-anurag.kumar.vulisha@xilinx.com>
 X-Mailer: git-send-email 2.1.1
+In-Reply-To: <1539436498-24892-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+References: <1539436498-24892-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(346002)(376002)(2980300002)(438002)(189003)(199004)(476003)(39060400002)(81156014)(26005)(48376002)(186003)(5660300001)(6666004)(356004)(8676002)(336012)(52956003)(36386004)(106002)(316002)(47776003)(42186006)(486006)(110136005)(51416003)(126002)(16586007)(426003)(4326008)(81166006)(90966002)(50466002)(305945005)(50226002)(54906003)(14444005)(2906002)(8936002)(2616005)(478600001)(106466001)(36756003)(63266004)(107886003)(103686004)(7416002)(6266002)(2171002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4325;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT011;1:YIPC82+MIKLhsJ7/8QXxbvPfL+z6iyDbcWzhnysRUVOHjseUnn+uR4cdgNd3jqRAYY2SThmHxSAx7BK5plJ2+mQekZ/pqryXoJtJtgBha8Zpo5l5GwdLepnCnfW9Q4k5
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(396003)(39860400002)(2980300002)(438002)(199004)(189003)(76176011)(48376002)(51416003)(81166006)(14444005)(356004)(106002)(5660300001)(36756003)(54906003)(42186006)(81156014)(486006)(36386004)(107886003)(426003)(90966002)(2616005)(39060400002)(110136005)(2906002)(16586007)(316002)(11346002)(446003)(7416002)(6666004)(8676002)(551934003)(476003)(126002)(2171002)(6266002)(52956003)(50226002)(4326008)(63266004)(336012)(186003)(106466001)(305945005)(8936002)(50466002)(47776003)(478600001)(103686004)(26005)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4457;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT015;1:i7ah8hMV0WwQBtuTolNJUxggNtgZd4M59kgS8KKtHBYVEipTl+s9dR7m07rkjbhfY3ijpkO0RlyKrr/uSJGg/Mz0LY1tjFRVkus7WqmYkagzt9T7sTG7da18N4RN7tIN
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6bb4911c-92ad-4371-a8a3-08d6310df045
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4325;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4325;3:iHT7TmbcRUKmmartzLV84fGMB/5+QID4LsJc9hsrz88A+G35uOHYp5otUUzZQJZYXn8t6vvPmHGb1vfm7DpSTkSDn4BYggT7R9unKXchhtvdbtp7Lp0ZMB4USR3BNCPaErmp51hOUGmXlFTYkuPzegXD/OKvuZLBXovv59Iz23jL5DP8YpEhrU9w5YxrzE85vFbXnWnVjiGkvHuG+bL0tXUF+3RuRF0YpkIjMWOlw15bhoGXMuCsAO85awx5MPiQk6MUiHHY5u0QhEAF9E0m1SoOV3wvfGx67EM85Mffk3YR3zYhsssH7kqOOjNZaYKp7vpN52h9eArFgmDsMDfgV7fKOY8B2PlaF+/jUzRnAXw=;25:/k55KtAXUprwKWOZQV7aW1omPBDo0+ZkX26+s5PNMQozTATu/uQKjyJGjXaeRcImJBTcBse6EDfwcDxKozoqGvIiPZrQAOSg4Tw2idDxKybk6uGwYCtvhc35q9f2PLqJpZB9pPX+DyXexVDfNUb2OCmy+59ZOfm+K6J5Cgxy7ukS74/UV7jR0fdk1YW710Dh2w12CnZX0HuqMPuQNpeYAZ7MjFltSra4m/sPKjEfJEKFLMLqASK1dpQgX5V3/ETVNCTUqsQfJqobcW6dGq/HB8SpQIT74YCsIRQAvfGOHyvuid1nRg/H9DyVzjdxAs89YcfSHpgUDfrb1+QZGW18/A==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4325:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4325;31:EAZ9wpTj/BrY4poqVbjPxxt6xTUIJomfD6vSYQXAwPD5spcoKr95i68ooSgi8iY/iYFyP+5wJS31LgvI3fn54FS2bqQeWgr4at07Z2hKJo8dg0/oJbU7a54f+LPYY+6mGaWKOWAWmerGXjkjFC2C3NoJS6J0v9+BANSNkClz3HQXA7eExYhXHVUZry9n8VUKu716tAg3eHey9lxE0TA60RnI95MJtotuWjCB6cjemms=;20:JI1rjNY0GEoEoj4L70mnFGg/2tXGUIdG8+Mlnzpca6xmcgVHB+AWNxXjKsL5WYJbkHAeLhibFHHzH9R2mZGet1fRPrYLD+gso5aAFc2H72+ZJVSXFv0onklJVeA5+pniXqYS7p+bfer7dhBtftjcBRkhQUzQhc3pjrLfeerL4Vib9lZbb1v/Lrg/+HDttXxKj8L5icR45AZONf8kD8f1GhLqLTIOA8fE++JzvP+uxhJ0CWkkL0vQmD//6MK57sVR0fqQBU1lOwiFI54ckwis/hMyHKrwzeC0dF9pFeWoO7c5i18DqXtkdxBqBdvkI69em9PsvFMC/576wI+/PursP3JK9dUc7HSETup3fsgRi5BVwOJM2gx4Iz57V9rr3E+ifIUsv/zg8l00IcLUbvenK2PNdBYzxr+PNXGTz+kCk9qYY/IN5BOq08HUmwEp6K+x3+n3dX/jZANCgyybrTZVQoYwx08x9ipj5s21DFp5137Vrs+Kg5m0StOHneq+qt5Y
+X-MS-Office365-Filtering-Correlation-Id: a8222ea8-ae99-47e6-70fa-08d6310dedba
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM6PR02MB4457;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4457;3:JnZAAFzkaUC+aBnj+Rm25O7F4GYkOu6prW1GNgff/5QMkfytI7SUACdMXuXvP3mL1T7dqmC3TbAF2kOUg8BMtGv+SNE3CfjN3UJXDboJoTmtIeYH8htQ+gq0Sw7/ZjkIJzEgM0VMnd5sMUI0/b4cHXalVPz4FME3woOPNE9VWsqy13vNXAAwQLNHh4RFpzLOjxqTGvN4t9aBZWFBWnOToQpxXuEHykpKZPjUiRcjE1c1Uq1u0omoLlQHriSvylQSfmH33xrYk+2rltSNlkkcqDhfY7N7K0nAnfLczgU8MDiXspXYdDsv3RAT9YBQNHcH+EOQgzumu43UjiFwepO3N9oQlxbcG/GAocws84GtokI=;25:CnXNGEgJrL9QWmCbgGUC23r1JF0IkHZAuVpJoICEPKHuQU//EGklOE9iXbgEPMd85YLIRTbXoa7lL57mWWzPhhEcaQ7xAVTdNWBAwnDHVrDaIL+FXoGciBfkeT2rKFti/3iTszklEQOWU7VwotQ5s+kwIrqV6RoeqHPKyTMZ+OfkvPM1Cpap75cSHL7+o6MyVWB/D7DgxOhwroq2o4uxlnu2UXxY2DXeYA8LgbEJG5iZ0a1XlP+cKLX3EPYFHYAvKFHwx5OGssTZCnGGxzIOEYEY+MiG0EPLYyf3TIzl5+GAxJ5mwZleP8MLkqjWwwQ/F/rYBjO1LJqvzCh1Gu/L4g==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4457:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4457;31:e0PRcCTk1RsD6kXQS4FIx/zUv/FPNKhmf1D0zH2UetkRreNEQaaaekXI+t6dR/rYjnGccwwUAfwFRSJiRm2HEnIyQdSqknWdA/2Du/HCTnDCKMRpZnONdfTglxeT/6IKzroe70SzH78NMmh+nE14qx2C8t+YmajFOx8K9AsqPebf6N3MG807cjpB6OYs7EJbRx+J6ItKfCJ73jPxOgMKozI60vA8n24PuXv9hziCndw=;20:IoSthHAb5ZQHBAUVcEpsinubeoZiHvE1Eg4gHVdbrp6Gv4hRjJPsS+cHHWJzWMqq6ch/t0Wf8xoVG/HWtBwJIzjbTkZ5eAR11CgqCOrkLwS6UFK2vEkKiQcfcnel5LBo9f5lVduwosgXBuPlV220Zhp5uCYYnFNJvOCDOvdcE0dErs8aoqymaFwswEiJ6iobkfSveFG48Q/zS7J39qiIuGN3uQekLMsqR6iyJ0/9rm1LvthxFNdlPwmzsYnz2hBnxy4Ve4zyrVoLRCk1hI6imx7eu6iE4EUK9PnoMfMxnfQZmCM3b3czyKqPo+GMxgluCzHKSsKCUOxR3GxwOZl1qkUHtui6uxn1TcbyS2D2664wLTwGR5Av+7s3+Mf/UwO/G1sQjznLOWDEUolGpYwJN0Q6jv+DBXsijr6cZ8rAPbDC6ZibvpEaLqW8nmm+JzfBgVu70TCRN/uEoU31OwXlcr2huVumzXmBVJdJPWTdpSv+QCMoLRxcTgl+ZpQs1UzI
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB4325C025599967A041309D74A7E30@BYAPR02MB4325.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <DM6PR02MB4457C1269E1967811DB7D77BA7E30@DM6PR02MB4457.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93004095)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051);SRVR:BYAPR02MB4325;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4325;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4325;4:Cym3LGpKEF0MOIR8rf0X8ykhTzEPOUERTMkRPHLU+Z529haj+p5WuhLHKlRM4ZOhHAbCkMOZDNlykrVZ7cgmbrT/NFkL+buFDREBNArtSHzUfKQLj/q41Ebbnec3H238HAFExB3X/8f1fuR8n9eabMD5w5GitMOjbTYwGhgIz2bzxgNJnDZ5tDv04ptUyx6oAiju5piT7fBPr9/XnTWusu7+fBxysWh1OzyegObVU75gIXlmZuwExl5gzOUEE7XY9k4hiwTqxv0obARkLmOfwg==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:DM6PR02MB4457;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4457;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4457;4:8by50OofMJWDwUJVWiK5ICHVtHBMzpXqBHqQuv6RFuJWMo7tdDl2xcQkmduNw++hGioM5vmxo0korxUhN8ZwIWOghcp5oquciBZXKCRWVqMXATejFRbo8bZSBXtRuZpmIqnCYJo0HpzNkQBNvNAAQ0G8Efc+OnpTheUNqb88IyF/YB/8CKQqtEP9XgKoAE2L81MhPfgqnjeFR+RrDju8Bl9xZk3zvD97hegyNVwuDAKW4wsehwvhjS8HEEweizCCNX5VEXFApHILXz34TpaU+rGmw5hM9w8v1yAzrHuJovlO+pZSnY1AxxxwiCSrF5c4
 X-Forefront-PRVS: 082465FB26
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4325;23:GkgqiMKnjJCctGHImDom08DgFmqoxZwt5YfVNu7Hd?=
- =?us-ascii?Q?yZwkjym7uUYZ2AwpO2OX+1CofJLOHSr71iDmpI7snxMDrgTgbbDdP+XS+VTO?=
- =?us-ascii?Q?jJ+pHSYeufaUuodVuQUiu+PPMjmjzKzwS31mhkuVVhHz3GApsmwjOjOqlwmg?=
- =?us-ascii?Q?I4gh2DRLXT/vYPfqAto2owAulP6hsYKT4puA2R618CYRk9LnTQWZUtCK18aq?=
- =?us-ascii?Q?iP7fwcafZtY5j/qlWyyfke2QDKfv/+g078qU3YKhXViMneMRh/yjbWvEMrZf?=
- =?us-ascii?Q?RxoSJxSCupMawUfJ6JDsRtMjgDGZ0w84YRYWohZalWaDweq8ZKb0Mq9T1RZN?=
- =?us-ascii?Q?a4gckd55hmBs2V2IJadhE4/cvTw6v4Oc+LFhUTLqLPVSAGosfEAw1S9qBbyw?=
- =?us-ascii?Q?BcHLA2tcYruEDcgsUIz9USMBk2vzlECbuX09DcGVsEmOQKo2kzrWlw8P53Xk?=
- =?us-ascii?Q?0anuHa4hQMPRW8woCOwCDkpuuzz1X/ESNjiEPcp8RKR0h/xzpTfDVlLU1W6E?=
- =?us-ascii?Q?ZCK8An6Kp3u9/EOM5fB0HEeHYM9rCEnU7Ivwhg4SCbHCRGsJKsO6ICxU8p58?=
- =?us-ascii?Q?tpjPMidNN5ABw/leynax4vM6qUFWNZOuhoj4334OQOcC2pEGpvzzQqo5TvYg?=
- =?us-ascii?Q?Aq1fJg2CFAUmDJOGt4UDfrWFC4WplSCfMcqkGKLWlx0sDZxAfE3/FYGuImhY?=
- =?us-ascii?Q?1JBcJtrePg92mKF2y6T7mJ1fXQzMNHhL09Qtz/EWEDRZVB6aVS3AsKbRweof?=
- =?us-ascii?Q?q8oVGZI5RdEQRyXU0eaZMNM/s83PHTtDzmVTBBE1Z9z2hbI8z24NBBCMN+sS?=
- =?us-ascii?Q?IWHQT2EB4NwvuCBXWuDKpkXgYl3jkQB611PGpIYGzhVyLeQX+8Wv2ttMKZRT?=
- =?us-ascii?Q?5jceJfR7JKUUq575xr7HYepZevHXh0xPQWjQz0m9jeQ9zToVyfAzaaK7opCO?=
- =?us-ascii?Q?b+paxoeITH/QRDPL3z7VnSKteKwnGW0Id7Lox6s5IUVYK+QjUBBA3y+56QgF?=
- =?us-ascii?Q?QqxO3MXLrEuR5PEokOvv7UQSSWKGdXAULlT73YcmDAlGRYal8OLujzjpspVw?=
- =?us-ascii?Q?Atfciy8+H67Dwtj2TUtQj7bj9DwG9fUiZYkA2bGoyQdK2ap4MpPeK9XUgdmq?=
- =?us-ascii?Q?+rNZgf8dTKMm3TvZTV/EgonxH+LB5OGCTLgM2vOgtzi1g7K8fzedqdS9PB2T?=
- =?us-ascii?Q?aSx38RXewBrnkNs3I4W4JU0HeUVXmi3G+a2?=
-X-Microsoft-Antispam-Message-Info: wQ7f9wtqPceTzc04q8ig8/2z0xBR9SHxn9/9OHN2+QL5l0cPEUaIEDYU95yS3zQIDjlLZuRXzB9PLmGhjz3oX0ZsqtN1MH/1PL4teDCi61vL1Zw6bGlRBGboTprlqxtWphzXDOHdGajkZ6ZsIB2LlY2GKn43XdaJGUFkkuH7KW1umDVmUnLwdrndW/9nWkJvVpovfcPCcyyezG/pIZgeyVe7oxt75Y4tamgo1DTsO9fI581UgJDYf4+axkJnLEMEft6JIaxesgVz0I7mQGuP5PfT50vPc5SSFv3LwsZG3Vq4MmqfFsCKwFa11JVaZekbQC1YFt8fRSESgWkmRjJLt/LJn5XwTgk0V38fatqqovQ=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4325;6:UGWY8MO5BFeJ4UbUY3NNRfM9DV/bWcuSiyrRD7TNDrye1C3xlKO+yBDsembc/VOvRaJOspA0B4oOyW/2YFLVj/8g9T54YnMxK+TsSzoMz1NtwxLZ/4kDjKrKIea0bBXoZgDzqaV+Y+j1+TKoCzu8C9v9QXtLvcRMu+DJTZTC1snh+W+aK4+3NxNzGWQ1czhRtA9iLqFSr7S8qkWH7X7i8i6gQW1R3tvl2CQiEk4IBfIXj24Hh+iK+o6fvHxHSXBo/2IxPmd3ih+vrpOhh7EFGP7QWeilnnA7L1JJj8LoiVZcDPdCJHCBdC85uXt6xWw3pCkfmoj72r3dC6Qr1k5wAvzCSHT4egWxW71YS7gI37gneyXnBUc//gVbzFdDM0vzzxmvACX3kBIfq/VNqheOILbtrTGkVZYLLdiKrGxuU2x7SutDJLU6fEdcqGDAREQZS1W30Cu6jsZYSS+ygy88bw==;5:GW/PV3r/xBMA63zL23S/VED3V6EsyPYI9DhY/ryeM+xQFe0Vbor37Oivcrf8ZF9s0qGDY0KCunsq6r2KB7hjdqrFCE35PCPP7FUA5xNJJB2fWL3C9a6aH07S6ShrEJu6UzQingrAAmAxa+DxuRlNimVTDu9mc207taKk7UIfNjw=;7:1JZhpkW6aweZHDMlJHWDwORPJxxxRv9hNUO8vjE5eLJLDJV+ZMxvD/gBoKiC/QLtQc4WTKwjBA6LqE2wMmz/oZCrhSUMY40fCpcPh12Ovnrfcn+iCxsS3Bi02avPEMO/hm9+hwxxU5mn7ZPqqoXqz6kfNxFQ2IBRTcusvemSPU9LbSrGqX+XK5s3BvGMUqH5loMewZp/y0x9OnWxImCUNebMv0BLK0aQ2GCLzQ3YPGXKzWK1kvIQwF7ByWCUyMk4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4457;23:5knaq0NKJuLy7JUy+DXGTEEz7roq2p30XIL5fn+n6?=
+ =?us-ascii?Q?Ow5328zUJ+cmOvxQspJyuDuDaeK1HO0SHABjh3xoLr6suW5AgWhIt0ppJQF9?=
+ =?us-ascii?Q?cVc1xc1q0DqjNaZzr/Rx/pt2FSArh8EGWdtSgWDKa4gJjxvIU74jIejA/Qsy?=
+ =?us-ascii?Q?KiFc5E8n+sOhBn/qaILNYyW2K0ESBly0FzvKADwjH9ECmEPUhDYVAJTI9JJO?=
+ =?us-ascii?Q?zoLAb7y2N4an0GWzTTDN3nCD+7CvDiFE0D4qRmi5MJwiwSgX9lZuD2/76ITJ?=
+ =?us-ascii?Q?aKXiPdc3DOsLPdCg4NsaafdepX8qIvsmCiQV48Td/OIpx8zFLlgdzR2azW6X?=
+ =?us-ascii?Q?RrNBUEs3R2QQSOplE7A/KWzrwlp1Y30W+6kcDf6tlIsvqf7TzidOz2pp9vEP?=
+ =?us-ascii?Q?WMoNhs+6MnBbs+qpjJl7Q8kbrakshmtBwPQXZAwXGsH7Qnbo81amS+h6RRco?=
+ =?us-ascii?Q?RE39PEBm7Mnu65X15zanvWMfyq4ZiL/A9aMqjy801pEdkOWZdqtGHiapL4tc?=
+ =?us-ascii?Q?2c5CrswsCw5Zik6Jw6bKV+vkaB9szSVuKTXnNbE08ivhVpNaGVl7Xij0zOwv?=
+ =?us-ascii?Q?ayU+tUiiD3yPkrPdquuR7tdnB1ZJI+eNmoU1Cw+Uk3X6hgyEZds8fKlrN3rB?=
+ =?us-ascii?Q?au2OHXUOxlwi2Illu3URZYiGLAcqA+NmPZgzSs75egUnOAaeLc2MI+qPny9F?=
+ =?us-ascii?Q?t0DZnq0n6Cdh8g3LComGkhraPzAIwBI/sWBHkbL/x026xZL3xL+PSSYhxmFN?=
+ =?us-ascii?Q?4iFbCd0Vd3b1PaBVXAnDx843skDMDnOV67UIwSKwArfVnZWa5LDn9oIBGyEy?=
+ =?us-ascii?Q?kNph3mFrVa3buC1R3mGWZSR6o6AvftNFhnI0GxXgFd+Fb98Db2Uzmekk+On1?=
+ =?us-ascii?Q?fGsrKAFGEvEcvY0RhKuPKmsAozDLXZ6IdLkdyLdn+d+xzQ37XRMe+7+gGmLL?=
+ =?us-ascii?Q?wVS+c1mxlt8ycciFYSYZ5MzBlrp61Y6KKnZHkb6sTDwZRC4uhEpvrjaJxK4U?=
+ =?us-ascii?Q?03Fds6boEv+6I8lTdHC1vVoJL19p/lt66epocwwodkWDz94s/kWGv1SQP2Iu?=
+ =?us-ascii?Q?1BB2vKOdOcFnB7GdHfZGTaCMsKomjfzCKQyceMcw3UIoRRqV2wX1o94tfrap?=
+ =?us-ascii?Q?9CTdQsN3GaTDZ+IwO+YzWFlrCfTx8iyjt3XBDa3VbSirlTQD7CmGV3mPEdNE?=
+ =?us-ascii?Q?WTbNaRMTExy9UbQgorOSrAaZvcsR5UFyFcn1KvsDNPTurTFnOkEaQKbSJatx?=
+ =?us-ascii?Q?C9pyd/yE0N3zor2VvM=3D?=
+X-Microsoft-Antispam-Message-Info: I6mxqqciUEatIeSkyFdjCMuq//9NymGTjQLqDAjdAIihXIFHIJ1v63+XSoaAwXU9meV95y882SNZTxY7EJkQuVRuiKiTfAf6mDBGGzueW9DueTFzOLGN0o9a9A1Mu9QqYxsaVKvQPb5skx1l8N6gKg/J8OQe+cmijvwv9Zn1hvmlzHT9LTNedTZ5BODI61wx7ieRXJqOJdjwudrodZ4lUKMfhf15wQsRfScWc8iZCCn14zZ3ZT5BPV3iMtbrhq2lrtBhy3nIhZ19SF0j8DanY/QqAQJ+uxWS3+P1dsmyTmJqFRL9HoWUgktqQxAHNmLredj/7LhLFQ2HeUDUzd/hYR5zL6vS4JrCjnBjuTvZ4F0=
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4457;6:HCwwalWRAAT9dz3O4UFHi9FGAW4IZuDPqqRpznMcRgPGz7yXgxISN9UluQ838Qbp2arCj9wL0bGUexG+nIRtlQlzVOet3YtiPr7Pp7+grMHXvSw7J78yJXpeKQ/xk+g9Benb1lOQ3LPBTQDBvTYZ3txq/GcB4Wu8zqg6unKju0rzIBBs5c7/JatFSiMEIcSp19Kjp4I8pnjdQaVKJUDvETV9c5e0rKUWWZCtacwunb47EEZYjilYAdd2gfZk+L4yHVDjwzSadyxCvyE9qABNFsWCYqqe7cNsQ+MQogBbqti6p9fF5tVPYn4pKZe6LKR3GKXfQRvtMF3spa54ycu6A+a8gUtl9QwMzR4Sl04QcIpHmk5cDZG02+AVNqK0n3mZ5B77boTeEls/eieB3PV4BX8PcLAAECQNlrYvw8mnbNgEioh/4eAH863HLH66tr9UBV4S6mgSBTyoQUvrXnCJvQ==;5:isWn2gUvm/ZE7sj1FF5Mr64f2IHCzk/ujQwByi4qRAdWLdCUttDFS9nUfTabrmP1jj2pksEX6fUdI8Zk20gyaFQ+VQNXOQm38VGOfhq57HKnYKNaSKzD3vycsgQaJ50ChLbtizujypolFaK28ffXxQhP0YQlkrXO8iRZF1XObHM=;7:Lakzp4Bt2wD3w0QEk2UXa+8OtYwZ4WzRzWpI0ULS1lg1vYybDseDzqFsqeiVjdFUALzOP3JMdsWu4tcbOMcd0tqmu4uL832nbWkJ6pKMlIXzycKIHxlIu2WWupTCM4cSWr8iUR0gJ8BrletmymvkK/UFtTs+n9FUGow7gsiFUI6AFpj540/ybJyXBX42kVDgAer6m3c6Qw28yXTYzFha+8MffcbEyw41zDx+g29XSo2/9a8WqI1PNcF0Hfc+5woO
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2018 13:15:21.1030
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2018 13:15:20.0695
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bb4911c-92ad-4371-a8a3-08d6310df045
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8222ea8-ae99-47e6-70fa-08d6310dedba
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4325
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4457
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series fixes the broken BULK streaming support in
-dwc3 gadget driver and also adds timer into udc/core.c to
-avoid deadlock for the endpoints which are bulk stream capable.
+When bulk streams are enabled for an endpoint, there can
+be a condition where the gadget controller waits for the
+host to issue prime transaction and the host controller
+waits for the gadget to issue ERDY. This condition could
+create a deadlock. To avoid such potential deadlocks, a
+timer is started after queuing any request for the stream
+capable endpoint in usb_ep_queue(). The gadget driver is
+expected to stop the timer if a valid stream event is found.
+If no stream event is found, the timer expires after the
+STREAM_TIMEOUT_MS value and a callback function registered
+by gadget driver to endpoint ops->stream_timeout API would be
+called, so that the gadget driver can handle this situation.
+This kind of behaviour is observed in dwc3 controller and
+expected to be generic issue with other controllers supporting
+bulk streams also.
 
-Changes in v6:
-	1. Added timer into udc/core.c for stream capable endpoint
-	   as suggested by "Felipe Balbi"
-
-Changes in v5:
-	1. Removed the dev_dbg prints as suggested bt "Thinh Nguyen"
-
-Changes in v4:
-	1. Corrected the commit message and stream timeout description
-	   as suggested by "Thinh Nguyen"
-
-Changes in v3:
-	1. Added the changes suggested by "Thinh Nguyen"
-
-Changes in v2:
-	1. Added "usb: dwc3:" in subject heading
-
-Anurag Kumar Vulisha (10):
-  usb: gadget: udc: Add timer for stream capable endpoints
-  usb: dwc3: gadget: Add stream timeout handler for avoiding deadlock
-  usb: dwc3: gadget: Remove references to dep->stream_capable
-  usb: dwc3: update stream id in depcmd
-  usb: dwc3: make controller clear transfer resources after complete
-  usb: dwc3: don't issue no-op trb for stream capable endpoints
-  usb: dwc3: check for requests in started list for stream capable
-    endpoints
-  usb: dwc3: Correct the logic for checking TRB full in
-    __dwc3_prepare_one_trb()
-  usb: dwc3: Check for IOC/LST bit in both event->status and TRB->ctrl
-    fields
-  usb: dwc3: Check MISSED ISOC bit only for ISOC endpoints
-
- drivers/usb/dwc3/core.h       |  2 --
- drivers/usb/dwc3/gadget.c     | 67 +++++++++++++++++++++++++++++++++-------
+Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+---
+ Changes in v6:
+	1. This patch is newly added in this series to add timer into udc/core.c
+---
  drivers/usb/gadget/udc/core.c | 71 ++++++++++++++++++++++++++++++++++++++++++-
  include/linux/usb/gadget.h    | 12 ++++++++
- 4 files changed, 138 insertions(+), 14 deletions(-)
+ 2 files changed, 82 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index af88b48..41cc23b 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -52,6 +52,24 @@ static int udc_bind_to_driver(struct usb_udc *udc,
+ /* ------------------------------------------------------------------------- */
+ 
+ /**
++ * usb_ep_stream_timeout - callback function for endpoint stream timeout timer
++ * @arg: pointer to struct timer_list
++ *
++ * This function gets called only when bulk streams are enabled in the endpoint
++ * and only after ep->stream_timeout_timer has expired. The timer gets expired
++ * only when the gadget controller failed to find a valid stream event for this
++ * endpoint. On timer expiry, this function calls the endpoint-specific timeout
++ * handler registered to endpoint ops->stream_timeout API.
++ */
++static void usb_ep_stream_timeout(struct timer_list *arg)
++{
++	struct usb_ep *ep = from_timer(ep, arg, stream_timeout_timer);
++
++	if (ep->stream_capable && ep->ops->stream_timeout)
++		ep->ops->stream_timeout(ep);
++}
++
++/**
+  * usb_ep_set_maxpacket_limit - set maximum packet size limit for endpoint
+  * @ep:the endpoint being configured
+  * @maxpacket_limit:value of maximum packet size limit
+@@ -87,6 +105,18 @@ EXPORT_SYMBOL_GPL(usb_ep_set_maxpacket_limit);
+  * configurable, with more generic names like "ep-a".  (remember that for
+  * USB, "in" means "towards the USB master".)
+  *
++ * When bulk streams are enabled (stream_capable == true), a timer is setup
++ * by this function, which would be started at the time of queuing the request
++ * in  usb_ep_queue(). This is because, when streams are enabled the host and
++ * gadget can go out sync, the gadget may wait until the host issues a prime
++ * transaction and the host may wait until gadget issues a ERDY. This behaviour
++ * may create a deadlock. To avoid such a deadlock, the timer is started after
++ * submitting the request in usb_ep_queue(). If a valid stream event is
++ * generated, the gadget driver stops the timer. If no valid stream event is
++ * found, the timer gets expired and usb_ep_stream_timeout() function which is
++ * registered as a callback to stream_timeout_timer is called. This callback
++ * function handles the deadlock.
++ *
+  * This routine must be called in process context.
+  *
+  * returns zero, or a negative error code.
+@@ -102,6 +132,10 @@ int usb_ep_enable(struct usb_ep *ep)
+ 	if (ret)
+ 		goto out;
+ 
++	if (ep->stream_capable)
++		timer_setup(&ep->stream_timeout_timer,
++			    usb_ep_stream_timeout, 0);
++
+ 	ep->enabled = true;
+ 
+ out:
+@@ -121,6 +155,9 @@ EXPORT_SYMBOL_GPL(usb_ep_enable);
+  * gadget drivers must call usb_ep_enable() again before queueing
+  * requests to the endpoint.
+  *
++ * For stream capable endpoints, the timer which was started in usb_ep_enable()
++ * would be removed.
++ *
+  * This routine must be called in process context.
+  *
+  * returns zero, or a negative error code.
+@@ -132,6 +169,9 @@ int usb_ep_disable(struct usb_ep *ep)
+ 	if (!ep->enabled)
+ 		goto out;
+ 
++	if (ep->stream_capable && timer_pending(&ep->stream_timeout_timer))
++		del_timer(&ep->stream_timeout_timer);
++
+ 	ret = ep->ops->disable(ep);
+ 	if (ret)
+ 		goto out;
+@@ -245,6 +285,18 @@ EXPORT_SYMBOL_GPL(usb_ep_free_request);
+  * Note that @req's ->complete() callback must never be called from
+  * within usb_ep_queue() as that can create deadlock situations.
+  *
++ * For stream capable endpoints (stream_capable == true), a timer which was
++ * setup by usb_ep_enable() is started in this function to avoid deadlock.
++ * When streams are enabled the host and gadget can go out sync, the gadget
++ * may wait until the host issues prime transaction and the host may wait
++ * until gadget issues a ERDY. This behaviour may create a deadlock. To avoid
++ * such a deadlock, when endpoint is bulk stream capable, the timer is started
++ * after submitting the request. If a valid stream event is generated by the
++ * gadget controller, the gadget driver stops the timer. If no valid stream
++ * event is found, the timer keeps running until expired after STREAM_TIMEOUT_MS
++ * value and the stream timeout function - usb_ep_stream_timeout() gets
++ * called, which takes necessary action to avoid the deadlock condition.
++ *
+  * This routine may be called in interrupt context.
+  *
+  * Returns zero, or a negative error code.  Endpoints that are not enabled
+@@ -269,6 +321,13 @@ int usb_ep_queue(struct usb_ep *ep,
+ 
+ 	ret = ep->ops->queue(ep, req, gfp_flags);
+ 
++	if (ep->stream_capable) {
++		ep->stream_timeout_timer.expires = jiffies +
++				msecs_to_jiffies(STREAM_TIMEOUT_MS);
++		mod_timer(&ep->stream_timeout_timer,
++			  ep->stream_timeout_timer.expires);
++	}
++
+ out:
+ 	trace_usb_ep_queue(ep, req, ret);
+ 
+@@ -291,6 +350,9 @@ EXPORT_SYMBOL_GPL(usb_ep_queue);
+  * restrictions prevent drivers from supporting configuration changes,
+  * even to configuration zero (a "chapter 9" requirement).
+  *
++ * For stream capable endpoints, the timer which was started in usb_ep_queue()
++ * would be removed.
++ *
+  * This routine may be called in interrupt context.
+  */
+ int usb_ep_dequeue(struct usb_ep *ep, struct usb_request *req)
+@@ -300,6 +362,9 @@ int usb_ep_dequeue(struct usb_ep *ep, struct usb_request *req)
+ 	ret = ep->ops->dequeue(ep, req);
+ 	trace_usb_ep_dequeue(ep, req, ret);
+ 
++	if (ep->stream_capable && timer_pending(&ep->stream_timeout_timer))
++		del_timer(&ep->stream_timeout_timer);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(usb_ep_dequeue);
+@@ -878,7 +943,8 @@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_request);
+  * Context: in_interrupt()
+  *
+  * This is called by device controller drivers in order to return the
+- * completed request back to the gadget layer.
++ * completed request back to the gadget layer. For stream capable endpoints,
++ * the timer which was started in usb_ep_queue() would be removed.
+  */
+ void usb_gadget_giveback_request(struct usb_ep *ep,
+ 		struct usb_request *req)
+@@ -886,6 +952,9 @@ void usb_gadget_giveback_request(struct usb_ep *ep,
+ 	if (likely(req->status == 0))
+ 		usb_led_activity(USB_LED_EVENT_GADGET);
+ 
++	if (ep->stream_capable && timer_pending(&ep->stream_timeout_timer))
++		del_timer(&ep->stream_timeout_timer);
++
+ 	trace_usb_gadget_giveback_request(ep, req, 0);
+ 
+ 	req->complete(ep, req);
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index e5cd84a..2ebaef0 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -144,6 +144,7 @@ struct usb_ep_ops {
+ 
+ 	int (*fifo_status) (struct usb_ep *ep);
+ 	void (*fifo_flush) (struct usb_ep *ep);
++	void (*stream_timeout) (struct usb_ep *ep);
+ };
+ 
+ /**
+@@ -184,6 +185,11 @@ struct usb_ep_caps {
+ 		.dir_out = !!(_dir & USB_EP_CAPS_DIR_OUT), \
+ 	}
+ 
++/*
++ * Timeout value in msecs used by stream_timeout_timer when streams are enabled
++ */
++#define STREAM_TIMEOUT_MS	50
++
+ /**
+  * struct usb_ep - device side representation of USB endpoint
+  * @name:identifier for the endpoint, such as "ep-a" or "ep9in-bulk"
+@@ -191,6 +197,7 @@ struct usb_ep_caps {
+  * @ep_list:the gadget's ep_list holds all of its endpoints
+  * @caps:The structure describing types and directions supported by endoint.
+  * @enabled: The current endpoint enabled/disabled state.
++ * @stream_capable: Set to true when ep supports bulk streams.
+  * @claimed: True if this endpoint is claimed by a function.
+  * @maxpacket:The maximum packet size used on this endpoint.  The initial
+  *	value can sometimes be reduced (hardware allowing), according to
+@@ -209,6 +216,9 @@ struct usb_ep_caps {
+  *	enabled and remains valid until the endpoint is disabled.
+  * @comp_desc: In case of SuperSpeed support, this is the endpoint companion
+  *	descriptor that is used to configure the endpoint
++ * @stream_timeout_timer: timeout timer used by bulk streams to avoid deadlock
++ *	where host waits for the gadget to issue ERDY and gadget waits for host
++ *	to issue prime transaction.
+  *
+  * the bus controller driver lists all the general purpose endpoints in
+  * gadget->ep_list.  the control endpoint (gadget->ep0) is not in that list,
+@@ -224,12 +234,14 @@ struct usb_ep {
+ 	struct usb_ep_caps	caps;
+ 	bool			claimed;
+ 	bool			enabled;
++	bool			stream_capable;
+ 	unsigned		maxpacket:16;
+ 	unsigned		maxpacket_limit:16;
+ 	unsigned		max_streams:16;
+ 	unsigned		mult:2;
+ 	unsigned		maxburst:5;
+ 	u8			address;
++	struct timer_list	stream_timeout_timer;
+ 	const struct usb_endpoint_descriptor	*desc;
+ 	const struct usb_ss_ep_comp_descriptor	*comp_desc;
+ };
 -- 
 2.1.1
 
