@@ -2,121 +2,98 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CBAC6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E62C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0E120865
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:54:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oO7CQBJ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0E120865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F25020865
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F25020865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeJMJ3r (ORCPT
+        id S1727086AbeJMJkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 05:29:47 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41708 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbeJMJ3r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 05:29:47 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so14078678otb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 18:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ruDqHADLGhUq/OqjXNRFevT5jDn0habRcwA3l0QGuG8=;
-        b=oO7CQBJ0o3h4W+oksCLNlcAMMdo7sg4Jtv1VCUZcuw6SrUuKQoC7/yRbVEByqVegR5
-         2XakAmI6gLBq49bXmjVYz4+acBeAcuwKtUHPjj2sGXy+jzOkdhqdTL0YPcZPqB+LKt6o
-         bhRful9oO7cRR8nbmHw1A7uqI9ttcB1fV31XpSXw7a9IcC+joMzcgVc8TxQKKcRQt8Re
-         zoNMfZUWu+1do2+6RW0MSWVyN/9DUjKrGt5dJpbjxpWiCS22HxYleuy9uZIoJeze7/q0
-         zCoyyhRBLvqgZ71FAynWB3xe4pRvB3ibgZGe60xwaYIUrVPx8bwkXyzud+F7R7U1MaXx
-         /VYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ruDqHADLGhUq/OqjXNRFevT5jDn0habRcwA3l0QGuG8=;
-        b=O4U0g8BC4DyFZo36yrtoT018ZQoEULqkvr27of2t7ZAHL5Q7pxuDJOq+yJogcG0nH3
-         rX51gEy7APoXm5ObOOuCP4U3ipNRTPxI3VUbGusI3rT77YM6k2Bjd/1Orw6UiZAw3/mA
-         D+1JnUAa8pPv0nlH9Mq50ZAkE0A8vnRkls5rNoz7mOQgKP8T1NkGP3zEtZ9BPj2+4kLP
-         0d1elmNErU+4gVGOuJEYM1AqYa6Cp3hSbaooCEJoKlqsnhdgqeH04vR9vqkEnCRsAoR3
-         6wRle6UQu647Em5j5Ku2kMrOxMWeThe3FdLbd7CF/IViKHPf1G/Ca73u9Fl/4Eo9sqYg
-         4CLA==
-X-Gm-Message-State: ABuFfogY0+5UmirSngCKJC58gDIGRiNePoiYCacKbNQ13fjea/OMO31o
-        d/gt4Zeh4QNvncT9etU8yIzb6jeOjdeOfl2l4vjm3g==
-X-Google-Smtp-Source: ACcGV61wTHJT8KA0FRbB4T8HJavFhx8DCnBEFcv7It/8YmRplkdtkLJbpEFBtddWCai0iE4efhP92rfUMrMKw3tumlM=
-X-Received: by 2002:a9d:3a21:: with SMTP id j30mr2325823otc.237.1539395674440;
- Fri, 12 Oct 2018 18:54:34 -0700 (PDT)
+        Sat, 13 Oct 2018 05:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726526AbeJMJkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 05:40:08 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2225C20865;
+        Sat, 13 Oct 2018 02:04:54 +0000 (UTC)
+Date:   Fri, 12 Oct 2018 22:04:52 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masanari Iida <standby24x7@gmail.com>
+Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
+        mchehab+samsung@kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH] docs: Fix typos in histogram.rst
+Message-ID: <20181012220452.57d23a82@vmware.local.home>
+In-Reply-To: <20181013013057.10677-1-standby24x7@gmail.com>
+References: <20181013013057.10677-1-standby24x7@gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:ac9:56d8:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 18:54:33
- -0700 (PDT)
-In-Reply-To: <20181013014429.GB207108@joelaf.mtv.corp.google.com>
-References: <20181012013756.11285-2-joel@joelfernandes.org>
- <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1> <20181012125046.GA170912@joelaf.mtv.corp.google.com>
- <20181012.111836.1569129998592378186.davem@davemloft.net> <20181013013540.GA207108@joelaf.mtv.corp.google.com>
- <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com> <20181013014429.GB207108@joelaf.mtv.corp.google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 12 Oct 2018 18:54:33 -0700
-Message-ID: <CAKOZues25aaKz3_AiyfJ=r2QBd5MghgY3ky_ptg4Z8=ST4DCgw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     David Miller <davem@davemloft.net>, kirill@shutemov.name,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Minchan Kim <minchan@kernel.org>,
-        Ramon Pantin <pantin@google.com>, hughd@google.com,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        aryabinin@virtuozzo.com, luto@kernel.org, bp@alien8.de,
-        catalin.marinas@arm.com, chris@zankel.net,
-        dave.hansen@linux.intel.com, elfring@users.sourceforge.net,
-        fenghua.yu@intel.com, geert@linux-m68k.org, gxt@pku.edu.cn,
-        deller@gmx.de, mingo@redhat.com, jejb@parisc-linux.org,
-        jdike@addtoit.com, jonas@southpole.se, Julia.Lawall@lip6.fr,
-        kasan-dev@googlegroups.com, kvmarm@lists.cs.columbia.edu,
-        lftan@altera.com, linux-alpha@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
-        linux-mm <linux-mm@kvack.org>, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, jcmvbkbc@gmail.com,
-        nios2-dev@lists.rocketboards.org,
-        Peter Zijlstra <peterz@infradead.org>, richard@nod.at
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I wonder whether it makes sense to expose to userspace somehow whether
-mremap is "fast" for a particular architecture. If a feature relies on
-fast mremap, it might be better for some userland component to disable
-that feature entirely rather than blindly use mremap and end up
-performing very poorly. If we're disabling fast mremap when THP is
-enabled, the userland component can't just rely on an architecture
-switch and some kind of runtime feature detection becomes even more
-important.
+On Sat, 13 Oct 2018 10:30:57 +0900
+Masanari Iida <standby24x7@gmail.com> wrote:
 
-On Fri, Oct 12, 2018 at 6:44 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Fri, Oct 12, 2018 at 06:39:45PM -0700, Daniel Colascione wrote:
->> Not 32-bit ARM?
->
-> Well, I didn't want to enable every possible architecture we could in a
-> single go. Certainly arm32 can be a follow on enablement as can be other
-> architectures. The point of this series is to upstream this feature and
-> enable a hand-picked few architectures as a first step.
->
-> thanks,
->
->  - Joel
->
+> This patch fixes some spelling typos.
+> 
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  Documentation/trace/histogram.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
+> index 5ac724baea7d..7dda76503127 100644
+> --- a/Documentation/trace/histogram.rst
+> +++ b/Documentation/trace/histogram.rst
+> @@ -1765,7 +1765,7 @@ For example, here's how a latency can be calculated::
+>    # echo 'hist:keys=pid,prio:ts0=common_timestamp ...' >> event1/trigger
+>    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp-$ts0 ...' >> event2/trigger
+>  
+> -In the first line above, the event's timetamp is saved into the
+> +In the first line above, the event's timestamp is saved into the
+>  variable ts0.  In the next line, ts0 is subtracted from the second
+>  event's timestamp to produce the latency, which is then assigned into
+>  yet another variable, 'wakeup_lat'.  The hist trigger below in turn
+> @@ -1811,7 +1811,7 @@ the command that defined it with a '!'::
+>      /sys/kernel/debug/tracing/synthetic_events
+>  
+>  At this point, there isn't yet an actual 'wakeup_latency' event
+> -instantiated in the event subsytem - for this to happen, a 'hist
+> +instantiated in the event subsystem - for this to happen, a 'hist
+
+The first two appear to show that Tom has a faulty 's' key ;-)
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
+
+
+>  trigger action' needs to be instantiated and bound to actual fields
+>  and variables defined on other events (see Section 2.2.3 below on
+>  how that is done using hist trigger 'onmatch' action). Once that is
+> @@ -1837,7 +1837,7 @@ output can be displayed by reading the event's 'hist' file.
+>  A hist trigger 'action' is a function that's executed whenever a
+>  histogram entry is added or updated.
+>  
+> -The default 'action' if no special function is explicity specified is
+> +The default 'action' if no special function is explicitly specified is
+>  as it always has been, to simply update the set of values associated
+>  with an entry.  Some applications, however, may want to perform
+>  additional actions at that point, such as generate another event, or
+
