@@ -2,146 +2,135 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C19C6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77503C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B9520868
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:25:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uV2twWkm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B9520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AA3B20868
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA3B20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeJMKA3 (ORCPT
+        id S1726660AbeJMKBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 06:00:29 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39272 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbeJMKA2 (ORCPT
+        Sat, 13 Oct 2018 06:01:47 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43835 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeJMKBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 06:00:28 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l58so14121604otd.6
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 19:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AVT8yt4SB5J9DoLXgmc7fyXmf+sZ/QolyovgztLAQ10=;
-        b=uV2twWkmECSPrusRnN/vXPmvBFYTjOqR8hUGj7uFIqFnja6HWyEE59/EX6URRSK7ei
-         bsLQO8pq96Yj7M5G0CjsRbi5afMpRO5p6LGi6gqkF1Fsb96X2cpi7a6HzEjPHM5S5b/+
-         frAsPOqLD9LWEf7OVOqxvcQcS5euFpCDZTZ4mQNwNIu+I5BIdazSX176UsMrE2WE7yqy
-         vEzD1H9jpf2yN7Z39bZVobe1cuQmeBj/6yYghOi4Eg5BRvkIX/X2/Np9eIx+7MbesZ3i
-         M/WKTCz0rPGomijvt/NLvxi250WzkhscHNYFINjgKIa6h6fyG7Vk/yjb5v+LZqg963lC
-         Fyng==
+        Sat, 13 Oct 2018 06:01:47 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y20-v6so13067425eds.10;
+        Fri, 12 Oct 2018 19:26:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AVT8yt4SB5J9DoLXgmc7fyXmf+sZ/QolyovgztLAQ10=;
-        b=iO3iQcf9MSDHNE/4t8xHu6Q3sWW/OMv886ZyPBw+nOwQNsPfxyQb2lK5tDsU5Gesun
-         MW0w65fnERfJXE/zQyftw5kqy3wpRJt5mr6qnuINti/LHe0v+s8v/FCuaPLYho5swfY7
-         ef5J+I0zUgFf9DjRBGeIJD9i0eHhtQLKKVcSPCBhemSSS6KLcZqTVNSvO/fulL8offzd
-         A1OukEV0YOJ2uk34FzvAT7uNsD5aRwqYcBYOXXdvde7jmfthwLqLHub6IqvIldnJGGIc
-         +Pzd0RhKw5pNpx8p6QQKjyzFyAoIPLo9M7Exr5mT24U4nn+UcDdAqNatMXJbXCk9oSP0
-         xOnQ==
-X-Gm-Message-State: ABuFfoiHWtAmjM9y6JznS6ixTrapOz2OrCgyKDL/NIY2kfgSJWNv4Ulf
-        tk5toBx4AStGfML400YgO0vkwHyHyTZxIoTC7N49gA==
-X-Google-Smtp-Source: ACcGV626tmOS/hq+IOOBvcyLVHGavVFHf8rpMv7Ej7UrZuwws9AFWJei17jzLnNTEoqbyX0OG7eWDPlqeQQBpHBj980=
-X-Received: by 2002:a9d:62cb:: with SMTP id z11mr5748873otk.342.1539397509267;
- Fri, 12 Oct 2018 19:25:09 -0700 (PDT)
+        bh=+oxrHtI0zGX9gGTV4ikOtS7b7TmIoW1ok6jGY2PVgGI=;
+        b=Taw7CRscUy+zArkvU5QoZakmYET1b0yZeVUgopjM/kD5MX2ZRrhh3q4zOplvw5zX63
+         Nb5ec0Oe7LgFPa8q6gHVgB0OCRRDnhFULkWMZeTanVPSBZ0tjAIZqdR64+n5gM37+MOM
+         NvNsK0eCuc6IrPuHHvXW1Z0Yp/TzA/aLDtOvmxkMDC7ZTDZeXD8Vu3Uo81y+VQbGx4uy
+         GNPOInBnUK6T5sdz1O/iDzbWPXiu0uvlRPW3KF7kxDg9KBCr/2w/1v11cgMavpg5xKvA
+         oEsfmwah+EMR2IWFOWgUiEB0/XmqyPs4YbEvb0q1O8gpV6ZZ5CiUOR8Rl405za/Qcpab
+         uk3Q==
+X-Gm-Message-State: ABuFfoioii3Kg0G1e/3Yl82UIzJeNthtFK20Qg1seKoypp5xOIjJM8c/
+        mbFdHPHjTnkFv1k71rqu8/MWP++9AiA=
+X-Google-Smtp-Source: ACcGV61GMBSIwihmU56Z0pgPaqptVztFHJDtAOwpleHHkI0RS8ZiKXPlLua6BohrWUVDzV1Wl5RIAg==
+X-Received: by 2002:a17:906:4f98:: with SMTP id o24-v6mr9722825eju.237.1539397586691;
+        Fri, 12 Oct 2018 19:26:26 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id b26-v6sm1043467edw.0.2018.10.12.19.26.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 19:26:24 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id d2-v6so15266418wro.7;
+        Fri, 12 Oct 2018 19:26:23 -0700 (PDT)
+X-Received: by 2002:a5d:480b:: with SMTP id l11-v6mr7540908wrq.28.1539397583289;
+ Fri, 12 Oct 2018 19:26:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:56d8:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 19:25:08
- -0700 (PDT)
-In-Reply-To: <20181013021057.GA213522@joelaf.mtv.corp.google.com>
-References: <20181012013756.11285-2-joel@joelfernandes.org>
- <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1> <20181012125046.GA170912@joelaf.mtv.corp.google.com>
- <20181012.111836.1569129998592378186.davem@davemloft.net> <20181013013540.GA207108@joelaf.mtv.corp.google.com>
- <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com>
- <20181013014429.GB207108@joelaf.mtv.corp.google.com> <CAKOZues25aaKz3_AiyfJ=r2QBd5MghgY3ky_ptg4Z8=ST4DCgw@mail.gmail.com>
- <20181013021057.GA213522@joelaf.mtv.corp.google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 12 Oct 2018 19:25:08 -0700
-Message-ID: <CAKOZueu2wdkeUFYLQ8qE48yJs1_uRz-9RVJRkp==CL=jp=Q8+g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     David Miller <davem@davemloft.net>, kirill@shutemov.name,
+References: <1539012044-29998-2-git-send-email-aleksandr.aleksandrov@emlid.com>
+ <1539339841-22235-1-git-send-email-aleksandr.aleksandrov@emlid.com>
+ <1539339841-22235-2-git-send-email-aleksandr.aleksandrov@emlid.com>
+ <b47c5458-683e-3e96-0bbe-f9db84579c77@suse.de> <20181012133914.GA32670@imagebutcher>
+ <20181012202330.tdwedsof2bsnxkxn@flea>
+In-Reply-To: <20181012202330.tdwedsof2bsnxkxn@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 13 Oct 2018 10:26:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67406+vo_eF6-UvA0hPSx50kyXWTtcaeiOoXaz8uM1TQA@mail.gmail.com>
+Message-ID: <CAGb2v67406+vo_eF6-UvA0hPSx50kyXWTtcaeiOoXaz8uM1TQA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] arm64: dts: allwinner: new board - Emlid Neutis N5
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     aleksandr.aleksandrov@emlid.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, david@lechnology.com,
+        Thierry Reding <treding@nvidia.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, johan@kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Minchan Kim <minchan@kernel.org>,
-        Ramon Pantin <pantin@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        aryabinin@virtuozzo.com, luto@kernel.org, bp@alien8.de,
-        catalin.marinas@arm.com, Chris Zankel <chris@zankel.net>,
-        dave.hansen@linux.intel.com, elfring@users.sourceforge.net,
-        fenghua.yu@intel.com, geert@linux-m68k.org, gxt@pku.edu.cn,
-        deller@gmx.de, mingo@redhat.com, jejb@parisc-linux.org,
-        jdike@addtoit.com, Jonas Bonn <jonas@southpole.se>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        kasan-dev@googlegroups.com, kvmarm@lists.cs.columbia.edu,
-        lftan@altera.com, linux-alpha@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
-        linux-mm <linux-mm@kvack.org>, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, Max Filippov <jcmvbkbc@gmail.com>,
-        nios2-dev@lists.rocketboards.org,
-        Peter Zijlstra <peterz@infradead.org>, richard@nod.at
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 7:10 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Fri, Oct 12, 2018 at 06:54:33PM -0700, Daniel Colascione wrote:
->> I wonder whether it makes sense to expose to userspace somehow whether
->> mremap is "fast" for a particular architecture. If a feature relies on
->> fast mremap, it might be better for some userland component to disable
->> that feature entirely rather than blindly use mremap and end up
->> performing very poorly. If we're disabling fast mremap when THP is
->> enabled, the userland component can't just rely on an architecture
->> switch and some kind of runtime feature detection becomes even more
->> important.
+On Sat, Oct 13, 2018 at 4:23 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> I hate to point out that its forbidden to top post on LKML :-)
-> https://kernelnewbies.org/mailinglistguidelines
-> So don't that Mr. Dan! :D
+> On Fri, Oct 12, 2018 at 04:39:14PM +0300, Aleksandr Aleksandrov wrote:
+> > Hi Andreas,
+> >
+> > Thanks for your feedback!
+> >
+> > > > + *
+> > > > + * Copyright (C) 2018 Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+> > > > + */
+> > > > +
+> > > > +/dts-v1/;
+> > > > +
+> > > > +#include "sun50i-h5-emlid-neutis-n5.dtsi"
+> > > > +
+> > > > +/ {
+> > > > + model = "Emlid Neutis N5 Developer board";
+> > > > + compatible = "emlid,neutis-n5-devboard",
+> > > > +              "emlid,neutis-n5",
+> > >
+> > > You are lacking bindings definitions for these new identifiers. The
+> > > vendor prefix should be patch 1/3, the SoM/board compatibles 2/3 and
+> > > this .dts[i] patch 3/3, so that only vendor prefixes and compatibles
+> > > that are defined and don't result in checkpatch.pl warnings get used.
+> >
+> > Patch 2/3:
+> >
+> > commit 46dcb8632b36644cb20e6b35ede12ff0088a60eb
+> > Author: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+> > Date:   Fri Oct 12 16:22:28 2018 +0300
+> >
+> >     dt-bindings: arm: sunxi: emlid,neutis-n5(-devboard)
+> >
+> >     sunxi: add new compatibles for Emlid Neutis Dev board and SoM module
+> >
+> >     Signed-off-by: Aleksandr Aleksandrov <aleksandr.aleksandrov@emlid.com>
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+> > index e4beec3..a907e52 100644
+> > --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+> > +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+> > @@ -19,3 +19,5 @@ using one of the following compatible strings:
+> >    allwinner,sun9i-a80
+> >    allwinner,sun50i-a64
+> >    nextthing,gr8
+> > +  emlid,neutis-n5
+> > +  emlid,neutis-n5-devboard
+> >
+> > Is this right place for the neutis compatibles?
+>
+> No, those are for SoCs compatible. I'm not sure we ever created a
+> board compatible files.
 
-Guilty as charged. I really should switch back to Gnus. :-)
+We never did. We don't even have all vendor prefixes in, only the ones
+that seem more popular, and actually have an identifiable website.
 
-> But anyway, I think this runtime detection thing is not needed. THP is
-> actually expected to be as fast as this anyway, so if that's available then
-> we should already be as fast.
-
-Ah, I think the commit message is confusing. (Or else I'm misreading
-the patch now.) It's not quite that we're disabling the feature when
-THP is enabled anywhere, but rather that we use the move_huge_pmd path
-for huge PMDs and use the new code only for non-huge PMDs. (Right?) If
-that's the case, the commit message shouldn't say "Incase THP is
-enabled, the optimization is skipped". Even if THP is enabled on a
-system generally, we might use the new PMD-moving code for mapping
-types that don't support THP-ization, right?
-
-> This is for non-THP where THP cannot be enabled
-> and there is still room for some improvement. Most/all architectures will be
-> just fine with this. This flag is more of a safety-net type of thing where in
-> the future if there is this one or two weird architectures that don't play
-> well, then they can turn it off at the architecture level by not selecting
-> the flag. See my latest patches for the per-architecture compile-time
-> controls. Ideally we'd like to blanket turn it on on all, but this is just
-> playing it extra safe as Kirill and me were discussing on other threads.
-
-Sure. I'm just pointing out that the 500x performance different turns
-the operation into a qualitatively different feature, so if we expect
-to actually ship a mainstream architecture without support for this
-thing, we should make it explicit. If we're not, we shouldn't.
+ChenYu
