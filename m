@@ -2,117 +2,136 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E0AC6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDED8C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CFC20895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:13:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BkHw4hPy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LXYY1ZB/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CFC20895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id AF8C520895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 02:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8C520895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeJMJsT (ORCPT
+        id S1726320AbeJMJtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 05:48:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52010 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeJMJsT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 05:48:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4031660BFE; Sat, 13 Oct 2018 02:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539396783;
-        bh=YxG0wgOHAFsih/UvVuK8Jwdf0DGFBwOuS3XBPC4bxIs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BkHw4hPyTxui6t4JBVsm/dWXAm3hAAtGL/T76sbJoQVxMSJ0gbS7KTBAsYu3Ef9qc
-         H319noWb/OQhpX4NDdi5yXWUum41u4+k7mZ1j+exFLfe1UOwoFFc1kd3jDyzKxJKcQ
-         Zff58Qrg5MEJlPkojUQ0rjTT7nWStndvlO6KtKLo=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 5EAD460285;
-        Sat, 13 Oct 2018 02:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539396782;
-        bh=YxG0wgOHAFsih/UvVuK8Jwdf0DGFBwOuS3XBPC4bxIs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LXYY1ZB/uVZ+VT+Douq1msi4nm4Ejt6RffBWLEv4i2yYVVVHa6CL2T1F0texsxnhV
-         75cSnUEGQNMF6BLfHupGxhjkDRFGOWqY2XJoD7aXhjysA2ppdLSICWUh6diQjvQN7z
-         kChd4FJ8K6k2n1307+ddbLehHAoG40yihvOvkEl8=
+        Sat, 13 Oct 2018 05:49:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57230 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbeJMJtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 05:49:20 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AA723078AA9;
+        Sat, 13 Oct 2018 02:14:04 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-28.brq.redhat.com [10.40.200.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6AFB1601AC;
+        Sat, 13 Oct 2018 02:13:55 +0000 (UTC)
+Date:   Sat, 13 Oct 2018 04:14:16 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Yury Norov <ynorov@caviumnetworks.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        Alexander Graf <agraf@suse.de>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        James Morse <james.morse@arm.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Manuel Montezelo <manuel.montezelo@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Nathan_Lynch <Nathan_Lynch@mentor.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Wookey <wookey@wookware.org>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+Message-ID: <20181013021416.GE21972@asgard.redhat.com>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180724173957.GA22106@yury-thinkpad>
+ <20181010141017.GA2881@asgard.redhat.com>
+ <20181010153655.GA212880@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 13 Oct 2018 10:13:02 +0800
-From:   cang@codeaurora.org
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     subhashj@codeaurora.org, Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        venkatg@codeaurora.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] scsi: ufs: make UFS Tx lane1 clock optional for
- QCOM platforms
-In-Reply-To: <CAD=FV=WjO9YvKHDiEDt8+8TJ_JjnzcVAqB99nhP5LwnWO0fuLw@mail.gmail.com>
-References: <1539306736-9519-1-git-send-email-cang@codeaurora.org>
- <CAD=FV=WjO9YvKHDiEDt8+8TJ_JjnzcVAqB99nhP5LwnWO0fuLw@mail.gmail.com>
-Message-ID: <5f2d152941aed6411f54d47dd7ec199e@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010153655.GA212880@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Sat, 13 Oct 2018 02:14:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-13 00:55, Doug Anderson wrote:
-> Hi,
+On Wed, Oct 10, 2018 at 04:36:56PM +0100, Catalin Marinas wrote:
+> On Wed, Oct 10, 2018 at 04:10:21PM +0200, Eugene Syromiatnikov wrote:
+> > I have some questions regarding AArch64 ILP32 implementation for which I
+> > failed to find an answer myself:
+> >  * How ptrace() tracer is supposed to distinguish between ILP32 and LP64
+> >    tracees? For MIPS N32 and x32 this is possible based on syscall
+> >    number, but for AArch64 ILP32 I do not see such a sign. There's also
+> >    ARM_ip is employed for signalling entering/exiting, I wonder whether
+> >    it's possible to employ it also for signalling tracee's personality.
 > 
-> On Thu, Oct 11, 2018 at 6:12 PM Can Guo <cang@codeaurora.org> wrote:
->> +       if (err != -EPROBE_DEFER)
->> +               dev_err(dev, "failed to get %s err %d",
->> +                               name, err);
-> 
-> I wouldn't spin just for this, but if you spin for some other reason
-> you could move the above "dev_err" onto one line now.  Sorry: I should
-> have noticed that / done that on my patch...
-> 
-> 
+> With the current implementation, I don't think you can distinguish. From
+> the kernel perspective, the register set is the same. What is the
+> use-case for this?
 
-Yeah... I didn't notice it too. Shall push a new one to address it.
+Err, a ptrace()-based tracer trying to trace a process, for example?
 
->> @@ -141,24 +147,21 @@ static int ufs_qcom_enable_lane_clks(struct 
->> ufs_qcom_host *host)
-> 
-> Idea for a future patch: now that I look at what's left of this
-> function you're basically re-implementing clk_bulk_prepare_enable()
-> and clk_bulk_disable_unprepare() now.  I bet your code would be
-> cleaner / nicer by switching to that.
-> 
-> ...possibly you might need to improve the clk_bulk_get() API to allow
-> for some clock to be optional, but that would be a pretty easy patch
-> to post up.
-> 
-> In any case I think it's better to do the clk_bulk switch in a future
-> / separate patch, so:
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Tested-by: Douglas Anderson <dianders@chromium.org>
-> 
-> 
-> -Doug
+> We could add a new regset to expose the ILP32 state (NT_ARM_..., I can't
+> think of a name now but probably not PER* as this implies PER_LINUX_...
+> which is independent from TIF_32BIT_*).
 
-That is a good idea, I shall follow up after this one is merged.
+So that would require an additional ptrace() call on each syscall stop,
+is that correct?
 
-Thank you.
--Can Guo
+> >  * What's the reasoning behind capping syscall arguments to 32 bit? x32
+> >    and MIPS N32 do not have such a restriction (and do not need special
+> >    wrappers for syscalls that pass 64-bit values as a result, except
+> >    when they do,  as it is the case for preadv2 on x32); moreover, that
+> >    would lead to insurmountable difficulties for AArch64 ILP32 tracers
+> >    that try to trace LP64 tracees, as it would be impossible to pass
+> >    64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
+> 
+> We've attempted in earlier versions to allow a mix of 32 and 64-bit
+> register values from ILP32 but it got pretty complicated. The entry code
+> would need to know which registers need zeroing of the top 32-bit
+
+If kernel specifies 64-bit wide registers for syscalls, then it's the
+caller's (libc's) responsibility to properly sign-extend arguments when
+needed, and glibc, for example, already has proper type definitions that
+aimed to handle this.
+
+> and the generic unistd.h wrapper hacks were not very nice.
+
+They are already implemented in glibc during x32 introduction period.
+
+> Some past discussions:
+> 
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1211716.html
+> 
+> -- 
+> Catalin
