@@ -6,94 +6,96 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 680D6C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C299C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A88620659
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1E02054F
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GxAXdlWA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h/xl7UMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A88620659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GSDSxSfw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A1E02054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeJNAnu (ORCPT
+        id S1727016AbeJNAoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 20:43:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39680 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbeJNAnu (ORCPT
+        Sat, 13 Oct 2018 20:44:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46598 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbeJNAoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 20:43:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3879D60B72; Sat, 13 Oct 2018 17:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539450354;
-        bh=T3niiUekW6H17D3koI+YESKbhPh+vkVSMp3lV6DKPw0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=GxAXdlWAH/zbwanIdvme4RZdG9vOuW+uAXLH2vJmIabw8HfGyqB4MyQhFScjx4nwt
-         8nZsMgnJpVWXV+tN0QS9yqwsDIFDRmysP7xao9lckQ/IdIOlYXypw/3etFDNhhc4WD
-         lE/cQxJvUajI/1YMS11YpcxAyrj12VTqjVlv8hZc=
-Received: from potku.adurom.net (88-114-240-228.elisa-laajakaista.fi [88.114.240.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3776B605A4;
-        Sat, 13 Oct 2018 17:05:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539450352;
-        bh=T3niiUekW6H17D3koI+YESKbhPh+vkVSMp3lV6DKPw0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=h/xl7UMoEOkkPf1rHV591POTqZHQHfR4syZmc9zdHmaVepKFAqRLMzZx84yq6Pm0I
-         VzI2UkTM8j91dyOPkMAF7Ch85JgT2ASDS43n52EUimd7OCMguP5GjP1xicNFD/eVJh
-         O6wsAeb0Szo26MR+f8EBgBYw5prS61OZP7gZXY1g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3776B605A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sat, 13 Oct 2018 20:44:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=mv0toIaNlwA0+Z3ryAFpIuL9LEcHiD181vJNGTXalvU=; b=GSDSxSfwr/FVK/e/rhBeEGOixi
+        E2t2FhL76c+schVkRvFPPK91kD5Kku0wP0euKBqcYxAVwUrIBQ32Xcr8ChUPe0zqs1ufsHM/ipaMH
+        tE2H1LWiM/+n+kHUF5/obqhJ35SWIfM3m0BYUfxzdGOv3iSSdQi1inYxDTzJOxc/RIGKRSvzOmsAW
+        t2ceKzKGDWEKb6mI7e8Qua6giOErAyx+Ntl1Ov+RmkNQmZ7htCNqYq97CFAEPnW0tIsHB2cJv6E/X
+        bn69TBk+xoL+3pGyp6PZ1iP53PPaAi6ESiXsbI4fTt9g3tvdNUrMD7Zi64Y0ki2TN2Mh8iM+FjP3z
+        WYcDmTXQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gBNMp-0007nT-TY; Sat, 13 Oct 2018 17:06:20 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] input: touchscreen: fix wm97xx-ts exit path
+Message-ID: <c522fb84-20cd-39e6-bd2d-79ed8709fd5d@infradead.org>
+Date:   Sat, 13 Oct 2018 10:06:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rtl8xxxu: Remove set but not used variables 'usedesc40'
- and 'seq_number'
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
-References: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181013170554.3879D60B72@smtp.codeaurora.org>
-Date:   Sat, 13 Oct 2018 17:05:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_tx':
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4925:7: warning:
->  variable 'usedesc40' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4921:6: warning:
->  variable 'seq_number' set but not used [-Wunused-but-set-variable]
-> 
-> 'usedesc40' and 'seq_number' are not used any more after
-> commit b59415c2dd08 ("rtl8xxxu: Split filling of TX descriptors into separate functions")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Loading then unloading wm97xx-ts.ko when CONFIG_AC97_BUS=m
+causes a WARNING: from drivers/base/driver.c:
 
-Patch applied to wireless-drivers-next.git, thanks.
+Unexpected driver unregister!
+WARNING: CPU: 0 PID: 1709 at ../drivers/base/driver.c:193 driver_unregister+0x30/0x40
 
-03ce6f8a6776 rtl8xxxu: Remove set but not used variables 'usedesc40' and 'seq_number'
+Fix this by only calling driver_unregister() with the same
+condition that driver_register() is called.
 
--- 
-https://patchwork.kernel.org/patch/10630829/
+Fixes: ae9d1b5fbd7b ("Input: wm97xx: add new AC97 bus support")
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: patches@opensource.cirrus.com
+Cc: linux-input@vger.kernel.org
+---
+ drivers/input/touchscreen/wm97xx-core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- lnx-419-rc7.orig/drivers/input/touchscreen/wm97xx-core.c
++++ lnx-419-rc7/drivers/input/touchscreen/wm97xx-core.c
+@@ -929,7 +929,8 @@ static int __init wm97xx_init(void)
+ 
+ static void __exit wm97xx_exit(void)
+ {
+-	driver_unregister(&wm97xx_driver);
++	if (IS_BUILTIN(CONFIG_AC97_BUS))
++		driver_unregister(&wm97xx_driver);
+ 	platform_driver_unregister(&wm97xx_mfd_driver);
+ }
+ 
+
 
