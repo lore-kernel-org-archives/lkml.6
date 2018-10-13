@@ -2,213 +2,90 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA2DC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6072FC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF5020659
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B4D220659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:02:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOlRCVqx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF5020659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UZPgHWY6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EbGs9Bpb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4D220659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeJNAge (ORCPT
+        id S1726878AbeJNAks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 20:36:34 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41499 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbeJNAge (ORCPT
+        Sat, 13 Oct 2018 20:40:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38320 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbeJNAks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 20:36:34 -0400
-Received: by mail-oi1-f196.google.com with SMTP id l197-v6so12140710oib.8;
-        Sat, 13 Oct 2018 09:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q/ReSYIuFOFaRJhbbz3/wwsKBIHKrTWE6n3IfmclR94=;
-        b=MOlRCVqx2Y+1giGNbcCrP/xUK8phJjVp+aM+gjXCsTuBn8PDNwbDPJ+vuPSg4MhM9S
-         ynAS9qEs+8cjQZs54KUKRB7TR1N3F/CuNRB5CE8bOMEiJj3lcUMHfPotttIHJm+mb/zJ
-         gE/q7VHKaFIAgoo92UGnQQ2UYC+8s51hGOy6uSlOhUf+JYQKu4YSSxBGCQ3dCZDHS48U
-         h1eZqDSX7lp99MrHR045X5HZLBs299lovrbOPWgt2R9eXDDXxFtXJT/aT4pC2aYhTS5Z
-         p+khnx7sotroVN8FE3deykrx/azq6qgR0a/OP98uxeRzXoVdan5k2h5TqejIDzh5jv3K
-         XcmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q/ReSYIuFOFaRJhbbz3/wwsKBIHKrTWE6n3IfmclR94=;
-        b=iEfw43lQ0NaqagypN5Kc7dmMsspme9NKjVCoDrHwOFib1uyWJAMOiDuuoqUZNuhwYF
-         h33jlaIQ+fQK3+6OictCgG0ND8hiBsqNTG/PgWXbjP1P/rYXXk02GJNMIoZolY8HjN/Q
-         XOJRhyEh0Ibp5c/ESsGGM0Y1gmmegXxq+K3EIYH9yn+PnBcj7vTakSitN5ar84lVo9QO
-         4GbTjeDWsoL/gdaT6BPFyCM5Mtr8ePZo2zDdar9fpsdUmS++lXAg9ek/xLCesJWbJ4xv
-         u5nWCmKTmrDPRHZUqok9Zza8QHCQoMFBK/Q6FUlbX9F8C9+68LLfx7oIoa9YCKc9fR6t
-         568Q==
-X-Gm-Message-State: ABuFfogI39PmRjUIFCJ9VItyVl6+Q0MDMFi3ZpjCaZPnjyBBtio5DHql
-        JPPJR9Pjo9xhh9Vfoyus1t/wQ/ydKU9n12AQNRo=
-X-Google-Smtp-Source: ACcGV63COr6BtiejFrSjVhlgKO13u271ANuhQiqviC7cJts//xF2z9gen884pTdR1tBxjJv+yxEjy4CPNEuBykH2upw=
-X-Received: by 2002:aca:d4d3:: with SMTP id l202-v6mr5440360oig.15.1539449919711;
- Sat, 13 Oct 2018 09:58:39 -0700 (PDT)
+        Sat, 13 Oct 2018 20:40:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D315460C62; Sat, 13 Oct 2018 17:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539450173;
+        bh=wcemWQgqR2JXWaN23sJAclpbIloQsL+0RxhVlzgSBms=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=UZPgHWY6XCHU6InKnlPU5i4gDIZ4o5re63nUVfRJRdC2Ux2+u8HW3KpKojQAuEQPE
+         e2Um0YIy8nxamg3HijzVnrlaEGB52JXN6dp8+LkmgNZy25A75jVGSgc038fFTxd0UR
+         wb94G4kcbtezNs6n7Fi33t0m+PRJiy/VD1btT8SY=
+Received: from potku.adurom.net (88-114-240-228.elisa-laajakaista.fi [88.114.240.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E60FF60B72;
+        Sat, 13 Oct 2018 17:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539450173;
+        bh=wcemWQgqR2JXWaN23sJAclpbIloQsL+0RxhVlzgSBms=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=EbGs9BpbsRZVqVBZ/uPlzqzcCIC1xIMnAYwdrYFTW6L8ArEmx6JfjrLUkcvGMW4h3
+         YPSuUczMRCsro41PgOVa7cX9K9wUZNpeIE1s7BqKxO0JhzuPY9001BTslDAlqazhFy
+         w820amNA6RoEevaICuvHsgQM97UhHOPGvRon8Cng=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E60FF60B72
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181011221237.1925.85591.stgit@localhost.localdomain> <20181011221334.1925.31961.stgit@localhost.localdomain>
-In-Reply-To: <20181011221334.1925.31961.stgit@localhost.localdomain>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Date:   Sat, 13 Oct 2018 12:58:03 -0400
-Message-ID: <CAGM2rebWT43mTrpsbiwqpioNa=K68OQp=fstBmgov3tdkXjPiQ@mail.gmail.com>
-Subject: Re: [mm PATCH v2 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
-        LKML <linux-kernel@vger.kernel.org>, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com,
-        Vlastimil Babka <vbabka@suse.cz>, sparclinux@vger.kernel.org,
-        dan.j.williams@intel.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iwlegacy: Add a lock assertion in il4965_send_rxon_assoc()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181005135546.21011-1-baijiaju1990@gmail.com>
+References: <20181005135546.21011-1-baijiaju1990@gmail.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     sgruszka@redhat.com, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181013170253.D315460C62@smtp.codeaurora.org>
+Date:   Sat, 13 Oct 2018 17:02:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am worried about this change. I added SPARC optimized
-mm_zero_struct_page() specifically to SPARC because it has a poor
-performance with small memset()s, since it uses STBI instructions.
-However, other architectures might not suffer with small memset()s,
-and have hardware optimized memset variants for small sizes. Don't
-forget, this is a leaf routine on most arches, so the function call
-should be cheap. Also, the macro itself is not very flexible: when
-size of struct page is changed, it also must be modified (we could add
-fall throughs though), I would add this macro only to those arches
-that benefit from this change, in other words, I would like to see
-performance data.
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-I will review the rest of the patches in this series on Monday.
+> The variables il->staging.filter_flags, rxon1->filter_flags and 
+> rxon2->filter_flags need to be protected by the mutex lock il->mutex.
+> This patch adds a lock assertion of il->mutex to check whether 
+> this lock is held.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Thank you,
-Pavel
-On Thu, Oct 11, 2018 at 6:17 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> This change makes it so that we use the same approach that was already in
-> use on Sparc on all the archtectures that support a 64b long.
->
-> This is mostly motivated by the fact that 8 to 10 store/move instructions
-> are likely always going to be faster than having to call into a function
-> that is not specialized for handling page init.
->
-> An added advantage to doing it this way is that the compiler can get away
-> with combining writes in the __init_single_page call. As a result the
-> memset call will be reduced to only about 4 write operations, or at least
-> that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
-> count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
-> my system.
->
-> One change I had to make to the function was to reduce the minimum page
-> size to 56 to support some powerpc64 configurations.
->
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
->  include/linux/mm.h                  |   34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 34 insertions(+), 30 deletions(-)
->
-> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-> index 1393a8ac596b..22500c3be7a9 100644
-> --- a/arch/sparc/include/asm/pgtable_64.h
-> +++ b/arch/sparc/include/asm/pgtable_64.h
-> @@ -231,36 +231,6 @@
->  extern struct page *mem_map_zero;
->  #define ZERO_PAGE(vaddr)       (mem_map_zero)
->
-> -/* This macro must be updated when the size of struct page grows above 80
-> - * or reduces below 64.
-> - * The idea that compiler optimizes out switch() statement, and only
-> - * leaves clrx instructions
-> - */
-> -#define        mm_zero_struct_page(pp) do {                                    \
-> -       unsigned long *_pp = (void *)(pp);                              \
-> -                                                                       \
-> -        /* Check that struct page is either 64, 72, or 80 bytes */     \
-> -       BUILD_BUG_ON(sizeof(struct page) & 7);                          \
-> -       BUILD_BUG_ON(sizeof(struct page) < 64);                         \
-> -       BUILD_BUG_ON(sizeof(struct page) > 80);                         \
-> -                                                                       \
-> -       switch (sizeof(struct page)) {                                  \
-> -       case 80:                                                        \
-> -               _pp[9] = 0;     /* fallthrough */                       \
-> -       case 72:                                                        \
-> -               _pp[8] = 0;     /* fallthrough */                       \
-> -       default:                                                        \
-> -               _pp[7] = 0;                                             \
-> -               _pp[6] = 0;                                             \
-> -               _pp[5] = 0;                                             \
-> -               _pp[4] = 0;                                             \
-> -               _pp[3] = 0;                                             \
-> -               _pp[2] = 0;                                             \
-> -               _pp[1] = 0;                                             \
-> -               _pp[0] = 0;                                             \
-> -       }                                                               \
-> -} while (0)
-> -
->  /* PFNs are real physical page numbers.  However, mem_map only begins to record
->   * per-page information starting at pfn_base.  This is to handle systems where
->   * the first physical page in the machine is at some huge physical address,
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 273d4dbd3883..dee407998366 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long limit) { }
->   * zeroing by defining this macro in <asm/pgtable.h>.
->   */
->  #ifndef mm_zero_struct_page
-> +#if BITS_PER_LONG == 64
-> +/* This function must be updated when the size of struct page grows above 80
-> + * or reduces below 64. The idea that compiler optimizes out switch()
-> + * statement, and only leaves move/store instructions
-> + */
-> +#define        mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
-> +static inline void __mm_zero_struct_page(struct page *page)
-> +{
-> +       unsigned long *_pp = (void *)page;
-> +
-> +        /* Check that struct page is either 56, 64, 72, or 80 bytes */
-> +       BUILD_BUG_ON(sizeof(struct page) & 7);
-> +       BUILD_BUG_ON(sizeof(struct page) < 56);
-> +       BUILD_BUG_ON(sizeof(struct page) > 80);
-> +
-> +       switch (sizeof(struct page)) {
-> +       case 80:
-> +               _pp[9] = 0;     /* fallthrough */
-> +       case 72:
-> +               _pp[8] = 0;     /* fallthrough */
-> +       default:
-> +               _pp[7] = 0;     /* fallthrough */
-> +       case 56:
-> +               _pp[6] = 0;
-> +               _pp[5] = 0;
-> +               _pp[4] = 0;
-> +               _pp[3] = 0;
-> +               _pp[2] = 0;
-> +               _pp[1] = 0;
-> +               _pp[0] = 0;
-> +       }
-> +}
-> +#else
->  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
->  #endif
-> +#endif
->
->  /*
->   * Default maximum number of active map areas, this limits the number of vmas
->
+Patch applied to wireless-drivers-next.git, thanks.
+
+52a312673aff iwlegacy: Add a lock assertion in il4965_send_rxon_assoc()
+
+-- 
+https://patchwork.kernel.org/patch/10628205/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
