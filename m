@@ -2,118 +2,177 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C149EC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A5CC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8834D2098A
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 04:56:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjLKBF08"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8834D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C4E72087D
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 05:00:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4E72087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeJMMaw (ORCPT
+        id S1726318AbeJMMgZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 08:30:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46089 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeJMMau (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 08:30:50 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so7147172pfb.13;
-        Fri, 12 Oct 2018 21:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CCjwtqQtCAOwIXfabE6A59py+g67jCSp+upDI4OtmXg=;
-        b=XjLKBF08ZQ+dsEyY+1vcvgFDvIQUH+3J+mij+q0zb8rlPtPBVFuf5qpY1NOYkLMfWI
-         LqJaauyLUA2EQ/lBipHWNE0gvwzV7tNahnPnfKggwln8idyWVA6EVc1MNMpOXBMduylD
-         hbUgnmPJ3tMlT7Ez7ftzWY9/qtX+3Z8PEP+Wx6XfJEnvDQwMYWSHtLZezIJITXjbsgzr
-         qxFUauNaVKokdPIeKVZxfVgmERQM91b3Al/4t14pd+5anf9hSVdzeG0KAt7gK3Br4dze
-         MFzqaiAyDAcx9IFrwN8uYqjthUhxIim9HYDqu2myBuMCvzZsF6TY1FJsuVS7IATvdWvM
-         KT4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CCjwtqQtCAOwIXfabE6A59py+g67jCSp+upDI4OtmXg=;
-        b=MtP/UR9hxmoFEcK0z7zqLGJZ4HwaKeDK+4gcT34BefKAC3TLoJa4+Y6u4PG9poyPUH
-         TzJDtptIkintvprrtRFZch61eQz2b+0FD7Z68T0ndRdNDa6JdzZzxznlM462c7maLzZx
-         B4xpJAoXyW5CCgGkBPFdzIO5HBXS895eFNzDEr9wR4poamNT4f3LlTHRJShL+8UQB006
-         hQce+HB/Cqw5NZGnmNyKJWWzbl8looNsodVa7otBh7EKNUF8iSt3ys3J87D5ajknz+kW
-         BxMQ3cFONciQ3eLh1kRnbZDyi+VAs8VpyiI+0KcwcxtTFIZ4OcTEKpX5GvMqWimbSM77
-         T4YQ==
-X-Gm-Message-State: ABuFfogcVKTIzwXjNSB988y+f8dY9+tsP9dWspBv7Z2uElFHHtOvnfhs
-        G7YUyYaEgF9wQ1vR3HdRiFQ=
-X-Google-Smtp-Source: ACcGV63Jw8JZON7Ti8uWdCVxtgPjcr/J6vei2RiqRNuBSRDqGBHpxXgxxuMvJCv9Z1oTfYAqhkmFJQ==
-X-Received: by 2002:a63:565d:: with SMTP id g29-v6mr7995901pgm.227.1539406509460;
-        Fri, 12 Oct 2018 21:55:09 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id h87-v6sm6959462pfj.78.2018.10.12.21.55.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 12 Oct 2018 21:55:08 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v2 04/18] powerpc/pseries: add of_node_put() in dlpar_detach_node()
-Date:   Fri, 12 Oct 2018 21:53:24 -0700
-Message-Id: <1539406418-18162-5-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
-References: <1539406418-18162-1-git-send-email-frowand.list@gmail.com>
+        Sat, 13 Oct 2018 08:36:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45738 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbeJMMgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 08:36:25 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 05289D7E6A;
+        Sat, 13 Oct 2018 05:00:43 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (dhcp193-42.pnq.redhat.com [10.65.193.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7A921C921;
+        Sat, 13 Oct 2018 05:00:23 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org
+Cc:     jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, nilal@redhat.com, kwolf@redhat.com,
+        pbonzini@redhat.com, zwisler@kernel.org, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, david@redhat.com,
+        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
+        lcapitulino@redhat.com, imammedo@redhat.com, eblake@redhat.com,
+        pagupta@redhat.com
+Subject: [PATCH v2 0/2] kvm "fake DAX" device
+Date:   Sat, 13 Oct 2018 10:30:19 +0530
+Message-Id: <20181013050021.11962-1-pagupta@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 13 Oct 2018 05:00:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
-
-"of: overlay: add missing of_node_get() in __of_attach_node_sysfs"
-added a missing of_node_get() to __of_attach_node_sysfs().  This
-results in a refcount imbalance for nodes attached with
-dlpar_attach_node().  The calling sequence from dlpar_attach_node()
-to __of_attach_node_sysfs() is:
-
-   dlpar_attach_node()
-      of_attach_node()
-         __of_attach_node_sysfs()
-
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
-
-***** UNTESTED.  I need people with the affected PowerPC systems
-*****            (systems that dynamically allocate and deallocate
-*****            devicetree nodes) to test this patch.
-
- arch/powerpc/platforms/pseries/dlpar.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index a0b20c03f078..e3010b14aea5 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -272,6 +272,8 @@ int dlpar_detach_node(struct device_node *dn)
- 	if (rc)
- 		return rc;
+ This patch series has implementation for "fake DAX". 
+ "fake DAX" is fake persistent memory(nvdimm) in guest 
+ which allows to bypass the guest page cache. This also
+ implements a VIRTIO based asynchronous flush mechanism.  
  
-+	of_node_put(dn);
-+
- 	return 0;
- }
+ Sharing guest kernel driver in this patchset with the 
+ changes suggested in v1. Tested with Qemu side device 
+ emulation for virtio-pmem [4]. 
  
--- 
-Frank Rowand <frank.rowand@sony.com>
+ Details of project idea for 'fake DAX' flushing interface 
+ is shared [2] & [3].
 
+ Implementation is divided into two parts:
+ New virtio pmem guest driver and qemu code changes for new 
+ virtio pmem paravirtualized device.
+
+1. Guest virtio-pmem kernel driver
+---------------------------------
+   - Reads persistent memory range from paravirt device and 
+     registers with 'nvdimm_bus'.  
+   - 'nvdimm/pmem' driver uses this information to allocate 
+     persistent memory region and setup filesystem operations 
+     to the allocated memory. 
+   - virtio pmem driver implements asynchronous flushing 
+     interface to flush from guest to host.
+
+2. Qemu virtio-pmem device
+---------------------------------
+   - Creates virtio pmem device and exposes a memory range to 
+     KVM guest. 
+   - At host side this is file backed memory which acts as 
+     persistent memory. 
+   - Qemu side flush uses aio thread pool API's and virtio 
+     for asynchronous guest multi request handling. 
+
+   David Hildenbrand CCed also posted a modified version[5] of 
+   qemu virtio-pmem code based on updated Qemu memory device API. 
+
+ Virtio-pmem errors handling:
+ ----------------------------------------
+  Checked behaviour of virtio-pmem for below types of errors
+  Need suggestions on expected behaviour for handling these errors?
+
+  - Hardware Errors: Uncorrectable recoverable Errors: 
+  a] virtio-pmem: 
+    - As per current logic if error page belongs to Qemu process, 
+      host MCE handler isolates(hwpoison) that page and send SIGBUS. 
+      Qemu SIGBUS handler injects exception to KVM guest. 
+    - KVM guest then isolates the page and send SIGBUS to guest 
+      userspace process which has mapped the page. 
+  
+  b] Existing implementation for ACPI pmem driver: 
+    - Handles such errors with MCE notifier and creates a list 
+      of bad blocks. Read/direct access DAX operation return EIO 
+      if accessed memory page fall in bad block list.
+    - It also starts backgound scrubbing.  
+    - Similar functionality can be reused in virtio-pmem with MCE 
+      notifier but without scrubbing(no ACPI/ARS)? Need inputs to 
+      confirm if this behaviour is ok or needs any change?
+
+Changes from PATCH v1: [1]
+- 0-day build test for build dependency on libnvdimm 
+
+ Changes suggested by - [Dan Williams]
+- Split the driver into two parts virtio & pmem  
+- Move queuing of async block request to block layer
+- Add "sync" parameter in nvdimm_flush function
+- Use indirect call for nvdimm_flush
+- Don’t move declarations to common global header e.g nd.h
+- nvdimm_flush() return 0 or -EIO if it fails
+- Teach nsio_rw_bytes() that the flush can fail
+- Rename nvdimm_flush() to generic_nvdimm_flush()
+- Use 'nd_region->provider_data' for long dereferencing
+- Remove virtio_pmem_freeze/restore functions
+- Remove BSD license text with SPDX license text
+
+- Add might_sleep() in virtio_pmem_flush - [Luiz]
+- Make spin_lock_irqsave() narrow
+
+Changes from RFC v3
+- Rebase to latest upstream - Luiz
+- Call ndregion->flush in place of nvdimm_flush- Luiz
+- kmalloc return check - Luiz
+- virtqueue full handling - Stefan
+- Don't map entire virtio_pmem_req to device - Stefan
+- request leak, correct sizeof req- Stefan
+- Move declaration to virtio_pmem.c
+
+Changes from RFC v2:
+- Add flush function in the nd_region in place of switching
+  on a flag - Dan & Stefan
+- Add flush completion function with proper locking and wait
+  for host side flush completion - Stefan & Dan
+- Keep userspace API in uapi header file - Stefan, MST
+- Use LE fields & New device id - MST
+- Indentation & spacing suggestions - MST & Eric
+- Remove extra header files & add licensing - Stefan
+
+Changes from RFC v1:
+- Reuse existing 'pmem' code for registering persistent 
+  memory and other operations instead of creating an entirely 
+  new block driver.
+- Use VIRTIO driver to register memory information with 
+  nvdimm_bus and create region_type accordingly. 
+- Call VIRTIO flush from existing pmem driver.
+
+Pankaj Gupta (2):
+   libnvdimm: nd_region flush callback support
+   virtio-pmem: Add virtio-pmem guest driver
+
+[1] https://lkml.org/lkml/2018/8/31/407
+[2] https://www.spinics.net/lists/kvm/msg149761.html
+[3] https://www.spinics.net/lists/kvm/msg153095.html  
+[4] https://lkml.org/lkml/2018/8/31/413
+[5] https://marc.info/?l=qemu-devel&m=153555721901824&w=2
+
+ drivers/acpi/nfit/core.c     |    8 ++--
+ drivers/nvdimm/claim.c       |   12 ++++--
+ drivers/nvdimm/nd.h          |    2 +
+ drivers/nvdimm/pmem.c        |   24 +++++++++----
+ drivers/nvdimm/region_devs.c |   76 ++++++++++++++++++++++++++++++++++++++++---
+ include/linux/libnvdimm.h    |   10 ++++-
+ 6 files changed, 110 insertions(+), 22 deletions(-)
