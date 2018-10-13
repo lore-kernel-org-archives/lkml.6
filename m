@@ -2,209 +2,242 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A892C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517D5C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C90420895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C90420895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 175D620895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 13:48:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175D620895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeJMVZa (ORCPT
+        id S1726736AbeJMVZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 17:25:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41100 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726281AbeJMVZa (ORCPT
+        Sat, 13 Oct 2018 17:25:47 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:39901 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbeJMVZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 17:25:30 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9DDhfQp041042
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 09:48:16 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n3cw8g2pj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 09:48:16 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 13 Oct 2018 09:48:16 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 13 Oct 2018 09:48:13 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9DDmCGU27132156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 13 Oct 2018 13:48:12 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11AF5B2064;
-        Sat, 13 Oct 2018 09:46:10 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CA071B205F;
-        Sat, 13 Oct 2018 09:46:09 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.131.128])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat, 13 Oct 2018 09:46:09 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B246616C0F04; Sat, 13 Oct 2018 06:48:13 -0700 (PDT)
-Date:   Sat, 13 Oct 2018 06:48:13 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
- cpu_online_mask
-Reply-To: paulmck@linux.ibm.com
-References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
- <20180911160532.GJ4225@linux.vnet.ibm.com>
- <20180911162142.cc3vgook2gctus4c@linutronix.de>
- <20180911170222.GO4225@linux.vnet.ibm.com>
- <20180919205521.GE902964@devbig004.ftw2.facebook.com>
- <20180919221140.GH4222@linux.ibm.com>
- <20181012184114.w332lnkc34evd4sm@linutronix.de>
+        Sat, 13 Oct 2018 17:25:47 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gBKGn-0002t8-2T from Vladimir_Zapolskiy@mentor.com ; Sat, 13 Oct 2018 06:47:53 -0700
+Received: from [137.202.108.125] (137.202.0.90) by
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Sat, 13 Oct 2018 14:47:48 +0100
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
+ TI DS90Ux9xx pinmux
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-4-vz@mleia.com> <8675619.KiXOS7fxCj@avalon>
+CC:     Vladimir Zapolskiy <vz@mleia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <9bd129b4-ce18-b036-9376-2cb1cb76aaf2@mentor.com>
+Date:   Sat, 13 Oct 2018 16:47:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012184114.w332lnkc34evd4sm@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18101313-0052-0000-0000-000003431887
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009872; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01102078; UDB=6.00570337; IPR=6.00882123;
- MB=3.00023742; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-13 13:48:15
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101313-0053-0000-0000-00005E66AFB8
-Message-Id: <20181013134813.GD2674@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-13_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810130131
+In-Reply-To: <8675619.KiXOS7fxCj@avalon>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 08:41:15PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2018-09-19 15:11:40 [-0700], Paul E. McKenney wrote:
-> > On Wed, Sep 19, 2018 at 01:55:21PM -0700, Tejun Heo wrote:
-> > > Unbound workqueue is NUMA-affine by default, so using it by default
-> > > might not harm anything.
-> > 
-> > OK, so the above workaround would function correctly on -rt, thank you!
-> > 
-> > Sebastian, is there a counterpart to CONFIG_PREEMPT_RT already in
-> > mainline?  If so, I would be happy to make mainline safe for -rt.
-> 
-> Now that I stumbled upon it again, I noticed that I never replied here.
-> Sorry for that.
-> 
-> Let me summarize:
-> sync_rcu_exp_select_cpus() used
-> 	queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
-> 
-> which was changed in commit fcc6354365015 ("rcu: Make expedited GPs
-> handle CPU 0 being offline"). The commit claims that this is needed in
-> case CPU0 is offline so it tries to find another CPU starting with the
-> possible offline CPU. It might cross to another NUMA node but that is
-> not really a problem, it just tries to remain on the "local NUMA node".
-> 
-> After that commit, the code invokes queue_work_on() within a
-> preempt_disable() section because it can't use cpus_read_lock() to
-> ensure that the CPU won't go offline in the middle of testing (and
-> preempt_disable() does the trick).
-> For RT reasons I would like to get rid of queue_work_on() within the
-> preempt_disable() section.
-> Tejun said that enqueueing an item on an unbound workqueue is NUMA
-> affine.
-> 
-> I figured out that enqueueing an item on an offline CPU is not a problem
-> and it will pop up on a "random" CPU which means it will be carried out
-> asap and will not wait until the CPU gets back online. Therefore I don't
-> understand the commit fcc6354365015.
-> 
-> May I suggest the following change? It will enqueue the work item on
-> the first CPU on the NUMA node and the "unbound" part of the work queue
-> ensures that a CPU of that NUMA node will perform the work.
-> This is mostly a revert of fcc6354365015 except that the workqueue
-> gained the WQ_UNBOUND flag.
+Hi Laurent,
 
-My concern would be that it would queue it by default for the current
-CPU, which would serialize the processing, losing the concurrency of
-grace-period initialization.  But that was a long time ago, and perhaps
-workqueues have changed.  So, have you tried using rcuperf to test the
-update performance on a large system?
+thank you for review, please find my comments below.
 
-If this change does not impact performance on an rcuperf test, why not
-send me a formal patch with Signed-off-by and commit log (including
-performance testing results)?  I will then apply it, it will be exposed
-to 0day and eventually -next testing, and if no problems arise, it will go
-to mainline, perhaps as soon as the merge window after the upcoming one.
-
-Fair enough?
-
-							Thanx, Paul
-
-> ------------------>8----
+On 10/12/2018 03:01 PM, Laurent Pinchart wrote:
+> Hi Vladimir,
 > 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 0b760c1369f76..94d6c50c4e796 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -4162,7 +4162,7 @@ void __init rcu_init(void)
->  	/* Create workqueue for expedited GPs and for Tree SRCU. */
->  	rcu_gp_wq = alloc_workqueue("rcu_gp", WQ_MEM_RECLAIM, 0);
->  	WARN_ON(!rcu_gp_wq);
-> -	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM, 0);
-> +	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
->  	WARN_ON(!rcu_par_gp_wq);
->  }
->  
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index 0b2c2ad69629c..a0486414edb40 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -472,7 +472,6 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
->  static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
->  				     smp_call_func_t func)
->  {
-> -	int cpu;
->  	struct rcu_node *rnp;
->  
->  	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
-> @@ -494,13 +493,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
->  			continue;
->  		}
->  		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
-> -		preempt_disable();
-> -		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-> -		/* If all offline, queue the work on an unbound CPU. */
-> -		if (unlikely(cpu > rnp->grphi))
-> -			cpu = WORK_CPU_UNBOUND;
-> -		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> -		preempt_enable();
-> +		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
->  		rnp->exp_need_flush = true;
->  	}
->  
+> Thank you for the patch.
 > 
-> > 
-> > 							Thanx, Paul
+> On Tuesday, 9 October 2018 00:12:01 EEST Vladimir Zapolskiy wrote:
+>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>
+>> TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
+>> in particular a pin may have selectable functions of GPIO, GPIO line
+>> transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
+>>
+>> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
+>> controllers.
+>>
+>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>> ---
+>>  .../bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt | 83 +++++++++++++++++++
+>>  1 file changed, 83 insertions(+)
+>>  create mode 100644
+>> Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+>> b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt new
+>> file mode 100644
+>> index 000000000000..fbfa1a3cdf9f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+>> @@ -0,0 +1,83 @@
+>> +TI DS90Ux9xx de-/serializer pinmux and GPIO subcontroller
+>> +
+>> +Required properties:
+>> +- compatible: Must contain a generic "ti,ds90ux9xx-pinctrl" value and
+>> +	may contain one more specific value from the list:
+>> +	"ti,ds90ux925-pinctrl",
+>> +	"ti,ds90ux926-pinctrl",
+>> +	"ti,ds90ux927-pinctrl",
+>> +	"ti,ds90ux928-pinctrl",
+>> +	"ti,ds90ux940-pinctrl".
 > 
-> Sebastian
+> No need for a subnode, you can mark the main DT node with gpio-controller 
+> directly.
+
+If the IC is seen as an MFD, and you guess I highly prefer it and I object
+the "overkill" argument, then the subnode is requred.
+
+Also the more complicated part of the subcontroller and its device driver
+is to provide pinmuxing function to consumers rather than to allow GPIO
+line configuration.
+
+The pinctrl/GPIO driver can not be alloyed with the base driver's code
+to sustain maintainability, so it will reside in drivers/pinctrl as
+a separate cell driver, and by the way that is the reason why it earns
+its own very non-trivial DT binding description documentation.
+
+>> +- gpio-controller: Marks the device node as a GPIO controller.
+>> +
+>> +- #gpio-cells: Must be set to 2,
+>> +	- the first cell is the GPIO offset number within the controller,
+>> +	- the second cell is used to specify the GPIO line polarity.
+>> +
+>> +- gpio-ranges: Mapping to pin controller pins (as described in
+>> +	Documentation/devicetree/bindings/gpio/gpio.txt)
+>> +
+>> +Optional properties:
+>> +- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
+> 
+> Please use standard properties to configure bus width. There is one defined in 
+> Documentation/devicetree/bindings/media/video-interfaces.txt.
+
+Here it is not a bus width description or property, but rather it is a custom
+pinmux control.
+
+It could make sense to reduce the scope of the property to "parallel" pin
+function only though, like in
+
+	ds90ux927_0_pins: pinmux {
+		parallel {
+			groups = "parallel";
+			function = "parallel";
+			ti,video-depth-18bit;
+		};
+	};
+
+Alternatively the removal of the property would be almost loseless, it is
+needed just in one very specific case, please reference to the driver code
+for details, there you'll find a comment in ds90ux9xx_parse_dt_properties()
+function.
+
+>> +Available pins, groups and functions (reference to device datasheets):
+>> +
+>> +function: "gpio" ("gpio4" is on DS90Ux925 and DS90Ux926 only,
+>> +		  "gpio9" is on DS90Ux940 only)
+>> + - pins: "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
+>> +	 "gpio7", "gpio8", "gpio9"
+>> +
+>> +function: "gpio-remote"
+>> + - pins: "gpio0", "gpio1", "gpio2", "gpio3"
+>> +
+>> +function: "pass" (DS90Ux940 specific only)
+>> + - pins: "gpio0", "gpio3"
+> 
+> What do those functions mean ?
 > 
 
+"gpio" function should be already familiar to you.
+
+"gpio-remote" function is the pin function for a GPIO line bridging.
+
+"pass" function sets a pin to a status pin function for detecting
+display timing issues, namely DE or Vsync length value mismatch.
+
+>> +function: "i2s-1"
+>> + - group: "i2s-1"
+>> +
+>> +function: "i2s-2"
+>> + - group: "i2s-2"
+>> +
+>> +function: "i2s-3" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
+>> + - group: "i2s-3"
+>> +
+>> +function: "i2s-4" (DS90Ux927, DS90Ux928 and DS90Ux940 specific only)
+>> + - group: "i2s-4"
+>> +
+>> +function: "i2s-m" (DS90Ux928 and DS90Ux940 specific only)
+>> + - group: "i2s-m"
+> 
+> Do we really need all this ? I think a better model would be to describe the 
+> audio interfaces explicitly, and configure pinmuxing automatically based on 
+> which audio interfaces are in use.
+
+Yes, all the pin functions are needed, because they are transparent pinmux
+controls.
+
+I really don't want to copy a part of gpio and pinctrl frameworks to
+the driver to hunt out why a user configured audio bridging and a GPIO
+line, and then something goes funny due to a pin conflict. To forget
+about such very possible pin and pin function conflicts I'm happy to
+shift the task to the neat Linus' frameworks.
+
+>> +function: "parallel" (DS90Ux925 and DS90Ux926 specific only)
+>> + - group: "parallel"
+>> +
+>> +Example (deserializer with pins GPIO[3:0] set to bridged output
+>> +	 function and pin GPIO4 in standard hogged GPIO function):
+>> +
+>> +deserializer {
+>> +	compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
+>> +
+>> +	ds90ux928_pctrl: pin-controller {
+>> +		compatible = "ti,ds90ux928-pinctrl", "ti,ds90ux9xx-pinctrl";
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		gpio-ranges = <&ds90ux928_pctrl 0 0 8>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&ds90ux928_pins>;
+>> +
+>> +		ds90ux928_pins: pinmux {
+>> +			gpio-remote {
+>> +				pins = "gpio0", "gpio1", "gpio2", "gpio3";
+>> +				function = "gpio-remote";
+>> +			};
+>> +		};
+>> +
+>> +		rst {
+>> +			gpio-hog;
+>> +			gpios = <4 GPIO_ACTIVE_HIGH>;
+>> +			output-high;
+>> +		};
+>> +	};
+>> +};
+> 
+
+--
+Best wishes,
+Vladimir
