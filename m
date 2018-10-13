@@ -2,74 +2,125 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB684C6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AB0C71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6142C20895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF01320895
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mLETeln3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6142C20895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="t/bdXm4a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF01320895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeJMJK3 (ORCPT
+        id S1727033AbeJMJKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 05:10:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40318 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeJMJK3 (ORCPT
+        Sat, 13 Oct 2018 05:10:53 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41617 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeJMJKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 05:10:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PQpCtfUXGYIrSoFJLsFSv1P+l2EGtZAn/oOqAWCmzsE=; b=mLETeln3hm6RTAttlt2Iq5N2cb
-        +1aYZoz5IZTBI2CPEBtVA9P4g3q4y9NfdEIPgPl9Ma18A/KeNrFnyg4jfd3iAw3+cvNtB66EpZ6Ei
-        i2h3WQFD6dvDjj+O/HxKPm2ZlfL/q+zxjOGYFnKO4rAwNKv4pFqZMB4kWZYclX/QlLGo/B0xmznx+
-        eX7XS9uAAheLqxMGdrvVg668HHyfgDwCjp1cnu2hHJGmqcfJJMR7oJtW9LxwItVpxH++3CEXOu02b
-        6dFSO5ASvmrtjf5gnXI8TZS7xAQU1VF4xFFI6GctDOixgBijTK55GJd6SHZaEqWfkj2MbxG73hqAR
-        KE6TSCVw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gB8pq-00047S-7v; Sat, 13 Oct 2018 01:35:18 +0000
-Subject: Re: [PATCH] docs: Fix typos in histogram.rst
-To:     Masanari Iida <standby24x7@gmail.com>, corbet@lwn.net,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        mchehab+samsung@kernel.org
-References: <20181013013057.10677-1-standby24x7@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <02e0990f-c42e-dd91-1f83-17b13f628db6@infradead.org>
-Date:   Fri, 12 Oct 2018 18:35:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 13 Oct 2018 05:10:52 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q17-v6so6683717plr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Oct 2018 18:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WNSmz6gPUWl0psy6VYdrKZKj8jjeGLoBOEaYk7PTF5E=;
+        b=t/bdXm4ahfHUsC1W/kmIGtZM4IaaXFvhptMHyl/MsEl85wogOLcBRPLXwHtXoa2xTR
+         d2M48uB6euL4d5IaKV5t6nT5ABUr0y0qRBKJlUNuiclAcNB1bktYaPSMWAk89SYK1P2v
+         +doypv+PPbaJGW2yXU+EaPjAWnWnd1ZXLhamE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WNSmz6gPUWl0psy6VYdrKZKj8jjeGLoBOEaYk7PTF5E=;
+        b=MBQzjk2Xm9Plm5+r4pi2Xa89JXldz6NRFngZD3Jutj2KGPXyuRM4fGuxj8xeJw8Ddj
+         0ve9jHWpDlnKo6AZ6lGSHxkLzeI/ReoEio6UthZCsxpThdubhpeAtbG2uY5ZgGagPsyx
+         NdBKm/7Ct3WvzLkjkcnctTHcVvCcekkNfEdr3ojDVzIQnDMp1Hu753qyjWTYrm8t6arz
+         inggrWwvSU4NyqOewzbGzn4AIdX8D7cstyvp8ANjIXZyc9rIFqhcIG6lOHTmOetUQNia
+         ZhhW6nHGWMjRvU9c1AbyWR3b69NhM9gouYaWcBxGm7UlxaJzADcVo6QlUl+w9RA/EiAU
+         L5zA==
+X-Gm-Message-State: ABuFfoi5MIQMY9KiiAKXrXMpupqypmQuD/cAO0Pf/bFYzXPEK1uYNQQc
+        GK1uvqwt85EXnl5o35XB+cEZ6w==
+X-Google-Smtp-Source: ACcGV63YcGHLeWFH+zMcDfPGfwOAvPK81iWmstN1Bsc/dCjm29V/T1DgWrxlTjwp6QBDN3hA/VReOg==
+X-Received: by 2002:a17:902:d20a:: with SMTP id t10-v6mr8118444ply.256.1539394543039;
+        Fri, 12 Oct 2018 18:35:43 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id 20-v6sm3688934pge.77.2018.10.12.18.35.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 18:35:41 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 18:35:40 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     kirill@shutemov.name, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, minchan@kernel.org, pantin@google.com,
+        hughd@google.com, lokeshgidra@google.com, dancol@google.com,
+        mhocko@kernel.org, akpm@linux-foundation.org,
+        aryabinin@virtuozzo.com, luto@kernel.org, bp@alien8.de,
+        catalin.marinas@arm.com, chris@zankel.net,
+        dave.hansen@linux.intel.com, elfring@users.sourceforge.net,
+        fenghua.yu@intel.com, geert@linux-m68k.org, gxt@pku.edu.cn,
+        deller@gmx.de, mingo@redhat.com, jejb@parisc-linux.org,
+        jdike@addtoit.com, jonas@southpole.se, Julia.Lawall@lip6.fr,
+        kasan-dev@googlegroups.com, kvmarm@lists.cs.columbia.edu,
+        lftan@altera.com, linux-alpha@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, jcmvbkbc@gmail.com,
+        nios2-dev@lists.rocketboards.org, peterz@infradead.org,
+        richard@nod.at
+Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
+Message-ID: <20181013013540.GA207108@joelaf.mtv.corp.google.com>
+References: <20181012013756.11285-2-joel@joelfernandes.org>
+ <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1>
+ <20181012125046.GA170912@joelaf.mtv.corp.google.com>
+ <20181012.111836.1569129998592378186.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <20181013013057.10677-1-standby24x7@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012.111836.1569129998592378186.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/18 6:30 PM, Masanari Iida wrote:
-> This patch fixes some spelling typos.
+On Fri, Oct 12, 2018 at 11:18:36AM -0700, David Miller wrote:
+> From: Joel Fernandes <joel@joelfernandes.org>
+[...]
+> > Also, do we not flush the caches from any path when we munmap
+> > address space?  We do call do_munmap on the old mapping from mremap
+> > after moving to the new one.
 > 
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-> ---
->  Documentation/trace/histogram.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Sparc makes sure that shared mapping have consistent colors.  Therefore
+> all that's left are private mappings and those will be initialized by
+> block stores to clear the page out or similar.
+> 
+> Also, when creating new mappings, we flush the D-cache when necessary
+> in update_mmu_cache().
+> 
+> We also maintain a bit in the page struct to track when a page which
+> was potentially written to on one cpu ends up mapped into another
+> address space and flush as necessary.
+> 
+> The cache is write-through, which simplifies the preconditions we have
+> to maintain.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Makes sense, thanks. For the moment I sent patches to enable this on arm64
+and x86. We can enable it on sparc as well at a later time as it sounds it
+could be a safe optimization to apply to that architecture as well.
 
-thanks.
--- 
-~Randy
+thanks,
+
+ - Joel
+
