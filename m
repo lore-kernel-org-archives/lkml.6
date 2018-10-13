@@ -2,69 +2,143 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25054C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAA5C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2241206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7E9D206B2
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 15:12:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KUtd94DE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2241206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuHgMBQt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E9D206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeJMWrz (ORCPT
+        id S1726827AbeJMWtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:47:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32912 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJMWry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:47:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Cwcwm2vgjyIKuNqAgBAUGLyrP6a8beJUjg7kDKl0syw=; b=KUtd94DEljRYiEfSHwPvOLY4r
-        udKaT2I3zOGnid/1SY2czwxyzKtNAix8OpVy6AP4tfZV3ecVJIZWf/qom9/BDgLnkVki6Vl0CLGQ9
-        ZxQPUYbcsN4nsbADILOWFihznR73DSo0N/Ay1DQ1iJMbp8jgajUiotZzcxedvU/2Fh8Ar84B3/ZyZ
-        8356fVhpB4eURHA3r1yMaRS7HeQoZCaQs7iZw7igPHrRDxD9sq5Wi3lqFaJ7AwxnJXWmmc6AOubJI
-        k2LKa/hz1PdmcWFuj/40WnxUVnOgNomDVsE8W0L5++5ZJnTsDsOJCHRAC2Zz6ECCvdVu5GxY38jJo
-        zdGoV82UQ==;
-Received: from 089144199123.atnat0008.highway.a1.net ([89.144.199.123] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gBLYY-0002r5-Te; Sat, 13 Oct 2018 15:10:19 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kbuild@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: move bus (PCI, PCMCIA, EISA, rapdio) config to drivers/
-Date:   Sat, 13 Oct 2018 17:10:08 +0200
-Message-Id: <20181013151016.31674-1-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
+        Sat, 13 Oct 2018 18:49:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbeJMWtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 18:49:47 -0400
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27BE72150F
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 15:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539443535;
+        bh=3DQgUXjim3DE86Q1Dhg416AjsygSI2y0jVlyMqk7/P4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZuHgMBQt/o1ijt/hy45c/Vv7LKL4arCtmPXejONfx1UUOlf8mvqqLRXaWM9Vi6wcy
+         PasTG30KTFRSgd1RwS8fCcR7JKzmoyAnAKo2HR/ftqCZ2uh0HsvLmIyY4G41jdVREZ
+         ZvJ078JEVnySOuyWXdwvZ0anu4pATeHdIr+lFDiI=
+Received: by mail-wm1-f48.google.com with SMTP id 206-v6so14881891wmb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 08:12:15 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiHY856Q+t2OQVHI2S88HOehHcBi0H0YdL+ec6/IV/V56NeVQa4
+        4Al/7VuR966r4QWAS/1064e5roWynl6uXf+cI5LCMg==
+X-Google-Smtp-Source: ACcGV61utiAa6YjKFFahIA2+BL4OFMsQN0rQQzI2yz/mYvckE1xj/oXZvpqvmiE3gfR3IZaGtf1sylfpSf2y8m8NxBE=
+X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr8109368wmq.14.1539443533428;
+ Sat, 13 Oct 2018 08:12:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
+ <1531906876-13451-11-git-send-email-joro@8bytes.org> <97421241-2bc4-c3f1-4128-95b3e8a230d1@siemens.com>
+ <35a24feb-5970-aa03-acbf-53428a159ace@web.de>
+In-Reply-To: <35a24feb-5970-aa03-acbf-53428a159ace@web.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 13 Oct 2018 08:12:01 -0700
+X-Gmail-Original-Message-ID: <CALCETrWveao7jthnfKr5F=UyEpyowP0VA20eZi5OxizgT05EDA@mail.gmail.com>
+Message-ID: <CALCETrWveao7jthnfKr5F=UyEpyowP0VA20eZi5OxizgT05EDA@mail.gmail.com>
+Subject: Re: [PATCH] x86/entry/32: Fix setup of CS high bits
+To:     jan.kiszka@web.de
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Sat, Oct 13, 2018 at 3:02 AM Jan Kiszka <jan.kiszka@web.de> wrote:
+>
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> Even if we are not on an entry stack, we have to initialize the CS high
+> bits because we are unconditionally evaluating them
+> PARANOID_EXIT_TO_KERNEL_MODE. Failing to do so broke the boot on Galileo
+> Gen2 and IOT2000 boards.
+>
+> Fixes: b92a165df17e ("x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack")
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  arch/x86/entry/entry_32.S | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index 2767c625a52c..95c94d48ecd2 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -389,6 +389,12 @@
+>          * that register for the time this macro runs
+>          */
+>
+> +       /*
+> +        * Clear unused upper bits of the dword containing the word-sized CS
+> +        * slot in pt_regs in case hardware didn't clear it for us.
+> +        */
+> +       andl    $(0x0000ffff), PT_CS(%esp)
+> +
 
-currently every architecture that wants to provide on of the common
-periphal busses needs to add some boilerplate code and include the
-right Kconfig files.   This series instead just selects the presence
-(when needed) and then handles everything in the bus-specific
-Kconfig file under drivers/.
+Please improve the comment. Since commit:
 
+commit 385eca8f277c4c34f361a4c3a088fd876d29ae21
+Author: Andy Lutomirski <luto@kernel.org>
+Date:   Fri Jul 28 06:00:30 2017 -0700
+
+    x86/asm/32: Make pt_regs's segment registers be 16 bits
+
+Those fields are genuinely 16 bit.  So the comment should say
+something like "Those high bits are used for CS_FROM_ENTRY_STACK and
+CS_FROM_USER_CR3".
+
+Also, can you fold something like this in:
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2767c625a52c..358eed8cf62a 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -171,7 +171,7 @@
+        ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
+        .if \no_user_check == 0
+        /* coming from usermode? */
+-       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
++       testb   $SEGMENT_RPL_MASK, PT_CS(%esp)
+        jz      .Lend_\@
+        .endif
+        /* On user-cr3? */
