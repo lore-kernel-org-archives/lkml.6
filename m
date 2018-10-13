@@ -2,123 +2,168 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80AEC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 21:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B30C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 22:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA0020652
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 21:45:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7Vlwxcc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA0020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2521520693
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 22:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2521520693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbeJNFYc (ORCPT
+        id S1726253AbeJNFoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 14 Oct 2018 01:24:32 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:35783 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbeJNFYc (ORCPT
+        Sun, 14 Oct 2018 01:44:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54610 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725806AbeJNFoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Oct 2018 01:24:32 -0400
-Received: by mail-yw1-f68.google.com with SMTP id y76-v6so6274916ywd.2;
-        Sat, 13 Oct 2018 14:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pxAmPRPvhGden/RQb6IbiyK5U6v4ypXghQiByCY4v00=;
-        b=R7Vlwxccdu8NP9jC6blTBbDkTqZlCjtLeyMlVON9GAXKk+8FhHk/GLLpTY6zFgC5DH
-         emtQpGvwBouiWXrwxZx00eh56/ddtJs2rfVo4iArAx6/ZDEybaEXyd9lK1EkYF04mVAS
-         bpTHki/nEr0kiCOwgc21cKQF3t0QXj6HtlP74LoRRat4/OHlSSED+sHAJ0FKH+F4DYOV
-         411BVWsf3ogqSXPxxP+MhNg74Ibnb20oo/38KCYZEv3AdjhaOXmwmjORk2JpO+4qpOFi
-         S3ahLSTu+qy6jqwKCZ74q2kVbA864q78XG5pGUGuiqtFPfJPLRQwtHm3KytGgk79JxaQ
-         BAwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pxAmPRPvhGden/RQb6IbiyK5U6v4ypXghQiByCY4v00=;
-        b=Aku/WIl5mQFiiBDnag+WNvwGWXLAB+JJicsDbYPxaHftgN5DLY+fCQe9vWjxWtPeC+
-         /mcfpFyfFmoG4wK6dhYGsXlN4hXFGL19wflzYmWAAq95L3P80o4NE8HIsHSgw1GKIROW
-         TvekcCFncW4ATb6Iff4hajYxxZ1lu68isXHO8k5j9/WzRKkVXDcm+/0qi9VzPJuaXPmn
-         V+d4EquWDI0rq9uLqbPi8IBXlv5RS2InP9Prb9Fai7Yul6cwLwv7esoQ/Mobsp1/3cK5
-         0+tzcPvF5OTf/Mb8GKuo+3IPtUd/uR6JWSnyaJMsjHkC5kWdg6CPdQTpMU5bYfiot1Ft
-         QVqA==
-X-Gm-Message-State: ABuFfoh/aLMogOkQyI/d+JYIsB33hGzUVQGRSatEJB6NTkFlcN63a1LL
-        +93rH0vHxtTwqYVc//XyrQ==
-X-Google-Smtp-Source: ACcGV60hUlhBhimfJicHq4qCEUXumd8yRdwatIEF0jGJx76mVY53uoCW98wTFf/XlmXzEyt1WLdz/g==
-X-Received: by 2002:a81:1d96:: with SMTP id d144-v6mr6219899ywd.504.1539467154659;
-        Sat, 13 Oct 2018 14:45:54 -0700 (PDT)
-Received: from gabell (c-98-229-178-29.hsd1.ma.comcast.net. [98.229.178.29])
-        by smtp.gmail.com with ESMTPSA id 138-v6sm1425676ywj.11.2018.10.13.14.45.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 14:45:54 -0700 (PDT)
-Date:   Sat, 13 Oct 2018 17:45:51 -0400
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>, Baoquan He <bhe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181013214550.ag5qzokhkrkwnzsy@gabell>
-References: <20181010085920.GB5533@zn.tnic>
- <20181010090620.GF25297@MiWiFi-R3L-srv>
- <alpine.DEB.2.21.1810101113070.10278@nanos.tec.linutronix.de>
- <20181010091923.GC5533@zn.tnic>
- <20181010093057.GA22088@MiWiFi-R3L-srv>
- <20181010194443.sgdvplwdnltshwwi@gabell>
- <20181011002955.GJ25297@MiWiFi-R3L-srv>
- <20181011055154.GB6667@localhost.localdomain>
- <20181013201958.zfzv5ahhe3xz7bwi@gabell>
- <20181013203429.GE31650@zn.tnic>
+        Sun, 14 Oct 2018 01:44:15 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9DM3tLH004187
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 18:05:35 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n3k6dgrnc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 18:05:35 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Sat, 13 Oct 2018 18:05:34 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 13 Oct 2018 18:05:29 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9DM5SBP44105898
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 13 Oct 2018 22:05:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 33ADAB206A;
+        Sat, 13 Oct 2018 18:03:26 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 147BFB205F;
+        Sat, 13 Oct 2018 18:03:26 -0400 (EDT)
+Received: from ltcalpine2-lp9.aus.stglabs.ibm.com (unknown [9.40.195.192])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 13 Oct 2018 18:03:26 -0400 (EDT)
+Received: from ltcalpine2-lp9.aus.stglabs.ibm.com (localhost [IPv6:::1])
+        by ltcalpine2-lp9.aus.stglabs.ibm.com (Postfix) with ESMTP id 06AB120FBAB7;
+        Sat, 13 Oct 2018 17:05:28 -0500 (CDT)
+Subject: [PATCH] net/sysfs: Remove devices without receive buffers
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mwb@linux.vnet.ibm.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        David Decotigny <decot@googlers.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Date:   Sat, 13 Oct 2018 17:05:28 -0500
+User-Agent: StGit/0.18-105-g416a
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181013203429.GE31650@zn.tnic>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101322-0064-0000-0000-0000035F0FB7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009874; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01102243; UDB=6.00570436; IPR=6.00882289;
+ MB=3.00023746; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-13 22:05:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101322-0065-0000-0000-00003AF894DB
+Message-Id: <20181013220451.6905.65084.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-13_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810130207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 10:34:29PM +0200, Borislav Petkov wrote:
-> On Sat, Oct 13, 2018 at 04:19:59PM -0400, Masayoshi Mizuma wrote:
-> > Baoquan and Chao, thank you for your comments!
-> > 
-> > Boris, the patches has been merged to linux-next.
-> 
-> First of all, please do not top-post.
-> 
-> Even if they're in linux-next, that doesn't mean they should go upstream
-> while there are still issues to be hammered out.
+Testing ran into a case where a network device was created and
+initialized, but then removed from the system before accepting
+traffic through it.  In this case, no receive buffers were added
+to the device prior to attempting to release the driver.  This
+resulted in generation of a WARNING notice/stack trace in the
+console log like,
 
-Got it, thanks.
+kobject: '(null)' (c0000009e028a310): is not initialized, yet kobject_put() is being called.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 7689 at lib/kobject.c:661 kobject_put+0x2a8/0x370
+Modules linked in: bonding iptable_filter rpadlpar_io rpaphp tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag btrfs raid6_pq pseries_rng xor sg ibmvnic nfsd auth_rpcgss nfs_acl lockd grace sunrpc binfmt_misc ip_tables xfs libcrc32c sd_mod crc_t10dif crct10dif_generic crct10dif_common ibmvscsi scsi_transport_srp ibmvfc scsi_transport_fc ibmveth scsi_tgt dm_mirror dm_region_hash dm_log dm_mod [last unloaded: bonding]
+CPU: 1 PID: 7689 Comm: drmgr Kdump: loaded Not tainted 3.10.0-948.el7.ppc64le #1
+task: c0000009ddb55c00 ti: c0000009daea8000 task.ti: c0000009daea8000
+NIP: c000000000551ff8 LR: c000000000551ff4 CTR: 0000000000770c6c
+REGS: c0000009daeab4a0 TRAP: 0700   Not tainted  (3.10.0-948.el7.ppc64le)
+MSR: 8000000100029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 28088822  XER: 0000000d
+CFAR: c000000000a97f78 SOFTE: 1
+00551ff4 c0000009daeab720 c0000000013e4d00 000000000000005c
+0194a820 c00000000195d728 0000bc6bd731da26 00000000000000ec
+00000007 0000000000000000 0000000000ad0000 0000000000000000
+00008000 c000000007af0900 0000000000000000 0000000000000000
+00000000 0000000000000000 0000000000000000 0000000000000000
+00000000 0000000000000000 0000000000000000 0000000000000007
+00d19c28 c000000000d19c50 0000000000000000 0000000000000000
+d7dca000 c0000009e364da00 0000000000000005 c0000009e028a310
+NIP [c000000000551ff8] kobject_put+0x2a8/0x370
+LR [c000000000551ff4] kobject_put+0x2a4/0x370
+Call Trace:
+[c0000009daeab720] [c000000000551ff4] kobject_put+0x2a4/0x370 (unreliable)
+[c0000009daeab7b0] [c000000000905ae8] net_rx_queue_update_kobjects+0x128/0x190
+[c0000009daeab860] [c000000000905d78] netdev_unregister_kobject+0x48/0xa0
+[c0000009daeab890] [c0000000008d35f4] rollback_registered_many+0x374/0x4e0
+[c0000009daeab950] [c0000000008d38f8] unregister_netdev+0x68/0xf0
+[c0000009daeab9d0] [d00000000aac95d4] ibmvnic_remove+0x54/0x190 [ibmvnic]
+[c0000009daeaba10] [c00000000003f744] vio_bus_remove+0x64/0xf0
+[c0000009daeaba50] [c0000000006b3a30] device_release_driver+0xf0/0x1b0
+[c0000009daeaba90] [c0000000006b2d10] bus_remove_device+0x180/0x220
+[c0000009daeabb10] [c0000000006ab9ac] device_del+0x1fc/0x3b0
+[c0000009daeabba0] [c0000000006abb9c] device_unregister+0x3c/0xa0
+[c0000009daeabc10] [c00000000003f49c] vio_unregister_device+0x2c/0x60
+[c0000009daeabc40] [d00000000eb0093c] dlpar_remove_slot+0x28c/0x340 [rpadlpar_io]
+[c0000009daeabcd0] [d00000000eb00b1c] remove_slot_store+0x8c/0xd0 [rpadlpar_io]
+[c0000009daeabd40] [c0000000005516d0] kobj_attr_store+0x30/0x60
+[c0000009daeabd60] [c00000000044c97c] sysfs_kf_write+0x6c/0xa0
+[c0000009daeabd80] [c00000000044b7d0] kernfs_fop_write+0x150/0x1e0
+[c0000009daeabdd0] [c000000000369e74] SyS_write+0x164/0x430
+[c0000009daeabe30] [c00000000000a284] system_call+0x38/0xfc
 
-> 
-> In this particular case, if Chao Fan's patchset shapes up in a decent
-> form to be upstreamed, we don't need the cmdline parameter anymore, do
-> we?
-> 
-> Because we'll have the SRAT parsing and proper KASLR limits ready and
-> working automatically, I'd say.
+This patch removes the warning for unitialized receive queues.
 
-Yes, but I think we need to arrange the Chao's SRAT parsing to be used
-from kernel_randomize_memory() because Chao's approach needs the SRAT
-parsing before extract kernel and the padding size calculation needs
-the parsing in start_kernel(), so they are living in different life
-cycle and space.
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+---
+ net/core/net-sysfs.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Masa
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index bd67c4d..a1d3f67 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -971,6 +971,8 @@ static int rx_queue_add_kobject(struct net_device *dev, int index)
+ 	while (--i >= new_num) {
+ 		struct kobject *kobj = &dev->_rx[i].kobj;
+ 
++		if (!kobj->state_initialized)
++			continue;
+ 		if (!refcount_read(&dev_net(dev)->count))
+ 			kobj->uevent_suppress = 1;
+ 		if (dev->sysfs_rx_queue_group)
+
