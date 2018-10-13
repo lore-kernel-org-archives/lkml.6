@@ -2,242 +2,147 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562A7C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54D5C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1597020693
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753C120693
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Im1aqaYG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1597020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="gtX/3bFK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753C120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeJNB1s (ORCPT
+        id S1726964AbeJNB2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 21:27:48 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35265 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbeJNB1s (ORCPT
+        Sat, 13 Oct 2018 21:28:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37787 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbeJNB2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 21:27:48 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 14so11287713oth.2;
-        Sat, 13 Oct 2018 10:49:43 -0700 (PDT)
+        Sat, 13 Oct 2018 21:28:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j23-v6so7710170pfi.4
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 10:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hur/UQSGeKyBxkxNDsWOpnXAJMIqj/VK7d0r4EoTVBY=;
-        b=Im1aqaYG90Sc+xYC/4WQtXGi4xU/JDvqQ/qK3eUk1LYexRNU5/YuGNikm+Hv0Zg6jp
-         pq7rFjUfAtPeJv2q9DeT1GhVCX3h42c4LBqRumEMgKaVCtCsuMFC5dVjY2h0x4Ix7qb7
-         KDZi2+RBa92aUm4kVljOxxT9YJzIRgIxgBKyfX2oZZ8PPz17qcycUNPS9egC4gfNwn87
-         zqJRB1yUj1NQcXRPvnSaM/0bLmVPntlgEHc6ypup0gmoiQHO0CIGhSnhbFPRMDO6w0D1
-         AR6rGu1rr03EiVUr6tqe3+G5NUZIRgtqlcChr1xQcXwAHUOzQHvqLl3DplfiQllFPeJv
-         /8qA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GoWsMygASIRyu7PZgD3N2dBBnQZB9nQ/7GbuLV2HYnY=;
+        b=gtX/3bFKdysbo0S38lPP9ATjDdsTysp7ptOg+SsEzBQmc5jRhOODzCYik6fd+BjPNr
+         xu2Vp+XyGO4o3VTbAkLtyvZfSWRtUUHxernM8wIzLOXHfZUYx/YsB2m5iu16tCWuQG1m
+         dx/4Vn6wKESA5zdAVp2ssOawvrRQIiujDiDAU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hur/UQSGeKyBxkxNDsWOpnXAJMIqj/VK7d0r4EoTVBY=;
-        b=QStMpOYRW6uDn1u/yzSkpFhRCLxETIHiFQ1c27BMflyhRISL96rNDMV5mjC+d/NWwR
-         KLhh3OPq+XmTa7fGJFQaf9SqKd+JbAfuUfluPE2YkKWmOzYVw/Tfrzf4Il/qTRg7PSLZ
-         xjM2gE/ZbhV3gaD4GTKFjrXNx0cyyNjvcZewgixCw7EneVUspXJeild2oW73xmhmuZlw
-         MIGROiVdo7LIYOVHOX4/yYjkhLiiDk4J7bS0+3zLZwsNb+rNARhtsDIYFTQhiD64ctZN
-         S5GzuLUuP7rU6xgDatknHjOP7pBJUkYq/1eVU87SMymZUi7KoV/wpfP5IQEtk7ZiweLn
-         PAfw==
-X-Gm-Message-State: ABuFfoitRHlaSPtoRnzFXqMAaH5yzpXwzb8EdebIRJ6IzZbXN1AtCNja
-        rAharz5T7w4mfnzmvBXwGGAKU1LsraWChpyBQ6c=
-X-Google-Smtp-Source: ACcGV62B8qfvsQWkfZxlfThEeSpw2zrJHUtOwY6RIX9T/KQPLWUQJ2iztYK2+BagYfbpckmksQZ87KfNHtAYzAotAic=
-X-Received: by 2002:a9d:44a8:: with SMTP id v40mr3886118ote.219.1539452983295;
- Sat, 13 Oct 2018 10:49:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011221237.1925.85591.stgit@localhost.localdomain>
- <20181011221334.1925.31961.stgit@localhost.localdomain> <CAGM2rebWT43mTrpsbiwqpioNa=K68OQp=fstBmgov3tdkXjPiQ@mail.gmail.com>
- <CAKgT0Uc7DSEqKqfymyBzDhN-TpWZSxSmS=W_iiY0_A7YY-voSg@mail.gmail.com>
-In-Reply-To: <CAKgT0Uc7DSEqKqfymyBzDhN-TpWZSxSmS=W_iiY0_A7YY-voSg@mail.gmail.com>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Date:   Sat, 13 Oct 2018 13:49:06 -0400
-Message-ID: <CAGM2reZpV8OuAe2=VP5fiHJ7yTGAOH35U78BsULbKbXZ9fR9ng@mail.gmail.com>
-Subject: Re: [mm PATCH v2 1/6] mm: Use mm_zero_struct_page from SPARC on all
- 64b architectures
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     alexander.h.duyck@linux.intel.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GoWsMygASIRyu7PZgD3N2dBBnQZB9nQ/7GbuLV2HYnY=;
+        b=NwiFDaQdyyHRCWlnQffjTAD2o1Za2u9iEbLolgZ6O93SVgt3SR9fIxWvwCZcOsJ78M
+         gGYbOXCgO8cv9IAi0kwB1P6rLaCXr2bWFydlhPfWh5mU1ZhdURz9BxRw+d3fHkwnaaxH
+         E/5YqnYiLRVv36sL6WTy2QTa6qp/4RJL2VKE7YULBQU4asPWLLwhFqO2/nK124o74TTR
+         nZ35ySrTGMs1fpvwz/jYMeZ0TaIpN0CPINPdikOS4BXDb8JXLVFOmV/Xzkax9ffGDEep
+         jpCXBDJ/mi+/y3wZlFlEaefB7EaX9lldTgW7cCItUW7Y5MNWR4lg5acrWASKtEspFp2Y
+         tXPg==
+X-Gm-Message-State: ABuFfogT1aPuCHThBXaWD8ecImWYkoBqucOzhkk0pD24GSEnry5LL7v5
+        HGsA9uOHhShX2rfGNIYg/guBtw==
+X-Google-Smtp-Source: ACcGV61mIIBnEva6K1s4pwIUv1udY8Qs2DvoHn+puuc+AYRgF7l/b6wUFQE1+gRiz97iAhmfFDPhRQ==
+X-Received: by 2002:a63:f64f:: with SMTP id u15-v6mr10134944pgj.258.1539453041895;
+        Sat, 13 Oct 2018 10:50:41 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id t26-v6sm7479626pfa.158.2018.10.13.10.50.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 13 Oct 2018 10:50:40 -0700 (PDT)
+Date:   Sat, 13 Oct 2018 10:50:39 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     dancol@google.com
+Cc:     David Miller <davem@davemloft.net>, kirill@shutemov.name,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Minchan Kim <minchan@kernel.org>,
+        Ramon Pantin <pantin@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
-        LKML <linux-kernel@vger.kernel.org>, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com,
-        Vlastimil Babka <vbabka@suse.cz>, sparclinux@vger.kernel.org,
-        dan.j.williams@intel.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        aryabinin@virtuozzo.com, luto@kernel.org, bp@alien8.de,
+        catalin.marinas@arm.com, Chris Zankel <chris@zankel.net>,
+        dave.hansen@linux.intel.com, elfring@users.sourceforge.net,
+        fenghua.yu@intel.com, geert@linux-m68k.org, gxt@pku.edu.cn,
+        deller@gmx.de, mingo@redhat.com, jejb@parisc-linux.org,
+        jdike@addtoit.com, Jonas Bonn <jonas@southpole.se>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        kasan-dev@googlegroups.com, kvmarm@lists.cs.columbia.edu,
+        lftan@altera.com, linux-alpha@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        linux-mm <linux-mm@kvack.org>, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, Max Filippov <jcmvbkbc@gmail.com>,
+        nios2-dev@lists.rocketboards.org,
+        Peter Zijlstra <peterz@infradead.org>, richard@nod.at
+Subject: Re: [PATCH v2 2/2] mm: speed up mremap by 500x on large regions
+Message-ID: <20181013175039.GB213522@joelaf.mtv.corp.google.com>
+References: <20181012013756.11285-2-joel@joelfernandes.org>
+ <20181012113056.gxhcbrqyu7k7xnyv@kshutemo-mobl1>
+ <20181012125046.GA170912@joelaf.mtv.corp.google.com>
+ <20181012.111836.1569129998592378186.davem@davemloft.net>
+ <20181013013540.GA207108@joelaf.mtv.corp.google.com>
+ <CAKOZueuNvWvn18vffJWpbpg7h-uScT8gXrrudTB2pnT4M2HJ_w@mail.gmail.com>
+ <20181013014429.GB207108@joelaf.mtv.corp.google.com>
+ <CAKOZues25aaKz3_AiyfJ=r2QBd5MghgY3ky_ptg4Z8=ST4DCgw@mail.gmail.com>
+ <20181013021057.GA213522@joelaf.mtv.corp.google.com>
+ <CAKOZueu2wdkeUFYLQ8qE48yJs1_uRz-9RVJRkp==CL=jp=Q8+g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZueu2wdkeUFYLQ8qE48yJs1_uRz-9RVJRkp==CL=jp=Q8+g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Still, lets get some real data, please provide Intel data before vs
-after. I could test on an ARM processor.
+On Fri, Oct 12, 2018 at 07:25:08PM -0700, Daniel Colascione wrote:
+[...] 
+> > But anyway, I think this runtime detection thing is not needed. THP is
+> > actually expected to be as fast as this anyway, so if that's available then
+> > we should already be as fast.
+> 
+> Ah, I think the commit message is confusing. (Or else I'm misreading
+> the patch now.) It's not quite that we're disabling the feature when
+> THP is enabled anywhere, but rather that we use the move_huge_pmd path
+> for huge PMDs and use the new code only for non-huge PMDs. (Right?) If
+> that's the case, the commit message shouldn't say "Incase THP is
+> enabled, the optimization is skipped". Even if THP is enabled on a
+> system generally, we might use the new PMD-moving code for mapping
+> types that don't support THP-ization, right?
 
-Pavel
+That is true. Ok, I guess I can update the commit message to be more accurate
+about that.
 
-On Sat, Oct 13, 2018 at 1:18 PM Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
->
-> Well in the case of x86 the call to memset is expensive as well. In
-> most cases it is 16 cycles plus 1 cycle per 16 bytes if I recall
-> correctly. So for example in the case of skbuff which was a little
-> over 192 bytes I know Jesper Brouer and myself were going back and
-> forth with the idea of if we should try to do something similar.
->
-> I'm suspecting for the 64b architectures impacted by this change there
-> should be little to no negative impact. The main reason for that being
-> the fact that the compiler can actually drop some of the writes by
-> merging them with the later assignments.
->
-> Thanks.
->
-> - Alex
->
-> On Sat, Oct 13, 2018 at 9:58 AM Pavel Tatashin <pasha.tatashin@gmail.com> wrote:
-> >
-> > I am worried about this change. I added SPARC optimized
-> > mm_zero_struct_page() specifically to SPARC because it has a poor
-> > performance with small memset()s, since it uses STBI instructions.
-> > However, other architectures might not suffer with small memset()s,
-> > and have hardware optimized memset variants for small sizes. Don't
-> > forget, this is a leaf routine on most arches, so the function call
-> > should be cheap. Also, the macro itself is not very flexible: when
-> > size of struct page is changed, it also must be modified (we could add
-> > fall throughs though), I would add this macro only to those arches
-> > that benefit from this change, in other words, I would like to see
-> > performance data.
-> >
-> > I will review the rest of the patches in this series on Monday.
-> >
-> > Thank you,
-> > Pavel
-> > On Thu, Oct 11, 2018 at 6:17 PM Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> > >
-> > > This change makes it so that we use the same approach that was already in
-> > > use on Sparc on all the archtectures that support a 64b long.
-> > >
-> > > This is mostly motivated by the fact that 8 to 10 store/move instructions
-> > > are likely always going to be faster than having to call into a function
-> > > that is not specialized for handling page init.
-> > >
-> > > An added advantage to doing it this way is that the compiler can get away
-> > > with combining writes in the __init_single_page call. As a result the
-> > > memset call will be reduced to only about 4 write operations, or at least
-> > > that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
-> > > count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
-> > > my system.
-> > >
-> > > One change I had to make to the function was to reduce the minimum page
-> > > size to 56 to support some powerpc64 configurations.
-> > >
-> > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > ---
-> > >  arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
-> > >  include/linux/mm.h                  |   34 ++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 34 insertions(+), 30 deletions(-)
-> > >
-> > > diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-> > > index 1393a8ac596b..22500c3be7a9 100644
-> > > --- a/arch/sparc/include/asm/pgtable_64.h
-> > > +++ b/arch/sparc/include/asm/pgtable_64.h
-> > > @@ -231,36 +231,6 @@
-> > >  extern struct page *mem_map_zero;
-> > >  #define ZERO_PAGE(vaddr)       (mem_map_zero)
-> > >
-> > > -/* This macro must be updated when the size of struct page grows above 80
-> > > - * or reduces below 64.
-> > > - * The idea that compiler optimizes out switch() statement, and only
-> > > - * leaves clrx instructions
-> > > - */
-> > > -#define        mm_zero_struct_page(pp) do {                                    \
-> > > -       unsigned long *_pp = (void *)(pp);                              \
-> > > -                                                                       \
-> > > -        /* Check that struct page is either 64, 72, or 80 bytes */     \
-> > > -       BUILD_BUG_ON(sizeof(struct page) & 7);                          \
-> > > -       BUILD_BUG_ON(sizeof(struct page) < 64);                         \
-> > > -       BUILD_BUG_ON(sizeof(struct page) > 80);                         \
-> > > -                                                                       \
-> > > -       switch (sizeof(struct page)) {                                  \
-> > > -       case 80:                                                        \
-> > > -               _pp[9] = 0;     /* fallthrough */                       \
-> > > -       case 72:                                                        \
-> > > -               _pp[8] = 0;     /* fallthrough */                       \
-> > > -       default:                                                        \
-> > > -               _pp[7] = 0;                                             \
-> > > -               _pp[6] = 0;                                             \
-> > > -               _pp[5] = 0;                                             \
-> > > -               _pp[4] = 0;                                             \
-> > > -               _pp[3] = 0;                                             \
-> > > -               _pp[2] = 0;                                             \
-> > > -               _pp[1] = 0;                                             \
-> > > -               _pp[0] = 0;                                             \
-> > > -       }                                                               \
-> > > -} while (0)
-> > > -
-> > >  /* PFNs are real physical page numbers.  However, mem_map only begins to record
-> > >   * per-page information starting at pfn_base.  This is to handle systems where
-> > >   * the first physical page in the machine is at some huge physical address,
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 273d4dbd3883..dee407998366 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -102,8 +102,42 @@ static inline void set_max_mapnr(unsigned long limit) { }
-> > >   * zeroing by defining this macro in <asm/pgtable.h>.
-> > >   */
-> > >  #ifndef mm_zero_struct_page
-> > > +#if BITS_PER_LONG == 64
-> > > +/* This function must be updated when the size of struct page grows above 80
-> > > + * or reduces below 64. The idea that compiler optimizes out switch()
-> > > + * statement, and only leaves move/store instructions
-> > > + */
-> > > +#define        mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
-> > > +static inline void __mm_zero_struct_page(struct page *page)
-> > > +{
-> > > +       unsigned long *_pp = (void *)page;
-> > > +
-> > > +        /* Check that struct page is either 56, 64, 72, or 80 bytes */
-> > > +       BUILD_BUG_ON(sizeof(struct page) & 7);
-> > > +       BUILD_BUG_ON(sizeof(struct page) < 56);
-> > > +       BUILD_BUG_ON(sizeof(struct page) > 80);
-> > > +
-> > > +       switch (sizeof(struct page)) {
-> > > +       case 80:
-> > > +               _pp[9] = 0;     /* fallthrough */
-> > > +       case 72:
-> > > +               _pp[8] = 0;     /* fallthrough */
-> > > +       default:
-> > > +               _pp[7] = 0;     /* fallthrough */
-> > > +       case 56:
-> > > +               _pp[6] = 0;
-> > > +               _pp[5] = 0;
-> > > +               _pp[4] = 0;
-> > > +               _pp[3] = 0;
-> > > +               _pp[2] = 0;
-> > > +               _pp[1] = 0;
-> > > +               _pp[0] = 0;
-> > > +       }
-> > > +}
-> > > +#else
-> > >  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
-> > >  #endif
-> > > +#endif
-> > >
-> > >  /*
-> > >   * Default maximum number of active map areas, this limits the number of vmas
-> > >
-> >
+> > This is for non-THP where THP cannot be enabled
+> > and there is still room for some improvement. Most/all architectures will be
+> > just fine with this. This flag is more of a safety-net type of thing where in
+> > the future if there is this one or two weird architectures that don't play
+> > well, then they can turn it off at the architecture level by not selecting
+> > the flag. See my latest patches for the per-architecture compile-time
+> > controls. Ideally we'd like to blanket turn it on on all, but this is just
+> > playing it extra safe as Kirill and me were discussing on other threads.
+> 
+> Sure. I'm just pointing out that the 500x performance different turns
+> the operation into a qualitatively different feature, so if we expect
+> to actually ship a mainstream architecture without support for this
+> thing, we should make it explicit. If we're not, we shouldn't.
+
+We can make it explicit by enabling it in such a mainstream architecture is
+my point. Also if the optimization is not doing what its supposed to, then
+userspace will also just know by measuring the time.
+
+thanks,
+
+ - Joel
+
