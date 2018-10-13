@@ -2,101 +2,108 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACBEC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A9C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F7520659
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F7520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 2D8F620659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 16:21:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eNBHvBGs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8F620659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbeJMX6y (ORCPT
+        id S1726890AbeJMX7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 19:58:54 -0400
-Received: from sauhun.de ([88.99.104.3]:57046 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbeJMX6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 19:58:54 -0400
-Received: from localhost (i577A647D.versanet.de [87.122.100.125])
-        by pokefinder.org (Postfix) with ESMTPSA id A65772C7D2D;
-        Sat, 13 Oct 2018 18:21:05 +0200 (CEST)
-Date:   Sat, 13 Oct 2018 18:21:05 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.19
-Message-ID: <20181013162101.GA1321@kunai>
+        Sat, 13 Oct 2018 19:59:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45520 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbeJMX7d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 19:59:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=x4O2hnMK3ivZixLfSIEiDWuEI7e2xM9wTrjw8QvfE0w=; b=eNBHvBGsqItvyKYNzdLjyaaN1g
+        hjCpE4/dBoDW62t3y6w0t5TJ3RQ4XE/iYzQ4602YV8MmEN87somwaDKjEArTjv1FoZqhnQDYSKk6M
+        qovbLFDBmS8yt6hB6hnpHcGCUuPsXNSO/iWm5X9b5WtmK9Ops8Ps8m+p5liz57ijQ62u6Qh+XfNS5
+        Sx0JO5ohb5Tr6S+r+IXUVyCyHUqVHWO2nDk08ieBEz/7l+UlakIBxBjycqIv2nbZFST5GWjGqymc9
+        JGI6c6RzsK2oOqSyt2NC/pwhyPmCDT43EAlP9xJ7baOZoHPbWGmWA9zt//xVz+sikxwJh1xAWb0N9
+        mi7Kn7AA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gBMfg-0006lj-N8; Sat, 13 Oct 2018 16:21:44 +0000
+Subject: Re: [PATCH] ubifs: Fix WARN_ON logic in exit path
+To:     Richard Weinberger <richard@nod.at>, gregkh@linuxfoundation.org
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dunlap@infradead.org
+References: <20181013081841.13369-1-richard@nod.at>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ab4fe8b1-330d-3aa9-a45b-761f65a31f2c@infradead.org>
+Date:   Sat, 13 Oct 2018 09:21:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181013081841.13369-1-richard@nod.at>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/13/18 1:18 AM, Richard Weinberger wrote:
+> ubifs_assert() is not WARN_ON(), so we have to invert
+> the checks.
+> Randy faced this warning with UBIFS being a module, since
+> most users use UBIFS as builtin because UBIFS is the rootfs
+> nobody noticed so far. :-(
+> Including me.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Fixes: 54169ddd382d ("ubifs: Turn two ubifs_assert() into a WARN_ON()")
+> Signed-off-by: Richard Weinberger <richard@nod.at>
 
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks.  Works for me.
 
-Greg,
+> ---
+> Greg,
+> 
+> can you please take this patch directly?
+> It fixes a brown paper bug which was introduced in rc1, I'd like to avoid
+> having it in a release and going the -stable path.
+> 
+> Thanks,
+> //richard
+> ---
+>  fs/ubifs/super.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+> index bf000c8aeffb..fec62e9dfbe6 100644
+> --- a/fs/ubifs/super.c
+> +++ b/fs/ubifs/super.c
+> @@ -2337,8 +2337,8 @@ late_initcall(ubifs_init);
+>  
+>  static void __exit ubifs_exit(void)
+>  {
+> -	WARN_ON(list_empty(&ubifs_infos));
+> -	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) == 0);
+> +	WARN_ON(!list_empty(&ubifs_infos));
+> +	WARN_ON(atomic_long_read(&ubifs_clean_zn_cnt) != 0);
+>  
+>  	dbg_debugfs_exit();
+>  	ubifs_compressors_exit();
+> 
 
-I2C has one documentation bugfix for something we changed during the
-v4.19 cycle.
 
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
-
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to 34d1b82cd198379545ca634119e296fce06252aa:
-
-  i2c: Fix kerneldoc for renamed i2c dma put function (2018-10-11 22:59:57 +0200)
-
-----------------------------------------------------------------
-Stephen Boyd (1):
-      i2c: Fix kerneldoc for renamed i2c dma put function
-
- drivers/i2c/i2c-core-base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvCG2kACgkQFA3kzBSg
-KbbsDBAAiESQTk2qjhz/gE/JI5zIgpJl9oyu35+lf6W1pdMHTtw98XsgYcFtjing
-j36PHO3xPga62UHrhxsmlHbFUYzwAJXOAHFmYDNfTlAuKexsbuY75nV/Oj7Hqm8Q
-Q+ClsWbp7a8efwmwdeyrLsQmx3vQsed4WmE7WZktQZlg1IVOhft0suZcj3O0SyNn
-XYLA4xb1uwXqHzTQzUSbPHZvt5KqPCsvlVJuwKJ/LicpxMVsEv8gSCeAd4BgNB38
-2QKTEHiSK8X+onbXAMRUUQTQbXrahy65OB7O+sChnliFXfMhGArXC3uAmXMzwBhu
-O5s9iV2rwm+D+XaRMr+WBQaWusWlOCO8xCDMZSGRmK0U0LCN4s6t8ZVJnPKtSWKK
-W0iBrwsffVKZgWoGABIRHmeC4IL5Eq9SEb8L+GqtCmlCqU+QTEuOBFNL0C0Z2svP
-ZTnzW36p5QhP01gKtOV5Y3yCQW+t0sn8WKdoYV2Iw5JCqFgB2debUSEJ/hDmfZgr
-+f1nJIVduoj1Vx/clMdd+SwkS5KRb+56i4umP7JTcbfuQzXkxB7fVg3DhS3krtfW
-P0L/E6doc9GyP39jHiotVdtq8bCVPbNpzRI6jCxTdNdmWPicLraC4hawZrN/mCNo
-1EGIWcaduF+vIcqoZKtu5RJmteQcDT9u0ayiVFzNWPBGfKGrevo=
-=jgCq
------END PGP SIGNATURE-----
-
---fdj2RfSjLxBAspz7--
+-- 
+~Randy
