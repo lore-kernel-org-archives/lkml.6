@@ -2,102 +2,119 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEF2C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F14C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFC120895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AFC120895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 1C87B214C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 09:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C87B214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJMQws (ORCPT
+        id S1726810AbeJMQ4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 12:52:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:12748 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726123AbeJMQws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 12:52:48 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42XJwd4y0Gz9ttFt;
-        Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id xl_QyuytFTXF; Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42XJwd4P8Qz9ttFr;
-        Sat, 13 Oct 2018 11:16:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E454B8B782;
-        Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id E8m8eOxeGacV; Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A195C8B74B;
-        Sat, 13 Oct 2018 11:16:22 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 605656F2BD; Sat, 13 Oct 2018 09:16:22 +0000 (UTC)
-Message-Id: <f79824d5da910441ede885fa32a25083c4cc9359.1539422122.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/traps: restore recoverability of machine_check
- interrupts
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Sat, 13 Oct 2018 09:16:22 +0000 (UTC)
+        Sat, 13 Oct 2018 12:56:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32778 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbeJMQ4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 13 Oct 2018 12:56:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D38B0F;
+        Sat, 13 Oct 2018 02:20:18 -0700 (PDT)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFCCD3F5D3;
+        Sat, 13 Oct 2018 02:20:12 -0700 (PDT)
+Date:   Sat, 13 Oct 2018 10:20:09 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     Szabolcs Nagy <szabolcs.nagy@arm.com>, linux-doc@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        linux-arch@vger.kernel.org,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Alexander Graf <agraf@suse.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Manuel Montezelo <manuel.montezelo@gmail.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Wookey <wookey@wookware.org>, Mark Brown <broonie@kernel.org>,
+        nd@arm.com, linux-arm-kernel@lists.infradead.org,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>, linux-api@vger.kernel.org,
+        Nathan_Lynch <Nathan_Lynch@mentor.com>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+Message-ID: <20181013092009.gzxorufk4tqrzked@mbp>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <20180724173957.GA22106@yury-thinkpad>
+ <20181010141017.GA2881@asgard.redhat.com>
+ <7aac1a08-8948-1a04-cbd3-fbc6a53f9ff0@arm.com>
+ <20181013020731.GD21972@asgard.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181013020731.GD21972@asgard.redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit b96672dd840f ("powerpc: Machine check interrupt is a non-
-maskable interrupt") added a call to nmi_enter() at the beginning of
-machine check restart exception handler. Due to that, in_interrupt()
-always returns true regardless of the state before entering the
-exception, and die() panics even when the system was not already in
-interrupt.
+On Sat, Oct 13, 2018 at 04:07:31AM +0200, Eugene Syromiatnikov wrote:
+> On Wed, Oct 10, 2018 at 03:39:07PM +0100, Szabolcs Nagy wrote:
+> > On 10/10/18 15:10, Eugene Syromiatnikov wrote:
+> > >  * What's the reasoning behind capping syscall arguments to 32 bit? x32
+> > >    and MIPS N32 do not have such a restriction (and do not need special
+> > >    wrappers for syscalls that pass 64-bit values as a result, except
+> > >    when they do,  as it is the case for preadv2 on x32); moreover, that
+> > >    would lead to insurmountable difficulties for AArch64 ILP32 tracers
+> > >    that try to trace LP64 tracees, as it would be impossible to pass
+> > >    64-bit addresses to process_vm_{read,write} or ptrace PEEK/POKE.
+> > 
+> > but that's necessarily the case for all ilp32 abis:
+> > the userspace syscall function receives 32bit
+> > arguments so even if the kernel abi takes 64bit
+> > args you cannot use that from c code. (the libc
+> > does not even know which args should be sign or
+> > zero extended.)
+> 
+> glibc's syscall() prototype has kernel_ulong_t as its arguments (more
+> specifically, to __syscall_ulong_t, which is 64-bit wide on x32; it
+> should also have kernel_long_t as its return type instead of long,
+> but that's another story), so it works perfectly fine in case of x32.
 
-This patch calls nmi_exit() before calling die() in order to restore
-the interrupt state we had before calling nmi_enter()
+This would have been my preferred approach but the libc community were
+not entirely happy with it as it breaks POSIX compatibility:
 
-Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/traps.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+https://sourceware.org/bugzilla/show_bug.cgi?id=16437
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/323348.html
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index fd58749b4d6b..4f880c2a6e4c 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -765,12 +765,17 @@ void machine_check_exception(struct pt_regs *regs)
- 	if (check_io_access(regs))
- 		goto bail;
- 
--	die("Machine check", regs, SIGBUS);
--
- 	/* Must die if the interrupt is not recoverable */
- 	if (!(regs->msr & MSR_RI))
- 		nmi_panic(regs, "Unrecoverable Machine check");
- 
-+	if (!nested)
-+		nmi_exit();
-+
-+	die("Machine check", regs, SIGBUS);
-+
-+	return;
-+
- bail:
- 	if (!nested)
- 		nmi_exit();
+(there are other threads around x32 and people arguing whether POSIX is
+wrong)
+
+Some sometime around version 4 or 5 of this series, we made the move
+(back) to compat-like ABI.
+
 -- 
-2.13.3
-
+Catalin
