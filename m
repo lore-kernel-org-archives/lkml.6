@@ -6,104 +6,102 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7364EC6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147E4C6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EFD20865
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EFD20865
+	by mail.kernel.org (Postfix) with ESMTP id C5AB720865
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 01:11:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AB720865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbeJMIpK (ORCPT
+        id S1727074AbeJMIqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 04:45:10 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47148 "EHLO
+        Sat, 13 Oct 2018 04:46:54 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47194 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeJMIpK (ORCPT
+        with ESMTP id S1726814AbeJMIqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 04:45:10 -0400
+        Sat, 13 Oct 2018 04:46:53 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 795A329FC4; Fri, 12 Oct 2018 21:10:06 -0400 (EDT)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <17b745712a31927fda2d5d93571884122d7c4727.1539391675.git.fthain@telegraphics.com.au>
+        id B5CE229FC6; Fri, 12 Oct 2018 21:11:48 -0400 (EDT)
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Message-Id: <bfcbc04b25b4baa99bb7434a237c555908e36bd9.1539391876.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1539391876.git.fthain@telegraphics.com.au>
+References: <cover.1539391876.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] m68k: Unroll raw_outsb() loop
-Date:   Sat, 13 Oct 2018 11:47:55 +1100
+Subject: [PATCH 2/6] esp_scsi: Track residual for PIO transfers
+Date:   Sat, 13 Oct 2018 11:51:16 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unroll the raw_outsb() loop using the optimized assembler code from
-raw_outsw(). That code is copied and pasted, with movew changed to moveb.
+If a target disconnects during a PIO data transfer the command may
+fail when the target reconnects:
 
-This improves the performance of sequential write transfers using mac_esp
-in PIO mode by 5% or 10%. (The DMA controller on the 840av/660av models is
-still unsupported so PIO transfers are used.)
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
 
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
+
+The usual residual calculation relies on the Transfer Count registers
+which works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-In a separate patch series, mac_esp adopts writesb() in place of inline
-assembler, making that code smaller and more reusable.
----
- arch/m68k/include/asm/raw_io.h | 39 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 4 deletions(-)
+ drivers/scsi/esp_scsi.c | 1 +
+ drivers/scsi/esp_scsi.h | 2 ++
+ drivers/scsi/mac_esp.c  | 2 ++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/arch/m68k/include/asm/raw_io.h b/arch/m68k/include/asm/raw_io.h
-index 85761255dde5..8a6dc6e5a279 100644
---- a/arch/m68k/include/asm/raw_io.h
-+++ b/arch/m68k/include/asm/raw_io.h
-@@ -107,12 +107,43 @@ static inline void raw_insb(volatile u8 __iomem *port, u8 *buf, unsigned int len
+diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+index c3fc34b9964d..9e5d3f7d29ae 100644
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
+ 
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	/*
+ 	 * The am53c974 has a DMA 'pecularity'. The doc states:
+diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
+index 8163dca2071b..db4b6ea94caa 100644
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -540,6 +540,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
++
++	int			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
+index eb551f3cc471..71879f2207e0 100644
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
+ 	}
++
++	esp->send_cmd_residual = esp_count;
  }
  
- static inline void raw_outsb(volatile u8 __iomem *port, const u8 *buf,
--			     unsigned int len)
-+			     unsigned int nr)
- {
--	unsigned int i;
-+	unsigned int tmp;
- 
--        for (i = 0; i < len; i++)
--		out_8(port, *buf++);
-+	if (nr & 15) {
-+		tmp = (nr & 15) - 1;
-+		asm volatile (
-+			"1: moveb %0@+,%2@; dbra %1,1b"
-+			: "=a" (buf), "=d" (tmp)
-+			: "a" (port), "0" (buf),
-+			  "1" (tmp));
-+	}
-+	if (nr >> 4) {
-+		tmp = (nr >> 4) - 1;
-+		asm volatile (
-+			"1: "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"moveb %0@+,%2@; "
-+			"dbra %1,1b"
-+			: "=a" (buf), "=d" (tmp)
-+			: "a" (port), "0" (buf),
-+			  "1" (tmp));
-+	}
- }
- 
- static inline void raw_insw(volatile u16 __iomem *port, u16 *buf, unsigned int nr)
+ static int mac_esp_irq_pending(struct esp *esp)
 -- 
 2.16.4
 
