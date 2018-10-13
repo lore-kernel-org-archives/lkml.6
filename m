@@ -2,108 +2,98 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB80C71122
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680D6C71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6326D205F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A88620659
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 17:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaAaPTjg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6326D205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GxAXdlWA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h/xl7UMo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A88620659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeJNAnR (ORCPT
+        id S1727002AbeJNAnu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 20:43:17 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46471 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbeJNAnR (ORCPT
+        Sat, 13 Oct 2018 20:43:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39680 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbeJNAnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 20:43:17 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k64-v6so12150857oia.13
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 10:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lBV0QO459WTTqFnmD7pZDxx8U0cyPRIGNGBD4H22lDc=;
-        b=DaAaPTjgo+XOcS0x2asnXJncPDtmSnkH2rCjORfHnH8ZzZ+RdhWnxz5m7sa0l43XoA
-         EwIA0pktSB/fLA63EpRehV24BbfSeoTyq7ezutJcFAOOXxKnzjQVisEEJcfk6ch0DF8A
-         SUTVqU0BpFA8Xh2qB4KcByqPOE0zYNBnIt6CqgeK98gLhklONdOXktY1l+a7KukSK+pX
-         VUWLxTQu/cM2QDh85WGi1/DZ5G+bMSnCCxip2DWvtOQ7TC4r9PRu5nrDBx2azyvq2zxc
-         RWy8v5trMoDqYpDSdGDeeEOdXT+KDP2OefxhhCx7Kwx+azqrHOe7+uzUE92HKxqWqnFq
-         Rclw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lBV0QO459WTTqFnmD7pZDxx8U0cyPRIGNGBD4H22lDc=;
-        b=EfM+S0e9fRDi1behJdMQeyJKHzTP/h1DTL5di0frxjlbu/+Ok2TuVWniJ7Vck59bEN
-         ek8vvRykegfgdG6wG7AC/+yi59oV9p5h33gmXVVhFjM0Uew91PtgepWE9zfKoodoWEXs
-         GO2Jos+EXhHIIKHM5D7XUjMRJif2aAh441/TxdORbYei+wLQ3FpAuB6p+AlMeeYswpzT
-         +Qgv6w5X16Fqf7AUMQLOKF4BilTUSBylsby5k2iaEaN4fWyh5b8Y4ZvNq70WXBRhlmNV
-         iOflBQ+ZWuMcHRyhwxFFh3rufQLar5TeAUz6TtcqmgsYvjEndtqBdNXt7JmpIxbqYQYA
-         I2ZA==
-X-Gm-Message-State: ABuFfojqU3aJFwpWgCWF//NwZknXeKvfDrFa8SlXSLFiBlRvFh8IvRqP
-        2dphBAzo3Q3lHNpe1Mxif+cijdB87ydALBnDZ2E=
-X-Google-Smtp-Source: ACcGV63tUx5Toloynjwfaxqql/W4z6901AYEYJ31xeSirZVVdIUtdnm4Mtci0sMz9vL0qlAU9/iARcXlJnRMRJPIxZE=
-X-Received: by 2002:aca:4792:: with SMTP id u140-v6mr5538699oia.215.1539450321921;
- Sat, 13 Oct 2018 10:05:21 -0700 (PDT)
+        Sat, 13 Oct 2018 20:43:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3879D60B72; Sat, 13 Oct 2018 17:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539450354;
+        bh=T3niiUekW6H17D3koI+YESKbhPh+vkVSMp3lV6DKPw0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=GxAXdlWAH/zbwanIdvme4RZdG9vOuW+uAXLH2vJmIabw8HfGyqB4MyQhFScjx4nwt
+         8nZsMgnJpVWXV+tN0QS9yqwsDIFDRmysP7xao9lckQ/IdIOlYXypw/3etFDNhhc4WD
+         lE/cQxJvUajI/1YMS11YpcxAyrj12VTqjVlv8hZc=
+Received: from potku.adurom.net (88-114-240-228.elisa-laajakaista.fi [88.114.240.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3776B605A4;
+        Sat, 13 Oct 2018 17:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539450352;
+        bh=T3niiUekW6H17D3koI+YESKbhPh+vkVSMp3lV6DKPw0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=h/xl7UMoEOkkPf1rHV591POTqZHQHfR4syZmc9zdHmaVepKFAqRLMzZx84yq6Pm0I
+         VzI2UkTM8j91dyOPkMAF7Ch85JgT2ASDS43n52EUimd7OCMguP5GjP1xicNFD/eVJh
+         O6wsAeb0Szo26MR+f8EBgBYw5prS61OZP7gZXY1g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3776B605A4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1539447319-5383-1-git-send-email-penghao122@sina.com.cn>
-In-Reply-To: <1539447319-5383-1-git-send-email-penghao122@sina.com.cn>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Date:   Sat, 13 Oct 2018 13:04:45 -0400
-Message-ID: <CAGM2reYqEpY9KbMDU6uSaCuzsyN6qcXit930vbWk54PLhvZxZg@mail.gmail.com>
-Subject: Re: [PATCH] mm/sparse: remove a check that compare if unsigned
- variable is negative
-To:     penghao122@sina.com.cn
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        pasha.tatashin@oracle.com, osalvador@suse.de,
-        LKML <linux-kernel@vger.kernel.org>, peng.hao2@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtl8xxxu: Remove set but not used variables 'usedesc40'
+ and 'seq_number'
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
+References: <1539008219-149058-1-git-send-email-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181013170554.3879D60B72@smtp.codeaurora.org>
+Date:   Sat, 13 Oct 2018 17:05:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is incorrect: next_present_section_nr() returns "int" and -1 no
-next section, this change would lead to infinite loop.
-On Sat, Oct 13, 2018 at 12:16 PM Peng Hao <penghao122@sina.com.cn> wrote:
->
->
-> From: Peng Hao <peng.hao2@zte.com.cn>
->
-> In all use locations for for_each_present_section_nr, variable
-> section_nr is unsigned. It is unnecessary to test if it is negative.
->
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  mm/sparse.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 10b07ee..a6f9f22 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -196,8 +196,7 @@ static inline int next_present_section_nr(int section_nr)
->  }
->  #define for_each_present_section_nr(start, section_nr)         \
->         for (section_nr = next_present_section_nr(start-1);     \
-> -            ((section_nr >= 0) &&                              \
-> -             (section_nr <= __highest_present_section_nr));    \
-> +            section_nr <= __highest_present_section_nr;        \
->              section_nr = next_present_section_nr(section_nr))
->
->  static inline unsigned long first_present_section_nr(void)
-> --
-> 1.8.3.1
->
->
+YueHaibing <yuehaibing@huawei.com> wrote:
+
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_tx':
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4925:7: warning:
+>  variable 'usedesc40' set but not used [-Wunused-but-set-variable]
+> 
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4921:6: warning:
+>  variable 'seq_number' set but not used [-Wunused-but-set-variable]
+> 
+> 'usedesc40' and 'seq_number' are not used any more after
+> commit b59415c2dd08 ("rtl8xxxu: Split filling of TX descriptors into separate functions")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+03ce6f8a6776 rtl8xxxu: Remove set but not used variables 'usedesc40' and 'seq_number'
+
+-- 
+https://patchwork.kernel.org/patch/10630829/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
