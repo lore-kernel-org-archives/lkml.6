@@ -2,279 +2,164 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE9C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B21BC28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7624E20659
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7624E20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id F27B320877
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 14:54:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iptJbN9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27B320877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeJMWGh (ORCPT
+        id S1726530AbeJMWbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 18:06:37 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:41269 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeJMWGh (ORCPT
+        Sat, 13 Oct 2018 18:31:49 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46472 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbeJMWbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 18:06:37 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gBKuB-0006w5-O1 from Vladimir_Zapolskiy@mentor.com ; Sat, 13 Oct 2018 07:28:35 -0700
-Received: from [137.202.108.125] (137.202.0.90) by
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Sat, 13 Oct 2018 15:28:31 +0100
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com> <1884479.fINZhmP2Mi@avalon>
-CC:     Vladimir Zapolskiy <vz@mleia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Sandeep Jain <Sandeep_Jain@mentor.com>
-From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <55fe6c51-20e0-a10b-97fd-23c6f030acac@mentor.com>
-Date:   Sat, 13 Oct 2018 17:28:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <1884479.fINZhmP2Mi@avalon>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+        Sat, 13 Oct 2018 18:31:48 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r64-v6so7584305pfb.13;
+        Sat, 13 Oct 2018 07:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qRIE2f33zVx7l+zax50LPFwdkUfPKlzQ2ecUdzjJB3w=;
+        b=iptJbN9c7EXhdMtLuNVDWpdEX79VyhZ/htZ+sDq/0gR2dP1AIYzptr3iNcS4dIhKuE
+         gKw0scn4icIEQk2lUAZ2WgG/ONCcoYfNbDD4oYWQfMASgZKFuZjGjOA4PRN7GaECv8ck
+         n/2kTGtpkX8cnOiPay1nwjGWywFo4yOAGytbQfkZwU2tg0ewFBKfSh4JEH7fgTcNBwrc
+         eGHD3EwzUxJ3gViIkr7q00cmyxGixm8OBwWOPUEZH6uvOyR8FlWKtsQNRJ2u6hGGQBlu
+         a80KlkxdLjlR2NpXkH6zCVl+LXrXD6GK0Y+vwxzGldrKVK2BpTpUNoGAtxqIFg4xo6bA
+         OOaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qRIE2f33zVx7l+zax50LPFwdkUfPKlzQ2ecUdzjJB3w=;
+        b=RZUN0Pk4ju433QiT0/AFnA8k5J6tIrUlDXovaP+Cl7wsMH0rJxCdDZYymNh4ESlY2V
+         p5yKGBxbtEyfytxYj0JScPbM3NOGUIXfXCvgKKQYIX0GZ8Gm/bpmZMEwESe8u4Zur+Lm
+         jkyy9LlVvc3P0ul+wXyg6tJob+bxozEXVXOtQgR/vmeLr7Wq8R9tpX76a/Cj396GQLo6
+         OOpbk80D8rtDcqg/rN0mnTwgUF2yquD8MTZd/aNcwZRP0q39shiRiCzC1jqzRA9f9nnM
+         pZCYirSAyXjmpzonMRfopUoMizxWTgRTAfdMt0kiNWpYswt0PqlPynXVhtBbhTW8FIZZ
+         s4YA==
+X-Gm-Message-State: ABuFfoh55QwplgTbIhC6Zyk/FMf7qVcUqthjusnch4Qcp/RJD9iDwrWV
+        VSeFABxnGQg3xXaGh6D1D2Q=
+X-Google-Smtp-Source: ACcGV61HMe2w0niUJncct3r9sXFquEOhFIAsw/cgsgxD0CgIn25ejhdalgbJmm99gXA+gxqlvxuKnQ==
+X-Received: by 2002:a63:5605:: with SMTP id k5-v6mr9644403pgb.189.1539442462441;
+        Sat, 13 Oct 2018 07:54:22 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
+        by smtp.googlemail.com with ESMTPSA id v81-v6sm8688724pfj.25.2018.10.13.07.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 13 Oct 2018 07:54:21 -0700 (PDT)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
+        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
+        paulus@ozlabs.org, pbonzini@redhat.com, ralf@linux-mips.org,
+        rkrcmar@redhat.com, sthemmin@microsoft.com, tglx@linutronix.de,
+        will.deacon@arm.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+Subject: [PATCH V4 00/15] x86/KVM/Hyper-v: Add HV ept tlb range flush hypercall support in KVM
+Date:   Sat, 13 Oct 2018 22:53:51 +0800
+Message-Id: <20181013145406.4911-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-thank you for review, please find my comments below.
+For nested memory virtualization, Hyper-v doesn't set write-protect
+L1 hypervisor EPT page directory and page table node to track changes 
+while it relies on guest to tell it changes via HvFlushGuestAddressLlist
+hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
+EPT page table with ranges which are specified by L1 hypervisor.
 
-On 10/12/2018 02:44 PM, Laurent Pinchart wrote:
-> Hi Vladimir,
-> 
-> Thank you for the patch.
-> 
-> On Tuesday, 9 October 2018 00:11:59 EEST Vladimir Zapolskiy wrote:
->> From: Sandeep Jain <Sandeep_Jain@mentor.com>
->>
->> The change adds device tree binding description of TI DS90Ux9xx
->> series of serializer and deserializer controllers which support video,
->> audio and control data transmission over FPD-III Link connection.
->>
->> Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
->> [vzapolskiy: various updates and corrections of secondary importance]
->> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->> ---
->>  .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
->>  1 file changed, 66 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->> b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt new file mode
->> 100644
->> index 000000000000..0733da88f7ef
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
->> @@ -0,0 +1,66 @@
->> +Texas Instruments DS90Ux9xx de-/serializer controllers
->> +
->> +Required properties:
->> +- compatible: Must contain a generic "ti,ds90ux9xx" value and
->> +	may contain one more specific value from the list:
-> 
-> If it "may" contain one more specific value, when should that value be 
-> present, and when can it be absent ?
+If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
+flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
+and sync L1's EPT table when next EPT page fault is triggered.
+HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
+page fault and synchronization of shadow page table.
 
-Practically you can always omit a specific compatible, because (with a number
-of minor exceptions like DS90UH925Q case, see a quirk in the code) it is
-possible to read out the IC type in runtime.
 
-Nevertheless I prefer to have a complete list of all specific compatibles
-to avoid problems with maintenance in future, recently I had a long discussion
-with Jassi Brar about iMX* mailbox compatibles on the DT mailing list,
-the arguments remain the same, but I don't feel enough internal power to start
-another such an exhaustive discussion right at the moment.
+Change since v3:
+	1) Remove code of updating "tlbs_dirty" in kvm_flush_remote_tlbs_with_range()
+	2) Remove directly tlb flush in the kvm_handle_hva_range()
+	3) Move tlb flush in kvm_set_pte_rmapp() to kvm_mmu_notifier_change_pte()
+	4) Combine Vitaly's "don't pass EPT configuration info to
+vmx_hv_remote_flush_tlb()" fix
 
->> +	"ti,ds90ub925q",
->> +	"ti,ds90uh925q",
->> +	"ti,ds90ub927q",
->> +	"ti,ds90uh927q",
->> +	"ti,ds90ub926q",
->> +	"ti,ds90uh926q",
->> +	"ti,ds90ub928q",
->> +	"ti,ds90uh928q",
->> +	"ti,ds90ub940q",
->> +	"ti,ds90uh940q".
->> +
->> +Optional properties:
->> +- reg : Specifies the I2C slave address of a local de-/serializer.
-> 
-> You should explain when the reg property is required and when it isn't. This
+Change since v2:
+       1) Fix comment in the kvm_flush_remote_tlbs_with_range()
+       2) Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+	hyperv-tlfs.h.
+       3) Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+       4) Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+	struct hv_guest_mapping_flush_list.
 
-Talking about TI DS90Ux9xx IC series, ideally I'd like to shift from
-serializer/deserializer concept and promote "remote" and "local" IC, by the
-way, and if I'm not mistaken, MOST ICs are truly identical on both ends.
+Change since v1:
+       1) Convert "end_gfn" of struct kvm_tlb_range to "pages" in order
+          to avoid confusion as to whether "end_gfn" is inclusive or exlusive.
+       2) Add hyperv tlb range struct and replace kvm tlb range struct
+          with new struct in order to avoid using kvm struct in the hyperv
+	  code directly.
 
-So, here "reg" property is need only if the IC (serializer or deserializer,
-it does not matter) is on the "local" side, i.e. it is a slave I2C device
-discovered on an I2C bus, which is under control by an application processor.
 
-If IC is on the "remote" side, in other words separated by the serial link
-from the "local" IC, then "reg" property is not needed.
 
-> will in my opinion require a more detailed explanation of the DT model for 
-> this device.
-> 
->> +- power-gpios : GPIO line to control supplied power to the device.
-> 
-> As Marek mentioned, a regulator would be better. I would make it a mandatory 
-> property, as the device always needs to be powered.
-> 
+Lan Tianyu (15):
+  KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
+  KVM/MMU: Add tlb flush with range helper function
+  KVM: Replace old tlb flush function with new one to flush a specified
+    range.
+  KVM: Make kvm_set_spte_hva() return int
+  KVM/MMU: Move tlb flush in kvm_set_pte_rmapp() to
+    kvm_mmu_notifier_change_pte()
+  KVM/MMU: Flush tlb directly in the kvm_set_pte_rmapp()
+  KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+  KVM/MMU: Flush tlb directly in kvm_mmu_zap_collapsible_spte()
+  KVM: Add flush_link and parent_pte in the struct kvm_mmu_page
+  KVM: Add spte's point in the struct kvm_mmu_page
+  KVM/MMU: Replace tlb flush function with range list flush function
+  x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+  x86/Hyper-v: Add trace in the
+    hyperv_nested_flush_guest_mapping_range()
+  KVM/VMX: Change hv flush logic when ept tables are mismatched.
+  KVM/VMX: Add hv tlb range flush support
 
-I get a memory flashback. Did we discuss recently a right property name to
-control panel power by a GPIO or was it something else?
+ arch/arm/include/asm/kvm_host.h     |   2 +-
+ arch/arm64/include/asm/kvm_host.h   |   2 +-
+ arch/mips/include/asm/kvm_host.h    |   2 +-
+ arch/mips/kvm/mmu.c                 |   3 +-
+ arch/powerpc/include/asm/kvm_host.h |   2 +-
+ arch/powerpc/kvm/book3s.c           |   3 +-
+ arch/powerpc/kvm/e500_mmu_host.c    |   3 +-
+ arch/x86/hyperv/nested.c            |  85 ++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h  |  32 +++++++++
+ arch/x86/include/asm/kvm_host.h     |  12 +++-
+ arch/x86/include/asm/mshyperv.h     |  16 +++++
+ arch/x86/include/asm/trace/hyperv.h |  14 ++++
+ arch/x86/kvm/mmu.c                  | 138 ++++++++++++++++++++++++++++++------
+ arch/x86/kvm/paging_tmpl.h          |  10 ++-
+ arch/x86/kvm/vmx.c                  |  70 +++++++++++++++---
+ virt/kvm/arm/mmu.c                  |   6 +-
+ virt/kvm/kvm_main.c                 |   5 +-
+ 17 files changed, 360 insertions(+), 45 deletions(-)
 
-There are quite many properties of exactly the same functionality:
-* powerdown-gpios
-* pd-gpios
-* pdn-gpios
-* power-gpios
-* powerdn-gpio
-* power-down-gpios
-* ...
+-- 
+2.14.4
 
-Probably device tree maintainers should unify the names, but my point is that
-your argument should be applicable to all such device tree nodes / property
-descriptions and usages. Do I understand you correctly?
-
-I would prefer to reference to a regulator while dealing with the power
-rails, and reference to a GPIO in case of power control only like in the
-case above.
-
->> +- ti,backward-compatible-mode : Overrides backward compatibility mode.
->> +	Possible values are "<1>" or "<0>".
->> +	If "ti,backward-compatible-mode" is not mentioned, the backward
->> +	compatibility mode is not touched and given by hardware pin strapping.
-> 
-> This doesn't seem to be a device description to me, it's a software 
-> configuration. You should handle it in drivers.
-> 
-
-No, it is a hardware description which allows to connect/discover ICs of
-different series, please reference to the datasheet for examples of its
-usage.
-
->> +- ti,low-frequency-mode : Overrides low frequency mode.
->> +	Possible values are "<1>" or "<0>".
->> +	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
->> +	is not touched and given by hardware pin strapping.
-> 
-> This sounds the same. How about giving a real life example of a case where you 
-> need to set these two properties to override the pin strapping, for the 
-> purpose of discussing the DT bindings ?
-
-I have to ask, what do you mean by "a software configuration"?
-
-Both properties are IC controls (= hardware configuration in my language),
-and these hardware properties shall be set (if needed of course) on a "local" IC
-*before* a discovery of some "remote" IC, thus the property are in the DT.
-
->> +- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
->> +	MAPSEL pin value is ignored.
->> +- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
->> +	MAPSEL pin value is ignored.
-> 
-> I assume those two are mutually exclusive, this should be documented, or you 
-> could merge the two properties into one. Same comment as above though, why do 
-> you need an override in DT ?
-> 
-
-The property are mutually exclusive, but it is a tristate property, please
-see my answer to a similar question from Marek.
-
->> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
->> +	Possible values are "<1>" or "<0>".
->> +	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
->> +	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
->> +	strobed on the Falling edge of the PCLK.
->> +	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
->> +	value is not touched and given by hardware pin strapping.
-> 
-> We have a standard property in Documentation/devicetree/bindings/media/video-
-> interfaces.txt for this, please use it.
-> 
-
-Okay, thank you for the link.
-
->> +- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
->> +	Possible values are from "<0>" to "<7>". The same value will be
->> +	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
->> +	found, then SSCG will be disabled.
-> 
-> This makes sense in DT in my opinion, as EMC is a system property. I wonder 
-> however if exposing the hardware register directly is the best option. Could 
-> you elaborate on how a system designer will select which value to use, in 
-> order to find the best DT description ?
-> 
-
-Hm, I suppose IC datasheets should serve as a better source of information.
-
->> +TI DS90Ux9xx serializers and deserializer device nodes may contain a number
->> +of children device nodes to describe and enable particular subcomponents
->> +found on ICs.
-> 
-> As mentioned in my review of the cover letter I don't think this is necessary. 
-
-It is, in my humble opinion if an IC can be described as "a _pinmux_ + loads
-of other functions" it makes it an MFD.
-
-> You can make the serializer and deserializer I2C controllers without subnodes. 
-> Same goes for GPIO control.
-> 
-
-I have to define pinmuxes, one of the complicated and essential parts of IC
-configuration is unfairly excluded from the consideration.
-
->> +Example:
->> +
->> +serializer: serializer@c {
->> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
->> +	reg = <0xc>;
->> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
->> +	ti,backward-compatible-mode = <0>;
->> +	ti,low-frequency-mode = <0>;
->> +	ti,pixel-clock-edge = <0>;
->> +	...
->> +}
->> +
->> +deserializer: deserializer@3c {
->> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
->> +	reg = <0x3c>;
->> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
->> +	...
->> +}
->> +
-> 
-> Extra blank line ?
-> 
-
-Right, thank you for comments.
-
---
-Best wishes,
-Vladimir
