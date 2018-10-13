@@ -2,415 +2,81 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEF4C28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 10:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CBFC71122
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61F520652
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 10:45:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61F520652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id DD1792098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 11:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD1792098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbeJMSVn (ORCPT
+        id S1726292AbeJMSdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 14:21:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33453 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbeJMSVm (ORCPT
+        Sat, 13 Oct 2018 14:33:41 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:52806 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeJMSdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 14:21:42 -0400
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1gBHPp-0005x3-O1
-        for linux-kernel@vger.kernel.org; Sat, 13 Oct 2018 10:45:01 +0000
-Received: by mail-wr1-f70.google.com with SMTP id t9so8130879wrx.7
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 03:45:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1Cr+74FzyO85zUd/Dh5gdHGxLETlI9ZH6tf9tlPDrPw=;
-        b=ZDcNERlY9MQvIo7Xtm6ok0KiY3w/avHAQjysTDth4exNf0UUy6TcB5IbShVPAigb21
-         /W5B85wsotBskh4HQ3D2BQAgVkG6jRJFrPVzqNq0FMkPj7uPQ9QOKKqTVjqA1iYPPx4B
-         LsFY8jBz1SeK1+9h/zIvSsalQuh9/nEUXGpC1Q5uTSBdllUBHVPGT/m8G8lMTydSwkas
-         Q1io1hTXsl2jwUY4wMaeffPuAQaxKz49kIXYv/X9DiJWVOVkIxAGU5EfPVZrdsr8IJze
-         TRTGDqvhyVUD44XqNis28ngHFcH0FIluLzfTCWh00UEpENSBhLNKOqs8FmI8wmd7OLNE
-         ySaA==
-X-Gm-Message-State: ABuFfog3ja7sFCxsagNMOKzLAAPJzP0jTpN4RNgu+z5MRdh1S1N3YGhL
-        ITMT+B7pcrYsKnat5cjwtZNnvaoRxaaGUnvQtRNy44AFFacWKp3Y9gXzW1gMZFSUpw/XtBk65Gy
-        bgXBOb4r5yFKmgfDNFhpGy9qHPqkV1hUR76dMVtKL4g==
-X-Received: by 2002:a1c:7ed4:: with SMTP id z203-v6mr7531776wmc.62.1539427498512;
-        Sat, 13 Oct 2018 03:44:58 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV62vKcwhP6006SIpeoLWat35UkmgIsINAbtXPygSp6PcKeE1YHFuPJOkttynUOZ42inKmpbaxg==
-X-Received: by 2002:a1c:7ed4:: with SMTP id z203-v6mr7531758wmc.62.1539427497872;
-        Sat, 13 Oct 2018 03:44:57 -0700 (PDT)
-Received: from gmail.com ([2a02:8070:8895:9700:8197:8849:535a:4f00])
-        by smtp.gmail.com with ESMTPSA id q17-v6sm2782518wrw.19.2018.10.13.03.44.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 13 Oct 2018 03:44:57 -0700 (PDT)
-From:   Christian Brauner <christian.brauner@canonical.com>
-X-Google-Original-From: Christian Brauner <christian@brauner.io>
-Date:   Sat, 13 Oct 2018 12:44:48 +0200
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-Message-ID: <20181013104446.b3z26rwmiripqfks@gmail.com>
-Reply-To: christian@brauner.io
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        Sat, 13 Oct 2018 14:33:41 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id AFC54260B2D
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     David Airlie <airlied@linux.ie>
+Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
+        Sandy Huang <hjc@rock-chips.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] drm/rockchip: psr: do not dereference encoder before it is null checked.
+Date:   Sat, 13 Oct 2018 12:56:54 +0200
+Message-Id: <20181013105654.11827-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 05:33:35PM -0700, Enke Chen wrote:
-> For simplicity and consistency, this patch provides an implementation
-> for signal-based fault notification prior to the coredump of a child
-> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
-> be used by an application to express its interest and to specify the
-> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
-> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
-> 
-> Background:
-> 
-> As the coredump of a process may take time, in certain time-sensitive
-> applications it is necessary for a parent process (e.g., a process
-> manager) to be notified of a child's imminent death before the coredump
-> so that the parent process can act sooner, such as re-spawning an
-> application process, or initiating a control-plane fail-over.
-> 
-> Currently there are two ways for a parent process to be notified of a
-> child process's state change. One is to use the POSIX signal, and
-> another is to use the kernel connector module. The specific events and
-> actions are summarized as follows:
-> 
-> Process Event    POSIX Signal                Connector-based
-> ----------------------------------------------------------------------
-> ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_STOPPED
-> 
-> ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_CONTINUED
-> 
-> pre_coredump/    N/A                         proc_coredump_connector()
-> get_signal()
-> 
-> post_coredump/   do_notify_parent()          proc_exit_connector()
-> do_exit()        SIGCHLD / exit_signal
-> ----------------------------------------------------------------------
-> 
-> As shown in the table, the signal-based pre-coredump notification is not
-> currently available. In some cases using a connector-based notification
-> can be quite complicated (e.g., when a process manager is written in shell
-> scripts and thus is subject to certain inherent limitations), and a
-> signal-based notification would be simpler and better suited.
-> 
-> Signed-off-by: Enke Chen <enkechen@cisco.com>
-> ---
->  arch/x86/kernel/signal_compat.c    |  2 +-
->  include/linux/sched.h              |  4 ++
->  include/linux/signal.h             |  5 +++
->  include/uapi/asm-generic/siginfo.h |  3 +-
->  include/uapi/linux/prctl.h         |  4 ++
->  kernel/fork.c                      |  1 +
->  kernel/signal.c                    | 51 +++++++++++++++++++++++++
->  kernel/sys.c                       | 77 ++++++++++++++++++++++++++++++++++++++
->  8 files changed, 145 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
-> index 9ccbf05..a3deba8 100644
-> --- a/arch/x86/kernel/signal_compat.c
-> +++ b/arch/x86/kernel/signal_compat.c
-> @@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
->  	BUILD_BUG_ON(NSIGSEGV != 7);
->  	BUILD_BUG_ON(NSIGBUS  != 5);
->  	BUILD_BUG_ON(NSIGTRAP != 5);
-> -	BUILD_BUG_ON(NSIGCHLD != 6);
-> +	BUILD_BUG_ON(NSIGCHLD != 7);
->  	BUILD_BUG_ON(NSIGSYS  != 1);
->  
->  	/* This is part of the ABI and can never change in size: */
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 09026ea..cfb9645 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -696,6 +696,10 @@ struct task_struct {
->  	int				exit_signal;
->  	/* The signal sent when the parent dies: */
->  	int				pdeath_signal;
-> +
-> +	/* The signal sent prior to a child's coredump: */
-> +	int				predump_signal;
-> +
->  	/* JOBCTL_*, siglock protected: */
->  	unsigned long			jobctl;
->  
-> diff --git a/include/linux/signal.h b/include/linux/signal.h
-> index 706a499..7cb976d 100644
-> --- a/include/linux/signal.h
-> +++ b/include/linux/signal.h
-> @@ -256,6 +256,11 @@ static inline int valid_signal(unsigned long sig)
->  	return sig <= _NSIG ? 1 : 0;
->  }
->  
-> +static inline int valid_predump_signal(int sig)
-> +{
-> +	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
-> +}
-> +
->  struct timespec;
->  struct pt_regs;
->  enum pid_type;
-> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-> index cb3d6c2..1a47cef 100644
-> --- a/include/uapi/asm-generic/siginfo.h
-> +++ b/include/uapi/asm-generic/siginfo.h
-> @@ -267,7 +267,8 @@ struct {				\
->  #define CLD_TRAPPED	4	/* traced child has trapped */
->  #define CLD_STOPPED	5	/* child has stopped */
->  #define CLD_CONTINUED	6	/* stopped child has continued */
-> -#define NSIGCHLD	6
-> +#define CLD_PREDUMP	7	/* child is about to dump core */
-> +#define NSIGCHLD	7
->  
->  /*
->   * SIGPOLL (or any other signal without signal specific si_codes) si_codes
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index c0d7ea0..79f0a8a 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -219,4 +219,8 @@ struct prctl_mm_map {
->  # define PR_SPEC_DISABLE		(1UL << 2)
->  # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
->  
-> +/* Whether to receive signal prior to child's coredump */
-> +#define PR_SET_PREDUMP_SIG	54
-> +#define PR_GET_PREDUMP_SIG	55
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff..c296c11 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1985,6 +1985,7 @@ static __latent_entropy struct task_struct *copy_process(
->  	p->dirty_paused_when = 0;
->  
->  	p->pdeath_signal = 0;
-> +	p->predump_signal = 0;
->  	INIT_LIST_HEAD(&p->thread_group);
->  	p->task_works = NULL;
->  
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 312b43e..eb4a483 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
->  	return signr;
->  }
->  
-> +/*
-> + * Let the parent, if so desired, know about the imminent death of a child
-> + * prior to its coredump.
-> + *
-> + * Locking logic is similar to do_notify_parent_cldstop().
-> + */
-> +static void do_notify_parent_predump(struct task_struct *tsk)
-> +{
-> +	struct sighand_struct *sighand;
-> +	struct task_struct *parent;
-> +	struct kernel_siginfo info;
-> +	unsigned long flags;
-> +	int sig;
-> +
-> +	parent = tsk->real_parent;
-> +	sig = parent->predump_signal;
-> +
-> +	/* Check again with "tasklist_lock" locked by the caller */
-> +	if (!valid_predump_signal(sig))
-> +		return;
-> +
-> +	clear_siginfo(&info);
-> +	info.si_signo = sig;
-> +	if (sig == SIGCHLD)
-> +		info.si_code = CLD_PREDUMP;
-> +
-> +	rcu_read_lock();
-> +	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
-> +	info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
-> +				       task_uid(tsk));
-> +	rcu_read_unlock();
-> +
-> +	sighand = parent->sighand;
-> +	spin_lock_irqsave(&sighand->siglock, flags);
-> +	__group_send_sig_info(sig, &info, parent);
-> +	spin_unlock_irqrestore(&sighand->siglock, flags);
-> +}
-> +
->  bool get_signal(struct ksignal *ksig)
->  {
->  	struct sighand_struct *sighand = current->sighand;
-> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
->  		current->flags |= PF_SIGNALED;
->  
->  		if (sig_kernel_coredump(signr)) {
-> +			/*
-> +			 * Notify the parent prior to the coredump if the
-> +			 * parent is interested in such a notificaiton.
-> +			 */
-> +			int p_sig = current->real_parent->predump_signal;
-> +
-> +			if (valid_predump_signal(p_sig)) {
-> +				read_lock(&tasklist_lock);
-> +				do_notify_parent_predump(current);
-> +				read_unlock(&tasklist_lock);
-> +				cond_resched();
-> +			}
-> +
->  			if (print_fatal_signals)
->  				print_fatal_signal(ksig->info.si_signo);
->  			proc_coredump_connector(current);
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 123bd73..43eb250d 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  	return -EINVAL;
->  }
->  
-> +static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
-> +				    int __user *addr)
-> +{
-> +	struct task_struct *p;
-> +	int error;
-> +
-> +	/* For the current task, the common case */
-> +	if (pid == 0) {
-> +		put_user(tsk->predump_signal, addr);
-> +		return 0;
-> +	}
-> +
-> +	error = -ESRCH;
-> +	rcu_read_lock();
-> +	p = find_task_by_vpid(pid);
-> +	if (p) {
-> +		error = 0;
-> +		put_user(p->predump_signal, addr);
-> +	}
-> +	rcu_read_unlock();
-> +	return error;
-> +}
-> +
-> +/*
-> + * Returns true if current's euid is same as p's uid or euid,
-> + * or has CAP_SYS_ADMIN.
-> + *
-> + * Called with rcu_read_lock, creds are safe.
-> + *
-> + * Adapted from set_one_prio_perm().
-> + */
-> +static bool set_predump_signal_perm(struct task_struct *p)
-> +{
-> +	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
-> +
-> +	return uid_eq(pcred->uid, cred->euid) ||
-> +	       uid_eq(pcred->euid, cred->euid) ||
-> +	       capable(CAP_SYS_ADMIN);
+'encoder' is deferenced before it is null sanity checked, hence we
+potentially have a null pointer dereference bug. Instead, initialise
+drm_drv from encoder->dev->dev_private after we are sure 'encoder' is
+not null.
 
-So before proceeding I'd like to discuss at least two points:
-- how does this interact with the dumpability of a process?
-- do we need the capable(CAP_SYS_ADMIN) restriction to init_user_ns?
-  Seems we could make this work per-user-ns just like
-  PRCTL_SET_PDEATHSIG does?
+Fixes: 5182c1a556d7f ("drm/rockchip: add an common abstracted PSR driver")
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-> +}
-> +
-> +static int prctl_set_predump_signal(struct task_struct *tsk, pid_t pid, int sig)
-> +{
-> +	struct task_struct *p;
-> +	int error;
-> +
-> +	/* 0 is valid for disabling the feature */
-> +	if (sig && !valid_predump_signal(sig))
-> +		return -EINVAL;
-> +
-> +	/* For the current task, the common case */
-> +	if (pid == 0) {
-> +		tsk->predump_signal = sig;
-> +		return 0;
-> +	}
-> +
-> +	error = -ESRCH;
-> +	rcu_read_lock();
-> +	p = find_task_by_vpid(pid);
-> +	if (p) {
-> +		if (!set_predump_signal_perm(p))
-> +			error = -EPERM;
-> +		else {
-> +			error = 0;
-> +			p->predump_signal = sig;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +	return error;
-> +}
-> +
->  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		unsigned long, arg4, unsigned long, arg5)
->  {
-> @@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  			return -EINVAL;
->  		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
->  		break;
-> +	case PR_SET_PREDUMP_SIG:
-> +		error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
-> +		break;
-> +	case PR_GET_PREDUMP_SIG:
-> +		error = prctl_get_predump_signal(me, (pid_t)arg2,
-> +						 (int __user *)arg3);
-> +		break;
->  	default:
->  		error = -EINVAL;
->  		break;
-> -- 
-> 1.8.3.1
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index 1635485955d3..22a70ab6e214 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -226,12 +226,14 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+ 			int (*psr_set)(struct drm_encoder *, bool enable))
+ {
+-	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
++	struct rockchip_drm_private *drm_drv;
+ 	struct psr_drv *psr;
+ 
+ 	if (!encoder || !psr_set)
+ 		return -EINVAL;
+ 
++	drm_drv = encoder->dev->dev_private;
++
+ 	psr = kzalloc(sizeof(struct psr_drv), GFP_KERNEL);
+ 	if (!psr)
+ 		return -ENOMEM;
+-- 
+2.19.1
+
