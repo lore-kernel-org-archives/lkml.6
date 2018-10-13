@@ -2,118 +2,396 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E5DC6787C
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387FCC6787C
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8886920895
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C71B72098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 00:43:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GZbrO6Q2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8886920895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="BsfcUCVp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C71B72098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbeJMIQc (ORCPT
+        id S1726417AbeJMISG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 04:16:32 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44848 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeJMIQc (ORCPT
+        Sat, 13 Oct 2018 04:18:06 -0400
+Received: from alln-iport-3.cisco.com ([173.37.142.90]:57212 "EHLO
+        alln-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeJMISG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 04:16:32 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9D0fXTo042158;
-        Fri, 12 Oct 2018 19:41:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539391293;
-        bh=42QId3MRZo7j+3GEExtSv4wUr4+otAAS76xbO4Edv7U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GZbrO6Q2Nrg9p3J9k9gMVxWMvm0uJYH6kh2brTsC9HCnouXZ96y4ejHte4lJW9DV0
-         Ovimw/XJxm1At5XpyTU/DyT5/Zcz/hB11q234tBzvmnHTENsiVNsN4oQpWb9v3L+/O
-         mnU0gsSBSRIlx3LNMlQLd5amvrlt+lRPjPLlSbJM=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9D0fXmd029495;
-        Fri, 12 Oct 2018 19:41:33 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 12
- Oct 2018 19:41:33 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 12 Oct 2018 19:41:33 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9D0fWMs029411;
-        Fri, 12 Oct 2018 19:41:32 -0500
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: use for mcast entries
- only host port
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, <davem@davemloft.net>
-CC:     <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181012160629.7245-1-ivan.khoronzhuk@linaro.org>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <79601c11-8160-fe8e-f824-8b19d539bb76@ti.com>
-Date:   Fri, 12 Oct 2018 19:41:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 13 Oct 2018 04:18:06 -0400
+X-Greylist: delayed 571 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Oct 2018 04:18:04 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=9739; q=dns/txt; s=iport;
+  t=1539391386; x=1540600986;
+  h=to:from:cc:subject:message-id:date:mime-version:
+   content-transfer-encoding;
+  bh=yQiOG26t4yWgrpRWkKhg6VU6cwdx8KiWqe6julKE/7g=;
+  b=BsfcUCVpq50pARG6TeW6Pjd2L7a/zUReXtR7sR8UNQ5NpjQTW5ZFeGD9
+   V9xHSmTpEQFWcN32PcMMzBzvtJUmW1Zno8I9JLpD7yJYgRodM4kLMLa75
+   auuqiRK+UP/jphuxx6NBjMiCdqVxsVDBLFcV3Xwtff2MMrggFgtW/e88V
+   o=;
+X-IronPort-AV: E=Sophos;i="5.54,374,1534809600"; 
+   d="scan'208";a="185538400"
+Received: from rcdn-core-12.cisco.com ([173.37.93.148])
+  by alln-iport-3.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Oct 2018 00:33:38 +0000
+Received: from [10.154.208.159] ([10.154.208.159])
+        by rcdn-core-12.cisco.com (8.15.2/8.15.2) with ESMTP id w9D0XZ8a029947;
+        Sat, 13 Oct 2018 00:33:36 GMT
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+From:   Enke Chen <enkechen@cisco.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Enke Chen <enkechen@cisco.com>,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: [PATCH] kernel/signal: Signal-based pre-coredump notification
+Message-ID: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+Date:   Fri, 12 Oct 2018 17:33:35 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181012160629.7245-1-ivan.khoronzhuk@linaro.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.159, [10.154.208.159]
+X-Outbound-Node: rcdn-core-12.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For simplicity and consistency, this patch provides an implementation
+for signal-based fault notification prior to the coredump of a child
+process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+be used by an application to express its interest and to specify the
+signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
 
+Background:
 
-On 10/12/2018 11:06 AM, Ivan Khoronzhuk wrote:
-> In dual-emac mode the cpsw driver sends directed packets, that means
-> that packets go to the directed port, but an ALE lookup is performed
-> to determine untagged egress only. It means that on tx side no need
-> to add port bit for ALE mcast entry mask, and basically ALE entry
-> for port identification is needed only on rx side.
-> 
-> So, add only host port in dual_emac mode as used directed
-> transmission, and no need in one more port. For single port boards
-> and switch mode all ports used, as usual, so no changes for them.
-> Also it simplifies farther changes.
-> 
-> In other words, mcast entries for dual-emac should behave exactly
-> like unicast. It also can help avoid leaking packets between ports
-> with same vlan on h/w level if ports could became members of same vid.
-> 
-> So now, for instance, if mcast address 33:33:00:00:00:01 is added then
-> entries in ALE table:
-> 
-> vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x1
-> vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x1
-> 
-> Instead of:
-> vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x3
-> vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x5
-> 
-> With the same considerations, set only host port for unregistered
-> mcast for dual-emac mode in case of IFF_ALLMULTI is set, exactly like
-> it's done in cpsw_ale_set_allmulti().
-> 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
-> 
-> Based on net-next/master
+As the coredump of a process may take time, in certain time-sensitive
+applications it is necessary for a parent process (e.g., a process
+manager) to be notified of a child's imminent death before the coredump
+so that the parent process can act sooner, such as re-spawning an
+application process, or initiating a control-plane fail-over.
 
+Currently there are two ways for a parent process to be notified of a
+child process's state change. One is to use the POSIX signal, and
+another is to use the kernel connector module. The specific events and
+actions are summarized as follows:
 
+Process Event    POSIX Signal                Connector-based
+----------------------------------------------------------------------
+ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+                 SIGCHLD / CLD_STOPPED
 
-Thank you.
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+                 SIGCHLD / CLD_CONTINUED
 
+pre_coredump/    N/A                         proc_coredump_connector()
+get_signal()
+
+post_coredump/   do_notify_parent()          proc_exit_connector()
+do_exit()        SIGCHLD / exit_signal
+----------------------------------------------------------------------
+
+As shown in the table, the signal-based pre-coredump notification is not
+currently available. In some cases using a connector-based notification
+can be quite complicated (e.g., when a process manager is written in shell
+scripts and thus is subject to certain inherent limitations), and a
+signal-based notification would be simpler and better suited.
+
+Signed-off-by: Enke Chen <enkechen@cisco.com>
+---
+ arch/x86/kernel/signal_compat.c    |  2 +-
+ include/linux/sched.h              |  4 ++
+ include/linux/signal.h             |  5 +++
+ include/uapi/asm-generic/siginfo.h |  3 +-
+ include/uapi/linux/prctl.h         |  4 ++
+ kernel/fork.c                      |  1 +
+ kernel/signal.c                    | 51 +++++++++++++++++++++++++
+ kernel/sys.c                       | 77 ++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 145 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
+index 9ccbf05..a3deba8 100644
+--- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
+ 	BUILD_BUG_ON(NSIGSEGV != 7);
+ 	BUILD_BUG_ON(NSIGBUS  != 5);
+ 	BUILD_BUG_ON(NSIGTRAP != 5);
+-	BUILD_BUG_ON(NSIGCHLD != 6);
++	BUILD_BUG_ON(NSIGCHLD != 7);
+ 	BUILD_BUG_ON(NSIGSYS  != 1);
+ 
+ 	/* This is part of the ABI and can never change in size: */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 09026ea..cfb9645 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -696,6 +696,10 @@ struct task_struct {
+ 	int				exit_signal;
+ 	/* The signal sent when the parent dies: */
+ 	int				pdeath_signal;
++
++	/* The signal sent prior to a child's coredump: */
++	int				predump_signal;
++
+ 	/* JOBCTL_*, siglock protected: */
+ 	unsigned long			jobctl;
+ 
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 706a499..7cb976d 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -256,6 +256,11 @@ static inline int valid_signal(unsigned long sig)
+ 	return sig <= _NSIG ? 1 : 0;
+ }
+ 
++static inline int valid_predump_signal(int sig)
++{
++	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
++}
++
+ struct timespec;
+ struct pt_regs;
+ enum pid_type;
+diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+index cb3d6c2..1a47cef 100644
+--- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@ -267,7 +267,8 @@ struct {				\
+ #define CLD_TRAPPED	4	/* traced child has trapped */
+ #define CLD_STOPPED	5	/* child has stopped */
+ #define CLD_CONTINUED	6	/* stopped child has continued */
+-#define NSIGCHLD	6
++#define CLD_PREDUMP	7	/* child is about to dump core */
++#define NSIGCHLD	7
+ 
+ /*
+  * SIGPOLL (or any other signal without signal specific si_codes) si_codes
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0..79f0a8a 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -219,4 +219,8 @@ struct prctl_mm_map {
+ # define PR_SPEC_DISABLE		(1UL << 2)
+ # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+ 
++/* Whether to receive signal prior to child's coredump */
++#define PR_SET_PREDUMP_SIG	54
++#define PR_GET_PREDUMP_SIG	55
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff..c296c11 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1985,6 +1985,7 @@ static __latent_entropy struct task_struct *copy_process(
+ 	p->dirty_paused_when = 0;
+ 
+ 	p->pdeath_signal = 0;
++	p->predump_signal = 0;
+ 	INIT_LIST_HEAD(&p->thread_group);
+ 	p->task_works = NULL;
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 312b43e..eb4a483 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
+ 	return signr;
+ }
+ 
++/*
++ * Let the parent, if so desired, know about the imminent death of a child
++ * prior to its coredump.
++ *
++ * Locking logic is similar to do_notify_parent_cldstop().
++ */
++static void do_notify_parent_predump(struct task_struct *tsk)
++{
++	struct sighand_struct *sighand;
++	struct task_struct *parent;
++	struct kernel_siginfo info;
++	unsigned long flags;
++	int sig;
++
++	parent = tsk->real_parent;
++	sig = parent->predump_signal;
++
++	/* Check again with "tasklist_lock" locked by the caller */
++	if (!valid_predump_signal(sig))
++		return;
++
++	clear_siginfo(&info);
++	info.si_signo = sig;
++	if (sig == SIGCHLD)
++		info.si_code = CLD_PREDUMP;
++
++	rcu_read_lock();
++	info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
++	info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
++				       task_uid(tsk));
++	rcu_read_unlock();
++
++	sighand = parent->sighand;
++	spin_lock_irqsave(&sighand->siglock, flags);
++	__group_send_sig_info(sig, &info, parent);
++	spin_unlock_irqrestore(&sighand->siglock, flags);
++}
++
+ bool get_signal(struct ksignal *ksig)
+ {
+ 	struct sighand_struct *sighand = current->sighand;
+@@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
+ 		current->flags |= PF_SIGNALED;
+ 
+ 		if (sig_kernel_coredump(signr)) {
++			/*
++			 * Notify the parent prior to the coredump if the
++			 * parent is interested in such a notificaiton.
++			 */
++			int p_sig = current->real_parent->predump_signal;
++
++			if (valid_predump_signal(p_sig)) {
++				read_lock(&tasklist_lock);
++				do_notify_parent_predump(current);
++				read_unlock(&tasklist_lock);
++				cond_resched();
++			}
++
+ 			if (print_fatal_signals)
+ 				print_fatal_signal(ksig->info.si_signo);
+ 			proc_coredump_connector(current);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 123bd73..43eb250d 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+ 	return -EINVAL;
+ }
+ 
++static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
++				    int __user *addr)
++{
++	struct task_struct *p;
++	int error;
++
++	/* For the current task, the common case */
++	if (pid == 0) {
++		put_user(tsk->predump_signal, addr);
++		return 0;
++	}
++
++	error = -ESRCH;
++	rcu_read_lock();
++	p = find_task_by_vpid(pid);
++	if (p) {
++		error = 0;
++		put_user(p->predump_signal, addr);
++	}
++	rcu_read_unlock();
++	return error;
++}
++
++/*
++ * Returns true if current's euid is same as p's uid or euid,
++ * or has CAP_SYS_ADMIN.
++ *
++ * Called with rcu_read_lock, creds are safe.
++ *
++ * Adapted from set_one_prio_perm().
++ */
++static bool set_predump_signal_perm(struct task_struct *p)
++{
++	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
++
++	return uid_eq(pcred->uid, cred->euid) ||
++	       uid_eq(pcred->euid, cred->euid) ||
++	       capable(CAP_SYS_ADMIN);
++}
++
++static int prctl_set_predump_signal(struct task_struct *tsk, pid_t pid, int sig)
++{
++	struct task_struct *p;
++	int error;
++
++	/* 0 is valid for disabling the feature */
++	if (sig && !valid_predump_signal(sig))
++		return -EINVAL;
++
++	/* For the current task, the common case */
++	if (pid == 0) {
++		tsk->predump_signal = sig;
++		return 0;
++	}
++
++	error = -ESRCH;
++	rcu_read_lock();
++	p = find_task_by_vpid(pid);
++	if (p) {
++		if (!set_predump_signal_perm(p))
++			error = -EPERM;
++		else {
++			error = 0;
++			p->predump_signal = sig;
++		}
++	}
++	rcu_read_unlock();
++	return error;
++}
++
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		unsigned long, arg4, unsigned long, arg5)
+ {
+@@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+ 			return -EINVAL;
+ 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
++	case PR_SET_PREDUMP_SIG:
++		error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
++		break;
++	case PR_GET_PREDUMP_SIG:
++		error = prctl_get_predump_signal(me, (pid_t)arg2,
++						 (int __user *)arg3);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
 -- 
-regards,
--grygorii
+1.8.3.1
