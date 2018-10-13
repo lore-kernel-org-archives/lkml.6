@@ -2,272 +2,344 @@ Return-Path: <SRS0=sHJz=MZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CBFC28CF8
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F79C28CF8
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1F22064E
-	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81F252064E
+	for <linux-kernel@archiver.kernel.org>; Sat, 13 Oct 2018 18:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kil9J/+W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1F22064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="CoNXh91f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F252064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbeJNCGQ (ORCPT
+        id S1726795AbeJNCMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 13 Oct 2018 22:06:16 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40348 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeJNCGP (ORCPT
+        Sat, 13 Oct 2018 22:12:38 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33632 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeJNCMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 13 Oct 2018 22:06:15 -0400
-Received: by mail-oi1-f194.google.com with SMTP id j68-v6so12254882oib.7
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Oct 2018 11:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A/8Y0Hb6Wyj/qkND39Hgf/WWfH6YJH4yKTgmz9ZnF3A=;
-        b=Kil9J/+WsGxve+TAkuLPVQxkmNl9o2ziXWey4kM9rXQkjVl9sZjGAKWuvCx11tLkoD
-         cvJ0v4+DcU2QrwBosy+1tPlFgyh3nYdShLCPqUdBkccpfnOwuxpajAzvpR4P3gkN5mNH
-         /ml7VXssETEDk5qhJgYRF20YT9CX6/nHninXnKslZiOEbLnOJTYNr67amVSLqlzyicGJ
-         W00AiDZkFlThgdc6Xjzol+NE1YbkL+EkRmmcsWbOSBH5+vQkKZiFwB/q1Z8ESn9JpK2R
-         jleYzSVezWrxqWk8silsN/PnoRqEKqwuTStMTFaL2SL++fVjsy8xmOIUhKM9IJsPNAAS
-         ZB9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A/8Y0Hb6Wyj/qkND39Hgf/WWfH6YJH4yKTgmz9ZnF3A=;
-        b=WyOWTBeSebyakAMx6bxldwKZwV/FCOtIEYL+qAQxPvo9ChaabJbVXp21+g8t1x3PW5
-         ErGHNMdw5Ql85SyJ0lik7Ri7FXtfGlTcIHVyRCT21UBFtgr82Kq7t/7u1xcKoKHpgWRu
-         1/uQ5bTcSvj4ypi0B2atyTlcyYT+o9J4oebux2pffs3ble6SXSExr6ZYWl5DzlmvAgvr
-         KkrXuRvxy4rQkq70tRbac3Ihtk7GZ8bEL/EX8UAM6wigvASz5w+Mrq28harQv0ZKCs0Y
-         iE9noNtvHOzJ3DlgmQVceo4lXSqE/OUGiEyqnDbzXml0VP48CCUGqyTezkkw0PY3nKlA
-         UM6A==
-X-Gm-Message-State: ABuFfojYOASqm/gb9hbbg/F8TjMhzsolv28FQrybD15+ECMjDgSxf6e1
-        ndyMtArt/KjuNXakGImCwAQCKwudt+oJKtuT6aRrRw==
-X-Google-Smtp-Source: ACcGV63Pnnbdkm+2Pl6f5G+QsPWxynGEuA/PMoQ5RYCizerrJBiTIQWVu7tdO/7FF7Q9gLqT2t6fqciGOXf8rHnQuqo=
-X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr5580705oih.3.1539455285088;
- Sat, 13 Oct 2018 11:28:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-In-Reply-To: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 13 Oct 2018 20:27:38 +0200
-Message-ID: <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-To:     enkechen@cisco.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Sat, 13 Oct 2018 22:12:37 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id CA9CE1BEE7D;
+        Sat, 13 Oct 2018 14:34:25 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id rMHF1f2sC1qU; Sat, 13 Oct 2018 14:34:24 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 62E2E1BEE76;
+        Sat, 13 Oct 2018 14:34:24 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 62E2E1BEE76
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1539455664;
+        bh=M7WXEKQBVui8qLxtCZU89aRC3T/BSayQWb0i3X3F6nk=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=CoNXh91fAZFPJ0qJpgNmgl3dOCAteBTPrMAMckLHjU3og63dKvXRHVnxae5cKawzx
+         G0/HokIobm2fiHTEnL+0StZNtbWlgEZlQb5bTFS56UkWdFnqoq0BL2+oQAh9n7rzRo
+         MlP2guWBEq6dVsX7fz0gfk+c1YrWPRotBi/hjDXcStz7LlL7zAT2v8JM+oYojaAJPF
+         a1tGSpFI6rfJy0V1lo4aGLD+CmderqHP21VQdQv3iY0KmoPMJgmC3rDflzkGJnNnEa
+         GRfAjcHL8AI8JBO/YhfLCu5DseWOFtln/XeEc15BahW2xeFJBWgLsGVE4n5E8G3Rb4
+         7j3gCZVpo6ybQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id qfKFpgxLDUEL; Sat, 13 Oct 2018 14:34:24 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 3B2E91BEE70;
+        Sat, 13 Oct 2018 14:34:24 -0400 (EDT)
+Date:   Sat, 13 Oct 2018 14:34:23 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <james.morris@microsoft.com>,
+        James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
-        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        guro@fb.com, marcos.souza.org@gmail.com,
-        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, kamensky@cisco.com,
-        xe-linux-external@cisco.com, sstrogin@cisco.com
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <1921357606.3547.1539455663932.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAKv+Gu8gLivx7dDkKeUS4BHi3s8jEoX0=Q+WUeDXPmi7WT6BGA@mail.gmail.com>
+References: <20181012200523.23731-1-mathieu.desnoyers@efficios.com> <CAKv+Gu_2xWvpNPucLSZwSXMj3YsxDUavsQvR9bKxRNqKaRRX9g@mail.gmail.com> <CAKv+Gu8gLivx7dDkKeUS4BHi3s8jEoX0=Q+WUeDXPmi7WT6BGA@mail.gmail.com>
+Subject: Re: [PATCH for 4.19] tracepoint: Fix: out-of-bound tracepoint array
+ iteration
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3039)
+Thread-Topic: tracepoint: Fix: out-of-bound tracepoint array iteration
+Thread-Index: Yq0g2RTNffX73sk0E+n4pHd0vAah/g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 2:33 AM Enke Chen <enkechen@cisco.com> wrote:
-> For simplicity and consistency, this patch provides an implementation
-> for signal-based fault notification prior to the coredump of a child
-> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
-> be used by an application to express its interest and to specify the
-> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
-> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+----- On Oct 13, 2018, at 11:24 AM, Ard Biesheuvel ard.biesheuvel@linaro.org wrote:
 
-Your suggested API looks vaguely similar to PR_SET_PDEATHSIG, but with
-some important differences:
+> On 12 October 2018 at 23:07, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> Hi Mathieu,
+>>
+>> On 12 October 2018 at 22:05, Mathieu Desnoyers
+>> <mathieu.desnoyers@efficios.com> wrote:
+>>> commit 46e0c9be206f ("kernel: tracepoints: add support for relative
+>>> references") changes the layout of the __tracepoint_ptrs section on
+>>> architectures supporting relative references. However, it does so
+>>> without turning struct tracepoint * const into const int * elsewhere in
+>>> the tracepoint code, which has the following side-effect:
+>>>
+>>> tracepoint_module_{coming,going} invoke
+>>> tp_module_going_check_quiescent() with mod->tracepoints_ptrs
+>>> as first argument, and computes the end address of the array
+>>> for the second argument with:
+>>>
+>>>   mod->tracepoints_ptrs + mod->num_tracepoints
+>>>
+>>> However, because the type of mod->tracepoint_ptrs in module.h
+>>> has not been changed from pointer to int, it passes an end
+>>> pointer which is twice larger than the array, causing out-of-bound
+>>> array accesses.
+>>>
+>>> Fix this by introducing a new typedef: tracepoint_ptr_t, which
+>>> is either "const int" on architectures that have PREL32 relocations,
+>>> or "struct tracepoint * const" on architectures that does not have
+>>> this feature.
+>>>
+>>> Also provide a new tracepoint_ptr_defer() static inline to
+>>> encapsulate deferencing this type rather than duplicate code and
+>>> ugly idefs within the for_each_tracepoint_range() implementation.
+>>>
+>>
+>> Apologies for the breakage. FWIW, this looks like the correct approach
+>> to me (and mirrors what I did for initcalls in the same series)
+>>
+>>> This issue appears in 4.19-rc kernels, and should ideally be fixed
+>>> before the end of the rc cycle.
+>>>
+>>
+>> +1
+>>
+>>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>> Link: http://lkml.kernel.org/r/20180704083651.24360-7-ard.biesheuvel@linaro.org
+>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>> Cc: James Morris <james.morris@microsoft.com>
+>>> Cc: James Morris <jmorris@namei.org>
+>>> Cc: Jessica Yu <jeyu@kernel.org>
+>>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Nicolas Pitre <nico@linaro.org>
+>>> Cc: Paul Mackerras <paulus@samba.org>
+>>> Cc: Petr Mladek <pmladek@suse.com>
+>>> Cc: Russell King <linux@armlinux.org.uk>
+>>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>>> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+>>> Cc: Thomas Garnier <thgarnie@google.com>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Will Deacon <will.deacon@arm.com>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>
+>> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>
+> 
+> This fixes the build breakage for me that kbuild test robot reports.
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index cdab2451d6be..e19ae08c7fb8 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -20,6 +20,7 @@
+> #include <linux/export.h>
+> #include <linux/rbtree_latch.h>
+> #include <linux/error-injection.h>
+> +#include <linux/tracepoint-defs.h>
 
- - You don't reset the signal on setuid execution.
- - You permit setting this not just on the current process, but also on others.
+You've beat me to it :) I'll fold this change in a v2 of the patch,
 
-For both of these: Are these differences actually necessary, and if
-so, can you provide a specific rationale? From a security perspective,
-I would very much prefer it if this API had semantics closer to
-PR_SET_PDEATHSIG.
+Thanks!
 
-[...]
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 312b43e..eb4a483 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2337,6 +2337,44 @@ static int ptrace_signal(int signr, kernel_siginfo_t *info)
->         return signr;
->  }
->
-> +/*
-> + * Let the parent, if so desired, know about the imminent death of a child
-> + * prior to its coredump.
-> + *
-> + * Locking logic is similar to do_notify_parent_cldstop().
-> + */
-> +static void do_notify_parent_predump(struct task_struct *tsk)
-> +{
-> +       struct sighand_struct *sighand;
-> +       struct task_struct *parent;
-> +       struct kernel_siginfo info;
-> +       unsigned long flags;
-> +       int sig;
-> +
-> +       parent = tsk->real_parent;
-> +       sig = parent->predump_signal;
-> +
-> +       /* Check again with "tasklist_lock" locked by the caller */
-> +       if (!valid_predump_signal(sig))
-> +               return;
-> +
-> +       clear_siginfo(&info);
-> +       info.si_signo = sig;
-> +       if (sig == SIGCHLD)
-> +               info.si_code = CLD_PREDUMP;
-> +
-> +       rcu_read_lock();
-> +       info.si_pid = task_pid_nr_ns(tsk, task_active_pid_ns(parent));
-> +       info.si_uid = from_kuid_munged(task_cred_xxx(parent, user_ns),
-> +                                      task_uid(tsk));
+Mathieu
 
-You're sending a signal from the current namespaces, but with IDs that
-have been mapped into the parent's namespaces? That looks wrong to me.
+> 
+> #include <linux/percpu.h>
+> #include <asm/module.h>
+> 
+> 
+> 
+> 
+> 
+>>> ---
+>>>  include/linux/module.h          |  2 +-
+>>>  include/linux/tracepoint-defs.h |  6 ++++++
+>>>  include/linux/tracepoint.h      | 36 +++++++++++++++++++++------------
+>>>  kernel/tracepoint.c             | 24 ++++++++--------------
+>>>  4 files changed, 38 insertions(+), 30 deletions(-)
+>>>
+>>> diff --git a/include/linux/module.h b/include/linux/module.h
+>>> index f807f15bebbe..cdab2451d6be 100644
+>>> --- a/include/linux/module.h
+>>> +++ b/include/linux/module.h
+>>> @@ -430,7 +430,7 @@ struct module {
+>>>
+>>>  #ifdef CONFIG_TRACEPOINTS
+>>>         unsigned int num_tracepoints;
+>>> -       struct tracepoint * const *tracepoints_ptrs;
+>>> +       tracepoint_ptr_t *tracepoints_ptrs;
+>>>  #endif
+>>>  #ifdef HAVE_JUMP_LABEL
+>>>         struct jump_entry *jump_entries;
+>>> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
+>>> index 22c5a46e9693..49ba9cde7e4b 100644
+>>> --- a/include/linux/tracepoint-defs.h
+>>> +++ b/include/linux/tracepoint-defs.h
+>>> @@ -35,6 +35,12 @@ struct tracepoint {
+>>>         struct tracepoint_func __rcu *funcs;
+>>>  };
+>>>
+>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>> +typedef const int tracepoint_ptr_t;
+>>> +#else
+>>> +typedef struct tracepoint * const tracepoint_ptr_t;
+>>> +#endif
+>>> +
+>>>  struct bpf_raw_event_map {
+>>>         struct tracepoint       *tp;
+>>>         void                    *bpf_func;
+>>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+>>> index 041f7e56a289..538ba1a58f5b 100644
+>>> --- a/include/linux/tracepoint.h
+>>> +++ b/include/linux/tracepoint.h
+>>> @@ -99,6 +99,29 @@ extern void syscall_unregfunc(void);
+>>>  #define TRACE_DEFINE_ENUM(x)
+>>>  #define TRACE_DEFINE_SIZEOF(x)
+>>>
+>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>>> +{
+>>> +       return offset_to_ptr(p);
+>>> +}
+>>> +
+>>> +#define __TRACEPOINT_ENTRY(name)                                       \
+>>> +       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+>>> +           "   .balign 4                                       \n"     \
+>>> +           "   .long   __tracepoint_" #name " - .              \n"     \
+>>> +           "   .previous                                       \n")
+>>> +#else
+>>> +static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>>> +{
+>>> +       return *p;
+>>> +}
+>>> +
+>>> +#define __TRACEPOINT_ENTRY(name)                                        \
+>>> +       static tracepoint_ptr_t __tracepoint_ptr_##name __used           \
+>>> +       __attribute__((section("__tracepoints_ptrs"))) =                 \
+>>> +               &__tracepoint_##name
+>>> +#endif
+>>> +
+>>>  #endif /* _LINUX_TRACEPOINT_H */
+>>>
+>>>  /*
+>>> @@ -253,19 +276,6 @@ extern void syscall_unregfunc(void);
+>>>                 return static_key_false(&__tracepoint_##name.key);      \
+>>>         }
+>>>
+>>> -#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>>> -#define __TRACEPOINT_ENTRY(name)                                       \
+>>> -       asm("   .section \"__tracepoints_ptrs\", \"a\"          \n"     \
+>>> -           "   .balign 4                                       \n"     \
+>>> -           "   .long   __tracepoint_" #name " - .              \n"     \
+>>> -           "   .previous                                       \n")
+>>> -#else
+>>> -#define __TRACEPOINT_ENTRY(name)                                        \
+>>> -       static struct tracepoint * const __tracepoint_ptr_##name __used  \
+>>> -       __attribute__((section("__tracepoints_ptrs"))) =                 \
+>>> -               &__tracepoint_##name
+>>> -#endif
+>>> -
+>>>  /*
+>>>   * We have no guarantee that gcc and the linker won't up-align the tracepoint
+>>>   * structures, so we create an array of pointers that will be used for iteration
+>>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+>>> index bf2c06ef9afc..a3be42304485 100644
+>>> --- a/kernel/tracepoint.c
+>>> +++ b/kernel/tracepoint.c
+>>> @@ -28,8 +28,8 @@
+>>>  #include <linux/sched/task.h>
+>>>  #include <linux/static_key.h>
+>>>
+>>> -extern struct tracepoint * const __start___tracepoints_ptrs[];
+>>> -extern struct tracepoint * const __stop___tracepoints_ptrs[];
+>>> +extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+>>> +extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+>>>
+>>>  DEFINE_SRCU(tracepoint_srcu);
+>>>  EXPORT_SYMBOL_GPL(tracepoint_srcu);
+>>> @@ -371,25 +371,17 @@ int tracepoint_probe_unregister(struct tracepoint *tp,
+>>> void *probe, void *data)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
+>>>
+>>> -static void for_each_tracepoint_range(struct tracepoint * const *begin,
+>>> -               struct tracepoint * const *end,
+>>> +static void for_each_tracepoint_range(
+>>> +               tracepoint_ptr_t *begin, tracepoint_ptr_t *end,
+>>>                 void (*fct)(struct tracepoint *tp, void *priv),
+>>>                 void *priv)
+>>>  {
+>>> +       tracepoint_ptr_t *iter;
+>>> +
+>>>         if (!begin)
+>>>                 return;
+>>> -
+>>> -       if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
+>>> -               const int *iter;
+>>> -
+>>> -               for (iter = (const int *)begin; iter < (const int *)end; iter++)
+>>> -                       fct(offset_to_ptr(iter), priv);
+>>> -       } else {
+>>> -               struct tracepoint * const *iter;
+>>> -
+>>> -               for (iter = begin; iter < end; iter++)
+>>> -                       fct(*iter, priv);
+>>> -       }
+>>> +       for (iter = begin; iter < end; iter++)
+>>> +               fct(tracepoint_ptr_deref(iter), priv);
+>>>  }
+>>>
+>>>  #ifdef CONFIG_MODULES
+>>> --
+>>> 2.17.1
 
-> +       rcu_read_unlock();
-> +
-> +       sighand = parent->sighand;
-> +       spin_lock_irqsave(&sighand->siglock, flags);
-> +       __group_send_sig_info(sig, &info, parent);
-> +       spin_unlock_irqrestore(&sighand->siglock, flags);
-> +}
-> +
->  bool get_signal(struct ksignal *ksig)
->  {
->         struct sighand_struct *sighand = current->sighand;
-> @@ -2497,6 +2535,19 @@ bool get_signal(struct ksignal *ksig)
->                 current->flags |= PF_SIGNALED;
->
->                 if (sig_kernel_coredump(signr)) {
-> +                       /*
-> +                        * Notify the parent prior to the coredump if the
-> +                        * parent is interested in such a notificaiton.
-> +                        */
-> +                       int p_sig = current->real_parent->predump_signal;
-
-current->real_parent is an __rcu member. I think if you run the sparse
-checker against this patch, it's going to complain. Are you allowed to
-access current->real_parent in this context?
-
-> +                       if (valid_predump_signal(p_sig)) {
-> +                               read_lock(&tasklist_lock);
-> +                               do_notify_parent_predump(current);
-> +                               read_unlock(&tasklist_lock);
-> +                               cond_resched();
-> +                       }
-> +
->                         if (print_fatal_signals)
->                                 print_fatal_signal(ksig->info.si_signo);
->                         proc_coredump_connector(current);
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 123bd73..43eb250d 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2258,6 +2258,76 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->         return -EINVAL;
->  }
->
-> +static int prctl_get_predump_signal(struct task_struct *tsk, pid_t pid,
-> +                                   int __user *addr)
-> +{
-> +       struct task_struct *p;
-> +       int error;
-> +
-> +       /* For the current task, the common case */
-> +       if (pid == 0) {
-> +               put_user(tsk->predump_signal, addr);
-> +               return 0;
-> +       }
-> +
-> +       error = -ESRCH;
-> +       rcu_read_lock();
-> +       p = find_task_by_vpid(pid);
-> +       if (p) {
-> +               error = 0;
-> +               put_user(p->predump_signal, addr);
-
-This is wrong. You can't call put_user() while you're in an RCU
-read-side critical section.
-
-As below, I would like it if you could just get rid of this branch,
-and restrict this prctl to operating on the current process.
-
-> +       }
-> +       rcu_read_unlock();
-> +       return error;
-> +}
-> +
-> +/*
-> + * Returns true if current's euid is same as p's uid or euid,
-> + * or has CAP_SYS_ADMIN.
-> + *
-> + * Called with rcu_read_lock, creds are safe.
-> + *
-> + * Adapted from set_one_prio_perm().
-> + */
-> +static bool set_predump_signal_perm(struct task_struct *p)
-> +{
-> +       const struct cred *cred = current_cred(), *pcred = __task_cred(p);
-> +
-> +       return uid_eq(pcred->uid, cred->euid) ||
-> +              uid_eq(pcred->euid, cred->euid) ||
-> +              capable(CAP_SYS_ADMIN);
-> +}
-
-This permission check permits fiddling with other processes in
-scenarios where kill() wouldn't let you send signals (specifically, if
-you control the EUID of the target task). That worries me. Also,
-kill() is subject to LSM checks (see check_kill_permission()), but
-this interface isn't. I would really prefer it if you could amend this
-so that you can only operate on the current task, and get rid of this
-permission check.
-
-[...]
->  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->                 unsigned long, arg4, unsigned long, arg5)
->  {
-> @@ -2476,6 +2546,13 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->                         return -EINVAL;
->                 error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
->                 break;
-> +       case PR_SET_PREDUMP_SIG:
-> +               error = prctl_set_predump_signal(me, (pid_t)arg2, (int)arg3);
-> +               break;
-> +       case PR_GET_PREDUMP_SIG:
-> +               error = prctl_get_predump_signal(me, (pid_t)arg2,
-> +                                                (int __user *)arg3);
-> +               break;
-
-New prctl() calls should check that the unused arguments are zero, in
-order to make it possible to safely add more flags in the future.
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
